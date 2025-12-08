@@ -1,0 +1,4634 @@
+{
+  "author": "Anyrainel",
+  "description": "全角色配装样例 AllCharactersBuildSample",
+  "version": 4,
+  "data": [
+    {
+      "characterId": "dahlia",
+      "builds": [
+        {
+          "id": "build-1759080624238",
+          "name": "攻速辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "dahlia"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "ineffa",
+      "builds": [
+        {
+          "id": "build-1759080283811",
+          "name": "月感电副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "silken_moons_serenade",
+          "kOverride": 3,
+          "characterId": "ineffa"
+        },
+        {
+          "id": "build-1759080297446",
+          "name": "月感电副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "gilded_dreams",
+          "kOverride": 3,
+          "characterId": "ineffa"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "lauma",
+      "builds": [
+        {
+          "id": "build-1759079342747",
+          "name": "月绽放副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "er"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er"
+          ],
+          "artifactSet": "silken_moons_serenade",
+          "kOverride": 3,
+          "characterId": "lauma"
+        },
+        {
+          "id": "build-1759079709770",
+          "name": "月绽放副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "er"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er"
+          ],
+          "artifactSet": "gilded_dreams",
+          "kOverride": 3,
+          "characterId": "lauma"
+        },
+        {
+          "id": "build-1759079851858",
+          "name": "6命月绽放主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "night_of_the_skys_unveiling",
+          "characterId": "lauma"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "aino",
+      "builds": [
+        {
+          "id": "build-1759079131327",
+          "name": "挂水辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "silken_moons_serenade",
+          "characterId": "aino"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "citlali",
+      "builds": [
+        {
+          "id": "build-1759081278514",
+          "name": "辅助",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "er"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "citlali"
+        },
+        {
+          "id": "build-1759081442681",
+          "name": "双辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "er"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "citlali"
+        },
+        {
+          "id": "build-1759081485035",
+          "name": "6命辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "citlali"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xilonen",
+      "builds": [
+        {
+          "id": "build-1759083062172",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "xilonen"
+        },
+        {
+          "id": "build-1759083198124",
+          "name": "双辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "instructor",
+          "characterId": "xilonen",
+          "kOverride": 2
+        },
+        {
+          "id": "build-1759084179722",
+          "name": "6命输出",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "obsidian_codex",
+          "characterId": "xilonen"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "navia",
+      "builds": [
+        {
+          "id": "build-1759187615514",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "nighttime_whispers_in_the_echoing_woods",
+          "characterId": "navia"
+        },
+        {
+          "id": "build-1759187653224",
+          "name": "6命 仅速切",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "golden_troupe",
+          "characterId": "navia"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "freminet",
+      "builds": [
+        {
+          "id": "build-1759188474962",
+          "name": "物伤流",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "phys%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "pale_flame",
+          "characterId": "freminet"
+        },
+        {
+          "id": "build-1759188972730",
+          "name": "冰伤流",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "pale_flame",
+          "halfSet1": 21,
+          "characterId": "freminet",
+          "halfSet2": 1
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "chevreuse",
+      "builds": [
+        {
+          "id": "build-1759187852819",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "song_of_days_past",
+          "characterId": "chevreuse"
+        },
+        {
+          "id": "build-1759187892434",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "chevreuse"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "gaming",
+      "builds": [
+        {
+          "id": "build-1759187170280",
+          "name": "非6命 带芙",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "gaming",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759187232590",
+          "name": "6命",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "crimson_witch_of_flames",
+          "characterId": "gaming",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "chiori",
+      "builds": [
+        {
+          "id": "build-1759187061348",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "golden_troupe",
+          "characterId": "chiori"
+        },
+        {
+          "id": "build-1759187098098",
+          "name": "6命主副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "characterId": "chiori"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "arlecchino",
+      "builds": [
+        {
+          "id": "build-1759186969794",
+          "name": "主C ",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "fragment_of_harmonic_whimsy",
+          "characterId": "arlecchino",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759190239412",
+          "name": "0-1命主C 可选",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "gladiators_finale",
+          "characterId": "arlecchino"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xianyun",
+      "builds": [
+        {
+          "id": "build-1759084310519",
+          "name": "辅助",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "halfSet1": 9,
+          "halfSet2": 9,
+          "characterId": "xianyun"
+        },
+        {
+          "id": "build-1759527361697",
+          "name": "辅助",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "characterId": "xianyun",
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "clorinde",
+      "builds": [
+        {
+          "id": "build-1759186747042",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "fragment_of_harmonic_whimsy",
+          "characterId": "clorinde"
+        },
+        {
+          "id": "build-1759190531579",
+          "name": "备选 减E技能CD",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "electro%",
+            "atk%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "thundering_fury",
+          "characterId": "clorinde"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "sethos",
+      "builds": [
+        {
+          "id": "build-1759186668261",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er"
+          ],
+          "artifactSet": "wanderers_troupe",
+          "characterId": "sethos",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "sigewinne",
+      "builds": [
+        {
+          "id": "build-1759186540862",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "song_of_days_past",
+          "characterId": "sigewinne"
+        },
+        {
+          "id": "build-1759186821466",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "song_of_days_past",
+          "halfSet1": 2,
+          "halfSet2": 2,
+          "characterId": "sigewinne"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "emilie",
+      "builds": [
+        {
+          "id": "build-1759081808391",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "unfinished_reverie",
+          "characterId": "emilie"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kachina",
+      "builds": [
+        {
+          "id": "build-1759086607322",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "kachina"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "mualani",
+      "builds": [
+        {
+          "id": "build-1759080896598",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%",
+            "hydro%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "em"
+          ],
+          "artifactSet": "obsidian_codex",
+          "kOverride": 3,
+          "characterId": "mualani"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kinich",
+      "builds": [
+        {
+          "id": "build-1759082607315",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "obsidian_codex",
+          "characterId": "kinich"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "ororon",
+      "builds": [
+        {
+          "id": "build-1759084891452",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "kOverride": 3,
+          "characterId": "ororon"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "chasca",
+      "builds": [
+        {
+          "id": "build-1759081008353",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "obsidian_codex",
+          "characterId": "chasca"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "mavuika",
+      "builds": [
+        {
+          "id": "build-1759081607748",
+          "name": "主副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "obsidian_codex",
+          "characterId": "mavuika",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "lan_yan",
+      "builds": [
+        {
+          "id": "build-1759084514618",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "lan_yan"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "varesa",
+      "builds": [
+        {
+          "id": "build-1759083294202",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "long_nights_oath",
+          "characterId": "varesa"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "iansan",
+      "builds": [
+        {
+          "id": "build-1759084055163",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "iansan"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "escoffier",
+      "builds": [
+        {
+          "id": "build-1759086332675",
+          "name": "副C辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "golden_troupe",
+          "kOverride": 3,
+          "characterId": "escoffier"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "skirk",
+      "builds": [
+        {
+          "id": "build-1759082094300",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "finale_of_the_deep_galleries",
+          "characterId": "skirk"
+        },
+        {
+          "id": "build-1759082233087",
+          "name": "主C 下位替代",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "skirk"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "charlotte",
+      "builds": [
+        {
+          "id": "build-1759187686000",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "halfSet1": 9,
+          "halfSet2": 15,
+          "characterId": "charlotte"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "wriothesley",
+      "builds": [
+        {
+          "id": "build-1759188209761",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "wriothesley",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "neuvillette",
+      "builds": [
+        {
+          "id": "build-1759188243838",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%",
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "neuvillette"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "lyney",
+      "builds": [
+        {
+          "id": "build-1759189166358",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "lyney"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "lynette",
+      "builds": [
+        {
+          "id": "build-1759189231377",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "anemo%",
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "lynette"
+        },
+        {
+          "id": "build-1759189518149",
+          "name": "辅助 扩散 / 超绽放（染雷）",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "er"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "lynette"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "shenhe",
+      "builds": [
+        {
+          "id": "build-1759082364372",
+          "name": "辅助",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "halfSet1": 9,
+          "halfSet2": 9,
+          "characterId": "shenhe"
+        },
+        {
+          "id": "build-1759082553612",
+          "name": "辅助 低命可选",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "shenhe"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kirara",
+      "builds": [
+        {
+          "id": "build-1759190096806",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "deepwood_memories",
+          "halfSet1": 2,
+          "halfSet2": 2,
+          "characterId": "kirara"
+        },
+        {
+          "id": "build-1759191158243",
+          "name": "盾辅 草体系",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "deepwood_memories",
+          "halfSet1": 2,
+          "halfSet2": 2,
+          "characterId": "kirara"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "baizhu",
+      "builds": [
+        {
+          "id": "build-1759191551804",
+          "name": "奶辅 草体系",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "deepwood_memories",
+          "characterId": "baizhu"
+        },
+        {
+          "id": "build-1759191574356",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "deepwood_memories",
+          "halfSet1": 2,
+          "halfSet2": 2,
+          "characterId": "baizhu"
+        },
+        {
+          "id": "build-1759191690188",
+          "name": "6命副C",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "artifactSet": "deepwood_memories",
+          "characterId": "baizhu"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "hu_tao",
+      "builds": [
+        {
+          "id": "build-1759191766096",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em",
+            "hp%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "hp%"
+          ],
+          "artifactSet": "crimson_witch_of_flames",
+          "kOverride": 3,
+          "characterId": "hu_tao"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "zhongli",
+      "builds": [
+        {
+          "id": "build-1759192230014",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "zhongli"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yelan",
+      "builds": [
+        {
+          "id": "build-1759192458294",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3,
+          "characterId": "yelan"
+        },
+        {
+          "id": "build-1759192655690",
+          "name": "6命主副C",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3,
+          "halfSet1": 11,
+          "halfSet2": 11,
+          "characterId": "yelan"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "cyno",
+      "builds": [
+        {
+          "id": "build-1759192902805",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "gilded_dreams",
+          "kOverride": 3,
+          "characterId": "cyno"
+        },
+        {
+          "id": "build-1759193003336",
+          "name": "主C 可选",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "thundering_fury",
+          "kOverride": 3,
+          "characterId": "cyno"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "wanderer",
+      "builds": [
+        {
+          "id": "build-1759193085426",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "desert_pavilion_chronicle",
+          "characterId": "wanderer"
+        },
+        {
+          "id": "build-1759193106253",
+          "name": "6命主C",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "echoes_of_an_offering",
+          "characterId": "wanderer"
+        },
+        {
+          "id": "build-1759193235795",
+          "name": "主C 下位替代",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "shimenawas_reminiscence",
+          "characterId": "wanderer"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "alhaitham",
+      "builds": [
+        {
+          "id": "build-1759193299891",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "gilded_dreams",
+          "kOverride": 3,
+          "characterId": "alhaitham"
+        },
+        {
+          "id": "build-1759193387576",
+          "name": "主C 可选",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "artifactSet": "gilded_dreams",
+          "kOverride": 3,
+          "halfSet1": 7,
+          "halfSet2": 19,
+          "characterId": "alhaitham"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "nahida",
+      "builds": [
+        {
+          "id": "build-1759193819381",
+          "name": "副C辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "dendro%",
+            "em"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "deepwood_memories",
+          "characterId": "nahida"
+        },
+        {
+          "id": "build-1759193978675",
+          "name": "副C辅助 队友深林",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "dendro%",
+            "em"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "gilded_dreams",
+          "characterId": "nahida"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "dehya",
+      "builds": [
+        {
+          "id": "build-1759194271970",
+          "name": "4命主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "er"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "characterId": "dehya",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759194977508",
+          "name": "烈绽放副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "dehya"
+        },
+        {
+          "id": "build-1759195034712",
+          "name": "奶辅",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "atk%"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "dehya"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yaoyao",
+      "builds": [
+        {
+          "id": "build-1759195882383",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "em"
+          ],
+          "goblet": [
+            "hp%",
+            "em"
+          ],
+          "circlet": [
+            "hp%",
+            "em"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "deepwood_memories",
+          "characterId": "yaoyao"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "faruzan",
+      "builds": [
+        {
+          "id": "build-1759193781730",
+          "name": "6命辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "faruzan",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759196270144",
+          "name": "0-5命辅助",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "faruzan"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "mika",
+      "builds": [
+        {
+          "id": "build-1759197847775",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "cr",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "mika"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "layla",
+      "builds": [
+        {
+          "id": "build-1759198025977",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "layla"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "nilou",
+      "builds": [
+        {
+          "id": "build-1759193690792",
+          "name": "种子后台",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "em",
+            "hp%"
+          ],
+          "halfSet1": 2,
+          "halfSet2": 2,
+          "characterId": "nilou"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kaveh",
+      "builds": [
+        {
+          "id": "build-1759192738702",
+          "name": "种子前台",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "kaveh"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yumemizuki_mizuki",
+      "builds": [
+        {
+          "id": "build-1759084408496",
+          "name": "前台辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "yumemizuki_mizuki"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "ifa",
+      "builds": [
+        {
+          "id": "build-1759082679468",
+          "name": "前台辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "ifa"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "candace",
+      "builds": [
+        {
+          "id": "build-1759198201283",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "candace"
+        },
+        {
+          "id": "build-1759200247991",
+          "name": "辅助",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "halfSet1": 15,
+          "halfSet2": 2,
+          "characterId": "candace"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "dori",
+      "builds": [
+        {
+          "id": "build-1759200270400",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "dori"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "collei",
+      "builds": [
+        {
+          "id": "build-1759200703444",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "er"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "atk%",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "deepwood_memories",
+          "characterId": "collei"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "tighnari",
+      "builds": [
+        {
+          "id": "build-1759193480601",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "wanderers_troupe",
+          "characterId": "tighnari"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "shikanoin_heizou",
+      "builds": [
+        {
+          "id": "build-1759201776335",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "shikanoin_heizou"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kuki_shinobu",
+      "builds": [
+        {
+          "id": "build-1759202560668",
+          "name": "辅助 超绽放",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "hp%"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "kuki_shinobu"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kamisato_ayato",
+      "builds": [
+        {
+          "id": "build-1759202694851",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%"
+          ],
+          "artifactSet": "echoes_of_an_offering",
+          "kOverride": 3,
+          "characterId": "kamisato_ayato"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yae_miko",
+      "builds": [
+        {
+          "id": "build-1759202987640",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "golden_troupe",
+          "characterId": "yae_miko"
+        },
+        {
+          "id": "build-1759203029752",
+          "name": "驾驶员 超绽放",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "yae_miko",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "thoma",
+      "builds": [
+        {
+          "id": "build-1759204275180",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "halfSet1": 15,
+          "halfSet2": 2,
+          "characterId": "thoma"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "gorou",
+      "builds": [
+        {
+          "id": "build-1759203574600",
+          "name": "辅助",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "cr"
+          ],
+          "substats": [
+            "er",
+            "def%"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "halfSet1": 3,
+          "halfSet2": 15,
+          "characterId": "gorou"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "arataki_itto",
+      "builds": [
+        {
+          "id": "build-1759203508540",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "characterId": "arataki_itto"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "sangonomiya_kokomi",
+      "builds": [
+        {
+          "id": "build-1759204643029",
+          "name": "奶辅",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "oceanhued_clam",
+          "characterId": "sangonomiya_kokomi"
+        },
+        {
+          "id": "build-1759204881856",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "sangonomiya_kokomi"
+        },
+        {
+          "id": "build-1759205225752",
+          "name": "驾驶员 绽放",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "hp%"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "sangonomiya_kokomi"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "raiden_shogun",
+      "builds": [
+        {
+          "id": "build-1759205395697",
+          "name": "主副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%",
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "characterId": "raiden_shogun",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759205505918",
+          "name": "驾驶员 超绽放",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "flower_of_paradise_lost",
+          "characterId": "raiden_shogun"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kujou_sara",
+      "builds": [
+        {
+          "id": "build-1759205733252",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "characterId": "kujou_sara",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "sayu",
+      "builds": [
+        {
+          "id": "build-1759205936352",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "em"
+          ],
+          "goblet": [
+            "atk%",
+            "em"
+          ],
+          "circlet": [
+            "atk%",
+            "em"
+          ],
+          "substats": [
+            "atk%",
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "sayu"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yun_jin",
+      "builds": [
+        {
+          "id": "build-1759203149889",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "characterId": "yun_jin"
+        },
+        {
+          "id": "build-1759203247121",
+          "name": "辅助",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "halfSet1": 3,
+          "halfSet2": 15,
+          "characterId": "yun_jin"
+        },
+        {
+          "id": "build-1759206795471",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "artifactSet": "archaic_petra",
+          "characterId": "yun_jin"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yoimiya",
+      "builds": [
+        {
+          "id": "build-1759206551412",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "shimenawas_reminiscence",
+          "characterId": "yoimiya"
+        },
+        {
+          "id": "build-1759206655604",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "echoes_of_an_offering",
+          "characterId": "yoimiya"
+        },
+        {
+          "id": "build-1759207339699",
+          "name": "主C 带芙",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "yoimiya"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kamisato_ayaka",
+      "builds": [
+        {
+          "id": "build-1759206991595",
+          "name": "主C 冻结",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "blizzard_strayer",
+          "characterId": "kamisato_ayaka"
+        },
+        {
+          "id": "build-1759207641706",
+          "name": "主C 带芙",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "kamisato_ayaka"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kaedehara_kazuha",
+      "builds": [
+        {
+          "id": "build-1759191263268",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "kaedehara_kazuha"
+        },
+        {
+          "id": "build-1759191297010",
+          "name": "6命主C",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "characterId": "kaedehara_kazuha"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "eula",
+      "builds": [
+        {
+          "id": "build-1759207798294",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "phys%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "pale_flame",
+          "kOverride": 3,
+          "characterId": "eula"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "furina",
+      "builds": [
+        {
+          "id": "build-1759187981228",
+          "name": "副C辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "golden_troupe",
+          "characterId": "furina",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759207948577",
+          "name": "辅助 危战",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "cr",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "golden_troupe",
+          "halfSet1": 15,
+          "halfSet2": 15,
+          "characterId": "furina",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759207984224",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "cr",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "tenacity_of_the_millelith",
+          "characterId": "furina",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "diona",
+      "builds": [
+        {
+          "id": "build-1759208355682",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "diona"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "yanfei",
+      "builds": [
+        {
+          "id": "build-1759208611809",
+          "name": "主C",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "crimson_witch_of_flames",
+          "characterId": "yanfei"
+        },
+        {
+          "id": "build-1759208876847",
+          "name": "主C",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "wanderers_troupe",
+          "characterId": "yanfei"
+        },
+        {
+          "id": "build-1759208877289",
+          "name": "主C 带芙",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "yanfei"
+        },
+        {
+          "id": "build-1759209392525",
+          "name": "4命盾辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "halfSet1": 15,
+          "halfSet2": 2,
+          "characterId": "yanfei"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "rosaria",
+      "builds": [
+        {
+          "id": "build-1759209474015",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%",
+            "cryo%"
+          ],
+          "circlet": [
+            "cr"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "er"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "characterId": "rosaria"
+        },
+        {
+          "id": "build-1759209733744",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%",
+            "cryo%"
+          ],
+          "circlet": [
+            "cr"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city",
+          "characterId": "rosaria"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xiao",
+      "builds": [
+        {
+          "id": "build-1759192291161",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "vermillion_hereafter",
+          "kOverride": 3,
+          "characterId": "xiao"
+        },
+        {
+          "id": "build-1759210166671",
+          "name": "主C 带闲",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "kOverride": 3,
+          "characterId": "xiao"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "ganyu",
+      "builds": [
+        {
+          "id": "build-1759210251533",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "wanderers_troupe",
+          "characterId": "ganyu"
+        },
+        {
+          "id": "build-1759210415719",
+          "name": "副C辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3,
+          "characterId": "ganyu"
+        },
+        {
+          "id": "build-1759210775321",
+          "name": "主C 冰冻",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "blizzard_strayer",
+          "characterId": "ganyu"
+        },
+        {
+          "id": "build-1759210775808",
+          "name": "主C 带芙",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "characterId": "ganyu"
+        },
+        {
+          "id": "build-1759210945515",
+          "name": "辅助",
+          "visible": false,
+          "composition": "2pc+2pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "halfSet1": 15,
+          "halfSet2": 15,
+          "characterId": "ganyu"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "albedo",
+      "builds": [
+        {
+          "id": "build-1759210807730",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "husk_of_opulent_dreams",
+          "characterId": "albedo"
+        },
+        {
+          "id": "build-1759211156049",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "golden_troupe",
+          "characterId": "albedo"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xinyan",
+      "builds": [
+        {
+          "id": "build-1759211487022",
+          "name": "盾辅",
+          "visible": true,
+          "composition": "2pc+2pc",
+          "sands": [
+            "def%"
+          ],
+          "goblet": [
+            "def%"
+          ],
+          "circlet": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er"
+          ],
+          "halfSet1": 3,
+          "halfSet2": 15,
+          "characterId": "xinyan"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "flins",
+      "builds": [
+        {
+          "id": "build-1759328579451-z7wjyodis",
+          "characterId": "flins",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "night_of_the_skys_unveiling",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "tartaglia",
+      "builds": [
+        {
+          "id": "build-1759334285960",
+          "characterId": "tartaglia",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "nymphs_dream",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "klee",
+      "builds": [
+        {
+          "id": "build-1759336696323",
+          "characterId": "klee",
+          "name": "火锅对策 带芙",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter"
+        },
+        {
+          "id": "build-1759336947764",
+          "characterId": "klee",
+          "name": "辅助 增幅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "instructor"
+        },
+        {
+          "id": "build-1759336980516",
+          "characterId": "klee",
+          "name": "辅助 挂火",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "tenacity_of_the_millelith"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xiangling",
+      "builds": [
+        {
+          "id": "build-1759337032514",
+          "characterId": "xiangling",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "er"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "traveler_pyro",
+      "builds": [
+        {
+          "id": "build-1759337139638",
+          "characterId": "traveler_pyro",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "traveler_dendro",
+      "builds": [
+        {
+          "id": "build-1759337168559",
+          "characterId": "traveler_dendro",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "dendro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "deepwood_memories"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "qiqi",
+      "builds": [
+        {
+          "id": "build-1759337471368",
+          "characterId": "qiqi",
+          "name": "奶副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "heal%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "oceanhued_clam",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "ningguang",
+      "builds": [
+        {
+          "id": "build-1759337625562",
+          "characterId": "ningguang",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "nighttime_whispers_in_the_echoing_woods",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759339588968",
+          "characterId": "ningguang",
+          "name": "主C 带芙",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "marechaussee_hunter",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "keqing",
+      "builds": [
+        {
+          "id": "build-1759337777184",
+          "characterId": "keqing",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "thundering_fury",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "kaeya",
+      "builds": [
+        {
+          "id": "build-1759337888247",
+          "characterId": "kaeya",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "emblem_of_severed_fate"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "venti",
+      "builds": [
+        {
+          "id": "build-1759337988358",
+          "characterId": "venti",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "anemo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer"
+        },
+        {
+          "id": "build-1759338035984",
+          "characterId": "venti",
+          "name": "副C 扩散",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "bennett",
+      "builds": [
+        {
+          "id": "build-1759338069336",
+          "characterId": "bennett",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "noblesse_oblige"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "jean",
+      "builds": [
+        {
+          "id": "build-1759338127674",
+          "characterId": "jean",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%",
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "sucrose",
+      "builds": [
+        {
+          "id": "build-1759338170311",
+          "characterId": "sucrose",
+          "name": "辅助 驾驶员",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "mona",
+      "builds": [
+        {
+          "id": "build-1759338376643",
+          "characterId": "mona",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759338600732",
+          "characterId": "mona",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1759338615988",
+          "characterId": "mona",
+          "name": "副C 种子",
+          "visible": false,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "flower_of_paradise_lost"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "barbara",
+      "builds": [
+        {
+          "id": "build-1759338752932",
+          "characterId": "barbara",
+          "name": "奶辅",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er",
+            "hp%"
+          ],
+          "goblet": [
+            "hp%"
+          ],
+          "circlet": [
+            "heal%",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%"
+          ],
+          "artifactSet": "song_of_days_past"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "fischl",
+      "builds": [
+        {
+          "id": "build-1759339066833",
+          "characterId": "fischl",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "golden_troupe",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "beidou",
+      "builds": [
+        {
+          "id": "build-1759339117510",
+          "characterId": "beidou",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "amber",
+      "builds": [
+        {
+          "id": "build-1759339164551",
+          "characterId": "amber",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "noblesse_oblige"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "xingqiu",
+      "builds": [
+        {
+          "id": "build-1759339238254",
+          "characterId": "xingqiu",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "hydro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "emblem_of_severed_fate"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "noelle",
+      "builds": [
+        {
+          "id": "build-1759339407750",
+          "characterId": "noelle",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "husk_of_opulent_dreams"
+        },
+        {
+          "id": "build-1759339444672",
+          "characterId": "noelle",
+          "name": "主C 带芙",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "def%",
+            "er"
+          ],
+          "goblet": [
+            "def%",
+            "geo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "artifactSet": "marechaussee_hunter"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "lisa",
+      "builds": [
+        {
+          "id": "build-1759339777815",
+          "characterId": "lisa",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "er"
+          ],
+          "goblet": [
+            "electro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er"
+          ],
+          "artifactSet": "emblem_of_severed_fate"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "diluc",
+      "builds": [
+        {
+          "id": "build-1759340073784",
+          "characterId": "diluc",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "pyro%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "artifactSet": "crimson_witch_of_flames",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "razor",
+      "builds": [
+        {
+          "id": "build-1759340652755",
+          "characterId": "razor",
+          "name": "",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "phys%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "pale_flame"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "chongyun",
+      "builds": [
+        {
+          "id": "build-1759340746213",
+          "characterId": "chongyun",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "cryo%"
+          ],
+          "circlet": [
+            "cd",
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "artifactSet": "noblesse_oblige"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "nefer",
+      "builds": [
+        {
+          "id": "build-1765193818046",
+          "characterId": "nefer",
+          "name": "主C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "em"
+          ],
+          "goblet": [
+            "em"
+          ],
+          "circlet": [
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em"
+          ],
+          "artifactSet": "night_of_the_skys_unveiling"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "durin",
+      "builds": [
+        {
+          "id": "build-1765193880868",
+          "characterId": "durin",
+          "name": "",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%",
+            "pyro%"
+          ],
+          "circlet": [
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er"
+          ],
+          "artifactSet": "noblesse_oblige",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "jahoda",
+      "builds": [
+        {
+          "id": "build-1765193935606",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "silken_moons_serenade"
+        },
+        {
+          "id": "build-1765193981718",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": [
+            "atk%"
+          ],
+          "goblet": [
+            "atk%"
+          ],
+          "circlet": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "er",
+            "atk%"
+          ],
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false
+    }
+  ],
+  "computeOptions": {
+    "skipCritBuilds": false,
+    "expandElementalGoblet": true,
+    "expandCritCirclet": true,
+    "mergeSingleFlexVariants": true,
+    "findRigidCommonSubset": true
+  }
+}

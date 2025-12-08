@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Genshin Artifact Filter Helper Design System */
+
+@layer base {
+  :root {
+    /* Genshin-inspired dark theme */
+    --background: 220 23% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Golden accent as primary */
+    --primary: 45 100% 65%;
+    --primary-foreground: 220 23% 8%;
+
+    /* Mystical purple secondary */
+    --secondary: 260 50% 25%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 55%;
+
+    /* Ethereal blue accent */
+    --accent: 200 80% 55%;
+    --accent-foreground: 220 23% 8%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 45 100% 65%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar colors */
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 45 100% 65%;
+    --sidebar-primary-foreground: 220 23% 8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 45 100% 65%;
+
+    /* Element colors */
+    --anemo: 120 60% 70%;
+    --geo: 45 85% 55%;
+    --electro: 280 70% 75%;
+    --dendro: 90 60% 50%;
+    --hydro: 200 80% 65%;
+    --pyro: 15 90% 65%;
+    --cryo: 190 80% 75%;
+
+    /* Custom gradients */
+    --gradient-mystical: linear-gradient(135deg, hsl(260 50% 25%) 0%, hsl(220 25% 12%) 50%, hsl(200 80% 25%) 100%);
+    --gradient-mystical-reverse: linear-gradient(135deg, hsl(200 40% 16%) 0%, hsl(220 20% 14%) 50%, hsl(260 30% 16%) 100%);
+    --gradient-golden: linear-gradient(135deg, hsl(45 100% 65%) 0%, hsl(35 80% 55%) 100%);
+    --gradient-artifact: linear-gradient(135deg, hsl(220 25% 12%) 0%, hsl(260 30% 15%) 100%);
+    
+    /* Shadows */
+    /* --shadow-mystical: 0 10px 40px -10px hsl(260 50% 25% / 0.4);
+    --shadow-golden: 0 0 30px hsl(45 100% 65% / 0.3);
+    --shadow-card: 0 8px 32px -8px hsl(220 23% 8% / 0.6);
+      */
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow: hidden;
+      /* Prevent page-level scrolling */
+
+    /* Custom scrollbar styles - completely hidden */
+    .overflow-y-auto {
+      scrollbar-gutter: auto;
+    }
+    
+    .overflow-y-auto::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+    
+    .overflow-y-auto::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+  }
+}
+
+@layer utilities {
+  /* Character rarity background gradients */
+  .bg-rarity-4 {
+    background: linear-gradient(to bottom, #5e5789, #9c75b7);
+  }
+
+  .bg-rarity-5 {
+    background: linear-gradient(to bottom, #945c2c, #b27330);
+  }
+}
+
+/* Additional styles for the tierlist */
+@layer components {
+  .character-card-dragging {
+    @apply scale-110 opacity-70 shadow-lg;
+  }
+  
+  .tier-row-highlight {
+    @apply bg-blue-100 border-blue-400;
+  }
+}
