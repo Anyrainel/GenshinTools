@@ -6,7 +6,7 @@
 
 ### *A collection of useful tools for Genshin Impact travelers.*
 
-[🎮 Launch Tool](https://anyrainel.github.io/genshin-tools)
+[🎮 Launch Tool](https://anyrainel.github.io/GenshinTools)
 
 </div>
 

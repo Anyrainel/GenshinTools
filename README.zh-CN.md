@@ -6,7 +6,7 @@
 
 ### *为原神旅行者准备的实用工具集合。*
 
-[🎮 启动工具](https://anyrainel.github.io/genshin-tools)
+[🎮 启动工具](https://anyrainel.github.io/GenshinTools)
 
 </div>
 

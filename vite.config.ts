@@ -4,7 +4,7 @@ import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'tauri' ? '/' : '/genshin-tools/',
+  base: mode === 'tauri' ? '/' : '/GenshinTools/',
   plugins: [react()],
   resolve: {
     alias: {
