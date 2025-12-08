@@ -4,7 +4,9 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { Settings } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ToolHeader } from '@/components/shared/ToolHeader';
-import { ImportControl, ExportControl, ClearAllControl } from '@/components/shared'; // Updated import
+import { ImportControl } from '@/components/shared/ImportControl';
+import { ExportControl } from '@/components/shared/ExportControl';
+import { ClearAllControl } from '@/components/shared/ClearAllControl'; // Updated import
 import { PresetOption, TierListData, TierAssignment, TierCustomization } from '@/data/types'; // Import necessary types
 import { useTierStore } from '@/stores/useTierStore';
 import TierTable from '@/components/tier-list/TierTable'; // Renamed component
