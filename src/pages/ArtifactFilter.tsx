@@ -11,18 +11,19 @@ import { serializeBuildExportPayload } from '@/stores/jsonUtils';
 import { Build, BuildGroup, BuildPayload, PresetOption } from '@/data/types';
 import { ImportControl } from '@/components/shared/ImportControl';
 import { ExportControl } from '@/components/shared/ExportControl';
-import { ClearAllControl } from '@/components/shared/ClearAllControl';
-import { computeArtifactFilters } from '@/lib/computeFilters';
-import { generateAllArtifactsMarkdown, downloadMarkdown } from '@/lib/printConfig';
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ToolHeader } from '@/components/shared/ToolHeader';
+import { toPng } from "html-to-image";
+import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: BuildPayload }>('@/presets/artifact-filter/*.json', { eager: false });
 
 const ACTIVE_TAB_KEY = 'genshin-artifact-filter:activeTab';
 
 const Index = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const configureViewRef = useRef<ConfigureViewRef>(null);
+  const computeContentRef = useRef<HTMLDivElement>(null);
 
   // Initialize activeTab from localStorage, fallback to 'configure'
   const [activeTab, setActiveTab] = useState(() => {
@@ -136,39 +137,44 @@ const Index = () => {
     return t.ui('app.artifactFilterTitle');
   };
 
-  const handlePrintConfigs = () => {
-    // Get current builds from store
-    const state = useBuildsStore.getState();
-    const { characterToBuildIds, builds, hiddenCharacters, computeOptions } = state;
+  const handleDownloadImage = async () => {
+    if (!computeContentRef.current) return;
 
-    // Convert to the format expected by computeArtifactFilters
-    const characterBuilds = Object.entries(characterToBuildIds)
-      .filter(([characterId]) => !hiddenCharacters[characterId])
-      .map(([characterId, buildIds]) => ({
-        characterId,
-        builds: buildIds
-          .map(id => builds[id])
-          .filter((b): b is Build => b !== undefined && b.visible)
-      }));
+    try {
+      const loadingToast = toast.loading(t.ui("app.generatingImage"));
 
-    // Convert to BuildGroup format for the appendix
-    const buildGroups: BuildGroup[] = Object.entries(characterToBuildIds).map(([characterId, buildIds]) => ({
-      characterId,
-      builds: buildIds
-        .map(id => builds[id])
-        .filter((b): b is Build => b !== undefined),
-      hidden: !!hiddenCharacters?.[characterId]
-    }));
+      // Add a small delay to allow toast to show
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // Compute artifact filters
-    const artifactFilters = computeArtifactFilters(characterBuilds, computeOptions);
+      const element = computeContentRef.current;
+      const { scrollWidth, scrollHeight } = element;
 
-    // Generate markdown
-    const markdown = generateAllArtifactsMarkdown(artifactFilters, buildGroups, { t, language });
+      const dataUrl = await toPng(element, {
+        cacheBust: true,
+        backgroundColor: "#10141d", // Match the dark theme background
+        width: scrollWidth,
+        height: scrollHeight,
+        pixelRatio: 2,
+        style: {
+          // Explicitly set width/height in style to prevent reflow during capture
+          width: `${scrollWidth}px`,
+          height: `${scrollHeight}px`,
+        },
+      });
 
-    // Download
-    const timestamp = new Date().toISOString().split('T')[0];
-    downloadMarkdown(markdown, `artifact-configs-${timestamp}.md`);
+      const link = document.createElement("a");
+      link.download = `artifact-configs-${
+        new Date().toISOString().split("T")[0]
+      }.png`;
+      link.href = dataUrl;
+      link.click();
+
+      toast.dismiss(loadingToast);
+      toast.success(t.ui("app.imageGenerated"));
+    } catch (err) {
+      console.error(err);
+      toast.error(t.ui("app.imageGenerationFailed"));
+    }
   };
 
   return (
@@ -178,21 +184,19 @@ const Index = () => {
           title={getTitle()}
           actions={
             <>
-              {activeTab === 'filters' ? (
+              {activeTab === "filters" ? (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handlePrintConfigs}
+                  onClick={handleDownloadImage}
                   className="gap-2"
                 >
                   <FileDown className="w-4 h-4" />
-                  {t.ui('app.print')}
+                  {t.ui("app.print")}
                 </Button>
               ) : (
                 <>
-                  <ClearAllControl
-                    onConfirm={clearAllBuilds}
-                  />
+                  <ClearAllControl onConfirm={clearAllBuilds} />
 
                   <ImportControl
                     options={presetOptions}
@@ -216,19 +220,23 @@ const Index = () => {
           <div className="container mx-auto px-4 pt-2 pb-2">
             {/* Tab Bar */}
             <div className="flex justify-center">
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
                 <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2 bg-card/30 border border-border/30 h-10">
                   <TabsTrigger
                     value="configure"
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-golden"
                   >
-                    {t.ui('navigation.configure')}
+                    {t.ui("navigation.configure")}
                   </TabsTrigger>
                   <TabsTrigger
                     value="filters"
                     className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-golden"
                   >
-                    {t.ui('navigation.computeFilters')}
+                    {t.ui("navigation.computeFilters")}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -239,15 +247,26 @@ const Index = () => {
         {/* Main Content Area - Takes remaining height */}
         <main className="flex-1 overflow-hidden">
           <div className="container mx-auto px-4 h-full">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-              <TabsContent value="configure" className="mt-0 h-full data-[state=inactive]:hidden">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="h-full"
+            >
+              <TabsContent
+                value="configure"
+                className="mt-0 h-full data-[state=inactive]:hidden"
+              >
                 <ConfigureView ref={configureViewRef} />
               </TabsContent>
 
-              <TabsContent value="filters" className="mt-0 h-full data-[state=inactive]:hidden">
+              <TabsContent
+                value="filters"
+                className="mt-0 h-full data-[state=inactive]:hidden"
+              >
                 <ComputeView
+                  contentRef={computeContentRef}
                   onJumpToCharacter={(characterId) => {
-                    setActiveTab('configure');
+                    setActiveTab("configure");
                     setTimeout(() => {
                       configureViewRef.current?.scrollToCharacter(characterId);
                     }, 0);

@@ -88,7 +88,10 @@ export const i18nAppData = {
       "export": { "en": "Export", "zh": "导出" },
       "import": { "en": "Import", "zh": "导入" },
       "clear": { "en": "Clear", "zh": "清除" },
-      "print": { "en": "Download", "zh": "下载" }
+      "print": { "en": "Download", "zh": "下载" },
+      "generatingImage": { "en": "Generating image...", "zh": "正在生成图片..." },
+      "imageGenerated": { "en": "Image generated successfully", "zh": "图片生成成功" },
+      "imageGenerationFailed": { "en": "Failed to generate image", "zh": "图片生成失败" }
     },
     "filters": {
       "title": { "en": "Filters", "zh": "过滤器" },
