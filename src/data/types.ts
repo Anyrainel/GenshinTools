@@ -5,8 +5,8 @@ export type Rarity = 4 | 5;
 export type Element = 'Pyro' | 'Hydro' | 'Electro' | 'Cryo' | 'Anemo' | 'Geo' | 'Dendro';
 export const elements: Element[] = ['Pyro', 'Hydro', 'Electro', 'Cryo', 'Anemo', 'Geo', 'Dendro'];
 
-export type Weapon = 'Sword' | 'Claymore' | 'Polearm' | 'Catalyst' | 'Bow';
-export const weapons: Weapon[] = ['Sword', 'Claymore', 'Polearm', 'Catalyst', 'Bow'];
+export type WeaponType = 'Sword' | 'Claymore' | 'Polearm' | 'Catalyst' | 'Bow';
+export const weaponTypes: WeaponType[] = ['Sword', 'Claymore', 'Polearm', 'Catalyst', 'Bow'];
 
 export type Region = 'Mondstadt' | 'Liyue' | 'Inazuma' | 'Sumeru' | 'Fontaine' | 'Natlan' | 'Snezhnaya' | 'Nod-Krai' | 'None';
 export const regions: Region[] = ['Mondstadt', 'Liyue', 'Inazuma', 'Sumeru', 'Fontaine', 'Natlan', 'Snezhnaya', 'Nod-Krai', 'None'];
@@ -26,39 +26,46 @@ export type Character = {
   id: string;
   element: Element;
   rarity: Rarity;
-  weapon: Weapon;
+  weapon: WeaponType;
   region: Region;
   releaseDate: string; // Format: YYYY-MM-DD
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
 
-export interface ArtifactSet {
+export type Weapon = {
+  id: string;
+  rarity: number;
+  imageUrl: string; // Original image URL from wiki
+  imagePath: string; // Local serving path
+};
+
+export type ArtifactSet = {
   id: string;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
-}
+};
 
-export interface ArtifactHalfSet {
+export type ArtifactHalfSet = {
   id: number;
   setIds: string[]; // All artifact set IDs that have this 2pc effect
   normalizedEffectTextEn: string; // Normalized English effect text
   normalizedEffectTextZh: string; // Normalized Chinese effect text
-}
+};
 
-export interface ElementResource {
+export type ElementResource = {
   name: Element;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
-}
+};
 
-export interface WeaponResource {
-  name: Weapon;
+export type WeaponTypeResource = {
+  name: WeaponType;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
-}
+};
 
-export interface Build {
+export type Build = {
   id: string;
   characterId: string; // Back link to character
   name: string;
@@ -72,24 +79,24 @@ export interface Build {
   circlet: MainStat[];
   substats: SubStat[];
   kOverride?: number; // if different from M
-}
+};
 
-export interface ArtifactPattern {
+export type ArtifactPattern = {
   mainStat: MainStatPlus;
   substats: SubStat[];
   set: string;
   slot: Slot;
   characters4pc?: string[];
   characters2pc?: string[];
-}
+};
 
-export interface BuildGroup {
+export type BuildGroup = {
   characterId: string;
   builds: Build[];
   hidden?: boolean;
-}
+};
 
-export interface ComputeOptions {
+export type ComputeOptions = {
   // Skip CR+CD builds (assume in-game auto-lock)
   skipCritBuilds?: boolean;           // default: false
   // Simplify certain main stats
@@ -98,75 +105,75 @@ export interface ComputeOptions {
   // Optional merge heuristics
   mergeSingleFlexVariants?: boolean;  // default: true
   findRigidCommonSubset?: boolean;    // default: true
-}
+};
 
-export interface BuildPayload {
+export type BuildPayload = {
   author: string;
   description: string;
   version: number;
   data: BuildGroup[];
   computeOptions?: ComputeOptions;
-}
+};
 
-export interface CharacterBuilds {
+export type CharacterBuilds = {
   characterId: string;
   buildIds: string[]; // Ordered list of build IDs for this character
-}
+};
 
-export interface CharacterMergeInfo {
+export type CharacterMergeInfo = {
   characterId: string;
   hasPerfectMerge: boolean; // false if the character's build was always imperfectly merged (coverage)
   has4pcBuild: boolean; // false if this character only has 2pc+2pc build with this set
-}
+};
 
-export interface SlotConfig {
+export type SlotConfig = {
   mainStats: MainStatPlus[];
   substats: SubStat[];
   mustPresent: SubStat[];
   minStatCount: number;
-}
+};
 
-export interface SetConfig {
+export type SetConfig = {
   flowerPlume: SlotConfig;
   sands: SlotConfig;
   goblet: SlotConfig;
   circlet: SlotConfig;
   servedCharacters: CharacterMergeInfo[];
-}
+};
 
-export interface ArtifactSetConfigs {
+export type ArtifactSetConfigs = {
   setId: string;
   configurations: SetConfig[];
-}
+};
 
 export const tiers = ['S', 'A', 'B', 'C', 'D'];
 
-export interface TierAssignment {
+export type TierAssignment = {
   [characterId: string]: {
     tier: string;
     position: number;
   };
-}
+};
 
-export interface TierCustomization {
+export type TierCustomization = {
   [tier: string]: {
     displayName: string;
     hidden: boolean;
   };
-}
+};
 
-export interface TierListData {
+export type TierListData = {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
   customTitle?: string;
   language: 'en' | 'zh';
   author?: string; // Added for export metadata
   description?: string; // Added for export metadata
-}
+};
 
-export interface PresetOption {
+export type PresetOption = {
   path: string;
   label: string;
   author?: string;
   description?: string;
-}
+};

@@ -11,7 +11,7 @@ import { PresetOption, TierListData, TierAssignment, TierCustomization } from '@
 import { useTierStore } from '@/stores/useTierStore';
 import TierTable from '@/components/tier-list/TierTable'; // Renamed component
 import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
-import { charactersById } from '@/data/resources';
+import { charactersById } from "@/data/constants";
 import { toast } from 'sonner';
 
 // Helper to build name to ID map (from old TierList.tsx)

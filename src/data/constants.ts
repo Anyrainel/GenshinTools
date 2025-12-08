@@ -5,14 +5,14 @@ import type {
   ArtifactSet,
   ArtifactHalfSet,
   ElementResource,
-  WeaponResource
+  WeaponTypeResource
 } from './types';
 import {
   artifacts,
   artifactHalfSets,
   characters,
   elements as elementResources,
-  weapons as weaponResources
+  weaponTypes as weaponResources
 } from './resources';
 
 
@@ -77,5 +77,5 @@ export const elementResourcesByName = freezeRecord(
 );
 
 export const weaponResourcesByName = freezeRecord(
-  createRecord<WeaponResource, WeaponResource['name']>(weaponResources, (weapon) => weapon.name)
+  createRecord<WeaponTypeResource, WeaponTypeResource['name']>(weaponResources, (weapon) => weapon.name)
 );

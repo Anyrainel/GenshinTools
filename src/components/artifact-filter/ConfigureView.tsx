@@ -1,6 +1,6 @@
 import { useState, useImperativeHandle, forwardRef, useRef } from 'react';
 import { SlidersHorizontal, Search, ArrowUp, ArrowDown, Filter } from 'lucide-react';
-import { Element, Weapon, Region, Rarity, Character } from '@/data/types';
+import { Element, WeaponType, Region, Rarity, Character } from "@/data/types";
 import { characters } from '@/data/resources';
 import { ConfigureSidebar } from './ConfigureSidebar';
 import { TitleCard } from './TitleCard';
@@ -22,10 +22,10 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState({
     elements: [] as Element[],
-    weaponTypes: [] as Weapon[],
+    weaponTypes: [] as WeaponType[],
     regions: [] as Region[],
     rarities: [] as Rarity[],
-    sortOrder: 'desc' as 'asc' | 'desc'
+    sortOrder: "desc" as "asc" | "desc",
   });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 

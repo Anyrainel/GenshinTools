@@ -1,6 +1,7 @@
 import type { Character, TierAssignment, TierCustomization } from '@/data/types';
 import { tiers } from '@/data/types';
-import { characters, charactersById } from '@/data/resources';
+import { characters } from "@/data/resources";
+import { charactersById } from "@/data/constants";
 
 import {
   DndContext,
@@ -13,14 +14,11 @@ import {
   DragEndEvent,
   DragOverEvent,
   pointerWithin,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { TierItemPreview } from './TierItemPreview';
-import { useState, useMemo, useEffect, useRef } from 'react';
-import TierGrid from './TierGrid';
-
-
-
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { TierItemPreview } from "./TierItemPreview";
+import { useState, useMemo, useEffect, useRef } from "react";
+import TierGrid from "./TierGrid";
 
 
 interface TierTableProps {
