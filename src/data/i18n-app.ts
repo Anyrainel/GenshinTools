@@ -77,12 +77,12 @@ export const i18nAppData = {
     "app": {
       "title": { "en": "Genshin Tools", "zh": "原神工具箱" },
       "navArtifactFilter": { "en": "Artifact Filter", "zh": "圣遗物过滤器" },
-      "navTierList": { "en": "Tier List", "zh": "角色榜单" },
+      "navTierList": { "en": "Character Tier List", "zh": "角色榜单" },
       "heroDescription": { "en": "Powerful utilities to optimize your builds and organize your roster.", "zh": "强大实用的工具，助您优化配装、管理角色养成。" },
       "artifactFilterTitle": { "en": "Artifact Filter Helper", "zh": "圣遗物过滤器助手" },
       "artifactFilterWhat": { "en": "Derive precise artifact filters from your own character builds.", "zh": "基于您的角色配装，推导生成精准的圣遗物过滤器。" },
       "artifactFilterWhy": { "en": "Calculates exact lock rules tailored to your specific roster, deriving filters directly from your defined ideal builds.", "zh": "为您特定的阵容计算精确的锁定规则，直接基于您定义的理想配装推导过滤规则。" },
-      "tierListTitle": { "en": "Tier List Maker", "zh": "角色榜单制作器" },
+      "tierListTitle": { "en": "Character Tier List Maker", "zh": "角色榜单制作器" },
       "tierListWhat": { "en": "Create element-specific tier lists for deeper roster analysis.", "zh": "创建按元素分类的角色榜单，深度分析。" },
       "tierListWhy": { "en": "The per-element layout offers superior comparability within elemental roles, ideal for planning around element-restricted content.", "zh": "分元素布局提供了更优的同系角色对比视角，完美适配元素限制类玩法的规划需求。" },
       "weaponTierListTitle": { "en": "Weapon Tier List Maker", "zh": "武器榜单制作器" },
@@ -163,8 +163,8 @@ export const i18nAppData = {
       "exportDescriptionRequired": { "en": "Description is required", "zh": "需要填写描述" }
     },
     "navigation": {
-      "configure": { "en": "Configure Character Builds", "zh": "配置角色配装" },
-      "computeFilters": { "en": "Compute Artifact Filters", "zh": "计算圣遗物过滤器" }
+      "configure": { "en": "1. Configure Character Builds", "zh": "1. 配置角色配装" },
+      "computeFilters": { "en": "2. Compute Artifact Filters", "zh": "2. 计算圣遗物过滤器" }
     },
     "characterCard": {
       "addFirstBuild": { "en": "Add First Build", "zh": "添加第一个配装" },

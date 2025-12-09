@@ -22,7 +22,7 @@ export const WeaponTierItemPreview = ({ weapon }: WeaponTierItemPreviewProps) =>
     >
       <img
         src={getAssetUrl(weapon.imagePath)}
-        alt={t.ui('weapon', weapon.id)}
+        alt={t.weaponName(weapon.id)}
         className="w-full h-full object-cover"
         draggable={false}
       />

@@ -76,7 +76,7 @@ const WeaponTierListPage = () => {
 
       // Use a generic message key or reuse characterMoved if acceptable
       // Ideally should add weaponMoved messages
-      const localizedName = t.ui('weapon', weapon.id); // Fallback to ID if not found, usually name is in i18nGameData
+      const localizedName = t.weaponName(weapon.id); // Fallback to ID if not found, usually name is in i18nGameData
 
       if (change.toTier) {
         const tierLabel = change.toTier === 'Pool' ? t.ui('tiers.Pool') : change.toTier;
@@ -143,7 +143,7 @@ const WeaponTierListPage = () => {
 
   const handleImport = (importedData: TierListData) => {
     shouldShowAutoSaveRef.current = false;
-    
+
     // Normalize logic if needed
 
     loadTierListData({
@@ -175,9 +175,9 @@ const WeaponTierListPage = () => {
       link.download = `[${author}] ${description}.json`;
       link.click();
       URL.revokeObjectURL(url);
-      
+
       useWeaponTierStore.getState().setMetadata(author, description);
-      
+
       toast.success(t.ui('messages.tierListSaved'));
     } catch (error) {
       console.error('Error saving weapon tier list:', error);
@@ -214,7 +214,7 @@ const WeaponTierListPage = () => {
   const handleTierAssignment = (draggedWeaponId: string, dropTargetWeaponId: string | null, tier: string, direction: 'left' | 'right') => {
     setTierAssignments(prev => {
       const newAssignments = { ...prev };
-      
+
       const targetTierWeapons = Object.entries(prev)
         .filter(([id, assignment]) => assignment.tier === tier && id !== draggedWeaponId)
         .map(([id, assignment]) => ({ id, ...assignment }))
@@ -232,19 +232,19 @@ const WeaponTierListPage = () => {
           }
         }
       } else {
-          if (direction === 'left') insertIndex = 0;
+        if (direction === 'left') insertIndex = 0;
       }
 
       targetTierWeapons.splice(insertIndex, 0, {
         id: draggedWeaponId,
         tier: tier,
-        position: 0 
+        position: 0
       });
 
       targetTierWeapons.forEach((w, index) => {
         newAssignments[w.id] = { tier, position: index };
       });
-      
+
       return newAssignments;
     });
   };
@@ -360,7 +360,7 @@ const WeaponTierListPage = () => {
             />
           </div>
         </main>
-        
+
         <TierCustomizationDialog
           isOpen={isCustomizeDialogOpen}
           onClose={() => setIsCustomizeDialogOpen(false)}
