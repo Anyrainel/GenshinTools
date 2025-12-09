@@ -183,6 +183,7 @@ const TierListPage = () => {
   };
 
   const handleClear = () => {
+    shouldShowAutoSaveRef.current = false;
     resetStoredTierList();
     toast.info(t.ui('messages.tierListReset'));
   };
