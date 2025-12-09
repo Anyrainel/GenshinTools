@@ -1,152 +1,70 @@
 import React, { useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { Character } from "@/data/types";
-import { getAssetUrl } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useTierStore } from "@/stores/useTierStore";
-import { weaponResourcesByName } from "@/data/constants";
-import { RARITY_COLORS } from "@/constants/theme";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { CharacterTooltip } from "@/components/CharacterTooltip";
+import { cn } from '@/lib/utils';
 
-interface TierItemProps {
-  character: Character;
+export interface TierItemData {
+  id: string;
+  rarity: number;
+  [key: string]: any; // Allow additional properties
+}
+
+interface TierItemProps<T extends TierItemData> {
+  item: T;
   id: string;
   tier: string;
   disabled?: boolean;
-  onDoubleClick?: (characterId: string) => void;
+  onDoubleClick?: (itemId: string) => void;
+  renderContent: (item: T, isDragging: boolean) => React.ReactNode;
+  getItemData: (item: T) => Record<string, any>;
 }
 
-export const TierItem: React.FC<TierItemProps> = ({
-  character,
+export function TierItem<T extends TierItemData>({
+  item,
   id,
   tier,
   disabled,
   onDoubleClick,
-}) => {
-  const showWeapons = useTierStore((state) => state.showWeapons);
-  const { t } = useLanguage();
-
+  renderContent,
+  getItemData,
+}: TierItemProps<T>) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
-      id: id, // Use the passed id for dnd-kit
+      id: id,
       data: {
-        characterId: character.id, // Pass actual character ID in data
+        itemId: item.id,
         tier: tier,
-        element: character.element,
+        ...getItemData(item),
       },
       disabled: disabled,
-      animateLayoutChanges: () => false, // Disable animations completely
+      animateLayoutChanges: () => false,
     });
 
   const style = {
-    transform: isDragging ? CSS.Transform.toString(transform) : "none",
-    zIndex: isDragging ? 1000 : "auto",
+    transform: isDragging ? CSS.Transform.toString(transform) : 'none',
+    zIndex: isDragging ? 1000 : 'auto',
     opacity: isDragging ? 0.5 : 1,
   };
 
   const handleDoubleClick = useCallback(() => {
-    onDoubleClick?.(character.id); // Pass character.id on double click
-  }, [onDoubleClick, character.id]);
+    onDoubleClick?.(item.id);
+  }, [onDoubleClick, item.id]);
 
   return (
-    <>
-      {isDragging ? (
-        <div
-          ref={setNodeRef}
-          style={style}
-          {...attributes}
-          {...listeners}
-          className={cn(
-            "w-16 h-16 rounded-md overflow-hidden relative",
-            RARITY_COLORS[character.rarity],
-            "cursor-grab active:cursor-grabbing",
-            "hover:scale-105",
-            disabled && "opacity-50 cursor-not-allowed"
-          )}
-          onDoubleClick={handleDoubleClick}
-          data-character-id={character.id}
-        >
-          <img
-            src={getAssetUrl(character.imagePath)}
-            alt={t.character(character.id)}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            draggable={false}
-          />
-          {showWeapons && (
-            <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-              <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
-                <img
-                  src={getAssetUrl(
-                    weaponResourcesByName[character.weaponType].imagePath
-                  )}
-                  alt={t.weaponType(character.weaponType)}
-                  className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
-                  draggable={false}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <Tooltip disableHoverableContent>
-          <TooltipTrigger asChild>
-            <div
-              ref={setNodeRef}
-              style={style}
-              {...attributes}
-              {...listeners}
-              className={cn(
-                "w-16 h-16 rounded-md overflow-hidden relative",
-                RARITY_COLORS[character.rarity],
-                "cursor-grab active:cursor-grabbing",
-                "hover:scale-105",
-                disabled && "opacity-50 cursor-not-allowed"
-              )}
-              onDoubleClick={handleDoubleClick}
-              data-character-id={character.id}
-            >
-              <img
-                src={getAssetUrl(character.imagePath)}
-                alt={t.character(character.id)}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                draggable={false}
-              />
-              {showWeapons && (
-                <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-                  <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
-                    <img
-                      src={getAssetUrl(
-                        weaponResourcesByName[character.weaponType].imagePath
-                      )}
-                      alt={t.weaponType(character.weaponType)}
-                      className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
-                      draggable={false}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent
-            side="right"
-            sideOffset={10}
-            className="p-0 border-0 bg-transparent shadow-none"
-          >
-            <CharacterTooltip characterId={character.id} />
-          </TooltipContent>
-        </Tooltip>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={cn(
+        'cursor-grab active:cursor-grabbing',
+        'hover:scale-105',
+        disabled && 'opacity-50 cursor-not-allowed'
       )}
-    </>
+      onDoubleClick={handleDoubleClick}
+      data-item-id={item.id}
+    >
+      {renderContent(item, isDragging)}
+    </div>
   );
-};
-
-TierItem.displayName = "TierItem";
+}

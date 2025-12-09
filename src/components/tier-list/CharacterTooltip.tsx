@@ -50,3 +50,4 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({ characterId 
     </div>
   );
 };
+

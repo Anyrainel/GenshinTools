@@ -9,7 +9,7 @@ import { ExportControl } from '@/components/shared/ExportControl';
 import { ClearAllControl } from '@/components/shared/ClearAllControl'; // Updated import
 import { PresetOption, TierListData, TierAssignment, TierCustomization } from '@/data/types'; // Import necessary types
 import { useTierStore } from '@/stores/useTierStore';
-import TierTable from '@/components/tier-list/TierTable'; // Renamed component
+import CharacterTierTable from '@/components/tier-list/CharacterTierTable';
 import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
 import { charactersById } from "@/data/constants";
 import { toast } from 'sonner';
@@ -454,7 +454,7 @@ const TierListPage = () => {
 
         <main className="flex-1 overflow-y-auto">
           <div className="w-full px-4 h-full">
-            <TierTable
+            <CharacterTierTable
               tierAssignments={tierAssignments}
               tierCustomization={tierCustomization}
               showTravelers={showTravelers}

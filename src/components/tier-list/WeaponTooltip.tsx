@@ -59,3 +59,4 @@ export const WeaponTooltip: React.FC<WeaponTooltipProps> = ({ weaponId }) => {
     </div>
   );
 };
+
