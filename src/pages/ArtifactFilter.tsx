@@ -15,6 +15,9 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ToolHeader } from '@/components/shared/ToolHeader';
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
+import { cn } from '@/lib/utils';
+import { LAYOUT } from '@/constants/theme';
+import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
 
 const presetModules = import.meta.glob<{ default: BuildPayload }>('@/presets/artifact-filter/*.json', { eager: false });
 
@@ -52,50 +55,11 @@ const Index = () => {
 
   // Load preset metadata on mount
   useEffect(() => {
-    const loadPresetMetadata = async () => {
-      const options = await Promise.all(
-        Object.keys(presetModules).map(async (path) => {
-          try {
-            const loader = presetModules[path];
-            const module = await loader();
-            const payload = module?.default ?? (module as unknown as BuildPayload);
-
-            // Use author and description if available, otherwise fallback to filename
-            if (payload.author && payload.description) {
-              return {
-                path,
-                label: `[${payload.author}] ${payload.description}`,
-                author: payload.author,
-                description: payload.description
-              };
-            } else {
-              const fileName = path.split('/').pop() || path;
-              const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-              return { path, label: label.trim() || fileName };
-            }
-          } catch (error) {
-            console.error(`Failed to load preset metadata for ${path}:`, error);
-            const fileName = path.split('/').pop() || path;
-            const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-            return { path, label: label.trim() || fileName };
-          }
-        })
-      );
-
-      setPresetOptions(options.sort((a, b) => a.label.localeCompare(b.label)));
-    };
-
-    loadPresetMetadata();
+    loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
 
-  const loadPresetPayload = useCallback(async (path: string) => {
-    const loader = presetModules[path];
-    if (!loader) {
-      throw new Error(`Preset not found for path: ${path}`);
-    }
-
-    const module = await loader();
-    return module?.default ?? (module as unknown as BuildPayload);
+  const loadPreset = useCallback(async (path: string) => {
+    return loadPresetPayload(presetModules, path);
   }, []);
 
   const handleExport = (author: string, description: string) => {
@@ -128,7 +92,7 @@ const Index = () => {
     link.download = `[${author}] ${description}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    
+
     // Save metadata to store
     state.setMetadata(author, description);
   };
@@ -163,9 +127,8 @@ const Index = () => {
       });
 
       const link = document.createElement("a");
-      link.download = `artifact-configs-${
-        new Date().toISOString().split("T")[0]
-      }.png`;
+      link.download = `artifact-configs-${new Date().toISOString().split("T")[0]
+        }.png`;
       link.href = dataUrl;
       link.click();
 
@@ -200,7 +163,7 @@ const Index = () => {
 
                   <ImportControl
                     options={presetOptions}
-                    loadPreset={loadPresetPayload}
+                    loadPreset={loadPreset}
                     onApply={importBuilds}
                     onLocalImport={importBuilds}
                   />
@@ -216,7 +179,7 @@ const Index = () => {
           }
         />
 
-        <div className="border-b border-border/50 bg-card/20 backdrop-blur-sm z-40">
+        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40')}>
           <div className="container mx-auto px-4 pt-2 pb-2">
             {/* Tab Bar */}
             <div className="flex justify-center">

@@ -11,23 +11,12 @@ import { getAssetUrl } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTierStore } from '@/stores/useTierStore';
 import { CharacterTooltip } from './CharacterTooltip';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 interface CharacterTierTableProps {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
   showTravelers: boolean;
-  onTierAssignment: (
-    draggedCharacterId: string,
-    dropTargetCharacterId: string | null,
-    tier: string,
-    direction: 'left' | 'right'
-  ) => void;
-  onRemoveFromTiers: (characterId: string) => void;
+  onAssignmentsChange: (newAssignments: TierAssignment) => void;
 }
 
 // Character implements TierItemData
@@ -39,8 +28,7 @@ export default function CharacterTierTable({
   tierAssignments,
   tierCustomization,
   showTravelers,
-  onTierAssignment,
-  onRemoveFromTiers,
+  onAssignmentsChange,
 }: CharacterTierTableProps) {
   const showWeapons = useTierStore((state) => state.showWeapons);
   const { t } = useLanguage();
@@ -68,11 +56,34 @@ export default function CharacterTierTable({
     );
   };
 
-  const renderCellContent = (character: Character, isDragging: boolean) => {
-    const content = (
+  const getImagePath = (character: Character) => character.imagePath;
+  const getAlt = (character: Character) => t.character(character.id);
+  const getOverlay = (character: Character) => {
+    if (!showWeapons) return null;
+    return (
+      <div className={LAYOUT.WEAPON_ICON_CONTAINER}>
+        <div className={LAYOUT.WEAPON_ICON_BG}>
+          <img
+            src={getAssetUrl(
+              weaponResourcesByName[character.weaponType].imagePath
+            )}
+            alt={t.weaponType(character.weaponType)}
+            className={LAYOUT.WEAPON_ICON}
+            draggable={false}
+          />
+        </div>
+      </div>
+    );
+  };
+  const getTooltip = (character: Character) => (
+    <CharacterTooltip characterId={character.id} />
+  );
+
+  const renderPreview = (character: Character) => {
+    return (
       <div
         className={cn(
-          'w-16 h-16 rounded-md overflow-hidden relative',
+          LAYOUT.ITEM_CARD,
           RARITY_COLORS[character.rarity]
         )}
       >
@@ -80,64 +91,17 @@ export default function CharacterTierTable({
           src={getAssetUrl(character.imagePath)}
           alt={t.character(character.id)}
           className="w-full h-full object-cover"
-          loading="lazy"
           draggable={false}
         />
         {showWeapons && (
-          <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-            <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
+          <div className={LAYOUT.WEAPON_ICON_CONTAINER}>
+            <div className={LAYOUT.WEAPON_ICON_BG}>
               <img
                 src={getAssetUrl(
                   weaponResourcesByName[character.weaponType].imagePath
                 )}
                 alt={t.weaponType(character.weaponType)}
-                className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
-                draggable={false}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    );
-
-    if (isDragging) {
-      return content;
-    }
-
-    return (
-      <Tooltip disableHoverableContent>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          sideOffset={10}
-          className="p-0 border-0 bg-transparent shadow-none"
-        >
-          <CharacterTooltip characterId={character.id} />
-        </TooltipContent>
-      </Tooltip>
-    );
-  };
-
-  const renderPreview = (character: Character) => {
-    return (
-      <div
-        className={`w-16 h-16 rounded-md overflow-hidden relative ${RARITY_COLORS[character.rarity]}`}
-      >
-        <img
-          src={getAssetUrl(character.imagePath)}
-          alt={t.character(character.id)}
-          className="w-full h-full object-cover"
-          draggable={false}
-        />
-        {showWeapons && (
-          <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-            <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
-              <img
-                src={getAssetUrl(
-                  weaponResourcesByName[character.weaponType].imagePath
-                )}
-                alt={t.weaponType(character.weaponType)}
-                className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
+                className={LAYOUT.WEAPON_ICON}
                 draggable={false}
               />
             </div>
@@ -196,18 +160,20 @@ export default function CharacterTierTable({
       itemsById={charactersById}
       tierAssignments={tierAssignments}
       tierCustomization={tierCustomization}
-      onTierAssignment={onTierAssignment}
-      onRemoveFromTiers={onRemoveFromTiers}
+      onAssignmentsChange={onAssignmentsChange}
       isValidDrop={isValidDrop}
       groups={elements}
       getItemGroup={getItemGroup}
       getGroupCount={getGroupCount}
       renderHeader={renderHeader}
-      renderCellContent={renderCellContent}
       renderPreview={renderPreview}
       getItemData={getItemData}
       getTierDisplayName={getTierDisplayName}
       filterItem={filterItem}
+      getImagePath={getImagePath}
+      getAlt={getAlt}
+      getOverlay={getOverlay}
+      getTooltip={getTooltip}
     />
   );
 }

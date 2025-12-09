@@ -9,22 +9,14 @@ import { RARITY_COLORS, LAYOUT } from '@/constants/theme';
 import { getAssetUrl } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { WeaponTooltip } from './WeaponTooltip';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 interface WeaponTierTableProps {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
-  onTierAssignment: (
-    draggedWeaponId: string,
-    dropTargetWeaponId: string | null,
-    tier: string,
-    direction: 'left' | 'right'
-  ) => void;
-  onRemoveFromTiers: (weaponId: string) => void;
+  onAssignmentsChange: (newAssignments: TierAssignment) => void;
+  showRarity5: boolean;
+  showRarity4: boolean;
+  showRarity3: boolean;
 }
 
 // Weapon implements TierItemData
@@ -35,10 +27,19 @@ const weaponToTierItemData = (weapon: Weapon): Weapon & TierItemData => {
 export default function WeaponTierTable({
   tierAssignments,
   tierCustomization,
-  onTierAssignment,
-  onRemoveFromTiers,
+  onAssignmentsChange,
+  showRarity5,
+  showRarity4,
+  showRarity3,
 }: WeaponTierTableProps) {
   const { t } = useLanguage();
+
+  const filterItem = (weapon: Weapon) => {
+    if (weapon.rarity === 5 && !showRarity5) return false;
+    if (weapon.rarity === 4 && !showRarity4) return false;
+    if (weapon.rarity === 3 && !showRarity3) return false;
+    return true;
+  };
 
   const renderHeader = (type: string, count: number) => {
     return (
@@ -63,46 +64,17 @@ export default function WeaponTierTable({
     );
   };
 
-  const renderCellContent = (weapon: Weapon, isDragging: boolean) => {
-    const content = (
-      <div
-        className={cn(
-          'w-16 h-16 rounded-md overflow-hidden relative',
-          RARITY_COLORS[weapon.rarity]
-        )}
-      >
-        <img
-          src={getAssetUrl(weapon.imagePath)}
-          alt={t.weaponName(weapon.id)}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          draggable={false}
-        />
-      </div>
-    );
-
-    if (isDragging) {
-      return content;
-    }
-
-    return (
-      <Tooltip disableHoverableContent>
-        <TooltipTrigger asChild>{content}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          sideOffset={10}
-          className="p-0 border-0 bg-transparent shadow-none"
-        >
-          <WeaponTooltip weaponId={weapon.id} />
-        </TooltipContent>
-      </Tooltip>
-    );
-  };
+  const getImagePath = (weapon: Weapon) => weapon.imagePath;
+  const getAlt = (weapon: Weapon) => t.weaponName(weapon.id);
+  const getTooltip = (weapon: Weapon) => <WeaponTooltip weaponId={weapon.id} />;
 
   const renderPreview = (weapon: Weapon) => {
     return (
       <div
-        className={`w-16 h-16 rounded-md overflow-hidden relative ${RARITY_COLORS[weapon.rarity]}`}
+        className={cn(
+          LAYOUT.ITEM_CARD,
+          RARITY_COLORS[weapon.rarity]
+        )}
       >
         <img
           src={getAssetUrl(weapon.imagePath)}
@@ -153,17 +125,19 @@ export default function WeaponTierTable({
       itemsById={weaponsById}
       tierAssignments={tierAssignments}
       tierCustomization={tierCustomization}
-      onTierAssignment={onTierAssignment}
-      onRemoveFromTiers={onRemoveFromTiers}
+      onAssignmentsChange={onAssignmentsChange}
       isValidDrop={isValidDrop}
       groups={weaponTypes}
       getItemGroup={getItemGroup}
       getGroupCount={getGroupCount}
       renderHeader={renderHeader}
-      renderCellContent={renderCellContent}
       renderPreview={renderPreview}
       getItemData={getItemData}
       getTierDisplayName={getTierDisplayName}
+      getImagePath={getImagePath}
+      getAlt={getAlt}
+      getTooltip={getTooltip}
+      filterItem={filterItem}
     />
   );
 }

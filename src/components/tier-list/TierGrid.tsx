@@ -12,11 +12,14 @@ interface TierGridProps<T extends TierItemData> {
   tierCustomization: { [tier: string]: { displayName?: string; hidden?: boolean } };
   onRemoveFromTiers: (itemId: string) => void;
   renderHeader: (group: string, count: number) => React.ReactNode;
-  renderCellContent: (item: T, isDragging: boolean) => React.ReactNode;
   getItemData: (item: T) => Record<string, any>;
   getItemGroup: (item: T) => string;
   getGroupCount: (group: string, itemsPerTier: { [tier: string]: T[] }) => number;
   getTierDisplayName: (tier: string) => string; // Function to get tier display name (with translation)
+  getImagePath: (item: T) => string;
+  getAlt: (item: T) => string;
+  getOverlay?: (item: T) => React.ReactNode;
+  getTooltip: (item: T) => React.ReactNode;
 }
 
 export function TierGrid<T extends TierItemData>({
@@ -26,11 +29,14 @@ export function TierGrid<T extends TierItemData>({
   tierCustomization,
   onRemoveFromTiers,
   renderHeader,
-  renderCellContent,
   getItemData,
   getItemGroup,
   getGroupCount,
   getTierDisplayName,
+  getImagePath,
+  getAlt,
+  getOverlay,
+  getTooltip,
 }: TierGridProps<T>) {
   // Check if any tier has custom names for flexible width
   const hasCustomNames = Object.values(tierCustomization).some(
@@ -81,8 +87,11 @@ export function TierGrid<T extends TierItemData>({
                 id={item.id}
                 tier={tier}
                 onDoubleClick={onRemoveFromTiers}
-                renderContent={renderCellContent}
                 getItemData={getItemData}
+                imagePath={getImagePath(item)}
+                alt={getAlt(item)}
+                overlay={getOverlay?.(item)}
+                tooltip={getTooltip(item)}
               />
             ))}
           </div>

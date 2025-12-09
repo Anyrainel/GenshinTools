@@ -23,23 +23,28 @@ interface TierTableProps<T extends TierItemData> {
   tierCustomization: {
     [tier: string]: { displayName?: string; hidden?: boolean };
   };
-  onTierAssignment: (
-    draggedItemId: string,
-    dropTargetItemId: string | null,
-    tier: string,
-    direction: 'left' | 'right'
-  ) => void;
-  onRemoveFromTiers: (itemId: string) => void;
+  onAssignmentsChange: (newAssignments: { [itemId: string]: { tier: string; position: number } }) => void;
   isValidDrop: (activeItem: T, overId: string) => boolean;
   groups: string[]; // elements or weapon types
   getItemGroup: (item: T) => string;
   getGroupCount: (group: string, itemsPerTier: { [tier: string]: T[] }) => number;
   renderHeader: (group: string, count: number) => React.ReactNode;
-  renderCellContent: (item: T, isDragging: boolean) => React.ReactNode;
   renderPreview: (item: T) => React.ReactNode;
   getItemData: (item: T) => Record<string, any>;
   getTierDisplayName: (tier: string) => string; // Function to get tier display name (with translation)
   filterItem?: (item: T) => boolean; // Optional filter (e.g., showTravelers)
+  getImagePath: (item: T) => string;
+  getAlt: (item: T) => string;
+  getOverlay?: (item: T) => React.ReactNode;
+  getTooltip: (item: T) => React.ReactNode;
+  // Legacy callbacks for backward compatibility - if provided, will be used instead of internal logic
+  onTierAssignment?: (
+    draggedItemId: string,
+    dropTargetItemId: string | null,
+    tier: string,
+    direction: 'left' | 'right'
+  ) => void;
+  onRemoveFromTiers?: (itemId: string) => void;
 }
 
 export function TierTable<T extends TierItemData>({
@@ -47,18 +52,22 @@ export function TierTable<T extends TierItemData>({
   itemsById,
   tierAssignments,
   tierCustomization,
-  onTierAssignment,
-  onRemoveFromTiers,
+  onAssignmentsChange,
   isValidDrop,
   groups,
   getItemGroup,
   getGroupCount,
   renderHeader,
-  renderCellContent,
   renderPreview,
   getItemData,
   getTierDisplayName,
   filterItem,
+  getImagePath,
+  getAlt,
+  getOverlay,
+  getTooltip,
+  onTierAssignment: legacyOnTierAssignment,
+  onRemoveFromTiers: legacyOnRemoveFromTiers,
 }: TierTableProps<T>) {
   const [activeItem, setActiveItem] = useState<T | null>(null);
   const [localAssignments, setLocalAssignments] = useState<
@@ -258,6 +267,101 @@ export function TierTable<T extends TierItemData>({
     }, 20); // 20ms debounce
   };
 
+  // Internal handler for tier assignment - computes new assignments and calls onAssignmentsChange
+  const handleTierAssignmentInternal = (
+    draggedItemId: string,
+    dropTargetItemId: string | null,
+    tier: string,
+    direction: 'left' | 'right'
+  ) => {
+    const newAssignments = { ...tierAssignments };
+
+    // 1. Get all items currently in the target tier (excluding the dragged one)
+    const targetTierItems = Object.entries(tierAssignments)
+      .filter(([id, assignment]) => assignment.tier === tier && id !== draggedItemId)
+      .map(([id, assignment]) => ({ id, ...assignment }))
+      .sort((a, b) => a.position - b.position);
+
+    // 2. Determine insertion index
+    let insertIndex = targetTierItems.length; // Default to end
+
+    if (dropTargetItemId) {
+      const targetIndex = targetTierItems.findIndex((item) => item.id === dropTargetItemId);
+      if (targetIndex !== -1) {
+        if (direction === 'left') {
+          insertIndex = targetIndex;
+        } else {
+          insertIndex = targetIndex + 1;
+        }
+      }
+    } else {
+      // If dropping on empty container or specifically requesting end
+      if (direction === 'left') insertIndex = 0;
+    }
+
+    // 3. Insert dragged item
+    targetTierItems.splice(insertIndex, 0, {
+      id: draggedItemId,
+      tier: tier,
+      position: 0, // Placeholder, will be updated
+    });
+
+    // 4. Re-assign positions for the entire tier
+    targetTierItems.forEach((item, index) => {
+      newAssignments[item.id] = { tier, position: index };
+    });
+
+    onAssignmentsChange(newAssignments);
+  };
+
+  // Internal handler for removing from tiers - computes new assignments and calls onAssignmentsChange
+  const handleRemoveFromTiersInternal = (itemId: string) => {
+    const newAssignments = { ...tierAssignments };
+    const oldAssignment = tierAssignments[itemId];
+    const item = itemsById[itemId];
+    if (!item) return;
+
+    if (oldAssignment) {
+      const itemGroup = getItemGroup(item);
+      const groupItems = Object.entries(tierAssignments)
+        .filter(([id, assignment]) => {
+          const otherItem = itemsById[id];
+          return (
+            otherItem &&
+            getItemGroup(otherItem) === itemGroup &&
+            assignment.tier === oldAssignment.tier
+          );
+        })
+        .map(([id, assignment]) => ({
+          id,
+          position: assignment.position,
+        }))
+        .sort((a, b) => a.position - b.position);
+
+      delete newAssignments[item.id];
+
+      // Re-position remaining items in the tier
+      let newPosition = 0;
+      groupItems.forEach((groupItem) => {
+        if (groupItem.id !== item.id) {
+          newAssignments[groupItem.id] = {
+            tier: oldAssignment.tier,
+            position: newPosition,
+          };
+          newPosition++;
+        }
+      });
+    } else {
+      delete newAssignments[itemId];
+    }
+
+    onAssignmentsChange(newAssignments);
+  };
+
+  // Use legacy callbacks if provided, otherwise use internal handlers
+  const onTierAssignment = legacyOnTierAssignment || handleTierAssignmentInternal;
+  const onRemoveFromTiers = legacyOnRemoveFromTiers || handleRemoveFromTiersInternal;
+
   const handleDragEnd = (event: DragEndEvent) => {
     // Clear any pending update
     if (dragOverTimeoutRef.current) {
@@ -328,11 +432,14 @@ export function TierTable<T extends TierItemData>({
             tierCustomization={tierCustomization}
             onRemoveFromTiers={onRemoveFromTiers}
             renderHeader={renderHeader}
-            renderCellContent={renderCellContent}
             getItemData={getItemData}
             getItemGroup={getItemGroup}
             getGroupCount={getGroupCount}
             getTierDisplayName={getTierDisplayName}
+            getImagePath={getImagePath}
+            getAlt={getAlt}
+            getOverlay={getOverlay}
+            getTooltip={getTooltip}
           />
         </div>
       </div>

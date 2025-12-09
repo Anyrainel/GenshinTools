@@ -1,0 +1,281 @@
+{
+  "tierAssignments": {
+    "athame_artis": {
+      "tier": "S",
+      "position": 0
+    },
+    "peak_patrol_song": {
+      "tier": "S",
+      "position": 1
+    },
+    "freedomsworn": {
+      "tier": "S",
+      "position": 3
+    },
+    "key_of_khajnisut": {
+      "tier": "S",
+      "position": 2
+    },
+    "mistsplitter_reforged": {
+      "tier": "A",
+      "position": 0
+    },
+    "primordial_jade_cutter": {
+      "tier": "A",
+      "position": 1
+    },
+    "uraku_misugiri": {
+      "tier": "B",
+      "position": 0
+    },
+    "light_of_foliar_incision": {
+      "tier": "A",
+      "position": 2
+    },
+    "splendor_of_tranquil_waters": {
+      "tier": "C",
+      "position": 0
+    },
+    "summit_shaper": {
+      "tier": "C",
+      "position": 1
+    },
+    "skyward_blade": {
+      "tier": "B",
+      "position": 4
+    },
+    "haran_geppaku_futsu": {
+      "tier": "B",
+      "position": 1
+    },
+    "azurelight": {
+      "tier": "B",
+      "position": 2
+    },
+    "aquila_favonia": {
+      "tier": "C",
+      "position": 2
+    },
+    "absolution": {
+      "tier": "B",
+      "position": 3
+    },
+    "a_thousand_blazing_suns": {
+      "tier": "B",
+      "position": 5
+    },
+    "fang_of_the_mountain_king": {
+      "tier": "B",
+      "position": 6
+    },
+    "verdict": {
+      "tier": "B",
+      "position": 7
+    },
+    "beacon_of_the_reed_sea": {
+      "tier": "A",
+      "position": 3
+    },
+    "redhorn_stonethresher": {
+      "tier": "B",
+      "position": 8
+    },
+    "wolfs_gravestone": {
+      "tier": "C",
+      "position": 3
+    },
+    "song_of_broken_pines": {
+      "tier": "S",
+      "position": 4
+    },
+    "the_unforged": {
+      "tier": "C",
+      "position": 4
+    },
+    "skyward_pride": {
+      "tier": "B",
+      "position": 9
+    },
+    "bloodsoaked_ruins": {
+      "tier": "B",
+      "position": 10
+    },
+    "fractured_halo": {
+      "tier": "B",
+      "position": 11
+    },
+    "symphonist_of_scents": {
+      "tier": "S",
+      "position": 5
+    },
+    "lumidouce_elegy": {
+      "tier": "B",
+      "position": 12
+    },
+    "crimson_moons_semblance": {
+      "tier": "B",
+      "position": 13
+    },
+    "staff_of_the_scarlet_sands": {
+      "tier": "A",
+      "position": 6
+    },
+    "vortex_vanquisher": {
+      "tier": "C",
+      "position": 5
+    },
+    "engulfing_lightning": {
+      "tier": "A",
+      "position": 5
+    },
+    "staff_of_homa": {
+      "tier": "A",
+      "position": 4
+    },
+    "calamity_queller": {
+      "tier": "A",
+      "position": 7
+    },
+    "skyward_spine": {
+      "tier": "B",
+      "position": 14
+    },
+    "primordial_jade_wingedspear": {
+      "tier": "A",
+      "position": 8
+    },
+    "reliquary_of_truth": {
+      "tier": "B",
+      "position": 18
+    },
+    "nightweavers_looking_glass": {
+      "tier": "B",
+      "position": 19
+    },
+    "vivid_notions": {
+      "tier": "B",
+      "position": 15
+    },
+    "sunny_morning_sleepin": {
+      "tier": "B",
+      "position": 20
+    },
+    "starcallers_watch": {
+      "tier": "S",
+      "position": 6
+    },
+    "cranes_echoing_call": {
+      "tier": "B",
+      "position": 16
+    },
+    "a_thousand_floating_dreams": {
+      "tier": "S",
+      "position": 7
+    },
+    "kaguras_verity": {
+      "tier": "A",
+      "position": 9
+    },
+    "surfs_up": {
+      "tier": "B",
+      "position": 17
+    },
+    "cashflow_supervision": {
+      "tier": "A",
+      "position": 10
+    },
+    "tome_of_the_eternal_flow": {
+      "tier": "B",
+      "position": 21
+    },
+    "jadefalls_splendor": {
+      "tier": "B",
+      "position": 22
+    },
+    "everlasting_moonglow": {
+      "tier": "C",
+      "position": 6
+    },
+    "lost_prayer_to_the_sacred_winds": {
+      "tier": "A",
+      "position": 11
+    },
+    "memory_of_dust": {
+      "tier": "C",
+      "position": 7
+    },
+    "tulaytullahs_remembrance": {
+      "tier": "B",
+      "position": 23
+    },
+    "skyward_atlas": {
+      "tier": "B",
+      "position": 29
+    },
+    "the_daybreak_chronicles": {
+      "tier": "A",
+      "position": 12
+    },
+    "astral_vultures_crimson_plumage": {
+      "tier": "B",
+      "position": 24
+    },
+    "amos_bow": {
+      "tier": "B",
+      "position": 25
+    },
+    "silvershower_heartstrings": {
+      "tier": "B",
+      "position": 26
+    },
+    "the_first_great_magic": {
+      "tier": "A",
+      "position": 13
+    },
+    "hunters_path": {
+      "tier": "A",
+      "position": 15
+    },
+    "aqua_simulacra": {
+      "tier": "A",
+      "position": 14
+    },
+    "elegy_for_the_end": {
+      "tier": "S",
+      "position": 8
+    },
+    "skyward_harp": {
+      "tier": "B",
+      "position": 28
+    },
+    "thundering_pulse": {
+      "tier": "B",
+      "position": 27
+    },
+    "polar_star": {
+      "tier": "A",
+      "position": 16
+    }
+  },
+  "tierCustomization": {
+    "D": {
+      "hidden": true
+    },
+    "S": {
+      "displayName": "拐力"
+    },
+    "A": {
+      "displayName": "通用"
+    },
+    "B": {
+      "displayName": "专用"
+    },
+    "C": {
+      "displayName": "淘汰"
+    }
+  },
+  "customTitle": "强度x泛用性",
+  "language": "zh",
+  "author": "Anyrainel",
+  "description": "5星样例 5StarSample"
+}

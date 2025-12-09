@@ -8,11 +8,17 @@ interface WeaponTierListState {
   customTitle: string;
   author: string;
   description: string;
+  showRarity5: boolean;
+  showRarity4: boolean;
+  showRarity3: boolean;
 
   // Actions
   setTierAssignments: (assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)) => void;
   setTierCustomization: (customization: TierCustomization) => void;
   setCustomTitle: (title: string) => void;
+  setShowRarity5: (show: boolean) => void;
+  setShowRarity4: (show: boolean) => void;
+  setShowRarity3: (show: boolean) => void;
   resetTierList: () => void;
   loadTierListData: (data: {
     tierAssignments: TierAssignment;
@@ -33,6 +39,9 @@ export const useWeaponTierStore = create<WeaponTierListState>()(
       customTitle: '',
       author: '',
       description: '',
+      showRarity5: true,
+      showRarity4: true,
+      showRarity3: true,
 
       // Actions
       setTierAssignments: (assignments) =>
@@ -48,6 +57,15 @@ export const useWeaponTierStore = create<WeaponTierListState>()(
       setCustomTitle: (title) =>
         set({ customTitle: title }),
 
+      setShowRarity5: (show) =>
+        set({ showRarity5: show }),
+
+      setShowRarity4: (show) =>
+        set({ showRarity4: show }),
+
+      setShowRarity3: (show) =>
+        set({ showRarity3: show }),
+
       resetTierList: () =>
         set({
           tierAssignments: {},
@@ -55,6 +73,9 @@ export const useWeaponTierStore = create<WeaponTierListState>()(
           customTitle: '',
           author: '',
           description: '',
+          showRarity5: true,
+          showRarity4: true,
+          showRarity3: true,
         }),
 
       loadTierListData: (data) =>
@@ -78,6 +99,9 @@ export const useWeaponTierStore = create<WeaponTierListState>()(
         customTitle: state.customTitle,
         author: state.author,
         description: state.description,
+        showRarity5: state.showRarity5,
+        showRarity4: state.showRarity4,
+        showRarity3: state.showRarity3,
       }),
     }
   )

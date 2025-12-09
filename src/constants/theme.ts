@@ -59,6 +59,11 @@ export const LAYOUT = {
     GRID_BORDER: 'border-r border-b border-gray-600 bg-clip-padding',
     CENTER_BOX: 'flex items-center justify-center p-2',
     LABEL_TEXT: 'text-center break-words font-bold text-gray-100',
+    HEADER_BORDER: 'border-b border-border/50 bg-card/20 backdrop-blur-sm',
+    ITEM_CARD: 'w-16 h-16 rounded-md overflow-hidden relative',
+    WEAPON_ICON_CONTAINER: 'absolute top-0 right-0 w-5 h-5 flex items-center justify-center',
+    WEAPON_ICON_BG: 'relative bg-black/30 rounded-full backdrop-blur-sm',
+    WEAPON_ICON: 'w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg',
 } as const;
 
 export const COLORS = {
@@ -76,4 +81,6 @@ export const BUTTONS = {
     PRIMARY: 'bg-blue-600 hover:bg-blue-700 text-white',
     OUTLINE_DARK: 'border-gray-600 text-gray-200 hover:bg-gray-700',
     SECONDARY: 'bg-gray-600 hover:bg-gray-700 text-white',
+    CUSTOMIZE: 'bg-yellow-600 hover:bg-yellow-700 text-white gap-2',
+    TOGGLE: 'bg-gray-700 hover:bg-gray-600 text-white border-gray-600 gap-2',
 } as const;

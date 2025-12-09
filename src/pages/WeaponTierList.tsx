@@ -13,6 +13,11 @@ import WeaponTierTable from '@/components/tier-list/WeaponTierTable';
 import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
 import { weaponsById } from "@/data/constants";
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { LAYOUT, BUTTONS } from '@/constants/theme';
+import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 // Placeholder for weapon tier list presets
 const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/weapon-tier-list/*.json', { eager: false });
@@ -30,6 +35,12 @@ const WeaponTierListPage = () => {
   const loadTierListData = useWeaponTierStore((state) => state.loadTierListData);
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
+  const showRarity5 = useWeaponTierStore((state) => state.showRarity5);
+  const showRarity4 = useWeaponTierStore((state) => state.showRarity4);
+  const showRarity3 = useWeaponTierStore((state) => state.showRarity3);
+  const setShowRarity5 = useWeaponTierStore((state) => state.setShowRarity5);
+  const setShowRarity4 = useWeaponTierStore((state) => state.setShowRarity4);
+  const setShowRarity3 = useWeaponTierStore((state) => state.setShowRarity3);
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
@@ -94,51 +105,11 @@ const WeaponTierListPage = () => {
   }, [tierAssignments, t, language]);
 
   useEffect(() => {
-    const loadPresetMetadata = async () => {
-      const options = await Promise.all(
-        Object.keys(presetModules).map(async (path) => {
-          try {
-            const loader = presetModules[path];
-            const module = await loader();
-            const payload = module?.default ?? (module as unknown as TierListData);
-
-            if (payload.author && payload.description) {
-              return {
-                path,
-                label: `[${payload.author}] ${payload.description}`,
-                author: payload.author,
-                description: payload.description
-              };
-            } else {
-              const fileName = path.split('/').pop() || path;
-              const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-              return { path, label: label.trim() || fileName };
-            }
-          } catch (error) {
-            console.error(`Failed to load weapon tierlist preset metadata for ${path}:`, error);
-            const fileName = path.split('/').pop() || path;
-            const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-            return { path, label: label.trim() || fileName };
-          }
-        })
-      );
-
-      setPresetOptions(options.sort((a, b) => a.label.localeCompare(b.label)));
-    };
-
-    loadPresetMetadata();
+    loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
 
-  const loadPresetPayload = useCallback(async (path: string) => {
-    const loader = presetModules[path];
-    if (!loader) {
-      throw new Error(`Weapon TierList Preset not found for path: ${path}`);
-    }
-
-    const module = await loader();
-    const payload = module?.default ?? (module as unknown as TierListData);
-    // Add normalization if needed (like nameToIdMap)
-    return payload;
+  const loadPreset = useCallback(async (path: string) => {
+    return loadPresetPayload(presetModules, path);
   }, []);
 
   const handleImport = (importedData: TierListData) => {
@@ -211,79 +182,8 @@ const WeaponTierListPage = () => {
     setIsCustomizeDialogOpen(false);
   };
 
-  const handleTierAssignment = (draggedWeaponId: string, dropTargetWeaponId: string | null, tier: string, direction: 'left' | 'right') => {
-    setTierAssignments(prev => {
-      const newAssignments = { ...prev };
-
-      const targetTierWeapons = Object.entries(prev)
-        .filter(([id, assignment]) => assignment.tier === tier && id !== draggedWeaponId)
-        .map(([id, assignment]) => ({ id, ...assignment }))
-        .sort((a, b) => a.position - b.position);
-
-      let insertIndex = targetTierWeapons.length;
-
-      if (dropTargetWeaponId) {
-        const targetIndex = targetTierWeapons.findIndex(c => c.id === dropTargetWeaponId);
-        if (targetIndex !== -1) {
-          if (direction === 'left') {
-            insertIndex = targetIndex;
-          } else {
-            insertIndex = targetIndex + 1;
-          }
-        }
-      } else {
-        if (direction === 'left') insertIndex = 0;
-      }
-
-      targetTierWeapons.splice(insertIndex, 0, {
-        id: draggedWeaponId,
-        tier: tier,
-        position: 0
-      });
-
-      targetTierWeapons.forEach((w, index) => {
-        newAssignments[w.id] = { tier, position: index };
-      });
-
-      return newAssignments;
-    });
-  };
-
-  const handleRemoveFromTiers = (weaponId: string) => {
-    setTierAssignments(prev => {
-      const newAssignments = { ...prev };
-      const oldAssignment = prev[weaponId];
-      const weapon = weaponsById[weaponId];
-      if (!weapon) return prev;
-
-      if (oldAssignment) {
-        const typeWeapons = Object.entries(prev)
-          .filter(([id, assignment]: [string, { tier: string; position: number }]) => {
-            const w = weaponsById[id];
-            return w?.type === weapon.type &&
-              assignment.tier === oldAssignment.tier;
-          })
-          .map(([id, assignment]: [string, { tier: string; position: number }]) => ({
-            id,
-            position: assignment.position
-          }))
-          .sort((a, b) => a.position - b.position);
-
-        delete newAssignments[weapon.id];
-
-        let newPosition = 0;
-        typeWeapons.forEach((card) => {
-          if (card.id !== weapon.id) {
-            newAssignments[card.id] = {
-              tier: oldAssignment.tier,
-              position: newPosition
-            };
-            newPosition++;
-          }
-        });
-      }
-      return newAssignments;
-    });
+  const handleAssignmentsChange = (newAssignments: TierAssignment) => {
+    setTierAssignments(newAssignments);
   };
 
   return (
@@ -302,7 +202,7 @@ const WeaponTierListPage = () => {
 
               <ImportControl<TierListData>
                 options={presetOptions}
-                loadPreset={loadPresetPayload}
+                loadPreset={loadPreset}
                 onApply={handleImport}
                 onLocalImport={handleImport}
                 dialogTitle={t.ui('tierList.importDialogTitle')}
@@ -333,19 +233,51 @@ const WeaponTierListPage = () => {
           }
         />
 
-        <div className="border-b border-border/50 bg-card/20 backdrop-blur-sm z-40 flex-shrink-0 sticky top-0">
+        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40 flex-shrink-0 sticky top-0')}>
           <div className="container mx-auto flex items-center gap-4 py-4">
             <h1 className="text-2xl font-bold text-gray-200">{customTitle || t.ui('app.weaponTierListTitle')}</h1>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-4">
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => setIsCustomizeDialogOpen(true)}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white gap-2"
+                className={BUTTONS.CUSTOMIZE}
               >
                 <Settings className="w-4 h-4" />
                 {t.ui('buttons.customize')}
               </Button>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rarity-5"
+                    checked={showRarity5}
+                    onCheckedChange={(checked) => setShowRarity5(checked === true)}
+                  />
+                  <Label htmlFor="rarity-5" className="text-sm text-gray-200 cursor-pointer">
+                    {t.ui('buttons.includeRarity5')}
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rarity-4"
+                    checked={showRarity4}
+                    onCheckedChange={(checked) => setShowRarity4(checked === true)}
+                  />
+                  <Label htmlFor="rarity-4" className="text-sm text-gray-200 cursor-pointer">
+                    {t.ui('buttons.includeRarity4')}
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rarity-3"
+                    checked={showRarity3}
+                    onCheckedChange={(checked) => setShowRarity3(checked === true)}
+                  />
+                  <Label htmlFor="rarity-3" className="text-sm text-gray-200 cursor-pointer">
+                    {t.ui('buttons.includeRarity3')}
+                  </Label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -355,8 +287,10 @@ const WeaponTierListPage = () => {
             <WeaponTierTable
               tierAssignments={tierAssignments}
               tierCustomization={tierCustomization}
-              onTierAssignment={handleTierAssignment}
-              onRemoveFromTiers={handleRemoveFromTiers}
+              onAssignmentsChange={handleAssignmentsChange}
+              showRarity5={showRarity5}
+              showRarity4={showRarity4}
+              showRarity3={showRarity3}
             />
           </div>
         </main>

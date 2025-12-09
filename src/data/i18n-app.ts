@@ -231,7 +231,10 @@ export const i18nAppData = {
       "showWeapons": { "en": "Show Weapon Types", "zh": "显示武器类型" },
       "hideTravelers": { "en": "Hide Travelers", "zh": "隐藏旅行者" },
       "showTravelers": { "en": "Show Travelers", "zh": "显示旅行者" },
-      "customize": { "en": "Customize", "zh": "自定义" }
+      "customize": { "en": "Customize", "zh": "自定义" },
+      "includeRarity5": { "en": "5★ Weapons", "zh": "5★武器" },
+      "includeRarity4": { "en": "4★ Weapons", "zh": "4★武器" },
+      "includeRarity3": { "en": "3★ Weapons", "zh": "3★武器" }
     },
     "resetConfirmDialog": {
       "title": { "en": "Reset Tier List", "zh": "重置榜单" },

@@ -13,6 +13,9 @@ import CharacterTierTable from '@/components/tier-list/CharacterTierTable';
 import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
 import { charactersById } from "@/data/constants";
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { LAYOUT, BUTTONS } from '@/constants/theme';
+import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
 
 // Helper to build name to ID map (from old TierList.tsx)
 import { i18nGameData } from '@/data/i18n-game';
@@ -120,52 +123,13 @@ const TierListPage = () => {
     prevAssignmentsRef.current = tierAssignments;
   }, [tierAssignments, t, language]);
 
-  // Load preset metadata on mount (adapted from ArtifactFilter)
+  // Load preset metadata on mount
   useEffect(() => {
-    const loadPresetMetadata = async () => {
-      const options = await Promise.all(
-        Object.keys(presetModules).map(async (path) => {
-          try {
-            const loader = presetModules[path];
-            const module = await loader();
-            const payload = module?.default ?? (module as unknown as TierListData);
-
-            // Use author and description if available, otherwise fallback to filename
-            if (payload.author && payload.description) { // Need to add author/description to TierListData for this to work
-              return {
-                path,
-                label: `[${payload.author}] ${payload.description}`,
-                author: payload.author,
-                description: payload.description
-              };
-            } else {
-              const fileName = path.split('/').pop() || path;
-              const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-              return { path, label: label.trim() || fileName };
-            }
-          } catch (error) {
-            console.error(`Failed to load tierlist preset metadata for ${path}:`, error);
-            const fileName = path.split('/').pop() || path;
-            const label = fileName.replace(/\.json$/i, '').replace(/[-_]+/g, ' ');
-            return { path, label: label.trim() || fileName };
-          }
-        })
-      );
-
-      setPresetOptions(options.sort((a, b) => a.label.localeCompare(b.label)));
-    };
-
-    loadPresetMetadata();
+    loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
 
-  const loadPresetPayload = useCallback(async (path: string) => {
-    const loader = presetModules[path];
-    if (!loader) {
-      throw new Error(`TierList Preset not found for path: ${path}`);
-    }
-
-    const module = await loader();
-    const payload = module?.default ?? (module as unknown as TierListData);
+  const loadPreset = useCallback(async (path: string) => {
+    const payload = await loadPresetPayload(presetModules, path);
 
     // Backward compatibility for old format: character name to ID mapping
     const normalizedAssignments: TierAssignment = {};
@@ -285,91 +249,8 @@ const TierListPage = () => {
     setIsCustomizeDialogOpen(false);
   };
 
-  const handleTierAssignment = (draggedCharacterId: string, dropTargetCharacterId: string | null, tier: string, direction: 'left' | 'right') => {
-    setTierAssignments(prev => {
-      const newAssignments = { ...prev };
-      
-      // 1. Get all characters currently in the target tier (excluding the dragged one)
-      // We map to an array of { id, assignment } to make sorting and splicing easier
-      const targetTierChars = Object.entries(prev)
-        .filter(([id, assignment]) => assignment.tier === tier && id !== draggedCharacterId)
-        .map(([id, assignment]) => ({ id, ...assignment }))
-        .sort((a, b) => a.position - b.position);
-
-      // 2. Determine insertion index
-      let insertIndex = targetTierChars.length; // Default to end
-
-      if (dropTargetCharacterId) {
-        const targetIndex = targetTierChars.findIndex(c => c.id === dropTargetCharacterId);
-        if (targetIndex !== -1) {
-          if (direction === 'left') {
-            insertIndex = targetIndex;
-          } else {
-            insertIndex = targetIndex + 1;
-          }
-        }
-      } else {
-          // If dropping on empty container or specifically requesting end
-          if (direction === 'left') insertIndex = 0;
-      }
-
-      // 3. Insert dragged character
-      targetTierChars.splice(insertIndex, 0, {
-        id: draggedCharacterId,
-        tier: tier,
-        position: 0 // Placeholder, will be updated
-      });
-
-      // 4. Re-assign positions for the entire tier
-      targetTierChars.forEach((char, index) => {
-        newAssignments[char.id] = { tier, position: index };
-      });
-      
-      // If the character was moved from a DIFFERENT tier, we technically should re-index the source tier
-      // to prevent gaps, but gaps aren't fatal in this logic (sort handles them). 
-      // However, removing the old assignment is implicit because we overwrite newAssignments[draggedCharacterId].
-      // If it was in a different tier before, the overwrite handles the "move".
-      
-      return newAssignments;
-    });
-  };
-
-  const handleRemoveFromTiers = (characterId: string) => {
-    setTierAssignments(prev => {
-      const newAssignments = { ...prev };
-      const oldAssignment = prev[characterId];
-      const character = charactersById[characterId];
-      if (!character) return prev;
-
-      if (oldAssignment) {
-        const elementChars = Object.entries(prev)
-          .filter(([id, assignment]: [string, { tier: string; position: number }]) => {
-            const char = charactersById[id];
-            return char?.element === character.element &&
-              assignment.tier === oldAssignment.tier;
-          })
-          .map(([id, assignment]: [string, { tier: string; position: number }]) => ({
-            id,
-            position: assignment.position
-          }))
-          .sort((a, b) => a.position - b.position);
-
-        delete newAssignments[character.id];
-
-        // Re-position remaining characters in the tier
-        let newPosition = 0;
-        elementChars.forEach((card) => {
-          if (card.id !== character.id) {
-            newAssignments[card.id] = {
-              tier: oldAssignment.tier,
-              position: newPosition
-            };
-            newPosition++;
-          }
-        });
-      }
-      return newAssignments;
-    });
+  const handleAssignmentsChange = (newAssignments: TierAssignment) => {
+    setTierAssignments(newAssignments);
   };
 
   return (
@@ -388,7 +269,7 @@ const TierListPage = () => {
 
               <ImportControl<TierListData> // Specify type for ImportControl
                 options={presetOptions}
-                loadPreset={loadPresetPayload}
+                loadPreset={loadPreset}
                 onApply={handleImport}
                 onLocalImport={handleImport} // Use handleImport for local file import as well
                 dialogTitle={t.ui('tierList.importDialogTitle')}
@@ -419,7 +300,7 @@ const TierListPage = () => {
           }
         />
 
-        <div className="border-b border-border/50 bg-card/20 backdrop-blur-sm z-40 flex-shrink-0 sticky top-0">
+        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40 flex-shrink-0 sticky top-0')}>
           <div className="container mx-auto flex items-center gap-4 py-4">
             <h1 className="text-2xl font-bold text-gray-200">{customTitle || t.ui('app.tierListTitle')}</h1>
             <div className="flex gap-2">
@@ -427,7 +308,7 @@ const TierListPage = () => {
                 variant="secondary"
                 size="sm"
                 onClick={() => setIsCustomizeDialogOpen(true)}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white gap-2"
+                className={BUTTONS.CUSTOMIZE}
               >
                 <Settings className="w-4 h-4" />
                 {t.ui('buttons.customize')}
@@ -436,7 +317,7 @@ const TierListPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowWeapons(!showWeapons)}
-                className="bg-gray-700 hover:bg-gray-600 text-white border-gray-600 gap-2"
+                className={BUTTONS.TOGGLE}
               >
                 {showWeapons ? t.ui('buttons.hideWeapons') : t.ui('buttons.showWeapons')}
               </Button>
@@ -444,7 +325,7 @@ const TierListPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setShowTravelers(!showTravelers)}
-                className="bg-gray-700 hover:bg-gray-600 text-white border-gray-600 gap-2"
+                className={BUTTONS.TOGGLE}
               >
                 {showTravelers ? t.ui('buttons.hideTravelers') : t.ui('buttons.showTravelers')}
               </Button>
@@ -458,8 +339,7 @@ const TierListPage = () => {
               tierAssignments={tierAssignments}
               tierCustomization={tierCustomization}
               showTravelers={showTravelers}
-              onTierAssignment={handleTierAssignment}
-              onRemoveFromTiers={handleRemoveFromTiers}
+              onAssignmentsChange={handleAssignmentsChange}
             />
           </div>
         </main>

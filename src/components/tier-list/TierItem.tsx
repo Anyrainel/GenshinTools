@@ -2,6 +2,13 @@ import React, { useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
+import { LAYOUT, RARITY_COLORS } from '@/constants/theme';
+import { getAssetUrl } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export interface TierItemData {
   id: string;
@@ -15,8 +22,11 @@ interface TierItemProps<T extends TierItemData> {
   tier: string;
   disabled?: boolean;
   onDoubleClick?: (itemId: string) => void;
-  renderContent: (item: T, isDragging: boolean) => React.ReactNode;
   getItemData: (item: T) => Record<string, any>;
+  imagePath: string;
+  alt: string;
+  overlay?: React.ReactNode;
+  tooltip?: React.ReactNode;
 }
 
 export function TierItem<T extends TierItemData>({
@@ -25,8 +35,11 @@ export function TierItem<T extends TierItemData>({
   tier,
   disabled,
   onDoubleClick,
-  renderContent,
   getItemData,
+  imagePath,
+  alt,
+  overlay,
+  tooltip,
 }: TierItemProps<T>) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
@@ -50,6 +63,49 @@ export function TierItem<T extends TierItemData>({
     onDoubleClick?.(item.id);
   }, [onDoubleClick, item.id]);
 
+  const content = (
+    <div
+      className={cn(
+        LAYOUT.ITEM_CARD,
+        RARITY_COLORS[item.rarity as keyof typeof RARITY_COLORS]
+      )}
+    >
+      <img
+        src={getAssetUrl(imagePath)}
+        alt={alt}
+        className="w-full h-full object-cover"
+        loading="lazy"
+        draggable={false}
+      />
+      {overlay}
+    </div>
+  );
+
+  const renderItemContent = () => {
+    // If dragging, return content without tooltip
+    if (isDragging) {
+      return content;
+    }
+
+    // Wrap with tooltip if provided
+    if (tooltip) {
+      return (
+        <Tooltip disableHoverableContent>
+          <TooltipTrigger asChild>{content}</TooltipTrigger>
+          <TooltipContent
+            side="right"
+            sideOffset={10}
+            className="p-0 border-0 bg-transparent shadow-none"
+          >
+            {tooltip}
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return content;
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -64,7 +120,7 @@ export function TierItem<T extends TierItemData>({
       onDoubleClick={handleDoubleClick}
       data-item-id={item.id}
     >
-      {renderContent(item, isDragging)}
+      {renderItemContent()}
     </div>
   );
 }
