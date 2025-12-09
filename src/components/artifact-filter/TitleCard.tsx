@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Eye, EyeOff, Plus, Trash2, Copy } from 'lucide-react';
 import { useBuildsStore } from '@/stores/useBuildsStore';
 import { getAssetUrl } from '@/lib/utils';
+import { RARITY_COLORS, TEXT_RARITY_COLORS } from '@/constants/theme';
 
 interface TitleCardProps {
   character: Character;
@@ -29,13 +30,11 @@ function TitleCardComponent({ character }: TitleCardProps) {
   }, [character.weapon]);
 
   const rarityColor = useMemo(() => {
-    return character.rarity === 5
-      ? 'bg-gradient-to-b from-[#945c2c] to-[#b27330]'
-      : 'bg-gradient-to-b from-[#5e5789] to-[#9c75b7]';
+    return RARITY_COLORS[character.rarity];
   }, [character.rarity]);
 
   const rarityTextColor = useMemo(() => {
-    return character.rarity === 5 ? 'text-[#b27330]' : 'text-[#9c75b7]';
+    return TEXT_RARITY_COLORS[character.rarity];
   }, [character.rarity]);
 
   const elementTextColor = useMemo(() => {
@@ -52,7 +51,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
   }, [character.element]);
 
   const elementName = useMemo(() => t.element(character.element), [t, character.element]);
-  const weaponName = useMemo(() => t.weapon(character.weapon), [t, character.weapon]);
+  const weaponName = useMemo(() => t.weaponType(character.weapon), [t, character.weapon]);
   const regionName = useMemo(() => t.region(character.region), [t, character.region]);
   const formattedDate = useMemo(() => t.formatDate(character.releaseDate), [t, character.releaseDate]);
 

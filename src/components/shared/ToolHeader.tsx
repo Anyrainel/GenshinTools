@@ -17,6 +17,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
 
   const isArtifactFilter = location.pathname.includes('/artifact-filter');
   const isTierList = location.pathname.includes('/tier-list');
+  const isWeaponTierList = location.pathname.includes('/weapon-tier-list');
 
   return (
     <header className={cn("border-b border-border/50 bg-card/20 backdrop-blur-sm flex-shrink-0 z-50", className)}>
@@ -48,15 +49,27 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
               </Link>
             </Button>
             <Button
-              variant={isTierList ? "secondary" : "ghost"}
+              variant={isTierList && !isWeaponTierList ? "secondary" : "ghost"}
               asChild
               className={cn(
                 "gap-2",
-                isTierList && "bg-primary/10 text-primary hover:bg-primary/20"
+                (isTierList && !isWeaponTierList) && "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/tier-list">
                 {t.ui('app.navTierList')}
+              </Link>
+            </Button>
+            <Button
+              variant={isWeaponTierList ? "secondary" : "ghost"}
+              asChild
+              className={cn(
+                "gap-2",
+                isWeaponTierList && "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
+            >
+              <Link to="/weapon-tier-list">
+                {t.ui('app.navWeaponTierList')}
               </Link>
             </Button>
           </div>

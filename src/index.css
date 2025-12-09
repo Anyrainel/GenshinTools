@@ -50,26 +50,11 @@
     --sidebar-border: 220 15% 20%;
     --sidebar-ring: 45 100% 65%;
 
-    /* Element colors */
-    --anemo: 120 60% 70%;
-    --geo: 45 85% 55%;
-    --electro: 280 70% 75%;
-    --dendro: 90 60% 50%;
-    --hydro: 200 80% 65%;
-    --pyro: 15 90% 65%;
-    --cryo: 190 80% 75%;
-
     /* Custom gradients */
     --gradient-mystical: linear-gradient(135deg, hsl(260 50% 25%) 0%, hsl(220 25% 12%) 50%, hsl(200 80% 25%) 100%);
     --gradient-mystical-reverse: linear-gradient(135deg, hsl(200 40% 16%) 0%, hsl(220 20% 14%) 50%, hsl(260 30% 16%) 100%);
     --gradient-golden: linear-gradient(135deg, hsl(45 100% 65%) 0%, hsl(35 80% 55%) 100%);
     --gradient-artifact: linear-gradient(135deg, hsl(220 25% 12%) 0%, hsl(260 30% 15%) 100%);
-    
-    /* Shadows */
-    /* --shadow-mystical: 0 10px 40px -10px hsl(260 50% 25% / 0.4);
-    --shadow-golden: 0 0 30px hsl(45 100% 65% / 0.3);
-    --shadow-card: 0 8px 32px -8px hsl(220 23% 8% / 0.6);
-      */
     
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -109,12 +94,45 @@
 
 @layer utilities {
   /* Character rarity background gradients */
+  .bg-rarity-1 {
+    background: linear-gradient(180deg, #6a6d74, #868586);
+  }
+
+  .bg-rarity-2 {
+    background: linear-gradient(180deg, #4b6c67, #519072);
+  }
+
+  .bg-rarity-3 {
+    background: linear-gradient(180deg, #567496, #5392b8);
+  }
+
   .bg-rarity-4 {
-    background: linear-gradient(to bottom, #5e5789, #9c75b7);
+    background: linear-gradient(180deg, #5e5789, #9c75b7);
   }
 
   .bg-rarity-5 {
-    background: linear-gradient(to bottom, #945c2c, #b27330);
+    background: linear-gradient(180deg, #945c2c, #b27330);
+  }
+
+  /* Character rarity text colors (using end colors from gradients) */
+  .text-rarity-1 {
+    color: #868586;
+  }
+
+  .text-rarity-2 {
+    color: #519072;
+  }
+
+  .text-rarity-3 {
+    color: #5392b8;
+  }
+
+  .text-rarity-4 {
+    color: #9c75b7;
+  }
+
+  .text-rarity-5 {
+    color: #b27330;
   }
 }
 

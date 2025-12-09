@@ -1,6 +1,6 @@
 export type Language = 'en' | 'zh';
 
-export type Rarity = 4 | 5;
+export type Rarity = 1 | 2 | 3 | 4 | 5;
 
 export type Element = 'Pyro' | 'Hydro' | 'Electro' | 'Cryo' | 'Anemo' | 'Geo' | 'Dendro';
 export const elements: Element[] = ['Pyro', 'Hydro', 'Electro', 'Cryo', 'Anemo', 'Geo', 'Dendro'];
@@ -35,7 +35,9 @@ export type Character = {
 
 export type Weapon = {
   id: string;
-  rarity: number;
+  rarity: Rarity;
+  type: WeaponType;
+  secondaryStat: MainStat;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };

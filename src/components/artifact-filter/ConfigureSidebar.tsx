@@ -212,7 +212,7 @@ export function ConfigureSidebar({
                   alt={weapon}
                   className="w-4 h-4 flex-shrink-0"
                 />
-                <span className="truncate">{t.weapon(weapon)}</span>
+                <span className="truncate">{t.weaponType(weapon)}</span>
               </Label>
             </div>
           ))}

@@ -39,7 +39,7 @@ export const TierItemPreview = ({ character }: TierItemPreviewProps) => { // Ren
           <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
             <img
               src={getAssetUrl(weaponResourcesByName[character.weapon].imagePath)}
-              alt={t.weapon(character.weapon)} // Use translated weapon name
+              alt={t.weaponType(character.weapon)} // Use translated weapon name
               className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
               draggable={false}
             />

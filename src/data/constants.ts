@@ -2,6 +2,7 @@ import type {
   Element,
   MainStat,
   Character,
+  Weapon,
   ArtifactSet,
   ArtifactHalfSet,
   ElementResource,
@@ -9,6 +10,7 @@ import type {
 } from './types';
 import {
   artifacts,
+  weapons,
   artifactHalfSets,
   characters,
   elements as elementResources,
@@ -66,6 +68,10 @@ export const charactersById = freezeRecord(
 
 export const artifactsById = freezeRecord(
   createRecord<ArtifactSet, ArtifactSet['id']>(artifacts, (artifact) => artifact.id)
+);
+
+export const weaponsById = freezeRecord(
+  createRecord<Weapon, Weapon['id']>(weapons, (weapon) => weapon.id)
 );
 
 export const artifactHalfSetsById = freezeRecord(

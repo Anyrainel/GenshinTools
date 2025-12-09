@@ -9,10 +9,7 @@ import { computeSlotChance } from '@/lib/artifactChance';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getAssetUrl } from '@/lib/utils';
 import { AlertOctagon, AlertTriangle } from 'lucide-react';
-
-function getRarityClasses(rarity: Rarity): string {
-  return rarity === 5 ? 'bg-rarity-5' : 'bg-rarity-4';
-}
+import { RARITY_COLORS } from '@/constants/theme';
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -199,7 +196,7 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
     return (
       <div
         key={charInfo.characterId}
-        className={`rounded ${getRarityClasses(character.rarity)} overflow-hidden cursor-pointer hover:scale-110 transition-transform`}
+        className={`rounded ${RARITY_COLORS[character.rarity]} overflow-hidden cursor-pointer hover:scale-110 transition-transform`}
         onClick={() => onJumpToCharacter(charInfo.characterId)}
         title={t.character(character.id)}
       >

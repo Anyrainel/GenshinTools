@@ -58,25 +58,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Element colors for Genshin Impact (HSL based)
-        element: {
-          anemo: "hsl(var(--anemo))",
-          geo: "hsl(var(--geo))",
-          electro: "hsl(var(--electro))",
-          dendro: "hsl(var(--dendro))",
-          hydro: "hsl(var(--hydro))",
-          pyro: "hsl(var(--pyro))",
-          cryo: "hsl(var(--cryo))",
-        },
         // Element colors (Hex based) - from TierList
-        genshin: {
-          'pyro': '#e35a4f',
-          'hydro': '#2a8fbd',
-          'electro': '#b38ed5',
-          'cryo': '#98d2e6',
-          'anemo': '#4cc285',
-          'geo': '#e3b342',
-          'dendro': '#7fb92c',
+        element: {
+          'pyro': '#b8483f',
+          'hydro': '#22728f',
+          'electro': '#8f70aa',
+          'cryo': '#7aa8b8',
+          'anemo': '#3d9b6a',
+          'geo': '#b58f35',
+          'dendro': '#669423',
           'bg': '#f5f3e6',
         },
         // Tier colors
@@ -87,12 +77,14 @@ export default {
           'c': '#43ad8b',
           'd': '#4a85cd',
           'pool': '#757575',
+          // Tier background colors: 25% tier + 75% black
+          'bg-s': '#2e0c0f',   // 25% of tier-s (#b92f3a)
+          'bg-a': '#372116',   // 25% of tier-a (#dd8559)
+          'bg-b': '#3a2d13',   // 25% of tier-b (#e6b44d)
+          'bg-c': '#112b23',   // 25% of tier-c (#43ad8b)
+          'bg-d': '#132133',   // 25% of tier-d (#4a85cd)
+          'bg-pool': '#1d1d1d', // 25% of tier-pool (#757575)
         },
-        // Rarity colors
-        rarity: {
-          '4': '#9b6b9e',
-          '5': '#c89b3c',
-        }
       },
       backgroundImage: {
         "gradient-mystical": "var(--gradient-mystical)",
@@ -100,11 +92,6 @@ export default {
         "gradient-golden": "var(--gradient-golden)",
         "gradient-artifact": "var(--gradient-artifact)",
       },
-      // boxShadow: {
-      //   "mystical": "var(--shadow-mystical)",
-      //   "golden": "var(--shadow-golden)",
-      //   "card": "var(--shadow-card)",
-      // },
       transitionTimingFunction: {
         "smooth": "var(--transition-smooth)",
         "bounce": "var(--transition-bounce)",
