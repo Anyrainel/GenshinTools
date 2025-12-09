@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { Settings } from 'lucide-react';
+import { Settings, FileDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ToolHeader } from '@/components/shared/ToolHeader';
 import { ImportControl } from '@/components/shared/ImportControl';
@@ -18,6 +18,7 @@ import { LAYOUT, BUTTONS } from '@/constants/theme';
 import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { downloadTierListImage } from '@/lib/downloadTierListImage';
 
 // Placeholder for weapon tier list presets
 const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/weapon-tier-list/*.json', { eager: false });
@@ -44,6 +45,7 @@ const WeaponTierListPage = () => {
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const prevAssignmentsRef = useRef<TierAssignment>(tierAssignments);
   const shouldShowAutoSaveRef = useRef(false);
@@ -115,8 +117,6 @@ const WeaponTierListPage = () => {
   const handleImport = (importedData: TierListData) => {
     shouldShowAutoSaveRef.current = false;
 
-    // Normalize logic if needed
-
     loadTierListData({
       tierAssignments: importedData.tierAssignments,
       tierCustomization: importedData.tierCustomization,
@@ -186,6 +186,17 @@ const WeaponTierListPage = () => {
     setTierAssignments(newAssignments);
   };
 
+  const handleDownloadImage = async () => {
+    if (!tableRef.current) return;
+
+    await downloadTierListImage({
+      tableElement: tableRef.current,
+      title: customTitle || t.ui('app.weaponTierListTitle'),
+      filename: 'weapon-tier-list',
+      t,
+    });
+  };
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden">
@@ -229,6 +240,16 @@ const WeaponTierListPage = () => {
                 defaultAuthor={author}
                 defaultDescription={description}
               />
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadImage}
+                className="gap-2"
+              >
+                <FileDown className="w-4 h-4" />
+                {t.ui("app.print")}
+              </Button>
             </>
           }
         />
@@ -291,6 +312,7 @@ const WeaponTierListPage = () => {
               showRarity5={showRarity5}
               showRarity4={showRarity4}
               showRarity3={showRarity3}
+              tableRef={tableRef}
             />
           </div>
         </main>

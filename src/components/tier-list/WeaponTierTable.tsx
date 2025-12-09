@@ -17,6 +17,7 @@ interface WeaponTierTableProps {
   showRarity5: boolean;
   showRarity4: boolean;
   showRarity3: boolean;
+  tableRef?: React.Ref<HTMLDivElement>;
 }
 
 // Weapon implements TierItemData
@@ -31,6 +32,7 @@ export default function WeaponTierTable({
   showRarity5,
   showRarity4,
   showRarity3,
+  tableRef,
 }: WeaponTierTableProps) {
   const { t } = useLanguage();
 
@@ -138,6 +140,7 @@ export default function WeaponTierTable({
       getAlt={getAlt}
       getTooltip={getTooltip}
       filterItem={filterItem}
+      tableRef={tableRef}
     />
   );
 }

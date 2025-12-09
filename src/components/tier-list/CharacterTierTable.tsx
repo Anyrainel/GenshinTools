@@ -17,6 +17,7 @@ interface CharacterTierTableProps {
   tierCustomization: TierCustomization;
   showTravelers: boolean;
   onAssignmentsChange: (newAssignments: TierAssignment) => void;
+  tableRef?: React.Ref<HTMLDivElement>;
 }
 
 // Character implements TierItemData
@@ -29,6 +30,7 @@ export default function CharacterTierTable({
   tierCustomization,
   showTravelers,
   onAssignmentsChange,
+  tableRef,
 }: CharacterTierTableProps) {
   const showWeapons = useTierStore((state) => state.showWeapons);
   const { t } = useLanguage();
@@ -174,6 +176,7 @@ export default function CharacterTierTable({
       getAlt={getAlt}
       getOverlay={getOverlay}
       getTooltip={getTooltip}
+      tableRef={tableRef}
     />
   );
 }

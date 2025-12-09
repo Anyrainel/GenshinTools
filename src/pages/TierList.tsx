@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { Settings } from 'lucide-react';
+import { Settings, FileDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ToolHeader } from '@/components/shared/ToolHeader';
 import { ImportControl } from '@/components/shared/ImportControl';
@@ -16,20 +16,9 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { LAYOUT, BUTTONS } from '@/constants/theme';
 import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
+import { downloadTierListImage } from '@/lib/downloadTierListImage';
 
-// Helper to build name to ID map (from old TierList.tsx)
-import { i18nGameData } from '@/data/i18n-game';
-const nameToIdMap: Record<string, string> = {};
-Object.entries(i18nGameData.characters).forEach(([id, names]) => {
-  const nameRecord = names as Record<string, string>;
-  if (nameRecord.en) nameToIdMap[nameRecord.en] = id;
-});
-
-// For TierList Presets - if they exist, otherwise we'll need to create a system
-// Assuming presets will be in a similar structure to artifact presets for now.
-// However, the original request didn't mention tier list presets, so for now
-// I'll make this placeholder.
-const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/tier-list/*.json', { eager: false }); // Placeholder for tierlist specific presets
+const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/tier-list/*.json', { eager: false });
 
 // Helper to generate ID from name (mirrors scrape_hoyolab.py logic)
 const generateId = (name: string): string => {
@@ -57,6 +46,7 @@ const TierListPage = () => {
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   // Show toast when tier assignments change (auto-save) - This logic was in TierList.tsx, moving here.
   // Track previous assignments to detect changes
@@ -129,58 +119,27 @@ const TierListPage = () => {
   }, []);
 
   const loadPreset = useCallback(async (path: string) => {
-    const payload = await loadPresetPayload(presetModules, path);
-
-    // Backward compatibility for old format: character name to ID mapping
-    const normalizedAssignments: TierAssignment = {};
-    if (payload.tierAssignments) {
-        Object.entries(payload.tierAssignments).forEach(([key, value]) => {
-            if (charactersById[key]) {
-                normalizedAssignments[key] = value as { tier: string; position: number };
-            } else {
-                // Try to generate ID from the key (assuming it's an English name)
-                const generatedId = generateId(key);
-                if (charactersById[generatedId]) {
-                   normalizedAssignments[generatedId] = value as { tier: string; position: number };
-                } else if (nameToIdMap[key]) {
-                   // Fallback to direct name map if available
-                   const id = nameToIdMap[key];
-                   if (charactersById[id]) {
-                      normalizedAssignments[id] = value as { tier: string; position: number };
-                   }
-                }
-            }
-        });
-        payload.tierAssignments = normalizedAssignments;
-    }
-
-    return payload;
+    return loadPresetPayload(presetModules, path);
   }, []);
 
   const handleImport = (importedData: TierListData) => {
     shouldShowAutoSaveRef.current = false; // Disable auto-save toast for manual import
-    
-    // Normalize imported data assignments
+
+    // Normalize imported data assignments using generateId
     const normalizedAssignments: TierAssignment = {};
     if (importedData.tierAssignments) {
-        Object.entries(importedData.tierAssignments).forEach(([key, value]) => {
-            if (charactersById[key]) {
-                normalizedAssignments[key] = value as { tier: string; position: number };
-            } else {
-                // Try to generate ID from the key (assuming it's an English name)
-                const generatedId = generateId(key);
-                if (charactersById[generatedId]) {
-                   normalizedAssignments[generatedId] = value as { tier: string; position: number };
-                } else if (nameToIdMap[key]) {
-                   // Fallback to direct name map if available
-                   const id = nameToIdMap[key];
-                   if (charactersById[id]) {
-                      normalizedAssignments[id] = value as { tier: string; position: number };
-                   }
-                }
-            }
-        });
-        importedData.tierAssignments = normalizedAssignments;
+      Object.entries(importedData.tierAssignments).forEach(([key, value]) => {
+        if (charactersById[key]) {
+          normalizedAssignments[key] = value as { tier: string; position: number };
+        } else {
+          // Try to generate ID from the key (assuming it's an English name)
+          const generatedId = generateId(key);
+          if (charactersById[generatedId]) {
+            normalizedAssignments[generatedId] = value as { tier: string; position: number };
+          }
+        }
+      });
+      importedData.tierAssignments = normalizedAssignments;
     }
 
     loadTierListData({
@@ -212,10 +171,10 @@ const TierListPage = () => {
       link.download = `[${author}] ${description}.json`;
       link.click();
       URL.revokeObjectURL(url);
-      
+
       // Save metadata to store
       useTierStore.getState().setMetadata(author, description);
-      
+
       toast.success(t.ui('messages.tierListSaved'));
     } catch (error) {
       console.error('Error saving tier list:', error);
@@ -251,6 +210,17 @@ const TierListPage = () => {
 
   const handleAssignmentsChange = (newAssignments: TierAssignment) => {
     setTierAssignments(newAssignments);
+  };
+
+  const handleDownloadImage = async () => {
+    if (!tableRef.current) return;
+
+    await downloadTierListImage({
+      tableElement: tableRef.current,
+      title: customTitle || t.ui('app.tierListTitle'),
+      filename: 'tier-list',
+      t,
+    });
   };
 
   return (
@@ -296,6 +266,16 @@ const TierListPage = () => {
                 defaultAuthor={author}
                 defaultDescription={description}
               />
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadImage}
+                className="gap-2"
+              >
+                <FileDown className="w-4 h-4" />
+                {t.ui("app.print")}
+              </Button>
             </>
           }
         />
@@ -340,10 +320,11 @@ const TierListPage = () => {
               tierCustomization={tierCustomization}
               showTravelers={showTravelers}
               onAssignmentsChange={handleAssignmentsChange}
+              tableRef={tableRef}
             />
           </div>
         </main>
-        
+
         <TierCustomizationDialog
           isOpen={isCustomizeDialogOpen}
           onClose={() => setIsCustomizeDialogOpen(false)}

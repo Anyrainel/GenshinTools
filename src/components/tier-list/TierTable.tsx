@@ -45,6 +45,7 @@ interface TierTableProps<T extends TierItemData> {
     direction: 'left' | 'right'
   ) => void;
   onRemoveFromTiers?: (itemId: string) => void;
+  tableRef?: React.Ref<HTMLDivElement>;
 }
 
 export function TierTable<T extends TierItemData>({
@@ -68,6 +69,7 @@ export function TierTable<T extends TierItemData>({
   getTooltip,
   onTierAssignment: legacyOnTierAssignment,
   onRemoveFromTiers: legacyOnRemoveFromTiers,
+  tableRef,
 }: TierTableProps<T>) {
   const [activeItem, setActiveItem] = useState<T | null>(null);
   const [localAssignments, setLocalAssignments] = useState<
@@ -424,7 +426,7 @@ export function TierTable<T extends TierItemData>({
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        <div className="flex-1 p-4 overflow-y-auto">
+        <div ref={tableRef} className="flex-1 p-4 overflow-y-auto">
           <TierGrid
             allTiers={allTiers}
             groups={groups}
