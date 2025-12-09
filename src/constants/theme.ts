@@ -43,6 +43,16 @@ export const ELEMENT_COLORS = {
     Dendro: 'bg-element-dendro/60',
 } as const;
 
+export const TEXT_ELEMENT_COLORS = {
+    Pyro: 'text-element-pyro',
+    Hydro: 'text-element-hydro',
+    Electro: 'text-element-electro',
+    Cryo: 'text-element-cryo',
+    Anemo: 'text-element-anemo',
+    Geo: 'text-element-geo',
+    Dendro: 'text-element-dendro',
+} as const;
+
 export const LAYOUT = {
     TIER_LABEL_WIDTH: 'w-12',
     MIN_ROW_HEIGHT: 'min-h-[5rem]',

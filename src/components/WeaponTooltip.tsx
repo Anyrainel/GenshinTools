@@ -21,7 +21,7 @@ export const WeaponTooltip: React.FC<WeaponTooltipProps> = ({ weaponId }) => {
   const weaponType = t.weaponType(weapon.type);
 
   return (
-    <div className="w-[320px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100">
+    <div className="w-[320px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div className={cn(
         "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
@@ -29,7 +29,7 @@ export const WeaponTooltip: React.FC<WeaponTooltipProps> = ({ weaponId }) => {
       )}>
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
-        
+
         <div className="relative z-10 flex-1">
           <h3 className="font-bold text-lg leading-tight text-white mb-1 drop-shadow-md">
             {name}

@@ -37,7 +37,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
       if (filters.elements.length > 0 && !filters.elements.includes(character.element)) {
         return false;
       }
-      if (filters.weaponTypes.length > 0 && !filters.weaponTypes.includes(character.weapon)) {
+      if (filters.weaponTypes.length > 0 && !filters.weaponTypes.includes(character.weaponType)) {
         return false;
       }
       if (filters.regions.length > 0 && !filters.regions.includes(character.region)) {
@@ -109,11 +109,11 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
               </div>
             </div>
           ) : (
-              <VirtualizedCharacterList
-                characters={filteredAndSortedCharacters}
-                scrollRef={mainScrollRef}
-                ref={ref}
-              />
+            <VirtualizedCharacterList
+              characters={filteredAndSortedCharacters}
+              scrollRef={mainScrollRef}
+              ref={ref}
+            />
           )}
         </section>
       </div>

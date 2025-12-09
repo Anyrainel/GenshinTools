@@ -38,8 +38,8 @@ export const TierItemPreview = ({ character }: TierItemPreviewProps) => { // Ren
         <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
           <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
             <img
-              src={getAssetUrl(weaponResourcesByName[character.weapon].imagePath)}
-              alt={t.weaponType(character.weapon)} // Use translated weapon name
+              src={getAssetUrl(weaponResourcesByName[character.weaponType].imagePath)}
+              alt={t.weaponType(character.weaponType)} // Use translated weapon name
               className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
               draggable={false}
             />

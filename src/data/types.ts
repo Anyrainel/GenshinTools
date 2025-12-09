@@ -26,7 +26,7 @@ export type Character = {
   id: string;
   element: Element;
   rarity: Rarity;
-  weapon: WeaponType;
+  weaponType: WeaponType;
   region: Region;
   releaseDate: string; // Format: YYYY-MM-DD
   imageUrl: string; // Original image URL from wiki

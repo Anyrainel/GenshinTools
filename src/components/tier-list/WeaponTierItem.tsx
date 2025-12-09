@@ -59,7 +59,7 @@ export const WeaponTierItem = React.memo<WeaponTierItemProps>(({
 
   // We are using Tooltip from shadcn/ui which uses Radix UI
   // Note: TierList page must wrap this in TooltipProvider
-  
+
   return (
     <>
       {isDragging ? (
@@ -78,15 +78,15 @@ export const WeaponTierItem = React.memo<WeaponTierItemProps>(({
           onDoubleClick={handleDoubleClick}
           data-weapon-id={weapon.id}
         >
-                      <img
-                        src={getAssetUrl(weapon.imagePath)}
-                        alt={t.weaponName(weapon.id)}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        draggable={false}
-                      />        </div>
+          <img
+            src={getAssetUrl(weapon.imagePath)}
+            alt={t.weaponName(weapon.id)}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            draggable={false}
+          />        </div>
       ) : (
-        <Tooltip>
+        <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <div
               ref={setNodeRef}
@@ -103,13 +103,13 @@ export const WeaponTierItem = React.memo<WeaponTierItemProps>(({
               onDoubleClick={handleDoubleClick}
               data-weapon-id={weapon.id}
             >
-                          <img
-                            src={getAssetUrl(weapon.imagePath)}
-                            alt={t.weaponName(weapon.id)}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            draggable={false}
-                          />            </div>
+              <img
+                src={getAssetUrl(weapon.imagePath)}
+                alt={t.weaponName(weapon.id)}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                draggable={false}
+              />            </div>
           </TooltipTrigger>
           <TooltipContent side="right" sideOffset={10} className="p-0 border-0 bg-transparent shadow-none">
             <WeaponTooltip weaponId={weapon.id} />

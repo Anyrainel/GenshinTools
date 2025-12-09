@@ -16,11 +16,11 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({ characterId 
 
   const name = t.character(character.id);
   const element = t.element(character.element);
-  const weapon = t.weaponType(character.weapon);
+  const weapon = t.weaponType(character.weaponType);
   const region = t.region(character.region);
 
   return (
-    <div className="w-[180px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100">
+    <div className="w-[200px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div className={cn(
         "p-3 flex items-start gap-3 relative overflow-hidden",

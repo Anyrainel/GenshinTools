@@ -4,10 +4,10 @@ import { elementResourcesByName, weaponResourcesByName } from '@/data/constants'
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff, Plus, Trash2, Copy } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useBuildsStore } from '@/stores/useBuildsStore';
 import { getAssetUrl } from '@/lib/utils';
-import { RARITY_COLORS, TEXT_RARITY_COLORS } from '@/constants/theme';
+import { RARITY_COLORS, TEXT_RARITY_COLORS, TEXT_ELEMENT_COLORS } from '@/constants/theme';
 
 interface TitleCardProps {
   character: Character;
@@ -26,8 +26,8 @@ function TitleCardComponent({ character }: TitleCardProps) {
   }, [character.element]);
 
   const weaponImagePath = useMemo(() => {
-    return weaponResourcesByName[character.weapon]?.imagePath || '';
-  }, [character.weapon]);
+    return weaponResourcesByName[character.weaponType]?.imagePath || '';
+  }, [character.weaponType]);
 
   const rarityColor = useMemo(() => {
     return RARITY_COLORS[character.rarity];
@@ -38,20 +38,11 @@ function TitleCardComponent({ character }: TitleCardProps) {
   }, [character.rarity]);
 
   const elementTextColor = useMemo(() => {
-    const colors = {
-      'Anemo': 'text-teal-500',
-      'Geo': 'text-yellow-500',
-      'Electro': 'text-purple-500',
-      'Dendro': 'text-green-500',
-      'Hydro': 'text-blue-500',
-      'Pyro': 'text-red-500',
-      'Cryo': 'text-sky-500'
-    };
-    return colors[character.element as keyof typeof colors] || 'text-muted-foreground';
+    return TEXT_ELEMENT_COLORS[character.element];
   }, [character.element]);
 
   const elementName = useMemo(() => t.element(character.element), [t, character.element]);
-  const weaponName = useMemo(() => t.weaponType(character.weapon), [t, character.weapon]);
+  const weaponName = useMemo(() => t.weaponType(character.weaponType), [t, character.weaponType]);
   const regionName = useMemo(() => t.region(character.region), [t, character.region]);
   const formattedDate = useMemo(() => t.formatDate(character.releaseDate), [t, character.releaseDate]);
 
@@ -99,10 +90,10 @@ function TitleCardComponent({ character }: TitleCardProps) {
           <Badge variant="outline" className={`${rarityTextColor} border-current border-2 font-semibold`}>
             ★ {character.rarity}
           </Badge>
-          <Badge variant="outline" className="text-slate-500 border-slate-500 border-2 font-medium capitalize flex items-center gap-1">
+          <Badge variant="outline" className="text-slate-400 border-slate-400 border-2 font-medium capitalize flex items-center gap-1">
             <img
               src={getAssetUrl(weaponImagePath)}
-              alt={character.weapon}
+              alt={character.weaponType}
               loading="lazy"
               className="w-4 h-4"
             />

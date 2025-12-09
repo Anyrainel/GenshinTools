@@ -46,7 +46,7 @@ const TierGrid = ({
               key={element}
               className={cn(
                 LAYOUT.CENTER_BOX,
-                ELEMENT_COLORS[element as keyof typeof ELEMENT_COLORS], // Cast to ensure type safety
+                ELEMENT_COLORS[element],
                 LAYOUT.GRID_BORDER,
                 'rounded-tl-md rounded-tr-md',
               )}

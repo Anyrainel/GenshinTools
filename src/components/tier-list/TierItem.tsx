@@ -85,9 +85,9 @@ export const TierItem: React.FC<TierItemProps> = ({
               <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
                 <img
                   src={getAssetUrl(
-                    weaponResourcesByName[character.weapon].imagePath
+                    weaponResourcesByName[character.weaponType].imagePath
                   )}
-                  alt={t.weaponType(character.weapon)}
+                  alt={t.weaponType(character.weaponType)}
                   className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
                   draggable={false}
                 />
@@ -96,7 +96,7 @@ export const TierItem: React.FC<TierItemProps> = ({
           )}
         </div>
       ) : (
-        <Tooltip>
+        <Tooltip disableHoverableContent>
           <TooltipTrigger asChild>
             <div
               ref={setNodeRef}
@@ -125,9 +125,9 @@ export const TierItem: React.FC<TierItemProps> = ({
                   <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
                     <img
                       src={getAssetUrl(
-                        weaponResourcesByName[character.weapon].imagePath
+                        weaponResourcesByName[character.weaponType].imagePath
                       )}
-                      alt={t.weaponType(character.weapon)}
+                      alt={t.weaponType(character.weaponType)}
                       className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
                       draggable={false}
                     />
