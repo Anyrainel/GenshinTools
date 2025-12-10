@@ -1,10 +1,9 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { Build, BuildPayload, ComputeOptions } from '../data/types';
-import { BUILD_DATA_VERSION } from './jsonUtils';
-import { DEFAULT_COMPUTE_OPTIONS } from '../lib/computeFilters';
-
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import { Build, BuildPayload, ComputeOptions } from "../data/types";
+import { BUILD_DATA_VERSION } from "./jsonUtils";
+import { DEFAULT_COMPUTE_OPTIONS } from "../lib/computeFilters";
 
 interface BuildsState {
   // State
@@ -49,8 +48,8 @@ export const useBuildsStore = create<BuildsState>()(
       builds: {},
       hiddenCharacters: {},
       computeOptions: { ...DEFAULT_COMPUTE_OPTIONS },
-      author: '',
-      description: '',
+      author: "",
+      description: "",
 
       // Getters
       getCharacterBuildIds: (characterId: string) => {
@@ -67,13 +66,13 @@ export const useBuildsStore = create<BuildsState>()(
         const newBuild: Build = {
           id: buildId,
           characterId,
-          name: '',
+          name: "",
           visible: true,
-          composition: '4pc',
+          composition: "4pc",
           sands: [],
           goblet: [],
           circlet: [],
-          substats: []
+          substats: [],
         };
 
         set((state) => {
@@ -98,7 +97,7 @@ export const useBuildsStore = create<BuildsState>()(
         const copiedBuild: Build = {
           ...originalBuild,
           id: newBuildId,
-          characterId
+          characterId,
         };
 
         set((state) => {
@@ -135,7 +134,7 @@ export const useBuildsStore = create<BuildsState>()(
           delete state.builds[buildId];
 
           const existingBuildIds = state.characterToBuildIds[characterId] || [];
-          const newBuildIds = existingBuildIds.filter(id => id !== buildId);
+          const newBuildIds = existingBuildIds.filter((id) => id !== buildId);
 
           if (newBuildIds.length === 0) {
             delete state.characterToBuildIds[characterId];
@@ -169,7 +168,6 @@ export const useBuildsStore = create<BuildsState>()(
 
       // Import builds from exported data
       importBuilds: (payload: BuildPayload) => {
-
         set((state) => {
           // Set metadata if available
           if (payload.author) state.author = payload.author;
@@ -180,7 +178,7 @@ export const useBuildsStore = create<BuildsState>()(
             builds.forEach((build) => {
               const buildWithCharacterId: Build = {
                 ...build,
-                characterId
+                characterId,
               };
 
               state.builds[build.id] = buildWithCharacterId;
@@ -203,7 +201,7 @@ export const useBuildsStore = create<BuildsState>()(
 
           state.computeOptions = {
             ...DEFAULT_COMPUTE_OPTIONS,
-            ...(payload.computeOptions ?? {})
+            ...(payload.computeOptions ?? {}),
           };
         });
       },
@@ -215,8 +213,8 @@ export const useBuildsStore = create<BuildsState>()(
           state.builds = {};
           state.hiddenCharacters = {};
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
-          state.author = '';
-          state.description = '';
+          state.author = "";
+          state.description = "";
         });
       },
 
@@ -224,7 +222,7 @@ export const useBuildsStore = create<BuildsState>()(
         set((state) => {
           state.computeOptions = {
             ...state.computeOptions,
-            ...options
+            ...options,
           };
         });
       },
@@ -234,11 +232,11 @@ export const useBuildsStore = create<BuildsState>()(
           state.author = author;
           state.description = description;
         });
-      }
+      },
     })),
     {
-      name: 'artifact-filter-builds',
-      version: BUILD_DATA_VERSION
-    }
-  )
+      name: "artifact-filter-builds",
+      version: BUILD_DATA_VERSION,
+    },
+  ),
 );

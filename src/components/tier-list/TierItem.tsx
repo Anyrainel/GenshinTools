@@ -1,19 +1,20 @@
-import React, { useCallback } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { cn } from '@/lib/utils';
-import { LAYOUT, RARITY_COLORS } from '@/constants/theme';
-import { getAssetUrl } from '@/lib/utils';
+import React, { useCallback } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import { getAssetUrl } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
+import { Rarity } from "@/data/types";
 
 export interface TierItemData {
   id: string;
-  rarity: number;
-  [key: string]: any; // Allow additional properties
+  rarity: Rarity;
+  [key: string]: unknown;
 }
 
 interface TierItemProps<T extends TierItemData> {
@@ -22,7 +23,7 @@ interface TierItemProps<T extends TierItemData> {
   tier: string;
   disabled?: boolean;
   onDoubleClick?: (itemId: string) => void;
-  getItemData: (item: T) => Record<string, any>;
+  getItemData: (item: T) => Record<string, unknown>;
   imagePath: string;
   alt: string;
   overlay?: React.ReactNode;
@@ -54,8 +55,8 @@ export function TierItem<T extends TierItemData>({
     });
 
   const style = {
-    transform: isDragging ? CSS.Transform.toString(transform) : 'none',
-    zIndex: isDragging ? 1000 : 'auto',
+    transform: isDragging ? CSS.Transform.toString(transform) : "none",
+    zIndex: isDragging ? 1000 : "auto",
     opacity: isDragging ? 0.5 : 1,
   };
 
@@ -64,12 +65,7 @@ export function TierItem<T extends TierItemData>({
   }, [onDoubleClick, item.id]);
 
   const content = (
-    <div
-      className={cn(
-        LAYOUT.ITEM_CARD,
-        RARITY_COLORS[item.rarity as keyof typeof RARITY_COLORS]
-      )}
-    >
+    <div className={cn(THEME.layout.itemCard, THEME.rarity.bg[item.rarity])}>
       <img
         src={getAssetUrl(imagePath)}
         alt={alt}
@@ -113,9 +109,9 @@ export function TierItem<T extends TierItemData>({
       {...attributes}
       {...listeners}
       className={cn(
-        'cursor-grab active:cursor-grabbing',
-        'hover:scale-105',
-        disabled && 'opacity-50 cursor-not-allowed'
+        "cursor-grab active:cursor-grabbing",
+        "hover:scale-105",
+        disabled && "opacity-50 cursor-not-allowed",
       )}
       onDoubleClick={handleDoubleClick}
       data-item-id={item.id}

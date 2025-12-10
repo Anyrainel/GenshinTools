@@ -1,5 +1,5 @@
-import React from 'react';
-import { TierItemData } from './TierItem';
+import React from "react";
+import { TierItemData } from "./TierItem";
 
 interface TierItemPreviewProps<T extends TierItemData> {
   item: T;
@@ -18,9 +18,9 @@ export function TierItemPreview<T extends TierItemData>({
     <div
       style={{
         opacity: 0.8,
-        transform: 'scale(1.05)',
-        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-        cursor: 'grabbing',
+        transform: "scale(1.05)",
+        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+        cursor: "grabbing",
       }}
     >
       {renderContent(item)}

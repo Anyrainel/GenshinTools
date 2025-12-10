@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+build
+.husky
+*.lock
+*.log
+public
+src-tauri
+scripts
+src/components/ui/*.tsx

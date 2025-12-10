@@ -88,4 +88,3 @@ export async function downloadTierListImage({
     toast.error(t.ui("app.imageGenerationFailed"));
   }
 }
-

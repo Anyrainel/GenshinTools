@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged for TypeScript/JavaScript files (prettier + eslint)
+npx lint-staged
+
+# Type check TypeScript files
+STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
+if [ -n "$STAGED_TS_FILES" ]; then
+  echo "Running TypeScript type check..."
+  npm run type-check || exit 1
+fi
+
+# Check Python files in scripts directory
+STAGED_PY_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E 'scripts/.*\.py$' || true)
+if [ -n "$STAGED_PY_FILES" ]; then
+  echo "Running Python checks..."
+  cd scripts || exit 1
+  
+  echo "Running ruff check..."
+  ruff check --fix . || exit 1
+  
+  echo "Running ruff format..."
+  ruff format . || exit 1
+  
+  echo "Running pyright..."
+  pyright *.py || exit 1
+  
+  # Stage any auto-fixed files
+  git add -u .
+  
+  cd .. || exit 1
+fi

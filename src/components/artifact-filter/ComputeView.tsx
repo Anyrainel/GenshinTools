@@ -34,7 +34,7 @@ export function ComputeView({
 
   // Get data from Zustand store
   const characterToBuildIds = useBuildsStore(
-    (state) => state.characterToBuildIds
+    (state) => state.characterToBuildIds,
   );
   const buildsMap = useBuildsStore((state) => state.builds);
   const hiddenCharacters = useBuildsStore((state) => state.hiddenCharacters);
@@ -74,7 +74,7 @@ export function ComputeView({
     <K extends keyof ComputeOptions>(key: K, value: ComputeOptions[K]) => {
       setComputeOptions({ [key]: value });
     },
-    [setComputeOptions]
+    [setComputeOptions],
   );
 
   const hasActiveFilters = searchQuery.length > 0;

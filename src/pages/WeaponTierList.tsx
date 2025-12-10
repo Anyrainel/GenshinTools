@@ -1,39 +1,57 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Settings, FileDown } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { ToolHeader } from '@/components/shared/ToolHeader';
-import { ImportControl } from '@/components/shared/ImportControl';
-import { ExportControl } from '@/components/shared/ExportControl';
-import { ClearAllControl } from '@/components/shared/ClearAllControl';
-import { PresetOption, TierListData, TierAssignment, TierCustomization } from '@/data/types';
-import { useWeaponTierStore } from '@/stores/useWeaponTierStore';
-import WeaponTierTable from '@/components/tier-list/WeaponTierTable';
-import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Settings, FileDown } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ToolHeader } from "@/components/shared/ToolHeader";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportControl } from "@/components/shared/ExportControl";
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import {
+  PresetOption,
+  TierListData,
+  TierAssignment,
+  TierCustomization,
+} from "@/data/types";
+import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
+import WeaponTierTable from "@/components/tier-list/WeaponTierTable";
+import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
 import { weaponsById } from "@/data/constants";
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { LAYOUT, BUTTONS } from '@/constants/theme';
-import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { downloadTierListImage } from '@/lib/downloadTierListImage';
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { downloadTierListImage } from "@/lib/downloadTierListImage";
 
 // Placeholder for weapon tier list presets
-const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/weapon-tier-list/*.json', { eager: false });
+const presetModules = import.meta.glob<{ default: TierListData }>(
+  "@/presets/weapon-tier-list/*.json",
+  { eager: false },
+);
 
 const WeaponTierListPage = () => {
   const { t, language, setLanguage } = useLanguage();
 
   const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
-  const tierCustomization = useWeaponTierStore((state) => state.tierCustomization);
+  const tierCustomization = useWeaponTierStore(
+    (state) => state.tierCustomization,
+  );
   const customTitle = useWeaponTierStore((state) => state.customTitle);
-  const setTierAssignments = useWeaponTierStore((state) => state.setTierAssignments);
-  const setTierCustomization = useWeaponTierStore((state) => state.setTierCustomization);
+  const setTierAssignments = useWeaponTierStore(
+    (state) => state.setTierAssignments,
+  );
+  const setTierCustomization = useWeaponTierStore(
+    (state) => state.setTierCustomization,
+  );
   const setCustomTitle = useWeaponTierStore((state) => state.setCustomTitle);
-  const resetStoredTierList = useWeaponTierStore((state) => state.resetTierList);
-  const loadTierListData = useWeaponTierStore((state) => state.loadTierListData);
+  const resetStoredTierList = useWeaponTierStore(
+    (state) => state.resetTierList,
+  );
+  const loadTierListData = useWeaponTierStore(
+    (state) => state.loadTierListData,
+  );
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
   const showRarity5 = useWeaponTierStore((state) => state.showRarity5);
@@ -61,20 +79,23 @@ const WeaponTierListPage = () => {
     const curr = tierAssignments;
 
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-    const changes: { weaponId: string; fromTier?: string; toTier?: string }[] = [];
+    const changes: { weaponId: string; fromTier?: string; toTier?: string }[] =
+      [];
 
-    allKeys.forEach(weaponId => {
+    allKeys.forEach((weaponId) => {
       const prevAssignment = prev[weaponId];
       const currAssignment = curr[weaponId];
 
-      if (currAssignment && (!prevAssignment || prevAssignment.tier !== currAssignment.tier)) {
+      if (
+        currAssignment &&
+        (!prevAssignment || prevAssignment.tier !== currAssignment.tier)
+      ) {
         changes.push({
           weaponId,
           fromTier: prevAssignment?.tier,
           toTier: currAssignment.tier,
         });
-      }
-      else if (prevAssignment && !currAssignment) {
+      } else if (prevAssignment && !currAssignment) {
         changes.push({
           weaponId,
           fromTier: prevAssignment.tier,
@@ -92,12 +113,16 @@ const WeaponTierListPage = () => {
       const localizedName = t.weaponName(weapon.id); // Fallback to ID if not found, usually name is in i18nGameData
 
       if (change.toTier) {
-        const tierLabel = change.toTier === 'Pool' ? t.ui('tiers.Pool') : change.toTier;
-        toast.success(t.format('messages.characterMoved', localizedName, tierLabel), {
-          duration: 2000,
-        });
+        const tierLabel =
+          change.toTier === "Pool" ? t.ui("tiers.Pool") : change.toTier;
+        toast.success(
+          t.format("messages.characterMoved", localizedName, tierLabel),
+          {
+            duration: 2000,
+          },
+        );
       } else {
-        toast.success(t.format('messages.characterRemoved', localizedName), {
+        toast.success(t.format("messages.characterRemoved", localizedName), {
           duration: 2000,
         });
       }
@@ -120,12 +145,12 @@ const WeaponTierListPage = () => {
     loadTierListData({
       tierAssignments: importedData.tierAssignments,
       tierCustomization: importedData.tierCustomization,
-      customTitle: importedData.customTitle || '',
+      customTitle: importedData.customTitle || "",
     });
     if (importedData.language && importedData.language !== language) {
       setLanguage(importedData.language);
     }
-    toast.success(t.ui('messages.tierListLoaded'));
+    toast.success(t.ui("messages.tierListLoaded"));
   };
 
   const handleExport = (author: string, description: string) => {
@@ -135,13 +160,13 @@ const WeaponTierListPage = () => {
       customTitle: customTitle || undefined,
       language,
       author,
-      description
+      description,
     };
     try {
       const dataStr = JSON.stringify(data, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `[${author}] ${description}.json`;
       link.click();
@@ -149,25 +174,30 @@ const WeaponTierListPage = () => {
 
       useWeaponTierStore.getState().setMetadata(author, description);
 
-      toast.success(t.ui('messages.tierListSaved'));
+      toast.success(t.ui("messages.tierListSaved"));
     } catch (error) {
-      console.error('Error saving weapon tier list:', error);
-      toast.error(t.ui('messages.tierListSaveFailed'));
+      console.error("Error saving weapon tier list:", error);
+      toast.error(t.ui("messages.tierListSaveFailed"));
     }
   };
 
   const handleClear = () => {
     shouldShowAutoSaveRef.current = false;
     resetStoredTierList();
-    toast.info(t.ui('messages.tierListReset'));
+    toast.info(t.ui("messages.tierListReset"));
   };
 
-  const handleTierCustomizationSave = (customization: TierCustomization, newCustomTitle?: string) => {
+  const handleTierCustomizationSave = (
+    customization: TierCustomization,
+    newCustomTitle?: string,
+  ) => {
     const newAssignments = { ...tierAssignments };
-    const hiddenTiers = Object.keys(customization).filter(tier => customization[tier]?.hidden);
+    const hiddenTiers = Object.keys(customization).filter(
+      (tier) => customization[tier]?.hidden,
+    );
 
-    hiddenTiers.forEach(tier => {
-      Object.keys(newAssignments).forEach(weaponId => {
+    hiddenTiers.forEach((tier) => {
+      Object.keys(newAssignments).forEach((weaponId) => {
         if (newAssignments[weaponId].tier === tier) {
           delete newAssignments[weaponId];
         }
@@ -179,7 +209,7 @@ const WeaponTierListPage = () => {
     if (newCustomTitle !== undefined) {
       setCustomTitle(newCustomTitle);
     }
-    toast.success(t.ui('messages.customizationsSaved'));
+    toast.success(t.ui("messages.customizationsSaved"));
     setIsCustomizeDialogOpen(false);
   };
 
@@ -192,24 +222,23 @@ const WeaponTierListPage = () => {
 
     await downloadTierListImage({
       tableElement: tableRef.current,
-      title: customTitle || t.ui('app.weaponTierListTitle'),
-      filename: 'weapon-tier-list',
+      title: customTitle || t.ui("app.weaponTierListTitle"),
+      filename: "weapon-tier-list",
       t,
     });
   };
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden">
+      <div className={THEME.layout.pageContainer}>
         <ToolHeader
-          title={t.ui('app.weaponTierListTitle')}
           actions={
             <>
               <ClearAllControl
                 onConfirm={handleClear}
-                dialogTitle={t.ui('resetConfirmDialog.title')}
-                dialogDescription={t.ui('resetConfirmDialog.message')}
-                confirmActionLabel={t.ui('resetConfirmDialog.confirm')}
+                dialogTitle={t.ui("resetConfirmDialog.title")}
+                dialogDescription={t.ui("resetConfirmDialog.message")}
+                confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
               />
 
               <ImportControl<TierListData>
@@ -217,27 +246,31 @@ const WeaponTierListPage = () => {
                 loadPreset={loadPreset}
                 onApply={handleImport}
                 onLocalImport={handleImport}
-                dialogTitle={t.ui('tierList.importDialogTitle')}
-                dialogDescription={t.ui('tierList.importDialogDescription')}
-                confirmTitle={t.ui('tierList.presetConfirmTitle')}
-                confirmDescription={t.ui('tierList.presetConfirmDescription')}
-                confirmActionLabel={t.ui('tierList.presetConfirmAction')}
-                loadErrorText={t.ui('tierList.loadError')}
-                emptyListText={t.ui('tierList.noPresets')}
-                importFromFileText={t.ui('tierList.importFromFile')}
+                dialogTitle={t.ui("tierList.importDialogTitle")}
+                dialogDescription={t.ui("tierList.importDialogDescription")}
+                confirmTitle={t.ui("tierList.presetConfirmTitle")}
+                confirmDescription={t.ui("tierList.presetConfirmDescription")}
+                confirmActionLabel={t.ui("tierList.presetConfirmAction")}
+                loadErrorText={t.ui("tierList.loadError")}
+                emptyListText={t.ui("tierList.noPresets")}
+                importFromFileText={t.ui("tierList.importFromFile")}
               />
 
               <ExportControl
                 onExport={handleExport}
-                dialogTitle={t.ui('tierList.exportDialogTitle')}
-                dialogDescription={t.ui('tierList.exportDialogDescription')}
-                authorLabel={t.ui('tierList.exportAuthorLabel')}
-                authorPlaceholder={t.ui('tierList.exportAuthorPlaceholder')}
-                descriptionLabel={t.ui('tierList.exportDescriptionLabel')}
-                descriptionPlaceholder={t.ui('tierList.exportDescriptionPlaceholder')}
-                authorRequiredError={t.ui('tierList.exportAuthorRequired')}
-                descriptionRequiredError={t.ui('tierList.exportDescriptionRequired')}
-                confirmActionLabel={t.ui('tierList.exportConfirmAction')}
+                dialogTitle={t.ui("tierList.exportDialogTitle")}
+                dialogDescription={t.ui("tierList.exportDialogDescription")}
+                authorLabel={t.ui("tierList.exportAuthorLabel")}
+                authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
+                descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
+                descriptionPlaceholder={t.ui(
+                  "tierList.exportDescriptionPlaceholder",
+                )}
+                authorRequiredError={t.ui("tierList.exportAuthorRequired")}
+                descriptionRequiredError={t.ui(
+                  "tierList.exportDescriptionRequired",
+                )}
+                confirmActionLabel={t.ui("tierList.exportConfirmAction")}
                 defaultAuthor={author}
                 defaultDescription={description}
               />
@@ -255,48 +288,70 @@ const WeaponTierListPage = () => {
           }
         />
 
-        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40 flex-shrink-0 sticky top-0')}>
+        <div
+          className={cn(
+            THEME.layout.headerBorder,
+            "z-40 flex-shrink-0 sticky top-0",
+          )}
+        >
           <div className="container mx-auto flex items-center gap-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-200">{customTitle || t.ui('app.weaponTierListTitle')}</h1>
+            <h1 className="text-2xl font-bold text-gray-200">
+              {customTitle || t.ui("app.weaponTierListTitle")}
+            </h1>
             <div className="flex items-center gap-4">
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => setIsCustomizeDialogOpen(true)}
-                className={BUTTONS.CUSTOMIZE}
+                className={THEME.button.customize}
               >
                 <Settings className="w-4 h-4" />
-                {t.ui('buttons.customize')}
+                {t.ui("buttons.customize")}
               </Button>
               <div className="flex items-center gap-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="rarity-5"
                     checked={showRarity5}
-                    onCheckedChange={(checked) => setShowRarity5(checked === true)}
+                    onCheckedChange={(checked) =>
+                      setShowRarity5(checked === true)
+                    }
                   />
-                  <Label htmlFor="rarity-5" className="text-sm text-gray-200 cursor-pointer">
-                    {t.ui('buttons.includeRarity5')}
+                  <Label
+                    htmlFor="rarity-5"
+                    className="text-sm text-gray-200 cursor-pointer"
+                  >
+                    {t.ui("buttons.includeRarity5")}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="rarity-4"
                     checked={showRarity4}
-                    onCheckedChange={(checked) => setShowRarity4(checked === true)}
+                    onCheckedChange={(checked) =>
+                      setShowRarity4(checked === true)
+                    }
                   />
-                  <Label htmlFor="rarity-4" className="text-sm text-gray-200 cursor-pointer">
-                    {t.ui('buttons.includeRarity4')}
+                  <Label
+                    htmlFor="rarity-4"
+                    className="text-sm text-gray-200 cursor-pointer"
+                  >
+                    {t.ui("buttons.includeRarity4")}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="rarity-3"
                     checked={showRarity3}
-                    onCheckedChange={(checked) => setShowRarity3(checked === true)}
+                    onCheckedChange={(checked) =>
+                      setShowRarity3(checked === true)
+                    }
                   />
-                  <Label htmlFor="rarity-3" className="text-sm text-gray-200 cursor-pointer">
-                    {t.ui('buttons.includeRarity3')}
+                  <Label
+                    htmlFor="rarity-3"
+                    className="text-sm text-gray-200 cursor-pointer"
+                  >
+                    {t.ui("buttons.includeRarity3")}
                   </Label>
                 </div>
               </div>

@@ -3,7 +3,12 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -58,32 +63,43 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Element colors (Hex based) - from TierList
         element: {
-          'pyro': '#b8483f',
-          'hydro': '#22728f',
-          'electro': '#8f70aa',
-          'cryo': '#7aa8b8',
-          'anemo': '#3d9b6a',
-          'geo': '#b58f35',
-          'dendro': '#669423',
-          'bg': '#f5f3e6',
+          pyro: "#b8483f",
+          hydro: "#22728f",
+          electro: "#8f70aa",
+          cryo: "#7aa8b8",
+          anemo: "#3d9b6a",
+          geo: "#b58f35",
+          dendro: "#669423",
+          bg: "#f5f3e6",
         },
-        // Tier colors
         tier: {
-          's': '#b92f3a',
-          'a': '#dd8559',
-          'b': '#e6b44d',
-          'c': '#43ad8b',
-          'd': '#4a85cd',
-          'pool': '#757575',
-          // Tier background colors: 25% tier + 75% black
-          'bg-s': '#2e0c0f',   // 25% of tier-s (#b92f3a)
-          'bg-a': '#372116',   // 25% of tier-a (#dd8559)
-          'bg-b': '#3a2d13',   // 25% of tier-b (#e6b44d)
-          'bg-c': '#112b23',   // 25% of tier-c (#43ad8b)
-          'bg-d': '#132133',   // 25% of tier-d (#4a85cd)
-          'bg-pool': '#1d1d1d', // 25% of tier-pool (#757575)
+          s: "#b92f3a",
+          a: "#dd8559",
+          b: "#e6b44d",
+          c: "#43ad8b",
+          d: "#4a85cd",
+          pool: "#757575",
+          "bg-s": "#2e0c0f",
+          "bg-a": "#372116",
+          "bg-b": "#3a2d13",
+          "bg-c": "#112b23",
+          "bg-d": "#132133",
+          "bg-pool": "#1d1d1d",
+        },
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+        rarity: {
+          1: "#868586",
+          2: "#519072",
+          3: "#5392b8",
+          4: "#9c75b7",
+          5: "#b27330",
         },
       },
       backgroundImage: {
@@ -91,10 +107,15 @@ export default {
         "gradient-mystical-reverse": "var(--gradient-mystical-reverse)",
         "gradient-golden": "var(--gradient-golden)",
         "gradient-artifact": "var(--gradient-artifact)",
+        "rarity-1": "linear-gradient(180deg, #6a6d74, #868586)",
+        "rarity-2": "linear-gradient(180deg, #4b6c67, #519072)",
+        "rarity-3": "linear-gradient(180deg, #567496, #5392b8)",
+        "rarity-4": "linear-gradient(180deg, #5e5789, #9c75b7)",
+        "rarity-5": "linear-gradient(180deg, #945c2c, #b27330)",
       },
       transitionTimingFunction: {
-        "smooth": "var(--transition-smooth)",
-        "bounce": "var(--transition-bounce)",
+        smooth: "var(--transition-smooth)",
+        bounce: "var(--transition-bounce)",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { TierCustomization } from '@/data/types';
-import { tiers } from '@/data/types';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { COLORS, BUTTONS } from '@/constants/theme';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TierCustomization } from "@/data/types";
+import { tiers } from "@/data/types";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 
 interface TierCustomizationDialogProps {
   isOpen: boolean;
@@ -27,17 +34,21 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
 }) => {
   const { t } = useLanguage();
   const [customization, setCustomization] = useState<TierCustomization>({});
-  const [customTitle, setCustomTitle] = useState<string>('');
+  const [customTitle, setCustomTitle] = useState<string>("");
 
   useEffect(() => {
     if (isOpen) {
       setCustomization(initialCustomization);
-      setCustomTitle(initialCustomTitle || '');
+      setCustomTitle(initialCustomTitle || "");
     }
   }, [isOpen, initialCustomization, initialCustomTitle]);
 
-  const handleTierChange = (tier: string, field: 'displayName' | 'hidden', value: string | boolean) => {
-    setCustomization(prev => ({
+  const handleTierChange = (
+    tier: string,
+    field: "displayName" | "hidden",
+    value: string | boolean,
+  ) => {
+    setCustomization((prev) => ({
       ...prev,
       [tier]: {
         ...prev[tier],
@@ -53,31 +64,48 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
 
   const handleCancel = () => {
     setCustomization(initialCustomization);
-    setCustomTitle(initialCustomTitle || '');
+    setCustomTitle(initialCustomTitle || "");
     onClose();
   };
 
   const handleReset = () => {
     setCustomization({});
-    setCustomTitle('');
+    setCustomTitle("");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn('sm:max-w-[700px]', COLORS.DARK_BG, COLORS.DARK_BORDER)}>
+      <DialogContent
+        className={cn(
+          "sm:max-w-[700px]",
+          THEME.colors.darkBg,
+          THEME.colors.darkBorder,
+        )}
+      >
         <DialogHeader>
-          <DialogTitle className={COLORS.TEXT_WHITE}>{t.ui('customizeDialog.title')}</DialogTitle>
-          <DialogDescription className={COLORS.TEXT_GRAY}>
-            {t.ui('customizeDialog.description')}
+          <DialogTitle className={THEME.colors.textWhite}>
+            {t.ui("customizeDialog.title")}
+          </DialogTitle>
+          <DialogDescription className={THEME.colors.textGray}>
+            {t.ui("customizeDialog.description")}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
-          <div className={cn('p-4 border rounded-lg', COLORS.DARK_BORDER_SECONDARY, COLORS.DARK_BG_SECONDARY)}>
+          <div
+            className={cn(
+              "p-4 border rounded-lg",
+              THEME.colors.darkBorderSecondary,
+              THEME.colors.darkBgSecondary,
+            )}
+          >
             <div className="flex items-center gap-4">
               <div className="flex-shrink-0 w-24">
-                <Label htmlFor="custom-title" className={cn('text-sm font-medium', COLORS.TEXT_GRAY)}>
-                  {t.ui('customizeDialog.customTitle')}
+                <Label
+                  htmlFor="custom-title"
+                  className={cn("text-sm font-medium", THEME.colors.textGray)}
+                >
+                  {t.ui("customizeDialog.customTitle")}
                 </Label>
               </div>
               <div className="flex-1">
@@ -85,40 +113,52 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
                   id="custom-title"
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
-                  placeholder={t.ui('app.title')}
+                  placeholder={t.ui("app.title")}
                   className={cn(
-                    'w-full',
-                    COLORS.DARK_BG_SECONDARY,
-                    COLORS.DARK_BORDER_SECONDARY,
-                    COLORS.TEXT_WHITE,
-                    COLORS.TEXT_GRAY_PLACEHOLDER,
-                    'focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900',
+                    "w-full",
+                    THEME.colors.darkBgSecondary,
+                    THEME.colors.darkBorderSecondary,
+                    THEME.colors.textWhite,
+                    THEME.colors.textGrayPlaceholder,
+                    "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900",
                   )}
                 />
               </div>
             </div>
           </div>
           {tiers.map((tier) => (
-            <div key={tier} className={cn('p-4 border rounded-lg', COLORS.DARK_BORDER_SECONDARY, COLORS.DARK_BG_SECONDARY)}>
+            <div
+              key={tier}
+              className={cn(
+                "p-4 border rounded-lg",
+                THEME.colors.darkBorderSecondary,
+                THEME.colors.darkBgSecondary,
+              )}
+            >
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0 w-24">
-                  <Label htmlFor={`${tier}-name`} className={cn('text-sm font-medium', COLORS.TEXT_GRAY)}>
-                    {tier} {t.ui('customizeDialog.tierName')}
+                  <Label
+                    htmlFor={`${tier}-name`}
+                    className={cn("text-sm font-medium", THEME.colors.textGray)}
+                  >
+                    {tier} {t.ui("customizeDialog.tierName")}
                   </Label>
                 </div>
                 <div className="flex-1">
                   <Input
                     id={`${tier}-name`}
-                    value={customization[tier]?.displayName || ''}
-                    onChange={(e) => handleTierChange(tier, 'displayName', e.target.value)}
-                    placeholder={`${t.ui('customizeDialog.defaultPrefix')}${tier}`}
+                    value={customization[tier]?.displayName || ""}
+                    onChange={(e) =>
+                      handleTierChange(tier, "displayName", e.target.value)
+                    }
+                    placeholder={`${t.ui("customizeDialog.defaultPrefix")}${tier}`}
                     className={cn(
-                      'w-full',
-                      COLORS.DARK_BG_SECONDARY,
-                      COLORS.DARK_BORDER_SECONDARY,
-                      COLORS.TEXT_WHITE,
-                      COLORS.TEXT_GRAY_PLACEHOLDER,
-                      'focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900',
+                      "w-full",
+                      THEME.colors.darkBgSecondary,
+                      THEME.colors.darkBorderSecondary,
+                      THEME.colors.textWhite,
+                      THEME.colors.textGrayPlaceholder,
+                      "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900",
                     )}
                   />
                 </div>
@@ -126,13 +166,19 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
                   <Checkbox
                     id={`${tier}-hidden`}
                     checked={customization[tier]?.hidden || false}
-                    onCheckedChange={(checked) => 
-                      handleTierChange(tier, 'hidden', checked as boolean)
+                    onCheckedChange={(checked) =>
+                      handleTierChange(tier, "hidden", checked as boolean)
                     }
                     className="border-gray-400 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   />
-                  <Label htmlFor={`${tier}-hidden`} className={cn('text-sm whitespace-nowrap', COLORS.TEXT_GRAY)}>
-                    {t.ui('customizeDialog.hideTier')}
+                  <Label
+                    htmlFor={`${tier}-hidden`}
+                    className={cn(
+                      "text-sm whitespace-nowrap",
+                      THEME.colors.textGray,
+                    )}
+                  >
+                    {t.ui("customizeDialog.hideTier")}
                   </Label>
                 </div>
               </div>
@@ -141,18 +187,22 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
         </div>
 
         <DialogFooter className="flex justify-end gap-2">
-          <Button 
-            variant="destructive" 
+          <Button
+            variant="destructive"
             onClick={handleReset}
-            className={BUTTONS.DESTRUCTIVE}
+            className={THEME.button.destructive}
           >
-            {t.ui('customizeDialog.reset')}
+            {t.ui("customizeDialog.reset")}
           </Button>
-          <Button variant="secondary" onClick={handleCancel} className={BUTTONS.SECONDARY}>
-            {t.ui('customizeDialog.cancel')}
+          <Button
+            variant="secondary"
+            onClick={handleCancel}
+            className={THEME.button.secondary}
+          >
+            {t.ui("customizeDialog.cancel")}
           </Button>
-          <Button onClick={handleSave} className={BUTTONS.PRIMARY}>
-            {t.ui('customizeDialog.save')}
+          <Button onClick={handleSave} className={THEME.button.primary}>
+            {t.ui("customizeDialog.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -4,7 +4,7 @@
 
 <div align="center">
 
-### *A collection of useful tools for Genshin Impact travelers.*
+### _A collection of useful tools for Genshin Impact travelers._
 
 [🎮 Launch Tool](https://anyrainel.github.io/GenshinTools)
 
@@ -15,20 +15,38 @@
 ## 🛠️ Included Tools
 
 ### Artifact Filter Helper
+
 **Customize your own artifact filters!**
 
 Everyone plays Genshin differently. This tool allows you to:
+
 - **Configure once**: Define builds for each character (sets + stats) based on your specific needs.
 - **Intelligent merging**: Combines all your builds into optimized filter configs.
 - **Export & Share**: Easily share your configurations or import from the community.
 
 ### Tier List Maker
+
 **Create and manage character tier lists.**
 
 A modern, interactive tier list maker that:
+
 - **Organizes by Element**: Characters are sorted by element within tiers for better clarity.
 - **Save/Load**: Save your tier lists to JSON and load them later.
 - **Drag & Drop**: Easy-to-use interface.
+
+### Weapon Tier List Maker
+
+**Rank weapons by type.**
+
+Compare weapons within their specific categories (Sword, Claymore, etc.) to decide what to pull or level up next.
+
+### Team Builder
+
+**Theorycraft your dream teams.**
+
+- **Visual Planning**: Select characters, weapons, and artifacts in a clear, card-based layout.
+- **Interactive**: Smart pickers with filtering (e.g., only show weapons usable by the character).
+- **Manage**: Create, copy, and organize multiple team compositions.
 
 ## 💻 Tech Stack
 
@@ -42,4 +60,5 @@ A modern, interactive tier list maker that:
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
-***Fan-made tool. Not affiliated with HoYoverse.***
+
+**_Fan-made tool. Not affiliated with HoYoverse._**

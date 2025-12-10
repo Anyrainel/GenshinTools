@@ -1,27 +1,33 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileDown } from 'lucide-react';
-import { ConfigureView, ConfigureViewRef } from '@/components/artifact-filter/ConfigureView';
-import { ComputeView } from '@/components/artifact-filter/ComputeView';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useBuildsStore } from '@/stores/useBuildsStore';
-import { serializeBuildExportPayload } from '@/stores/jsonUtils';
-import { Build, BuildGroup, BuildPayload, PresetOption } from '@/data/types';
-import { ImportControl } from '@/components/shared/ImportControl';
-import { ExportControl } from '@/components/shared/ExportControl';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { FileDown } from "lucide-react";
+import {
+  ConfigureView,
+  ConfigureViewRef,
+} from "@/components/artifact-filter/ConfigureView";
+import { ComputeView } from "@/components/artifact-filter/ComputeView";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { serializeBuildExportPayload } from "@/stores/jsonUtils";
+import { Build, BuildGroup, BuildPayload, PresetOption } from "@/data/types";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportControl } from "@/components/shared/ExportControl";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import { ToolHeader } from '@/components/shared/ToolHeader';
+import { ToolHeader } from "@/components/shared/ToolHeader";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
-import { cn } from '@/lib/utils';
-import { LAYOUT } from '@/constants/theme';
-import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
+import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 
-const presetModules = import.meta.glob<{ default: BuildPayload }>('@/presets/artifact-filter/*.json', { eager: false });
+const presetModules = import.meta.glob<{ default: BuildPayload }>(
+  "@/presets/artifact-filter/*.json",
+  { eager: false },
+);
 
-const ACTIVE_TAB_KEY = 'genshin-artifact-filter:activeTab';
+const ACTIVE_TAB_KEY = "genshin-artifact-filter:activeTab";
 
 const Index = () => {
   const { t } = useLanguage();
@@ -31,9 +37,9 @@ const Index = () => {
   // Initialize activeTab from localStorage, fallback to 'configure'
   const [activeTab, setActiveTab] = useState(() => {
     try {
-      return localStorage.getItem(ACTIVE_TAB_KEY) || 'configure';
+      return localStorage.getItem(ACTIVE_TAB_KEY) || "configure";
     } catch {
-      return 'configure';
+      return "configure";
     }
   });
 
@@ -47,7 +53,7 @@ const Index = () => {
     try {
       localStorage.setItem(ACTIVE_TAB_KEY, activeTab);
     } catch (error) {
-      console.error('Failed to save active tab to localStorage:', error);
+      console.error("Failed to save active tab to localStorage:", error);
     }
   }, [activeTab]);
 
@@ -65,29 +71,35 @@ const Index = () => {
   const handleExport = (author: string, description: string) => {
     // Read data directly from store at export time (not as a subscription)
     const state = useBuildsStore.getState();
-    const { characterToBuildIds, builds, hiddenCharacters, computeOptions } = state;
+    const { characterToBuildIds, builds, hiddenCharacters, computeOptions } =
+      state;
 
     // Convert store format to export format
     const exportData: BuildGroup[] = [];
 
     Object.entries(characterToBuildIds).forEach(([characterId, buildIds]) => {
       const characterBuilds = buildIds
-        .map(id => builds[id])
+        .map((id) => builds[id])
         .filter((b): b is Build => b !== undefined);
 
       if (characterBuilds.length > 0) {
         exportData.push({
           characterId,
           builds: characterBuilds,
-          hidden: !!hiddenCharacters?.[characterId]
+          hidden: !!hiddenCharacters?.[characterId],
         });
       }
     });
 
-    const dataStr = serializeBuildExportPayload(exportData, computeOptions, author, description);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataStr = serializeBuildExportPayload(
+      exportData,
+      computeOptions,
+      author,
+      description,
+    );
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `[${author}] ${description}.json`;
     link.click();
@@ -95,10 +107,6 @@ const Index = () => {
 
     // Save metadata to store
     state.setMetadata(author, description);
-  };
-
-  const getTitle = () => {
-    return t.ui('app.artifactFilterTitle');
   };
 
   const handleDownloadImage = async () => {
@@ -127,8 +135,7 @@ const Index = () => {
       });
 
       const link = document.createElement("a");
-      link.download = `artifact-configs-${new Date().toISOString().split("T")[0]
-        }.png`;
+      link.download = `artifact-configs-${new Date().toISOString().split("T")[0]}.png`;
       link.href = dataUrl;
       link.click();
 
@@ -142,9 +149,8 @@ const Index = () => {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden">
+      <div className={THEME.layout.pageContainer}>
         <ToolHeader
-          title={getTitle()}
           actions={
             <>
               {activeTab === "filters" ? (
@@ -179,7 +185,7 @@ const Index = () => {
           }
         />
 
-        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40')}>
+        <div className={cn(THEME.layout.headerBorder, "z-40")}>
           <div className="container mx-auto px-4 pt-2 pb-2">
             {/* Tab Bar */}
             <div className="flex justify-center">

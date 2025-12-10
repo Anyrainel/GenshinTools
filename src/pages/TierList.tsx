@@ -1,28 +1,41 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Settings, FileDown } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { ToolHeader } from '@/components/shared/ToolHeader';
-import { ImportControl } from '@/components/shared/ImportControl';
-import { ExportControl } from '@/components/shared/ExportControl';
-import { ClearAllControl } from '@/components/shared/ClearAllControl'; // Updated import
-import { PresetOption, TierListData, TierAssignment, TierCustomization } from '@/data/types'; // Import necessary types
-import { useTierStore } from '@/stores/useTierStore';
-import CharacterTierTable from '@/components/tier-list/CharacterTierTable';
-import TierCustomizationDialog from '@/components/tier-list/TierCustomizationDialog';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Settings, FileDown } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ToolHeader } from "@/components/shared/ToolHeader";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportControl } from "@/components/shared/ExportControl";
+import { ClearAllControl } from "@/components/shared/ClearAllControl"; // Updated import
+import {
+  PresetOption,
+  TierListData,
+  TierAssignment,
+  TierCustomization,
+} from "@/data/types"; // Import necessary types
+import { useTierStore } from "@/stores/useTierStore";
+import CharacterTierTable from "@/components/tier-list/CharacterTierTable";
+import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
 import { charactersById } from "@/data/constants";
-import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { LAYOUT, BUTTONS } from '@/constants/theme';
-import { loadPresetMetadata, loadPresetPayload } from '@/lib/presetLoader';
-import { downloadTierListImage } from '@/lib/downloadTierListImage';
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { downloadTierListImage } from "@/lib/downloadTierListImage";
 
-const presetModules = import.meta.glob<{ default: TierListData }>('@/presets/tier-list/*.json', { eager: false });
+const presetModules = import.meta.glob<{ default: TierListData }>(
+  "@/presets/tier-list/*.json",
+  {
+    eager: false,
+  },
+);
 
-// Helper to generate ID from name (mirrors scrape_hoyolab.py logic)
+// Helper to generate ID from name (for backwards compatibility from genshin-tier-list project)
 const generateId = (name: string): string => {
-  return name.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
+  return name
+    .toLowerCase()
+    .replace(/ /g, "_")
+    .replace(/[^a-z0-9_]/g, "");
 };
 
 const TierListPage = () => {
@@ -32,7 +45,9 @@ const TierListPage = () => {
   const tierCustomization = useTierStore((state) => state.tierCustomization);
   const customTitle = useTierStore((state) => state.customTitle);
   const setTierAssignments = useTierStore((state) => state.setTierAssignments);
-  const setTierCustomization = useTierStore((state) => state.setTierCustomization);
+  const setTierCustomization = useTierStore(
+    (state) => state.setTierCustomization,
+  );
   const setCustomTitle = useTierStore((state) => state.setCustomTitle);
   const resetStoredTierList = useTierStore((state) => state.resetTierList);
   const loadTierListData = useTierStore((state) => state.loadTierListData);
@@ -42,7 +57,6 @@ const TierListPage = () => {
   const setShowTravelers = useTierStore((state) => state.setShowTravelers);
   const author = useTierStore((state) => state.author);
   const description = useTierStore((state) => state.description);
-
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
@@ -67,14 +81,21 @@ const TierListPage = () => {
 
     // Find what changed
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-    const changes: { characterId: string; fromTier?: string; toTier?: string }[] = [];
+    const changes: {
+      characterId: string;
+      fromTier?: string;
+      toTier?: string;
+    }[] = [];
 
-    allKeys.forEach(characterId => {
+    allKeys.forEach((characterId) => {
       const prevAssignment = prev[characterId];
       const currAssignment = curr[characterId];
 
       // Character was added or moved
-      if (currAssignment && (!prevAssignment || prevAssignment.tier !== currAssignment.tier)) {
+      if (
+        currAssignment &&
+        (!prevAssignment || prevAssignment.tier !== currAssignment.tier)
+      ) {
         changes.push({
           characterId,
           fromTier: prevAssignment?.tier,
@@ -99,12 +120,16 @@ const TierListPage = () => {
       const localizedName = t.character(character.id);
 
       if (change.toTier) {
-        const tierLabel = change.toTier === 'Pool' ? t.ui('tiers.Pool') : change.toTier;
-        toast.success(t.format('messages.characterMoved', localizedName, tierLabel), {
-          duration: 2000,
-        });
+        const tierLabel =
+          change.toTier === "Pool" ? t.ui("tiers.Pool") : change.toTier;
+        toast.success(
+          t.format("messages.characterMoved", localizedName, tierLabel),
+          {
+            duration: 2000,
+          },
+        );
       } else {
-        toast.success(t.format('messages.characterRemoved', localizedName), {
+        toast.success(t.format("messages.characterRemoved", localizedName), {
           duration: 2000,
         });
       }
@@ -130,12 +155,18 @@ const TierListPage = () => {
     if (importedData.tierAssignments) {
       Object.entries(importedData.tierAssignments).forEach(([key, value]) => {
         if (charactersById[key]) {
-          normalizedAssignments[key] = value as { tier: string; position: number };
+          normalizedAssignments[key] = value as {
+            tier: string;
+            position: number;
+          };
         } else {
           // Try to generate ID from the key (assuming it's an English name)
           const generatedId = generateId(key);
           if (charactersById[generatedId]) {
-            normalizedAssignments[generatedId] = value as { tier: string; position: number };
+            normalizedAssignments[generatedId] = value as {
+              tier: string;
+              position: number;
+            };
           }
         }
       });
@@ -145,12 +176,12 @@ const TierListPage = () => {
     loadTierListData({
       tierAssignments: importedData.tierAssignments,
       tierCustomization: importedData.tierCustomization,
-      customTitle: importedData.customTitle || '',
+      customTitle: importedData.customTitle || "",
     });
     if (importedData.language && importedData.language !== language) {
       setLanguage(importedData.language);
     }
-    toast.success(t.ui('messages.tierListLoaded'));
+    toast.success(t.ui("messages.tierListLoaded"));
   };
 
   const handleExport = (author: string, description: string) => {
@@ -160,13 +191,13 @@ const TierListPage = () => {
       customTitle: customTitle || undefined,
       language,
       author, // Add author to export data
-      description // Add description to export data
+      description, // Add description to export data
     };
     try {
       const dataStr = JSON.stringify(data, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `[${author}] ${description}.json`;
       link.click();
@@ -175,25 +206,30 @@ const TierListPage = () => {
       // Save metadata to store
       useTierStore.getState().setMetadata(author, description);
 
-      toast.success(t.ui('messages.tierListSaved'));
+      toast.success(t.ui("messages.tierListSaved"));
     } catch (error) {
-      console.error('Error saving tier list:', error);
-      toast.error(t.ui('messages.tierListSaveFailed'));
+      console.error("Error saving tier list:", error);
+      toast.error(t.ui("messages.tierListSaveFailed"));
     }
   };
 
   const handleClear = () => {
     shouldShowAutoSaveRef.current = false;
     resetStoredTierList();
-    toast.info(t.ui('messages.tierListReset'));
+    toast.info(t.ui("messages.tierListReset"));
   };
 
-  const handleTierCustomizationSave = (customization: TierCustomization, newCustomTitle?: string) => {
+  const handleTierCustomizationSave = (
+    customization: TierCustomization,
+    newCustomTitle?: string,
+  ) => {
     const newAssignments = { ...tierAssignments };
-    const hiddenTiers = Object.keys(customization).filter(tier => customization[tier]?.hidden);
+    const hiddenTiers = Object.keys(customization).filter(
+      (tier) => customization[tier]?.hidden,
+    );
 
-    hiddenTiers.forEach(tier => {
-      Object.keys(newAssignments).forEach(characterId => {
+    hiddenTiers.forEach((tier) => {
+      Object.keys(newAssignments).forEach((characterId) => {
         if (newAssignments[characterId].tier === tier) {
           delete newAssignments[characterId];
         }
@@ -205,7 +241,7 @@ const TierListPage = () => {
     if (newCustomTitle !== undefined) {
       setCustomTitle(newCustomTitle);
     }
-    toast.success(t.ui('messages.customizationsSaved'));
+    toast.success(t.ui("messages.customizationsSaved"));
     setIsCustomizeDialogOpen(false);
   };
 
@@ -218,24 +254,23 @@ const TierListPage = () => {
 
     await downloadTierListImage({
       tableElement: tableRef.current,
-      title: customTitle || t.ui('app.tierListTitle'),
-      filename: 'tier-list',
+      title: customTitle || t.ui("app.tierListTitle"),
+      filename: "tier-list",
       t,
     });
   };
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden">
+      <div className={THEME.layout.pageContainer}>
         <ToolHeader
-          title={t.ui('app.tierListTitle')}
           actions={
             <>
               <ClearAllControl
                 onConfirm={handleClear}
-                dialogTitle={t.ui('resetConfirmDialog.title')}
-                dialogDescription={t.ui('resetConfirmDialog.message')}
-                confirmActionLabel={t.ui('resetConfirmDialog.confirm')}
+                dialogTitle={t.ui("resetConfirmDialog.title")}
+                dialogDescription={t.ui("resetConfirmDialog.message")}
+                confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
               />
 
               <ImportControl<TierListData> // Specify type for ImportControl
@@ -243,27 +278,31 @@ const TierListPage = () => {
                 loadPreset={loadPreset}
                 onApply={handleImport}
                 onLocalImport={handleImport} // Use handleImport for local file import as well
-                dialogTitle={t.ui('tierList.importDialogTitle')}
-                dialogDescription={t.ui('tierList.importDialogDescription')}
-                confirmTitle={t.ui('tierList.presetConfirmTitle')}
-                confirmDescription={t.ui('tierList.presetConfirmDescription')}
-                confirmActionLabel={t.ui('tierList.presetConfirmAction')}
-                loadErrorText={t.ui('tierList.loadError')}
-                emptyListText={t.ui('tierList.noPresets')}
-                importFromFileText={t.ui('tierList.importFromFile')}
+                dialogTitle={t.ui("tierList.importDialogTitle")}
+                dialogDescription={t.ui("tierList.importDialogDescription")}
+                confirmTitle={t.ui("tierList.presetConfirmTitle")}
+                confirmDescription={t.ui("tierList.presetConfirmDescription")}
+                confirmActionLabel={t.ui("tierList.presetConfirmAction")}
+                loadErrorText={t.ui("tierList.loadError")}
+                emptyListText={t.ui("tierList.noPresets")}
+                importFromFileText={t.ui("tierList.importFromFile")}
               />
 
               <ExportControl
                 onExport={handleExport}
-                dialogTitle={t.ui('tierList.exportDialogTitle')}
-                dialogDescription={t.ui('tierList.exportDialogDescription')}
-                authorLabel={t.ui('tierList.exportAuthorLabel')}
-                authorPlaceholder={t.ui('tierList.exportAuthorPlaceholder')}
-                descriptionLabel={t.ui('tierList.exportDescriptionLabel')}
-                descriptionPlaceholder={t.ui('tierList.exportDescriptionPlaceholder')}
-                authorRequiredError={t.ui('tierList.exportAuthorRequired')}
-                descriptionRequiredError={t.ui('tierList.exportDescriptionRequired')}
-                confirmActionLabel={t.ui('tierList.exportConfirmAction')}
+                dialogTitle={t.ui("tierList.exportDialogTitle")}
+                dialogDescription={t.ui("tierList.exportDialogDescription")}
+                authorLabel={t.ui("tierList.exportAuthorLabel")}
+                authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
+                descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
+                descriptionPlaceholder={t.ui(
+                  "tierList.exportDescriptionPlaceholder",
+                )}
+                authorRequiredError={t.ui("tierList.exportAuthorRequired")}
+                descriptionRequiredError={t.ui(
+                  "tierList.exportDescriptionRequired",
+                )}
+                confirmActionLabel={t.ui("tierList.exportConfirmAction")}
                 defaultAuthor={author}
                 defaultDescription={description}
               />
@@ -281,34 +320,45 @@ const TierListPage = () => {
           }
         />
 
-        <div className={cn(LAYOUT.HEADER_BORDER, 'z-40 flex-shrink-0 sticky top-0')}>
+        <div
+          className={cn(
+            THEME.layout.headerBorder,
+            "z-40 flex-shrink-0 sticky top-0",
+          )}
+        >
           <div className="container mx-auto flex items-center gap-4 py-4">
-            <h1 className="text-2xl font-bold text-gray-200">{customTitle || t.ui('app.tierListTitle')}</h1>
+            <h1 className="text-2xl font-bold text-gray-200">
+              {customTitle || t.ui("app.tierListTitle")}
+            </h1>
             <div className="flex gap-2">
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={() => setIsCustomizeDialogOpen(true)}
-                className={BUTTONS.CUSTOMIZE}
+                className={THEME.button.customize}
               >
                 <Settings className="w-4 h-4" />
-                {t.ui('buttons.customize')}
+                {t.ui("buttons.customize")}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowWeapons(!showWeapons)}
-                className={BUTTONS.TOGGLE}
+                className={THEME.button.toggle}
               >
-                {showWeapons ? t.ui('buttons.hideWeapons') : t.ui('buttons.showWeapons')}
+                {showWeapons
+                  ? t.ui("buttons.hideWeapons")
+                  : t.ui("buttons.showWeapons")}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowTravelers(!showTravelers)}
-                className={BUTTONS.TOGGLE}
+                className={THEME.button.toggle}
               >
-                {showTravelers ? t.ui('buttons.hideTravelers') : t.ui('buttons.showTravelers')}
+                {showTravelers
+                  ? t.ui("buttons.hideTravelers")
+                  : t.ui("buttons.showTravelers")}
               </Button>
             </div>
           </div>

@@ -9,12 +9,13 @@ import {
   DragEndEvent,
   DragOverEvent,
   pointerWithin,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { TierItemPreview } from './TierItemPreview';
-import { TierItemData } from './TierItem';
-import { TierGrid } from './TierGrid';
-import { useState, useMemo, useEffect, useRef } from 'react';
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { TierItemPreview } from "./TierItemPreview";
+import { TierItemData } from "./TierItem";
+import { TierGrid } from "./TierGrid";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { tiers } from "@/data/types";
 
 interface TierTableProps<T extends TierItemData> {
   items: T[];
@@ -23,28 +24,25 @@ interface TierTableProps<T extends TierItemData> {
   tierCustomization: {
     [tier: string]: { displayName?: string; hidden?: boolean };
   };
-  onAssignmentsChange: (newAssignments: { [itemId: string]: { tier: string; position: number } }) => void;
+  onAssignmentsChange: (newAssignments: {
+    [itemId: string]: { tier: string; position: number };
+  }) => void;
   isValidDrop: (activeItem: T, overId: string) => boolean;
-  groups: string[]; // elements or weapon types
+  groups: string[]; // Element[] or WeaponType[]
   getItemGroup: (item: T) => string;
-  getGroupCount: (group: string, itemsPerTier: { [tier: string]: T[] }) => number;
+  getGroupCount: (
+    group: string,
+    itemsPerTier: { [tier: string]: T[] },
+  ) => number;
   renderHeader: (group: string, count: number) => React.ReactNode;
   renderPreview: (item: T) => React.ReactNode;
-  getItemData: (item: T) => Record<string, any>;
-  getTierDisplayName: (tier: string) => string; // Function to get tier display name (with translation)
-  filterItem?: (item: T) => boolean; // Optional filter (e.g., showTravelers)
+  getItemData: (item: T) => Record<string, unknown>;
+  getTierDisplayName: (tier: string) => string;
+  filterItem?: (item: T) => boolean;
   getImagePath: (item: T) => string;
   getAlt: (item: T) => string;
   getOverlay?: (item: T) => React.ReactNode;
   getTooltip: (item: T) => React.ReactNode;
-  // Legacy callbacks for backward compatibility - if provided, will be used instead of internal logic
-  onTierAssignment?: (
-    draggedItemId: string,
-    dropTargetItemId: string | null,
-    tier: string,
-    direction: 'left' | 'right'
-  ) => void;
-  onRemoveFromTiers?: (itemId: string) => void;
   tableRef?: React.Ref<HTMLDivElement>;
 }
 
@@ -67,14 +65,11 @@ export function TierTable<T extends TierItemData>({
   getAlt,
   getOverlay,
   getTooltip,
-  onTierAssignment: legacyOnTierAssignment,
-  onRemoveFromTiers: legacyOnRemoveFromTiers,
   tableRef,
 }: TierTableProps<T>) {
   const [activeItem, setActiveItem] = useState<T | null>(null);
-  const [localAssignments, setLocalAssignments] = useState<
-    typeof tierAssignments
-  >(tierAssignments);
+  const [localAssignments, setLocalAssignments] =
+    useState<typeof tierAssignments>(tierAssignments);
 
   // Sync local state with props when not dragging
   useEffect(() => {
@@ -83,11 +78,8 @@ export function TierTable<T extends TierItemData>({
     }
   }, [tierAssignments, activeItem]);
 
-
   // Debounce ref for drag over updates
-  const dragOverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const dragOverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -97,14 +89,11 @@ export function TierTable<T extends TierItemData>({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const allTiers = useMemo(() => {
-    const defaultTiers = ['S', 'A', 'B', 'C', 'D'];
-    return [...defaultTiers, 'Pool'].filter(
-      (tier) => !tierCustomization[tier]?.hidden
-    );
+    return tiers.filter((tier) => !tierCustomization[tier]?.hidden);
   }, [tierCustomization]);
 
   const itemsPerTier = useMemo(() => {
@@ -123,10 +112,10 @@ export function TierTable<T extends TierItemData>({
         if (!tierCustomization[assignment.tier]?.hidden) {
           map[assignment.tier].push(item);
         } else {
-          map['Pool'].push(item);
+          map["Pool"].push(item);
         }
       } else {
-        map['Pool'].push(item);
+        map["Pool"].push(item);
       }
     });
 
@@ -182,15 +171,15 @@ export function TierTable<T extends TierItemData>({
       // Helper to get tier from ID (item or container)
       const getTier = (id: string): string => {
         if (itemsById[id]) {
-          return localAssignments[id]?.tier || 'Pool';
+          return localAssignments[id]?.tier || "Pool";
         }
-        if (id.includes('-')) {
-          return id.split('-')[0];
+        if (id.includes("-")) {
+          return id.split("-")[0];
         }
-        return 'Pool';
+        return "Pool";
       };
 
-      const sourceTier = localAssignments[activeId]?.tier || 'Pool';
+      const sourceTier = localAssignments[activeId]?.tier || "Pool";
       const targetTier = getTier(overId);
 
       setLocalAssignments((prev) => {
@@ -227,11 +216,9 @@ export function TierTable<T extends TierItemData>({
           });
 
           // Re-index source tier
-          if (sourceTier !== 'Pool') {
+          if (sourceTier !== "Pool") {
             const sourceItems = Object.entries(newAssignments)
-              .filter(
-                ([id, val]) => val.tier === sourceTier && id !== activeId
-              )
+              .filter(([id, val]) => val.tier === sourceTier && id !== activeId)
               .map(([id, val]) => ({ id, ...val }))
               .sort((a, b) => a.position - b.position);
             sourceItems.forEach((item, index) => {
@@ -243,15 +230,11 @@ export function TierTable<T extends TierItemData>({
         }
 
         // Same tier reordering
-        if (sourceTier === targetTier && sourceTier !== 'Pool') {
+        if (sourceTier === targetTier && sourceTier !== "Pool") {
           const oldIndex = targetItems.findIndex((i) => i.id === activeId);
           const newIndex = targetItems.findIndex((i) => i.id === overId);
 
-          if (
-            oldIndex !== -1 &&
-            newIndex !== -1 &&
-            oldIndex !== newIndex
-          ) {
+          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
             // Move item
             const [moved] = targetItems.splice(oldIndex, 1);
             targetItems.splice(newIndex, 0, moved);
@@ -274,13 +257,15 @@ export function TierTable<T extends TierItemData>({
     draggedItemId: string,
     dropTargetItemId: string | null,
     tier: string,
-    direction: 'left' | 'right'
+    direction: "left" | "right",
   ) => {
     const newAssignments = { ...tierAssignments };
 
     // 1. Get all items currently in the target tier (excluding the dragged one)
     const targetTierItems = Object.entries(tierAssignments)
-      .filter(([id, assignment]) => assignment.tier === tier && id !== draggedItemId)
+      .filter(
+        ([id, assignment]) => assignment.tier === tier && id !== draggedItemId,
+      )
       .map(([id, assignment]) => ({ id, ...assignment }))
       .sort((a, b) => a.position - b.position);
 
@@ -288,9 +273,11 @@ export function TierTable<T extends TierItemData>({
     let insertIndex = targetTierItems.length; // Default to end
 
     if (dropTargetItemId) {
-      const targetIndex = targetTierItems.findIndex((item) => item.id === dropTargetItemId);
+      const targetIndex = targetTierItems.findIndex(
+        (item) => item.id === dropTargetItemId,
+      );
       if (targetIndex !== -1) {
-        if (direction === 'left') {
+        if (direction === "left") {
           insertIndex = targetIndex;
         } else {
           insertIndex = targetIndex + 1;
@@ -298,7 +285,7 @@ export function TierTable<T extends TierItemData>({
       }
     } else {
       // If dropping on empty container or specifically requesting end
-      if (direction === 'left') insertIndex = 0;
+      if (direction === "left") insertIndex = 0;
     }
 
     // 3. Insert dragged item
@@ -361,8 +348,8 @@ export function TierTable<T extends TierItemData>({
   };
 
   // Use legacy callbacks if provided, otherwise use internal handlers
-  const onTierAssignment = legacyOnTierAssignment || handleTierAssignmentInternal;
-  const onRemoveFromTiers = legacyOnRemoveFromTiers || handleRemoveFromTiersInternal;
+  const onTierAssignment = handleTierAssignmentInternal;
+  const onRemoveFromTiers = handleRemoveFromTiersInternal;
 
   const handleDragEnd = (event: DragEndEvent) => {
     // Clear any pending update
@@ -399,21 +386,21 @@ export function TierTable<T extends TierItemData>({
 
     const { tier, position } = finalAssignment;
 
-    if (tier === 'Pool') {
+    if (tier === "Pool") {
       onRemoveFromTiers(activeId);
       return;
     }
 
     // Find the neighbor to anchor the drop
     const neighbor = Object.entries(localAssignments).find(
-      (entry) => entry[1].tier === tier && entry[1].position === position + 1
+      (entry) => entry[1].tier === tier && entry[1].position === position + 1,
     );
 
     if (neighbor) {
-      onTierAssignment(activeId, neighbor[0], tier, 'left');
+      onTierAssignment(activeId, neighbor[0], tier, "left");
     } else {
       // No neighbor after, so we are at the end
-      onTierAssignment(activeId, null, tier, 'right');
+      onTierAssignment(activeId, null, tier, "right");
     }
   };
 

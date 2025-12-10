@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { TierAssignment, TierCustomization } from '@/data/types';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { TierAssignment, TierCustomization } from "@/data/types";
 
 interface TierListState {
   tierAssignments: TierAssignment;
@@ -12,7 +12,9 @@ interface TierListState {
   description: string;
 
   // Actions
-  setTierAssignments: (assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)) => void;
+  setTierAssignments: (
+    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment),
+  ) => void;
   setTierCustomization: (customization: TierCustomization) => void;
   setCustomTitle: (title: string) => void;
   setShowWeapons: (show: boolean) => void;
@@ -34,39 +36,37 @@ export const useTierStore = create<TierListState>()(
       // Initial state
       tierAssignments: {},
       tierCustomization: {},
-      customTitle: '',
+      customTitle: "",
       showWeapons: true, // Default to true
       showTravelers: false, // Default to false
-      author: '',
-      description: '',
+      author: "",
+      description: "",
 
       // Actions
       setTierAssignments: (assignments) =>
         set((state) => ({
-          tierAssignments: typeof assignments === 'function'
-            ? assignments(state.tierAssignments)
-            : assignments
+          tierAssignments:
+            typeof assignments === "function"
+              ? assignments(state.tierAssignments)
+              : assignments,
         })),
 
       setTierCustomization: (customization) =>
         set({ tierCustomization: customization }),
 
-      setCustomTitle: (title) =>
-        set({ customTitle: title }),
+      setCustomTitle: (title) => set({ customTitle: title }),
 
-      setShowWeapons: (show) =>
-        set({ showWeapons: show }),
+      setShowWeapons: (show) => set({ showWeapons: show }),
 
-      setShowTravelers: (show) =>
-        set({ showTravelers: show }),
+      setShowTravelers: (show) => set({ showTravelers: show }),
 
       resetTierList: () =>
         set({
           tierAssignments: {},
           tierCustomization: {},
-          customTitle: '',
-          author: '',
-          description: '',
+          customTitle: "",
+          author: "",
+          description: "",
           // Optionally reset visibility settings or keep them? Keeping them seems friendlier.
         }),
 
@@ -74,16 +74,15 @@ export const useTierStore = create<TierListState>()(
         set({
           tierAssignments: data.tierAssignments,
           tierCustomization: data.tierCustomization,
-          customTitle: data.customTitle || '',
-          author: data.author || '',
-          description: data.description || '',
+          customTitle: data.customTitle || "",
+          author: data.author || "",
+          description: data.description || "",
         }),
-      
-      setMetadata: (author, description) =>
-        set({ author, description }),
+
+      setMetadata: (author, description) => set({ author, description }),
     }),
     {
-      name: 'tierlist-storage', // localStorage key
+      name: "tierlist-storage", // localStorage key
       partialize: (state) => ({
         // Only persist these fields
         tierAssignments: state.tierAssignments,
@@ -94,6 +93,6 @@ export const useTierStore = create<TierListState>()(
         author: state.author,
         description: state.description,
       }),
-    }
-  )
+    },
+  ),
 );

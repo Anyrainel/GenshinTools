@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from 'react';
+import { useEffect, RefObject } from "react";
 
 /**
  * Custom hook to handle global scroll behavior for views with sidebars.
@@ -15,7 +15,7 @@ import { useEffect, RefObject } from 'react';
 export function useGlobalScroll(
   containerRef: RefObject<HTMLElement>,
   mainScrollRef: RefObject<HTMLElement>,
-  sidebarSelector: string = 'aside'
+  sidebarSelector: string = "aside",
 ) {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -38,20 +38,22 @@ export function useGlobalScroll(
       }
 
       // We're in margin/padding areas - manually scroll main content
-      if (mainScrollRef.current.scrollHeight > mainScrollRef.current.clientHeight) {
+      if (
+        mainScrollRef.current.scrollHeight > mainScrollRef.current.clientHeight
+      ) {
         e.preventDefault();
         mainScrollRef.current.scrollBy({
           top: e.deltaY,
-          behavior: 'auto' // Use 'auto' for instant response, 'smooth' feels too laggy
+          behavior: "auto", // Use 'auto' for instant response, 'smooth' feels too laggy
         });
       }
     };
 
     // Attach to the window to capture all wheel events
-    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener("wheel", handleWheel);
     };
   }, [containerRef, mainScrollRef, sidebarSelector]);
 }

@@ -1,15 +1,19 @@
-import { useMemo } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { charactersById } from '@/data/constants';
-import { SetConfig, MainStatPlus, SubStat, SlotConfig, Rarity } from '@/data/types';
-import { computeSlotChance } from '@/lib/artifactChance';
+import { useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
+import { SetConfig, MainStatPlus, SlotConfig } from "@/data/types";
+import { computeSlotChance } from "@/lib/artifactChance";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getAssetUrl } from '@/lib/utils';
-import { AlertOctagon, AlertTriangle } from 'lucide-react';
-import { RARITY_COLORS } from '@/constants/theme';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getAssetUrl } from "@/lib/utils";
+import { AlertOctagon, AlertTriangle } from "lucide-react";
+import { THEME } from "@/lib/theme";
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -17,8 +21,12 @@ interface ArtifactConfigCardProps {
   onJumpToCharacter: (characterId: string) => void;
 }
 
-export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: ArtifactConfigCardProps) {
-  const { t, language } = useLanguage();
+export function ArtifactConfigCard({
+  config,
+  configNumber,
+  onJumpToCharacter,
+}: ArtifactConfigCardProps) {
+  const { t } = useLanguage();
 
   const getStatDisplayName = (stat: string) => {
     return t.statShort(stat);
@@ -28,7 +36,7 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
     return charactersById[id];
   };
 
-  type SlotKey = 'flowerPlume' | 'sands' | 'goblet' | 'circlet';
+  type SlotKey = "flowerPlume" | "sands" | "goblet" | "circlet";
 
   type ChanceDetail = {
     base: number;
@@ -44,37 +52,44 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
       if (slotConfig.minStatCount < maxMinCount) {
         const tightenedConfig: SlotConfig = {
           ...slotConfig,
-          minStatCount: slotConfig.minStatCount + 1
+          minStatCount: slotConfig.minStatCount + 1,
         };
         tightened = computeSlotChance(slot, tightenedConfig);
-        tightenedLabel = `${t.ui('computeFilters.passChance')} (${t.ui('computeFilters.atLeast')} ${tightenedConfig.minStatCount})`;
+        tightenedLabel = `${t.ui("computeFilters.passChance")} (${t.ui(
+          "computeFilters.atLeast",
+        )} ${tightenedConfig.minStatCount})`;
       }
       return { base, tightened, tightenedLabel };
     };
 
     return {
-      flowerPlume: getDetail('flowerPlume', config.flowerPlume),
-      sands: getDetail('sands', config.sands),
-      goblet: getDetail('goblet', config.goblet),
-      circlet: getDetail('circlet', config.circlet)
+      flowerPlume: getDetail("flowerPlume", config.flowerPlume),
+      sands: getDetail("sands", config.sands),
+      goblet: getDetail("goblet", config.goblet),
+      circlet: getDetail("circlet", config.circlet),
     };
-  }, [config, language]);
-
+  }, [config, t]);
 
   // Helper function to render main stat cell
   const renderMainStatCell = (slotName: string, mainStats: MainStatPlus[]) => (
     <div>
       <Label className="text-xs text-muted-foreground block mb-1">
-        {slotName} {t.ui('computeFilters.mainStat')}
+        {slotName} {t.ui("computeFilters.mainStat")}
       </Label>
       <div className="flex flex-wrap gap-1">
-        {mainStats.length > 0 ? mainStats.map(stat => (
-          <Badge key={stat} variant="outline" className="text-xs bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10">
-            {getStatDisplayName(stat)}
-          </Badge>
-        )) : (
+        {mainStats.length > 0 ? (
+          mainStats.map((stat) => (
+            <Badge
+              key={stat}
+              variant="outline"
+              className="text-xs bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+            >
+              {getStatDisplayName(stat)}
+            </Badge>
+          ))
+        ) : (
           <span className="text-xs text-muted-foreground italic">
-            {t.ui('computeFilters.any')}
+            {t.ui("computeFilters.any")}
           </span>
         )}
       </div>
@@ -85,17 +100,23 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
   const renderSubstatCell = (slotName: string, slotConfig: SlotConfig) => (
     <div>
       <Label className="text-xs text-muted-foreground block mb-1">
-        {slotName} {t.ui('computeFilters.subStat')}{' '}
-        <span className="font-semibold text-foreground">[{t.ui('computeFilters.atLeast')} {slotConfig.minStatCount}]</span>
+        {slotName} {t.ui("computeFilters.subStat")}{" "}
+        <span className="font-semibold text-foreground">
+          [{t.ui("computeFilters.atLeast")} {slotConfig.minStatCount}]
+        </span>
       </Label>
       <div className="flex flex-wrap gap-1">
-        {slotConfig.substats.map(stat => {
+        {slotConfig.substats.map((stat) => {
           const isMustPresent = slotConfig.mustPresent.includes(stat);
           return (
             <Badge
               key={stat}
               variant="secondary"
-              className={`text-xs ${isMustPresent ? 'bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15' : 'bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10'}`}
+              className={`text-xs ${
+                isMustPresent
+                  ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
+                  : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+              }`}
             >
               {getStatDisplayName(stat)}
             </Badge>
@@ -107,7 +128,7 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
 
   const formatChance = (chance: number): string => {
     if (!Number.isFinite(chance)) {
-      return '—';
+      return "—";
     }
     return `${(chance * 100).toFixed(chance < 0.01 ? 2 : 1)}%`;
   };
@@ -118,33 +139,39 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
 
     if (chance >= dangerThreshold) {
       return {
-        textClass: 'text-destructive',
+        textClass: "text-destructive",
         Icon: AlertOctagon,
-        message: t.ui('computeFilters.highPassChance')
+        message: t.ui("computeFilters.highPassChance"),
       };
     }
 
     if (chance >= warningThreshold) {
       return {
-        textClass: 'text-amber-500 dark:text-amber-400',
+        textClass: "text-amber-500 dark:text-amber-400",
         Icon: AlertTriangle,
-        message: t.ui('computeFilters.moderatePassChance')
+        message: t.ui("computeFilters.moderatePassChance"),
       };
     }
 
     return {
-      textClass: 'text-foreground',
+      textClass: "text-foreground",
       Icon: null,
-      message: ''
+      message: "",
     };
   };
 
   const renderChanceCell = (slotName: string, detail: ChanceDetail) => {
-    const renderChanceRow = (label: string, chance: number, indicator: ReturnType<typeof getChanceIndicator>) => {
+    const renderChanceRow = (
+      label: string,
+      chance: number,
+      indicator: ReturnType<typeof getChanceIndicator>,
+    ) => {
       const { textClass, Icon, message } = indicator;
       const content = (
         <>
-          {Icon && <Icon className={`h-3.5 w-3.5 ${textClass}`} aria-hidden="true" />}
+          {Icon && (
+            <Icon className={`h-3.5 w-3.5 ${textClass}`} aria-hidden="true" />
+          )}
           {formatChance(chance)}
         </>
       );
@@ -155,11 +182,17 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
           {Icon && message ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className={`text-xs flex items-center gap-1 cursor-help ${textClass}`}>
+                <div
+                  className={`text-xs flex items-center gap-1 cursor-help ${textClass}`}
+                >
                   {content}
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="top" align="center" className="text-xs max-w-xs">
+              <TooltipContent
+                side="top"
+                align="center"
+                className="text-xs max-w-xs"
+              >
                 {message}
               </TooltipContent>
             </Tooltip>
@@ -173,30 +206,50 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
     };
 
     const baseIndicator = getChanceIndicator(detail.base);
-    const showTightened = detail.base > 0.1 && detail.tightened !== null && detail.tightenedLabel;
+    const showTightened =
+      detail.base > 0.1 && detail.tightened !== null && detail.tightenedLabel;
 
     return (
       <div className="rounded-md bg-muted/50 mr-3 px-3 py-1.5 space-y-1">
-        {renderChanceRow(t.ui('computeFilters.passChance'), detail.base, baseIndicator)}
-        {showTightened && renderChanceRow(detail.tightenedLabel!, detail.tightened!, getChanceIndicator(detail.tightened!))}
+        {renderChanceRow(
+          t.ui("computeFilters.passChance"),
+          detail.base,
+          baseIndicator,
+        )}
+        {showTightened &&
+          renderChanceRow(
+            detail.tightenedLabel!,
+            detail.tightened!,
+            getChanceIndicator(detail.tightened!),
+          )}
       </div>
     );
   };
 
   // Group characters by 4pc/2pc and perfect/imperfect merge
-  const fourPcPerfect = config.servedCharacters.filter(c => c.has4pcBuild && c.hasPerfectMerge);
-  const fourPcImperfect = config.servedCharacters.filter(c => c.has4pcBuild && !c.hasPerfectMerge);
-  const twoPcPerfect = config.servedCharacters.filter(c => !c.has4pcBuild && c.hasPerfectMerge);
-  const twoPcImperfect = config.servedCharacters.filter(c => !c.has4pcBuild && !c.hasPerfectMerge);
+  const fourPcPerfect = config.servedCharacters.filter(
+    (c) => c.has4pcBuild && c.hasPerfectMerge,
+  );
+  const fourPcImperfect = config.servedCharacters.filter(
+    (c) => c.has4pcBuild && !c.hasPerfectMerge,
+  );
+  const twoPcPerfect = config.servedCharacters.filter(
+    (c) => !c.has4pcBuild && c.hasPerfectMerge,
+  );
+  const twoPcImperfect = config.servedCharacters.filter(
+    (c) => !c.has4pcBuild && !c.hasPerfectMerge,
+  );
 
-  const renderCharacter = (charInfo: typeof config.servedCharacters[0]) => {
+  const renderCharacter = (charInfo: (typeof config.servedCharacters)[0]) => {
     const character = getCharacterById(charInfo.characterId);
     if (!character) return null;
 
     return (
       <div
         key={charInfo.characterId}
-        className={`rounded ${RARITY_COLORS[character.rarity]} overflow-hidden cursor-pointer hover:scale-110 transition-transform`}
+        className={`rounded ${
+          THEME.rarity.bg[character.rarity]
+        } overflow-hidden cursor-pointer hover:scale-110 transition-transform`}
         onClick={() => onJumpToCharacter(charInfo.characterId)}
         title={t.character(character.id)}
       >
@@ -214,14 +267,15 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
       {/* Title row with config number and character groups */}
       <div className="flex gap-3 mb-1.5">
         <h4 className="self-center font-medium text-foreground px-2">
-          {t.ui('computeFilters.configurationNumber')} {configNumber}
+          {t.ui("computeFilters.configurationNumber")} {configNumber}
         </h4>
 
-        <Label className="self-end text-xs text-muted-foreground pb-0.5">{t.ui('computeFilters.for')}</Label>
+        <Label className="self-end text-xs text-muted-foreground pb-0.5">
+          {t.ui("computeFilters.for")}
+        </Label>
 
         {/* Character groups */}
         <div className="flex-1 flex items-end gap-x-5 gap-y-1 text-xs">
-
           {/* 4pc group */}
           {(fourPcPerfect.length > 0 || fourPcImperfect.length > 0) && (
             <div className="flex gap-1.5">
@@ -230,7 +284,9 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
                 <div className="w-px bg-border self-stretch mx-0.5"></div>
               )}
               {fourPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">({t.ui('computeFilters.fourPc')})</Label>
+              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">
+                ({t.ui("computeFilters.fourPc")})
+              </Label>
             </div>
           )}
 
@@ -242,7 +298,9 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
                 <div className="w-px bg-border self-stretch mx-0.5"></div>
               )}
               {twoPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">({t.ui('computeFilters.twoPc')})</Label>
+              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">
+                ({t.ui("computeFilters.twoPc")})
+              </Label>
             </div>
           )}
         </div>
@@ -251,26 +309,47 @@ export function ArtifactConfigCard({ config, configNumber, onJumpToCharacter }: 
       {/* Grid layout with explicit rows - 3 rows per column */}
       <div
         className="grid grid-cols-4 gap-x-3 gap-y-2 pt-2 border-t border-border/40"
-        style={{ gridTemplateRows: 'auto auto auto' }}
+        style={{ gridTemplateRows: "auto auto auto" }}
       >
-
         {/* Row 1: Main Stats */}
         <div></div> {/* Flower/Plume - empty */}
-        {renderMainStatCell(t.ui('computeFilters.sands'), config.sands.mainStats)}
-        {renderMainStatCell(t.ui('computeFilters.goblet'), config.goblet.mainStats)}
-        {renderMainStatCell(t.ui('computeFilters.circlet'), config.circlet.mainStats)}
-
+        {renderMainStatCell(
+          t.ui("computeFilters.sands"),
+          config.sands.mainStats,
+        )}
+        {renderMainStatCell(
+          t.ui("computeFilters.goblet"),
+          config.goblet.mainStats,
+        )}
+        {renderMainStatCell(
+          t.ui("computeFilters.circlet"),
+          config.circlet.mainStats,
+        )}
         {/* Row 2: Substats */}
-        {renderSubstatCell(`${t.ui('computeFilters.flower')}/${t.ui('computeFilters.plume')}`, config.flowerPlume)}
-        {renderSubstatCell(t.ui('computeFilters.sands'), config.sands)}
-        {renderSubstatCell(t.ui('computeFilters.goblet'), config.goblet)}
-        {renderSubstatCell(t.ui('computeFilters.circlet'), config.circlet)}
-
+        {renderSubstatCell(
+          `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+          config.flowerPlume,
+        )}
+        {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
+        {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
+        {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
         {/* Row 3: Chances */}
-        {renderChanceCell(`${t.ui('computeFilters.flower')}/${t.ui('computeFilters.plume')}`, slotChanceDetails.flowerPlume)}
-        {renderChanceCell(t.ui('computeFilters.sands'), slotChanceDetails.sands)}
-        {renderChanceCell(t.ui('computeFilters.goblet'), slotChanceDetails.goblet)}
-        {renderChanceCell(t.ui('computeFilters.circlet'), slotChanceDetails.circlet)}
+        {renderChanceCell(
+          `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+          slotChanceDetails.flowerPlume,
+        )}
+        {renderChanceCell(
+          t.ui("computeFilters.sands"),
+          slotChanceDetails.sands,
+        )}
+        {renderChanceCell(
+          t.ui("computeFilters.goblet"),
+          slotChanceDetails.goblet,
+        )}
+        {renderChanceCell(
+          t.ui("computeFilters.circlet"),
+          slotChanceDetails.circlet,
+        )}
       </div>
     </div>
   );

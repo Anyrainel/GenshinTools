@@ -1,14 +1,24 @@
-import type { Weapon, WeaponType, TierAssignment, TierCustomization } from '@/data/types';
-import { weaponTypes } from '@/data/types';
-import { weapons } from '@/data/resources';
-import { weaponsById, weaponResourcesByName } from '@/data/constants';
-import { TierTable } from './TierTable';
-import { TierItemData } from './TierItem';
-import { cn } from '@/lib/utils';
-import { RARITY_COLORS, LAYOUT } from '@/constants/theme';
-import { getAssetUrl } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { WeaponTooltip } from './WeaponTooltip';
+import React from "react";
+import {
+  Weapon,
+  TierAssignment,
+  TierCustomization,
+  WeaponType,
+  weaponTypes,
+} from "@/data/types";
+import { weapons } from "@/data/resources";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import { TierTable } from "./TierTable";
+import { TierItemData } from "./TierItem";
+import { weaponsById, weaponResourcesByName } from "@/data/constants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+
+// Weapon implements TierItemData
+const weaponToTierItemData = (weapon: Weapon): Weapon & TierItemData => {
+  return weapon as Weapon & TierItemData;
+};
 
 interface WeaponTierTableProps {
   tierAssignments: TierAssignment;
@@ -19,11 +29,6 @@ interface WeaponTierTableProps {
   showRarity3: boolean;
   tableRef?: React.Ref<HTMLDivElement>;
 }
-
-// Weapon implements TierItemData
-const weaponToTierItemData = (weapon: Weapon): Weapon & TierItemData => {
-  return weapon as Weapon & TierItemData;
-};
 
 export default function WeaponTierTable({
   tierAssignments,
@@ -36,32 +41,30 @@ export default function WeaponTierTable({
 }: WeaponTierTableProps) {
   const { t } = useLanguage();
 
-  const filterItem = (weapon: Weapon) => {
-    if (weapon.rarity === 5 && !showRarity5) return false;
-    if (weapon.rarity === 4 && !showRarity4) return false;
-    if (weapon.rarity === 3 && !showRarity3) return false;
-    return true;
-  };
-
-  const renderHeader = (type: string, count: number) => {
+  const renderHeader = (weaponType: string, count: number) => {
+    const resource = weaponResourcesByName[weaponType as WeaponType];
     return (
       <div
-        key={type}
+        key={weaponType}
         className={cn(
-          LAYOUT.CENTER_BOX,
-          'bg-slate-700/80',
-          LAYOUT.GRID_BORDER,
-          'rounded-tl-md rounded-tr-md'
+          THEME.layout.centerBox,
+          "min-h-[3rem]",
+          THEME.layout.gridBorder,
+          "bg-gray-800", // Default bg for weapon type headers
         )}
       >
-        <img
-          src={getAssetUrl(weaponResourcesByName[type as WeaponType].imagePath)}
-          className="w-6 h-6 mr-2 brightness-110 contrast-125 object-contain"
-          alt={t.weaponType(type)}
-        />
-        <span className={cn(LAYOUT.LABEL_TEXT, 'text-lg')}>
-          {t.weaponType(type)}
-        </span>
+        <div className="flex flex-col items-center">
+          <img
+            src={getAssetUrl(resource?.imagePath)}
+            alt={weaponType}
+            className="w-8 h-8 object-contain drop-shadow-md brightness-150" // Brighter icons for dark bg
+          />
+          <span
+            className={cn(THEME.layout.labelText, "text-lg text-shadow-sm")}
+          >
+            {t.weaponType(weaponType)} ({count})
+          </span>
+        </div>
       </div>
     );
   };
@@ -73,10 +76,7 @@ export default function WeaponTierTable({
   const renderPreview = (weapon: Weapon) => {
     return (
       <div
-        className={cn(
-          LAYOUT.ITEM_CARD,
-          RARITY_COLORS[weapon.rarity]
-        )}
+        className={cn(THEME.layout.itemCard, THEME.rarity.bg[weapon.rarity])}
       >
         <img
           src={getAssetUrl(weapon.imagePath)}
@@ -99,22 +99,33 @@ export default function WeaponTierTable({
   };
 
   const getGroupCount = (
-    type: string,
-    itemsPerTier: { [tier: string]: Weapon[] }
+    group: string,
+    itemsPerTier: { [tier: string]: Weapon[] },
   ) => {
-    // For weapons, we don't show counts in header (original implementation doesn't)
-    return 0;
+    return Object.entries(itemsPerTier)
+      .filter(([tier]) => tier !== "Pool")
+      .reduce((sum, [, weapons]) => {
+        return sum + weapons.filter((w) => w.type === group).length;
+      }, 0);
   };
 
-  const isValidDrop = (activeWeap: Weapon, overId: string) => {
+  const isValidDrop = (activeWeapon: Weapon, overId: string) => {
     if (weaponsById[overId]) {
-      return weaponsById[overId].type === activeWeap.type;
+      return weaponsById[overId].type === activeWeapon.type;
     }
-    if (overId.includes('-')) {
-      const [, type] = overId.split('-');
-      return type === activeWeap.type;
+    if (overId.includes("-")) {
+      const [, type] = overId.split("-");
+      // Check if type matches weapon type
+      return type === activeWeapon.type;
     }
     return false;
+  };
+
+  const filterItem = (weapon: Weapon) => {
+    if (weapon.rarity === 5 && !showRarity5) return false;
+    if (weapon.rarity === 4 && !showRarity4) return false;
+    if (weapon.rarity === 3 && !showRarity3) return false;
+    return true;
   };
 
   const getTierDisplayName = (tier: string) => {
@@ -136,10 +147,10 @@ export default function WeaponTierTable({
       renderPreview={renderPreview}
       getItemData={getItemData}
       getTierDisplayName={getTierDisplayName}
+      filterItem={filterItem}
       getImagePath={getImagePath}
       getAlt={getAlt}
       getTooltip={getTooltip}
-      filterItem={filterItem}
       tableRef={tableRef}
     />
   );

@@ -1,8 +1,14 @@
-import { memo, useState, useCallback, useMemo } from 'react';
-import { LightweightSelect, LightweightSelectItem } from '@/components/ui/lightweight-select';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Plus, X } from 'lucide-react';
+import { memo, useState, useCallback, useMemo } from "react";
+import {
+  LightweightSelect,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectContent,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Plus } from "lucide-react";
 
 interface StatSelectProps {
   values: string[];
@@ -22,7 +28,7 @@ function StatSelectItem({
   value,
   onValueChange,
   availableOptions,
-  autoOpen = false
+  autoOpen = false,
 }: StatSelectItemProps) {
   const { t } = useLanguage();
 
@@ -30,21 +36,24 @@ function StatSelectItem({
     <LightweightSelect
       value={value}
       onValueChange={onValueChange}
-      className="w-28 h-8 text-sm hover:brightness-110"
-      autoOpen={autoOpen}
+      defaultOpen={autoOpen}
     >
-      <LightweightSelectItem value="__DESELECT__" className="text-muted-foreground">
-        {t.ui('buildCard.deselect')}
-      </LightweightSelectItem>
-      {availableOptions.map((option) => (
+      <LightweightSelectTrigger className="w-28 h-8 text-sm hover:brightness-110">
+        <LightweightSelectValue />
+      </LightweightSelectTrigger>
+      <LightweightSelectContent>
         <LightweightSelectItem
-          key={option}
-          value={option}
-          shortLabel={t.statShort(option)}
+          value="__DESELECT__"
+          className="text-muted-foreground"
         >
-          {t.stat(option)}
+          {t.ui("buildCard.deselect")}
         </LightweightSelectItem>
-      ))}
+        {availableOptions.map((option) => (
+          <LightweightSelectItem key={option} value={option}>
+            {t.stat(option)}
+          </LightweightSelectItem>
+        ))}
+      </LightweightSelectContent>
     </LightweightSelect>
   );
 }
@@ -53,51 +62,60 @@ function StatSelectComponent({
   values,
   onValuesChange,
   options,
-  maxLength
+  maxLength,
 }: StatSelectProps) {
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddValue = useCallback((value: string) => {
-    if (value === '__DESELECT__') {
-      // Do nothing, just ignore
-    } else if (value && !values.includes(value)) {
-      onValuesChange([...values, value]);
-    }
-    setIsAdding(false);
-  }, [values, onValuesChange]);
+  const handleAddValue = useCallback(
+    (value: string) => {
+      if (value === "__DESELECT__") {
+        // Do nothing, just ignore
+      } else if (value && !values.includes(value)) {
+        onValuesChange([...values, value]);
+      }
+      setIsAdding(false);
+    },
+    [values, onValuesChange],
+  );
 
   const handlePlusClick = useCallback(() => {
     setIsAdding(true);
   }, []);
 
-  const handleUpdateValue = useCallback((index: number, value: string) => {
-    if (value === '__DESELECT__') {
-      // Remove the value
-      const newValues = values.filter((_, i) => i !== index);
-      onValuesChange(newValues);
-    } else if (value) {
-      const newValues = [...values];
-      newValues[index] = value;
-      onValuesChange(newValues);
-    }
-  }, [values, onValuesChange]);
+  const handleUpdateValue = useCallback(
+    (index: number, value: string) => {
+      if (value === "__DESELECT__") {
+        // Remove the value
+        const newValues = values.filter((_, i) => i !== index);
+        onValuesChange(newValues);
+      } else if (value) {
+        const newValues = [...values];
+        newValues[index] = value;
+        onValuesChange(newValues);
+      }
+    },
+    [values, onValuesChange],
+  );
 
   // Memoize available options computation
   const availableOptions = useMemo(
-    () => options.filter(option => !values.includes(option)),
-    [options, values]
+    () => options.filter((option) => !values.includes(option)),
+    [options, values],
   );
 
   const canAddMore = useMemo(
     () => values.length < maxLength && availableOptions.length > 0,
-    [values.length, maxLength, availableOptions.length]
+    [values.length, maxLength, availableOptions.length],
   );
 
   // Get available options for a specific select (excludes all other selected values)
-  const getAvailableOptionsForSelect = useCallback((currentIndex: number) => {
-    const otherValues = values.filter((_, index) => index !== currentIndex);
-    return options.filter(option => !otherValues.includes(option));
-  }, [values, options]);
+  const getAvailableOptionsForSelect = useCallback(
+    (currentIndex: number) => {
+      const otherValues = values.filter((_, index) => index !== currentIndex);
+      return options.filter((option) => !otherValues.includes(option));
+    },
+    [values, options],
+  );
 
   return (
     <div className="flex text-sm min-h-8 items-center gap-1 flex-wrap">

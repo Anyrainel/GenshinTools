@@ -1,165 +1,143 @@
-import * as React from "react";
-import { createPortal } from "react-dom";
-import { ChevronDown } from "lucide-react";
+import * as React from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
+import * as SelectPrimitive from "@radix-ui/react-select"
 
-interface LightweightSelectProps {
-  value: string;
-  onValueChange: (value: string) => void;
-  children: React.ReactNode;
-  className?: string;
-  autoOpen?: boolean; // Auto-open on mount
-}
+import { cn } from "@/lib/utils"
 
-interface LightweightSelectItemProps {
-  value: string;
-  children: React.ReactNode;
-  className?: string;
-  shortLabel?: string; // Optional short label for trigger display
-}
+const LightweightSelect = SelectPrimitive.Root
 
-export function LightweightSelect({
-  value,
-  onValueChange,
-  children,
-  className,
-  autoOpen = false,
-}: LightweightSelectProps) {
-  const [isOpen, setIsOpen] = React.useState(autoOpen);
-  const [dropdownStyle, setDropdownStyle] = React.useState<React.CSSProperties>({});
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+const LightweightSelectGroup = SelectPrimitive.Group
 
-  // Get options from children
-  const options = React.Children.toArray(children).filter(
-    (child): child is React.ReactElement<LightweightSelectItemProps> =>
-      React.isValidElement(child)
-  );
+const LightweightSelectValue = SelectPrimitive.Value
 
-  // Find selected option
-  const selectedOption = options.find(opt => opt.props.value === value);
-  // Use shortLabel if provided, otherwise use children
-  const displayText = selectedOption?.props.shortLabel || selectedOption?.props.children || '';
+const LightweightSelectTrigger = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Trigger
+    ref={ref}
+    className={cn(
+      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      className
+    )}
+    {...props}
+  >
+    {children}
+    <SelectPrimitive.Icon asChild>
+      <ChevronsUpDown className="h-4 w-4 opacity-50" />
+    </SelectPrimitive.Icon>
+  </SelectPrimitive.Trigger>
+))
+LightweightSelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
-  // Calculate dropdown position based on viewport and trigger position
-  const updateDropdownPosition = React.useCallback(() => {
-    if (isOpen && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
-
-      // Estimate dropdown height (max 320px = max-h-80)
-      const estimatedDropdownHeight = Math.min(options.length * 36, 320);
-
-      // If not enough space below and more space above, show on top
-      const shouldShowOnTop = spaceBelow < estimatedDropdownHeight && spaceAbove > spaceBelow;
-
-      // Set absolute position relative to viewport
-      setDropdownStyle({
-        position: 'fixed',
-        left: `${rect.left}px`,
-        minWidth: `${rect.width}px`,  // At least as wide as trigger
-        top: shouldShowOnTop ? 'auto' : `${rect.bottom + 4}px`,
-        bottom: shouldShowOnTop ? `${viewportHeight - rect.top + 4}px` : 'auto',
-      });
-    }
-  }, [isOpen, options.length]);
-
-  React.useEffect(() => {
-    updateDropdownPosition();
-  }, [updateDropdownPosition]);
-
-  // Re-position on scroll
-  React.useEffect(() => {
-    if (isOpen) {
-      window.addEventListener('scroll', updateDropdownPosition, true);
-      window.addEventListener('resize', updateDropdownPosition);
-      return () => {
-        window.removeEventListener('scroll', updateDropdownPosition, true);
-        window.removeEventListener('resize', updateDropdownPosition);
-      };
-    }
-  }, [isOpen, updateDropdownPosition]);
-
-  // Close dropdown when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-
-      // Check if click is outside both the trigger container and the dropdown portal
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(target) &&
-        // Also check if the click is not on the dropdown (which is in a portal)
-        !(target as Element).closest('[data-dropdown-portal]')
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      // Use a slight delay to avoid closing immediately after opening
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-      }, 0);
-
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [isOpen]);
-
-  const handleSelect = React.useCallback((newValue: string) => {
-    onValueChange(newValue);
-    setIsOpen(false);
-  }, [onValueChange]);
-
-  return (
-    <>
-      <div ref={containerRef} className="relative">
-        <button
-          ref={triggerRef}
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className={`flex h-10 w-full items-center justify-between rounded-md border border-input bg-gradient-mystical-reverse px-3 py-2 text-sm select-none ring-offset-background focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-left ${className || ''}`}
-        >
-          <span className="truncate">{displayText}</span>
-          <ChevronDown className="h-4 w-4 opacity-50 ml-2 flex-shrink-0" />
-        </button>
-      </div>
-
-      {/* Render dropdown in portal to escape parent overflow constraints */}
-      {isOpen && createPortal(
-        <div
-          data-dropdown-portal="true"
-          style={dropdownStyle}
-          className="overflow-auto rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 max-h-80 w-max z-[9999]"
-        >
-          <div className="p-1">
-            {options.map((option) => (
-              <div
-                key={option.props.value}
-                onMouseDown={(e) => {
-                  e.preventDefault(); // Prevent focus loss
-                  handleSelect(option.props.value);
-                }}
-                className={`relative flex w-full select-none items-center rounded-sm py-1.5 px-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors ${option.props.value === value ? 'bg-accent/50' : ''} ${option.props.className || ''}`}
-              >
-                {option.props.children}
-              </div>
-            ))}
-          </div>
-        </div>,
-        document.body
+const LightweightSelectContent = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+>(({ className, children, position = "popper", ...props }, ref) => (
+  <SelectPrimitive.Portal>
+    <SelectPrimitive.Content
+      ref={ref}
+      className={cn(
+        "relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        position === "popper" &&
+        "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+        className
       )}
-    </>
-  );
-}
+      position={position}
+      {...props}
+    >
+      <SelectPrimitive.Viewport
+        className={cn(
+          "p-1",
+          position === "popper" &&
+          "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+        )}
+      >
+        {children}
+      </SelectPrimitive.Viewport>
+    </SelectPrimitive.Content>
+  </SelectPrimitive.Portal>
+))
+LightweightSelectContent.displayName = SelectPrimitive.Content.displayName
 
-export function LightweightSelectItem(_props: LightweightSelectItemProps) {
-  // This is just a container component for options
-  // The actual rendering is done by LightweightSelect
-  // Props (value, children, className) are extracted in parent component
-  return null;
-}
+const LightweightSelectItem = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+>(({ className, children, ...props }, ref) => (
+  <SelectPrimitive.Item
+    ref={ref}
+    className={cn(
+      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      className
+    )}
+    {...props}
+  >
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+      <SelectPrimitive.ItemIndicator>
+        <Check className="h-4 w-4" />
+      </SelectPrimitive.ItemIndicator>
+    </span>
+    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+  </SelectPrimitive.Item>
+))
+LightweightSelectItem.displayName = SelectPrimitive.Item.displayName;
+
+const LightweightSelectSeparator = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <SelectPrimitive.Separator
+    ref={ref}
+    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    {...props}
+  />
+));
+LightweightSelectSeparator.displayName = SelectPrimitive.Separator.displayName;
+
+const LightweightSelectScrollUpButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
+>(({ className, ..._props }, ref) => (
+  <SelectPrimitive.ScrollUpButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className
+    )}
+    {..._props}
+  >
+    <div className="h-4 w-4" /> {/* Up chevron if needed */}
+  </SelectPrimitive.ScrollUpButton>
+));
+LightweightSelectScrollUpButton.displayName =
+  SelectPrimitive.ScrollUpButton.displayName;
+
+const LightweightSelectScrollDownButton = React.forwardRef<
+  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
+>(({ className, ..._props }, ref) => (
+  <SelectPrimitive.ScrollDownButton
+    ref={ref}
+    className={cn(
+      "flex cursor-default items-center justify-center py-1",
+      className
+    )}
+    {..._props}
+  >
+    <div className="h-4 w-4" /> {/* Down chevron if needed */}
+  </SelectPrimitive.ScrollDownButton>
+));
+LightweightSelectScrollDownButton.displayName =
+  SelectPrimitive.ScrollDownButton.displayName;
+
+export {
+  LightweightSelect,
+  LightweightSelectGroup,
+  LightweightSelectValue,
+  LightweightSelectTrigger,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectSeparator,
+  LightweightSelectScrollUpButton,
+  LightweightSelectScrollDownButton,
+};

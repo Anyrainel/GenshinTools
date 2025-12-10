@@ -1,18 +1,50 @@
-import { Build, MainStat, SubStat, mainStatSlots, Element, MainStatSlot } from '@/data/types';
-import { statPools, getGobletPool, artifactHalfSetsById } from '@/data/constants';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useBuildsStore } from '@/stores/useBuildsStore';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { LightweightSelect, LightweightSelectItem } from '@/components/ui/lightweight-select';
-import { Check, X, ChevronDown, ChevronRight, Copy, RotateCcw, AlertCircle, Trash2, ChevronUp } from 'lucide-react';
-import { memo, useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArtifactSelect, ArtifactSelectHalf } from './ArtifactSelect';
-import { StatSelect } from './StatSelect';
+import {
+  Build,
+  MainStat,
+  SubStat,
+  mainStatSlots,
+  Element,
+  MainStatSlot,
+} from "@/data/types";
+import {
+  statPools,
+  getGobletPool,
+  artifactHalfSetsById,
+} from "@/data/constants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import {
+  LightweightSelect,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectContent,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+import {
+  Check,
+  ChevronDown,
+  Copy,
+  AlertCircle,
+  Trash2,
+  ChevronUp,
+} from "lucide-react";
+import { memo, useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ArtifactSelect, ArtifactSelectHalf } from "./ArtifactSelect";
+import { StatSelect } from "./StatSelect";
 
 interface BuildCardProps {
   buildId: string;
@@ -27,7 +59,7 @@ function BuildCardComponent({
   buildIndex,
   onDelete,
   onDuplicate,
-  element
+  element,
 }: BuildCardProps) {
   const { t } = useLanguage();
   const build = useBuildsStore((state) => state.builds[buildId]);
@@ -35,8 +67,10 @@ function BuildCardComponent({
 
   const [isExpanded, setIsExpanded] = useState(true);
   // Only keep local state for the name field (for typing smoothness)
-  const [localName, setLocalName] = useState('');
-  const nameUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [localName, setLocalName] = useState("");
+  const nameUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   // Sync local name when build name changes from store
   useEffect(() => {
@@ -45,17 +79,20 @@ function BuildCardComponent({
     }
   }, [build?.name]);
 
-  const handleNameChange = useCallback((newName: string) => {
-    setLocalName(newName);
+  const handleNameChange = useCallback(
+    (newName: string) => {
+      setLocalName(newName);
 
-    if (nameUpdateTimeoutRef.current) {
-      clearTimeout(nameUpdateTimeoutRef.current);
-    }
+      if (nameUpdateTimeoutRef.current) {
+        clearTimeout(nameUpdateTimeoutRef.current);
+      }
 
-    nameUpdateTimeoutRef.current = setTimeout(() => {
-      setBuild(buildId, { name: newName });
-    }, 300);
-  }, [buildId, setBuild]);
+      nameUpdateTimeoutRef.current = setTimeout(() => {
+        setBuild(buildId, { name: newName });
+      }, 300);
+    },
+    [buildId, setBuild],
+  );
 
   const handleNameBlur = useCallback(() => {
     if (nameUpdateTimeoutRef.current) {
@@ -64,9 +101,12 @@ function BuildCardComponent({
     setBuild(buildId, { name: localName });
   }, [buildId, localName, setBuild]);
 
-  const handleBuildChange = useCallback((changes: Partial<Build>) => {
-    setBuild(buildId, changes);
-  }, [buildId, setBuild]);
+  const handleBuildChange = useCallback(
+    (changes: Partial<Build>) => {
+      setBuild(buildId, changes);
+    },
+    [buildId, setBuild],
+  );
 
   const handleToggleVisibility = useCallback(() => {
     if (build) {
@@ -80,19 +120,22 @@ function BuildCardComponent({
     const warnings: string[] = [];
 
     // Check artifact set configuration
-    if (build.composition === '4pc') {
+    if (build.composition === "4pc") {
       if (!build.artifactSet) {
-        warnings.push(t.ui('buildCard.missing4pcSet'));
+        warnings.push(t.ui("buildCard.missing4pcSet"));
       }
-    } else { // 2pc+2pc
+    } else {
+      // 2pc+2pc
       if (!build.halfSet1 || !build.halfSet2) {
-        warnings.push(t.ui('buildCard.missing2pcSets'));
+        warnings.push(t.ui("buildCard.missing2pcSets"));
       } else {
         // Check if halfSet1 and halfSet2 are the same
         if (build.halfSet1 === build.halfSet2) {
-          const halfSet = build.halfSet1 ? artifactHalfSetsById[build.halfSet1] : undefined;
+          const halfSet = build.halfSet1
+            ? artifactHalfSetsById[build.halfSet1]
+            : undefined;
           if (!halfSet || halfSet.setIds.length <= 1) {
-            warnings.push(t.ui('buildCard.notEnoughSame2pcSets'));
+            warnings.push(t.ui("buildCard.notEnoughSame2pcSets"));
           }
         }
       }
@@ -100,54 +143,57 @@ function BuildCardComponent({
 
     // Check main stats
     if (build.sands.length === 0) {
-      warnings.push(t.ui('buildCard.missingSandsMainStat'));
+      warnings.push(t.ui("buildCard.missingSandsMainStat"));
     }
     if (build.goblet.length === 0) {
-      warnings.push(t.ui('buildCard.missingGobletMainStat'));
+      warnings.push(t.ui("buildCard.missingGobletMainStat"));
     }
     if (build.circlet.length === 0) {
-      warnings.push(t.ui('buildCard.missingCircletMainStat'));
+      warnings.push(t.ui("buildCard.missingCircletMainStat"));
     }
 
     // Check substats
     if (build.substats.length === 0) {
-      warnings.push(t.ui('buildCard.missingSubstat'));
+      warnings.push(t.ui("buildCard.missingSubstat"));
     }
 
     return {
       isValid: warnings.length === 0,
-      warningMessage: warnings.length > 0 ? warnings.join('\n') : undefined
+      warningMessage: warnings.length > 0 ? warnings.join("\n") : undefined,
     };
   }, [build, t]);
 
   const compositionLabel = useMemo(() => {
-    if (!build) return '';
+    if (!build) return "";
 
-    if (build.composition === '2pc+2pc') {
-      return t.ui('buildCard.2pc+2pc');
+    if (build.composition === "2pc+2pc") {
+      return t.ui("buildCard.2pc+2pc");
     }
 
     if (build.artifactSet) {
       return t.artifact(build.artifactSet);
     }
 
-    return t.ui('buildCard.4pc');
+    return t.ui("buildCard.4pc");
   }, [build, t]);
 
-  const localStatPools = useMemo(() => ({
-    sands: statPools.sands,
-    goblet: getGobletPool(element),
-    circlet: statPools.circlet
-  }), [element]);
+  const localStatPools = useMemo(
+    () => ({
+      sands: statPools.sands,
+      goblet: getGobletPool(element),
+      circlet: statPools.circlet,
+    }),
+    [element],
+  );
 
   const mainStatLabel = (slot: MainStatSlot) => {
-    switch(slot) {
-      case 'sands':
-        return t.ui('buildCard.sandsMainStat');
-      case 'goblet':
-        return t.ui('buildCard.gobletMainStat');
-      case 'circlet':
-        return t.ui('buildCard.circletMainStat');
+    switch (slot) {
+      case "sands":
+        return t.ui("buildCard.sandsMainStat");
+      case "goblet":
+        return t.ui("buildCard.gobletMainStat");
+      case "circlet":
+        return t.ui("buildCard.circletMainStat");
     }
   };
 
@@ -157,10 +203,7 @@ function BuildCardComponent({
   }
 
   return (
-    <Collapsible
-      open={isExpanded}
-      onOpenChange={setIsExpanded}
-    >
+    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <div className="border border-border/50 rounded-lg bg-muted/30">
         {/* Build Header - More Compact */}
         <div className="flex items-center gap-2 px-3 pt-2">
@@ -172,7 +215,7 @@ function BuildCardComponent({
 
           <div className="flex-1 min-w-0 flex items-center gap-3 px-6">
             <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none">
-              {t.ui('buildCard.buildLabel')} {buildIndex}
+              {t.ui("buildCard.buildLabel")} {buildIndex}
             </span>
             <Input
               value={localName}
@@ -195,7 +238,9 @@ function BuildCardComponent({
             </TooltipTrigger>
             <TooltipContent>
               <span className="whitespace-pre-line">
-                {validation.isValid ? t.ui('buildCard.buildComplete') : validation.warningMessage}
+                {validation.isValid
+                  ? t.ui("buildCard.buildComplete")
+                  : validation.warningMessage}
               </span>
             </TooltipContent>
           </Tooltip>
@@ -204,18 +249,30 @@ function BuildCardComponent({
             <LightweightSelect
               value={build.composition}
               onValueChange={(value) => {
-                const composition = value as '4pc' | '2pc+2pc';
+                const composition = value as "4pc" | "2pc+2pc";
                 // Clear opposite composition fields when switching
-                if (composition === '4pc') {
-                  handleBuildChange({ composition, halfSet1: undefined, halfSet2: undefined });
+                if (composition === "4pc") {
+                  handleBuildChange({
+                    composition,
+                    halfSet1: undefined,
+                    halfSet2: undefined,
+                  });
                 } else {
                   handleBuildChange({ composition, artifactSet: undefined });
                 }
               }}
-              className="w-32 h-7 text-sm"
             >
-              <LightweightSelectItem value="4pc">{t.ui('buildCard.4pc')}</LightweightSelectItem>
-              <LightweightSelectItem value="2pc+2pc">{t.ui('buildCard.2pc+2pc')}</LightweightSelectItem>
+              <LightweightSelectTrigger className="w-32 h-7 text-sm">
+                <LightweightSelectValue />
+              </LightweightSelectTrigger>
+              <LightweightSelectContent>
+                <LightweightSelectItem value="4pc">
+                  {t.ui("buildCard.4pc")}
+                </LightweightSelectItem>
+                <LightweightSelectItem value="2pc+2pc">
+                  {t.ui("buildCard.2pc+2pc")}
+                </LightweightSelectItem>
+              </LightweightSelectContent>
             </LightweightSelect>
           ) : (
             <span
@@ -244,11 +301,7 @@ function BuildCardComponent({
           </Button>
 
           <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="p-1 h-7 w-7"
-            >
+            <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
               {isExpanded ? (
                 <ChevronUp className="w-4 h-4" />
               ) : (
@@ -264,30 +317,38 @@ function BuildCardComponent({
             <div className="flex gap-3 items-center justify-center">
               {/* Artifact Set Selection - Left Side */}
               <div className="flex-shrink-0 w-36">
-                {build.composition === '4pc' ? (
+                {build.composition === "4pc" ? (
                   <div className="w-full h-full flex items-center justify-center">
                     <ArtifactSelect
-                      value={build.artifactSet || ''}
-                      onValueChange={(value) => handleBuildChange({ artifactSet: value })}
-                      placeholder={t.ui('buildCard.selectSet')}
+                      value={build.artifactSet || ""}
+                      onValueChange={(value) =>
+                        handleBuildChange({ artifactSet: value })
+                      }
+                      placeholder={t.ui("buildCard.selectSet")}
                     />
                   </div>
                 ) : (
                   <div className="w-full h-full flex-col items-center justify-center">
                     <ArtifactSelectHalf
                       value={build.halfSet1}
-                      onValueChange={(value) => handleBuildChange({ halfSet1: value })}
-                      placeholder={t.ui('buildCard.effect1')}
+                      onValueChange={(value) =>
+                        handleBuildChange({ halfSet1: value })
+                      }
+                      placeholder={t.ui("buildCard.effect1")}
                     />
 
-                      <div className="flex justify-center">
-                        <span className="text-lg text-muted-foreground select-none">+</span>
-                      </div>
+                    <div className="flex justify-center">
+                      <span className="text-lg text-muted-foreground select-none">
+                        +
+                      </span>
+                    </div>
 
                     <ArtifactSelectHalf
                       value={build.halfSet2}
-                      onValueChange={(value) => handleBuildChange({ halfSet2: value })}
-                      placeholder={t.ui('buildCard.effect2')}
+                      onValueChange={(value) =>
+                        handleBuildChange({ halfSet2: value })
+                      }
+                      placeholder={t.ui("buildCard.effect2")}
                     />
                   </div>
                 )}
@@ -307,7 +368,9 @@ function BuildCardComponent({
                       </Label>
                       <StatSelect
                         values={build[slot]}
-                        onValuesChange={(values) => handleBuildChange({ [slot]: values as MainStat[] })}
+                        onValuesChange={(values) =>
+                          handleBuildChange({ [slot]: values as MainStat[] })
+                        }
                         options={localStatPools[slot]}
                         maxLength={3}
                       />
@@ -318,29 +381,42 @@ function BuildCardComponent({
                 {/* Substats Row - Bottom Unit */}
                 <div className="space-y-1">
                   <Label className="text-xs font-medium text-muted-foreground select-none">
-                    {t.ui('buildCard.substats')}
+                    {t.ui("buildCard.substats")}
                   </Label>
                   <div className="flex items-center justify-between">
                     <StatSelect
                       values={build.substats}
-                      onValuesChange={(values) => handleBuildChange({ substats: values as SubStat[] })}
+                      onValuesChange={(values) =>
+                        handleBuildChange({ substats: values as SubStat[] })
+                      }
                       options={statPools.substat}
                       maxLength={5}
                     />
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-muted-foreground select-none">{t.ui('buildCard.atLeast')}</span>
+                      <span className="text-xs text-muted-foreground select-none">
+                        {t.ui("buildCard.atLeast")}
+                      </span>
                       <Input
                         type="number"
                         min="1"
                         max={Math.min(build.substats.length, 4)}
-                        value={build.kOverride || ''}
-                        onChange={(e) => handleBuildChange({
-                          kOverride: e.target.value ? parseInt(e.target.value) : undefined
-                        })}
+                        value={build.kOverride || ""}
+                        onChange={(e) =>
+                          handleBuildChange({
+                            kOverride: e.target.value
+                              ? parseInt(e.target.value)
+                              : undefined,
+                          })
+                        }
                         className="w-12 h-6 text-xs border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        placeholder={Math.min(build.substats.length, 4).toString()}
+                        placeholder={Math.min(
+                          build.substats.length,
+                          4,
+                        ).toString()}
                       />
-                      <span className="text-xs text-muted-foreground select-none">{t.ui('buildCard.affixes')}</span>
+                      <span className="text-xs text-muted-foreground select-none">
+                        {t.ui("buildCard.affixes")}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -361,4 +437,3 @@ export const BuildCard = memo(BuildCardComponent, (prevProps, nextProps) => {
     // onDelete and onDuplicate are not compared since they should be stable from parent
   );
 });
-

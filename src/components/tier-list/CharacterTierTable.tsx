@@ -1,16 +1,23 @@
-import type { Character, TierAssignment, TierCustomization } from '@/data/types';
-import { Element, elements } from '@/data/types';
-import { characters } from '@/data/resources';
-import { charactersById } from '@/data/constants';
-import { TierTable } from './TierTable';
-import { TierItemData } from './TierItem';
-import { cn } from '@/lib/utils';
-import { RARITY_COLORS, ELEMENT_COLORS, LAYOUT } from '@/constants/theme';
-import { elementResourcesByName, weaponResourcesByName } from '@/data/constants';
-import { getAssetUrl } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTierStore } from '@/stores/useTierStore';
-import { CharacterTooltip } from './CharacterTooltip';
+import type {
+  Character,
+  TierAssignment,
+  TierCustomization,
+} from "@/data/types";
+import { Element, elements } from "@/data/types";
+import { characters } from "@/data/resources";
+import { charactersById } from "@/data/constants";
+import { TierTable } from "./TierTable";
+import { TierItemData } from "./TierItem";
+import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import {
+  elementResourcesByName,
+  weaponResourcesByName,
+} from "@/data/constants";
+import { getAssetUrl } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTierStore } from "@/stores/useTierStore";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 
 interface CharacterTierTableProps {
   tierAssignments: TierAssignment;
@@ -35,24 +42,24 @@ export default function CharacterTierTable({
   const showWeapons = useTierStore((state) => state.showWeapons);
   const { t } = useLanguage();
 
-  const renderHeader = (element: string, count: number) => {
+  const renderHeader = (group: string, count: number) => {
     return (
       <div
-        key={element}
+        key={group}
         className={cn(
-          LAYOUT.CENTER_BOX,
-          ELEMENT_COLORS[element as keyof typeof ELEMENT_COLORS],
-          LAYOUT.GRID_BORDER,
-          'rounded-tl-md rounded-tr-md'
+          THEME.layout.centerBox,
+          THEME.element.bg[group as Element],
+          THEME.layout.gridBorder,
+          "rounded-tl-md rounded-tr-md",
         )}
       >
         <img
-          src={getAssetUrl(elementResourcesByName[element as Element].imagePath)}
+          src={getAssetUrl(elementResourcesByName[group as Element].imagePath)}
           className="w-6 h-6 mr-2 brightness-110 contrast-125 object-contain"
-          alt={t.element(element)}
+          alt={t.element(group)}
         />
-        <span className={cn(LAYOUT.LABEL_TEXT, 'text-lg')}>
-          {t.element(element)} ({count})
+        <span className={cn(THEME.layout.labelText, "text-lg")}>
+          {t.element(group)} ({count})
         </span>
       </div>
     );
@@ -63,14 +70,14 @@ export default function CharacterTierTable({
   const getOverlay = (character: Character) => {
     if (!showWeapons) return null;
     return (
-      <div className={LAYOUT.WEAPON_ICON_CONTAINER}>
-        <div className={LAYOUT.WEAPON_ICON_BG}>
+      <div className={THEME.layout.weaponIconContainer}>
+        <div className={THEME.layout.weaponIconBg}>
           <img
             src={getAssetUrl(
-              weaponResourcesByName[character.weaponType].imagePath
+              weaponResourcesByName[character.weaponType].imagePath,
             )}
             alt={t.weaponType(character.weaponType)}
-            className={LAYOUT.WEAPON_ICON}
+            className={THEME.layout.weaponIcon}
             draggable={false}
           />
         </div>
@@ -84,10 +91,7 @@ export default function CharacterTierTable({
   const renderPreview = (character: Character) => {
     return (
       <div
-        className={cn(
-          LAYOUT.ITEM_CARD,
-          RARITY_COLORS[character.rarity]
-        )}
+        className={cn(THEME.layout.itemCard, THEME.rarity.bg[character.rarity])}
       >
         <img
           src={getAssetUrl(character.imagePath)}
@@ -96,14 +100,14 @@ export default function CharacterTierTable({
           draggable={false}
         />
         {showWeapons && (
-          <div className={LAYOUT.WEAPON_ICON_CONTAINER}>
-            <div className={LAYOUT.WEAPON_ICON_BG}>
+          <div className={THEME.layout.weaponIconContainer}>
+            <div className={THEME.layout.weaponIconBg}>
               <img
                 src={getAssetUrl(
-                  weaponResourcesByName[character.weaponType].imagePath
+                  weaponResourcesByName[character.weaponType].imagePath,
                 )}
                 alt={t.weaponType(character.weaponType)}
-                className={LAYOUT.WEAPON_ICON}
+                className={THEME.layout.weaponIcon}
                 draggable={false}
               />
             </div>
@@ -125,10 +129,10 @@ export default function CharacterTierTable({
 
   const getGroupCount = (
     element: string,
-    itemsPerTier: { [tier: string]: Character[] }
+    itemsPerTier: { [tier: string]: Character[] },
   ) => {
     return Object.entries(itemsPerTier)
-      .filter(([tier]) => tier !== 'Pool')
+      .filter(([tier]) => tier !== "Pool")
       .reduce((sum, [, chars]) => {
         return sum + chars.filter((c) => c.element === element).length;
       }, 0);
@@ -138,15 +142,15 @@ export default function CharacterTierTable({
     if (charactersById[overId]) {
       return charactersById[overId].element === activeChar.element;
     }
-    if (overId.includes('-')) {
-      const [, element] = overId.split('-');
+    if (overId.includes("-")) {
+      const [, element] = overId.split("-");
       return element === activeChar.element;
     }
     return false;
   };
 
   const filterItem = (character: Character) => {
-    if (character.id.startsWith('traveler') && !showTravelers) {
+    if (character.id.startsWith("traveler") && !showTravelers) {
       return false;
     }
     return true;
@@ -180,4 +184,3 @@ export default function CharacterTierTable({
     />
   );
 }
-

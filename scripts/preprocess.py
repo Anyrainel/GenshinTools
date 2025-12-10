@@ -17,10 +17,6 @@ class I18nArtifactData(TypedDict):
     effects: EffectData
 
 
-class ArtifactInput(TypedDict):
-    id: str
-
-
 class HalfSet(TypedDict):
     id: int
     setIds: list[str]
@@ -58,7 +54,7 @@ def normalize_effect_text(text: str, language: str) -> str:
 
 
 def extract_unique_2pc_effects(
-    artifacts: list[ArtifactInput], i18n_data: dict[str, dict[str, I18nArtifactData]]
+    artifact_ids: list[str], artifact_data: dict[str, I18nArtifactData]
 ) -> list[HalfSet]:
     """
     Extract unique 2pc effects from i18n data.
@@ -67,18 +63,18 @@ def extract_unique_2pc_effects(
     """
     half_sets: list[HalfSet] = []
     effect_text_map: dict[str, int] = {}
-    artifact_data: dict[str, I18nArtifactData] = i18n_data.get("artifacts", {})
     next_id: int = 1
 
-    filtered_artifacts: list[ArtifactInput] = [
-        a for a in artifacts if a["id"] not in ARTIFACT_SKIP_LIST
-    ]
+    filtered_artifact_ids: list[str] = [a for a in artifact_ids if a not in ARTIFACT_SKIP_LIST]
 
-    for artifact in reversed(filtered_artifacts):
-        artifact_id: str = artifact["id"]
+    for artifact_id in reversed(filtered_artifact_ids):
         data: I18nArtifactData | None = artifact_data.get(artifact_id)
 
-        if not data or not data.get("effects", {}).get("en") or not data.get("effects", {}).get("zh"):
+        if (
+            not data
+            or not data.get("effects", {}).get("en")
+            or not data.get("effects", {}).get("zh")
+        ):
             continue
 
         effects_en: list[str] = data["effects"]["en"]
@@ -123,19 +119,17 @@ def extract_unique_2pc_effects(
     return half_sets
 
 
-def process_scraped_data(
-    characters: list[dict[str, object]],
-    artifacts: list[ArtifactInput],
-    i18n_data: dict[str, dict[str, I18nArtifactData]],
+def process_artifact_effects(
+    artifact_ids: list[str],
+    artifact_i18n_data: dict[str, I18nArtifactData],
 ) -> list[HalfSet]:
     """
     Process scraped data to compute half sets.
     This function is called by scrape_hoyolab.py after scraping is complete.
     """
-    print("Processing scraped data to compute half sets...")
-    print(f"Computing half sets from {len(artifacts)} artifacts...")
+    print(f"Computing half sets from {len(artifact_ids)} artifacts...")
 
-    half_sets: list[HalfSet] = extract_unique_2pc_effects(artifacts, i18n_data)
+    half_sets: list[HalfSet] = extract_unique_2pc_effects(artifact_ids, artifact_i18n_data)
 
     print(f"Generated {len(half_sets)} unique half sets:")
     for hs in half_sets:

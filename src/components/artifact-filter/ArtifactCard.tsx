@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { ArtifactSetConfigs } from '@/data/types';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { ArtifactSetConfigs } from "@/data/types";
 
-import { getAssetUrl } from '@/lib/utils';
-import { ArtifactConfigCard } from './ArtifactConfigCard';
+import { getAssetUrl } from "@/lib/utils";
+import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
   setId: string;
@@ -12,7 +12,12 @@ interface ArtifactCardProps {
   onJumpToCharacter: (characterId: string) => void;
 }
 
-export function ArtifactCard({ setId, setImagePath, filter, onJumpToCharacter }: ArtifactCardProps) {
+export function ArtifactCard({
+  setId,
+  setImagePath,
+  filter,
+  onJumpToCharacter,
+}: ArtifactCardProps) {
   const { t } = useLanguage();
   const effects = t.artifactEffects(setId);
 
@@ -32,7 +37,7 @@ export function ArtifactCard({ setId, setImagePath, filter, onJumpToCharacter }:
               </CardTitle>
             </div>
             <p className="text-xs italic text-muted-foreground truncate pr-4">
-              <span className="font-bold">[2]</span> {effects[0]}{' '}
+              <span className="font-bold">[2]</span> {effects[0]}{" "}
               <span className="font-bold">[4]</span> {effects[1]}
             </p>
           </div>

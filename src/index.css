@@ -51,14 +51,37 @@
     --sidebar-ring: 45 100% 65%;
 
     /* Custom gradients */
-    --gradient-mystical: linear-gradient(135deg, hsl(260 50% 25%) 0%, hsl(220 25% 12%) 50%, hsl(200 60% 25%) 100%);
-    --gradient-mystical-reverse: linear-gradient(135deg, hsl(200 40% 16%) 0%, hsl(220 20% 14%) 50%, hsl(260 30% 16%) 100%);
-    --gradient-golden: linear-gradient(135deg, hsl(45 100% 65%) 0%, hsl(35 80% 55%) 100%);
-    --gradient-artifact: linear-gradient(135deg, hsl(220 25% 12%) 0%, hsl(260 30% 15%) 100%);
-    
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(260 50% 25%) 0%,
+      hsl(220 25% 12%) 50%,
+      hsl(200 60% 25%) 100%
+    );
+    --gradient-mystical-reverse: linear-gradient(
+      135deg,
+      hsl(200 40% 16%) 0%,
+      hsl(220 20% 14%) 50%,
+      hsl(260 30% 16%) 100%
+    );
+    --gradient-golden: linear-gradient(
+      135deg,
+      hsl(45 100% 65%) 0%,
+      hsl(35 80% 55%) 100%
+    );
+    --gradient-artifact: linear-gradient(
+      135deg,
+      hsl(220 25% 12%) 0%,
+      hsl(260 30% 15%) 100%
+    );
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 }
 
@@ -69,80 +92,16 @@
 
   body {
     @apply bg-background text-foreground;
+    /* Prevent page-level scrolling */
     overflow: hidden;
-      /* Prevent page-level scrolling */
 
     /* Custom scrollbar styles - completely hidden */
     .overflow-y-auto {
-      scrollbar-gutter: auto;
+      scrollbar-width: none;
     }
-    
+
     .overflow-y-auto::-webkit-scrollbar {
-      width: 0px;
-      background: transparent;
+      display: none;
     }
-    
-    .overflow-y-auto::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    .overflow-y-auto::-webkit-scrollbar-thumb {
-      background-color: transparent;
-    }
-  }
-}
-
-@layer utilities {
-  /* Character rarity background gradients */
-  .bg-rarity-1 {
-    background: linear-gradient(180deg, #6a6d74, #868586);
-  }
-
-  .bg-rarity-2 {
-    background: linear-gradient(180deg, #4b6c67, #519072);
-  }
-
-  .bg-rarity-3 {
-    background: linear-gradient(180deg, #567496, #5392b8);
-  }
-
-  .bg-rarity-4 {
-    background: linear-gradient(180deg, #5e5789, #9c75b7);
-  }
-
-  .bg-rarity-5 {
-    background: linear-gradient(180deg, #945c2c, #b27330);
-  }
-
-  /* Character rarity text colors (using end colors from gradients) */
-  .text-rarity-1 {
-    color: #868586;
-  }
-
-  .text-rarity-2 {
-    color: #519072;
-  }
-
-  .text-rarity-3 {
-    color: #5392b8;
-  }
-
-  .text-rarity-4 {
-    color: #9c75b7;
-  }
-
-  .text-rarity-5 {
-    color: #b27330;
-  }
-}
-
-/* Additional styles for the tierlist */
-@layer components {
-  .character-card-dragging {
-    @apply scale-110 opacity-70 shadow-lg;
-  }
-  
-  .tier-row-highlight {
-    @apply bg-blue-100 border-blue-400;
   }
 }

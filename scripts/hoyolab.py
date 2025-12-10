@@ -1,7 +1,8 @@
 import re
 import time
-from typing import TypedDict, List, Optional, Tuple, Set, Dict
-from playwright.sync_api import Page, Locator
+from typing import TypedDict
+
+from playwright.sync_api import Locator, Page
 
 from preprocess import ARTIFACT_SKIP_LIST
 
@@ -18,7 +19,7 @@ class ScrapedArtifact(TypedDict):
     id: str
     name: str
     image_url: str
-    effects: List[str]
+    effects: list[str]
 
 
 class ScrapedWeapon(TypedDict):
@@ -37,7 +38,7 @@ class ResourceOutput(TypedDict):
     imagePath: str
 
 
-VALID_ELEMENTS: Set[str] = {
+VALID_ELEMENTS: set[str] = {
     "Pyro",
     "Hydro",
     "Electro",
@@ -46,7 +47,7 @@ VALID_ELEMENTS: Set[str] = {
     "Geo",
     "Dendro",
 }
-VALID_WEAPONS: Set[str] = {"Sword", "Claymore", "Polearm", "Catalyst", "Bow"}
+VALID_WEAPONS: set[str] = {"Sword", "Claymore", "Polearm", "Catalyst", "Bow"}
 WEAPON_TYPE_MAP = {
     "Sword": "Sword",
     "Claymore": "Claymore",
@@ -92,7 +93,7 @@ IGNORE_KEYS = {
     "副属性",
     "版本发布",
 }
-PLACEHOLDER_PATTERNS: List[str] = [
+PLACEHOLDER_PATTERNS: list[str] = [
     "avatar.7663739.png",
     "_nuxt/img/avatar",
     "placeholder",
@@ -131,7 +132,7 @@ def extract_element_from_src(src: str) -> str:
     return "Pyro"
 
 
-def extract_rarity_from_class(class_str: str) -> Optional[int]:
+def extract_rarity_from_class(class_str: str) -> int | None:
     if "d-img-level-5" in class_str:
         return 5
     elif "d-img-level-4" in class_str:
@@ -152,9 +153,7 @@ def navigate_with_language(page: Page, base_url: str, language: str = "en") -> b
         return False
 
 
-def scroll_until_all_loaded(
-    page: Page, card_selector: str, max_scrolls: int = 20
-) -> int:
+def scroll_until_all_loaded(page: Page, card_selector: str, max_scrolls: int = 20) -> int:
     print("Scrolling to load all cards...")
 
     previous_count = 0
@@ -224,9 +223,7 @@ def wait_for_images_to_load(page: Page, selector: str, max_wait: int = 30) -> bo
     return False
 
 
-def extract_character_from_card(
-    card: Locator, index: int
-) -> Optional[ScrapedCharacter]:
+def extract_character_from_card(card: Locator, index: int) -> ScrapedCharacter | None:
     try:
         name_el = card.locator("div.character-card-name span").first
         if not name_el.count():
@@ -264,7 +261,8 @@ def extract_character_from_card(
         original_image_url = char_img.get_attribute("src")
         if not original_image_url or is_placeholder_image(original_image_url):
             print(
-                f"ERROR: {name} has placeholder image: {original_image_url if original_image_url else 'None'}"
+                f"ERROR: {name} has placeholder image: "
+                f"{original_image_url if original_image_url else 'None'}"
             )
             return None
         cleaned_image_url = clean_image_url(original_image_url)
@@ -280,7 +278,7 @@ def extract_character_from_card(
     }
 
 
-def scrape_characters(page: Page, language: str = "en") -> List[ScrapedCharacter]:
+def scrape_characters(page: Page, language: str = "en") -> list[ScrapedCharacter]:
     print(f"Scraping characters in {language}...")
     character_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/2"
 
@@ -293,19 +291,20 @@ def scrape_characters(page: Page, language: str = "en") -> List[ScrapedCharacter
     character_cards = page.locator("article.character-card").all()
     print(f"Found {len(character_cards)} character cards")
 
-    characters: List[ScrapedCharacter] = []
+    characters: list[ScrapedCharacter] = []
     for i, card in enumerate(character_cards):
         char_data = extract_character_from_card(card, i)
         if char_data:
             characters.append(char_data)
             print(
-                f"Character {i + 1}: {char_data['name']} ({char_data['element']}, {char_data['rarity']}*)"
+                f"Character {i + 1}: {char_data['name']} "
+                f"({char_data['element']}, {char_data['rarity']}*)"
             )
 
     return characters
 
 
-def extract_artifact_from_card(card: Locator, index: int) -> Optional[ScrapedArtifact]:
+def extract_artifact_from_card(card: Locator, index: int) -> ScrapedArtifact | None:
     name: str = ""
     try:
         name_el = card.locator("div.artifact-card-name").first
@@ -331,7 +330,7 @@ def extract_artifact_from_card(card: Locator, index: int) -> Optional[ScrapedArt
         if len(desc_items) < 2:
             return None
 
-        effects: List[str] = []
+        effects: list[str] = []
         for item in desc_items[:2]:
             detail_el = item.locator("div.artifact-card-desc-detail").first
             effect_text = detail_el.text_content()
@@ -354,7 +353,7 @@ def extract_artifact_from_card(card: Locator, index: int) -> Optional[ScrapedArt
         return None
 
 
-def scrape_artifacts(page: Page, language: str = "en") -> List[ScrapedArtifact]:
+def scrape_artifacts(page: Page, language: str = "en") -> list[ScrapedArtifact]:
     print(f"Scraping artifacts in {language}...")
     artifact_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/5"
 
@@ -367,7 +366,7 @@ def scrape_artifacts(page: Page, language: str = "en") -> List[ScrapedArtifact]:
     artifact_cards = page.locator("div.artifact-card").all()
     print(f"Found {len(artifact_cards)} artifact cards")
 
-    artifacts: List[ScrapedArtifact] = []
+    artifacts: list[ScrapedArtifact] = []
     for i, card in enumerate(artifact_cards):
         art_data = extract_artifact_from_card(card, i)
         if art_data:
@@ -377,7 +376,7 @@ def scrape_artifacts(page: Page, language: str = "en") -> List[ScrapedArtifact]:
     return artifacts
 
 
-def extract_weapon_from_card(card: Locator, index: int) -> Optional[ScrapedWeapon]:
+def extract_weapon_from_card(card: Locator, index: int) -> ScrapedWeapon | None:
     name: str = ""
     try:
         name_el = card.locator("div.weapon-card-name span").first
@@ -443,13 +442,11 @@ def extract_weapon_from_card(card: Locator, index: int) -> Optional[ScrapedWeapo
     }
 
 
-def scrape_weapon_detail_page(page: Page) -> Dict[str, str]:
+def scrape_weapon_detail_page(page: Page) -> dict[str, str]:
     try:
         page.wait_for_selector("div.base-info-content", timeout=5000)
     except Exception as e:
-        print(
-            f"Warning: Could not find base-info-content on weapon detail page: {str(e)}"
-        )
+        print(f"Warning: Could not find base-info-content on weapon detail page: {str(e)}")
         return {}
 
     items = page.locator("div.base-info-item").all()
@@ -479,7 +476,7 @@ def scrape_weapon_detail_page(page: Page) -> Dict[str, str]:
     return data
 
 
-def scrape_weapons(page: Page, language: str = "en") -> List[ScrapedWeapon]:
+def scrape_weapons(page: Page, language: str = "en") -> list[ScrapedWeapon]:
     print(f"Scraping weapons in {language}...")
     weapon_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/4"
 
@@ -492,7 +489,7 @@ def scrape_weapons(page: Page, language: str = "en") -> List[ScrapedWeapon]:
     weapon_cards = page.locator(".genshin-show-weapon-item").all()
     print(f"Found {len(weapon_cards)} weapon cards")
 
-    weapons: List[ScrapedWeapon] = []
+    weapons: list[ScrapedWeapon] = []
     for i, card in enumerate(weapon_cards):
         weapon_data = extract_weapon_from_card(card, i)
         if not weapon_data:
@@ -537,15 +534,15 @@ def scrape_weapons(page: Page, language: str = "en") -> List[ScrapedWeapon]:
 
 def scrape_elements_and_weapons(
     page: Page, language: str = "en"
-) -> Tuple[List[ResourceOutput], List[ResourceOutput]]:
+) -> tuple[list[ResourceOutput], list[ResourceOutput]]:
     print(f"Scraping elements and weapons in {language}...")
     character_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/2"
 
     if not navigate_with_language(page, character_url, language):
         return [], []
 
-    elements: List[ResourceOutput] = []
-    weapon_types: List[ResourceOutput] = []
+    elements: list[ResourceOutput] = []
+    weapon_types: list[ResourceOutput] = []
 
     try:
         # Looking for filter icons

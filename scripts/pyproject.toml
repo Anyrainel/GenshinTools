@@ -12,4 +12,31 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pyright>=1.1.407",
+    "ruff>=0.8.0",
 ]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pyright]
+include = ["scripts"]
+exclude = ["**/__pycache__", "**/node_modules"]
+pythonVersion = "3.13"
+typeCheckingMode = "basic"

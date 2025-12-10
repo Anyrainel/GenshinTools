@@ -1,6 +1,7 @@
-from typing import TypedDict, List
 import re
-from playwright.sync_api import sync_playwright, Route
+from typing import TypedDict
+
+from playwright.sync_api import Route, sync_playwright
 
 
 class CharacterData(TypedDict):
@@ -33,10 +34,10 @@ def clean_image_url(image_url: str) -> str:
 
 
 def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
-    """Get character data from Fandom wiki and return it as a dictionary keyed by (element, rarity, name)"""
+    """Get character data from Fandom wiki and return a dict keyed by (element, rarity, name)."""
     print("Fetching character data from genshin-impact.fandom.com...")
 
-    characters: List[CharacterData] = []
+    characters: list[CharacterData] = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -45,7 +46,7 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
         # This mimics the behavior of 'requests' which the user noted was fast.
         context = browser.new_context(
             java_script_enabled=False,
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",  # noqa: E501
         )
         page = context.new_page()
 
@@ -104,11 +105,7 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                         continue
                     name = name_text.strip()
 
-                    if (
-                        not name
-                        or len(name) < MIN_NAME_LENGTH
-                        or len(name) > MAX_NAME_LENGTH
-                    ):
+                    if not name or len(name) < MIN_NAME_LENGTH or len(name) > MAX_NAME_LENGTH:
                         continue
                     if SKIP_TRAVELER and name.startswith("Traveler"):
                         continue
@@ -169,9 +166,7 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                     if not icon_img.count():
                         continue
 
-                    image_url = icon_img.get_attribute(
-                        "data-src"
-                    ) or icon_img.get_attribute("src")
+                    image_url = icon_img.get_attribute("data-src") or icon_img.get_attribute("src")
                     if not image_url or image_url.startswith("data:image/gif"):
                         pass
 
@@ -192,7 +187,8 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
 
                     characters.append(char_data)
                     print(
-                        f"Scraped: {name} ({element}, {weaponType}, {region}, {rarity}★, {releaseDate})"
+                        f"Scraped: {name} ({element}, {weaponType}, "
+                        f"{region}, {rarity}★, {releaseDate})"
                     )
 
                 except Exception as e:

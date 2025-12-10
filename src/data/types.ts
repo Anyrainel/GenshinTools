@@ -1,26 +1,113 @@
-export type Language = 'en' | 'zh';
+export type Language = "en" | "zh";
 
 export type Rarity = 1 | 2 | 3 | 4 | 5;
 
-export type Element = 'Pyro' | 'Hydro' | 'Electro' | 'Cryo' | 'Anemo' | 'Geo' | 'Dendro';
-export const elements: Element[] = ['Pyro', 'Hydro', 'Electro', 'Cryo', 'Anemo', 'Geo', 'Dendro'];
+export type Element =
+  | "Pyro"
+  | "Hydro"
+  | "Electro"
+  | "Cryo"
+  | "Anemo"
+  | "Geo"
+  | "Dendro";
+export const elements: Element[] = [
+  "Pyro",
+  "Hydro",
+  "Electro",
+  "Cryo",
+  "Anemo",
+  "Geo",
+  "Dendro",
+];
 
-export type WeaponType = 'Sword' | 'Claymore' | 'Polearm' | 'Catalyst' | 'Bow';
-export const weaponTypes: WeaponType[] = ['Sword', 'Claymore', 'Polearm', 'Catalyst', 'Bow'];
+export type WeaponType = "Sword" | "Claymore" | "Polearm" | "Catalyst" | "Bow";
+export const weaponTypes: WeaponType[] = [
+  "Sword",
+  "Claymore",
+  "Polearm",
+  "Catalyst",
+  "Bow",
+];
 
-export type Region = 'Mondstadt' | 'Liyue' | 'Inazuma' | 'Sumeru' | 'Fontaine' | 'Natlan' | 'Snezhnaya' | 'Nod-Krai' | 'None';
-export const regions: Region[] = ['Mondstadt', 'Liyue', 'Inazuma', 'Sumeru', 'Fontaine', 'Natlan', 'Snezhnaya', 'Nod-Krai', 'None'];
+export type Region =
+  | "Mondstadt"
+  | "Liyue"
+  | "Inazuma"
+  | "Sumeru"
+  | "Fontaine"
+  | "Natlan"
+  | "Snezhnaya"
+  | "Nod-Krai"
+  | "None";
+export const regions: Region[] = [
+  "Mondstadt",
+  "Liyue",
+  "Inazuma",
+  "Sumeru",
+  "Fontaine",
+  "Natlan",
+  "Snezhnaya",
+  "Nod-Krai",
+  "None",
+];
 
-export type MainStat = 'cr' | 'cd' | 'atk%' | 'hp%' | 'def%' | 'em' | 'er' | 'pyro%' | 'hydro%' | 'anemo%' | 'electro%' | 'dendro%' | 'cryo%' | 'geo%' | 'phys%' | 'heal%' | 'atk' | 'hp';
-export type SubStat = 'cr' | 'cd' | 'atk%' | 'hp%' | 'def%' | 'er' | 'em' | 'atk' | 'hp' | 'def';
-export type MainStatPlus = MainStat | 'elemental%' | 'cr/cd';
+export type MainStat =
+  | "cr"
+  | "cd"
+  | "atk%"
+  | "hp%"
+  | "def%"
+  | "em"
+  | "er"
+  | "pyro%"
+  | "hydro%"
+  | "anemo%"
+  | "electro%"
+  | "dendro%"
+  | "cryo%"
+  | "geo%"
+  | "phys%"
+  | "heal%"
+  | "atk"
+  | "hp";
+export type SubStat =
+  | "cr"
+  | "cd"
+  | "atk%"
+  | "hp%"
+  | "def%"
+  | "er"
+  | "em"
+  | "atk"
+  | "hp"
+  | "def";
+export type MainStatPlus = MainStat | "elemental%" | "cr/cd";
 export const mainStatsPlus: MainStatPlus[] = [
-  'cr', 'cd', 'atk%', 'hp%', 'def%', 'em', 'er', 'pyro%', 'hydro%', 'anemo%', 'electro%', 'dendro%', 'cryo%', 'geo%', 'phys%', 'heal%', 'atk', 'hp', 'elemental%', 'cr/cd'
+  "cr",
+  "cd",
+  "atk%",
+  "hp%",
+  "def%",
+  "em",
+  "er",
+  "pyro%",
+  "hydro%",
+  "anemo%",
+  "electro%",
+  "dendro%",
+  "cryo%",
+  "geo%",
+  "phys%",
+  "heal%",
+  "atk",
+  "hp",
+  "elemental%",
+  "cr/cd",
 ] as const;
 
-export type MainStatSlot = 'sands' | 'goblet' | 'circlet';
-export const mainStatSlots: MainStatSlot[] = ['sands', 'goblet', 'circlet'];
-export type Slot = MainStatSlot | 'flower' | 'plume';
+export type MainStatSlot = "sands" | "goblet" | "circlet";
+export const mainStatSlots: MainStatSlot[] = ["sands", "goblet", "circlet"];
+export type Slot = MainStatSlot | "flower" | "plume";
 
 export type Character = {
   id: string;
@@ -44,6 +131,7 @@ export type Weapon = {
 
 export type ArtifactSet = {
   id: string;
+  rarity: Rarity;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
@@ -72,7 +160,7 @@ export type Build = {
   characterId: string; // Back link to character
   name: string;
   visible: boolean;
-  composition: '4pc' | '2pc+2pc';
+  composition: "4pc" | "2pc+2pc";
   artifactSet?: string; // for 4pc
   halfSet1?: number; // for 2pc+2pc - ID of the first half set
   halfSet2?: number; // for 2pc+2pc - ID of the second half set
@@ -100,13 +188,13 @@ export type BuildGroup = {
 
 export type ComputeOptions = {
   // Skip CR+CD builds (assume in-game auto-lock)
-  skipCritBuilds?: boolean;           // default: false
+  skipCritBuilds?: boolean; // default: false
   // Simplify certain main stats
-  expandElementalGoblet?: boolean;       // default: true
-  expandCritCirclet?: boolean;        // default: true
+  expandElementalGoblet?: boolean; // default: true
+  expandCritCirclet?: boolean; // default: true
   // Optional merge heuristics
-  mergeSingleFlexVariants?: boolean;  // default: true
-  findRigidCommonSubset?: boolean;    // default: true
+  mergeSingleFlexVariants?: boolean; // default: true
+  findRigidCommonSubset?: boolean; // default: true
 };
 
 export type BuildPayload = {
@@ -148,7 +236,7 @@ export type ArtifactSetConfigs = {
   configurations: SetConfig[];
 };
 
-export const tiers = ['S', 'A', 'B', 'C', 'D'];
+export const tiers = ["S", "A", "B", "C", "D", "Pool"];
 
 export type TierAssignment = {
   [characterId: string]: {
@@ -168,7 +256,7 @@ export type TierListData = {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
   customTitle?: string;
-  language: 'en' | 'zh';
+  language: "en" | "zh";
   author?: string; // Added for export metadata
   description?: string; // Added for export metadata
 };

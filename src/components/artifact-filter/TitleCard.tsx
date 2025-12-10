@@ -1,13 +1,16 @@
-import { memo, useMemo, useCallback } from 'react';
-import { Character } from '@/data/types';
-import { elementResourcesByName, weaponResourcesByName } from '@/data/constants';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
-import { useBuildsStore } from '@/stores/useBuildsStore';
-import { getAssetUrl } from '@/lib/utils';
-import { RARITY_COLORS, TEXT_RARITY_COLORS, TEXT_ELEMENT_COLORS } from '@/constants/theme';
+import { memo, useMemo, useCallback } from "react";
+import { Character } from "@/data/types";
+import {
+  elementResourcesByName,
+  weaponResourcesByName,
+} from "@/data/constants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { getAssetUrl } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
 
 interface TitleCardProps {
   character: Character;
@@ -15,37 +18,53 @@ interface TitleCardProps {
 
 function TitleCardComponent({ character }: TitleCardProps) {
   const { t } = useLanguage();
-  const isHidden = useBuildsStore((state) => !!state.hiddenCharacters[character.id]);
+  const isHidden = useBuildsStore(
+    (state) => !!state.hiddenCharacters[character.id],
+  );
   const toggleHidden = useBuildsStore((state) => state.toggleCharacterHidden);
 
   // Memoize all computed display values
-  const displayName = useMemo(() => t.character(character.id), [t, character.id]);
+  const displayName = useMemo(
+    () => t.character(character.id),
+    [t, character.id],
+  );
 
   const elementImagePath = useMemo(() => {
-    return elementResourcesByName[character.element]?.imagePath || '';
+    return elementResourcesByName[character.element]?.imagePath || "";
   }, [character.element]);
 
   const weaponImagePath = useMemo(() => {
-    return weaponResourcesByName[character.weaponType]?.imagePath || '';
+    return weaponResourcesByName[character.weaponType]?.imagePath || "";
   }, [character.weaponType]);
 
   const rarityColor = useMemo(() => {
-    return RARITY_COLORS[character.rarity];
+    return THEME.rarity.bg[character.rarity];
   }, [character.rarity]);
 
   const rarityTextColor = useMemo(() => {
-    return TEXT_RARITY_COLORS[character.rarity];
+    return THEME.rarity.text[character.rarity];
   }, [character.rarity]);
 
   const elementTextColor = useMemo(() => {
-    return TEXT_ELEMENT_COLORS[character.element];
+    return THEME.element.text[character.element];
   }, [character.element]);
 
-  const elementName = useMemo(() => t.element(character.element), [t, character.element]);
-  const weaponName = useMemo(() => t.weaponType(character.weaponType), [t, character.weaponType]);
-  const regionName = useMemo(() => t.region(character.region), [t, character.region]);
-  const formattedDate = useMemo(() => t.formatDate(character.releaseDate), [t, character.releaseDate]);
-
+  const elementName = useMemo(
+    () => t.element(character.element),
+    [t, character.element],
+  );
+  const weaponName = useMemo(
+    () => t.weaponType(character.weaponType),
+    [t, character.weaponType],
+  );
+  const regionName = useMemo(
+    () => t.region(character.region),
+    [t, character.region],
+  );
+  const formattedDate = useMemo(
+    () => t.formatDate(character.releaseDate),
+    [t, character.releaseDate],
+  );
 
   const handleToggle = useCallback(() => {
     toggleHidden(character.id);
@@ -53,7 +72,9 @@ function TitleCardComponent({ character }: TitleCardProps) {
 
   return (
     <div className="flex items-center gap-4">
-      <div className={`relative w-16 h-16 rounded-lg ${rarityColor} overflow-hidden select-none`}>
+      <div
+        className={`relative w-16 h-16 rounded-lg ${rarityColor} overflow-hidden select-none`}
+      >
         <img
           src={getAssetUrl(character.imagePath)}
           alt={displayName}
@@ -64,21 +85,40 @@ function TitleCardComponent({ character }: TitleCardProps) {
 
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-2">
-          <h3 className={`text-xl font-bold ${isHidden ? 'text-muted-foreground' : 'text-foreground'}`}>{displayName}</h3>
+          <h3
+            className={`text-xl font-bold ${isHidden ? "text-muted-foreground" : "text-foreground"}`}
+          >
+            {displayName}
+          </h3>
           <Button
             type="button"
             variant="ghost"
             size="icon"
             onClick={handleToggle}
             className="h-6 w-6 text-muted-foreground hover:text-foreground"
-            aria-label={isHidden ? t.ui('characterCard.showBuilds') : t.ui('characterCard.hideBuilds')}
-            title={isHidden ? t.ui('characterCard.showBuilds') : t.ui('characterCard.hideBuilds')}
+            aria-label={
+              isHidden
+                ? t.ui("characterCard.showBuilds")
+                : t.ui("characterCard.hideBuilds")
+            }
+            title={
+              isHidden
+                ? t.ui("characterCard.showBuilds")
+                : t.ui("characterCard.hideBuilds")
+            }
           >
-            {isHidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {isHidden ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </Button>
         </div>
         <div className="flex gap-2 flex-wrap items-center">
-          <Badge variant="outline" className={`${elementTextColor} border-current border-2 font-medium flex items-center gap-1`}>
+          <Badge
+            variant="outline"
+            className={`${elementTextColor} border-current border-2 font-medium flex items-center gap-1`}
+          >
             <img
               src={getAssetUrl(elementImagePath)}
               alt={character.element}
@@ -87,10 +127,16 @@ function TitleCardComponent({ character }: TitleCardProps) {
             />
             {elementName}
           </Badge>
-          <Badge variant="outline" className={`${rarityTextColor} border-current border-2 font-semibold`}>
+          <Badge
+            variant="outline"
+            className={`${rarityTextColor} border-current border-2 font-semibold`}
+          >
             ★ {character.rarity}
           </Badge>
-          <Badge variant="outline" className="text-slate-400 border-slate-400 border-2 font-medium capitalize flex items-center gap-1">
+          <Badge
+            variant="outline"
+            className="text-slate-400 border-slate-400 border-2 font-medium capitalize flex items-center gap-1"
+          >
             <img
               src={getAssetUrl(weaponImagePath)}
               alt={character.weaponType}
@@ -99,7 +145,10 @@ function TitleCardComponent({ character }: TitleCardProps) {
             />
             {weaponName}
           </Badge>
-          <Badge variant="outline" className="text-slate-500 border-slate-500 border-2 font-medium capitalize">
+          <Badge
+            variant="outline"
+            className="text-slate-500 border-slate-500 border-2 font-medium capitalize"
+          >
             {regionName}
           </Badge>
           <span className="text-sm text-muted-foreground pl-2">
@@ -115,4 +164,3 @@ export const TitleCard = memo(TitleCardComponent, (prev, next) => {
   // Only re-render if character ID changes (character object should be stable)
   return prev.character.id === next.character.id;
 });
-

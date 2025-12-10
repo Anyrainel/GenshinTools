@@ -11,20 +11,10 @@
           "name": "攻速辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "dahlia"
         }
@@ -39,22 +29,10 @@
           "name": "月感电副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "silken_moons_serenade",
           "kOverride": 3,
           "characterId": "ineffa"
@@ -64,22 +42,10 @@
           "name": "月感电副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "characterId": "ineffa"
@@ -95,23 +61,10 @@
           "name": "月绽放副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "er"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cr",
-            "em"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "er"
-          ],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["cr", "em"],
+          "substats": ["cd", "cr", "em", "er"],
           "artifactSet": "silken_moons_serenade",
           "kOverride": 3,
           "characterId": "lauma"
@@ -121,23 +74,10 @@
           "name": "月绽放副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "er"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cr",
-            "em"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "er"
-          ],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["cr", "em"],
+          "substats": ["cd", "cr", "em", "er"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "characterId": "lauma"
@@ -147,21 +87,10 @@
           "name": "6命月绽放主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "night_of_the_skys_unveiling",
           "characterId": "lauma"
         }
@@ -176,21 +105,10 @@
           "name": "挂水辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "silken_moons_serenade",
           "characterId": "aino"
         }
@@ -205,20 +123,10 @@
           "name": "辅助",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "er"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "citlali"
         },
@@ -227,20 +135,10 @@
           "name": "双辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "er"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "citlali"
         },
@@ -249,20 +147,10 @@
           "name": "6命辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "citlali"
         }
@@ -277,19 +165,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "xilonen"
         },
@@ -298,19 +177,10 @@
           "name": "双辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "instructor",
           "characterId": "xilonen",
           "kOverride": 2
@@ -320,20 +190,10 @@
           "name": "6命输出",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "obsidian_codex",
           "characterId": "xilonen"
         }
@@ -348,21 +208,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "nighttime_whispers_in_the_echoing_woods",
           "characterId": "navia"
         },
@@ -371,21 +220,10 @@
           "name": "6命 仅速切",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "golden_troupe",
           "characterId": "navia"
         }
@@ -400,22 +238,10 @@
           "name": "物伤流",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "phys%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "phys%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "pale_flame",
           "characterId": "freminet"
         },
@@ -424,22 +250,10 @@
           "name": "冰伤流",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "pale_flame",
           "halfSet1": 21,
           "characterId": "freminet",
@@ -456,20 +270,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "song_of_days_past",
           "characterId": "chevreuse"
         },
@@ -478,20 +282,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "chevreuse"
         }
@@ -506,22 +300,10 @@
           "name": "非6命 带芙",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "gaming",
           "kOverride": 3
@@ -531,22 +313,10 @@
           "name": "6命",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "crimson_witch_of_flames",
           "characterId": "gaming",
           "kOverride": 3
@@ -562,21 +332,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "golden_troupe",
           "characterId": "chiori"
         },
@@ -585,21 +344,10 @@
           "name": "6命主副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "chiori"
         }
@@ -614,23 +362,10 @@
           "name": "主C ",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "fragment_of_harmonic_whimsy",
           "characterId": "arlecchino",
           "kOverride": 3
@@ -640,21 +375,10 @@
           "name": "0-1命主C 可选",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "gladiators_finale",
           "characterId": "arlecchino"
         }
@@ -669,19 +393,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "halfSet1": 9,
           "halfSet2": 9,
           "characterId": "xianyun"
@@ -691,19 +406,10 @@
           "name": "辅助",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "characterId": "xianyun",
           "artifactSet": "viridescent_venerer"
         }
@@ -718,22 +424,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "fragment_of_harmonic_whimsy",
           "characterId": "clorinde"
         },
@@ -742,22 +436,10 @@
           "name": "备选 减E技能CD",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "electro%",
-            "atk%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["electro%", "atk%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "thundering_fury",
           "characterId": "clorinde"
         }
@@ -772,22 +454,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "er"],
           "artifactSet": "wanderers_troupe",
           "characterId": "sethos",
           "kOverride": 3
@@ -803,20 +473,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "song_of_days_past",
           "characterId": "sigewinne"
         },
@@ -825,20 +485,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "song_of_days_past",
           "halfSet1": 2,
           "halfSet2": 2,
@@ -855,22 +505,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "unfinished_reverie",
           "characterId": "emilie"
         }
@@ -885,20 +523,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "kachina"
         }
@@ -913,23 +541,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%",
-            "hydro%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "hp%",
-            "em"
-          ],
+          "sands": ["em", "hp%"],
+          "goblet": ["hp%", "hydro%"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "hp%", "em"],
           "artifactSet": "obsidian_codex",
           "kOverride": 3,
           "characterId": "mualani"
@@ -945,21 +560,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "obsidian_codex",
           "characterId": "kinich"
         }
@@ -974,22 +578,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "kOverride": 3,
           "characterId": "ororon"
@@ -1005,20 +597,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "obsidian_codex",
           "characterId": "chasca"
         }
@@ -1033,22 +615,10 @@
           "name": "主副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%", "em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "obsidian_codex",
           "characterId": "mavuika",
           "kOverride": 3
@@ -1064,19 +634,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "lan_yan"
         }
@@ -1091,21 +652,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "long_nights_oath",
           "characterId": "varesa"
         }
@@ -1120,19 +670,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "iansan"
         }
@@ -1147,23 +688,10 @@
           "name": "副C辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "golden_troupe",
           "kOverride": 3,
           "characterId": "escoffier"
@@ -1179,21 +707,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "finale_of_the_deep_galleries",
           "characterId": "skirk"
         },
@@ -1202,20 +719,10 @@
           "name": "主C 下位替代",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "skirk"
         }
@@ -1230,19 +737,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "heal%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["heal%"],
+          "substats": ["atk%", "er"],
           "halfSet1": 9,
           "halfSet2": 15,
           "characterId": "charlotte"
@@ -1258,21 +756,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "wriothesley",
           "kOverride": 3
@@ -1288,22 +775,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%",
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%", "hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "hp%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "neuvillette"
         }
@@ -1318,21 +793,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "lyney"
         }
@@ -1347,22 +811,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "anemo%",
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["anemo%", "atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "lynette"
         },
@@ -1371,20 +823,10 @@
           "name": "辅助 扩散 / 超绽放（染雷）",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "er"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "lynette"
         }
@@ -1399,19 +841,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "halfSet1": 9,
           "halfSet2": 9,
           "characterId": "shenhe"
@@ -1421,19 +854,10 @@
           "name": "辅助 低命可选",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["atk%", "er"],
           "artifactSet": "noblesse_oblige",
           "characterId": "shenhe"
         }
@@ -1448,19 +872,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "deepwood_memories",
           "halfSet1": 2,
           "halfSet2": 2,
@@ -1471,19 +886,10 @@
           "name": "盾辅 草体系",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "deepwood_memories",
           "halfSet1": 2,
           "halfSet2": 2,
@@ -1500,19 +906,10 @@
           "name": "奶辅 草体系",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["hp%", "er"],
           "artifactSet": "deepwood_memories",
           "characterId": "baizhu"
         },
@@ -1521,19 +918,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "deepwood_memories",
           "halfSet1": 2,
           "halfSet2": 2,
@@ -1544,21 +932,10 @@
           "name": "6命副C",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "hp%"],
           "artifactSet": "deepwood_memories",
           "characterId": "baizhu"
         }
@@ -1573,23 +950,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em",
-            "hp%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "hp%"
-          ],
+          "sands": ["em", "hp%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "hp%"],
           "artifactSet": "crimson_witch_of_flames",
           "kOverride": 3,
           "characterId": "hu_tao"
@@ -1605,19 +969,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["hp%", "er"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "zhongli"
         }
@@ -1632,22 +987,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3,
           "characterId": "yelan"
@@ -1657,22 +1000,10 @@
           "name": "6命主副C",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "hp%", "er"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3,
           "halfSet1": 11,
@@ -1690,22 +1021,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "characterId": "cyno"
@@ -1715,22 +1034,10 @@
           "name": "主C 可选",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["electro%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "em", "atk%"],
           "artifactSet": "thundering_fury",
           "kOverride": 3,
           "characterId": "cyno"
@@ -1746,21 +1053,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "desert_pavilion_chronicle",
           "characterId": "wanderer"
         },
@@ -1769,21 +1065,10 @@
           "name": "6命主C",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "echoes_of_an_offering",
           "characterId": "wanderer"
         },
@@ -1792,21 +1077,10 @@
           "name": "主C 下位替代",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "shimenawas_reminiscence",
           "characterId": "wanderer"
         }
@@ -1821,22 +1095,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "characterId": "alhaitham"
@@ -1846,22 +1108,10 @@
           "name": "主C 可选",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "halfSet1": 7,
@@ -1879,22 +1129,10 @@
           "name": "副C辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "dendro%",
-            "em"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["dendro%", "em"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "deepwood_memories",
           "characterId": "nahida"
         },
@@ -1903,22 +1141,10 @@
           "name": "副C辅助 队友深林",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "dendro%",
-            "em"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["dendro%", "em"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "gilded_dreams",
           "characterId": "nahida"
         }
@@ -1933,23 +1159,10 @@
           "name": "4命主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "er"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%", "er"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "characterId": "dehya",
           "kOverride": 3
@@ -1959,20 +1172,10 @@
           "name": "烈绽放副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "cr",
-            "cd"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "cr", "cd"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "dehya"
         },
@@ -1981,19 +1184,10 @@
           "name": "奶辅",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "hp%",
-            "atk%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["hp%", "atk%"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "dehya"
         }
@@ -2008,22 +1202,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "em"
-          ],
-          "goblet": [
-            "hp%",
-            "em"
-          ],
-          "circlet": [
-            "hp%",
-            "em"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["er", "em"],
+          "goblet": ["hp%", "em"],
+          "circlet": ["hp%", "em"],
+          "substats": ["hp%", "er"],
           "artifactSet": "deepwood_memories",
           "characterId": "yaoyao"
         }
@@ -2038,22 +1220,10 @@
           "name": "6命辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "faruzan",
           "kOverride": 3
@@ -2063,20 +1233,10 @@
           "name": "0-5命辅助",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["er", "atk%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "faruzan"
         }
@@ -2091,20 +1251,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "cr",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["cr", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "mika"
         }
@@ -2119,19 +1269,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "layla"
         }
@@ -2146,19 +1287,10 @@
           "name": "种子后台",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "em",
-            "hp%"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["em", "hp%"],
           "halfSet1": 2,
           "halfSet2": 2,
           "characterId": "nilou"
@@ -2174,19 +1306,10 @@
           "name": "种子前台",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "kaveh"
         }
@@ -2201,19 +1324,10 @@
           "name": "前台辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "yumemizuki_mizuki"
         }
@@ -2228,19 +1342,10 @@
           "name": "前台辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "ifa"
         }
@@ -2255,20 +1360,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "candace"
         },
@@ -2277,20 +1372,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "halfSet1": 15,
           "halfSet2": 2,
@@ -2307,20 +1392,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "dori"
         }
@@ -2335,22 +1410,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "er"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "atk%",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%", "er"],
+          "goblet": ["dendro%"],
+          "circlet": ["atk%", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "deepwood_memories",
           "characterId": "collei"
         }
@@ -2365,21 +1428,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "wanderers_troupe",
           "characterId": "tighnari"
         }
@@ -2394,21 +1446,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "viridescent_venerer",
           "characterId": "shikanoin_heizou"
         }
@@ -2423,19 +1464,10 @@
           "name": "辅助 超绽放",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "hp%"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "hp%"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "kuki_shinobu"
         }
@@ -2450,22 +1482,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "hp%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "hp%"],
           "artifactSet": "echoes_of_an_offering",
           "kOverride": 3,
           "characterId": "kamisato_ayato"
@@ -2481,21 +1501,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "golden_troupe",
           "characterId": "yae_miko"
         },
@@ -2504,21 +1513,10 @@
           "name": "驾驶员 超绽放",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "cr", "cd", "atk%"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "yae_miko",
           "kOverride": 3
@@ -2534,19 +1532,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["er", "hp%"],
           "halfSet1": 15,
           "halfSet2": 2,
           "characterId": "thoma"
@@ -2562,19 +1551,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "cr"
-          ],
-          "substats": [
-            "er",
-            "def%"
-          ],
+          "sands": ["er"],
+          "goblet": ["def%"],
+          "circlet": ["cr"],
+          "substats": ["er", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "halfSet1": 3,
           "halfSet2": 15,
@@ -2591,21 +1571,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "arataki_itto"
         }
@@ -2620,20 +1589,10 @@
           "name": "奶辅",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%",
-            "heal%"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%", "heal%"],
+          "substats": ["hp%", "er"],
           "artifactSet": "oceanhued_clam",
           "characterId": "sangonomiya_kokomi"
         },
@@ -2642,20 +1601,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["hp%", "er"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "sangonomiya_kokomi"
         },
@@ -2664,19 +1613,10 @@
           "name": "驾驶员 绽放",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "hp%"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "hp%"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "sangonomiya_kokomi"
         }
@@ -2691,23 +1631,10 @@
           "name": "主副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%",
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%", "electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "characterId": "raiden_shogun",
           "kOverride": 3
@@ -2717,20 +1644,10 @@
           "name": "驾驶员 超绽放",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "atk%",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "atk%", "er"],
           "artifactSet": "flower_of_paradise_lost",
           "characterId": "raiden_shogun"
         }
@@ -2745,22 +1662,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "characterId": "kujou_sara",
           "kOverride": 3
@@ -2776,23 +1681,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "em"
-          ],
-          "goblet": [
-            "atk%",
-            "em"
-          ],
-          "circlet": [
-            "atk%",
-            "em"
-          ],
-          "substats": [
-            "atk%",
-            "em",
-            "er"
-          ],
+          "sands": ["er", "em"],
+          "goblet": ["atk%", "em"],
+          "circlet": ["atk%", "em"],
+          "substats": ["atk%", "em", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "sayu"
         }
@@ -2807,20 +1699,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "yun_jin"
         },
@@ -2829,20 +1711,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "husk_of_opulent_dreams",
           "halfSet1": 3,
           "halfSet2": 15,
@@ -2853,20 +1725,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "artifactSet": "archaic_petra",
           "characterId": "yun_jin"
         }
@@ -2881,21 +1743,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "shimenawas_reminiscence",
           "characterId": "yoimiya"
         },
@@ -2904,21 +1755,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "echoes_of_an_offering",
           "characterId": "yoimiya"
         },
@@ -2927,21 +1767,10 @@
           "name": "主C 带芙",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "yoimiya"
         }
@@ -2956,21 +1785,10 @@
           "name": "主C 冻结",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "blizzard_strayer",
           "characterId": "kamisato_ayaka"
         },
@@ -2979,21 +1797,10 @@
           "name": "主C 带芙",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "kamisato_ayaka"
         }
@@ -3008,19 +1815,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "viridescent_venerer",
           "characterId": "kaedehara_kazuha"
         },
@@ -3029,21 +1827,10 @@
           "name": "6命主C",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "em",
-            "cr",
-            "cd"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["cr", "cd"],
+          "substats": ["em", "cr", "cd"],
           "artifactSet": "viridescent_venerer",
           "characterId": "kaedehara_kazuha"
         }
@@ -3058,22 +1845,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "phys%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["phys%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "pale_flame",
           "kOverride": 3,
           "characterId": "eula"
@@ -3089,23 +1864,10 @@
           "name": "副C辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "golden_troupe",
           "characterId": "furina",
           "kOverride": 3
@@ -3115,22 +1877,10 @@
           "name": "辅助 危战",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "cr",
-            "hp%"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["cr", "hp%"],
+          "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "golden_troupe",
           "halfSet1": 15,
           "halfSet2": 15,
@@ -3142,22 +1892,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "cr",
-            "hp%"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["cr", "hp%"],
+          "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "tenacity_of_the_millelith",
           "characterId": "furina",
           "kOverride": 3
@@ -3173,20 +1911,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige",
           "characterId": "diona"
         }
@@ -3201,22 +1929,10 @@
           "name": "主C",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%", "em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "crimson_witch_of_flames",
           "characterId": "yanfei"
         },
@@ -3225,22 +1941,10 @@
           "name": "主C",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%", "em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "wanderers_troupe",
           "characterId": "yanfei"
         },
@@ -3249,22 +1953,10 @@
           "name": "主C 带芙",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%", "em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "yanfei"
         },
@@ -3273,19 +1965,10 @@
           "name": "4命盾辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "hp%"
-          ],
-          "substats": [
-            "hp%",
-            "er"
-          ],
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%"],
+          "substats": ["hp%", "er"],
           "halfSet1": 15,
           "halfSet2": 2,
           "characterId": "yanfei"
@@ -3301,21 +1984,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%",
-            "cryo%"
-          ],
-          "circlet": [
-            "cr"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%", "cryo%"],
+          "circlet": ["cr"],
+          "substats": ["cr", "cd", "er"],
           "artifactSet": "noblesse_oblige",
           "characterId": "rosaria"
         },
@@ -3324,21 +1996,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%",
-            "cryo%"
-          ],
-          "circlet": [
-            "cr"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%", "cryo%"],
+          "circlet": ["cr"],
+          "substats": ["cr", "cd", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city",
           "characterId": "rosaria"
         }
@@ -3353,22 +2014,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "vermillion_hereafter",
           "kOverride": 3,
           "characterId": "xiao"
@@ -3378,21 +2027,10 @@
           "name": "主C 带闲",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "kOverride": 3,
           "characterId": "xiao"
@@ -3408,21 +2046,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "wanderers_troupe",
           "characterId": "ganyu"
         },
@@ -3431,22 +2058,10 @@
           "name": "副C辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3,
           "characterId": "ganyu"
@@ -3456,21 +2071,10 @@
           "name": "主C 冰冻",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "blizzard_strayer",
           "characterId": "ganyu"
         },
@@ -3479,21 +2083,10 @@
           "name": "主C 带芙",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cr",
-            "cd"
-          ],
-          "substats": [
-            "cr",
-            "cd",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "ganyu"
         },
@@ -3502,20 +2095,10 @@
           "name": "辅助",
           "visible": false,
           "composition": "2pc+2pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["atk%", "er"],
           "artifactSet": "emblem_of_severed_fate",
           "halfSet1": 15,
           "halfSet2": 15,
@@ -3532,21 +2115,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "albedo"
         },
@@ -3555,21 +2127,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "golden_troupe",
           "characterId": "albedo"
         }
@@ -3584,19 +2145,10 @@
           "name": "盾辅",
           "visible": true,
           "composition": "2pc+2pc",
-          "sands": [
-            "def%"
-          ],
-          "goblet": [
-            "def%"
-          ],
-          "circlet": [
-            "def%"
-          ],
-          "substats": [
-            "def%",
-            "er"
-          ],
+          "sands": ["def%"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
           "halfSet1": 3,
           "halfSet2": 15,
           "characterId": "xinyan"
@@ -3613,22 +2165,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "night_of_the_skys_unveiling",
           "kOverride": 3
         }
@@ -3644,23 +2184,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%", "em"],
           "artifactSet": "nymphs_dream",
           "kOverride": 3
         }
@@ -3676,21 +2203,10 @@
           "name": "火锅对策 带芙",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter"
         },
         {
@@ -3699,22 +2215,10 @@
           "name": "辅助 增幅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["atk%", "em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "instructor"
         },
         {
@@ -3723,21 +2227,10 @@
           "name": "辅助 挂火",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "tenacity_of_the_millelith"
         }
       ],
@@ -3752,23 +2245,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "er"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%", "er"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3
         }
@@ -3784,21 +2264,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "scroll_of_the_hero_of_cinder_city"
         }
       ],
@@ -3813,21 +2282,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "dendro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["dendro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "deepwood_memories"
         }
       ],
@@ -3842,21 +2300,10 @@
           "name": "奶副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "heal%"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["heal%"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "oceanhued_clam",
           "kOverride": 3
         }
@@ -3872,21 +2319,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "nighttime_whispers_in_the_echoing_woods",
           "kOverride": 3
         },
@@ -3896,21 +2332,10 @@
           "name": "主C 带芙",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "kOverride": 3
         }
@@ -3926,22 +2351,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "thundering_fury",
           "kOverride": 3
         }
@@ -3957,21 +2370,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "emblem_of_severed_fate"
         }
       ],
@@ -3986,21 +2388,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "anemo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["anemo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "viridescent_venerer"
         },
         {
@@ -4009,21 +2400,10 @@
           "name": "副C 扩散",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["cd", "cr", "em", "er"],
           "artifactSet": "viridescent_venerer",
           "kOverride": 3
         }
@@ -4039,19 +2419,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "noblesse_oblige"
         }
       ],
@@ -4066,21 +2437,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%",
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%",
-            "heal%"
-          ],
-          "substats": [
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["atk%", "er"],
           "artifactSet": "viridescent_venerer"
         }
       ],
@@ -4095,19 +2455,10 @@
           "name": "辅助 驾驶员",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "viridescent_venerer"
         }
       ],
@@ -4122,22 +2473,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "noblesse_oblige",
           "kOverride": 3
         },
@@ -4147,22 +2486,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3
         },
@@ -4172,20 +2499,10 @@
           "name": "副C 种子",
           "visible": false,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "em"
-          ],
-          "substats": [
-            "em",
-            "atk%",
-            "er"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "atk%", "er"],
           "artifactSet": "flower_of_paradise_lost"
         }
       ],
@@ -4200,21 +2517,10 @@
           "name": "奶辅",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er",
-            "hp%"
-          ],
-          "goblet": [
-            "hp%"
-          ],
-          "circlet": [
-            "heal%",
-            "hp%"
-          ],
-          "substats": [
-            "er",
-            "hp%"
-          ],
+          "sands": ["er", "hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["heal%", "hp%"],
+          "substats": ["er", "hp%"],
           "artifactSet": "song_of_days_past"
         }
       ],
@@ -4229,22 +2535,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "golden_troupe",
           "kOverride": 3
         }
@@ -4260,22 +2554,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3
         }
@@ -4291,21 +2573,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "noblesse_oblige"
         }
       ],
@@ -4320,21 +2591,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "hydro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["er"],
+          "goblet": ["hydro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "emblem_of_severed_fate"
         }
       ],
@@ -4349,22 +2609,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams"
         },
         {
@@ -4373,23 +2621,10 @@
           "name": "主C 带芙",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "def%",
-            "er"
-          ],
-          "goblet": [
-            "def%",
-            "geo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "def%"
-          ],
+          "sands": ["def%", "er"],
+          "goblet": ["def%", "geo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "def%"],
           "artifactSet": "marechaussee_hunter"
         }
       ],
@@ -4404,21 +2639,10 @@
           "name": "副C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "er"
-          ],
-          "goblet": [
-            "electro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "er"
-          ],
+          "sands": ["er"],
+          "goblet": ["electro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "er"],
           "artifactSet": "emblem_of_severed_fate"
         }
       ],
@@ -4433,22 +2657,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "pyro%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "crimson_witch_of_flames",
           "kOverride": 3
         }
@@ -4464,22 +2676,10 @@
           "name": "",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "phys%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "phys%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "pale_flame"
         }
       ],
@@ -4494,21 +2694,10 @@
           "name": "辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "cryo%"
-          ],
-          "circlet": [
-            "cd",
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["cryo%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%"],
           "artifactSet": "noblesse_oblige"
         }
       ],
@@ -4523,20 +2712,10 @@
           "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "em"
-          ],
-          "goblet": [
-            "em"
-          ],
-          "circlet": [
-            "cd"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "em"
-          ],
+          "sands": ["em"],
+          "goblet": ["em"],
+          "circlet": ["cd"],
+          "substats": ["cd", "cr", "em"],
           "artifactSet": "night_of_the_skys_unveiling"
         }
       ],
@@ -4551,22 +2730,10 @@
           "name": "",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%",
-            "pyro%"
-          ],
-          "circlet": [
-            "cr"
-          ],
-          "substats": [
-            "cd",
-            "cr",
-            "atk%",
-            "er"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%", "pyro%"],
+          "circlet": ["cr"],
+          "substats": ["cd", "cr", "atk%", "er"],
           "artifactSet": "noblesse_oblige",
           "kOverride": 3
         }
@@ -4582,20 +2749,10 @@
           "name": "治疗辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%",
-            "heal%"
-          ],
-          "substats": [
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
           "artifactSet": "silken_moons_serenade"
         },
         {
@@ -4604,20 +2761,10 @@
           "name": "治疗辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": [
-            "atk%"
-          ],
-          "goblet": [
-            "atk%"
-          ],
-          "circlet": [
-            "atk%",
-            "heal%"
-          ],
-          "substats": [
-            "er",
-            "atk%"
-          ],
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
           "artifactSet": "viridescent_venerer"
         }
       ],

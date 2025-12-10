@@ -1,19 +1,26 @@
-import { useState } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { SlidersHorizontal, Search, Filter } from 'lucide-react';
-import { ComputeOptions } from '@/data/types';
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Filter } from "lucide-react";
+import { ComputeOptions } from "@/data/types";
 
 interface ComputeSidebarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   computeOptions: ComputeOptions;
-  onComputeOptionChange: <K extends keyof ComputeOptions>(key: K, value: ComputeOptions[K]) => void;
+  onComputeOptionChange: <K extends keyof ComputeOptions>(
+    key: K,
+    value: ComputeOptions[K],
+  ) => void;
   isInSidePanel?: boolean;
 }
 
@@ -22,7 +29,7 @@ export function ComputeSidebar({
   onSearchChange,
   computeOptions,
   onComputeOptionChange,
-  isInSidePanel = false
+  isInSidePanel = false,
 }: ComputeSidebarProps) {
   const { t } = useLanguage();
 
@@ -31,10 +38,10 @@ export function ComputeSidebar({
       {/* Search */}
       <div className="space-y-2">
         <Label className="text-foreground text-sm font-medium">
-          {t.ui('computeFilters.searchSets')}
+          {t.ui("computeFilters.searchSets")}
         </Label>
         <Input
-          placeholder={t.ui('computeFilters.searchPlaceholder')}
+          placeholder={t.ui("computeFilters.searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="bg-input border-border h-9"
@@ -44,74 +51,98 @@ export function ComputeSidebar({
       {/* Compute Options */}
       <div className="space-y-3 pt-2 border-t border-border/50">
         <Label className="text-foreground text-sm font-medium">
-          {t.ui('computeFilters.computeOptions')}
+          {t.ui("computeFilters.computeOptions")}
         </Label>
 
         {/* Skip CR+CD builds */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? 'mobile-' : ''}skip-crit`}
+            id={`${isInSidePanel ? "mobile-" : ""}skip-crit`}
             checked={computeOptions.skipCritBuilds}
-            onCheckedChange={(checked) => onComputeOptionChange('skipCritBuilds', checked as boolean)}
+            onCheckedChange={(checked) =>
+              onComputeOptionChange("skipCritBuilds", checked as boolean)
+            }
             className="h-4 w-4 mt-0.5"
           />
-          <Label htmlFor={`${isInSidePanel ? 'mobile-' : ''}skip-crit`} className="text-foreground text-sm flex-1 leading-tight cursor-pointer">
-            {t.ui('computeFilters.skipCritBuilds')}
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}skip-crit`}
+            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+          >
+            {t.ui("computeFilters.skipCritBuilds")}
           </Label>
         </div>
 
         {/* Expand Elemental DMG */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? 'mobile-' : ''}expand-elemental`}
+            id={`${isInSidePanel ? "mobile-" : ""}expand-elemental`}
             checked={computeOptions.expandElementalGoblet}
-            onCheckedChange={(checked) => onComputeOptionChange('expandElementalGoblet', checked as boolean)}
+            onCheckedChange={(checked) =>
+              onComputeOptionChange("expandElementalGoblet", checked as boolean)
+            }
             className="h-4 w-4 mt-0.5"
           />
-          <Label htmlFor={`${isInSidePanel ? 'mobile-' : ''}expand-elemental`} className="text-foreground text-sm flex-1 leading-tight cursor-pointer">
-            {t.ui('computeFilters.expandElementalGoblet')}
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}expand-elemental`}
+            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+          >
+            {t.ui("computeFilters.expandElementalGoblet")}
           </Label>
         </div>
 
         {/* Expand Crit Circlet */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? 'mobile-' : ''}expand-crit`}
+            id={`${isInSidePanel ? "mobile-" : ""}expand-crit`}
             checked={computeOptions.expandCritCirclet}
-            onCheckedChange={(checked) => onComputeOptionChange('expandCritCirclet', checked as boolean)}
+            onCheckedChange={(checked) =>
+              onComputeOptionChange("expandCritCirclet", checked as boolean)
+            }
             className="h-4 w-4 mt-0.5"
           />
-          <Label htmlFor={`${isInSidePanel ? 'mobile-' : ''}expand-crit`} className="text-foreground text-sm flex-1 leading-tight cursor-pointer">
-            {t.ui('computeFilters.expandCritCirclet')}
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}expand-crit`}
+            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+          >
+            {t.ui("computeFilters.expandCritCirclet")}
           </Label>
         </div>
 
         {/* Merge single-flex variants */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? 'mobile-' : ''}pick-one-merge`}
+            id={`${isInSidePanel ? "mobile-" : ""}pick-one-merge`}
             checked={!!computeOptions.mergeSingleFlexVariants}
-            onCheckedChange={(checked) => onComputeOptionChange('mergeSingleFlexVariants', !!checked)}
+            onCheckedChange={(checked) =>
+              onComputeOptionChange("mergeSingleFlexVariants", !!checked)
+            }
             className="h-4 w-4 mt-0.5"
           />
-          <Label htmlFor={`${isInSidePanel ? 'mobile-' : ''}pick-one-merge`} className="text-foreground text-sm flex-1 leading-tight cursor-pointer">
-            {t.ui('computeFilters.mergeSingleFlexVariants')}
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}pick-one-merge`}
+            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+          >
+            {t.ui("computeFilters.mergeSingleFlexVariants")}
           </Label>
         </div>
 
         {/* Find rigid common subset */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? 'mobile-' : ''}rigid-promotion`}
+            id={`${isInSidePanel ? "mobile-" : ""}rigid-promotion`}
             checked={!!computeOptions.findRigidCommonSubset}
-            onCheckedChange={(checked) => onComputeOptionChange('findRigidCommonSubset', !!checked)}
+            onCheckedChange={(checked) =>
+              onComputeOptionChange("findRigidCommonSubset", !!checked)
+            }
             className="h-4 w-4 mt-0.5"
           />
-          <Label htmlFor={`${isInSidePanel ? 'mobile-' : ''}rigid-promotion`} className="text-foreground text-sm flex-1 leading-tight cursor-pointer">
-            {t.ui('computeFilters.findRigidCommonSubset')}
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}rigid-promotion`}
+            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+          >
+            {t.ui("computeFilters.findRigidCommonSubset")}
           </Label>
         </div>
-
       </div>
     </CardContent>
   );
@@ -136,7 +167,7 @@ export function ComputeSidebarMobile({
   onOpenChange,
   hasActiveFilters,
   computeOptions,
-  onComputeOptionChange
+  onComputeOptionChange,
 }: ComputeSidebarMobileProps) {
   const { t } = useLanguage();
 
@@ -150,10 +181,10 @@ export function ComputeSidebarMobile({
           className="gap-2"
         >
           <Filter className="w-4 h-4" />
-          {t.ui('computeFilters.title')}
+          {t.ui("computeFilters.title")}
           {hasActiveFilters && (
             <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-              {searchQuery.length > 0 ? '1' : '0'}
+              {searchQuery.length > 0 ? "1" : "0"}
             </span>
           )}
         </Button>
@@ -163,7 +194,7 @@ export function ComputeSidebarMobile({
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent side="left" className="w-80 p-0">
           <SheetHeader className="p-6 pb-4 border-b">
-            <SheetTitle>{t.ui('computeFilters.title')}</SheetTitle>
+            <SheetTitle>{t.ui("computeFilters.title")}</SheetTitle>
           </SheetHeader>
           <div className="flex-1 overflow-hidden">
             <div className="h-full">

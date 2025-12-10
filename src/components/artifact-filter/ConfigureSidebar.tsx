@@ -49,7 +49,7 @@ export function ConfigureSidebar({
   const handleFilterChange = <T extends string | number>(
     filterType: keyof typeof filters,
     value: T,
-    checked: boolean
+    checked: boolean,
   ) => {
     const currentValues = filters[filterType] as T[];
     const newValues = checked
@@ -159,7 +159,7 @@ export function ConfigureSidebar({
                   handleFilterChange(
                     "rarities",
                     rarity as Rarity,
-                    checked as boolean
+                    checked as boolean,
                   )
                 }
                 className="h-4 w-4"

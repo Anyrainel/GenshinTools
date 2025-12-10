@@ -1,4 +1,10 @@
-import { CharacterMergeInfo, MainStatPlus, SetConfig, SlotConfig, SubStat } from '../data/types';
+import {
+  CharacterMergeInfo,
+  MainStatPlus,
+  SetConfig,
+  SlotConfig,
+  SubStat,
+} from "../data/types";
 
 export interface SimpleMergeOptions {
   /**
@@ -16,10 +22,10 @@ export interface SimpleMergeOptions {
 
 export const DEFAULT_SIMPLE_MERGE_OPTIONS: Required<SimpleMergeOptions> = {
   mergeSingleFlexVariants: false,
-  findRigidCommonSubset: false
+  findRigidCommonSubset: false,
 };
 
-type SlotKey = 'flowerPlume' | 'sands' | 'goblet' | 'circlet';
+type SlotKey = "flowerPlume" | "sands" | "goblet" | "circlet";
 
 interface SlotMergeResult {
   mainStats: MainStatPlus[];
@@ -31,19 +37,19 @@ interface SlotMergeResult {
 type PromotionShape = RigidPromotionShape | PickPromotionShape;
 
 interface RigidPromotionShape {
-  type: 'rigid';
+  type: "rigid";
   k: number;
   required: SubStat[];
 }
 
 interface PickPromotionShape {
-  type: 'pick';
+  type: "pick";
   k: number;
   must: SubStat[];
   optional: SubStat[];
 }
 
-const SLOT_KEYS: SlotKey[] = ['flowerPlume', 'sands', 'goblet', 'circlet'];
+const SLOT_KEYS: SlotKey[] = ["flowerPlume", "sands", "goblet", "circlet"];
 
 /**
  * Simple merge pipeline with optional heuristics.
@@ -51,7 +57,7 @@ const SLOT_KEYS: SlotKey[] = ['flowerPlume', 'sands', 'goblet', 'circlet'];
  */
 export function simpleMerge(
   configs: SetConfig[],
-  options: SimpleMergeOptions = DEFAULT_SIMPLE_MERGE_OPTIONS
+  options: SimpleMergeOptions = DEFAULT_SIMPLE_MERGE_OPTIONS,
 ): SetConfig[] {
   if (configs.length <= 1) {
     return configs;
@@ -104,7 +110,7 @@ function mergeIdenticalConfigs(configs: SetConfig[]): SetConfig[] {
  */
 function iterativeMerge(
   configs: SetConfig[],
-  strategy: (target: SetConfig, candidate: SetConfig) => boolean
+  strategy: (target: SetConfig, candidate: SetConfig) => boolean,
 ): SetConfig[] {
   const list = [...configs];
 
@@ -141,9 +147,12 @@ function tryMergePickOne(target: SetConfig, candidate: SetConfig): boolean {
     if (areSlotsStructurallyEqual(targetSlot, candidateSlot)) {
       slotUpdates[key] = {
         mainStats: orderedUnion(targetSlot.mainStats, candidateSlot.mainStats),
-        substats: normalizeSubstats(orderedUnion(targetSlot.substats, candidateSlot.substats), targetSlot.mustPresent),
+        substats: normalizeSubstats(
+          orderedUnion(targetSlot.substats, candidateSlot.substats),
+          targetSlot.mustPresent,
+        ),
         mustPresent: [...targetSlot.mustPresent],
-        minStatCount: targetSlot.minStatCount
+        minStatCount: targetSlot.minStatCount,
       };
       continue;
     }
@@ -180,9 +189,12 @@ function tryPromoteRigid(target: SetConfig, candidate: SetConfig): boolean {
     if (areSlotsStructurallyEqual(targetSlot, candidateSlot)) {
       slotUpdates[key] = {
         mainStats: orderedUnion(targetSlot.mainStats, candidateSlot.mainStats),
-        substats: normalizeSubstats(orderedUnion(targetSlot.substats, candidateSlot.substats), targetSlot.mustPresent),
+        substats: normalizeSubstats(
+          orderedUnion(targetSlot.substats, candidateSlot.substats),
+          targetSlot.mustPresent,
+        ),
         mustPresent: [...targetSlot.mustPresent],
-        minStatCount: targetSlot.minStatCount
+        minStatCount: targetSlot.minStatCount,
       };
       continue;
     }
@@ -205,7 +217,10 @@ function tryPromoteRigid(target: SetConfig, candidate: SetConfig): boolean {
   return true;
 }
 
-function mergePickOneSlot(target: SlotConfig, candidate: SlotConfig): SlotMergeResult | null {
+function mergePickOneSlot(
+  target: SlotConfig,
+  candidate: SlotConfig,
+): SlotMergeResult | null {
   if (target.minStatCount !== candidate.minStatCount) {
     return null;
   }
@@ -222,21 +237,27 @@ function mergePickOneSlot(target: SlotConfig, candidate: SlotConfig): SlotMergeR
     return null;
   }
 
-  const orderedMust = orderMustPresent(target.mustPresent, candidate.mustPresent);
+  const orderedMust = orderMustPresent(
+    target.mustPresent,
+    candidate.mustPresent,
+  );
   const mergedSubstats = normalizeSubstats(
     orderedUnion(target.substats, candidate.substats),
-    orderedMust
+    orderedMust,
   );
 
   return {
     mainStats: orderedUnion(target.mainStats, candidate.mainStats),
     substats: mergedSubstats,
     mustPresent: orderedMust,
-    minStatCount: target.minStatCount
+    minStatCount: target.minStatCount,
   };
 }
 
-function promoteRigidSlot(target: SlotConfig, candidate: SlotConfig): SlotMergeResult | null {
+function promoteRigidSlot(
+  target: SlotConfig,
+  candidate: SlotConfig,
+): SlotMergeResult | null {
   if (target.minStatCount !== candidate.minStatCount) {
     return null;
   }
@@ -257,16 +278,21 @@ function promoteRigidSlot(target: SlotConfig, candidate: SlotConfig): SlotMergeR
     return null;
   }
 
-  if (shapeTarget.type === 'rigid' && shapeCandidate.type === 'rigid') {
+  if (shapeTarget.type === "rigid" && shapeCandidate.type === "rigid") {
     return mergeRigidPairs(target, candidate, shapeTarget, shapeCandidate);
   }
 
-  if (shapeTarget.type === 'pick' && shapeCandidate.type === 'rigid') {
+  if (shapeTarget.type === "pick" && shapeCandidate.type === "rigid") {
     return mergePickWithRigid(target, candidate, shapeTarget, shapeCandidate);
   }
 
-  if (shapeTarget.type === 'rigid' && shapeCandidate.type === 'pick') {
-    const merged = mergePickWithRigid(candidate, target, shapeCandidate, shapeTarget);
+  if (shapeTarget.type === "rigid" && shapeCandidate.type === "pick") {
+    const merged = mergePickWithRigid(
+      candidate,
+      target,
+      shapeCandidate,
+      shapeTarget,
+    );
     if (!merged) {
       return null;
     }
@@ -275,7 +301,7 @@ function promoteRigidSlot(target: SlotConfig, candidate: SlotConfig): SlotMergeR
       mainStats: orderedUnion(target.mainStats, candidate.mainStats),
       substats: merged.substats,
       mustPresent: merged.mustPresent,
-      minStatCount: merged.minStatCount
+      minStatCount: merged.minStatCount,
     };
   }
 
@@ -293,19 +319,21 @@ function analyzePromotionShape(slot: SlotConfig): PromotionShape | null {
 
   if (uniqueMust.length === k) {
     return {
-      type: 'rigid',
+      type: "rigid",
       k,
-      required: uniqueMust
+      required: uniqueMust,
     };
   }
 
   if (uniqueMust.length === k - 1) {
-    const optional = dedupe(slot.substats.filter(stat => !uniqueMust.includes(stat)));
+    const optional = dedupe(
+      slot.substats.filter((stat) => !uniqueMust.includes(stat)),
+    );
     return {
-      type: 'pick',
+      type: "pick",
       k,
       must: uniqueMust,
-      optional
+      optional,
     };
   }
 
@@ -316,7 +344,7 @@ function mergeRigidPairs(
   targetSlot: SlotConfig,
   candidateSlot: SlotConfig,
   targetShape: RigidPromotionShape,
-  candidateShape: RigidPromotionShape
+  candidateShape: RigidPromotionShape,
 ): SlotMergeResult | null {
   const k = targetShape.k;
   const common = intersection(targetShape.required, candidateShape.required);
@@ -329,22 +357,28 @@ function mergeRigidPairs(
     k - 1,
     targetShape.required,
     candidateShape.required,
-    common
+    common,
   );
 
-  const requiredUnion = orderedUnion(targetShape.required, candidateShape.required);
+  const requiredUnion = orderedUnion(
+    targetShape.required,
+    candidateShape.required,
+  );
   const combinedSubstats = orderedUnion(
     orderedUnion(targetSlot.substats, candidateSlot.substats),
-    requiredUnion
+    requiredUnion,
   );
 
-  const normalizedSubstats = normalizeSubstats(combinedSubstats, newMustPresent);
+  const normalizedSubstats = normalizeSubstats(
+    combinedSubstats,
+    newMustPresent,
+  );
 
   return {
     mainStats: orderedUnion(targetSlot.mainStats, candidateSlot.mainStats),
     substats: normalizedSubstats,
     mustPresent: newMustPresent,
-    minStatCount: k
+    minStatCount: k,
   };
 }
 
@@ -352,7 +386,7 @@ function mergePickWithRigid(
   pickSlot: SlotConfig,
   rigidSlot: SlotConfig,
   pickShape: PickPromotionShape,
-  rigidShape: RigidPromotionShape
+  rigidShape: RigidPromotionShape,
 ): SlotMergeResult | null {
   const pickMust = pickShape.must;
   const intersectionWithRigid = intersection(rigidShape.required, pickMust);
@@ -361,12 +395,14 @@ function mergePickWithRigid(
     return null;
   }
 
-  const rigidExtras = rigidShape.required.filter(stat => !pickMust.includes(stat));
+  const rigidExtras = rigidShape.required.filter(
+    (stat) => !pickMust.includes(stat),
+  );
   const optionalUnion = orderedUnion(pickShape.optional, rigidExtras);
 
   const candidatesUnion = orderedUnion(
     orderedUnion(pickSlot.substats, rigidSlot.substats),
-    orderedUnion(pickMust, optionalUnion)
+    orderedUnion(pickMust, optionalUnion),
   );
 
   const normalized = normalizeSubstats(candidatesUnion, pickMust);
@@ -375,13 +411,13 @@ function mergePickWithRigid(
     mainStats: orderedUnion(pickSlot.mainStats, rigidSlot.mainStats),
     substats: normalized,
     mustPresent: pickMust,
-    minStatCount: pickShape.k
+    minStatCount: pickShape.k,
   };
 }
 
 function applySlotUpdates(
   target: SetConfig,
-  updates: Partial<Record<SlotKey, SlotMergeResult>>
+  updates: Partial<Record<SlotKey, SlotMergeResult>>,
 ): void {
   for (const key of SLOT_KEYS) {
     const update = updates[key];
@@ -391,7 +427,7 @@ function applySlotUpdates(
       mainStats: update.mainStats,
       substats: update.substats,
       mustPresent: update.mustPresent,
-      minStatCount: update.minStatCount
+      minStatCount: update.minStatCount,
     };
   }
 }
@@ -399,7 +435,10 @@ function applySlotUpdates(
 function mergeConfigMetadata(target: SetConfig, source: SetConfig): void {
   // Merge main stats
   for (const key of SLOT_KEYS) {
-    target[key].mainStats = orderedUnion(target[key].mainStats, source[key].mainStats);
+    target[key].mainStats = orderedUnion(
+      target[key].mainStats,
+      source[key].mainStats,
+    );
   }
 
   // Merge served characters
@@ -420,14 +459,12 @@ function mergeConfigMetadata(target: SetConfig, source: SetConfig): void {
 }
 
 function buildConfigSignature(config: SetConfig): string {
-  return SLOT_KEYS
-    .map((key) => buildSlotSignature(config[key]))
-    .join('|');
+  return SLOT_KEYS.map((key) => buildSlotSignature(config[key])).join("|");
 }
 
 function buildSlotSignature(slot: SlotConfig): string {
-  const must = [...slot.mustPresent].sort().join(',');
-  const sub = [...slot.substats].sort().join(',');
+  const must = [...slot.mustPresent].sort().join(",");
+  const sub = [...slot.substats].sort().join(",");
   return `${slot.minStatCount}:${must}:${sub}`;
 }
 
@@ -437,7 +474,7 @@ function cloneConfig(config: SetConfig): SetConfig {
     sands: cloneSlot(config.sands),
     goblet: cloneSlot(config.goblet),
     circlet: cloneSlot(config.circlet),
-    servedCharacters: config.servedCharacters.map(info => ({ ...info }))
+    servedCharacters: config.servedCharacters.map((info) => ({ ...info })),
   };
 }
 
@@ -446,11 +483,14 @@ function cloneSlot(slot: SlotConfig): SlotConfig {
     mainStats: [...slot.mainStats],
     substats: [...slot.substats],
     mustPresent: [...slot.mustPresent],
-    minStatCount: slot.minStatCount
+    minStatCount: slot.minStatCount,
   };
 }
 
-function areSlotsStructurallyEqual(slotA: SlotConfig, slotB: SlotConfig): boolean {
+function areSlotsStructurallyEqual(
+  slotA: SlotConfig,
+  slotB: SlotConfig,
+): boolean {
   return (
     slotA.minStatCount === slotB.minStatCount &&
     areArraysEqualIgnoreOrder(slotA.mustPresent, slotB.mustPresent) &&
@@ -479,10 +519,15 @@ function orderedUnion<T>(first: T[], second: T[]): T[] {
   return result;
 }
 
-function normalizeSubstats(allSubstats: SubStat[], mustPresent: SubStat[]): SubStat[] {
+function normalizeSubstats(
+  allSubstats: SubStat[],
+  mustPresent: SubStat[],
+): SubStat[] {
   const mustSet = new Set(mustPresent);
-  const orderedMust = mustPresent.filter((stat, index) => mustPresent.indexOf(stat) === index);
-  const remainder = allSubstats.filter(stat => !mustSet.has(stat));
+  const orderedMust = mustPresent.filter(
+    (stat, index) => mustPresent.indexOf(stat) === index,
+  );
+  const remainder = allSubstats.filter((stat) => !mustSet.has(stat));
   return [...orderedMust, ...remainder];
 }
 
@@ -549,7 +594,7 @@ function selectOrderedSubset(
   count: number,
   primarySource: SubStat[],
   secondarySource: SubStat[],
-  commonPool: SubStat[]
+  commonPool: SubStat[],
 ): SubStat[] {
   if (count <= 0) {
     return [];

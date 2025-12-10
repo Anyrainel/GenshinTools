@@ -1,10 +1,21 @@
-import { useState, memo, useMemo, useCallback } from 'react';
-import { artifacts, artifactHalfSets } from '@/data/resources';
-import { artifactsById } from '@/data/constants';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getAssetUrl } from '@/lib/utils';
+import { useState, memo, useMemo, useCallback } from "react";
+import { artifacts, artifactHalfSets } from "@/data/resources";
+import { artifactsById } from "@/data/constants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { getAssetUrl } from "@/lib/utils";
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip"; // Import the shared tooltip
 
 interface ArtifactSelectProps {
   value: string;
@@ -12,49 +23,31 @@ interface ArtifactSelectProps {
   placeholder: string;
 }
 
-function ArtifactSelectComponent({ value, onValueChange, placeholder }: ArtifactSelectProps) {
+function ArtifactSelectComponent({
+  value,
+  onValueChange,
+  placeholder,
+}: ArtifactSelectProps) {
   const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Memoize translated artifact data alongside an id-indexed lookup (recompute only when language changes)
   const { list: artifactList, lookup: artifactLookup } = useMemo(() => {
-    const list = artifacts.map(set => ({
+    const list = artifacts.map((set) => ({
       id: set.id,
       imagePath: set.imagePath,
       name: t.artifact(set.id),
-      effects: t.artifactEffects(set.id)
+      effects: t.artifactEffects(set.id),
     }));
 
     const lookup = Object.fromEntries(
-      list.map(item => [item.id, item] as const)
-    ) as Record<string, typeof list[number]>;
+      list.map((item) => [item.id, item] as const),
+    ) as Record<string, (typeof list)[number]>;
 
     return { list, lookup };
   }, [t]);
 
-  const selectedArtifact = value ? artifactLookup[value] ?? null : null;
-
-  // Create tooltip content component
-  const EffectTooltip = useCallback(({ setId }: { setId: string }) => {
-    const artifact = artifactLookup[setId];
-    if (!artifact) return null;
-
-    return (
-      <div className="space-y-2">
-        <div className="text-sm text-muted-foreground">
-          <span className="font-bold">{artifact.name}</span>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          <span className="font-bold mr-1">[2]</span>
-          <span>{artifact.effects[0] || "???"}</span>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          <span className="font-bold mr-1">[4]</span>
-          <span>{artifact.effects[1] || "???"}</span>
-        </div>
-      </div>
-    );
-  }, [artifactLookup]);
+  const selectedArtifact = value ? (artifactLookup[value] ?? null) : null;
 
   // Handle menu open change
   const handleOpenChange = useCallback((open: boolean) => {
@@ -93,21 +86,30 @@ function ArtifactSelectComponent({ value, onValueChange, placeholder }: Artifact
           </SelectTrigger>
         </TooltipTrigger>
         {value && !isMenuOpen && (
-          <TooltipContent side="bottom" align="start" className="max-w-xs z-[60]">
-            <EffectTooltip setId={value} />
+          <TooltipContent
+            side="bottom"
+            align="start"
+            className="p-0 border-0 bg-transparent shadow-none z-[60]"
+          >
+            <ArtifactTooltip setId={value} />
           </TooltipContent>
         )}
       </Tooltip>
 
-      <SelectContent className="w-96 overflow-visible max-h-96" side="right" align="start">
+      <SelectContent
+        className="w-96 overflow-visible max-h-96"
+        side="right"
+        align="start"
+      >
         <div className="grid grid-cols-2 gap-0.5 p-0.5">
           {artifactList.map((artifact, index) => (
             <Tooltip key={artifact.id} disableHoverableContent>
               <TooltipTrigger asChild>
                 <SelectItem
                   value={artifact.id}
-                  className={`p-1 h-auto data-[highlighted]:bg-accent ${value === artifact.id ? 'bg-accent/60' : ''
-                    }`}
+                  className={`p-1 h-auto data-[highlighted]:bg-accent ${
+                    value === artifact.id ? "bg-accent/60" : ""
+                  }`}
                 >
                   <div className="flex items-center gap-1 w-full max-w-[180px]">
                     <img
@@ -124,11 +126,11 @@ function ArtifactSelectComponent({ value, onValueChange, placeholder }: Artifact
               </TooltipTrigger>
               <TooltipContent
                 side="right"
-                className="max-w-xs z-[60]"
+                className="p-0 border-0 bg-transparent shadow-none z-[60]"
                 align="start"
                 sideOffset={index % 2 === 0 ? 195 : 9}
               >
-                <EffectTooltip setId={artifact.id} />
+                <ArtifactTooltip setId={artifact.id} />
               </TooltipContent>
             </Tooltip>
           ))}
@@ -151,38 +153,40 @@ interface ArtifactSelectHalfProps {
 function ArtifactSelectHalfComponent({
   value,
   onValueChange,
-  placeholder
+  placeholder,
 }: ArtifactSelectHalfProps) {
   const { language } = useLanguage();
 
   // Memoize effect text computation for all half sets and expose an id-indexed lookup for O(1) access
   const { list: halfSetList, lookup: halfSetLookup } = useMemo(() => {
-    const list = artifactHalfSets.map(halfSet => ({
+    const list = artifactHalfSets.map((halfSet) => ({
       id: halfSet.id,
-      text: language === 'zh' ? halfSet.normalizedEffectTextZh : halfSet.normalizedEffectTextEn,
-      setIds: halfSet.setIds
+      text:
+        language === "zh"
+          ? halfSet.normalizedEffectTextZh
+          : halfSet.normalizedEffectTextEn,
+      setIds: halfSet.setIds,
     }));
 
     const lookup = Object.fromEntries(
-      list.map(item => [item.id, item] as const)
-    ) as Record<number, typeof list[number]>;
+      list.map((item) => [item.id, item] as const),
+    ) as Record<number, (typeof list)[number]>;
 
     return { list, lookup };
   }, [language]);
 
-  const selectedHalfSet = value !== undefined ? halfSetLookup[value] ?? null : null;
+  const selectedHalfSet =
+    value !== undefined ? (halfSetLookup[value] ?? null) : null;
   const displayValue = selectedHalfSet ? selectedHalfSet.text : placeholder;
 
   return (
     <div className="px-1">
       <Select
-        value={value?.toString() || ''}
+        value={value?.toString() || ""}
         onValueChange={(val) => onValueChange(parseInt(val))}
       >
         <SelectTrigger className="w-full min-h-8 h-auto text-xs px-2 py-1 [&>span]:line-clamp-2">
-          <SelectValue placeholder={placeholder}>
-            {displayValue}
-          </SelectValue>
+          <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
         <SelectContent>
           {halfSetList.map((halfSet) => (
@@ -214,7 +218,9 @@ function ArtifactSelectHalfComponent({
   );
 }
 
-export const ArtifactSelectHalf = memo(ArtifactSelectHalfComponent, (prev, next) => {
-  return prev.value === next.value && prev.placeholder === next.placeholder;
-});
-
+export const ArtifactSelectHalf = memo(
+  ArtifactSelectHalfComponent,
+  (prev, next) => {
+    return prev.value === next.value && prev.placeholder === next.placeholder;
+  },
+);
