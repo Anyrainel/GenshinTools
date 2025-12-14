@@ -6,7 +6,7 @@ import {
   WeaponType,
   weaponTypes,
 } from "@/data/types";
-import { weapons } from "@/data/resources";
+import { sortedWeapons } from "@/data/constants";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
 import { TierTable } from "./TierTable";
@@ -48,23 +48,18 @@ export default function WeaponTierTable({
         key={weaponType}
         className={cn(
           THEME.layout.centerBox,
-          "min-h-[3rem]",
           THEME.layout.gridBorder,
-          "bg-gray-800", // Default bg for weapon type headers
+          "bg-gray-800 rounded-tl-md rounded-tr-md",
         )}
       >
-        <div className="flex flex-col items-center">
-          <img
-            src={getAssetUrl(resource?.imagePath)}
-            alt={weaponType}
-            className="w-8 h-8 object-contain drop-shadow-md brightness-150" // Brighter icons for dark bg
-          />
-          <span
-            className={cn(THEME.layout.labelText, "text-lg text-shadow-sm")}
-          >
-            {t.weaponType(weaponType)} ({count})
-          </span>
-        </div>
+        <img
+          src={getAssetUrl(resource?.imagePath)}
+          alt={weaponType}
+          className="w-6 h-6 mr-2 object-contain drop-shadow-md brightness-150"
+        />
+        <span className={cn(THEME.layout.labelText, "text-lg text-shadow-sm")}>
+          {t.weaponType(weaponType)} ({count})
+        </span>
       </div>
     );
   };
@@ -134,7 +129,7 @@ export default function WeaponTierTable({
 
   return (
     <TierTable<Weapon>
-      items={weapons.map(weaponToTierItemData)}
+      items={sortedWeapons.map(weaponToTierItemData)}
       itemsById={weaponsById}
       tierAssignments={tierAssignments}
       tierCustomization={tierCustomization}

@@ -71,8 +71,13 @@ const Index = () => {
   const handleExport = (author: string, description: string) => {
     // Read data directly from store at export time (not as a subscription)
     const state = useBuildsStore.getState();
-    const { characterToBuildIds, builds, hiddenCharacters, computeOptions } =
-      state;
+    const {
+      characterToBuildIds,
+      builds,
+      hiddenCharacters,
+      characterWeapons,
+      computeOptions,
+    } = state;
 
     // Convert store format to export format
     const exportData: BuildGroup[] = [];
@@ -87,6 +92,7 @@ const Index = () => {
           characterId,
           builds: characterBuilds,
           hidden: !!hiddenCharacters?.[characterId],
+          weapons: characterWeapons[characterId],
         });
       }
     });

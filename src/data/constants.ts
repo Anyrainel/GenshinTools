@@ -167,3 +167,26 @@ export const weaponResourcesByName = freezeRecord(
     (weapon) => weapon.name,
   ),
 );
+
+/**
+ * Sorts items by rarity in descending order.
+ * Since the original lists (resources.ts) are ordered by release date descending,
+ * and Array.prototype.sort is stable in modern JS environments,
+ * this results in Rarity Descending > Release Date Descending.
+ */
+function sortItemsByRarityDesc<T extends { rarity?: number }>(
+  items: readonly T[],
+): T[] {
+  return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
+}
+
+// Sorted lists (Rarity Descending -> Release Date Descending)
+export const sortedCharacters = [...characters].sort((a, b) => {
+  const getRarity = (c: Character) => {
+    if (c.id.startsWith("traveler")) return 3;
+    return c.rarity;
+  };
+  return getRarity(b) - getRarity(a);
+});
+export const sortedWeapons = sortItemsByRarityDesc(weapons);
+export const sortedArtifacts = sortItemsByRarityDesc(artifacts);

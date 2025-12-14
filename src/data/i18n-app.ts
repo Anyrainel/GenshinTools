@@ -74,6 +74,7 @@ export const i18nAppData = {
     common: {
       cancel: { en: "Cancel", zh: "取消" },
       elements: { en: "Elements", zh: "元素" },
+      none: { en: "None", zh: "无" },
     },
     app: {
       title: { en: "Genshin Tools", zh: "原神工具箱" },

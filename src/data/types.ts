@@ -184,6 +184,7 @@ export type BuildGroup = {
   characterId: string;
   builds: Build[];
   hidden?: boolean;
+  weapons?: string[]; // character weapon choices
 };
 
 export type ComputeOptions = {

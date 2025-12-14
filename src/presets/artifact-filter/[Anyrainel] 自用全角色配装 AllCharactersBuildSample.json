@@ -1,8 +1,38 @@
 {
   "author": "Anyrainel",
-  "description": "全角色配装样例 AllCharactersBuildSample",
+  "description": "自用全角色配装 AllCharactersBuildSample",
   "version": 4,
   "data": [
+    {
+      "characterId": "jahoda",
+      "builds": [
+        {
+          "id": "build-1765193935606",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
+          "artifactSet": "silken_moons_serenade"
+        },
+        {
+          "id": "build-1765193981718",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false
+    },
     {
       "characterId": "dahlia",
       "builds": [
@@ -19,7 +49,8 @@
           "characterId": "dahlia"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["sacrificial_sword"]
     },
     {
       "characterId": "ineffa",
@@ -51,7 +82,8 @@
           "characterId": "ineffa"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["fractured_halo"]
     },
     {
       "characterId": "lauma",
@@ -63,7 +95,7 @@
           "composition": "4pc",
           "sands": ["em", "er"],
           "goblet": ["em"],
-          "circlet": ["cr", "em"],
+          "circlet": ["em"],
           "substats": ["cd", "cr", "em", "er"],
           "artifactSet": "silken_moons_serenade",
           "kOverride": 3,
@@ -76,26 +108,15 @@
           "composition": "4pc",
           "sands": ["em", "er"],
           "goblet": ["em"],
-          "circlet": ["cr", "em"],
+          "circlet": ["em"],
           "substats": ["cd", "cr", "em", "er"],
-          "artifactSet": "gilded_dreams",
+          "artifactSet": "deepwood_memories",
           "kOverride": 3,
-          "characterId": "lauma"
-        },
-        {
-          "id": "build-1759079851858",
-          "name": "6命月绽放主C",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["em"],
-          "goblet": ["em"],
-          "circlet": ["cd", "cr"],
-          "substats": ["cd", "cr", "em"],
-          "artifactSet": "night_of_the_skys_unveiling",
           "characterId": "lauma"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["nightweavers_looking_glass"]
     },
     {
       "characterId": "aino",
@@ -105,15 +126,28 @@
           "name": "挂水辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": ["em"],
+          "sands": ["er", "em"],
           "goblet": ["em"],
-          "circlet": ["cd", "cr"],
-          "substats": ["cd", "cr", "em"],
+          "circlet": ["em"],
+          "substats": ["er", "em"],
           "artifactSet": "silken_moons_serenade",
+          "characterId": "aino"
+        },
+        {
+          "id": "build-1765659340331",
+          "name": "挂水辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["er", "em"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["er", "em"],
+          "artifactSet": "instructor",
           "characterId": "aino"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["flameforged_insight"]
     },
     {
       "characterId": "citlali",
@@ -155,7 +189,8 @@
           "characterId": "citlali"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["starcallers_watch"]
     },
     {
       "characterId": "xilonen",
@@ -198,7 +233,8 @@
           "characterId": "xilonen"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["peak_patrol_song"]
     },
     {
       "characterId": "navia",
@@ -210,7 +246,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["geo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "nighttime_whispers_in_the_echoing_woods",
           "characterId": "navia"
@@ -222,13 +258,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["geo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "golden_troupe",
           "characterId": "navia"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["verdict"]
     },
     {
       "characterId": "freminet",
@@ -290,7 +327,8 @@
           "characterId": "chevreuse"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["rightful_reward"]
     },
     {
       "characterId": "gaming",
@@ -322,7 +360,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["fruitful_hook"]
     },
     {
       "characterId": "chiori",
@@ -334,7 +373,7 @@
           "composition": "4pc",
           "sands": ["def%"],
           "goblet": ["geo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "def%"],
           "artifactSet": "golden_troupe",
           "characterId": "chiori"
@@ -346,13 +385,14 @@
           "composition": "4pc",
           "sands": ["def%"],
           "goblet": ["geo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "chiori"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["uraku_misugiri"]
     },
     {
       "characterId": "arlecchino",
@@ -364,7 +404,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%", "pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "fragment_of_harmonic_whimsy",
           "characterId": "arlecchino",
@@ -377,13 +417,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["pyro%"],
-          "circlet": ["cr", "cd"],
+          "circlet": ["cd"],
           "substats": ["cr", "cd", "atk%"],
           "artifactSet": "gladiators_finale",
           "characterId": "arlecchino"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["crimson_moons_semblance"]
     },
     {
       "characterId": "xianyun",
@@ -414,7 +455,8 @@
           "artifactSet": "viridescent_venerer"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["cranes_echoing_call"]
     },
     {
       "characterId": "clorinde",
@@ -426,7 +468,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%", "electro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "fragment_of_harmonic_whimsy",
           "characterId": "clorinde"
@@ -438,13 +480,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["electro%", "atk%"],
-          "circlet": ["cr", "cd"],
+          "circlet": ["cr"],
           "substats": ["cr", "cd", "atk%"],
           "artifactSet": "thundering_fury",
           "characterId": "clorinde"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["absolution"]
     },
     {
       "characterId": "sethos",
@@ -463,7 +506,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["slingshot", "scion_of_the_blazing_sun"]
     },
     {
       "characterId": "sigewinne",
@@ -495,7 +539,8 @@
           "characterId": "sigewinne"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["silvershower_heartstrings"]
     },
     {
       "characterId": "emilie",
@@ -507,13 +552,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%", "dendro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "unfinished_reverie",
           "characterId": "emilie"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["lumidouce_elegy"]
     },
     {
       "characterId": "kachina",
@@ -531,7 +577,8 @@
           "characterId": "kachina"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["footprint_of_the_rainbow"]
     },
     {
       "characterId": "mualani",
@@ -550,7 +597,8 @@
           "characterId": "mualani"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["surfs_up"]
     },
     {
       "characterId": "kinich",
@@ -562,13 +610,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["dendro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "obsidian_codex",
           "characterId": "kinich"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["fang_of_the_mountain_king"]
     },
     {
       "characterId": "ororon",
@@ -587,7 +636,8 @@
           "characterId": "ororon"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["elegy_for_the_end", "favonius_warbow"]
     },
     {
       "characterId": "chasca",
@@ -605,7 +655,8 @@
           "characterId": "chasca"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["astral_vultures_crimson_plumage"]
     },
     {
       "characterId": "mavuika",
@@ -624,7 +675,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["a_thousand_blazing_suns"]
     },
     {
       "characterId": "lan_yan",
@@ -654,13 +706,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["electro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "long_nights_oath",
           "characterId": "varesa"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["vivid_notions"]
     },
     {
       "characterId": "iansan",
@@ -678,7 +731,8 @@
           "characterId": "iansan"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["skyward_spine", "tamayuratei_no_ohanashi"]
     },
     {
       "characterId": "escoffier",
@@ -690,14 +744,15 @@
           "composition": "4pc",
           "sands": ["atk%", "er"],
           "goblet": ["atk%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "golden_troupe",
           "kOverride": 3,
           "characterId": "escoffier"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["symphonist_of_scents"]
     },
     {
       "characterId": "skirk",
@@ -727,7 +782,8 @@
           "characterId": "skirk"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["azurelight"]
     },
     {
       "characterId": "charlotte",
@@ -746,7 +802,8 @@
           "characterId": "charlotte"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_codex"]
     },
     {
       "characterId": "wriothesley",
@@ -758,14 +815,15 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["cryo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "wriothesley",
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["cashflow_supervision"]
     },
     {
       "characterId": "neuvillette",
@@ -777,13 +835,14 @@
           "composition": "4pc",
           "sands": ["hp%"],
           "goblet": ["hp%", "hydro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "hp%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "neuvillette"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["tome_of_the_eternal_flow"]
     },
     {
       "characterId": "lyney",
@@ -795,13 +854,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "lyney"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["the_first_great_magic"]
     },
     {
       "characterId": "lynette",
@@ -831,7 +891,8 @@
           "characterId": "lynette"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_sword"]
     },
     {
       "characterId": "shenhe",
@@ -851,8 +912,8 @@
         },
         {
           "id": "build-1759082553612",
-          "name": "辅助 低命可选",
-          "visible": false,
+          "name": "辅助",
+          "visible": true,
           "composition": "4pc",
           "sands": ["er"],
           "goblet": ["atk%"],
@@ -862,7 +923,8 @@
           "characterId": "shenhe"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["calamity_queller"]
     },
     {
       "characterId": "kirara",
@@ -896,7 +958,8 @@
           "characterId": "kirara"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["the_dockhands_assistant"]
     },
     {
       "characterId": "baizhu",
@@ -916,7 +979,7 @@
         {
           "id": "build-1759191574356",
           "name": "奶辅",
-          "visible": true,
+          "visible": false,
           "composition": "2pc+2pc",
           "sands": ["hp%"],
           "goblet": ["hp%"],
@@ -940,7 +1003,8 @@
           "characterId": "baizhu"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["jadefalls_splendor"]
     },
     {
       "characterId": "hu_tao",
@@ -952,14 +1016,15 @@
           "composition": "4pc",
           "sands": ["em", "hp%"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "em", "hp%"],
           "artifactSet": "crimson_witch_of_flames",
           "kOverride": 3,
           "characterId": "hu_tao"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["staff_of_homa"]
     },
     {
       "characterId": "zhongli",
@@ -977,7 +1042,8 @@
           "characterId": "zhongli"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["staff_of_homa", "black_tassel"]
     },
     {
       "characterId": "yelan",
@@ -989,7 +1055,7 @@
           "composition": "4pc",
           "sands": ["hp%"],
           "goblet": ["hydro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3,
@@ -1002,7 +1068,7 @@
           "composition": "2pc+2pc",
           "sands": ["hp%"],
           "goblet": ["hydro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "hp%", "er"],
           "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3,
@@ -1011,7 +1077,8 @@
           "characterId": "yelan"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["aqua_simulacra"]
     },
     {
       "characterId": "cyno",
@@ -1023,7 +1090,7 @@
           "composition": "4pc",
           "sands": ["em"],
           "goblet": ["electro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
@@ -1036,14 +1103,15 @@
           "composition": "4pc",
           "sands": ["em"],
           "goblet": ["electro%"],
-          "circlet": ["cr", "cd"],
+          "circlet": ["cd"],
           "substats": ["cr", "cd", "em", "atk%"],
           "artifactSet": "thundering_fury",
           "kOverride": 3,
           "characterId": "cyno"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["staff_of_the_scarlet_sands"]
     },
     {
       "characterId": "wanderer",
@@ -1055,7 +1123,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["anemo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "desert_pavilion_chronicle",
           "characterId": "wanderer"
@@ -1067,7 +1135,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["anemo%"],
-          "circlet": ["cr", "cd"],
+          "circlet": ["cr"],
           "substats": ["cr", "cd", "atk%"],
           "artifactSet": "echoes_of_an_offering",
           "characterId": "wanderer"
@@ -1079,13 +1147,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["anemo%"],
-          "circlet": ["cr", "cd"],
+          "circlet": ["cr"],
           "substats": ["cr", "cd", "atk%"],
           "artifactSet": "shimenawas_reminiscence",
           "characterId": "wanderer"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["tulaytullahs_remembrance"]
     },
     {
       "characterId": "alhaitham",
@@ -1097,7 +1166,7 @@
           "composition": "4pc",
           "sands": ["em"],
           "goblet": ["dendro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "em", "atk%"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
@@ -1106,7 +1175,7 @@
         {
           "id": "build-1759193387576",
           "name": "主C 可选",
-          "visible": true,
+          "visible": false,
           "composition": "2pc+2pc",
           "sands": ["em"],
           "goblet": ["dendro%"],
@@ -1119,7 +1188,8 @@
           "characterId": "alhaitham"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["light_of_foliar_incision"]
     },
     {
       "characterId": "nahida",
@@ -1149,7 +1219,8 @@
           "characterId": "nahida"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["a_thousand_floating_dreams"]
     },
     {
       "characterId": "dehya",
@@ -1161,7 +1232,7 @@
           "composition": "4pc",
           "sands": ["atk%", "er"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "emblem_of_severed_fate",
           "characterId": "dehya",
@@ -1182,7 +1253,7 @@
         {
           "id": "build-1759195034712",
           "name": "奶辅",
-          "visible": false,
+          "visible": true,
           "composition": "4pc",
           "sands": ["hp%"],
           "goblet": ["hp%"],
@@ -1192,7 +1263,8 @@
           "characterId": "dehya"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["beacon_of_the_reed_sea"]
     },
     {
       "characterId": "yaoyao",
@@ -1210,7 +1282,8 @@
           "characterId": "yaoyao"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["dialogues_of_the_desert_sages"]
     },
     {
       "characterId": "faruzan",
@@ -1241,7 +1314,8 @@
           "characterId": "faruzan"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_warbow"]
     },
     {
       "characterId": "mika",
@@ -1259,7 +1333,8 @@
           "characterId": "mika"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_lance"]
     },
     {
       "characterId": "layla",
@@ -1277,7 +1352,8 @@
           "characterId": "layla"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["the_dockhands_assistant"]
     },
     {
       "characterId": "nilou",
@@ -1296,7 +1372,8 @@
           "characterId": "nilou"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["key_of_khajnisut"]
     },
     {
       "characterId": "kaveh",
@@ -1314,7 +1391,8 @@
           "characterId": "kaveh"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["mailed_flower"]
     },
     {
       "characterId": "yumemizuki_mizuki",
@@ -1332,7 +1410,8 @@
           "characterId": "yumemizuki_mizuki"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["sunny_morning_sleepin"]
     },
     {
       "characterId": "ifa",
@@ -1350,7 +1429,8 @@
           "characterId": "ifa"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["wandering_evenstar"]
     },
     {
       "characterId": "candace",
@@ -1382,7 +1462,8 @@
           "characterId": "candace"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["black_tassel"]
     },
     {
       "characterId": "dori",
@@ -1400,7 +1481,8 @@
           "characterId": "dori"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["sacrificial_greatsword"]
     },
     {
       "characterId": "collei",
@@ -1418,7 +1500,8 @@
           "characterId": "collei"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["windblume_ode"]
     },
     {
       "characterId": "tighnari",
@@ -1430,13 +1513,14 @@
           "composition": "4pc",
           "sands": ["em"],
           "goblet": ["dendro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "em"],
           "artifactSet": "wanderers_troupe",
           "characterId": "tighnari"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["hunters_path"]
     },
     {
       "characterId": "shikanoin_heizou",
@@ -1472,7 +1556,8 @@
           "characterId": "kuki_shinobu"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["xiphos_moonlight"]
     },
     {
       "characterId": "kamisato_ayato",
@@ -1484,14 +1569,15 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["hydro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%", "hp%"],
           "artifactSet": "echoes_of_an_offering",
           "kOverride": 3,
           "characterId": "kamisato_ayato"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["haran_geppaku_futsu"]
     },
     {
       "characterId": "yae_miko",
@@ -1503,7 +1589,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["electro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "golden_troupe",
           "characterId": "yae_miko"
@@ -1511,7 +1597,7 @@
         {
           "id": "build-1759203029752",
           "name": "驾驶员 超绽放",
-          "visible": true,
+          "visible": false,
           "composition": "4pc",
           "sands": ["em"],
           "goblet": ["em"],
@@ -1522,7 +1608,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["kaguras_verity"]
     },
     {
       "characterId": "thoma",
@@ -1541,7 +1628,8 @@
           "characterId": "thoma"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["kitain_cross_spear", "vortex_vanquisher"]
     },
     {
       "characterId": "gorou",
@@ -1561,7 +1649,8 @@
           "characterId": "gorou"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_warbow"]
     },
     {
       "characterId": "arataki_itto",
@@ -1573,13 +1662,14 @@
           "composition": "4pc",
           "sands": ["def%"],
           "goblet": ["geo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "def%"],
           "artifactSet": "husk_of_opulent_dreams",
           "characterId": "arataki_itto"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["redhorn_stonethresher"]
     },
     {
       "characterId": "sangonomiya_kokomi",
@@ -1621,7 +1711,8 @@
           "characterId": "sangonomiya_kokomi"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["everlasting_moonglow"]
     },
     {
       "characterId": "raiden_shogun",
@@ -1652,7 +1743,8 @@
           "characterId": "raiden_shogun"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["engulfing_lightning"]
     },
     {
       "characterId": "kujou_sara",
@@ -1671,7 +1763,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["skyward_harp"]
     },
     {
       "characterId": "sayu",
@@ -1689,7 +1782,8 @@
           "characterId": "sayu"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["sacrificial_greatsword"]
     },
     {
       "characterId": "yun_jin",
@@ -1733,7 +1827,8 @@
           "characterId": "yun_jin"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["footprint_of_the_rainbow"]
     },
     {
       "characterId": "yoimiya",
@@ -1745,7 +1840,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "shimenawas_reminiscence",
           "characterId": "yoimiya"
@@ -1753,11 +1848,11 @@
         {
           "id": "build-1759206655604",
           "name": "主C",
-          "visible": true,
+          "visible": false,
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "echoes_of_an_offering",
           "characterId": "yoimiya"
@@ -1765,17 +1860,18 @@
         {
           "id": "build-1759207339699",
           "name": "主C 带芙",
-          "visible": true,
+          "visible": false,
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["pyro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "yoimiya"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["thundering_pulse"]
     },
     {
       "characterId": "kamisato_ayaka",
@@ -1787,7 +1883,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["cryo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "blizzard_strayer",
           "characterId": "kamisato_ayaka"
@@ -1803,9 +1899,22 @@
           "substats": ["cd", "cr", "atk%"],
           "artifactSet": "marechaussee_hunter",
           "characterId": "kamisato_ayaka"
+        },
+        {
+          "id": "build-1765662760302",
+          "characterId": "kamisato_ayaka",
+          "name": "辅助 挂冰",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["cr"],
+          "substats": ["er", "cr", "atk%"],
+          "artifactSet": "noblesse_oblige"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["mistsplitter_reforged"]
     },
     {
       "characterId": "kaedehara_kazuha",
@@ -1835,7 +1944,8 @@
           "characterId": "kaedehara_kazuha"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["freedomsworn"]
     },
     {
       "characterId": "eula",
@@ -1854,7 +1964,8 @@
           "characterId": "eula"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["song_of_broken_pines"]
     },
     {
       "characterId": "furina",
@@ -1866,7 +1977,7 @@
           "composition": "4pc",
           "sands": ["er", "hp%"],
           "goblet": ["hp%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["cd", "cr", "er", "hp%"],
           "artifactSet": "golden_troupe",
           "characterId": "furina",
@@ -1901,7 +2012,12 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": [
+        "splendor_of_tranquil_waters",
+        "freedomsworn",
+        "key_of_khajnisut"
+      ]
     },
     {
       "characterId": "diona",
@@ -1919,7 +2035,8 @@
           "characterId": "diona"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["sacrificial_bow"]
     },
     {
       "characterId": "yanfei",
@@ -1974,7 +2091,8 @@
           "characterId": "yanfei"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["thrilling_tales_of_dragon_slayers"]
     },
     {
       "characterId": "rosaria",
@@ -2004,7 +2122,8 @@
           "characterId": "rosaria"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_lance"]
     },
     {
       "characterId": "xiao",
@@ -2016,7 +2135,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["anemo%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "er", "atk%"],
           "artifactSet": "vermillion_hereafter",
           "kOverride": 3,
@@ -2036,7 +2155,8 @@
           "characterId": "xiao"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["primordial_jade_wingedspear"]
     },
     {
       "characterId": "ganyu",
@@ -2055,7 +2175,7 @@
         },
         {
           "id": "build-1759210415719",
-          "name": "副C辅助",
+          "name": "副C",
           "visible": true,
           "composition": "4pc",
           "sands": ["er"],
@@ -2092,12 +2212,12 @@
         },
         {
           "id": "build-1759210945515",
-          "name": "辅助",
-          "visible": false,
+          "name": "辅助 挂冰",
+          "visible": true,
           "composition": "2pc+2pc",
           "sands": ["er"],
           "goblet": ["atk%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cr"],
           "substats": ["atk%", "er"],
           "artifactSet": "emblem_of_severed_fate",
           "halfSet1": 15,
@@ -2105,7 +2225,8 @@
           "characterId": "ganyu"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["amos_bow", "elegy_for_the_end"]
     },
     {
       "characterId": "albedo",
@@ -2135,7 +2256,8 @@
           "characterId": "albedo"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["cinnabar_spindle", "flute_of_ezpitzal"]
     },
     {
       "characterId": "xinyan",
@@ -2154,7 +2276,8 @@
           "characterId": "xinyan"
         }
       ],
-      "hidden": false
+      "hidden": true,
+      "weapons": ["whiteblind"]
     },
     {
       "characterId": "flins",
@@ -2167,13 +2290,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "night_of_the_skys_unveiling",
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["bloodsoaked_ruins"]
     },
     {
       "characterId": "tartaglia",
@@ -2186,13 +2310,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["hydro%"],
-          "circlet": ["cd", "cr"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "er", "atk%", "em"],
           "artifactSet": "nymphs_dream",
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["polar_star"]
     },
     {
       "characterId": "klee",
@@ -2234,7 +2359,8 @@
           "artifactSet": "tenacity_of_the_millelith"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["lost_prayer_to_the_sacred_winds"]
     },
     {
       "characterId": "xiangling",
@@ -2253,7 +2379,8 @@
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["engulfing_lightning", "the_catch"]
     },
     {
       "characterId": "traveler_pyro",
@@ -2271,7 +2398,8 @@
           "artifactSet": "scroll_of_the_hero_of_cinder_city"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["favonius_sword"]
     },
     {
       "characterId": "traveler_dendro",
@@ -2289,7 +2417,7 @@
           "artifactSet": "deepwood_memories"
         }
       ],
-      "hidden": false
+      "hidden": true
     },
     {
       "characterId": "qiqi",
@@ -2683,7 +2811,8 @@
           "artifactSet": "pale_flame"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["serpent_spine"]
     },
     {
       "characterId": "chongyun",
@@ -2719,7 +2848,8 @@
           "artifactSet": "night_of_the_skys_unveiling"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["reliquary_of_truth"]
     },
     {
       "characterId": "durin",
@@ -2732,43 +2862,14 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%", "pyro%"],
-          "circlet": ["cr"],
+          "circlet": ["cd", "atk%"],
           "substats": ["cd", "cr", "atk%", "er"],
           "artifactSet": "noblesse_oblige",
           "kOverride": 3
         }
       ],
-      "hidden": false
-    },
-    {
-      "characterId": "jahoda",
-      "builds": [
-        {
-          "id": "build-1765193935606",
-          "characterId": "jahoda",
-          "name": "治疗辅助",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["atk%"],
-          "goblet": ["atk%"],
-          "circlet": ["atk%", "heal%"],
-          "substats": ["er", "atk%"],
-          "artifactSet": "silken_moons_serenade"
-        },
-        {
-          "id": "build-1765193981718",
-          "characterId": "jahoda",
-          "name": "治疗辅助",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["atk%"],
-          "goblet": ["atk%"],
-          "circlet": ["atk%", "heal%"],
-          "substats": ["er", "atk%"],
-          "artifactSet": "viridescent_venerer"
-        }
-      ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["athame_artis"]
     }
   ],
   "computeOptions": {

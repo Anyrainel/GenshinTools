@@ -10,6 +10,7 @@ interface BuildsState {
   characterToBuildIds: Record<string, string[]>;
   builds: Record<string, Build>;
   hiddenCharacters: Record<string, boolean>;
+  characterWeapons: Record<string, string[]>; // [weaponId1, weaponId2, weaponId3]
   computeOptions: ComputeOptions;
   author: string;
   description: string;
@@ -17,6 +18,7 @@ interface BuildsState {
   // Getters
   getCharacterBuildIds: (characterId: string) => string[];
   getBuild: (buildId: string) => Build | undefined;
+  getCharacterWeapons: (characterId: string) => string[];
 
   // Actions
   newBuild: (characterId: string) => Build;
@@ -27,6 +29,9 @@ interface BuildsState {
   // Character visibility
   setCharacterHidden: (characterId: string, hidden: boolean) => void;
   toggleCharacterHidden: (characterId: string) => void;
+
+  // Character weapons
+  setCharacterWeapons: (characterId: string, weaponIds: string[]) => void;
 
   // Utility for import
   importBuilds: (payload: BuildPayload) => void;
@@ -47,6 +52,7 @@ export const useBuildsStore = create<BuildsState>()(
       characterToBuildIds: {},
       builds: {},
       hiddenCharacters: {},
+      characterWeapons: {},
       computeOptions: { ...DEFAULT_COMPUTE_OPTIONS },
       author: "",
       description: "",
@@ -58,6 +64,10 @@ export const useBuildsStore = create<BuildsState>()(
 
       getBuild: (buildId: string) => {
         return get().builds[buildId];
+      },
+
+      getCharacterWeapons: (characterId: string) => {
+        return get().characterWeapons[characterId] ?? EMPTY_ARRAY;
       },
 
       // Create a new build for a character
@@ -166,6 +176,16 @@ export const useBuildsStore = create<BuildsState>()(
         });
       },
 
+      setCharacterWeapons: (characterId: string, weaponIds: string[]) => {
+        set((state) => {
+          if (weaponIds.length === 0) {
+            delete state.characterWeapons[characterId];
+          } else {
+            state.characterWeapons[characterId] = weaponIds.slice(0, 3);
+          }
+        });
+      },
+
       // Import builds from exported data
       importBuilds: (payload: BuildPayload) => {
         set((state) => {
@@ -187,6 +207,15 @@ export const useBuildsStore = create<BuildsState>()(
 
             if (buildIds.length > 0) {
               state.characterToBuildIds[characterId] = buildIds;
+            }
+          });
+
+          // Handle character weapons if present in payload
+          payload.data.forEach(({ characterId, weapons }) => {
+            if (weapons && weapons.length > 0) {
+              state.characterWeapons[characterId] = weapons.slice(0, 3);
+            } else {
+              delete state.characterWeapons[characterId];
             }
           });
 
@@ -212,6 +241,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.characterToBuildIds = {};
           state.builds = {};
           state.hiddenCharacters = {};
+          state.characterWeapons = {};
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
           state.author = "";
           state.description = "";

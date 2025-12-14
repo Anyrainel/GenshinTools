@@ -1,6 +1,12 @@
-import { useState, useMemo } from "react";
-import { characters, weapons, artifacts } from "@/data/resources";
-import { charactersById, weaponsById, artifactsById } from "@/data/constants";
+import { useState, useMemo, memo } from "react";
+import {
+  charactersById,
+  weaponsById,
+  artifactsById,
+  sortedCharacters,
+  sortedWeapons,
+  sortedArtifacts,
+} from "@/data/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Popover,
@@ -13,7 +19,7 @@ import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Ban } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -29,16 +35,22 @@ interface ItemPickerProps {
   type: ItemPickerType;
   value: string | null;
   onChange: (value: string) => void;
+  onClear?: () => void;
   disabled?: boolean;
   filter?: (item: Item) => boolean;
+  className?: string;
+  tooltipSide?: "left" | "right";
 }
 
-export function ItemPicker({
+function ItemPickerComponent({
   type,
   value,
   onChange,
+  onClear,
   disabled,
   filter,
+  className,
+  tooltipSide = "right",
 }: ItemPickerProps) {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +61,7 @@ export function ItemPicker({
     switch (type) {
       case "character":
         return {
-          items: characters,
+          items: sortedCharacters,
           getItem: (id: string) => charactersById[id] as Character,
           getName: (id: string) => t.character(id),
           placeholder: t.ui("teamBuilder.selectCharacter"),
@@ -57,7 +69,7 @@ export function ItemPicker({
         };
       case "weapon":
         return {
-          items: weapons,
+          items: sortedWeapons,
           getItem: (id: string) => weaponsById[id] as Weapon,
           getName: (id: string) => t.weaponName(id),
           placeholder: t.ui("teamBuilder.selectWeapon"),
@@ -65,7 +77,7 @@ export function ItemPicker({
         };
       case "artifact":
         return {
-          items: artifacts,
+          items: sortedArtifacts,
           getItem: (id: string) => artifactsById[id] as ArtifactSet,
           getName: (id: string) => t.artifact(id),
           placeholder: t.ui("teamBuilder.selectArtifact"),
@@ -109,6 +121,10 @@ export function ItemPicker({
     </div>
   );
 
+  const calcOffset = function (index: number) {
+    return (tooltipSide == "right" ? 5 - (index % 6) : index % 6) * 62 + 12;
+  };
+
   return (
     <Popover
       open={isOpen}
@@ -122,6 +138,7 @@ export function ItemPicker({
                 THEME.picker.trigger,
                 "select-none",
                 disabled && THEME.picker.triggerDisabled,
+                className,
               )}
             >
               {triggerContent}
@@ -153,7 +170,10 @@ export function ItemPicker({
               className="pl-8 pr-2"
             />
           </div>
-          <div className={THEME.picker.itemGrid}>
+          <div
+            className={THEME.picker.itemGrid}
+            onWheel={(e) => e.stopPropagation()}
+          >
             {filteredItems.map((item, index) => (
               <Tooltip key={item.id} disableHoverableContent>
                 <TooltipTrigger asChild>
@@ -178,21 +198,50 @@ export function ItemPicker({
                       className={THEME.picker.imageCover}
                       loading="lazy"
                     />
+                    {type === "character" &&
+                      item.id.startsWith("traveler") &&
+                      (item as Character).element && (
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-sm bg-black/50 p-0.5 z-10 pointer-events-none w-6 h-6">
+                          <img
+                            src={getAssetUrl(
+                              `element/${(item as Character).element.toLowerCase()}.png`,
+                            )}
+                            alt={(item as Character).element}
+                            className="w-5 h-5 drop-shadow-md"
+                          />
+                        </div>
+                      )}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent
-                  side="right"
+                  side={tooltipSide}
                   align="start"
-                  sideOffset={(5 - (index % 6)) * 64 + 4}
+                  sideOffset={calcOffset(index)}
                   className="p-0 border-0 bg-transparent shadow-none z-[60]"
                 >
                   {config.tooltip(item.id)}
                 </TooltipContent>
               </Tooltip>
             ))}
+            {onClear && value && (
+              <div
+                className={cn(
+                  THEME.picker.itemWrapper,
+                  "bg-muted border-2 border-dashed border-muted-foreground/30 hover:bg-muted/80 flex justify-center items-center",
+                )}
+                onClick={() => {
+                  onClear();
+                  setIsOpen(false);
+                }}
+              >
+                <Ban className="w-8 h-8 text-muted-foreground/50" />
+              </div>
+            )}
           </div>
         </div>
       </PopoverContent>
     </Popover>
   );
 }
+
+export const ItemPicker = memo(ItemPickerComponent);

@@ -58,12 +58,8 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
         <TitleCard character={character} />
       </CardHeader>
 
-      <CardContent className="pb-3">
-        {isHidden ? (
-          <div className="text-center pb-2 text-muted-foreground text-xs italic select-none">
-            {t.ui("characterCard.hiddenNotice")}
-          </div>
-        ) : (
+      {!isHidden && (
+        <CardContent className="pb-3">
           <div className="space-y-2">
             {buildIds.length === 0 ? (
               <div className="text-center py-2 text-muted-foreground">
@@ -107,8 +103,8 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
               </>
             )}
           </div>
-        )}
-      </CardContent>
+        </CardContent>
+      )}
     </Card>
   );
 }

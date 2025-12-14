@@ -1,6 +1,6 @@
 import { useState, memo, useMemo, useCallback } from "react";
-import { artifacts, artifactHalfSets } from "@/data/resources";
-import { artifactsById } from "@/data/constants";
+import { artifactHalfSets } from "@/data/resources";
+import { artifactsById, sortedArtifacts } from "@/data/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Select,
@@ -33,7 +33,7 @@ function ArtifactSelectComponent({
 
   // Memoize translated artifact data alongside an id-indexed lookup (recompute only when language changes)
   const { list: artifactList, lookup: artifactLookup } = useMemo(() => {
-    const list = artifacts.map((set) => ({
+    const list = sortedArtifacts.map((set) => ({
       id: set.id,
       imagePath: set.imagePath,
       name: t.artifact(set.id),
@@ -97,7 +97,7 @@ function ArtifactSelectComponent({
       </Tooltip>
 
       <SelectContent
-        className="w-96 overflow-visible max-h-96"
+        className="w-96 overflow-y-auto max-h-96"
         side="right"
         align="start"
       >
@@ -188,7 +188,7 @@ function ArtifactSelectHalfComponent({
         <SelectTrigger className="w-full min-h-8 h-auto text-xs px-2 py-1 [&>span]:line-clamp-2">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-96 overflow-y-auto">
           {halfSetList.map((halfSet) => (
             <SelectItem key={halfSet.id} value={halfSet.id.toString()}>
               <div className="flex items-center gap-2">

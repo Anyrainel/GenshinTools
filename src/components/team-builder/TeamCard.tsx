@@ -2,7 +2,7 @@ import { Team } from "@/stores/useTeamStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Copy, Trash2, User, Sword, Flower } from "lucide-react";
-import { ItemPicker } from "./ItemPicker";
+import { ItemPicker } from "@/components/shared/ItemPicker";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAssetUrl, cn } from "@/lib/utils";
 import {
@@ -143,6 +143,19 @@ export function TeamCard({
 
                 onUpdate({ characters: newChars, weapons: newWeapons });
               }}
+              onClear={() => {
+                const newChars = [...team.characters];
+                newChars[idx] = null;
+                const newWeapons = [...team.weapons];
+                newWeapons[idx] = null;
+                const newArts = [...team.artifacts];
+                newArts[idx] = null;
+                onUpdate({
+                  characters: newChars,
+                  weapons: newWeapons,
+                  artifacts: newArts,
+                });
+              }}
             />
           </div>
         ))}
@@ -166,6 +179,11 @@ export function TeamCard({
               onChange={(val) => {
                 const newWeapons = [...team.weapons];
                 newWeapons[idx] = val;
+                onUpdate({ weapons: newWeapons });
+              }}
+              onClear={() => {
+                const newWeapons = [...team.weapons];
+                newWeapons[idx] = null;
                 onUpdate({ weapons: newWeapons });
               }}
               disabled={!team.characters[idx]}
@@ -198,6 +216,11 @@ export function TeamCard({
               onChange={(val) => {
                 const newArts = [...team.artifacts];
                 newArts[idx] = val;
+                onUpdate({ artifacts: newArts });
+              }}
+              onClear={() => {
+                const newArts = [...team.artifacts];
+                newArts[idx] = null;
                 onUpdate({ artifacts: newArts });
               }}
               disabled={!team.characters[idx]}

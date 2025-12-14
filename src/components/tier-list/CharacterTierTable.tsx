@@ -4,8 +4,7 @@ import type {
   TierCustomization,
 } from "@/data/types";
 import { Element, elements } from "@/data/types";
-import { characters } from "@/data/resources";
-import { charactersById } from "@/data/constants";
+import { sortedCharacters, charactersById } from "@/data/constants";
 import { TierTable } from "./TierTable";
 import { TierItemData } from "./TierItem";
 import { cn } from "@/lib/utils";
@@ -162,7 +161,7 @@ export default function CharacterTierTable({
 
   return (
     <TierTable<Character>
-      items={characters.map(characterToTierItemData)}
+      items={sortedCharacters.map(characterToTierItemData)}
       itemsById={charactersById}
       tierAssignments={tierAssignments}
       tierCustomization={tierCustomization}
