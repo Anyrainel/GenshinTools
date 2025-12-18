@@ -69,10 +69,6 @@ export const THEME = {
     pageContainer:
       "h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden",
     headerBorder: "border-b border-border/50 bg-card/20 backdrop-blur-sm",
-
-    // TierList specific
-    tierLabelWidth: "w-12",
-    minRowHeight: "min-h-[5rem]",
     gridBorder: "border-r border-b border-gray-600 bg-clip-padding",
     centerBox: "flex items-center justify-center p-2",
     labelText: "text-center break-words font-bold text-gray-100",

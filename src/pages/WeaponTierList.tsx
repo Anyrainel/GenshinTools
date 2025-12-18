@@ -12,11 +12,12 @@ import {
   TierListData,
   TierAssignment,
   TierCustomization,
+  MainStat,
 } from "@/data/types";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import WeaponTierTable from "@/components/tier-list/WeaponTierTable";
 import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
-import { weaponsById } from "@/data/constants";
+import { weaponsById, sortedWeaponSecondaryStats } from "@/data/constants";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
@@ -62,6 +63,9 @@ const WeaponTierListPage = () => {
   const setShowRarity3 = useWeaponTierStore((state) => state.setShowRarity3);
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
+  const [selectedSecondaryStats, setSelectedSecondaryStats] = useState<
+    MainStat[]
+  >(sortedWeaponSecondaryStats);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -354,6 +358,35 @@ const WeaponTierListPage = () => {
                     {t.ui("buttons.includeRarity3")}
                   </Label>
                 </div>
+
+                <div className="w-px h-6 bg-gray-600 mx-2" />
+
+                {sortedWeaponSecondaryStats.map((stat) => (
+                  <div key={stat} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`stat-${stat}`}
+                      checked={selectedSecondaryStats.includes(stat)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedSecondaryStats([
+                            ...selectedSecondaryStats,
+                            stat,
+                          ]);
+                        } else {
+                          setSelectedSecondaryStats(
+                            selectedSecondaryStats.filter((s) => s !== stat),
+                          );
+                        }
+                      }}
+                    />
+                    <Label
+                      htmlFor={`stat-${stat}`}
+                      className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+                    >
+                      {t.statShort(stat)}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -368,6 +401,7 @@ const WeaponTierListPage = () => {
               showRarity5={showRarity5}
               showRarity4={showRarity4}
               showRarity3={showRarity3}
+              allowedSecondaryStats={selectedSecondaryStats}
               tableRef={tableRef}
             />
           </div>

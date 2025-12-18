@@ -438,11 +438,11 @@ export const i18nAppData = {
     },
     tiers: {
       Pool: { en: "Pool", zh: "角色池" },
-      S: { en: "S", zh: "S" },
-      A: { en: "A", zh: "A" },
-      B: { en: "B", zh: "B" },
-      C: { en: "C", zh: "C" },
-      D: { en: "D", zh: "D" },
+      S: { en: "S", zh: "夯" },
+      A: { en: "A", zh: "顶级" },
+      B: { en: "B", zh: "人上人" },
+      C: { en: "C", zh: "NPC" },
+      D: { en: "D", zh: "拉完了" },
     },
   },
 };

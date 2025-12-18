@@ -5,6 +5,7 @@ import {
   TierCustomization,
   WeaponType,
   weaponTypes,
+  MainStat,
 } from "@/data/types";
 import { sortedWeapons } from "@/data/constants";
 import { cn, getAssetUrl } from "@/lib/utils";
@@ -27,6 +28,7 @@ interface WeaponTierTableProps {
   showRarity5: boolean;
   showRarity4: boolean;
   showRarity3: boolean;
+  allowedSecondaryStats: MainStat[];
   tableRef?: React.Ref<HTMLDivElement>;
 }
 
@@ -37,6 +39,7 @@ export default function WeaponTierTable({
   showRarity5,
   showRarity4,
   showRarity3,
+  allowedSecondaryStats,
   tableRef,
 }: WeaponTierTableProps) {
   const { t } = useLanguage();
@@ -120,6 +123,7 @@ export default function WeaponTierTable({
     if (weapon.rarity === 5 && !showRarity5) return false;
     if (weapon.rarity === 4 && !showRarity4) return false;
     if (weapon.rarity === 3 && !showRarity3) return false;
+    if (!allowedSecondaryStats.includes(weapon.secondaryStat)) return false;
     return true;
   };
 

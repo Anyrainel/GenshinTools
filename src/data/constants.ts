@@ -190,3 +190,7 @@ export const sortedCharacters = [...characters].sort((a, b) => {
 });
 export const sortedWeapons = sortItemsByRarityDesc(weapons);
 export const sortedArtifacts = sortItemsByRarityDesc(artifacts);
+
+export const sortedWeaponSecondaryStats = Array.from(
+  new Set(weapons.map((w) => w.secondaryStat)),
+).sort();

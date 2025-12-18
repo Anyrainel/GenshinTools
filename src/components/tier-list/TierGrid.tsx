@@ -73,8 +73,7 @@ export function TierGrid<T extends TierItemData>({
         ref={setNodeRef}
         key={cellId}
         className={cn(
-          "p-2",
-          THEME.layout.minRowHeight,
+          "min-h-[5rem]",
           THEME.tier.bg[tier as keyof typeof THEME.tier.bg],
           THEME.layout.gridBorder,
         )}
@@ -104,12 +103,12 @@ export function TierGrid<T extends TierItemData>({
   };
 
   const gridColsClass = hasCustomNames
-    ? `grid-cols-[minmax(4rem,max-content)_repeat(${groups.length},1fr)]`
-    : `grid-cols-[4rem_repeat(${groups.length},1fr)]`;
+    ? `grid-cols-[minmax(5rem,max-content)_repeat(${groups.length},1fr)]`
+    : `grid-cols-[5rem_repeat(${groups.length},1fr)]`;
 
   const gridTemplateColumns = hasCustomNames
-    ? `minmax(4rem, max-content) repeat(${groups.length}, 1fr)`
-    : `4rem repeat(${groups.length}, 1fr)`;
+    ? `minmax(5rem, max-content) repeat(${groups.length}, 1fr)`
+    : `5rem repeat(${groups.length}, 1fr)`;
 
   return (
     <div
@@ -131,7 +130,7 @@ export function TierGrid<T extends TierItemData>({
             key={`${tier}-label`}
             className={cn(
               THEME.layout.centerBox,
-              THEME.layout.minRowHeight,
+              "min-h-[5rem]",
               THEME.tier.color[tier as keyof typeof THEME.tier.color],
               THEME.layout.gridBorder,
               "rounded-l-md",
@@ -141,7 +140,7 @@ export function TierGrid<T extends TierItemData>({
             <span
               className={cn(
                 THEME.layout.labelText,
-                customName ? "text-lg" : "text-2xl",
+                customName ? "text-base" : "text-xl",
               )}
             >
               {displayName}
