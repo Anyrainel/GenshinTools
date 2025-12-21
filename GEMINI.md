@@ -41,15 +41,23 @@ Data ingestion logic resides in `scripts/`.
 - **Utility:** **ALWAYS** use `cn()` from `@/lib/utils` to merge Tailwind classes.
 - **Theming:** Define reusable Tailwind class strings in `src/lib/theme.ts`. Avoid magic strings for complex, repeated UI elements.
 - **Layers:** `tailwind.config.ts` > `src/index.css` > `theme.ts` > Component inline classes.
+- **Consistency:** Follow existing layout patterns (e.g., specific gaps, border weights, and hover effects like `cursor-help` for tooltips).
 
 ### Code Quality
 
-- **DRY:** Look for opportunities to genericize components (e.g., generic tooltips in `shared/`).
-- **Types:** Strictly define types in `src/data/types.ts`. Avoid `any`.
+- **DRY:** Abstract reusable logic and UI into `src/components/shared/` or domain-specific subdirectories (e.g., `src/components/account-data/`).
+- **Types:** Strictly define types in `src/data/types.ts` or local type files (e.g., `goodTypes.ts`). **AVOID `any`**; use `unknown` and type guards/assertions if dealing with raw external JSON.
 - **Comments:** **Sparingly.** Explain _why_ a complex logic exists. Do not explain _what_ the code does.
 
 ### Common Patterns
 
-- **Localization:** Add new UI strings to `src/data/i18n-app.ts` under the appropriate key.
+- **Page Structure:** Every main tool page starts with a `ToolHeader`.
+- **Standard Actions:** Use standardized control components inside `ToolHeader` actions:
+  - `ImportControl`: For JSON/GOOD data imports.
+  - `ExportControl`: For data exports.
+  - `ClearAllControl`: For resetting state.
+- **Item Icons:** Always use the `ItemIcon` component for characters, weapons, and artifacts. It standardizes rarity backgrounds, shapes, and corner labels (C#/R#).
+- **Tooltips:** Almost all game items should provide hover tooltips using `CharacterTooltip`, `WeaponTooltip`, or `ArtifactTooltip`.
+- **Localization:** **NO HARDCODED STRINGS.** All UI text must be in `src/data/i18n-app.ts` and accessed via `t.ui()`. Game data names should use `t.character()`, `t.weaponName()`, `t.artifact()`, etc.
 - **Assets:** Game assets are served from `public/`. Access them via `getAssetUrl()` helper.
 - **Icons:** Use `lucide-react`.

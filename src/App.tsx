@@ -5,6 +5,7 @@ import ArtifactFilterPage from "./pages/ArtifactFilter";
 import TierListPage from "./pages/TierList";
 import WeaponTierListPage from "./pages/WeaponTierList";
 import TeamBuilderPage from "./pages/TeamBuilder";
+import AccountDataPage from "./pages/AccountData";
 import Home from "./pages/Home";
 import { Layout } from "./components/shared/Layout";
 
@@ -17,6 +18,14 @@ function App() {
           element={
             <Layout>
               <Home />
+            </Layout>
+          }
+        />
+        <Route
+          path="/account-data"
+          element={
+            <Layout>
+              <AccountDataPage />
             </Layout>
           }
         />

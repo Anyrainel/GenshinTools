@@ -2,7 +2,7 @@ import { useState, useImperativeHandle, forwardRef, useRef } from "react";
 import { Filter } from "lucide-react";
 import { Element, WeaponType, Region, Rarity, Character } from "@/data/types";
 import { characters } from "@/data/resources";
-import { ConfigureSidebar } from "./ConfigureSidebar";
+import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -82,8 +82,11 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
         className="flex flex-col gap-4 lg:flex-row lg:gap-6 h-full pt-4"
       >
         {/* Desktop Sidebar - Fixed height with internal scroll */}
-        <aside className="hidden lg:block lg:w-72 lg:flex-shrink-0 h-full">
-          <ConfigureSidebar filters={filters} onFiltersChange={setFilters} />
+        <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 h-full">
+          <CharacterFilterSidebar
+            filters={filters}
+            onFiltersChange={setFilters}
+          />
         </aside>
 
         {/* Main Column - Scrollable */}
@@ -143,7 +146,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
       <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
         <SheetContent side="left" className="w-80 p-0 flex flex-col">
           <div className="flex-1 overflow-y-auto my-4">
-            <ConfigureSidebar
+            <CharacterFilterSidebar
               filters={filters}
               onFiltersChange={setFilters}
               isInSidePanel={false}

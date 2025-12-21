@@ -262,7 +262,7 @@ function BuildCardComponent({
                 }
               }}
             >
-              <LightweightSelectTrigger className="w-32 h-7 text-sm">
+              <LightweightSelectTrigger className="w-32 h-7 text-sm bg-gradient-mystical-reverse">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>

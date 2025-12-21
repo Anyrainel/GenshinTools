@@ -62,7 +62,11 @@ function ArtifactSelectComponent({
     >
       <Tooltip disableHoverableContent>
         <TooltipTrigger asChild>
-          <SelectTrigger className={"w-32 h-32 p-0 border-2 border-border/50"}>
+          <SelectTrigger
+            className={
+              "w-32 h-32 p-0 border-2 border-border/50 bg-gradient-mystical-reverse"
+            }
+          >
             <div className="w-full h-full rounded flex flex-col items-center justify-center">
               {selectedArtifact ? (
                 <>
@@ -185,7 +189,7 @@ function ArtifactSelectHalfComponent({
         value={value?.toString() || ""}
         onValueChange={(val) => onValueChange(parseInt(val))}
       >
-        <SelectTrigger className="w-full min-h-8 h-auto text-xs px-2 py-1 [&>span]:line-clamp-2">
+        <SelectTrigger className="w-full min-h-8 h-auto text-xs px-2 py-1 [&>span]:line-clamp-2 bg-gradient-mystical-reverse">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
         <SelectContent className="max-h-96 overflow-y-auto">

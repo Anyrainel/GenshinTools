@@ -76,10 +76,45 @@ export const i18nAppData = {
       elements: { en: "Elements", zh: "元素" },
       none: { en: "None", zh: "无" },
     },
+    accountData: {
+      loadSample: { en: "Load Sample", zh: "加载示例" },
+      importGOOD: { en: "Import GOOD", zh: "导入 GOOD" },
+      clear: { en: "Clear", zh: "清除" },
+      characters: { en: "Characters", zh: "角色" },
+      inventory: { en: "Inventory", zh: "库存" },
+      evaluation: { en: "Evaluation", zh: "评估" },
+      unequippedWeapons: { en: "Unequipped Weapons", zh: "未装备武器" },
+      unequippedArtifacts: { en: "Unequipped Artifacts", zh: "未装备圣遗物" },
+      buildEvaluationComingSoon: {
+        en: "Build evaluation coming soon...",
+        zh: "配装评估即将推出...",
+      },
+      noAccountDataLoaded: {
+        en: "No account data loaded.",
+        zh: "未加载账号数据。",
+      },
+      importGOODInstruction: {
+        en: "Import a GOOD format JSON file to get started.",
+        zh: "导入 GOOD 格式的 JSON 文件以开始使用。",
+      },
+      failedToParseFile: {
+        en: "Failed to parse file.",
+        zh: "解析文件失败。",
+      },
+      noSetBonus: { en: "No Set Bonus", zh: "无套装效果" },
+      twoPiece: { en: "2-Piece", zh: "2件套" },
+      fourPiece: { en: "4-Piece", zh: "4件套" },
+      talents: {
+        auto: { en: "Normal Attack", zh: "普通攻击" },
+        skill: { en: "Elemental Skill", zh: "元素战技" },
+        burst: { en: "Elemental Burst", zh: "元素爆发" },
+      },
+    },
     app: {
       title: { en: "Genshin Tools", zh: "原神工具箱" },
       navArtifactFilter: { en: "Artifact Filter", zh: "圣遗物过滤器" },
       navTierList: { en: "Character Tier List", zh: "角色榜单" },
+      navAccountData: { en: "Account Data", zh: "账号数据" },
       heroDescription: {
         en: "Powerful utilities to optimize your builds and organize your roster.",
         zh: "强大实用的工具，助您优化配装、管理角色养成。",

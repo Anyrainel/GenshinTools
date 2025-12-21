@@ -268,3 +268,49 @@ export type PresetOption = {
   author?: string;
   description?: string;
 };
+
+export type ArtifactData = {
+  id: string;
+  setKey: string;
+  slotKey: Slot;
+  level: number;
+  rarity: number;
+  mainStatKey: MainStat;
+  lock: boolean;
+  substats: Partial<Record<SubStat, number>>;
+};
+
+export type WeaponData = {
+  id: string;
+  key: string;
+  level: number;
+  refinement: number;
+  lock: boolean;
+};
+
+export type CharacterData = {
+  key: string;
+  constellation: number;
+  level: number;
+  talent: {
+    auto: number;
+    skill: number;
+    burst: number;
+  };
+  weapon?: WeaponData;
+  artifacts: Partial<Record<Slot, ArtifactData>>;
+};
+
+export type AccountData = {
+  characters: CharacterData[];
+  extraArtifacts: ArtifactData[];
+  extraWeapons: WeaponData[];
+};
+
+export interface CharacterFilters {
+  elements: Element[];
+  weaponTypes: WeaponType[];
+  regions: Region[];
+  rarities: Rarity[];
+  sortOrder: "asc" | "desc";
+}

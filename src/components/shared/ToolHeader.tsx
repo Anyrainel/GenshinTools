@@ -85,6 +85,21 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
             >
               <Link to="/team-builder">{t.ui("app.navTeamBuilder")}</Link>
             </Button>
+            <Button
+              variant={
+                location.pathname.includes("/account-data")
+                  ? "secondary"
+                  : "ghost"
+              }
+              asChild
+              className={cn(
+                "gap-2",
+                location.pathname.includes("/account-data") &&
+                  "bg-primary/10 text-primary hover:bg-primary/20",
+              )}
+            >
+              <Link to="/account-data">{t.ui("app.navAccountData")}</Link>
+            </Button>
           </div>
         </div>
 

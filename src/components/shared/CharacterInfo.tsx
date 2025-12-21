@@ -1,0 +1,132 @@
+import { memo, useMemo } from "react";
+import { Character } from "@/data/types";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Badge } from "@/components/ui/badge";
+import { getAssetUrl, cn } from "@/lib/utils";
+import { THEME } from "@/lib/theme";
+import {
+  elementResourcesByName,
+  weaponResourcesByName,
+} from "@/data/constants";
+
+interface CharacterInfoProps {
+  character: Character;
+  className?: string;
+  showDate?: boolean;
+  nameClassName?: string;
+  children?: React.ReactNode;
+}
+
+export const CharacterInfo = memo(
+  ({
+    character,
+    className,
+    showDate = true,
+    nameClassName,
+    children,
+  }: CharacterInfoProps) => {
+    const { t } = useLanguage();
+
+    const displayName = useMemo(
+      () => t.character(character.id),
+      [t, character.id],
+    );
+
+    const elementImagePath = useMemo(() => {
+      return elementResourcesByName[character.element]?.imagePath || "";
+    }, [character.element]);
+
+    const weaponImagePath = useMemo(() => {
+      return weaponResourcesByName[character.weaponType]?.imagePath || "";
+    }, [character.weaponType]);
+
+    const rarityTextColor = useMemo(() => {
+      return THEME.rarity.text[character.rarity];
+    }, [character.rarity]);
+
+    const elementTextColor = useMemo(() => {
+      return THEME.element.text[character.element];
+    }, [character.element]);
+
+    const elementName = useMemo(
+      () => t.element(character.element),
+      [t, character.element],
+    );
+    const weaponName = useMemo(
+      () => t.weaponType(character.weaponType),
+      [t, character.weaponType],
+    );
+    const regionName = useMemo(
+      () => t.region(character.region),
+      [t, character.region],
+    );
+    const formattedDate = useMemo(
+      () => t.formatDate(character.releaseDate),
+      [t, character.releaseDate],
+    );
+
+    return (
+      <div className={cn("flex flex-col gap-2", className)}>
+        <div className="flex items-center gap-2">
+          <h3
+            className={cn("text-xl font-bold text-foreground", nameClassName)}
+          >
+            {displayName}
+          </h3>
+          {children}
+        </div>
+        <div className="flex gap-2 flex-wrap items-center">
+          <Badge
+            variant="outline"
+            className={cn(
+              elementTextColor,
+              "border-current border-2 font-medium flex items-center gap-1",
+            )}
+          >
+            <img
+              src={getAssetUrl(elementImagePath)}
+              alt={character.element}
+              loading="lazy"
+              className="w-4 h-4"
+            />
+            {elementName}
+          </Badge>
+          <Badge
+            variant="outline"
+            className={cn(
+              rarityTextColor,
+              "border-current border-2 font-semibold",
+            )}
+          >
+            ★ {character.rarity}
+          </Badge>
+          <Badge
+            variant="outline"
+            className="text-slate-400 border-slate-400 border-2 font-medium capitalize flex items-center gap-1"
+          >
+            <img
+              src={getAssetUrl(weaponImagePath)}
+              alt={character.weaponType}
+              loading="lazy"
+              className="w-4 h-4"
+            />
+            {weaponName}
+          </Badge>
+          <Badge
+            variant="outline"
+            className="text-slate-500 border-slate-500 border-2 font-medium capitalize"
+          >
+            {regionName}
+          </Badge>
+          {showDate && (
+            <span className="text-sm text-muted-foreground pl-2">
+              {formattedDate}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  },
+);
+
+CharacterInfo.displayName = "CharacterInfo";

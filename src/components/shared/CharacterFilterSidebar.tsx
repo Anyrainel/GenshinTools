@@ -1,11 +1,11 @@
 import {
-  Element,
-  WeaponType,
-  Region,
-  Rarity,
+  CharacterFilters,
   elements,
   weaponTypes,
   regions,
+  Element,
+  WeaponType,
+  Rarity,
 } from "@/data/types";
 import { getAssetUrl } from "@/lib/utils";
 import {
@@ -19,23 +19,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
-interface ConfigureSidebarProps {
-  filters: {
-    elements: Element[];
-    weaponTypes: WeaponType[];
-    regions: Region[];
-    rarities: Rarity[];
-    sortOrder: "asc" | "desc";
-  };
-  onFiltersChange: (filters: ConfigureSidebarProps["filters"]) => void;
+interface CharacterFilterSidebarProps {
+  filters: CharacterFilters;
+  onFiltersChange: (filters: CharacterFilters) => void;
   isInSidePanel?: boolean;
 }
 
-export function ConfigureSidebar({
+export function CharacterFilterSidebar({
   filters,
   onFiltersChange,
   isInSidePanel = true,
-}: ConfigureSidebarProps) {
+}: CharacterFilterSidebarProps) {
   const { t } = useLanguage();
 
   // Helper functions to get image paths
@@ -46,8 +40,9 @@ export function ConfigureSidebar({
   const getWeaponImagePath = (weapon: WeaponType) => {
     return getAssetUrl(weaponResourcesByName[weapon]?.imagePath) || "";
   };
+
   const handleFilterChange = <T extends string | number>(
-    filterType: keyof typeof filters,
+    filterType: keyof CharacterFilters,
     value: T,
     checked: boolean,
   ) => {
@@ -77,7 +72,7 @@ export function ConfigureSidebar({
               sortOrder: filters.sortOrder === "asc" ? "desc" : "asc",
             })
           }
-          className="justify-center gap-2 h-9 w-36 mx-auto"
+          className="justify-center gap-2 h-9 px-6 mx-auto"
         >
           {filters.sortOrder === "asc" ? (
             <ArrowUp className="w-4 h-4" />
@@ -263,7 +258,7 @@ export function ConfigureSidebar({
   if (isInSidePanel) {
     return (
       <Card className="bg-card/50 border-border/50 h-full flex flex-col overflow-hidden">
-        <CardContent className="flex-1 overflow-y-auto p-6">
+        <CardContent className="flex-1 overflow-y-auto py-6 pl-6 pr-4">
           {content}
         </CardContent>
       </Card>

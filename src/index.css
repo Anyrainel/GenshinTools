@@ -17,7 +17,7 @@
     --popover-foreground: 210 40% 98%;
 
     /* Golden accent as primary */
-    --primary: 45 100% 65%;
+    --primary: 45 100% 55%;
     --primary-foreground: 220 23% 8%;
 
     /* Mystical purple secondary */
@@ -36,14 +36,14 @@
 
     --border: 220 15% 20%;
     --input: 220 15% 18%;
-    --ring: 45 100% 65%;
+    --ring: 45 100% 55%;
 
     --radius: 0.75rem;
 
     /* Sidebar colors */
     --sidebar-background: 220 25% 10%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 45 100% 65%;
+    --sidebar-primary: 45 100% 55%;
     --sidebar-primary-foreground: 220 23% 8%;
     --sidebar-accent: 220 15% 18%;
     --sidebar-accent-foreground: 210 40% 98%;

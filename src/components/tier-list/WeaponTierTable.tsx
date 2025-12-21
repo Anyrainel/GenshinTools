@@ -52,7 +52,7 @@ export default function WeaponTierTable({
         className={cn(
           THEME.layout.centerBox,
           THEME.layout.gridBorder,
-          "bg-gray-800 rounded-tl-md rounded-tr-md",
+          "bg-cyan-900/70 backdrop-blur-sm rounded-tl-md rounded-tr-md",
         )}
       >
         <img

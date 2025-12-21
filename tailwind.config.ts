@@ -19,6 +19,10 @@ export default {
       },
     },
     extend: {
+      gridTemplateColumns: {
+        "14": "repeat(14, minmax(0, 1fr))",
+        "16": "repeat(16, minmax(0, 1fr))",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

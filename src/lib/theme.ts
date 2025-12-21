@@ -15,6 +15,13 @@ export const THEME = {
       4: "text-rarity-4",
       5: "text-rarity-5",
     },
+    border: {
+      1: "border-rarity-1",
+      2: "border-rarity-2",
+      3: "border-rarity-3",
+      4: "border-rarity-4",
+      5: "border-rarity-5",
+    },
   },
   element: {
     bg: {

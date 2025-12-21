@@ -18,6 +18,7 @@ import { THEME } from "@/lib/theme";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Input } from "@/components/ui/input";
 import { Search, Ban } from "lucide-react";
 import {
@@ -99,22 +100,13 @@ function ItemPickerComponent({
   }, [search, config, filter]);
 
   const triggerContent = selectedItem ? (
-    <div
-      className={cn(
-        THEME.picker.wrapper,
-        "select-none",
-        selectedItem.rarity
-          ? THEME.rarity.bg[selectedItem.rarity as keyof typeof THEME.rarity.bg]
-          : "bg-gray-500",
-      )}
-    >
-      <img
-        src={getAssetUrl(selectedItem.imagePath)}
-        alt={config.getName(selectedItem.id)}
-        className={THEME.picker.imageCover}
-        draggable={false}
-      />
-    </div>
+    <ItemIcon
+      imagePath={selectedItem.imagePath}
+      rarity={selectedItem.rarity}
+      alt={config.getName(selectedItem.id)}
+      size="full"
+      className={THEME.picker.wrapper}
+    />
   ) : (
     <div className={cn(THEME.picker.placeholder, "select-none")}>
       <span className="text-4xl text-muted-foreground select-none">+</span>
@@ -178,26 +170,24 @@ function ItemPickerComponent({
               <Tooltip key={item.id} disableHoverableContent>
                 <TooltipTrigger asChild>
                   <div
-                    className={cn(
-                      THEME.picker.itemWrapper,
-                      item.rarity
-                        ? THEME.rarity.bg[
-                            item.rarity as keyof typeof THEME.rarity.bg
-                          ]
-                        : "bg-gray-500",
-                      value === item.id && THEME.picker.itemSelected,
-                    )}
                     onClick={() => {
                       onChange(item.id);
                       setIsOpen(false);
                     }}
+                    className={cn(
+                      "cursor-pointer hover:scale-110 hover:brightness-125 transition-all rounded-md relative",
+                    )}
                   >
-                    <img
-                      src={getAssetUrl(item.imagePath)}
+                    <ItemIcon
+                      imagePath={item.imagePath}
+                      rarity={item.rarity}
                       alt={config.getName(item.id)}
-                      className={THEME.picker.imageCover}
-                      loading="lazy"
+                      size="w-14 h-14" // THEME.picker.itemWrapper is w-14 h-14
+                      className="rounded-md"
                     />
+                    {/* Traveler Element Overlay - Keep this custom logic or integrate into ItemIcon?
+                         ItemIcon handles simple labels. This is a complex overlay. Keep it here for now.
+                      */}
                     {type === "character" &&
                       item.id.startsWith("traveler") &&
                       (item as Character).element && (

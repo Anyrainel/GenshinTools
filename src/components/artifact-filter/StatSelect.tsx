@@ -38,7 +38,7 @@ function StatSelectItem({
       onValueChange={onValueChange}
       defaultOpen={autoOpen}
     >
-      <LightweightSelectTrigger className="w-28 h-8 text-sm hover:brightness-110">
+      <LightweightSelectTrigger className="w-28 h-8 text-sm hover:brightness-110 bg-gradient-mystical-reverse">
         {value && value !== "__DESELECT__" ? (
           <span>{t.statShort(value)}</span>
         ) : (
