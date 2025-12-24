@@ -6,9 +6,13 @@ import { THEME } from "@/lib/theme";
 
 interface ArtifactTooltipProps {
   setId: string;
+  hideFourPieceEffect?: boolean;
 }
 
-export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({ setId }) => {
+export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({
+  setId,
+  hideFourPieceEffect,
+}) => {
   const { t } = useLanguage();
   const artifact = artifactsById[setId];
 
@@ -45,10 +49,12 @@ export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({ setId }) => {
           <span className="text-slate-400 font-medium mr-1">[2]</span>
           {effects[0] || "???"}
         </div>
-        <div className="text-sm text-slate-300 leading-relaxed">
-          <span className="text-slate-400 font-medium mr-1">[4]</span>
-          {effects[1] || "???"}
-        </div>
+        {!hideFourPieceEffect && (
+          <div className="text-sm text-slate-300 leading-relaxed">
+            <span className="text-slate-400 font-medium mr-1">[4]</span>
+            {effects[1] || "???"}
+          </div>
+        )}
       </div>
     </div>
   );

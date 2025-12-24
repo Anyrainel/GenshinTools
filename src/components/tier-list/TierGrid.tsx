@@ -81,7 +81,7 @@ export function TierGrid<T extends TierItemData>({
         data-group={group}
       >
         <SortableContext items={itemIds} strategy={rectSortingStrategy}>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-2 py-2">
             {cellItems.map((item) => (
               <TierItem
                 key={item.id}

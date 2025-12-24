@@ -66,7 +66,7 @@ export const i18nAppData = {
     "dendro%": { en: "Dendro%", zh: "草伤%" },
     "cryo%": { en: "Cryo%", zh: "冰伤%" },
     "geo%": { en: "Geo%", zh: "岩伤%" },
-    "phys%": { en: "Phys%", zh: "物伤%" },
+    "phys%": { en: "Phys%", zh: "物理伤%" },
     "heal%": { en: "Heal%", zh: "治疗%" },
     "elemental%": { en: "Elemental%", zh: "元素伤%" },
   },
@@ -75,6 +75,7 @@ export const i18nAppData = {
       cancel: { en: "Cancel", zh: "取消" },
       elements: { en: "Elements", zh: "元素" },
       none: { en: "None", zh: "无" },
+      name: { en: "Name", zh: "名称" },
     },
     accountData: {
       loadSample: { en: "Load Sample", zh: "加载示例" },
@@ -83,6 +84,7 @@ export const i18nAppData = {
       characters: { en: "Characters", zh: "角色" },
       inventory: { en: "Inventory", zh: "库存" },
       evaluation: { en: "Evaluation", zh: "评估" },
+      summary: { en: "Summary", zh: "数据概览" },
       unequippedWeapons: { en: "Unequipped Weapons", zh: "未装备武器" },
       unequippedArtifacts: { en: "Unequipped Artifacts", zh: "未装备圣遗物" },
       buildEvaluationComingSoon: {
@@ -102,6 +104,34 @@ export const i18nAppData = {
         zh: "解析文件失败。",
       },
       noSetBonus: { en: "No Set Bonus", zh: "无套装效果" },
+      artifactScore: {
+        en: "Artifact Score",
+        zh: "圣遗物评分",
+      },
+      score: {
+        en: "Score",
+        zh: "评分",
+      },
+      breakdownBySlot: {
+        en: "By Slot",
+        zh: "部位详情",
+      },
+      breakdownByStat: {
+        en: "By Stat",
+        zh: "属性详情",
+      },
+      totalValue: {
+        en: "Total Value",
+        zh: "总数值",
+      },
+      scoreContribution: {
+        en: "Score",
+        zh: "分数",
+      },
+      valOverScore: {
+        en: "Val / Score",
+        zh: "数值 / 分数",
+      },
       twoPiece: { en: "2-Piece", zh: "2件套" },
       fourPiece: { en: "4-Piece", zh: "4件套" },
       talents: {
@@ -109,6 +139,32 @@ export const i18nAppData = {
         skill: { en: "Elemental Skill", zh: "元素战技" },
         burst: { en: "Elemental Burst", zh: "元素爆发" },
       },
+      statWeights: { en: "Stat Weights", zh: "词条权重" },
+      globalSettings: { en: "Global Settings", zh: "全局设置" },
+      flatStatsEffectiveness: {
+        en: "Effectiveness of Flat Stats (Recommend 30-40%)",
+        zh: "固定数值词条有效比例（推荐 30-40%）",
+      },
+      resetDefaults: { en: "Reset Defaults", zh: "重置默认" },
+      resetGlobal: { en: "Reset", zh: "重置" },
+      resetCharacters: { en: "Reset", zh: "重置" },
+      resetGlobalConfirm: {
+        en: "Reset global settings to default?",
+        zh: "重置全局设置到默认值？",
+      },
+      resetCharactersConfirm: {
+        en: "Reset all character weights to default?",
+        zh: "重置所有角色权重到默认值？",
+      },
+      resetConfirm: {
+        en: "Reset all weights to default?",
+        zh: "重置所有权重为默认值？",
+      },
+      characterWeights: { en: "Character Stat Weights", zh: "角色词条权重" },
+      flatAtk: { en: "Flat ATK", zh: "小攻击" },
+      flatHp: { en: "Flat HP", zh: "小生命" },
+      flatDef: { en: "Flat DEF", zh: "小防御" },
+      searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
     },
     app: {
       title: { en: "Genshin Tools", zh: "原神工具箱" },

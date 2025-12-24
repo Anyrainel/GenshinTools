@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,35 +28,26 @@ const presetModules = import.meta.glob<{ default: BuildPayload }>(
   { eager: false },
 );
 
-const ACTIVE_TAB_KEY = "genshin-artifact-filter:activeTab";
-
 const Index = () => {
   const { t } = useLanguage();
   const configureViewRef = useRef<ConfigureViewRef>(null);
   const computeContentRef = useRef<HTMLDivElement>(null);
 
-  // Initialize activeTab from localStorage, fallback to 'configure'
-  const [activeTab, setActiveTab] = useState(() => {
-    try {
-      return localStorage.getItem(ACTIVE_TAB_KEY) || "configure";
-    } catch {
-      return "configure";
-    }
-  });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "configure";
+
+  const setActiveTab = (tab: string) => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("tab", tab);
+      return newParams;
+    });
+  };
 
   const importBuilds = useBuildsStore((state) => state.importBuilds);
   const clearAllBuilds = useBuildsStore((state) => state.clearAll);
   const author = useBuildsStore((state) => state.author);
   const description = useBuildsStore((state) => state.description);
-
-  // Persist activeTab to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem(ACTIVE_TAB_KEY, activeTab);
-    } catch (error) {
-      console.error("Failed to save active tab to localStorage:", error);
-    }
-  }, [activeTab]);
 
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
 

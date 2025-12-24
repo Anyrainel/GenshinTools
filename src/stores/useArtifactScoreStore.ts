@@ -1,0 +1,80 @@
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { ArtifactScoreConfig } from "@/data/types";
+import { STAT_WEIGHTS } from "@/data/statWeights";
+
+function generateDefaultArtifactScoreConfig(): ArtifactScoreConfig {
+  return {
+    global: {
+      flatAtk: 30,
+      flatHp: 30,
+      flatDef: 30,
+    },
+    characters: STAT_WEIGHTS,
+  };
+}
+
+interface ArtifactScoreState {
+  config: ArtifactScoreConfig;
+  setGlobalWeight: (
+    key: keyof ArtifactScoreConfig["global"],
+    value: number,
+  ) => void;
+  setCharacterWeight: (charId: string, stat: string, value: number) => void;
+  resetConfig: () => void;
+  resetGlobalConfig: () => void;
+  resetCharacterWeights: () => void;
+}
+
+export const useArtifactScoreStore = create<ArtifactScoreState>()(
+  persist(
+    (set) => ({
+      config: generateDefaultArtifactScoreConfig(),
+      setGlobalWeight: (key, value) =>
+        set((state) => ({
+          config: {
+            ...state.config,
+            global: {
+              ...state.config.global,
+              [key]: value,
+            },
+          },
+        })),
+      setCharacterWeight: (charId, stat, value) =>
+        set((state) => ({
+          config: {
+            ...state.config,
+            characters: {
+              ...state.config.characters,
+              [charId]: {
+                ...state.config.characters[charId],
+                [stat]: value,
+              },
+            },
+          },
+        })),
+      resetConfig: () =>
+        set(() => ({
+          config: generateDefaultArtifactScoreConfig(),
+        })),
+      resetGlobalConfig: () =>
+        set((state) => ({
+          config: {
+            ...state.config,
+            global: generateDefaultArtifactScoreConfig().global,
+          },
+        })),
+      resetCharacterWeights: () =>
+        set((state) => ({
+          config: {
+            ...state.config,
+            characters: generateDefaultArtifactScoreConfig().characters,
+          },
+        })),
+    }),
+    {
+      name: "artifact-score-storage",
+      storage: createJSONStorage(() => localStorage),
+    },
+  ),
+);

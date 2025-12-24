@@ -314,3 +314,16 @@ export interface CharacterFilters {
   rarities: Rarity[];
   sortOrder: "asc" | "desc";
 }
+
+export type StatWeightMap = Record<string, number>; // key: MainStat | SubStat (e.g. "atk%", "cr", "pyro%"), value: 0-100
+
+export type GlobalStatWeights = {
+  flatAtk: number;
+  flatHp: number;
+  flatDef: number;
+};
+
+export type ArtifactScoreConfig = {
+  global: GlobalStatWeights;
+  characters: Record<string, StatWeightMap>;
+};

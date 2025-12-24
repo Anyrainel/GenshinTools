@@ -1,0 +1,560 @@
+import React, { useState, useMemo, useCallback } from "react";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { sortedCharacters, elementResourcesByName } from "@/data/constants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Search, RotateCcw, Save } from "lucide-react";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { Element, Character } from "@/data/types";
+import { toast } from "sonner";
+
+// Helper to map element string to stat key
+const elementToStatKey = (element: Element): string => {
+  return `${element.toLowerCase()}%`;
+};
+
+// Memoized Row Component
+const CharacterWeightRow = React.memo(
+  ({
+    char,
+    weights,
+    onValueChange,
+  }: {
+    char: Character;
+    weights: Record<string, number>;
+    onValueChange: (
+      charId: string,
+      key: string,
+      val: number,
+      isMerged?: boolean,
+    ) => void;
+  }) => {
+    const { t } = useLanguage();
+    const elemKey = elementToStatKey(char.element);
+
+    return (
+      <TableRow className="border-white/5 hover:bg-white/5">
+        <TableCell className="p-2">
+          <div className="flex items-center gap-3">
+            <ItemIcon
+              imagePath={char.imagePath}
+              rarity={char.rarity}
+              size="w-8 h-8"
+              className="rounded-md flex-shrink-0 shadow-sm"
+            />
+            <span className="font-medium text-gray-200 truncate">
+              {t.character(char.id)}
+            </span>
+            <img
+              src={getAssetUrl(elementResourcesByName[char.element]?.imagePath)}
+              alt={char.element}
+              className="w-5 h-5 flex-shrink-0 opacity-80"
+            />
+          </div>
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["atk%"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "atk", v, true)}
+            label={t.stat("atk")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["hp%"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "hp", v, true)}
+            label={t.stat("hp")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["def%"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "def", v, true)}
+            label={t.stat("def")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["cr"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "cr", v)}
+            label={t.stat("cr")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["cd"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "cd", v)}
+            label={t.stat("cd")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["em"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "em", v)}
+            label={t.stat("em")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["er"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "er", v)}
+            label={t.stat("er")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights[elemKey] ?? 0}
+            onChange={(v) => onValueChange(char.id, elemKey, v)}
+            label={t.stat(elemKey)}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["phys%"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "phys%", v)}
+            label={t.stat("phys%")}
+          />
+        </TableCell>
+        <TableCell className="p-1">
+          <WeightCell
+            value={weights["heal%"] ?? 0}
+            onChange={(v) => onValueChange(char.id, "heal%", v)}
+            label={t.stat("heal%")}
+          />
+        </TableCell>
+      </TableRow>
+    );
+  },
+  (prevProps, nextProps) => {
+    // Custom comparison for performance
+    return (
+      prevProps.char === nextProps.char &&
+      prevProps.weights === nextProps.weights &&
+      prevProps.onValueChange === nextProps.onValueChange
+    );
+  },
+);
+
+export const StatWeightView = () => {
+  const { t } = useLanguage();
+  const {
+    config,
+    setGlobalWeight,
+    setCharacterWeight,
+    resetGlobalConfig,
+    resetCharacterWeights,
+  } = useArtifactScoreStore();
+
+  const [search, setSearch] = useState("");
+
+  const filteredCharacters = useMemo(() => {
+    return sortedCharacters.filter((c) => {
+      const name = t.character(c.id).toLowerCase();
+      return name.includes(search.toLowerCase());
+    });
+  }, [search, t]);
+
+  // Helper to update merged stats
+  const updateMergedWeight = useCallback(
+    (charId: string, baseKey: "hp" | "atk" | "def", value: number) => {
+      setCharacterWeight(charId, baseKey, value); // flat
+      setCharacterWeight(charId, `${baseKey}%`, value); // percent
+    },
+    [setCharacterWeight],
+  );
+
+  const updateWeight = useCallback(
+    (charId: string, key: string, value: number) => {
+      // Clamp between 0 and 100
+      const clamped = Math.max(0, Math.min(100, value));
+      setCharacterWeight(charId, key, clamped);
+    },
+    [setCharacterWeight],
+  );
+
+  const handleValueChange = useCallback(
+    (charId: string, key: string, val: number, isMerged: boolean = false) => {
+      if (isMerged) {
+        updateMergedWeight(charId, key as "hp" | "atk" | "def", val);
+      } else {
+        updateWeight(charId, key, val);
+      }
+    },
+    [updateMergedWeight, updateWeight],
+  );
+
+  const handleSaveConfig = async () => {
+    const lines = [
+      `// prettier-ignore`,
+      `export const STAT_WEIGHTS: Record<string, Record<string, number>> = {`,
+    ];
+
+    // Define exact key order for the output
+    const keysOrder = [
+      "hp",
+      "atk",
+      "def",
+      "hp%",
+      "atk%",
+      "def%",
+      "cr",
+      "cd",
+      "em",
+      "er",
+      "pyro%",
+      "hydro%",
+      "anemo%",
+      "electro%",
+      "dendro%",
+      "cryo%",
+      "geo%",
+      "phys%",
+      "heal%",
+    ];
+
+    // Use the same order as in the table (sortedCharacters)
+    sortedCharacters.forEach((char) => {
+      const id = char.id;
+      const w = config.characters[id];
+      if (!w) return;
+
+      const props = keysOrder
+        .filter((k) => (w[k] ?? 0) !== 0) // Only include non-zero values
+        .map((k) => {
+          const val = w[k];
+          return `"${k}": ${val}`;
+        })
+        .join(", ");
+
+      lines.push(`  "${id}": { ${props} },`);
+    });
+
+    lines.push(`};`);
+
+    const code = lines.join("\n");
+
+    try {
+      // @ts-expect-error - showSaveFilePicker is not yet in standard lib
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "statWeights.ts",
+        types: [
+          {
+            description: "TypeScript File",
+            accept: { "text/plain": [".ts"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(code);
+      await writable.close();
+      toast.success("Config saved successfully!");
+    } catch (err) {
+      if ((err as Error).name !== "AbortError") {
+        console.error(err);
+        // Fallback to clipboard if file system API fails or not supported
+        navigator.clipboard.writeText(code);
+        toast.info("Could not save file. Code copied to clipboard instead.");
+      }
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full gap-6">
+      {/* Global Settings */}
+      <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-4 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            {t.ui("accountData.globalSettings")}
+            <span className="text-sm font-normal text-muted-foreground">
+              ({t.ui("accountData.flatStatsEffectiveness")})
+            </span>
+          </h2>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-white"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                {t.ui("accountData.resetGlobal")}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {t.ui("accountData.resetDefaults")}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t.ui("accountData.resetGlobalConfirm")}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={resetGlobalConfig}>
+                  {t.ui("resetConfirmDialog.confirm")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {(["flatAtk", "flatHp", "flatDef"] as const).map((key) => (
+            <div key={key} className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-300">
+                  {key === "flatAtk"
+                    ? t.ui("accountData.flatAtk")
+                    : key === "flatHp"
+                      ? t.ui("accountData.flatHp")
+                      : t.ui("accountData.flatDef")}
+                </span>
+                <span className="font-mono text-amber-100 font-bold">
+                  {config.global[key]}%
+                </span>
+              </div>
+              <Slider
+                value={[config.global[key]]}
+                min={0}
+                max={100}
+                step={5}
+                onValueChange={([val]) => setGlobalWeight(key, val)}
+                className="[&_.bg-primary]:bg-amber-500"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Table Section */}
+      <div className="flex-1 flex flex-col min-h-0 bg-white/5 border border-white/10 rounded-lg p-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <h2 className="text-lg font-bold text-white">
+              {t.ui("accountData.characterWeights")}
+            </h2>
+            <div className="relative w-64">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t.ui("accountData.searchPlaceholder")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8 bg-black/20 border-white/10"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-white"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  {t.ui("accountData.resetCharacters")}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {t.ui("accountData.resetDefaults")}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t.ui("accountData.resetCharactersConfirm")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+                  <AlertDialogAction onClick={resetCharacterWeights}>
+                    {t.ui("resetConfirmDialog.confirm")}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            {import.meta.env.DEV && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSaveConfig}
+                className="text-muted-foreground hover:text-white"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-auto rounded-md border border-white/10 mx-16">
+          <ScrollArea className="h-full">
+            <Table
+              containerClassName="overflow-visible"
+              className="table-fixed"
+            >
+              <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
+                <TableRow className="hover:bg-transparent border-white/10">
+                  <TableHead className="w-[240px] pl-4">
+                    {t.ui("accountData.characters")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("atk")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("hp")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("def")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("cr")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("cd")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("em")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("er")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("elemental%")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("phys%")}
+                  </TableHead>
+                  <TableHead className="text-center">
+                    {t.statShort("heal%")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCharacters.map((char) => (
+                  <CharacterWeightRow
+                    key={char.id}
+                    char={char}
+                    weights={config.characters[char.id] || {}}
+                    onValueChange={handleValueChange}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// High-quality interactive cell component
+const WeightCell = ({
+  value,
+  onChange,
+  label,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+  label: string;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const handlePresetClick = (val: number) => {
+    onChange(val);
+    setOpen(false);
+  };
+
+  const getCellStyles = (val: number) => {
+    if (val === 0) return "text-muted-foreground hover:bg-white/5";
+
+    const base = "bg-amber-500/5 hover:bg-amber-500/10";
+    if (val === 100) return cn(base, "text-orange-300 font-extrabold");
+    if (val >= 70) return cn(base, "text-amber-200 font-bold");
+    return base + " text-amber-100/70";
+  };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div
+          className={cn(
+            "h-7 w-full flex items-center justify-center rounded cursor-pointer transition-all font-mono text-sm",
+            getCellStyles(value),
+          )}
+        >
+          {value}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-64 p-4 bg-slate-950 border-slate-800 shadow-xl"
+        side="top"
+      >
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              {label}
+            </span>
+            <span className="text-lg font-bold text-amber-100 font-mono">
+              {value}%
+            </span>
+          </div>
+
+          <Slider
+            value={[value]}
+            min={0}
+            max={100}
+            step={5}
+            onValueChange={([val]) => onChange(val)}
+            className="[&_.bg-primary]:bg-amber-500"
+          />
+
+          <div className="flex justify-between gap-1">
+            {[0, 30, 50, 75, 100].map((preset) => (
+              <Button
+                key={preset}
+                size="sm"
+                variant="outline"
+                onClick={() => handlePresetClick(preset)}
+                className={cn(
+                  "h-6 flex-1 text-[10px] px-0 border-slate-700 hover:bg-slate-800 hover:text-white",
+                  value === preset &&
+                    "bg-amber-500/20 text-amber-100 border-amber-500/50",
+                )}
+              >
+                {preset}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};

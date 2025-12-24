@@ -11,7 +11,7 @@ This is a **React + TypeScript + Vite** application using **Tailwind CSS** and *
 
 - `src/components/ui`: Reusable shadcn/ui primitives.
 - `src/components/shared`: Common domain components (e.g., `ItemPicker`, `CharacterTooltip`).
-- `src/constants/theme.ts`: **Centralized style constants** (colors, layouts, picker styles). **Use this.**
+- `src/lib/theme.ts`: **Centralized style constants** (colors, layouts, picker styles). **Use this.**
 - `src/stores`: Zustand state management with persistence.
 - `src/data`: Static data resources, types, and localization (`i18n-app.ts`).
 - `scripts/`: Python ETL scripts.

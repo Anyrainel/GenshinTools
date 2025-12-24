@@ -12,22 +12,32 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sword } from "lucide-react";
-import { THEME } from "@/lib/theme";
 import { StatDisplay } from "./StatDisplay";
+import { Sword } from "lucide-react";
+import {
+  calculateArtifactScore,
+  ArtifactScoreResult,
+} from "@/lib/artifactScore";
+import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
 interface CharacterCardProps {
   char: CharacterData;
+  score?: ArtifactScoreResult;
 }
 
-export const CharacterCard = ({ char }: CharacterCardProps) => {
+export const CharacterCard = ({ char, score }: CharacterCardProps) => {
   const { t } = useLanguage();
+  const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
   if (!charInfo) return null; // Should not happen if conversion is correct
 
   const weapon = char.weapon;
   const weaponInfo = weapon ? weaponsById[weapon.key] : null;
   const weaponName = weapon ? t.weaponName(weapon.key) : null;
+
+  // Use provided score or calculate on the fly (fallback)
+  const artifactScore = score || calculateArtifactScore(char, scoreConfig);
 
   // Set Bonus Logic
   const setCounts: Record<string, number> = {};
@@ -54,7 +64,7 @@ export const CharacterCard = ({ char }: CharacterCardProps) => {
             imagePath={charInfo.imagePath}
             rarity={charInfo.rarity}
             label={`C${char.constellation}`}
-            size="w-16 h-16"
+            size="w-16 h-16" // Match character size
             className="rounded-lg shadow-md flex-shrink-0"
           />
 
@@ -130,44 +140,62 @@ export const CharacterCard = ({ char }: CharacterCardProps) => {
       </div>
 
       {/* Artifact Sets Row */}
-      <div className="px-3 py-2 bg-black/10 border-b border-border/20 flex flex-wrap gap-x-6 gap-y-2 min-h-[56px] items-center justify-start">
-        {activeSets.length > 0 ? (
-          activeSets.map(([setKey, count]) => (
-            <Tooltip key={setKey}>
-              <TooltipTrigger className="flex items-center gap-2 cursor-help">
-                <ItemIcon
-                  imagePath={artifactsById[setKey]?.imagePath || ""}
-                  rarity={5}
-                  size="w-10 h-10"
-                  className="border border-white/10 shadow-sm"
-                />
-                <div className="flex flex-col items-start leading-none">
-                  <span
-                    className={cn(
-                      "text-sm font-semibold text-gray-200 hover:text-primary transition-colors",
-                    )}
-                  >
-                    {t.artifact(setKey)}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground font-mono">
-                    {count >= 4
-                      ? t.ui("accountData.fourPiece")
-                      : t.ui("accountData.twoPiece")}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                className="p-0 border-none bg-transparent"
-              >
-                <ArtifactTooltip setId={setKey} />
-              </TooltipContent>
-            </Tooltip>
-          ))
-        ) : (
-          <span className="text-muted-foreground italic text-xs pl-1">
-            {t.ui("accountData.noSetBonus")}
-          </span>
+      <div className="px-3 py-2 bg-black/10 border-b border-border/20 flex flex-wrap gap-x-6 gap-y-2 min-h-[56px] items-center justify-between">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
+          {activeSets.length > 0 ? (
+            activeSets.map(([setKey, count]) => (
+              <Tooltip key={setKey}>
+                <TooltipTrigger className="flex items-center gap-2 cursor-help">
+                  <ItemIcon
+                    imagePath={artifactsById[setKey]?.imagePath || ""}
+                    rarity={artifactsById[setKey]?.rarity || 5}
+                    size="w-10 h-10"
+                    className="border border-white/10 shadow-sm"
+                  />
+                  <div className="flex flex-col items-start leading-none">
+                    <span
+                      className={cn(
+                        "text-sm font-semibold text-gray-200 hover:text-primary transition-colors",
+                      )}
+                    >
+                      {t.artifact(setKey)}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground font-mono">
+                      {count >= 4
+                        ? t.ui("accountData.fourPiece")
+                        : t.ui("accountData.twoPiece")}
+                    </span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="p-0 border-none bg-transparent"
+                >
+                  <ArtifactTooltip
+                    setId={setKey}
+                    hideFourPieceEffect={count < 4}
+                  />
+                </TooltipContent>
+              </Tooltip>
+            ))
+          ) : (
+            <span className="text-muted-foreground italic text-xs pl-1">
+              {t.ui("accountData.noSetBonus")}
+            </span>
+          )}
+        </div>
+
+        {/* Artifact Score */}
+        {artifactScore.isComplete && (
+          <div className="flex flex-col items-end leading-none mr-1">
+            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
+              {t.ui("accountData.score")}
+            </span>
+            <ArtifactScoreHoverCard
+              score={artifactScore}
+              className="text-2xl font-black italic tracking-tighter"
+            />
+          </div>
         )}
       </div>
 
@@ -185,38 +213,11 @@ export const CharacterCard = ({ char }: CharacterCardProps) => {
                 )}
               >
                 {art ? (
-                  <>
-                    {/* Main Stat + Level */}
-                    <div className="flex items-center justify-between mb-2">
-                      <div
-                        className="text-xs font-bold text-amber-100 truncate flex-1"
-                        title={t.stat(art.mainStatKey)}
-                      >
-                        {t.statShort(art.mainStatKey)}
-                      </div>
-                      <div
-                        className={cn(
-                          "text-[10px] px-1 rounded bg-black/40 font-mono",
-                          THEME.rarity.text[
-                            art.rarity as keyof typeof THEME.rarity.text
-                          ],
-                        )}
-                      >
-                        +{art.level}
-                      </div>
-                    </div>
-
-                    {/* Substats */}
-                    <div className="space-y-0.5">
-                      {Object.entries(art.substats).map(([key, value]) => (
-                        <StatDisplay key={key} statKey={key} value={value} />
-                      ))}
-                    </div>
-                  </>
+                  <StatDisplay artifact={art} scoreResult={artifactScore} />
                 ) : (
                   <div className="flex-1 flex items-center justify-center py-4">
-                    <div className="w-8 h-8 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-[10px] text-muted-foreground/50">
-                      {slot.substring(0, 2).toUpperCase()}
+                    <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-[10px] text-muted-foreground/50 text-center px-1">
+                      {t.ui(`computeFilters.${slot}`)}
                     </div>
                   </div>
                 )}
