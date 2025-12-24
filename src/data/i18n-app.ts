@@ -169,56 +169,56 @@ export const i18nAppData = {
     app: {
       title: { en: "Genshin Tools", zh: "原神工具箱" },
       navArtifactFilter: { en: "Artifact Filter", zh: "圣遗物过滤器" },
-      navTierList: { en: "Character Tier List", zh: "角色榜单" },
       navAccountData: { en: "Account Data", zh: "账号数据" },
+      navTierList: { en: "Character Tier List", zh: "角色榜单" },
+      navWeaponTierList: { en: "Weapon Tier List", zh: "武器榜单" },
+      navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
       heroDescription: {
         en: "Powerful utilities to optimize your builds and organize your roster.",
         zh: "强大实用的工具，助您优化配装、管理角色养成。",
       },
-      artifactFilterTitle: {
-        en: "Artifact Filter Helper",
-        zh: "圣遗物过滤器助手",
+      artifactFilterProblem: {
+        en: "How to configure artifact filters?",
+        zh: "圣遗物自动锁定怎么设置？",
       },
-      artifactFilterWhat: {
-        en: "Derive precise artifact filters from your own character builds.",
-        zh: "基于您的角色配装，推导生成精准的圣遗物过滤器。",
+      artifactFilterGuideline: {
+        en: "1. Use built-in presets for all characters or define your own. 2. Generate optimized filter configurations.",
+        zh: "1. 使用内置的全角色预设，或自定义理想配装。 2. 自动生成优化的过滤配置。",
       },
-      artifactFilterWhy: {
-        en: "Calculates exact lock rules tailored to your specific roster, deriving filters directly from your defined ideal builds.",
-        zh: "为您特定的阵容计算精确的锁定规则，直接基于您定义的理想配装推导过滤规则。",
+      tierListProblem: {
+        en: "Which character to build next?",
+        zh: "哪个角色应该优先练？",
       },
-      tierListTitle: { en: "Character Tier List Maker", zh: "角色榜单制作器" },
-      tierListWhat: {
-        en: "Create element-specific tier lists for deeper roster analysis.",
-        zh: "创建按元素分类的角色榜单，深度分析。",
+      tierListGuideline: {
+        en: "Stack rank characters per element to define your own progression priority.",
+        zh: "按元素分组排名，规划属于你自己的培养优先级。",
       },
-      tierListWhy: {
-        en: "The per-element layout offers superior comparability within elemental roles, ideal for planning around element-restricted content.",
-        zh: "分元素布局提供了更优的同系角色对比视角，完美适配元素限制类玩法的规划需求。",
+      accountDataProblem: {
+        en: "How good are my builds?",
+        zh: "我的角色练度毕业了吗？",
       },
-      teamBuilderTitle: { en: "Team Builder", zh: "队伍构建器" },
-      teamBuilderWhat: {
-        en: "Interactively theory craft team compositions.",
-        zh: "交互式构筑理论队伍。",
+      accountDataGuideline: {
+        en: "1. Export data using [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) or [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera). 2. Import JSON for automated scoring.",
+        zh: "1. 使用 [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) 或 [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera) 导出数据。 2. 导入 JSON 自动计算圣遗物评分。",
       },
-      teamBuilderWhy: {
-        en: "Plan your teams with characters, weapons, and artifacts in a visual way.",
-        zh: "以可视化的方式规划包含角色、武器和圣遗物的队伍。",
+      weaponTierListProblem: {
+        en: "Need a quick weapon reference?",
+        zh: "想快速查阅或筛选武器？",
       },
-      navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
-      weaponTierListTitle: {
-        en: "Weapon Tier List Maker",
-        zh: "武器榜单制作器",
+      weaponTierListGuideline: {
+        en: "Filter by rarity and secondary stats to find the perfect match for your character.",
+        zh: "按稀有度和副属性快速筛选，全武器数据一览无余。",
       },
-      weaponTierListWhat: {
-        en: "Create weapon tier lists organized by weapon type.",
-        zh: "创建按武器类型分类的武器榜单。",
+      teamBuilderProblem: {
+        en: "Need help theory-crafting new teams?",
+        zh: "正在科研新配队？",
       },
-      weaponTierListWhy: {
-        en: "Compare weapons within their specific types for optimal selection.",
-        zh: "在同类武器中进行对比，选择最优配置。",
+      teamBuilderGuideline: {
+        en: "A visual workspace to build, experiment, and refine your team compositions.",
+        zh: "可视化构筑与实验，打磨你的最强阵容。",
       },
-      navWeaponTierList: { en: "Weapon Tier List", zh: "武器榜单" },
+      tierListTitle: { en: "Character Priority", zh: "角色优先级" },
+      weaponTierListTitle: { en: "Weapon Priority", zh: "武器优先级" },
       export: { en: "Export", zh: "导出" },
       import: { en: "Import", zh: "导入" },
       clear: { en: "Clear", zh: "清除" },
