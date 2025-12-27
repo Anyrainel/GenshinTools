@@ -78,8 +78,10 @@ export const i18nAppData = {
       name: { en: "Name", zh: "名称" },
     },
     accountData: {
-      loadSample: { en: "Load Sample", zh: "加载示例" },
-      importGOOD: { en: "Import GOOD", zh: "导入 GOOD" },
+      importGOOD: {
+        en: "Import .json file (GOOD)",
+        zh: "导入 .json 文件 (GOOD)",
+      },
       clear: { en: "Clear", zh: "清除" },
       characters: { en: "Characters", zh: "角色" },
       inventory: { en: "Inventory", zh: "库存" },
@@ -99,9 +101,37 @@ export const i18nAppData = {
         en: "Import a GOOD format JSON file to get started.",
         zh: "导入 GOOD 格式的 JSON 文件以开始使用。",
       },
+      importHelpGood: {
+        en: "Full Data Import (Recommended)",
+        zh: "完整数据导入（推荐）",
+      },
+      importHelpGoodDesc: {
+        en: "Import a GOOD format JSON file exported from tools like",
+        zh: "导入由第三方工具生成的 GOOD 格式 JSON 文件，例如",
+      },
+      importHelpUid: {
+        en: "UID Import",
+        zh: "UID 导入",
+      },
+      importHelpUidDesc: {
+        en: "Fetch data from Enka Network. Limited to characters showcased on your profile.",
+        zh: "从 Enka Network 获取数据。仅限个人资料展示的角色。",
+      },
+      importDialogTitle: {
+        en: "Import Account Data",
+        zh: "导入账号数据",
+      },
+      uidPlaceholder: {
+        en: "Enter UID (e.g. 800000000)",
+        zh: "输入 UID (如 100000000)",
+      },
       failedToParseFile: {
         en: "Failed to parse file.",
         zh: "解析文件失败。",
+      },
+      importSuccess: {
+        en: "Import successful!",
+        zh: "导入成功！",
       },
       noSetBonus: { en: "No Set Bonus", zh: "无套装效果" },
       artifactScore: {
@@ -347,6 +377,10 @@ export const i18nAppData = {
       importDialogLoadError: {
         en: "Failed to import file",
         zh: "文件导入失败",
+      },
+      clearBeforeImport: {
+        en: "Clear data before import",
+        zh: "导入前清除现有数据",
       },
       exportDialogTitle: { en: "Export builds", zh: "导出配装" },
       exportDialogDescription: {

@@ -4,7 +4,9 @@ import { AccountData } from "@/data/types";
 
 interface AccountStore {
   accountData: AccountData | null;
+  lastUid: string;
   setAccountData: (data: AccountData) => void;
+  setLastUid: (uid: string) => void;
   clearAccountData: () => void;
 }
 
@@ -12,7 +14,9 @@ export const useAccountStore = create<AccountStore>()(
   persist(
     (set) => ({
       accountData: null,
+      lastUid: "",
       setAccountData: (data) => set({ accountData: data }),
+      setLastUid: (uid) => set({ lastUid: uid }),
       clearAccountData: () => set({ accountData: null }),
     }),
     {

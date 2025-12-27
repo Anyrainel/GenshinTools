@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run lint-staged for TypeScript/JavaScript files (prettier + eslint)
 npx lint-staged
 
@@ -18,13 +15,13 @@ if [ -n "$STAGED_PY_FILES" ]; then
   cd scripts || exit 1
   
   echo "Running ruff check..."
-  ruff check --fix . || exit 1
+  uv run ruff check --fix . || exit 1
   
   echo "Running ruff format..."
-  ruff format . || exit 1
+  uv run ruff format . || exit 1
   
   echo "Running pyright..."
-  pyright *.py || exit 1
+  uv run pyright *.py || exit 1
   
   # Stage any auto-fixed files
   git add -u .

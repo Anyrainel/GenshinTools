@@ -36,7 +36,7 @@ quote-style = "double"
 indent-style = "space"
 
 [tool.pyright]
-include = ["scripts"]
+include = ["."]
 exclude = ["**/__pycache__", "**/node_modules"]
 pythonVersion = "3.13"
 typeCheckingMode = "basic"
