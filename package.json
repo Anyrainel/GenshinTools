@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "type-check": "tsc -b --noEmit",
     "preview": "vite preview",
+    "test": "vitest",
     "tauri": "tauri",
     "prepare": "husky"
   },
