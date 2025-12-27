@@ -20,7 +20,7 @@ CHARACTERS_URL = f"{BASE_URL}/wiki/Character/List"
 MIN_NAME_LENGTH = 2
 MAX_NAME_LENGTH = 30
 VALID_RARITIES = [4, 5]
-SKIP_TRAVELER = False
+CHARACTER_BLOCKLIST = {"Manekina", "Manekin"}
 
 
 def clean_release_date(date_string: str) -> str:
@@ -107,7 +107,7 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
 
                     if not name or len(name) < MIN_NAME_LENGTH or len(name) > MAX_NAME_LENGTH:
                         continue
-                    if SKIP_TRAVELER and name.startswith("Traveler"):
+                    if name in CHARACTER_BLOCKLIST:
                         continue
 
                     # 2. Rarity (Cell 2)

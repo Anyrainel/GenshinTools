@@ -1,7 +1,7 @@
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
 
 interface CharacterTooltipProps {
@@ -22,7 +22,7 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
   const region = t.region(character.region);
 
   return (
-    <div className="w-[200px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
+    <div className="w-[240px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div
         className={cn(
@@ -34,20 +34,34 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex-1">
-          <h3 className="font-bold text-lg leading-tight text-white mb-1 drop-shadow-md">
+          <h3 className="font-bold text-lg leading-tight text-white mb-2 drop-shadow-md">
             {name}
             <span className="mx-2 text-yellow-400 text-sm">
               {"★".repeat(character.rarity)}
             </span>
           </h3>
           <div className="flex items-center gap-2 text-xs text-white/90 font-medium flex-wrap">
-            <span className="bg-black/30 px-1.5 py-0.5 rounded backdrop-blur-sm">
+            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+              <img
+                src={getAssetUrl(
+                  `/element/${character.element.toLowerCase()}.png`,
+                )}
+                alt={character.element}
+                className="w-4 h-4 object-contain"
+              />
               {element}
             </span>
-            <span className="bg-black/30 px-1.5 py-0.5 rounded backdrop-blur-sm">
+            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+              <img
+                src={getAssetUrl(
+                  `/weapontype/${character.weaponType.toLowerCase()}.png`,
+                )}
+                alt={character.weaponType}
+                className="w-4 h-4 object-contain"
+              />
               {weapon}
             </span>
-            <span className="bg-black/30 px-1.5 py-0.5 rounded backdrop-blur-sm">
+            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
               {region}
             </span>
           </div>

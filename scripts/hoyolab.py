@@ -30,6 +30,8 @@ class ScrapedWeapon(TypedDict):
     type: str
     secondary_stat: str
     effect: str
+    base_atk: int
+    secondary_stat_value: str
 
 
 class ResourceOutput(TypedDict):
@@ -99,6 +101,8 @@ PLACEHOLDER_PATTERNS: list[str] = [
     "placeholder",
     "default-avatar",
 ]
+
+CHARACTER_BLOCKLIST: set[str] = {"Manekina", "Manekin"}
 
 
 def generate_id(name: str) -> str:
@@ -179,6 +183,8 @@ def scroll_until_all_loaded(page: Page, card_selector: str, max_scrolls: int = 2
         time.sleep(2)
         scroll_count += 1
 
+    time.sleep(2)  # Wait for final images/cards to settle
+
     # print("Scrolling back to top...")
     # page.evaluate("window.scrollTo(0, 0)")
     # time.sleep(2)
@@ -233,6 +239,8 @@ def extract_character_from_card(card: Locator, index: int) -> ScrapedCharacter |
         if not name_text:
             return None
         name = name_text.strip()
+        if name in CHARACTER_BLOCKLIST:
+            return None
     except Exception:
         return None
 
@@ -439,10 +447,12 @@ def extract_weapon_from_card(card: Locator, index: int) -> ScrapedWeapon | None:
         "type": "",
         "secondary_stat": "",
         "effect": "",
+        "base_atk": 0,
+        "secondary_stat_value": "",
     }
 
 
-def scrape_weapon_detail_page(page: Page) -> dict[str, str]:
+def scrape_weapon_detail_page(page: Page) -> dict[str, str | int]:
     try:
         page.wait_for_selector("div.base-info-content", timeout=5000)
     except Exception as e:
@@ -450,7 +460,13 @@ def scrape_weapon_detail_page(page: Page) -> dict[str, str]:
         return {}
 
     items = page.locator("div.base-info-item").all()
-    data = {"type": "", "secondary_stat": "", "effect": ""}
+    data: dict[str, str | int] = {
+        "type": "",
+        "secondary_stat": "",
+        "effect": "",
+        "base_atk": 0,
+        "secondary_stat_value": "",
+    }
 
     for item in items:
         try:
@@ -472,6 +488,31 @@ def scrape_weapon_detail_page(page: Page) -> dict[str, str]:
 
         except Exception:
             continue
+
+    try:
+        ascension_info = page.locator("article.hoyowiki-slider.pc.d-ascension-info.noMap").first
+        if ascension_info.count():
+            items_list = ascension_info.locator("div.d-ascension-item").all()
+            if items_list:
+                last_item = items_list[-1]
+                rows = last_item.locator("table tbody tr").all()
+                if len(rows) >= 2:
+                    val_row = rows[1]
+                    cols = val_row.locator("td").all()
+                    if len(cols) >= 3:
+                        atk_text = cols[0].text_content()
+                        sec_text = cols[2].text_content()
+
+                        if atk_text:
+                            try:
+                                data["base_atk"] = int(atk_text.strip())
+                            except ValueError:
+                                print(f"Warning: Could not parse ATK value: {atk_text}")
+
+                        if sec_text:
+                            data["secondary_stat_value"] = sec_text.strip()
+    except Exception as e:
+        print(f"Error scraping stats: {e}")
 
     return data
 

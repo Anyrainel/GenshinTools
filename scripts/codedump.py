@@ -30,7 +30,7 @@ class CharacterOutput(TypedDict):
     id: str
     element: str
     rarity: int
-    weapon: str
+    weaponType: str
     region: str
     releaseDate: str
     imageUrl: str
@@ -49,6 +49,8 @@ class WeaponOutput(TypedDict):
     rarity: int
     type: str
     secondaryStat: str
+    baseAtk: int
+    secondaryStatValue: str
     imageUrl: str
     imagePath: str
 
@@ -155,7 +157,6 @@ def enrich_character_data_with_fandom(
             enriched_char["weapon"] = fandom_char["weaponType"]
             enriched_char["region"] = fandom_char["region"]
             enriched_char["releaseDate"] = fandom_char["releaseDate"]
-            enriched_characters.append(enriched_char)  # type: ignore
             matched_count += 1
             if matched_count <= 5:  # Only print first few to avoid spam
                 print(
@@ -164,18 +165,23 @@ def enrich_character_data_with_fandom(
                     f"region={fandom_char['region']}, "
                     f"date={fandom_char['releaseDate']}"
                 )
+        else:
             # Try to find similar keys for debugging
             similar_keys = [
                 k for k in fandom_data.keys() if k[0] == char["element"] and k[1] == char["rarity"]
             ]
             if similar_keys and len(enriched_characters) < 5:  # Only show first few
                 print(f"DEBUG: {char['name']} not found, but found similar: {similar_keys[:3]}")
+
+            # Default values for characters not in Fandom (like Traveler elements, or very new ones)
             enriched_char["weapon"] = "Sword"
             enriched_char["region"] = "None"
             enriched_char["releaseDate"] = "2020-09-28"
-            enriched_characters.append(enriched_char)  # type: ignore
+
             if len(enriched_characters) - matched_count <= 5:  # Only print first few unmatched
                 print(f"Using defaults for {char['name']} (Not found in Fandom) - key: {key}")
+
+        enriched_characters.append(enriched_char)  # type: ignore
 
     print(
         f"Enrich complete: {matched_count}/{len(characters_en)} characters matched with Fandom data"
@@ -219,7 +225,7 @@ def save_typescript_data(
                 "id": char_en["id"],
                 "element": char_en["element"],
                 "rarity": char_en["rarity"],
-                "weapon": weapon,
+                "weaponType": weapon,
                 "region": region,
                 "releaseDate": release_date,
                 "imageUrl": char_en["image_url"],
@@ -264,6 +270,8 @@ def save_typescript_data(
                 "rarity": weap_en["rarity"],
                 "type": weap_en["type"],
                 "secondaryStat": weap_en["secondary_stat"],
+                "baseAtk": weap_en.get("base_atk", 0),
+                "secondaryStatValue": weap_en.get("secondary_stat_value", ""),
                 "imageUrl": weap_en["image_url"],
                 "imagePath": f"/weapon/{weap_en['id']}.png",
             }

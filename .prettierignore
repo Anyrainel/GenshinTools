@@ -9,3 +9,5 @@ public
 src-tauri
 scripts
 src/components/ui/*.tsx
+src/data/resources.ts
+src/data/i18n-game.ts

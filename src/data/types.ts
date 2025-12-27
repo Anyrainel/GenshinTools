@@ -125,6 +125,8 @@ export type Weapon = {
   rarity: Rarity;
   type: WeaponType;
   secondaryStat: MainStat;
+  baseAtk: number;
+  secondaryStatValue: string;
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
