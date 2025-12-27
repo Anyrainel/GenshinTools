@@ -4,11 +4,10 @@ from typing import TypedDict
 
 from playwright.sync_api import Locator, Page
 
-from preprocess import ARTIFACT_SKIP_LIST
-
 
 class ScrapedCharacter(TypedDict):
     id: str
+    entry_id: str
     name: str
     element: str
     rarity: int
@@ -17,13 +16,15 @@ class ScrapedCharacter(TypedDict):
 
 class ScrapedArtifact(TypedDict):
     id: str
+    entry_id: str
     name: str
-    image_url: str
+    image_urls: dict[str, str]
     effects: list[str]
 
 
 class ScrapedWeapon(TypedDict):
     id: str
+    entry_id: str
     name: str
     rarity: int
     image_url: str
@@ -108,6 +109,14 @@ CHARACTER_BLOCKLIST: set[str] = {"Manekina", "Manekin"}
 def generate_id(name: str) -> str:
     """Generate a consistent ID from character name"""
     return re.sub(r"[^a-z0-9_]", "", name.lower().replace(" ", "_"))
+
+
+def extract_id_from_url(url: str) -> str:
+    """Extract entry ID from Hoyolab URL"""
+    match = re.search(r"entry/(\d+)", url)
+    if match:
+        return match.group(1)
+    return ""
 
 
 def clean_image_url(url: str) -> str:
@@ -279,6 +288,7 @@ def extract_character_from_card(card: Locator, index: int) -> ScrapedCharacter |
 
     return {
         "id": generate_id(name),
+        "entry_id": "",
         "name": name,
         "element": element,
         "rarity": rarity,
@@ -303,10 +313,19 @@ def scrape_characters(page: Page, language: str = "en") -> list[ScrapedCharacter
     for i, card in enumerate(character_cards):
         char_data = extract_character_from_card(card, i)
         if char_data:
+            try:
+                with page.context.expect_page() as new_page_info:
+                    card.click()
+                new_page = new_page_info.value
+                char_data["entry_id"] = extract_id_from_url(new_page.url)
+                new_page.close()
+            except Exception as e:
+                print(f"Error getting ID for {char_data['name']}: {e}")
+
             characters.append(char_data)
             print(
                 f"Character {i + 1}: {char_data['name']} "
-                f"({char_data['element']}, {char_data['rarity']}*)"
+                f"({char_data['element']}, {char_data['rarity']}*) [ID: {char_data['entry_id']}]"
             )
 
     return characters
@@ -324,12 +343,32 @@ def extract_artifact_from_card(card: Locator, index: int) -> ScrapedArtifact | N
         return None
 
     try:
-        artifact_img = card.locator("div.artifact-card-main img.d-img-show").first
-        original_image_url = artifact_img.get_attribute("src")
-        if not original_image_url or is_placeholder_image(original_image_url):
-            print(f"ERROR: {name} has placeholder image")
+        image_urls: dict[str, str] = {}
+
+        # Try to get suit images first
+        suit_div = card.locator("div.artifact-card-suit").first
+        if suit_div.count():
+            suit_items = suit_div.locator("div.artifact-card-suit-item").all()
+            if len(suit_items) >= 5:
+                # Order: circlet, flower, goblet, plume, sands
+                slots = ["circlet", "flower", "goblet", "plume", "sands"]
+                for i, item in enumerate(suit_items[:5]):
+                    img = item.locator("img.d-img-show").first
+                    src = img.get_attribute("src")
+                    if src:
+                        image_urls[slots[i]] = clean_image_url(src)
+
+        # Fallback/Primary check for flower (main image)
+        if "flower" not in image_urls:
+            artifact_img = card.locator("div.artifact-card-main img.d-img-show").first
+            original_image_url = artifact_img.get_attribute("src")
+            if original_image_url and not is_placeholder_image(original_image_url):
+                image_urls["flower"] = clean_image_url(original_image_url)
+
+        if "flower" not in image_urls:
+            print(f"ERROR: {name} has no flower image")
             return None
-        cleaned_image_url = clean_image_url(original_image_url)
+
     except Exception:
         return None
 
@@ -348,13 +387,14 @@ def extract_artifact_from_card(card: Locator, index: int) -> ScrapedArtifact | N
                 effects.append("")
 
         artifact_id = generate_id(name)
-        if artifact_id in ARTIFACT_SKIP_LIST:
-            return None
+        # if artifact_id in ARTIFACT_SKIP_LIST:
+        #    return None
 
         return {
             "id": artifact_id,
+            "entry_id": "",
             "name": name,
-            "image_url": cleaned_image_url,
+            "image_urls": image_urls,
             "effects": effects,
         }
     except Exception:
@@ -378,8 +418,17 @@ def scrape_artifacts(page: Page, language: str = "en") -> list[ScrapedArtifact]:
     for i, card in enumerate(artifact_cards):
         art_data = extract_artifact_from_card(card, i)
         if art_data:
+            try:
+                with page.context.expect_page() as new_page_info:
+                    card.click()
+                new_page = new_page_info.value
+                art_data["entry_id"] = extract_id_from_url(new_page.url)
+                new_page.close()
+            except Exception as e:
+                print(f"Error getting ID for {art_data['name']}: {e}")
+
             artifacts.append(art_data)
-            print(f"Artifact {i + 1}: {art_data['name']}")
+            print(f"Artifact {i + 1}: {art_data['name']} [ID: {art_data['entry_id']}]")
 
     return artifacts
 
@@ -441,6 +490,7 @@ def extract_weapon_from_card(card: Locator, index: int) -> ScrapedWeapon | None:
 
     return {
         "id": generate_id(name),
+        "entry_id": "",
         "name": name,
         "rarity": rarity,
         "image_url": cleaned_image_url,
@@ -545,6 +595,8 @@ def scrape_weapons(page: Page, language: str = "en") -> list[ScrapedWeapon]:
 
             detail_page = new_page_info.value
             detail_page.wait_for_load_state()
+
+            weapon_data["entry_id"] = extract_id_from_url(detail_page.url)
 
             # Check/fix language if needed (sometimes it defaults to EN)
             # The URL usually inherits query params but let's be safe.

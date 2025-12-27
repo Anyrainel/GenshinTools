@@ -129,7 +129,7 @@ export function ComputeView({
                   <ArtifactCard
                     key={set.id}
                     setId={set.id}
-                    setImagePath={set.imagePath}
+                    setImagePath={set.imagePaths.flower}
                     filter={filter}
                     onJumpToCharacter={onJumpToCharacter}
                   />

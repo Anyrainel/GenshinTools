@@ -147,20 +147,20 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
               <Tooltip key={setKey}>
                 <TooltipTrigger className="flex items-center gap-2 cursor-help">
                   <ItemIcon
-                    imagePath={artifactsById[setKey]?.imagePath || ""}
+                    imagePath={artifactsById[setKey]?.imagePaths.flower || ""}
                     rarity={artifactsById[setKey]?.rarity || 5}
                     size="w-10 h-10"
                     className="border border-white/10 shadow-sm"
                   />
-                  <div className="flex flex-col items-start leading-none">
+                  <div className="flex flex-col items-start">
                     <span
                       className={cn(
-                        "text-sm font-semibold text-gray-200 hover:text-primary transition-colors",
+                        "text-base font-semibold text-gray-200 hover:text-primary transition-colors leading-tight",
                       )}
                     >
                       {t.artifact(setKey)}
                     </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">
+                    <span className="text-xs text-muted-foreground font-mono leading-tight">
                       {count >= 4
                         ? t.ui("accountData.fourPiece")
                         : t.ui("accountData.twoPiece")}

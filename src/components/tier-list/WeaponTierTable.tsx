@@ -15,6 +15,7 @@ import { TierItemData } from "./TierItem";
 import { weaponsById, weaponResourcesByName } from "@/data/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 
 // Weapon implements TierItemData
 const weaponToTierItemData = (weapon: Weapon): Weapon & TierItemData => {
@@ -73,16 +74,13 @@ export default function WeaponTierTable({
 
   const renderPreview = (weapon: Weapon) => {
     return (
-      <div
-        className={cn(THEME.layout.itemCard, THEME.rarity.bg[weapon.rarity])}
-      >
-        <img
-          src={getAssetUrl(weapon.imagePath)}
-          alt={t.weaponName(weapon.id)}
-          className="w-full h-full object-cover"
-          draggable={false}
-        />
-      </div>
+      <ItemIcon
+        imagePath={weapon.imagePath}
+        rarity={weapon.rarity}
+        alt={t.weaponName(weapon.id)}
+        size="lg"
+        className={THEME.layout.itemCard.replace("w-16 h-16 ", "")}
+      />
     );
   };
 

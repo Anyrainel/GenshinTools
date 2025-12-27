@@ -28,7 +28,7 @@ export const StatDisplay = ({ artifact, scoreResult }: StatDisplayProps) => {
       <div
         key={statKey}
         className={cn(
-          "flex justify-between items-center text-[11px]",
+          "flex justify-between items-center text-[12px]",
           weight > 0 ? "text-gray-200" : "text-muted-foreground",
         )}
       >
@@ -42,12 +42,13 @@ export const StatDisplay = ({ artifact, scoreResult }: StatDisplayProps) => {
     scoreResult?.statScores[artifact.mainStatKey]?.weight || 0;
 
   return (
-    <div className={cn("flex flex-col")}>
+    <div className="flex flex-col">
+      {" "}
       {/* Main Stat + Level */}
       <div className="flex items-center justify-between mb-2">
         <div
           className={cn(
-            "text-xs font-bold truncate flex-1",
+            "text-sm font-bold truncate flex-1",
             // If scoreResult is provided, dim unweighted stats. If not (inventory), show default color.
             scoreResult
               ? mainStatWeight > 0
@@ -61,7 +62,7 @@ export const StatDisplay = ({ artifact, scoreResult }: StatDisplayProps) => {
         </div>
         <div
           className={cn(
-            "text-[10px] px-1 rounded bg-black/40 font-mono",
+            "text-[11px] px-1 rounded bg-black/40 font-mono",
             THEME.rarity.text[
               artifact.rarity as keyof typeof THEME.rarity.text
             ],
@@ -70,7 +71,6 @@ export const StatDisplay = ({ artifact, scoreResult }: StatDisplayProps) => {
           +{artifact.level}
         </div>
       </div>
-
       {/* Substats */}
       <div className="space-y-0.5">
         {Object.entries(artifact.substats).map(([key, val]) => {

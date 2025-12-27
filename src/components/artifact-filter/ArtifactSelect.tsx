@@ -35,7 +35,7 @@ function ArtifactSelectComponent({
   const { list: artifactList, lookup: artifactLookup } = useMemo(() => {
     const list = sortedArtifacts.map((set) => ({
       id: set.id,
-      imagePath: set.imagePath,
+      imagePath: set.imagePaths.flower,
       name: t.artifact(set.id),
       effects: t.artifactEffects(set.id),
     }));
@@ -205,7 +205,7 @@ function ArtifactSelectHalfComponent({
                     return (
                       <img
                         key={setId}
-                        src={getAssetUrl(artifact?.imagePath)}
+                        src={getAssetUrl(artifact?.imagePaths.flower)}
                         alt={artifact?.id || setId}
                         loading="lazy"
                         className="w-6 h-6 object-contain"

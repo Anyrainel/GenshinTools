@@ -17,6 +17,7 @@ import { getAssetUrl } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTierStore } from "@/stores/useTierStore";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 
 interface CharacterTierTableProps {
   tierAssignments: TierAssignment;
@@ -89,15 +90,13 @@ export default function CharacterTierTable({
 
   const renderPreview = (character: Character) => {
     return (
-      <div
-        className={cn(THEME.layout.itemCard, THEME.rarity.bg[character.rarity])}
+      <ItemIcon
+        imagePath={character.imagePath}
+        rarity={character.rarity}
+        alt={t.character(character.id)}
+        size="lg"
+        className={THEME.layout.itemCard.replace("w-16 h-16 ", "")}
       >
-        <img
-          src={getAssetUrl(character.imagePath)}
-          alt={t.character(character.id)}
-          className="w-full h-full object-cover"
-          draggable={false}
-        />
         {showWeapons && (
           <div className={THEME.layout.weaponIconContainer}>
             <div className={THEME.layout.weaponIconBg}>
@@ -112,7 +111,7 @@ export default function CharacterTierTable({
             </div>
           </div>
         )}
-      </div>
+      </ItemIcon>
     );
   };
 

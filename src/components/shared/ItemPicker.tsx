@@ -99,9 +99,16 @@ function ItemPickerComponent({
     );
   }, [search, config, filter]);
 
+  const getImagePath = (item: Item) => {
+    if (type === "artifact") {
+      return (item as ArtifactSet).imagePaths.flower;
+    }
+    return (item as Character | Weapon).imagePath;
+  };
+
   const triggerContent = selectedItem ? (
     <ItemIcon
-      imagePath={selectedItem.imagePath}
+      imagePath={getImagePath(selectedItem)}
       rarity={selectedItem.rarity}
       alt={config.getName(selectedItem.id)}
       size="full"
@@ -179,28 +186,27 @@ function ItemPickerComponent({
                     )}
                   >
                     <ItemIcon
-                      imagePath={item.imagePath}
+                      imagePath={getImagePath(item)}
                       rarity={item.rarity}
                       alt={config.getName(item.id)}
                       size="w-14 h-14" // THEME.picker.itemWrapper is w-14 h-14
                       className="rounded-md"
-                    />
-                    {/* Traveler Element Overlay - Keep this custom logic or integrate into ItemIcon?
-                         ItemIcon handles simple labels. This is a complex overlay. Keep it here for now.
-                      */}
-                    {type === "character" &&
-                      item.id.startsWith("traveler") &&
-                      (item as Character).element && (
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-sm bg-black/50 p-0.5 z-10 pointer-events-none w-6 h-6">
-                          <img
-                            src={getAssetUrl(
-                              `element/${(item as Character).element.toLowerCase()}.png`,
-                            )}
-                            alt={(item as Character).element}
-                            className="w-5 h-5 drop-shadow-md"
-                          />
-                        </div>
-                      )}
+                    >
+                      {/* Traveler Element Overlay */}
+                      {type === "character" &&
+                        item.id.startsWith("traveler") &&
+                        (item as Character).element && (
+                          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-sm bg-black/50 p-0.5 z-10 pointer-events-none w-6 h-6">
+                            <img
+                              src={getAssetUrl(
+                                `element/${(item as Character).element.toLowerCase()}.png`,
+                              )}
+                              alt={(item as Character).element}
+                              className="w-5 h-5 drop-shadow-md"
+                            />
+                          </div>
+                        )}
+                    </ItemIcon>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent

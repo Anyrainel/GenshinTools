@@ -170,10 +170,10 @@ export const i18nAppData = {
         burst: { en: "Elemental Burst", zh: "元素爆发" },
       },
       statWeights: { en: "Stat Weights", zh: "词条权重" },
-      globalSettings: { en: "Global Settings", zh: "全局设置" },
+      punishmentFactor: { en: "Punishment Factor", zh: "惩罚系数" },
       flatStatsEffectiveness: {
-        en: "Effectiveness of Flat Stats (Recommend 30-40%)",
-        zh: "固定数值词条有效比例（推荐 30-40%）",
+        en: "Effectiveness of Flat Stats",
+        zh: "固定数值词条有效比例",
       },
       resetDefaults: { en: "Reset Defaults", zh: "重置默认" },
       resetGlobal: { en: "Reset", zh: "重置" },
@@ -195,6 +195,52 @@ export const i18nAppData = {
       flatHp: { en: "Flat HP", zh: "小生命" },
       flatDef: { en: "Flat DEF", zh: "小防御" },
       searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
+    },
+    scoreExplanation: {
+      title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },
+      description: {
+        en: "How we derive the score for each artifact.",
+        zh: "我们如何计算圣遗物的评分。",
+      },
+      formula: {
+        en: "Final Score = Stat Value × Normalization Factor × (Weight / 100) × [Punishment Factor]",
+        zh: "最终评分 = 属性数值 × 折算系数 × (权重 / 100) × [惩罚系数]",
+      },
+      normalization: {
+        title: { en: "Normalization Factor", zh: "折算系数" },
+        description: {
+          en: "The scoring system normalizes all stats to their 'Critical Damage' equivalent value based on the maximum possible roll for a 5-star artifact.",
+          zh: "评分系统基于 5 星圣遗物的最大可能数值，将所有属性折算为等效的“暴击伤害”数值。",
+        },
+      },
+      weight: {
+        title: { en: "Weight", zh: "权重" },
+        description: {
+          en: "Determines how important a stat is for a specific character. The app provides default weights based on general build guides, but you can customize them to fit your specific needs.",
+          zh: "决定了该属性对特定角色的重要程度。应用提供了基于通用攻略的默认权重，但您可以根据自己的需求进行自定义。",
+        },
+      },
+      punishment: {
+        title: { en: "Punishment Factor", zh: "惩罚系数" },
+        description: {
+          en: "Applied only to flat stats (ATK, HP, DEF) to reflect their reduced effectiveness compared to percentage stats. This is usually set between 30% to 40% for Lv.90-100 characters.",
+          zh: "仅适用于固定数值属性（小攻击、小生命、小防御），以反映其相对于百分比属性较低的有效性。对于 90-100 级角色，通常设置为 30% 到 40%。",
+        },
+      },
+      factors: {
+        cr: { en: "Crit Rate: ×2", zh: "暴击率: ×2" },
+        cd: { en: "Crit DMG: ×1", zh: "暴击伤害: ×1" },
+        em: { en: "Elemental Mastery: ×0.3333", zh: "元素精通: ×0.3333" },
+        er: { en: "Energy Recharge: ×1.1991", zh: "元素充能: ×1.1991" },
+        atk: { en: "ATK% / HP%: ×1.3328", zh: "攻击%/生命%: ×1.3328" },
+        def: { en: "DEF%: ×1.0658", zh: "防御%: ×1.0658" },
+        ele: { en: "Elemental DMG: ×1.3348", zh: "元素伤害: ×1.3348" },
+        phys: { en: "Physical DMG: ×1.0669", zh: "物理伤害: ×1.0669" },
+        heal: { en: "Healing Bonus: ×1.7326", zh: "治疗加成: ×1.7326" },
+        flatAtk: { en: "Flat ATK: ×0.3995", zh: "小攻击: ×0.3995" },
+        flatHp: { en: "Flat HP: ×0.026", zh: "小生命: ×0.026" },
+        flatDef: { en: "Flat DEF: ×0.3356", zh: "小防御: ×0.3356" },
+      },
     },
     app: {
       title: { en: "Genshin Tools", zh: "原神工具箱" },

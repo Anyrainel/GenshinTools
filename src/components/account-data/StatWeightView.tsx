@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -30,8 +31,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, RotateCcw, Save } from "lucide-react";
+import { Search, RotateCcw, Save, CircleHelp } from "lucide-react";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { Element, Character } from "@/data/types";
 import { toast } from "sonner";
@@ -39,6 +48,125 @@ import { toast } from "sonner";
 // Helper to map element string to stat key
 const elementToStatKey = (element: Element): string => {
   return `${element.toLowerCase()}%`;
+};
+
+const ScoreExplanationDialog = () => {
+  const { t } = useLanguage();
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-6 h-6 text-amber-500/70 hover:text-amber-400 hover:bg-amber-500/10 ml-1 transition-all duration-300 hover:scale-110 active:scale-95"
+        >
+          <CircleHelp className="w-4 h-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl bg-slate-950 border-slate-800 text-slate-200">
+        <DialogHeader>
+          <DialogTitle>{t.ui("scoreExplanation.title")}</DialogTitle>
+          <DialogDescription>
+            {t.ui("scoreExplanation.description")}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-6 pt-2 text-sm overflow-y-auto max-h-[70vh] pr-2">
+          <div className="p-3 rounded-md bg-slate-900 border border-slate-800 font-mono text-amber-200/90 text-center text-xs sm:text-sm">
+            {t.ui("scoreExplanation.formula")}
+          </div>
+
+          {/* Section 1: Normalization */}
+          <div className="space-y-2">
+            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                1
+              </span>
+              {t.ui("scoreExplanation.normalization.title")}
+            </h4>
+            <p className="text-slate-300 text-xs leading-relaxed">
+              {t.ui("scoreExplanation.normalization.description")}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-slate-400 text-xs font-mono bg-slate-900/50 p-3 rounded border border-white/5">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
+                {t.ui("scoreExplanation.factors.cr")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
+                {t.ui("scoreExplanation.factors.cd")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500/50" />
+                {t.ui("scoreExplanation.factors.atk")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500/50" />
+                {t.ui("scoreExplanation.factors.em")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
+                {t.ui("scoreExplanation.factors.er")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                {t.ui("scoreExplanation.factors.def")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
+                {t.ui("scoreExplanation.factors.ele")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-500/50" />
+                {t.ui("scoreExplanation.factors.phys")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-500/50" />
+                {t.ui("scoreExplanation.factors.heal")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-orange-500/30" />
+                {t.ui("scoreExplanation.factors.flatAtk")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
+                {t.ui("scoreExplanation.factors.flatHp")}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/30" />
+                {t.ui("scoreExplanation.factors.flatDef")}
+              </div>
+            </div>
+          </div>
+
+          {/* Section 2: Weight */}
+          <div className="space-y-2">
+            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                2
+              </span>
+              {t.ui("scoreExplanation.weight.title")}
+            </h4>
+            <p className="text-slate-300 text-xs leading-relaxed">
+              {t.ui("scoreExplanation.weight.description")}
+            </p>
+          </div>
+
+          {/* Section 3: Punishment */}
+          <div className="space-y-2">
+            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                3
+              </span>
+              {t.ui("scoreExplanation.punishment.title")}
+            </h4>
+            <p className="text-slate-300 text-xs leading-relaxed">
+              {t.ui("scoreExplanation.punishment.description")}
+            </p>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 // Memoized Row Component
@@ -287,16 +415,16 @@ export const StatWeightView = () => {
   };
 
   return (
-    <div className="flex flex-col h-full gap-6">
-      {/* Global Settings */}
-      <div className="bg-white/5 border border-white/10 rounded-lg p-4 space-y-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            {t.ui("accountData.globalSettings")}
-            <span className="text-sm font-normal text-muted-foreground">
-              ({t.ui("accountData.flatStatsEffectiveness")})
-            </span>
-          </h2>
+    <div className="flex flex-col h-full gap-3 pb-3">
+      {/* Punishment Factor Section */}
+      <Card className="bg-white/5 border-white/10 shrink-0">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
+          <div className="flex items-center gap-2">
+            <CardTitle className="text-lg font-bold text-white">
+              {t.ui("accountData.punishmentFactor")}
+            </CardTitle>
+            <ScoreExplanationDialog />
+          </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
@@ -325,42 +453,41 @@ export const StatWeightView = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 px-12 pb-4 pt-2">
           {(["flatAtk", "flatHp", "flatDef"] as const).map((key) => (
-            <div key={key} className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-300">
-                  {key === "flatAtk"
-                    ? t.ui("accountData.flatAtk")
-                    : key === "flatHp"
-                      ? t.ui("accountData.flatHp")
-                      : t.ui("accountData.flatDef")}
-                </span>
-                <span className="font-mono text-amber-100 font-bold">
-                  {config.global[key]}%
-                </span>
-              </div>
+            <div key={key} className="flex items-center gap-4">
+              <span className="text-sm text-gray-300 w-20 shrink-0">
+                {key === "flatAtk"
+                  ? t.ui("accountData.flatAtk")
+                  : key === "flatHp"
+                    ? t.ui("accountData.flatHp")
+                    : t.ui("accountData.flatDef")}
+              </span>
               <Slider
                 value={[config.global[key]]}
                 min={0}
                 max={100}
                 step={5}
                 onValueChange={([val]) => setGlobalWeight(key, val)}
-                className="[&_.bg-primary]:bg-amber-500"
+                className="flex-1 [&_.bg-primary]:bg-amber-500"
               />
+              <span className="font-mono text-amber-100 font-bold w-10 text-right shrink-0">
+                {config.global[key]}%
+              </span>
             </div>
           ))}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Table Section */}
-      <div className="flex-1 flex flex-col min-h-0 bg-white/5 border border-white/10 rounded-lg p-4">
-        <div className="flex items-center justify-between mb-4">
+      <Card className="flex-1 flex flex-col min-h-0 bg-white/5 border-white/10">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-3">
           <div className="flex items-center gap-4">
-            <h2 className="text-lg font-bold text-white">
+            <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
               {t.ui("accountData.characterWeights")}
-            </h2>
+              <ScoreExplanationDialog />
+            </CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -412,65 +539,69 @@ export const StatWeightView = () => {
               </Button>
             )}
           </div>
-        </div>
+        </CardHeader>
 
-        <div className="flex-1 overflow-auto rounded-md border border-white/10 mx-16">
-          <ScrollArea className="h-full">
-            <Table
-              containerClassName="overflow-visible"
-              className="table-fixed"
-            >
-              <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
-                <TableRow className="hover:bg-transparent border-white/10">
-                  <TableHead className="w-[240px] pl-4">
-                    {t.ui("accountData.characters")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("atk")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("hp")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("def")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("cr")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("cd")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("em")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("er")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("elemental%")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("phys%")}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.statShort("heal%")}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCharacters.map((char) => (
-                  <CharacterWeightRow
-                    key={char.id}
-                    char={char}
-                    weights={config.characters[char.id] || {}}
-                    onValueChange={handleValueChange}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </ScrollArea>
-        </div>
-      </div>
+        <CardContent className="flex-1 min-h-0 p-0 overflow-hidden relative">
+          <div className="absolute inset-0 px-4 pb-4">
+            <div className="h-full rounded-md border border-white/10 overflow-hidden">
+              <ScrollArea className="h-full">
+                <Table
+                  containerClassName="overflow-visible"
+                  className="table-fixed"
+                >
+                  <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
+                    <TableRow className="hover:bg-transparent border-white/10">
+                      <TableHead className="w-[240px] pl-4">
+                        {t.ui("accountData.characters")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("atk")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("hp")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("def")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("cr")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("cd")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("em")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("er")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("elemental%")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("phys%")}
+                      </TableHead>
+                      <TableHead className="text-center">
+                        {t.statShort("heal%")}
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredCharacters.map((char) => (
+                      <CharacterWeightRow
+                        key={char.id}
+                        char={char}
+                        weights={config.characters[char.id] || {}}
+                        onValueChange={handleValueChange}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

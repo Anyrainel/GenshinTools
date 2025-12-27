@@ -134,8 +134,8 @@ export type Weapon = {
 export type ArtifactSet = {
   id: string;
   rarity: Rarity;
-  imageUrl: string; // Original image URL from wiki
-  imagePath: string; // Local serving path
+  imageUrl: string; // Original image URL from wiki (flower)
+  imagePaths: Record<Slot, string>; // Local serving paths for all slots
 };
 
 export type ArtifactHalfSet = {

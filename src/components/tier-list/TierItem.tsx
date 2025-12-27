@@ -3,13 +3,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
-import { getAssetUrl } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Rarity } from "@/data/types";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 
 export interface TierItemData {
   id: string;
@@ -65,16 +65,15 @@ export function TierItem<T extends TierItemData>({
   }, [onDoubleClick, item.id]);
 
   const content = (
-    <div className={cn(THEME.layout.itemCard, THEME.rarity.bg[item.rarity])}>
-      <img
-        src={getAssetUrl(imagePath)}
-        alt={alt}
-        className="w-full h-full object-cover"
-        loading="lazy"
-        draggable={false}
-      />
+    <ItemIcon
+      imagePath={imagePath}
+      rarity={item.rarity}
+      alt={alt}
+      size="lg"
+      className={THEME.layout.itemCard.replace("w-16 h-16 ", "")} // Preserve other layout styles but let size="lg" handle dims
+    >
       {overlay}
-    </div>
+    </ItemIcon>
   );
 
   const renderItemContent = () => {

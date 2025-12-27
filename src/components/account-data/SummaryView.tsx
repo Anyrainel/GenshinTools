@@ -148,7 +148,7 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
                               <Tooltip key={setId}>
                                 <TooltipTrigger>
                                   <ItemIcon
-                                    imagePath={artInfo.imagePath}
+                                    imagePath={artInfo.imagePaths.flower}
                                     rarity={artInfo.rarity}
                                     size={
                                       activeSetIds.length > 1

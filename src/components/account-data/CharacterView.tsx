@@ -122,8 +122,8 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
 
       {/* Grid */}
       <div className="flex-1 h-full overflow-hidden">
-        <div className="h-full overflow-y-auto pr-4">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 pb-10">
+        <div className="h-full overflow-y-auto">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 pb-4">
             {filteredCharacters.map((char) => (
               <div key={char.key}>
                 <CharacterCard char={char} score={scores[char.key]} />

@@ -93,7 +93,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                     >
                       {artInfo && (
                         <img
-                          src={getAssetUrl(artInfo.imagePath)}
+                          src={getAssetUrl(artInfo.imagePaths[a.slotKey])}
                           alt={name}
                           className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
                         />
