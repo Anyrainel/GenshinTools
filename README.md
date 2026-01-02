@@ -24,6 +24,14 @@ Everyone plays Genshin differently. This tool allows you to:
 - **Intelligent merging**: Combines all your builds into optimized filter configs.
 - **Export & Share**: Easily share your configurations or import from the community.
 
+### Account Analytics
+
+**Visualize your account progress.**
+
+- **Data Import**: Import account data via **GOOD** files (from scanners) or directly via **Enka.Network** (UID).
+- **Artifact Scoring**: Automatically score your characters' artifacts based on custom weights.
+- **Inventory Overview**: View distribution of artifacts and weapons across your account.
+
 ### Tier List Maker
 
 **Create and manage character tier lists.**
@@ -38,7 +46,7 @@ A modern, interactive tier list maker that:
 
 **Rank weapons by type.**
 
-Compare weapons within their specific categories (Sword, Claymore, etc.) to decide what to pull or level up next.
+Compare weapons within their specific categories (Sword, Claymore, etc.) with advanced filtering by **Secondary Stat** (e.g., CRIT Rate, EM) and Rarity.
 
 ### Team Builder
 

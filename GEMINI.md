@@ -7,14 +7,30 @@ This is a **React + TypeScript + Vite** application using **Tailwind CSS** and *
 - **Desktop App:** Wrapped with **Tauri** (`src-tauri/`) for offline capability.
 - **Data Pipeline:** Python scripts (`scripts/`) fetch and preprocess game data using `uv` for dependency management.
 
-## Key Directories
+## Project Structure
+
+### Core Domains
+
+The application is divided into distinct functional domains, each with its own state store and component subdirectory:
+
+- **Account Data** (`src/components/account-data`): Logic for imported GOOD/Enka data, inventory management, and artifact scoring.
+- **Tier Lists** (`src/components/tier-list`): Logic for Character and Weapon tier lists, including drag-and-drop grids and customization dialogs.
+- **Artifact Filter** (`src/components/artifact-filter`): The rule engine for generating lock/trash scripts.
+
+### Key Directories
 
 - `src/components/ui`: Reusable shadcn/ui primitives.
 - `src/components/shared`: Common domain components (e.g., `ItemPicker`, `CharacterTooltip`).
-- `src/lib/theme.ts`: **Centralized style constants** (colors, layouts, picker styles). **Use this.**
-- `src/stores`: Zustand state management with persistence.
-- `src/data`: Static data resources, types, and localization (`i18n-app.ts`).
-- `scripts/`: Python ETL scripts.
+- `src/lib/theme.ts`: **Centralized style constants** (Tokens & Slots). **Use this for all complex styles.**
+- `src/stores`: Zustand state management. **One store per domain** (e.g., `useAccountStore`, `useTierStore`).
+- `src/data`: Static data resources (Characters/Weapons/Artifacts JSON), types (`types.ts`), and localization (`i18n-app.ts`).
+- `scripts/`: Python ETL scripts for fetching game data.
+
+## Data Flow Philosophy
+
+1. **Static Data Rule**: The frontend treats `src/data/*.json` as the immutable source of truth for Game Data.
+2. **User Data Rule**: User data (Artifacts, Tier Lists) enters via **GOOD Format** (JSON import) or Enka API, and persists in `localStorage`.
+3. **ZERO `any` Policy**: All data crossing the boundary (Network/File -> App) must be typed and validated.
 
 ## Workflows & Commands
 
@@ -34,30 +50,34 @@ Data ingestion logic resides in `scripts/`.
   uv run --project scripts/pyproject.toml scripts/codedump.py
   ```
 
-## Development Guidelines
+### Development Guidelines
 
-### Styling
+#### 1. Architecture & State
 
-- **Utility:** **ALWAYS** use `cn()` from `@/lib/utils` to merge Tailwind classes.
-- **Theming:** Define reusable Tailwind class strings in `src/lib/theme.ts`. Avoid magic strings for complex, repeated UI elements.
-- **Layers:** `tailwind.config.ts` > `src/index.css` > `theme.ts` > Component inline classes.
-- **Consistency:** Follow existing layout patterns (e.g., specific gaps, border weights, and hover effects like `cursor-help` for tooltips).
+- **State vs Props**: Use local state for UI (dialog open/close). Use **Zustand** stores for domain data that persists (Tier Lists, Account Data).
+- **Persistence**: Domain stores use `persist` middleware to save to `localStorage`.
+- **Logic Separation**:
+  - **Components**: Rendering only.
+  - **`src/lib`**: Pure functions for complex logic (math, data conversion, parsing). E.g., `artifactScore.ts` should be testable without React.
+  - **`src/hooks`**: Reusable UI behaviors (scroll, toast).
 
-### Code Quality
+#### 2. Styling Strategy
 
-- **DRY:** Abstract reusable logic and UI into `src/components/shared/` or domain-specific subdirectories (e.g., `src/components/account-data/`).
-- **Types:** Strictly define types in `src/data/types.ts` or local type files (e.g., `goodTypes.ts`). **AVOID `any`**; use `unknown` and type guards/assertions if dealing with raw external JSON.
-- **Comments:** **Sparingly.** Explain _why_ a complex logic exists. Do not explain _what_ the code does.
+- **Tokens & Slots**: logic resides in `src/lib/theme.ts`.
+  - **Tokens**: `THEME.rarity.bg[5]`
+  - **Slots**: `THEME.characterCard.container` (multi-class strings)
+- **Utility**: Always use `cn()` to merge `THEME` styles with overrides.
+- **Layers**: `tailwind.config.ts` (base) > `index.css` (globals) > `theme.ts` (components) > inline (one-offs).
 
-### Common Patterns
+#### 3. Code Quality Standards
 
-- **Page Structure:** Every main tool page starts with a `ToolHeader`.
-- **Standard Actions:** Use standardized control components inside `ToolHeader` actions:
-  - `ImportControl`: For JSON/GOOD data imports.
-  - `ExportControl`: For data exports.
-  - `ClearAllControl`: For resetting state.
-- **Item Icons:** Always use the `ItemIcon` component for characters, weapons, and artifacts. It standardizes rarity backgrounds, shapes, and corner labels (C#/R#).
-- **Tooltips:** Almost all game items should provide hover tooltips using `CharacterTooltip`, `WeaponTooltip`, or `ArtifactTooltip`.
-- **Localization:** **NO HARDCODED STRINGS.** All UI text must be in `src/data/i18n-app.ts` and accessed via `t.ui()`. Game data names should use `t.character()`, `t.weaponName()`, `t.artifact()`, etc.
-- **Assets:** Game assets are served from `public/`. Access them via `getAssetUrl()` helper.
-- **Icons:** Use `lucide-react`.
+- **Zero `any`**: All external data (Enka API, JSON imports) must be validated. Use `src/data/types.ts`.
+- **Localization**: UI text belongs in `i18n-app.ts`. Game terms (names) belong in `i18n-game.ts` (handled via helpers).
+- **Performance**: High-cardinality lists (Tier Tables, Inventory) key by ID. Avoid deep object comparisons in `useEffect` dependencies.
+
+#### 4. Common Patterns
+
+- **ToolHeader**: Every tool page has a header with `ImportControl` / `ExportControl` / `ClearAllControl`.
+- **ItemIcon**: The canonical way to render Character/Weapon/Artifact icons with correct rarity backgrounds.
+- **Tooltips**: Essential for Game Items. Use `CharacterTooltip` etc. wrapper components.
+- **Assets**: Use `getAssetUrl(path)` helper. Never hardcode `/assets/` paths.
