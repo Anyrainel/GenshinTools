@@ -69,7 +69,7 @@ export const CharacterInfo = memo(
       <div className={cn("flex flex-col gap-2", className)}>
         <div className="flex items-center gap-2">
           <h3
-            className={cn("text-xl font-bold text-foreground", nameClassName)}
+            className={cn("text-2xl font-bold text-foreground", nameClassName)}
           >
             {displayName}
           </h3>
@@ -80,14 +80,14 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               elementTextColor,
-              "border-current border-2 font-medium flex items-center gap-1",
+              "border-current border-2 font-medium text-base flex items-center gap-1",
             )}
           >
             <img
               src={getAssetUrl(elementImagePath)}
               alt={character.element}
               loading="lazy"
-              className="w-4 h-4"
+              className="w-5 h-5"
             />
             {elementName}
           </Badge>
@@ -95,31 +95,31 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               rarityTextColor,
-              "border-current border-2 font-semibold",
+              "border-current border-2 font-semibold text-base",
             )}
           >
             ★ {character.rarity}
           </Badge>
           <Badge
             variant="outline"
-            className="text-slate-400 border-slate-400 border-2 font-medium capitalize flex items-center gap-1"
+            className="text-slate-400 border-slate-400 border-2 font-medium text-base capitalize flex items-center gap-1"
           >
             <img
               src={getAssetUrl(weaponImagePath)}
               alt={character.weaponType}
               loading="lazy"
-              className="w-4 h-4"
+              className="w-5 h-5"
             />
             {weaponName}
           </Badge>
           <Badge
             variant="outline"
-            className="text-slate-500 border-slate-500 border-2 font-medium capitalize"
+            className="text-slate-500 border-slate-500 border-2 font-medium text-base capitalize"
           >
             {regionName}
           </Badge>
           {showDate && (
-            <span className="text-sm text-muted-foreground pl-2">
+            <span className="text-base text-muted-foreground pl-2">
               {formattedDate}
             </span>
           )}

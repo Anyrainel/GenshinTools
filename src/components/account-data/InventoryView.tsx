@@ -33,7 +33,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4">
           {t.ui("accountData.unequippedWeapons")} ({unequippedWeapons.length})
         </h3>
         <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 xl:grid-cols-14 2xl:grid-cols-16 gap-2">
@@ -43,16 +43,15 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
             return (
               <Tooltip key={w.id}>
                 <TooltipTrigger asChild>
-                  <Card className="overflow-hidden hover:border-primary/50 transition-colors cursor-help">
+                  <Card className="overflow-hidden cursor-help">
                     <ItemIcon
                       imagePath={weaponInfo?.imagePath || ""}
                       rarity={weaponInfo?.rarity || 1}
                       label={`R${w.refinement}`}
                       size="full"
-                      className="aspect-square"
                       alt={name}
                     />
-                    <div className="p-1 text-[10px] truncate text-center font-medium bg-card/80">
+                    <div className="p-1 text-xs truncate text-center font-medium bg-card/80">
                       {name}
                     </div>
                   </Card>
@@ -70,7 +69,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4">
           {t.ui("accountData.unequippedArtifacts")} (
           {unequippedArtifacts.length})
         </h3>
@@ -95,10 +94,10 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                         <img
                           src={getAssetUrl(artInfo.imagePaths[a.slotKey])}
                           alt={name}
-                          className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                          className="w-full h-full object-cover opacity-70 hover:opacity-100"
                         />
                       )}
-                      <div className="absolute bottom-0 right-0 bg-black/60 px-1 text-[10px] text-white font-mono">
+                      <div className="absolute bottom-0 right-0 bg-black/60 px-1 text-xs text-white font-mono">
                         +{a.level}
                       </div>
                     </div>
@@ -111,7 +110,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                       <div className="border-b border-slate-700 pb-2">
                         <div
                           className={cn(
-                            "font-bold text-sm",
+                            "font-bold text-base",
                             THEME.rarity.text[
                               a.rarity as keyof typeof THEME.rarity.text
                             ],
@@ -119,7 +118,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                         >
                           {name}
                         </div>
-                        <div className="text-xs text-slate-400 capitalize">
+                        <div className="text-sm text-slate-400 capitalize">
                           {t.ui(`computeFilters.${a.slotKey}`)}
                         </div>
                       </div>

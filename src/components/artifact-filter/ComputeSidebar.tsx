@@ -37,7 +37,7 @@ export function ComputeSidebar({
     <CardContent className="flex-1 overflow-y-auto space-y-4 p-6">
       {/* Search */}
       <div className="space-y-2">
-        <Label className="text-foreground text-sm font-medium">
+        <Label className="text-foreground text-base font-medium">
           {t.ui("computeFilters.searchSets")}
         </Label>
         <Input
@@ -50,7 +50,7 @@ export function ComputeSidebar({
 
       {/* Compute Options */}
       <div className="space-y-3 pt-2 border-t border-border/50">
-        <Label className="text-foreground text-sm font-medium">
+        <Label className="text-foreground text-base font-medium">
           {t.ui("computeFilters.computeOptions")}
         </Label>
 
@@ -66,7 +66,7 @@ export function ComputeSidebar({
           />
           <Label
             htmlFor={`${isInSidePanel ? "mobile-" : ""}skip-crit`}
-            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
             {t.ui("computeFilters.skipCritBuilds")}
           </Label>
@@ -84,7 +84,7 @@ export function ComputeSidebar({
           />
           <Label
             htmlFor={`${isInSidePanel ? "mobile-" : ""}expand-elemental`}
-            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
             {t.ui("computeFilters.expandElementalGoblet")}
           </Label>
@@ -102,7 +102,7 @@ export function ComputeSidebar({
           />
           <Label
             htmlFor={`${isInSidePanel ? "mobile-" : ""}expand-crit`}
-            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
             {t.ui("computeFilters.expandCritCirclet")}
           </Label>
@@ -120,7 +120,7 @@ export function ComputeSidebar({
           />
           <Label
             htmlFor={`${isInSidePanel ? "mobile-" : ""}pick-one-merge`}
-            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
             {t.ui("computeFilters.mergeSingleFlexVariants")}
           </Label>
@@ -138,7 +138,7 @@ export function ComputeSidebar({
           />
           <Label
             htmlFor={`${isInSidePanel ? "mobile-" : ""}rigid-promotion`}
-            className="text-foreground text-sm flex-1 leading-tight cursor-pointer"
+            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
             {t.ui("computeFilters.findRigidCommonSubset")}
           </Label>

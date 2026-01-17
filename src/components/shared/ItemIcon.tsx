@@ -6,12 +6,25 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   imagePath: string;
   rarity?: number;
   label?: string; // e.g. "C6", "R5"
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | string; // Predefined sizes or arbitrary class
+  size?: ItemIconSize; // Predefined sizes
   className?: string;
   alt?: string;
-  shape?: "square" | "circle"; // Default square
   children?: React.ReactNode;
 }
+
+// Size token definitions - change these to adjust all icons globally
+// eslint-disable-next-line react-refresh/only-export-components
+export const SIZE_CLASSES = {
+  xs: "w-10 h-10",
+  sm: "w-12 h-12",
+  md: "w-14 h-14 rounded-md",
+  lg: "w-16 h-16 rounded-lg",
+  xl: "w-20 h-20 rounded-xl",
+  "2xl": "w-24 h-24 rounded-2xl",
+  full: "w-full h-full",
+} as const;
+
+export type ItemIconSize = keyof typeof SIZE_CLASSES;
 
 export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
   (
@@ -19,27 +32,15 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       imagePath,
       rarity = 1,
       label,
-      size = "md",
+      size = "lg",
       className,
       alt = "",
-      shape = "square",
       children,
       ...props
     },
     ref,
   ) => {
-    const sizeClass =
-      size === "xs"
-        ? "w-6 h-6"
-        : size === "sm"
-          ? "w-8 h-8"
-          : size === "md"
-            ? "w-12 h-12"
-            : size === "lg"
-              ? "w-16 h-16"
-              : size === "xl"
-                ? "w-20 h-20"
-                : size; // If string, use as class
+    const sizeClass = SIZE_CLASSES[size] ?? size;
 
     return (
       <div
@@ -47,7 +48,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         className={cn(
           "relative overflow-hidden flex-shrink-0 select-none",
           sizeClass,
-          shape === "circle" ? "rounded-full" : "rounded-md",
+          "rounded-md",
           THEME.rarity.bg[rarity as keyof typeof THEME.rarity.bg] ||
             "bg-gray-500", // Rarity BG
           className,
@@ -57,14 +58,11 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         <img
           src={getAssetUrl(imagePath)}
           alt={alt}
-          className={cn(
-            "w-full h-full object-cover",
-            shape === "square" ? "object-cover" : "object-cover scale-110",
-          )} // Slightly scale up for circle to avoid borders?
+          className={cn("w-full h-full object-cover scale-110")}
           draggable={false}
         />
         {label && (
-          <div className="absolute top-0 right-0 bg-black/60 text-[9px] text-white px-1 rounded-bl leading-tight font-bold">
+          <div className="absolute top-0 right-0 bg-black/60 text-xs text-white px-1 rounded-bl leading-tight font-bold">
             {label}
           </div>
         )}

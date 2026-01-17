@@ -38,7 +38,7 @@ function StatSelectItem({
       onValueChange={onValueChange}
       defaultOpen={autoOpen}
     >
-      <LightweightSelectTrigger className="w-28 h-8 text-sm hover:brightness-110 bg-gradient-mystical-reverse">
+      <LightweightSelectTrigger className="w-28 h-8 text-md hover:brightness-110 bg-gradient-mystical-reverse">
         {value && value !== "__DESELECT__" ? (
           <span>{t.statShort(value)}</span>
         ) : (
@@ -53,7 +53,11 @@ function StatSelectItem({
           {t.ui("buildCard.deselect")}
         </LightweightSelectItem>
         {availableOptions.map((option) => (
-          <LightweightSelectItem key={option} value={option}>
+          <LightweightSelectItem
+            key={option}
+            value={option}
+            className="text-md"
+          >
             {t.stat(option)}
           </LightweightSelectItem>
         ))}
@@ -122,7 +126,7 @@ function StatSelectComponent({
   );
 
   return (
-    <div className="flex text-sm min-h-8 items-center gap-1 flex-wrap">
+    <div className="flex text-base min-h-8 items-center gap-1 flex-wrap">
       {/* Existing value selects */}
       {values.map((value, index) => (
         <div key={index} className="flex items-center gap-1">

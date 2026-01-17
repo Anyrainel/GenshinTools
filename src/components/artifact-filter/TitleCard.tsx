@@ -41,7 +41,7 @@ const WeaponSlot = memo(
         onClear={!isAddSlot ? handleClear : undefined}
         filter={filter}
         tooltipSide="left"
-        className={isAddSlot ? "w-14 h-14 [&_span]:text-2xl" : "w-14 h-14"}
+        triggerSize="xl"
       />
     );
   },
@@ -112,7 +112,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
         imagePath={character.imagePath}
         rarity={character.rarity}
         alt={displayName}
-        size="w-16 h-16"
+        size="xl"
         className="rounded-lg shadow-md"
       />
 
@@ -126,7 +126,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
             variant="ghost"
             size="icon"
             onClick={handleToggle}
-            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            className="h-7 w-7 text-muted-foreground hover:text-foreground"
             aria-label={
               isHidden
                 ? t.ui("characterCard.showBuilds")
@@ -139,13 +139,13 @@ function TitleCardComponent({ character }: TitleCardProps) {
             }
           >
             {isHidden ? (
-              <EyeOff className="h-4 w-4" />
+              <EyeOff className="h-7 w-7" />
             ) : (
-              <Eye className="h-4 w-4" />
+              <Eye className="h-7 w-7" />
             )}
           </Button>
           {isHidden && (
-            <span className="text-muted-foreground text-xs italic select-none">
+            <span className="text-muted-foreground text-base italic select-none">
               {t.ui("characterCard.hiddenNotice")}
             </span>
           )}

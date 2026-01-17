@@ -11,9 +11,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getAssetUrl } from "@/lib/utils";
 import { AlertOctagon, AlertTriangle } from "lucide-react";
-import { THEME } from "@/lib/theme";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -73,7 +72,7 @@ export function ArtifactConfigCard({
   // Helper function to render main stat cell
   const renderMainStatCell = (slotName: string, mainStats: MainStatPlus[]) => (
     <div>
-      <Label className="text-xs text-muted-foreground block mb-1">
+      <Label className="text-sm text-muted-foreground block mb-1">
         {slotName} {t.ui("computeFilters.mainStat")}
       </Label>
       <div className="flex flex-wrap gap-1">
@@ -82,13 +81,13 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="outline"
-              className="text-xs bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+              className="text-sm bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
             >
               {getStatDisplayName(stat)}
             </Badge>
           ))
         ) : (
-          <span className="text-xs text-muted-foreground italic">
+          <span className="text-sm text-muted-foreground italic">
             {t.ui("computeFilters.any")}
           </span>
         )}
@@ -99,7 +98,7 @@ export function ArtifactConfigCard({
   // Helper function to render substat cell
   const renderSubstatCell = (slotName: string, slotConfig: SlotConfig) => (
     <div>
-      <Label className="text-xs text-muted-foreground block mb-1">
+      <Label className="text-sm text-muted-foreground block mb-1">
         {slotName} {t.ui("computeFilters.subStat")}{" "}
         <span className="font-semibold text-foreground">
           [{t.ui("computeFilters.atLeast")} {slotConfig.minStatCount}]
@@ -112,7 +111,7 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="secondary"
-              className={`text-xs ${
+              className={`text-sm ${
                 isMustPresent
                   ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
                   : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
@@ -178,12 +177,12 @@ export function ArtifactConfigCard({
 
       return (
         <div className="flex items-center justify-between">
-          <div className="text-[11px] text-muted-foreground">{label}</div>
+          <div className="text-xs text-muted-foreground">{label}</div>
           {Icon && message ? (
             <Tooltip>
               <TooltipTrigger asChild>
                 <div
-                  className={`text-xs flex items-center gap-1 cursor-help ${textClass}`}
+                  className={`text-sm flex items-center gap-1 cursor-help ${textClass}`}
                 >
                   {content}
                 </div>
@@ -197,7 +196,7 @@ export function ArtifactConfigCard({
               </TooltipContent>
             </Tooltip>
           ) : (
-            <div className={`text-xs flex items-center gap-1 ${textClass}`}>
+            <div className={`text-sm flex items-center gap-1 ${textClass}`}>
               {content}
             </div>
           )}
@@ -247,16 +246,15 @@ export function ArtifactConfigCard({
     return (
       <div
         key={charInfo.characterId}
-        className={`rounded ${
-          THEME.rarity.bg[character.rarity]
-        } overflow-hidden cursor-pointer hover:scale-110 transition-transform`}
+        className="cursor-pointer hover:scale-110 transition-transform"
         onClick={() => onJumpToCharacter(charInfo.characterId)}
         title={t.character(character.id)}
       >
-        <img
-          src={getAssetUrl(character.imagePath)}
+        <ItemIcon
+          imagePath={character.imagePath}
+          rarity={character.rarity}
+          size="sm"
           alt={t.character(character.id)}
-          className="w-8 h-8 object-cover"
         />
       </div>
     );
@@ -270,12 +268,12 @@ export function ArtifactConfigCard({
           {t.ui("computeFilters.configurationNumber")} {configNumber}
         </h4>
 
-        <Label className="self-end text-xs text-muted-foreground pb-0.5">
+        <Label className="self-end text-sm text-muted-foreground pb-0.5">
           {t.ui("computeFilters.for")}
         </Label>
 
         {/* Character groups */}
-        <div className="flex-1 flex items-end gap-x-5 gap-y-1 text-xs">
+        <div className="flex-1 flex items-end gap-x-5 gap-y-1 text-sm">
           {/* 4pc group */}
           {(fourPcPerfect.length > 0 || fourPcImperfect.length > 0) && (
             <div className="flex gap-1.5">
@@ -284,7 +282,7 @@ export function ArtifactConfigCard({
                 <div className="w-px bg-border self-stretch mx-0.5"></div>
               )}
               {fourPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">
+              <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
                 ({t.ui("computeFilters.fourPc")})
               </Label>
             </div>
@@ -298,7 +296,7 @@ export function ArtifactConfigCard({
                 <div className="w-px bg-border self-stretch mx-0.5"></div>
               )}
               {twoPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-xs text-muted-foreground mx-0.5 pb-0.5">
+              <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
                 ({t.ui("computeFilters.twoPc")})
               </Label>
             </div>

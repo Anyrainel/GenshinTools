@@ -214,7 +214,7 @@ function BuildCardComponent({
           />
 
           <div className="flex-1 min-w-0 flex items-center gap-3 px-6">
-            <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none">
+            <span className="text-sm text-muted-foreground italic flex-shrink-0 select-none">
               {t.ui("buildCard.buildLabel")} {buildIndex}
             </span>
             <Input
@@ -222,7 +222,7 @@ function BuildCardComponent({
               onChange={(e) => handleNameChange(e.target.value)}
               onBlur={handleNameBlur}
               placeholder=""
-              className="font-medium bg-transparent border-none px-2 py-0 h-auto text-foreground flex-1"
+              className="font-medium text-base bg-transparent border-none px-2 py-0 h-auto text-foreground flex-1"
             />
           </div>
 
@@ -230,9 +230,9 @@ function BuildCardComponent({
             <TooltipTrigger asChild>
               <div className="flex-shrink-0">
                 {validation.isValid ? (
-                  <Check className="w-5 h-5 text-green-500" />
+                  <Check className="w-6 h-6 text-green-500" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 text-amber-500" />
+                  <AlertCircle className="w-6 h-6 text-amber-500" />
                 )}
               </div>
             </TooltipTrigger>
@@ -262,7 +262,7 @@ function BuildCardComponent({
                 }
               }}
             >
-              <LightweightSelectTrigger className="w-32 h-7 text-sm bg-gradient-mystical-reverse">
+              <LightweightSelectTrigger className="w-32 h-8 text-base bg-gradient-mystical-reverse">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -276,7 +276,7 @@ function BuildCardComponent({
             </LightweightSelect>
           ) : (
             <span
-              className="w-32 h-7 text-sm flex items-center justify-center rounded-md border border-border/40 px-2 select-none text-muted-foreground"
+              className="w-32 h-8 text-base flex items-center justify-center rounded-md border border-border/40 px-2 select-none text-muted-foreground"
               title={compositionLabel}
             >
               {compositionLabel}
@@ -287,7 +287,7 @@ function BuildCardComponent({
             variant="ghost"
             size="sm"
             onClick={onDuplicate}
-            className="p-1 h-7 w-7"
+            className="p-1 h-8 w-8"
           >
             <Copy />
           </Button>
@@ -295,17 +295,17 @@ function BuildCardComponent({
             variant="ghost"
             size="sm"
             onClick={onDelete}
-            className="p-1 h-7 w-7 text-destructive hover:text-destructive"
+            className="p-1 h-8 w-8 text-destructive hover:text-destructive"
           >
             <Trash2 />
           </Button>
 
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
+            <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
               {isExpanded ? (
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp className="w-5 h-5" />
               ) : (
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-5 h-5" />
               )}
             </Button>
           </CollapsibleTrigger>
@@ -363,7 +363,7 @@ function BuildCardComponent({
                 <div className="grid grid-cols-3 gap-2">
                   {mainStatSlots.map((slot) => (
                     <div key={slot} className="space-y-1">
-                      <Label className="text-xs font-medium text-muted-foreground select-none">
+                      <Label className="text-sm font-medium text-muted-foreground select-none">
                         {mainStatLabel(slot)}
                       </Label>
                       <StatSelect
@@ -380,7 +380,7 @@ function BuildCardComponent({
 
                 {/* Substats Row - Bottom Unit */}
                 <div className="space-y-1">
-                  <Label className="text-xs font-medium text-muted-foreground select-none">
+                  <Label className="text-sm font-medium text-muted-foreground select-none">
                     {t.ui("buildCard.substats")}
                   </Label>
                   <div className="flex items-center justify-between">
@@ -393,7 +393,7 @@ function BuildCardComponent({
                       maxLength={5}
                     />
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-muted-foreground select-none">
+                      <span className="text-sm text-muted-foreground select-none">
                         {t.ui("buildCard.atLeast")}
                       </span>
                       <Input
@@ -408,13 +408,13 @@ function BuildCardComponent({
                               : undefined,
                           })
                         }
-                        className="w-12 h-6 text-xs border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-12 h-7 text-sm border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder={Math.min(
                           build.substats.length,
                           4,
                         ).toString()}
                       />
-                      <span className="text-xs text-muted-foreground select-none">
+                      <span className="text-sm text-muted-foreground select-none">
                         {t.ui("buildCard.affixes")}
                       </span>
                     </div>

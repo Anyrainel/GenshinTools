@@ -113,7 +113,7 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="w-64 flex-shrink-0 hidden md:block h-full">
+      <div className="hidden lg:block lg:flex-shrink-0 h-full">
         <CharacterFilterSidebar
           filters={filters}
           onFiltersChange={setFilters}

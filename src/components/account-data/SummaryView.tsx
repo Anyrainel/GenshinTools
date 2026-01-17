@@ -83,11 +83,11 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
           <div key={tier} className="space-y-3">
             <h2 className="text-xl font-bold text-white border-b border-white/10 pb-2">
               {displayName}
-              <span className="text-sm font-normal text-muted-foreground ml-2">
+              <span className="text-base font-normal text-muted-foreground ml-2">
                 ({chars.length})
               </span>
             </h2>
-            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
               {chars.map(({ char, scoreResult }) => {
                 const charInfo = charactersById[char.key];
                 if (!charInfo) return null;
@@ -126,7 +126,7 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
                           <ItemIcon
                             imagePath={charInfo.imagePath}
                             rarity={charInfo.rarity}
-                            size="w-12 h-12"
+                            size="xl"
                             className="shadow-md"
                           />
                         </TooltipTrigger>
@@ -151,11 +151,8 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
                                     imagePath={artInfo.imagePaths.flower}
                                     rarity={artInfo.rarity}
                                     size={
-                                      activeSetIds.length > 1
-                                        ? "w-6 h-6"
-                                        : "w-9 h-9"
+                                      activeSetIds.length === 1 ? "sm" : "xs"
                                     }
-                                    className="shadow-sm"
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent
@@ -180,10 +177,10 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
                     {scoreResult ? (
                       <ArtifactScoreHoverCard
                         score={scoreResult}
-                        className="text-lg font-black italic tracking-tighter"
+                        className="text-2xl font-black italic tracking-tighter"
                       />
                     ) : (
-                      <div className="px-1.5 py-0 rounded bg-black/20 border border-white/5 text-muted-foreground text-xs">
+                      <div className="px-1.5 py-0 rounded bg-black/20 border border-white/5 text-muted-foreground text-sm">
                         N/A
                       </div>
                     )}

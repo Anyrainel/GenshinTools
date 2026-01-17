@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArtifactSetConfigs } from "@/data/types";
-
-import { getAssetUrl } from "@/lib/utils";
 import { ArtifactConfigCard } from "./ArtifactConfigCard";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { artifactsById } from "@/data/constants";
 
 interface ArtifactCardProps {
   setId: string;
@@ -25,18 +25,19 @@ export function ArtifactCard({
     <Card className="bg-gradient-artifact">
       <CardHeader className="pb-3 pt-5">
         <div className="flex items-center gap-4">
-          <img
-            src={getAssetUrl(setImagePath)}
+          <ItemIcon
+            imagePath={setImagePath}
+            rarity={artifactsById[setId]?.rarity || 5}
+            size="xl"
             alt={setId}
-            className="w-16 h-16 rounded-lg object-cover bg-muted select-none"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <CardTitle className="text-lg text-foreground">
+              <CardTitle className="text-xl text-foreground">
                 {t.artifact(setId)}
               </CardTitle>
             </div>
-            <p className="text-xs italic text-muted-foreground truncate pr-4">
+            <p className="text-sm italic text-muted-foreground truncate pr-4">
               <span className="font-bold">[2]</span> {effects[0]}{" "}
               <span className="font-bold">[4]</span> {effects[1]}
             </p>

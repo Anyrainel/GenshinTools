@@ -13,7 +13,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <TooltipProvider>
+        <TooltipProvider delayDuration={200}>
           <HashRouter>
             <App />
           </HashRouter>

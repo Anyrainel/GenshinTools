@@ -70,14 +70,14 @@ export default function CharacterTierTable({
   const getOverlay = (character: Character) => {
     if (!showWeapons) return null;
     return (
-      <div className={THEME.layout.weaponIconContainer}>
-        <div className={THEME.layout.weaponIconBg}>
+      <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
+        <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
           <img
             src={getAssetUrl(
               weaponResourcesByName[character.weaponType].imagePath,
             )}
             alt={t.weaponType(character.weaponType)}
-            className={THEME.layout.weaponIcon}
+            className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
             draggable={false}
           />
         </div>
@@ -95,23 +95,7 @@ export default function CharacterTierTable({
         rarity={character.rarity}
         alt={t.character(character.id)}
         size="lg"
-        className={THEME.layout.itemCard.replace("w-16 h-16 ", "")}
-      >
-        {showWeapons && (
-          <div className={THEME.layout.weaponIconContainer}>
-            <div className={THEME.layout.weaponIconBg}>
-              <img
-                src={getAssetUrl(
-                  weaponResourcesByName[character.weaponType].imagePath,
-                )}
-                alt={t.weaponType(character.weaponType)}
-                className={THEME.layout.weaponIcon}
-                draggable={false}
-              />
-            </div>
-          </div>
-        )}
-      </ItemIcon>
+      />
     );
   };
 

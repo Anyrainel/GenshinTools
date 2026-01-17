@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
 import {
   Tooltip,
   TooltipContent,
@@ -65,13 +64,7 @@ export function TierItem<T extends TierItemData>({
   }, [onDoubleClick, item.id]);
 
   const content = (
-    <ItemIcon
-      imagePath={imagePath}
-      rarity={item.rarity}
-      alt={alt}
-      size="lg"
-      className={THEME.layout.itemCard.replace("w-16 h-16 ", "")} // Preserve other layout styles but let size="lg" handle dims
-    >
+    <ItemIcon imagePath={imagePath} rarity={item.rarity} alt={alt} size="lg">
       {overlay}
     </ItemIcon>
   );

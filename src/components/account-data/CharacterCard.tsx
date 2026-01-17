@@ -58,23 +58,21 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
       {/* Header */}
       <div className="flex flex-col p-3 gap-2 bg-black/40 border-b border-border/40">
         {/* Top Row: Icon + Name/Badges + Weapon */}
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           {/* Character Icon - No Tooltip */}
           <ItemIcon
             imagePath={charInfo.imagePath}
             rarity={charInfo.rarity}
             label={`C${char.constellation}`}
-            size="w-16 h-16" // Match character size
-            className="rounded-lg shadow-md flex-shrink-0"
+            size="xl"
           />
 
           {/* Info */}
-          <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[4rem]">
+          <div className="flex-1 min-w-0">
             <CharacterInfo
               character={charInfo}
               showDate={false}
               className="gap-1"
-              nameClassName="text-xl"
             />
           </div>
 
@@ -87,13 +85,12 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
                     imagePath={weaponInfo.imagePath}
                     rarity={weaponInfo.rarity}
                     label={`R${weapon.refinement}`}
-                    size="w-16 h-16" // Match character size
-                    className="rounded-lg shadow-md"
+                    size="xl"
                     alt={weaponName || ""}
                   />
                 </div>
               ) : (
-                <div className="w-16 h-16 rounded-lg bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center opacity-30 cursor-help flex-shrink-0">
+                <div className="w-16 h-16 bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center opacity-30 cursor-help flex-shrink-0">
                   <Sword className="w-6 h-6" />
                 </div>
               )}
@@ -111,25 +108,28 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
 
         {/* Bottom Row: Levels & Talents */}
         <div className="flex items-center gap-3">
-          <div className="w-16 text-center text-sm text-muted-foreground leading-none flex-shrink-0">
+          <div className="w-20 text-center text-base text-muted-foreground leading-none flex-shrink-0">
             Lv.{char.level}
           </div>
 
-          <div className="flex-1 flex items-center justify-start px-2 gap-3 text-xs text-muted-foreground leading-none overflow-hidden">
-            <span className="truncate">
-              {t.ui("accountData.talents.auto")}: {talents.auto}
+          <div className="flex-1 flex items-center justify-start px-2 gap-3 text-base text-muted-foreground leading-none overflow-hidden">
+            <span>
+              {t.ui("accountData.talents.auto")}:{" "}
+              <span className="font-bold">{talents.auto}</span>
             </span>
-            <span className="truncate">
-              {t.ui("accountData.talents.skill")}: {talents.skill}
+            <span>
+              {t.ui("accountData.talents.skill")}:{" "}
+              <span className="font-bold">{talents.skill}</span>
             </span>
-            <span className="truncate">
-              {t.ui("accountData.talents.burst")}: {talents.burst}
+            <span>
+              {t.ui("accountData.talents.burst")}:{" "}
+              <span className="font-bold">{talents.burst}</span>
             </span>
           </div>
 
-          <div className="w-16 flex-shrink-0 flex justify-center">
+          <div className="w-20 flex-shrink-0 flex justify-center">
             {weapon ? (
-              <span className="w-full text-center text-sm text-muted-foreground leading-none">
+              <span className="w-full text-center text-base text-muted-foreground leading-none">
                 Lv.{weapon.level}
               </span>
             ) : (
@@ -149,18 +149,17 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
                   <ItemIcon
                     imagePath={artifactsById[setKey]?.imagePaths.flower || ""}
                     rarity={artifactsById[setKey]?.rarity || 5}
-                    size="w-10 h-10"
-                    className="border border-white/10 shadow-sm"
+                    size="md"
                   />
                   <div className="flex flex-col items-start">
                     <span
                       className={cn(
-                        "text-base font-semibold text-gray-200 hover:text-primary transition-colors leading-tight",
+                        "text-lg font-semibold text-gray-200 hover:text-primary transition-colors leading-tight",
                       )}
                     >
                       {t.artifact(setKey)}
                     </span>
-                    <span className="text-xs text-muted-foreground font-mono leading-tight">
+                    <span className="text-base text-muted-foreground font-mono leading-tight">
                       {count >= 4
                         ? t.ui("accountData.fourPiece")
                         : t.ui("accountData.twoPiece")}
@@ -179,7 +178,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
               </Tooltip>
             ))
           ) : (
-            <span className="text-muted-foreground italic text-xs pl-1">
+            <span className="text-muted-foreground italic text-base pl-1">
               {t.ui("accountData.noSetBonus")}
             </span>
           )}
@@ -188,12 +187,12 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
         {/* Artifact Score */}
         {artifactScore.isComplete && (
           <div className="flex flex-col items-end leading-none mr-1">
-            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
+            <span className="text-base text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
               {t.ui("accountData.score")}
             </span>
             <ArtifactScoreHoverCard
               score={artifactScore}
-              className="text-2xl font-black italic tracking-tighter"
+              className="text-3xl font-black italic tracking-tighter"
             />
           </div>
         )}
@@ -205,6 +204,13 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
           {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
+            // Determine if main stat is "wrong" for this character
+            // (only for sands/goblet/circlet where main stat choice matters)
+            const isMainStatWrong =
+              art &&
+              ["sands", "goblet", "circlet"].includes(slot) &&
+              (artifactScore.statScores[art.mainStatKey]?.weight ?? 0) === 0;
+
             const content = (
               <div
                 className={cn(
@@ -213,10 +219,16 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
                 )}
               >
                 {art ? (
-                  <StatDisplay artifact={art} scoreResult={artifactScore} />
+                  <StatDisplay
+                    artifact={art}
+                    scoreResult={artifactScore}
+                    slotSubScore={artifactScore.slotSubScores[slot]}
+                    slotMaxSubScore={artifactScore.slotMaxSubScores[slot]}
+                    isMainStatWrong={isMainStatWrong}
+                  />
                 ) : (
                   <div className="flex-1 flex items-center justify-center py-4">
-                    <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-[10px] text-muted-foreground/50 text-center px-1">
+                    <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-sm text-muted-foreground/50 text-center px-1">
                       {t.ui(`computeFilters.${slot}`)}
                     </div>
                   </div>

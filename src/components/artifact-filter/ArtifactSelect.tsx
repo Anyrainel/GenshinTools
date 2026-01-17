@@ -14,8 +14,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getAssetUrl } from "@/lib/utils";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip"; // Import the shared tooltip
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 
 interface ArtifactSelectProps {
   value: string;
@@ -64,26 +64,26 @@ function ArtifactSelectComponent({
         <TooltipTrigger asChild>
           <SelectTrigger
             className={
-              "w-32 h-32 p-0 border-2 border-border/50 bg-gradient-mystical-reverse"
+              "w-36 h-36 p-0 border-2 border-border/50 bg-gradient-mystical-reverse"
             }
           >
             <div className="w-full h-full rounded flex flex-col items-center justify-center">
               {selectedArtifact ? (
                 <>
-                  <img
-                    src={getAssetUrl(selectedArtifact.imagePath)}
+                  <ItemIcon
+                    imagePath={selectedArtifact.imagePath}
+                    rarity={artifactsById[value]?.rarity || 5}
+                    size="xl"
                     alt={selectedArtifact.name}
-                    loading="lazy"
-                    className="w-20 h-20 object-contain"
                   />
-                  <span className="text-xs font-medium mt-1 text-center leading-tight px-1">
+                  <span className="text-base font-medium mt-1 text-center leading-tight px-1">
                     {selectedArtifact.name}
                   </span>
                 </>
               ) : (
                 <div className="text-muted-foreground text-center">
                   <div className="text-4xl mb-1">?</div>
-                  <span className="text-xs">{placeholder}</span>
+                  <span className="text-base">{placeholder}</span>
                 </div>
               )}
             </div>
@@ -101,7 +101,7 @@ function ArtifactSelectComponent({
       </Tooltip>
 
       <SelectContent
-        className="w-96 overflow-y-auto max-h-96"
+        className="w-[430px] overflow-y-auto max-h-96"
         side="right"
         align="start"
       >
@@ -111,18 +111,19 @@ function ArtifactSelectComponent({
               <TooltipTrigger asChild>
                 <SelectItem
                   value={artifact.id}
-                  className={`p-1 h-auto data-[highlighted]:bg-accent ${
+                  className={`p-1.5 h-auto data-[highlighted]:bg-accent ${
                     value === artifact.id ? "bg-accent/60" : ""
                   }`}
                 >
-                  <div className="flex items-center gap-1 w-full max-w-[180px]">
-                    <img
-                      src={getAssetUrl(artifact.imagePath)}
+                  <div className="flex items-center gap-2 w-full max-w-[200px]">
+                    <ItemIcon
+                      imagePath={artifact.imagePath}
+                      rarity={artifactsById[artifact.id]?.rarity || 5}
+                      size="sm"
                       alt={artifact.name}
-                      loading="lazy"
-                      className="w-10 h-10 object-contain flex-shrink-0"
+                      className="flex-shrink-0"
                     />
-                    <span className="text-xs font-medium leading-tight text-left flex-1 whitespace-normal">
+                    <span className="text-base font-medium leading-tight text-left flex-1 whitespace-normal">
                       {artifact.name}
                     </span>
                   </div>
@@ -186,26 +187,26 @@ function ArtifactSelectHalfComponent({
         value={value?.toString() || ""}
         onValueChange={(val) => onValueChange(parseInt(val))}
       >
-        <SelectTrigger className="w-full min-h-8 h-auto text-xs px-2 py-1 [&>span]:line-clamp-2 bg-gradient-mystical-reverse">
+        <SelectTrigger className="w-full min-h-8 h-auto text-sm px-2 py-1 [&>span]:line-clamp-2 bg-gradient-mystical-reverse">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
         <SelectContent className="max-h-96 overflow-y-auto">
           {halfSetList.map((halfSet) => (
             <SelectItem key={halfSet.id} value={halfSet.id.toString()}>
               <div className="flex items-center gap-2">
-                <span className="text-xs max-w-80 break-words leading-tight">
+                <span className="text-base max-w-80 break-words leading-tight">
                   {halfSet.text}
                 </span>
                 <div className="flex gap-1 flex-shrink-0">
                   {halfSet.setIds.map((setId) => {
                     const artifact = artifactsById[setId];
                     return (
-                      <img
+                      <ItemIcon
                         key={setId}
-                        src={getAssetUrl(artifact?.imagePaths.flower)}
+                        imagePath={artifact?.imagePaths.flower || ""}
+                        rarity={artifact?.rarity || 5}
+                        size="xs"
                         alt={artifact?.id || setId}
-                        loading="lazy"
-                        className="w-6 h-6 object-contain"
                       />
                     );
                   })}

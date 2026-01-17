@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { Settings, FileDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ToolHeader } from "@/components/shared/ToolHeader";
@@ -233,189 +232,187 @@ const WeaponTierListPage = () => {
   };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className={THEME.layout.pageContainer}>
-        <ToolHeader
-          actions={
-            <>
-              <ClearAllControl
-                onConfirm={handleClear}
-                dialogTitle={t.ui("resetConfirmDialog.title")}
-                dialogDescription={t.ui("resetConfirmDialog.message")}
-                confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
-              />
+    <div className={THEME.layout.pageContainer}>
+      <ToolHeader
+        actions={
+          <>
+            <ClearAllControl
+              onConfirm={handleClear}
+              dialogTitle={t.ui("resetConfirmDialog.title")}
+              dialogDescription={t.ui("resetConfirmDialog.message")}
+              confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
+            />
 
-              <ImportControl<TierListData>
-                options={presetOptions}
-                loadPreset={loadPreset}
-                onApply={handleImport}
-                onLocalImport={handleImport}
-                dialogTitle={t.ui("tierList.importDialogTitle")}
-                dialogDescription={t.ui("tierList.importDialogDescription")}
-                confirmTitle={t.ui("tierList.presetConfirmTitle")}
-                confirmDescription={t.ui("tierList.presetConfirmDescription")}
-                confirmActionLabel={t.ui("tierList.presetConfirmAction")}
-                loadErrorText={t.ui("tierList.loadError")}
-                emptyListText={t.ui("tierList.noPresets")}
-                importFromFileText={t.ui("tierList.importFromFile")}
-              />
+            <ImportControl<TierListData>
+              options={presetOptions}
+              loadPreset={loadPreset}
+              onApply={handleImport}
+              onLocalImport={handleImport}
+              dialogTitle={t.ui("tierList.importDialogTitle")}
+              dialogDescription={t.ui("tierList.importDialogDescription")}
+              confirmTitle={t.ui("tierList.presetConfirmTitle")}
+              confirmDescription={t.ui("tierList.presetConfirmDescription")}
+              confirmActionLabel={t.ui("tierList.presetConfirmAction")}
+              loadErrorText={t.ui("tierList.loadError")}
+              emptyListText={t.ui("tierList.noPresets")}
+              importFromFileText={t.ui("tierList.importFromFile")}
+            />
 
-              <ExportControl
-                onExport={handleExport}
-                dialogTitle={t.ui("tierList.exportDialogTitle")}
-                dialogDescription={t.ui("tierList.exportDialogDescription")}
-                authorLabel={t.ui("tierList.exportAuthorLabel")}
-                authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
-                descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
-                descriptionPlaceholder={t.ui(
-                  "tierList.exportDescriptionPlaceholder",
-                )}
-                authorRequiredError={t.ui("tierList.exportAuthorRequired")}
-                descriptionRequiredError={t.ui(
-                  "tierList.exportDescriptionRequired",
-                )}
-                confirmActionLabel={t.ui("tierList.exportConfirmAction")}
-                defaultAuthor={author}
-                defaultDescription={description}
-              />
+            <ExportControl
+              onExport={handleExport}
+              dialogTitle={t.ui("tierList.exportDialogTitle")}
+              dialogDescription={t.ui("tierList.exportDialogDescription")}
+              authorLabel={t.ui("tierList.exportAuthorLabel")}
+              authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
+              descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
+              descriptionPlaceholder={t.ui(
+                "tierList.exportDescriptionPlaceholder",
+              )}
+              authorRequiredError={t.ui("tierList.exportAuthorRequired")}
+              descriptionRequiredError={t.ui(
+                "tierList.exportDescriptionRequired",
+              )}
+              confirmActionLabel={t.ui("tierList.exportConfirmAction")}
+              defaultAuthor={author}
+              defaultDescription={description}
+            />
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadImage}
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                {t.ui("app.print")}
-              </Button>
-            </>
-          }
-        />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadImage}
+              className="gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              {t.ui("app.print")}
+            </Button>
+          </>
+        }
+      />
 
-        <div
-          className={cn(
-            THEME.layout.headerBorder,
-            "z-40 flex-shrink-0 sticky top-0",
-          )}
-        >
-          <div className="container mx-auto flex items-center gap-4 py-2">
-            <h1 className="text-2xl font-bold text-gray-200">
-              {customTitle || t.ui("app.weaponTierListTitle")}
-            </h1>
+      <div
+        className={cn(
+          THEME.layout.headerBorder,
+          "z-40 flex-shrink-0 sticky top-0",
+        )}
+      >
+        <div className="container mx-auto flex items-center gap-4 py-2">
+          <h1 className="text-2xl font-bold text-gray-200">
+            {customTitle || t.ui("app.weaponTierListTitle")}
+          </h1>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsCustomizeDialogOpen(true)}
+              className={THEME.button.customize}
+            >
+              <Settings className="w-4 h-4" />
+              {t.ui("buttons.customize")}
+            </Button>
             <div className="flex items-center gap-4">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsCustomizeDialogOpen(true)}
-                className={THEME.button.customize}
-              >
-                <Settings className="w-4 h-4" />
-                {t.ui("buttons.customize")}
-              </Button>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rarity-5"
-                    checked={showRarity5}
-                    onCheckedChange={(checked) =>
-                      setShowRarity5(checked === true)
-                    }
-                  />
-                  <Label
-                    htmlFor="rarity-5"
-                    className="text-sm text-gray-200 cursor-pointer"
-                  >
-                    {t.ui("buttons.includeRarity5")}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rarity-4"
-                    checked={showRarity4}
-                    onCheckedChange={(checked) =>
-                      setShowRarity4(checked === true)
-                    }
-                  />
-                  <Label
-                    htmlFor="rarity-4"
-                    className="text-sm text-gray-200 cursor-pointer"
-                  >
-                    {t.ui("buttons.includeRarity4")}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="rarity-3"
-                    checked={showRarity3}
-                    onCheckedChange={(checked) =>
-                      setShowRarity3(checked === true)
-                    }
-                  />
-                  <Label
-                    htmlFor="rarity-3"
-                    className="text-sm text-gray-200 cursor-pointer"
-                  >
-                    {t.ui("buttons.includeRarity3")}
-                  </Label>
-                </div>
-
-                <div className="w-px h-6 bg-gray-600 mx-2" />
-
-                {sortedWeaponSecondaryStats.map((stat) => (
-                  <div key={stat} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`stat-${stat}`}
-                      checked={selectedSecondaryStats.includes(stat)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setSelectedSecondaryStats([
-                            ...selectedSecondaryStats,
-                            stat,
-                          ]);
-                        } else {
-                          setSelectedSecondaryStats(
-                            selectedSecondaryStats.filter((s) => s !== stat),
-                          );
-                        }
-                      }}
-                    />
-                    <Label
-                      htmlFor={`stat-${stat}`}
-                      className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-                    >
-                      {t.statShort(stat)}
-                    </Label>
-                  </div>
-                ))}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="rarity-5"
+                  checked={showRarity5}
+                  onCheckedChange={(checked) =>
+                    setShowRarity5(checked === true)
+                  }
+                />
+                <Label
+                  htmlFor="rarity-5"
+                  className="text-sm text-gray-200 cursor-pointer"
+                >
+                  {t.ui("buttons.includeRarity5")}
+                </Label>
               </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="rarity-4"
+                  checked={showRarity4}
+                  onCheckedChange={(checked) =>
+                    setShowRarity4(checked === true)
+                  }
+                />
+                <Label
+                  htmlFor="rarity-4"
+                  className="text-sm text-gray-200 cursor-pointer"
+                >
+                  {t.ui("buttons.includeRarity4")}
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="rarity-3"
+                  checked={showRarity3}
+                  onCheckedChange={(checked) =>
+                    setShowRarity3(checked === true)
+                  }
+                />
+                <Label
+                  htmlFor="rarity-3"
+                  className="text-sm text-gray-200 cursor-pointer"
+                >
+                  {t.ui("buttons.includeRarity3")}
+                </Label>
+              </div>
+
+              <div className="w-px h-6 bg-gray-600 mx-2" />
+
+              {sortedWeaponSecondaryStats.map((stat) => (
+                <div key={stat} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`stat-${stat}`}
+                    checked={selectedSecondaryStats.includes(stat)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedSecondaryStats([
+                          ...selectedSecondaryStats,
+                          stat,
+                        ]);
+                      } else {
+                        setSelectedSecondaryStats(
+                          selectedSecondaryStats.filter((s) => s !== stat),
+                        );
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor={`stat-${stat}`}
+                    className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+                  >
+                    {t.statShort(stat)}
+                  </Label>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-
-        <main className="flex-1 overflow-y-auto pb-2">
-          <div className="w-full px-4 h-full">
-            <WeaponTierTable
-              tierAssignments={tierAssignments}
-              tierCustomization={tierCustomization}
-              onAssignmentsChange={handleAssignmentsChange}
-              showRarity5={showRarity5}
-              showRarity4={showRarity4}
-              showRarity3={showRarity3}
-              allowedSecondaryStats={selectedSecondaryStats}
-              tableRef={tableRef}
-            />
-          </div>
-        </main>
-
-        <TierCustomizationDialog
-          isOpen={isCustomizeDialogOpen}
-          onClose={() => setIsCustomizeDialogOpen(false)}
-          onSave={handleTierCustomizationSave}
-          initialCustomization={tierCustomization}
-          initialCustomTitle={customTitle}
-        />
       </div>
-    </TooltipProvider>
+
+      <main className="flex-1 overflow-y-auto pb-2">
+        <div className="w-[95%] mx-auto h-full">
+          <WeaponTierTable
+            tierAssignments={tierAssignments}
+            tierCustomization={tierCustomization}
+            onAssignmentsChange={handleAssignmentsChange}
+            showRarity5={showRarity5}
+            showRarity4={showRarity4}
+            showRarity3={showRarity3}
+            allowedSecondaryStats={selectedSecondaryStats}
+            tableRef={tableRef}
+          />
+        </div>
+      </main>
+
+      <TierCustomizationDialog
+        isOpen={isCustomizeDialogOpen}
+        onClose={() => setIsCustomizeDialogOpen(false)}
+        onSave={handleTierCustomizationSave}
+        initialCustomization={tierCustomization}
+        initialCustomTitle={customTitle}
+      />
+    </div>
   );
 };
 

@@ -1149,8 +1149,8 @@ export const characters: Character[] = [
     "element": "Geo",
     "rarity": 5,
     "weaponType": "Sword",
-    "region": "None",
-    "releaseDate": "2020-09-28",
+    "region": "Liyue",
+    "releaseDate": "2026-02-03",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/11/6a57d2dd9677f63ae7d38f525484c55f_7837326903952372916.png",
     "imagePath": "/character/zibai.png"
   },
@@ -1158,9 +1158,9 @@ export const characters: Character[] = [
     "id": "illuga",
     "element": "Geo",
     "rarity": 4,
-    "weaponType": "Sword",
-    "region": "None",
-    "releaseDate": "2020-09-28",
+    "weaponType": "Polearm",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-02-03",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/12/b138122c91d1ce61bf7d06d6042ae08a_4301479487552885437.png",
     "imagePath": "/character/illuga.png"
   }

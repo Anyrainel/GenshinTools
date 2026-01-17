@@ -244,7 +244,7 @@ export default function AccountDataPage() {
       />
 
       <div className={cn(THEME.layout.headerBorder, "z-40")}>
-        <div className="container mx-auto px-4 pt-2 pb-2">
+        <div className="container mx-auto pt-2 pb-2">
           <div className="flex justify-center">
             <Tabs
               value={activeTab}
@@ -283,7 +283,7 @@ export default function AccountDataPage() {
       </div>
 
       <main className="flex-1 overflow-hidden">
-        <div className="container mx-auto px-4 h-full">
+        <div className="container mx-auto h-full">
           {accountData ? (
             <Tabs value={activeTab} className="h-full">
               <TabsContent

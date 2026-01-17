@@ -85,7 +85,7 @@ export function ComputeView({
       className="flex flex-row gap-4 lg:gap-6 h-full pt-4"
     >
       {/* Desktop Sidebar - Fixed height with internal scroll */}
-      <div className="hidden lg:block w-64 xl:w-72 flex-shrink-0 h-full">
+      <div className="hidden lg:block w-80 flex-shrink-0 h-full">
         <ComputeSidebar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

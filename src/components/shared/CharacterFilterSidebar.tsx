@@ -61,7 +61,7 @@ export function CharacterFilterSidebar({
     <div className="space-y-6">
       {/* Sort Order */}
       <div className="flex flex-col space-y-3">
-        <Label className="text-foreground text-sm font-medium">
+        <Label className="text-foreground text-base font-medium">
           {t.ui("filters.sort")}
         </Label>
         <Button
@@ -86,7 +86,7 @@ export function CharacterFilterSidebar({
       {/* Elements */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-sm font-medium">
+          <Label className="text-foreground text-base font-medium">
             {t.ui("filters.elements")}
           </Label>
           {filters.elements.length > 0 && (
@@ -113,12 +113,12 @@ export function CharacterFilterSidebar({
               />
               <Label
                 htmlFor={`element-${element}`}
-                className="text-sm text-foreground cursor-pointer flex items-center gap-1 flex-1"
+                className="text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
               >
                 <img
                   src={getElementImagePath(element)}
                   alt={element}
-                  className="w-4 h-4 flex-shrink-0"
+                  className="w-5 h-5 flex-shrink-0"
                 />
                 <span className="truncate">{t.element(element)}</span>
               </Label>
@@ -130,7 +130,7 @@ export function CharacterFilterSidebar({
       {/* Rarity */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-sm font-medium">
+          <Label className="text-foreground text-base font-medium">
             {t.ui("filters.rarity")}
           </Label>
           {filters.rarities.length > 0 && (
@@ -161,7 +161,7 @@ export function CharacterFilterSidebar({
               />
               <Label
                 htmlFor={`rarity-${rarity}`}
-                className="text-sm text-foreground cursor-pointer flex-1"
+                className="text-base text-foreground cursor-pointer flex-1"
               >
                 ★ {rarity}
               </Label>
@@ -173,7 +173,7 @@ export function CharacterFilterSidebar({
       {/* Weapon Types */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-sm font-medium">
+          <Label className="text-foreground text-base font-medium">
             {t.ui("filters.weaponTypes")}
           </Label>
           {filters.weaponTypes.length > 0 && (
@@ -200,12 +200,12 @@ export function CharacterFilterSidebar({
               />
               <Label
                 htmlFor={`weapon-${weapon}`}
-                className="text-sm text-foreground cursor-pointer flex items-center gap-1 flex-1"
+                className="text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
               >
                 <img
                   src={getWeaponImagePath(weapon)}
                   alt={weapon}
-                  className="w-4 h-4 flex-shrink-0"
+                  className="w-5 h-5 flex-shrink-0"
                 />
                 <span className="truncate">{t.weaponType(weapon)}</span>
               </Label>
@@ -217,7 +217,7 @@ export function CharacterFilterSidebar({
       {/* Regions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-sm font-medium">
+          <Label className="text-foreground text-base font-medium">
             {t.ui("filters.regions")}
           </Label>
           {filters.regions.length > 0 && (
@@ -244,7 +244,7 @@ export function CharacterFilterSidebar({
               />
               <Label
                 htmlFor={`region-${region}`}
-                className="text-sm text-foreground cursor-pointer flex-1 truncate capitalize"
+                className="text-base text-foreground cursor-pointer flex-1 truncate capitalize"
               >
                 {t.region(region)}
               </Label>

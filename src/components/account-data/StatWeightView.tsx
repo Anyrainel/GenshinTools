@@ -195,16 +195,15 @@ const CharacterWeightRow = React.memo(
             <ItemIcon
               imagePath={char.imagePath}
               rarity={char.rarity}
-              size="w-8 h-8"
-              className="rounded-md flex-shrink-0 shadow-sm"
+              size="xs"
             />
-            <span className="font-medium text-gray-200 truncate">
+            <span className="font-medium text-lg text-gray-200 truncate">
               {t.character(char.id)}
             </span>
             <img
               src={getAssetUrl(elementResourcesByName[char.element]?.imagePath)}
               alt={char.element}
-              className="w-5 h-5 flex-shrink-0 opacity-80"
+              className="w-6 h-6 flex-shrink-0 opacity-80"
             />
           </div>
         </TableCell>
@@ -454,10 +453,10 @@ export const StatWeightView = () => {
             </AlertDialogContent>
           </AlertDialog>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 px-12 pb-4 pt-2">
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-x-32 gap-y-4 px-20 pb-4 pt-2">
           {(["flatAtk", "flatHp", "flatDef"] as const).map((key) => (
-            <div key={key} className="flex items-center gap-4">
-              <span className="text-sm text-gray-300 w-20 shrink-0">
+            <div key={key} className="flex items-center gap-2">
+              <span className="text-base text-gray-300 w-20 shrink-0">
                 {key === "flatAtk"
                   ? t.ui("accountData.flatAtk")
                   : key === "flatHp"
@@ -542,7 +541,7 @@ export const StatWeightView = () => {
         </CardHeader>
 
         <CardContent className="flex-1 min-h-0 p-0 overflow-hidden relative">
-          <div className="absolute inset-0 px-4 pb-4">
+          <div className="absolute inset-0 px-12 pb-4">
             <div className="h-full rounded-md border border-white/10 overflow-hidden">
               <ScrollArea className="h-full">
                 <Table
@@ -550,7 +549,7 @@ export const StatWeightView = () => {
                   className="table-fixed"
                 >
                   <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
-                    <TableRow className="hover:bg-transparent border-white/10">
+                    <TableRow className="hover:bg-transparent border-white/10 text-base">
                       <TableHead className="w-[240px] pl-4">
                         {t.ui("accountData.characters")}
                       </TableHead>
@@ -624,9 +623,9 @@ const WeightCell = ({
   };
 
   const getCellStyles = (val: number) => {
-    if (val === 0) return "text-muted-foreground hover:bg-white/5";
+    if (val === 0) return "text-muted-foreground hover:bg-white/5 text-base";
 
-    const base = "bg-amber-500/5 hover:bg-amber-500/10";
+    const base = "bg-amber-500/5 hover:bg-amber-500/10 text-base";
     if (val === 100) return cn(base, "text-orange-300 font-extrabold");
     if (val >= 70) return cn(base, "text-amber-200 font-bold");
     return base + " text-amber-100/70";
@@ -637,7 +636,7 @@ const WeightCell = ({
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "h-7 w-full flex items-center justify-center rounded cursor-pointer transition-all font-mono text-sm",
+            "h-7 w-[80%] mx-auto flex items-center justify-center rounded cursor-pointer transition-all font-mono text-md",
             getCellStyles(value),
           )}
         >
@@ -650,10 +649,10 @@ const WeightCell = ({
       >
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
               {label}
             </span>
-            <span className="text-lg font-bold text-amber-100 font-mono">
+            <span className="text-base font-bold text-amber-100 font-mono">
               {value}%
             </span>
           </div>
@@ -675,7 +674,7 @@ const WeightCell = ({
                 variant="outline"
                 onClick={() => handlePresetClick(preset)}
                 className={cn(
-                  "h-6 flex-1 text-[10px] px-0 border-slate-700 hover:bg-slate-800 hover:text-white",
+                  "h-6 flex-1 text-sm px-0 border-slate-700 hover:bg-slate-800 hover:text-white",
                   value === preset &&
                     "bg-amber-500/20 text-amber-100 border-amber-500/50",
                 )}

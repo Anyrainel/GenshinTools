@@ -30,7 +30,7 @@ export default function TeamBuilderPage() {
     <div className={THEME.layout.pageContainer}>
       <ToolHeader />
       <div className="flex-1 overflow-auto p-4 md:p-8">
-        <div className="w-[95%] max-w-[1600px] mx-auto grid grid-cols-[repeat(auto-fit,minmax(440px,460px))] gap-8 justify-center items-center">
+        <div className="w-[95%] max-w-[1800px] mx-auto grid grid-cols-[repeat(auto-fit,minmax(440px,460px))] gap-8 justify-center items-center">
           {teams.map((team, index) => {
             const isLast = index === teams.length - 1;
             return (

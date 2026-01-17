@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { FileDown } from "lucide-react";
 import {
   ConfigureView,
@@ -146,105 +145,103 @@ const Index = () => {
   };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className={THEME.layout.pageContainer}>
-        <ToolHeader
-          actions={
-            <>
-              {activeTab === "filters" ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadImage}
-                  className="gap-2"
-                >
-                  <FileDown className="w-4 h-4" />
-                  {t.ui("app.print")}
-                </Button>
-              ) : (
-                <>
-                  <ClearAllControl onConfirm={clearAllBuilds} />
-
-                  <ImportControl
-                    options={presetOptions}
-                    loadPreset={loadPreset}
-                    onApply={importBuilds}
-                    onLocalImport={importBuilds}
-                  />
-
-                  <ExportControl
-                    onExport={handleExport}
-                    defaultAuthor={author}
-                    defaultDescription={description}
-                  />
-                </>
-              )}
-            </>
-          }
-        />
-
-        <div className={cn(THEME.layout.headerBorder, "z-40")}>
-          <div className="container mx-auto px-4 pt-2 pb-2">
-            {/* Tab Bar */}
-            <div className="flex justify-center">
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full"
+    <div className={THEME.layout.pageContainer}>
+      <ToolHeader
+        actions={
+          <>
+            {activeTab === "filters" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadImage}
+                className="gap-2"
               >
-                <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2">
-                  <TabsTrigger
-                    value="configure"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                  >
-                    {t.ui("navigation.configure")}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="filters"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                  >
-                    {t.ui("navigation.computeFilters")}
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-        </div>
+                <FileDown className="w-4 h-4" />
+                {t.ui("app.print")}
+              </Button>
+            ) : (
+              <>
+                <ClearAllControl onConfirm={clearAllBuilds} />
 
-        {/* Main Content Area - Takes remaining height */}
-        <main className="flex-1 overflow-hidden">
-          <div className="container mx-auto px-4 h-full">
+                <ImportControl
+                  options={presetOptions}
+                  loadPreset={loadPreset}
+                  onApply={importBuilds}
+                  onLocalImport={importBuilds}
+                />
+
+                <ExportControl
+                  onExport={handleExport}
+                  defaultAuthor={author}
+                  defaultDescription={description}
+                />
+              </>
+            )}
+          </>
+        }
+      />
+
+      <div className={cn(THEME.layout.headerBorder, "z-40")}>
+        <div className="container mx-auto pt-2 pb-2">
+          {/* Tab Bar */}
+          <div className="flex justify-center">
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
-              className="h-full"
+              className="w-full"
             >
-              <TabsContent
-                value="configure"
-                className="mt-0 h-full data-[state=inactive]:hidden"
-              >
-                <ConfigureView ref={configureViewRef} />
-              </TabsContent>
-
-              <TabsContent
-                value="filters"
-                className="mt-0 h-full data-[state=inactive]:hidden"
-              >
-                <ComputeView
-                  contentRef={computeContentRef}
-                  onJumpToCharacter={(characterId) => {
-                    setActiveTab("configure");
-                    setTimeout(() => {
-                      configureViewRef.current?.scrollToCharacter(characterId);
-                    }, 0);
-                  }}
-                />
-              </TabsContent>
+              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2">
+                <TabsTrigger
+                  value="configure"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  {t.ui("navigation.configure")}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="filters"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  {t.ui("navigation.computeFilters")}
+                </TabsTrigger>
+              </TabsList>
             </Tabs>
           </div>
-        </main>
+        </div>
       </div>
-    </TooltipProvider>
+
+      {/* Main Content Area - Takes remaining height */}
+      <main className="flex-1 overflow-hidden">
+        <div className="container mx-auto h-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="h-full"
+          >
+            <TabsContent
+              value="configure"
+              className="mt-0 h-full data-[state=inactive]:hidden"
+            >
+              <ConfigureView ref={configureViewRef} />
+            </TabsContent>
+
+            <TabsContent
+              value="filters"
+              className="mt-0 h-full data-[state=inactive]:hidden"
+            >
+              <ComputeView
+                contentRef={computeContentRef}
+                onJumpToCharacter={(characterId) => {
+                  setActiveTab("configure");
+                  setTimeout(() => {
+                    configureViewRef.current?.scrollToCharacter(characterId);
+                  }, 0);
+                }}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+    </div>
   );
 };
 

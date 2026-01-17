@@ -195,6 +195,8 @@ export const i18nAppData = {
       flatHp: { en: "Flat HP", zh: "小生命" },
       flatDef: { en: "Flat DEF", zh: "小防御" },
       searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
+      wrongMainStat: { en: "Wrong main stat", zh: "错误主属性" },
+      subStatScore: { en: "Sub", zh: "副词条" },
     },
     scoreExplanation: {
       title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },

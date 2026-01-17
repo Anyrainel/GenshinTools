@@ -79,7 +79,6 @@ export default function WeaponTierTable({
         rarity={weapon.rarity}
         alt={t.weaponName(weapon.id)}
         size="lg"
-        className={THEME.layout.itemCard.replace("w-16 h-16 ", "")}
       />
     );
   };

@@ -79,12 +79,6 @@ export const THEME = {
     gridBorder: "border-r border-b border-gray-600 bg-clip-padding",
     centerBox: "flex items-center justify-center p-2",
     labelText: "text-center break-words font-bold text-gray-100",
-    itemCard: "w-16 h-16 rounded-md overflow-hidden relative",
-    weaponIconContainer:
-      "absolute top-0 right-0 w-5 h-5 flex items-center justify-center",
-    weaponIconBg: "relative bg-black/30 rounded-full backdrop-blur-sm",
-    weaponIcon:
-      "w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg",
   },
   button: {
     destructive: "bg-red-600 hover:bg-red-700 text-white",
@@ -93,19 +87,5 @@ export const THEME = {
     secondary: "bg-gray-600 hover:bg-gray-700 text-white",
     customize: "bg-yellow-600 hover:bg-yellow-700 text-white gap-2",
     toggle: "bg-gray-700 hover:bg-gray-600 text-white border-gray-600 gap-2",
-  },
-  picker: {
-    wrapper: "w-full h-full rounded-md overflow-hidden relative",
-    placeholder:
-      "w-full h-full rounded-md overflow-hidden relative bg-secondary/30 border-dashed border-2 border-border flex items-center justify-center hover:bg-secondary/50 transition-colors",
-    trigger: "w-20 h-20 cursor-pointer hover:scale-105 transition-transform",
-    triggerDisabled: "opacity-50 cursor-not-allowed hover:scale-100",
-    imageContain: "w-full h-full object-contain p-1",
-    imageCover: "w-full h-full object-cover",
-    popoverContent: "w-[392px] p-2",
-    itemGrid: "grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-1",
-    itemWrapper:
-      "w-14 h-14 rounded-md overflow-hidden relative cursor-pointer hover:ring-2 ring-primary transition-all",
-    itemSelected: "ring-2 ring-primary",
   },
 } as const;

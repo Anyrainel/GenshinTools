@@ -82,7 +82,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
         className="flex flex-col gap-4 lg:flex-row lg:gap-6 h-full pt-4"
       >
         {/* Desktop Sidebar - Fixed height with internal scroll */}
-        <aside className="hidden lg:block lg:w-64 lg:flex-shrink-0 h-full">
+        <aside className="hidden lg:block lg:flex-shrink-0 h-full">
           <CharacterFilterSidebar
             filters={filters}
             onFiltersChange={setFilters}

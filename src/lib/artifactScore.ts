@@ -7,6 +7,7 @@ import {
   StatWeightMap,
   GlobalStatWeights,
 } from "@/data/types";
+import { statPools } from "@/data/constants";
 
 // ----------------------------------------------------------------------------
 // 1. Constants & Helpers
@@ -78,6 +79,7 @@ export interface ArtifactScoreResult {
   subScore: number;
   slotMainScores: Record<string, number>;
   slotSubScores: Record<string, number>;
+  slotMaxSubScores: Record<string, number>;
   statScores: Record<string, StatScoreBreakdown>;
   isComplete: boolean;
 }
@@ -158,6 +160,48 @@ function calculateAttributeScore(
   return { score, weight: effectiveWeight };
 }
 
+// Max CD roll value used as baseline for sub-score calculation
+// 5-star: 7.77 (max CD roll), 4-star: 6.22 (max CD roll)
+const MAX_CD_ROLL_5STAR = 7.77;
+const MAX_CD_ROLL_4STAR = 6.22;
+
+/**
+ * Calculate the max potential sub-score for a slot based on:
+ * - Available substat pool (all substats minus main stat type)
+ * - Character's stat weights
+ * - 5-star: 8 rolls distributed as 5-1-1-1 to top 4 weighted stats
+ * - 4-star: 6 rolls distributed as 3-1-1-1 to top 4 weighted stats
+ */
+function calculateMaxSlotSubScore(
+  mainStat: MainStat,
+  weights: StatWeightMap,
+  rarity: number,
+): number {
+  // Get substat pool excluding main stat (if it's a substat type)
+  const pool = statPools.substat.filter((s) => s !== mainStat) as SubStat[];
+
+  // Get weights for each stat, normalized to 0-1
+  const statWeights = pool
+    .map((stat) => (weights[stat] ?? 0) / 100)
+    .filter((w) => w > 0)
+    .sort((a, b) => b - a);
+
+  // Need at least 1 stat with weight to calculate potential
+  if (statWeights.length === 0) return 0;
+
+  // 5-star: 5-1-1-1 (8 rolls), 4-star: 3-1-1-1 (6 rolls)
+  const is5Star = rarity === 5;
+  const rolls = is5Star ? [5, 1, 1, 1] : [3, 1, 1, 1];
+  const maxCdRoll = is5Star ? MAX_CD_ROLL_5STAR : MAX_CD_ROLL_4STAR;
+
+  let weightSum = 0;
+  for (let i = 0; i < Math.min(4, statWeights.length); i++) {
+    weightSum += rolls[i] * statWeights[i];
+  }
+
+  return weightSum * maxCdRoll;
+}
+
 export function calculateArtifactScore(
   char: CharacterData,
   config: ArtifactScoreConfig,
@@ -170,6 +214,7 @@ export function calculateArtifactScore(
     subScore: 0,
     slotMainScores: {},
     slotSubScores: {},
+    slotMaxSubScores: {},
     statScores: {},
     isComplete: false,
   };
@@ -283,6 +328,17 @@ export function calculateArtifactScore(
 
     result.slotMainScores[slot] = slotMain;
     result.slotSubScores[slot] = slotSub;
+
+    // Calculate max potential sub-score for 5-star and 4-star artifacts
+    if (artifact.rarity === 5 || artifact.rarity === 4) {
+      result.slotMaxSubScores[slot] = calculateMaxSlotSubScore(
+        artifact.mainStatKey,
+        weights,
+        artifact.rarity,
+      );
+    } else {
+      result.slotMaxSubScores[slot] = 0;
+    }
   });
 
   result.isComplete = equippedCount === 5;

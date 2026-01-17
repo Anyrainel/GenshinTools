@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { Settings, FileDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ToolHeader } from "@/components/shared/ToolHeader";
@@ -261,130 +260,128 @@ const TierListPage = () => {
   };
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className={THEME.layout.pageContainer}>
-        <ToolHeader
-          actions={
-            <>
-              <ClearAllControl
-                onConfirm={handleClear}
-                dialogTitle={t.ui("resetConfirmDialog.title")}
-                dialogDescription={t.ui("resetConfirmDialog.message")}
-                confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
-              />
+    <div className={THEME.layout.pageContainer}>
+      <ToolHeader
+        actions={
+          <>
+            <ClearAllControl
+              onConfirm={handleClear}
+              dialogTitle={t.ui("resetConfirmDialog.title")}
+              dialogDescription={t.ui("resetConfirmDialog.message")}
+              confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
+            />
 
-              <ImportControl<TierListData> // Specify type for ImportControl
-                options={presetOptions}
-                loadPreset={loadPreset}
-                onApply={handleImport}
-                onLocalImport={handleImport} // Use handleImport for local file import as well
-                dialogTitle={t.ui("tierList.importDialogTitle")}
-                dialogDescription={t.ui("tierList.importDialogDescription")}
-                confirmTitle={t.ui("tierList.presetConfirmTitle")}
-                confirmDescription={t.ui("tierList.presetConfirmDescription")}
-                confirmActionLabel={t.ui("tierList.presetConfirmAction")}
-                loadErrorText={t.ui("tierList.loadError")}
-                emptyListText={t.ui("tierList.noPresets")}
-                importFromFileText={t.ui("tierList.importFromFile")}
-              />
+            <ImportControl<TierListData> // Specify type for ImportControl
+              options={presetOptions}
+              loadPreset={loadPreset}
+              onApply={handleImport}
+              onLocalImport={handleImport} // Use handleImport for local file import as well
+              dialogTitle={t.ui("tierList.importDialogTitle")}
+              dialogDescription={t.ui("tierList.importDialogDescription")}
+              confirmTitle={t.ui("tierList.presetConfirmTitle")}
+              confirmDescription={t.ui("tierList.presetConfirmDescription")}
+              confirmActionLabel={t.ui("tierList.presetConfirmAction")}
+              loadErrorText={t.ui("tierList.loadError")}
+              emptyListText={t.ui("tierList.noPresets")}
+              importFromFileText={t.ui("tierList.importFromFile")}
+            />
 
-              <ExportControl
-                onExport={handleExport}
-                dialogTitle={t.ui("tierList.exportDialogTitle")}
-                dialogDescription={t.ui("tierList.exportDialogDescription")}
-                authorLabel={t.ui("tierList.exportAuthorLabel")}
-                authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
-                descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
-                descriptionPlaceholder={t.ui(
-                  "tierList.exportDescriptionPlaceholder",
-                )}
-                authorRequiredError={t.ui("tierList.exportAuthorRequired")}
-                descriptionRequiredError={t.ui(
-                  "tierList.exportDescriptionRequired",
-                )}
-                confirmActionLabel={t.ui("tierList.exportConfirmAction")}
-                defaultAuthor={author}
-                defaultDescription={description}
-              />
+            <ExportControl
+              onExport={handleExport}
+              dialogTitle={t.ui("tierList.exportDialogTitle")}
+              dialogDescription={t.ui("tierList.exportDialogDescription")}
+              authorLabel={t.ui("tierList.exportAuthorLabel")}
+              authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
+              descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
+              descriptionPlaceholder={t.ui(
+                "tierList.exportDescriptionPlaceholder",
+              )}
+              authorRequiredError={t.ui("tierList.exportAuthorRequired")}
+              descriptionRequiredError={t.ui(
+                "tierList.exportDescriptionRequired",
+              )}
+              confirmActionLabel={t.ui("tierList.exportConfirmAction")}
+              defaultAuthor={author}
+              defaultDescription={description}
+            />
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadImage}
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                {t.ui("app.print")}
-              </Button>
-            </>
-          }
-        />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadImage}
+              className="gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              {t.ui("app.print")}
+            </Button>
+          </>
+        }
+      />
 
-        <div
-          className={cn(
-            THEME.layout.headerBorder,
-            "z-40 flex-shrink-0 sticky top-0",
-          )}
-        >
-          <div className="container mx-auto flex items-center gap-4 py-2">
-            <h1 className="text-2xl font-bold text-gray-200">
-              {customTitle || t.ui("app.tierListTitle")}
-            </h1>
-            <div className="flex gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setIsCustomizeDialogOpen(true)}
-                className={THEME.button.customize}
-              >
-                <Settings className="w-4 h-4" />
-                {t.ui("buttons.customize")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowWeapons(!showWeapons)}
-                className={THEME.button.toggle}
-              >
-                {showWeapons
-                  ? t.ui("buttons.hideWeapons")
-                  : t.ui("buttons.showWeapons")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowTravelers(!showTravelers)}
-                className={THEME.button.toggle}
-              >
-                {showTravelers
-                  ? t.ui("buttons.hideTravelers")
-                  : t.ui("buttons.showTravelers")}
-              </Button>
-            </div>
+      <div
+        className={cn(
+          THEME.layout.headerBorder,
+          "z-40 flex-shrink-0 sticky top-0",
+        )}
+      >
+        <div className="container mx-auto flex items-center gap-4 py-2">
+          <h1 className="text-2xl font-bold text-gray-200">
+            {customTitle || t.ui("app.tierListTitle")}
+          </h1>
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsCustomizeDialogOpen(true)}
+              className={THEME.button.customize}
+            >
+              <Settings className="w-4 h-4" />
+              {t.ui("buttons.customize")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowWeapons(!showWeapons)}
+              className={THEME.button.toggle}
+            >
+              {showWeapons
+                ? t.ui("buttons.hideWeapons")
+                : t.ui("buttons.showWeapons")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTravelers(!showTravelers)}
+              className={THEME.button.toggle}
+            >
+              {showTravelers
+                ? t.ui("buttons.hideTravelers")
+                : t.ui("buttons.showTravelers")}
+            </Button>
           </div>
         </div>
-
-        <main className="flex-1 overflow-y-auto pb-2">
-          <div className="w-full px-4 h-full">
-            <CharacterTierTable
-              tierAssignments={tierAssignments}
-              tierCustomization={tierCustomization}
-              showTravelers={showTravelers}
-              onAssignmentsChange={handleAssignmentsChange}
-              tableRef={tableRef}
-            />
-          </div>
-        </main>
-
-        <TierCustomizationDialog
-          isOpen={isCustomizeDialogOpen}
-          onClose={() => setIsCustomizeDialogOpen(false)}
-          onSave={handleTierCustomizationSave}
-          initialCustomization={tierCustomization}
-          initialCustomTitle={customTitle}
-        />
       </div>
-    </TooltipProvider>
+
+      <main className="flex-1 overflow-y-auto pb-2">
+        <div className="w-[95%] mx-auto h-full">
+          <CharacterTierTable
+            tierAssignments={tierAssignments}
+            tierCustomization={tierCustomization}
+            showTravelers={showTravelers}
+            onAssignmentsChange={handleAssignmentsChange}
+            tableRef={tableRef}
+          />
+        </div>
+      </main>
+
+      <TierCustomizationDialog
+        isOpen={isCustomizeDialogOpen}
+        onClose={() => setIsCustomizeDialogOpen(false)}
+        onSave={handleTierCustomizationSave}
+        initialCustomization={tierCustomization}
+        initialCustomTitle={customTitle}
+      />
+    </div>
   );
 };
 

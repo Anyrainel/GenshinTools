@@ -14,11 +14,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { getAssetUrl, cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import {
+  ItemIcon,
+  SIZE_CLASSES,
+  ItemIconSize,
+} from "@/components/shared/ItemIcon";
 import { Input } from "@/components/ui/input";
 import { Search, Ban } from "lucide-react";
 import {
@@ -32,6 +35,8 @@ export type ItemPickerType = "character" | "weapon" | "artifact";
 
 type Item = Character | Weapon | ArtifactSet;
 
+// Re-export for convenience
+export type { ItemIconSize };
 interface ItemPickerProps {
   type: ItemPickerType;
   value: string | null;
@@ -41,6 +46,8 @@ interface ItemPickerProps {
   filter?: (item: Item) => boolean;
   className?: string;
   tooltipSide?: "left" | "right";
+  triggerSize?: ItemIconSize; // Size of the trigger icon (default: lg)
+  menuSize?: ItemIconSize; // Size of menu item icons (default: md)
 }
 
 function ItemPickerComponent({
@@ -52,6 +59,8 @@ function ItemPickerComponent({
   filter,
   className,
   tooltipSide = "right",
+  triggerSize = "lg",
+  menuSize = "md",
 }: ItemPickerProps) {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -111,11 +120,16 @@ function ItemPickerComponent({
       imagePath={getImagePath(selectedItem)}
       rarity={selectedItem.rarity}
       alt={config.getName(selectedItem.id)}
-      size="full"
-      className={THEME.picker.wrapper}
+      size={triggerSize}
     />
   ) : (
-    <div className={cn(THEME.picker.placeholder, "select-none")}>
+    <div
+      className={cn(
+        SIZE_CLASSES[triggerSize],
+        "bg-secondary/30 border-dashed border-2 border-border",
+        "flex items-center justify-center hover:bg-secondary/50 transition-colors select-none",
+      )}
+    >
       <span className="text-4xl text-muted-foreground select-none">+</span>
     </div>
   );
@@ -134,9 +148,8 @@ function ItemPickerComponent({
           <PopoverTrigger asChild disabled={disabled}>
             <div
               className={cn(
-                THEME.picker.trigger,
-                "select-none",
-                disabled && THEME.picker.triggerDisabled,
+                "cursor-pointer hover:scale-105 transition-transform select-none",
+                disabled && "opacity-50 cursor-not-allowed hover:scale-100",
                 className,
               )}
             >
@@ -154,11 +167,7 @@ function ItemPickerComponent({
         )}
       </Tooltip>
 
-      <PopoverContent
-        className={cn(THEME.picker.popoverContent)}
-        side="right"
-        align="start"
-      >
+      <PopoverContent className="w-[392px] p-2" side="right" align="start">
         <div className="space-y-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -170,7 +179,7 @@ function ItemPickerComponent({
             />
           </div>
           <div
-            className={THEME.picker.itemGrid}
+            className="grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-1"
             onWheel={(e) => e.stopPropagation()}
           >
             {filteredItems.map((item, index) => (
@@ -189,7 +198,7 @@ function ItemPickerComponent({
                       imagePath={getImagePath(item)}
                       rarity={item.rarity}
                       alt={config.getName(item.id)}
-                      size="w-14 h-14" // THEME.picker.itemWrapper is w-14 h-14
+                      size={menuSize}
                       className="rounded-md"
                     >
                       {/* Traveler Element Overlay */}
@@ -222,7 +231,8 @@ function ItemPickerComponent({
             {onClear && value && (
               <div
                 className={cn(
-                  THEME.picker.itemWrapper,
+                  SIZE_CLASSES[menuSize],
+                  "rounded-md overflow-hidden relative cursor-pointer hover:ring-2 ring-primary transition-all",
                   "bg-muted border-2 border-dashed border-muted-foreground/30 hover:bg-muted/80 flex justify-center items-center",
                 )}
                 onClick={() => {
