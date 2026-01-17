@@ -54,9 +54,9 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
   const talents = char.talent || { auto: 1, skill: 1, burst: 1 };
 
   return (
-    <Card className="flex flex-col bg-card/40 border-border/50 transition-colors overflow-hidden">
+    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col p-3 gap-2 bg-black/40 border-b border-border/40">
+      <div className="flex flex-col p-3 gap-2 bg-gradient-select border-b border-border/40">
         {/* Top Row: Icon + Name/Badges + Weapon */}
         <div className="flex items-center gap-3">
           {/* Character Icon - No Tooltip */}
@@ -140,7 +140,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
       </div>
 
       {/* Artifact Sets Row */}
-      <div className="px-3 py-2 bg-black/10 border-b border-border/20 flex flex-wrap gap-x-6 gap-y-2 min-h-[56px] items-center justify-between">
+      <div className="px-3 py-2 bg-black/20 border-b border-border/20 flex flex-wrap gap-x-6 gap-y-2 min-h-[56px] items-center justify-between">
         <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
           {activeSets.length > 0 ? (
             activeSets.map(([setKey, count]) => (
@@ -199,7 +199,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
       </div>
 
       {/* Artifacts Body */}
-      <CardContent className="p-0 bg-black/10">
+      <CardContent className="p-0 bg-black/15">
         <div className="grid grid-cols-5 divide-x divide-border/20">
           {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];

@@ -108,9 +108,9 @@ export default {
       },
       backgroundImage: {
         "gradient-mystical": "var(--gradient-mystical)",
-        "gradient-mystical-reverse": "var(--gradient-mystical-reverse)",
+        "gradient-select": "var(--gradient-select)",
         "gradient-golden": "var(--gradient-golden)",
-        "gradient-artifact": "var(--gradient-artifact)",
+        "gradient-card": "var(--gradient-card)",
         "rarity-1": "linear-gradient(180deg, #6a6d74, #868586)",
         "rarity-2": "linear-gradient(180deg, #4b6c67, #519072)",
         "rarity-3": "linear-gradient(180deg, #567496, #5392b8)",

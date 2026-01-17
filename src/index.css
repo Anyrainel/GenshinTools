@@ -6,72 +6,72 @@
 
 @layer base {
   :root {
-    /* Genshin-inspired dark theme */
-    --background: 220 23% 8%;
-    --foreground: 210 40% 98%;
+    /* Abyss as Default Theme - Deep void with purple undertones */
+    --background: 270 8% 3%;
+    --foreground: 0 0% 95%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 210 40% 98%;
+    --card: 270 10% 7%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 220 25% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 270 10% 7%;
+    --popover-foreground: 0 0% 95%;
 
     /* Golden accent as primary */
     --primary: 45 100% 55%;
     --primary-foreground: 220 23% 8%;
 
-    /* Mystical purple secondary */
-    --secondary: 260 50% 25%;
-    --secondary-foreground: 210 40% 98%;
+    /* Deep purple secondary */
+    --secondary: 270 12% 12%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 220 15% 18%;
-    --muted-foreground: 220 10% 55%;
+    --muted: 270 8% 10%;
+    --muted-foreground: 270 5% 50%;
 
-    /* Ethereal blue accent */
-    --accent: 200 80% 55%;
-    --accent-foreground: 220 23% 8%;
+    /* Violet accent */
+    --accent: 280 60% 55%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 75% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 18%;
+    --border: 270 8% 14%;
+    --input: 270 8% 10%;
     --ring: 45 100% 55%;
 
     --radius: 0.75rem;
 
     /* Sidebar colors */
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 210 40% 98%;
+    --sidebar-background: 270 10% 5%;
+    --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 45 100% 55%;
     --sidebar-primary-foreground: 220 23% 8%;
-    --sidebar-accent: 220 15% 18%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 15% 20%;
+    --sidebar-accent: 270 10% 10%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 270 8% 14%;
     --sidebar-ring: 45 100% 65%;
 
-    /* Custom gradients */
+    /* Abyss gradients - deep void with purple hints */
     --gradient-mystical: linear-gradient(
-      135deg,
-      hsl(260 50% 25%) 0%,
-      hsl(220 25% 12%) 50%,
-      hsl(200 60% 25%) 100%
+      145deg,
+      hsl(280 20% 10%) 0%,
+      hsl(270 10% 3%) 50%,
+      hsl(260 15% 8%) 100%
     );
-    --gradient-mystical-reverse: linear-gradient(
-      135deg,
-      hsl(200 40% 16%) 0%,
-      hsl(220 20% 14%) 50%,
-      hsl(260 30% 16%) 100%
+    --gradient-select: linear-gradient(
+      145deg,
+      hsl(260 15% 9%) 0%,
+      hsl(270 10% 5%) 50%,
+      hsl(280 18% 11%) 100%
     );
     --gradient-golden: linear-gradient(
-      135deg,
+      315deg,
       hsl(45 100% 65%) 0%,
       hsl(35 80% 55%) 100%
     );
-    --gradient-artifact: linear-gradient(
+    --gradient-card: linear-gradient(
       135deg,
-      hsl(220 25% 12%) 0%,
-      hsl(260 30% 15%) 100%
+      hsl(270 12% 8%) 0%,
+      hsl(280 15% 10%) 100%
     );
 
     /* Animations */
@@ -82,6 +82,555 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+  }
+
+  /* Slate: Clean professional with subtle blue undertone */
+  [data-theme="slate"] {
+    --background: 220 18% 7%;
+    --card: 220 15% 11%;
+    --popover: 220 15% 11%;
+    --secondary: 220 18% 18%;
+    --muted: 220 12% 15%;
+    --accent: 210 70% 55%;
+    --border: 220 12% 17%;
+    --input: 220 12% 14%;
+    --sidebar-background: 220 15% 9%;
+    --sidebar-accent: 220 12% 15%;
+    --sidebar-border: 220 12% 17%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(225 35% 14%) 0%,
+      hsl(220 25% 8%) 50%,
+      hsl(200 30% 10%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(200 30% 10%) 0%,
+      hsl(220 25% 8%) 50%,
+      hsl(225 35% 14%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(220 25% 12%) 0%,
+      hsl(200 30% 14%) 100%
+    );
+  }
+
+  /* Ember Forge: Warm, aggressive, powerful */
+  [data-theme="ember"] {
+    --background: 20 12% 8%;
+    --card: 20 10% 12%;
+    --popover: 20 10% 12%;
+    --primary: 30 100% 55%;
+    --secondary: 15 20% 18%;
+    --muted: 20 8% 16%;
+    --muted-foreground: 20 10% 55%;
+    --accent: 0 70% 50%;
+    --border: 20 10% 18%;
+    --input: 20 8% 14%;
+    --ring: 30 100% 55%;
+    --sidebar-background: 20 10% 10%;
+    --sidebar-primary: 30 100% 55%;
+    --sidebar-accent: 20 8% 16%;
+    --sidebar-border: 20 10% 18%;
+    --sidebar-ring: 30 100% 65%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(5 45% 16%) 0%,
+      hsl(20 25% 9%) 50%,
+      hsl(35 40% 12%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(30 35% 11%) 0%,
+      hsl(20 28% 10%) 50%,
+      hsl(10 38% 13%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(20 30% 13%) 0%,
+      hsl(10 35% 14%) 100%
+    );
+  }
+
+  /* Jade Dynasty: Eastern elegance, green tints */
+  [data-theme="jade"] {
+    --background: 160 15% 7%;
+    --card: 160 12% 11%;
+    --popover: 160 12% 11%;
+    --primary: 45 90% 60%;
+    --secondary: 160 20% 16%;
+    --muted: 160 10% 15%;
+    --muted-foreground: 160 10% 50%;
+    --accent: 160 50% 45%;
+    --border: 160 10% 18%;
+    --input: 160 10% 14%;
+    --ring: 45 90% 60%;
+    --sidebar-background: 160 12% 9%;
+    --sidebar-primary: 45 90% 60%;
+    --sidebar-accent: 160 10% 15%;
+    --sidebar-border: 160 10% 18%;
+    --sidebar-ring: 45 90% 70%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(140 40% 14%) 0%,
+      hsl(160 30% 8%) 50%,
+      hsl(175 35% 11%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(175 35% 11%) 0%,
+      hsl(160 30% 8%) 50%,
+      hsl(140 40% 14%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(160 30% 12%) 0%,
+      hsl(145 35% 14%) 100%
+    );
+  }
+
+  /* Abyss: Deep void black with sneaky purple hints */
+  [data-theme="abyss"] {
+    --background: 280 6% 2%;
+    --foreground: 0 0% 95%;
+    --card: 280 10% 5%;
+    --card-foreground: 0 0% 95%;
+    --popover: 280 10% 5%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 280 12% 9%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 280 8% 6%;
+    --muted-foreground: 280 6% 42%;
+    --accent: 290 55% 50%;
+    --accent-foreground: 0 0% 98%;
+    --border: 280 10% 10%;
+    --input: 280 8% 6%;
+    --sidebar-background: 280 8% 3%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 280 10% 6%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 280 10% 10%;
+    /* Page: Flat infinite void - nearly uniform dark */
+    --gradient-mystical: linear-gradient(
+      145deg,
+      hsl(280 6% 2%) 0%,
+      hsl(275 4% 3%) 50%,
+      hsl(280 6% 2%) 100%
+    );
+    --gradient-select: linear-gradient(
+      145deg,
+      hsl(280 16% 12%) 0%,
+      hsl(280 11% 9%) 50%,
+      hsl(285 20% 13%) 100%
+    );
+    /* Cards: Platforms emerging from void - purple-dark-purple */
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(285 18% 8%) 0%,
+      hsl(280 8% 5%) 50%,
+      hsl(295 20% 9%) 100%
+    );
+  }
+
+  /* Dusk: Refined mystical, less intense */
+  [data-theme="dusk"] {
+    --background: 225 20% 9%;
+    --card: 225 18% 13%;
+    --popover: 225 18% 13%;
+    --secondary: 250 30% 20%;
+    --muted: 225 12% 16%;
+    --muted-foreground: 225 10% 50%;
+    --accent: 200 50% 50%;
+    --border: 225 12% 18%;
+    --input: 225 12% 15%;
+    --sidebar-background: 225 18% 11%;
+    --sidebar-accent: 225 12% 16%;
+    --sidebar-border: 225 12% 18%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(260 40% 20%) 0%,
+      hsl(225 30% 10%) 50%,
+      hsl(190 35% 14%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(190 35% 14%) 0%,
+      hsl(225 30% 10%) 50%,
+      hsl(260 40% 20%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(225 30% 14%) 0%,
+      hsl(260 35% 16%) 100%
+    );
+  }
+
+  /* Void: True OLED black with zero color tint */
+  [data-theme="void"] {
+    --background: 0 0% 2%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 0 0% 11%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 9%;
+    --muted-foreground: 0 0% 50%;
+    --accent: 0 0% 70%;
+    --accent-foreground: 0 0% 5%;
+    --border: 0 0% 14%;
+    --input: 0 0% 9%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 0 0% 9%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 14%;
+    --gradient-mystical: linear-gradient(
+      145deg,
+      hsl(0 0% 8%) 0%,
+      hsl(0 0% 2%) 50%,
+      hsl(0 0% 6%) 100%
+    );
+    --gradient-select: linear-gradient(
+      145deg,
+      hsl(0 0% 7%) 0%,
+      hsl(0 0% 4%) 50%,
+      hsl(0 0% 9%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(0 0% 6%) 0%,
+      hsl(0 0% 9%) 100%
+    );
+  }
+
+  /* ============================================ */
+  /* NATION-BASED THEMES                          */
+  /* ============================================ */
+
+  /* Mondstadt (蒙德) — Anemo / Freedom - Teal-cyan inspired by Venti */
+  [data-theme="mondstadt"] {
+    --background: 185 15% 5%;
+    --foreground: 0 0% 95%;
+    --card: 185 18% 9%;
+    --card-foreground: 0 0% 95%;
+    --popover: 185 18% 9%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 185 20% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 185 12% 11%;
+    --muted-foreground: 185 10% 50%;
+    --accent: 175 60% 45%;
+    --accent-foreground: 0 0% 98%;
+    --border: 185 12% 16%;
+    --input: 185 12% 11%;
+    --sidebar-background: 185 16% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 185 12% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 185 12% 16%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(165 38% 14%) 0%,
+      hsl(185 20% 5%) 50%,
+      hsl(205 32% 12%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(200 30% 12%) 0%,
+      hsl(185 18% 6%) 50%,
+      hsl(170 35% 13%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(180 25% 10%) 0%,
+      hsl(170 32% 13%) 100%
+    );
+  }
+
+  /* Liyue (璃月) — Geo / Contracts - Amber/gold inspired by Zhongli */
+  [data-theme="liyue"] {
+    --background: 35 18% 5%;
+    --foreground: 0 0% 95%;
+    --card: 35 20% 9%;
+    --card-foreground: 0 0% 95%;
+    --popover: 35 20% 9%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 35 25% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 35 15% 11%;
+    --muted-foreground: 35 12% 50%;
+    --accent: 40 70% 50%;
+    --accent-foreground: 0 0% 5%;
+    --border: 35 15% 16%;
+    --input: 35 15% 11%;
+    --sidebar-background: 35 18% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 35 15% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 35 15% 16%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(25 42% 14%) 0%,
+      hsl(35 22% 5%) 50%,
+      hsl(50 38% 12%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(45 32% 12%) 0%,
+      hsl(35 20% 6%) 50%,
+      hsl(25 38% 13%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(35 28% 10%) 0%,
+      hsl(45 35% 13%) 100%
+    );
+  }
+
+  /* Inazuma (稻妻) — Electro / Eternity - Purple-pink inspired by Raiden */
+  [data-theme="inazuma"] {
+    --background: 290 15% 5%;
+    --foreground: 0 0% 95%;
+    --card: 290 18% 9%;
+    --card-foreground: 0 0% 95%;
+    --popover: 290 18% 9%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 290 22% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 290 12% 11%;
+    --muted-foreground: 290 10% 50%;
+    --accent: 320 55% 55%;
+    --accent-foreground: 0 0% 98%;
+    --border: 290 12% 16%;
+    --input: 290 12% 11%;
+    --sidebar-background: 290 16% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 290 12% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 290 12% 16%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(310 38% 16%) 0%,
+      hsl(290 22% 5%) 50%,
+      hsl(275 35% 13%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(275 32% 12%) 0%,
+      hsl(290 18% 6%) 50%,
+      hsl(310 35% 14%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(290 28% 11%) 0%,
+      hsl(305 32% 14%) 100%
+    );
+  }
+
+  /* Sumeru (须弥) — Dendro / Wisdom - Forest green inspired by Nahida */
+  [data-theme="sumeru"] {
+    --background: 130 18% 4%;
+    --foreground: 0 0% 95%;
+    --card: 130 20% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 130 20% 8%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 130 25% 13%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 130 15% 10%;
+    --muted-foreground: 130 12% 48%;
+    --accent: 90 60% 45%;
+    --accent-foreground: 0 0% 5%;
+    --border: 130 15% 15%;
+    --input: 130 15% 10%;
+    --sidebar-background: 130 18% 6%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 130 15% 11%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 130 15% 15%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(110 42% 13%) 0%,
+      hsl(130 22% 4%) 50%,
+      hsl(150 38% 12%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(145 35% 11%) 0%,
+      hsl(130 20% 5%) 50%,
+      hsl(115 40% 12%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(130 30% 9%) 0%,
+      hsl(115 38% 12%) 100%
+    );
+  }
+
+  /* Fontaine (枫丹) — Hydro / Justice - Aquatic teal inspired by Furina */
+  [data-theme="fontaine"] {
+    --background: 195 22% 5%;
+    --foreground: 0 0% 95%;
+    --card: 195 25% 9%;
+    --card-foreground: 0 0% 95%;
+    --popover: 195 25% 9%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 195 28% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 195 18% 11%;
+    --muted-foreground: 195 14% 50%;
+    --accent: 190 75% 45%;
+    --accent-foreground: 0 0% 98%;
+    --border: 195 18% 16%;
+    --input: 195 18% 11%;
+    --sidebar-background: 195 22% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 195 18% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 195 18% 16%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(185 45% 14%) 0%,
+      hsl(195 25% 5%) 50%,
+      hsl(210 40% 12%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(205 38% 12%) 0%,
+      hsl(195 22% 6%) 50%,
+      hsl(185 42% 13%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(195 30% 10%) 0%,
+      hsl(185 40% 13%) 100%
+    );
+  }
+
+  /* Natlan (纳塔) — Pyro / War - Volcanic terracotta inspired by Mavuika */
+  [data-theme="natlan"] {
+    --background: 15 20% 5%;
+    --foreground: 0 0% 95%;
+    --card: 15 22% 9%;
+    --card-foreground: 0 0% 95%;
+    --popover: 15 22% 9%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 15 28% 14%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 15 18% 11%;
+    --muted-foreground: 15 14% 50%;
+    --accent: 25 80% 50%;
+    --accent-foreground: 0 0% 5%;
+    --border: 15 18% 16%;
+    --input: 15 18% 11%;
+    --sidebar-background: 15 20% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 15 18% 12%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 15 18% 16%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(5 48% 16%) 0%,
+      hsl(15 25% 5%) 50%,
+      hsl(30 42% 13%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(25 40% 12%) 0%,
+      hsl(15 22% 6%) 50%,
+      hsl(5 45% 14%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(15 35% 11%) 0%,
+      hsl(25 42% 14%) 100%
+    );
+  }
+
+  /* Snezhnaya (至冬) — Cryo / ??? - Icy blue inspired by winter/Tsaritsa */
+  [data-theme="snezhnaya"] {
+    --background: 205 12% 4%;
+    --foreground: 0 0% 95%;
+    --card: 205 15% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 205 15% 8%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 205 18% 13%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 205 10% 10%;
+    --muted-foreground: 205 8% 50%;
+    --accent: 195 50% 60%;
+    --accent-foreground: 0 0% 5%;
+    --border: 205 10% 15%;
+    --input: 205 10% 10%;
+    --sidebar-background: 205 12% 6%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 205 10% 11%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 205 10% 15%;
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(195 28% 12%) 0%,
+      hsl(205 16% 4%) 50%,
+      hsl(215 25% 10%) 100%
+    );
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(212 24% 10%) 0%,
+      hsl(205 14% 5%) 50%,
+      hsl(195 26% 11%) 100%
+    );
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(205 22% 9%) 0%,
+      hsl(195 26% 12%) 100%
+    );
+  }
+
+  /* Nod-Krai (挪德卡莱) — Layered moonlight: silvery far, purple close */
+  [data-theme="nodkrai"] {
+    --background: 230 8% 5%;
+    --foreground: 0 0% 95%;
+    --card: 235 10% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 235 10% 10%;
+    --popover-foreground: 0 0% 95%;
+    --secondary: 240 12% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 235 8% 12%;
+    --muted-foreground: 230 6% 55%;
+    --accent: 250 20% 70%;
+    --accent-foreground: 240 15% 10%;
+    --border: 235 10% 18%;
+    --input: 235 8% 12%;
+    --sidebar-background: 230 9% 7%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-accent: 235 8% 13%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 235 10% 18%;
+    /* Page BG: Distant moonlight - luminous center, pure moonshine blue */
+    --gradient-mystical: linear-gradient(
+      135deg,
+      hsl(230 8% 5%) 0%,
+      hsl(210 20% 25%) 50%,
+      hsl(230 8% 5%) 100%
+    );
+    /* Cards: Surfaces in moonlit shadow - balanced purple */
+    --gradient-card: linear-gradient(
+      135deg,
+      hsl(238 6% 8%) 0%,
+      hsl(233 13% 19%) 100%
+    );
+    /* Selects: Close-up detail - purple reveals itself */
+    --gradient-select: linear-gradient(
+      135deg,
+      hsl(260 18% 16%) 0%,
+      hsl(250 13% 12%) 50%,
+      hsl(268 22% 18%) 100%
+    );
   }
 }
 

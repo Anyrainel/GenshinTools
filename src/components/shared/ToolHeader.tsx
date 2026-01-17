@@ -1,7 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Languages, Home } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Languages, Home, Palette, Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTheme, THEME_IDS, type ThemeId } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
 
@@ -12,6 +19,7 @@ interface ToolHeaderProps {
 
 const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
   const { language, toggleLanguage, t } = useLanguage();
+  const { theme, setTheme } = useTheme();
   const location = useLocation();
 
   const isArtifactFilter = location.pathname.includes("/artifact-filter");
@@ -105,6 +113,30 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
 
         <div className="flex items-center gap-2">
           {actions}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Palette className="w-4 h-4" />
+                <span className="hidden sm:inline">
+                  {t.ui("theme.switcherButton")}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-0">
+              {THEME_IDS.map((themeId: ThemeId) => (
+                <DropdownMenuItem
+                  key={themeId}
+                  onClick={() => setTheme(themeId)}
+                  className="gap-2"
+                >
+                  {theme === themeId && <Check className="w-4 h-4" />}
+                  {theme !== themeId && <span className="w-4" />}
+                  {t.ui(`theme.${themeId}`)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button
             variant="outline"

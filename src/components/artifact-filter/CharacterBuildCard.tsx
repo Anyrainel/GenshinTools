@@ -53,7 +53,7 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
   );
 
   return (
-    <Card className="bg-gradient-artifact">
+    <Card className="bg-gradient-card">
       <CardHeader className="pb-3 pt-5">
         <TitleCard character={character} />
       </CardHeader>

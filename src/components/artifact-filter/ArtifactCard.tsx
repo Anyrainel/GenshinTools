@@ -22,7 +22,7 @@ export function ArtifactCard({
   const effects = t.artifactEffects(setId);
 
   return (
-    <Card className="bg-gradient-artifact">
+    <Card className="bg-gradient-card">
       <CardHeader className="pb-3 pt-5">
         <div className="flex items-center gap-4">
           <ItemIcon
