@@ -38,7 +38,7 @@ function StatSelectItem({
       onValueChange={onValueChange}
       defaultOpen={autoOpen}
     >
-      <LightweightSelectTrigger className="w-28 h-8 text-md hover:brightness-110 bg-gradient-select">
+      <LightweightSelectTrigger className="w-28 h-8 text-base hover:brightness-110 bg-gradient-select">
         {value && value !== "__DESELECT__" ? (
           <span>{t.statShort(value)}</span>
         ) : (
@@ -56,7 +56,7 @@ function StatSelectItem({
           <LightweightSelectItem
             key={option}
             value={option}
-            className="text-md"
+            className="text-base"
           >
             {t.stat(option)}
           </LightweightSelectItem>
@@ -126,7 +126,7 @@ function StatSelectComponent({
   );
 
   return (
-    <div className="flex text-base min-h-8 items-center gap-1 flex-wrap">
+    <div className="flex text-base min-h-8 items-center gap-3 flex-wrap">
       {/* Existing value selects */}
       {values.map((value, index) => (
         <div key={index} className="flex items-center gap-1">

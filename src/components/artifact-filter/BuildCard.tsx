@@ -222,7 +222,7 @@ function BuildCardComponent({
               onChange={(e) => handleNameChange(e.target.value)}
               onBlur={handleNameBlur}
               placeholder=""
-              className="font-medium text-base bg-transparent border-none px-2 py-0 h-auto text-foreground flex-1"
+              className="h-9 rounded-full text-lg bg-transparent border-none px-3 mx-8 py-0 text-foreground flex-1"
             />
           </div>
 

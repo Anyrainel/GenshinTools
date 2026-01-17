@@ -70,10 +70,10 @@ function ArtifactSelectComponent({
                   <ItemIcon
                     imagePath={selectedArtifact.imagePath}
                     rarity={artifactsById[value]?.rarity || 5}
-                    size="2xl"
+                    size="xl"
                     alt={selectedArtifact.name}
                   />
-                  <span className="text-base font-medium mt-1 text-center leading-tight px-1">
+                  <span className="text-base font-medium mt-1 text-center leading-tight px-1 w-full line-clamp-2">
                     {selectedArtifact.name}
                   </span>
                 </>

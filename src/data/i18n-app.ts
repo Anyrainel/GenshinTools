@@ -276,8 +276,8 @@ export const i18nAppData = {
         zh: "我的角色练度毕业了吗？",
       },
       accountDataGuideline: {
-        en: "1. Export data using [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) or [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera). 2. Import JSON for automated scoring.",
-        zh: "1. 使用 [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) 或 [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera) 导出数据。 2. 导入 JSON 自动计算圣遗物评分。",
+        en: "1. Import via UID or tools like [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera). 2. Get automated artifact scoring.",
+        zh: "1. 通过 UID 或 [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera) 导入数据。 2. 自动计算圣遗物评分。",
       },
       weaponTierListProblem: {
         en: "Need a quick weapon reference?",

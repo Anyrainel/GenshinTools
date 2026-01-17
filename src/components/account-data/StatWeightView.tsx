@@ -416,7 +416,7 @@ export const StatWeightView = () => {
   return (
     <div className="flex flex-col h-full gap-3 pb-3">
       {/* Punishment Factor Section */}
-      <Card className="bg-white/5 border-white/10 shrink-0">
+      <Card className="bg-gradient-card shrink-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
           <div className="flex items-center gap-2">
             <CardTitle className="text-lg font-bold text-white">
@@ -480,7 +480,7 @@ export const StatWeightView = () => {
       </Card>
 
       {/* Table Section */}
-      <Card className="flex-1 flex flex-col min-h-0 bg-white/5 border-white/10">
+      <Card className="flex-1 flex flex-col min-h-0 bg-gradient-card">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-3">
           <div className="flex items-center gap-4">
             <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
@@ -636,7 +636,7 @@ const WeightCell = ({
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "h-7 w-[80%] mx-auto flex items-center justify-center rounded cursor-pointer transition-all font-mono text-md",
+            "h-7 w-[80%] mx-auto flex items-center justify-center rounded cursor-pointer transition-all font-mono text-base",
             getCellStyles(value),
           )}
         >

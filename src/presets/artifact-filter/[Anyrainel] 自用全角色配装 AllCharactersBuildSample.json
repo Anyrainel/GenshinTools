@@ -637,7 +637,7 @@
         }
       ],
       "hidden": false,
-      "weapons": ["elegy_for_the_end", "favonius_warbow"]
+      "weapons": ["favonius_warbow"]
     },
     {
       "characterId": "chasca",
@@ -694,7 +694,8 @@
           "characterId": "lan_yan"
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["memory_of_dust", "oathsworn_eye"]
     },
     {
       "characterId": "varesa",
@@ -2857,19 +2858,101 @@
         {
           "id": "build-1765193880868",
           "characterId": "durin",
-          "name": "",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "atk%"],
+          "substats": ["cd", "cr", "atk%", "er"],
+          "artifactSet": "noblesse_oblige",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1766289167820",
+          "characterId": "durin",
+          "name": "后台主C",
           "visible": true,
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%", "pyro%"],
           "circlet": ["cd", "atk%"],
           "substats": ["cd", "cr", "atk%", "er"],
-          "artifactSet": "noblesse_oblige",
+          "artifactSet": "emblem_of_severed_fate",
           "kOverride": 3
         }
       ],
       "hidden": false,
       "weapons": ["athame_artis"]
+    },
+    {
+      "characterId": "columbina",
+      "builds": [
+        {
+          "id": "build-1768661019006",
+          "characterId": "columbina",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["hp%", "er"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%", "cd"],
+          "substats": ["cr", "cd", "hp%", "er"],
+          "artifactSet": "silken_moons_serenade",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1768661067166",
+          "characterId": "columbina",
+          "name": "副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["hp%"],
+          "goblet": ["hp%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cr", "cd", "hp%", "er"],
+          "artifactSet": "aubade_of_morningstar_and_moon",
+          "kOverride": 3
+        }
+      ],
+      "hidden": false,
+      "weapons": ["nocturnes_curtain_call"]
+    },
+    {
+      "characterId": "illuga",
+      "builds": [
+        {
+          "id": "build-1768661121889",
+          "characterId": "illuga",
+          "name": "",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["def%", "er"],
+          "goblet": ["def%"],
+          "circlet": ["def%"],
+          "substats": ["def%", "er"],
+          "artifactSet": "silken_moons_serenade"
+        }
+      ],
+      "hidden": false
+    },
+    {
+      "characterId": "zibai",
+      "builds": [
+        {
+          "id": "build-1768661158868",
+          "characterId": "zibai",
+          "name": "",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["def%"],
+          "goblet": ["def%"],
+          "circlet": ["cd"],
+          "substats": ["cr", "cd", "def%"],
+          "artifactSet": "night_of_the_skys_unveiling"
+        }
+      ],
+      "hidden": false
     }
   ],
   "computeOptions": {
