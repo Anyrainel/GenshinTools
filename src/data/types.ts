@@ -141,8 +141,6 @@ export type ArtifactSet = {
 export type ArtifactHalfSet = {
   id: number;
   setIds: string[]; // All artifact set IDs that have this 2pc effect
-  normalizedEffectTextEn: string; // Normalized English effect text
-  normalizedEffectTextZh: string; // Normalized Chinese effect text
 };
 
 export type ElementResource = {

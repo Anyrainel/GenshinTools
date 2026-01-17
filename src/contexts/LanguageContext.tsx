@@ -18,8 +18,8 @@ interface LanguageContextType {
   t: {
     character: (id: string) => string;
     artifact: (id: string) => string;
+    artifactHalfSet: (id: number) => string;
     artifactEffects: (id: string) => string[];
-    artifactFirstEffect: (id: string) => string;
     region: (key: string) => string;
     stat: (key: string) => string;
     statShort: (key: string) => string;
@@ -107,12 +107,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language],
   );
 
-  const getArtifactSetFirstEffect = useCallback(
-    (setId: string): string => {
-      const effects = getArtifactSetEffects(setId);
-      return effects[0] || "";
+  const getArtifactHalfSetName = useCallback(
+    (id: number): string => {
+      const halfSets = i18nGameData.artifactHalfSets as Record<
+        string,
+        Record<string, string>
+      >;
+      return halfSets?.[id.toString()]?.[language] || `Half Set ${id}`;
     },
-    [getArtifactSetEffects],
+    [language],
   );
 
   const getRegionName = useCallback(
@@ -267,8 +270,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     () => ({
       character: getCharacterName,
       artifact: getArtifactSetName,
+      artifactHalfSet: getArtifactHalfSetName,
       artifactEffects: getArtifactSetEffects,
-      artifactFirstEffect: getArtifactSetFirstEffect,
       region: getRegionName,
       stat: getStatName,
       statShort: getStatShortName,
@@ -286,8 +289,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [
       getCharacterName,
       getArtifactSetName,
+      getArtifactHalfSetName,
       getArtifactSetEffects,
-      getArtifactSetFirstEffect,
       getRegionName,
       getStatName,
       getStatShortName,

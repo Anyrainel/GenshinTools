@@ -159,16 +159,13 @@ function ArtifactSelectHalfComponent({
   onValueChange,
   placeholder,
 }: ArtifactSelectHalfProps) {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
 
   // Memoize effect text computation for all half sets and expose an id-indexed lookup for O(1) access
   const { list: halfSetList, lookup: halfSetLookup } = useMemo(() => {
     const list = artifactHalfSets.map((halfSet) => ({
       id: halfSet.id,
-      text:
-        language === "zh"
-          ? halfSet.normalizedEffectTextZh
-          : halfSet.normalizedEffectTextEn,
+      text: t.artifactHalfSet(halfSet.id),
       setIds: halfSet.setIds,
     }));
 
@@ -177,7 +174,7 @@ function ArtifactSelectHalfComponent({
     ) as Record<number, (typeof list)[number]>;
 
     return { list, lookup };
-  }, [language]);
+  }, [t]);
 
   const selectedHalfSet =
     value !== undefined ? (halfSetLookup[value] ?? null) : null;

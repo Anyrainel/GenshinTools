@@ -10,70 +10,43 @@ import os
 import re
 import sys
 from collections.abc import Sequence
-from typing import (
-    Any,
-    Literal,
-    TypedDict,
-    cast,
-)
+from datetime import datetime
+from typing import Any, Literal, cast
 
-import requests
-from playwright.sync_api import sync_playwright
+from pydantic import BaseModel
+from tqdm import tqdm
+
+import fandom
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-import fandom
-import hoyolab
-from hoyolab import ResourceOutput, ScrapedArtifact, ScrapedCharacter, ScrapedWeapon
-from preprocess import ARTIFACT_SKIP_LIST, I18nArtifactData, process_artifact_effects
-
-
-class CharacterOutput(TypedDict):
-    id: str
-    element: str
-    rarity: int
-    weaponType: str
-    region: str
-    releaseDate: str
-    imageUrl: str
-    imagePath: str
-
-
-class ArtifactOutput(TypedDict):
-    id: str
-    rarity: int
-    imageUrl: str  # flower image url
-    imagePaths: dict[str, str]
-
-
-class WeaponOutput(TypedDict):
-    id: str
-    rarity: int
-    type: str
-    secondaryStat: str
-    baseAtk: int
-    secondaryStatValue: str
-    imageUrl: str
-    imagePath: str
-
-
-class EnrichedCharacter(ScrapedCharacter):
-    weapon: str
-    region: str
-    releaseDate: str
-
-
-class MatchedItem[T: ScrapedCharacter | ScrapedArtifact | ScrapedWeapon](TypedDict):
-    en: T
-    zh: T
-
+from hoyolab import HoyolabAssetManager, HoyolabScraper, generate_id
+from models import (
+    ArtifactOutput,
+    ArtifactSource,
+    BaseItemSource,
+    CharacterOutput,
+    CharacterSource,
+    EffectData,
+    EnrichedCharacterSource,
+    HalfSet,
+    I18nArtifactData,
+    MatchedItem,
+    ResourceOutput,
+    WeaponOutput,
+    WeaponSource,
+)
+from preprocess import ARTIFACT_SKIP_LIST, process_artifact_effects
 
 SKIP_EXISTING_IMAGES = True
+RARITY_4_ARTIFACTS = ["Instructor"]
 
 
 def extract_json_from_ts(content: str, variable_name: str) -> Any:
     """Extract JSON data from a TypeScript export definition"""
-    pattern = f"export const {variable_name}: .*? = (.*);"
+    # Look for content ending with a semicolon that is followed by 'export' or end of string
+    # Also handle optional type annotations
+    pattern = f"export const {variable_name}(?::.*?)? = (.*?);\\s*(?:export|$)"
     match = re.search(pattern, content, re.DOTALL)
     if match:
         try:
@@ -110,138 +83,146 @@ def load_existing_data(project_root: str) -> tuple[dict[str, Any], dict[str, Any
     return resources, i18n
 
 
-def download_image(url: str, filepath: str) -> bool:
-    """Download an image from URL to filepath"""
-    if SKIP_EXISTING_IMAGES and os.path.exists(filepath):
-        print(f"Skipping existing image: {os.path.basename(filepath)}")
-        return True
-
-    try:
-        response = requests.get(url, timeout=30)
-        response.raise_for_status()
-
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        with open(filepath, "wb") as f:
-            f.write(response.content)
-        print(f"Downloaded: {os.path.basename(filepath)}")
-        return True
-    except Exception as e:
-        print(f"Failed to download image {url}: {e}")
-        return False
-
-
-def match_items[T: ScrapedCharacter | ScrapedArtifact | ScrapedWeapon](
+def match_items[T: BaseItemSource](
     items_en: Sequence[T],
     items_zh: Sequence[T],
     item_type: Literal["character", "artifact", "weapon"] = "character",
+    scraper: HoyolabScraper | None = None,
 ) -> list[MatchedItem[T]]:
     """Match items across languages using entry ID and validate consistency"""
     matched_items: list[MatchedItem[T]] = []
 
     # Build lookup maps
-    en_map_by_id = {item["entry_id"]: item for item in items_en if item.get("entry_id")}
-    zh_map_by_id = {item["entry_id"]: item for item in items_zh if item.get("entry_id")}
+    en_map_by_id = {item.entry_id: item for item in items_en if item.entry_id}
+    zh_map_by_id = {item.entry_id: item for item in items_zh if item.entry_id}
 
     all_entry_ids = set(en_map_by_id.keys()) | set(zh_map_by_id.keys())
 
-    for eid in sorted(all_entry_ids):
+    # Sort IDs numerically (Newest -> Oldest) to ensure stable processing order
+    # preprocess.py uses reversed() (Oldest -> Newest) to assign sequential IDs
+    def get_sort_key(eid: str) -> int:
+        return int(eid) if eid.isdigit() else 999999999
+
+    ordered_ids = sorted(all_entry_ids, key=get_sort_key, reverse=True)
+
+    # Wrap the iterator with tqdm for progress
+    for eid in tqdm(
+        ordered_ids,
+        desc=f"Matching {item_type}s",
+        unit="item",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
         item_en = en_map_by_id.get(eid)
         item_zh = zh_map_by_id.get(eid)
 
         if item_en and item_zh:
             if item_type == "character":
                 # Check consistency
-                char_en = cast(ScrapedCharacter, item_en)
-                char_zh = cast(ScrapedCharacter, item_zh)
-                if (
-                    char_en["element"] != char_zh["element"]
-                    or char_en["rarity"] != char_zh["rarity"]
-                ):
+                char_en = cast(CharacterSource, item_en)
+                char_zh = cast(CharacterSource, item_zh)
+                if char_en.element != char_zh.element or char_en.rarity != char_zh.rarity:
                     print(
                         f"ERROR: {item_type} {eid} - element/rarity mismatch: "
-                        f"EN={char_en['element']} {char_en['rarity']}*, "
-                        f"ZH={char_zh['element']} {char_zh['rarity']}*"
+                        f"EN={char_en.element} {char_en.rarity}*, "
+                        f"ZH={char_zh.element} {char_zh.rarity}*"
                     )
-            matched_items.append({"en": item_en, "zh": item_zh})
+            # Match found
+            matched_items.append(MatchedItem(en=item_en, zh=item_zh))
         elif item_en:
-            print(
-                f"LOG: {item_type.capitalize()} '{item_en['name']}' (ID: {eid}) "
-                "only exists in EN. Using ??? for ZH."
+            tqdm.write(
+                f"{item_type.capitalize()} '{item_en.name}' (ID: {eid}) "
+                "only exists in EN. Attempting to fetch ZH name..."
             )
-            dummy_zh = cast(T, item_en.copy())
-            dummy_zh["name"] = "???"
-            if "effects" in dummy_zh:
-                dummy_zh["effects"] = ["???", "???"]
-            if "effect" in dummy_zh:
-                dummy_zh["effect"] = "???"
-            matched_items.append({"en": item_en, "zh": dummy_zh})
-        elif item_zh:
-            print(
-                f"LOG: {item_type.capitalize()} '{item_zh['name']}' (ID: {eid}) "
-                "only exists in ZH. Using ??? for EN."
-            )
-            dummy_en = cast(T, item_zh.copy())
-            dummy_en["name"] = "???"
-            # Ensure we have a valid 'id' slug for the EN side
-            if not dummy_en.get("id") or dummy_en["id"] == "":
-                dummy_en["id"] = f"unknown_{eid}"
+            dummy_zh = item_en.model_copy(deep=True)
 
-            if "effects" in dummy_en:
-                dummy_en["effects"] = ["???", "???"]
-            if "effect" in dummy_en:
-                dummy_en["effect"] = "???"
-            matched_items.append({"en": dummy_en, "zh": item_zh})
+            zh_name = None
+            if scraper:
+                zh_name = scraper.fetch_entry_name(item_en.entry_id, "zh-cn")
+
+            dummy_zh.name = zh_name if zh_name else "???"
+
+            if hasattr(dummy_zh, "effects"):
+                dummy_zh.effects = ["???", "???"]  # type: ignore
+            if hasattr(dummy_zh, "effect"):
+                dummy_zh.effect = "???"  # type: ignore
+            matched_items.append(MatchedItem(en=item_en, zh=dummy_zh))
+        elif item_zh:
+            tqdm.write(
+                f"{item_type.capitalize()} '{item_zh.name}' (ID: {eid}) "
+                "only exists in ZH. Attempting to fetch EN name..."
+            )
+            dummy_en = item_zh.model_copy(deep=True)
+
+            en_name = None
+            if scraper:
+                en_name = scraper.fetch_entry_name(item_zh.entry_id, "en-us")
+
+            dummy_en.name = en_name if en_name else "???"
+
+            if hasattr(dummy_en, "effects"):
+                dummy_en.effects = ["???", "???"]  # type: ignore
+            if hasattr(dummy_en, "effect"):
+                dummy_en.effect = "???"  # type: ignore
+            matched_items.append(MatchedItem(en=dummy_en, zh=item_zh))
 
     return matched_items
 
 
 def enrich_character_data_with_fandom(
-    characters_en: list[ScrapedCharacter],
+    characters_en: list[CharacterSource],
     fandom_data: dict[tuple[str, int, str], fandom.CharacterData],
-) -> list[EnrichedCharacter]:
+) -> list[EnrichedCharacterSource]:
     """Enrich character data with weapon, region, and release date from Fandom data"""
-    enriched_characters: list[EnrichedCharacter] = []
+    enriched_characters: list[EnrichedCharacterSource] = []
 
     matched_count = 0
-    for char in characters_en:
-        key = (char["element"], char["rarity"], char["name"])
+    for char in tqdm(
+        characters_en,
+        desc="Enriching (Fandom)",
+        unit="char",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
+        key = (char.element, char.rarity, char.name)
+        if char.name.startswith("Traveler"):
+            key = ("None", 5, "Traveler")
         fandom_char = fandom_data.get(key)
 
-        # Create a new dict with all original fields plus new ones
-        # Use dict() constructor to ensure we get a mutable dict, not TypedDict
-        enriched_char: dict[str, Any] = dict(char)
+        # Create new EnrichedCharacterSource
+        # Default fallback values
+        weapon = "Sword"
+        region = "None"
+        release_date = datetime.now().strftime("%Y-%m-%d")
 
         if fandom_char:
-            enriched_char["weapon"] = fandom_char["weaponType"]
-            enriched_char["region"] = fandom_char["region"]
-            enriched_char["releaseDate"] = fandom_char["releaseDate"]
+            weapon = fandom_char["weaponType"]
+            region = fandom_char["region"]
+            release_date = fandom_char["releaseDate"]
             matched_count += 1
-            if matched_count <= 5:  # Only print first few to avoid spam
-                print(
-                    f"Enriched {char['name']} from Fandom: "
-                    f"weapon={fandom_char['weaponType']}, "
-                    f"region={fandom_char['region']}, "
-                    f"date={fandom_char['releaseDate']}"
-                )
         else:
-            # Try to find similar keys for debugging
-            similar_keys = [
-                k for k in fandom_data.keys() if k[0] == char["element"] and k[1] == char["rarity"]
-            ]
-            if similar_keys and len(enriched_characters) < 5:  # Only show first few
-                print(f"DEBUG: {char['name']} not found, but found similar: {similar_keys[:3]}")
+            tqdm.write(f"Character {char.name} not found in Fandom data.")
 
-            # Default values for characters not in Fandom (like Traveler elements, or very new ones)
-            enriched_char["weapon"] = "Sword"
-            enriched_char["region"] = "None"
-            enriched_char["releaseDate"] = "2020-09-28"
+            valid_weapons = ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"]
+            while True:
+                val = input(
+                    f"Please enter weapon type for {char.name} ({'/'.join(valid_weapons)}): "
+                ).strip()
+                # Case-insensitive matching
+                matched_weapon = next((w for w in valid_weapons if w.lower() == val.lower()), None)
+                if matched_weapon:
+                    weapon = matched_weapon
+                    break
+                print(f"Invalid weapon type. Please choose from: {', '.join(valid_weapons)}")
 
-            if len(enriched_characters) - matched_count <= 5:  # Only print first few unmatched
-                print(f"Using defaults for {char['name']} (Not found in Fandom) - key: {key}")
+        # Construct enriched object
+        enriched_char = EnrichedCharacterSource(
+            **char.model_dump(),
+            weapon=weapon,
+            region=region,
+            releaseDate=release_date,
+        )
+        enriched_characters.append(enriched_char)
 
-        enriched_characters.append(enriched_char)  # type: ignore
-
-    print(
+    tqdm.write(
         f"Enrich complete: {matched_count}/{len(characters_en)} characters matched with Fandom data"
     )
 
@@ -249,128 +230,180 @@ def enrich_character_data_with_fandom(
 
 
 def process_characters(
-    characters_en: list[ScrapedCharacter],
-    characters_zh: list[ScrapedCharacter],
+    characters_en: list[CharacterSource],
+    characters_zh: list[CharacterSource],
     fandom_data: dict[tuple[str, int, str], fandom.CharacterData],
-) -> tuple[list[CharacterOutput], dict[str, dict[str, str]], list[MatchedItem[ScrapedCharacter]]]:
+    scraper: HoyolabScraper | None = None,
+) -> tuple[list[CharacterOutput], dict[str, dict[str, str]], list[MatchedItem[CharacterSource]]]:
     enriched_characters_en = enrich_character_data_with_fandom(characters_en, fandom_data)
-    matched_characters = match_items(enriched_characters_en, characters_zh, "character")
 
-    character_data: list[CharacterOutput] = []
+    matched_characters = match_items(enriched_characters_en, characters_zh, "character", scraper)
+
+    final_characters: list[CharacterOutput] = []
     i18n_chars: dict[str, dict[str, str]] = {}
 
-    for match in matched_characters:
-        char_en = match["en"]
-        char_zh = match["zh"]
+    for m in tqdm(
+        matched_characters,
+        desc="Processing Characters",
+        unit="item",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
+        en = m["en"]
+        zh = m["zh"]
 
-        # Verify enriched fields exist
-        weapon = char_en.get("weapon", "Sword")
-        region = char_en.get("region", "None")
-        release_date = char_en.get("releaseDate", "2020-09-28")
+        # Interactive Rarity Check
+        if en.rarity == 0:
+            print(f"\nWARNING: Rarity 0 detected for Character: {en.name} / {zh.name}")
+            while True:
+                try:
+                    val = input(f"Please enter actual rarity (4/5) for {en.name}: ").strip()
+                    rarity_int = int(val)
+                    if rarity_int in [4, 5]:
+                        en.rarity = rarity_int
+                        # Also update matched zh item if it was 0 or incorrect (keep in sync)
+                        zh.rarity = rarity_int
+                        break
+                    else:
+                        print("Invalid rarity. Please enter 4 or 5.")
+                except ValueError:
+                    print("Invalid number.")
 
-        character_data.append(
-            {
-                "id": char_en["id"],
-                "element": char_en["element"],
-                "rarity": char_en["rarity"],
-                "weaponType": weapon,
-                "region": region,
-                "releaseDate": release_date,
-                "imageUrl": char_en["image_url"],
-                "imagePath": f"/character/{char_en['id']}.png",
-            }
+        # Check if 'en' is EnrichedCharacterSource to access extra fields
+        # If it came from match_items(enriched...), it should be.
+        # However, match_items might have inserted dummy entries (CharacterSource) if missing.
+
+        weapon = getattr(en, "weapon", "Sword")
+        region = getattr(en, "region", "None")
+        release_date = getattr(en, "release_date", "2020-09-28")
+
+        character_id = generate_id(en.name)
+        output = CharacterOutput(
+            id=character_id,
+            element=en.element,
+            rarity=en.rarity,
+            weaponType=weapon,
+            region=region,
+            releaseDate=release_date,
+            imageUrl=en.image_url,
+            imagePath=f"/character/{character_id}.png",
         )
-        i18n_chars[char_en["id"]] = {
-            "en": char_en["name"],
-            "zh": char_zh["name"],
+        final_characters.append(output)
+
+        i18n_chars[character_id] = {
+            "en": en.name,
+            "zh": zh.name,
         }
 
-    return character_data, i18n_chars, matched_characters
+    return final_characters, i18n_chars, matched_characters
 
 
 def process_artifacts(
-    artifacts_en: list[ScrapedArtifact],
-    artifacts_zh: list[ScrapedArtifact],
-) -> tuple[list[ArtifactOutput], dict[str, dict[str, Any]], list[MatchedItem[ScrapedArtifact]]]:
-    matched_artifacts_all = match_items(artifacts_en, artifacts_zh, "artifact")
+    artifacts_en: list[ArtifactSource],
+    artifacts_zh: list[ArtifactSource],
+    scraper: HoyolabScraper | None = None,
+) -> tuple[list[ArtifactOutput], dict[str, I18nArtifactData], list[MatchedItem[ArtifactSource]]]:
+    matched_artifacts = match_items(artifacts_en, artifacts_zh, "artifact", scraper)
 
-    # Filter out ignored artifacts
-    matched_artifacts = [
-        m for m in matched_artifacts_all if m["en"]["id"] not in ARTIFACT_SKIP_LIST
-    ]
+    final_artifacts: list[ArtifactOutput] = []
+    i18n_artifacts: dict[str, I18nArtifactData] = {}
 
-    artifact_data: list[ArtifactOutput] = []
-    i18n_arts: dict[str, dict[str, Any]] = {}
-
-    for match in matched_artifacts:
-        art_en = match["en"]
-        art_zh = match["zh"]
-
-        rarity = 4 if art_en["id"] == "instructor" else 5
-
-        image_urls = art_en.get("image_urls", {})
-        flower_url = image_urls.get("flower", "")
+    for m in tqdm(
+        matched_artifacts,
+        desc="Processing Artifacts",
+        unit="item",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
+        en = m["en"]
+        zh = m["zh"]
+        artifact_id = generate_id(en.name)
+        if artifact_id in ARTIFACT_SKIP_LIST:
+            continue
+        # Instructor is 4-star, others are 5-star for now
+        rarity = 4 if en.name in RARITY_4_ARTIFACTS else 5
 
         image_paths = {}
         suffixes = {"flower": "", "plume": "2", "sands": "3", "goblet": "4", "circlet": "5"}
 
         for slot, suffix in suffixes.items():
-            image_paths[slot] = f"/artifact/{art_en['id']}{suffix}.png"
+            image_paths[slot] = f"/artifact/{artifact_id}{suffix}.png"
 
-        artifact_data.append(
-            {
-                "id": art_en["id"],
-                "rarity": rarity,
-                "imageUrl": flower_url,
-                "imagePaths": image_paths,
-            }
+        output = ArtifactOutput(
+            id=artifact_id,
+            rarity=rarity,
+            imageUrl=en.image_urls.get("flower", ""),
+            imagePaths=image_paths,
         )
-        i18n_arts[art_en["id"]] = {
-            "name": {"en": art_en["name"], "zh": art_zh["name"]},
-            "effects": {"en": art_en["effects"], "zh": art_zh["effects"]},
-        }
+        final_artifacts.append(output)
 
-    return artifact_data, i18n_arts, matched_artifacts
+        i18n_artifacts[artifact_id] = I18nArtifactData(
+            name={"en": en.name, "zh": zh.name},
+            effects=EffectData(en=en.effects, zh=zh.effects),
+        )
+
+    return final_artifacts, i18n_artifacts, matched_artifacts
 
 
 def process_weapons(
-    weapons_en: list[ScrapedWeapon],
-    weapons_zh: list[ScrapedWeapon],
-) -> tuple[list[WeaponOutput], dict[str, dict[str, Any]], list[MatchedItem[ScrapedWeapon]]]:
-    matched_weapons = match_items(weapons_en, weapons_zh, "weapon")
+    weapons_en: list[WeaponSource],
+    weapons_zh: list[WeaponSource],
+    scraper: HoyolabScraper | None = None,
+) -> tuple[list[WeaponOutput], dict[str, dict[str, Any]], list[MatchedItem[WeaponSource]]]:
+    matched_weapons = match_items(weapons_en, weapons_zh, "weapon", scraper)
 
-    weapon_data: list[WeaponOutput] = []
-    i18n_weaps: dict[str, dict[str, Any]] = {}
+    final_weapons: list[WeaponOutput] = []
+    i18n_weapons: dict[str, dict[str, Any]] = {}
 
-    for match in matched_weapons:
-        weap_en = match["en"]
-        weap_zh = match["zh"]
+    for m in tqdm(
+        matched_weapons,
+        desc="Processing Weapons",
+        unit="item",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
+        en = m["en"]
+        zh = m["zh"]
 
-        weapon_data.append(
-            {
-                "id": weap_en["id"],
-                "rarity": weap_en["rarity"],
-                "type": weap_en["type"],
-                "secondaryStat": weap_en["secondary_stat"],
-                "baseAtk": weap_en.get("base_atk", 0),
-                "secondaryStatValue": weap_en.get("secondary_stat_value", ""),
-                "imageUrl": weap_en["image_url"],
-                "imagePath": f"/weapon/{weap_en['id']}.png",
-            }
+        # Interactive Rarity Check
+        if en.rarity == 0:
+            print(f"\nWARNING: Rarity 0 detected for Weapon: {en.name} / {zh.name}")
+            while True:
+                try:
+                    val = input(f"Please enter actual rarity (1-5) for {en.name}: ").strip()
+                    rarity_int = int(val)
+                    if 1 <= rarity_int <= 5:
+                        en.rarity = rarity_int
+                        zh.rarity = rarity_int
+                        break
+                    else:
+                        print("Invalid rarity. Please enter 1-5.")
+                except ValueError:
+                    print("Invalid number.")
+
+        weapon_id = generate_id(en.name)
+        output = WeaponOutput(
+            id=weapon_id,
+            rarity=en.rarity,
+            type=en.type,
+            secondaryStat=en.secondary_stat,
+            baseAtk=en.base_atk,
+            secondaryStatValue=en.secondary_stat_value,
+            imageUrl=en.image_url,
+            imagePath=f"/weapon/{weapon_id}.png",
         )
-        i18n_weaps[weap_en["id"]] = {
-            "name": {"en": weap_en["name"], "zh": weap_zh["name"]},
-            "effect": {"en": weap_en["effect"], "zh": weap_zh["effect"]},
+        final_weapons.append(output)
+
+        i18n_weapons[weapon_id] = {
+            "name": {"en": en.name, "zh": zh.name},
+            "effect": {"en": en.effect, "zh": zh.effect},
         }
 
-    return weapon_data, i18n_weaps, matched_weapons
+    return final_weapons, i18n_weapons, matched_weapons
 
 
 def write_data(
     character_data: list[CharacterOutput],
     artifact_data: list[ArtifactOutput],
     weapon_data: list[WeaponOutput],
-    half_sets: list[Any],
+    half_sets: list[HalfSet],
     elements: list[ResourceOutput],
     weapon_types: list[ResourceOutput],
     i18n_data: dict[str, dict[str, Any]],
@@ -389,27 +422,79 @@ def write_data(
         )
 
         f.write("export const characters: Character[] = ")
-        f.write(json.dumps(character_data, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [
+                    c.model_dump(by_alias=True) if isinstance(c, BaseModel) else c
+                    for c in character_data
+                ],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         f.write(";\n\n")
 
         f.write("export const elementResources: ElementResource[] = ")
-        f.write(json.dumps(elements, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [e.model_dump(by_alias=True) if isinstance(e, BaseModel) else e for e in elements],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         f.write(";\n\n")
 
         f.write("export const weaponTypeResources: WeaponTypeResource[] = ")
-        f.write(json.dumps(weapon_types, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [
+                    wt.model_dump(by_alias=True) if isinstance(wt, BaseModel) else wt
+                    for wt in weapon_types
+                ],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         f.write(";\n\n")
 
         f.write("export const artifacts: ArtifactSet[] = ")
-        f.write(json.dumps(artifact_data, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [
+                    a.model_dump(by_alias=True) if isinstance(a, BaseModel) else a
+                    for a in artifact_data
+                ],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         f.write(";\n\n")
 
         f.write("export const artifactHalfSets: ArtifactHalfSet[] = ")
-        f.write(json.dumps(half_sets, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [
+                    hs.model_dump(by_alias=True) if isinstance(hs, BaseModel) else hs
+                    for hs in half_sets
+                ],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
+
         f.write(";\n\n")
 
         f.write("export const weapons: Weapon[] = ")
-        f.write(json.dumps(weapon_data, indent=2, ensure_ascii=False))
+        f.write(
+            json.dumps(
+                [
+                    w.model_dump(by_alias=True) if isinstance(w, BaseModel) else w
+                    for w in weapon_data
+                ],
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         f.write(";\n")
 
     print(f"Written resources to {resources_path}")
@@ -419,15 +504,31 @@ def write_data(
         f.write("// This file is auto-generated by scripts/codedump.py\n")
         f.write("// Do not edit this file directly\n\n")
         f.write("export const i18nGameData = ")
-        f.write(json.dumps(i18n_data, indent=2, ensure_ascii=False))
+        serializable_i18n_data = {}
+        for key, value in i18n_data.items():
+            if isinstance(value, BaseModel):
+                serializable_i18n_data[key] = value.model_dump(by_alias=True)
+            elif isinstance(value, dict):
+                # Handle dictionaries that might contain Pydantic models (like artifacts)
+                new_dict = {}
+                for k, v in value.items():
+                    if isinstance(v, BaseModel):
+                        new_dict[k] = v.model_dump(by_alias=True)
+                    else:
+                        new_dict[k] = v
+                serializable_i18n_data[key] = new_dict
+            else:
+                serializable_i18n_data[key] = value
+
+        f.write(json.dumps(serializable_i18n_data, indent=2, ensure_ascii=False))
         f.write(";\n")
     print(f"Written i18n data to {i18n_path}")
 
 
 def download_all_images(
-    characters: list[MatchedItem[ScrapedCharacter]],
-    artifacts: list[MatchedItem[ScrapedArtifact]],
-    weapons: list[MatchedItem[ScrapedWeapon]],
+    characters: list[MatchedItem[CharacterSource]],
+    artifacts: list[MatchedItem[ArtifactSource]],
+    weapons: list[MatchedItem[WeaponSource]],
     elements: list[ResourceOutput] | None = None,
     weapon_types: list[ResourceOutput] | None = None,
 ) -> None:
@@ -435,50 +536,44 @@ def download_all_images(
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
 
-    print("Downloading character images...")
-    for match in characters:
-        char = match["en"]
-        filename = os.path.join(project_root, "public", "character", f"{char['id']}.png")
-        download_image(char["image_url"], filename)
+    print("=== [4/4] Assets ===")
+
+    with tqdm(characters, desc="Downloading Characters", unit="img") as pbar:
+        for match in pbar:
+            char = match["en"]
+            HoyolabAssetManager.download_character_assets(char, project_root)
 
     print("Downloading artifact images...")
-    suffixes = {"flower": "", "plume": "2", "sands": "3", "goblet": "4", "circlet": "5"}
-    for match in artifacts:
-        art = match["en"]
-        image_urls = art.get("image_urls", {})
 
-        for slot, suffix in suffixes.items():
-            url = image_urls.get(slot)
-            if url:
-                filename = os.path.join(
-                    project_root, "public", "artifact", f"{art['id']}{suffix}.png"
-                )
-                download_image(url, filename)
+    with tqdm(
+        artifacts,
+        desc="Downloading Artifacts",
+        unit="set",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ) as pbar:
+        for match in pbar:
+            art = match["en"]
+            HoyolabAssetManager.download_artifact_assets(art, project_root)
 
-    print("Downloading weapon images...")
-    for match in weapons:
-        weap = match["en"]
-        filename = os.path.join(project_root, "public", "weapon", f"{weap['id']}.png")
-        download_image(weap["image_url"], filename)
+    with tqdm(
+        weapons,
+        desc="Downloading Weapons",
+        unit="img",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ) as pbar:
+        for match in pbar:
+            weap = match["en"]
+            HoyolabAssetManager.download_weapon_assets(weap, project_root)
 
     if elements:
         print("Downloading element images...")
         for element in elements:
-            filename = os.path.join(
-                project_root, "public", "element", f"{element['name'].lower()}.png"
-            )
-            download_image(element["imageUrl"], filename)
+            HoyolabAssetManager.download_element_asset(element, project_root)
 
     if weapon_types:
         print("Downloading weapon type images...")
         for weapon_type in weapon_types:
-            filename = os.path.join(
-                project_root,
-                "public",
-                "weapontype",
-                f"{weapon_type['name'].lower()}.png",
-            )
-            download_image(weapon_type["imageUrl"], filename)
+            HoyolabAssetManager.download_weapon_type_asset(weapon_type, project_root)
 
 
 def main():
@@ -486,10 +581,11 @@ def main():
     parser.add_argument("--character", action="store_true", help="Update character data")
     parser.add_argument("--weapon", action="store_true", help="Update weapon data")
     parser.add_argument("--artifact", action="store_true", help="Update artifact data")
+    parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     args = parser.parse_args()
 
     # Default to all if no flags provided
-    if not (args.character or args.weapon or args.artifact):
+    if not (args.character or args.weapon or args.artifact or args.half_set):
         args.character = True
         args.weapon = True
         args.artifact = True
@@ -533,70 +629,79 @@ def main():
     if args.character:
         fandom_data = fandom.get_character_data()
 
-    # 2. Scrape Hoyolab
+    print("=== [2/4] Hoyolab Data ===")
     if args.character or args.artifact or args.weapon:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(
-                viewport={"width": 1920, "height": 1080},
-                user_agent=(
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/131.0.0.0 Safari/537.36"
-                ),
-            )
-            page = context.new_page()
-
+        with HoyolabScraper() as scraper:
             try:
-                # Character Data
                 if args.character:
-                    chars_en = hoyolab.scrape_characters(page, "en")
-                    new_elements, new_weapon_types = hoyolab.scrape_elements_and_weapons(page, "en")
-                    chars_zh = hoyolab.scrape_characters(page, "zh")
+                    chars_en = scraper.scrape_characters("en")
+                    new_elements, new_weapon_types = scraper.scrape_elements_and_weapons("en")
+                    chars_zh = scraper.scrape_characters("zh")
 
+                    print("=== [3/4] Processing & Matching (Characters) ===")
                     c_data, c_i18n, matched_chars = process_characters(
-                        chars_en, chars_zh, fandom_data
+                        chars_en, chars_zh, fandom_data, scraper
                     )
                     character_data = c_data
                     i18n_data["characters"] = c_i18n
                     elements = new_elements
                     weapon_types = new_weapon_types
 
-                # Artifact Data
                 if args.artifact:
-                    arts_en = hoyolab.scrape_artifacts(page, "en")
-                    arts_zh = hoyolab.scrape_artifacts(page, "zh")
+                    arts_en = scraper.scrape_artifacts("en")
+                    arts_zh = scraper.scrape_artifacts("zh")
 
-                    a_data, a_i18n, matched_arts = process_artifacts(arts_en, arts_zh)
+                    a_data, a_i18n, matched_arts = process_artifacts(arts_en, arts_zh, scraper)
                     artifact_data = a_data
                     i18n_data["artifacts"] = a_i18n
 
-                    # Recompute half sets
-                    print("Computing artifact half sets...")
-                    # We need IDs from the newly scraped data (which are in a_data)
-                    # Use a_data because it filtered out skipped artifacts
-                    artifact_ids = [a["id"] for a in a_data]
-                    half_sets = process_artifact_effects(
-                        artifact_ids,
-                        cast(dict[str, I18nArtifactData], i18n_data["artifacts"]),
-                    )
-
-                # Weapon Data
                 if args.weapon:
-                    weaps_en = hoyolab.scrape_weapons(page, "en")
-                    weaps_zh = hoyolab.scrape_weapons(page, "zh")
+                    weaps_en = scraper.scrape_weapons("en")
+                    weaps_zh = scraper.scrape_weapons("zh")
 
-                    w_data, w_i18n, matched_weaps = process_weapons(weaps_en, weaps_zh)
+                    w_data, w_i18n, matched_weaps = process_weapons(weaps_en, weaps_zh, scraper)
                     weapon_data = w_data
                     i18n_data["weapons"] = w_i18n
 
             except Exception as e:
-                print(f"Error in scraping: {e}")
+                print(f"Error during scraping: {e}")
                 import traceback
 
                 traceback.print_exc()
-            finally:
-                browser.close()
+
+    # 2.5 Recompute Half Sets (if requested or if artifacts were updated)
+    if args.half_set or args.artifact:
+        print("=== Computing Half Sets ===")
+
+        # Prepare artifact_ids
+        # If args.artifact was True, artifact_data contains Pydantic models
+        # If from file, it contains dicts
+        artifact_ids = []
+        if artifact_data:
+            if isinstance(artifact_data[0], BaseModel):
+                artifact_ids = [a.id for a in artifact_data]
+            else:
+                artifact_ids = [a["id"] for a in artifact_data]  # type: ignore
+
+        # Prepare i18n data (needs to be Pydantic models for preprocess.py)
+        current_i18n_artifacts = i18n_data.get("artifacts", {})
+        model_i18n_artifacts: dict[str, I18nArtifactData] = {}
+
+        for aid, data in current_i18n_artifacts.items():
+            if isinstance(data, I18nArtifactData):
+                model_i18n_artifacts[aid] = data
+            elif isinstance(data, dict):
+                # Hydrate from dict
+                model_i18n_artifacts[aid] = I18nArtifactData(**data)
+
+        if artifact_ids and model_i18n_artifacts:
+            half_sets, half_sets_i18n = process_artifact_effects(
+                artifact_ids,
+                model_i18n_artifacts,
+            )
+            i18n_data["artifactHalfSets"] = half_sets_i18n
+        else:
+            print("Warning: Skipping half set computation due to missing artifact data")
 
     # 3. Save Data
     write_data(

@@ -1133,6 +1133,36 @@ export const characters: Character[] = [
     "releaseDate": "2025-12-03",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/01/19708bac6eba4779a70908bf0bee70b1_1653339605275422455.png",
     "imagePath": "/character/jahoda.png"
+  },
+  {
+    "id": "columbina",
+    "element": "Hydro",
+    "rarity": 5,
+    "weaponType": "Catalyst",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-01-14",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/13/80fa97679c8d1828fdd96c6aa9638632_4327573591148809640.png",
+    "imagePath": "/character/columbina.png"
+  },
+  {
+    "id": "zibai",
+    "element": "Geo",
+    "rarity": 5,
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-28",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/11/6a57d2dd9677f63ae7d38f525484c55f_7837326903952372916.png",
+    "imagePath": "/character/zibai.png"
+  },
+  {
+    "id": "illuga",
+    "element": "Geo",
+    "rarity": 4,
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-28",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/12/b138122c91d1ce61bf7d06d6042ae08a_4301479487552885437.png",
+    "imagePath": "/character/illuga.png"
   }
 ];
 
@@ -1204,471 +1234,39 @@ export const weaponTypeResources: WeaponTypeResource[] = [
 
 export const artifacts: ArtifactSet[] = [
   {
-    "id": "blizzard_strayer",
+    "id": "a_day_carved_from_rising_winds",
     "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Blizzard%2520Strayer/flower_of_life_icon.png",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/12/7c4a7aca9f8325c6663239bbfa452ded_4271064323680356779.png",
     "imagePaths": {
-      "flower": "/artifact/blizzard_strayer.png",
-      "plume": "/artifact/blizzard_strayer2.png",
-      "sands": "/artifact/blizzard_strayer3.png",
-      "goblet": "/artifact/blizzard_strayer4.png",
-      "circlet": "/artifact/blizzard_strayer5.png"
+      "flower": "/artifact/a_day_carved_from_rising_winds.png",
+      "plume": "/artifact/a_day_carved_from_rising_winds2.png",
+      "sands": "/artifact/a_day_carved_from_rising_winds3.png",
+      "goblet": "/artifact/a_day_carved_from_rising_winds4.png",
+      "circlet": "/artifact/a_day_carved_from_rising_winds5.png"
     }
   },
   {
-    "id": "tenacity_of_the_millelith",
+    "id": "aubade_of_morningstar_and_moon",
     "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Tenacity%2520of%2520the%2520Millelith/flower_of_life_icon.png",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/12/ef58ecfcb8906792c3a9b07c92586934_3343384077195352394.png",
     "imagePaths": {
-      "flower": "/artifact/tenacity_of_the_millelith.png",
-      "plume": "/artifact/tenacity_of_the_millelith2.png",
-      "sands": "/artifact/tenacity_of_the_millelith3.png",
-      "goblet": "/artifact/tenacity_of_the_millelith4.png",
-      "circlet": "/artifact/tenacity_of_the_millelith5.png"
+      "flower": "/artifact/aubade_of_morningstar_and_moon.png",
+      "plume": "/artifact/aubade_of_morningstar_and_moon2.png",
+      "sands": "/artifact/aubade_of_morningstar_and_moon3.png",
+      "goblet": "/artifact/aubade_of_morningstar_and_moon4.png",
+      "circlet": "/artifact/aubade_of_morningstar_and_moon5.png"
     }
   },
   {
-    "id": "husk_of_opulent_dreams",
+    "id": "silken_moons_serenade",
     "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Husk%2520of%2520Opulent%2520Dreams/flower_of_life_icon.png",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/09/01/b8350998129a66e67c1a7691153da68d_6559589601591776539.png",
     "imagePaths": {
-      "flower": "/artifact/husk_of_opulent_dreams.png",
-      "plume": "/artifact/husk_of_opulent_dreams2.png",
-      "sands": "/artifact/husk_of_opulent_dreams3.png",
-      "goblet": "/artifact/husk_of_opulent_dreams4.png",
-      "circlet": "/artifact/husk_of_opulent_dreams5.png"
-    }
-  },
-  {
-    "id": "thundering_fury",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Thundering%2520Fury/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/thundering_fury.png",
-      "plume": "/artifact/thundering_fury2.png",
-      "sands": "/artifact/thundering_fury3.png",
-      "goblet": "/artifact/thundering_fury4.png",
-      "circlet": "/artifact/thundering_fury5.png"
-    }
-  },
-  {
-    "id": "thundersoother",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Thundersoother/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/thundersoother.png",
-      "plume": "/artifact/thundersoother2.png",
-      "sands": "/artifact/thundersoother3.png",
-      "goblet": "/artifact/thundersoother4.png",
-      "circlet": "/artifact/thundersoother5.png"
-    }
-  },
-  {
-    "id": "archaic_petra",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Archaic%2520Petra/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/archaic_petra.png",
-      "plume": "/artifact/archaic_petra2.png",
-      "sands": "/artifact/archaic_petra3.png",
-      "goblet": "/artifact/archaic_petra4.png",
-      "circlet": "/artifact/archaic_petra5.png"
-    }
-  },
-  {
-    "id": "instructor",
-    "rarity": 4,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Instructor/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/instructor.png",
-      "plume": "/artifact/instructor2.png",
-      "sands": "/artifact/instructor3.png",
-      "goblet": "/artifact/instructor4.png",
-      "circlet": "/artifact/instructor5.png"
-    }
-  },
-  {
-    "id": "noblesse_oblige",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Noblesse%2520Oblige/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/noblesse_oblige.png",
-      "plume": "/artifact/noblesse_oblige2.png",
-      "sands": "/artifact/noblesse_oblige3.png",
-      "goblet": "/artifact/noblesse_oblige4.png",
-      "circlet": "/artifact/noblesse_oblige5.png"
-    }
-  },
-  {
-    "id": "echoes_of_an_offering",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Echoes%2520of%2520an%2520Offering/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/echoes_of_an_offering.png",
-      "plume": "/artifact/echoes_of_an_offering2.png",
-      "sands": "/artifact/echoes_of_an_offering3.png",
-      "goblet": "/artifact/echoes_of_an_offering4.png",
-      "circlet": "/artifact/echoes_of_an_offering5.png"
-    }
-  },
-  {
-    "id": "bloodstained_chivalry",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Bloodstained%2520Chivalry/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/bloodstained_chivalry.png",
-      "plume": "/artifact/bloodstained_chivalry2.png",
-      "sands": "/artifact/bloodstained_chivalry3.png",
-      "goblet": "/artifact/bloodstained_chivalry4.png",
-      "circlet": "/artifact/bloodstained_chivalry5.png"
-    }
-  },
-  {
-    "id": "heart_of_depth",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Heart%2520of%2520Depth/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/heart_of_depth.png",
-      "plume": "/artifact/heart_of_depth2.png",
-      "sands": "/artifact/heart_of_depth3.png",
-      "goblet": "/artifact/heart_of_depth4.png",
-      "circlet": "/artifact/heart_of_depth5.png"
-    }
-  },
-  {
-    "id": "wanderers_troupe",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Wanderer's%2520Troupe/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/wanderers_troupe.png",
-      "plume": "/artifact/wanderers_troupe2.png",
-      "sands": "/artifact/wanderers_troupe3.png",
-      "goblet": "/artifact/wanderers_troupe4.png",
-      "circlet": "/artifact/wanderers_troupe5.png"
-    }
-  },
-  {
-    "id": "oceanhued_clam",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Ocean-Hued%2520Clam/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/oceanhued_clam.png",
-      "plume": "/artifact/oceanhued_clam2.png",
-      "sands": "/artifact/oceanhued_clam3.png",
-      "goblet": "/artifact/oceanhued_clam4.png",
-      "circlet": "/artifact/oceanhued_clam5.png"
-    }
-  },
-  {
-    "id": "lavawalker",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Lavawalker/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/lavawalker.png",
-      "plume": "/artifact/lavawalker2.png",
-      "sands": "/artifact/lavawalker3.png",
-      "goblet": "/artifact/lavawalker4.png",
-      "circlet": "/artifact/lavawalker5.png"
-    }
-  },
-  {
-    "id": "crimson_witch_of_flames",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Crimson%2520Witch%2520of%2520Flames/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/crimson_witch_of_flames.png",
-      "plume": "/artifact/crimson_witch_of_flames2.png",
-      "sands": "/artifact/crimson_witch_of_flames3.png",
-      "goblet": "/artifact/crimson_witch_of_flames4.png",
-      "circlet": "/artifact/crimson_witch_of_flames5.png"
-    }
-  },
-  {
-    "id": "emblem_of_severed_fate",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Emblem%2520of%2520Severed%2520Fate/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/emblem_of_severed_fate.png",
-      "plume": "/artifact/emblem_of_severed_fate2.png",
-      "sands": "/artifact/emblem_of_severed_fate3.png",
-      "goblet": "/artifact/emblem_of_severed_fate4.png",
-      "circlet": "/artifact/emblem_of_severed_fate5.png"
-    }
-  },
-  {
-    "id": "viridescent_venerer",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Viridescent%2520Venerer/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/viridescent_venerer.png",
-      "plume": "/artifact/viridescent_venerer2.png",
-      "sands": "/artifact/viridescent_venerer3.png",
-      "goblet": "/artifact/viridescent_venerer4.png",
-      "circlet": "/artifact/viridescent_venerer5.png"
-    }
-  },
-  {
-    "id": "pale_flame",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Pale%2520Flame/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/pale_flame.png",
-      "plume": "/artifact/pale_flame2.png",
-      "sands": "/artifact/pale_flame3.png",
-      "goblet": "/artifact/pale_flame4.png",
-      "circlet": "/artifact/pale_flame5.png"
-    }
-  },
-  {
-    "id": "maiden_beloved",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Maiden%2520Beloved/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/maiden_beloved.png",
-      "plume": "/artifact/maiden_beloved2.png",
-      "sands": "/artifact/maiden_beloved3.png",
-      "goblet": "/artifact/maiden_beloved4.png",
-      "circlet": "/artifact/maiden_beloved5.png"
-    }
-  },
-  {
-    "id": "gladiators_finale",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Gladiator's%2520Finale/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/gladiators_finale.png",
-      "plume": "/artifact/gladiators_finale2.png",
-      "sands": "/artifact/gladiators_finale3.png",
-      "goblet": "/artifact/gladiators_finale4.png",
-      "circlet": "/artifact/gladiators_finale5.png"
-    }
-  },
-  {
-    "id": "vermillion_hereafter",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Vermillion%2520Hereafter/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/vermillion_hereafter.png",
-      "plume": "/artifact/vermillion_hereafter2.png",
-      "sands": "/artifact/vermillion_hereafter3.png",
-      "goblet": "/artifact/vermillion_hereafter4.png",
-      "circlet": "/artifact/vermillion_hereafter5.png"
-    }
-  },
-  {
-    "id": "shimenawas_reminiscence",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Shimenawa's%2520Reminiscence/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/shimenawas_reminiscence.png",
-      "plume": "/artifact/shimenawas_reminiscence2.png",
-      "sands": "/artifact/shimenawas_reminiscence3.png",
-      "goblet": "/artifact/shimenawas_reminiscence4.png",
-      "circlet": "/artifact/shimenawas_reminiscence5.png"
-    }
-  },
-  {
-    "id": "retracing_bolide",
-    "rarity": 5,
-    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Retracing%2520Bolide/flower_of_life_icon.png",
-    "imagePaths": {
-      "flower": "/artifact/retracing_bolide.png",
-      "plume": "/artifact/retracing_bolide2.png",
-      "sands": "/artifact/retracing_bolide3.png",
-      "goblet": "/artifact/retracing_bolide4.png",
-      "circlet": "/artifact/retracing_bolide5.png"
-    }
-  },
-  {
-    "id": "deepwood_memories",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/08/23/194600931/f526e111c9c7dcbaed0d7fd8c8d58ef2_1582614701349912537.png",
-    "imagePaths": {
-      "flower": "/artifact/deepwood_memories.png",
-      "plume": "/artifact/deepwood_memories2.png",
-      "sands": "/artifact/deepwood_memories3.png",
-      "goblet": "/artifact/deepwood_memories4.png",
-      "circlet": "/artifact/deepwood_memories5.png"
-    }
-  },
-  {
-    "id": "gilded_dreams",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/08/23/194600931/ae8a2c6f24df66e1bd7cc2dbd83d330d_9176911893609858619.png",
-    "imagePaths": {
-      "flower": "/artifact/gilded_dreams.png",
-      "plume": "/artifact/gilded_dreams2.png",
-      "sands": "/artifact/gilded_dreams3.png",
-      "goblet": "/artifact/gilded_dreams4.png",
-      "circlet": "/artifact/gilded_dreams5.png"
-    }
-  },
-  {
-    "id": "flower_of_paradise_lost",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/12/05/35428890/50ce09dfa5a91a33aa9cedfb15bcf2d1_3721149201626085815.png",
-    "imagePaths": {
-      "flower": "/artifact/flower_of_paradise_lost.png",
-      "plume": "/artifact/flower_of_paradise_lost2.png",
-      "sands": "/artifact/flower_of_paradise_lost3.png",
-      "goblet": "/artifact/flower_of_paradise_lost4.png",
-      "circlet": "/artifact/flower_of_paradise_lost5.png"
-    }
-  },
-  {
-    "id": "desert_pavilion_chronicle",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/12/05/35428890/b86d9fd7cf57937a021c9c68c9b185ed_5545735814779163159.png",
-    "imagePaths": {
-      "flower": "/artifact/desert_pavilion_chronicle.png",
-      "plume": "/artifact/desert_pavilion_chronicle2.png",
-      "sands": "/artifact/desert_pavilion_chronicle3.png",
-      "goblet": "/artifact/desert_pavilion_chronicle4.png",
-      "circlet": "/artifact/desert_pavilion_chronicle5.png"
-    }
-  },
-  {
-    "id": "nymphs_dream",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/04/10/35428890/1bde348ad550ef356ff197b93caed6c8_4807982142633085431.png",
-    "imagePaths": {
-      "flower": "/artifact/nymphs_dream.png",
-      "plume": "/artifact/nymphs_dream2.png",
-      "sands": "/artifact/nymphs_dream3.png",
-      "goblet": "/artifact/nymphs_dream4.png",
-      "circlet": "/artifact/nymphs_dream5.png"
-    }
-  },
-  {
-    "id": "vourukashas_glow",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/04/10/35428890/bc9329baf36935b2fb094f783a7695f2_7474535067193858925.png",
-    "imagePaths": {
-      "flower": "/artifact/vourukashas_glow.png",
-      "plume": "/artifact/vourukashas_glow2.png",
-      "sands": "/artifact/vourukashas_glow3.png",
-      "goblet": "/artifact/vourukashas_glow4.png",
-      "circlet": "/artifact/vourukashas_glow5.png"
-    }
-  },
-  {
-    "id": "marechaussee_hunter",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/08/14/35428890/539b03bed1057707abd643147e18abde_8249644511854926994.png",
-    "imagePaths": {
-      "flower": "/artifact/marechaussee_hunter.png",
-      "plume": "/artifact/marechaussee_hunter2.png",
-      "sands": "/artifact/marechaussee_hunter3.png",
-      "goblet": "/artifact/marechaussee_hunter4.png",
-      "circlet": "/artifact/marechaussee_hunter5.png"
-    }
-  },
-  {
-    "id": "golden_troupe",
-    "rarity": 5,
-    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/08/06/35428890/4fda3f028a5acd6e23e99e70f21118cc_5229469833478915194.png",
-    "imagePaths": {
-      "flower": "/artifact/golden_troupe.png",
-      "plume": "/artifact/golden_troupe2.png",
-      "sands": "/artifact/golden_troupe3.png",
-      "goblet": "/artifact/golden_troupe4.png",
-      "circlet": "/artifact/golden_troupe5.png"
-    }
-  },
-  {
-    "id": "nighttime_whispers_in_the_echoing_woods",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2023/12/18/35428890/d9d39d9f046d5d23c3d497574be55a82_5403734726175910170.png",
-    "imagePaths": {
-      "flower": "/artifact/nighttime_whispers_in_the_echoing_woods.png",
-      "plume": "/artifact/nighttime_whispers_in_the_echoing_woods2.png",
-      "sands": "/artifact/nighttime_whispers_in_the_echoing_woods3.png",
-      "goblet": "/artifact/nighttime_whispers_in_the_echoing_woods4.png",
-      "circlet": "/artifact/nighttime_whispers_in_the_echoing_woods5.png"
-    }
-  },
-  {
-    "id": "song_of_days_past",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2023/12/18/35428890/7789fb5e684cf95a7011657d0fa8a971_4916799814445482045.png",
-    "imagePaths": {
-      "flower": "/artifact/song_of_days_past.png",
-      "plume": "/artifact/song_of_days_past2.png",
-      "sands": "/artifact/song_of_days_past3.png",
-      "goblet": "/artifact/song_of_days_past4.png",
-      "circlet": "/artifact/song_of_days_past5.png"
-    }
-  },
-  {
-    "id": "fragment_of_harmonic_whimsy",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/04/22/35428890/7557f4558ab243d82e8b6b9994fc97ee_4487332453175531251.png",
-    "imagePaths": {
-      "flower": "/artifact/fragment_of_harmonic_whimsy.png",
-      "plume": "/artifact/fragment_of_harmonic_whimsy2.png",
-      "sands": "/artifact/fragment_of_harmonic_whimsy3.png",
-      "goblet": "/artifact/fragment_of_harmonic_whimsy4.png",
-      "circlet": "/artifact/fragment_of_harmonic_whimsy5.png"
-    }
-  },
-  {
-    "id": "unfinished_reverie",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/04/22/35428890/356c6b0e1be129282f759d8844872c7d_8835103084516203071.png",
-    "imagePaths": {
-      "flower": "/artifact/unfinished_reverie.png",
-      "plume": "/artifact/unfinished_reverie2.png",
-      "sands": "/artifact/unfinished_reverie3.png",
-      "goblet": "/artifact/unfinished_reverie4.png",
-      "circlet": "/artifact/unfinished_reverie5.png"
-    }
-  },
-  {
-    "id": "scroll_of_the_hero_of_cinder_city",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/08/25/35428890/6ad5095f324c2da829ecaa5e2ed13af9_8914409440111681461.png",
-    "imagePaths": {
-      "flower": "/artifact/scroll_of_the_hero_of_cinder_city.png",
-      "plume": "/artifact/scroll_of_the_hero_of_cinder_city2.png",
-      "sands": "/artifact/scroll_of_the_hero_of_cinder_city3.png",
-      "goblet": "/artifact/scroll_of_the_hero_of_cinder_city4.png",
-      "circlet": "/artifact/scroll_of_the_hero_of_cinder_city5.png"
-    }
-  },
-  {
-    "id": "obsidian_codex",
-    "rarity": 5,
-    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/08/25/35428890/cd11df3be5420d2c53c2da0d3298eb92_763344799368209312.png",
-    "imagePaths": {
-      "flower": "/artifact/obsidian_codex.png",
-      "plume": "/artifact/obsidian_codex2.png",
-      "sands": "/artifact/obsidian_codex3.png",
-      "goblet": "/artifact/obsidian_codex4.png",
-      "circlet": "/artifact/obsidian_codex5.png"
-    }
-  },
-  {
-    "id": "long_nights_oath",
-    "rarity": 5,
-    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/03/17/3cf2511dfb1f91696a0ee986e5f1fb22_3371878648281977517.png",
-    "imagePaths": {
-      "flower": "/artifact/long_nights_oath.png",
-      "plume": "/artifact/long_nights_oath2.png",
-      "sands": "/artifact/long_nights_oath3.png",
-      "goblet": "/artifact/long_nights_oath4.png",
-      "circlet": "/artifact/long_nights_oath5.png"
-    }
-  },
-  {
-    "id": "finale_of_the_deep_galleries",
-    "rarity": 5,
-    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/03/17/bf39402f87db1168263c7c0898c8ab0c_4434336707917443666.png",
-    "imagePaths": {
-      "flower": "/artifact/finale_of_the_deep_galleries.png",
-      "plume": "/artifact/finale_of_the_deep_galleries2.png",
-      "sands": "/artifact/finale_of_the_deep_galleries3.png",
-      "goblet": "/artifact/finale_of_the_deep_galleries4.png",
-      "circlet": "/artifact/finale_of_the_deep_galleries5.png"
+      "flower": "/artifact/silken_moons_serenade.png",
+      "plume": "/artifact/silken_moons_serenade2.png",
+      "sands": "/artifact/silken_moons_serenade3.png",
+      "goblet": "/artifact/silken_moons_serenade4.png",
+      "circlet": "/artifact/silken_moons_serenade5.png"
     }
   },
   {
@@ -1684,15 +1282,471 @@ export const artifacts: ArtifactSet[] = [
     }
   },
   {
-    "id": "silken_moons_serenade",
+    "id": "finale_of_the_deep_galleries",
     "rarity": 5,
-    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/09/01/b8350998129a66e67c1a7691153da68d_6559589601591776539.png",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/03/17/bf39402f87db1168263c7c0898c8ab0c_4434336707917443666.png",
     "imagePaths": {
-      "flower": "/artifact/silken_moons_serenade.png",
-      "plume": "/artifact/silken_moons_serenade2.png",
-      "sands": "/artifact/silken_moons_serenade3.png",
-      "goblet": "/artifact/silken_moons_serenade4.png",
-      "circlet": "/artifact/silken_moons_serenade5.png"
+      "flower": "/artifact/finale_of_the_deep_galleries.png",
+      "plume": "/artifact/finale_of_the_deep_galleries2.png",
+      "sands": "/artifact/finale_of_the_deep_galleries3.png",
+      "goblet": "/artifact/finale_of_the_deep_galleries4.png",
+      "circlet": "/artifact/finale_of_the_deep_galleries5.png"
+    }
+  },
+  {
+    "id": "long_nights_oath",
+    "rarity": 5,
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/03/17/3cf2511dfb1f91696a0ee986e5f1fb22_3371878648281977517.png",
+    "imagePaths": {
+      "flower": "/artifact/long_nights_oath.png",
+      "plume": "/artifact/long_nights_oath2.png",
+      "sands": "/artifact/long_nights_oath3.png",
+      "goblet": "/artifact/long_nights_oath4.png",
+      "circlet": "/artifact/long_nights_oath5.png"
+    }
+  },
+  {
+    "id": "obsidian_codex",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/08/25/35428890/cd11df3be5420d2c53c2da0d3298eb92_763344799368209312.png",
+    "imagePaths": {
+      "flower": "/artifact/obsidian_codex.png",
+      "plume": "/artifact/obsidian_codex2.png",
+      "sands": "/artifact/obsidian_codex3.png",
+      "goblet": "/artifact/obsidian_codex4.png",
+      "circlet": "/artifact/obsidian_codex5.png"
+    }
+  },
+  {
+    "id": "scroll_of_the_hero_of_cinder_city",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/08/25/35428890/6ad5095f324c2da829ecaa5e2ed13af9_8914409440111681461.png",
+    "imagePaths": {
+      "flower": "/artifact/scroll_of_the_hero_of_cinder_city.png",
+      "plume": "/artifact/scroll_of_the_hero_of_cinder_city2.png",
+      "sands": "/artifact/scroll_of_the_hero_of_cinder_city3.png",
+      "goblet": "/artifact/scroll_of_the_hero_of_cinder_city4.png",
+      "circlet": "/artifact/scroll_of_the_hero_of_cinder_city5.png"
+    }
+  },
+  {
+    "id": "unfinished_reverie",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/04/22/35428890/356c6b0e1be129282f759d8844872c7d_8835103084516203071.png",
+    "imagePaths": {
+      "flower": "/artifact/unfinished_reverie.png",
+      "plume": "/artifact/unfinished_reverie2.png",
+      "sands": "/artifact/unfinished_reverie3.png",
+      "goblet": "/artifact/unfinished_reverie4.png",
+      "circlet": "/artifact/unfinished_reverie5.png"
+    }
+  },
+  {
+    "id": "fragment_of_harmonic_whimsy",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2024/04/22/35428890/7557f4558ab243d82e8b6b9994fc97ee_4487332453175531251.png",
+    "imagePaths": {
+      "flower": "/artifact/fragment_of_harmonic_whimsy.png",
+      "plume": "/artifact/fragment_of_harmonic_whimsy2.png",
+      "sands": "/artifact/fragment_of_harmonic_whimsy3.png",
+      "goblet": "/artifact/fragment_of_harmonic_whimsy4.png",
+      "circlet": "/artifact/fragment_of_harmonic_whimsy5.png"
+    }
+  },
+  {
+    "id": "song_of_days_past",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2023/12/18/35428890/7789fb5e684cf95a7011657d0fa8a971_4916799814445482045.png",
+    "imagePaths": {
+      "flower": "/artifact/song_of_days_past.png",
+      "plume": "/artifact/song_of_days_past2.png",
+      "sands": "/artifact/song_of_days_past3.png",
+      "goblet": "/artifact/song_of_days_past4.png",
+      "circlet": "/artifact/song_of_days_past5.png"
+    }
+  },
+  {
+    "id": "nighttime_whispers_in_the_echoing_woods",
+    "rarity": 5,
+    "imageUrl": "https://act-upload.hoyoverse.com/event-ugc-hoyowiki/2023/12/18/35428890/d9d39d9f046d5d23c3d497574be55a82_5403734726175910170.png",
+    "imagePaths": {
+      "flower": "/artifact/nighttime_whispers_in_the_echoing_woods.png",
+      "plume": "/artifact/nighttime_whispers_in_the_echoing_woods2.png",
+      "sands": "/artifact/nighttime_whispers_in_the_echoing_woods3.png",
+      "goblet": "/artifact/nighttime_whispers_in_the_echoing_woods4.png",
+      "circlet": "/artifact/nighttime_whispers_in_the_echoing_woods5.png"
+    }
+  },
+  {
+    "id": "golden_troupe",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/08/06/35428890/4fda3f028a5acd6e23e99e70f21118cc_5229469833478915194.png",
+    "imagePaths": {
+      "flower": "/artifact/golden_troupe.png",
+      "plume": "/artifact/golden_troupe2.png",
+      "sands": "/artifact/golden_troupe3.png",
+      "goblet": "/artifact/golden_troupe4.png",
+      "circlet": "/artifact/golden_troupe5.png"
+    }
+  },
+  {
+    "id": "marechaussee_hunter",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/08/14/35428890/539b03bed1057707abd643147e18abde_8249644511854926994.png",
+    "imagePaths": {
+      "flower": "/artifact/marechaussee_hunter.png",
+      "plume": "/artifact/marechaussee_hunter2.png",
+      "sands": "/artifact/marechaussee_hunter3.png",
+      "goblet": "/artifact/marechaussee_hunter4.png",
+      "circlet": "/artifact/marechaussee_hunter5.png"
+    }
+  },
+  {
+    "id": "vourukashas_glow",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/04/10/35428890/bc9329baf36935b2fb094f783a7695f2_7474535067193858925.png",
+    "imagePaths": {
+      "flower": "/artifact/vourukashas_glow.png",
+      "plume": "/artifact/vourukashas_glow2.png",
+      "sands": "/artifact/vourukashas_glow3.png",
+      "goblet": "/artifact/vourukashas_glow4.png",
+      "circlet": "/artifact/vourukashas_glow5.png"
+    }
+  },
+  {
+    "id": "nymphs_dream",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2023/04/10/35428890/1bde348ad550ef356ff197b93caed6c8_4807982142633085431.png",
+    "imagePaths": {
+      "flower": "/artifact/nymphs_dream.png",
+      "plume": "/artifact/nymphs_dream2.png",
+      "sands": "/artifact/nymphs_dream3.png",
+      "goblet": "/artifact/nymphs_dream4.png",
+      "circlet": "/artifact/nymphs_dream5.png"
+    }
+  },
+  {
+    "id": "desert_pavilion_chronicle",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/12/05/35428890/b86d9fd7cf57937a021c9c68c9b185ed_5545735814779163159.png",
+    "imagePaths": {
+      "flower": "/artifact/desert_pavilion_chronicle.png",
+      "plume": "/artifact/desert_pavilion_chronicle2.png",
+      "sands": "/artifact/desert_pavilion_chronicle3.png",
+      "goblet": "/artifact/desert_pavilion_chronicle4.png",
+      "circlet": "/artifact/desert_pavilion_chronicle5.png"
+    }
+  },
+  {
+    "id": "flower_of_paradise_lost",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/12/05/35428890/50ce09dfa5a91a33aa9cedfb15bcf2d1_3721149201626085815.png",
+    "imagePaths": {
+      "flower": "/artifact/flower_of_paradise_lost.png",
+      "plume": "/artifact/flower_of_paradise_lost2.png",
+      "sands": "/artifact/flower_of_paradise_lost3.png",
+      "goblet": "/artifact/flower_of_paradise_lost4.png",
+      "circlet": "/artifact/flower_of_paradise_lost5.png"
+    }
+  },
+  {
+    "id": "gilded_dreams",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/08/23/194600931/ae8a2c6f24df66e1bd7cc2dbd83d330d_9176911893609858619.png",
+    "imagePaths": {
+      "flower": "/artifact/gilded_dreams.png",
+      "plume": "/artifact/gilded_dreams2.png",
+      "sands": "/artifact/gilded_dreams3.png",
+      "goblet": "/artifact/gilded_dreams4.png",
+      "circlet": "/artifact/gilded_dreams5.png"
+    }
+  },
+  {
+    "id": "deepwood_memories",
+    "rarity": 5,
+    "imageUrl": "https://upload-static.hoyoverse.com/hoyolab-wiki/2022/08/23/194600931/f526e111c9c7dcbaed0d7fd8c8d58ef2_1582614701349912537.png",
+    "imagePaths": {
+      "flower": "/artifact/deepwood_memories.png",
+      "plume": "/artifact/deepwood_memories2.png",
+      "sands": "/artifact/deepwood_memories3.png",
+      "goblet": "/artifact/deepwood_memories4.png",
+      "circlet": "/artifact/deepwood_memories5.png"
+    }
+  },
+  {
+    "id": "retracing_bolide",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Retracing%2520Bolide/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/retracing_bolide.png",
+      "plume": "/artifact/retracing_bolide2.png",
+      "sands": "/artifact/retracing_bolide3.png",
+      "goblet": "/artifact/retracing_bolide4.png",
+      "circlet": "/artifact/retracing_bolide5.png"
+    }
+  },
+  {
+    "id": "shimenawas_reminiscence",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Shimenawa's%2520Reminiscence/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/shimenawas_reminiscence.png",
+      "plume": "/artifact/shimenawas_reminiscence2.png",
+      "sands": "/artifact/shimenawas_reminiscence3.png",
+      "goblet": "/artifact/shimenawas_reminiscence4.png",
+      "circlet": "/artifact/shimenawas_reminiscence5.png"
+    }
+  },
+  {
+    "id": "vermillion_hereafter",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Vermillion%2520Hereafter/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/vermillion_hereafter.png",
+      "plume": "/artifact/vermillion_hereafter2.png",
+      "sands": "/artifact/vermillion_hereafter3.png",
+      "goblet": "/artifact/vermillion_hereafter4.png",
+      "circlet": "/artifact/vermillion_hereafter5.png"
+    }
+  },
+  {
+    "id": "gladiators_finale",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Gladiator's%2520Finale/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/gladiators_finale.png",
+      "plume": "/artifact/gladiators_finale2.png",
+      "sands": "/artifact/gladiators_finale3.png",
+      "goblet": "/artifact/gladiators_finale4.png",
+      "circlet": "/artifact/gladiators_finale5.png"
+    }
+  },
+  {
+    "id": "maiden_beloved",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Maiden%2520Beloved/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/maiden_beloved.png",
+      "plume": "/artifact/maiden_beloved2.png",
+      "sands": "/artifact/maiden_beloved3.png",
+      "goblet": "/artifact/maiden_beloved4.png",
+      "circlet": "/artifact/maiden_beloved5.png"
+    }
+  },
+  {
+    "id": "pale_flame",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Pale%2520Flame/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/pale_flame.png",
+      "plume": "/artifact/pale_flame2.png",
+      "sands": "/artifact/pale_flame3.png",
+      "goblet": "/artifact/pale_flame4.png",
+      "circlet": "/artifact/pale_flame5.png"
+    }
+  },
+  {
+    "id": "viridescent_venerer",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Viridescent%2520Venerer/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/viridescent_venerer.png",
+      "plume": "/artifact/viridescent_venerer2.png",
+      "sands": "/artifact/viridescent_venerer3.png",
+      "goblet": "/artifact/viridescent_venerer4.png",
+      "circlet": "/artifact/viridescent_venerer5.png"
+    }
+  },
+  {
+    "id": "emblem_of_severed_fate",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Emblem%2520of%2520Severed%2520Fate/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/emblem_of_severed_fate.png",
+      "plume": "/artifact/emblem_of_severed_fate2.png",
+      "sands": "/artifact/emblem_of_severed_fate3.png",
+      "goblet": "/artifact/emblem_of_severed_fate4.png",
+      "circlet": "/artifact/emblem_of_severed_fate5.png"
+    }
+  },
+  {
+    "id": "crimson_witch_of_flames",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Crimson%2520Witch%2520of%2520Flames/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/crimson_witch_of_flames.png",
+      "plume": "/artifact/crimson_witch_of_flames2.png",
+      "sands": "/artifact/crimson_witch_of_flames3.png",
+      "goblet": "/artifact/crimson_witch_of_flames4.png",
+      "circlet": "/artifact/crimson_witch_of_flames5.png"
+    }
+  },
+  {
+    "id": "lavawalker",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Lavawalker/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/lavawalker.png",
+      "plume": "/artifact/lavawalker2.png",
+      "sands": "/artifact/lavawalker3.png",
+      "goblet": "/artifact/lavawalker4.png",
+      "circlet": "/artifact/lavawalker5.png"
+    }
+  },
+  {
+    "id": "oceanhued_clam",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Ocean-Hued%2520Clam/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/oceanhued_clam.png",
+      "plume": "/artifact/oceanhued_clam2.png",
+      "sands": "/artifact/oceanhued_clam3.png",
+      "goblet": "/artifact/oceanhued_clam4.png",
+      "circlet": "/artifact/oceanhued_clam5.png"
+    }
+  },
+  {
+    "id": "wanderers_troupe",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Wanderer's%2520Troupe/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/wanderers_troupe.png",
+      "plume": "/artifact/wanderers_troupe2.png",
+      "sands": "/artifact/wanderers_troupe3.png",
+      "goblet": "/artifact/wanderers_troupe4.png",
+      "circlet": "/artifact/wanderers_troupe5.png"
+    }
+  },
+  {
+    "id": "heart_of_depth",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Heart%2520of%2520Depth/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/heart_of_depth.png",
+      "plume": "/artifact/heart_of_depth2.png",
+      "sands": "/artifact/heart_of_depth3.png",
+      "goblet": "/artifact/heart_of_depth4.png",
+      "circlet": "/artifact/heart_of_depth5.png"
+    }
+  },
+  {
+    "id": "bloodstained_chivalry",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Bloodstained%2520Chivalry/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/bloodstained_chivalry.png",
+      "plume": "/artifact/bloodstained_chivalry2.png",
+      "sands": "/artifact/bloodstained_chivalry3.png",
+      "goblet": "/artifact/bloodstained_chivalry4.png",
+      "circlet": "/artifact/bloodstained_chivalry5.png"
+    }
+  },
+  {
+    "id": "echoes_of_an_offering",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Echoes%2520of%2520an%2520Offering/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/echoes_of_an_offering.png",
+      "plume": "/artifact/echoes_of_an_offering2.png",
+      "sands": "/artifact/echoes_of_an_offering3.png",
+      "goblet": "/artifact/echoes_of_an_offering4.png",
+      "circlet": "/artifact/echoes_of_an_offering5.png"
+    }
+  },
+  {
+    "id": "noblesse_oblige",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Noblesse%2520Oblige/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/noblesse_oblige.png",
+      "plume": "/artifact/noblesse_oblige2.png",
+      "sands": "/artifact/noblesse_oblige3.png",
+      "goblet": "/artifact/noblesse_oblige4.png",
+      "circlet": "/artifact/noblesse_oblige5.png"
+    }
+  },
+  {
+    "id": "instructor",
+    "rarity": 4,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Instructor/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/instructor.png",
+      "plume": "/artifact/instructor2.png",
+      "sands": "/artifact/instructor3.png",
+      "goblet": "/artifact/instructor4.png",
+      "circlet": "/artifact/instructor5.png"
+    }
+  },
+  {
+    "id": "archaic_petra",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Archaic%2520Petra/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/archaic_petra.png",
+      "plume": "/artifact/archaic_petra2.png",
+      "sands": "/artifact/archaic_petra3.png",
+      "goblet": "/artifact/archaic_petra4.png",
+      "circlet": "/artifact/archaic_petra5.png"
+    }
+  },
+  {
+    "id": "thundersoother",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Thundersoother/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/thundersoother.png",
+      "plume": "/artifact/thundersoother2.png",
+      "sands": "/artifact/thundersoother3.png",
+      "goblet": "/artifact/thundersoother4.png",
+      "circlet": "/artifact/thundersoother5.png"
+    }
+  },
+  {
+    "id": "thundering_fury",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Thundering%2520Fury/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/thundering_fury.png",
+      "plume": "/artifact/thundering_fury2.png",
+      "sands": "/artifact/thundering_fury3.png",
+      "goblet": "/artifact/thundering_fury4.png",
+      "circlet": "/artifact/thundering_fury5.png"
+    }
+  },
+  {
+    "id": "husk_of_opulent_dreams",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Husk%2520of%2520Opulent%2520Dreams/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/husk_of_opulent_dreams.png",
+      "plume": "/artifact/husk_of_opulent_dreams2.png",
+      "sands": "/artifact/husk_of_opulent_dreams3.png",
+      "goblet": "/artifact/husk_of_opulent_dreams4.png",
+      "circlet": "/artifact/husk_of_opulent_dreams5.png"
+    }
+  },
+  {
+    "id": "tenacity_of_the_millelith",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Tenacity%2520of%2520the%2520Millelith/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/tenacity_of_the_millelith.png",
+      "plume": "/artifact/tenacity_of_the_millelith2.png",
+      "sands": "/artifact/tenacity_of_the_millelith3.png",
+      "goblet": "/artifact/tenacity_of_the_millelith4.png",
+      "circlet": "/artifact/tenacity_of_the_millelith5.png"
+    }
+  },
+  {
+    "id": "blizzard_strayer",
+    "rarity": 5,
+    "imageUrl": "https://wiki.hoyolab.com/_ipx/f_webp/https://bbs.hoyolab.com/hoyowiki/picture/reliquary/Blizzard%2520Strayer/flower_of_life_icon.png",
+    "imagePaths": {
+      "flower": "/artifact/blizzard_strayer.png",
+      "plume": "/artifact/blizzard_strayer2.png",
+      "sands": "/artifact/blizzard_strayer3.png",
+      "goblet": "/artifact/blizzard_strayer4.png",
+      "circlet": "/artifact/blizzard_strayer5.png"
     }
   }
 ];
@@ -1708,9 +1762,7 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
       "nighttime_whispers_in_the_echoing_woods",
       "fragment_of_harmonic_whimsy",
       "unfinished_reverie"
-    ],
-    "normalizedEffectTextEn": "ATK +18%",
-    "normalizedEffectTextZh": "攻击力提高18%"
+    ]
   },
   {
     "id": 7,
@@ -1720,192 +1772,146 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
       "gilded_dreams",
       "flower_of_paradise_lost",
       "night_of_the_skys_unveiling"
-    ],
-    "normalizedEffectTextEn": "Elemental Mastery +80",
-    "normalizedEffectTextZh": "元素精通提高80点"
+    ]
   },
   {
     "id": 16,
     "setIds": [
       "viridescent_venerer",
       "desert_pavilion_chronicle"
-    ],
-    "normalizedEffectTextEn": "Anemo DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%风元素伤害加成"
+    ]
   },
   {
     "id": 15,
     "setIds": [
       "emblem_of_severed_fate",
       "silken_moons_serenade"
-    ],
-    "normalizedEffectTextEn": "Energy Recharge +20%",
-    "normalizedEffectTextZh": "元素充能效率提高20%"
+    ]
   },
   {
     "id": 12,
     "setIds": [
       "oceanhued_clam",
       "song_of_days_past"
-    ],
-    "normalizedEffectTextEn": "Healing Bonus +15%",
-    "normalizedEffectTextZh": "治疗加成提高15%"
+    ]
   },
   {
     "id": 11,
     "setIds": [
       "heart_of_depth",
       "nymphs_dream"
-    ],
-    "normalizedEffectTextEn": "Hydro DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%水元素伤害加成"
+    ]
   },
   {
     "id": 10,
     "setIds": [
       "bloodstained_chivalry",
       "pale_flame"
-    ],
-    "normalizedEffectTextEn": "Physical DMG +25%",
-    "normalizedEffectTextZh": "造成的物理伤害提高25%"
+    ]
   },
   {
     "id": 2,
     "setIds": [
       "tenacity_of_the_millelith",
       "vourukashas_glow"
-    ],
-    "normalizedEffectTextEn": "HP +20%",
-    "normalizedEffectTextZh": "生命值提升20%"
+    ]
   },
   {
     "id": 1,
     "setIds": [
       "blizzard_strayer",
       "finale_of_the_deep_galleries"
-    ],
-    "normalizedEffectTextEn": "Cryo DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%冰元素伤害加成"
+    ]
   },
   {
     "id": 24,
     "setIds": [
       "long_nights_oath"
-    ],
-    "normalizedEffectTextEn": "Plunging Attack DMG increased by 25%",
-    "normalizedEffectTextZh": "下落攻击造成的伤害提升25%"
+    ]
   },
   {
     "id": 23,
     "setIds": [
       "obsidian_codex"
-    ],
-    "normalizedEffectTextEn": "While the equipping character is in Nightsoul's Blessing and is on the field, their DMG dealt is increased by 15%",
-    "normalizedEffectTextZh": "装备者处于夜魂加持状态，并且在场上时，造成的伤害提高15%"
+    ]
   },
   {
     "id": 22,
     "setIds": [
       "scroll_of_the_hero_of_cinder_city"
-    ],
-    "normalizedEffectTextEn": "When a nearby party member triggers a Nightsoul Burst, the equipping character regenerates 6 Energy",
-    "normalizedEffectTextZh": "队伍中附近的角色触发「夜魂迸发」时，装备者恢复6点元素能量"
+    ]
   },
   {
     "id": 21,
     "setIds": [
       "golden_troupe"
-    ],
-    "normalizedEffectTextEn": "Increases Elemental Skill DMG by 20%",
-    "normalizedEffectTextZh": "元素战技造成的伤害提升20%"
+    ]
   },
   {
     "id": 20,
     "setIds": [
       "marechaussee_hunter"
-    ],
-    "normalizedEffectTextEn": "Normal and Charged Attack DMG +15%",
-    "normalizedEffectTextZh": "普通攻击与重击造成的伤害提高15%"
+    ]
   },
   {
     "id": 19,
     "setIds": [
       "deepwood_memories"
-    ],
-    "normalizedEffectTextEn": "Dendro DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%草元素伤害加成"
+    ]
   },
   {
     "id": 18,
     "setIds": [
       "retracing_bolide"
-    ],
-    "normalizedEffectTextEn": "Increases Shield Strength by 35%",
-    "normalizedEffectTextZh": "护盾强效提高35%"
+    ]
   },
   {
     "id": 17,
     "setIds": [
       "maiden_beloved"
-    ],
-    "normalizedEffectTextEn": "Character Healing Effectiveness +15%",
-    "normalizedEffectTextZh": "角色造成的治疗效果提升15%"
+    ]
   },
   {
     "id": 14,
     "setIds": [
       "crimson_witch_of_flames"
-    ],
-    "normalizedEffectTextEn": "Pyro DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%火元素伤害加成"
+    ]
   },
   {
     "id": 13,
     "setIds": [
       "lavawalker"
-    ],
-    "normalizedEffectTextEn": "Pyro RES increased by 40%",
-    "normalizedEffectTextZh": "火元素抗性提高40%"
+    ]
   },
   {
     "id": 8,
     "setIds": [
       "noblesse_oblige"
-    ],
-    "normalizedEffectTextEn": "Elemental Burst DMG +20%",
-    "normalizedEffectTextZh": "元素爆发造成的伤害提升20%"
+    ]
   },
   {
     "id": 6,
     "setIds": [
       "archaic_petra"
-    ],
-    "normalizedEffectTextEn": "Gain a 15% Geo DMG Bonus",
-    "normalizedEffectTextZh": "获得15%岩元素伤害加成"
+    ]
   },
   {
     "id": 5,
     "setIds": [
       "thundersoother"
-    ],
-    "normalizedEffectTextEn": "Electro RES increased by 40%",
-    "normalizedEffectTextZh": "雷元素抗性提高40%"
+    ]
   },
   {
     "id": 4,
     "setIds": [
       "thundering_fury"
-    ],
-    "normalizedEffectTextEn": "Electro DMG Bonus +15%",
-    "normalizedEffectTextZh": "获得15%雷元素伤害加成"
+    ]
   },
   {
     "id": 3,
     "setIds": [
       "husk_of_opulent_dreams"
-    ],
-    "normalizedEffectTextEn": "DEF +30%",
-    "normalizedEffectTextZh": "防御力提高30%"
+    ]
   }
 ];
 
@@ -4079,5 +4085,15 @@ export const weapons: Weapon[] = [
     "secondaryStatValue": "44.1%",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/11/25/888f15859930696bb17aeb61f35fa340_139096456278287885.png",
     "imagePath": "/weapon/the_daybreak_chronicles.png"
+  },
+  {
+    "id": "nocturnes_curtain_call",
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "baseAtk": 542,
+    "secondaryStatValue": "88.2%",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/07/670440ccb460f5f58e014c68ad569d78_7754520756837248808.png",
+    "imagePath": "/weapon/nocturnes_curtain_call.png"
   }
 ];

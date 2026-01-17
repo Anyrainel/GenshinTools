@@ -46,9 +46,12 @@ Data ingestion logic resides in `scripts/`.
 
 - **Full Update:** Run `update_data.cmd` (Windows) to fetch and process all data.
 - **Single Script:** Use `uv`:
+
   ```bash
   uv run --project scripts/pyproject.toml scripts/codedump.py
   ```
+
+  Note: scripts use `ruff` for linting and `ty` for type checking. (`ty` is a new type checker for Python, different from `mypy` or `pyright`.)
 
 ### Development Guidelines
 

@@ -5,24 +5,8 @@ Replicates the TypeScript preprocessing logic from src/data/preprocess.ts
 """
 
 import re
-from typing import TypedDict
 
-
-class EffectData(TypedDict):
-    en: list[str]
-    zh: list[str]
-
-
-class I18nArtifactData(TypedDict):
-    effects: EffectData
-
-
-class HalfSet(TypedDict):
-    id: int
-    setIds: list[str]
-    normalizedEffectTextEn: str
-    normalizedEffectTextZh: str
-
+from models import HalfSet, I18nArtifactData
 
 ARTIFACT_SKIP_LIST: list[str] = [
     "adventurer",
@@ -55,13 +39,14 @@ def normalize_effect_text(text: str, language: str) -> str:
 
 def extract_unique_2pc_effects(
     artifact_ids: list[str], artifact_data: dict[str, I18nArtifactData]
-) -> list[HalfSet]:
+) -> tuple[list[HalfSet], dict[str, dict[str, str]]]:
     """
     Extract unique 2pc effects from i18n data.
     Replicates the TypeScript extractUnique2pcEffects function.
     Processes artifacts in reverse order (oldest first) for stable ID assignment.
     """
     half_sets: list[HalfSet] = []
+    half_sets_i18n: dict[str, dict[str, str]] = {}
     effect_text_map: dict[str, int] = {}
     next_id: int = 1
 
@@ -70,15 +55,11 @@ def extract_unique_2pc_effects(
     for artifact_id in reversed(filtered_artifact_ids):
         data: I18nArtifactData | None = artifact_data.get(artifact_id)
 
-        if (
-            not data
-            or not data.get("effects", {}).get("en")
-            or not data.get("effects", {}).get("zh")
-        ):
+        if not data or not data.effects.en or not data.effects.zh:
             continue
 
-        effects_en: list[str] = data["effects"]["en"]
-        effects_zh: list[str] = data["effects"]["zh"]
+        effects_en: list[str] = data.effects.en
+        effects_zh: list[str] = data.effects.zh
 
         if len(effects_en) == 0 or len(effects_zh) == 0:
             continue
@@ -86,53 +67,64 @@ def extract_unique_2pc_effects(
         normalized_en: str = normalize_effect_text(effects_en[0], "en")
         normalized_zh: str = normalize_effect_text(effects_zh[0], "zh")
 
+        # Skip if either effect is a placeholder
+        if "???" in normalized_en or "???" in normalized_zh:
+            continue
+
         existing_id: int | None = effect_text_map.get(normalized_en) or effect_text_map.get(
             normalized_zh
         )
 
         if existing_id is not None:
             existing_half_set: HalfSet | None = next(
-                (hs for hs in half_sets if hs["id"] == existing_id), None
+                (hs for hs in half_sets if hs.id == existing_id), None
             )
             if existing_half_set:
-                existing_half_set["setIds"].append(artifact_id)
+                existing_half_set.setIds.append(artifact_id)
 
-                if len(normalized_en) < len(existing_half_set["normalizedEffectTextEn"]):
-                    existing_half_set["normalizedEffectTextEn"] = normalized_en
-                if len(normalized_zh) < len(existing_half_set["normalizedEffectTextZh"]):
-                    existing_half_set["normalizedEffectTextZh"] = normalized_zh
+                # Update shortest text (heuristic for "best" description)
+                current_i18n = half_sets_i18n[str(existing_id)]
+                if len(normalized_en) < len(current_i18n["en"]):
+                    current_i18n["en"] = normalized_en
+                if len(normalized_zh) < len(current_i18n["zh"]):
+                    current_i18n["zh"] = normalized_zh
         else:
-            new_half_set: HalfSet = {
-                "id": next_id,
-                "setIds": [artifact_id],
-                "normalizedEffectTextEn": normalized_en,
-                "normalizedEffectTextZh": normalized_zh,
-            }
+            new_half_set = HalfSet(
+                id=next_id,
+                setIds=[artifact_id],
+            )
 
             half_sets.append(new_half_set)
-            effect_text_map[normalized_en] = new_half_set["id"]
-            effect_text_map[normalized_zh] = new_half_set["id"]
+
+            half_sets_i18n[str(next_id)] = {
+                "en": normalized_en,
+                "zh": normalized_zh,
+            }
+
+            effect_text_map[normalized_en] = new_half_set.id
+            effect_text_map[normalized_zh] = new_half_set.id
             next_id += 1
 
-    half_sets.sort(key=lambda hs: (-len(hs["setIds"]), -hs["id"]))
+    half_sets.sort(key=lambda hs: (-len(hs.setIds), -hs.id))
 
-    return half_sets
+    return half_sets, half_sets_i18n
 
 
 def process_artifact_effects(
     artifact_ids: list[str],
     artifact_i18n_data: dict[str, I18nArtifactData],
-) -> list[HalfSet]:
+) -> tuple[list[HalfSet], dict[str, dict[str, str]]]:
     """
     Process scraped data to compute half sets.
     This function is called by scrape_hoyolab.py after scraping is complete.
     """
     print(f"Computing half sets from {len(artifact_ids)} artifacts...")
 
-    half_sets: list[HalfSet] = extract_unique_2pc_effects(artifact_ids, artifact_i18n_data)
+    half_sets, half_sets_i18n = extract_unique_2pc_effects(artifact_ids, artifact_i18n_data)
 
     print(f"Generated {len(half_sets)} unique half sets:")
     for hs in half_sets:
-        print(f"  ID {hs['id']}: {len(hs['setIds'])} sets - {hs['normalizedEffectTextEn'][:50]}...")
+        zh_text = half_sets_i18n[str(hs.id)]["zh"]
+        print(f"  ID {hs.id}: {len(hs.setIds)} sets - {zh_text}")
 
-    return half_sets
+    return half_sets, half_sets_i18n

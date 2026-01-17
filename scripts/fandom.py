@@ -2,6 +2,7 @@ import re
 from typing import TypedDict
 
 from playwright.sync_api import Route, sync_playwright
+from tqdm import tqdm
 
 
 class CharacterData(TypedDict):
@@ -35,22 +36,19 @@ def clean_image_url(image_url: str) -> str:
 
 def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
     """Get character data from Fandom wiki and return a dict keyed by (element, rarity, name)."""
-    print("Fetching character data from genshin-impact.fandom.com...")
+    print("=== [1/4] Fandom Wiki Data ===")
 
     characters: list[CharacterData] = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
 
-        # Disable JavaScript for speed (Fandom tables are server-rendered) and set User-Agent
-        # This mimics the behavior of 'requests' which the user noted was fast.
         context = browser.new_context(
             java_script_enabled=False,
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",  # noqa: E501
         )
         page = context.new_page()
 
-        # Optimize loading by blocking unnecessary resources
         def route_handler(route: Route):
             if route.request.resource_type in [
                 "image",
@@ -67,11 +65,11 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
         page.route("**/*", route_handler)
 
         try:
-            print(f"Navigating to {CHARACTERS_URL}...")
-            # With JS disabled, this should be extremely fast
-            page.goto(CHARACTERS_URL, timeout=30000, wait_until="domcontentloaded")
+            with tqdm(total=1, desc="Navigating", bar_format="{desc}", leave=False) as pbar:
+                pbar.set_description(f"Navigating to {CHARACTERS_URL}...")
+                page.goto(CHARACTERS_URL, timeout=30000, wait_until="domcontentloaded")
+                pbar.set_description("Table Found")
 
-            # Locate all tables
             tables = page.locator("table").all()
             target_table = None
 
@@ -81,16 +79,20 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                     break
 
             if not target_table:
-                print("Could not find the Playable Characters table")
+                tqdm.write("Could not find the Playable Characters table")
                 return {}
 
             rows = target_table.locator("tr").all()
             if len(rows) > 0:
                 rows = rows[1:]  # Skip header
 
-            print(f"Processing {len(rows)} rows...")
-
-            for row in rows:
+            # Progress bar for row processing
+            for row in tqdm(
+                rows,
+                desc="Scraping Characters",
+                unit="char",
+                bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
+            ):
                 try:
                     cells = row.locator("td, th").all()
                     if len(cells) < 9:
@@ -186,22 +188,19 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                     }
 
                     characters.append(char_data)
-                    print(
-                        f"Scraped: {name} ({element}, {weaponType}, "
-                        f"{region}, {rarity}★, {releaseDate})"
-                    )
+                    # Removed per-item print to reduce noise, using tqdm bar instead
 
                 except Exception as e:
-                    print(f"Error processing row: {e}")
+                    tqdm.write(f"Error processing row: {e}")
                     continue
 
         except Exception as e:
-            print(f"Error scraping Fandom: {e}")
+            tqdm.write(f"Error scraping Fandom: {e}")
             return {}
         finally:
             browser.close()
 
-    print(f"Successfully scraped {len(characters)} characters from Fandom")
+    tqdm.write(f"Successfully scraped {len(characters)} characters from Fandom")
 
     character_lookup: dict[tuple[str, int, str], CharacterData] = {}
     for char in characters:
