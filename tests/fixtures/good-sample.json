@@ -1,0 +1,143 @@
+{
+  "format": "GOOD",
+  "version": 1,
+  "source": "TestFixture",
+  "characters": [
+    {
+      "key": "HuTao",
+      "constellation": 1,
+      "level": 90,
+      "ascension": 6,
+      "talent": { "auto": 10, "skill": 10, "burst": 8 }
+    },
+    {
+      "key": "Xingqiu",
+      "constellation": 6,
+      "level": 90,
+      "ascension": 6,
+      "talent": { "auto": 1, "skill": 9, "burst": 12 }
+    },
+    {
+      "key": "Zhongli",
+      "constellation": 0,
+      "level": 90,
+      "ascension": 6,
+      "talent": { "auto": 1, "skill": 9, "burst": 9 }
+    }
+  ],
+  "weapons": [
+    {
+      "key": "StaffOfHoma",
+      "level": 90,
+      "refinement": 1,
+      "location": "HuTao",
+      "lock": true
+    },
+    {
+      "key": "SacrificialSword",
+      "level": 90,
+      "refinement": 5,
+      "location": "Xingqiu",
+      "lock": true
+    },
+    {
+      "key": "BlackTassel",
+      "level": 90,
+      "refinement": 5,
+      "location": "Zhongli",
+      "lock": false
+    }
+  ],
+  "artifacts": [
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "flower",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp",
+      "location": "HuTao",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 28.8 },
+        { "key": "critRate_", "value": 6.6 },
+        { "key": "atk_", "value": 5.8 },
+        { "key": "eleMas", "value": 40 }
+      ]
+    },
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "plume",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "atk",
+      "location": "HuTao",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 21.8 },
+        { "key": "critRate_", "value": 10.5 },
+        { "key": "hp_", "value": 9.3 },
+        { "key": "eleMas", "value": 23 }
+      ]
+    },
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "sands",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp_",
+      "location": "HuTao",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 14.0 },
+        { "key": "critRate_", "value": 7.0 },
+        { "key": "eleMas", "value": 56 },
+        { "key": "enerRech_", "value": 5.2 }
+      ]
+    },
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "goblet",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "pyro_dmg_",
+      "location": "HuTao",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 19.4 },
+        { "key": "critRate_", "value": 3.9 },
+        { "key": "hp_", "value": 14.6 },
+        { "key": "hp", "value": 299 }
+      ]
+    },
+    {
+      "setKey": "GladiatorsFinale",
+      "slotKey": "circlet",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "critDMG_",
+      "location": "HuTao",
+      "lock": true,
+      "substats": [
+        { "key": "critRate_", "value": 10.9 },
+        { "key": "hp_", "value": 15.7 },
+        { "key": "eleMas", "value": 35 },
+        { "key": "atk", "value": 33 }
+      ]
+    },
+    {
+      "setKey": "EmblemOfSeveredFate",
+      "slotKey": "flower",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp",
+      "location": "Xingqiu",
+      "lock": true,
+      "substats": [
+        { "key": "critDMG_", "value": 14.8 },
+        { "key": "critRate_", "value": 7.4 },
+        { "key": "enerRech_", "value": 11.0 },
+        { "key": "atk_", "value": 9.9 }
+      ]
+    }
+  ]
+}

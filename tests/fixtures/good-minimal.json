@@ -1,0 +1,35 @@
+{
+  "format": "GOOD",
+  "version": 1,
+  "source": "TestFixture",
+  "characters": [
+    {
+      "key": "Amber",
+      "constellation": 0,
+      "level": 20,
+      "ascension": 1,
+      "talent": { "auto": 1, "skill": 1, "burst": 1 }
+    }
+  ],
+  "weapons": [
+    {
+      "key": "FavoniusWarbow",
+      "level": 1,
+      "refinement": 1,
+      "location": "Amber",
+      "lock": false
+    }
+  ],
+  "artifacts": [
+    {
+      "setKey": "Instructor",
+      "slotKey": "flower",
+      "level": 0,
+      "rarity": 3,
+      "mainStatKey": "hp",
+      "location": "Amber",
+      "lock": false,
+      "substats": []
+    }
+  ]
+}

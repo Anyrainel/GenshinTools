@@ -7,20 +7,15 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:tauri": "tsc -b && vite build --mode tauri",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "check": "biome check .",
-    "check:fix": "biome check --write .",
-    "type-check": "tsc -b --noEmit",
     "preview": "vite preview",
-    "tauri": "tauri",
-    "prepare": "husky",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "type-check": "tsc -b --noEmit && tsc --project tsconfig.test.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
+    "prepare": "husky",
+    "tauri": "tauri"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [

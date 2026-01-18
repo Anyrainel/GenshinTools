@@ -17,6 +17,17 @@ The application is divided into distinct functional domains, each with its own s
 - **Tier Lists** (`src/components/tier-list`): Logic for Character and Weapon tier lists, including drag-and-drop grids and customization dialogs.
 - **Artifact Filter** (`src/components/artifact-filter`): The rule engine for generating lock/trash scripts.
 
+### Application Pages
+
+| Page | Route | Purpose |
+|------|-------|---------|
+| `Home` | `/` | Landing page with navigation cards |
+| `ArtifactFilter` | `/artifact-filter` | Configure builds, compute lock/trash filters |
+| `AccountData` | `/account-data` | Import GOOD/Enka data, view characters, artifact scoring |
+| `TierList` | `/tier-list` | Character tier list with drag-drop |
+| `WeaponTierList` | `/weapon-tier-list` | Weapon tier list with rarity filters |
+| `TeamBuilder` | `/team-builder` | Create and manage team compositions |
+
 ### Key Directories
 
 - `src/components/ui`: Reusable shadcn/ui primitives.
@@ -36,12 +47,17 @@ The application is divided into distinct functional domains, each with its own s
 
 ### Development
 
-- **Frontend:** `npm run dev`
-- **Tauri App:** `npm run tauri dev`
-- **Linting:** `npm run lint`
-- **Formatting:** `npm run format`
-- **Full Check (Lint + Format + Organize Imports):** `npm run check`
-- **Auto-fix:** `npm run check:fix`
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start Vite dev server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Check lint + format (Biome) |
+| `npm run lint:fix` | Auto-fix lint + format |
+| `npm run type-check` | TypeScript check (src + tests) |
+| `npm run test` | Run tests once |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run tauri dev` | Run Tauri desktop app |
 
 ### Data Updates
 
@@ -54,7 +70,7 @@ Data ingestion logic resides in `scripts/`.
   uv run --project scripts/pyproject.toml scripts/codedump.py
   ```
 
-  Note: scripts use `ruff` for linting and `ty` for type checking. (`ty` is a new type checker for Python, different from `mypy` or `pyright`.)
+  Note: scripts use `ruff` for linting and `ty` for type checking.
 
 ### Development Guidelines
 
@@ -92,8 +108,7 @@ Data ingestion logic resides in `scripts/`.
 
 Tests use **Vitest** with **React Testing Library**.
 
-- **Before writing tests**: Read [docs/testing_tips.md](docs/testing_tips.md) for environment setup, common pitfalls, and patterns.
-- **For planned test work**: See [docs/testing_plan.md](docs/testing_plan.md) for phased implementation details.
+- **Before writing tests**: Read [docs/testing_plan.md](docs/testing_plan.md) for patterns, tips, and coverage status.
 
 Key points:
 - Tests live in `tests/` with matching structure to `src/`
