@@ -3,17 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { characters } from "@/data/resources";
-import type {
-  Character,
-  Element,
-  Rarity,
-  Region,
-  WeaponType,
-} from "@/data/types";
+import type { Character, CharacterFilters } from "@/data/types";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
+import {
+  defaultCharacterFilters,
+  filterAndSortCharacters,
+  hasActiveFilters,
+} from "@/lib/characterFilters";
+import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Filter } from "lucide-react";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CharacterBuildCard } from "./CharacterBuildCard";
 
 export interface ConfigureViewRef {
@@ -22,64 +28,25 @@ export interface ConfigureViewRef {
 
 export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
   const { t } = useLanguage();
+  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const hasTierData = Object.keys(tierAssignments).length > 0;
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [filters, setFilters] = useState({
-    elements: [] as Element[],
-    weaponTypes: [] as WeaponType[],
-    regions: [] as Region[],
-    rarities: [] as Rarity[],
-    sortOrder: "desc" as "asc" | "desc",
-  });
+  const [filters, setFilters] = useState<CharacterFilters>(
+    defaultCharacterFilters
+  );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Use custom hook for scroll forwarding from margin areas to main content
   useGlobalScroll(containerRef, mainScrollRef);
 
-  const filteredAndSortedCharacters = (() => {
-    const filtered = characters.filter((character) => {
-      if (
-        filters.elements.length > 0 &&
-        !filters.elements.includes(character.element)
-      ) {
-        return false;
-      }
-      if (
-        filters.weaponTypes.length > 0 &&
-        !filters.weaponTypes.includes(character.weaponType)
-      ) {
-        return false;
-      }
-      if (
-        filters.regions.length > 0 &&
-        !filters.regions.includes(character.region)
-      ) {
-        return false;
-      }
-      if (
-        filters.rarities.length > 0 &&
-        !filters.rarities.includes(character.rarity)
-      ) {
-        return false;
-      }
-      return true;
-    });
+  // Use shared filter and sort utility (no tier sort in artifact filter - no tier context)
+  const filteredAndSortedCharacters = useMemo(
+    () => filterAndSortCharacters(characters, filters),
+    [filters]
+  );
 
-    // Sort by release date
-    return filtered.sort((a, b) => {
-      const dateA = new Date(a.releaseDate);
-      const dateB = new Date(b.releaseDate);
-      return filters.sortOrder === "asc"
-        ? dateA.getTime() - dateB.getTime()
-        : dateB.getTime() - dateA.getTime();
-    });
-  })();
-
-  const hasActiveFilters =
-    filters.elements.length > 0 ||
-    filters.weaponTypes.length > 0 ||
-    filters.regions.length > 0 ||
-    filters.rarities.length > 0;
+  const activeFilters = hasActiveFilters(filters);
 
   return (
     <>
@@ -92,6 +59,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
           <CharacterFilterSidebar
             filters={filters}
             onFiltersChange={setFilters}
+            hasTierData={hasTierData}
           />
         </aside>
 
@@ -106,7 +74,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
             >
               <Filter className="w-4 h-4" />
               {t.ui("filters.title")}
-              {hasActiveFilters && (
+              {activeFilters && (
                 <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
                   {
                     [
@@ -156,6 +124,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
               filters={filters}
               onFiltersChange={setFilters}
               isInSidePanel={false}
+              hasTierData={hasTierData}
             />
           </div>
         </SheetContent>

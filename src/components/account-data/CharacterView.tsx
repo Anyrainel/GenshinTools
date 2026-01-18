@@ -4,9 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { CharacterFilters } from "@/data/types";
+import {
+  type Character,
+  type CharacterData,
+  type CharacterFilters,
+  tiers,
+} from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import {
+  defaultCharacterFilters,
+  filterAndSortCharacters,
+  hasActiveFilters,
+} from "@/lib/characterFilters";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { Filter } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -17,72 +28,38 @@ interface CharacterViewProps {
 export const CharacterView = ({ scores }: CharacterViewProps) => {
   const { t } = useLanguage();
   const { accountData } = useAccountStore();
-  const [filters, setFilters] = useState<CharacterFilters>({
-    elements: [],
-    weaponTypes: [],
-    regions: [],
-    rarities: [],
-    sortOrder: "desc",
-  });
+  const tierAssignments = useTierStore((state) => state.tierAssignments);
+  const [filters, setFilters] = useState<CharacterFilters>(
+    defaultCharacterFilters
+  );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Filter Logic
+  // Filter and sort characters using shared utility
   const filteredCharacters = useMemo(() => {
     if (!accountData) return [];
-    let chars = [...accountData.characters];
 
-    // Filter by Element
-    if (filters.elements.length > 0) {
-      chars = chars.filter((c) => {
-        const info = charactersById[c.key];
-        return info && filters.elements.includes(info.element);
-      });
-    }
+    // Convert account characters to Character type for the shared filter
+    const chars = accountData.characters
+      .map((c) => charactersById[c.key])
+      .filter((c): c is Character => c !== undefined);
 
-    // Filter by Weapon Type
-    if (filters.weaponTypes.length > 0) {
-      chars = chars.filter((c) => {
-        const info = charactersById[c.key];
-        return info && filters.weaponTypes.includes(info.weaponType);
-      });
-    }
+    const sorted = filterAndSortCharacters(
+      chars,
+      filters,
+      tierAssignments,
+      tiers
+    );
 
-    // Filter by Region
-    if (filters.regions.length > 0) {
-      chars = chars.filter((c) => {
-        const info = charactersById[c.key];
-        return info && filters.regions.includes(info.region);
-      });
-    }
+    // Map back to account character objects for rendering
+    return sorted
+      .map((c) => accountData.characters.find((ac) => ac.key === c.id))
+      .filter((c): c is CharacterData => c !== undefined);
+  }, [accountData, filters, tierAssignments]);
 
-    // Filter by Rarity
-    if (filters.rarities.length > 0) {
-      chars = chars.filter((c) => {
-        const info = charactersById[c.key];
-        return info && filters.rarities.includes(info.rarity);
-      });
-    }
+  const activeFilters = hasActiveFilters(filters);
 
-    // Sort
-    chars.sort((a, b) => {
-      const infoA = charactersById[a.key];
-      const infoB = charactersById[b.key];
-      if (!infoA || !infoB) return 0;
-
-      const dateA = new Date(infoA.releaseDate).getTime();
-      const dateB = new Date(infoB.releaseDate).getTime();
-
-      return filters.sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-    });
-
-    return chars;
-  }, [accountData, filters]);
-
-  const hasActiveFilters =
-    filters.elements.length > 0 ||
-    filters.weaponTypes.length > 0 ||
-    filters.regions.length > 0 ||
-    filters.rarities.length > 0;
+  // Tier data exists if there are any tier assignments
+  const hasTierData = Object.keys(tierAssignments).length > 0;
 
   if (!accountData) return null;
 
@@ -97,7 +74,7 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
         >
           <Filter className="w-4 h-4" />
           {t.ui("filters.title")}
-          {hasActiveFilters && (
+          {activeFilters && (
             <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
               {
                 [
@@ -117,6 +94,7 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
         <CharacterFilterSidebar
           filters={filters}
           onFiltersChange={setFilters}
+          hasTierData={hasTierData}
         />
       </div>
 
@@ -141,6 +119,7 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
               filters={filters}
               onFiltersChange={setFilters}
               isInSidePanel={false}
+              hasTierData={hasTierData}
             />
           </div>
         </SheetContent>

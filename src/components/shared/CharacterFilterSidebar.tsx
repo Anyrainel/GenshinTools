@@ -1,7 +1,13 @@
+import { SortToggleGroup } from "@/components/shared/SortToggleGroup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   elementResourcesByName,
@@ -11,24 +17,27 @@ import {
   type CharacterFilters,
   type Element,
   type Rarity,
+  type SortDirection,
   type WeaponType,
   elements,
   regions,
   weaponTypes,
 } from "@/data/types";
 import { getAssetUrl } from "@/lib/utils";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface CharacterFilterSidebarProps {
   filters: CharacterFilters;
   onFiltersChange: (filters: CharacterFilters) => void;
   isInSidePanel?: boolean;
+  hasTierData?: boolean;
 }
 
 export function CharacterFilterSidebar({
   filters,
   onFiltersChange,
   isInSidePanel = true,
+  hasTierData = true,
 }: CharacterFilterSidebarProps) {
   const { t } = useLanguage();
 
@@ -61,32 +70,51 @@ export function CharacterFilterSidebar({
     <div className="space-y-6">
       {/* Sort Order */}
       <div className="flex flex-col space-y-3">
-        <Label className="text-foreground text-base font-medium">
+        <Label className="text-foreground text-lg font-semibold">
           {t.ui("filters.sort")}
         </Label>
-        <Button
-          variant="outline"
-          onClick={() =>
-            onFiltersChange({
-              ...filters,
-              sortOrder: filters.sortOrder === "asc" ? "desc" : "asc",
-            })
-          }
-          className="justify-center gap-2 h-9 px-6 mx-auto"
-        >
-          {filters.sortOrder === "asc" ? (
-            <ArrowUp className="w-4 h-4" />
+        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 items-center">
+          {/* Tier sort row - with optional disabled tooltip */}
+          {hasTierData ? (
+            <Label className="text-foreground text-sm font-medium">
+              {t.ui("filters.sortByTier")}
+            </Label>
           ) : (
-            <ArrowDown className="w-4 h-4" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Label className="text-muted-foreground text-sm font-medium flex items-center gap-1 cursor-help">
+                  {t.ui("filters.sortByTier")}
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                </Label>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.ui("filters.tierSortDisabled")}</p>
+              </TooltipContent>
+            </Tooltip>
           )}
-          {t.ui("filters.sortByReleaseDate")}
-        </Button>
+          <SortToggleGroup
+            value={filters.tierSort}
+            onChange={(v: SortDirection) =>
+              onFiltersChange({ ...filters, tierSort: v })
+            }
+            disabled={!hasTierData}
+          />
+          <Label className="text-foreground text-sm font-medium">
+            {t.ui("filters.sortByReleaseDate")}
+          </Label>
+          <SortToggleGroup
+            value={filters.releaseSort}
+            onChange={(v: SortDirection) =>
+              onFiltersChange({ ...filters, releaseSort: v })
+            }
+          />
+        </div>
       </div>
 
       {/* Elements */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-base font-medium">
+          <Label className="text-foreground text-lg font-semibold">
             {t.ui("filters.elements")}
           </Label>
           {filters.elements.length > 0 && (
@@ -130,7 +158,7 @@ export function CharacterFilterSidebar({
       {/* Rarity */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-base font-medium">
+          <Label className="text-foreground text-lg font-semibold">
             {t.ui("filters.rarity")}
           </Label>
           {filters.rarities.length > 0 && (
@@ -173,7 +201,7 @@ export function CharacterFilterSidebar({
       {/* Weapon Types */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-base font-medium">
+          <Label className="text-foreground text-lg font-semibold">
             {t.ui("filters.weaponTypes")}
           </Label>
           {filters.weaponTypes.length > 0 && (
@@ -217,7 +245,7 @@ export function CharacterFilterSidebar({
       {/* Regions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-foreground text-base font-medium">
+          <Label className="text-foreground text-lg font-semibold">
             {t.ui("filters.regions")}
           </Label>
           {filters.regions.length > 0 && (

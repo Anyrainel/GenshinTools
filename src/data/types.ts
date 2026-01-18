@@ -307,12 +307,15 @@ export type AccountData = {
   extraWeapons: WeaponData[];
 };
 
+export type SortDirection = "asc" | "desc" | "off";
+
 export interface CharacterFilters {
   elements: Element[];
   weaponTypes: WeaponType[];
   regions: Region[];
   rarities: Rarity[];
-  sortOrder: "asc" | "desc";
+  tierSort: SortDirection;
+  releaseSort: SortDirection;
 }
 
 export type StatWeightMap = Record<string, number>; // key: MainStat | SubStat (e.g. "atk%", "cr", "pyro%"), value: 0-100
