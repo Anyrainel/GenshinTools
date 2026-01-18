@@ -1,5 +1,4 @@
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/shared/Layout";
 import AccountDataPage from "./pages/AccountData";
@@ -63,7 +62,6 @@ function App() {
         />
       </Routes>
       <Toaster />
-      <Sonner />
     </>
   );
 }

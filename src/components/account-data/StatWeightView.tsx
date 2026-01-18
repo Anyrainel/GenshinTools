@@ -544,10 +544,7 @@ export const StatWeightView = () => {
           <div className="absolute inset-0 px-12 pb-4">
             <div className="h-full rounded-md border border-white/10 overflow-hidden">
               <ScrollArea className="h-full">
-                <Table
-                  containerClassName="overflow-visible"
-                  className="table-fixed"
-                >
+                <Table className="table-fixed">
                   <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
                     <TableRow className="hover:bg-transparent border-white/10 text-base">
                       <TableHead className="w-[240px] pl-4">
