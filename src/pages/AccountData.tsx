@@ -305,28 +305,28 @@ export default function AccountDataPage() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4">
+              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 h-11">
                 <TabsTrigger
                   value="characters"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("accountData.characters")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="summary"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("accountData.summary")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="weights"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("accountData.statWeights")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="inventory"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("accountData.inventory")}
                 </TabsTrigger>

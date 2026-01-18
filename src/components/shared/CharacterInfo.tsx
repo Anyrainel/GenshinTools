@@ -80,7 +80,7 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               elementTextColor,
-              "border-current border-2 font-medium text-base flex items-center gap-1"
+              "rounded-full shadow-none border-current border-2 font-medium text-base flex items-center gap-1"
             )}
           >
             <img
@@ -95,14 +95,14 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               rarityTextColor,
-              "border-current border-2 font-semibold text-base"
+              "rounded-full shadow-none border-current border-2 font-semibold text-base"
             )}
           >
             ★ {character.rarity}
           </Badge>
           <Badge
             variant="outline"
-            className="text-slate-400 border-slate-400 border-2 font-medium text-base capitalize flex items-center gap-1"
+            className="rounded-full shadow-none text-slate-400 border-slate-400 border-2 font-medium text-base capitalize flex items-center gap-1"
           >
             <img
               src={getAssetUrl(weaponImagePath)}
@@ -114,7 +114,7 @@ export const CharacterInfo = memo(
           </Badge>
           <Badge
             variant="outline"
-            className="text-slate-500 border-slate-500 border-2 font-medium text-base capitalize"
+            className="rounded-full shadow-none text-slate-500 border-slate-500 border-2 font-medium text-base capitalize"
           >
             {regionName}
           </Badge>

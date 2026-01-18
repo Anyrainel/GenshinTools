@@ -66,7 +66,7 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
                 <Button
                   onClick={handleAddBuild}
                   variant="outline"
-                  className="gap-2"
+                  className="gap-2 text-base h-10"
                 >
                   <Plus className="w-4 h-4" />
                   {t.ui("characterCard.addFirstBuild")}
@@ -95,7 +95,7 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
                   onClick={handleAddBuild}
                   variant="outline"
                   size="sm"
-                  className="w-full gap-2"
+                  className="w-full gap-2 text-base h-10"
                 >
                   <Plus className="w-4 h-4" />
                   {t.ui("characterCard.addBuild")}

@@ -81,7 +81,7 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="outline"
-              className="text-sm bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+              className="font-normal shadow-none text-sm bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
             >
               {getStatDisplayName(stat)}
             </Badge>
@@ -111,7 +111,7 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="secondary"
-              className={`text-sm ${
+              className={`font-normal shadow-none text-sm ${
                 isMustPresent
                   ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
                   : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"

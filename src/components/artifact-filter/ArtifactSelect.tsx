@@ -103,6 +103,7 @@ function ArtifactSelectComponent({
         className="w-[430px] overflow-y-auto max-h-96"
         side="right"
         align="start"
+        onWheel={(e) => e.stopPropagation()}
       >
         <div className="grid grid-cols-2 gap-0.5 p-0.5">
           {artifactList.map((artifact, index) => (
@@ -189,7 +190,10 @@ function ArtifactSelectHalfComponent({
         <SelectTrigger className="w-full min-h-8 h-auto text-sm px-2 py-1 [&>span]:line-clamp-2 bg-gradient-select">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
-        <SelectContent className="max-h-96 overflow-y-auto">
+        <SelectContent
+          className="max-h-96 overflow-y-auto"
+          onWheel={(e) => e.stopPropagation()}
+        >
           {halfSetList.map((halfSet) => (
             <SelectItem key={halfSet.id} value={halfSet.id.toString()}>
               <div className="flex items-center gap-2">

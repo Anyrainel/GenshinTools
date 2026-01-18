@@ -193,16 +193,16 @@ const Index = () => {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2">
+              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2 h-11">
                 <TabsTrigger
                   value="configure"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("navigation.configure")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="filters"
-                  className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 >
                   {t.ui("navigation.computeFilters")}
                 </TabsTrigger>
