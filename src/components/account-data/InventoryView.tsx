@@ -1,17 +1,17 @@
-import { AccountData } from "@/data/types";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { weaponsById, artifactsById } from "@/data/constants";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { Card } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Card } from "@/components/ui/card";
-import { StatDisplay } from "./StatDisplay";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { artifactsById, weaponsById } from "@/data/constants";
+import type { AccountData } from "@/data/types";
 import { THEME } from "@/lib/theme";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { StatDisplay } from "./StatDisplay";
 
 interface InventoryViewProps {
   data: AccountData;
@@ -87,7 +87,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                         "aspect-square relative rounded border bg-card/50 overflow-hidden group cursor-help",
                         THEME.rarity.border[
                           a.rarity as keyof typeof THEME.rarity.border
-                        ],
+                        ]
                       )}
                     >
                       {artInfo && (
@@ -113,7 +113,7 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
                             "font-bold text-base",
                             THEME.rarity.text[
                               a.rarity as keyof typeof THEME.rarity.text
-                            ],
+                            ]
                           )}
                         >
                           {name}

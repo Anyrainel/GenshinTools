@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { Build, BuildPayload, ComputeOptions } from "../data/types";
-import { BUILD_DATA_VERSION } from "./jsonUtils";
+import type { Build, BuildPayload, ComputeOptions } from "../data/types";
 import { DEFAULT_COMPUTE_OPTIONS } from "../lib/computeFilters";
+import { BUILD_DATA_VERSION } from "./jsonUtils";
 
 interface BuildsState {
   // State
@@ -193,9 +193,9 @@ export const useBuildsStore = create<BuildsState>()(
           if (payload.author) state.author = payload.author;
           if (payload.description) state.description = payload.description;
 
-          payload.data.forEach(({ characterId, builds }) => {
+          for (const { characterId, builds } of payload.data) {
             const buildIds: string[] = [];
-            builds.forEach((build) => {
+            for (const build of builds) {
               const buildWithCharacterId: Build = {
                 ...build,
                 characterId,
@@ -203,30 +203,30 @@ export const useBuildsStore = create<BuildsState>()(
 
               state.builds[build.id] = buildWithCharacterId;
               buildIds.push(build.id);
-            });
+            }
 
             if (buildIds.length > 0) {
               state.characterToBuildIds[characterId] = buildIds;
             }
-          });
+          }
 
           // Handle character weapons if present in payload
-          payload.data.forEach(({ characterId, weapons }) => {
+          for (const { characterId, weapons } of payload.data) {
             if (weapons && weapons.length > 0) {
               state.characterWeapons[characterId] = weapons.slice(0, 3);
             } else {
               delete state.characterWeapons[characterId];
             }
-          });
+          }
 
           // Apply character hidden flags (default to false if not provided)
-          payload.data.forEach(({ characterId, hidden }) => {
+          for (const { characterId, hidden } of payload.data) {
             if (hidden) {
               state.hiddenCharacters[characterId] = true;
             } else {
               delete state.hiddenCharacters[characterId];
             }
-          });
+          }
 
           state.computeOptions = {
             ...DEFAULT_COMPUTE_OPTIONS,
@@ -267,6 +267,6 @@ export const useBuildsStore = create<BuildsState>()(
     {
       name: "artifact-filter-builds",
       version: BUILD_DATA_VERSION,
-    },
-  ),
+    }
+  )
 );

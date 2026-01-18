@@ -1,12 +1,12 @@
-import { useMemo, useState, useRef, useCallback, RefObject } from "react";
-import { Build, ComputeOptions } from "@/data/types";
-import { artifacts } from "@/data/resources";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useBuildsStore } from "@/stores/useBuildsStore";
+import { artifacts } from "@/data/resources";
+import type { Build, ComputeOptions } from "@/data/types";
+import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { computeArtifactFilters } from "@/lib/computeFilters";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactCard } from "./ArtifactCard";
 import { ComputeSidebar, ComputeSidebarMobile } from "./ComputeSidebar";
-import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 
 interface ComputeViewProps {
   onJumpToCharacter: (characterId: string) => void;
@@ -34,7 +34,7 @@ export function ComputeView({
 
   // Get data from Zustand store
   const characterToBuildIds = useBuildsStore(
-    (state) => state.characterToBuildIds,
+    (state) => state.characterToBuildIds
   );
   const buildsMap = useBuildsStore((state) => state.builds);
   const hiddenCharacters = useBuildsStore((state) => state.hiddenCharacters);
@@ -47,7 +47,7 @@ export function ComputeView({
         characterId,
         builds: buildIds
           .map((id) => buildsMap[id])
-          .filter((b): b is Build => b !== undefined && b.visible),
+          .filter((b): b is Build => b?.visible),
         hidden: false,
       }));
   }, [characterToBuildIds, buildsMap, hiddenCharacters]);
@@ -74,7 +74,7 @@ export function ComputeView({
     <K extends keyof ComputeOptions>(key: K, value: ComputeOptions[K]) => {
       setComputeOptions({ [key]: value });
     },
-    [setComputeOptions],
+    [setComputeOptions]
   );
 
   const hasActiveFilters = searchQuery.length > 0;

@@ -1,14 +1,14 @@
-import { useState, useMemo } from "react";
-import { useAccountStore } from "@/stores/useAccountStore";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
-import { CharacterFilters } from "@/data/types";
-import { charactersById } from "@/data/constants";
 import { CharacterCard } from "@/components/account-data/CharacterCard";
+import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
+import type { CharacterFilters } from "@/data/types";
+import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { Filter } from "lucide-react";
-import { ArtifactScoreResult } from "@/lib/artifactScore";
+import { useMemo, useState } from "react";
 
 interface CharacterViewProps {
   scores: Record<string, ArtifactScoreResult>;

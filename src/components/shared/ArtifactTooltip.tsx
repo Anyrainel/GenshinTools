@@ -1,8 +1,8 @@
-import React from "react";
-import { artifactsById } from "@/data/constants";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
+import { artifactsById } from "@/data/constants";
 import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import type React from "react";
 
 interface ArtifactTooltipProps {
   setId: string;
@@ -27,7 +27,7 @@ export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          THEME.rarity.bg[artifact.rarity],
+          THEME.rarity.bg[artifact.rarity]
         )}
       >
         {/* Background gradient overlay */}

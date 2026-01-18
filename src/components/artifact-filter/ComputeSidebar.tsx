@@ -1,17 +1,17 @@
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { ComputeOptions } from "@/data/types";
 import { Filter } from "lucide-react";
-import { ComputeOptions } from "@/data/types";
 
 interface ComputeSidebarProps {
   searchQuery: string;
@@ -19,7 +19,7 @@ interface ComputeSidebarProps {
   computeOptions: ComputeOptions;
   onComputeOptionChange: <K extends keyof ComputeOptions>(
     key: K,
-    value: ComputeOptions[K],
+    value: ComputeOptions[K]
   ) => void;
   isInSidePanel?: boolean;
 }

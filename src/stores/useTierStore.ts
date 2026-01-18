@@ -1,6 +1,6 @@
+import type { TierAssignment, TierCustomization } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { TierAssignment, TierCustomization } from "@/data/types";
 
 interface TierListState {
   tierAssignments: TierAssignment;
@@ -13,7 +13,7 @@ interface TierListState {
 
   // Actions
   setTierAssignments: (
-    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment),
+    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
   ) => void;
   setTierCustomization: (customization: TierCustomization) => void;
   setCustomTitle: (title: string) => void;
@@ -93,6 +93,6 @@ export const useTierStore = create<TierListState>()(
         author: state.author,
         description: state.description,
       }),
-    },
-  ),
+    }
+  )
 );

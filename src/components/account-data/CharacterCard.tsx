@@ -1,25 +1,25 @@
-import { CharacterData } from "@/data/types";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
-import { charactersById, weaponsById, artifactsById } from "@/data/constants";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatDisplay } from "./StatDisplay";
-import { Sword } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { artifactsById, charactersById, weaponsById } from "@/data/constants";
+import type { CharacterData } from "@/data/types";
 import {
+  type ArtifactScoreResult,
   calculateArtifactScore,
-  ArtifactScoreResult,
 } from "@/lib/artifactScore";
-import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
+import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { Sword } from "lucide-react";
+import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
   char: CharacterData;
@@ -41,11 +41,11 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
 
   // Set Bonus Logic
   const setCounts: Record<string, number> = {};
-  Object.values(char.artifacts || {}).forEach((a) => {
+  for (const a of Object.values(char.artifacts || {})) {
     if (a) {
       setCounts[a.setKey] = (setCounts[a.setKey] || 0) + 1;
     }
-  });
+  }
 
   const activeSets = Object.entries(setCounts)
     .filter((entry) => entry[1] >= 2)
@@ -154,7 +154,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
                   <div className="flex flex-col items-start">
                     <span
                       className={cn(
-                        "text-lg font-semibold text-gray-200 hover:text-primary transition-colors leading-tight",
+                        "text-lg font-semibold text-gray-200 hover:text-primary transition-colors leading-tight"
                       )}
                     >
                       {t.artifact(setKey)}
@@ -215,7 +215,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
               <div
                 className={cn(
                   "flex flex-col p-2 relative transition-colors",
-                  art ? "group hover:bg-white/5" : "opacity-30",
+                  art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >
                 {art ? (

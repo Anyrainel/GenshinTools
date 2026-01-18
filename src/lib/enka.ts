@@ -1,16 +1,16 @@
 import {
+  artifactIdMap,
+  characterIdMap,
+  statIdMap,
+  weaponIdMap,
+} from "@/data/enkaIdMap";
+import type {
   GOODData,
   IGOODArtifact,
-  IGOODWeapon,
   IGOODCharacter,
   IGOODSubstat,
+  IGOODWeapon,
 } from "@/lib/goodConversion";
-import {
-  characterIdMap,
-  artifactIdMap,
-  weaponIdMap,
-  statIdMap,
-} from "@/data/enkaIdMap";
 
 export type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
 export type StatKey = string;
@@ -158,13 +158,13 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
   const weapons: IGOODWeapon[] = [];
 
   if (enkaData.avatarInfoList) {
-    enkaData.avatarInfoList.forEach((avatar) => {
+    for (const avatar of enkaData.avatarInfoList) {
       const charId = String(avatar.avatarId);
       const charName = characterIdMap[charId];
 
       if (!charName) {
         console.warn(`Unknown character ID: ${charId}`);
-        return;
+        continue;
       }
 
       const charKey = toPascalKey(charName);
@@ -187,7 +187,7 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
 
       // Equips
       if (avatar.equipList) {
-        avatar.equipList.forEach((equip) => {
+        for (const equip of avatar.equipList) {
           const flat = equip.flat;
 
           if (flat.itemType === "ITEM_WEAPON") {
@@ -227,7 +227,7 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
 
               // Use flat.reliquarySubstats
               if (flat.reliquarySubstats) {
-                flat.reliquarySubstats.forEach((sub) => {
+                for (const sub of flat.reliquarySubstats) {
                   const statKey = statIdMap[String(sub.appendPropId)];
                   if (statKey) {
                     substats.push({
@@ -235,7 +235,7 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
                       value: sub.statValue,
                     });
                   }
-                });
+                }
               }
 
               if (slotKey && mainStatKey) {
@@ -252,9 +252,9 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
               }
             }
           }
-        });
+        }
       }
-    });
+    }
   }
 
   return {

@@ -1,15 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
   type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
 } from "react";
-import type { Language } from "../data/types";
-import { i18nGameData } from "../data/i18n-game";
 import { i18nAppData } from "../data/i18n-app";
+import { i18nGameData } from "../data/i18n-game";
+import type { Language } from "../data/types";
 
 interface LanguageContextType {
   language: Language;
@@ -37,7 +37,7 @@ interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(
-  undefined,
+  undefined
 );
 
 const LANGUAGE_STORAGE_KEY = "app_language";
@@ -82,7 +82,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return chars[characterId]?.[language] || characterId;
     },
-    [language],
+    [language]
   );
 
   const getArtifactSetName = useCallback(
@@ -93,7 +93,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return arts[setId]?.name?.[language] || setId;
     },
-    [language],
+    [language]
   );
 
   const getArtifactSetEffects = useCallback(
@@ -104,7 +104,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return arts[setId]?.effects?.[language] || [];
     },
-    [language],
+    [language]
   );
 
   const getArtifactHalfSetName = useCallback(
@@ -115,7 +115,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return halfSets?.[id.toString()]?.[language] || `Half Set ${id}`;
     },
-    [language],
+    [language]
   );
 
   const getRegionName = useCallback(
@@ -126,7 +126,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return regs[regionKey]?.[language] || regionKey;
     },
-    [language],
+    [language]
   );
 
   const getStatName = useCallback(
@@ -134,7 +134,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       const stats = i18nAppData.stats as Record<string, Record<string, string>>;
       return stats[statKey]?.[language] || statKey;
     },
-    [language],
+    [language]
   );
 
   const getStatShortName = useCallback(
@@ -145,21 +145,21 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return stats[statKey]?.[language] || statKey;
     },
-    [language],
+    [language]
   );
 
   const getMainStatName = useCallback(
     (statKey: string): string => {
       return getStatName(statKey);
     },
-    [getStatName],
+    [getStatName]
   );
 
   const getSubStatName = useCallback(
     (statKey: string): string => {
       return getStatName(statKey);
     },
-    [getStatName],
+    [getStatName]
   );
 
   const getElementName = useCallback(
@@ -170,7 +170,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return elems[element]?.[language] || element;
     },
-    [language],
+    [language]
   );
 
   const getWeaponTypeName = useCallback(
@@ -181,7 +181,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return weaps[weaponType]?.[language] || weaponType;
     },
-    [language],
+    [language]
   );
 
   const getWeaponName = useCallback(
@@ -192,7 +192,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return weaponData[weaponId]?.name?.[language] || weaponId;
     },
-    [language],
+    [language]
   );
 
   const getWeaponEffect = useCallback(
@@ -203,7 +203,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       >;
       return weaponData[weaponId]?.effect?.[language] || "";
     },
-    [language],
+    [language]
   );
 
   const formatReleaseDate = useCallback(
@@ -214,25 +214,24 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
       if (language === "zh") {
         return `${year}年${month}月`;
-      } else {
-        const monthNames = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-        return `${monthNames[month - 1]} ${year}`;
       }
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      return `${monthNames[month - 1]} ${year}`;
     },
-    [language],
+    [language]
   );
 
   const getUIMessage = useCallback(
@@ -250,7 +249,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
       return (current as Record<string, string>)?.[language] || path;
     },
-    [language],
+    [language]
   );
 
   const formatString = useCallback(
@@ -262,7 +261,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           : match;
       });
     },
-    [getUIMessage],
+    [getUIMessage]
   );
 
   // Memoize the t object to prevent recreation on every render
@@ -304,7 +303,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getUIMessage,
       formatString,
       language,
-    ],
+    ]
   );
 
   // Memoize context value to prevent cascading re-renders
@@ -315,7 +314,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       toggleLanguage,
       t,
     }),
-    [language, setLanguage, toggleLanguage, t],
+    [language, setLanguage, toggleLanguage, t]
   );
 
   return (

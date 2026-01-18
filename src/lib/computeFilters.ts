@@ -3,20 +3,20 @@
  * Based on V3 algorithm with coverage theorem and merge rules
  */
 
-import {
-  Build,
-  SetConfig,
-  ArtifactSetConfigs,
-  MainStat,
-  MainStatPlus,
-  MainStatSlot,
-  SubStat,
-  BuildGroup,
-  SlotConfig,
-  mainStatsPlus,
-  ComputeOptions,
-} from "../data/types";
 import { artifactHalfSetsById, elementalMainStats } from "../data/constants";
+import {
+  type ArtifactSetConfigs,
+  type Build,
+  type BuildGroup,
+  type ComputeOptions,
+  type MainStat,
+  type MainStatPlus,
+  type MainStatSlot,
+  type SetConfig,
+  type SlotConfig,
+  type SubStat,
+  mainStatsPlus,
+} from "../data/types";
 import { simpleMerge } from "./simpleMerge";
 
 export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {
@@ -36,42 +36,40 @@ export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {
  */
 export function computeArtifactFilters(
   buildGroups: BuildGroup[],
-  options: ComputeOptions = DEFAULT_COMPUTE_OPTIONS,
+  options: ComputeOptions = DEFAULT_COMPUTE_OPTIONS
 ): ArtifactSetConfigs[] {
   const mergedOptions = { ...DEFAULT_COMPUTE_OPTIONS, ...options };
   const setFilters: Record<string, SetConfig[]> = {};
 
   // PHASE 1: ADD - Create configs from all builds
   // Filter out hidden build groups first
-  buildGroups
-    .filter((group) => !group.hidden)
-    .forEach(({ characterId, builds }) => {
-      builds
-        .filter((build) => build.visible)
-        .forEach((build) => {
-          const relevantSets = getRelevantArtifactSets(build);
-          const is4pc = build.composition === "4pc";
+  const visibleGroups = buildGroups.filter((group) => !group.hidden);
+  for (const { characterId, builds } of visibleGroups) {
+    const visibleBuilds = builds.filter((build) => build.visible);
+    for (const build of visibleBuilds) {
+      const relevantSets = getRelevantArtifactSets(build);
+      const is4pc = build.composition === "4pc";
 
-          relevantSets.forEach((setId) => {
-            if (!setFilters[setId]) {
-              setFilters[setId] = [];
-            }
+      for (const setId of relevantSets) {
+        if (!setFilters[setId]) {
+          setFilters[setId] = [];
+        }
 
-            const config = createConfigFromBuild(
-              build,
-              characterId,
-              is4pc,
-              mergedOptions,
-            );
+        const config = createConfigFromBuild(
+          build,
+          characterId,
+          is4pc,
+          mergedOptions
+        );
 
-            // Skip CR+CD builds if option enabled
-            if (mergedOptions.skipCritBuilds && hasCrCdMustPresent(config)) {
-              return;
-            }
-            setFilters[setId].push(config);
-          });
-        });
-    });
+        // Skip CR+CD builds if option enabled
+        if (mergedOptions.skipCritBuilds && hasCrCdMustPresent(config)) {
+          continue;
+        }
+        setFilters[setId].push(config);
+      }
+    }
+  }
 
   // PHASE 2: MERGE - Merge configs using Coverage Theorem rules
   for (const setId in setFilters) {
@@ -135,7 +133,7 @@ const mainStatIndex: Record<string, number> = mainStatsPlus.reduce(
     acc[stat] = index;
     return acc;
   },
-  {} as Record<string, number>,
+  {} as Record<string, number>
 );
 
 const SPECIAL_MAIN_STAT_ORDER: Record<string, number> = {
@@ -144,7 +142,7 @@ const SPECIAL_MAIN_STAT_ORDER: Record<string, number> = {
 
 function sortMainStats(mainStats: MainStatPlus[]): MainStatPlus[] {
   return [...mainStats].sort(
-    (a, b) => getMainStatOrder(a) - getMainStatOrder(b),
+    (a, b) => getMainStatOrder(a) - getMainStatOrder(b)
   );
 }
 
@@ -171,7 +169,7 @@ function getMainStatOrder(stat: MainStatPlus): number {
  */
 function detectMustPresent(
   substats: SubStat[],
-  minStatCount: number,
+  minStatCount: number
 ): SubStat[] {
   if (substats.length < 2) return [];
 
@@ -205,7 +203,8 @@ function hasCrCdMustPresent(config: SetConfig): boolean {
 function getRelevantArtifactSets(build: Build): string[] {
   if (build.composition === "4pc" && build.artifactSet) {
     return [build.artifactSet];
-  } else if (
+  }
+  if (
     build.composition === "2pc+2pc" &&
     build.halfSet1 !== undefined &&
     build.halfSet2 !== undefined
@@ -231,7 +230,7 @@ function createConfigFromBuild(
   build: Build,
   characterId: string,
   is4pc: boolean,
-  options: ComputeOptions,
+  options: ComputeOptions
 ): SetConfig {
   const minStatCount = build.kOverride ?? build.substats.length;
 
@@ -244,13 +243,13 @@ function createConfigFromBuild(
     build.goblet,
     "goblet",
     options,
-    is4pc,
+    is4pc
   );
   const circletMainStats = expandMainStats(
     build.circlet,
     "circlet",
     options,
-    is4pc,
+    is4pc
   );
 
   return {
@@ -296,19 +295,19 @@ function expandMainStats(
   mainStats: MainStat[],
   slot: MainStatSlot,
   options: ComputeOptions,
-  is4pc: boolean = false,
+  is4pc = false
 ): MainStatPlus[] {
   const result: MainStatPlus[] = [...mainStats];
 
   // Expand elemental DMG%
   if (options.expandElementalGoblet && slot === "goblet") {
     const hasAnyElemental = mainStats.some((m) =>
-      elementalMainStats.includes(m),
+      elementalMainStats.includes(m)
     );
     if (hasAnyElemental) {
       // Replace all elemental types with 'elemental%'
       const nonElemental = result.filter(
-        (m) => !elementalMainStats.includes(m as MainStat),
+        (m) => !elementalMainStats.includes(m as MainStat)
       );
       return ["elemental%", ...nonElemental];
     }

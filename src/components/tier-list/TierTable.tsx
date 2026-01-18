@@ -1,21 +1,21 @@
+import { tiers } from "@/data/types";
 import {
   DndContext,
+  type DragEndEvent,
+  type DragOverEvent,
   DragOverlay,
-  PointerSensor,
+  type DragStartEvent,
   KeyboardSensor,
+  PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
-  DragStartEvent,
-  DragEndEvent,
-  DragOverEvent,
-  pointerWithin,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { TierItemPreview } from "./TierItemPreview";
-import { TierItemData } from "./TierItem";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TierGrid } from "./TierGrid";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { tiers } from "@/data/types";
+import type { TierItemData } from "./TierItem";
+import { TierItemPreview } from "./TierItemPreview";
 
 interface TierTableProps<T extends TierItemData> {
   items: T[];
@@ -32,7 +32,7 @@ interface TierTableProps<T extends TierItemData> {
   getItemGroup: (item: T) => string;
   getGroupCount: (
     group: string,
-    itemsPerTier: { [tier: string]: T[] },
+    itemsPerTier: { [tier: string]: T[] }
   ) => number;
   renderHeader: (group: string, count: number) => React.ReactNode;
   renderPreview: (item: T) => React.ReactNode;
@@ -89,7 +89,7 @@ export function TierTable<T extends TierItemData>({
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const allTiers = useMemo(() => {
@@ -99,27 +99,27 @@ export function TierTable<T extends TierItemData>({
   const itemsPerTier = useMemo(() => {
     const map: { [tier: string]: T[] } = {};
 
-    allTiers.forEach((tier) => {
+    for (const tier of allTiers) {
       map[tier] = [];
-    });
+    }
 
-    items.forEach((item) => {
+    for (const item of items) {
       if (filterItem && !filterItem(item)) {
-        return;
+        continue;
       }
       const assignment = localAssignments[item.id];
       if (assignment) {
         if (!tierCustomization[assignment.tier]?.hidden) {
           map[assignment.tier].push(item);
         } else {
-          map["Pool"].push(item);
+          map.Pool.push(item);
         }
       } else {
-        map["Pool"].push(item);
+        map.Pool.push(item);
       }
-    });
+    }
 
-    allTiers.forEach((tier) => {
+    for (const tier of allTiers) {
       map[tier].sort((a, b) => {
         const assignmentA = localAssignments[a.id];
         const assignmentB = localAssignments[b.id];
@@ -127,7 +127,7 @@ export function TierTable<T extends TierItemData>({
         const posB = assignmentB?.position ?? 0;
         return posA - posB;
       });
-    });
+    }
 
     return map;
   }, [localAssignments, tierCustomization, allTiers, items, filterItem]);
@@ -211,9 +211,14 @@ export function TierTable<T extends TierItemData>({
           });
 
           // Update positions
-          newTargetList.forEach((item, index) => {
-            newAssignments[item.id] = { tier: targetTier, position: index };
-          });
+          let targetIndex = 0;
+          for (const item of newTargetList) {
+            newAssignments[item.id] = {
+              tier: targetTier,
+              position: targetIndex,
+            };
+            targetIndex++;
+          }
 
           // Re-index source tier
           if (sourceTier !== "Pool") {
@@ -221,9 +226,14 @@ export function TierTable<T extends TierItemData>({
               .filter(([id, val]) => val.tier === sourceTier && id !== activeId)
               .map(([id, val]) => ({ id, ...val }))
               .sort((a, b) => a.position - b.position);
-            sourceItems.forEach((item, index) => {
-              newAssignments[item.id] = { tier: sourceTier, position: index };
-            });
+            let sourceIndex = 0;
+            for (const item of sourceItems) {
+              newAssignments[item.id] = {
+                tier: sourceTier,
+                position: sourceIndex,
+              };
+              sourceIndex++;
+            }
           }
 
           return newAssignments;
@@ -240,9 +250,14 @@ export function TierTable<T extends TierItemData>({
             targetItems.splice(newIndex, 0, moved);
 
             // Update positions
-            targetItems.forEach((item, index) => {
-              newAssignments[item.id] = { tier: targetTier, position: index };
-            });
+            let reorderIndex = 0;
+            for (const item of targetItems) {
+              newAssignments[item.id] = {
+                tier: targetTier,
+                position: reorderIndex,
+              };
+              reorderIndex++;
+            }
             return newAssignments;
           }
         }
@@ -257,14 +272,14 @@ export function TierTable<T extends TierItemData>({
     draggedItemId: string,
     dropTargetItemId: string | null,
     tier: string,
-    direction: "left" | "right",
+    direction: "left" | "right"
   ) => {
     const newAssignments = { ...tierAssignments };
 
     // 1. Get all items currently in the target tier (excluding the dragged one)
     const targetTierItems = Object.entries(tierAssignments)
       .filter(
-        ([id, assignment]) => assignment.tier === tier && id !== draggedItemId,
+        ([id, assignment]) => assignment.tier === tier && id !== draggedItemId
       )
       .map(([id, assignment]) => ({ id, ...assignment }))
       .sort((a, b) => a.position - b.position);
@@ -274,7 +289,7 @@ export function TierTable<T extends TierItemData>({
 
     if (dropTargetItemId) {
       const targetIndex = targetTierItems.findIndex(
-        (item) => item.id === dropTargetItemId,
+        (item) => item.id === dropTargetItemId
       );
       if (targetIndex !== -1) {
         if (direction === "left") {
@@ -296,9 +311,11 @@ export function TierTable<T extends TierItemData>({
     });
 
     // 4. Re-assign positions for the entire tier
-    targetTierItems.forEach((item, index) => {
-      newAssignments[item.id] = { tier, position: index };
-    });
+    let positionIndex = 0;
+    for (const item of targetTierItems) {
+      newAssignments[item.id] = { tier, position: positionIndex };
+      positionIndex++;
+    }
 
     onAssignmentsChange(newAssignments);
   };
@@ -331,7 +348,7 @@ export function TierTable<T extends TierItemData>({
 
       // Re-position remaining items in the tier
       let newPosition = 0;
-      groupItems.forEach((groupItem) => {
+      for (const groupItem of groupItems) {
         if (groupItem.id !== item.id) {
           newAssignments[groupItem.id] = {
             tier: oldAssignment.tier,
@@ -339,7 +356,7 @@ export function TierTable<T extends TierItemData>({
           };
           newPosition++;
         }
-      });
+      }
     } else {
       delete newAssignments[itemId];
     }
@@ -393,7 +410,7 @@ export function TierTable<T extends TierItemData>({
 
     // Find the neighbor to anchor the drop
     const neighbor = Object.entries(localAssignments).find(
-      (entry) => entry[1].tier === tier && entry[1].position === position + 1,
+      (entry) => entry[1].tier === tier && entry[1].position === position + 1
     );
 
     if (neighbor) {

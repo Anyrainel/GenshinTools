@@ -1,13 +1,13 @@
-import {
-  CharacterData,
-  MainStat,
-  SubStat,
-  Slot,
-  ArtifactScoreConfig,
-  StatWeightMap,
-  GlobalStatWeights,
-} from "@/data/types";
 import { statPools } from "@/data/constants";
+import type {
+  ArtifactScoreConfig,
+  CharacterData,
+  GlobalStatWeights,
+  MainStat,
+  Slot,
+  StatWeightMap,
+  SubStat,
+} from "@/data/types";
 
 // ----------------------------------------------------------------------------
 // 1. Constants & Helpers
@@ -92,7 +92,7 @@ function calculateAttributeScore(
   stat: MainStat | SubStat,
   value: number,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
+  globalConfig: GlobalStatWeights
 ): { score: number; weight: number } {
   let score = 0;
   // Weight is 0-100, so we divide by 100
@@ -175,7 +175,7 @@ const MAX_CD_ROLL_4STAR = 6.22;
 function calculateMaxSlotSubScore(
   mainStat: MainStat,
   weights: StatWeightMap,
-  rarity: number,
+  rarity: number
 ): number {
   // Get substat pool excluding main stat (if it's a substat type)
   const pool = statPools.substat.filter((s) => s !== mainStat) as SubStat[];
@@ -204,7 +204,7 @@ function calculateMaxSlotSubScore(
 
 export function calculateArtifactScore(
   char: CharacterData,
-  config: ArtifactScoreConfig,
+  config: ArtifactScoreConfig
 ): ArtifactScoreResult {
   const weights = config.characters[char.key] || {};
   const globalConfig = config.global;
@@ -242,12 +242,12 @@ export function calculateArtifactScore(
     "heal%",
   ];
 
-  potentialSubstats.forEach((key) => {
+  for (const key of potentialSubstats) {
     const { weight } = calculateAttributeScore(
       key as SubStat,
       0,
       weights,
-      globalConfig,
+      globalConfig
     );
     result.statScores[key] = {
       mainValue: 0,
@@ -256,17 +256,17 @@ export function calculateArtifactScore(
       subScore: 0,
       weight,
     };
-  });
+  }
 
   const slots: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
   let equippedCount = 0;
 
-  slots.forEach((slot) => {
+  for (const slot of slots) {
     const artifact = char.artifacts?.[slot];
     if (!artifact) {
       result.slotMainScores[slot] = 0;
       result.slotSubScores[slot] = 0;
-      return;
+      continue;
     }
 
     equippedCount++;
@@ -279,7 +279,7 @@ export function calculateArtifactScore(
         key as MainStat | SubStat,
         val,
         weights,
-        globalConfig,
+        globalConfig
       );
       if (isMain) {
         slotMain += score;
@@ -315,15 +315,15 @@ export function calculateArtifactScore(
     // 1. Main Stat - Use MAX Value based on rarity
     const mainStatVal = getFixedMainStatValue(
       artifact.mainStatKey,
-      artifact.rarity,
+      artifact.rarity
     );
     accumulate(artifact.mainStatKey, mainStatVal, true);
 
     // 2. Substats
     if (artifact.substats) {
-      Object.entries(artifact.substats).forEach(([key, val]) => {
+      for (const [key, val] of Object.entries(artifact.substats)) {
         accumulate(key, val, false);
-      });
+      }
     }
 
     result.slotMainScores[slot] = slotMain;
@@ -334,12 +334,12 @@ export function calculateArtifactScore(
       result.slotMaxSubScores[slot] = calculateMaxSlotSubScore(
         artifact.mainStatKey,
         weights,
-        artifact.rarity,
+        artifact.rarity
       );
     } else {
       result.slotMaxSubScores[slot] = 0;
     }
-  });
+  }
 
   result.isComplete = equippedCount === 5;
   return result;

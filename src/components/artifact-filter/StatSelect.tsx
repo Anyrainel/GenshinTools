@@ -1,14 +1,14 @@
-import { memo, useState, useCallback, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 import {
   LightweightSelect,
+  LightweightSelectContent,
   LightweightSelectItem,
   LightweightSelectTrigger,
-  LightweightSelectContent,
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Plus } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 interface StatSelectProps {
   values: string[];
@@ -83,7 +83,7 @@ function StatSelectComponent({
       }
       setIsAdding(false);
     },
-    [values, onValuesChange],
+    [values, onValuesChange]
   );
 
   const handlePlusClick = useCallback(() => {
@@ -102,18 +102,18 @@ function StatSelectComponent({
         onValuesChange(newValues);
       }
     },
-    [values, onValuesChange],
+    [values, onValuesChange]
   );
 
   // Memoize available options computation
   const availableOptions = useMemo(
     () => options.filter((option) => !values.includes(option)),
-    [options, values],
+    [options, values]
   );
 
   const canAddMore = useMemo(
     () => values.length < maxLength && availableOptions.length > 0,
-    [values.length, maxLength, availableOptions.length],
+    [values.length, maxLength, availableOptions.length]
   );
 
   // Get available options for a specific select (excludes all other selected values)
@@ -122,7 +122,7 @@ function StatSelectComponent({
       const otherValues = values.filter((_, index) => index !== currentIndex);
       return options.filter((option) => !otherValues.includes(option));
     },
-    [values, options],
+    [values, options]
   );
 
   return (

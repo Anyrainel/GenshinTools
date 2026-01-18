@@ -39,6 +39,9 @@ The application is divided into distinct functional domains, each with its own s
 - **Frontend:** `npm run dev`
 - **Tauri App:** `npm run tauri dev`
 - **Linting:** `npm run lint`
+- **Formatting:** `npm run format`
+- **Full Check (Lint + Format + Organize Imports):** `npm run check`
+- **Auto-fix:** `npm run check:fix`
 
 ### Data Updates
 
@@ -84,3 +87,16 @@ Data ingestion logic resides in `scripts/`.
 - **ItemIcon**: The canonical way to render Character/Weapon/Artifact icons with correct rarity backgrounds.
 - **Tooltips**: Essential for Game Items. Use `CharacterTooltip` etc. wrapper components.
 - **Assets**: Use `getAssetUrl(path)` helper. Never hardcode `/assets/` paths.
+
+#### 5. Testing
+
+Tests use **Vitest** with **React Testing Library**.
+
+- **Before writing tests**: Read [docs/testing_tips.md](docs/testing_tips.md) for environment setup, common pitfalls, and patterns.
+- **For planned test work**: See [docs/testing_plan.md](docs/testing_plan.md) for phased implementation details.
+
+Key points:
+- Tests live in `tests/` with matching structure to `src/`
+- Use `@/` path aliases in tests (configured in `vitest.config.ts`)
+- Character/weapon/artifact IDs use snake_case internally (e.g., `"hu_tao"`, `"staff_of_homa"`)
+- Store tests require `useStore.getState()` after mutations for Zustand sync

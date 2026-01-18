@@ -1,13 +1,19 @@
-import { useState, useImperativeHandle, forwardRef, useRef } from "react";
-import { Filter } from "lucide-react";
-import { Element, WeaponType, Region, Rarity, Character } from "@/data/types";
-import { characters } from "@/data/resources";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { characters } from "@/data/resources";
+import type {
+  Character,
+  Element,
+  Rarity,
+  Region,
+  WeaponType,
+} from "@/data/types";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { Filter } from "lucide-react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { CharacterBuildCard } from "./CharacterBuildCard";
 
 export interface ConfigureViewRef {
@@ -184,7 +190,7 @@ const VirtualizedCharacterList = forwardRef<
         }
       },
     }),
-    [characters, virtualizer],
+    [characters, virtualizer]
   );
 
   return (

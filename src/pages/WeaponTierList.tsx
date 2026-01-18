@@ -1,34 +1,34 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Settings, FileDown } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ToolHeader } from "@/components/shared/ToolHeader";
-import { ImportControl } from "@/components/shared/ImportControl";
-import { ExportControl } from "@/components/shared/ExportControl";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import {
-  PresetOption,
-  TierListData,
-  TierAssignment,
-  TierCustomization,
-  MainStat,
-} from "@/data/types";
-import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
-import WeaponTierTable from "@/components/tier-list/WeaponTierTable";
+import { ExportControl } from "@/components/shared/ExportControl";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ToolHeader } from "@/components/shared/ToolHeader";
 import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
-import { weaponsById, sortedWeaponSecondaryStats } from "@/data/constants";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import WeaponTierTable from "@/components/tier-list/WeaponTierTable";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { sortedWeaponSecondaryStats, weaponsById } from "@/data/constants";
+import type {
+  MainStat,
+  PresetOption,
+  TierAssignment,
+  TierCustomization,
+  TierListData,
+} from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
+import { FileDown, Settings } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 // Placeholder for weapon tier list presets
 const presetModules = import.meta.glob<{ default: TierListData }>(
   "@/presets/weapon-tier-list/*.json",
-  { eager: false },
+  { eager: false }
 );
 
 const WeaponTierListPage = () => {
@@ -36,21 +36,21 @@ const WeaponTierListPage = () => {
 
   const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
   const tierCustomization = useWeaponTierStore(
-    (state) => state.tierCustomization,
+    (state) => state.tierCustomization
   );
   const customTitle = useWeaponTierStore((state) => state.customTitle);
   const setTierAssignments = useWeaponTierStore(
-    (state) => state.setTierAssignments,
+    (state) => state.setTierAssignments
   );
   const setTierCustomization = useWeaponTierStore(
-    (state) => state.setTierCustomization,
+    (state) => state.setTierCustomization
   );
   const setCustomTitle = useWeaponTierStore((state) => state.setCustomTitle);
   const resetStoredTierList = useWeaponTierStore(
-    (state) => state.resetTierList,
+    (state) => state.resetTierList
   );
   const loadTierListData = useWeaponTierStore(
-    (state) => state.loadTierListData,
+    (state) => state.loadTierListData
   );
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
@@ -85,7 +85,7 @@ const WeaponTierListPage = () => {
     const changes: { weaponId: string; fromTier?: string; toTier?: string }[] =
       [];
 
-    allKeys.forEach((weaponId) => {
+    for (const weaponId of allKeys) {
       const prevAssignment = prev[weaponId];
       const currAssignment = curr[weaponId];
 
@@ -104,7 +104,7 @@ const WeaponTierListPage = () => {
           fromTier: prevAssignment.tier,
         });
       }
-    });
+    }
 
     if (changes.length > 0) {
       const change = changes[0];
@@ -122,7 +122,7 @@ const WeaponTierListPage = () => {
           t.format("messages.characterMoved", localizedName, tierLabel),
           {
             duration: 2000,
-          },
+          }
         );
       } else {
         toast.success(t.format("messages.characterRemoved", localizedName), {
@@ -132,7 +132,7 @@ const WeaponTierListPage = () => {
     }
 
     prevAssignmentsRef.current = tierAssignments;
-  }, [tierAssignments, t, language]);
+  }, [tierAssignments, t]);
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
@@ -192,20 +192,20 @@ const WeaponTierListPage = () => {
 
   const handleTierCustomizationSave = (
     customization: TierCustomization,
-    newCustomTitle?: string,
+    newCustomTitle?: string
   ) => {
     const newAssignments = { ...tierAssignments };
     const hiddenTiers = Object.keys(customization).filter(
-      (tier) => customization[tier]?.hidden,
+      (tier) => customization[tier]?.hidden
     );
 
-    hiddenTiers.forEach((tier) => {
-      Object.keys(newAssignments).forEach((weaponId) => {
+    for (const tier of hiddenTiers) {
+      for (const weaponId of Object.keys(newAssignments)) {
         if (newAssignments[weaponId].tier === tier) {
           delete newAssignments[weaponId];
         }
-      });
-    });
+      }
+    }
 
     setTierAssignments(newAssignments);
     setTierCustomization(customization);
@@ -266,11 +266,11 @@ const WeaponTierListPage = () => {
               authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
               descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
               descriptionPlaceholder={t.ui(
-                "tierList.exportDescriptionPlaceholder",
+                "tierList.exportDescriptionPlaceholder"
               )}
               authorRequiredError={t.ui("tierList.exportAuthorRequired")}
               descriptionRequiredError={t.ui(
-                "tierList.exportDescriptionRequired",
+                "tierList.exportDescriptionRequired"
               )}
               confirmActionLabel={t.ui("tierList.exportConfirmAction")}
               defaultAuthor={author}
@@ -293,7 +293,7 @@ const WeaponTierListPage = () => {
       <div
         className={cn(
           THEME.layout.headerBorder,
-          "z-40 flex-shrink-0 sticky top-0",
+          "z-40 flex-shrink-0 sticky top-0"
         )}
       >
         <div className="container mx-auto flex items-center gap-4 py-2">
@@ -372,7 +372,7 @@ const WeaponTierListPage = () => {
                         ]);
                       } else {
                         setSelectedSecondaryStats(
-                          selectedSecondaryStats.filter((s) => s !== stat),
+                          selectedSecondaryStats.filter((s) => s !== stat)
                         );
                       }
                     }}

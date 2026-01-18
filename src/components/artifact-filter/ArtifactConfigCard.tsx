@@ -1,18 +1,18 @@
-import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { SetConfig, MainStatPlus, SlotConfig } from "@/data/types";
+import type { MainStatPlus, SetConfig, SlotConfig } from "@/data/types";
 import { computeSlotChance } from "@/lib/artifactChance";
+import { useMemo } from "react";
 
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { AlertOctagon, AlertTriangle } from "lucide-react";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -55,7 +55,7 @@ export function ArtifactConfigCard({
         };
         tightened = computeSlotChance(slot, tightenedConfig);
         tightenedLabel = `${t.ui("computeFilters.passChance")} (${t.ui(
-          "computeFilters.atLeast",
+          "computeFilters.atLeast"
         )} ${tightenedConfig.minStatCount})`;
       }
       return { base, tightened, tightenedLabel };
@@ -163,7 +163,7 @@ export function ArtifactConfigCard({
     const renderChanceRow = (
       label: string,
       chance: number,
-      indicator: ReturnType<typeof getChanceIndicator>,
+      indicator: ReturnType<typeof getChanceIndicator>
     ) => {
       const { textClass, Icon, message } = indicator;
       const content = (
@@ -213,13 +213,13 @@ export function ArtifactConfigCard({
         {renderChanceRow(
           t.ui("computeFilters.passChance"),
           detail.base,
-          baseIndicator,
+          baseIndicator
         )}
         {showTightened &&
           renderChanceRow(
             detail.tightenedLabel!,
             detail.tightened!,
-            getChanceIndicator(detail.tightened!),
+            getChanceIndicator(detail.tightened!)
           )}
       </div>
     );
@@ -227,16 +227,16 @@ export function ArtifactConfigCard({
 
   // Group characters by 4pc/2pc and perfect/imperfect merge
   const fourPcPerfect = config.servedCharacters.filter(
-    (c) => c.has4pcBuild && c.hasPerfectMerge,
+    (c) => c.has4pcBuild && c.hasPerfectMerge
   );
   const fourPcImperfect = config.servedCharacters.filter(
-    (c) => c.has4pcBuild && !c.hasPerfectMerge,
+    (c) => c.has4pcBuild && !c.hasPerfectMerge
   );
   const twoPcPerfect = config.servedCharacters.filter(
-    (c) => !c.has4pcBuild && c.hasPerfectMerge,
+    (c) => !c.has4pcBuild && c.hasPerfectMerge
   );
   const twoPcImperfect = config.servedCharacters.filter(
-    (c) => !c.has4pcBuild && !c.hasPerfectMerge,
+    (c) => !c.has4pcBuild && !c.hasPerfectMerge
   );
 
   const renderCharacter = (charInfo: (typeof config.servedCharacters)[0]) => {
@@ -279,7 +279,7 @@ export function ArtifactConfigCard({
             <div className="flex gap-1.5">
               {fourPcPerfect.map(renderCharacter)}
               {fourPcPerfect.length > 0 && fourPcImperfect.length > 0 && (
-                <div className="w-px bg-border self-stretch mx-0.5"></div>
+                <div className="w-px bg-border self-stretch mx-0.5" />
               )}
               {fourPcImperfect.map(renderCharacter)}
               <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
@@ -293,7 +293,7 @@ export function ArtifactConfigCard({
             <div className="flex items-end gap-1.5">
               {twoPcPerfect.map(renderCharacter)}
               {twoPcPerfect.length > 0 && twoPcImperfect.length > 0 && (
-                <div className="w-px bg-border self-stretch mx-0.5"></div>
+                <div className="w-px bg-border self-stretch mx-0.5" />
               )}
               {twoPcImperfect.map(renderCharacter)}
               <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
@@ -310,23 +310,23 @@ export function ArtifactConfigCard({
         style={{ gridTemplateRows: "auto auto auto" }}
       >
         {/* Row 1: Main Stats */}
-        <div></div> {/* Flower/Plume - empty */}
+        <div /> {/* Flower/Plume - empty */}
         {renderMainStatCell(
           t.ui("computeFilters.sands"),
-          config.sands.mainStats,
+          config.sands.mainStats
         )}
         {renderMainStatCell(
           t.ui("computeFilters.goblet"),
-          config.goblet.mainStats,
+          config.goblet.mainStats
         )}
         {renderMainStatCell(
           t.ui("computeFilters.circlet"),
-          config.circlet.mainStats,
+          config.circlet.mainStats
         )}
         {/* Row 2: Substats */}
         {renderSubstatCell(
           `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
-          config.flowerPlume,
+          config.flowerPlume
         )}
         {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
         {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
@@ -334,19 +334,19 @@ export function ArtifactConfigCard({
         {/* Row 3: Chances */}
         {renderChanceCell(
           `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
-          slotChanceDetails.flowerPlume,
+          slotChanceDetails.flowerPlume
         )}
         {renderChanceCell(
           t.ui("computeFilters.sands"),
-          slotChanceDetails.sands,
+          slotChanceDetails.sands
         )}
         {renderChanceCell(
           t.ui("computeFilters.goblet"),
-          slotChanceDetails.goblet,
+          slotChanceDetails.goblet
         )}
         {renderChanceCell(
           t.ui("computeFilters.circlet"),
-          slotChanceDetails.circlet,
+          slotChanceDetails.circlet
         )}
       </div>
     </div>

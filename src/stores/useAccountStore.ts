@@ -1,6 +1,6 @@
+import type { AccountData } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AccountData } from "@/data/types";
 
 interface AccountStore {
   accountData: AccountData | null;
@@ -21,6 +21,6 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
-    },
-  ),
+    }
+  )
 );

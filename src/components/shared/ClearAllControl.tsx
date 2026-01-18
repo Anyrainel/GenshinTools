@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,6 +11,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ClearAllControlProps {
   onConfirm: () => void;

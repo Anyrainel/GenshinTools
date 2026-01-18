@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { ArtifactScoreConfig } from "@/data/types";
 import { STAT_WEIGHTS } from "@/data/statWeights";
+import type { ArtifactScoreConfig } from "@/data/types";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 function generateDefaultArtifactScoreConfig(): ArtifactScoreConfig {
   return {
@@ -18,7 +18,7 @@ interface ArtifactScoreState {
   config: ArtifactScoreConfig;
   setGlobalWeight: (
     key: keyof ArtifactScoreConfig["global"],
-    value: number,
+    value: number
   ) => void;
   setCharacterWeight: (charId: string, stat: string, value: number) => void;
   resetConfig: () => void;
@@ -75,6 +75,6 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
     {
       name: "artifact-score-storage",
       storage: createJSONStorage(() => localStorage),
-    },
-  ),
+    }
+  )
 );

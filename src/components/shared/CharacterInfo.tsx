@@ -1,13 +1,13 @@
-import { memo, useMemo } from "react";
-import { Character } from "@/data/types";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
-import { getAssetUrl, cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/constants";
+import type { Character } from "@/data/types";
+import { THEME } from "@/lib/theme";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { memo, useMemo } from "react";
 
 interface CharacterInfoProps {
   character: Character;
@@ -29,7 +29,7 @@ export const CharacterInfo = memo(
 
     const displayName = useMemo(
       () => t.character(character.id),
-      [t, character.id],
+      [t, character.id]
     );
 
     const elementImagePath = useMemo(() => {
@@ -50,19 +50,19 @@ export const CharacterInfo = memo(
 
     const elementName = useMemo(
       () => t.element(character.element),
-      [t, character.element],
+      [t, character.element]
     );
     const weaponName = useMemo(
       () => t.weaponType(character.weaponType),
-      [t, character.weaponType],
+      [t, character.weaponType]
     );
     const regionName = useMemo(
       () => t.region(character.region),
-      [t, character.region],
+      [t, character.region]
     );
     const formattedDate = useMemo(
       () => t.formatDate(character.releaseDate),
-      [t, character.releaseDate],
+      [t, character.releaseDate]
     );
 
     return (
@@ -80,7 +80,7 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               elementTextColor,
-              "border-current border-2 font-medium text-base flex items-center gap-1",
+              "border-current border-2 font-medium text-base flex items-center gap-1"
             )}
           >
             <img
@@ -95,7 +95,7 @@ export const CharacterInfo = memo(
             variant="outline"
             className={cn(
               rarityTextColor,
-              "border-current border-2 font-semibold text-base",
+              "border-current border-2 font-semibold text-base"
             )}
           >
             ★ {character.rarity}
@@ -126,7 +126,7 @@ export const CharacterInfo = memo(
         </div>
       </div>
     );
-  },
+  }
 );
 
 CharacterInfo.displayName = "CharacterInfo";

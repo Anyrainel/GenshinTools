@@ -1,8 +1,8 @@
-import { ArtifactData } from "@/data/types";
-import { ArtifactScoreResult } from "@/lib/artifactScore";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
+import type { ArtifactData } from "@/data/types";
+import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 
 interface StatDisplayProps {
@@ -22,11 +22,7 @@ export const StatDisplay = ({
 }: StatDisplayProps) => {
   const { t } = useLanguage();
 
-  const renderStatLine = (
-    statKey: string,
-    value: number,
-    weight: number = 0,
-  ) => {
+  const renderStatLine = (statKey: string, value: number, weight = 0) => {
     const isPercent =
       statKey.endsWith("%") ||
       statKey === "cr" ||
@@ -39,7 +35,7 @@ export const StatDisplay = ({
         key={statKey}
         className={cn(
           "flex justify-between items-center text-sm",
-          weight > 0 ? "text-gray-200" : "text-muted-foreground",
+          weight > 0 ? "text-gray-200" : "text-muted-foreground"
         )}
       >
         <span>{t.statShort(statKey)}</span>
@@ -64,7 +60,7 @@ export const StatDisplay = ({
               ? mainStatWeight > 0
                 ? "text-amber-100"
                 : "text-amber-100/50"
-              : "text-amber-100",
+              : "text-amber-100"
           )}
         >
           {t.statShort(artifact.mainStatKey)}
@@ -72,9 +68,7 @@ export const StatDisplay = ({
         <div
           className={cn(
             "text-xs px-1 rounded bg-black/40 font-mono",
-            THEME.rarity.text[
-              artifact.rarity as keyof typeof THEME.rarity.text
-            ],
+            THEME.rarity.text[artifact.rarity as keyof typeof THEME.rarity.text]
           )}
         >
           +{artifact.level}
@@ -93,7 +87,7 @@ export const StatDisplay = ({
             <div key={`empty-${i}`} className="text-sm">
               &nbsp;
             </div>
-          ),
+          )
         )}
       </div>
       {/* Progress Indicator */}

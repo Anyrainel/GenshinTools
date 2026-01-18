@@ -1,8 +1,5 @@
-import { useState, memo, useMemo, useCallback } from "react";
-import { Plus } from "lucide-react";
-import { artifactHalfSets } from "@/data/resources";
-import { artifactsById, sortedArtifacts } from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Select,
   SelectContent,
@@ -15,8 +12,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { artifactsById, sortedArtifacts } from "@/data/constants";
+import { artifactHalfSets } from "@/data/resources";
+import { Plus } from "lucide-react";
+import { memo, useCallback, useMemo, useState } from "react";
 
 interface ArtifactSelectProps {
   value: string;
@@ -42,7 +42,7 @@ function ArtifactSelectComponent({
     }));
 
     const lookup = Object.fromEntries(
-      list.map((item) => [item.id, item] as const),
+      list.map((item) => [item.id, item] as const)
     ) as Record<string, (typeof list)[number]>;
 
     return { list, lookup };
@@ -170,7 +170,7 @@ function ArtifactSelectHalfComponent({
     }));
 
     const lookup = Object.fromEntries(
-      list.map((item) => [item.id, item] as const),
+      list.map((item) => [item.id, item] as const)
     ) as Record<number, (typeof list)[number]>;
 
     return { list, lookup };
@@ -184,7 +184,7 @@ function ArtifactSelectHalfComponent({
     <div className="px-1">
       <Select
         value={value?.toString() || ""}
-        onValueChange={(val) => onValueChange(parseInt(val))}
+        onValueChange={(val) => onValueChange(Number.parseInt(val))}
       >
         <SelectTrigger className="w-full min-h-8 h-auto text-sm px-2 py-1 [&>span]:line-clamp-2 bg-gradient-select">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
@@ -223,5 +223,5 @@ export const ArtifactSelectHalf = memo(
   ArtifactSelectHalfComponent,
   (prev, next) => {
     return prev.value === next.value && prev.placeholder === next.placeholder;
-  },
+  }
 );

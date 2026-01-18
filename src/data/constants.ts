@@ -1,21 +1,21 @@
+import {
+  artifactHalfSets,
+  artifacts,
+  characters,
+  elementResources,
+  weaponTypeResources as weaponResources,
+  weapons,
+} from "./resources";
 import type {
-  Element,
-  MainStat,
-  Character,
-  Weapon,
-  ArtifactSet,
   ArtifactHalfSet,
+  ArtifactSet,
+  Character,
+  Element,
   ElementResource,
+  MainStat,
+  Weapon,
   WeaponTypeResource,
 } from "./types";
-import {
-  artifacts,
-  weapons,
-  artifactHalfSets,
-  characters,
-  elementResources as elementResources,
-  weaponTypeResources as weaponResources,
-} from "./resources";
 
 // Function to get goblet pool with character's elemental damage bonus
 export const getGobletPool = (element?: Element): readonly MainStat[] => {
@@ -114,58 +114,58 @@ export const statPoolWithWeights = {
 
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],
-  getKey: (item: Item) => Key,
+  getKey: (item: Item) => Key
 ): Record<Key, Item> => {
   return items.reduce<Record<Key, Item>>(
     (acc, item) => {
       acc[getKey(item)] = item;
       return acc;
     },
-    {} as Record<Key, Item>,
+    {} as Record<Key, Item>
   );
 };
 
 const freezeRecord = <MapType extends Record<PropertyKey, unknown>>(
-  record: MapType,
+  record: MapType
 ) => Object.freeze(record) as Readonly<MapType>;
 
 export const charactersById = freezeRecord(
   createRecord<Character, Character["id"]>(
     characters,
-    (character) => character.id,
-  ),
+    (character) => character.id
+  )
 );
 
 export const artifactsById = freezeRecord(
   createRecord<ArtifactSet, ArtifactSet["id"]>(
     artifacts,
-    (artifact) => artifact.id,
-  ),
+    (artifact) => artifact.id
+  )
 );
 
 export const weaponsById = freezeRecord(
-  createRecord<Weapon, Weapon["id"]>(weapons, (weapon) => weapon.id),
+  createRecord<Weapon, Weapon["id"]>(weapons, (weapon) => weapon.id)
 );
 
 export const artifactHalfSetsById = freezeRecord(
   createRecord<ArtifactHalfSet, ArtifactHalfSet["id"]>(
     artifactHalfSets,
-    (halfSet) => halfSet.id,
-  ),
+    (halfSet) => halfSet.id
+  )
 );
 
 export const elementResourcesByName = freezeRecord(
   createRecord<ElementResource, ElementResource["name"]>(
     elementResources,
-    (element) => element.name,
-  ),
+    (element) => element.name
+  )
 );
 
 export const weaponResourcesByName = freezeRecord(
   createRecord<WeaponTypeResource, WeaponTypeResource["name"]>(
     weaponResources,
-    (weapon) => weapon.name,
-  ),
+    (weapon) => weapon.name
+  )
 );
 
 /**
@@ -175,7 +175,7 @@ export const weaponResourcesByName = freezeRecord(
  * this results in Rarity Descending > Release Date Descending.
  */
 function sortItemsByRarityDesc<T extends { rarity?: number }>(
-  items: readonly T[],
+  items: readonly T[]
 ): T[] {
   return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
 }
@@ -192,5 +192,5 @@ export const sortedWeapons = sortItemsByRarityDesc(weapons);
 export const sortedArtifacts = sortItemsByRarityDesc(artifacts);
 
 export const sortedWeaponSecondaryStats = Array.from(
-  new Set(weapons.map((w) => w.secondaryStat)),
+  new Set(weapons.map((w) => w.secondaryStat))
 ).sort();

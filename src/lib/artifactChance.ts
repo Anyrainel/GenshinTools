@@ -1,12 +1,12 @@
-import {
-  SetConfig,
-  SlotConfig,
-  SubStat,
+import { elementalMainStats, statPoolWithWeights } from "../data/constants";
+import type {
   MainStat,
   MainStatPlus,
   MainStatSlot,
+  SetConfig,
+  SlotConfig,
+  SubStat,
 } from "../data/types";
-import { statPoolWithWeights, elementalMainStats } from "../data/constants";
 
 type SlotKind = "flowerPlume" | "sands" | "goblet" | "circlet";
 
@@ -38,7 +38,7 @@ export function computeSlotChances(config: SetConfig): SlotChanceResult {
 
 export function computeSlotChance(
   slot: SlotKind,
-  slotConfig: SlotConfig,
+  slotConfig: SlotConfig
 ): number {
   if (slotConfig.minStatCount <= 0 && slotConfig.mustPresent.length === 0) {
     return 1;
@@ -55,7 +55,7 @@ export function computeSlotChance(
   const mainStatPool = MAIN_STAT_POOLS[slot];
   const totalWeight = Object.values(mainStatPool).reduce(
     (sum, weight) => sum + weight,
-    0,
+    0
   );
   if (totalWeight <= 0) {
     return 0;
@@ -64,7 +64,7 @@ export function computeSlotChance(
   const choices = resolveMainStatChoices(
     slotConfig.mainStats,
     slot,
-    mainStatPool,
+    mainStatPool
   );
   const effectiveChoices =
     choices.length > 0
@@ -89,7 +89,7 @@ export function computeSlotChance(
 
 function computeSubstatSuccessProbability(
   mainStat: MainStatPlus,
-  slotConfig: SlotConfig,
+  slotConfig: SlotConfig
 ): number {
   const pool = Object.entries(SUBSTAT_POOL)
     .filter(([stat]) => stat !== mainStat)
@@ -106,7 +106,7 @@ function computeSubstatSuccessProbability(
 
   const mainStatCovers = (stat: SubStat) => stat === mainStat;
   const effectiveMust = Array.from(new Set(slotConfig.mustPresent)).filter(
-    (stat) => !mainStatCovers(stat),
+    (stat) => !mainStatCovers(stat)
   );
 
   if (effectiveMust.length > SUBSTAT_DRAW_COUNT) {
@@ -114,9 +114,11 @@ function computeSubstatSuccessProbability(
   }
 
   const poolIndexByStat = new Map<SubStat, number>();
-  pool.forEach((entry, index) => {
-    poolIndexByStat.set(entry.stat, index);
-  });
+  let poolIndex = 0;
+  for (const entry of pool) {
+    poolIndexByStat.set(entry.stat, poolIndex);
+    poolIndex++;
+  }
 
   for (const stat of effectiveMust) {
     if (!poolIndexByStat.has(stat)) {
@@ -130,7 +132,7 @@ function computeSubstatSuccessProbability(
 
   const combinationIterator = createCombinationIterator(
     pool.length,
-    SUBSTAT_DRAW_COUNT,
+    SUBSTAT_DRAW_COUNT
   );
 
   let probability = 0;
@@ -153,7 +155,7 @@ function computeSubstatSuccessProbability(
 function checkSlotMatch(
   selectedSubstats: SubStat[],
   mainStat: MainStatPlus,
-  slotConfig: SlotConfig,
+  slotConfig: SlotConfig
 ): boolean {
   const available = new Set<SubStat>(selectedSubstats);
   if (SUBSTAT_POOL[mainStat as SubStat] !== undefined) {
@@ -204,7 +206,7 @@ function subsetProbability(
   mask: number,
   weights: number[],
   totalWeight: number,
-  memo: Map<number, number>,
+  memo: Map<number, number>
 ): number {
   if (memo.has(mask)) {
     return memo.get(mask)!;
@@ -243,7 +245,7 @@ interface MainStatChoice {
 function resolveMainStatChoices(
   mainStats: MainStatPlus[],
   slot: Exclude<SlotKind, "flower" | "plume">,
-  pool: Record<MainStat, number>,
+  pool: Record<MainStat, number>
 ): MainStatChoice[] {
   const choices: MainStatChoice[] = [];
   const seen = new Set<MainStatPlus>();
@@ -255,7 +257,7 @@ function resolveMainStatChoices(
     if (stat === "elemental%") {
       const weightSum = elementalMainStats.reduce(
         (sum, elemStat) => sum + (pool[elemStat] ?? 0),
-        0,
+        0
       );
       if (weightSum > 0) {
         choices.push({ stat, weight: weightSum });
@@ -269,10 +271,14 @@ function resolveMainStatChoices(
   };
 
   if (mainStats.length === 0) {
-    Object.keys(pool).forEach((stat) => includeStat(stat as MainStat));
+    for (const stat of Object.keys(pool)) {
+      includeStat(stat as MainStat);
+    }
     return choices;
   }
 
-  mainStats.forEach(includeStat);
+  for (const stat of mainStats) {
+    includeStat(stat);
+  }
   return choices;
 }

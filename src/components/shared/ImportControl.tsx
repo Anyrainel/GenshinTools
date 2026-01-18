@@ -1,15 +1,6 @@
-import { useEffect, useMemo, useState, ReactNode } from "react";
 import { Layers, Loader2, Upload } from "lucide-react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +11,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { PresetOption } from "@/data/types"; // Updated import
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { PresetOption } from "@/data/types"; // Updated import
 
 interface ImportControlProps<T> {
   options: PresetOption[];
@@ -65,7 +65,7 @@ export function ImportControl<T>({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<PresetOption | null>(
-    null,
+    null
   );
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -116,7 +116,7 @@ export function ImportControl<T>({
   };
 
   const handleLocalImport = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file || !onLocalImport) {
@@ -135,7 +135,7 @@ export function ImportControl<T>({
       } catch (error) {
         console.error("Failed to import data:", error);
         setErrorMessage(
-          loadErrorText || t.ui("configure.importDialogLoadError"),
+          loadErrorText || t.ui("configure.importDialogLoadError")
         );
       } finally {
         setIsBusy(false);

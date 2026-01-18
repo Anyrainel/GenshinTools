@@ -1,23 +1,23 @@
-import {
-  CharacterFilters,
-  elements,
-  weaponTypes,
-  regions,
-  Element,
-  WeaponType,
-  Rarity,
-} from "@/data/types";
-import { getAssetUrl } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import {
+  type CharacterFilters,
+  type Element,
+  type Rarity,
+  type WeaponType,
+  elements,
+  regions,
+  weaponTypes,
+} from "@/data/types";
+import { getAssetUrl } from "@/lib/utils";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface CharacterFilterSidebarProps {
   filters: CharacterFilters;
@@ -44,7 +44,7 @@ export function CharacterFilterSidebar({
   const handleFilterChange = <T extends string | number>(
     filterType: keyof CharacterFilters,
     value: T,
-    checked: boolean,
+    checked: boolean
   ) => {
     const currentValues = filters[filterType] as T[];
     const newValues = checked
@@ -154,7 +154,7 @@ export function CharacterFilterSidebar({
                   handleFilterChange(
                     "rarities",
                     rarity as Rarity,
-                    checked as boolean,
+                    checked as boolean
                   )
                 }
                 className="h-4 w-4"

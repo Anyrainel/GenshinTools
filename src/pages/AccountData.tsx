@@ -1,34 +1,34 @@
+import { CharacterView } from "@/components/account-data/CharacterView";
+import { InventoryView } from "@/components/account-data/InventoryView";
+import { StatWeightView } from "@/components/account-data/StatWeightView";
+import { SummaryView } from "@/components/account-data/SummaryView";
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ToolHeader } from "@/components/shared/ToolHeader";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
+import {
+  type ArtifactScoreResult,
+  calculateArtifactScore,
+} from "@/lib/artifactScore";
+import { convertEnkaToGOOD, fetchEnkaData } from "@/lib/enka";
+import {
+  type ConversionResult,
+  type GOODData,
+  convertGOODToAccountData,
+} from "@/lib/goodConversion";
+import type { ConversionWarning } from "@/lib/goodConversion";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { AlertTriangle, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useAccountStore } from "@/stores/useAccountStore";
-import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import {
-  calculateArtifactScore,
-  ArtifactScoreResult,
-} from "@/lib/artifactScore";
-import { AccountData, ArtifactData, WeaponData } from "@/data/types";
-import {
-  convertGOODToAccountData,
-  GOODData,
-  ConversionResult,
-} from "@/lib/goodConversion";
-import { fetchEnkaData, convertEnkaToGOOD } from "@/lib/enka";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ToolHeader } from "@/components/shared/ToolHeader";
-import { ImportControl } from "@/components/shared/ImportControl";
-import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
-import { InventoryView } from "@/components/account-data/InventoryView";
-import { SummaryView } from "@/components/account-data/SummaryView";
-import { CharacterView } from "@/components/account-data/CharacterView";
-import { StatWeightView } from "@/components/account-data/StatWeightView";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ConversionWarning } from "@/lib/goodConversion";
-import { AlertTriangle, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 type GOODPreset = GOODData & { author?: string; description?: string };
 
@@ -36,8 +36,8 @@ const getMaxIds = (data: AccountData) => {
   let maxA = -1;
   let maxW = -1;
   const parse = (id: string, prefix: string) => {
-    const num = parseInt(id.replace(prefix, ""), 10);
-    return isNaN(num) ? -1 : num;
+    const num = Number.parseInt(id.replace(prefix, ""), 10);
+    return Number.isNaN(num) ? -1 : num;
   };
 
   const checkA = (art: ArtifactData) => {
@@ -49,12 +49,18 @@ const getMaxIds = (data: AccountData) => {
     if (val > maxW) maxW = val;
   };
 
-  data.characters.forEach((c) => {
-    Object.values(c.artifacts).forEach((a) => a && checkA(a));
+  for (const c of data.characters) {
+    for (const a of Object.values(c.artifacts)) {
+      if (a) checkA(a);
+    }
     if (c.weapon) checkW(c.weapon);
-  });
-  data.extraArtifacts.forEach(checkA);
-  data.extraWeapons.forEach(checkW);
+  }
+  for (const art of data.extraArtifacts) {
+    checkA(art);
+  }
+  for (const wp of data.extraWeapons) {
+    checkW(wp);
+  }
 
   return { maxA, maxW };
 };
@@ -62,31 +68,31 @@ const getMaxIds = (data: AccountData) => {
 const reassignIds = (
   data: AccountData,
   startArtifactId: number,
-  startWeaponId: number,
+  startWeaponId: number
 ) => {
   let aId = startArtifactId;
   let wId = startWeaponId;
 
-  data.characters.forEach((char) => {
+  for (const char of data.characters) {
     // Artifacts
-    (Object.keys(char.artifacts) as Array<keyof typeof char.artifacts>).forEach(
-      (slot) => {
-        const art = char.artifacts[slot];
-        if (art) art.id = `artifact-${aId++}`;
-      },
-    );
+    for (const slot of Object.keys(char.artifacts) as Array<
+      keyof typeof char.artifacts
+    >) {
+      const art = char.artifacts[slot];
+      if (art) art.id = `artifact-${aId++}`;
+    }
     // Weapon
     if (char.weapon) {
       char.weapon.id = `weapon-${wId++}`;
     }
-  });
+  }
   // Extras
-  data.extraArtifacts.forEach((art) => {
+  for (const art of data.extraArtifacts) {
     art.id = `artifact-${aId++}`;
-  });
-  data.extraWeapons.forEach((wp) => {
+  }
+  for (const wp of data.extraWeapons) {
     wp.id = `weapon-${wId++}`;
-  });
+  }
 };
 
 export default function AccountDataPage() {
@@ -110,9 +116,9 @@ export default function AccountDataPage() {
     const results: Record<string, ArtifactScoreResult> = {};
     if (!accountData) return results;
 
-    accountData.characters.forEach((char) => {
+    for (const char of accountData.characters) {
       results[char.key] = calculateArtifactScore(char, scoreConfig);
-    });
+    }
 
     return results;
   }, [accountData, scoreConfig]);
@@ -143,13 +149,13 @@ export default function AccountDataPage() {
     setConversionWarnings(result.warnings);
 
     const charCount = result.warnings.filter(
-      (w) => w.type === "character",
+      (w) => w.type === "character"
     ).length;
     const weaponCount = result.warnings.filter(
-      (w) => w.type === "weapon",
+      (w) => w.type === "weapon"
     ).length;
     const artifactCount = result.warnings.filter(
-      (w) => w.type === "artifact",
+      (w) => w.type === "artifact"
     ).length;
 
     const parts: string[] = [];
@@ -202,16 +208,16 @@ export default function AccountDataPage() {
 
         const mergedCharacters = [...accountData.characters];
 
-        newData.characters.forEach((newChar) => {
+        for (const newChar of newData.characters) {
           const index = mergedCharacters.findIndex(
-            (c) => c.key === newChar.key,
+            (c) => c.key === newChar.key
           );
           if (index >= 0) {
             mergedCharacters[index] = newChar; // Overwrite
           } else {
             mergedCharacters.push(newChar); // Add
           }
-        });
+        }
 
         // Keep existing extras, assume Enka import has no extras
         const mergedData: AccountData = {
@@ -358,7 +364,7 @@ export default function AccountDataPage() {
                     <AlertDescription className="pr-8">
                       <div className="mt-1">
                         {conversionWarnings.filter(
-                          (w) => w.type === "character",
+                          (w) => w.type === "character"
                         ).length > 0 && (
                           <div>
                             <span className="font-medium">

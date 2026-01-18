@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { useTeamStore } from "@/stores/useTeamStore";
-import { TeamCard } from "@/components/team-builder/TeamCard";
 import { ToolHeader } from "@/components/shared/ToolHeader";
+import { TeamCard } from "@/components/team-builder/TeamCard";
 import { THEME } from "@/lib/theme";
+import { useTeamStore } from "@/stores/useTeamStore";
+import { useEffect } from "react";
 
 export default function TeamBuilderPage() {
   const teams = useTeamStore((state) => state.teams);

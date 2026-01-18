@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from "react";
+import { type RefObject, useEffect } from "react";
 
 /**
  * Custom hook to handle global scroll behavior for views with sidebars.
@@ -15,7 +15,7 @@ import { useEffect, RefObject } from "react";
 export function useGlobalScroll(
   containerRef: RefObject<HTMLElement>,
   mainScrollRef: RefObject<HTMLElement>,
-  sidebarSelector: string = "aside",
+  sidebarSelector = "aside"
 ) {
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -25,14 +25,14 @@ export function useGlobalScroll(
 
       // Check if we're scrolling over the sidebar (it has its own scroll)
       const sidebar = containerRef.current.querySelector(sidebarSelector);
-      if (sidebar && sidebar.contains(target)) {
+      if (sidebar?.contains(target)) {
         // Let sidebar handle its own scrolling
         return;
       }
 
       // Check if we're scrolling over the main content itself
       const mainContent = mainScrollRef.current;
-      if (mainContent && mainContent.contains(target)) {
+      if (mainContent?.contains(target)) {
         // Let main content handle its own native scrolling (smooth!)
         return;
       }

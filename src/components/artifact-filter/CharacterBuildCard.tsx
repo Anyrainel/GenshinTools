@@ -1,12 +1,12 @@
-import { memo, useCallback, useMemo } from "react";
-import { Character } from "@/data/types";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Character } from "@/data/types";
+import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Plus } from "lucide-react";
-import { TitleCard } from "./TitleCard";
+import { memo, useCallback, useMemo } from "react";
 import { BuildCard } from "./BuildCard";
+import { TitleCard } from "./TitleCard";
 
 interface CharacterBuildCardProps {
   character: Character;
@@ -18,16 +18,16 @@ const EMPTY_BUILD_IDS: string[] = [];
 function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
   const { t } = useLanguage();
   const isHidden = useBuildsStore(
-    (state) => !!state.hiddenCharacters[character.id],
+    (state) => !!state.hiddenCharacters[character.id]
   );
 
   // Use useMemo with shallow comparison for array to prevent re-renders on reference changes
   const buildIdsFromStore = useBuildsStore(
-    (state) => state.characterToBuildIds[character.id],
+    (state) => state.characterToBuildIds[character.id]
   );
   const buildIds = useMemo(
     () => buildIdsFromStore ?? EMPTY_BUILD_IDS,
-    [buildIdsFromStore],
+    [buildIdsFromStore]
   );
 
   const newBuild = useBuildsStore((state) => state.newBuild);
@@ -42,14 +42,14 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
     (buildId: string) => {
       removeBuild(character.id, buildId);
     },
-    [removeBuild, character.id],
+    [removeBuild, character.id]
   );
 
   const handleDuplicateBuild = useCallback(
     (buildId: string) => {
       copyBuild(character.id, buildId);
     },
-    [copyBuild, character.id],
+    [copyBuild, character.id]
   );
 
   return (
@@ -114,5 +114,5 @@ export const CharacterBuildCard = memo(
   (prev, next) => {
     // Only re-render if character ID changes (character object should be stable from resources array)
     return prev.character.id === next.character.id;
-  },
+  }
 );

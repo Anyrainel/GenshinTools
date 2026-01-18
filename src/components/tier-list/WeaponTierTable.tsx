@@ -1,21 +1,21 @@
-import React from "react";
-import {
-  Weapon,
-  TierAssignment,
-  TierCustomization,
-  WeaponType,
-  weaponTypes,
-  MainStat,
-} from "@/data/types";
-import { sortedWeapons } from "@/data/constants";
-import { cn, getAssetUrl } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
-import { TierTable } from "./TierTable";
-import { TierItemData } from "./TierItem";
-import { weaponsById, weaponResourcesByName } from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { sortedWeapons } from "@/data/constants";
+import { weaponResourcesByName, weaponsById } from "@/data/constants";
+import {
+  type MainStat,
+  type TierAssignment,
+  type TierCustomization,
+  type Weapon,
+  type WeaponType,
+  weaponTypes,
+} from "@/data/types";
+import { THEME } from "@/lib/theme";
+import { cn, getAssetUrl } from "@/lib/utils";
+import type React from "react";
+import type { TierItemData } from "./TierItem";
+import { TierTable } from "./TierTable";
 
 // Weapon implements TierItemData
 const weaponToTierItemData = (weapon: Weapon): Weapon & TierItemData => {
@@ -53,7 +53,7 @@ export default function WeaponTierTable({
         className={cn(
           THEME.layout.centerBox,
           THEME.layout.gridBorder,
-          "bg-cyan-900/70 backdrop-blur-sm rounded-tl-md rounded-tr-md",
+          "bg-cyan-900/70 backdrop-blur-sm rounded-tl-md rounded-tr-md"
         )}
       >
         <img
@@ -95,7 +95,7 @@ export default function WeaponTierTable({
 
   const getGroupCount = (
     group: string,
-    itemsPerTier: { [tier: string]: Weapon[] },
+    itemsPerTier: { [tier: string]: Weapon[] }
   ) => {
     return Object.entries(itemsPerTier)
       .filter(([tier]) => tier !== "Pool")

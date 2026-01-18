@@ -1,9 +1,9 @@
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ArtifactSetConfigs } from "@/data/types";
-import { ArtifactConfigCard } from "./ArtifactConfigCard";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { artifactsById } from "@/data/constants";
+import type { ArtifactSetConfigs } from "@/data/types";
+import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
   setId: string;

@@ -1,23 +1,23 @@
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById, sortedCharacters } from "@/data/constants";
+import {
+  elementResourcesByName,
+  weaponResourcesByName,
+} from "@/data/constants";
 import type {
   Character,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import { Element, elements } from "@/data/types";
-import { sortedCharacters, charactersById } from "@/data/constants";
-import { TierTable } from "./TierTable";
-import { TierItemData } from "./TierItem";
-import { cn } from "@/lib/utils";
+import { type Element, elements } from "@/data/types";
 import { THEME } from "@/lib/theme";
-import {
-  elementResourcesByName,
-  weaponResourcesByName,
-} from "@/data/constants";
+import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useTierStore } from "@/stores/useTierStore";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import type { TierItemData } from "./TierItem";
+import { TierTable } from "./TierTable";
 
 interface CharacterTierTableProps {
   tierAssignments: TierAssignment;
@@ -50,7 +50,7 @@ export default function CharacterTierTable({
           THEME.layout.centerBox,
           THEME.element.bg[group as Element],
           THEME.layout.gridBorder,
-          "rounded-tl-md rounded-tr-md",
+          "rounded-tl-md rounded-tr-md"
         )}
       >
         <img
@@ -74,7 +74,7 @@ export default function CharacterTierTable({
         <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
           <img
             src={getAssetUrl(
-              weaponResourcesByName[character.weaponType].imagePath,
+              weaponResourcesByName[character.weaponType].imagePath
             )}
             alt={t.weaponType(character.weaponType)}
             className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
@@ -111,7 +111,7 @@ export default function CharacterTierTable({
 
   const getGroupCount = (
     element: string,
-    itemsPerTier: { [tier: string]: Character[] },
+    itemsPerTier: { [tier: string]: Character[] }
   ) => {
     return Object.entries(itemsPerTier)
       .filter(([tier]) => tier !== "Pool")

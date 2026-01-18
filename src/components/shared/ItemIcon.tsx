@@ -1,6 +1,6 @@
-import { forwardRef } from "react";
-import { cn, getAssetUrl } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { forwardRef } from "react";
 
 interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   imagePath: string;
@@ -38,7 +38,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
     const sizeClass = SIZE_CLASSES[size] ?? size;
 
@@ -51,7 +51,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           "rounded-md",
           THEME.rarity.bg[rarity as keyof typeof THEME.rarity.bg] ||
             "bg-gray-500", // Rarity BG
-          className,
+          className
         )}
         {...props}
       >
@@ -69,7 +69,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 ItemIcon.displayName = "ItemIcon";

@@ -1,14 +1,15 @@
-import React, { useCallback } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { cn } from "@/lib/utils";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Rarity } from "@/data/types";
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import type { Rarity } from "@/data/types";
+import { cn } from "@/lib/utils";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type React from "react";
+import { useCallback } from "react";
 
 export interface TierItemData {
   id: string;
@@ -103,7 +104,7 @@ export function TierItem<T extends TierItemData>({
       className={cn(
         "cursor-grab active:cursor-grabbing",
         "hover:scale-105",
-        disabled && "opacity-50 cursor-not-allowed",
+        disabled && "opacity-50 cursor-not-allowed"
       )}
       onDoubleClick={handleDoubleClick}
       data-item-id={item.id}

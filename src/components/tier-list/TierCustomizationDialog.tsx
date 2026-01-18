@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { TierCustomization } from "@/data/types";
-import { tiers } from "@/data/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { TierCustomization } from "@/data/types";
+import { tiers } from "@/data/types";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 interface TierCustomizationDialogProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
   const handleTierChange = (
     tier: string,
     field: "displayName" | "hidden",
-    value: string | boolean,
+    value: string | boolean
   ) => {
     setCustomization((prev) => ({
       ...prev,
@@ -79,7 +80,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
         className={cn(
           "sm:max-w-[700px]",
           THEME.colors.darkBg,
-          THEME.colors.darkBorder,
+          THEME.colors.darkBorder
         )}
       >
         <DialogHeader>
@@ -96,7 +97,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
             className={cn(
               "p-4 border rounded-lg",
               THEME.colors.darkBorderSecondary,
-              THEME.colors.darkBgSecondary,
+              THEME.colors.darkBgSecondary
             )}
           >
             <div className="flex items-center gap-4">
@@ -120,7 +121,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
                     THEME.colors.darkBorderSecondary,
                     THEME.colors.textWhite,
                     THEME.colors.textGrayPlaceholder,
-                    "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900",
+                    "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
                   )}
                 />
               </div>
@@ -132,7 +133,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
               className={cn(
                 "p-4 border rounded-lg",
                 THEME.colors.darkBorderSecondary,
-                THEME.colors.darkBgSecondary,
+                THEME.colors.darkBgSecondary
               )}
             >
               <div className="flex items-center gap-4">
@@ -158,7 +159,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
                       THEME.colors.darkBorderSecondary,
                       THEME.colors.textWhite,
                       THEME.colors.textGrayPlaceholder,
-                      "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900",
+                      "focus-visible:ring-1 focus-visible:ring-blue-800 focus-visible:border-blue-800 focus-visible:ring-offset-1 focus-visible:ring-offset-gray-900"
                     )}
                   />
                 </div>
@@ -175,7 +176,7 @@ const TierCustomizationDialog: React.FC<TierCustomizationDialogProps> = ({
                     htmlFor={`${tier}-hidden`}
                     className={cn(
                       "text-sm whitespace-nowrap",
-                      THEME.colors.textGray,
+                      THEME.colors.textGray
                     )}
                   >
                     {t.ui("customizeDialog.hideTier")}

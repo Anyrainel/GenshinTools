@@ -1,35 +1,35 @@
-import { useState, useMemo, memo } from "react";
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import {
-  charactersById,
-  weaponsById,
-  artifactsById,
-  sortedCharacters,
-  sortedWeapons,
-  sortedArtifacts,
-} from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
+  ItemIcon,
+  type ItemIconSize,
+  SIZE_CLASSES,
+} from "@/components/shared/ItemIcon";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getAssetUrl, cn } from "@/lib/utils";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import {
-  ItemIcon,
-  SIZE_CLASSES,
-  ItemIconSize,
-} from "@/components/shared/ItemIcon";
-import { Input } from "@/components/ui/input";
-import { Search, Ban } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Character, Weapon, ArtifactSet } from "@/data/types";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  artifactsById,
+  charactersById,
+  sortedArtifacts,
+  sortedCharacters,
+  sortedWeapons,
+  weaponsById,
+} from "@/data/constants";
+import type { ArtifactSet, Character, Weapon } from "@/data/types";
+import { cn, getAssetUrl } from "@/lib/utils";
+import { Ban, Search } from "lucide-react";
+import { memo, useMemo, useState } from "react";
 
 export type ItemPickerType = "character" | "weapon" | "artifact";
 
@@ -104,7 +104,7 @@ function ItemPickerComponent({
       list = list.filter(filter);
     }
     return list.filter((item) =>
-      config.getName(item.id).toLowerCase().includes(search.toLowerCase()),
+      config.getName(item.id).toLowerCase().includes(search.toLowerCase())
     );
   }, [search, config, filter]);
 
@@ -127,16 +127,15 @@ function ItemPickerComponent({
       className={cn(
         SIZE_CLASSES[triggerSize],
         "bg-secondary/30 border-dashed border-2 border-border",
-        "flex items-center justify-center hover:bg-secondary/50 transition-colors select-none",
+        "flex items-center justify-center hover:bg-secondary/50 transition-colors select-none"
       )}
     >
       <span className="text-4xl text-muted-foreground select-none">+</span>
     </div>
   );
 
-  const calcOffset = function (index: number) {
-    return (tooltipSide == "right" ? 5 - (index % 6) : index % 6) * 62 + 12;
-  };
+  const calcOffset = (index: number) =>
+    (tooltipSide === "right" ? 5 - (index % 6) : index % 6) * 62 + 12;
 
   return (
     <Popover
@@ -150,7 +149,7 @@ function ItemPickerComponent({
               className={cn(
                 "cursor-pointer hover:scale-105 transition-transform select-none",
                 disabled && "opacity-50 cursor-not-allowed hover:scale-100",
-                className,
+                className
               )}
             >
               {triggerContent}
@@ -191,7 +190,7 @@ function ItemPickerComponent({
                       setIsOpen(false);
                     }}
                     className={cn(
-                      "cursor-pointer hover:scale-110 hover:brightness-125 transition-all rounded-md relative",
+                      "cursor-pointer hover:scale-110 hover:brightness-125 transition-all rounded-md relative"
                     )}
                   >
                     <ItemIcon
@@ -208,7 +207,7 @@ function ItemPickerComponent({
                           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full backdrop-blur-sm bg-black/50 p-0.5 z-10 pointer-events-none w-6 h-6">
                             <img
                               src={getAssetUrl(
-                                `element/${(item as Character).element.toLowerCase()}.png`,
+                                `element/${(item as Character).element.toLowerCase()}.png`
                               )}
                               alt={(item as Character).element}
                               className="w-5 h-5 drop-shadow-md"
@@ -233,7 +232,7 @@ function ItemPickerComponent({
                 className={cn(
                   SIZE_CLASSES[menuSize],
                   "rounded-md overflow-hidden relative cursor-pointer hover:ring-2 ring-primary transition-all",
-                  "bg-muted border-2 border-dashed border-muted-foreground/30 hover:bg-muted/80 flex justify-center items-center",
+                  "bg-muted border-2 border-dashed border-muted-foreground/30 hover:bg-muted/80 flex justify-center items-center"
                 )}
                 onClick={() => {
                   onClear();

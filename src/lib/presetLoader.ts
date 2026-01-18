@@ -1,4 +1,4 @@
-import { PresetOption } from "@/data/types";
+import type { PresetOption } from "@/data/types";
 
 /**
  * Loads preset metadata from a glob pattern of preset modules
@@ -8,7 +8,7 @@ import { PresetOption } from "@/data/types";
 export async function loadPresetMetadata<
   T extends { author?: string; description?: string },
 >(
-  presetModules: Record<string, () => Promise<{ default: T } | T>>,
+  presetModules: Record<string, () => Promise<{ default: T } | T>>
 ): Promise<PresetOption[]> {
   const options = await Promise.all(
     Object.keys(presetModules).map(async (path) => {
@@ -28,18 +28,17 @@ export async function loadPresetMetadata<
             author: payload.author,
             description: payload.description,
           };
-        } else {
-          const fileName = path.split("/").pop() || path;
-          const label = fileName.replace(/\.json$/i, "").replace(/[-_]+/g, " ");
-          return { path, label: label.trim() || fileName };
         }
+        const fileName = path.split("/").pop() || path;
+        const label = fileName.replace(/\.json$/i, "").replace(/[-_]+/g, " ");
+        return { path, label: label.trim() || fileName };
       } catch (error) {
         console.error(`Failed to load preset metadata for ${path}:`, error);
         const fileName = path.split("/").pop() || path;
         const label = fileName.replace(/\.json$/i, "").replace(/[-_]+/g, " ");
         return { path, label: label.trim() || fileName };
       }
-    }),
+    })
   );
 
   return options.sort((a, b) => a.label.localeCompare(b.label));
@@ -54,7 +53,7 @@ export async function loadPresetMetadata<
  */
 export async function loadPresetPayload<T>(
   presetModules: Record<string, () => Promise<{ default: T } | T>>,
-  path: string,
+  path: string
 ): Promise<T> {
   const loader = presetModules[path];
   if (!loader) {

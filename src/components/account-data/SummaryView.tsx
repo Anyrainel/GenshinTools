@@ -1,19 +1,19 @@
-import { useAccountStore } from "@/stores/useAccountStore";
-import { useTierStore } from "@/stores/useTierStore";
-import { ArtifactScoreResult } from "@/lib/artifactScore";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { charactersById, artifactsById } from "@/data/constants";
-import { CharacterData, tiers } from "@/data/types";
-import { useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { artifactsById, charactersById } from "@/data/constants";
+import { type CharacterData, tiers } from "@/data/types";
+import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { useTierStore } from "@/stores/useTierStore";
+import { useMemo } from "react";
 
 interface SummaryViewProps {
   scores: Record<string, ArtifactScoreResult>;
@@ -35,33 +35,33 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
       }[]
     > = {};
 
-    tiers.forEach((tier) => {
+    for (const tier of tiers) {
       byTier[tier] = [];
-    });
+    }
 
-    accountData.characters.forEach((char) => {
+    for (const char of accountData.characters) {
       const scoreResult = scores[char.key];
-      if (!scoreResult || !scoreResult.isComplete) return;
+      if (!scoreResult || !scoreResult.isComplete) continue;
 
       const assignment = tierAssignments[char.key];
       const tier = assignment ? assignment.tier : "Pool";
 
       if (!byTier[tier]) {
-        if (!byTier["Pool"]) byTier["Pool"] = [];
-        byTier["Pool"].push({ char, scoreResult });
+        if (!byTier.Pool) byTier.Pool = [];
+        byTier.Pool.push({ char, scoreResult });
       } else {
         byTier[tier].push({ char, scoreResult });
       }
-    });
+    }
 
-    Object.keys(byTier).forEach((tier) => {
+    for (const tier of Object.keys(byTier)) {
       byTier[tier].sort(
         (a, b) =>
           b.scoreResult.mainScore +
           b.scoreResult.subScore -
-          (a.scoreResult.mainScore + a.scoreResult.subScore),
+          (a.scoreResult.mainScore + a.scoreResult.subScore)
       );
-    });
+    }
 
     return byTier;
   }, [accountData, scores, tierAssignments]);
@@ -93,23 +93,23 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
                 if (!charInfo) return null;
 
                 const artifactCounts: Record<string, number> = {};
-                Object.values(char.artifacts).forEach((art) => {
-                  if (art && art.setKey) {
+                for (const art of Object.values(char.artifacts)) {
+                  if (art?.setKey) {
                     artifactCounts[art.setKey] =
                       (artifactCounts[art.setKey] || 0) + 1;
                   }
-                });
+                }
 
                 let activeSetIds: string[] = [];
                 const set4pc = Object.keys(artifactCounts).find(
-                  (key) => artifactCounts[key] >= 4,
+                  (key) => artifactCounts[key] >= 4
                 );
 
                 if (set4pc) {
                   activeSetIds = [set4pc];
                 } else {
                   const sets2pc = Object.keys(artifactCounts).filter(
-                    (key) => artifactCounts[key] >= 2,
+                    (key) => artifactCounts[key] >= 2
                   );
                   activeSetIds = sets2pc.slice(0, 2);
                 }

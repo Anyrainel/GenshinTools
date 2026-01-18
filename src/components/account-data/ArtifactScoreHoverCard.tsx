@@ -1,10 +1,10 @@
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ArtifactScoreResult } from "@/lib/artifactScore";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import { cn } from "@/lib/utils";
 
 interface ArtifactScoreHoverCardProps {
@@ -140,7 +140,7 @@ const ArtifactScoreContent = ({
           {Object.entries(artifactScore.statScores)
             .filter(
               ([, data]) =>
-                (data.mainValue > 0 || data.subValue > 0) && data.weight > 0,
+                (data.mainValue > 0 || data.subValue > 0) && data.weight > 0
             )
             .sort((a, b) => {
               if (b[1].weight !== a[1].weight) {

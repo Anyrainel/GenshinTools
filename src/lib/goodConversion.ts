@@ -1,12 +1,12 @@
 import { i18nGameData } from "@/data/i18n-game";
-import {
+import type {
   AccountData,
   ArtifactData,
   CharacterData,
-  WeaponData,
   MainStat,
-  SubStat,
   Slot,
+  SubStat,
+  WeaponData,
 } from "@/data/types";
 
 // --- Types from GOOD (Genshin Open Object Description) ---
@@ -95,19 +95,19 @@ const ARTIFACT_SKIP_SET = new Set([
 
 // Build Reverse Maps
 const charMap = new Map<string, string>();
-Object.entries(i18nGameData.characters).forEach(([id, data]) => {
+for (const [id, data] of Object.entries(i18nGameData.characters)) {
   charMap.set(normalize(data.en), id);
-});
+}
 
 const weaponMap = new Map<string, string>();
-Object.entries(i18nGameData.weapons).forEach(([id, data]) => {
+for (const [id, data] of Object.entries(i18nGameData.weapons)) {
   weaponMap.set(normalize(data.name.en), id);
-});
+}
 
 const artifactMap = new Map<string, string>();
-Object.entries(i18nGameData.artifacts).forEach(([id, data]) => {
+for (const [id, data] of Object.entries(i18nGameData.artifacts)) {
   artifactMap.set(normalize(data.name.en), id);
-});
+}
 
 // Stat Key Mapping (GOOD -> Internal)
 const statKeyMap: Record<string, string> = {
@@ -153,7 +153,7 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
   // 1. Process Characters
   if (Array.isArray(data.characters)) {
-    data.characters.forEach((char) => {
+    for (const char of data.characters) {
       let key = char.key;
       // Special handling for Traveler
       if (key === "Traveler") {
@@ -164,7 +164,7 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
       // Skip intentionally ignored characters silently
       if (CHARACTER_SKIP_SET.has(normalizedKey)) {
-        return;
+        continue;
       }
 
       const internalId = charMap.get(normalizedKey);
@@ -182,16 +182,17 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
         console.warn(`Character not found: ${key}`);
         warnings.push({ type: "character", key: char.key });
       }
-    });
+    }
   }
 
   // 2. Process Weapons
   if (Array.isArray(data.weapons)) {
-    data.weapons.forEach((wp, index: number) => {
+    let weaponIndex = 0;
+    for (const wp of data.weapons) {
       const internalId = weaponMap.get(normalize(wp.key));
       if (internalId) {
         const weaponData: WeaponData = {
-          id: `weapon-${index}`,
+          id: `weapon-${weaponIndex}`,
           key: internalId,
           level: wp.level,
           refinement: wp.refinement,
@@ -220,17 +221,20 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
         console.warn(`Weapon not found: ${wp.key}`);
         warnings.push({ type: "weapon", key: wp.key });
       }
-    });
+      weaponIndex++;
+    }
   }
 
   // 3. Process Artifacts
   if (Array.isArray(data.artifacts)) {
-    data.artifacts.forEach((art, index: number) => {
+    let artifactIndex = 0;
+    for (const art of data.artifacts) {
       const normalizedSetKey = normalize(art.setKey);
 
       // Skip intentionally ignored artifact sets silently
       if (ARTIFACT_SKIP_SET.has(normalizedSetKey)) {
-        return;
+        artifactIndex++;
+        continue;
       }
 
       const setKey = artifactMap.get(normalizedSetKey);
@@ -240,16 +244,16 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
         // Convert substats array to Record (Map)
         const substats: Partial<Record<SubStat, number>> = {};
-        art.substats.forEach((sub: IGOODSubstat) => {
+        for (const sub of art.substats) {
           const key = statKeyMap[sub.key] as SubStat;
           if (key) {
             substats[key] = sub.value;
           }
-        });
+        }
 
         if (mainStatKey && slotKey) {
           const artifactData: ArtifactData = {
-            id: `artifact-${index}`,
+            id: `artifact-${artifactIndex}`,
             setKey,
             slotKey,
             level: art.level,
@@ -282,7 +286,8 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
         console.warn(`Artifact Set not found: ${art.setKey}`);
         warnings.push({ type: "artifact", key: art.setKey });
       }
-    });
+      artifactIndex++;
+    }
   }
 
   return {

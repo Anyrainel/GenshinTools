@@ -1,13 +1,13 @@
-import { memo, useMemo, useCallback } from "react";
-import { Character } from "@/data/types";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
-import { useBuildsStore } from "@/stores/useBuildsStore";
-import { ItemPicker } from "@/components/shared/ItemPicker";
-import { ItemIcon } from "@/components/shared/ItemIcon";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
-import { Weapon } from "@/data/types";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { ItemPicker } from "@/components/shared/ItemPicker";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Character } from "@/data/types";
+import type { Weapon } from "@/data/types";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { Eye, EyeOff } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 
 interface WeaponSlotProps {
   index: number;
@@ -29,7 +29,7 @@ const WeaponSlot = memo(
   }: WeaponSlotProps) => {
     const handleChange = useCallback(
       (val: string) => onUpdate(index, val),
-      [index, onUpdate],
+      [index, onUpdate]
     );
     const handleClear = useCallback(() => onClear(index), [index, onClear]);
 
@@ -44,7 +44,7 @@ const WeaponSlot = memo(
         triggerSize="xl"
       />
     );
-  },
+  }
 );
 WeaponSlot.displayName = "WeaponSlot";
 
@@ -55,17 +55,17 @@ interface TitleCardProps {
 function TitleCardComponent({ character }: TitleCardProps) {
   const { t } = useLanguage();
   const isHidden = useBuildsStore(
-    (state) => !!state.hiddenCharacters[character.id],
+    (state) => !!state.hiddenCharacters[character.id]
   );
   const toggleHidden = useBuildsStore((state) => state.toggleCharacterHidden);
 
   const displayName = useMemo(
     () => t.character(character.id),
-    [t, character.id],
+    [t, character.id]
   );
 
   const characterWeapons = useBuildsStore((state) =>
-    state.getCharacterWeapons(character.id),
+    state.getCharacterWeapons(character.id)
   );
 
   const handleToggle = useCallback(() => {
@@ -76,7 +76,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
     (item: unknown) => {
       return (item as Weapon).type === character.weaponType;
     },
-    [character.weaponType],
+    [character.weaponType]
   );
 
   // Stable callbacks for weapon updates
@@ -93,7 +93,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
       }
       state.setCharacterWeapons(character.id, currentWeapons);
     },
-    [character.id],
+    [character.id]
   );
 
   const handleWeaponClear = useCallback(
@@ -103,7 +103,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
       currentWeapons.splice(index, 1);
       state.setCharacterWeapons(character.id, currentWeapons);
     },
-    [character.id],
+    [character.id]
   );
 
   return (

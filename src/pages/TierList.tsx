@@ -1,32 +1,32 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Settings, FileDown } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ToolHeader } from "@/components/shared/ToolHeader";
-import { ImportControl } from "@/components/shared/ImportControl";
-import { ExportControl } from "@/components/shared/ExportControl";
 import { ClearAllControl } from "@/components/shared/ClearAllControl"; // Updated import
-import {
-  PresetOption,
-  TierListData,
-  TierAssignment,
-  TierCustomization,
-} from "@/data/types"; // Import necessary types
-import { useTierStore } from "@/stores/useTierStore";
+import { ExportControl } from "@/components/shared/ExportControl";
+import { ImportControl } from "@/components/shared/ImportControl";
+import { ToolHeader } from "@/components/shared/ToolHeader";
 import CharacterTierTable from "@/components/tier-list/CharacterTierTable";
 import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import type {
+  PresetOption,
+  TierAssignment,
+  TierCustomization,
+  TierListData,
+} from "@/data/types"; // Import necessary types
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
+import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { useTierStore } from "@/stores/useTierStore";
+import { FileDown, Settings } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: TierListData }>(
   "@/presets/tier-list/*.json",
   {
     eager: false,
-  },
+  }
 );
 
 // Helper to generate ID from name (for backwards compatibility from genshin-tier-list project)
@@ -45,7 +45,7 @@ const TierListPage = () => {
   const customTitle = useTierStore((state) => state.customTitle);
   const setTierAssignments = useTierStore((state) => state.setTierAssignments);
   const setTierCustomization = useTierStore(
-    (state) => state.setTierCustomization,
+    (state) => state.setTierCustomization
   );
   const setCustomTitle = useTierStore((state) => state.setCustomTitle);
   const resetStoredTierList = useTierStore((state) => state.resetTierList);
@@ -86,7 +86,7 @@ const TierListPage = () => {
       toTier?: string;
     }[] = [];
 
-    allKeys.forEach((characterId) => {
+    for (const characterId of allKeys) {
       const prevAssignment = prev[characterId];
       const currAssignment = curr[characterId];
 
@@ -108,7 +108,7 @@ const TierListPage = () => {
           fromTier: prevAssignment.tier,
         });
       }
-    });
+    }
 
     // Show toast for changes
     if (changes.length > 0) {
@@ -125,7 +125,7 @@ const TierListPage = () => {
           t.format("messages.characterMoved", localizedName, tierLabel),
           {
             duration: 2000,
-          },
+          }
         );
       } else {
         toast.success(t.format("messages.characterRemoved", localizedName), {
@@ -135,7 +135,7 @@ const TierListPage = () => {
     }
 
     prevAssignmentsRef.current = tierAssignments;
-  }, [tierAssignments, t, language]);
+  }, [tierAssignments, t]);
 
   // Load preset metadata on mount
   useEffect(() => {
@@ -152,7 +152,7 @@ const TierListPage = () => {
     // Normalize imported data assignments using generateId
     const normalizedAssignments: TierAssignment = {};
     if (importedData.tierAssignments) {
-      Object.entries(importedData.tierAssignments).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(importedData.tierAssignments)) {
         if (charactersById[key]) {
           normalizedAssignments[key] = value as {
             tier: string;
@@ -168,7 +168,7 @@ const TierListPage = () => {
             };
           }
         }
-      });
+      }
       importedData.tierAssignments = normalizedAssignments;
     }
 
@@ -220,20 +220,20 @@ const TierListPage = () => {
 
   const handleTierCustomizationSave = (
     customization: TierCustomization,
-    newCustomTitle?: string,
+    newCustomTitle?: string
   ) => {
     const newAssignments = { ...tierAssignments };
     const hiddenTiers = Object.keys(customization).filter(
-      (tier) => customization[tier]?.hidden,
+      (tier) => customization[tier]?.hidden
     );
 
-    hiddenTiers.forEach((tier) => {
-      Object.keys(newAssignments).forEach((characterId) => {
+    for (const tier of hiddenTiers) {
+      for (const characterId of Object.keys(newAssignments)) {
         if (newAssignments[characterId].tier === tier) {
           delete newAssignments[characterId];
         }
-      });
-    });
+      }
+    }
 
     setTierAssignments(newAssignments);
     setTierCustomization(customization);
@@ -294,11 +294,11 @@ const TierListPage = () => {
               authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
               descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
               descriptionPlaceholder={t.ui(
-                "tierList.exportDescriptionPlaceholder",
+                "tierList.exportDescriptionPlaceholder"
               )}
               authorRequiredError={t.ui("tierList.exportAuthorRequired")}
               descriptionRequiredError={t.ui(
-                "tierList.exportDescriptionRequired",
+                "tierList.exportDescriptionRequired"
               )}
               confirmActionLabel={t.ui("tierList.exportConfirmAction")}
               defaultAuthor={author}
@@ -321,7 +321,7 @@ const TierListPage = () => {
       <div
         className={cn(
           THEME.layout.headerBorder,
-          "z-40 flex-shrink-0 sticky top-0",
+          "z-40 flex-shrink-0 sticky top-0"
         )}
       >
         <div className="container mx-auto flex items-center gap-4 py-2">

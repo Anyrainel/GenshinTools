@@ -1,5 +1,5 @@
-import React from "react";
-import { TierItemData } from "./TierItem";
+import type React from "react";
+import type { TierItemData } from "./TierItem";
 
 interface TierItemPreviewProps<T extends TierItemData> {
   item: T;

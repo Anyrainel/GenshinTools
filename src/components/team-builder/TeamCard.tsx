@@ -1,16 +1,16 @@
-import { Team } from "@/stores/useTeamStore";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Copy, Trash2, User, Sword, Flower } from "lucide-react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getAssetUrl, cn } from "@/lib/utils";
 import {
   charactersById,
-  weaponsById,
   elementResourcesByName,
+  weaponsById,
 } from "@/data/constants";
-import { Weapon } from "@/data/types";
+import type { Weapon } from "@/data/types";
+import { cn, getAssetUrl } from "@/lib/utils";
+import type { Team } from "@/stores/useTeamStore";
+import { Copy, Flower, Sword, Trash2, User } from "lucide-react";
 
 interface TeamCardProps {
   team: Team;
@@ -36,7 +36,7 @@ export function TeamCard({
       return (
         <div
           className={cn(
-            "w-8 h-8 rounded-full bg-secondary/50 border border-border/50",
+            "w-8 h-8 rounded-full bg-secondary/50 border border-border/50"
           )}
         />
       );
@@ -58,7 +58,7 @@ export function TeamCard({
   return (
     <div
       className={cn(
-        "bg-card/40 backdrop-blur-md rounded-lg p-6 space-y-4 w-fit mx-auto",
+        "bg-card/40 backdrop-blur-md rounded-lg p-6 space-y-4 w-fit mx-auto"
       )}
     >
       {/* Row 1: Header */}
@@ -100,7 +100,7 @@ export function TeamCard({
       {/* Grid for Pickers and Display */}
       <div className="grid grid-cols-[auto_repeat(4,auto)] gap-3 justify-center justify-items-center items-center pr-1">
         {/* Row Header: Elements */}
-        <div className="w-6"></div>
+        <div className="w-6" />
         {/* Row 2: Element Display (Thin row) */}
         {team.characters.map((charId, idx) => (
           <div

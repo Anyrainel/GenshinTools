@@ -1,30 +1,35 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react";
+import { ComputeView } from "@/components/artifact-filter/ComputeView";
 import {
   ConfigureView,
-  ConfigureViewRef,
+  type ConfigureViewRef,
 } from "@/components/artifact-filter/ConfigureView";
-import { ComputeView } from "@/components/artifact-filter/ComputeView";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useBuildsStore } from "@/stores/useBuildsStore";
-import { serializeBuildExportPayload } from "@/stores/jsonUtils";
-import { Build, BuildGroup, BuildPayload, PresetOption } from "@/data/types";
-import { ImportControl } from "@/components/shared/ImportControl";
-import { ExportControl } from "@/components/shared/ExportControl";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { ExportControl } from "@/components/shared/ExportControl";
+import { ImportControl } from "@/components/shared/ImportControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
-import { toPng } from "html-to-image";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type {
+  Build,
+  BuildGroup,
+  BuildPayload,
+  PresetOption,
+} from "@/data/types";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { serializeBuildExportPayload } from "@/stores/jsonUtils";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { toPng } from "html-to-image";
+import { FileDown } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: BuildPayload }>(
   "@/presets/artifact-filter/*.json",
-  { eager: false },
+  { eager: false }
 );
 
 const Index = () => {
@@ -73,7 +78,7 @@ const Index = () => {
     // Convert store format to export format
     const exportData: BuildGroup[] = [];
 
-    Object.entries(characterToBuildIds).forEach(([characterId, buildIds]) => {
+    for (const [characterId, buildIds] of Object.entries(characterToBuildIds)) {
       const characterBuilds = buildIds
         .map((id) => builds[id])
         .filter((b): b is Build => b !== undefined);
@@ -86,13 +91,13 @@ const Index = () => {
           weapons: characterWeapons[characterId],
         });
       }
-    });
+    }
 
     const dataStr = serializeBuildExportPayload(
       exportData,
       computeOptions,
       author,
-      description,
+      description
     );
     const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
@@ -148,36 +153,34 @@ const Index = () => {
     <div className={THEME.layout.pageContainer}>
       <ToolHeader
         actions={
-          <>
-            {activeTab === "filters" ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadImage}
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                {t.ui("app.print")}
-              </Button>
-            ) : (
-              <>
-                <ClearAllControl onConfirm={clearAllBuilds} />
+          activeTab === "filters" ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadImage}
+              className="gap-2"
+            >
+              <FileDown className="w-4 h-4" />
+              {t.ui("app.print")}
+            </Button>
+          ) : (
+            <>
+              <ClearAllControl onConfirm={clearAllBuilds} />
 
-                <ImportControl
-                  options={presetOptions}
-                  loadPreset={loadPreset}
-                  onApply={importBuilds}
-                  onLocalImport={importBuilds}
-                />
+              <ImportControl
+                options={presetOptions}
+                loadPreset={loadPreset}
+                onApply={importBuilds}
+                onLocalImport={importBuilds}
+              />
 
-                <ExportControl
-                  onExport={handleExport}
-                  defaultAuthor={author}
-                  defaultDescription={description}
-                />
-              </>
-            )}
-          </>
+              <ExportControl
+                onExport={handleExport}
+                defaultAuthor={author}
+                defaultDescription={description}
+              />
+            </>
+          )
         }
       />
 

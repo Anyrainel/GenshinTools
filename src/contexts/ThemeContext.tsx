@@ -1,12 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
   type ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
 } from "react";
 
 export type ThemeId =
@@ -75,7 +75,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       theme,
       setTheme,
     }),
-    [theme, setTheme],
+    [theme, setTheme]
   );
 
   return (

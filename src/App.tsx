@@ -1,13 +1,13 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { Route, Routes } from "react-router-dom";
+import { Layout } from "./components/shared/Layout";
+import AccountDataPage from "./pages/AccountData";
 import ArtifactFilterPage from "./pages/ArtifactFilter";
+import Home from "./pages/Home";
+import TeamBuilderPage from "./pages/TeamBuilder";
 import TierListPage from "./pages/TierList";
 import WeaponTierListPage from "./pages/WeaponTierList";
-import TeamBuilderPage from "./pages/TeamBuilder";
-import AccountDataPage from "./pages/AccountData";
-import Home from "./pages/Home";
-import { Layout } from "./components/shared/Layout";
 
 function App() {
   return (

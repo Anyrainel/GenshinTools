@@ -1,6 +1,6 @@
+import type { TierAssignment, TierCustomization } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { TierAssignment, TierCustomization } from "@/data/types";
 
 interface WeaponTierListState {
   tierAssignments: TierAssignment;
@@ -14,7 +14,7 @@ interface WeaponTierListState {
 
   // Actions
   setTierAssignments: (
-    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment),
+    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
   ) => void;
   setTierCustomization: (customization: TierCustomization) => void;
   setCustomTitle: (title: string) => void;
@@ -101,6 +101,6 @@ export const useWeaponTierStore = create<WeaponTierListState>()(
         showRarity4: state.showRarity4,
         showRarity3: state.showRarity3,
       }),
-    },
-  ),
+    }
+  )
 );

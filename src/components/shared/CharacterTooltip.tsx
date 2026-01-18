@@ -1,8 +1,8 @@
-import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { cn, getAssetUrl } from "@/lib/utils";
 import { THEME } from "@/lib/theme";
+import { cn, getAssetUrl } from "@/lib/utils";
+import type React from "react";
 
 interface CharacterTooltipProps {
   characterId: string;
@@ -27,7 +27,7 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
       <div
         className={cn(
           "p-3 flex items-start gap-3 relative overflow-hidden",
-          THEME.rarity.bg[character.rarity as keyof typeof THEME.rarity.bg],
+          THEME.rarity.bg[character.rarity as keyof typeof THEME.rarity.bg]
         )}
       >
         {/* Background gradient overlay */}
@@ -44,7 +44,7 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
             <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
               <img
                 src={getAssetUrl(
-                  `/element/${character.element.toLowerCase()}.png`,
+                  `/element/${character.element.toLowerCase()}.png`
                 )}
                 alt={character.element}
                 className="w-4 h-4 object-contain"
@@ -54,7 +54,7 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
             <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
               <img
                 src={getAssetUrl(
-                  `/weapontype/${character.weaponType.toLowerCase()}.png`,
+                  `/weapontype/${character.weaponType.toLowerCase()}.png`
                 )}
                 alt={character.weaponType}
                 className="w-4 h-4 object-contain"

@@ -1,48 +1,48 @@
-import {
-  Build,
-  MainStat,
-  SubStat,
-  mainStatSlots,
-  Element,
-  MainStatSlot,
-} from "@/data/types";
-import {
-  statPools,
-  getGobletPool,
-  artifactHalfSetsById,
-} from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import {
-  LightweightSelect,
-  LightweightSelectItem,
-  LightweightSelectTrigger,
-  LightweightSelectContent,
-  LightweightSelectValue,
-} from "@/components/ui/lightweight-select";
-import {
-  Check,
-  ChevronDown,
-  Copy,
-  AlertCircle,
-  Trash2,
-  ChevronUp,
-} from "lucide-react";
-import { memo, useState, useCallback, useRef, useEffect, useMemo } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  LightweightSelect,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  artifactHalfSetsById,
+  getGobletPool,
+  statPools,
+} from "@/data/constants";
+import {
+  type Build,
+  type Element,
+  type MainStat,
+  type MainStatSlot,
+  type SubStat,
+  mainStatSlots,
+} from "@/data/types";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import {
+  AlertCircle,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Trash2,
+} from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArtifactSelect, ArtifactSelectHalf } from "./ArtifactSelect";
 import { StatSelect } from "./StatSelect";
 
@@ -69,7 +69,7 @@ function BuildCardComponent({
   // Only keep local state for the name field (for typing smoothness)
   const [localName, setLocalName] = useState("");
   const nameUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
+    null
   );
 
   // Sync local name when build name changes from store
@@ -91,7 +91,7 @@ function BuildCardComponent({
         setBuild(buildId, { name: newName });
       }, 300);
     },
-    [buildId, setBuild],
+    [buildId, setBuild]
   );
 
   const handleNameBlur = useCallback(() => {
@@ -105,7 +105,7 @@ function BuildCardComponent({
     (changes: Partial<Build>) => {
       setBuild(buildId, changes);
     },
-    [buildId, setBuild],
+    [buildId, setBuild]
   );
 
   const handleToggleVisibility = useCallback(() => {
@@ -183,7 +183,7 @@ function BuildCardComponent({
       goblet: getGobletPool(element),
       circlet: statPools.circlet,
     }),
-    [element],
+    [element]
   );
 
   const mainStatLabel = (slot: MainStatSlot) => {
@@ -355,7 +355,7 @@ function BuildCardComponent({
               </div>
 
               {/* Vertical Divider */}
-              <div className="w-px h-full bg-border/70 min-h-32"></div>
+              <div className="w-px h-full bg-border/70 min-h-32" />
 
               {/* Stats Section - Right Side */}
               <div className="flex-1 space-y-1">
@@ -404,14 +404,14 @@ function BuildCardComponent({
                         onChange={(e) =>
                           handleBuildChange({
                             kOverride: e.target.value
-                              ? parseInt(e.target.value)
+                              ? Number.parseInt(e.target.value)
                               : undefined,
                           })
                         }
                         className="w-12 h-7 text-sm border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         placeholder={Math.min(
                           build.substats.length,
-                          4,
+                          4
                         ).toString()}
                       />
                       <span className="text-sm text-muted-foreground select-none">

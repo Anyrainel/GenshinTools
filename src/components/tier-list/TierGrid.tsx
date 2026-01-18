@@ -1,9 +1,9 @@
-import React from "react";
+import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import { cn } from "@/lib/utils";
-import { THEME } from "@/lib/theme";
-import { TierItem, TierItemData } from "./TierItem";
+import type React from "react";
+import { TierItem, type TierItemData } from "./TierItem";
 
 interface TierGridProps<T extends TierItemData> {
   allTiers: string[];
@@ -18,7 +18,7 @@ interface TierGridProps<T extends TierItemData> {
   getItemGroup: (item: T) => string;
   getGroupCount: (
     group: string,
-    itemsPerTier: { [tier: string]: T[] },
+    itemsPerTier: { [tier: string]: T[] }
   ) => number;
   getTierDisplayName: (tier: string) => string; // Function to get tier display name (with translation)
   getImagePath: (item: T) => string;
@@ -45,7 +45,7 @@ export function TierGrid<T extends TierItemData>({
 }: TierGridProps<T>) {
   // Check if any tier has custom names for flexible width
   const hasCustomNames = Object.values(tierCustomization).some(
-    (custom) => custom?.displayName,
+    (custom) => custom?.displayName
   );
 
   // Component for each droppable cell (tier-group combination)
@@ -75,7 +75,7 @@ export function TierGrid<T extends TierItemData>({
         className={cn(
           "min-h-[5rem]",
           THEME.tier.bg[tier as keyof typeof THEME.tier.bg],
-          THEME.layout.gridBorder,
+          THEME.layout.gridBorder
         )}
         data-tier={tier}
         data-group={group}
@@ -134,13 +134,13 @@ export function TierGrid<T extends TierItemData>({
               THEME.tier.color[tier as keyof typeof THEME.tier.color],
               THEME.layout.gridBorder,
               "rounded-l-md",
-              hasCustomNames && "max-w-48",
+              hasCustomNames && "max-w-48"
             )}
           >
             <span
               className={cn(
                 THEME.layout.labelText,
-                customName ? "text-base" : "text-xl",
+                customName ? "text-base" : "text-xl"
               )}
             >
               {displayName}

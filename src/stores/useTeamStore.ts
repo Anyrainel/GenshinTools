@@ -80,6 +80,6 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-    },
-  ),
+    }
+  )
 );

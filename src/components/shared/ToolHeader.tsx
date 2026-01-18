@@ -1,4 +1,3 @@
-import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,11 +5,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Languages, Home, Palette, Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useTheme, THEME_IDS, type ThemeId } from "@/contexts/ThemeContext";
-import { cn } from "@/lib/utils";
+import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
 import { THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import { Check, Home, Languages, Palette } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 interface ToolHeaderProps {
   actions?: React.ReactNode;
@@ -52,7 +52,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
               className={cn(
                 "gap-2",
                 isArtifactFilter &&
-                  "bg-primary/10 text-primary hover:bg-primary/20",
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/artifact-filter">{t.ui("app.navArtifactFilter")}</Link>
@@ -67,7 +67,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
               className={cn(
                 "gap-2",
                 location.pathname.includes("/account-data") &&
-                  "bg-primary/10 text-primary hover:bg-primary/20",
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/account-data">{t.ui("app.navAccountData")}</Link>
@@ -79,7 +79,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
                 "gap-2",
                 isTierList &&
                   !isWeaponTierList &&
-                  "bg-primary/10 text-primary hover:bg-primary/20",
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/tier-list">{t.ui("app.navTierList")}</Link>
@@ -90,7 +90,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
               className={cn(
                 "gap-2",
                 isWeaponTierList &&
-                  "bg-primary/10 text-primary hover:bg-primary/20",
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/weapon-tier-list">
@@ -103,7 +103,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
               className={cn(
                 "gap-2",
                 isTeamBuilder &&
-                  "bg-primary/10 text-primary hover:bg-primary/20",
+                  "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               <Link to="/team-builder">{t.ui("app.navTeamBuilder")}</Link>

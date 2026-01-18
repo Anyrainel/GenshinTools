@@ -1,25 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
-import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { sortedCharacters, elementResourcesByName } from "@/data/constants";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +10,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -39,10 +20,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, RotateCcw, Save, CircleHelp } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { elementResourcesByName, sortedCharacters } from "@/data/constants";
+import type { Character, Element } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Element, Character } from "@/data/types";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { CircleHelp, RotateCcw, Save, Search } from "lucide-react";
+import React, { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 
 // Helper to map element string to stat key
@@ -182,7 +182,7 @@ const CharacterWeightRow = React.memo(
       charId: string,
       key: string,
       val: number,
-      isMerged?: boolean,
+      isMerged?: boolean
     ) => void;
   }) => {
     const { t } = useLanguage();
@@ -230,28 +230,28 @@ const CharacterWeightRow = React.memo(
         </TableCell>
         <TableCell className="p-1">
           <WeightCell
-            value={weights["cr"] ?? 0}
+            value={weights.cr ?? 0}
             onChange={(v) => onValueChange(char.id, "cr", v)}
             label={t.stat("cr")}
           />
         </TableCell>
         <TableCell className="p-1">
           <WeightCell
-            value={weights["cd"] ?? 0}
+            value={weights.cd ?? 0}
             onChange={(v) => onValueChange(char.id, "cd", v)}
             label={t.stat("cd")}
           />
         </TableCell>
         <TableCell className="p-1">
           <WeightCell
-            value={weights["em"] ?? 0}
+            value={weights.em ?? 0}
             onChange={(v) => onValueChange(char.id, "em", v)}
             label={t.stat("em")}
           />
         </TableCell>
         <TableCell className="p-1">
           <WeightCell
-            value={weights["er"] ?? 0}
+            value={weights.er ?? 0}
             onChange={(v) => onValueChange(char.id, "er", v)}
             label={t.stat("er")}
           />
@@ -287,7 +287,7 @@ const CharacterWeightRow = React.memo(
       prevProps.weights === nextProps.weights &&
       prevProps.onValueChange === nextProps.onValueChange
     );
-  },
+  }
 );
 
 export const StatWeightView = () => {
@@ -315,7 +315,7 @@ export const StatWeightView = () => {
       setCharacterWeight(charId, baseKey, value); // flat
       setCharacterWeight(charId, `${baseKey}%`, value); // percent
     },
-    [setCharacterWeight],
+    [setCharacterWeight]
   );
 
   const updateWeight = useCallback(
@@ -324,24 +324,24 @@ export const StatWeightView = () => {
       const clamped = Math.max(0, Math.min(100, value));
       setCharacterWeight(charId, key, clamped);
     },
-    [setCharacterWeight],
+    [setCharacterWeight]
   );
 
   const handleValueChange = useCallback(
-    (charId: string, key: string, val: number, isMerged: boolean = false) => {
+    (charId: string, key: string, val: number, isMerged = false) => {
       if (isMerged) {
         updateMergedWeight(charId, key as "hp" | "atk" | "def", val);
       } else {
         updateWeight(charId, key, val);
       }
     },
-    [updateMergedWeight, updateWeight],
+    [updateMergedWeight, updateWeight]
   );
 
   const handleSaveConfig = async () => {
     const lines = [
-      `// prettier-ignore`,
-      `export const STAT_WEIGHTS: Record<string, Record<string, number>> = {`,
+      "// prettier-ignore",
+      "export const STAT_WEIGHTS: Record<string, Record<string, number>> = {",
     ];
 
     // Define exact key order for the output
@@ -368,10 +368,10 @@ export const StatWeightView = () => {
     ];
 
     // Use the same order as in the table (sortedCharacters)
-    sortedCharacters.forEach((char) => {
+    for (const char of sortedCharacters) {
       const id = char.id;
       const w = config.characters[id];
-      if (!w) return;
+      if (!w) continue;
 
       const props = keysOrder
         .filter((k) => (w[k] ?? 0) !== 0) // Only include non-zero values
@@ -382,9 +382,9 @@ export const StatWeightView = () => {
         .join(", ");
 
       lines.push(`  "${id}": { ${props} },`);
-    });
+    }
 
-    lines.push(`};`);
+    lines.push("};");
 
     const code = lines.join("\n");
 
@@ -628,7 +628,7 @@ const WeightCell = ({
     const base = "bg-amber-500/5 hover:bg-amber-500/10 text-base";
     if (val === 100) return cn(base, "text-orange-300 font-extrabold");
     if (val >= 70) return cn(base, "text-amber-200 font-bold");
-    return base + " text-amber-100/70";
+    return `${base} text-amber-100/70`;
   };
 
   return (
@@ -637,7 +637,7 @@ const WeightCell = ({
         <div
           className={cn(
             "h-7 w-[80%] mx-auto flex items-center justify-center rounded cursor-pointer transition-all font-mono text-base",
-            getCellStyles(value),
+            getCellStyles(value)
           )}
         >
           {value}
@@ -676,7 +676,7 @@ const WeightCell = ({
                 className={cn(
                   "h-6 flex-1 text-sm px-0 border-slate-700 hover:bg-slate-800 hover:text-white",
                   value === preset &&
-                    "bg-amber-500/20 text-amber-100 border-amber-500/50",
+                    "bg-amber-500/20 text-amber-100 border-amber-500/50"
                 )}
               >
                 {preset}
