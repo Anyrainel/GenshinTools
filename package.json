@@ -14,7 +14,11 @@
     "type-check": "tsc -b --noEmit",
     "preview": "vite preview",
     "tauri": "tauri",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [

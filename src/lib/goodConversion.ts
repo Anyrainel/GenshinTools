@@ -56,11 +56,42 @@ export interface GOODData {
   artifacts?: IGOODArtifact[];
 }
 
+// --- Conversion Result ---
+
+export interface ConversionWarning {
+  type: "character" | "weapon" | "artifact";
+  key: string;
+}
+
+export interface ConversionResult {
+  data: AccountData;
+  warnings: ConversionWarning[];
+}
+
 // --- Conversion Logic ---
 
 // Helper to normalize strings for comparison (remove non-alphanumeric, lowercase)
 const normalize = (str: string) =>
   str.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+
+// Skip lists for intentionally ignored entities (mirrors Python logic)
+// These are normalized keys that should be silently skipped without warnings
+const CHARACTER_SKIP_SET = new Set(["manekina", "manekin"]);
+
+const ARTIFACT_SKIP_SET = new Set([
+  "adventurer",
+  "braveheart",
+  "luckydog",
+  "travelingdoctor",
+  "resolutionofsojourner",
+  "tinymiracle",
+  "berserker",
+  "theexile",
+  "defenderswill",
+  "martialartist",
+  "gambler",
+  "scholar",
+]);
 
 // Build Reverse Maps
 const charMap = new Map<string, string>();
@@ -109,10 +140,16 @@ const slotKeyMap: Record<string, Slot> = {
   circlet: "circlet",
 };
 
-export const convertGOODToAccountData = (data: GOODData): AccountData => {
+export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
   const charactersMap = new Map<string, CharacterData>();
   const extraWeapons: WeaponData[] = [];
   const extraArtifacts: ArtifactData[] = [];
+
+  // Track unique warning keys to avoid duplicates
+  const seenCharacterKeys = new Set<string>();
+  const seenWeaponKeys = new Set<string>();
+  const seenArtifactKeys = new Set<string>();
+  const warnings: ConversionWarning[] = [];
 
   // 1. Process Characters
   if (Array.isArray(data.characters)) {
@@ -123,7 +160,14 @@ export const convertGOODToAccountData = (data: GOODData): AccountData => {
         key = "Traveler (Anemo)";
       }
 
-      const internalId = charMap.get(normalize(key));
+      const normalizedKey = normalize(key);
+
+      // Skip intentionally ignored characters silently
+      if (CHARACTER_SKIP_SET.has(normalizedKey)) {
+        return;
+      }
+
+      const internalId = charMap.get(normalizedKey);
       if (internalId) {
         charactersMap.set(internalId, {
           key: internalId,
@@ -132,8 +176,11 @@ export const convertGOODToAccountData = (data: GOODData): AccountData => {
           talent: char.talent || { auto: 1, skill: 1, burst: 1 },
           artifacts: {},
         });
-      } else {
+      } else if (!seenCharacterKeys.has(char.key)) {
+        // Only add warning if not already seen (deduplicate)
+        seenCharacterKeys.add(char.key);
         console.warn(`Character not found: ${key}`);
+        warnings.push({ type: "character", key: char.key });
       }
     });
   }
@@ -167,8 +214,11 @@ export const convertGOODToAccountData = (data: GOODData): AccountData => {
         if (!assigned) {
           extraWeapons.push(weaponData);
         }
-      } else {
+      } else if (!seenWeaponKeys.has(wp.key)) {
+        // Only add warning if not already seen (deduplicate)
+        seenWeaponKeys.add(wp.key);
         console.warn(`Weapon not found: ${wp.key}`);
+        warnings.push({ type: "weapon", key: wp.key });
       }
     });
   }
@@ -176,7 +226,14 @@ export const convertGOODToAccountData = (data: GOODData): AccountData => {
   // 3. Process Artifacts
   if (Array.isArray(data.artifacts)) {
     data.artifacts.forEach((art, index: number) => {
-      const setKey = artifactMap.get(normalize(art.setKey));
+      const normalizedSetKey = normalize(art.setKey);
+
+      // Skip intentionally ignored artifact sets silently
+      if (ARTIFACT_SKIP_SET.has(normalizedSetKey)) {
+        return;
+      }
+
+      const setKey = artifactMap.get(normalizedSetKey);
       if (setKey) {
         const mainStatKey = statKeyMap[art.mainStatKey] as MainStat;
         const slotKey = slotKeyMap[art.slotKey];
@@ -219,15 +276,21 @@ export const convertGOODToAccountData = (data: GOODData): AccountData => {
             extraArtifacts.push(artifactData);
           }
         }
-      } else {
+      } else if (!seenArtifactKeys.has(art.setKey)) {
+        // Only add warning if not already seen (deduplicate)
+        seenArtifactKeys.add(art.setKey);
         console.warn(`Artifact Set not found: ${art.setKey}`);
+        warnings.push({ type: "artifact", key: art.setKey });
       }
     });
   }
 
   return {
-    characters: Array.from(charactersMap.values()),
-    extraArtifacts,
-    extraWeapons,
+    data: {
+      characters: Array.from(charactersMap.values()),
+      extraArtifacts,
+      extraWeapons,
+    },
+    warnings,
   };
 };

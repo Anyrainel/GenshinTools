@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAccountStore } from "@/stores/useAccountStore";
@@ -8,7 +8,11 @@ import {
   ArtifactScoreResult,
 } from "@/lib/artifactScore";
 import { AccountData, ArtifactData, WeaponData } from "@/data/types";
-import { convertGOODToAccountData, GOODData } from "@/lib/goodConversion";
+import {
+  convertGOODToAccountData,
+  GOODData,
+  ConversionResult,
+} from "@/lib/goodConversion";
 import { fetchEnkaData, convertEnkaToGOOD } from "@/lib/enka";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToolHeader } from "@/components/shared/ToolHeader";
@@ -21,6 +25,10 @@ import { InventoryView } from "@/components/account-data/InventoryView";
 import { SummaryView } from "@/components/account-data/SummaryView";
 import { CharacterView } from "@/components/account-data/CharacterView";
 import { StatWeightView } from "@/components/account-data/StatWeightView";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ConversionWarning } from "@/lib/goodConversion";
+import { AlertTriangle, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type GOODPreset = GOODData & { author?: string; description?: string };
 
@@ -121,15 +129,53 @@ export default function AccountDataPage() {
     }
   }, [accountData, clearAccountData]);
 
+  const [conversionWarnings, setConversionWarnings] = useState<
+    ConversionWarning[]
+  >([]);
+
+  const showConversionWarnings = (result: ConversionResult) => {
+    if (result.warnings.length === 0) {
+      setConversionWarnings([]);
+      return;
+    }
+
+    // Store warnings for the alert block
+    setConversionWarnings(result.warnings);
+
+    const charCount = result.warnings.filter(
+      (w) => w.type === "character",
+    ).length;
+    const weaponCount = result.warnings.filter(
+      (w) => w.type === "weapon",
+    ).length;
+    const artifactCount = result.warnings.filter(
+      (w) => w.type === "artifact",
+    ).length;
+
+    const parts: string[] = [];
+    if (charCount > 0) parts.push(`${charCount} character(s)`);
+    if (weaponCount > 0) parts.push(`${weaponCount} weapon(s)`);
+    if (artifactCount > 0) parts.push(`${artifactCount} artifact set(s)`);
+
+    const message = `${t.ui("accountData.conversionWarning")}: ${parts.join(", ")} ${t.ui("accountData.conversionWarningSkipped")}`;
+    toast.warning(message, { duration: 6000 });
+  };
+
+  const dismissWarnings = () => {
+    setConversionWarnings([]);
+  };
+
   const onImportApply = (data: GOODPreset) => {
-    const accountData = convertGOODToAccountData(data);
-    setAccountData(accountData);
+    const result = convertGOODToAccountData(data);
+    setAccountData(result.data);
+    showConversionWarnings(result);
   };
 
   const handleLocalImport = (data: unknown) => {
     try {
-      const accountData = convertGOODToAccountData(data as GOODData);
-      setAccountData(accountData);
+      const result = convertGOODToAccountData(data as GOODData);
+      setAccountData(result.data);
+      showConversionWarnings(result);
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error) {
       console.error("Failed to convert GOOD data", error);
@@ -143,7 +189,9 @@ export default function AccountDataPage() {
       setLastUid(uid); // Save UID to store
       const rawData = await fetchEnkaData(uid);
       const goodData = convertEnkaToGOOD(rawData);
-      const newData = convertGOODToAccountData(goodData);
+      const result = convertGOODToAccountData(goodData);
+      const newData = result.data;
+      showConversionWarnings(result);
 
       if (clearBeforeImport || !accountData) {
         setAccountData(newData);
@@ -290,6 +338,66 @@ export default function AccountDataPage() {
                 value="characters"
                 className="h-full mt-0 data-[state=inactive]:hidden"
               >
+                {conversionWarnings.length > 0 && (
+                  <Alert
+                    variant="destructive"
+                    className="mx-4 mt-4 mb-2 relative"
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-6 w-6"
+                      onClick={dismissWarnings}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <AlertTitle>
+                      {t.ui("accountData.conversionWarning")}
+                    </AlertTitle>
+                    <AlertDescription className="pr-8">
+                      <div className="mt-1">
+                        {conversionWarnings.filter(
+                          (w) => w.type === "character",
+                        ).length > 0 && (
+                          <div>
+                            <span className="font-medium">
+                              {t.ui("accountData.characters")}:
+                            </span>{" "}
+                            {conversionWarnings
+                              .filter((w) => w.type === "character")
+                              .map((w) => w.key)
+                              .join(", ")}
+                          </div>
+                        )}
+                        {conversionWarnings.filter((w) => w.type === "weapon")
+                          .length > 0 && (
+                          <div>
+                            <span className="font-medium">
+                              {t.ui("teamBuilder.weapon")}:
+                            </span>{" "}
+                            {conversionWarnings
+                              .filter((w) => w.type === "weapon")
+                              .map((w) => w.key)
+                              .join(", ")}
+                          </div>
+                        )}
+                        {conversionWarnings.filter((w) => w.type === "artifact")
+                          .length > 0 && (
+                          <div>
+                            <span className="font-medium">
+                              {t.ui("teamBuilder.artifact")}:
+                            </span>{" "}
+                            {conversionWarnings
+                              .filter((w) => w.type === "artifact")
+                              .map((w) => w.key)
+                              .join(", ")}
+                          </div>
+                        )}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
                 <CharacterView scores={scores} />
               </TabsContent>
 

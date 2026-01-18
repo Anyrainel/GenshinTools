@@ -42,33 +42,36 @@ export function computeArtifactFilters(
   const setFilters: Record<string, SetConfig[]> = {};
 
   // PHASE 1: ADD - Create configs from all builds
-  buildGroups.forEach(({ characterId, builds }) => {
-    builds
-      .filter((build) => build.visible)
-      .forEach((build) => {
-        const relevantSets = getRelevantArtifactSets(build);
-        const is4pc = build.composition === "4pc";
+  // Filter out hidden build groups first
+  buildGroups
+    .filter((group) => !group.hidden)
+    .forEach(({ characterId, builds }) => {
+      builds
+        .filter((build) => build.visible)
+        .forEach((build) => {
+          const relevantSets = getRelevantArtifactSets(build);
+          const is4pc = build.composition === "4pc";
 
-        relevantSets.forEach((setId) => {
-          if (!setFilters[setId]) {
-            setFilters[setId] = [];
-          }
+          relevantSets.forEach((setId) => {
+            if (!setFilters[setId]) {
+              setFilters[setId] = [];
+            }
 
-          const config = createConfigFromBuild(
-            build,
-            characterId,
-            is4pc,
-            mergedOptions,
-          );
+            const config = createConfigFromBuild(
+              build,
+              characterId,
+              is4pc,
+              mergedOptions,
+            );
 
-          // Skip CR+CD builds if option enabled
-          if (mergedOptions.skipCritBuilds && hasCrCdMustPresent(config)) {
-            return;
-          }
-          setFilters[setId].push(config);
+            // Skip CR+CD builds if option enabled
+            if (mergedOptions.skipCritBuilds && hasCrCdMustPresent(config)) {
+              return;
+            }
+            setFilters[setId].push(config);
+          });
         });
-      });
-  });
+    });
 
   // PHASE 2: MERGE - Merge configs using Coverage Theorem rules
   for (const setId in setFilters) {

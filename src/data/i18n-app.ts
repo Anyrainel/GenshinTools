@@ -133,6 +133,14 @@ export const i18nAppData = {
         en: "Import successful!",
         zh: "导入成功！",
       },
+      conversionWarning: {
+        en: "Some items could not be imported",
+        zh: "部分条目无法导入",
+      },
+      conversionWarningSkipped: {
+        en: "skipped",
+        zh: "已跳过",
+      },
       noSetBonus: { en: "No Set Bonus", zh: "无套装效果" },
       artifactScore: {
         en: "Artifact Score",
