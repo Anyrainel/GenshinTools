@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === "tauri" ? "/" : "/GenshinTools/",
+  base: mode === "tauri" || mode === "cloudflare" ? "/" : "/GenshinTools/",
   plugins: [react()],
   resolve: {
     alias: {
