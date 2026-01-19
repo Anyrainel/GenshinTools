@@ -58,7 +58,7 @@ export function TeamCard({
   return (
     <div
       className={cn(
-        "bg-card/40 backdrop-blur-md rounded-lg p-6 space-y-4 w-fit mx-auto"
+        "bg-card/40 backdrop-blur-md rounded-lg p-4 space-y-4 w-fit mx-auto"
       )}
     >
       {/* Row 1: Header */}
@@ -98,7 +98,7 @@ export function TeamCard({
       </div>
 
       {/* Grid for Pickers and Display */}
-      <div className="grid grid-cols-[auto_repeat(4,auto)] gap-3 justify-center justify-items-center items-center pr-1">
+      <div className="grid grid-cols-[auto_repeat(4,auto)] gap-4 justify-center justify-items-center items-center pr-1">
         {/* Row Header: Elements */}
         <div className="w-6" />
         {/* Row 2: Element Display (Thin row) */}

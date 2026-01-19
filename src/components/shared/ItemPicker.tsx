@@ -27,6 +27,7 @@ import {
   weaponsById,
 } from "@/data/constants";
 import type { ArtifactSet, Character, Weapon } from "@/data/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { Ban, Search } from "lucide-react";
 import { memo, useMemo, useState } from "react";
@@ -65,6 +66,7 @@ function ItemPickerComponent({
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const isMobile = useIsMobile();
 
   // Determine configuration based on type
   const config = useMemo(() => {
@@ -134,8 +136,16 @@ function ItemPickerComponent({
     </div>
   );
 
+  const cols = isMobile ? 4 : 6;
+  const itemSize = 62; // 56px + gap roughly
+
   const calcOffset = (index: number) =>
-    (tooltipSide === "right" ? 5 - (index % 6) : index % 6) * 62 + 12;
+    (tooltipSide === "right" ? cols - 1 - (index % cols) : index % cols) *
+      itemSize +
+    12;
+
+  // Popover width: (62 * cols) + padding (16) roughly
+  const popoverWidth = isMobile ? "w-[270px]" : "w-[392px]";
 
   return (
     <Popover
@@ -166,7 +176,11 @@ function ItemPickerComponent({
         )}
       </Tooltip>
 
-      <PopoverContent className="w-[392px] p-2" side="right" align="start">
+      <PopoverContent
+        className={cn(popoverWidth, "p-2")}
+        side="right"
+        align="start"
+      >
         <div className="space-y-2">
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -178,7 +192,10 @@ function ItemPickerComponent({
             />
           </div>
           <div
-            className="grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-1"
+            className={cn(
+              "grid gap-2 max-h-[300px] overflow-y-auto p-1",
+              isMobile ? "grid-cols-4" : "grid-cols-6"
+            )}
             onWheel={(e) => e.stopPropagation()}
           >
             {filteredItems.map((item, index) => (

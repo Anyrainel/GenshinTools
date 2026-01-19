@@ -5,6 +5,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
@@ -19,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { serializeBuildExportPayload } from "@/stores/jsonUtils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
-import { FileDown } from "lucide-react";
+import { Download, FileDown } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -33,6 +34,7 @@ export default function ArtifactFilterPage() {
   const { t } = useLanguage();
   const computeContentRef = useRef<HTMLDivElement>(null);
   const [targetCharacterId, setTargetCharacterId] = useState<string>();
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "configure";
@@ -175,14 +177,35 @@ export default function ArtifactFilterPage() {
                 onExport={handleExport}
                 defaultAuthor={author}
                 defaultDescription={description}
+                className="hidden md:flex"
               />
             </>
           )
         }
+        mobileMenuItems={
+          activeTab === "filters" ? undefined : (
+            <DropdownMenuItem
+              onSelect={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              {t.ui("app.export")}
+            </DropdownMenuItem>
+          )
+        }
+      />
+
+      <ExportControl
+        onExport={handleExport}
+        defaultAuthor={author}
+        defaultDescription={description}
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        renderTrigger={false}
       />
 
       <div className={cn(THEME.layout.headerBorder, "z-40")}>
-        <div className="container mx-auto pt-2 pb-2">
+        <div className="px-2 mx-auto pt-2 pb-2">
           {/* Tab Bar */}
           <div className="flex justify-center">
             <Tabs
@@ -211,7 +234,7 @@ export default function ArtifactFilterPage() {
 
       {/* Main Content Area - Takes remaining height */}
       <main className="flex-1 overflow-hidden">
-        <div className="container mx-auto h-full">
+        <div className="px-2 mx-auto h-full">
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}

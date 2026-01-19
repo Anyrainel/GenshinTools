@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -20,15 +21,26 @@ interface ClearAllControlProps {
   onConfirm: () => void;
   variant?: ClearAllVariant;
   disabled?: boolean;
+  className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  renderTrigger?: boolean;
 }
 
 export function ClearAllControl({
   onConfirm,
   variant = "default",
   disabled = false,
+  className,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  renderTrigger = true,
 }: ClearAllControlProps) {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const isOpen = controlledOpen ?? internalOpen;
+  const onOpenChange = setControlledOpen ?? setInternalOpen;
 
   // Variant-based i18n keys
   const messages =
@@ -46,23 +58,28 @@ export function ClearAllControl({
 
   const handleConfirm = () => {
     onConfirm();
-    setOpen(false);
+    onOpenChange(false);
   };
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2 text-destructive hover:bg-destructive/30"
-        onClick={() => setOpen(true)}
-        disabled={disabled}
-      >
-        <Trash2 className="w-4 h-4" />
-        {t.ui("app.clear")}
-      </Button>
+      {renderTrigger && (
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn(
+            "gap-2 text-destructive hover:bg-destructive/30",
+            className
+          )}
+          onClick={() => onOpenChange(true)}
+          disabled={disabled}
+        >
+          <Trash2 className="w-4 h-4" />
+          {t.ui("app.clear")}
+        </Button>
+      )}
 
-      <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{messages.title}</AlertDialogTitle>

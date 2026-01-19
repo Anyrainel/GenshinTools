@@ -7,6 +7,7 @@ import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizatio
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   charactersById,
@@ -28,7 +29,7 @@ import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
-import { FileDown, Settings } from "lucide-react";
+import { Download, FileDown, Settings, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -80,6 +81,8 @@ export default function TierListPage() {
 
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Load preset metadata on mount
@@ -221,19 +224,53 @@ export default function TierListPage() {
               variant="tier-list"
               defaultAuthor={author}
               defaultDescription={description}
+              className="hidden md:flex"
             />
 
             <Button
               variant="outline"
               size="sm"
               onClick={handleDownloadImage}
-              className="gap-2"
+              className="gap-2 hidden md:flex"
             >
               <FileDown className="w-4 h-4" />
               {t.ui("app.print")}
             </Button>
           </>
         }
+        mobileMenuItems={
+          <>
+            <DropdownMenuItem
+              onClick={() => setExportDialogOpen(true)}
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              {t.ui("app.export")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDownloadImage} className="gap-2">
+              <FileDown className="w-4 h-4" />
+              {t.ui("app.print")}
+            </DropdownMenuItem>
+          </>
+        }
+      />
+
+      {/* Hidden Controlled Dialogs for Mobile */}
+      <ClearAllControl
+        onConfirm={handleClear}
+        variant="tier-list"
+        open={clearDialogOpen}
+        onOpenChange={setClearDialogOpen}
+        renderTrigger={false}
+      />
+      <ExportControl
+        onExport={handleExport}
+        variant="tier-list"
+        defaultAuthor={author}
+        defaultDescription={description}
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        renderTrigger={false}
       />
 
       <div

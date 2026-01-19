@@ -33,6 +33,8 @@ import {
   type SubStat,
   mainStatSlots,
 } from "@/data/types";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import {
   AlertCircle,
@@ -62,6 +64,7 @@ function BuildCardComponent({
   element,
 }: BuildCardProps) {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const build = useBuildsStore((state) => state.builds[buildId]);
   const setBuild = useBuildsStore((state) => state.setBuild);
 
@@ -202,6 +205,32 @@ function BuildCardComponent({
     return null;
   }
 
+  const minCountInput = (
+    <div className="flex items-center gap-1">
+      <span className="text-sm text-muted-foreground select-none">
+        {t.ui("buildCard.atLeast")}
+      </span>
+      <Input
+        type="number"
+        min="1"
+        max={Math.min(build.substats.length, 4)}
+        value={build.kOverride || ""}
+        onChange={(e) =>
+          handleBuildChange({
+            kOverride: e.target.value
+              ? Number.parseInt(e.target.value)
+              : undefined,
+          })
+        }
+        className="w-12 h-7 text-sm border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        placeholder={Math.min(build.substats.length, 4).toString()}
+      />
+      <span className="text-sm text-muted-foreground select-none">
+        {t.ui("buildCard.affixes")}
+      </span>
+    </div>
+  );
+
   return (
     <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <div className="border border-border/50 rounded-lg bg-muted/30">
@@ -314,9 +343,18 @@ function BuildCardComponent({
         {/* Build Details */}
         <CollapsibleContent className="px-3 py-2">
           <div className="pt-1 border-t border-border/30">
-            <div className="flex gap-3 items-center justify-center">
+            <div
+              className={cn(
+                "flex gap-3",
+                isMobile
+                  ? "flex-col items-center"
+                  : "flex-row items-center justify-center"
+              )}
+            >
               {/* Artifact Set Selection - Left Side */}
-              <div className="flex-shrink-0 w-36">
+              <div
+                className={cn("flex-shrink-0", isMobile ? "w-full" : "w-36")}
+              >
                 {build.composition === "4pc" ? (
                   <div className="w-full h-full flex items-center justify-center">
                     <ArtifactSelect
@@ -328,7 +366,7 @@ function BuildCardComponent({
                     />
                   </div>
                 ) : (
-                  <div className="w-full h-full flex-col items-center justify-center">
+                  <div className="w-full h-full flex flex-col items-center justify-center">
                     <ArtifactSelectHalf
                       value={build.halfSet1}
                       onValueChange={(value) =>
@@ -354,11 +392,16 @@ function BuildCardComponent({
                 )}
               </div>
 
-              {/* Vertical Divider */}
-              <div className="w-px h-full bg-border/70 min-h-32" />
+              {/* Vertical Divider (Hidden on Mobile) */}
+              <div
+                className={cn(
+                  "w-px h-full bg-border/70 min-h-32",
+                  isMobile ? "hidden" : "block"
+                )}
+              />
 
               {/* Stats Section - Right Side */}
-              <div className="flex-1 space-y-1">
+              <div className={cn("space-y-1", isMobile ? "w-full" : "flex-1")}>
                 {/* Main Stats Row - 3 Units */}
                 <div className="grid grid-cols-3 gap-2">
                   {mainStatSlots.map((slot) => (
@@ -380,10 +423,24 @@ function BuildCardComponent({
 
                 {/* Substats Row - Bottom Unit */}
                 <div className="space-y-1">
-                  <Label className="text-sm font-medium text-muted-foreground select-none">
-                    {t.ui("buildCard.substats")}
-                  </Label>
-                  <div className="flex items-center justify-between">
+                  {isMobile ? (
+                    <div className="flex items-center">
+                      <Label className="text-sm font-medium text-muted-foreground select-none">
+                        {t.ui("buildCard.substats")}
+                      </Label>
+                      <div className="pl-12">{minCountInput}</div>
+                    </div>
+                  ) : (
+                    <Label className="text-sm font-medium text-muted-foreground select-none">
+                      {t.ui("buildCard.substats")}
+                    </Label>
+                  )}
+                  <div
+                    className={cn(
+                      "flex items-center",
+                      isMobile ? "w-full" : "justify-between"
+                    )}
+                  >
                     <StatSelect
                       values={build.substats}
                       onValuesChange={(values) =>
@@ -392,32 +449,7 @@ function BuildCardComponent({
                       options={statPools.substat}
                       maxLength={5}
                     />
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm text-muted-foreground select-none">
-                        {t.ui("buildCard.atLeast")}
-                      </span>
-                      <Input
-                        type="number"
-                        min="1"
-                        max={Math.min(build.substats.length, 4)}
-                        value={build.kOverride || ""}
-                        onChange={(e) =>
-                          handleBuildChange({
-                            kOverride: e.target.value
-                              ? Number.parseInt(e.target.value)
-                              : undefined,
-                          })
-                        }
-                        className="w-12 h-7 text-sm border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        placeholder={Math.min(
-                          build.substats.length,
-                          4
-                        ).toString()}
-                      />
-                      <span className="text-sm text-muted-foreground select-none">
-                        {t.ui("buildCard.affixes")}
-                      </span>
-                    </div>
+                    {!isMobile && minCountInput}
                   </div>
                 </div>
               </div>

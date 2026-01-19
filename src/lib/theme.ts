@@ -65,7 +65,7 @@ export const THEME = {
   // Page-level layout tokens (used across all pages)
   layout: {
     pageContainer:
-      "h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden",
+      "h-dvh bg-gradient-mystical text-foreground flex flex-col overflow-hidden",
     headerBorder: "border-b border-border/50 bg-card/20 backdrop-blur-sm",
   },
 } as const;

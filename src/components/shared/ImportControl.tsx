@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Layers, Loader2, Upload } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -31,6 +32,10 @@ interface ImportControlProps<T> {
   variant?: ImportVariant;
   disabled?: boolean;
   onLocalImport?: (payload: T) => void;
+  className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  renderTrigger?: boolean;
 }
 
 export function ImportControl<T>({
@@ -40,15 +45,25 @@ export function ImportControl<T>({
   variant = "default",
   disabled = false,
   onLocalImport,
+  className,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  renderTrigger = true,
 }: ImportControlProps<T>) {
   const { t } = useLanguage();
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [internalPickerOpen, setInternalPickerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<PresetOption | null>(
     null
   );
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const pickerOpen = controlledOpen ?? internalPickerOpen;
+  const setPickerOpen = (open: boolean) => {
+    if (setControlledOpen) setControlledOpen(open);
+    else setInternalPickerOpen(open);
+  };
 
   // Variant-based i18n keys
   const getMessages = useCallback(() => {
@@ -133,16 +148,18 @@ export function ImportControl<T>({
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2"
-        onClick={() => setPickerOpen(true)}
-        disabled={disabled || isBusy}
-      >
-        <Upload className="w-4 h-4" />
-        {t.ui("app.import")}
-      </Button>
+      {renderTrigger && (
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn("gap-2", className)}
+          onClick={() => setPickerOpen(true)}
+          disabled={disabled || isBusy}
+        >
+          <Upload className="w-4 h-4" />
+          {t.ui("app.import")}
+        </Button>
+      )}
 
       <Dialog
         open={pickerOpen}

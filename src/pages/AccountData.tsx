@@ -7,6 +7,7 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
@@ -25,7 +26,7 @@ import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -136,6 +137,7 @@ export default function AccountDataPage() {
   const [conversionWarnings, setConversionWarnings] = useState<
     ConversionWarning[]
   >([]);
+  const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   const showConversionWarnings = (result: ConversionResult) => {
     if (result.warnings.length === 0) {
@@ -236,15 +238,22 @@ export default function AccountDataPage() {
     <div className={THEME.layout.pageContainer}>
       <ToolHeader
         actions={
-          <div className="flex gap-2">
+          <>
             <ClearAllControl onConfirm={clearAccountData} />
             <AccountImportControl
               onLocalImport={handleLocalImport}
               onUidImport={handleUidImport}
               initialUid={lastUid}
             />
-          </div>
+          </>
         }
+      />
+
+      <ClearAllControl
+        onConfirm={clearAccountData}
+        open={clearDialogOpen}
+        onOpenChange={setClearDialogOpen}
+        renderTrigger={false}
       />
 
       <div className={cn(THEME.layout.headerBorder, "z-40")}>
@@ -345,7 +354,7 @@ export default function AccountDataPage() {
       )}
 
       <main className="flex-1 overflow-hidden">
-        <div className="container mx-auto h-full">
+        <div className="px-2 mx-auto h-full">
           {accountData ? (
             <Tabs value={activeTab} className="h-full">
               <TabsContent

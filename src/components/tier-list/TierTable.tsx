@@ -16,6 +16,7 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { MobileTierList } from "./MobileTierList";
 import { TierGrid } from "./TierGrid";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 
@@ -471,19 +472,38 @@ export function TierTable<T extends TierItemData, K extends string>({
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        <div ref={tableRef} className="flex-1 p-4 overflow-y-auto">
-          <TierGrid
-            allTiers={allTiers}
-            groups={groups}
-            itemsPerTier={itemsPerTier}
-            tierCustomization={tierCustomization}
-            groupKey={groupKey}
-            groupConfig={groupConfig}
-            getGroupName={getGroupName}
-            getItemName={getItemName}
-            getTooltip={getTooltip}
-            getOverlayImage={getOverlayImage}
-          />
+        <div ref={tableRef} className="flex-1 h-full overflow-hidden">
+          {/* Desktop View */}
+          <div className="hidden md:block h-full p-4 overflow-y-auto">
+            <TierGrid
+              allTiers={allTiers}
+              groups={groups}
+              itemsPerTier={itemsPerTier}
+              tierCustomization={tierCustomization}
+              groupKey={groupKey}
+              groupConfig={groupConfig}
+              getGroupName={getGroupName}
+              getItemName={getItemName}
+              getTooltip={getTooltip}
+              getOverlayImage={getOverlayImage}
+            />
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden h-full">
+            <MobileTierList
+              allTiers={allTiers}
+              groups={groups}
+              itemsPerTier={itemsPerTier}
+              tierCustomization={tierCustomization}
+              groupKey={groupKey}
+              groupConfig={groupConfig}
+              getGroupName={getGroupName}
+              getItemName={getItemName}
+              getTooltip={getTooltip}
+              getOverlayImage={getOverlayImage}
+            />
+          </div>
         </div>
       </div>
 

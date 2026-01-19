@@ -17,10 +17,10 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className={THEME.layout.pageContainer}>
+    <div className="min-h-full bg-gradient-mystical text-foreground flex flex-col">
       <ToolHeader />
 
-      <div className="flex-1 container mx-auto p-4 flex flex-col gap-8 max-w-[1400px] overflow-y-auto">
+      <div className="flex-1 container mx-auto p-4 flex flex-col gap-8 max-w-[1400px]">
         {/* Hero Section - Genshin Style */}
         <div className="text-center space-y-1 pb-0">
           <div className="relative flex flex-col items-center justify-center pt-6">
@@ -190,9 +190,9 @@ const FeatureRow = ({
   bgPosition?: string;
 }) => {
   return (
-    <div className="group grid md:grid-cols-[40%_1fr] items-stretch h-[120px] rounded-2xl overflow-hidden transition-all duration-300 border border-border/30 hover:border-primary/40 shadow-sm hover:shadow-md bg-card/30">
+    <div className="group grid grid-cols-1 md:grid-cols-[40%_1fr] items-stretch min-h-[120px] md:h-[120px] rounded-2xl overflow-hidden transition-all duration-300 border border-border/30 hover:border-primary/40 shadow-sm hover:shadow-md bg-card/30">
       {/* Left: Problem Question with Background Image */}
-      <div className="relative h-full flex items-center px-8 overflow-hidden">
+      <div className="relative h-32 md:h-full flex items-center px-4 md:px-8 overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <div
@@ -208,19 +208,19 @@ const FeatureRow = ({
 
         {/* Content */}
         <div className="relative z-10 text-left pl-2">
-          <h2 className="text-2xl md:text-3xl font-bold text-white group-hover:text-primary transition-colors leading-tight drop-shadow-md">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white group-hover:text-primary transition-colors leading-tight drop-shadow-md">
             {problem}
           </h2>
         </div>
       </div>
 
       {/* Right: Solution (Button + Guideline) */}
-      <div className="relative h-full flex items-center px-8 bg-gradient-card border-l border-white/5">
-        <div className="grid grid-cols-[auto_1fr] items-center gap-6 w-full">
-          <Link to={link} className="shrink-0">
+      <div className="relative h-full flex items-center p-4 md:px-8 bg-gradient-card border-t md:border-t-0 md:border-l border-white/5">
+        <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] items-start md:items-center gap-4 md:gap-6 w-full">
+          <Link to={link} className="shrink-0 w-full md:w-auto">
             <Button
               variant="outline"
-              className="h-10 w-[240px] relative rounded-full border-primary/30 bg-background/50 hover:bg-background/80 hover:border-primary/60 shadow-md text-lg font-medium flex items-center justify-center px-10 backdrop-blur-sm"
+              className="h-10 w-full md:w-[240px] relative rounded-full border-primary/30 bg-background/50 hover:bg-background/80 hover:border-primary/60 shadow-md text-base md:text-lg font-medium flex items-center justify-center px-10 backdrop-blur-sm"
             >
               <span className="absolute left-5 text-primary shrink-0">
                 {icon}
@@ -230,7 +230,7 @@ const FeatureRow = ({
             </Button>
           </Link>
 
-          <div className="text-lg text-muted-foreground/90 leading-snug font-light line-clamp-3">
+          <div className="text-sm md:text-lg text-muted-foreground/90 leading-snug font-light line-clamp-3">
             {guideline.split(/(\d+\.)|(\[.*?\]\(.*?\))/).map((part, i) => {
               if (!part) return null;
               if (part.match(/^\d+\.$/)) {

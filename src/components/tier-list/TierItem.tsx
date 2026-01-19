@@ -20,6 +20,8 @@ interface TierItemProps<T extends TierItemData> {
   /** Optional image path for overlay badge (e.g., weapon type icon) */
   overlayImage?: string;
   tooltip?: React.ReactNode;
+  /** Icon size variant */
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 function TierItemComponent<T extends TierItemData>({
@@ -30,6 +32,7 @@ function TierItemComponent<T extends TierItemData>({
   alt,
   overlayImage,
   tooltip,
+  size = "lg",
 }: TierItemProps<T>) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
@@ -67,7 +70,7 @@ function TierItemComponent<T extends TierItemData>({
       imagePath={item.imagePath}
       rarity={item.rarity}
       alt={alt}
-      size="lg"
+      size={size}
     >
       {overlay}
     </ItemIcon>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Character } from "@/data/types";
 import type { Weapon } from "@/data/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
@@ -106,6 +107,15 @@ function TitleCardComponent({ character }: TitleCardProps) {
     [character.id]
   );
 
+  /* Mobile: Show max 1 weapon */
+  const isMobile = useIsMobile();
+  const visibleWeapons = isMobile
+    ? characterWeapons.slice(0, 1)
+    : characterWeapons;
+  const showAddSlot = isMobile
+    ? characterWeapons.length < 1
+    : characterWeapons.length < 3;
+
   return (
     <div className="flex items-center gap-4">
       <ItemIcon
@@ -153,7 +163,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
 
         {!isHidden && (
           <div className="flex gap-2">
-            {characterWeapons.map((weaponId, index) => (
+            {visibleWeapons.map((weaponId, index) => (
               <WeaponSlot
                 key={index}
                 index={index}
@@ -163,7 +173,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
                 filter={weaponFilter}
               />
             ))}
-            {characterWeapons.length < 3 && (
+            {showAddSlot && (
               <WeaponSlot
                 index={characterWeapons.length}
                 weaponId={null}

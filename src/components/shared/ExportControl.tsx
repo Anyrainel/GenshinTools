@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Download } from "lucide-react";
 import { useState } from "react";
 
@@ -22,6 +23,10 @@ interface ExportControlProps {
   disabled?: boolean;
   defaultAuthor?: string;
   defaultDescription?: string;
+  className?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  renderTrigger?: boolean;
 }
 
 export function ExportControl({
@@ -30,9 +35,22 @@ export function ExportControl({
   disabled = false,
   defaultAuthor = "",
   defaultDescription = "",
+  className,
+  open: controlledOpen,
+  onOpenChange: setControlledOpen,
+  renderTrigger = true,
 }: ExportControlProps) {
   const { t } = useLanguage();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  const widthOpen = controlledOpen ?? internalOpen;
+  const setOpen = (newOpen: boolean) => {
+    if (setControlledOpen) setControlledOpen(newOpen);
+    else setInternalOpen(newOpen);
+  };
+
+  // Use a derived state or effect to sync inputs?
+  // For simplicity, we keep internal form state but "reset" it when dialog opens
   const [author, setAuthor] = useState(defaultAuthor);
   const [description, setDescription] = useState(defaultDescription);
   const [errors, setErrors] = useState<{
@@ -87,18 +105,20 @@ export function ExportControl({
 
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2"
-        onClick={() => setOpen(true)}
-        disabled={disabled}
-      >
-        <Download className="w-4 h-4" />
-        {t.ui("app.export")}
-      </Button>
+      {renderTrigger && (
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn("gap-2", className)}
+          onClick={() => handleOpenChange(true)}
+          disabled={disabled}
+        >
+          <Download className="w-4 h-4" />
+          {t.ui("app.export")}
+        </Button>
+      )}
 
-      <Dialog open={open} onOpenChange={handleOpenChange}>
+      <Dialog open={widthOpen} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{messages.dialogTitle}</DialogTitle>

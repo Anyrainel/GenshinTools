@@ -362,6 +362,7 @@ export const i18nAppData = {
       weaponTypes: { en: "Weapon Types", zh: "武器类型" },
       regions: { en: "Regions", zh: "地区" },
       rarity: { en: "Rarity", zh: "稀有度" },
+      filterWeapons: { en: "Filter Weapons", zh: "筛选武器" },
     },
     computeFilters: {
       title: { en: "Filters", zh: "过滤" },

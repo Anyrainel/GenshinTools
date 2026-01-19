@@ -12,6 +12,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData } from "@/data/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   type ArtifactScoreResult,
   calculateArtifactScore,
@@ -29,6 +30,7 @@ interface CharacterCardProps {
 
 function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
   const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
   if (!charInfo) return null; // Should not happen if conversion is correct
@@ -113,7 +115,12 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             Lv.{char.level}
           </div>
 
-          <div className="flex-1 flex items-center justify-start px-2 gap-3 text-base text-muted-foreground leading-none overflow-hidden">
+          <div
+            className={cn(
+              "flex-1 flex items-center justify-start px-2 gap-3 text-muted-foreground leading-none overflow-hidden",
+              isMobile ? "text-sm" : "text-base"
+            )}
+          >
             <span>
               {t.ui("accountData.talents.auto")}:{" "}
               <span className="font-bold">{talents.auto}</span>

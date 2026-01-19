@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
-import { Route, Routes } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { Route, Routes, useLocation } from "react-router-dom";
 import AccountDataPage from "./pages/AccountData";
 import ArtifactFilterPage from "./pages/ArtifactFilter";
 import Home from "./pages/Home";
@@ -8,9 +9,17 @@ import TierListPage from "./pages/TierList";
 import WeaponTierListPage from "./pages/WeaponTierList";
 
 function App() {
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
+
   return (
-    <div className="h-screen bg-background text-foreground flex flex-col">
-      <main className="flex-1 overflow-hidden flex flex-col">
+    <div className="h-dvh bg-background text-foreground flex flex-col">
+      <main
+        className={cn(
+          "flex-1 flex flex-col",
+          isHomePage ? "overflow-y-auto" : "overflow-hidden"
+        )}
+      >
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/account-data" element={<AccountDataPage />} />
