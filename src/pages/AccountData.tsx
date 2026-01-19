@@ -286,6 +286,64 @@ export default function AccountDataPage() {
         </div>
       </div>
 
+      {/* Conversion Warnings - visible on all tabs */}
+      {conversionWarnings.length > 0 && (
+        <div className="container mx-auto px-4 pt-2">
+          <Alert variant="destructive" className="relative">
+            <AlertTriangle className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-6 w-6"
+              onClick={dismissWarnings}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <AlertTitle>{t.ui("accountData.conversionWarning")}</AlertTitle>
+            <AlertDescription className="pr-8">
+              <div className="mt-1">
+                {conversionWarnings.filter((w) => w.type === "character")
+                  .length > 0 && (
+                  <div>
+                    <span className="font-medium">
+                      {t.ui("accountData.characters")}:
+                    </span>{" "}
+                    {conversionWarnings
+                      .filter((w) => w.type === "character")
+                      .map((w) => w.key)
+                      .join(", ")}
+                  </div>
+                )}
+                {conversionWarnings.filter((w) => w.type === "weapon").length >
+                  0 && (
+                  <div>
+                    <span className="font-medium">
+                      {t.ui("teamBuilder.weapon")}:
+                    </span>{" "}
+                    {conversionWarnings
+                      .filter((w) => w.type === "weapon")
+                      .map((w) => w.key)
+                      .join(", ")}
+                  </div>
+                )}
+                {conversionWarnings.filter((w) => w.type === "artifact")
+                  .length > 0 && (
+                  <div>
+                    <span className="font-medium">
+                      {t.ui("teamBuilder.artifact")}:
+                    </span>{" "}
+                    {conversionWarnings
+                      .filter((w) => w.type === "artifact")
+                      .map((w) => w.key)
+                      .join(", ")}
+                  </div>
+                )}
+              </div>
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
+
       <main className="flex-1 overflow-hidden">
         <div className="container mx-auto h-full">
           {accountData ? (
@@ -294,66 +352,6 @@ export default function AccountDataPage() {
                 value="characters"
                 className="h-full mt-0 data-[state=inactive]:hidden"
               >
-                {conversionWarnings.length > 0 && (
-                  <Alert
-                    variant="destructive"
-                    className="mx-4 mt-4 mb-2 relative"
-                  >
-                    <AlertTriangle className="h-4 w-4" />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2 h-6 w-6"
-                      onClick={dismissWarnings}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <AlertTitle>
-                      {t.ui("accountData.conversionWarning")}
-                    </AlertTitle>
-                    <AlertDescription className="pr-8">
-                      <div className="mt-1">
-                        {conversionWarnings.filter(
-                          (w) => w.type === "character"
-                        ).length > 0 && (
-                          <div>
-                            <span className="font-medium">
-                              {t.ui("accountData.characters")}:
-                            </span>{" "}
-                            {conversionWarnings
-                              .filter((w) => w.type === "character")
-                              .map((w) => w.key)
-                              .join(", ")}
-                          </div>
-                        )}
-                        {conversionWarnings.filter((w) => w.type === "weapon")
-                          .length > 0 && (
-                          <div>
-                            <span className="font-medium">
-                              {t.ui("teamBuilder.weapon")}:
-                            </span>{" "}
-                            {conversionWarnings
-                              .filter((w) => w.type === "weapon")
-                              .map((w) => w.key)
-                              .join(", ")}
-                          </div>
-                        )}
-                        {conversionWarnings.filter((w) => w.type === "artifact")
-                          .length > 0 && (
-                          <div>
-                            <span className="font-medium">
-                              {t.ui("teamBuilder.artifact")}:
-                            </span>{" "}
-                            {conversionWarnings
-                              .filter((w) => w.type === "artifact")
-                              .map((w) => w.key)
-                              .join(", ")}
-                          </div>
-                        )}
-                      </div>
-                    </AlertDescription>
-                  </Alert>
-                )}
                 <CharacterView scores={scores} />
               </TabsContent>
 

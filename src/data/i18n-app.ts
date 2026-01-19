@@ -345,8 +345,9 @@ export const i18nAppData = {
       teamLabel: { en: "Team", zh: "队伍" },
     },
     filters: {
-      title: { en: "Filters", zh: "过滤器" },
+      title: { en: "Filters", zh: "过滤" },
       clear: { en: "Clear", zh: "清除" },
+      clearAll: { en: "Clear All", zh: "全部清除" },
       sort: { en: "Sort", zh: "排序" },
       sortByTier: { en: "Tier", zh: "评级" },
       sortByReleaseDate: { en: "Release Date", zh: "发布日期" },
@@ -363,7 +364,7 @@ export const i18nAppData = {
       rarity: { en: "Rarity", zh: "稀有度" },
     },
     computeFilters: {
-      title: { en: "Filters", zh: "过滤器" },
+      title: { en: "Filters", zh: "过滤" },
       searchSets: { en: "Search Sets", zh: "搜索套装" },
       searchPlaceholder: { en: "Enter set name...", zh: "输入套装名称..." },
       noConfigurations: {

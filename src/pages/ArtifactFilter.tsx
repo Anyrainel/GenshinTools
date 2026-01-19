@@ -1,8 +1,5 @@
 import { ComputeView } from "@/components/artifact-filter/ComputeView";
-import {
-  ConfigureView,
-  type ConfigureViewRef,
-} from "@/components/artifact-filter/ConfigureView";
+import { ConfigureView } from "@/components/artifact-filter/ConfigureView";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
@@ -34,8 +31,8 @@ const presetModules = import.meta.glob<{ default: BuildPayload }>(
 
 export default function ArtifactFilterPage() {
   const { t } = useLanguage();
-  const configureViewRef = useRef<ConfigureViewRef>(null);
   const computeContentRef = useRef<HTMLDivElement>(null);
+  const [targetCharacterId, setTargetCharacterId] = useState<string>();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "configure";
@@ -224,7 +221,10 @@ export default function ArtifactFilterPage() {
               value="configure"
               className="mt-0 h-full data-[state=inactive]:hidden"
             >
-              <ConfigureView ref={configureViewRef} />
+              <ConfigureView
+                targetCharacterId={targetCharacterId}
+                onTargetProcessed={() => setTargetCharacterId(undefined)}
+              />
             </TabsContent>
 
             <TabsContent
@@ -234,10 +234,8 @@ export default function ArtifactFilterPage() {
               <ComputeView
                 contentRef={computeContentRef}
                 onJumpToCharacter={(characterId) => {
+                  setTargetCharacterId(characterId);
                   setActiveTab("configure");
-                  setTimeout(() => {
-                    configureViewRef.current?.scrollToCharacter(characterId);
-                  }, 0);
                 }}
               />
             </TabsContent>

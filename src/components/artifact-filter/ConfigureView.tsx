@@ -2,8 +2,9 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
 import { characters } from "@/data/resources";
-import type { Character, CharacterFilters } from "@/data/types";
+import type { CharacterFilters } from "@/data/types";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import {
   defaultCharacterFilters,
@@ -13,20 +14,20 @@ import {
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Filter } from "lucide-react";
-import {
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { CharacterBuildCard } from "./CharacterBuildCard";
 
-export interface ConfigureViewRef {
-  scrollToCharacter: (characterId: string) => void;
+interface ConfigureViewProps {
+  /** When set, filters will be configured to show this character */
+  targetCharacterId?: string;
+  /** Called when targetCharacterId has been processed, so parent can clear it */
+  onTargetProcessed?: () => void;
 }
 
-export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
+export function ConfigureView({
+  targetCharacterId,
+  onTargetProcessed,
+}: ConfigureViewProps) {
   const { t } = useLanguage();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
@@ -37,14 +38,39 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+  // When targetCharacterId is set, configure filters to show that character
+  useEffect(() => {
+    if (!targetCharacterId) return;
+
+    const character = charactersById[targetCharacterId];
+    if (!character) {
+      onTargetProcessed?.();
+      return;
+    }
+
+    // Set filters to match this character's properties
+    setFilters({
+      ...defaultCharacterFilters,
+      elements: [character.element],
+      weaponTypes: [character.weaponType],
+      rarities: [character.rarity],
+      regions: [character.region],
+    });
+
+    onTargetProcessed?.();
+  }, [targetCharacterId, onTargetProcessed]);
+
   // Use custom hook for scroll forwarding from margin areas to main content
   useGlobalScroll(containerRef, mainScrollRef);
 
-  // Use shared filter and sort utility
+  // Compute filtered characters
   const filteredAndSortedCharacters = useMemo(
     () => filterAndSortCharacters(characters, filters, tierAssignments),
     [filters, tierAssignments]
   );
+
+  // Defer the list to allow UI to stay responsive
+  const deferredCharacters = useDeferredValue(filteredAndSortedCharacters);
 
   const activeFilters = hasActiveFilters(filters);
 
@@ -90,7 +116,7 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
           </div>
 
           {/* Scrollable Content */}
-          {filteredAndSortedCharacters.length === 0 ? (
+          {deferredCharacters.length === 0 ? (
             <div
               ref={mainScrollRef}
               className="flex-1 overflow-y-auto overflow-hidden"
@@ -108,9 +134,8 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
             </div>
           ) : (
             <VirtualizedCharacterList
-              characters={filteredAndSortedCharacters}
+              characters={deferredCharacters}
               scrollRef={mainScrollRef}
-              ref={ref}
             />
           )}
         </section>
@@ -131,36 +156,23 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
       </Sheet>
     </>
   );
-});
+}
 
 interface CharacterListProps {
-  characters: Character[];
+  characters: typeof characters;
   scrollRef: React.RefObject<HTMLDivElement>;
 }
 
-const VirtualizedCharacterList = forwardRef<
-  ConfigureViewRef,
-  CharacterListProps
->(({ characters, scrollRef }, ref) => {
+function VirtualizedCharacterList({
+  characters,
+  scrollRef,
+}: CharacterListProps) {
   const virtualizer = useVirtualizer({
     count: characters.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => 520,
     overscan: 6,
   });
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      scrollToCharacter: (characterId: string) => {
-        const index = characters.findIndex((c) => c.id === characterId);
-        if (index !== -1) {
-          virtualizer.scrollToIndex(index, { align: "start" });
-        }
-      },
-    }),
-    [characters, virtualizer]
-  );
 
   return (
     <div
@@ -196,4 +208,4 @@ const VirtualizedCharacterList = forwardRef<
       </div>
     </div>
   );
-});
+}
