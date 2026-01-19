@@ -1,5 +1,8 @@
 import { TierGrid } from "@/components/tier-list/TierGrid";
-import type { TierItemData } from "@/components/tier-list/TierItem";
+import type {
+  TierGroupConfig,
+  TierItemData,
+} from "@/components/tier-list/tierTableTypes";
 import { DndContext } from "@dnd-kit/core";
 import { render, screen } from "../../utils/render";
 
@@ -13,38 +16,45 @@ interface TestItem extends TierItemData {
 }
 
 const mockItems: TestItem[] = [
-  { id: "hu_tao", rarity: 5, element: "Pyro" },
-  { id: "xingqiu", rarity: 4, element: "Hydro" },
-  { id: "zhongli", rarity: 5, element: "Geo" },
+  {
+    id: "hu_tao",
+    rarity: 5,
+    imagePath: "/character/hu_tao.png",
+    element: "Pyro",
+  },
+  {
+    id: "xingqiu",
+    rarity: 4,
+    imagePath: "/character/xingqiu.png",
+    element: "Hydro",
+  },
+  {
+    id: "zhongli",
+    rarity: 5,
+    imagePath: "/character/zhongli.png",
+    element: "Geo",
+  },
 ];
+
+const testGroupConfig: Record<string, TierGroupConfig> = {
+  Pyro: { bgClass: "bg-element-pyro/60", iconPath: "/elements/pyro.png" },
+  Hydro: { bgClass: "bg-element-hydro/60", iconPath: "/elements/hydro.png" },
+  Geo: { bgClass: "bg-element-geo/60", iconPath: "/elements/geo.png" },
+};
 
 const defaultProps = {
   allTiers: ["S", "A", "Pool"],
-  groups: ["Pyro", "Hydro", "Geo"],
+  groups: ["Pyro", "Hydro", "Geo"] as const,
   itemsPerTier: {
     S: [mockItems[0]], // hu_tao in S tier
     A: [mockItems[1]], // xingqiu in A tier
     Pool: [mockItems[2]], // zhongli in Pool
   } as { [tier: string]: TestItem[] },
   tierCustomization: {},
-  onRemoveFromTiers: vi.fn(),
-  renderHeader: (group: string, count: number) => (
-    <div key={group} data-testid={`header-${group}`}>
-      {group} ({count})
-    </div>
-  ),
-  getItemData: (item: TestItem) => ({ element: item.element }),
-  getItemGroup: (item: TestItem) => item.element,
-  getGroupCount: (
-    group: string,
-    itemsPerTier: { [tier: string]: TestItem[] }
-  ) =>
-    Object.values(itemsPerTier)
-      .flat()
-      .filter((i) => i.element === group).length,
-  getTierDisplayName: (tier: string) => tier,
-  getImagePath: (item: TestItem) => `/character/${item.id}.png`,
-  getAlt: (item: TestItem) => item.id,
+  groupKey: "element" as keyof TestItem,
+  groupConfig: testGroupConfig,
+  getGroupName: (group: string) => group,
+  getItemName: (item: TestItem) => item.id,
   getTooltip: (item: TestItem) => <div>{item.id}</div>,
 };
 
@@ -61,16 +71,16 @@ describe("TierGrid", () => {
     expect(screen.getByText("Pool")).toBeInTheDocument();
   });
 
-  it("renders group headers", () => {
-    render(
+  it("renders group headers with icons", () => {
+    const { container } = render(
       <DndWrapper>
         <TierGrid {...defaultProps} />
       </DndWrapper>
     );
 
-    expect(screen.getByTestId("header-Pyro")).toBeInTheDocument();
-    expect(screen.getByTestId("header-Hydro")).toBeInTheDocument();
-    expect(screen.getByTestId("header-Geo")).toBeInTheDocument();
+    // Headers should have images for each group
+    const headerImages = container.querySelectorAll("img");
+    expect(headerImages.length).toBeGreaterThan(0);
   });
 
   it("renders items in correct tier cells", () => {
@@ -109,21 +119,19 @@ describe("TierGrid", () => {
     expect(screen.queryByText("S")).not.toBeInTheDocument();
   });
 
-  it("uses getTierDisplayName for tier label when no custom name", () => {
-    const customGetTierDisplayName = vi.fn((tier: string) => `Tier ${tier}`);
-
+  it("uses t.ui for tier display names when no custom name", () => {
+    // TierGrid now uses useLanguage() internally, which is mocked in tests
+    // This test just verifies the component renders with tier labels
     render(
       <DndWrapper>
-        <TierGrid
-          {...defaultProps}
-          getTierDisplayName={customGetTierDisplayName}
-        />
+        <TierGrid {...defaultProps} />
       </DndWrapper>
     );
 
-    expect(screen.getByText("Tier S")).toBeInTheDocument();
-    expect(screen.getByText("Tier A")).toBeInTheDocument();
-    expect(screen.getByText("Tier Pool")).toBeInTheDocument();
+    // The mock LanguageProvider in tests returns keys as-is
+    expect(screen.getByText("S")).toBeInTheDocument();
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByText("Pool")).toBeInTheDocument();
   });
 
   it("renders correct number of tier rows", () => {

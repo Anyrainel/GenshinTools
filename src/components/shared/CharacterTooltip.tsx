@@ -2,15 +2,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { THEME } from "@/lib/theme";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type React from "react";
 
 interface CharacterTooltipProps {
   characterId: string;
 }
 
-export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
-  characterId,
-}) => {
+export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
   const { t } = useLanguage();
   const character = charactersById[characterId];
 
@@ -69,4 +66,4 @@ export const CharacterTooltip: React.FC<CharacterTooltipProps> = ({
       </div>
     </div>
   );
-};
+}

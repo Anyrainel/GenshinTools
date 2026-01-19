@@ -32,7 +32,7 @@ const presetModules = import.meta.glob<{ default: BuildPayload }>(
   { eager: false }
 );
 
-const Index = () => {
+export default function ArtifactFilterPage() {
   const { t } = useLanguage();
   const configureViewRef = useRef<ConfigureViewRef>(null);
   const computeContentRef = useRef<HTMLDivElement>(null);
@@ -246,6 +246,4 @@ const Index = () => {
       </main>
     </div>
   );
-};
-
-export default Index;
+}

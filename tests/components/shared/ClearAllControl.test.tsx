@@ -22,33 +22,27 @@ describe("ClearAllControl", () => {
     expect(screen.getByRole("alertdialog")).toBeInTheDocument();
   });
 
-  it("shows default dialog title and description", async () => {
+  it("shows default dialog with cancel and confirm buttons", async () => {
     const user = userEvent.setup();
     render(<ClearAllControl onConfirm={() => {}} />);
 
     await user.click(screen.getByRole("button"));
 
-    // Should show title (from t.ui) - looks for "Clear" text in title
+    // Should show dialog
     const dialog = screen.getByRole("alertdialog");
     expect(dialog).toBeInTheDocument();
     // Dialog should have cancel and confirm buttons
     expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
   });
 
-  it("shows custom dialog title and description", async () => {
+  it("uses tier-list variant messages when specified", async () => {
     const user = userEvent.setup();
-    render(
-      <ClearAllControl
-        onConfirm={() => {}}
-        dialogTitle="Custom Title"
-        dialogDescription="Custom Description"
-      />
-    );
+    render(<ClearAllControl onConfirm={() => {}} variant="tier-list" />);
 
     await user.click(screen.getByRole("button"));
 
-    expect(screen.getByText("Custom Title")).toBeInTheDocument();
-    expect(screen.getByText("Custom Description")).toBeInTheDocument();
+    // Dialog should still open with tier-list specific messages
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
   });
 
   it("calls onConfirm when confirm button is clicked", async () => {
@@ -100,18 +94,5 @@ describe("ClearAllControl", () => {
 
     const button = screen.getByRole("button");
     expect(button).toBeDisabled();
-  });
-
-  it("shows custom confirm action label", async () => {
-    const user = userEvent.setup();
-    render(
-      <ClearAllControl onConfirm={() => {}} confirmActionLabel="Yes, Delete" />
-    );
-
-    await user.click(screen.getByRole("button"));
-
-    expect(
-      screen.getByRole("button", { name: /yes, delete/i })
-    ).toBeInTheDocument();
   });
 });

@@ -1,18 +1,28 @@
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ClearAllControl } from "@/components/shared/ClearAllControl"; // Updated import
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
-import CharacterTierTable from "@/components/tier-list/CharacterTierTable";
-import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
+import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
+import { TierTable } from "@/components/tier-list/TierTable";
+import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import {
+  charactersById,
+  elementResourcesByName,
+  sortedCharacters,
+  weaponResourcesByName,
+} from "@/data/constants";
 import type {
+  Character,
+  Element,
   PresetOption,
   TierAssignment,
   TierCustomization,
   TierListData,
-} from "@/data/types"; // Import necessary types
+} from "@/data/types";
+import { elements } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { THEME } from "@/lib/theme";
@@ -37,7 +47,18 @@ const generateId = (name: string): string => {
     .replace(/[^a-z0-9_]/g, "");
 };
 
-const TierListPage = () => {
+// Build group config from element resources
+const elementGroupConfig: Record<Element, TierGroupConfig> = Object.fromEntries(
+  elements.map((element) => [
+    element,
+    {
+      bgClass: THEME.element.bg[element],
+      iconPath: elementResourcesByName[element].imagePath,
+    },
+  ])
+) as Record<Element, TierGroupConfig>;
+
+export default function TierListPage() {
   const { t, language, setLanguage } = useLanguage();
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
@@ -61,82 +82,6 @@ const TierListPage = () => {
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // Show toast when tier assignments change (auto-save) - This logic was in TierList.tsx, moving here.
-  // Track previous assignments to detect changes
-  const prevAssignmentsRef = useRef<TierAssignment>(tierAssignments);
-  // Track if we should show auto-save toast (skip on initial load and manual load)
-  const shouldShowAutoSaveRef = useRef(false);
-
-  useEffect(() => {
-    // Skip on initial mount
-    if (!shouldShowAutoSaveRef.current) {
-      shouldShowAutoSaveRef.current = true;
-      prevAssignmentsRef.current = tierAssignments;
-      return;
-    }
-
-    const prev = prevAssignmentsRef.current;
-    const curr = tierAssignments;
-
-    // Find what changed
-    const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-    const changes: {
-      characterId: string;
-      fromTier?: string;
-      toTier?: string;
-    }[] = [];
-
-    for (const characterId of allKeys) {
-      const prevAssignment = prev[characterId];
-      const currAssignment = curr[characterId];
-
-      // Character was added or moved
-      if (
-        currAssignment &&
-        (!prevAssignment || prevAssignment.tier !== currAssignment.tier)
-      ) {
-        changes.push({
-          characterId,
-          fromTier: prevAssignment?.tier,
-          toTier: currAssignment.tier,
-        });
-      }
-      // Character was removed
-      else if (prevAssignment && !currAssignment) {
-        changes.push({
-          characterId,
-          fromTier: prevAssignment.tier,
-        });
-      }
-    }
-
-    // Show toast for changes
-    if (changes.length > 0) {
-      const change = changes[0];
-      const character = charactersById[change.characterId];
-      if (!character) return;
-
-      const localizedName = t.character(character.id);
-
-      if (change.toTier) {
-        const tierLabel =
-          change.toTier === "Pool" ? t.ui("tiers.Pool") : change.toTier;
-        toast.success(
-          t.format("messages.characterMoved", localizedName, tierLabel),
-          {
-            duration: 2000,
-          }
-        );
-      } else {
-        toast.success(t.format("messages.characterRemoved", localizedName), {
-          duration: 2000,
-        });
-      }
-    }
-
-    prevAssignmentsRef.current = tierAssignments;
-  }, [tierAssignments, t]);
-
   // Load preset metadata on mount
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
@@ -147,8 +92,6 @@ const TierListPage = () => {
   }, []);
 
   const handleImport = (importedData: TierListData) => {
-    shouldShowAutoSaveRef.current = false; // Disable auto-save toast for manual import
-
     // Normalize imported data assignments using generateId
     const normalizedAssignments: TierAssignment = {};
     if (importedData.tierAssignments) {
@@ -213,7 +156,6 @@ const TierListPage = () => {
   };
 
   const handleClear = () => {
-    shouldShowAutoSaveRef.current = false;
     resetStoredTierList();
     toast.info(t.ui("messages.tierListReset"));
   };
@@ -264,43 +206,19 @@ const TierListPage = () => {
       <ToolHeader
         actions={
           <>
-            <ClearAllControl
-              onConfirm={handleClear}
-              dialogTitle={t.ui("resetConfirmDialog.title")}
-              dialogDescription={t.ui("resetConfirmDialog.message")}
-              confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
-            />
+            <ClearAllControl onConfirm={handleClear} variant="tier-list" />
 
-            <ImportControl<TierListData> // Specify type for ImportControl
+            <ImportControl<TierListData>
               options={presetOptions}
               loadPreset={loadPreset}
               onApply={handleImport}
-              onLocalImport={handleImport} // Use handleImport for local file import as well
-              dialogTitle={t.ui("tierList.importDialogTitle")}
-              dialogDescription={t.ui("tierList.importDialogDescription")}
-              confirmTitle={t.ui("tierList.presetConfirmTitle")}
-              confirmDescription={t.ui("tierList.presetConfirmDescription")}
-              confirmActionLabel={t.ui("tierList.presetConfirmAction")}
-              loadErrorText={t.ui("tierList.loadError")}
-              emptyListText={t.ui("tierList.noPresets")}
-              importFromFileText={t.ui("tierList.importFromFile")}
+              onLocalImport={handleImport}
+              variant="tier-list"
             />
 
             <ExportControl
               onExport={handleExport}
-              dialogTitle={t.ui("tierList.exportDialogTitle")}
-              dialogDescription={t.ui("tierList.exportDialogDescription")}
-              authorLabel={t.ui("tierList.exportAuthorLabel")}
-              authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
-              descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
-              descriptionPlaceholder={t.ui(
-                "tierList.exportDescriptionPlaceholder"
-              )}
-              authorRequiredError={t.ui("tierList.exportAuthorRequired")}
-              descriptionRequiredError={t.ui(
-                "tierList.exportDescriptionRequired"
-              )}
-              confirmActionLabel={t.ui("tierList.exportConfirmAction")}
+              variant="tier-list"
               defaultAuthor={author}
               defaultDescription={description}
             />
@@ -333,7 +251,7 @@ const TierListPage = () => {
               variant="secondary"
               size="sm"
               onClick={() => setIsCustomizeDialogOpen(true)}
-              className={THEME.button.customize}
+              className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
             >
               <Settings className="w-4 h-4" />
               {t.ui("buttons.customize")}
@@ -342,7 +260,7 @@ const TierListPage = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowWeapons(!showWeapons)}
-              className={THEME.button.toggle}
+              className="gap-2"
             >
               {showWeapons
                 ? t.ui("buttons.hideWeapons")
@@ -352,7 +270,7 @@ const TierListPage = () => {
               variant="outline"
               size="sm"
               onClick={() => setShowTravelers(!showTravelers)}
-              className={THEME.button.toggle}
+              className="gap-2"
             >
               {showTravelers
                 ? t.ui("buttons.hideTravelers")
@@ -364,11 +282,30 @@ const TierListPage = () => {
 
       <main className="flex-1 overflow-y-auto pb-2">
         <div className="w-[95%] mx-auto h-full">
-          <CharacterTierTable
+          <TierTable<Character, Element>
+            items={sortedCharacters}
+            itemsById={charactersById}
             tierAssignments={tierAssignments}
             tierCustomization={tierCustomization}
-            showTravelers={showTravelers}
             onAssignmentsChange={handleAssignmentsChange}
+            groups={elements}
+            groupKey="element"
+            groupConfig={elementGroupConfig}
+            getGroupName={(group) => t.element(group)}
+            getItemName={(item) => t.character(item.id)}
+            getTooltip={(character) => (
+              <CharacterTooltip characterId={character.id} />
+            )}
+            filterItem={(character) => {
+              if (character.id.startsWith("traveler") && !showTravelers) {
+                return false;
+              }
+              return true;
+            }}
+            getOverlayImage={(character) => {
+              if (!showWeapons) return undefined;
+              return weaponResourcesByName[character.weaponType].imagePath;
+            }}
             tableRef={tableRef}
           />
         </div>
@@ -383,6 +320,4 @@ const TierListPage = () => {
       />
     </div>
   );
-};
-
-export default TierListPage;
+}

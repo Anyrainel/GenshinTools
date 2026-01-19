@@ -111,8 +111,8 @@ export type Slot = MainStatSlot | "flower" | "plume";
 
 export type Character = {
   id: string;
-  element: Element;
   rarity: Rarity;
+  element: Element;
   weaponType: WeaponType;
   region: Region;
   releaseDate: string; // Format: YYYY-MM-DD

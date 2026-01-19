@@ -19,7 +19,7 @@ interface SummaryViewProps {
   scores: Record<string, ArtifactScoreResult>;
 }
 
-export const SummaryView = ({ scores }: SummaryViewProps) => {
+export function SummaryView({ scores }: SummaryViewProps) {
   const { t } = useLanguage();
   const { accountData } = useAccountStore();
   const { tierAssignments, tierCustomization } = useTierStore();
@@ -193,4 +193,4 @@ export const SummaryView = ({ scores }: SummaryViewProps) => {
       })}
     </div>
   );
-};
+}

@@ -1,5 +1,5 @@
 import { Layers, Loader2, Upload } from "lucide-react";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import {
   AlertDialog,
@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -20,46 +19,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { PresetOption } from "@/data/types"; // Updated import
+import type { PresetOption } from "@/data/types";
+
+type ImportVariant = "default" | "tier-list";
 
 interface ImportControlProps<T> {
   options: PresetOption[];
   loadPreset: (path: string) => Promise<T>;
   onApply: (payload: T) => void;
+  variant?: ImportVariant;
   disabled?: boolean;
   onLocalImport?: (payload: T) => void;
-  onUidImport?: (uid: string, clearData: boolean) => Promise<void>; // Updated prop
-  initialUid?: string; // New prop for initial UID value
-  dialogTitle?: string;
-  dialogDescription?: string | ReactNode;
-  confirmTitle?: string;
-  confirmDescription?: string;
-  confirmActionLabel?: string;
-  loadErrorText?: string;
-  emptyListText?: string;
-  hideEmptyList?: boolean;
-  importFromFileText?: string;
 }
 
 export function ImportControl<T>({
   options,
   loadPreset,
   onApply,
+  variant = "default",
   disabled = false,
   onLocalImport,
-  dialogTitle,
-  dialogDescription,
-  confirmTitle,
-  confirmDescription,
-  confirmActionLabel,
-  loadErrorText,
-  emptyListText,
-  hideEmptyList,
-  importFromFileText,
-  onUidImport,
-  initialUid, // Destructured here
 }: ImportControlProps<T>) {
   const { t } = useLanguage();
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -69,15 +49,23 @@ export function ImportControl<T>({
   );
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [uidInput, setUidInput] = useState(initialUid || ""); // Initialize with prop
-  const [clearData, setClearData] = useState(false);
 
-  // Sync uidInput when initialUid changes (e.g. from store)
-  useEffect(() => {
-    if (initialUid) {
-      setUidInput(initialUid);
-    }
-  }, [initialUid]);
+  // Variant-based i18n keys
+  const getMessages = useCallback(() => {
+    const prefix = variant === "tier-list" ? "tierList" : "configure";
+    return {
+      dialogTitle: t.ui(`${prefix}.importDialogTitle`),
+      dialogDescription: t.ui(`${prefix}.importDialogDescription`),
+      confirmTitle: t.ui(`${prefix}.presetConfirmTitle`),
+      confirmDescription: t.ui(`${prefix}.presetConfirmDescription`),
+      confirmAction: t.ui(`${prefix}.presetConfirmAction`),
+      loadError: t.ui(`${prefix}.presetDialogLoadError`),
+      emptyList: t.ui("configure.presetDialogEmpty"),
+      importFromFile: t.ui(`${prefix}.importFromFile`),
+    };
+  }, [variant, t]);
+
+  const messages = getMessages();
 
   const sortedOptions = useMemo(() => {
     return [...options].sort((a, b) => a.label.localeCompare(b.label));
@@ -109,7 +97,7 @@ export function ImportControl<T>({
       handleConfirmChange(false);
     } catch (error) {
       console.error("Failed to load preset", error);
-      setErrorMessage(loadErrorText || t.ui("configure.presetDialogLoadError"));
+      setErrorMessage(messages.loadError);
     } finally {
       setIsBusy(false);
     }
@@ -134,35 +122,13 @@ export function ImportControl<T>({
         setPickerOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
-        setErrorMessage(
-          loadErrorText || t.ui("configure.importDialogLoadError")
-        );
+        setErrorMessage(t.ui("configure.importDialogLoadError"));
       } finally {
         setIsBusy(false);
       }
     };
     reader.readAsText(file);
     event.target.value = "";
-  };
-
-  const handleUidImport = async () => {
-    if (!onUidImport || !uidInput) return;
-
-    setIsBusy(true);
-    setErrorMessage(null);
-    try {
-      await onUidImport(uidInput, clearData);
-      setPickerOpen(false);
-    } catch (error: unknown) {
-      console.error("UID Import failed", error);
-      let message = t.ui("configure.importDialogLoadError");
-      if (error instanceof Error) {
-        message = error.message;
-      }
-      setErrorMessage(message);
-    } finally {
-      setIsBusy(false);
-    }
   };
 
   return (
@@ -187,12 +153,8 @@ export function ImportControl<T>({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {dialogTitle || t.ui("configure.importDialogTitle")}
-            </DialogTitle>
-            <DialogDescription>
-              {dialogDescription || t.ui("configure.importDialogDescription")}
-            </DialogDescription>
+            <DialogTitle>{messages.dialogTitle}</DialogTitle>
+            <DialogDescription>{messages.dialogDescription}</DialogDescription>
           </DialogHeader>
 
           {sortedOptions.length > 0 ? (
@@ -213,56 +175,13 @@ export function ImportControl<T>({
               ))}
             </div>
           ) : (
-            !hideEmptyList && (
-              <div className="py-4 text-sm text-muted-foreground">
-                {emptyListText || t.ui("configure.presetDialogEmpty")}
-              </div>
-            )
+            <div className="py-4 text-sm text-muted-foreground">
+              {messages.emptyList}
+            </div>
           )}
 
           {onLocalImport && (
-            <div className="pt-4 border-t space-y-3">
-              {/* UID Import Section */}
-              {onUidImport && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
-                    value={uidInput}
-                    onChange={(e) => setUidInput(e.target.value)}
-                    className="flex h-9 flex-1 min-w-[100px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={isBusy}
-                    onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
-                  />
-                  <div className="flex items-center space-x-1.5 shrink-0 px-1">
-                    <Checkbox
-                      id="clearData"
-                      checked={clearData}
-                      onCheckedChange={(c) => setClearData(c as boolean)}
-                      disabled={isBusy}
-                    />
-                    <Label
-                      htmlFor="clearData"
-                      className="text-[10px] sm:text-xs font-normal text-muted-foreground cursor-pointer whitespace-nowrap"
-                    >
-                      {t.ui("configure.clearBeforeImport")}
-                    </Label>
-                  </div>
-                  <Button
-                    size="sm"
-                    onClick={handleUidImport}
-                    disabled={!uidInput || isBusy}
-                    className="shrink-0"
-                  >
-                    {isBusy ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      t.ui("app.import")
-                    )}
-                  </Button>
-                </div>
-              )}
-
+            <div className="pt-4 border-t">
               <Button
                 variant="outline"
                 size="sm"
@@ -270,7 +189,7 @@ export function ImportControl<T>({
                 disabled={isBusy}
               >
                 <Upload className="w-4 h-4" />
-                {importFromFileText || t.ui("configure.importFromFile")}
+                {messages.importFromFile}
                 <input
                   type="file"
                   accept=".json"
@@ -291,11 +210,9 @@ export function ImportControl<T>({
       <AlertDialog open={confirmOpen} onOpenChange={handleConfirmChange}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {confirmTitle || t.ui("configure.presetConfirmTitle")}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{messages.confirmTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmDescription || t.ui("configure.presetConfirmDescription")}
+              {messages.confirmDescription}
               {selectedPreset && (
                 <span className="mt-2 block font-semibold text-primary">
                   {selectedPreset.label}
@@ -316,7 +233,7 @@ export function ImportControl<T>({
               className="gap-2"
             >
               {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
-              {confirmActionLabel || t.ui("configure.presetConfirmAction")}
+              {messages.confirmAction}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

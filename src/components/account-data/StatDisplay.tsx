@@ -13,13 +13,13 @@ interface StatDisplayProps {
   isMainStatWrong?: boolean;
 }
 
-export const StatDisplay = ({
+export function StatDisplay({
   artifact,
   scoreResult,
   slotSubScore,
   slotMaxSubScore,
   isMainStatWrong,
-}: StatDisplayProps) => {
+}: StatDisplayProps) {
   const { t } = useLanguage();
 
   const renderStatLine = (statKey: string, value: number, weight = 0) => {
@@ -101,4 +101,4 @@ export const StatDisplay = ({
       )}
     </div>
   );
-};
+}

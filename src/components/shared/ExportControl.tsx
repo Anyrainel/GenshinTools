@@ -14,34 +14,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+type ExportVariant = "default" | "tier-list";
+
 interface ExportControlProps {
   onExport: (author: string, description: string) => void;
+  variant?: ExportVariant;
   disabled?: boolean;
-  dialogTitle?: string;
-  dialogDescription?: string;
-  authorLabel?: string;
-  authorPlaceholder?: string;
-  descriptionLabel?: string;
-  descriptionPlaceholder?: string;
-  authorRequiredError?: string;
-  descriptionRequiredError?: string;
-  confirmActionLabel?: string;
   defaultAuthor?: string;
   defaultDescription?: string;
 }
 
 export function ExportControl({
   onExport,
+  variant = "default",
   disabled = false,
-  dialogTitle,
-  dialogDescription,
-  authorLabel,
-  authorPlaceholder,
-  descriptionLabel,
-  descriptionPlaceholder,
-  authorRequiredError,
-  descriptionRequiredError,
-  confirmActionLabel,
   defaultAuthor = "",
   defaultDescription = "",
 }: ExportControlProps) {
@@ -53,6 +39,20 @@ export function ExportControl({
     author?: string;
     description?: string;
   }>({});
+
+  // Variant-based i18n keys
+  const prefix = variant === "tier-list" ? "tierList" : "configure";
+  const messages = {
+    dialogTitle: t.ui(`${prefix}.exportDialogTitle`),
+    dialogDescription: t.ui(`${prefix}.exportDialogDescription`),
+    authorLabel: t.ui(`${prefix}.exportAuthorLabel`),
+    authorPlaceholder: t.ui(`${prefix}.exportAuthorPlaceholder`),
+    descriptionLabel: t.ui(`${prefix}.exportDescriptionLabel`),
+    descriptionPlaceholder: t.ui(`${prefix}.exportDescriptionPlaceholder`),
+    authorRequiredError: t.ui(`${prefix}.exportAuthorRequired`),
+    descriptionRequiredError: t.ui(`${prefix}.exportDescriptionRequired`),
+    confirmAction: t.ui(`${prefix}.exportConfirmAction`),
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
@@ -69,12 +69,10 @@ export function ExportControl({
     // Validate
     const newErrors: { author?: string; description?: string } = {};
     if (!author.trim()) {
-      newErrors.author =
-        authorRequiredError || t.ui("configure.exportAuthorRequired");
+      newErrors.author = messages.authorRequiredError;
     }
     if (!description.trim()) {
-      newErrors.description =
-        descriptionRequiredError || t.ui("configure.exportDescriptionRequired");
+      newErrors.description = messages.descriptionRequiredError;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -103,24 +101,16 @@ export function ExportControl({
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {dialogTitle || t.ui("configure.exportDialogTitle")}
-            </DialogTitle>
-            <DialogDescription>
-              {dialogDescription || t.ui("configure.exportDialogDescription")}
-            </DialogDescription>
+            <DialogTitle>{messages.dialogTitle}</DialogTitle>
+            <DialogDescription>{messages.dialogDescription}</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="export-author">
-                {authorLabel || t.ui("configure.exportAuthorLabel")}
-              </Label>
+              <Label htmlFor="export-author">{messages.authorLabel}</Label>
               <Input
                 id="export-author"
-                placeholder={
-                  authorPlaceholder || t.ui("configure.exportAuthorPlaceholder")
-                }
+                placeholder={messages.authorPlaceholder}
                 value={author}
                 onChange={(e) => {
                   setAuthor(e.target.value);
@@ -136,14 +126,11 @@ export function ExportControl({
 
             <div className="grid gap-2">
               <Label htmlFor="export-description">
-                {descriptionLabel || t.ui("configure.exportDescriptionLabel")}
+                {messages.descriptionLabel}
               </Label>
               <Input
                 id="export-description"
-                placeholder={
-                  descriptionPlaceholder ||
-                  t.ui("configure.exportDescriptionPlaceholder")
-                }
+                placeholder={messages.descriptionPlaceholder}
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value);
@@ -166,7 +153,7 @@ export function ExportControl({
             </Button>
             <Button onClick={handleExport} className="gap-2">
               <Download className="w-4 h-4" />
-              {confirmActionLabel || t.ui("configure.exportConfirmAction")}
+              {messages.confirmAction}
             </Button>
           </DialogFooter>
         </DialogContent>

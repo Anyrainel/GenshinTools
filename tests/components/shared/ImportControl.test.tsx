@@ -125,14 +125,13 @@ describe("ImportControl", () => {
     expect(fileButton).toBeInTheDocument();
   });
 
-  it("shows empty list message when no options and hideEmptyList is false", async () => {
+  it("shows empty list message when no options available", async () => {
     const user = userEvent.setup();
     render(
       <ImportControl
         options={[]}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
-        hideEmptyList={false}
       />
     );
 
@@ -141,24 +140,6 @@ describe("ImportControl", () => {
     // Should show empty list message
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeInTheDocument();
-  });
-
-  it("hides empty list message when hideEmptyList is true", async () => {
-    const user = userEvent.setup();
-    render(
-      <ImportControl
-        options={[]}
-        loadPreset={mockLoadPreset}
-        onApply={mockOnApply}
-        hideEmptyList={true}
-        onLocalImport={mockOnLocalImport}
-      />
-    );
-
-    await user.click(screen.getByRole("button"));
-
-    // Dialog should still be open but won't show no-presets message
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it("disables button when disabled prop is true", () => {

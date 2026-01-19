@@ -290,7 +290,7 @@ const CharacterWeightRow = React.memo(
   }
 );
 
-export const StatWeightView = () => {
+export function StatWeightView() {
   const { t } = useLanguage();
   const {
     config,
@@ -600,7 +600,7 @@ export const StatWeightView = () => {
       </Card>
     </div>
   );
-};
+}
 
 // High-quality interactive cell component
 const WeightCell = ({

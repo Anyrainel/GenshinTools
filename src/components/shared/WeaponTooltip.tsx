@@ -2,13 +2,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { weaponsById } from "@/data/constants";
 import { THEME } from "@/lib/theme";
 import { cn, getAssetUrl } from "@/lib/utils";
-import type React from "react";
 
 interface WeaponTooltipProps {
   weaponId: string;
 }
 
-export const WeaponTooltip: React.FC<WeaponTooltipProps> = ({ weaponId }) => {
+export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
   const { t } = useLanguage();
   const weapon = weaponsById[weaponId];
 
@@ -86,4 +85,4 @@ export const WeaponTooltip: React.FC<WeaponTooltipProps> = ({ weaponId }) => {
       </div>
     </div>
   );
-};
+}

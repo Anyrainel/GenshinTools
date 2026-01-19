@@ -17,7 +17,7 @@ interface InventoryViewProps {
   data: AccountData;
 }
 
-export const InventoryView = ({ data }: InventoryViewProps) => {
+export function InventoryView({ data }: InventoryViewProps) {
   const { t } = useLanguage();
   const unequippedWeapons = (data.extraWeapons || []).slice().sort((a, b) => {
     const infoA = weaponsById[a.key];
@@ -133,4 +133,4 @@ export const InventoryView = ({ data }: InventoryViewProps) => {
       </div>
     </div>
   );
-};
+}

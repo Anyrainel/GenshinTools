@@ -40,10 +40,10 @@ export const ConfigureView = forwardRef<ConfigureViewRef>((props, ref) => {
   // Use custom hook for scroll forwarding from margin areas to main content
   useGlobalScroll(containerRef, mainScrollRef);
 
-  // Use shared filter and sort utility (no tier sort in artifact filter - no tier context)
+  // Use shared filter and sort utility
   const filteredAndSortedCharacters = useMemo(
-    () => filterAndSortCharacters(characters, filters),
-    [filters]
+    () => filterAndSortCharacters(characters, filters, tierAssignments),
+    [filters, tierAssignments]
   );
 
   const activeFilters = hasActiveFilters(filters);

@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { Sword } from "lucide-react";
+import { memo } from "react";
 import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
@@ -26,7 +27,7 @@ interface CharacterCardProps {
   score?: ArtifactScoreResult;
 }
 
-export const CharacterCard = ({ char, score }: CharacterCardProps) => {
+function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
   const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
@@ -242,4 +243,7 @@ export const CharacterCard = ({ char, score }: CharacterCardProps) => {
       </CardContent>
     </Card>
   );
-};
+}
+
+// Memoize to prevent re-renders - CharacterCard is rendered for each character in the list
+export const CharacterCard = memo(CharacterCardComponent);

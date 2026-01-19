@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Home = () => {
+export default function Home() {
   const { t } = useLanguage();
 
   return (
@@ -170,7 +170,7 @@ const Home = () => {
       </div>
     </div>
   );
-};
+}
 
 const FeatureRow = ({
   icon,
@@ -265,5 +265,3 @@ const FeatureRow = ({
     </div>
   );
 };
-
-export default Home;

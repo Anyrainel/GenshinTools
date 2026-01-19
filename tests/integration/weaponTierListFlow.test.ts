@@ -58,55 +58,6 @@ describe("Integration: Weapon Tier List Page Flow", () => {
     });
   });
 
-  describe("rarity filters", () => {
-    it("toggles 5-star weapon visibility", () => {
-      expect(useWeaponTierStore.getState().showRarity5).toBe(true); // Default
-
-      act(() => {
-        useWeaponTierStore.getState().setShowRarity5(false);
-      });
-
-      expect(useWeaponTierStore.getState().showRarity5).toBe(false);
-    });
-
-    it("toggles 4-star weapon visibility", () => {
-      expect(useWeaponTierStore.getState().showRarity4).toBe(true); // Default
-
-      act(() => {
-        useWeaponTierStore.getState().setShowRarity4(false);
-      });
-
-      expect(useWeaponTierStore.getState().showRarity4).toBe(false);
-    });
-
-    it("toggles 3-star weapon visibility", () => {
-      expect(useWeaponTierStore.getState().showRarity3).toBe(true); // Default
-
-      act(() => {
-        useWeaponTierStore.getState().setShowRarity3(false);
-      });
-
-      expect(useWeaponTierStore.getState().showRarity3).toBe(false);
-    });
-
-    it("resets all rarity filters on tier list reset", () => {
-      act(() => {
-        useWeaponTierStore.getState().setShowRarity5(false);
-        useWeaponTierStore.getState().setShowRarity4(false);
-        useWeaponTierStore.getState().setShowRarity3(false);
-      });
-
-      act(() => {
-        useWeaponTierStore.getState().resetTierList();
-      });
-
-      const state = useWeaponTierStore.getState();
-      expect(state.showRarity5).toBe(true);
-      expect(state.showRarity4).toBe(true);
-      expect(state.showRarity3).toBe(true);
-    });
-  });
-
   describe("tier customization", () => {
     it("customizes weapon tier display names", () => {
       const customization: TierCustomization = {

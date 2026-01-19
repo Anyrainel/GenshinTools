@@ -17,7 +17,7 @@ interface ToolHeaderProps {
   className?: string;
 }
 
-const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
+export function ToolHeader({ actions, className }: ToolHeaderProps) {
   const { language, toggleLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
@@ -151,6 +151,4 @@ const ToolHeader: React.FC<ToolHeaderProps> = ({ actions, className }) => {
       </div>
     </header>
   );
-};
-
-export { ToolHeader };
+}

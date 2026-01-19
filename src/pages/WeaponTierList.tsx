@@ -2,20 +2,31 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
-import TierCustomizationDialog from "@/components/tier-list/TierCustomizationDialog";
-import WeaponTierTable from "@/components/tier-list/WeaponTierTable";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
+import { TierTable } from "@/components/tier-list/TierTable";
+import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { sortedWeaponSecondaryStats, weaponsById } from "@/data/constants";
+import {
+  sortedWeaponSecondaryStats,
+  sortedWeapons,
+  weaponResourcesByName,
+  weaponsById,
+} from "@/data/constants";
 import type {
   MainStat,
   PresetOption,
+  Rarity,
   TierAssignment,
   TierCustomization,
   TierListData,
+  Weapon,
+  WeaponType,
 } from "@/data/types";
+import { weaponTypes } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { THEME } from "@/lib/theme";
@@ -31,7 +42,22 @@ const presetModules = import.meta.glob<{ default: TierListData }>(
   { eager: false }
 );
 
-const WeaponTierListPage = () => {
+// Build group config from weapon type resources
+const weaponGroupConfig: Record<WeaponType, TierGroupConfig> =
+  Object.fromEntries(
+    weaponTypes.map((type) => [
+      type,
+      {
+        bgClass: "bg-cyan-900/70 backdrop-blur-sm",
+        iconPath: weaponResourcesByName[type].imagePath,
+      },
+    ])
+  ) as Record<WeaponType, TierGroupConfig>;
+
+// Weapon rarities to show in the filter (descending order for display)
+const WEAPON_RARITIES = [5, 4, 3] as const;
+
+export default function WeaponTierListPage() {
   const { t, language, setLanguage } = useLanguage();
 
   const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
@@ -54,85 +80,21 @@ const WeaponTierListPage = () => {
   );
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
-  const showRarity5 = useWeaponTierStore((state) => state.showRarity5);
-  const showRarity4 = useWeaponTierStore((state) => state.showRarity4);
-  const showRarity3 = useWeaponTierStore((state) => state.showRarity3);
-  const setShowRarity5 = useWeaponTierStore((state) => state.setShowRarity5);
-  const setShowRarity4 = useWeaponTierStore((state) => state.setShowRarity4);
-  const setShowRarity3 = useWeaponTierStore((state) => state.setShowRarity3);
 
+  // Local UI state for filters (not persisted)
+  const [showRarity, setShowRarity] = useState<Record<Rarity, boolean>>({
+    5: true,
+    4: true,
+    3: true,
+    2: false,
+    1: false,
+  });
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [selectedSecondaryStats, setSelectedSecondaryStats] = useState<
     MainStat[]
   >(sortedWeaponSecondaryStats);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
-
-  const prevAssignmentsRef = useRef<TierAssignment>(tierAssignments);
-  const shouldShowAutoSaveRef = useRef(false);
-
-  useEffect(() => {
-    if (!shouldShowAutoSaveRef.current) {
-      shouldShowAutoSaveRef.current = true;
-      prevAssignmentsRef.current = tierAssignments;
-      return;
-    }
-
-    const prev = prevAssignmentsRef.current;
-    const curr = tierAssignments;
-
-    const allKeys = new Set([...Object.keys(prev), ...Object.keys(curr)]);
-    const changes: { weaponId: string; fromTier?: string; toTier?: string }[] =
-      [];
-
-    for (const weaponId of allKeys) {
-      const prevAssignment = prev[weaponId];
-      const currAssignment = curr[weaponId];
-
-      if (
-        currAssignment &&
-        (!prevAssignment || prevAssignment.tier !== currAssignment.tier)
-      ) {
-        changes.push({
-          weaponId,
-          fromTier: prevAssignment?.tier,
-          toTier: currAssignment.tier,
-        });
-      } else if (prevAssignment && !currAssignment) {
-        changes.push({
-          weaponId,
-          fromTier: prevAssignment.tier,
-        });
-      }
-    }
-
-    if (changes.length > 0) {
-      const change = changes[0];
-      const weapon = weaponsById[change.weaponId];
-      if (!weapon) return;
-
-      // Use a generic message key or reuse characterMoved if acceptable
-      // Ideally should add weaponMoved messages
-      const localizedName = t.weaponName(weapon.id); // Fallback to ID if not found, usually name is in i18nGameData
-
-      if (change.toTier) {
-        const tierLabel =
-          change.toTier === "Pool" ? t.ui("tiers.Pool") : change.toTier;
-        toast.success(
-          t.format("messages.characterMoved", localizedName, tierLabel),
-          {
-            duration: 2000,
-          }
-        );
-      } else {
-        toast.success(t.format("messages.characterRemoved", localizedName), {
-          duration: 2000,
-        });
-      }
-    }
-
-    prevAssignmentsRef.current = tierAssignments;
-  }, [tierAssignments, t]);
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
@@ -143,8 +105,6 @@ const WeaponTierListPage = () => {
   }, []);
 
   const handleImport = (importedData: TierListData) => {
-    shouldShowAutoSaveRef.current = false;
-
     loadTierListData({
       tierAssignments: importedData.tierAssignments,
       tierCustomization: importedData.tierCustomization,
@@ -185,7 +145,6 @@ const WeaponTierListPage = () => {
   };
 
   const handleClear = () => {
-    shouldShowAutoSaveRef.current = false;
     resetStoredTierList();
     toast.info(t.ui("messages.tierListReset"));
   };
@@ -236,43 +195,19 @@ const WeaponTierListPage = () => {
       <ToolHeader
         actions={
           <>
-            <ClearAllControl
-              onConfirm={handleClear}
-              dialogTitle={t.ui("resetConfirmDialog.title")}
-              dialogDescription={t.ui("resetConfirmDialog.message")}
-              confirmActionLabel={t.ui("resetConfirmDialog.confirm")}
-            />
+            <ClearAllControl onConfirm={handleClear} variant="tier-list" />
 
             <ImportControl<TierListData>
               options={presetOptions}
               loadPreset={loadPreset}
               onApply={handleImport}
               onLocalImport={handleImport}
-              dialogTitle={t.ui("tierList.importDialogTitle")}
-              dialogDescription={t.ui("tierList.importDialogDescription")}
-              confirmTitle={t.ui("tierList.presetConfirmTitle")}
-              confirmDescription={t.ui("tierList.presetConfirmDescription")}
-              confirmActionLabel={t.ui("tierList.presetConfirmAction")}
-              loadErrorText={t.ui("tierList.loadError")}
-              emptyListText={t.ui("tierList.noPresets")}
-              importFromFileText={t.ui("tierList.importFromFile")}
+              variant="tier-list"
             />
 
             <ExportControl
               onExport={handleExport}
-              dialogTitle={t.ui("tierList.exportDialogTitle")}
-              dialogDescription={t.ui("tierList.exportDialogDescription")}
-              authorLabel={t.ui("tierList.exportAuthorLabel")}
-              authorPlaceholder={t.ui("tierList.exportAuthorPlaceholder")}
-              descriptionLabel={t.ui("tierList.exportDescriptionLabel")}
-              descriptionPlaceholder={t.ui(
-                "tierList.exportDescriptionPlaceholder"
-              )}
-              authorRequiredError={t.ui("tierList.exportAuthorRequired")}
-              descriptionRequiredError={t.ui(
-                "tierList.exportDescriptionRequired"
-              )}
-              confirmActionLabel={t.ui("tierList.exportConfirmAction")}
+              variant="tier-list"
               defaultAuthor={author}
               defaultDescription={description}
             />
@@ -305,57 +240,32 @@ const WeaponTierListPage = () => {
               variant="secondary"
               size="sm"
               onClick={() => setIsCustomizeDialogOpen(true)}
-              className={THEME.button.customize}
+              className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
             >
               <Settings className="w-4 h-4" />
               {t.ui("buttons.customize")}
             </Button>
             <div className="flex items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="rarity-5"
-                  checked={showRarity5}
-                  onCheckedChange={(checked) =>
-                    setShowRarity5(checked === true)
-                  }
-                />
-                <Label
-                  htmlFor="rarity-5"
-                  className="text-sm text-gray-200 cursor-pointer"
-                >
-                  {t.ui("buttons.includeRarity5")}
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="rarity-4"
-                  checked={showRarity4}
-                  onCheckedChange={(checked) =>
-                    setShowRarity4(checked === true)
-                  }
-                />
-                <Label
-                  htmlFor="rarity-4"
-                  className="text-sm text-gray-200 cursor-pointer"
-                >
-                  {t.ui("buttons.includeRarity4")}
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="rarity-3"
-                  checked={showRarity3}
-                  onCheckedChange={(checked) =>
-                    setShowRarity3(checked === true)
-                  }
-                />
-                <Label
-                  htmlFor="rarity-3"
-                  className="text-sm text-gray-200 cursor-pointer"
-                >
-                  {t.ui("buttons.includeRarity3")}
-                </Label>
-              </div>
+              {WEAPON_RARITIES.map((rarity) => (
+                <div key={rarity} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`rarity-${rarity}`}
+                    checked={showRarity[rarity]}
+                    onCheckedChange={(checked) =>
+                      setShowRarity((prev) => ({
+                        ...prev,
+                        [rarity]: checked === true,
+                      }))
+                    }
+                  />
+                  <Label
+                    htmlFor={`rarity-${rarity}`}
+                    className="text-sm text-gray-200 cursor-pointer"
+                  >
+                    {t.ui(`buttons.includeRarity${rarity}`)}
+                  </Label>
+                </div>
+              ))}
 
               <div className="w-px h-6 bg-gray-600 mx-2" />
 
@@ -392,14 +302,24 @@ const WeaponTierListPage = () => {
 
       <main className="flex-1 overflow-y-auto pb-2">
         <div className="w-[95%] mx-auto h-full">
-          <WeaponTierTable
+          <TierTable<Weapon, WeaponType>
+            items={sortedWeapons}
+            itemsById={weaponsById}
             tierAssignments={tierAssignments}
             tierCustomization={tierCustomization}
             onAssignmentsChange={handleAssignmentsChange}
-            showRarity5={showRarity5}
-            showRarity4={showRarity4}
-            showRarity3={showRarity3}
-            allowedSecondaryStats={selectedSecondaryStats}
+            groups={weaponTypes}
+            groupKey="type"
+            groupConfig={weaponGroupConfig}
+            getGroupName={(group) => t.weaponType(group)}
+            getItemName={(item) => t.weaponName(item.id)}
+            getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
+            filterItem={(weapon) => {
+              if (!showRarity[weapon.rarity]) return false;
+              if (!selectedSecondaryStats.includes(weapon.secondaryStat))
+                return false;
+              return true;
+            }}
             tableRef={tableRef}
           />
         </div>
@@ -414,6 +334,4 @@ const WeaponTierListPage = () => {
       />
     </div>
   );
-};
-
-export default WeaponTierListPage;
+}

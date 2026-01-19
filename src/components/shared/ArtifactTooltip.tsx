@@ -2,17 +2,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import type React from "react";
 
 interface ArtifactTooltipProps {
   setId: string;
   hideFourPieceEffect?: boolean;
 }
 
-export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({
+export function ArtifactTooltip({
   setId,
   hideFourPieceEffect,
-}) => {
+}: ArtifactTooltipProps) {
   const { t } = useLanguage();
   const artifact = artifactsById[setId];
 
@@ -58,4 +57,4 @@ export const ArtifactTooltip: React.FC<ArtifactTooltipProps> = ({
       </div>
     </div>
   );
-};
+}

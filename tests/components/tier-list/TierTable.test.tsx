@@ -1,16 +1,39 @@
-import type { TierItemData } from "@/components/tier-list/TierItem";
 import { TierTable } from "@/components/tier-list/TierTable";
-import { fireEvent, render, screen } from "../../utils/render";
+import type {
+  TierGroupConfig,
+  TierItemData,
+} from "@/components/tier-list/tierTableTypes";
+import { render, screen } from "../../utils/render";
 
 interface TestItem extends TierItemData {
   element: string;
 }
 
 const mockItems: TestItem[] = [
-  { id: "hu_tao", rarity: 5, element: "Pyro" },
-  { id: "xingqiu", rarity: 4, element: "Hydro" },
-  { id: "zhongli", rarity: 5, element: "Geo" },
-  { id: "bennett", rarity: 4, element: "Pyro" },
+  {
+    id: "hu_tao",
+    rarity: 5,
+    imagePath: "/character/hu_tao.png",
+    element: "Pyro",
+  },
+  {
+    id: "xingqiu",
+    rarity: 4,
+    imagePath: "/character/xingqiu.png",
+    element: "Hydro",
+  },
+  {
+    id: "zhongli",
+    rarity: 5,
+    imagePath: "/character/zhongli.png",
+    element: "Geo",
+  },
+  {
+    id: "bennett",
+    rarity: 4,
+    imagePath: "/character/bennett.png",
+    element: "Pyro",
+  },
 ];
 
 const mockItemsById: Record<string, TestItem> = {
@@ -18,6 +41,12 @@ const mockItemsById: Record<string, TestItem> = {
   xingqiu: mockItems[1],
   zhongli: mockItems[2],
   bennett: mockItems[3],
+};
+
+const testGroupConfig: Record<string, TierGroupConfig> = {
+  Pyro: { bgClass: "bg-element-pyro/60", iconPath: "/elements/pyro.png" },
+  Hydro: { bgClass: "bg-element-hydro/60", iconPath: "/elements/hydro.png" },
+  Geo: { bgClass: "bg-element-geo/60", iconPath: "/elements/geo.png" },
 };
 
 const defaultProps = {
@@ -29,23 +58,11 @@ const defaultProps = {
   },
   tierCustomization: {},
   onAssignmentsChange: vi.fn(),
-  isValidDrop: () => true,
-  groups: ["Pyro", "Hydro", "Geo"],
-  getItemGroup: (item: TestItem) => item.element,
-  getGroupCount: (group: string, itemsPerTier: Record<string, TestItem[]>) =>
-    Object.values(itemsPerTier)
-      .flat()
-      .filter((i) => i.element === group).length,
-  renderHeader: (group: string, count: number) => (
-    <div key={group} data-testid={`header-${group}`}>
-      {group} ({count})
-    </div>
-  ),
-  renderPreview: (item: TestItem) => <div>{item.id}</div>,
-  getItemData: (item: TestItem) => ({ element: item.element }),
-  getTierDisplayName: (tier: string) => tier,
-  getImagePath: (item: TestItem) => `/character/${item.id}.png`,
-  getAlt: (item: TestItem) => item.id,
+  groups: ["Pyro", "Hydro", "Geo"] as const,
+  groupKey: "element" as keyof TestItem,
+  groupConfig: testGroupConfig,
+  getGroupName: (group: string) => group,
+  getItemName: (item: TestItem) => item.id,
   getTooltip: (item: TestItem) => <div>{item.id}</div>,
 };
 
@@ -75,21 +92,6 @@ describe("TierTable", () => {
 
     const bennettItem = container.querySelector('[data-item-id="bennett"]');
     expect(bennettItem).toBeInTheDocument();
-  });
-
-  it("calls onAssignmentsChange when item is double-clicked to remove", () => {
-    const { container } = render(<TierTable {...defaultProps} />);
-
-    // Double-click hu_tao to remove from tier
-    const huTaoItem = container.querySelector('[data-item-id="hu_tao"]');
-    expect(huTaoItem).toBeInTheDocument();
-
-    fireEvent.doubleClick(huTaoItem!);
-
-    // onAssignmentsChange should be called with hu_tao removed
-    expect(defaultProps.onAssignmentsChange).toHaveBeenCalled();
-    const newAssignments = defaultProps.onAssignmentsChange.mock.calls[0][0];
-    expect(newAssignments.hu_tao).toBeUndefined();
   });
 
   it("hides tiers marked as hidden in tierCustomization", () => {

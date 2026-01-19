@@ -14,23 +14,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+type ClearAllVariant = "default" | "tier-list";
+
 interface ClearAllControlProps {
   onConfirm: () => void;
+  variant?: ClearAllVariant;
   disabled?: boolean;
-  dialogTitle?: string;
-  dialogDescription?: string;
-  confirmActionLabel?: string;
 }
 
 export function ClearAllControl({
   onConfirm,
+  variant = "default",
   disabled = false,
-  dialogTitle,
-  dialogDescription,
-  confirmActionLabel,
 }: ClearAllControlProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+
+  // Variant-based i18n keys
+  const messages =
+    variant === "tier-list"
+      ? {
+          title: t.ui("resetConfirmDialog.title"),
+          description: t.ui("resetConfirmDialog.message"),
+          action: t.ui("resetConfirmDialog.confirm"),
+        }
+      : {
+          title: t.ui("configure.clearAllConfirmTitle"),
+          description: t.ui("configure.clearAllConfirmDescription"),
+          action: t.ui("configure.clearAllConfirmAction"),
+        };
 
   const handleConfirm = () => {
     onConfirm();
@@ -53,12 +65,9 @@ export function ClearAllControl({
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {dialogTitle || t.ui("configure.clearAllConfirmTitle")}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{messages.title}</AlertDialogTitle>
             <AlertDialogDescription>
-              {dialogDescription ||
-                t.ui("configure.clearAllConfirmDescription")}
+              {messages.description}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -68,7 +77,7 @@ export function ClearAllControl({
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
             >
               <Trash2 className="h-4 w-4" />
-              {confirmActionLabel || t.ui("configure.clearAllConfirmAction")}
+              {messages.action}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

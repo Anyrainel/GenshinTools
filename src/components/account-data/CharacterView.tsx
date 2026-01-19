@@ -3,17 +3,11 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import {
-  type Character,
-  type CharacterData,
-  type CharacterFilters,
-  tiers,
-} from "@/data/types";
+import type { CharacterFilters } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import {
   defaultCharacterFilters,
-  filterAndSortCharacters,
+  filterAndSortCharacterData,
   hasActiveFilters,
 } from "@/lib/characterFilters";
 import { useAccountStore } from "@/stores/useAccountStore";
@@ -25,7 +19,7 @@ interface CharacterViewProps {
   scores: Record<string, ArtifactScoreResult>;
 }
 
-export const CharacterView = ({ scores }: CharacterViewProps) => {
+export function CharacterView({ scores }: CharacterViewProps) {
   const { t } = useLanguage();
   const { accountData } = useAccountStore();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
@@ -34,26 +28,14 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Filter and sort characters using shared utility
+  // Filter and sort account characters using shared utility
   const filteredCharacters = useMemo(() => {
     if (!accountData) return [];
-
-    // Convert account characters to Character type for the shared filter
-    const chars = accountData.characters
-      .map((c) => charactersById[c.key])
-      .filter((c): c is Character => c !== undefined);
-
-    const sorted = filterAndSortCharacters(
-      chars,
+    return filterAndSortCharacterData(
+      accountData.characters,
       filters,
-      tierAssignments,
-      tiers
+      tierAssignments
     );
-
-    // Map back to account character objects for rendering
-    return sorted
-      .map((c) => accountData.characters.find((ac) => ac.key === c.id))
-      .filter((c): c is CharacterData => c !== undefined);
   }, [accountData, filters, tierAssignments]);
 
   const activeFilters = hasActiveFilters(filters);
@@ -126,4 +108,4 @@ export const CharacterView = ({ scores }: CharacterViewProps) => {
       </Sheet>
     </div>
   );
-};
+}

@@ -4,51 +4,40 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Rarity } from "@/data/types";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type React from "react";
-import { useCallback } from "react";
-
-export interface TierItemData {
-  id: string;
-  rarity: Rarity;
-  [key: string]: unknown;
-}
+import { memo } from "react";
+import type { TierItemData } from "./tierTableTypes";
 
 interface TierItemProps<T extends TierItemData> {
   item: T;
-  id: string;
   tier: string;
+  /** The group value for this item (e.g., "Pyro" for element, "Sword" for weapon type) */
+  groupValue: string;
   disabled?: boolean;
-  onDoubleClick?: (itemId: string) => void;
-  getItemData: (item: T) => Record<string, unknown>;
-  imagePath: string;
   alt: string;
-  overlay?: React.ReactNode;
+  /** Optional image path for overlay badge (e.g., weapon type icon) */
+  overlayImage?: string;
   tooltip?: React.ReactNode;
 }
 
-export function TierItem<T extends TierItemData>({
+function TierItemComponent<T extends TierItemData>({
   item,
-  id,
   tier,
+  groupValue,
   disabled,
-  onDoubleClick,
-  getItemData,
-  imagePath,
   alt,
-  overlay,
+  overlayImage,
   tooltip,
 }: TierItemProps<T>) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
-      id: id,
+      id: item.id,
       data: {
         itemId: item.id,
         tier: tier,
-        ...getItemData(item),
+        group: groupValue,
       },
       disabled: disabled,
       animateLayoutChanges: () => false,
@@ -60,12 +49,26 @@ export function TierItem<T extends TierItemData>({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const handleDoubleClick = useCallback(() => {
-    onDoubleClick?.(item.id);
-  }, [onDoubleClick, item.id]);
+  const overlay = overlayImage ? (
+    <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
+      <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
+        <img
+          src={getAssetUrl(overlayImage)}
+          alt={overlayImage}
+          className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
+          draggable={false}
+        />
+      </div>
+    </div>
+  ) : null;
 
   const content = (
-    <ItemIcon imagePath={imagePath} rarity={item.rarity} alt={alt} size="lg">
+    <ItemIcon
+      imagePath={item.imagePath}
+      rarity={item.rarity}
+      alt={alt}
+      size="lg"
+    >
       {overlay}
     </ItemIcon>
   );
@@ -106,10 +109,12 @@ export function TierItem<T extends TierItemData>({
         "hover:scale-105",
         disabled && "opacity-50 cursor-not-allowed"
       )}
-      onDoubleClick={handleDoubleClick}
       data-item-id={item.id}
     >
       {renderItemContent()}
     </div>
   );
 }
+
+// Memoize to prevent re-renders - TierItem is rendered 100+ times in the grid
+export const TierItem = memo(TierItemComponent) as typeof TierItemComponent;

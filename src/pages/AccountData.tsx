@@ -1,9 +1,9 @@
+import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import { CharacterView } from "@/components/account-data/CharacterView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { StatWeightView } from "@/components/account-data/StatWeightView";
 import { SummaryView } from "@/components/account-data/SummaryView";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import { ImportControl } from "@/components/shared/ImportControl";
 import { ToolHeader } from "@/components/shared/ToolHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -29,8 +29,6 @@ import { AlertTriangle, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-
-type GOODPreset = GOODData & { author?: string; description?: string };
 
 const getMaxIds = (data: AccountData) => {
   let maxA = -1;
@@ -171,22 +169,16 @@ export default function AccountDataPage() {
     setConversionWarnings([]);
   };
 
-  const onImportApply = (data: GOODPreset) => {
-    const result = convertGOODToAccountData(data);
-    setAccountData(result.data);
-    showConversionWarnings(result);
-  };
-
-  const handleLocalImport = (data: unknown) => {
+  const handleLocalImport = (data: GOODData) => {
     try {
-      const result = convertGOODToAccountData(data as GOODData);
+      const result = convertGOODToAccountData(data);
       setAccountData(result.data);
       showConversionWarnings(result);
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error) {
       console.error("Failed to convert GOOD data", error);
       toast.error(t.ui("accountData.failedToParseFile"));
-      throw error; // Re-throw to let ImportControl handle UI state
+      throw error; // Re-throw to let AccountImportControl handle UI state
     }
   };
 
@@ -246,52 +238,10 @@ export default function AccountDataPage() {
         actions={
           <div className="flex gap-2">
             <ClearAllControl onConfirm={clearAccountData} />
-            <ImportControl
-              options={[]}
-              loadPreset={async () => ({}) as GOODPreset} // Dummy
-              onApply={onImportApply}
+            <AccountImportControl
               onLocalImport={handleLocalImport}
               onUidImport={handleUidImport}
               initialUid={lastUid}
-              hideEmptyList
-              importFromFileText={t.ui("accountData.importGOOD")}
-              dialogTitle={t.ui("accountData.importDialogTitle")}
-              dialogDescription={
-                <div className="flex flex-col gap-4 py-2 text-sm text-muted-foreground">
-                  <div>
-                    <span className="font-semibold block mb-1 text-foreground">
-                      {t.ui("accountData.importHelpGood")}
-                    </span>
-                    <span>
-                      {t.ui("accountData.importHelpGoodDesc")}{" "}
-                      <a
-                        href="https://konkers.github.io/irminsul/02-quickstart.html"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        Irminsul
-                      </a>
-                      {" / "}
-                      <a
-                        href="https://github.com/taiwenlee/Inventory_Kamera"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        Inventory Kamera
-                      </a>
-                      .
-                    </span>
-                  </div>
-                  <div>
-                    <span className="font-semibold block mb-1 text-foreground">
-                      {t.ui("accountData.importHelpUid")}
-                    </span>
-                    <span>{t.ui("accountData.importHelpUidDesc")}</span>
-                  </div>
-                </div>
-              }
             />
           </div>
         }

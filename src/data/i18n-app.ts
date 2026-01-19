@@ -203,14 +203,14 @@ export const i18nAppData = {
       flatHp: { en: "Flat HP", zh: "小生命" },
       flatDef: { en: "Flat DEF", zh: "小防御" },
       searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
-      wrongMainStat: { en: "Wrong main stat", zh: "错误主属性" },
+      wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
       subStatScore: { en: "Sub", zh: "副词条" },
     },
     scoreExplanation: {
       title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },
       description: {
         en: "How we derive the score for each artifact.",
-        zh: "我们如何计算圣遗物的评分。",
+        zh: "圣遗物评分是如何计算的？",
       },
       formula: {
         en: "Final Score = Stat Value × Normalization Factor × (Weight / 100) × [Punishment Factor]",
@@ -580,8 +580,8 @@ export const i18nAppData = {
       exportConfirmAction: { en: "Export", zh: "导出" },
     },
     messages: {
-      characterMoved: { en: "{0} moved to {1}", zh: "{0} 移动到了 {1}" },
-      characterRemoved: {
+      itemMoved: { en: "{0} moved to {1}", zh: "{0} 移动到了 {1}" },
+      itemRemoved: {
         en: "{0} removed from tier list",
         zh: "{0} 从榜单移除",
       },

@@ -22,12 +22,12 @@ function getProgressColor(percent: number): string {
   return "bg-red-500";
 }
 
-export const SlotProgressIndicator = ({
+export function SlotProgressIndicator({
   slot,
   actualScore,
   maxScore,
   isMainStatWrong,
-}: SlotProgressIndicatorProps) => {
+}: SlotProgressIndicatorProps) {
   const { t } = useLanguage();
 
   // Show warning for wrong main stat
@@ -75,4 +75,4 @@ export const SlotProgressIndicator = ({
       </TooltipContent>
     </Tooltip>
   );
-};
+}

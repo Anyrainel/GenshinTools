@@ -11,7 +11,6 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Character, CharacterFilters, TierAssignment } from "@/data/types";
-import { tiers } from "@/data/types";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
@@ -90,8 +89,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
     const sorted = filterAndSortCharacters(
       testCharacters,
       filters,
-      storedAssignments,
-      tiers
+      storedAssignments
     );
 
     // S tier characters should come first (hu_tao pos 0, xingqiu pos 1)
@@ -110,7 +108,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       releaseSort: "desc", // Newest first
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {}, tiers);
+    const sorted = filterAndSortCharacters(testCharacters, filters, {});
 
     // hu_tao is newest (2021-03-02)
     expect(sorted[0].id).toBe("hu_tao");
@@ -122,7 +120,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       elements: ["Pyro"],
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {}, tiers);
+    const sorted = filterAndSortCharacters(testCharacters, filters, {});
 
     // Only Pyro characters
     expect(sorted).toHaveLength(2);
@@ -135,7 +133,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       weaponTypes: ["Sword"],
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {}, tiers);
+    const sorted = filterAndSortCharacters(testCharacters, filters, {});
 
     // Only Sword users
     expect(sorted).toHaveLength(2);
@@ -161,8 +159,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
     const sorted = filterAndSortCharacters(
       testCharacters,
       filters,
-      useTierStore.getState().tierAssignments,
-      tiers
+      useTierStore.getState().tierAssignments
     );
 
     // Only Pyro, sorted by tier (hu_tao S, bennett A)
@@ -178,7 +175,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
     };
 
     // No tier assignments - falls back to release sort
-    const sorted = filterAndSortCharacters(testCharacters, filters, {}, tiers);
+    const sorted = filterAndSortCharacters(testCharacters, filters, {});
 
     // All characters should still be returned
     expect(sorted).toHaveLength(4);

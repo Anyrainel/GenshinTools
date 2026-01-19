@@ -1,3 +1,5 @@
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { tiers } from "@/data/types";
 import {
   DndContext,
@@ -13,11 +15,18 @@ import {
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { TierGrid } from "./TierGrid";
-import type { TierItemData } from "./TierItem";
-import { TierItemPreview } from "./TierItemPreview";
+import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 
-interface TierTableProps<T extends TierItemData> {
+/**
+ * Simplified TierTable props - minimal interface for tier list implementations.
+ *
+ * @typeParam T - The item type (e.g., Character, Weapon)
+ * @typeParam K - The group key type (e.g., Element, WeaponType)
+ */
+interface TierTableProps<T extends TierItemData, K extends string> {
+  // Data
   items: T[];
   itemsById: Record<string, T>;
   tierAssignments: { [itemId: string]: { tier: string; position: number } };
@@ -27,46 +36,40 @@ interface TierTableProps<T extends TierItemData> {
   onAssignmentsChange: (newAssignments: {
     [itemId: string]: { tier: string; position: number };
   }) => void;
-  isValidDrop: (activeItem: T, overId: string) => boolean;
-  groups: string[]; // Element[] or WeaponType[]
-  getItemGroup: (item: T) => string;
-  getGroupCount: (
-    group: string,
-    itemsPerTier: { [tier: string]: T[] }
-  ) => number;
-  renderHeader: (group: string, count: number) => React.ReactNode;
-  renderPreview: (item: T) => React.ReactNode;
-  getItemData: (item: T) => Record<string, unknown>;
-  getTierDisplayName: (tier: string) => string;
-  filterItem?: (item: T) => boolean;
-  getImagePath: (item: T) => string;
-  getAlt: (item: T) => string;
-  getOverlay?: (item: T) => React.ReactNode;
+
+  // Grouping configuration
+  groups: readonly K[];
+  groupKey: keyof T;
+  groupConfig: Record<K, TierGroupConfig>;
+
+  // Translation
+  getGroupName: (group: K) => string;
+  getItemName: (item: T) => string;
+
+  // Customization
   getTooltip: (item: T) => React.ReactNode;
+  filterItem?: (item: T) => boolean;
+  getOverlayImage?: (item: T) => string | undefined;
   tableRef?: React.Ref<HTMLDivElement>;
 }
 
-export function TierTable<T extends TierItemData>({
+export function TierTable<T extends TierItemData, K extends string>({
   items,
   itemsById,
   tierAssignments,
   tierCustomization,
   onAssignmentsChange,
-  isValidDrop,
   groups,
-  getItemGroup,
-  getGroupCount,
-  renderHeader,
-  renderPreview,
-  getItemData,
-  getTierDisplayName,
-  filterItem,
-  getImagePath,
-  getAlt,
-  getOverlay,
+  groupKey,
+  groupConfig,
+  getGroupName,
+  getItemName,
   getTooltip,
+  filterItem,
+  getOverlayImage,
   tableRef,
-}: TierTableProps<T>) {
+}: TierTableProps<T, K>) {
+  const { t } = useLanguage();
   const [activeItem, setActiveItem] = useState<T | null>(null);
   const [localAssignments, setLocalAssignments] =
     useState<typeof tierAssignments>(tierAssignments);
@@ -132,6 +135,17 @@ export function TierTable<T extends TierItemData>({
     return map;
   }, [localAssignments, tierCustomization, allTiers, items, filterItem]);
 
+  const isValidDrop = (activeItem: T, overId: string): boolean => {
+    if (itemsById[overId]) {
+      return itemsById[overId][groupKey] === activeItem[groupKey];
+    }
+    if (overId.includes("-")) {
+      const [, group] = overId.split("-");
+      return group === activeItem[groupKey];
+    }
+    return false;
+  };
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const item = itemsById[active.id as string];
@@ -156,11 +170,11 @@ export function TierTable<T extends TierItemData>({
 
     if (activeId === overId) return;
 
-    const activeItem = itemsById[activeId];
-    if (!activeItem) return;
+    const activeItemLocal = itemsById[activeId];
+    if (!activeItemLocal) return;
 
     // Check for valid drop target
-    if (!isValidDrop(activeItem, overId)) {
+    if (!isValidDrop(activeItemLocal, overId)) {
       // If invalid, reset preview to original state
       setLocalAssignments(tierAssignments);
       return;
@@ -318,6 +332,18 @@ export function TierTable<T extends TierItemData>({
     }
 
     onAssignmentsChange(newAssignments);
+
+    // Show toast notification
+    const movedItem = itemsById[draggedItemId];
+    if (movedItem) {
+      const itemName = getItemName(movedItem);
+      const tierLabel =
+        tierCustomization[tier]?.displayName ||
+        (tier === "Pool" ? t.ui("tiers.Pool") : tier);
+      toast.success(t.format("messages.itemMoved", itemName, tierLabel), {
+        duration: 2000,
+      });
+    }
   };
 
   // Internal handler for removing from tiers - computes new assignments and calls onAssignmentsChange
@@ -328,13 +354,13 @@ export function TierTable<T extends TierItemData>({
     if (!item) return;
 
     if (oldAssignment) {
-      const itemGroup = getItemGroup(item);
+      const itemGroup = item[groupKey];
       const groupItems = Object.entries(tierAssignments)
         .filter(([id, assignment]) => {
           const otherItem = itemsById[id];
           return (
             otherItem &&
-            getItemGroup(otherItem) === itemGroup &&
+            otherItem[groupKey] === itemGroup &&
             assignment.tier === oldAssignment.tier
           );
         })
@@ -362,9 +388,15 @@ export function TierTable<T extends TierItemData>({
     }
 
     onAssignmentsChange(newAssignments);
+
+    // Show toast notification for removal
+    const itemName = getItemName(item);
+    toast.success(t.format("messages.itemRemoved", itemName), {
+      duration: 2000,
+    });
   };
 
-  // Use legacy callbacks if provided, otherwise use internal handlers
+  // Use internal handlers
   const onTierAssignment = handleTierAssignmentInternal;
   const onRemoveFromTiers = handleRemoveFromTiersInternal;
 
@@ -382,12 +414,12 @@ export function TierTable<T extends TierItemData>({
 
     const activeId = active.id as string;
     const overId = over.id as string;
-    const activeItem = itemsById[activeId];
+    const activeItemLocal = itemsById[activeId];
 
-    if (!activeItem) return;
+    if (!activeItemLocal) return;
 
     // Validate drop target again
-    if (!isValidDrop(activeItem, overId)) {
+    if (!isValidDrop(activeItemLocal, overId)) {
       // Invalid drop, do nothing
       setLocalAssignments(tierAssignments);
       return;
@@ -421,6 +453,15 @@ export function TierTable<T extends TierItemData>({
     }
   };
 
+  const renderPreview = (item: T) => (
+    <ItemIcon
+      imagePath={item.imagePath}
+      rarity={item.rarity}
+      alt={getItemName(item)}
+      size="lg"
+    />
+  );
+
   return (
     <DndContext
       sensors={sensors}
@@ -436,24 +477,18 @@ export function TierTable<T extends TierItemData>({
             groups={groups}
             itemsPerTier={itemsPerTier}
             tierCustomization={tierCustomization}
-            onRemoveFromTiers={onRemoveFromTiers}
-            renderHeader={renderHeader}
-            getItemData={getItemData}
-            getItemGroup={getItemGroup}
-            getGroupCount={getGroupCount}
-            getTierDisplayName={getTierDisplayName}
-            getImagePath={getImagePath}
-            getAlt={getAlt}
-            getOverlay={getOverlay}
+            groupKey={groupKey}
+            groupConfig={groupConfig}
+            getGroupName={getGroupName}
+            getItemName={getItemName}
             getTooltip={getTooltip}
+            getOverlayImage={getOverlayImage}
           />
         </div>
       </div>
 
       <DragOverlay dropAnimation={{ duration: 200 }}>
-        {activeItem ? (
-          <TierItemPreview item={activeItem} renderContent={renderPreview} />
-        ) : null}
+        {activeItem ? renderPreview(activeItem) : null}
       </DragOverlay>
     </DndContext>
   );

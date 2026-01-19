@@ -1,5 +1,5 @@
 export const THEME = {
-  // Primitives
+  // Game-specific primitives (used across pages for game data display)
   rarity: {
     bg: {
       1: "bg-rarity-1",
@@ -61,31 +61,11 @@ export const THEME = {
       Pool: "bg-tier-pool/70",
     },
   },
-  colors: {
-    darkBg: "bg-gray-900",
-    darkBgSecondary: "bg-gray-800",
-    darkBorder: "border-gray-700",
-    darkBorderSecondary: "border-gray-600",
-    textWhite: "text-white",
-    textGray: "text-gray-200",
-    textGrayPlaceholder: "placeholder-gray-400",
-  },
 
-  // Components
+  // Page-level layout tokens (used across all pages)
   layout: {
     pageContainer:
       "h-screen bg-gradient-mystical text-foreground flex flex-col overflow-hidden",
     headerBorder: "border-b border-border/50 bg-card/20 backdrop-blur-sm",
-    gridBorder: "border-r border-b border-gray-600 bg-clip-padding",
-    centerBox: "flex items-center justify-center p-2",
-    labelText: "text-center break-words font-bold text-gray-100",
-  },
-  button: {
-    destructive: "bg-red-600 hover:bg-red-700 text-white",
-    primary: "bg-blue-600 hover:bg-blue-700 text-white",
-    outlineDark: "border-gray-600 text-gray-200 hover:bg-gray-700",
-    secondary: "bg-gray-600 hover:bg-gray-700 text-white",
-    customize: "bg-yellow-600 hover:bg-yellow-700 text-white gap-2",
-    toggle: "bg-gray-700 hover:bg-gray-600 text-white border-gray-600 gap-2",
   },
 } as const;

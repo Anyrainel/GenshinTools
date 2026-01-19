@@ -147,7 +147,6 @@ describe("characterFilters", () => {
         xingqiu: { tier: "A", position: 0 },
         bennett: { tier: "Pool", position: 0 },
       };
-      const tierOrder = ["S", "A", "B", "C", "D", "Pool"];
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
         tierSort: "desc",
@@ -157,8 +156,7 @@ describe("characterFilters", () => {
       const result = filterAndSortCharacters(
         mockCharacters,
         filters,
-        tierAssignments,
-        tierOrder
+        tierAssignments
       );
 
       // S tier first when desc
