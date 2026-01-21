@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 
 interface ArtifactTooltipProps {

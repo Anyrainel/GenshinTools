@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
+import type { ControlHandle } from "@/components/layout/AppBar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 type ClearAllVariant = "default" | "tier-list";
@@ -20,66 +19,54 @@ type ClearAllVariant = "default" | "tier-list";
 interface ClearAllControlProps {
   onConfirm: () => void;
   variant?: ClearAllVariant;
-  disabled?: boolean;
-  className?: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  renderTrigger?: boolean;
 }
 
-export function ClearAllControl({
-  onConfirm,
-  variant = "default",
-  disabled = false,
-  className,
-  open: controlledOpen,
-  onOpenChange: setControlledOpen,
-  renderTrigger = true,
-}: ClearAllControlProps) {
-  const { t } = useLanguage();
-  const [internalOpen, setInternalOpen] = useState(false);
+/**
+ * ClearAllControl - A dialog-only control for confirming destructive clear actions.
+ *
+ * Usage with ref pattern:
+ * ```tsx
+ * const clearRef = useRef<ControlHandle>(null);
+ *
+ * const actions: ActionConfig[] = [
+ *   { key: "clear", icon: Trash2, label: "Clear", onTrigger: () => clearRef.current?.open() },
+ * ];
+ *
+ * <ClearAllControl ref={clearRef} onConfirm={handleClear} />
+ * <AppBar actions={actions} />
+ * ```
+ */
+export const ClearAllControl = forwardRef<ControlHandle, ClearAllControlProps>(
+  function ClearAllControl({ onConfirm, variant = "default" }, ref) {
+    const { t } = useLanguage();
+    const [isOpen, setIsOpen] = useState(false);
 
-  const isOpen = controlledOpen ?? internalOpen;
-  const onOpenChange = setControlledOpen ?? setInternalOpen;
+    // Expose open() method via ref
+    useImperativeHandle(ref, () => ({
+      open: () => setIsOpen(true),
+    }));
 
-  // Variant-based i18n keys
-  const messages =
-    variant === "tier-list"
-      ? {
-          title: t.ui("resetConfirmDialog.title"),
-          description: t.ui("resetConfirmDialog.message"),
-          action: t.ui("resetConfirmDialog.confirm"),
-        }
-      : {
-          title: t.ui("configure.clearAllConfirmTitle"),
-          description: t.ui("configure.clearAllConfirmDescription"),
-          action: t.ui("configure.clearAllConfirmAction"),
-        };
+    // Variant-based i18n keys
+    const messages =
+      variant === "tier-list"
+        ? {
+            title: t.ui("resetConfirmDialog.title"),
+            description: t.ui("resetConfirmDialog.message"),
+            action: t.ui("resetConfirmDialog.confirm"),
+          }
+        : {
+            title: t.ui("configure.clearAllConfirmTitle"),
+            description: t.ui("configure.clearAllConfirmDescription"),
+            action: t.ui("configure.clearAllConfirmAction"),
+          };
 
-  const handleConfirm = () => {
-    onConfirm();
-    onOpenChange(false);
-  };
+    const handleConfirm = () => {
+      onConfirm();
+      setIsOpen(false);
+    };
 
-  return (
-    <>
-      {renderTrigger && (
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn(
-            "gap-2 text-destructive hover:bg-destructive/30",
-            className
-          )}
-          onClick={() => onOpenChange(true)}
-          disabled={disabled}
-        >
-          <Trash2 className="w-4 h-4" />
-          {t.ui("app.clear")}
-        </Button>
-      )}
-
-      <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
+    return (
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{messages.title}</AlertDialogTitle>
@@ -99,6 +86,6 @@ export function ClearAllControl({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
-  );
-}
+    );
+  }
+);

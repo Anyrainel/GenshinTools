@@ -12,20 +12,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -39,6 +38,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { elementResourcesByName, sortedCharacters } from "@/data/constants";
 import type { Character, Element } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { CircleHelp, RotateCcw, Save, Search } from "lucide-react";
@@ -52,120 +52,125 @@ const elementToStatKey = (element: Element): string => {
 
 const ScoreExplanationDialog = () => {
   const { t } = useLanguage();
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-6 h-6 text-amber-500/70 hover:text-amber-400 hover:bg-amber-500/10 ml-1 transition-all duration-300 hover:scale-110 active:scale-95"
-        >
-          <CircleHelp className="w-4 h-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl bg-slate-950 border-slate-800 text-slate-200">
-        <DialogHeader>
-          <DialogTitle>{t.ui("scoreExplanation.title")}</DialogTitle>
-          <DialogDescription>
-            {t.ui("scoreExplanation.description")}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-6 pt-2 text-sm overflow-y-auto max-h-[70vh] pr-2">
-          <div className="p-3 rounded-md bg-slate-900 border border-slate-800 font-mono text-amber-200/90 text-center text-xs sm:text-sm">
-            {t.ui("scoreExplanation.formula")}
-          </div>
+  const [isOpen, setIsOpen] = useState(false);
 
-          {/* Section 1: Normalization */}
-          <div className="space-y-2">
-            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
-              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
-                1
-              </span>
-              {t.ui("scoreExplanation.normalization.title")}
-            </h4>
-            <p className="text-slate-300 text-xs leading-relaxed">
-              {t.ui("scoreExplanation.normalization.description")}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-slate-400 text-xs font-mono bg-slate-900/50 p-3 rounded border border-white/5">
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
-                {t.ui("scoreExplanation.factors.cr")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
-                {t.ui("scoreExplanation.factors.cd")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500/50" />
-                {t.ui("scoreExplanation.factors.atk")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500/50" />
-                {t.ui("scoreExplanation.factors.em")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
-                {t.ui("scoreExplanation.factors.er")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                {t.ui("scoreExplanation.factors.def")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
-                {t.ui("scoreExplanation.factors.ele")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-500/50" />
-                {t.ui("scoreExplanation.factors.phys")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-pink-500/50" />
-                {t.ui("scoreExplanation.factors.heal")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500/30" />
-                {t.ui("scoreExplanation.factors.flatAtk")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
-                {t.ui("scoreExplanation.factors.flatHp")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500/30" />
-                {t.ui("scoreExplanation.factors.flatDef")}
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setIsOpen(true)}
+        className="w-6 h-6 text-amber-500/70 hover:text-amber-400 hover:bg-amber-500/10 ml-1 transition-all duration-300 hover:scale-110 active:scale-95"
+      >
+        <CircleHelp className="w-4 h-4" />
+      </Button>
+      <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
+        <ResponsiveDialogContent className="max-w-2xl bg-slate-950 border-slate-800 text-slate-200">
+          <ResponsiveDialogHeader>
+            <ResponsiveDialogTitle>
+              {t.ui("scoreExplanation.title")}
+            </ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
+              {t.ui("scoreExplanation.description")}
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+          <div className="space-y-6 pt-2 text-sm overflow-y-auto flex-1 pr-2">
+            <div className="p-3 rounded-md bg-slate-900 border border-slate-800 font-mono text-amber-200/90 text-center text-xs sm:text-sm">
+              {t.ui("scoreExplanation.formula")}
+            </div>
+
+            {/* Section 1: Normalization */}
+            <div className="space-y-2">
+              <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+                <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                  1
+                </span>
+                {t.ui("scoreExplanation.normalization.title")}
+              </h4>
+              <p className="text-slate-300 text-xs leading-relaxed">
+                {t.ui("scoreExplanation.normalization.description")}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-slate-400 text-xs font-mono bg-slate-900/50 p-3 rounded border border-white/5">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
+                  {t.ui("scoreExplanation.factors.cr")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
+                  {t.ui("scoreExplanation.factors.cd")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500/50" />
+                  {t.ui("scoreExplanation.factors.atk")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500/50" />
+                  {t.ui("scoreExplanation.factors.em")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500/50" />
+                  {t.ui("scoreExplanation.factors.er")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
+                  {t.ui("scoreExplanation.factors.def")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
+                  {t.ui("scoreExplanation.factors.ele")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-500/50" />
+                  {t.ui("scoreExplanation.factors.phys")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-500/50" />
+                  {t.ui("scoreExplanation.factors.heal")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500/30" />
+                  {t.ui("scoreExplanation.factors.flatAtk")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500/30" />
+                  {t.ui("scoreExplanation.factors.flatHp")}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500/30" />
+                  {t.ui("scoreExplanation.factors.flatDef")}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Section 2: Weight */}
-          <div className="space-y-2">
-            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
-              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
-                2
-              </span>
-              {t.ui("scoreExplanation.weight.title")}
-            </h4>
-            <p className="text-slate-300 text-xs leading-relaxed">
-              {t.ui("scoreExplanation.weight.description")}
-            </p>
-          </div>
+            {/* Section 2: Weight */}
+            <div className="space-y-2">
+              <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+                <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                  2
+                </span>
+                {t.ui("scoreExplanation.weight.title")}
+              </h4>
+              <p className="text-slate-300 text-xs leading-relaxed">
+                {t.ui("scoreExplanation.weight.description")}
+              </p>
+            </div>
 
-          {/* Section 3: Punishment */}
-          <div className="space-y-2">
-            <h4 className="font-semibold text-amber-100 flex items-center gap-2">
-              <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
-                3
-              </span>
-              {t.ui("scoreExplanation.punishment.title")}
-            </h4>
-            <p className="text-slate-300 text-xs leading-relaxed">
-              {t.ui("scoreExplanation.punishment.description")}
-            </p>
+            {/* Section 3: Punishment */}
+            <div className="space-y-2">
+              <h4 className="font-semibold text-amber-100 flex items-center gap-2">
+                <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
+                  3
+                </span>
+                {t.ui("scoreExplanation.punishment.title")}
+              </h4>
+              <p className="text-slate-300 text-xs leading-relaxed">
+                {t.ui("scoreExplanation.punishment.description")}
+              </p>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
+    </>
   );
 };
 
@@ -301,6 +306,10 @@ export function StatWeightView() {
   } = useArtifactScoreStore();
 
   const [search, setSearch] = useState("");
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null
+  );
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const filteredCharacters = useMemo(() => {
     return sortedCharacters.filter((c) => {
@@ -414,7 +423,12 @@ export function StatWeightView() {
   };
 
   return (
-    <div className="flex flex-col h-full gap-3 pb-3">
+    <div
+      className={cn(
+        "container flex flex-col gap-3 py-4",
+        isDesktop ? "h-full overflow-hidden" : "overflow-y-auto"
+      )}
+    >
       {/* Punishment Factor Section */}
       <Card className="bg-gradient-card shrink-0">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-2">
@@ -453,10 +467,10 @@ export function StatWeightView() {
             </AlertDialogContent>
           </AlertDialog>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-x-32 gap-y-4 px-20 pb-4 pt-2">
+        <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 px-4 lg:px-8 pb-4 pt-2">
           {(["flatAtk", "flatHp", "flatDef"] as const).map((key) => (
-            <div key={key} className="flex items-center gap-2">
-              <span className="text-base text-gray-300 w-20 shrink-0">
+            <div key={key} className="flex items-center gap-3 max-w-xs">
+              <span className="text-sm lg:text-base text-gray-300 w-16 lg:w-20 shrink-0">
                 {key === "flatAtk"
                   ? t.ui("accountData.flatAtk")
                   : key === "flatHp"
@@ -469,9 +483,9 @@ export function StatWeightView() {
                 max={100}
                 step={5}
                 onValueChange={([val]) => setGlobalWeight(key, val)}
-                className="flex-1 [&_.bg-primary]:bg-amber-500"
+                className="flex-1"
               />
-              <span className="font-mono text-amber-100 font-bold w-10 text-right shrink-0">
+              <span className="font-mono text-foreground font-bold w-10 text-right shrink-0">
                 {config.global[key]}%
               </span>
             </div>
@@ -479,15 +493,20 @@ export function StatWeightView() {
         </CardContent>
       </Card>
 
-      {/* Table Section */}
-      <Card className="flex-1 flex flex-col min-h-0 bg-gradient-card">
+      {/* Character Weights Section */}
+      <Card
+        className={cn(
+          "flex flex-col bg-gradient-card",
+          isDesktop && "flex-1 min-h-0"
+        )}
+      >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-3">
           <div className="flex items-center gap-4">
             <CardTitle className="text-lg font-bold text-white flex items-center gap-2">
               {t.ui("accountData.characterWeights")}
               <ScoreExplanationDialog />
             </CardTitle>
-            <div className="relative w-64">
+            <div className="relative w-48 lg:w-64 hidden lg:block">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={t.ui("accountData.searchPlaceholder")}
@@ -531,7 +550,7 @@ export function StatWeightView() {
                 variant="ghost"
                 size="sm"
                 onClick={handleSaveConfig}
-                className="text-muted-foreground hover:text-white"
+                className="text-muted-foreground hover:text-white hidden lg:flex"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Save
@@ -540,9 +559,15 @@ export function StatWeightView() {
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 min-h-0 p-0 overflow-hidden relative">
-          <div className="absolute inset-0 px-12 pb-4">
-            <div className="h-full rounded-md border border-white/10 overflow-hidden">
+        <CardContent
+          className={cn(
+            "p-0 px-4 pb-4",
+            isDesktop && "flex-1 min-h-0 overflow-hidden"
+          )}
+        >
+          {/* Desktop: Table View */}
+          {isDesktop ? (
+            <div className="h-full rounded-md border border-white/10 overflow-hidden bg-gradient-card">
               <ScrollArea className="h-full">
                 <Table className="table-fixed">
                   <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
@@ -595,9 +620,111 @@ export function StatWeightView() {
                 </Table>
               </ScrollArea>
             </div>
-          </div>
+          ) : (
+            /* Mobile: Character Grid View - no internal scroll, page scrolls */
+            <div
+              className="grid gap-2 p-2"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))",
+              }}
+            >
+              {filteredCharacters.map((char) => (
+                <button
+                  key={char.id}
+                  type="button"
+                  onClick={() => setSelectedCharacter(char)}
+                  className="flex flex-col items-center gap-1 p-1 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <ItemIcon
+                    imagePath={char.imagePath}
+                    rarity={char.rarity}
+                    size="sm"
+                  />
+                  <span className="text-xs text-muted-foreground text-center line-clamp-1 w-full">
+                    {t.character(char.id)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Mobile: Character Weight Dialog */}
+      <ResponsiveDialog
+        open={selectedCharacter !== null}
+        onOpenChange={(open) => !open && setSelectedCharacter(null)}
+      >
+        <ResponsiveDialogContent className="max-w-md">
+          <ResponsiveDialogHeader>
+            <ResponsiveDialogTitle className="flex items-center gap-3">
+              {selectedCharacter && (
+                <>
+                  <ItemIcon
+                    imagePath={selectedCharacter.imagePath}
+                    rarity={selectedCharacter.rarity}
+                    size="sm"
+                  />
+                  {t.character(selectedCharacter.id)}
+                </>
+              )}
+            </ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
+              {t.ui("accountData.characterWeights")}
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+          {selectedCharacter && (
+            <div className="space-y-4 py-4">
+              {/* Weight sliders for each stat */}
+              {[
+                { key: "atk", label: t.stat("atk"), isMerged: true },
+                { key: "hp", label: t.stat("hp"), isMerged: true },
+                { key: "def", label: t.stat("def"), isMerged: true },
+                { key: "cr", label: t.stat("cr"), isMerged: false },
+                { key: "cd", label: t.stat("cd"), isMerged: false },
+                { key: "em", label: t.stat("em"), isMerged: false },
+                { key: "er", label: t.stat("er"), isMerged: false },
+                {
+                  key: elementToStatKey(selectedCharacter.element),
+                  label: t.stat(elementToStatKey(selectedCharacter.element)),
+                  isMerged: false,
+                },
+                { key: "phys%", label: t.stat("phys%"), isMerged: false },
+                { key: "heal%", label: t.stat("heal%"), isMerged: false },
+              ].map(({ key, label, isMerged }) => {
+                const weightKey = isMerged ? `${key}%` : key;
+                const value =
+                  config.characters[selectedCharacter.id]?.[weightKey] ?? 0;
+                return (
+                  <div key={key} className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground w-24 shrink-0">
+                      {label}
+                    </span>
+                    <Slider
+                      value={[value]}
+                      min={0}
+                      max={100}
+                      step={5}
+                      onValueChange={([val]) =>
+                        handleValueChange(
+                          selectedCharacter.id,
+                          key,
+                          val,
+                          isMerged
+                        )
+                      }
+                      className="flex-1"
+                    />
+                    <span className="font-mono text-foreground w-10 text-right shrink-0">
+                      {value}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </div>
   );
 }
@@ -621,11 +748,9 @@ const WeightCell = ({
 
   const getCellStyles = (val: number) => {
     if (val === 0) return "text-muted-foreground hover:bg-white/5 text-base";
-
-    const base = "bg-amber-500/5 hover:bg-amber-500/10 text-base";
-    if (val === 100) return cn(base, "text-orange-300 font-extrabold");
-    if (val >= 70) return cn(base, "text-amber-200 font-bold");
-    return `${base} text-amber-100/70`;
+    if (val === 100)
+      return "bg-black/20 text-foreground hover:bg-black/30 text-base font-bold";
+    return "bg-black/20 text-foreground hover:bg-black/30 text-base";
   };
 
   return (

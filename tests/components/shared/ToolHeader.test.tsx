@@ -44,9 +44,9 @@ describe("ToolHeader", () => {
   it("renders language toggle button", () => {
     render(<ToolHeader />);
 
-    // Language button shows "中文" or "EN"
-    const langButton = screen.getByRole("button", { name: /中文|en/i });
-    expect(langButton).toBeInTheDocument();
+    // Language button shows "中文" or "EN" - there may be multiple due to responsive design
+    const langButtons = screen.getAllByRole("button", { name: /中文|en/i });
+    expect(langButtons.length).toBeGreaterThanOrEqual(1);
   });
 
   it("opens theme dropdown when theme button is clicked", async () => {

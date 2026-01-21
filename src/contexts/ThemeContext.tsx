@@ -9,9 +9,10 @@ import {
   useState,
 } from "react";
 
+import { applyThemeVars } from "@/lib/theme-generator";
+
 export type ThemeId =
   | "abyss"
-  | "dusk"
   | "mondstadt"
   | "liyue"
   | "inazuma"
@@ -56,9 +57,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return DEFAULT_THEME;
   });
 
-  // Apply theme to document
+  // Apply theme CSS variables to document
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    applyThemeVars(theme);
   }, [theme]);
 
   const setTheme = useCallback((newTheme: ThemeId) => {

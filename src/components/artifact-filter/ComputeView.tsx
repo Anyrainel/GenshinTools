@@ -1,12 +1,12 @@
+import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifacts } from "@/data/resources";
 import type { Build, ComputeOptions } from "@/data/types";
-import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { computeArtifactFilters } from "@/lib/computeFilters";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactCard } from "./ArtifactCard";
-import { ComputeSidebar, ComputeSidebarMobile } from "./ComputeSidebar";
+import { ComputeSidebar } from "./ComputeSidebar";
 
 interface ComputeViewProps {
   onJumpToCharacter: (characterId: string) => void;
@@ -18,7 +18,6 @@ export function ComputeView({
   contentRef,
 }: ComputeViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Compute options from store
   const computeOptions = useBuildsStore((state) => state.computeOptions);
@@ -26,11 +25,6 @@ export function ComputeView({
 
   const { t } = useLanguage();
   const mainScrollRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Use custom hook for scroll forwarding from margin areas to main content
-  // Using '.lg\\:block.w-64' selector to target the sidebar in ComputeView
-  useGlobalScroll(containerRef, mainScrollRef, ".lg\\:block.w-64");
 
   // Get data from Zustand store
   const characterToBuildIds = useBuildsStore(
@@ -77,68 +71,51 @@ export function ComputeView({
     [setComputeOptions]
   );
 
-  const hasActiveFilters = searchQuery.length > 0;
-
   return (
-    <div
-      ref={containerRef}
-      className="flex flex-row gap-4 lg:gap-6 h-full pt-4"
-    >
-      {/* Desktop Sidebar - Fixed height with internal scroll */}
-      <div className="hidden lg:block w-80 flex-shrink-0 h-full">
+    <SidebarLayout
+      sidebar={
         <ComputeSidebar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           computeOptions={computeOptions}
           onComputeOptionChange={handleComputeOptionChange}
         />
-      </div>
+      }
+      triggerLabel={t.ui("computeFilters.title")}
+      className="pt-4"
+    >
+      {/* Content Area - Scrollable */}
+      <div
+        ref={mainScrollRef}
+        className="flex-1 overflow-y-auto h-full"
+        style={{ scrollBehavior: "auto" }}
+      >
+        <div ref={contentRef} className="space-y-4">
+          {filteredSets.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">⚙️</div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {t.ui("computeFilters.noConfigurations")}
+              </h3>
+            </div>
+          ) : (
+            filteredSets.map((set) => {
+              const filter = artifactFilters.find((f) => f.setId === set.id);
+              if (!filter) return null;
 
-      {/* Main Content */}
-      <div className="flex-1 min-w-0 flex flex-col h-full">
-        <ComputeSidebarMobile
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          isOpen={isFilterOpen}
-          onOpenChange={setIsFilterOpen}
-          hasActiveFilters={hasActiveFilters}
-          computeOptions={computeOptions}
-          onComputeOptionChange={handleComputeOptionChange}
-        />
-
-        {/* Content Area - Scrollable */}
-        <div
-          ref={mainScrollRef}
-          className="flex-1 overflow-y-auto"
-          style={{ scrollBehavior: "auto" }}
-        >
-          <div ref={contentRef} className="space-y-6">
-            {filteredSets.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">⚙️</div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {t.ui("computeFilters.noConfigurations")}
-                </h3>
-              </div>
-            ) : (
-              filteredSets.map((set) => {
-                const filter = artifactFilters.find((f) => f.setId === set.id);
-                if (!filter) return null;
-
-                return (
-                  <ArtifactCard
-                    key={set.id}
-                    setId={set.id}
-                    setImagePath={set.imagePaths.flower}
-                    filter={filter}
-                    onJumpToCharacter={onJumpToCharacter}
-                  />
-                );
-              })
-            )}
-          </div>
+              return (
+                <ArtifactCard
+                  key={set.id}
+                  setId={set.id}
+                  setImagePath={set.imagePaths.flower}
+                  filter={filter}
+                  onJumpToCharacter={onJumpToCharacter}
+                />
+              );
+            })
+          )}
         </div>
       </div>
-    </div>
+    </SidebarLayout>
   );
 }

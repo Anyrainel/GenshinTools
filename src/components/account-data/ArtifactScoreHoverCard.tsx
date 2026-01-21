@@ -6,20 +6,88 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 
 interface ArtifactScoreHoverCardProps {
   score: ArtifactScoreResult;
   className?: string;
 }
 
+/**
+ * ArtifactScoreHoverCard - Displays artifact scores with detailed breakdown.
+ *
+ * Uses a hybrid hover + click pattern:
+ * - Desktop hover: Shows temporarily, disappears on mouse leave
+ * - Click/Tap: Pins open until click outside
+ *
+ * This makes the content accessible on mobile where hover doesn't exist.
+ */
 export function ArtifactScoreHoverCard({
   score,
   className,
 }: ArtifactScoreHoverCardProps) {
+  const [isPinned, setIsPinned] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Always controlled: open when pinned OR hovering
+  const isOpen = isPinned || isHovering;
+
+  // Click-outside detection when pinned
+  useEffect(() => {
+    if (!isPinned) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const isOutsideTrigger = !triggerRef.current?.contains(target);
+      const isOutsideContent = !contentRef.current?.contains(target);
+
+      if (isOutsideTrigger && isOutsideContent) {
+        setIsPinned(false);
+      }
+    };
+
+    // Delay adding listener to avoid catching the pin click itself
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("click", handleClickOutside);
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isPinned]);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsPinned((prev) => !prev);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (isPinned) {
+      // When pinned, ignore hover state changes
+      return;
+    }
+    // Normal hover behavior
+    setIsHovering(open);
+  };
+
   return (
-    <HoverCard openDelay={200}>
+    <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
       <HoverCardTrigger asChild>
-        <div className={cn("cursor-help flex items-center", className)}>
+        <button
+          ref={triggerRef}
+          type="button"
+          className={cn(
+            "cursor-pointer flex items-center",
+            // Reset button styles
+            "bg-transparent border-none p-0 font-inherit",
+            className
+          )}
+          onClick={handleClick}
+        >
           <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
             {score.mainScore.toFixed(0)}
           </span>
@@ -29,9 +97,12 @@ export function ArtifactScoreHoverCard({
           <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
             {score.subScore.toFixed(0)}
           </span>
-        </div>
+        </button>
       </HoverCardTrigger>
-      <HoverCardContent className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl">
+      <HoverCardContent
+        ref={contentRef}
+        className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl"
+      >
         <ArtifactScoreContent artifactScore={score} />
       </HoverCardContent>
     </HoverCard>

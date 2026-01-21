@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { TierCustomization } from "@/data/types";
 import { tiers } from "@/data/types";
@@ -73,16 +73,18 @@ export function TierCustomizationDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle>{t.ui("customizeDialog.title")}</DialogTitle>
-          <DialogDescription>
+    <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
+      <ResponsiveDialogContent className="sm:max-w-[700px]">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>
+            {t.ui("customizeDialog.title")}
+          </ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
             {t.ui("customizeDialog.description")}
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4 flex-1 overflow-y-auto px-1">
           <div className="p-4 border border-border rounded-lg bg-card">
             <div className="flex items-center gap-4">
               <div className="flex-shrink-0 w-24">
@@ -109,8 +111,8 @@ export function TierCustomizationDialog({
               key={tier}
               className="p-4 border border-border rounded-lg bg-card"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 w-24">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div className="flex-shrink-0 sm:w-24">
                   <Label
                     htmlFor={`${tier}-name`}
                     className="text-sm font-medium text-muted-foreground"
@@ -151,7 +153,7 @@ export function TierCustomizationDialog({
           ))}
         </div>
 
-        <DialogFooter className="flex justify-end gap-2">
+        <ResponsiveDialogFooter className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="destructive" onClick={handleReset}>
             {t.ui("customizeDialog.reset")}
           </Button>
@@ -159,8 +161,8 @@ export function TierCustomizationDialog({
             {t.ui("customizeDialog.cancel")}
           </Button>
           <Button onClick={handleSave}>{t.ui("customizeDialog.save")}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveDialogFooter>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

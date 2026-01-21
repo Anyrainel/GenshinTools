@@ -1,4 +1,4 @@
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { forwardRef } from "react";
 

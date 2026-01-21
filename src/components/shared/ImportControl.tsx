@@ -1,7 +1,13 @@
-import { cn } from "@/lib/utils";
 import { Layers, Loader2, Upload } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 
+import type { ControlHandle } from "@/components/layout/AppBar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,28 +36,36 @@ interface ImportControlProps<T> {
   loadPreset: (path: string) => Promise<T>;
   onApply: (payload: T) => void;
   variant?: ImportVariant;
-  disabled?: boolean;
   onLocalImport?: (payload: T) => void;
-  className?: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  renderTrigger?: boolean;
 }
 
-export function ImportControl<T>({
-  options,
-  loadPreset,
-  onApply,
-  variant = "default",
-  disabled = false,
-  onLocalImport,
-  className,
-  open: controlledOpen,
-  onOpenChange: setControlledOpen,
-  renderTrigger = true,
-}: ImportControlProps<T>) {
+/**
+ * ImportControl - A dialog-only control for importing data from presets or local files.
+ *
+ * Usage with ref pattern:
+ * ```tsx
+ * const importRef = useRef<ControlHandle>(null);
+ *
+ * const actions: ActionConfig[] = [
+ *   { key: "import", icon: Upload, label: "Import", onTrigger: () => importRef.current?.open() },
+ * ];
+ *
+ * <ImportControl ref={importRef} options={presets} loadPreset={load} onApply={apply} />
+ * <AppBar actions={actions} />
+ * ```
+ */
+function ImportControlInner<T>(
+  {
+    options,
+    loadPreset,
+    onApply,
+    variant = "default",
+    onLocalImport,
+  }: ImportControlProps<T>,
+  ref: React.ForwardedRef<ControlHandle>
+) {
   const { t } = useLanguage();
-  const [internalPickerOpen, setInternalPickerOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<PresetOption | null>(
     null
@@ -59,11 +73,13 @@ export function ImportControl<T>({
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const pickerOpen = controlledOpen ?? internalPickerOpen;
-  const setPickerOpen = (open: boolean) => {
-    if (setControlledOpen) setControlledOpen(open);
-    else setInternalPickerOpen(open);
-  };
+  // Expose open() method via ref
+  useImperativeHandle(ref, () => ({
+    open: () => {
+      setErrorMessage(null);
+      setPickerOpen(true);
+    },
+  }));
 
   // Variant-based i18n keys
   const getMessages = useCallback(() => {
@@ -148,19 +164,6 @@ export function ImportControl<T>({
 
   return (
     <>
-      {renderTrigger && (
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn("gap-2", className)}
-          onClick={() => setPickerOpen(true)}
-          disabled={disabled || isBusy}
-        >
-          <Upload className="w-4 h-4" />
-          {t.ui("app.import")}
-        </Button>
-      )}
-
       <Dialog
         open={pickerOpen}
         onOpenChange={(open) => {
@@ -258,3 +261,8 @@ export function ImportControl<T>({
     </>
   );
 }
+
+// Use type assertion to preserve generic type parameter with forwardRef
+export const ImportControl = forwardRef(ImportControlInner) as <T>(
+  props: ImportControlProps<T> & { ref?: React.ForwardedRef<ControlHandle> }
+) => React.ReactElement;

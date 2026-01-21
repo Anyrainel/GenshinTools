@@ -60,13 +60,13 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
 
       {!isHidden && (
         <CardContent className="pb-3">
-          <div className="space-y-2">
+          <div className="grid gap-2 grid-cols-1 xl:grid-cols-2">
             {buildIds.length === 0 ? (
               <div className="text-center py-2 text-muted-foreground">
                 <Button
                   onClick={handleAddBuild}
                   variant="outline"
-                  className="gap-2 text-base h-10"
+                  className="gap-2 text-sm h-9"
                 >
                   <Plus className="w-4 h-4" />
                   {t.ui("characterCard.addFirstBuild")}
@@ -90,19 +90,20 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
                     />
                   );
                 })}
-
-                <Button
-                  onClick={handleAddBuild}
-                  variant="outline"
-                  size="sm"
-                  className="w-full gap-2 text-base h-10"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t.ui("characterCard.addBuild")}
-                </Button>
               </>
             )}
           </div>
+          {buildIds.length > 0 && (
+            <Button
+              onClick={handleAddBuild}
+              variant="outline"
+              size="sm"
+              className="w-full gap-2 text-sm h-9 mt-2"
+            >
+              <Plus className="w-4 h-4" />
+              {t.ui("characterCard.addBuild")}
+            </Button>
+          )}
         </CardContent>
       )}
     </Card>

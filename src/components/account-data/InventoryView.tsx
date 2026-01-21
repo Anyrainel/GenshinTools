@@ -1,3 +1,4 @@
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Card } from "@/components/ui/card";
@@ -9,7 +10,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, weaponsById } from "@/data/constants";
 import type { AccountData } from "@/data/types";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { StatDisplay } from "./StatDisplay";
 
@@ -31,7 +32,7 @@ export function InventoryView({ data }: InventoryViewProps) {
   const unequippedArtifacts = data.extraArtifacts || [];
 
   return (
-    <div className="space-y-8">
+    <ScrollLayout className="space-y-8">
       <div>
         <h3 className="text-xl font-semibold mb-4">
           {t.ui("accountData.unequippedWeapons")} ({unequippedWeapons.length})
@@ -131,6 +132,6 @@ export function InventoryView({ data }: InventoryViewProps) {
           })}
         </div>
       </div>
-    </div>
+    </ScrollLayout>
   );
 }

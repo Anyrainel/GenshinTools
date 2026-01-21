@@ -3,469 +3,469 @@
 
 export const i18nGameData = {
   "characters": {
-    "qiqi": {
-      "en": "Qiqi",
-      "zh": "七七"
-    },
-    "keqing": {
-      "en": "Keqing",
-      "zh": "刻晴"
-    },
-    "beidou": {
-      "en": "Beidou",
-      "zh": "北斗"
-    },
-    "klee": {
-      "en": "Klee",
-      "zh": "可莉"
-    },
-    "aloy": {
-      "en": "Aloy",
-      "zh": "埃洛伊"
-    },
-    "amber": {
-      "en": "Amber",
-      "zh": "安柏"
-    },
-    "yoimiya": {
-      "en": "Yoimiya",
-      "zh": "宵宫"
-    },
-    "thoma": {
-      "en": "Thoma",
-      "zh": "托马"
-    },
-    "traveler_geo": {
-      "en": "Traveler (Geo)",
-      "zh": "旅行者（岩）"
-    },
-    "traveler_electro": {
-      "en": "Traveler (Electro)",
-      "zh": "旅行者（雷）"
-    },
-    "traveler_anemo": {
-      "en": "Traveler (Anemo)",
-      "zh": "旅行者（风）"
-    },
-    "lisa": {
-      "en": "Lisa",
-      "zh": "丽莎"
-    },
-    "sayu": {
-      "en": "Sayu",
-      "zh": "早柚"
-    },
-    "kaedehara_kazuha": {
-      "en": "Kaedehara Kazuha",
-      "zh": "枫原万叶"
-    },
-    "yelan": {
-      "en": "Yelan",
-      "zh": "夜兰"
-    },
-    "kuki_shinobu": {
-      "en": "Kuki Shinobu",
-      "zh": "久岐忍"
-    },
-    "shikanoin_heizou": {
-      "en": "Shikanoin Heizou",
-      "zh": "鹿野院平藏"
-    },
-    "tighnari": {
-      "en": "Tighnari",
-      "zh": "提纳里"
-    },
-    "collei": {
-      "en": "Collei",
-      "zh": "柯莱"
-    },
-    "dori": {
-      "en": "Dori",
-      "zh": "多莉"
-    },
-    "venti": {
-      "en": "Venti",
-      "zh": "温迪"
-    },
-    "yanfei": {
-      "en": "Yanfei",
-      "zh": "烟绯"
-    },
-    "sangonomiya_kokomi": {
-      "en": "Sangonomiya Kokomi",
-      "zh": "珊瑚宫心海"
-    },
-    "bennett": {
-      "en": "Bennett",
-      "zh": "班尼特"
-    },
-    "traveler_dendro": {
-      "en": "Traveler (Dendro)",
-      "zh": "旅行者（草）"
-    },
-    "jean": {
-      "en": "Jean",
-      "zh": "琴"
-    },
-    "ganyu": {
-      "en": "Ganyu",
-      "zh": "甘雨"
-    },
-    "nilou": {
-      "en": "Nilou",
-      "zh": "妮露"
-    },
-    "cyno": {
-      "en": "Cyno",
-      "zh": "赛诺"
-    },
-    "candace": {
-      "en": "Candace",
-      "zh": "坎蒂丝"
-    },
-    "nahida": {
-      "en": "Nahida",
-      "zh": "纳西妲"
-    },
-    "layla": {
-      "en": "Layla",
-      "zh": "莱依拉"
-    },
-    "shenhe": {
-      "en": "Shenhe",
-      "zh": "申鹤"
-    },
-    "faruzan": {
-      "en": "Faruzan",
-      "zh": "珐露珊"
-    },
-    "wanderer": {
-      "en": "Wanderer",
-      "zh": "流浪者"
-    },
-    "kujou_sara": {
-      "en": "Kujou Sara",
-      "zh": "九条裟罗"
-    },
-    "sucrose": {
-      "en": "Sucrose",
-      "zh": "砂糖"
-    },
-    "kamisato_ayato": {
-      "en": "Kamisato Ayato",
-      "zh": "神里绫人"
-    },
-    "kamisato_ayaka": {
-      "en": "Kamisato Ayaka",
-      "zh": "神里绫华"
-    },
-    "rosaria": {
-      "en": "Rosaria",
-      "zh": "罗莎莉亚"
-    },
-    "yaoyao": {
-      "en": "Yaoyao",
-      "zh": "瑶瑶"
-    },
-    "alhaitham": {
-      "en": "Alhaitham",
-      "zh": "艾尔海森"
-    },
-    "hu_tao": {
-      "en": "Hu Tao",
-      "zh": "胡桃"
-    },
-    "mika": {
-      "en": "Mika",
-      "zh": "米卡"
-    },
-    "dehya": {
-      "en": "Dehya",
-      "zh": "迪希雅"
-    },
-    "barbara": {
-      "en": "Barbara",
-      "zh": "芭芭拉"
-    },
-    "arataki_itto": {
-      "en": "Arataki Itto",
-      "zh": "荒泷一斗"
-    },
-    "kaveh": {
-      "en": "Kaveh",
-      "zh": "卡维"
-    },
-    "baizhu": {
-      "en": "Baizhu",
-      "zh": "白术"
-    },
-    "mona": {
-      "en": "Mona",
-      "zh": "莫娜"
-    },
-    "kirara": {
-      "en": "Kirara",
-      "zh": "绮良良"
-    },
-    "fischl": {
-      "en": "Fischl",
-      "zh": "菲谢尔"
-    },
-    "xingqiu": {
-      "en": "Xingqiu",
-      "zh": "行秋"
-    },
-    "lynette": {
-      "en": "Lynette",
-      "zh": "琳妮特"
-    },
-    "lyney": {
-      "en": "Lyney",
-      "zh": "林尼"
-    },
-    "freminet": {
-      "en": "Freminet",
-      "zh": "菲米尼"
-    },
-    "traveler_hydro": {
-      "en": "Traveler (Hydro)",
-      "zh": "旅行者（水）"
-    },
-    "yun_jin": {
-      "en": "Yun Jin",
-      "zh": "云堇"
-    },
-    "noelle": {
-      "en": "Noelle",
-      "zh": "诺艾尔"
-    },
-    "wriothesley": {
-      "en": "Wriothesley",
-      "zh": "莱欧斯利"
-    },
-    "neuvillette": {
-      "en": "Neuvillette",
-      "zh": "那维莱特"
-    },
-    "xinyan": {
-      "en": "Xinyan",
-      "zh": "辛焱"
-    },
-    "tartaglia": {
-      "en": "Tartaglia",
-      "zh": "达达利亚"
-    },
-    "diluc": {
-      "en": "Diluc",
-      "zh": "迪卢克"
-    },
-    "furina": {
-      "en": "Furina",
-      "zh": "芙宁娜"
-    },
-    "charlotte": {
-      "en": "Charlotte",
-      "zh": "夏洛蒂"
-    },
-    "diona": {
-      "en": "Diona",
-      "zh": "迪奥娜"
-    },
-    "chongyun": {
-      "en": "Chongyun",
-      "zh": "重云"
-    },
-    "navia": {
-      "en": "Navia",
-      "zh": "娜维娅"
-    },
-    "chevreuse": {
-      "en": "Chevreuse",
-      "zh": "夏沃蕾"
-    },
-    "zhongli": {
-      "en": "Zhongli",
-      "zh": "钟离"
-    },
-    "albedo": {
-      "en": "Albedo",
-      "zh": "阿贝多"
-    },
-    "xianyun": {
-      "en": "Xianyun",
-      "zh": "闲云"
-    },
-    "gaming": {
-      "en": "Gaming",
-      "zh": "嘉明"
-    },
-    "razor": {
-      "en": "Razor",
-      "zh": "雷泽"
-    },
-    "raiden_shogun": {
-      "en": "Raiden Shogun",
-      "zh": "雷电将军"
-    },
-    "chiori": {
-      "en": "Chiori",
-      "zh": "千织"
-    },
-    "gorou": {
-      "en": "Gorou",
-      "zh": "五郎"
-    },
-    "xiangling": {
-      "en": "Xiangling",
-      "zh": "香菱"
-    },
-    "xiao": {
-      "en": "Xiao",
-      "zh": "魈"
-    },
-    "arlecchino": {
-      "en": "Arlecchino",
-      "zh": "阿蕾奇诺"
-    },
-    "clorinde": {
-      "en": "Clorinde",
-      "zh": "克洛琳德"
-    },
-    "sigewinne": {
-      "en": "Sigewinne",
-      "zh": "希格雯"
-    },
-    "sethos": {
-      "en": "Sethos",
-      "zh": "赛索斯"
-    },
-    "emilie": {
-      "en": "Emilie",
-      "zh": "艾梅莉埃"
-    },
-    "eula": {
-      "en": "Eula",
-      "zh": "优菈"
-    },
-    "kinich": {
-      "en": "Kinich",
-      "zh": "基尼奇"
-    },
-    "kachina": {
-      "en": "Kachina",
-      "zh": "卡齐娜"
-    },
-    "mualani": {
-      "en": "Mualani",
-      "zh": "玛拉妮"
-    },
-    "xilonen": {
-      "en": "Xilonen",
-      "zh": "希诺宁"
-    },
-    "yae_miko": {
-      "en": "Yae Miko",
-      "zh": "八重神子"
-    },
-    "ororon": {
-      "en": "Ororon",
-      "zh": "欧洛伦"
-    },
-    "chasca": {
-      "en": "Chasca",
-      "zh": "恰斯卡"
-    },
-    "mavuika": {
-      "en": "Mavuika",
-      "zh": "玛薇卡"
-    },
-    "citlali": {
-      "en": "Citlali",
-      "zh": "茜特菈莉"
-    },
-    "lan_yan": {
-      "en": "Lan Yan",
-      "zh": "蓝砚"
-    },
-    "traveler_pyro": {
-      "en": "Traveler (Pyro)",
-      "zh": "旅行者（火）"
-    },
-    "yumemizuki_mizuki": {
-      "en": "Yumemizuki Mizuki",
-      "zh": "梦见月瑞希"
-    },
-    "varesa": {
-      "en": "Varesa",
-      "zh": "瓦雷莎"
-    },
-    "iansan": {
-      "en": "Iansan",
-      "zh": "伊安珊"
-    },
-    "escoffier": {
-      "en": "Escoffier",
-      "zh": "爱可菲"
-    },
-    "ifa": {
-      "en": "Ifa",
-      "zh": "伊法"
-    },
-    "skirk": {
-      "en": "Skirk",
-      "zh": "丝柯克"
-    },
-    "dahlia": {
-      "en": "Dahlia",
-      "zh": "塔利雅"
-    },
-    "ineffa": {
-      "en": "Ineffa",
-      "zh": "伊涅芙"
-    },
-    "ningguang": {
-      "en": "Ningguang",
-      "zh": "凝光"
-    },
-    "lauma": {
-      "en": "Lauma",
-      "zh": "菈乌玛"
-    },
-    "aino": {
-      "en": "Aino",
-      "zh": "爱诺"
-    },
-    "flins": {
-      "en": "Flins",
-      "zh": "菲林斯"
-    },
-    "nefer": {
-      "en": "Nefer",
-      "zh": "奈芙尔"
-    },
-    "kaeya": {
-      "en": "Kaeya",
-      "zh": "凯亚"
-    },
-    "durin": {
-      "en": "Durin",
-      "zh": "杜林"
-    },
-    "jahoda": {
-      "en": "Jahoda",
-      "zh": "雅珂达"
-    },
-    "columbina": {
-      "en": "Columbina",
-      "zh": "哥伦比娅"
+    "illuga": {
+      "en": "Illuga",
+      "zh": "叶洛亚"
     },
     "zibai": {
       "en": "Zibai",
       "zh": "兹白"
     },
-    "illuga": {
-      "en": "Illuga",
-      "zh": "叶洛亚"
+    "columbina": {
+      "en": "Columbina",
+      "zh": "哥伦比娅"
+    },
+    "jahoda": {
+      "en": "Jahoda",
+      "zh": "雅珂达"
+    },
+    "durin": {
+      "en": "Durin",
+      "zh": "杜林"
+    },
+    "nefer": {
+      "en": "Nefer",
+      "zh": "奈芙尔"
+    },
+    "flins": {
+      "en": "Flins",
+      "zh": "菲林斯"
+    },
+    "aino": {
+      "en": "Aino",
+      "zh": "爱诺"
+    },
+    "lauma": {
+      "en": "Lauma",
+      "zh": "菈乌玛"
+    },
+    "ineffa": {
+      "en": "Ineffa",
+      "zh": "伊涅芙"
+    },
+    "dahlia": {
+      "en": "Dahlia",
+      "zh": "塔利雅"
+    },
+    "skirk": {
+      "en": "Skirk",
+      "zh": "丝柯克"
+    },
+    "ifa": {
+      "en": "Ifa",
+      "zh": "伊法"
+    },
+    "escoffier": {
+      "en": "Escoffier",
+      "zh": "爱可菲"
+    },
+    "iansan": {
+      "en": "Iansan",
+      "zh": "伊安珊"
+    },
+    "varesa": {
+      "en": "Varesa",
+      "zh": "瓦雷莎"
+    },
+    "yumemizuki_mizuki": {
+      "en": "Yumemizuki Mizuki",
+      "zh": "梦见月瑞希"
+    },
+    "traveler_pyro": {
+      "en": "Traveler (Pyro)",
+      "zh": "旅行者（火）"
+    },
+    "lan_yan": {
+      "en": "Lan Yan",
+      "zh": "蓝砚"
+    },
+    "citlali": {
+      "en": "Citlali",
+      "zh": "茜特菈莉"
+    },
+    "mavuika": {
+      "en": "Mavuika",
+      "zh": "玛薇卡"
+    },
+    "chasca": {
+      "en": "Chasca",
+      "zh": "恰斯卡"
+    },
+    "ororon": {
+      "en": "Ororon",
+      "zh": "欧洛伦"
+    },
+    "xilonen": {
+      "en": "Xilonen",
+      "zh": "希诺宁"
+    },
+    "mualani": {
+      "en": "Mualani",
+      "zh": "玛拉妮"
+    },
+    "kachina": {
+      "en": "Kachina",
+      "zh": "卡齐娜"
+    },
+    "kinich": {
+      "en": "Kinich",
+      "zh": "基尼奇"
+    },
+    "emilie": {
+      "en": "Emilie",
+      "zh": "艾梅莉埃"
+    },
+    "sethos": {
+      "en": "Sethos",
+      "zh": "赛索斯"
+    },
+    "sigewinne": {
+      "en": "Sigewinne",
+      "zh": "希格雯"
+    },
+    "clorinde": {
+      "en": "Clorinde",
+      "zh": "克洛琳德"
+    },
+    "arlecchino": {
+      "en": "Arlecchino",
+      "zh": "阿蕾奇诺"
+    },
+    "chiori": {
+      "en": "Chiori",
+      "zh": "千织"
+    },
+    "gaming": {
+      "en": "Gaming",
+      "zh": "嘉明"
+    },
+    "xianyun": {
+      "en": "Xianyun",
+      "zh": "闲云"
+    },
+    "chevreuse": {
+      "en": "Chevreuse",
+      "zh": "夏沃蕾"
+    },
+    "navia": {
+      "en": "Navia",
+      "zh": "娜维娅"
+    },
+    "charlotte": {
+      "en": "Charlotte",
+      "zh": "夏洛蒂"
+    },
+    "furina": {
+      "en": "Furina",
+      "zh": "芙宁娜"
+    },
+    "neuvillette": {
+      "en": "Neuvillette",
+      "zh": "那维莱特"
+    },
+    "wriothesley": {
+      "en": "Wriothesley",
+      "zh": "莱欧斯利"
+    },
+    "traveler_hydro": {
+      "en": "Traveler (Hydro)",
+      "zh": "旅行者（水）"
+    },
+    "freminet": {
+      "en": "Freminet",
+      "zh": "菲米尼"
+    },
+    "lyney": {
+      "en": "Lyney",
+      "zh": "林尼"
+    },
+    "lynette": {
+      "en": "Lynette",
+      "zh": "琳妮特"
+    },
+    "kirara": {
+      "en": "Kirara",
+      "zh": "绮良良"
+    },
+    "baizhu": {
+      "en": "Baizhu",
+      "zh": "白术"
+    },
+    "kaveh": {
+      "en": "Kaveh",
+      "zh": "卡维"
+    },
+    "dehya": {
+      "en": "Dehya",
+      "zh": "迪希雅"
+    },
+    "mika": {
+      "en": "Mika",
+      "zh": "米卡"
+    },
+    "alhaitham": {
+      "en": "Alhaitham",
+      "zh": "艾尔海森"
+    },
+    "yaoyao": {
+      "en": "Yaoyao",
+      "zh": "瑶瑶"
+    },
+    "wanderer": {
+      "en": "Wanderer",
+      "zh": "流浪者"
+    },
+    "faruzan": {
+      "en": "Faruzan",
+      "zh": "珐露珊"
+    },
+    "layla": {
+      "en": "Layla",
+      "zh": "莱依拉"
+    },
+    "nahida": {
+      "en": "Nahida",
+      "zh": "纳西妲"
+    },
+    "candace": {
+      "en": "Candace",
+      "zh": "坎蒂丝"
+    },
+    "cyno": {
+      "en": "Cyno",
+      "zh": "赛诺"
+    },
+    "nilou": {
+      "en": "Nilou",
+      "zh": "妮露"
+    },
+    "traveler_dendro": {
+      "en": "Traveler (Dendro)",
+      "zh": "旅行者（草）"
+    },
+    "dori": {
+      "en": "Dori",
+      "zh": "多莉"
+    },
+    "collei": {
+      "en": "Collei",
+      "zh": "柯莱"
+    },
+    "tighnari": {
+      "en": "Tighnari",
+      "zh": "提纳里"
+    },
+    "shikanoin_heizou": {
+      "en": "Shikanoin Heizou",
+      "zh": "鹿野院平藏"
+    },
+    "kuki_shinobu": {
+      "en": "Kuki Shinobu",
+      "zh": "久岐忍"
+    },
+    "yelan": {
+      "en": "Yelan",
+      "zh": "夜兰"
+    },
+    "xiao": {
+      "en": "Xiao",
+      "zh": "魈"
+    },
+    "xiangling": {
+      "en": "Xiangling",
+      "zh": "香菱"
+    },
+    "raiden_shogun": {
+      "en": "Raiden Shogun",
+      "zh": "雷电将军"
+    },
+    "razor": {
+      "en": "Razor",
+      "zh": "雷泽"
+    },
+    "albedo": {
+      "en": "Albedo",
+      "zh": "阿贝多"
+    },
+    "zhongli": {
+      "en": "Zhongli",
+      "zh": "钟离"
+    },
+    "chongyun": {
+      "en": "Chongyun",
+      "zh": "重云"
+    },
+    "diona": {
+      "en": "Diona",
+      "zh": "迪奥娜"
+    },
+    "diluc": {
+      "en": "Diluc",
+      "zh": "迪卢克"
+    },
+    "tartaglia": {
+      "en": "Tartaglia",
+      "zh": "达达利亚"
+    },
+    "xinyan": {
+      "en": "Xinyan",
+      "zh": "辛焱"
+    },
+    "noelle": {
+      "en": "Noelle",
+      "zh": "诺艾尔"
+    },
+    "xingqiu": {
+      "en": "Xingqiu",
+      "zh": "行秋"
+    },
+    "fischl": {
+      "en": "Fischl",
+      "zh": "菲谢尔"
+    },
+    "mona": {
+      "en": "Mona",
+      "zh": "莫娜"
+    },
+    "arataki_itto": {
+      "en": "Arataki Itto",
+      "zh": "荒泷一斗"
+    },
+    "barbara": {
+      "en": "Barbara",
+      "zh": "芭芭拉"
+    },
+    "hu_tao": {
+      "en": "Hu Tao",
+      "zh": "胡桃"
+    },
+    "rosaria": {
+      "en": "Rosaria",
+      "zh": "罗莎莉亚"
+    },
+    "kamisato_ayaka": {
+      "en": "Kamisato Ayaka",
+      "zh": "神里绫华"
+    },
+    "kamisato_ayato": {
+      "en": "Kamisato Ayato",
+      "zh": "神里绫人"
+    },
+    "sucrose": {
+      "en": "Sucrose",
+      "zh": "砂糖"
+    },
+    "shenhe": {
+      "en": "Shenhe",
+      "zh": "申鹤"
+    },
+    "ganyu": {
+      "en": "Ganyu",
+      "zh": "甘雨"
+    },
+    "jean": {
+      "en": "Jean",
+      "zh": "琴"
+    },
+    "bennett": {
+      "en": "Bennett",
+      "zh": "班尼特"
+    },
+    "sangonomiya_kokomi": {
+      "en": "Sangonomiya Kokomi",
+      "zh": "珊瑚宫心海"
+    },
+    "yanfei": {
+      "en": "Yanfei",
+      "zh": "烟绯"
+    },
+    "venti": {
+      "en": "Venti",
+      "zh": "温迪"
+    },
+    "kaedehara_kazuha": {
+      "en": "Kaedehara Kazuha",
+      "zh": "枫原万叶"
+    },
+    "sayu": {
+      "en": "Sayu",
+      "zh": "早柚"
+    },
+    "traveler_anemo": {
+      "en": "Traveler (Anemo)",
+      "zh": "旅行者（风）"
+    },
+    "traveler_electro": {
+      "en": "Traveler (Electro)",
+      "zh": "旅行者（雷）"
+    },
+    "traveler_geo": {
+      "en": "Traveler (Geo)",
+      "zh": "旅行者（岩）"
+    },
+    "thoma": {
+      "en": "Thoma",
+      "zh": "托马"
+    },
+    "yoimiya": {
+      "en": "Yoimiya",
+      "zh": "宵宫"
+    },
+    "amber": {
+      "en": "Amber",
+      "zh": "安柏"
+    },
+    "aloy": {
+      "en": "Aloy",
+      "zh": "埃洛伊"
+    },
+    "klee": {
+      "en": "Klee",
+      "zh": "可莉"
+    },
+    "beidou": {
+      "en": "Beidou",
+      "zh": "北斗"
+    },
+    "keqing": {
+      "en": "Keqing",
+      "zh": "刻晴"
+    },
+    "kaeya": {
+      "en": "Kaeya",
+      "zh": "凯亚"
+    },
+    "ningguang": {
+      "en": "Ningguang",
+      "zh": "凝光"
+    },
+    "yae_miko": {
+      "en": "Yae Miko",
+      "zh": "八重神子"
+    },
+    "eula": {
+      "en": "Eula",
+      "zh": "优菈"
+    },
+    "gorou": {
+      "en": "Gorou",
+      "zh": "五郎"
+    },
+    "yun_jin": {
+      "en": "Yun Jin",
+      "zh": "云堇"
+    },
+    "kujou_sara": {
+      "en": "Kujou Sara",
+      "zh": "九条裟罗"
+    },
+    "lisa": {
+      "en": "Lisa",
+      "zh": "丽莎"
+    },
+    "qiqi": {
+      "en": "Qiqi",
+      "zh": "七七"
     }
   },
   "artifacts": {
@@ -476,8 +476,8 @@ export const i18nGameData = {
       },
       "effects": {
         "en": [
-          "???",
-          "???"
+          "ATK +18%.",
+          "After a Normal Attack, Charged Attack, Elemental Skill, or Elemental Burst hits an opponent, gain the Blessing of Pastoral Winds effect for 6s: ATK is increased by 25%. If the equipping character has completed Witch's Homework, Blessing of Pastoral Winds will be upgraded to Resolve of Pastoral Winds, which also increases the CRIT Rate of the equipping character by an additional 20%. This effect can be triggered even when the character is off-field."
         ],
         "zh": [
           "攻击力提高18%。",
@@ -492,8 +492,8 @@ export const i18nGameData = {
       },
       "effects": {
         "en": [
-          "???",
-          "???"
+          "Increases Elemental Mastery by 80.",
+          "When the equipping character is off-field, Lunar Reaction DMG is increased by 20%. When the party's Moonsign Level is at least Ascendant Gleam, Lunar Reaction DMG will be further increased by 40%. This effect will disappear after the equipping character is active for 3s."
         ],
         "zh": [
           "元素精通提高80点。",
@@ -653,7 +653,7 @@ export const i18nGameData = {
       "effects": {
         "en": [
           "ATK +18%.",
-          "After using an Elemental Skill, gain a 20% Geo DMG Bonus for 10s. While under a shield granted by the Crystallize reaction, the above effect will be increased by 150%, and this additional increase disappears 1s after that shield is lost."
+          "After using an Elemental Skill, gain a 20% Geo DMG Bonus for 10s. When under a shield granted by the Crystallize reaction, or when Moondrifts formed by Lunar-Crystallize reactions are nearby, the above effect is increased by 150%. When these conditions are no longer met, this additional increase disappears after 1s."
         ],
         "zh": [
           "攻击力提高18%。",
@@ -1069,7 +1069,7 @@ export const i18nGameData = {
       "effects": {
         "en": [
           "Gain a 15% Geo DMG Bonus.",
-          "Upon obtaining an Elemental Shard created through a Crystallize Reaction, all party members gain a 35% DMG Bonus for that particular element for 10s. Only one form of Elemental DMG Bonus can be gained in this manner at any one time."
+          "Upon obtaining an Elemental Shard created through Crystallize or triggering a Lunar-Crystallize reaction, all party members gain a 35% DMG Bonus for that particular element for 10s. Only one form of Elemental DMG Bonus can be gained in this manner at any one time."
         ],
         "zh": [
           "获得15%岩元素伤害加成。",
@@ -1159,1790 +1159,380 @@ export const i18nGameData = {
     }
   },
   "weapons": {
-    "the_catch": {
+    "nocturnes_curtain_call": {
       "name": {
-        "en": "\"The Catch\"",
-        "zh": "「渔获」"
+        "en": "Nocturne's Curtain Call",
+        "zh": "帷间夜曲"
       },
       "effect": {
-        "en": "Increases Elemental Burst DMG by 16%/20%/24%/28%/32% and Elemental Burst CRIT Rate by 6%/7.5%/9%/10.5%/12%.",
-        "zh": "元素爆发造成的伤害提升16%/20%/24%/28%/32%，元素爆发的暴击率提升6%/7.5%/9%/10.5%/12%。"
+        "en": "Max HP increases by 10%/12%/14%/16%/18%. When triggering Lunar reactions or inflicting Lunar Reaction DMG on opponents, the equipping character will recover 14/15/16/17/18 Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional 14%/16%/18%/20%/22%, CRIT DMG from Lunar Reaction DMG increases by 60/80/100/120/140%. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field.",
+        "zh": "生命值上限提高10%/12%/14%/16%/18%。装备者触发月曜反应或对敌人造成月曜反应伤害时，将为装备者恢复14/15/16/17/18点元素能量，并获得持续12秒的「丰饶海的神酒」效果：生命值上限进一步提高14%/16%/18%/20%/22%，月曜反应伤害的暴击伤害提升60%/80%/100%/120%/140%。恢复元素能量效果每18秒至多触发一次，装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "mappa_mare": {
+    "the_daybreak_chronicles": {
       "name": {
-        "en": "Mappa Mare",
-        "zh": "万国诸海图谱"
+        "en": "The Daybreak Chronicles",
+        "zh": "黎明破晓之史"
       },
       "effect": {
-        "en": "Triggering an Elemental reaction grants a 8%/10%/12%/14%/16% Elemental DMG Bonus for 10s. Max 2 stacks.",
-        "zh": "触发元素反应后的10秒内，获得8%/10%/12%/14%/16%元素伤害加成，该效果最多可以叠加2层。"
+        "en": "The equipping character gains Stirring Dawn Breeze: 3s after leaving combat, Normal Attack, Elemental Skill, and Elemental Burst DMG is increased by 60%/75%/90%/105%/120%. While in combat, this DMG Bonus will decrease by 10%/12.5%/15%/17.5%/20% per second until it reaches 0%. When the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for the corresponding DMG type is increased by 10%/12.5%/15%/17.5%/20% until it reaches 60%/75%/90%/105%/120%. This effect can be triggered once every 0.1s for each of the attack types mentioned above. This effect can be triggered even if the equipping character is off-field.Additionally, when the party possesses Hexerei: Secret Rite effects, when the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for all these DMG types is increased by 20%/25%/30%/35%/40% instead.",
+        "zh": "装备者获得「渐起的晓风」：脱离战斗状态3秒后，普通攻击、元素战技和元素爆发造成的伤害提升60/75/90/105/120%。在战斗状态下，上述伤害提升效果每秒降低10/12.5/15/17.5/20%，直到降低至0%；装备者的普通攻击、元素战技或元素爆发命中敌人时，对应类别的伤害提升效果提升10/12.5/15/17.5/20%，直到提升至60/75/90/105/120%，上述每种类别的攻击每0.1秒至多触发一次该效果。装备者处于队伍后台时，依然能触发上述效果。此外，队伍拥有「魔导·秘仪」效果时，装备者的普通攻击、元素战技或元素爆发命中敌人时，改为使所有类别的伤害提升效果提升20/25/30/35/40%。"
       }
     },
-    "everlasting_moonglow": {
+    "rainbow_serpents_rain_bow": {
       "name": {
-        "en": "Everlasting Moonglow",
-        "zh": "不灭月华"
+        "en": "Rainbow Serpent's Rain Bow",
+        "zh": "虹蛇的雨弦"
       },
       "effect": {
-        "en": "Healing Bonus increased by 10%/12.5%/15%/17.5%/20%, Normal Attack DMG is increased by 1%/1.5%/2%/2.5%/3% of the Max HP of the character equipping this weapon. For 12s after using an Elemental Burst, Normal Attacks that hit opponents will restore 0.6 Energy. Energy can be restored this way once every 0.1s.",
-        "zh": "治疗加成提升10%/12.5%/15%/17.5%/20%；普通攻击造成的伤害增加，增加值为装备该武器的角色生命值上限的1%/1.5%/2%/2.5%/3%。在施放元素爆发后的12秒内，普通攻击命中敌人时恢复0.6点元素能量，每0.1秒至多通过这种方式恢复一次元素能量。"
+        "en": "ATK is increased by 28%/35%/42%/49%/56% for 8s after the equipping character's attacks hit an opponent while the equipping character is off-field.",
+        "zh": "装备者处于队伍后台时，装备者的攻击命中敌人后的8秒内，攻击力提升28/35/42/49/56%。"
       }
     },
-    "debate_club": {
+    "athame_artis": {
       "name": {
-        "en": "Debate Club",
-        "zh": "以理服人"
+        "en": "Athame Artis",
+        "zh": "黑蚀"
       },
       "effect": {
-        "en": "After using an Elemental Skill, on hit, Normal and Charged Attacks deal additional DMG equal to 60%/75%/90%/105%/120% of ATK in a small AoE. Effect lasts 15s. DMG can only occur once every 3s.",
-        "zh": "施放元素战技后，普通攻击和重击命中时会在小范围内额外造成60%/75%/90%/105%/120%攻击力的伤害。该效果持续15秒，伤害每3秒只能触发一次。"
+        "en": "CRIT DMG from Elemental Bursts is increased by 16%/20%/24%/28%/32%. When an Elemental Burst hits an opponent, gain the Blade of the Daylight Hours effect: ATK is increased by 20%/25%/30%/35%/40%. Nearby active party members other than the equipping character have their ATK increased by 16%/20%/24%/28%/32% for 3s.Additionally, when the party possesses Hexerei: Secret Rite effects, the effects of Blade of the Daylight Hours are increased by an additional 75%. This effect can be triggered even if the equipping character is off-field.",
+        "zh": "元素爆发造成的暴击伤害提升16%/20%/24%/28%/32%；元素爆发命中敌人时，将获得「白昼之刃」效果：攻击力提升20%/25%/30%/35%/40%，除装备者以外，队伍中附近的当前场上角色攻击力提升16%/20%/24/28%/32%，持续3秒。此外，队伍拥有「魔导·秘仪」效果时，「白昼之刃」的效果额外提升75%。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "messenger": {
+    "reliquary_of_truth": {
       "name": {
-        "en": "Messenger",
-        "zh": "信使"
+        "en": "Reliquary of Truth",
+        "zh": "真语秘匣"
       },
       "effect": {
-        "en": "Charged Attack hits on weak points deal an additional 100%/125%/150%/175%/200% ATK DMG as CRIT DMG. Can only occur once every 10s.",
-        "zh": "重击若命中要害，则额外造成100%/125%/150%/175%/200%攻击力的伤害，该伤害必定暴击。此效果每10秒只能触发一次。"
+        "en": "CRIT Rate is increased by 8%/10%/12%/14%/16%. When the equipping character unleashes an Elemental Skill, they gain the Secret of Lies effect: Elemental Mastery is increased by 80/100/120/140/160 for 12s. When the equipping character deals Lunar-Bloom DMG to an opponent, they gain the Moon of Truth effect: CRIT DMG is increased by 24%/30%/36%/42%/48% for 4s. When both the Secret of Lies and Moon of Truth effects are active at the same time, the results of both effects will be increased by 50%.",
+        "zh": "暴击率提升8%/10%/12%/14%/16%。施放元素战技时，装备者获得「伪言之秘」效果：元素精通提升80/100/120/140/160点，持续12秒。装备者对敌人造成月绽放反应伤害时，装备者获得「真识之月」效果：暴击伤害提升24%/30%/36%/42%/48%，持续4秒。「伪言之秘」效果与「真识之月」效果同时存在时，这些效果分别提升50%。"
       }
     },
-    "polar_star": {
+    "dawning_frost": {
       "name": {
-        "en": "Polar Star",
-        "zh": "冬极白星"
+        "en": "Dawning Frost",
+        "zh": "霜辰"
       },
       "effect": {
-        "en": "Elemental Skill and Elemental Burst DMG increased by 12%/15%/18%/21%/24%. After a Normal Attack, Charged Attack, Elemental Skill or Elemental Burst hits an opponent, 1 stack of Ashen Nightstar will be gained for 12s. When 1/2/3/4 stacks of Ashen Nightstar are present, ATK is increased by 10%/20%/30%/48% | 12.5%/25%/37.5%/60% | 15%/30%/45%/72% | 17.5%/35%/52.5%/84% | 20%/40%/60%/96%. The stack of Ashen Nightstar created by the Normal Attack, Charged Attack, Elemental Skill or Elemental Burst will be counted independently of the others.",
-        "zh": "元素战技和元素爆发造成的伤害提高12%/15%/18%/21%/24%；普通攻击、重击、元素战技或元素爆发命中敌人后，将产生1层持续12秒的「白夜极星」效果。处于1/2/3/4层「白夜极星」效果下时，攻击力将提高10/20/30/48%/12.5/25/37.5/60%/15/30/45/72%/17.5/35/52.5/84%/20/40/60/96%。由普通攻击、重击、元素战技或元素爆发产生的「白夜极星」将分别独立存在。"
+        "en": "For 10s after a Charged Attack hits an opponent, Elemental Mastery is increased by 72/90/108/126/144. For 10s after an Elemental Skill hits an opponent, Elemental Mastery is increased by 48/60/72/84/96.",
+        "zh": "重击命中敌人后的10秒内，元素精通提升72/90/108/126/144点；元素战技命中敌人后的10秒内，元素精通提升48/60/72/84/96点。"
       }
     },
-    "deathmatch": {
+    "sacrificers_staff": {
       "name": {
-        "en": "Deathmatch",
-        "zh": "决斗之枪"
+        "en": "Sacrificer's Staff",
+        "zh": "圣祭者的辉杖"
       },
       "effect": {
-        "en": "If there are at least 2 opponents nearby, ATK is increased by 16%/20%/24%/28%/32% and DEF is increased by 16%/20%/24%/28%/32%. If there are fewer than 2 opponents nearby, ATK is increased by 24%/30%/36%/42%/48%.",
-        "zh": "身边至少有2个敌人时，获得16%/20%/24%/28%/32%攻击力提升与16%/20%/24%/28%/32%防御力提升；身边的敌人少于2个时，获得24%/30%/36%/42%/48%攻击力提升。"
+        "en": "For 6s after an Elemental Skill hits an opponent, ATK is increased by 8%/10%/12%/14%/16% and Energy Recharge is increased by 6%/7.5%/9%/10.5%/12%. Max 3 stacks. This effect can be triggered even when the equipping character is off-field.",
+        "zh": "元素战技命中敌人后的6秒内，攻击力提升8%/10%/12%/14%/16%，元素充能效率提升6%/7.5%/9%/10.5%/12%。该效果至多叠加3层，装备者处于队伍后台时依然能触发。"
       }
     },
-    "cool_steel": {
+    "bloodsoaked_ruins": {
       "name": {
-        "en": "Cool Steel",
-        "zh": "冷刃"
+        "en": "Bloodsoaked Ruins",
+        "zh": "血染荒城"
       },
       "effect": {
-        "en": "Increases DMG against opponents affected by Hydro or Cryo by 12%/15%/18%/21%/24%.",
-        "zh": "对处于水元素或冰元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
+        "en": "For 3.5s after using an Elemental Burst, the equipping character's Lunar-Charged DMG dealt to opponents is increased by 36%/48%/60%/72%/84%. Additionally, after triggering a Lunar-Charged reaction, the equipping character will gain Requiem of Ruin: CRIT DMG is increased by 28%/35%/42%/49%/56% for 6s. They will also regain 12/13/14/15/16 Elemental Energy. Elemental Energy can be restored this way once every 14s.",
+        "zh": "施放元素爆发后的3.5秒内，装备者对敌人造成的月感电反应伤害提高36%/48%/60%/72%/84%。此外，装备者触发月感电反应后，将获得「荒落的挽歌」：暴击伤害提高28%/35%/42%/49%/56%，持续6秒；并为装备者恢复12/13/14/15/16点元素能量，每14秒至多通过这种方式恢复一次元素能量。"
       }
     },
-    "solar_pearl": {
+    "etherlight_spindlelute": {
       "name": {
-        "en": "Solar Pearl",
-        "zh": "匣里日月"
+        "en": "Etherlight Spindlelute",
+        "zh": "天光的纺琴"
       },
       "effect": {
-        "en": "Normal Attack hits increase Elemental Skill and Elemental Burst DMG by 20%/25%/30%/35%/40% for 6s. Likewise, Elemental Skill or Elemental Burst hits increase Normal Attack DMG by 20%/25%/30%/35%/40% for 6s.",
-        "zh": "普通攻击命中后的6秒内，元素战技与元素爆发的伤害提高20%/25%/30%/35%/40%；元素战技与元素爆发命中后的6秒内，普通攻击的伤害提高20%/25%/30%/35%/40%。"
+        "en": "For 20s after using an Elemental Skill, the equipping character's Elemental Mastery is increased by 100/125/150/175/200.",
+        "zh": "施放元素战技后的20秒内，装备者的元素精通提升100/125/150/175/200点。"
       }
     },
-    "dragons_bane": {
+    "nightweavers_looking_glass": {
       "name": {
-        "en": "Dragon's Bane",
-        "zh": "匣里灭辰"
+        "en": "Nightweaver's Looking Glass",
+        "zh": "纺夜天镜"
       },
       "effect": {
-        "en": "Increases DMG against opponents affected by Hydro or Pyro by 20%/24%/28%/32%/36%.",
-        "zh": "对处于水元素或火元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
+        "en": "When the equipping character's Elemental Skill deals Hydro or Dendro DMG, they will gain Prayer of the Far North: Elemental Mastery is increased by 60/75/90/105/120 for 4.5s. When nearby party members trigger Lunar-Bloom reactions, the equipping character gains New Moon Verse: Elemental Mastery is increased by 60/75/90/105/120 for 10s. When both Prayer of the Far North and New Moon Verse are in effect, all nearby party members' Bloom DMG is increased by 120%/150%/180%/210%/240%, their Hyperbloom and Burgeon DMG is increased by 80%/100%/120%/140%/160%, and their Lunar-Bloom DMG is increased by 40%/50%/60%/70%/80%. This effect cannot stack. The aforementioned effects can be triggered even if the equipping character is off-field.",
+        "zh": "元素战技造成水元素或草元素伤害时，装备者获得「终北圣言」效果：元素精通提升60/75/90/105/120点，持续4.5秒；队伍中附近的角色触发月绽放反应时，装备者获得「朔月诗篇」效果：元素精通提升60/75/90/105/120点，持续10秒；「终北圣言」效果与「朔月诗篇」效果同时存在时，队伍中附近的所有角色触发的绽放反应造成的伤害提升120%/150%/180%/210%/240%，超绽放、烈绽放反应造成的伤害提升80%/100%/120%/140%/160%，月绽放反应伤害提升40%/50%/60%/70%/80%，该效果无法叠加。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "lions_roar": {
+    "snare_hook": {
       "name": {
-        "en": "Lion's Roar",
-        "zh": "匣里龙吟"
+        "en": "Snare Hook",
+        "zh": "罗网勾针"
       },
       "effect": {
-        "en": "Increases DMG against opponents affected by Pyro or Electro by 20%/24%/28%/32%/36%.",
-        "zh": "对处于火元素或雷元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
+        "en": "Upon causing an Elemental Reaction, increases Elemental Mastery by 60/75/90/105/120 for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by 60/75/90/105/120. This effect can be triggered even if the equipping character is off-field.",
+        "zh": "触发元素反应后的12秒内，元素精通提升60/75/90/105/120点。月兆·满辉：该效果中的元素精通额外提升60/75/90/105/120点。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "lithic_blade": {
+    "blackmarrow_lantern": {
       "name": {
-        "en": "Lithic Blade",
-        "zh": "千岩古剑"
+        "en": "Blackmarrow Lantern",
+        "zh": "乌髓孑灯"
       },
       "effect": {
-        "en": "For every character in the party who hails from Liyue, the character who equips this weapon gains a 7%/8%/9%/10%/11% ATK increase and a 3%/4%/5%/6%/7% CRIT Rate increase. This effect stacks up to 4 times.",
-        "zh": "队伍中每有一位璃月角色，装备该武器的角色便获得7%/8%/9%/10%/11%攻击力提升与3%/4%/5%/6%/7%暴击率提升。至多获得4层提升效果。"
+        "en": "Bloom DMG is increased by 48%/60%/72%/84%/96%, and Lunar-Bloom DMG is increased by 12%/15%/18%/21%/24%. Moonsign: Ascendant Gleam: Lunar-Bloom DMG is increased by an additional 12%/15%/18%/21%/24%.",
+        "zh": "绽放反应造成的伤害提升48%/60%/72%/84%/96%，月绽放反应伤害提升12%/15%/18%/21%/24%。月兆·满辉：月绽放反应伤害额外提升12%/15%/18%/21%/24%。"
       }
     },
-    "lithic_spear": {
+    "prospectors_shovel": {
       "name": {
-        "en": "Lithic Spear",
-        "zh": "千岩长枪"
+        "en": "Prospector's Shovel",
+        "zh": "掘金之锹"
       },
       "effect": {
-        "en": "For every character in the party who hails from Liyue, the character who equips this weapon gains a 7%/8%/9%/10%/11% ATK increase and a 3%/4%/5%/6%/7% CRIT Rate increase. This effect stacks up to 4 times.",
-        "zh": "队伍中每有一位璃月角色，装备此武器的角色便获得7%/8%/9%/10%/11%攻击力提升与3%/4%/5%/6%/7%暴击率提升。至多获得4层提升效果。"
+        "en": "Electro-Charged DMG is increased by 48%/60%/72%/84%/96%, and Lunar-Charged DMG is increased by 12%/15%/18%/21%/24%. Moonsign: Ascendant Gleam: Lunar-Charged DMG is increased by an additional 12%/15%/18%/21%/24%.",
+        "zh": "感电反应造成的伤害提升48%/60%/72%/84%/96%，月感电反应造成的伤害提升12%/15%/18%/21%/24%。月兆·满辉：月感电反应造成的伤害额外提升12%/15%/18%/21%/24%。"
       }
     },
-    "recurve_bow": {
+    "master_key": {
       "name": {
-        "en": "Recurve Bow",
-        "zh": "反曲弓"
+        "en": "Master Key",
+        "zh": "万能钥匙"
       },
       "effect": {
-        "en": "Defeating an opponent restores 8%/10%/12%/14%/16% HP.",
-        "zh": "击败敌人时，恢复8%/10%/12%/14%/16%生命值。"
+        "en": "Upon causing an Elemental Reaction, increases Elemental Mastery by 60/75/90/105/120 for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by 60/75/90/105/120. This effect can be triggered even if the equipping character is off-field.",
+        "zh": "触发元素反应后的12秒内，元素精通提升60/75/90/105/120点。月兆·满辉：该效果中的元素精通额外提升60/75/90/105/120点。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "fillet_blade": {
+    "moonweavers_dawn": {
       "name": {
-        "en": "Fillet Blade",
-        "zh": "吃虎鱼刀"
+        "en": "Moonweaver's Dawn",
+        "zh": "织月者的曙色"
       },
       "effect": {
-        "en": "On hit, has a 50% chance to deal 240%/280%/320%/360%/400% ATK DMG to a single target. Can only occur once every 15/14/13/12/11s.",
-        "zh": "攻击命中时，有50%的概率对单个敌人造成240%/280%/320%/360%/400%攻击力的伤害。该效果每15/14/13/12/11秒只能触发一次。"
+        "en": "Increases Elemental Burst DMG by 20%/25%/30%/35%/40%. When the equipping character's Energy Capacity does not exceed 60/40, their Elemental Burst DMG is increased by an additional 16%/28% | 20%/35% | 24%/42% | 28%/49% | 32%/56%.",
+        "zh": "元素爆发造成的伤害提高20%/25%/30%/35%/40%；装备者的元素能量上限不超过60/40点时，元素爆发造成的伤害额外提高16%/28% | 20%/35% | 24%/42% | 28%/49% | 32%/56%。"
       }
     },
-    "primordial_jade_wingedspear": {
+    "serenitys_call": {
       "name": {
-        "en": "Primordial Jade Winged-Spear",
-        "zh": "和璞鸢"
+        "en": "Serenity's Call",
+        "zh": "谧音吹哨"
       },
       "effect": {
-        "en": "On hit, increases ATK by 3.2%/3.9%/4.6%/5.3%/6% for 6s. Max 7 stacks. This effect can only occur once every 0.3s. While in possession of the maximum possible stacks, DMG dealt is increased by 12%/15%/18%/21%/24%.",
-        "zh": "命中敌人时自身攻击力提高3.2%/3.9%/4.6%/5.3%/6%，持续6秒，最高可以叠加7层。该效果每0.3秒最多触发一次。满层状态时伤害提升12%/15%/18%/21%/24%。"
+        "en": "Upon causing an Elemental Reaction, increases Max HP by 16%/20%/24%/28%/32% for 12s. Moonsign: Ascendant Gleam: Max HP from this effect is further increased by 16%/20%/24%/28%/32%. This effect can be triggered even if the equipping character is off-field.",
+        "zh": "触发元素反应后的12秒内，生命值上限提高16%/20%/24%/28%/32%。月兆·满辉：该效果中的生命值上限额外提高16%/20%/24%/28%/32%。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "kitain_cross_spear": {
+    "flameforged_insight": {
       "name": {
-        "en": "Kitain Cross Spear",
-        "zh": "喜多院十文字"
+        "en": "Flame-Forged Insight",
+        "zh": "拾慧铸熔"
       },
       "effect": {
-        "en": "Increases Elemental Skill DMG by 6%/7.5%/9%/10.5%/12%. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates 3/3.5/4/4.5/5 Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
-        "zh": "元素战技造成的伤害提升6%/7.5%/9%/10.5%/12%。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复3/3.5/4/4.5/5点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。"
+        "en": "When Electro-Charged, Lunar-Charged, Bloom, Lunar-Bloom, Crystallize or Lunar-Crystallize is triggered, restore 12/15/18/21/24 Elemental Energy and increase Elemental Mastery by 60/75/90/105/120 for 15 seconds. This effect can be triggered once every 15s and can be triggered even when the equipping character is off-field.",
+        "zh": "触发感电、月感电或绽放反应时，恢复12/15/18/21/24点元素能量，并在接下来的15秒内使元素精通提升60/75/90/105/120点。该效果每15秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "dodoco_tales": {
+    "fractured_halo": {
       "name": {
-        "en": "Dodoco Tales",
-        "zh": "嘟嘟可故事集"
+        "en": "Fractured Halo",
+        "zh": "支离轮光"
       },
       "effect": {
-        "en": "Normal Attack hits on opponents increase Charged Attack DMG by 16%/20%/24%/28%/32% for 6s. Charged Attack hits on opponents increase ATK by 8%/10%/12%/14%/16% for 6s.",
-        "zh": "普通攻击命中敌人后的6秒内，重击造成的伤害提升16%/20%/24%/28%/32%；重击命中敌人后的6秒内，攻击力提升8%/10%/12%/14%/16%。"
+        "en": "After an Elemental Skill or Elemental Burst is used, ATK is increased by 24%/30%/36%/42%/48% for 20s. If the equipping character creates a Shield while this effect is active, they will gain the Electrifying Edict effect for 20s: All nearby party members deal 40%/50%/60%/70%/80% more Lunar-Charged DMG.",
+        "zh": "施放元素战技或元素爆发后的20秒内，攻击力提升24%/30%/36%/42%/48%。持续期间内，若装备者创造了护盾，则接下来的20秒内，还会获得「流电圣敕」效果：队伍中附近所有角色触发的月感电反应造成的伤害提升40%/50%/60%/70%/80%。"
       }
     },
-    "lost_prayer_to_the_sacred_winds": {
+    "azurelight": {
       "name": {
-        "en": "Lost Prayer to the Sacred Winds",
-        "zh": "四风原典"
+        "en": "Azurelight",
+        "zh": "苍耀"
       },
       "effect": {
-        "en": "Increases Movement SPD by 10%. When in battle, gain a 8%/10%/12%/14%/16% Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat.",
-        "zh": "移动速度提高10%；在场上每4秒获得8%/10%/12%/14%/16%元素伤害加成。该效果最多叠加4层，持续直到角色倒下或离场。"
+        "en": "Within 12s after an Elemental Skill is used, ATK is increased by 24%/30%/36%/42%/48%. During this time, when the equipping character has 0 Energy, ATK will be further increased by 24%/30%/36%/42%/48%, and CRIT DMG will be increased by 40%/50%/60%/70%/80%.",
+        "zh": "施放元素战技后的12秒内，攻击力提升24%/30%/36%/42%/48%。持续期间，装备者的元素能量为0时，攻击力还会提升24%/30%/36%/42%/48%，且暴击伤害提升40%/50%/60%/70%/80%。"
       }
     },
-    "amenoma_kageuchi": {
+    "sequence_of_solitude": {
       "name": {
-        "en": "Amenoma Kageuchi",
-        "zh": "天目影打刀"
+        "en": "Sequence of Solitude",
+        "zh": "冷寂迸音"
       },
       "effect": {
-        "en": "After casting an Elemental Skill, gain 1 Succession Seed. This effect can be triggered once every 5s. The Succession Seed lasts for 30s. Up to 3 Succession Seeds may exist simultaneously. After using an Elemental Burst, all Succession Seeds are consumed and after 2s, the character regenerates 6/7.5/9/10.5/12 Energy for each seed consumed.",
-        "zh": "施放元素战技后，获得1个胤种，该效果每5秒至多触发一次。胤种持续30秒，至多同时存在3个。施放元素爆发后，会清除持有的所有胤种，并在2秒之后，基于消耗的胤种数量，每个为该角色恢复6/7.5/9/10.5/12点元素能量。"
+        "en": "When an attack hits an opponent, deal AoE DMG equal to 40%/50%/60%/70%/80% of Max HP at the target location. This effect can be triggered once every 15s.",
+        "zh": "攻击命中敌人时，在目标位置基于生命值上限的40%/50%/60%/70%/80%，造成范围伤害。该效果每15秒至多触发一次。"
       }
     },
-    "skyward_pride": {
+    "symphonist_of_scents": {
       "name": {
-        "en": "Skyward Pride",
-        "zh": "天空之傲"
+        "en": "Symphonist of Scents",
+        "zh": "香韵奏者"
       },
       "effect": {
-        "en": "Increases all DMG by 8%/10%/12%/14%/16%. After using an Elemental Burst, Normal or Charged Attack, on hit, creates a vacuum blade that does 80%/100%/120%/140%/160% of ATK as DMG to opponents along its path. Lasts for 20s or 8 vacuum blades.",
-        "zh": "造成的伤害提高8%/10%/12%/14%/16%；施放元素爆发后：普通攻击和重击命中时会发出真空刃，对路径上的敌人造成80%/100%/120%/140%/160%攻击力的伤害，持续20秒或直至发出8次真空刃。"
+        "en": "ATK is increased by 12%/15%/18%/21%/24%. When the equipping character is off-field, ATK is increased by an additional 12%/15%/18%/21%/24%. After initiating healing, the equipping character and the character(s) they have healed will obtain the \"Sweet Echoes\" effect, increasing their ATK by 32%/40%/48%/56%/64% for 3s. This effect can be triggered even if the equipping character is off-field.",
+        "zh": "攻击力提升12%/15%/18%/21%/24%；当装备此武器的角色处于队伍后台时，攻击力额外提升12%/15%/18%/21%/24%。进行治疗后，装备者与受到治疗的角色会获得「甘美回奏」的效果，攻击力提升32%/40%/48%/56%/64%，持续3秒。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "skyward_blade": {
+    "vivid_notions": {
       "name": {
-        "en": "Skyward Blade",
-        "zh": "天空之刃"
+        "en": "Vivid Notions",
+        "zh": "溢彩心念"
       },
       "effect": {
-        "en": "CRIT Rate increased by 4%/5%/6%/7%/8%. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by 10%, increases ATK SPD by 10%, and Normal and Charged hits deal additional DMG equal to 20%/25%/30%/35%/40% of ATK. Skypiercing Might lasts for 12s.",
-        "zh": "暴击率提升4%/5%/6%/7%/8%；施放元素爆发时，获得破空之势：移动速度提升10%/10%/10%/10%/10%，攻击速度提升10%/10%/10%/10%/10%，普通攻击与重击命中时，额外造成20%/25%/30%/35%/40%攻击力的伤害，持续12秒。"
+        "en": "ATK is increased by 28%/35%/42%/49%/56%. When you use a Plunging Attack, you will gain the \"Dawn's First Hue\" effect: Plunging Attack CRIT DMG is increased by 28%/35%/42%/49%/56%. When you use an Elemental Skill or Burst, you will gain the \"Twilight's Splendor\" effect: Plunging Attack CRIT DMG is increased by 40%/50%/60%/70%/80%. The two effects above each last for 15s, and will be canceled 0.1s after the ground impact hits a target.",
+        "zh": "攻击力提升28%/35%/42%/49%/56%；进行下落攻击时，获得「初霞之彩」效果：下落攻击造成的暴击伤害提升28%/35%/42%/49%/56%；施放元素战技或元素爆发时，获得「苍暮之辉」效果：下落攻击造成的暴击伤害提升40%/50%/60%/70%/80%；上述两种效果各自持续15秒，并将在坠地冲击命中后的0.1秒后解除。"
       }
     },
-    "skyward_atlas": {
+    "tamayuratei_no_ohanashi": {
       "name": {
-        "en": "Skyward Atlas",
-        "zh": "天空之卷"
+        "en": "Tamayuratei no Ohanashi",
+        "zh": "且住亭御咄"
       },
       "effect": {
-        "en": "Increases Elemental DMG Bonus by 12%/15%/18%/21%/24%. Normal Attack hits have a 50% chance to earn the favor of the clouds, which actively seek out nearby opponents to attack for 15s, dealing 160%/200%/240%/280%/320% ATK DMG. Can only occur once every 30s.",
-        "zh": "元素伤害加成提升12%/15%/18%/21%/24%；普通攻击命中时，有50%的概率获得高天流云的青睐，在15秒内主动攻击附近的敌人，造成等同于160%/200%/240%/280%/320%攻击力的伤害。该效果每30秒只能触发一次。"
+        "en": "Increase ATK by 20%/25%/30%/35%/40% and Movement SPD by 10% for 10s when using an Elemental Skill.",
+        "zh": "施放元素战技时，提高20%/25%/30%/35%/40%攻击力和10%移动速度，持续10秒。"
       }
     },
-    "skyward_harp": {
+    "sunny_morning_sleepin": {
       "name": {
-        "en": "Skyward Harp",
-        "zh": "天空之翼"
+        "en": "Sunny Morning Sleep-In",
+        "zh": "寝正月初晴"
       },
       "effect": {
-        "en": "Increases CRIT DMG by 20%/25%/30%/35%/40%. Hits have a 60%/70%/80%/90%/100% chance to inflict a small AoE attack, dealing 125% Physical ATK DMG. Can only occur once every 4/3.5/3/2.5/2s.",
-        "zh": "暴击伤害提高20%/25%/30%/35%/40%；攻击命中时有60%/70%/80%/90%/100%概率造成125%攻击力的小范围物理伤害，该效果每4/3.5/3/2.5/2秒只能触发一次。"
+        "en": "Elemental Mastery increases by 120/150/180/210/240 for 6s after triggering Swirl. Elemental Mastery increases by 96/120/144/168/192 for 9s after the wielder's Elemental Skill hits an opponent. Elemental Mastery increases by 32/40/48/56/64 for 30s after the wielder's Elemental Burst hits an opponent.",
+        "zh": "触发扩散反应后的6秒内，元素精通提升120/150/180/210/240点；元素战技命中敌人后的9秒内，元素精通提升96/120/144/168/192点；元素爆发命中敌人后的30秒内，元素精通提升32/40/48/56/64点。"
       }
     },
-    "skyward_spine": {
+    "starcallers_watch": {
       "name": {
-        "en": "Skyward Spine",
-        "zh": "天空之脊"
+        "en": "Starcaller's Watch",
+        "zh": "祭星者之望"
       },
       "effect": {
-        "en": "Increases CRIT Rate by 8%/10%/12%/14%/16% and increases Normal ATK SPD by 12%. Additionally, Normal and Charged Attacks hits on opponents have a 50% chance to trigger a vacuum blade that deals 40%/55%/70%/85%/100% of ATK as DMG in a small AoE. This effect can occur no more than once every 2s.",
-        "zh": "暴击率提升8%/10%/12%/14%/16%，普通攻击速度提升12%/12%/12%/12%/12%。此外，普通攻击与重击命中敌人时，有50%/50%/50%/50%/50%概率触发真空刃，在小范围内造成额外40%/55%/70%/85%/100%攻击力的伤害。该效果每2秒至多触发一次。"
+        "en": "Increases Elemental Mastery by 100/125/150/175/200. Gain the \"Mirror of Night\" effect within 15s after the equipping character creates a shield: The current active party member deals 28%/35%/42%/49%/56% increased DMG to nearby opponents. You can gain the \"Mirror of Night\" effect once every 14s.",
+        "zh": "元素精通提升100/125/150/175/200点。装备者创造护盾后的15秒内，获得「照夜之镜」效果：队伍中自己的当前场上角色对附近的敌人造成的伤害提升28%/35%/42%/49%/56%，该效果每14秒至多触发获得一次「照夜之镜」效果。"
       }
     },
-    "royal_greatsword": {
+    "a_thousand_blazing_suns": {
       "name": {
-        "en": "Royal Greatsword",
-        "zh": "宗室大剑"
+        "en": "A Thousand Blazing Suns",
+        "zh": "焚曜千阳"
       },
       "effect": {
-        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
-        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+        "en": "Gain the \"Scorching Brilliance\" effect when using an Elemental Skill or Burst: CRIT DMG increased by 20%/25%/30%/35%/40% and ATK increased by 28%/35%/42%/49%/56% for 6s. This effect can trigger once every 10s.While a \"Scorching Brilliance\" instance is active, its duration is increased by 2s after Normal or Charged attacks deal Elemental DMG. This effect can trigger once every second, and the max duration increase is 6s.Additionally, when the equipping character is in the Nightsoul's Blessing state, \"Scorching Brilliance\" effects are increased by 75%, and its duration will not count down when the equipping character is off-field.",
+        "zh": "施放元素战技或元素爆发时，获得「焚光」效果：暴击伤害提高20%/25%/30%/35%/40%，攻击力提升28%/35%/42%/49%/56%，该效果持续6秒，每10秒至多触发一次。持续期间内，普通攻击或重击造成元素伤害后，将使此次「焚光」效果的持续时间延长2秒，该效果每1秒至多触发一次，至多通过这种方式使持续时间延长6秒。此外，处于夜魂加持状态下时，「焚光」效果提高75%，且「焚光」效果仅在装备者处于场上后台时不进行计时。"
       }
     },
-    "royal_spear": {
+    "astral_vultures_crimson_plumage": {
       "name": {
-        "en": "Royal Spear",
-        "zh": "宗室猎枪"
+        "en": "Astral Vulture's Crimson Plumage",
+        "zh": "星鹫赤羽"
       },
       "effect": {
-        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
-        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+        "en": "For 12s after triggering a Swirl reaction, ATK increases by 24%/30%/36%/42%/48%. In addition, when 1/2 or more characters in the party are of a different Elemental Type from the equipping character, the DMG dealt by the equipping character's Charged Attacks is increased by 20%/48% | 25%/60% | 30%/72% | 35%/84% | 40%/96% and Elemental Burst DMG dealt is increased by 10%/24% | 12.5%/30% | 15%/36% | 17.5%/42% | 20%/48%.",
+        "zh": "触发扩散反应后的12秒内，攻击力提高24%/30%/36%/42%/48%。此外，队伍中存在至少1/2名与装备者元素类型不同的角色时，装备者重击造成的伤害提高20%/48% | 25%/60% | 30%/72% | 35%/84% | 40%/96%，元素爆发造成的伤害提高10%/24% | 12.5%/30% | 15%/36% | 17.5%/42% | 20%/48%。"
       }
     },
-    "royal_grimoire": {
+    "flowerwreathed_feathers": {
       "name": {
-        "en": "Royal Grimoire",
-        "zh": "宗室秘法录"
+        "en": "Flower-Wreathed Feathers",
+        "zh": "缀花之翎"
       },
       "effect": {
-        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
-        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+        "en": "Decreases Gliding Stamina consumption by 15%. When using Aimed Shots, the DMG dealt by Charged Attacks increases by 6%/7.5%/9%/10.5%/12% every 0.5s. This effect can stack up to 6 times and will be removed 10s after leaving Aiming Mode.",
+        "zh": "滑翔消耗的体力降低15%。进行瞄准射击时，每0.5秒提升重击造成的伤害6%/7.5%/9%/10.5%/12%，该效果最多叠加6层，并将在不处于瞄准状态下10秒后移除。"
       }
     },
-    "royal_longsword": {
+    "waveriding_whirl": {
       "name": {
-        "en": "Royal Longsword",
-        "zh": "宗室长剑"
+        "en": "Waveriding Whirl",
+        "zh": "乘浪的回旋"
       },
       "effect": {
-        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
-        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+        "en": "Decreases Swimming Stamina consumption by 15%. In addition, for 10s after using an Elemental Skill, Max HP is increased by 20%/25%/30%/35%/40%. For every Hydro Elemental Type character in the party, Max HP is increased by another 12%/15%/18%/21%/24%, and the maximum increase that can be achieved in this way is 24%/30%/36%/42%/48%. Can be triggered once every 15s.",
+        "zh": "游泳消耗的体力降低15%。此外，施放元素战技后的10秒内，生命值上限提升20%/25%/30%/35%/40%，队伍中每存在一位水元素类型的角色，生命值上限将进一步提升12%/15%/18%/21%/24%，至多通过这种方式提升24%/30%/36%/42%/48%，该效果每15秒至多触发一次。"
       }
     },
-    "royal_bow": {
+    "calamity_of_eshu": {
       "name": {
-        "en": "Royal Bow",
-        "zh": "宗室长弓"
+        "en": "Calamity of Eshu",
+        "zh": "厄水之祸"
       },
       "effect": {
-        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
-        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+        "en": "While characters are protected by a Shield, DMG dealt by Normal and Charged Attacks is increased by 20%/25%/30%/35%/40%, and Normal and Charged Attack CRIT Rate is increased by 8%/10%/12%/14%/16%.",
+        "zh": "角色处于护盾庇护下时，普通攻击和重击造成的伤害提升20%/25%/30%/35%/40%，普通攻击和重击的暴击率提升8%/10%/12%/14%/16%。"
       }
     },
-    "memory_of_dust": {
+    "mountainbracing_bolt": {
       "name": {
-        "en": "Memory of Dust",
-        "zh": "尘世之锁"
+        "en": "Mountain-Bracing Bolt",
+        "zh": "镇山之钉"
       },
       "effect": {
-        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
-        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
+        "en": "Decreases Climbing Stamina Consumption by 15% and increases Elemental Skill DMG by 12%/15%/18%/21%/24%. Also, after other nearby party members use Elemental Skills, the equipping character's Elemental Skill DMG will also increase by 12%/15%/18%/21%/24% for 8s.",
+        "zh": "攀爬消耗的体力降低15%，元素战技造成的伤害提升12%/15%/18%/21%/24%；此外，队伍中附近的其他角色施放元素战技后，装备者的元素战技造成的伤害还会提升12%/15%/18%/21%/24%，持续8秒。"
       }
     },
-    "mitternachts_waltz": {
+    "fruitful_hook": {
       "name": {
-        "en": "Mitternachts Waltz",
-        "zh": "幽夜华尔兹"
+        "en": "Fruitful Hook",
+        "zh": "硕果钩"
       },
       "effect": {
-        "en": "Normal Attack hits on opponents increase Elemental Skill DMG by 20%/25%/30%/35%/40% for 5s. Elemental Skill hits on opponents increase Normal Attack DMG by 20%/25%/30%/35%/40% for 5s.",
-        "zh": "普通攻击命中敌人后的5秒内，元素战技造成的伤害提升20%/25%/30%/35%/40%；元素战技命中敌人后的5秒内，普通攻击造成的伤害提升20%/25%/30%/35%/40%。"
+        "en": "Increase Plunging Attack CRIT Rate by 16%/20%/24%/28%/32%; After a Plunging Attack hits an opponent, Normal, Charged, and Plunging Attack DMG increased by 16%/20%/24%/28%/32% for 10s.",
+        "zh": "下落攻击的暴击率提升16%/20%/24%/28%/32%；下落攻击命中敌人后，普通攻击、重击、下落攻击造成的伤害提升16%/20%/24%/28%/32%，持续10秒。"
       }
     },
-    "otherworldly_story": {
+    "peak_patrol_song": {
       "name": {
-        "en": "Otherworldly Story",
-        "zh": "异世界行记"
+        "en": "Peak Patrol Song",
+        "zh": "岩峰巡歌"
       },
       "effect": {
-        "en": "Each Elemental Orb or Particle collected restores 1%/1.25%/1.5%/1.75%/2% HP.",
-        "zh": "获得元素微粒或元素晶球时，恢复1%/1.25%/1.5%/1.75%/2%生命值。"
+        "en": "Gain \"Ode to Flowers\" after Normal or Plunging Attacks hit an opponent: DEF increases by 8%/10%/12%/14%/16% and gain a 10%/12.5%/15%/17.5%/20% All Elemental DMG Bonus for 6s. Max 2 stacks. Can trigger once per 0.1s. When this effect reaches 2 stacks or the 2nd stack's duration is refreshed, increase all nearby party members' All Elemental DMG Bonus by 8%/10%/12%/14%/16% for every 1,000 DEF the equipping character has, up to a maximum of 25.6%/32%/38.4%/44.8%/51.2%, for 15s.",
+        "zh": "普通攻击或下落攻击命中敌人后，将获得「荣花之歌」：防御力提高8%/10%/12%/14%/16%，并获得10%/12.5%/15%/17.5%/20%所有元素伤害加成，该效果持续6秒，至多叠加2层，每0.1秒至多触发一次。该效果叠加至2层或2层的持续时间刷新时，基于装备者的防御力，每1000点使队伍中附近所有角色的所有元素伤害加成提高8%/10%/12%/14%/16%，至多提高25.6%/32%/38.4%/44.8%/51.2%，持续15秒。"
       }
     },
-    "rust": {
+    "sturdy_bone": {
       "name": {
-        "en": "Rust",
-        "zh": "弓藏"
+        "en": "Sturdy Bone",
+        "zh": "弥坚骨"
       },
       "effect": {
-        "en": "Increases Normal Attack DMG by 40%/50%/60%/70%/80% but decreases Charged Attack DMG by 10%.",
-        "zh": "普通攻击造成的伤害提升40%/50%/60%/70%/80%，重击造成的伤害下降10%。"
+        "en": "Sprint or Alternate Sprint Stamina Consumption decreased by 15%. Additionally, after using Sprint or Alternate Sprint, Normal Attack DMG is increased by 16%/20%/24%/28%/32% of ATK. This effect expires after triggering 18 times or 7s.",
+        "zh": "冲刺或替代冲刺的能力消耗的体力降低15%；此外，使用冲刺或替代冲刺的能力后，普通攻击造成的伤害提高，提高数值相当于攻击力的16%/20%/24%/28%/32%，该效果在生效18次或7秒后消失。"
       }
     },
-    "slingshot": {
+    "chain_breaker": {
       "name": {
-        "en": "Slingshot",
-        "zh": "弹弓"
+        "en": "Chain Breaker",
+        "zh": "碎链"
       },
       "effect": {
-        "en": "If a Normal or Charged Attack hits a target within 0.3s of being fired, increases DMG by 36%/42%/48%/54%/60%. Otherwise, decreases DMG by 10%.",
-        "zh": "普通攻击与重击的箭矢若在发射后的0.3秒内击中敌人，则造成的伤害增加36%/42%/48%/54%/60%；否则，造成的伤害下降10%。"
+        "en": "For every party member from Natlan or who has a different Elemental Type from the equipping character, the equipping character gains 4.8%/6%/7.2%/8.4%/9.6% increased ATK. When there are no less than 3 of the aforementioned characters, the equipping character gains 24/30/36/42/48 Elemental Mastery.",
+        "zh": "队伍中每有一名纳塔角色或与装备者元素类型不同的角色，装备者获得4.8%/6%/7.2%/8.4%/9.6%攻击力提升；上述角色不少于3名时，装备者的元素精通提升24/30/36/42/48点。"
       }
     },
-    "frostbearer": {
+    "ring_of_yaxche": {
       "name": {
-        "en": "Frostbearer",
-        "zh": "忍冬之果"
+        "en": "Ring of Yaxche",
+        "zh": "木棉之环"
       },
       "effect": {
-        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
-        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
+        "en": "Using an Elemental Skill grants the Jade-Forged Crown effect: Every 1,000 Max HP will increase the Normal Attack DMG dealt by the equipping character by 0.6%/0.7%/0.8%/0.9%/1% for 10s. Normal Attack DMG can be increased this way by a maximum of 16%/20%/24%/28%/32%.",
+        "zh": "施放元素战技时，获得「玉锻之冕」效果：每1000点生命值上限都会使普通攻击造成的伤害提升0.6%/0.7%/0.8%/0.9%/1%，持续10秒。通过这种方式至多使普通攻击造成的伤害提升16%/20%/24%/28%/32%。"
       }
     },
-    "calamity_queller": {
+    "ashgraven_drinking_horn": {
       "name": {
-        "en": "Calamity Queller",
-        "zh": "息灾"
+        "en": "Ash-Graven Drinking Horn",
+        "zh": "苍纹角杯"
       },
       "effect": {
-        "en": "Gain 12%/15%/18%/21%/24% All Elemental DMG Bonus. Obtain Consummation for 20s after using an Elemental Skill, causing ATK to increase by 3.2%/4%/4.8%/5.6%/6.4% per second. This ATK increase has a maximum of 6 stacks. When the character equipped with this weapon is not on the field, Consummation's ATK increase is doubled.",
-        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成；施放元素战技后，获得持续20秒的「圆顿」，攻击力每1秒提升3.2%/4%/4.8%/5.6%/6.4%，该攻击力提升效果至多叠加6次。当装备此武器的角色处于队伍后台时，「圆顿」的攻击力提升效果翻倍。"
+        "en": "When an attack hits an opponent, deal AoE DMG equal to 40%/50%/60%/70%/80% of Max HP at the target location. This effect can be triggered once every 15s.",
+        "zh": "攻击命中敌人时，在目标位置基于生命值上限的40%/50%/60%/70%/80%，造成范围伤害。该效果每15秒至多触发一次。"
       }
     },
-    "akuoumaru": {
+    "footprint_of_the_rainbow": {
       "name": {
-        "en": "Akuoumaru",
-        "zh": "恶王丸"
-      },
-      "effect": {
-        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
-        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
-      }
-    },
-    "staff_of_homa": {
-      "name": {
-        "en": "Staff of Homa",
-        "zh": "护摩之杖"
-      },
-      "effect": {
-        "en": "HP increased by 20%/25%/30%/35%/40%. Additionally, provides an ATK Bonus based on 0.8%/1%/1.2%/1.4%/1.6% of the wielder's Max HP. When the wielder's HP is less than 50%, this ATK Bonus is increased by an additional 1%/1.2%/1.4%/1.6%/1.8% of Max HP.",
-        "zh": "生命值提升20%/25%/30%/35%/40%。此外，基于装备该武器的角色生命值上限的0.8%/1%/1.2%/1.4%/1.6%，获得攻击力加成。当装备该武器的角色生命值低于50%时，进一步获得1%/1.2%/1.4%/1.6%/1.8%基于生命值上限的攻击力提升。"
-      }
-    },
-    "predator": {
-      "name": {
-        "en": "Predator",
-        "zh": "掠食者"
-      },
-      "effect": {
-        "en": "Effective only on the following platform: \"PlayStation Network\"Dealing Cryo DMG to opponents increases this character's Normal and Charged Attack DMG by 10% for 6s. This effect can have a maximum of 2 stacks. Additionally, when Aloy equips Predator, ATK is increased by 66.",
-        "zh": "普通攻击造成的伤害提升16%，重击造成的伤害提升12%。当装备该武器的角色元素能量等于100%时，这个效果提升100%。"
-      }
-    },
-    "summit_shaper": {
-      "name": {
-        "en": "Summit Shaper",
-        "zh": "斫峰之刃"
-      },
-      "effect": {
-        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
-        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
-      }
-    },
-    "wavebreakers_fin": {
-      "name": {
-        "en": "Wavebreaker's Fin",
-        "zh": "断浪长鳍"
-      },
-      "effect": {
-        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
-        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
-      }
-    },
-    "travelers_handy_sword": {
-      "name": {
-        "en": "Traveler's Handy Sword",
-        "zh": "旅行剑"
-      },
-      "effect": {
-        "en": "Each Elemental Orb or Particle collected restores 1%/1.25%/1.5%/1.75%/2% HP.",
-        "zh": "获得元素晶球或元素微粒时，恢复1%/1.25%/1.5%/1.75%/2%生命值。"
-      }
-    },
-    "the_unforged": {
-      "name": {
-        "en": "The Unforged",
-        "zh": "无工之剑"
-      },
-      "effect": {
-        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
-        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
-      }
-    },
-    "eye_of_perception": {
-      "name": {
-        "en": "Eye of Perception",
-        "zh": "昭心"
-      },
-      "effect": {
-        "en": "Normal and Charged Attacks have a 50% chance to fire a Bolt of Perception, dealing 240%/270%/300%/330%/360% ATK as DMG. This bolt can bounce between opponents a maximum of 4 times. This effect can occur once every 12/11/10/9/8s.",
-        "zh": "普通攻击与重击命中时，有50%几率发射一枚昭心法球，造成240%/270%/300%/330%/360%攻击力伤害，至多在敌人之间弹射4次。该效果每12/11/10/9/8秒至多触发一次。"
-      }
-    },
-    "alley_hunter": {
-      "name": {
-        "en": "Alley Hunter",
-        "zh": "暗巷猎手"
-      },
-      "effect": {
-        "en": "While the character equipped with this weapon is in the party but not on the field, their DMG increases by 2%/2.5%/3%/3.5%/4% every second up to a max of 20%/25%/30%/35%/40%. When the character is on the field for more than 4s, the aforementioned DMG buff decreases by 4%/5%/6%/7%/8% per second until it reaches 0%.",
-        "zh": "装备该武器的角色处于队伍后台时，每1秒角色造成的伤害提升2%/2.5%/3%/3.5%/4%，最多通过这种方式获得20%/25%/30%/35%/40%的伤害提升；在场上超过4秒后，上述伤害提升效果每1秒会流失4%/5%/6%/7%/8%，直到降低至0%。"
-      }
-    },
-    "wine_and_song": {
-      "name": {
-        "en": "Wine and Song",
-        "zh": "暗巷的酒与诗"
-      },
-      "effect": {
-        "en": "Hitting an opponent with a Normal Attack decreases the Stamina consumption of Sprint or Alternate Sprint by 14%/16%/18%/20%/22% for 5s. Additionally, using a Sprint or Alternate Sprint ability increases ATK by 20%/25%/30%/35%/40% for 5s.",
-        "zh": "普通攻击命中敌人后，冲刺或替代冲刺的能力消耗的体力降低14%/16%/18%/20%/22%，持续5秒。此外，使用冲刺或替代冲刺的能力后，攻击力提升20%/25%/30%/35%/40%，持续5秒。"
-      }
-    },
-    "the_alley_flash": {
-      "name": {
-        "en": "The Alley Flash",
-        "zh": "暗巷闪光"
-      },
-      "effect": {
-        "en": "Increases DMG dealt by the character equipping this weapon by 12%/15%/18%/21%/24%. Taking DMG disables this effect for 5s.",
-        "zh": "角色造成的伤害提升12%/15%/18%/21%/24%。受到伤害后，该伤害提升效果会失效5秒。"
-      }
-    },
-    "dark_iron_sword": {
-      "name": {
-        "en": "Dark Iron Sword",
-        "zh": "暗铁剑"
-      },
-      "effect": {
-        "en": "Upon causing an Overloaded, Superconduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, or Electro-infused Swirl reaction, ATK is increased by 20%/25%/30%/35%/40% for 12s.",
-        "zh": "触发超载、超导、感电、原激化、超激化、超绽放或雷元素扩散反应后的12秒内，攻击力提高20%/25%。"
-      }
-    },
-    "mouuns_moon": {
-      "name": {
-        "en": "Mouun's Moon",
-        "zh": "曚云之月"
-      },
-      "effect": {
-        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
-        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
-      }
-    },
-    "song_of_broken_pines": {
-      "name": {
-        "en": "Song of Broken Pines",
-        "zh": "松籁响起之时"
-      },
-      "effect": {
-        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases ATK by 16%/20%/24%/28%/32%, and when Normal or Charged Attacks hit opponents, the character gains a Sigil of Whispers. This effect can be triggered once every 0.3s. When you possess 4 Sigils of Whispers, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Banner-Hymn\" effect for 12s. \"Millennial Movement: Banner-Hymn\" increases Normal ATK SPD by 12%/15%/18%/21%/24% and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Whispers for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
-        "zh": "飘游风中的「千年的大乐章」的一部分。攻击力提高16%/20%/24%/28%/32%；普通攻击或重击命中敌人时，角色获得一枚低语之符，每0.3秒内至多触发一次。拥有4枚低语之符时，将消耗所有低语之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·揭旗之歌」效果：普通攻击速度提高12%/15%/18%/21%/24%，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得低语之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
-      }
-    },
-    "katsuragikiri_nagamasa": {
-      "name": {
-        "en": "Katsuragikiri Nagamasa",
-        "zh": "桂木斩长正"
-      },
-      "effect": {
-        "en": "Increases Elemental Skill DMG by 6%/7.5%/9%/10.5%/12%. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates 3/3.5/4/4.5/5 Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
-        "zh": "元素战技造成的伤害提升6%/7.5%/9%/10.5%/12%。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复3/3.5/4/4.5/5点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。"
-      }
-    },
-    "bloodtainted_greatsword": {
-      "name": {
-        "en": "Bloodtainted Greatsword",
-        "zh": "沐浴龙血的剑"
-      },
-      "effect": {
-        "en": "Increases DMG against opponents affected by Pyro or Electro by 12%/15%/18%/21%/24%.",
-        "zh": "对处于火元素或雷元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
-      }
-    },
-    "haran_geppaku_futsu": {
-      "name": {
-        "en": "Haran Geppaku Futsu",
-        "zh": "波乱月白经津"
-      },
-      "effect": {
-        "en": "Obtain 12%/15%/18%/21%/24% All Elemental DMG Bonus. When other nearby party members use Elemental Skills, the character equipping this weapon will gain 1 Wavespike stack. Max 2 stacks. This effect can be triggered once every 0.3s. When the character equipping this weapon uses an Elemental Skill, all stacks of Wavespike will be consumed to gain Rippling Upheaval: each stack of Wavespike consumed will increase Normal Attack DMG by 20%/25%/30%/35%/40% for 8s.",
-        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成；队伍中附近的其他角色在施放元素战技时，会为装备该武器的角色产生1层「波穗」效果，至多叠加2层，每0.3秒最多触发1次。装备该武器的角色施放元素战技时，如果有积累的「波穗」效果，则将消耗已有的「波穗」，获得「波乱」：根据消耗的层数，每层提升20%/25%/30%/35%/40%普通攻击伤害，持续8秒。"
-      }
-    },
-    "crescent_pike": {
-      "name": {
-        "en": "Crescent Pike",
-        "zh": "流月针"
-      },
-      "effect": {
-        "en": "After picking up an Elemental Orb/Particle, Normal and Charged Attacks deal additional DMG equal to 20%/25%/30%/35%/40% of ATK for 5s.",
-        "zh": "获得元素微粒或元素晶球后的5秒内，普通攻击和重击额外造成20/25/30/35/40%攻击力伤害。"
-      }
-    },
-    "the_widsith": {
-      "name": {
-        "en": "The Widsith",
-        "zh": "流浪乐章"
-      },
-      "effect": {
-        "en": "When the character takes the field, they will gain a random theme song for 10s. This can only occur once every 30s. Recitative: ATK is increased by 60%/75%/90%/105%/120%. Aria: Increases all Elemental DMG by 48%/60%/72%/84%/96%. Interlude: Elemental Mastery is increased by 240/300/360/420/480.",
-        "zh": "角色登场时，随机获得一个主题曲，持续10秒。每30秒只能触发一次。宣叙调：攻击力提升60%/75%/90%/105%/120%；咏叹调：全元素伤害提升48%/60%/72%/84%/96%;间奏曲：元素精通提升240/300/360/420/480。"
-      }
-    },
-    "wolfs_gravestone": {
-      "name": {
-        "en": "Wolf's Gravestone",
-        "zh": "狼的末路"
-      },
-      "effect": {
-        "en": "Increases ATK by 20%/25%/30%/35%/40%. On hit, attacks against opponents with less than 30% HP increase all party members' ATK by 40%/50%/60%/70%/80% for 12s. Can only occur once every 30s.",
-        "zh": "攻击力提高20%/25%/30%/35%/40%；攻击命中生命值低于30%的敌人时，队伍中所有成员的攻击力提高40%/50%/60%/70%/80%，持续12秒。该效果30秒只能触发一次。"
-      }
-    },
-    "twin_nephrite": {
-      "name": {
-        "en": "Twin Nephrite",
-        "zh": "甲级宝珏"
-      },
-      "effect": {
-        "en": "Defeating an opponent increases Movement SPD and ATK by 12%/14%/16%/18%/20% for 15s.",
-        "zh": "击败敌人后的15秒内，移动速度和攻击力提升12%/14%/16%/18%/20%。"
-      }
-    },
-    "whiteblind": {
-      "name": {
-        "en": "Whiteblind",
-        "zh": "白影剑"
-      },
-      "effect": {
-        "en": "On hit, Normal or Charged Attacks increase ATK and DEF by 6%/7.5%/9%/10.5%/12% for 6s. Max 4 stacks. This effect can only occur once every 0.5s.",
-        "zh": "普通攻击和重击命中后，攻击力和防御力提高6%/7.5%/9%/10.5%/12%。该效果持续6秒，最多叠加4层，每0.5秒只能触发一次。"
-      }
-    },
-    "white_tassel": {
-      "name": {
-        "en": "White Tassel",
-        "zh": "白缨枪"
-      },
-      "effect": {
-        "en": "Increases Normal Attack DMG by 24%/30%/36%/42%/48%.",
-        "zh": "普通攻击造成的伤害提升24%/30%/36%/42%/48%。"
-      }
-    },
-    "hakushin_ring": {
-      "name": {
-        "en": "Hakushin Ring",
-        "zh": "白辰之环"
-      },
-      "effect": {
-        "en": "After the character equipped with this weapon triggers an Electro elemental reaction, nearby party members of an Elemental Type involved in the elemental reaction receive a 10%/12.5%/15%/17.5%/20% Elemental DMG Bonus for their element, lasting 6s. Elemental Bonuses gained in this way cannot be stacked.",
-        "zh": "装备该武器的角色触发雷元素相关反应后，队伍中附近的与该元素反应相关的元素类型的角色，获得10%/12.5%/15%/17.5%/20%对应元素的元素伤害加成，持续6秒。通过这种方式，角色获得的元素伤害加成无法叠加。"
-      }
-    },
-    "white_iron_greatsword": {
-      "name": {
-        "en": "White Iron Greatsword",
-        "zh": "白铁大剑"
-      },
-      "effect": {
-        "en": "Defeating an opponent restores 8%/10%/12%/14%/16% HP.",
-        "zh": "击败敌人时，恢复8%/10%/12%/14%/16%生命值。"
-      }
-    },
-    "hamayumi": {
-      "name": {
-        "en": "Hamayumi",
-        "zh": "破魔之弓"
-      },
-      "effect": {
-        "en": "Increases Normal Attack DMG by 16%/20%/24%/28%/32% and Charged Attack DMG by 12%/15%/18%/21%/24%. When the equipping character's Energy reaches 100%, this effect is increased by 100%.",
-        "zh": "普通攻击造成的伤害提升16%/20%/24%/28%/32%，重击造成的伤害提升12%/15%/18%/21%/24%。当装备该武器的角色元素能量等于100%时，这个效果提升100%。"
-      }
-    },
-    "primordial_jade_cutter": {
-      "name": {
-        "en": "Primordial Jade Cutter",
-        "zh": "磐岩结绿"
-      },
-      "effect": {
-        "en": "HP increased by 20%/25%/30%/35%/40%. Additionally, provides an ATK Bonus based on 1.2%/1.5%/1.8%/2.1%/2.4% of the wielder's Max HP.",
-        "zh": "生命值提升20%/25%/30%/35%/40%。此外，基于装备该武器的角色生命值上限的1.2%/1.5%/1.8%/2.1%/2.4%，获得攻击力加成。"
-      }
-    },
-    "kaguras_verity": {
-      "name": {
-        "en": "Kagura's Verity",
-        "zh": "神乐之真意"
-      },
-      "effect": {
-        "en": "Gains the Kagura Dance effect when using an Elemental Skill, causing the Elemental Skill DMG of the character wielding this weapon to increase by 12%/15%/18%/21%/24% for 16s. Max 3 stacks. This character will gain 12%/15%/18%/21%/24% All Elemental DMG Bonus when they possess 3 stacks.",
-        "zh": "施放元素战技时，将获得「神乐舞」的效果，使装备该武器的角色的元素战技造成的伤害提高12%/15%/18%/21%/24%，该效果持续16秒，至多叠加3层。持有3层时，该角色获得12%/15%/18%/21%/24%所有元素伤害加成。"
-      }
-    },
-    "sharpshooters_oath": {
-      "name": {
-        "en": "Sharpshooter's Oath",
-        "zh": "神射手之誓"
-      },
-      "effect": {
-        "en": "Increases DMG against weak spots by 24%/30%/36%/42%/48%.",
-        "zh": "针对要害造成的伤害提升24%/30%/36%/42%/48%。"
-      }
-    },
-    "sacrificial_sword": {
-      "name": {
-        "en": "Sacrificial Sword",
-        "zh": "祭礼剑"
-      },
-      "effect": {
-        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
-        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
-      }
-    },
-    "sacrificial_greatsword": {
-      "name": {
-        "en": "Sacrificial Greatsword",
-        "zh": "祭礼大剑"
-      },
-      "effect": {
-        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
-        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
-      }
-    },
-    "sacrificial_bow": {
-      "name": {
-        "en": "Sacrificial Bow",
-        "zh": "祭礼弓"
-      },
-      "effect": {
-        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
-        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
-      }
-    },
-    "sacrificial_fragments": {
-      "name": {
-        "en": "Sacrificial Fragments",
-        "zh": "祭礼残章"
-      },
-      "effect": {
-        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
-        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
-      }
-    },
-    "the_flute": {
-      "name": {
-        "en": "The Flute",
-        "zh": "笛剑"
-      },
-      "effect": {
-        "en": "Normal or Charged Attacks grant a Harmonic on hits. Gaining 5 Harmonics triggers the power of music and deals 100%/125%/150%/175%/200% ATK DMG to surrounding opponents. Harmonics last up to 30s, and a maximum of 1 can be gained every 0.5s.",
-        "zh": "普通攻击或重击命中时，会获得一个和音。积攒了5个和音后，释放音律的力量，对周围的敌人造成100%/125%/150%/175%/200%攻击力的伤害。和音最多存在30秒，每0.5秒至多获得1个和音。"
-      }
-    },
-    "elegy_for_the_end": {
-      "name": {
-        "en": "Elegy for the End",
-        "zh": "终末嗟叹之诗"
-      },
-      "effect": {
-        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases Elemental Mastery by 60/75/90/105/120. When the Elemental Skills or Elemental Bursts of the character wielding this weapon hit opponents, that character gains a Sigil of Remembrance. This effect can be triggered once every 0.2s and can be triggered even if said character is not on the field. When you possess 4 Sigils of Remembrance, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Farewell Song\" effect for 12s. \"Millennial Movement: Farewell Song\" increases Elemental Mastery by 100/125/150/175/200 and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Remembrance for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
-        "zh": "飘游风中的「千年的大乐章」的一部分。元素精通提高60/75/90/105/120点；元素战技或元素爆发命中敌人时，角色获得一枚追思之符，每0.2秒内至多触发一次，角色处于队伍后台也能触发。拥有4枚追思之符时，将消耗所有追思之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·别离之歌」效果：元素精通提高100/125/150/175/200点，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得追思之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
-      }
-    },
-    "the_stringless": {
-      "name": {
-        "en": "The Stringless",
-        "zh": "绝弦"
-      },
-      "effect": {
-        "en": "Increases Elemental Skill and Elemental Burst DMG by 24%/30%/36%/42%/48%.",
-        "zh": "元素战技与元素爆发的伤害提高24%/30%/36%/42%/48%。"
-      }
-    },
-    "emerald_orb": {
-      "name": {
-        "en": "Emerald Orb",
-        "zh": "翡玉法球"
-      },
-      "effect": {
-        "en": "Upon causing a Vaporize, Electro-Charged, Frozen, Bloom, Lunar-Charged, or a Hydro-infused Swirl reaction, ATK is increased by 20%/25%/30%/35%/40% for 12s.",
-        "zh": "触发蒸发、感电、冰冻、绽放或水元素扩散反应后的12秒内，攻击力提高20%/25%/30%/35%/40%。"
-      }
-    },
-    "festering_desire": {
-      "name": {
-        "en": "Festering Desire",
-        "zh": "腐殖之剑"
-      },
-      "effect": {
-        "en": "Increases Elemental Skill DMG by 16%/20%/24%/28%/32% and Elemental Skill CRIT Rate by 6%/7.5%/9%/10.5%/12%.",
-        "zh": "元素战技造成的伤害增加16%/20%/24%/28%/32%，元素战技的暴击率提升6%/7.5%/9%/10.5%/12%。"
-      }
-    },
-    "freedomsworn": {
-      "name": {
-        "en": "Freedom-Sworn",
-        "zh": "苍古自由之誓"
-      },
-      "effect": {
-        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases DMG by 10%/12.5%/15%/17.5%/20%. When the character wielding this weapon triggers Elemental Reactions, they gain a Sigil of Rebellion. This effect can be triggered once every 0.5s and can be triggered even if said character is not on the field. When you possess 2 Sigils of Rebellion, all of them will be consumed and all nearby party members will obtain \"Millennial Movement: Song of Resistance\" for 12s. \"Millennial Movement: Song of Resistance\" increases Normal, Charged and Plunging Attack DMG by 16%/20%/24%/28%/32% and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Rebellion for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
-        "zh": "飘游风中的「千年的大乐章」的一部分。造成的伤害提高10%/12.5%/15%/17.5%/20%；触发元素反应时，角色获得一枚奋起之符，每0.5秒内至多触发一次，角色处于队伍后台也能触发。拥有2枚奋起之符时，将消耗所有奋起之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·抗争之歌」效果：普通攻击、重击、下落攻击造成的伤害提高16%/20%/24%/28%/32%，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得奋起之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
-      }
-    },
-    "the_viridescent_hunt": {
-      "name": {
-        "en": "The Viridescent Hunt",
-        "zh": "苍翠猎弓"
-      },
-      "effect": {
-        "en": "Upon hit, Normal and Aimed Shot Attacks have a 50% chance to generate a Cyclone, which will continuously attract surrounding opponents, dealing 40%/50%/60%/70%/80% of ATK as DMG to these opponents every 0.5s for 4s. This effect can only occur once every 14/13/12/11/10s.",
-        "zh": "普通攻击与重击命中时，有50%几率生成一个风之眼，持续吸引周围敌人，并对其中的敌人每0.5秒造成40%/50%/60%/70%/80%攻击的伤害。该效果持续4秒，每14/13/12/11/10秒至多触发一次。"
-      }
-    },
-    "engulfing_lightning": {
-      "name": {
-        "en": "Engulfing Lightning",
-        "zh": "薙草之稻光"
-      },
-      "effect": {
-        "en": "ATK increased by 28%/35%/42%/49%/56% of Energy Recharge over the base 100%. You can gain a maximum bonus of 80%/90%/100%/110%/120% ATK. Gain 30%/35%/40%/45%/50% Energy Recharge for 12s after using an Elemental Burst.",
-        "zh": "攻击力获得提升，提升程度相当于元素充能效率超出100%部分的28%/35%/42%/49%/56%，至多通过这种方式提升80%/90%/100%/110%/120%。施放元素爆发后的12秒内，元素充能效率提升30%/35%/40%/45%/50%。"
-      }
-    },
-    "serpent_spine": {
-      "name": {
-        "en": "Serpent Spine",
-        "zh": "螭骨剑"
-      },
-      "effect": {
-        "en": "Every 4s a character is on the field, they will deal 6%/7%/8%/9%/10% more DMG and take 3%/2.7%/2.4%/2.2%/2% more DMG. This effect has a maximum of 5 stacks and will not be reset if the character leaves the field, but will be reduced by 1 stack when the character takes DMG.",
-        "zh": "角色在场上时，每4秒提升6%/7%/8%/9%/10%造成的伤害，3%/2.7%/2.4%/2.2%/2%受到的伤害。该效果最多叠加5层，不随角色退场重置，受到伤害后会减少1层效果。"
-      }
-    },
-    "luxurious_sealord": {
-      "name": {
-        "en": "Luxurious Sea-Lord",
-        "zh": "衔珠海皇"
-      },
-      "effect": {
-        "en": "Increases Elemental Burst DMG by 12%/15%/18%/21%/24%. When Elemental Burst hits opponents, there is a 100% chance of summoning a huge onrush of tuna that deals 100%/125%/150%/175%/200% ATK as AoE DMG. This effect can occur once every 15s.",
-        "zh": "元素爆发造成的伤害提升12%/15%/18%/21%/24%。元素爆发命中敌人时，有100%概率召唤大鲔冲击，造成100%/125%/150%/175%/200%攻击力的范围伤害。该效果每15秒至多触发一次。"
-      }
-    },
-    "favonius_sword": {
-      "name": {
-        "en": "Favonius Sword",
-        "zh": "西风剑"
-      },
-      "effect": {
-        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
-        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
-      }
-    },
-    "favonius_greatsword": {
-      "name": {
-        "en": "Favonius Greatsword",
-        "zh": "西风大剑"
-      },
-      "effect": {
-        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
-        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
-      }
-    },
-    "favonius_warbow": {
-      "name": {
-        "en": "Favonius Warbow",
-        "zh": "西风猎弓"
-      },
-      "effect": {
-        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
-        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
-      }
-    },
-    "favonius_codex": {
-      "name": {
-        "en": "Favonius Codex",
-        "zh": "西风秘典"
-      },
-      "effect": {
-        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
-        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
-      }
-    },
-    "favonius_lance": {
-      "name": {
-        "en": "Favonius Lance",
-        "zh": "西风长枪"
-      },
-      "effect": {
-        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
-        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
-      }
-    },
-    "thrilling_tales_of_dragon_slayers": {
-      "name": {
-        "en": "Thrilling Tales of Dragon Slayers",
-        "zh": "讨龙英杰谭"
-      },
-      "effect": {
-        "en": "When switching characters, the new character taking the field has their ATK increased by 24%/30%/36%/42%/48% for 10s. This effect can only occur once every 20s.",
-        "zh": "主动切换角色时，新登场的角色攻击力提升24%/30%/36%/42%/48%，持续10秒。该效果每20秒只能触发一次。"
-      }
-    },
-    "oathsworn_eye": {
-      "name": {
-        "en": "Oathsworn Eye",
-        "zh": "证誓之明瞳"
-      },
-      "effect": {
-        "en": "Increases Energy Recharge by 24%/30%/36%/42%/48% for 10s after using an Elemental Skill.",
-        "zh": "施放元素战技后，元素充能效率提升24%/30%/36%/42%/48%，持续10秒。"
-      }
-    },
-    "prototype_archaic": {
-      "name": {
-        "en": "Prototype Archaic",
-        "zh": "试作古华"
-      },
-      "effect": {
-        "en": "On hit, Normal or Charged Attacks have a 50% chance to deal an additional 240%/300%/360%/420%/480% ATK DMG to opponents within a small AoE. Can only occur once every 15s.",
-        "zh": "普通攻击和重击命中时，有50%的概率对小范围内的敌人造成240%/300%/360%/420%/480%攻击力的额外伤害。该效果每15秒只能触发一次。"
-      }
-    },
-    "prototype_rancour": {
-      "name": {
-        "en": "Prototype Rancour",
-        "zh": "试作斩岩"
-      },
-      "effect": {
-        "en": "On hit, Normal or Charged Attacks increase ATK and DEF by 4%/5%/6%/7%/8% for 6s. Max 4 stacks. This effect can only occur once every 0.3s.",
-        "zh": "普通攻击或重击命中时，攻击力和防御力提高4%/5%/6%/7%/8%，持续6秒，最多叠加4层。该效果每0.3秒只能触发一次。"
-      }
-    },
-    "prototype_starglitter": {
-      "name": {
-        "en": "Prototype Starglitter",
-        "zh": "试作星镰"
-      },
-      "effect": {
-        "en": "After using an Elemental Skill, increases Normal and Charged Attack DMG by 8%/10%/12%/14%/16% for 12s. Max 2 stacks.",
-        "zh": "施放元素战技后，普通攻击和重击造成的伤害提高8%/10%/12%/14%/16%。该效果持续12秒，最多叠加2层。"
-      }
-    },
-    "prototype_crescent": {
-      "name": {
-        "en": "Prototype Crescent",
-        "zh": "试作澹月"
-      },
-      "effect": {
-        "en": "Charged Attack hits on weak points increase Movement SPD by 10% and ATK by 36%/45%/54%/63%/72% for 10s.",
-        "zh": "重击若命中要害，则提升10%移动速度与36%/45%/54%/63%/72%攻击力，持续10秒。"
-      }
-    },
-    "prototype_amber": {
-      "name": {
-        "en": "Prototype Amber",
-        "zh": "试作金珀"
-      },
-      "effect": {
-        "en": "Using an Elemental Burst regenerates 4/4.5/5/5.5/6 Energy every 2s for 6s. All party members will regenerate 4%/4.5%/5%/5.5%/6% HP every 2s for this duration.",
-        "zh": "施放元素爆发后6秒内，每2秒恢复4/4.5/5/5.5/6点元素能量，队伍中的所有角色每2秒恢复4%/4.5%/5%/5.5%/6%生命值。"
-      }
-    },
-    "vortex_vanquisher": {
-      "name": {
-        "en": "Vortex Vanquisher",
-        "zh": "贯虹之槊"
-      },
-      "effect": {
-        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
-        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
-      }
-    },
-    "redhorn_stonethresher": {
-      "name": {
-        "en": "Redhorn Stonethresher",
-        "zh": "赤角石溃杵"
-      },
-      "effect": {
-        "en": "DEF is increased by 28%/35%/42%/49%/56%. Normal and Charged Attack DMG is increased by 40%/50%/60%/70%/80% of DEF.",
-        "zh": "防御力提高28%/35%/42%/49%/56%；普通攻击与重击造成的伤害值提高，提高数值相当于防御力的40%/50%/60%/70%/80%。"
-      }
-    },
-    "cinnabar_spindle": {
-      "name": {
-        "en": "Cinnabar Spindle",
-        "zh": "辰砂之纺锤"
-      },
-      "effect": {
-        "en": "Elemental Skill DMG is increased by 40%/50%/60%/70%/80% of DEF. The effect will be triggered no more than once every 1.5s and will be cleared 0.1s after the Elemental Skill deals DMG.",
-        "zh": "元素战技造成的伤害值提高，提高数值相当于防御力的40%/50%/60%/70%/80%。该效果每1.5秒最多触发一次，并将在元素战技造成伤害后的0.1秒后清除效果。"
-      }
-    },
-    "the_bell": {
-      "name": {
-        "en": "The Bell",
-        "zh": "钟剑"
-      },
-      "effect": {
-        "en": "Taking DMG generates a shield which absorbs DMG up to 20%/23%/26%/29%/32% of Max HP. This shield lasts for 10s or until broken, and can only be triggered once every 45s. While protected by a shield, the character gains 12%/15%/18%/21%/24% increased DMG.",
-        "zh": "受到伤害时，生成一个伤害吸收量等同于生命值上限20%/23%/26%/29%/32%的护盾，持续10秒或直到护盾失效,每45/45/45/45/45秒只能触发一次。角色处于护盾庇护下时，造成的伤害提升12%/15%/18%/21%/24%。"
-      }
-    },
-    "compound_bow": {
-      "name": {
-        "en": "Compound Bow",
-        "zh": "钢轮弓"
-      },
-      "effect": {
-        "en": "Normal Attack and Charged Attack hits increase ATK by 4%/5%/6%/7%/8% and Normal ATK SPD by 1.2%/1.5%/1.8%/2.1%/2.4% for 6s. Max 4 stacks. Can only occur once every 0.3s.",
-        "zh": "普通攻击与重击命中时，提升4%/5%/6%/7%/8%攻击力与1.2%/1.5%/1.8%/2.1%/2.4%普通攻击速度。该效果持续6秒，最多可以叠加4层，每0.3秒只能触发一次。"
-      }
-    },
-    "halberd": {
-      "name": {
-        "en": "Halberd",
-        "zh": "钺矛"
-      },
-      "effect": {
-        "en": "Normal Attacks deal an additional 200%/240%/280%/320% ATK as DMG. This effect can only occur once every 10s.",
-        "zh": "对普通攻击命中的敌人造成200%/240%/280%/320%攻击力的额外伤害。该效果每10秒只能触发一次。"
-      }
-    },
-    "ferrous_shadow": {
-      "name": {
-        "en": "Ferrous Shadow",
-        "zh": "铁影阔剑"
-      },
-      "effect": {
-        "en": "When HP falls below 70%/75%/80%/85%/90%, increases Charged Attack DMG by 30%/35%/40%/45%/50% and Charged Attacks become harder to interrupt.",
-        "zh": "生命值低于70%/75%/80%/85%/90%时，重击不会轻易被打断，并提高30%/35%/40%/45%/50%重击伤害。"
-      }
-    },
-    "iron_sting": {
-      "name": {
-        "en": "Iron Sting",
-        "zh": "铁蜂刺"
-      },
-      "effect": {
-        "en": "Dealing Elemental DMG increases all DMG by 6%/7.5%/9%/10.5%/12% for 6s. Max 2 stacks. Can occur once every 1s.",
-        "zh": "造成元素伤害后的6秒内，角色造成的伤害提高6%/7.5%/9%/10.5%/12%，该效果最多叠加2层。该效果每1秒可以触发一次。"
-      }
-    },
-    "amos_bow": {
-      "name": {
-        "en": "Amos' Bow",
-        "zh": "阿莫斯之弓"
-      },
-      "effect": {
-        "en": "Increases Normal and Charged Attack DMG by 12%/15%/18%/21%/24%. After a Normal or Charged Attack is fired, DMG dealt increases by a further 8%/10%/12%/14%/16% every 0.1s the arrow is in the air for up to 5 times.",
-        "zh": "普通攻击与重击造成的伤害提升12%/15%/18%/21%/24%；普通攻击与重击的箭矢发射后每经过0.1秒，伤害还会提升8%/10%/12%/14%/16%，至多提升5次。"
-      }
-    },
-    "sword_of_descension": {
-      "name": {
-        "en": "Sword of Descension",
-        "zh": "降临之剑"
-      },
-      "effect": {
-        "en": "Effective only on the following platform: \"PlayStation Network\"Hitting opponents with Normal and Charged Attacks grants a 50% chance to deal 200% ATK as DMG in a small AoE. This effect can only occur once every 10s. Additionally, if the Traveler equips the Sword of Descension, their ATK is increased by 66.",
-        "zh": "仅在以下平台生效： \"PlayStation Network\" 普通攻击与重击命中敌人后有50%概率在小范围内造成200%攻击力的伤害。该效果每10秒只能触发一次；此外，旅行者装备降临之剑时，攻击力提升66点。"
-      }
-    },
-    "rainslasher": {
-      "name": {
-        "en": "Rainslasher",
-        "zh": "雨裁"
-      },
-      "effect": {
-        "en": "Increases DMG against opponents affected by Hydro or Electro by 20%/24%/28%/32%/36%.",
-        "zh": "对处于水元素或雷元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
-      }
-    },
-    "snowtombed_starsilver": {
-      "name": {
-        "en": "Snow-Tombed Starsilver",
-        "zh": "雪葬的星银"
-      },
-      "effect": {
-        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
-        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
-      }
-    },
-    "mistsplitter_reforged": {
-      "name": {
-        "en": "Mistsplitter Reforged",
-        "zh": "雾切之回光"
-      },
-      "effect": {
-        "en": "Gain a 12%/15%/18%/21%/24% Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a 8%/16%/28% | 10%/20%/35% | 12%/24%/42% | 14%/28%/49% | 16%/32%/56% Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of the Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
-        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成，并能获得「雾切之巴印」的威势。雾切之巴印：持有1/2/3层雾切之巴印时，获得8%/16%/28% | 10%/20%/35% | 12%/24%/42% | 14%/28%/49% | 16%/32%/56%自己的元素类型的元素伤害加成。在下列情况下，角色将各获得1层雾切之巴印：普通攻击造成元素伤害时，持续5秒；施放元素爆发时，持续10秒；此外，角色元素能量低于100%时，将获得1层雾切之巴印，此雾切之巴印会在角色的元素能量充满时消失。每层雾切之巴印的持续时间独立计算。"
-      }
-    },
-    "windblume_ode": {
-      "name": {
-        "en": "Windblume Ode",
-        "zh": "风花之颂"
-      },
-      "effect": {
-        "en": "After using an Elemental Skill, receive a boon from the ancient wish of the Windblume, increasing ATK by 16%/20%/24%/28%/32% for 6s.",
-        "zh": "施放元素战技时，获得风之花的悠古愿望加持，攻击力提升16%/20%/24%/28%/32%，持续6秒。"
-      }
-    },
-    "aquila_favonia": {
-      "name": {
-        "en": "Aquila Favonia",
-        "zh": "风鹰剑"
-      },
-      "effect": {
-        "en": "ATK is increased by 20%/25%/30%/35%/40%. Triggers on taking DMG: the soul of the Falcon of the West awakens, holding the banner of resistance aloft, regenerating HP equal to 100%/115%/130%/145%/160% of ATK and dealing 200%/230%/260%/290%/320% of ATK as DMG to surrounding opponents. This effect can only occur once every 15s.",
-        "zh": "攻击力提高20%/25%/30%/35%/40%；受到伤害时触发：高扬抗争旗号的西风鹰之魂苏醒，恢复等同于攻击力的100%/115%/130%/145%/160%的生命值，并对周围的敌人造成200%/230%/260%/290%/320%攻击力的伤害。该效果每15秒只能触发一次。"
-      }
-    },
-    "skyrider_greatsword": {
-      "name": {
-        "en": "Skyrider Greatsword",
-        "zh": "飞天大御剑"
-      },
-      "effect": {
-        "en": "On hit, Normal or Charged Attacks increase ATK by 6%/7%/8%/9%/10% for 6s. Max 4 stacks. Can occur once every 0.5s.",
-        "zh": "普通攻击和重击命中时，攻击力提高6%/7%/8%/9%/10%，持续6秒，最多叠加4层。该效果每0.5秒只能触发一次。"
-      }
-    },
-    "skyrider_sword": {
-      "name": {
-        "en": "Skyrider Sword",
-        "zh": "飞天御剑"
-      },
-      "effect": {
-        "en": "Using an Elemental Burst grants a 12%/15%/18%/21%/24% increase in ATK and Movement SPD for 15s.",
-        "zh": "施放元素爆发后，提高12%/15%/18%/21%/24%攻击力和移动速度，持续15秒。"
-      }
-    },
-    "thundering_pulse": {
-      "name": {
-        "en": "Thundering Pulse",
-        "zh": "飞雷之弦振"
-      },
-      "effect": {
-        "en": "Increases ATK by 20%/25%/30%/35%/40% and grants the might of the Thunder Emblem. At stack levels 1/2/3, the Thunder Emblem increases Normal Attack DMG by 12%/24%/40% | 15%/30%/50% | 18%/36%/60% | 21%/42%/70% | 24%48%/80%. The character will obtain 1 stack of Thunder Emblem in each of the following scenarios: Normal Attack deals DMG (stack lasts 5s), casting Elemental Skill (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
-        "zh": "攻击力提高20%/25%/30%/35%/40%，并能获得「飞雷之巴印」的威势。飞雷之巴印：持有1/2/3层飞雷之巴印时，普通攻击造成的伤害提高12/24/40%/15/30/50%/18/36/60%/21/42/70%/24/48/80%。在下列情况下，角色将各获得1层飞雷之巴印：普通攻击造成伤害时，持续5秒；施放元素战技时，持续10秒；此外，角色元素能量低于100%时，将获得1层飞雷之巴印，此飞雷之巴印会在角色的元素能量充满时消失。每层飞雷之巴印的持续时间独立计算。"
-      }
-    },
-    "magic_guide": {
-      "name": {
-        "en": "Magic Guide",
-        "zh": "魔导绪论"
-      },
-      "effect": {
-        "en": "Increases DMG against opponents affected by Hydro or Electro by 12%/15%/18%/21%/24%.",
-        "zh": "对处于水元素或雷元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
-      }
-    },
-    "raven_bow": {
-      "name": {
-        "en": "Raven Bow",
-        "zh": "鸦羽弓"
-      },
-      "effect": {
-        "en": "Increases DMG against opponents affected by Hydro or Pyro by 12%/15%/18%/21%/24%.",
-        "zh": "对处于水元素或火元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
-      }
-    },
-    "harbinger_of_dawn": {
-      "name": {
-        "en": "Harbinger of Dawn",
-        "zh": "黎明神剑"
-      },
-      "effect": {
-        "en": "When HP is above 90%, increases CRIT Rate by 14%/17.5%/21%/24.5%/28%.",
-        "zh": "生命值高于90%时，暴击率提升14%/17.5%/21%/24.5%/28%。"
-      }
-    },
-    "the_black_sword": {
-      "name": {
-        "en": "The Black Sword",
-        "zh": "黑剑"
-      },
-      "effect": {
-        "en": "Increases DMG dealt by Normal and Charged Attacks by 20%/25%/30%/35%/40%. Additionally, regenerates 60%/70%/80%/90%/100% of ATK as HP when Normal and Charged Attacks score a CRIT Hit. This effect can occur once every 5s.",
-        "zh": "普通攻击与重击的造成的伤害提升20%/25%/30%/35%/40%；此外，普通攻击与重击暴击时，回复等同于攻击力60%/70%/80%/90%/100%的生命值。该效果每5秒至多发动一次。"
-      }
-    },
-    "blackcliff_pole": {
-      "name": {
-        "en": "Blackcliff Pole",
-        "zh": "黑岩刺枪"
-      },
-      "effect": {
-        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
-        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
-      }
-    },
-    "blackcliff_warbow": {
-      "name": {
-        "en": "Blackcliff Warbow",
-        "zh": "黑岩战弓"
-      },
-      "effect": {
-        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
-        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
-      }
-    },
-    "blackcliff_slasher": {
-      "name": {
-        "en": "Blackcliff Slasher",
-        "zh": "黑岩斩刀"
-      },
-      "effect": {
-        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
-        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
-      }
-    },
-    "blackcliff_agate": {
-      "name": {
-        "en": "Blackcliff Agate",
-        "zh": "黑岩绯玉"
-      },
-      "effect": {
-        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
-        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
-      }
-    },
-    "blackcliff_longsword": {
-      "name": {
-        "en": "Blackcliff Longsword",
-        "zh": "黑岩长剑"
-      },
-      "effect": {
-        "en": "After defeating an opponent, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
-        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
-      }
-    },
-    "black_tassel": {
-      "name": {
-        "en": "Black Tassel",
-        "zh": "黑缨枪"
-      },
-      "effect": {
-        "en": "Increases DMG against slimes by 40%/50%/60%/70%/80%.",
-        "zh": "对史莱姆类敌人造成的伤害增加40%/50%/60%/70%/80%。"
-      }
-    },
-    "dragonspine_spear": {
-      "name": {
-        "en": "Dragonspine Spear",
-        "zh": "龙脊长枪"
-      },
-      "effect": {
-        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
-        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
-      }
-    },
-    "aqua_simulacra": {
-      "name": {
-        "en": "Aqua Simulacra",
-        "zh": "若水"
-      },
-      "effect": {
-        "en": "HP is increased by 16%/20%/24%/28%/32%. When there are opponents nearby, the DMG dealt by the wielder of this weapon is increased by 20%/25%/30%/35%/40%. This will take effect whether the character is on-field or not.",
-        "zh": "生命值提升16%/20%/24%/28%/32%。周围存在敌人时，装备该武器的角色造成的伤害都会提升20%/25%/30%/35%/40%，不论该角色处于场上或是处于队伍后台。"
-      }
-    },
-    "fading_twilight": {
-      "name": {
-        "en": "Fading Twilight",
-        "zh": "落霞"
-      },
-      "effect": {
-        "en": "Has three states, Evengleam, Afterglow, and Dawnblaze, which increase DMG dealt by 6%/10%/14% | 7.5%/12.5%/17.5% | 9%/15%/21% | 10.5%/17.5%/24.5% | 12%/20%/28% respectively. When attacks hit opponents, this weapon will switch to the next state. This weapon can change states once every 7s. The character equipping this weapon can still trigger the state switch while not on the field.",
-        "zh": "具有夕暮、流霞、朝晖三种状态，分别能使造成的伤害提升6%/10%/14%/7.5%/12.5%/17.5%/9%/15%/21%/10.5%/17.5%/24.5%/12%/20%/28%。攻击命中敌人后，将转换为下一种状态，每7秒至多转换一次状态。装备该武器的角色处于队伍后台时该效果依旧能触发转换。"
-      }
-    },
-    "kagotsurube_isshin": {
-      "name": {
-        "en": "Kagotsurube Isshin",
-        "zh": "笼钓瓶一心"
-      },
-      "effect": {
-        "en": "When a Normal, Charged, or Plunging Attack hits an opponent, it will whip up a Hewing Gale, dealing AoE DMG equal to 180% of ATK and increasing ATK by 15% for 8s. This effect can be triggered once every 8s.",
-        "zh": "普通攻击、重击或下落攻击命中敌人时，将卷起切落风，造成180%攻击力的范围伤害，并且使攻击力提升15%，持续8秒。该效果每8秒至多触发一次。"
-      }
-    },
-    "hunters_path": {
-      "name": {
-        "en": "Hunter's Path",
-        "zh": "猎人之径"
-      },
-      "effect": {
-        "en": "Gain 12%/15%/18%/21%/24% All Elemental DMG Bonus. Obtain the Tireless Hunt effect after hitting an opponent with a Charged Attack. This effect increases Charged Attack DMG by 160%/200%/240%/280%/320% of Elemental Mastery. This effect will be removed after 12 Charged Attacks or 10s. Only 1 instance of Tireless Hunt can be gained every 12s.",
-        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成。重击命中敌人后,将获得「无休止的狩猎」：重击造成的伤害值提高，提高值相当于元素精通数值的160%/200%/240%/280%/320%。该效果将在生效12次或10秒后消失，每12秒至多获得一次无休止的狩猎。"
-      }
-    },
-    "end_of_the_line": {
-      "name": {
-        "en": "End of the Line",
-        "zh": "竭泽"
-      },
-      "effect": {
-        "en": "Triggers the Flowrider effect after using an Elemental Skill, dealing 80%/100%/120%/140%/160% ATK as AoE DMG upon hitting an opponent with an attack. Flowrider will be removed after 15s or after causing 3 instances of AoE DMG. Only 1 instance of AoE DMG can be caused every 2s in this way. Flowrider can be triggered once every 12s.",
-        "zh": "施放元素战技后,将触发「沿洄」效果，在攻击命中敌人时造成80%/100%/120%/140%/160%攻击力的范围伤害，该效果将在15秒或触发3次范围伤害后移除。每2秒至多通过这种方式造成一次范围伤害,每12秒至多触发一次沿洄。"
-      }
-    },
-    "sapwood_blade": {
-      "name": {
-        "en": "Sapwood Blade",
-        "zh": "原木刀"
-      },
-      "effect": {
-        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 60/75/90/105/120 Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
-        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升60/75/90/105/120点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。"
-      }
-    },
-    "moonpiercer": {
-      "name": {
-        "en": "Moonpiercer",
-        "zh": "贯月矢"
-      },
-      "effect": {
-        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Revival will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 16%/20%/24%/28%/32% ATK for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field.",
-        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「苏生之叶」。拾取苏生之叶的角色攻击力提升16%/20%/24%/28%/32%，持续12秒。每20秒至多通过这种方式产生一枚苏生之叶。角色处于队伍后台时也能触发。"
-      }
-    },
-    "fruit_of_fulfillment": {
-      "name": {
-        "en": "Fruit of Fulfillment",
-        "zh": "盈满之实"
-      },
-      "effect": {
-        "en": "Obtain the \"Wax and Wane\" effect after an Elemental Reaction is triggered, gaining 24/27/30/33/36 Elemental Mastery while losing 5% ATK. For every 0.3s, 1 stack of Wax and Wane can be gained. Max 5 stacks. For every 6s that go by without an Elemental Reaction being triggered, 1 stack will be lost. This effect can be triggered even when the character is off-field.",
-        "zh": "触发元素反应后，获得「盈缺」效果：元素精通提升24/27/30/33/36点，攻击力降低5%。每0.3秒至多获得一层盈缺效果，至多叠加5层。未触发元素反应时将每6秒失去一层。角色处于队伍后台时也能触发效果。"
-      }
-    },
-    "kings_squire": {
-      "name": {
-        "en": "King's Squire",
-        "zh": "王下近侍"
-      },
-      "effect": {
-        "en": "Obtain the Teachings of the Forest effect when unleashing Elemental Skills and Bursts, increasing Elemental Mastery by 60/80/100/120/140 for 12s. This effect will be removed when switching characters. When the Teachings of the Forest effect ends or is removed, it will deal 100%/120%/140%/160%/180% of ATK as DMG to 1 nearby opponent. The Teachings of the Forest effect can be triggered once every 20s.",
-        "zh": "施放元素战技或元素爆发时，将获得「森林教诲」的效果，元素精通提升60/80/100/120/140点，持续12秒。该效果将在切换角色时移除。森林教诲的持续时间结束或被移除时，将对附近一名敌人造成100%/120%/140%/160%/180%攻击力的伤害。森林教诲每20秒至多触发一次。"
-      }
-    },
-    "forest_regalia": {
-      "name": {
-        "en": "Forest Regalia",
-        "zh": "森林王器"
-      },
-      "effect": {
-        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 60/75/90/105/120 Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
-        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升60/75/90/105/120点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。"
-      }
-    },
-    "missive_windspear": {
-      "name": {
-        "en": "Missive Windspear",
-        "zh": "风信之锋"
-      },
-      "effect": {
-        "en": "Within 10s after an Elemental Reaction is triggered, ATK is increased by 12%/15%/18%/21%/24% and Elemental Mastery is increased by 48/60/72/84/96.",
-        "zh": "触发元素反应后的10秒内，攻击力提升12%/15%/18%/21%/24%，元素精通提升48/60/72/84/96点。"
-      }
-    },
-    "makhaira_aquamarine": {
-      "name": {
-        "en": "Makhaira Aquamarine",
-        "zh": "玛海菈的水色"
-      },
-      "effect": {
-        "en": "The following effect will trigger every 10s: The equipping character will gain 24%/30%/36%/42%/48% of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
-        "zh": "每10秒，产生如下效果：基于装备者的元素精通的24%/30%/36%/42%/48%，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
-      }
-    },
-    "staff_of_the_scarlet_sands": {
-      "name": {
-        "en": "Staff of the Scarlet Sands",
-        "zh": "赤沙之杖"
-      },
-      "effect": {
-        "en": "The equipping character gains 52%/65%/78%/91%/104% of their Elemental Mastery as bonus ATK. When an Elemental Skill hits opponents, the Dream of the Scarlet Sands effect will be gained for 10s: The equipping character will gain 28%/35%/42%/49%/56% of their Elemental Mastery as bonus ATK. Max 3 stacks.",
-        "zh": "基于装备者元素精通的52%/65%/78%/91%/104%，获得攻击力加成。元素战技命中敌人时，将产生持续10秒的「赤沙之梦」效果：基于装备者元素精通的28%/35%/42%/49%/56%，获得攻击力加成，该效果至多叠加3层。"
-      }
-    },
-    "key_of_khajnisut": {
-      "name": {
-        "en": "Key of Khaj-Nisut",
-        "zh": "圣显之钥"
-      },
-      "effect": {
-        "en": "HP increased by 20%/25%/30%/35%/40%. When an Elemental Skill hits opponents, you gain the Grand Hymn effect for 20s. This effect increases the equipping character's Elemental Mastery by 0.12%/0.15%/0.18%/0.21%/0.24% of their Max HP. This effect can trigger once every 0.3s. Max 3 stacks. When this effect gains 3 stacks, or when the third stack's duration is refreshed, the Elemental Mastery of all nearby party members will be increased by 0.2%/0.25%/0.3%/0.35%/0.4% of the equipping character's max HP for 20s.",
-        "zh": "生命值提升20%/25%/30%/35%/40%。元素战技命中敌人时，将产生持续20秒的「宏大诗篇」效果：基于装备者生命值上限的0.12%/0.15%/0.18%/0.21%/0.24%，获得元素精通提升，该效果每0.3秒至多触发一次，至多叠加3层。该效果叠加至3层或3层的持续时间刷新时，将基于装备者生命值上限的0.2%/0.25%/0.3%/0.35%/0.4%，为队伍中附近所有角色提供元素精通提升，持续20秒。"
-      }
-    },
-    "xiphos_moonlight": {
-      "name": {
-        "en": "Xiphos' Moonlight",
-        "zh": "西福斯的月光"
-      },
-      "effect": {
-        "en": "The following effect will trigger every 10s: The equipping character will gain 0.036%/0.045%/0.054%/0.063%/0.072% Energy Recharge for each point of Elemental Mastery they possess for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
-        "zh": "每10秒，产生如下效果：装备者的每点元素精通，都会为该角色提升0.036%/0.045%/0.054%/0.063%/0.072%元素充能效率，并基于该提升的30%为队伍中附近的其他角色提升元素充能效率，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
-      }
-    },
-    "wandering_evenstar": {
-      "name": {
-        "en": "Wandering Evenstar",
-        "zh": "流浪的晚星"
-      },
-      "effect": {
-        "en": "The following effect will trigger every 10s: The equipping character will gain 24%/30%/36%/42%/48% of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
-        "zh": "每10秒，产生如下效果：基于装备者的元素精通的24%/30%/36%/42%/48%，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
-      }
-    },
-    "a_thousand_floating_dreams": {
-      "name": {
-        "en": "A Thousand Floating Dreams",
-        "zh": "千夜浮梦"
-      },
-      "effect": {
-        "en": "Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by 32/40/48/56/64. If not, increase the equipping character's DMG Bonus from their Elemental Type by 10%/14%/18%/22%/26%.",
-        "zh": "队伍中每个其他角色，都会依据元素类型与装备者相同与否，为装备者提供提升效果。相同：元素精通提升32点；不同：装备者元素类型的元素伤害加成提升10%。上述提升效果每种至多叠加3层。此外，队伍中装备者以外的附近角色的元素精通提升40点，多件同名武器产生的此效果可以叠加。"
-      }
-    },
-    "toukabou_shigure": {
-      "name": {
-        "en": "Toukabou Shigure",
-        "zh": "东花坊时雨"
-      },
-      "effect": {
-        "en": "After an attack hits opponents, it will inflict an instance of Cursed Parasol upon one of them for 10s. This effect can be triggered once every 15s. If this opponent is taken out during Cursed Parasol's duration, Cursed Parasol's CD will be refreshed immediately. The character wielding this weapon will deal 16%/20%/24%/28%/32% more DMG to the opponent affected by Cursed Parasol.",
-        "zh": "攻击命中敌人后，会为命中的一名敌人施加「纸伞作祟」状态，持续10秒。该效果每15秒至多触发一次；持续期间该敌人被击败时，将清除该效果的冷却时间。装备者对处于「纸伞作祟」状态下的敌人造成的伤害提升16%/20%/24%/28%/32%。"
-      }
-    },
-    "tulaytullahs_remembrance": {
-      "name": {
-        "en": "Tulaytullah's Remembrance",
-        "zh": "图莱杜拉的回忆"
-      },
-      "effect": {
-        "en": "Normal Attack SPD is increased by 10%/12.5%/15%/17.5%/20%. After the wielder unleashes an Elemental Skill, Normal Attack DMG will increase by 4.8%/6%/7.2%/8.4%/9.6% every second for 14s. After hitting an opponent with a Normal Attack during this duration, Normal Attack DMG will be increased by 9.6%/12%/14.4%/16.8%/19.2%. This increase can be triggered once every 0.3s. The maximum Normal Attack DMG increase per single duration of the overall effect is 48%/60%/72%/84%/96%. The effect will be removed when the wielder leaves the field, and using the Elemental Skill again will reset all DMG buffs.",
-        "zh": "普通攻击速度提升10%/12.5%/15%/17.5%/20%；施放元素战技后的14秒内：普通攻击造成的伤害每1秒提升4.8%/6%/7.2%/8.4%/9.6%；普通攻击命中敌人后，普通攻击造成的伤害提升9.6%/12%/14.4%/16.8%/19.2%，该效果每0.3秒至多触发1次。持续期间内，普通攻击造成的伤害至多通过上述效果提升至48%/60%/72%/84%/96%。角色退场时将移除效果，再次施放元素战技时会先移除原有的效果。"
-      }
-    },
-    "light_of_foliar_incision": {
-      "name": {
-        "en": "Light of Foliar Incision",
-        "zh": "裁叶萃光"
-      },
-      "effect": {
-        "en": "CRIT Rate is increased by 4%/5%/6%/7%/8%. When Normal Attacks deal Elemental DMG, the Foliar Incision effect will be obtained, increasing DMG dealt by Normal Attacks and Elemental Skills by 120%/150%/180%/210%/240% of Elemental Mastery. This effect will disappear after 28 DMG instances or 12s. You can obtain Foliar Incision once every 12s.",
-        "zh": "暴击率提升4%/5%/6%/7%/8%；普通攻击造成元素伤害后，获得「裁叶」效果：普通攻击和元素战技造成的伤害提高，提高值相当于元素精通的120%/150%/180%/210%/240%。该效果在生效28次或12秒后消失，每12秒至多获得一次「裁叶」效果。"
-      }
-    },
-    "mailed_flower": {
-      "name": {
-        "en": "Mailed Flower",
-        "zh": "饰铁之花"
-      },
-      "effect": {
-        "en": "Within 8s after the character's Elemental Skill hits an opponent or the character triggers an Elemental Reaction, their ATK and Elemental Mastery will be increased by 12%/15%/18%/21%/24% and 48/60/72/84/96 respectively.",
-        "zh": "元素战技命中敌人或触发元素反应后的8秒内，攻击力提升12%/15%/18%/21%/24%，元素精通提升48/60/72/84/96点。"
-      }
-    },
-    "beacon_of_the_reed_sea": {
-      "name": {
-        "en": "Beacon of the Reed Sea",
-        "zh": "苇海信标"
-      },
-      "effect": {
-        "en": "After the character's Elemental Skill hits an opponent, their ATK will be increased by 20%/25%/30%/35%/40% for 8s. After the character takes DMG, their ATK will be increased by 20%/25%/30%/35%/40% for 8s. The 2 aforementioned effects can be triggered even when the character is not on the field. Additionally, when not protected by a shield, the character's Max HP will be increased by 32%/40%/48%/56%/64%.",
-        "zh": "元素战技命中敌人后，攻击力提升20%，持续8秒；受到伤害后，攻击力提升20%，持续8秒。上述2种效果角色处于队伍后台时也能触发。此外，不处于护盾庇护下时，生命值上限提高32%。"
-      }
-    },
-    "jadefalls_splendor": {
-      "name": {
-        "en": "Jadefall's Splendor",
-        "zh": "碧落之珑"
-      },
-      "effect": {
-        "en": "For 3s after using an Elemental Burst or creating a shield, the equipping character can gain the Primordial Jade Regalia effect: Restore 4.5/5/5.5/6/6.5 Energy every 2.5s, and gain 0.3%/0.5%/0.7%/0.9%/1.1% Elemental DMG Bonus for their corresponding Elemental Type for every 1,000 Max HP they possess, up to 12%/20%/28%/36%/44%. Primordial Jade Regalia will still take effect even if the equipping character is not on the field.",
-        "zh": "施放元素爆发或创造护盾后的3秒内，将产生「定土玉圭」效果：每2.5秒恢复4.5点元素能量，并基于装备者的生命值上限，每1000点使其对应元素类型的元素伤害加成提高0.3%，至多提高12%。装备该武器的角色处于队伍后台时，依然能产生「定土玉圭」效果。"
-      }
-    },
-    "ibis_piercer": {
-      "name": {
-        "en": "Ibis Piercer",
-        "zh": "鹮穿之喙"
-      },
-      "effect": {
-        "en": "The character's Elemental Mastery will increase by 40/50/60/70/80 within 6s after Charged Attacks hit opponents. Max 2 stacks. This effect can be triggered once every 0.5s.",
-        "zh": "重击命中敌人后的6秒内，角色元素精通提升40/50/60/70/80点。该效果至多叠加2层，每0.5秒至多触发一次。"
-      }
-    },
-    "the_first_great_magic": {
-      "name": {
-        "en": "The First Great Magic",
-        "zh": "最初的大魔术"
-      },
-      "effect": {
-        "en": "DMG dealt by Charged Attacks increased by 16%/20%/24%/28%/32%. For every party member with the same Elemental Type as the wielder (including the wielder themselves), gain 1 Gimmick stack. For every party member with a different Elemental Type from the wielder, gain 1 Theatrics stack. When the wielder has 1/2/3 or more Gimmick stacks, ATK will be increased by 16%/32%/48% | 20%/40%/60% | 24%/48%/72% | 28%/56%/84% | 32%/64%/96%. When the wielder has 1/2/3 or more Theatrics stacks, Movement SPD will be increased by 4%/7%/10% | 6%/9%/12% | 8%/11%/14% | 10%/13%/16% | 12%/15%/18%.",
-        "zh": "重击造成的伤害提升16/20/24/28/32%；队伍中每存在一位与装备者元素类型相同的角色（包括装备者自身），将获得1层「手法」效果；每存在一位元素类型不同的角色，将获得1层「演技」效果。处于1/2/3层及以上「手法」效果下时，攻击力提升 16%/32%/48% | 20%/40%/60% | 24%/48%/72% | 28%/56%/84% | 32%/64%/96%；处于1/2/3层及以上「演技」效果下时，移动速度提升4%/7%/10% | 6%/9%/12% | 8%/11%/14% | 10%/13%/16% | 12%/15%/18%。"
-      }
-    },
-    "finale_of_the_deep": {
-      "name": {
-        "en": "Finale of the Deep",
-        "zh": "海渊终曲"
-      },
-      "effect": {
-        "en": "When using an Elemental Skill, ATK will be increased by 12%/15%/18%/21%/24% for 15s, and a Bond of Life worth 25% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, a maximum of 150/187.5/225/262.5/300 ATK will be gained based on 2.4/3/3.6/4.2/4.8% of the total amount of the Life Bond cleared, lasting for 15s.",
-        "zh": "施放元素战技时，攻击力提升12%/15%/18%/21%/24%，持续15秒，并赋予生命值上限25%的生命之契，该效果每10秒至多触发一次。生命之契清除时，基于清除值的2.4%/3%/3.6%/4.2%/4.8%提升至多150/187.5/225/262.5/300点攻击力，持续15秒。"
-      }
-    },
-    "tidal_shadow": {
-      "name": {
-        "en": "Tidal Shadow",
-        "zh": "浪影阔剑"
-      },
-      "effect": {
-        "en": "After the wielder is healed, ATK will be increased by 24%/30%/36%/42%/48% for 8s. This can be triggered even when the character is not on the field.",
-        "zh": "受到治疗后，攻击力提升24/30/36/42/48%，持续8秒。角色处于队伍后台也能触发。"
-      }
-    },
-    "rightful_reward": {
-      "name": {
-        "en": "Rightful Reward",
-        "zh": "公义的酬报"
-      },
-      "effect": {
-        "en": "When the wielder is healed, restore 8/10/12/14/16 Energy. This effect can be triggered once every 10s, and can occur even when the character is not on the field.",
-        "zh": "受到治疗时，恢复8/10/12/14/16点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。"
-      }
-    },
-    "song_of_stillness": {
-      "name": {
-        "en": "Song of Stillness",
-        "zh": "静谧之曲"
-      },
-      "effect": {
-        "en": "After the wielder is healed, they will deal 16%/20%/24%/28%/32% more DMG for 8s. This can be triggered even when the character is not on the field.",
-        "zh": "受到治疗后，造成的伤害提升16/20/24/28/32%，持续8秒。角色处于队伍后台也能触发。"
-      }
-    },
-    "flowing_purity": {
-      "name": {
-        "en": "Flowing Purity",
-        "zh": "纯水流华"
-      },
-      "effect": {
-        "en": "When using an Elemental Skill, All Elemental DMG Bonus will be increased by 8%/10%/12%/14%/16% for 15s, and a Bond of Life worth 24% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, every 1,000 HP cleared in the process will provide 2%/2.5%/3%/3.5%/4% All Elemental DMG Bonus, up to a maximum of 12%/15%/18%/21%/24%. This effect lasts 15s.",
-        "zh": "施放元素战技时，所有元素伤害加成提升8/10/12/14/16%，持续15秒，并赋予生命值上限24%的生命之契，该效果每10秒至多触发一次。生命之契清除时，每清除1000点将会提供2/2.5/3/3.5/4%所有元素伤害加成，至多通过这种方式获得12/15/18/21/24%所有元素伤害加成，持续15秒。"
-      }
-    },
-    "fleuve_cendre_ferryman": {
-      "name": {
-        "en": "Fleuve Cendre Ferryman",
-        "zh": "灰河渡手"
-      },
-      "effect": {
-        "en": "Increases Elemental Skill CRIT Rate by 8%/10%/12%/14%/16%. Additionally, increases Energy Recharge by 16%/20%/24%/28%/32% for 5s after using an Elemental Skill.",
-        "zh": "元素战技暴击率提升8%/10%/12%/14%/16%；此外，施放元素战技后的5秒内，元素充能效率提升16%/20%/24%/28%/32%。"
-      }
-    },
-    "wolffang": {
-      "name": {
-        "en": "Wolf-Fang",
-        "zh": "狼牙"
-      },
-      "effect": {
-        "en": "DMG dealt by Elemental Skill and Elemental Burst is increased by 16%/20%/24%/28%/32%. When an Elemental Skill hits an opponent, its CRIT Rate will be increased by 2%/2.%5/3%/3.5%/4%. When an Elemental Burst hits an opponent, its CRIT Rate will be increased by 2%/2.5%/3%/3.5%/4%. Both of these effects last 10s separately, have 4 max stacks, and can be triggered once every 0.1s.",
-        "zh": "元素战技与元素爆发造成的伤害提升16%/20%/24%/28%/32%。元素战技命中敌人时，元素战技的暴击率提升2%/2.5%/3%/3.5%/4%；元素爆发命中敌人时，元素爆发的暴击率提升2%/2.5%/3%/3.5%/4%。上述两种效果各自持续10秒，至多叠加4次，每0.1秒至多触发一次。"
-      }
-    },
-    "talking_stick": {
-      "name": {
-        "en": "Talking Stick",
-        "zh": "聊聊棒"
-      },
-      "effect": {
-        "en": "ATK will be increased by 16%/20%/24%/28%/32% for 15s after being affected by Pyro. This effect can be triggered once every 12s. All Elemental DMG Bonus will be increased by 12%/15%/18%/21%/24% for 15s after being affected by Hydro, Cryo, Electro, or Dendro. This effect can be triggered once every 12s.",
-        "zh": "承受火元素附着后的15秒内，攻击力提升16/20/24/28/32%，每12秒至多触发一次；承受水元素、冰元素、雷元素或草元素附着后的15秒内，所有元素伤害加成提升12/15/18/21/24%，每12秒至多触发一次。"
-      }
-    },
-    "ballad_of_the_fjords": {
-      "name": {
-        "en": "Ballad of the Fjords",
-        "zh": "峡湾长歌"
-      },
-      "effect": {
-        "en": "When there are at least 3 different Elemental Types in your party, Elemental Mastery will be increased by 120/150/180/210/240.",
-        "zh": "队伍中存在至少三种不同元素类型的角色时，元素精通提升120/150/180/210/240点。"
-      }
-    },
-    "scion_of_the_blazing_sun": {
-      "name": {
-        "en": "Scion of the Blazing Sun",
-        "zh": "烈阳之嗣"
-      },
-      "effect": {
-        "en": "After a Charged Attack hits an opponent, a Sunfire Arrow will descend upon the opponent hit, dealing 60%/75%/90%/105%/120% ATK as DMG, and applying the Heartsearer effect to the opponent damaged by said Arrow for 10s. Opponents affected by Heartsearer take 28%/35%/42%/49%/56% more Charged Attack DMG from the wielder. A Sunfire Arrow can be triggered once every 10s.",
-        "zh": "重击命中敌人后，会向命中的敌人降下阳炎矢，造成攻击力60/75/90/105/120%的伤害，并为受到阳炎矢伤害的敌人施加持续10秒的灼心效果。装备者的重击对处于灼心状态下的敌人造成的伤害提升28/35/42/49/56%。阳炎矢每10秒至多触发一次。"
-      }
-    },
-    "sacrificial_jade": {
-      "name": {
-        "en": "Sacrificial Jade",
-        "zh": "遗祀玉珑"
-      },
-      "effect": {
-        "en": "When not on the field for more than 5s, Max HP will be increased by 32%/40%/48%/56%/64% and Elemental Mastery will be increased by 40/50/60/70/80. These effects will be canceled after the wielder has been on the field for 10s.",
-        "zh": "处于队伍后台超过5秒后，生命值上限提升32/40/48/56/64%，元素精通提升40/50/60/70/80点。装备者登场并留在场上10秒后，该效果将失效。"
-      }
-    },
-    "the_dockhands_assistant": {
-      "name": {
-        "en": "The Dockhand's Assistant",
-        "zh": "船坞长剑"
-      },
-      "effect": {
-        "en": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain 40/50/60/70/80 Elemental Mastery, and 2s after the effect occurs, 2/2.5/3/3.5/4 Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
-        "zh": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高40/50/60/70/80点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复2/2.5/3/3.5/4点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。"
-      }
-    },
-    "portable_power_saw": {
-      "name": {
-        "en": "Portable Power Saw",
-        "zh": "便携动力锯"
-      },
-      "effect": {
-        "en": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain 40/50/60/70/80 Elemental Mastery, and 2s after the effect occurs, 2/2.5/3/3.5/4 Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
-        "zh": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高40/50/60/70/80点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复2/2.5/3/3.5/4点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。"
-      }
-    },
-    "prospectors_drill": {
-      "name": {
-        "en": "Prospector's Drill",
-        "zh": "勘探钻机"
-      },
-      "effect": {
-        "en": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain 3%/4%/5%/6%/7% ATK and 7%/8.5%/10%/11.5%/13% All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
-        "zh": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高3%/4%/5%/6%/7%攻击力与7%/8.5%/10%/11.5%/13%所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。"
-      }
-    },
-    "range_gauge": {
-      "name": {
-        "en": "Range Gauge",
-        "zh": "测距规"
-      },
-      "effect": {
-        "en": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain 3%/4%/5%/6%/7% ATK and 7%/8.5%/10%/11.5%/13% All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
-        "zh": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高3%/4%/5%/6%/7%攻击力与7%/8.5%/10%/11.5%/13%所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。"
-      }
-    },
-    "ballad_of_the_boundless_blue": {
-      "name": {
-        "en": "Ballad of the Boundless Blue",
-        "zh": "无垠蔚蓝之歌"
-      },
-      "effect": {
-        "en": "Within 6s after Normal or Charged Attacks hit an opponent, Normal Attack DMG will be increased by 8%/10%/12%/14%/16% and Charged Attack DMG will be increased by 6%/7.5%/9%/10.5%/12%. Max 3 stacks. This effect can be triggered once every 0.3s.",
-        "zh": "普通攻击或重击命中敌人后的6秒内，普通攻击造成的伤害提升8%/10%/12%/14%/16%，重击造成的伤害提升6%/7.5%/9%/10.5%/12%。该效果至多叠加3次，每0.3秒至多触发一次。"
-      }
-    },
-    "tome_of_the_eternal_flow": {
-      "name": {
-        "en": "Tome of the Eternal Flow",
-        "zh": "万世流涌大典"
-      },
-      "effect": {
-        "en": "HP is increased by 16%/20%/24%/28%/32%. When current HP increases or decreases, Charged Attack DMG will be increased by 14%/18%/22%/26%/30% for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the character has 3 stacks or a third stack's duration refreshes, 8/9/10/11/12 Energy will be restored. This Energy restoration effect can be triggered once every 12s.",
-        "zh": "生命值提升16/20/24/28/32%。当前生命值提升或降低时，重击造成的伤害提升14/18/22/26/30%。该效果持续4秒，至多叠加3次，每0.3秒至多触发一次；叠加至3层或3层的持续时间刷新时，恢复8/9/10/11/12点元素能量，每12秒至多通过这种方式恢复一次元素能量。"
-      }
-    },
-    "cashflow_supervision": {
-      "name": {
-        "en": "Cashflow Supervision",
-        "zh": "金流监督"
-      },
-      "effect": {
-        "en": "ATK is increased by 16%/20%/24%/28%/32%. When current HP increases or decreases, Normal Attack DMG will be increased by 16%/20%/24%/28%/32% and Charged Attack DMG will be increased by 14%/17.5%/21%/24.5%/28% for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the wielder has 3 stacks, ATK SPD will be increased by 8%/10%/12%/14%/16%.",
-        "zh": "攻击力提升16%/20%/24%/28%/32%。当前生命值提升或降低时，普通攻击造成的伤害提升16%/20%/24%/28%/32%，重击造成的伤害提升14%/17.5%/21%/24.5%/28%。该效果持续4秒，至多叠加3层，每0.3秒至多触发一次；处于叠加3层的状态下时，攻击速度提升8%/10%/12%/14%/16%。"
-      }
-    },
-    "splendor_of_tranquil_waters": {
-      "name": {
-        "en": "Splendor of Tranquil Waters",
-        "zh": "静水流涌之辉"
-      },
-      "effect": {
-        "en": "When the equipping character's current HP increases or decreases, Elemental Skill DMG dealt will be increased by 8%/10%/12%/14%/16% for 6s. Max 3 stacks. This effect can be triggered once every 0.2s. When other party members' current HP increases or decreases, the equipping character's Max HP will be increased by 14%/17.5%/21%/24.5%/28% for 6s. Max 2 stacks. This effect can be triggered once every 0.2s. The aforementioned effects can be triggered even if the wielder is off-field.",
-        "zh": "装备者的当前生命值提升或降低时，元素战技造成的伤害提升8%/10%/12%/14%/16%，该效果持续6秒，至多叠加3次，每0.2秒至多触发一次；队伍中其他角色的当前生命值提升或降低时，装备者的生命值上限提升14%/17.5%/21%/24.5%/28%，该效果持续6秒，至多叠加2次，每0.2秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。"
-      }
-    },
-    "sword_of_narzissenkreuz": {
-      "name": {
-        "en": "Sword of Narzissenkreuz",
-        "zh": "水仙十字之剑"
-      },
-      "effect": {
-        "en": "When the equipping character does not have an Arkhe: When Normal Attacks, Charged Attacks, or Plunging Attacks strike, a Pneuma or Ousia energy blast will be unleashed, dealing 160%/200%/240%/280%/320% of ATK as DMG. This effect can be triggered once every 12s. The energy blast type is determined by the current type of the Sword of Narzissenkreuz.",
-        "zh": "装备者不具备「始基力」时：普通攻击、重击、下落攻击命中时，会释放芒性或荒性的能量冲击，造成160%/200%/240%/280%/320%攻击力的伤害。该效果每12秒至多触发一次，能量冲击的类型由水仙十字之剑当前的属性决定。"
-      }
-    },
-    "verdict": {
-      "name": {
-        "en": "Verdict",
-        "zh": "裁断"
-      },
-      "effect": {
-        "en": "Increases ATK by 20%/25%/30%/35%/40%. When characters in your party obtain Elemental Shards from Crystallize reactions, the equipping character will gain 1 Seal, increasing Elemental Skill DMG by 18%/22.5%/27%/31.5%/36%. The Seal lasts for 15s, and the equipper may have up to 2 Seals at once. All of the equipper's Seals will disappear 0.2s after their Elemental Skill deals DMG.",
-        "zh": "攻击力提升20%/25%/30%/35%/40%；队伍中的角色获取结晶反应产生的晶片时，会为装备者赋予1枚「约印」，使元素战技造成的伤害提升18%/22.5%/27%/31.5%/36%，约印持续15秒，至多同时持有2枚。所有约印将在装备者的元素战技造成伤害后的0.2秒后移除。"
-      }
-    },
-    "ultimate_overlords_mega_magic_sword": {
-      "name": {
-        "en": "Ultimate Overlord's Mega Magic Sword",
-        "zh": "究极霸王超级魔剑"
-      },
-      "effect": {
-        "en": "ATK increased by 12%/15%/18%/21%/24%. That's not all! The support from all Melusines you've helped in Merusea Village fills you with strength! Based on the number of them you've helped, your ATK is increased by up to an additional 12%/15%/18%/21%/24%.",
-        "zh": "攻击力提升12%/15%/18%/21%/24%。不仅如此！海沫村中曾蒙妳/你帮助的美露莘们的声援心意充满了力量，依照她们的数目，攻击力至多进一步提升12%/15%/18%/21%/24%。"
-      }
-    },
-    "cranes_echoing_call": {
-      "name": {
-        "en": "Crane's Echoing Call",
-        "zh": "鹤鸣余音"
-      },
-      "effect": {
-        "en": "After the equipping character hits an opponent with a Plunging Attack, all nearby party members' Plunging Attacks deal 28%/41%/54%/67%/80% increased DMG for 20s. When nearby party members hit opponents with Plunging Attacks, they will restore 2.5/2.75/3/3.25/3.5 Energy to the equipping character. Energy can be restored this way every 0.7s.",
-        "zh": "装备者下落攻击命中敌人后，队伍中附近的所有角色下落攻击造成的伤害提高28%/41%/54%/67%/80%，持续20秒；队伍中附近的角色的下落攻击命中敌人时，为装备者恢复2.5/2.75/3/3.25/3.5点元素能量，每0.7秒至多通过这种方式恢复一次元素能量，装备者处于队伍后台时依然能通过这种方式恢复元素能量。"
-      }
-    },
-    "uraku_misugiri": {
-      "name": {
-        "en": "Uraku Misugiri",
-        "zh": "有乐御簾切"
-      },
-      "effect": {
-        "en": "Normal Attack DMG is increased by 16%/20%/24%/28%/32% and Elemental Skill DMG is increased by 24%/30%/36%/42%/48%. After a nearby active character deals Geo DMG, the aforementioned effects increase by 100% for 15s. Additionally, the wielder's DEF is increased by 20%/25%/30%/35%/40%.",
-        "zh": "普通攻击造成的伤害提升16/20/24/28/32%，元素战技造成的伤害提升24/30/36/42/48%；队伍中附近的角色在场上造成岩元素伤害后，上述效果进一步提升100%，持续15秒。此外，装备者的防御力提升20/25/30/35/40%。"
-      }
-    },
-    "dialogues_of_the_desert_sages": {
-      "name": {
-        "en": "Dialogues of the Desert Sages",
-        "zh": "沙中伟贤的对答"
-      },
-      "effect": {
-        "en": "When the wielder performs healing, restore 8/10/12/14/16 Energy. This effect can be triggered once every 10s and can occur even when the character is not on the field.",
-        "zh": "进行治疗时，恢复8/10/12/14/16点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。"
-      }
-    },
-    "crimson_moons_semblance": {
-      "name": {
-        "en": "Crimson Moon’s Semblance",
-        "zh": "赤月之形"
-      },
-      "effect": {
-        "en": "Grants a Bond of Life equal to 25% of Max HP when a Charged Attack hits an opponent. This effect can be triggered up to once every 14s. In addition, when the equipping character has a Bond of Life, they gain a 12%/16%/20%/24%/28% DMG Bonus; if the value of the Bond of Life is greater than or equal to 30% of Max HP, then gain an additional 24%/32%/40%/48%/56% DMG Bonus.",
-        "zh": "重击命中敌人时，赋予生命值上限25%的生命之契，该效果每14秒至多触发一次。此外，装备者具有生命之契时，造成的伤害提升12%/16%/20%/24%/28%；若生命之契的数值大于等于生命值上限的30%，造成的伤害将进一步提升24%/32%/40%/48%/56%。"
-      }
-    },
-    "silvershower_heartstrings": {
-      "name": {
-        "en": "Silvershower Heartstrings",
-        "zh": "白雨心弦"
-      },
-      "effect": {
-        "en": "The equipping character can gain the Remedy effect. When they possess 1/2/3 Remedy stacks, Max HP will increase by 12%/24%/40% | 15%/30%/50% | 18%/36%/60% | 21%/42%/70% | 24%/48%/80%. 1 stack may be gained when the following conditions are met: 1 stack for 25s when using an Elemental Skill; 1 stack for 25s when the value of a Bond of Life value increases; 1 stack for 20s for performing healing. Stacks can still be triggered when the equipping character is not on the field. Each stack's duration is counted independently. In addition, when 3 stacks are active, Elemental Burst CRIT Rate will be increased by 28%/35%/42%/49%/56%. This effect will be canceled 4s after falling under 3 stacks.",
-        "zh": "装备者能获得「疗护」效果，持有1/2/3层疗护时，生命值上限提升12%/24%/40%。在下列情况下，装备者将各获得1层疗护：施放元素战技时，持续25秒；生命之契的数值增加时，持续25秒；进行治疗时，持续20秒，装备者处于队伍后台时依然能触发。每层疗护的持续时间独立计算。此外，处于3层疗护状态下时，元素爆发的暴击率提升28%，该效果将在疗护不足3层4秒后移除。"
-      }
-    },
-    "absolution": {
-      "name": {
-        "en": "Absolution",
-        "zh": "赦罪"
-      },
-      "effect": {
-        "en": "CRIT DMG increased by 20%/25%/30%/35%/40%. Increasing the value of a Bond of Life increases the DMG the equipping character deals by 16%/20%/24%/28%/32% for 6s. Max 3 stacks.",
-        "zh": "暴击伤害提升20/25/30/35/40%；生命之契的数值增加时，装备者造成的伤害提升16/20/24/28/32%。该效果持续6秒，至多叠加3次。"
-      }
-    },
-    "cloudforged": {
-      "name": {
-        "en": "Cloudforged",
-        "zh": "筑云"
-      },
-      "effect": {
-        "en": "After Elemental Energy is decreased, the equipping character's Elemental Mastery will increase by 40/50/60/70/80 for 18s. Max 2 stacks.",
-        "zh": "元素能量减少后，装备者的元素精通提升40/50/60/70/80点。该效果持续18秒，至多叠加2层。"
-      }
-    },
-    "lumidouce_elegy": {
-      "name": {
-        "en": "Lumidouce Elegy",
-        "zh": "柔灯挽歌"
-      },
-      "effect": {
-        "en": "ATK increased by 15%/19%/23%/27%/31%. After the equipping character triggers Burning on an opponent or deals Dendro DMG to Burning opponents, the DMG dealt is increased by 18%/23%/28%/33%/38%. This effect lasts for 8s, max 2 stacks. When 2 stacks are reached or when the duration is refreshed at 2 stacks, restore 12/13/14/15/16 Energy. Energy can be restored this way once every 12s. The 2 aforementioned effects can be triggered even when the character is off-field.",
-        "zh": "攻击力提升15%/19%/23%/27%31%；装备者对敌人触发燃烧反应或对处于燃烧状态下的敌人造成草元素伤害后，造成的伤害提高18%/23%/28%/33%/38%。该效果持续8秒，至多叠加2层；叠加至2层或2层的持续时间刷新时，恢复12/13/14/15/16点元素能量，每12秒至多通过这种方式恢复一次元素能量。上述2种效果角色处于队伍后台时也能触发。"
-      }
-    },
-    "fang_of_the_mountain_king": {
-      "name": {
-        "en": "Fang of the Mountain King",
-        "zh": "山王长牙"
-      },
-      "effect": {
-        "en": "Gain 1 stack of Canopy's Favor after hitting an opponent with an Elemental Skill. This can be triggered once every 0.5s. After a nearby party member triggers a Burning or Burgeon reaction, the equipping character will gain 3 stacks. This effect can be triggered once every 2s and can be triggered even when the triggering party member is off-field. Canopy's Favor: Elemental Skill and Burst DMG is increased by 10%/12.5%/15%/17.5%/20% for 6s. Max 6 stacks. Each stack is counted independently.",
-        "zh": "元素战技命中敌人后，会获得1层「悬木祝赐」，该效果每0.5秒至多触发1次；队伍中附近的角色触发了燃烧或烈绽放反应后，装备者会获得3层悬木祝赐，该效果每2秒至多触发1次，队伍中的角色处于队伍后台时也能触发。悬木祝赐：元素战技伤害和元素爆发伤害提升10%/12.5%/15%/17.5%/20%，持续6秒，至多叠加6层，每层持续时间独立计算。"
-      }
-    },
-    "surfs_up": {
-      "name": {
-        "en": "Surf's Up",
-        "zh": "冲浪时光"
-      },
-      "effect": {
-        "en": "Max HP increased by 20%/25%/30%/35%/40%. Once every 15s, for the 14s after using an Elemental Skill: Gain 4 Scorching Summer stacks. Each stack increases Normal Attack DMG by 12%/15%/18%/21%/24%. For the duration of the effect, once every 1.5s, lose 1 stack after a Normal Attack hits an opponent; once every 1.5s, gain 1 stack after triggering a Vaporize reaction on an opponent. Max 4 Scorching Summer stacks.",
-        "zh": "生命值上限提高20%/25%/30%/35%/40%。每15秒一次，施放元素战技后的14秒内，产生如下效果：获得4层「炽夏」，每层使普通攻击造成的伤害提升12%/15%/18%/21%/24%。持续期间内，每1.5秒一次：普通攻击命中敌人后，移除1层；每1.5秒一次：对敌人触发蒸发反应后，增加1层。「炽夏」效果至多叠加4层。"
-      }
-    },
-    "flute_of_ezpitzal": {
-      "name": {
-        "en": "Flute of Ezpitzal",
-        "zh": "息燧之笛"
+        "en": "Footprint of the Rainbow",
+        "zh": "虹的行迹"
       },
       "effect": {
         "en": "Using an Elemental Skill increases DEF by 16%/20%/24%/28%/32% for 15s.",
@@ -2959,384 +1549,1794 @@ export const i18nGameData = {
         "zh": "队伍中的角色触发火元素相关反应后，装备者元素战技造成的伤害提升16%/20%/24%/28%/32%，持续8秒。该效果队伍中的角色处于队伍后台时也能触发。"
       }
     },
-    "footprint_of_the_rainbow": {
+    "flute_of_ezpitzal": {
       "name": {
-        "en": "Footprint of the Rainbow",
-        "zh": "虹的行迹"
+        "en": "Flute of Ezpitzal",
+        "zh": "息燧之笛"
       },
       "effect": {
         "en": "Using an Elemental Skill increases DEF by 16%/20%/24%/28%/32% for 15s.",
         "zh": "施放元素战技时，防御力提升16%/20%/24%/28%/32%，持续15秒。"
       }
     },
-    "ashgraven_drinking_horn": {
+    "surfs_up": {
       "name": {
-        "en": "Ash-Graven Drinking Horn",
-        "zh": "苍纹角杯"
+        "en": "Surf's Up",
+        "zh": "冲浪时光"
       },
       "effect": {
-        "en": "When an attack hits an opponent, deal AoE DMG equal to 40%/50%/60%/70%/80% of Max HP at the target location. This effect can be triggered once every 15s.",
-        "zh": "攻击命中敌人时，在目标位置基于生命值上限的40%/50%/60%/70%/80%，造成范围伤害。该效果每15秒至多触发一次。"
+        "en": "Max HP increased by 20%/25%/30%/35%/40%. Once every 15s, for the 14s after using an Elemental Skill: Gain 4 Scorching Summer stacks. Each stack increases Normal Attack DMG by 12%/15%/18%/21%/24%. For the duration of the effect, once every 1.5s, lose 1 stack after a Normal Attack hits an opponent; once every 1.5s, gain 1 stack after triggering a Vaporize reaction on an opponent. Max 4 Scorching Summer stacks.",
+        "zh": "生命值上限提高20%/25%/30%/35%/40%。每15秒一次，施放元素战技后的14秒内，产生如下效果：获得4层「炽夏」，每层使普通攻击造成的伤害提升12%/15%/18%/21%/24%。持续期间内，每1.5秒一次：普通攻击命中敌人后，移除1层；每1.5秒一次：对敌人触发蒸发反应后，增加1层。「炽夏」效果至多叠加4层。"
       }
     },
-    "ring_of_yaxche": {
+    "fang_of_the_mountain_king": {
       "name": {
-        "en": "Ring of Yaxche",
-        "zh": "木棉之环"
+        "en": "Fang of the Mountain King",
+        "zh": "山王长牙"
       },
       "effect": {
-        "en": "Using an Elemental Skill grants the Jade-Forged Crown effect: Every 1,000 Max HP will increase the Normal Attack DMG dealt by the equipping character by 0.6%/0.7%/0.8%/0.9%/1% for 10s. Normal Attack DMG can be increased this way by a maximum of 16%/20%/24%/28%/32%.",
-        "zh": "施放元素战技时，获得「玉锻之冕」效果：每1000点生命值上限都会使普通攻击造成的伤害提升0.6%/0.7%/0.8%/0.9%/1%，持续10秒。通过这种方式至多使普通攻击造成的伤害提升16%/20%/24%/28%/32%。"
+        "en": "Gain 1 stack of Canopy's Favor after hitting an opponent with an Elemental Skill. This can be triggered once every 0.5s. After a nearby party member triggers a Burning or Burgeon reaction, the equipping character will gain 3 stacks. This effect can be triggered once every 2s and can be triggered even when the triggering party member is off-field. Canopy's Favor: Elemental Skill and Burst DMG is increased by 10%/12.5%/15%/17.5%/20% for 6s. Max 6 stacks. Each stack is counted independently.",
+        "zh": "元素战技命中敌人后，会获得1层「悬木祝赐」，该效果每0.5秒至多触发1次；队伍中附近的角色触发了燃烧或烈绽放反应后，装备者会获得3层悬木祝赐，该效果每2秒至多触发1次，队伍中的角色处于队伍后台时也能触发。悬木祝赐：元素战技伤害和元素爆发伤害提升10%/12.5%/15%/17.5%/20%，持续6秒，至多叠加6层，每层持续时间独立计算。"
       }
     },
-    "chain_breaker": {
+    "lumidouce_elegy": {
       "name": {
-        "en": "Chain Breaker",
-        "zh": "碎链"
+        "en": "Lumidouce Elegy",
+        "zh": "柔灯挽歌"
       },
       "effect": {
-        "en": "For every party member from Natlan or who has a different Elemental Type from the equipping character, the equipping character gains 4.8%/6%/7.2%/8.4%/9.6% increased ATK. When there are no less than 3 of the aforementioned characters, the equipping character gains 24/30/36/42/48 Elemental Mastery.",
-        "zh": "队伍中每有一名纳塔角色或与装备者元素类型不同的角色，装备者获得4.8%/6%/7.2%/8.4%/9.6%攻击力提升；上述角色不少于3名时，装备者的元素精通提升24/30/36/42/48点。"
+        "en": "ATK increased by 15%/19%/23%/27%/31%. After the equipping character triggers Burning on an opponent or deals Dendro DMG to Burning opponents, the DMG dealt is increased by 18%/23%/28%/33%/38%. This effect lasts for 8s, max 2 stacks. When 2 stacks are reached or when the duration is refreshed at 2 stacks, restore 12/13/14/15/16 Energy. Energy can be restored this way once every 12s. The 2 aforementioned effects can be triggered even when the character is off-field.",
+        "zh": "攻击力提升15%/19%/23%/27%31%；装备者对敌人触发燃烧反应或对处于燃烧状态下的敌人造成草元素伤害后，造成的伤害提高18%/23%/28%/33%/38%。该效果持续8秒，至多叠加2层；叠加至2层或2层的持续时间刷新时，恢复12/13/14/15/16点元素能量，每12秒至多通过这种方式恢复一次元素能量。上述2种效果角色处于队伍后台时也能触发。"
       }
     },
-    "sturdy_bone": {
+    "cloudforged": {
       "name": {
-        "en": "Sturdy Bone",
-        "zh": "弥坚骨"
+        "en": "Cloudforged",
+        "zh": "筑云"
       },
       "effect": {
-        "en": "Sprint or Alternate Sprint Stamina Consumption decreased by 15%. Additionally, after using Sprint or Alternate Sprint, Normal Attack DMG is increased by 16%/20%/24%/28%/32% of ATK. This effect expires after triggering 18 times or 7s.",
-        "zh": "冲刺或替代冲刺的能力消耗的体力降低15%；此外，使用冲刺或替代冲刺的能力后，普通攻击造成的伤害提高，提高数值相当于攻击力的16%/20%/24%/28%/32%，该效果在生效18次或7秒后消失。"
+        "en": "After Elemental Energy is decreased, the equipping character's Elemental Mastery will increase by 40/50/60/70/80 for 18s. Max 2 stacks.",
+        "zh": "元素能量减少后，装备者的元素精通提升40/50/60/70/80点。该效果持续18秒，至多叠加2层。"
       }
     },
-    "peak_patrol_song": {
+    "absolution": {
       "name": {
-        "en": "Peak Patrol Song",
-        "zh": "岩峰巡歌"
+        "en": "Absolution",
+        "zh": "赦罪"
       },
       "effect": {
-        "en": "Gain \"Ode to Flowers\" after Normal or Plunging Attacks hit an opponent: DEF increases by 8%/10%/12%/14%/16% and gain a 10%/12.5%/15%/17.5%/20% All Elemental DMG Bonus for 6s. Max 2 stacks. Can trigger once per 0.1s. When this effect reaches 2 stacks or the 2nd stack's duration is refreshed, increase all nearby party members' All Elemental DMG Bonus by 8%/10%/12%/14%/16% for every 1,000 DEF the equipping character has, up to a maximum of 25.6%/32%/38.4%/44.8%/51.2%, for 15s.",
-        "zh": "普通攻击或下落攻击命中敌人后，将获得「荣花之歌」：防御力提高8%/10%/12%/14%/16%，并获得10%/12.5%/15%/17.5%/20%所有元素伤害加成，该效果持续6秒，至多叠加2层，每0.1秒至多触发一次。该效果叠加至2层或2层的持续时间刷新时，基于装备者的防御力，每1000点使队伍中附近所有角色的所有元素伤害加成提高8%/10%/12%/14%/16%，至多提高25.6%/32%/38.4%/44.8%/51.2%，持续15秒。"
+        "en": "CRIT DMG increased by 20%/25%/30%/35%/40%. Increasing the value of a Bond of Life increases the DMG the equipping character deals by 16%/20%/24%/28%/32% for 6s. Max 3 stacks.",
+        "zh": "暴击伤害提升20/25/30/35/40%；生命之契的数值增加时，装备者造成的伤害提升16/20/24/28/32%。该效果持续6秒，至多叠加3次。"
       }
     },
-    "fruitful_hook": {
+    "silvershower_heartstrings": {
       "name": {
-        "en": "Fruitful Hook",
-        "zh": "硕果钩"
+        "en": "Silvershower Heartstrings",
+        "zh": "白雨心弦"
       },
       "effect": {
-        "en": "Increase Plunging Attack CRIT Rate by 16%/20%/24%/28%/32%; After a Plunging Attack hits an opponent, Normal, Charged, and Plunging Attack DMG increased by 16%/20%/24%/28%/32% for 10s.",
-        "zh": "下落攻击的暴击率提升16%/20%/24%/28%/32%；下落攻击命中敌人后，普通攻击、重击、下落攻击造成的伤害提升16%/20%/24%/28%/32%，持续10秒。"
+        "en": "The equipping character can gain the Remedy effect. When they possess 1/2/3 Remedy stacks, Max HP will increase by 12%/24%/40% | 15%/30%/50% | 18%/36%/60% | 21%/42%/70% | 24%/48%/80%. 1 stack may be gained when the following conditions are met: 1 stack for 25s when using an Elemental Skill; 1 stack for 25s when the value of a Bond of Life value increases; 1 stack for 20s for performing healing. Stacks can still be triggered when the equipping character is not on the field. Each stack's duration is counted independently. In addition, when 3 stacks are active, Elemental Burst CRIT Rate will be increased by 28%/35%/42%/49%/56%. This effect will be canceled 4s after falling under 3 stacks.",
+        "zh": "装备者能获得「疗护」效果，持有1/2/3层疗护时，生命值上限提升12%/24%/40%。在下列情况下，装备者将各获得1层疗护：施放元素战技时，持续25秒；生命之契的数值增加时，持续25秒；进行治疗时，持续20秒，装备者处于队伍后台时依然能触发。每层疗护的持续时间独立计算。此外，处于3层疗护状态下时，元素爆发的暴击率提升28%，该效果将在疗护不足3层4秒后移除。"
       }
     },
-    "mountainbracing_bolt": {
+    "crimson_moons_semblance": {
       "name": {
-        "en": "Mountain-Bracing Bolt",
-        "zh": "镇山之钉"
+        "en": "Crimson Moon’s Semblance",
+        "zh": "赤月之形"
       },
       "effect": {
-        "en": "Decreases Climbing Stamina Consumption by 15% and increases Elemental Skill DMG by 12%/15%/18%/21%/24%. Also, after other nearby party members use Elemental Skills, the equipping character's Elemental Skill DMG will also increase by 12%/15%/18%/21%/24% for 8s.",
-        "zh": "攀爬消耗的体力降低15%，元素战技造成的伤害提升12%/15%/18%/21%/24%；此外，队伍中附近的其他角色施放元素战技后，装备者的元素战技造成的伤害还会提升12%/15%/18%/21%/24%，持续8秒。"
+        "en": "Grants a Bond of Life equal to 25% of Max HP when a Charged Attack hits an opponent. This effect can be triggered up to once every 14s. In addition, when the equipping character has a Bond of Life, they gain a 12%/16%/20%/24%/28% DMG Bonus; if the value of the Bond of Life is greater than or equal to 30% of Max HP, then gain an additional 24%/32%/40%/48%/56% DMG Bonus.",
+        "zh": "重击命中敌人时，赋予生命值上限25%的生命之契，该效果每14秒至多触发一次。此外，装备者具有生命之契时，造成的伤害提升12%/16%/20%/24%/28%；若生命之契的数值大于等于生命值上限的30%，造成的伤害将进一步提升24%/32%/40%/48%/56%。"
       }
     },
-    "calamity_of_eshu": {
+    "dialogues_of_the_desert_sages": {
       "name": {
-        "en": "Calamity of Eshu",
-        "zh": "厄水之祸"
+        "en": "Dialogues of the Desert Sages",
+        "zh": "沙中伟贤的对答"
       },
       "effect": {
-        "en": "While characters are protected by a Shield, DMG dealt by Normal and Charged Attacks is increased by 20%/25%/30%/35%/40%, and Normal and Charged Attack CRIT Rate is increased by 8%/10%/12%/14%/16%.",
-        "zh": "角色处于护盾庇护下时，普通攻击和重击造成的伤害提升20%/25%/30%/35%/40%，普通攻击和重击的暴击率提升8%/10%/12%/14%/16%。"
+        "en": "When the wielder performs healing, restore 8/10/12/14/16 Energy. This effect can be triggered once every 10s and can occur even when the character is not on the field.",
+        "zh": "进行治疗时，恢复8/10/12/14/16点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。"
       }
     },
-    "waveriding_whirl": {
+    "uraku_misugiri": {
       "name": {
-        "en": "Waveriding Whirl",
-        "zh": "乘浪的回旋"
+        "en": "Uraku Misugiri",
+        "zh": "有乐御簾切"
       },
       "effect": {
-        "en": "Decreases Swimming Stamina consumption by 15%. In addition, for 10s after using an Elemental Skill, Max HP is increased by 20%/25%/30%/35%/40%. For every Hydro Elemental Type character in the party, Max HP is increased by another 12%/15%/18%/21%/24%, and the maximum increase that can be achieved in this way is 24%/30%/36%/42%/48%. Can be triggered once every 15s.",
-        "zh": "游泳消耗的体力降低15%。此外，施放元素战技后的10秒内，生命值上限提升20%/25%/30%/35%/40%，队伍中每存在一位水元素类型的角色，生命值上限将进一步提升12%/15%/18%/21%/24%，至多通过这种方式提升24%/30%/36%/42%/48%，该效果每15秒至多触发一次。"
+        "en": "Normal Attack DMG is increased by 16%/20%/24%/28%/32% and Elemental Skill DMG is increased by 24%/30%/36%/42%/48%. After a nearby active character deals Geo DMG, the aforementioned effects increase by 100% for 15s. Additionally, the wielder's DEF is increased by 20%/25%/30%/35%/40%.",
+        "zh": "普通攻击造成的伤害提升16/20/24/28/32%，元素战技造成的伤害提升24/30/36/42/48%；队伍中附近的角色在场上造成岩元素伤害后，上述效果进一步提升100%，持续15秒。此外，装备者的防御力提升20/25/30/35/40%。"
       }
     },
-    "flowerwreathed_feathers": {
+    "cranes_echoing_call": {
       "name": {
-        "en": "Flower-Wreathed Feathers",
-        "zh": "缀花之翎"
+        "en": "Crane's Echoing Call",
+        "zh": "鹤鸣余音"
       },
       "effect": {
-        "en": "Decreases Gliding Stamina consumption by 15%. When using Aimed Shots, the DMG dealt by Charged Attacks increases by 6%/7.5%/9%/10.5%/12% every 0.5s. This effect can stack up to 6 times and will be removed 10s after leaving Aiming Mode.",
-        "zh": "滑翔消耗的体力降低15%。进行瞄准射击时，每0.5秒提升重击造成的伤害6%/7.5%/9%/10.5%/12%，该效果最多叠加6层，并将在不处于瞄准状态下10秒后移除。"
+        "en": "After the equipping character hits an opponent with a Plunging Attack, all nearby party members' Plunging Attacks deal 28%/41%/54%/67%/80% increased DMG for 20s. When nearby party members hit opponents with Plunging Attacks, they will restore 2.5/2.75/3/3.25/3.5 Energy to the equipping character. Energy can be restored this way every 0.7s.",
+        "zh": "装备者下落攻击命中敌人后，队伍中附近的所有角色下落攻击造成的伤害提高28%/41%/54%/67%/80%，持续20秒；队伍中附近的角色的下落攻击命中敌人时，为装备者恢复2.5/2.75/3/3.25/3.5点元素能量，每0.7秒至多通过这种方式恢复一次元素能量，装备者处于队伍后台时依然能通过这种方式恢复元素能量。"
       }
     },
-    "astral_vultures_crimson_plumage": {
+    "ultimate_overlords_mega_magic_sword": {
       "name": {
-        "en": "Astral Vulture's Crimson Plumage",
-        "zh": "星鹫赤羽"
+        "en": "Ultimate Overlord's Mega Magic Sword",
+        "zh": "究极霸王超级魔剑"
       },
       "effect": {
-        "en": "For 12s after triggering a Swirl reaction, ATK increases by 24%/30%/36%/42%/48%. In addition, when 1/2 or more characters in the party are of a different Elemental Type from the equipping character, the DMG dealt by the equipping character's Charged Attacks is increased by 20%/48% | 25%/60% | 30%/72% | 35%/84% | 40%/96% and Elemental Burst DMG dealt is increased by 10%/24% | 12.5%/30% | 15%/36% | 17.5%/42% | 20%/48%.",
-        "zh": "触发扩散反应后的12秒内，攻击力提高24%/30%/36%/42%/48%。此外，队伍中存在至少1/2名与装备者元素类型不同的角色时，装备者重击造成的伤害提高20%/48% | 25%/60% | 30%/72% | 35%/84% | 40%/96%，元素爆发造成的伤害提高10%/24% | 12.5%/30% | 15%/36% | 17.5%/42% | 20%/48%。"
+        "en": "ATK increased by 12%/15%/18%/21%/24%. That's not all! The support from all Melusines you've helped in Merusea Village fills you with strength! Based on the number of them you've helped, your ATK is increased by up to an additional 12%/15%/18%/21%/24%.",
+        "zh": "攻击力提升12%/15%/18%/21%/24%。不仅如此！海沫村中曾蒙妳/你帮助的美露莘们的声援心意充满了力量，依照她们的数目，攻击力至多进一步提升12%/15%/18%/21%/24%。"
       }
     },
-    "a_thousand_blazing_suns": {
+    "verdict": {
       "name": {
-        "en": "A Thousand Blazing Suns",
-        "zh": "焚曜千阳"
+        "en": "Verdict",
+        "zh": "裁断"
       },
       "effect": {
-        "en": "Gain the \"Scorching Brilliance\" effect when using an Elemental Skill or Burst: CRIT DMG increased by 20%/25%/30%/35%/40% and ATK increased by 28%/35%/42%/49%/56% for 6s. This effect can trigger once every 10s.While a \"Scorching Brilliance\" instance is active, its duration is increased by 2s after Normal or Charged attacks deal Elemental DMG. This effect can trigger once every second, and the max duration increase is 6s.Additionally, when the equipping character is in the Nightsoul's Blessing state, \"Scorching Brilliance\" effects are increased by 75%, and its duration will not count down when the equipping character is off-field.",
-        "zh": "施放元素战技或元素爆发时，获得「焚光」效果：暴击伤害提高20%/25%/30%/35%/40%，攻击力提升28%/35%/42%/49%/56%，该效果持续6秒，每10秒至多触发一次。持续期间内，普通攻击或重击造成元素伤害后，将使此次「焚光」效果的持续时间延长2秒，该效果每1秒至多触发一次，至多通过这种方式使持续时间延长6秒。此外，处于夜魂加持状态下时，「焚光」效果提高75%，且「焚光」效果仅在装备者处于场上后台时不进行计时。"
+        "en": "Increases ATK by 20%/25%/30%/35%/40%. When party members obtain Elemental Shards from Crystallize or trigger Lunar-Crystallize reactions, the equipping character will gain 1 Seal, increasing Elemental Skill DMG by 18%/22.5%/27%/31.5%/36%. The Seal lasts for 15s, and the equipper may have up to 2 Seals at once. All of the equipper's Seals will disappear 0.2s after their Elemental Skill deals DMG. Up to 1 Seal may be obtained every second through the Lunar-Crystallize reaction.",
+        "zh": "攻击力提升20%/25%/30%/35%/40%；队伍中的角色获取结晶反应产生的晶片时，会为装备者赋予1枚「约印」，使元素战技造成的伤害提升18%/22.5%/27%/31.5%/36%，约印持续15秒，至多同时持有2枚。所有约印将在装备者的元素战技造成伤害后的0.2秒后移除。"
       }
     },
-    "starcallers_watch": {
+    "sword_of_narzissenkreuz": {
       "name": {
-        "en": "Starcaller's Watch",
-        "zh": "祭星者之望"
+        "en": "Sword of Narzissenkreuz",
+        "zh": "水仙十字之剑"
       },
       "effect": {
-        "en": "Increases Elemental Mastery by 100/125/150/175/200. Gain the \"Mirror of Night\" effect within 15s after the equipping character creates a shield: The current active party member deals 28%/35%/42%/49%/56% increased DMG to nearby opponents. You can gain the \"Mirror of Night\" effect once every 14s.",
-        "zh": "元素精通提升100/125/150/175/200点。装备者创造护盾后的15秒内，获得「照夜之镜」效果：队伍中自己的当前场上角色对附近的敌人造成的伤害提升28%/35%/42%/49%/56%，该效果每14秒至多触发获得一次「照夜之镜」效果。"
+        "en": "When the equipping character does not have an Arkhe: When Normal Attacks, Charged Attacks, or Plunging Attacks strike, a Pneuma or Ousia energy blast will be unleashed, dealing 160%/200%/240%/280%/320% of ATK as DMG. This effect can be triggered once every 12s. The energy blast type is determined by the current type of the Sword of Narzissenkreuz.",
+        "zh": "装备者不具备「始基力」时：普通攻击、重击、下落攻击命中时，会释放芒性或荒性的能量冲击，造成160%/200%/240%/280%/320%攻击力的伤害。该效果每12秒至多触发一次，能量冲击的类型由水仙十字之剑当前的属性决定。"
       }
     },
-    "sunny_morning_sleepin": {
+    "splendor_of_tranquil_waters": {
       "name": {
-        "en": "Sunny Morning Sleep-In",
-        "zh": "寝正月初晴"
+        "en": "Splendor of Tranquil Waters",
+        "zh": "静水流涌之辉"
       },
       "effect": {
-        "en": "Elemental Mastery increases by 120/150/180/210/240 for 6s after triggering Swirl. Elemental Mastery increases by 96/120/144/168/192 for 9s after the wielder's Elemental Skill hits an opponent. Elemental Mastery increases by 32/40/48/56/64 for 30s after the wielder's Elemental Burst hits an opponent.",
-        "zh": "触发扩散反应后的6秒内，元素精通提升120/150/180/210/240点；元素战技命中敌人后的9秒内，元素精通提升96/120/144/168/192点；元素爆发命中敌人后的30秒内，元素精通提升32/40/48/56/64点。"
+        "en": "When the equipping character's current HP increases or decreases, Elemental Skill DMG dealt will be increased by 8%/10%/12%/14%/16% for 6s. Max 3 stacks. This effect can be triggered once every 0.2s. When other party members' current HP increases or decreases, the equipping character's Max HP will be increased by 14%/17.5%/21%/24.5%/28% for 6s. Max 2 stacks. This effect can be triggered once every 0.2s. The aforementioned effects can be triggered even if the wielder is off-field.",
+        "zh": "装备者的当前生命值提升或降低时，元素战技造成的伤害提升8%/10%/12%/14%/16%，该效果持续6秒，至多叠加3次，每0.2秒至多触发一次；队伍中其他角色的当前生命值提升或降低时，装备者的生命值上限提升14%/17.5%/21%/24.5%/28%，该效果持续6秒，至多叠加2次，每0.2秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
-    "tamayuratei_no_ohanashi": {
+    "cashflow_supervision": {
       "name": {
-        "en": "Tamayuratei no Ohanashi",
-        "zh": "且住亭御咄"
+        "en": "Cashflow Supervision",
+        "zh": "金流监督"
       },
       "effect": {
-        "en": "Increase ATK by 20%/25%/30%/35%/40% and Movement SPD by 10% for 10s when using an Elemental Skill.",
-        "zh": "施放元素战技时，提高20%/25%/30%/35%/40%攻击力和10%移动速度，持续10秒。"
+        "en": "ATK is increased by 16%/20%/24%/28%/32%. When current HP increases or decreases, Normal Attack DMG will be increased by 16%/20%/24%/28%/32% and Charged Attack DMG will be increased by 14%/17.5%/21%/24.5%/28% for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the wielder has 3 stacks, ATK SPD will be increased by 8%/10%/12%/14%/16%.",
+        "zh": "攻击力提升16%/20%/24%/28%/32%。当前生命值提升或降低时，普通攻击造成的伤害提升16%/20%/24%/28%/32%，重击造成的伤害提升14%/17.5%/21%/24.5%/28%。该效果持续4秒，至多叠加3层，每0.3秒至多触发一次；处于叠加3层的状态下时，攻击速度提升8%/10%/12%/14%/16%。"
       }
     },
-    "vivid_notions": {
+    "tome_of_the_eternal_flow": {
       "name": {
-        "en": "Vivid Notions",
-        "zh": "溢彩心念"
+        "en": "Tome of the Eternal Flow",
+        "zh": "万世流涌大典"
       },
       "effect": {
-        "en": "ATK is increased by 28%/35%/42%/49%/56%. When you use a Plunging Attack, you will gain the \"Dawn's First Hue\" effect: Plunging Attack CRIT DMG is increased by 28%/35%/42%/49%/56%. When you use an Elemental Skill or Burst, you will gain the \"Twilight's Splendor\" effect: Plunging Attack CRIT DMG is increased by 40%/50%/60%/70%/80%. The two effects above each last for 15s, and will be canceled 0.1s after the ground impact hits a target.",
-        "zh": "攻击力提升28%/35%/42%/49%/56%；进行下落攻击时，获得「初霞之彩」效果：下落攻击造成的暴击伤害提升28%/35%/42%/49%/56%；施放元素战技或元素爆发时，获得「苍暮之辉」效果：下落攻击造成的暴击伤害提升40%/50%/60%/70%/80%；上述两种效果各自持续15秒，并将在坠地冲击命中后的0.1秒后解除。"
+        "en": "HP is increased by 16%/20%/24%/28%/32%. When current HP increases or decreases, Charged Attack DMG will be increased by 14%/18%/22%/26%/30% for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the character has 3 stacks or a third stack's duration refreshes, 8/9/10/11/12 Energy will be restored. This Energy restoration effect can be triggered once every 12s.",
+        "zh": "生命值提升16/20/24/28/32%。当前生命值提升或降低时，重击造成的伤害提升14/18/22/26/30%。该效果持续4秒，至多叠加3次，每0.3秒至多触发一次；叠加至3层或3层的持续时间刷新时，恢复8/9/10/11/12点元素能量，每12秒至多通过这种方式恢复一次元素能量。"
       }
     },
-    "symphonist_of_scents": {
+    "ballad_of_the_boundless_blue": {
       "name": {
-        "en": "Symphonist of Scents",
-        "zh": "香韵奏者"
+        "en": "Ballad of the Boundless Blue",
+        "zh": "无垠蔚蓝之歌"
       },
       "effect": {
-        "en": "ATK is increased by 12%/15%/18%/21%/24%. When the equipping character is off-field, ATK is increased by an additional 12%/15%/18%/21%/24%. After initiating healing, the equipping character and the character(s) they have healed will obtain the \"Sweet Echoes\" effect, increasing their ATK by 32%/40%/48%/56%/64% for 3s. This effect can be triggered even if the equipping character is off-field.",
-        "zh": "攻击力提升12%/15%/18%/21%/24%；当装备此武器的角色处于队伍后台时，攻击力额外提升12%/15%/18%/21%/24%。进行治疗后，装备者与受到治疗的角色会获得「甘美回奏」的效果，攻击力提升32%/40%/48%/56%/64%，持续3秒。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "Within 6s after Normal or Charged Attacks hit an opponent, Normal Attack DMG will be increased by 8%/10%/12%/14%/16% and Charged Attack DMG will be increased by 6%/7.5%/9%/10.5%/12%. Max 3 stacks. This effect can be triggered once every 0.3s.",
+        "zh": "普通攻击或重击命中敌人后的6秒内，普通攻击造成的伤害提升8%/10%/12%/14%/16%，重击造成的伤害提升6%/7.5%/9%/10.5%/12%。该效果至多叠加3次，每0.3秒至多触发一次。"
       }
     },
-    "sequence_of_solitude": {
+    "range_gauge": {
       "name": {
-        "en": "Sequence of Solitude",
-        "zh": "冷寂迸音"
+        "en": "Range Gauge",
+        "zh": "测距规"
       },
       "effect": {
-        "en": "When an attack hits an opponent, deal AoE DMG equal to 40%/50%/60%/70%/80% of Max HP at the target location. This effect can be triggered once every 15s.",
-        "zh": "攻击命中敌人时，在目标位置基于生命值上限的40%/50%/60%/70%/80%，造成范围伤害。该效果每15秒至多触发一次。"
+        "en": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain 3%/4%/5%/6%/7% ATK and 7%/8.5%/10%/11.5%/13% All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
+        "zh": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高3%/4%/5%/6%/7%攻击力与7%/8.5%/10%/11.5%/13%所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。"
       }
     },
-    "azurelight": {
+    "prospectors_drill": {
       "name": {
-        "en": "Azurelight",
-        "zh": "苍耀"
+        "en": "Prospector's Drill",
+        "zh": "勘探钻机"
       },
       "effect": {
-        "en": "Within 12s after an Elemental Skill is used, ATK is increased by 24%/30%/36%/42%/48%. During this time, when the equipping character has 0 Energy, ATK will be further increased by 24%/30%/36%/42%/48%, and CRIT DMG will be increased by 40%/50%/60%/70%/80%.",
-        "zh": "施放元素战技后的12秒内，攻击力提升24%/30%/36%/42%/48%。持续期间，装备者的元素能量为0时，攻击力还会提升24%/30%/36%/42%/48%，且暴击伤害提升40%/50%/60%/70%/80%。"
+        "en": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain 3%/4%/5%/6%/7% ATK and 7%/8.5%/10%/11.5%/13% All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
+        "zh": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高3%/4%/5%/6%/7%攻击力与7%/8.5%/10%/11.5%/13%所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。"
       }
     },
-    "fractured_halo": {
+    "portable_power_saw": {
       "name": {
-        "en": "Fractured Halo",
-        "zh": "支离轮光"
+        "en": "Portable Power Saw",
+        "zh": "便携动力锯"
       },
       "effect": {
-        "en": "After an Elemental Skill or Elemental Burst is used, ATK is increased by 24%/30%/36%/42%/48% for 20s. If the equipping character creates a Shield while this effect is active, they will gain the Electrifying Edict effect for 20s: All nearby party members deal 40%/50%/60%/70%/80% more Lunar-Charged DMG.",
-        "zh": "施放元素战技或元素爆发后的20秒内，攻击力提升24%/30%/36%/42%/48%。持续期间内，若装备者创造了护盾，则接下来的20秒内，还会获得「流电圣敕」效果：队伍中附近所有角色触发的月感电反应造成的伤害提升40%/50%/60%/70%/80%。"
+        "en": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain 40/50/60/70/80 Elemental Mastery, and 2s after the effect occurs, 2/2.5/3/3.5/4 Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
+        "zh": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高40/50/60/70/80点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复2/2.5/3/3.5/4点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。"
       }
     },
-    "flameforged_insight": {
+    "the_dockhands_assistant": {
       "name": {
-        "en": "Flame-Forged Insight",
-        "zh": "拾慧铸熔"
+        "en": "The Dockhand's Assistant",
+        "zh": "船坞长剑"
       },
       "effect": {
-        "en": "When Electro-Charged, Lunar-Charged, or Bloom is triggered, restore 12/15/18/21/24 Elemental Energy and increase Elemental Mastery by 60/75/90/105/120 for 15 seconds. This effect can be triggered once every 15s and can be triggered even when the equipping character is off-field.",
-        "zh": "触发感电、月感电或绽放反应时，恢复12/15/18/21/24点元素能量，并在接下来的15秒内使元素精通提升60/75/90/105/120点。该效果每15秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain 40/50/60/70/80 Elemental Mastery, and 2s after the effect occurs, 2/2.5/3/3.5/4 Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
+        "zh": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高40/50/60/70/80点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复2/2.5/3/3.5/4点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。"
       }
     },
-    "serenitys_call": {
+    "sacrificial_jade": {
       "name": {
-        "en": "Serenity's Call",
-        "zh": "谧音吹哨"
+        "en": "Sacrificial Jade",
+        "zh": "遗祀玉珑"
       },
       "effect": {
-        "en": "Upon causing an Elemental Reaction, increases Max HP by 16%/20%/24%/28%/32% for 12s. Moonsign: Ascendant Gleam: Max HP from this effect is further increased by 16%/20%/24%/28%/32%. This effect can be triggered even if the equipping character is off-field.",
-        "zh": "触发元素反应后的12秒内，生命值上限提高16%/20%/24%/28%/32%。月兆·满辉：该效果中的生命值上限额外提高16%/20%/24%/28%/32%。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "When not on the field for more than 5s, Max HP will be increased by 32%/40%/48%/56%/64% and Elemental Mastery will be increased by 40/50/60/70/80. These effects will be canceled after the wielder has been on the field for 10s.",
+        "zh": "处于队伍后台超过5秒后，生命值上限提升32/40/48/56/64%，元素精通提升40/50/60/70/80点。装备者登场并留在场上10秒后，该效果将失效。"
       }
     },
-    "moonweavers_dawn": {
+    "scion_of_the_blazing_sun": {
       "name": {
-        "en": "Moonweaver's Dawn",
-        "zh": "织月者的曙色"
+        "en": "Scion of the Blazing Sun",
+        "zh": "烈阳之嗣"
       },
       "effect": {
-        "en": "Increases Elemental Burst DMG by 20%/25%/30%/35%/40%. When the equipping character's Energy Capacity does not exceed 60/40, their Elemental Burst DMG is increased by an additional 16%/28% | 20%/35% | 24%/42% | 28%/49% | 32%/56%.",
-        "zh": "元素爆发造成的伤害提高20%/25%/30%/35%/40%；装备者的元素能量上限不超过60/40点时，元素爆发造成的伤害额外提高16%/28% | 20%/35% | 24%/42% | 28%/49% | 32%/56%。"
+        "en": "After a Charged Attack hits an opponent, a Sunfire Arrow will descend upon the opponent hit, dealing 60%/75%/90%/105%/120% ATK as DMG, and applying the Heartsearer effect to the opponent damaged by said Arrow for 10s. Opponents affected by Heartsearer take 28%/35%/42%/49%/56% more Charged Attack DMG from the wielder. A Sunfire Arrow can be triggered once every 10s.",
+        "zh": "重击命中敌人后，会向命中的敌人降下阳炎矢，造成攻击力60/75/90/105/120%的伤害，并为受到阳炎矢伤害的敌人施加持续10秒的灼心效果。装备者的重击对处于灼心状态下的敌人造成的伤害提升28/35/42/49/56%。阳炎矢每10秒至多触发一次。"
       }
     },
-    "master_key": {
+    "ballad_of_the_fjords": {
       "name": {
-        "en": "Master Key",
-        "zh": "万能钥匙"
+        "en": "Ballad of the Fjords",
+        "zh": "峡湾长歌"
       },
       "effect": {
-        "en": "Upon causing an Elemental Reaction, increases Elemental Mastery by 60/75/90/105/120 for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by 60/75/90/105/120. This effect can be triggered even if the equipping character is off-field.",
-        "zh": "触发元素反应后的12秒内，元素精通提升60/75/90/105/120点。月兆·满辉：该效果中的元素精通额外提升60/75/90/105/120点。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "When there are at least 3 different Elemental Types in your party, Elemental Mastery will be increased by 120/150/180/210/240.",
+        "zh": "队伍中存在至少三种不同元素类型的角色时，元素精通提升120/150/180/210/240点。"
       }
     },
-    "prospectors_shovel": {
+    "talking_stick": {
       "name": {
-        "en": "Prospector's Shovel",
-        "zh": "掘金之锹"
+        "en": "Talking Stick",
+        "zh": "聊聊棒"
       },
       "effect": {
-        "en": "Electro-Charged DMG is increased by 48%/60%/72%/84%/96%, and Lunar-Charged DMG is increased by 12%/15%/18%/21%/24%. Moonsign: Ascendant Gleam: Lunar-Charged DMG is increased by an additional 12%/15%/18%/21%/24%.",
-        "zh": "感电反应造成的伤害提升48%/60%/72%/84%/96%，月感电反应造成的伤害提升12%/15%/18%/21%/24%。月兆·满辉：月感电反应造成的伤害额外提升12%/15%/18%/21%/24%。"
+        "en": "ATK will be increased by 16%/20%/24%/28%/32% for 15s after being affected by Pyro. This effect can be triggered once every 12s. All Elemental DMG Bonus will be increased by 12%/15%/18%/21%/24% for 15s after being affected by Hydro, Cryo, Electro, or Dendro. This effect can be triggered once every 12s.",
+        "zh": "承受火元素附着后的15秒内，攻击力提升16/20/24/28/32%，每12秒至多触发一次；承受水元素、冰元素、雷元素或草元素附着后的15秒内，所有元素伤害加成提升12/15/18/21/24%，每12秒至多触发一次。"
       }
     },
-    "blackmarrow_lantern": {
+    "wolffang": {
       "name": {
-        "en": "Blackmarrow Lantern",
-        "zh": "乌髓孑灯"
+        "en": "Wolf-Fang",
+        "zh": "狼牙"
       },
       "effect": {
-        "en": "Bloom DMG is increased by 48%/60%/72%/84%/96%, and Lunar-Bloom DMG is increased by 12%/15%/18%/21%/24%. Moonsign: Ascendant Gleam: Lunar-Bloom DMG is increased by an additional 12%/15%/18%/21%/24%.",
-        "zh": "绽放反应造成的伤害提升48%/60%/72%/84%/96%，月绽放反应伤害提升12%/15%/18%/21%/24%。月兆·满辉：月绽放反应伤害额外提升12%/15%/18%/21%/24%。"
+        "en": "DMG dealt by Elemental Skill and Elemental Burst is increased by 16%/20%/24%/28%/32%. When an Elemental Skill hits an opponent, its CRIT Rate will be increased by 2%/2.%5/3%/3.5%/4%. When an Elemental Burst hits an opponent, its CRIT Rate will be increased by 2%/2.5%/3%/3.5%/4%. Both of these effects last 10s separately, have 4 max stacks, and can be triggered once every 0.1s.",
+        "zh": "元素战技与元素爆发造成的伤害提升16%/20%/24%/28%/32%。元素战技命中敌人时，元素战技的暴击率提升2%/2.5%/3%/3.5%/4%；元素爆发命中敌人时，元素爆发的暴击率提升2%/2.5%/3%/3.5%/4%。上述两种效果各自持续10秒，至多叠加4次，每0.1秒至多触发一次。"
       }
     },
-    "snare_hook": {
+    "fleuve_cendre_ferryman": {
       "name": {
-        "en": "Snare Hook",
-        "zh": "罗网勾针"
+        "en": "Fleuve Cendre Ferryman",
+        "zh": "灰河渡手"
       },
       "effect": {
-        "en": "Upon causing an Elemental Reaction, increases Elemental Mastery by 60/75/90/105/120 for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by 60/75/90/105/120. This effect can be triggered even if the equipping character is off-field.",
-        "zh": "触发元素反应后的12秒内，元素精通提升60/75/90/105/120点。月兆·满辉：该效果中的元素精通额外提升60/75/90/105/120点。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "Increases Elemental Skill CRIT Rate by 8%/10%/12%/14%/16%. Additionally, increases Energy Recharge by 16%/20%/24%/28%/32% for 5s after using an Elemental Skill.",
+        "zh": "元素战技暴击率提升8%/10%/12%/14%/16%；此外，施放元素战技后的5秒内，元素充能效率提升16%/20%/24%/28%/32%。"
       }
     },
-    "nightweavers_looking_glass": {
+    "flowing_purity": {
       "name": {
-        "en": "Nightweaver's Looking Glass",
-        "zh": "纺夜天镜"
+        "en": "Flowing Purity",
+        "zh": "纯水流华"
       },
       "effect": {
-        "en": "When the equipping character's Elemental Skill deals Hydro or Dendro DMG, they will gain Prayer of the Far North: Elemental Mastery is increased by 60/75/90/105/120 for 4.5s. When nearby party members trigger Lunar-Bloom reactions, the equipping character gains New Moon Verse: Elemental Mastery is increased by 60/75/90/105/120 for 10s. When both Prayer of the Far North and New Moon Verse are in effect, all nearby party members' Bloom DMG is increased by 120%/150%/180%/210%/240%, their Hyperbloom and Burgeon DMG is increased by 80%/100%/120%/140%/160%, and their Lunar-Bloom DMG is increased by 40%/50%/60%/70%/80%. This effect cannot stack. The aforementioned effects can be triggered even if the equipping character is off-field.",
-        "zh": "元素战技造成水元素或草元素伤害时，装备者获得「终北圣言」效果：元素精通提升60/75/90/105/120点，持续4.5秒；队伍中附近的角色触发月绽放反应时，装备者获得「朔月诗篇」效果：元素精通提升60/75/90/105/120点，持续10秒；「终北圣言」效果与「朔月诗篇」效果同时存在时，队伍中附近的所有角色触发的绽放反应造成的伤害提升120%/150%/180%/210%/240%，超绽放、烈绽放反应造成的伤害提升80%/100%/120%/140%/160%，月绽放反应伤害提升40%/50%/60%/70%/80%，该效果无法叠加。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "When using an Elemental Skill, All Elemental DMG Bonus will be increased by 8%/10%/12%/14%/16% for 15s, and a Bond of Life worth 24% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, every 1,000 HP cleared in the process will provide 2%/2.5%/3%/3.5%/4% All Elemental DMG Bonus, up to a maximum of 12%/15%/18%/21%/24%. This effect lasts 15s.",
+        "zh": "施放元素战技时，所有元素伤害加成提升8/10/12/14/16%，持续15秒，并赋予生命值上限24%的生命之契，该效果每10秒至多触发一次。生命之契清除时，每清除1000点将会提供2/2.5/3/3.5/4%所有元素伤害加成，至多通过这种方式获得12/15/18/21/24%所有元素伤害加成，持续15秒。"
       }
     },
-    "etherlight_spindlelute": {
+    "song_of_stillness": {
       "name": {
-        "en": "Etherlight Spindlelute",
-        "zh": "天光的纺琴"
+        "en": "Song of Stillness",
+        "zh": "静谧之曲"
       },
       "effect": {
-        "en": "For 20s after using an Elemental Skill, the equipping character's Elemental Mastery is increased by 100/125/150/175/200.",
-        "zh": "施放元素战技后的20秒内，装备者的元素精通提升100/125/150/175/200点。"
+        "en": "After the wielder is healed, they will deal 16%/20%/24%/28%/32% more DMG for 8s. This can be triggered even when the character is not on the field.",
+        "zh": "受到治疗后，造成的伤害提升16/20/24/28/32%，持续8秒。角色处于队伍后台也能触发。"
       }
     },
-    "bloodsoaked_ruins": {
+    "rightful_reward": {
       "name": {
-        "en": "Bloodsoaked Ruins",
-        "zh": "血染荒城"
+        "en": "Rightful Reward",
+        "zh": "公义的酬报"
       },
       "effect": {
-        "en": "For 3.5s after using an Elemental Burst, the equipping character's Lunar-Charged DMG dealt to opponents is increased by 36%/48%/60%/72%/84%. Additionally, after triggering a Lunar-Charged reaction, the equipping character will gain Requiem of Ruin: CRIT DMG is increased by 28%/35%/42%/49%/56% for 6s. They will also regain 12/13/14/15/16 Elemental Energy. Elemental Energy can be restored this way once every 14s.",
-        "zh": "施放元素爆发后的3.5秒内，装备者对敌人造成的月感电反应伤害提高36%/48%/60%/72%/84%。此外，装备者触发月感电反应后，将获得「荒落的挽歌」：暴击伤害提高28%/35%/42%/49%/56%，持续6秒；并为装备者恢复12/13/14/15/16点元素能量，每14秒至多通过这种方式恢复一次元素能量。"
+        "en": "When the wielder is healed, restore 8/10/12/14/16 Energy. This effect can be triggered once every 10s, and can occur even when the character is not on the field.",
+        "zh": "受到治疗时，恢复8/10/12/14/16点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。"
       }
     },
-    "sacrificers_staff": {
+    "tidal_shadow": {
       "name": {
-        "en": "Sacrificer's Staff",
-        "zh": "圣祭者的辉杖"
+        "en": "Tidal Shadow",
+        "zh": "浪影阔剑"
       },
       "effect": {
-        "en": "For 6s after an Elemental Skill hits an opponent, ATK is increased by 8%/10%/12%/14%/16% and Energy Recharge is increased by 6%/7.5%/9%/10.5%/12%. Max 3 stacks. This effect can be triggered even when the equipping character is off-field.",
-        "zh": "元素战技命中敌人后的6秒内，攻击力提升8%/10%/12%/14%/16%，元素充能效率提升6%/7.5%/9%/10.5%/12%。该效果至多叠加3层，装备者处于队伍后台时依然能触发。"
+        "en": "After the wielder is healed, ATK will be increased by 24%/30%/36%/42%/48% for 8s. This can be triggered even when the character is not on the field.",
+        "zh": "受到治疗后，攻击力提升24/30/36/42/48%，持续8秒。角色处于队伍后台也能触发。"
       }
     },
-    "dawning_frost": {
+    "finale_of_the_deep": {
       "name": {
-        "en": "Dawning Frost",
-        "zh": "霜辰"
+        "en": "Finale of the Deep",
+        "zh": "海渊终曲"
       },
       "effect": {
-        "en": "For 10s after a Charged Attack hits an opponent, Elemental Mastery is increased by 72/90/108/126/144. For 10s after an Elemental Skill hits an opponent, Elemental Mastery is increased by 48/60/72/84/96.",
-        "zh": "重击命中敌人后的10秒内，元素精通提升72/90/108/126/144点；元素战技命中敌人后的10秒内，元素精通提升48/60/72/84/96点。"
+        "en": "When using an Elemental Skill, ATK will be increased by 12%/15%/18%/21%/24% for 15s, and a Bond of Life worth 25% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, a maximum of 150/187.5/225/262.5/300 ATK will be gained based on 2.4/3/3.6/4.2/4.8% of the total amount of the Life Bond cleared, lasting for 15s.",
+        "zh": "施放元素战技时，攻击力提升12%/15%/18%/21%/24%，持续15秒，并赋予生命值上限25%的生命之契，该效果每10秒至多触发一次。生命之契清除时，基于清除值的2.4%/3%/3.6%/4.2%/4.8%提升至多150/187.5/225/262.5/300点攻击力，持续15秒。"
       }
     },
-    "reliquary_of_truth": {
+    "the_first_great_magic": {
       "name": {
-        "en": "Reliquary of Truth",
-        "zh": "真语秘匣"
+        "en": "The First Great Magic",
+        "zh": "最初的大魔术"
       },
       "effect": {
-        "en": "CRIT Rate is increased by 8%/10%/12%/14%/16%. When the equipping character unleashes an Elemental Skill, they gain the Secret of Lies effect: Elemental Mastery is increased by 80/100/120/140/160 for 12s. When the equipping character deals Lunar-Bloom DMG to an opponent, they gain the Moon of Truth effect: CRIT DMG is increased by 24%/30%/36%/42%/48% for 4s. When both the Secret of Lies and Moon of Truth effects are active at the same time, the results of both effects will be increased by 50%.",
-        "zh": "暴击率提升8%/10%/12%/14%/16%。施放元素战技时，装备者获得「伪言之秘」效果：元素精通提升80/100/120/140/160点，持续12秒。装备者对敌人造成月绽放反应伤害时，装备者获得「真识之月」效果：暴击伤害提升24%/30%/36%/42%/48%，持续4秒。「伪言之秘」效果与「真识之月」效果同时存在时，这些效果分别提升50%。"
+        "en": "DMG dealt by Charged Attacks increased by 16%/20%/24%/28%/32%. For every party member with the same Elemental Type as the wielder (including the wielder themselves), gain 1 Gimmick stack. For every party member with a different Elemental Type from the wielder, gain 1 Theatrics stack. When the wielder has 1/2/3 or more Gimmick stacks, ATK will be increased by 16%/32%/48% | 20%/40%/60% | 24%/48%/72% | 28%/56%/84% | 32%/64%/96%. When the wielder has 1/2/3 or more Theatrics stacks, Movement SPD will be increased by 4%/7%/10% | 6%/9%/12% | 8%/11%/14% | 10%/13%/16% | 12%/15%/18%.",
+        "zh": "重击造成的伤害提升16/20/24/28/32%；队伍中每存在一位与装备者元素类型相同的角色（包括装备者自身），将获得1层「手法」效果；每存在一位元素类型不同的角色，将获得1层「演技」效果。处于1/2/3层及以上「手法」效果下时，攻击力提升 16%/32%/48% | 20%/40%/60% | 24%/48%/72% | 28%/56%/84% | 32%/64%/96%；处于1/2/3层及以上「演技」效果下时，移动速度提升4%/7%/10% | 6%/9%/12% | 8%/11%/14% | 10%/13%/16% | 12%/15%/18%。"
       }
     },
-    "athame_artis": {
+    "ibis_piercer": {
       "name": {
-        "en": "Athame Artis",
-        "zh": "黑蚀"
+        "en": "Ibis Piercer",
+        "zh": "鹮穿之喙"
       },
       "effect": {
-        "en": "CRIT DMG from Elemental Bursts is increased by 16/20/24/28/32%. When an Elemental Burst hits an opponent, gain the Blade of the Daylight Hours effect: ATK is increased by 20/25/30/35/40%. Nearby active party members other than the equipping character have their ATK increased by 16/20/24/28/32% for 3s.Additionally, when the party possesses Hexerei: Secret Rite effects, the effects of Blade of the Daylight Hours are increased by an additional 75%. This effect can be triggered even if the equipping character is off-field.",
-        "zh": "元素爆发造成的暴击伤害提升16%/20%/24%/28%/32%；元素爆发命中敌人时，将获得「白昼之刃」效果：攻击力提升20%/25%/30%/35%/40%，除装备者以外，队伍中附近的当前场上角色攻击力提升16%/20%/24/28%/32%，持续3秒。此外，队伍拥有「魔导·秘仪」效果时，「白昼之刃」的效果额外提升75%。装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "The character's Elemental Mastery will increase by 40/50/60/70/80 within 6s after Charged Attacks hit opponents. Max 2 stacks. This effect can be triggered once every 0.5s.",
+        "zh": "重击命中敌人后的6秒内，角色元素精通提升40/50/60/70/80点。该效果至多叠加2层，每0.5秒至多触发一次。"
       }
     },
-    "rainbow_serpents_rain_bow": {
+    "jadefalls_splendor": {
       "name": {
-        "en": "Rainbow Serpent's Rain Bow",
-        "zh": "虹蛇的雨弦"
+        "en": "Jadefall's Splendor",
+        "zh": "碧落之珑"
       },
       "effect": {
-        "en": "ATK is increased by 28%/35%/42%/49%/56% for 8s after the equipping character's attacks hit an opponent while the equipping character is off-field.",
-        "zh": "装备者处于队伍后台时，装备者的攻击命中敌人后的8秒内，攻击力提升28/35/42/49/56%。"
+        "en": "For 3s after using an Elemental Burst or creating a shield, the equipping character can gain the Primordial Jade Regalia effect: Restore 4.5/5/5.5/6/6.5 Energy every 2.5s, and gain 0.3%/0.5%/0.7%/0.9%/1.1% Elemental DMG Bonus for their corresponding Elemental Type for every 1,000 Max HP they possess, up to 12%/20%/28%/36%/44%. Primordial Jade Regalia will still take effect even if the equipping character is not on the field.",
+        "zh": "施放元素爆发或创造护盾后的3秒内，将产生「定土玉圭」效果：每2.5秒恢复4.5点元素能量，并基于装备者的生命值上限，每1000点使其对应元素类型的元素伤害加成提高0.3%，至多提高12%。装备该武器的角色处于队伍后台时，依然能产生「定土玉圭」效果。"
       }
     },
-    "the_daybreak_chronicles": {
+    "beacon_of_the_reed_sea": {
       "name": {
-        "en": "The Daybreak Chronicles",
-        "zh": "黎明破晓之史"
+        "en": "Beacon of the Reed Sea",
+        "zh": "苇海信标"
       },
       "effect": {
-        "en": "The equipping character gains Stirring Dawn Breeze: 3s after leaving combat, Normal Attack, Elemental Skill, and Elemental Burst DMG is increased by 60/75/90/105/120%. While in combat, this DMG Bonus will decrease by 10/12.5/15/17.5/20% per second until it reaches 0%. When the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for the corresponding DMG type is increased by 10/12.5/15/17.5/20% until it reaches 60/75/90/105/120%. This effect can be triggered once every 0.1s for each of the attack types mentioned above. This effect can be triggered even if the equipping character is off-field.Additionally, when the party possesses Hexerei: Secret Rite effects, when the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for all these DMG types is increased by 20/25/30/35/40% instead.",
-        "zh": "装备者获得「渐起的晓风」：脱离战斗状态3秒后，普通攻击、元素战技和元素爆发造成的伤害提升60/75/90/105/120%。在战斗状态下，上述伤害提升效果每秒降低10/12.5/15/17.5/20%，直到降低至0%；装备者的普通攻击、元素战技或元素爆发命中敌人时，对应类别的伤害提升效果提升10/12.5/15/17.5/20%，直到提升至60/75/90/105/120%，上述每种类别的攻击每0.1秒至多触发一次该效果。装备者处于队伍后台时，依然能触发上述效果。此外，队伍拥有「魔导·秘仪」效果时，装备者的普通攻击、元素战技或元素爆发命中敌人时，改为使所有类别的伤害提升效果提升20/25/30/35/40%。"
+        "en": "After the character's Elemental Skill hits an opponent, their ATK will be increased by 20%/25%/30%/35%/40% for 8s. After the character takes DMG, their ATK will be increased by 20%/25%/30%/35%/40% for 8s. The 2 aforementioned effects can be triggered even when the character is not on the field. Additionally, when not protected by a shield, the character's Max HP will be increased by 32%/40%/48%/56%/64%.",
+        "zh": "元素战技命中敌人后，攻击力提升20%，持续8秒；受到伤害后，攻击力提升20%，持续8秒。上述2种效果角色处于队伍后台时也能触发。此外，不处于护盾庇护下时，生命值上限提高32%。"
       }
     },
-    "nocturnes_curtain_call": {
+    "mailed_flower": {
       "name": {
-        "en": "Nocturne's Curtain Call",
-        "zh": "帷间夜曲"
+        "en": "Mailed Flower",
+        "zh": "饰铁之花"
       },
       "effect": {
-        "en": "Max HP increases by 10/12/14/16/18%. When triggering Lunar reactions or inflicting Lunar Reaction DMG on opponents, the equipping character will recover 14/15/16/17/18 Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional 14/16/18/20/22%, CRIT DMG from Lunar Reaction DMG increases by 60/80/100/120/140%. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field.",
-        "zh": "生命值上限提高10%/12%/14%/16%/18%。装备者触发月曜反应或对敌人造成月曜反应伤害时，将为装备者恢复14/15/16/17/18点元素能量，并获得持续12秒的「丰饶海的神酒」效果：生命值上限进一步提高14%/16%/18%/20%/22%，月曜反应伤害的暴击伤害提升60%/80%/100%/120%/140%。恢复元素能量效果每18秒至多触发一次，装备者处于队伍后台时，依然能触发上述效果。"
+        "en": "Within 8s after the character's Elemental Skill hits an opponent or the character triggers an Elemental Reaction, their ATK and Elemental Mastery will be increased by 12%/15%/18%/21%/24% and 48/60/72/84/96 respectively.",
+        "zh": "元素战技命中敌人或触发元素反应后的8秒内，攻击力提升12%/15%/18%/21%/24%，元素精通提升48/60/72/84/96点。"
+      }
+    },
+    "light_of_foliar_incision": {
+      "name": {
+        "en": "Light of Foliar Incision",
+        "zh": "裁叶萃光"
+      },
+      "effect": {
+        "en": "CRIT Rate is increased by 4%/5%/6%/7%/8%. When Normal Attacks deal Elemental DMG, the Foliar Incision effect will be obtained, increasing DMG dealt by Normal Attacks and Elemental Skills by 120%/150%/180%/210%/240% of Elemental Mastery. This effect will disappear after 28 DMG instances or 12s. You can obtain Foliar Incision once every 12s.",
+        "zh": "暴击率提升4%/5%/6%/7%/8%；普通攻击造成元素伤害后，获得「裁叶」效果：普通攻击和元素战技造成的伤害提高，提高值相当于元素精通的120%/150%/180%/210%/240%。该效果在生效28次或12秒后消失，每12秒至多获得一次「裁叶」效果。"
+      }
+    },
+    "tulaytullahs_remembrance": {
+      "name": {
+        "en": "Tulaytullah's Remembrance",
+        "zh": "图莱杜拉的回忆"
+      },
+      "effect": {
+        "en": "Normal Attack SPD is increased by 10%/12.5%/15%/17.5%/20%. After the wielder unleashes an Elemental Skill, Normal Attack DMG will increase by 4.8%/6%/7.2%/8.4%/9.6% every second for 14s. After hitting an opponent with a Normal Attack during this duration, Normal Attack DMG will be increased by 9.6%/12%/14.4%/16.8%/19.2%. This increase can be triggered once every 0.3s. The maximum Normal Attack DMG increase per single duration of the overall effect is 48%/60%/72%/84%/96%. The effect will be removed when the wielder leaves the field, and using the Elemental Skill again will reset all DMG buffs.",
+        "zh": "普通攻击速度提升10%/12.5%/15%/17.5%/20%；施放元素战技后的14秒内：普通攻击造成的伤害每1秒提升4.8%/6%/7.2%/8.4%/9.6%；普通攻击命中敌人后，普通攻击造成的伤害提升9.6%/12%/14.4%/16.8%/19.2%，该效果每0.3秒至多触发1次。持续期间内，普通攻击造成的伤害至多通过上述效果提升至48%/60%/72%/84%/96%。角色退场时将移除效果，再次施放元素战技时会先移除原有的效果。"
+      }
+    },
+    "toukabou_shigure": {
+      "name": {
+        "en": "Toukabou Shigure",
+        "zh": "东花坊时雨"
+      },
+      "effect": {
+        "en": "After an attack hits opponents, it will inflict an instance of Cursed Parasol upon one of them for 10s. This effect can be triggered once every 15s. If this opponent is taken out during Cursed Parasol's duration, Cursed Parasol's CD will be refreshed immediately. The character wielding this weapon will deal 16%/20%/24%/28%/32% more DMG to the opponent affected by Cursed Parasol.",
+        "zh": "攻击命中敌人后，会为命中的一名敌人施加「纸伞作祟」状态，持续10秒。该效果每15秒至多触发一次；持续期间该敌人被击败时，将清除该效果的冷却时间。装备者对处于「纸伞作祟」状态下的敌人造成的伤害提升16%/20%/24%/28%/32%。"
+      }
+    },
+    "a_thousand_floating_dreams": {
+      "name": {
+        "en": "A Thousand Floating Dreams",
+        "zh": "千夜浮梦"
+      },
+      "effect": {
+        "en": "Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by 32/40/48/56/64. If not, increase the equipping character's DMG Bonus from their Elemental Type by 10%/14%/18%/22%/26%.",
+        "zh": "队伍中每个其他角色，都会依据元素类型与装备者相同与否，为装备者提供提升效果。相同：元素精通提升32点；不同：装备者元素类型的元素伤害加成提升10%。上述提升效果每种至多叠加3层。此外，队伍中装备者以外的附近角色的元素精通提升40点，多件同名武器产生的此效果可以叠加。"
+      }
+    },
+    "wandering_evenstar": {
+      "name": {
+        "en": "Wandering Evenstar",
+        "zh": "流浪的晚星"
+      },
+      "effect": {
+        "en": "The following effect will trigger every 10s: The equipping character will gain 24%/30%/36%/42%/48% of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
+        "zh": "每10秒，产生如下效果：基于装备者的元素精通的24%/30%/36%/42%/48%，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
+      }
+    },
+    "xiphos_moonlight": {
+      "name": {
+        "en": "Xiphos' Moonlight",
+        "zh": "西福斯的月光"
+      },
+      "effect": {
+        "en": "The following effect will trigger every 10s: The equipping character will gain 0.036%/0.045%/0.054%/0.063%/0.072% Energy Recharge for each point of Elemental Mastery they possess for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
+        "zh": "每10秒，产生如下效果：装备者的每点元素精通，都会为该角色提升0.036%/0.045%/0.054%/0.063%/0.072%元素充能效率，并基于该提升的30%为队伍中附近的其他角色提升元素充能效率，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
+      }
+    },
+    "key_of_khajnisut": {
+      "name": {
+        "en": "Key of Khaj-Nisut",
+        "zh": "圣显之钥"
+      },
+      "effect": {
+        "en": "HP increased by 20%/25%/30%/35%/40%. When an Elemental Skill hits opponents, you gain the Grand Hymn effect for 20s. This effect increases the equipping character's Elemental Mastery by 0.12%/0.15%/0.18%/0.21%/0.24% of their Max HP. This effect can trigger once every 0.3s. Max 3 stacks. When this effect gains 3 stacks, or when the third stack's duration is refreshed, the Elemental Mastery of all nearby party members will be increased by 0.2%/0.25%/0.3%/0.35%/0.4% of the equipping character's max HP for 20s.",
+        "zh": "生命值提升20%/25%/30%/35%/40%。元素战技命中敌人时，将产生持续20秒的「宏大诗篇」效果：基于装备者生命值上限的0.12%/0.15%/0.18%/0.21%/0.24%，获得元素精通提升，该效果每0.3秒至多触发一次，至多叠加3层。该效果叠加至3层或3层的持续时间刷新时，将基于装备者生命值上限的0.2%/0.25%/0.3%/0.35%/0.4%，为队伍中附近所有角色提供元素精通提升，持续20秒。"
+      }
+    },
+    "staff_of_the_scarlet_sands": {
+      "name": {
+        "en": "Staff of the Scarlet Sands",
+        "zh": "赤沙之杖"
+      },
+      "effect": {
+        "en": "The equipping character gains 52%/65%/78%/91%/104% of their Elemental Mastery as bonus ATK. When an Elemental Skill hits opponents, the Dream of the Scarlet Sands effect will be gained for 10s: The equipping character will gain 28%/35%/42%/49%/56% of their Elemental Mastery as bonus ATK. Max 3 stacks.",
+        "zh": "基于装备者元素精通的52%/65%/78%/91%/104%，获得攻击力加成。元素战技命中敌人时，将产生持续10秒的「赤沙之梦」效果：基于装备者元素精通的28%/35%/42%/49%/56%，获得攻击力加成，该效果至多叠加3层。"
+      }
+    },
+    "makhaira_aquamarine": {
+      "name": {
+        "en": "Makhaira Aquamarine",
+        "zh": "玛海菈的水色"
+      },
+      "effect": {
+        "en": "The following effect will trigger every 10s: The equipping character will gain 24%/30%/36%/42%/48% of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
+        "zh": "每10秒，产生如下效果：基于装备者的元素精通的24%/30%/36%/42%/48%，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。"
+      }
+    },
+    "missive_windspear": {
+      "name": {
+        "en": "Missive Windspear",
+        "zh": "风信之锋"
+      },
+      "effect": {
+        "en": "Within 10s after an Elemental Reaction is triggered, ATK is increased by 12%/15%/18%/21%/24% and Elemental Mastery is increased by 48/60/72/84/96.",
+        "zh": "触发元素反应后的10秒内，攻击力提升12%/15%/18%/21%/24%，元素精通提升48/60/72/84/96点。"
+      }
+    },
+    "forest_regalia": {
+      "name": {
+        "en": "Forest Regalia",
+        "zh": "森林王器"
+      },
+      "effect": {
+        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 60/75/90/105/120 Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
+        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升60/75/90/105/120点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。"
+      }
+    },
+    "kings_squire": {
+      "name": {
+        "en": "King's Squire",
+        "zh": "王下近侍"
+      },
+      "effect": {
+        "en": "Obtain the Teachings of the Forest effect when unleashing Elemental Skills and Bursts, increasing Elemental Mastery by 60/80/100/120/140 for 12s. This effect will be removed when switching characters. When the Teachings of the Forest effect ends or is removed, it will deal 100%/120%/140%/160%/180% of ATK as DMG to 1 nearby opponent. The Teachings of the Forest effect can be triggered once every 20s.",
+        "zh": "施放元素战技或元素爆发时，将获得「森林教诲」的效果，元素精通提升60/80/100/120/140点，持续12秒。该效果将在切换角色时移除。森林教诲的持续时间结束或被移除时，将对附近一名敌人造成100%/120%/140%/160%/180%攻击力的伤害。森林教诲每20秒至多触发一次。"
+      }
+    },
+    "fruit_of_fulfillment": {
+      "name": {
+        "en": "Fruit of Fulfillment",
+        "zh": "盈满之实"
+      },
+      "effect": {
+        "en": "Obtain the \"Wax and Wane\" effect after an Elemental Reaction is triggered, gaining 24/27/30/33/36 Elemental Mastery while losing 5% ATK. For every 0.3s, 1 stack of Wax and Wane can be gained. Max 5 stacks. For every 6s that go by without an Elemental Reaction being triggered, 1 stack will be lost. This effect can be triggered even when the character is off-field.",
+        "zh": "触发元素反应后，获得「盈缺」效果：元素精通提升24/27/30/33/36点，攻击力降低5%。每0.3秒至多获得一层盈缺效果，至多叠加5层。未触发元素反应时将每6秒失去一层。角色处于队伍后台时也能触发效果。"
+      }
+    },
+    "moonpiercer": {
+      "name": {
+        "en": "Moonpiercer",
+        "zh": "贯月矢"
+      },
+      "effect": {
+        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Revival will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 16%/20%/24%/28%/32% ATK for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field.",
+        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「苏生之叶」。拾取苏生之叶的角色攻击力提升16%/20%/24%/28%/32%，持续12秒。每20秒至多通过这种方式产生一枚苏生之叶。角色处于队伍后台时也能触发。"
+      }
+    },
+    "sapwood_blade": {
+      "name": {
+        "en": "Sapwood Blade",
+        "zh": "原木刀"
+      },
+      "effect": {
+        "en": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character 60/75/90/105/120 Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
+        "zh": "触发燃烧、原激化、超激化、蔓激化、绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升60/75/90/105/120点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。"
+      }
+    },
+    "end_of_the_line": {
+      "name": {
+        "en": "End of the Line",
+        "zh": "竭泽"
+      },
+      "effect": {
+        "en": "Triggers the Flowrider effect after using an Elemental Skill, dealing 80%/100%/120%/140%/160% ATK as AoE DMG upon hitting an opponent with an attack. Flowrider will be removed after 15s or after causing 3 instances of AoE DMG. Only 1 instance of AoE DMG can be caused every 2s in this way. Flowrider can be triggered once every 12s.",
+        "zh": "施放元素战技后,将触发「沿洄」效果，在攻击命中敌人时造成80%/100%/120%/140%/160%攻击力的范围伤害，该效果将在15秒或触发3次范围伤害后移除。每2秒至多通过这种方式造成一次范围伤害,每12秒至多触发一次沿洄。"
+      }
+    },
+    "hunters_path": {
+      "name": {
+        "en": "Hunter's Path",
+        "zh": "猎人之径"
+      },
+      "effect": {
+        "en": "Gain 12%/15%/18%/21%/24% All Elemental DMG Bonus. Obtain the Tireless Hunt effect after hitting an opponent with a Charged Attack. This effect increases Charged Attack DMG by 160%/200%/240%/280%/320% of Elemental Mastery. This effect will be removed after 12 Charged Attacks or 10s. Only 1 instance of Tireless Hunt can be gained every 12s.",
+        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成。重击命中敌人后,将获得「无休止的狩猎」：重击造成的伤害值提高，提高值相当于元素精通数值的160%/200%/240%/280%/320%。该效果将在生效12次或10秒后消失，每12秒至多获得一次无休止的狩猎。"
+      }
+    },
+    "kagotsurube_isshin": {
+      "name": {
+        "en": "Kagotsurube Isshin",
+        "zh": "笼钓瓶一心"
+      },
+      "effect": {
+        "en": "When a Normal, Charged, or Plunging Attack hits an opponent, it will whip up a Hewing Gale, dealing AoE DMG equal to 180% of ATK and increasing ATK by 15% for 8s. This effect can be triggered once every 8s.",
+        "zh": "普通攻击、重击或下落攻击命中敌人时，将卷起切落风，造成180%攻击力的范围伤害，并且使攻击力提升15%，持续8秒。该效果每8秒至多触发一次。"
+      }
+    },
+    "fading_twilight": {
+      "name": {
+        "en": "Fading Twilight",
+        "zh": "落霞"
+      },
+      "effect": {
+        "en": "Has three states, Evengleam, Afterglow, and Dawnblaze, which increase DMG dealt by 6%/10%/14% | 7.5%/12.5%/17.5% | 9%/15%/21% | 10.5%/17.5%/24.5% | 12%/20%/28% respectively. When attacks hit opponents, this weapon will switch to the next state. This weapon can change states once every 7s. The character equipping this weapon can still trigger the state switch while not on the field.",
+        "zh": "具有夕暮、流霞、朝晖三种状态，分别能使造成的伤害提升6%/10%/14%/7.5%/12.5%/17.5%/9%/15%/21%/10.5%/17.5%/24.5%/12%/20%/28%。攻击命中敌人后，将转换为下一种状态，每7秒至多转换一次状态。装备该武器的角色处于队伍后台时该效果依旧能触发转换。"
+      }
+    },
+    "aqua_simulacra": {
+      "name": {
+        "en": "Aqua Simulacra",
+        "zh": "若水"
+      },
+      "effect": {
+        "en": "HP is increased by 16%/20%/24%/28%/32%. When there are opponents nearby, the DMG dealt by the wielder of this weapon is increased by 20%/25%/30%/35%/40%. This will take effect whether the character is on-field or not.",
+        "zh": "生命值提升16%/20%/24%/28%/32%。周围存在敌人时，装备该武器的角色造成的伤害都会提升20%/25%/30%/35%/40%，不论该角色处于场上或是处于队伍后台。"
+      }
+    },
+    "dragonspine_spear": {
+      "name": {
+        "en": "Dragonspine Spear",
+        "zh": "龙脊长枪"
+      },
+      "effect": {
+        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
+        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
+      }
+    },
+    "black_tassel": {
+      "name": {
+        "en": "Black Tassel",
+        "zh": "黑缨枪"
+      },
+      "effect": {
+        "en": "Increases DMG against slimes by 40%/50%/60%/70%/80%.",
+        "zh": "对史莱姆类敌人造成的伤害增加40%/50%/60%/70%/80%。"
+      }
+    },
+    "blackcliff_longsword": {
+      "name": {
+        "en": "Blackcliff Longsword",
+        "zh": "黑岩长剑"
+      },
+      "effect": {
+        "en": "After defeating an opponent, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
+      }
+    },
+    "blackcliff_agate": {
+      "name": {
+        "en": "Blackcliff Agate",
+        "zh": "黑岩绯玉"
+      },
+      "effect": {
+        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
+      }
+    },
+    "blackcliff_slasher": {
+      "name": {
+        "en": "Blackcliff Slasher",
+        "zh": "黑岩斩刀"
+      },
+      "effect": {
+        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
+      }
+    },
+    "blackcliff_warbow": {
+      "name": {
+        "en": "Blackcliff Warbow",
+        "zh": "黑岩战弓"
+      },
+      "effect": {
+        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
+      }
+    },
+    "blackcliff_pole": {
+      "name": {
+        "en": "Blackcliff Pole",
+        "zh": "黑岩刺枪"
+      },
+      "effect": {
+        "en": "After defeating an enemy, ATK is increased by 12%/15%/18%/21%/24% for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+        "zh": "击败敌人后，攻击力提升12%/15%/18%/21%/24%，持续30秒。该效果至多叠加3层，每层持续时间独立。"
+      }
+    },
+    "the_black_sword": {
+      "name": {
+        "en": "The Black Sword",
+        "zh": "黑剑"
+      },
+      "effect": {
+        "en": "Increases DMG dealt by Normal and Charged Attacks by 20%/25%/30%/35%/40%. Additionally, regenerates 60%/70%/80%/90%/100% of ATK as HP when Normal and Charged Attacks score a CRIT Hit. This effect can occur once every 5s.",
+        "zh": "普通攻击与重击的造成的伤害提升20%/25%/30%/35%/40%；此外，普通攻击与重击暴击时，回复等同于攻击力60%/70%/80%/90%/100%的生命值。该效果每5秒至多发动一次。"
+      }
+    },
+    "harbinger_of_dawn": {
+      "name": {
+        "en": "Harbinger of Dawn",
+        "zh": "黎明神剑"
+      },
+      "effect": {
+        "en": "When HP is above 90%, increases CRIT Rate by 14%/17.5%/21%/24.5%/28%.",
+        "zh": "生命值高于90%时，暴击率提升14%/17.5%/21%/24.5%/28%。"
+      }
+    },
+    "raven_bow": {
+      "name": {
+        "en": "Raven Bow",
+        "zh": "鸦羽弓"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Hydro or Pyro by 12%/15%/18%/21%/24%.",
+        "zh": "对处于水元素或火元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
+      }
+    },
+    "magic_guide": {
+      "name": {
+        "en": "Magic Guide",
+        "zh": "魔导绪论"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Hydro or Electro by 12%/15%/18%/21%/24%.",
+        "zh": "对处于水元素或雷元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
+      }
+    },
+    "thundering_pulse": {
+      "name": {
+        "en": "Thundering Pulse",
+        "zh": "飞雷之弦振"
+      },
+      "effect": {
+        "en": "Increases ATK by 20%/25%/30%/35%/40% and grants the might of the Thunder Emblem. At stack levels 1/2/3, the Thunder Emblem increases Normal Attack DMG by 12%/24%/40% | 15%/30%/50% | 18%/36%/60% | 21%/42%/70% | 24%48%/80%. The character will obtain 1 stack of Thunder Emblem in each of the following scenarios: Normal Attack deals DMG (stack lasts 5s), casting Elemental Skill (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
+        "zh": "攻击力提高20%/25%/30%/35%/40%，并能获得「飞雷之巴印」的威势。飞雷之巴印：持有1/2/3层飞雷之巴印时，普通攻击造成的伤害提高12/24/40%/15/30/50%/18/36/60%/21/42/70%/24/48/80%。在下列情况下，角色将各获得1层飞雷之巴印：普通攻击造成伤害时，持续5秒；施放元素战技时，持续10秒；此外，角色元素能量低于100%时，将获得1层飞雷之巴印，此飞雷之巴印会在角色的元素能量充满时消失。每层飞雷之巴印的持续时间独立计算。"
+      }
+    },
+    "skyrider_sword": {
+      "name": {
+        "en": "Skyrider Sword",
+        "zh": "飞天御剑"
+      },
+      "effect": {
+        "en": "Using an Elemental Burst grants a 12%/15%/18%/21%/24% increase in ATK and Movement SPD for 15s.",
+        "zh": "施放元素爆发后，提高12%/15%/18%/21%/24%攻击力和移动速度，持续15秒。"
+      }
+    },
+    "skyrider_greatsword": {
+      "name": {
+        "en": "Skyrider Greatsword",
+        "zh": "飞天大御剑"
+      },
+      "effect": {
+        "en": "On hit, Normal or Charged Attacks increase ATK by 6%/7%/8%/9%/10% for 6s. Max 4 stacks. Can occur once every 0.5s.",
+        "zh": "普通攻击和重击命中时，攻击力提高6%/7%/8%/9%/10%，持续6秒，最多叠加4层。该效果每0.5秒只能触发一次。"
+      }
+    },
+    "aquila_favonia": {
+      "name": {
+        "en": "Aquila Favonia",
+        "zh": "风鹰剑"
+      },
+      "effect": {
+        "en": "ATK is increased by 20%/25%/30%/35%/40%. Triggers on taking DMG: the soul of the Falcon of the West awakens, holding the banner of resistance aloft, regenerating HP equal to 100%/115%/130%/145%/160% of ATK and dealing 200%/230%/260%/290%/320% of ATK as DMG to surrounding opponents. This effect can only occur once every 15s.",
+        "zh": "攻击力提高20%/25%/30%/35%/40%；受到伤害时触发：高扬抗争旗号的西风鹰之魂苏醒，恢复等同于攻击力的100%/115%/130%/145%/160%的生命值，并对周围的敌人造成200%/230%/260%/290%/320%攻击力的伤害。该效果每15秒只能触发一次。"
+      }
+    },
+    "windblume_ode": {
+      "name": {
+        "en": "Windblume Ode",
+        "zh": "风花之颂"
+      },
+      "effect": {
+        "en": "After using an Elemental Skill, receive a boon from the ancient wish of the Windblume, increasing ATK by 16%/20%/24%/28%/32% for 6s.",
+        "zh": "施放元素战技时，获得风之花的悠古愿望加持，攻击力提升16%/20%/24%/28%/32%，持续6秒。"
+      }
+    },
+    "mistsplitter_reforged": {
+      "name": {
+        "en": "Mistsplitter Reforged",
+        "zh": "雾切之回光"
+      },
+      "effect": {
+        "en": "Gain a 12%/15%/18%/21%/24% Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a 8%/16%/28% | 10%/20%/35% | 12%/24%/42% | 14%/28%/49% | 16%/32%/56% Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of the Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
+        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成，并能获得「雾切之巴印」的威势。雾切之巴印：持有1/2/3层雾切之巴印时，获得8%/16%/28% | 10%/20%/35% | 12%/24%/42% | 14%/28%/49% | 16%/32%/56%自己的元素类型的元素伤害加成。在下列情况下，角色将各获得1层雾切之巴印：普通攻击造成元素伤害时，持续5秒；施放元素爆发时，持续10秒；此外，角色元素能量低于100%时，将获得1层雾切之巴印，此雾切之巴印会在角色的元素能量充满时消失。每层雾切之巴印的持续时间独立计算。"
+      }
+    },
+    "snowtombed_starsilver": {
+      "name": {
+        "en": "Snow-Tombed Starsilver",
+        "zh": "雪葬的星银"
+      },
+      "effect": {
+        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
+        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
+      }
+    },
+    "rainslasher": {
+      "name": {
+        "en": "Rainslasher",
+        "zh": "雨裁"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Hydro or Electro by 20%/24%/28%/32%/36%.",
+        "zh": "对处于水元素或雷元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
+      }
+    },
+    "sword_of_descension": {
+      "name": {
+        "en": "Sword of Descension",
+        "zh": "降临之剑"
+      },
+      "effect": {
+        "en": "Effective only on the following platform: \"PlayStation Network\"Hitting opponents with Normal and Charged Attacks grants a 50% chance to deal 200% ATK as DMG in a small AoE. This effect can only occur once every 10s. Additionally, if the Traveler equips the Sword of Descension, their ATK is increased by 66.",
+        "zh": "仅在以下平台生效： \"PlayStation Network\" 普通攻击与重击命中敌人后有50%概率在小范围内造成200%攻击力的伤害。该效果每10秒只能触发一次；此外，旅行者装备降临之剑时，攻击力提升66点。"
+      }
+    },
+    "amos_bow": {
+      "name": {
+        "en": "Amos' Bow",
+        "zh": "阿莫斯之弓"
+      },
+      "effect": {
+        "en": "Increases Normal and Charged Attack DMG by 12%/15%/18%/21%/24%. After a Normal or Charged Attack is fired, DMG dealt increases by a further 8%/10%/12%/14%/16% every 0.1s the arrow is in the air for up to 5 times.",
+        "zh": "普通攻击与重击造成的伤害提升12%/15%/18%/21%/24%；普通攻击与重击的箭矢发射后每经过0.1秒，伤害还会提升8%/10%/12%/14%/16%，至多提升5次。"
+      }
+    },
+    "iron_sting": {
+      "name": {
+        "en": "Iron Sting",
+        "zh": "铁蜂刺"
+      },
+      "effect": {
+        "en": "Dealing Elemental DMG increases all DMG by 6%/7.5%/9%/10.5%/12% for 6s. Max 2 stacks. Can occur once every 1s.",
+        "zh": "造成元素伤害后的6秒内，角色造成的伤害提高6%/7.5%/9%/10.5%/12%，该效果最多叠加2层。该效果每1秒可以触发一次。"
+      }
+    },
+    "ferrous_shadow": {
+      "name": {
+        "en": "Ferrous Shadow",
+        "zh": "铁影阔剑"
+      },
+      "effect": {
+        "en": "When HP falls below 70%/75%/80%/85%/90%, increases Charged Attack DMG by 30%/35%/40%/45%/50% and Charged Attacks become harder to interrupt.",
+        "zh": "生命值低于70%/75%/80%/85%/90%时，重击不会轻易被打断，并提高30%/35%/40%/45%/50%重击伤害。"
+      }
+    },
+    "halberd": {
+      "name": {
+        "en": "Halberd",
+        "zh": "钺矛"
+      },
+      "effect": {
+        "en": "Normal Attacks deal an additional 200%/240%/280%/320% ATK as DMG. This effect can only occur once every 10s.",
+        "zh": "对普通攻击命中的敌人造成200%/240%/280%/320%攻击力的额外伤害。该效果每10秒只能触发一次。"
+      }
+    },
+    "compound_bow": {
+      "name": {
+        "en": "Compound Bow",
+        "zh": "钢轮弓"
+      },
+      "effect": {
+        "en": "Normal Attack and Charged Attack hits increase ATK by 4%/5%/6%/7%/8% and Normal ATK SPD by 1.2%/1.5%/1.8%/2.1%/2.4% for 6s. Max 4 stacks. Can only occur once every 0.3s.",
+        "zh": "普通攻击与重击命中时，提升4%/5%/6%/7%/8%攻击力与1.2%/1.5%/1.8%/2.1%/2.4%普通攻击速度。该效果持续6秒，最多可以叠加4层，每0.3秒只能触发一次。"
+      }
+    },
+    "the_bell": {
+      "name": {
+        "en": "The Bell",
+        "zh": "钟剑"
+      },
+      "effect": {
+        "en": "Taking DMG generates a shield which absorbs DMG up to 20%/23%/26%/29%/32% of Max HP. This shield lasts for 10s or until broken, and can only be triggered once every 45s. While protected by a shield, the character gains 12%/15%/18%/21%/24% increased DMG.",
+        "zh": "受到伤害时，生成一个伤害吸收量等同于生命值上限20%/23%/26%/29%/32%的护盾，持续10秒或直到护盾失效,每45/45/45/45/45秒只能触发一次。角色处于护盾庇护下时，造成的伤害提升12%/15%/18%/21%/24%。"
+      }
+    },
+    "cinnabar_spindle": {
+      "name": {
+        "en": "Cinnabar Spindle",
+        "zh": "辰砂之纺锤"
+      },
+      "effect": {
+        "en": "Elemental Skill DMG is increased by 40%/50%/60%/70%/80% of DEF. The effect will be triggered no more than once every 1.5s and will be cleared 0.1s after the Elemental Skill deals DMG.",
+        "zh": "元素战技造成的伤害值提高，提高数值相当于防御力的40%/50%/60%/70%/80%。该效果每1.5秒最多触发一次，并将在元素战技造成伤害后的0.1秒后清除效果。"
+      }
+    },
+    "redhorn_stonethresher": {
+      "name": {
+        "en": "Redhorn Stonethresher",
+        "zh": "赤角石溃杵"
+      },
+      "effect": {
+        "en": "DEF is increased by 28%/35%/42%/49%/56%. Normal and Charged Attack DMG is increased by 40%/50%/60%/70%/80% of DEF.",
+        "zh": "防御力提高28%/35%/42%/49%/56%；普通攻击与重击造成的伤害值提高，提高数值相当于防御力的40%/50%/60%/70%/80%。"
+      }
+    },
+    "vortex_vanquisher": {
+      "name": {
+        "en": "Vortex Vanquisher",
+        "zh": "贯虹之槊"
+      },
+      "effect": {
+        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
+        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
+      }
+    },
+    "prototype_amber": {
+      "name": {
+        "en": "Prototype Amber",
+        "zh": "试作金珀"
+      },
+      "effect": {
+        "en": "Using an Elemental Burst regenerates 4/4.5/5/5.5/6 Energy every 2s for 6s. All party members will regenerate 4%/4.5%/5%/5.5%/6% HP every 2s for this duration.",
+        "zh": "施放元素爆发后6秒内，每2秒恢复4/4.5/5/5.5/6点元素能量，队伍中的所有角色每2秒恢复4%/4.5%/5%/5.5%/6%生命值。"
+      }
+    },
+    "prototype_crescent": {
+      "name": {
+        "en": "Prototype Crescent",
+        "zh": "试作澹月"
+      },
+      "effect": {
+        "en": "Charged Attack hits on weak points increase Movement SPD by 10% and ATK by 36%/45%/54%/63%/72% for 10s.",
+        "zh": "重击若命中要害，则提升10%移动速度与36%/45%/54%/63%/72%攻击力，持续10秒。"
+      }
+    },
+    "prototype_starglitter": {
+      "name": {
+        "en": "Prototype Starglitter",
+        "zh": "试作星镰"
+      },
+      "effect": {
+        "en": "After using an Elemental Skill, increases Normal and Charged Attack DMG by 8%/10%/12%/14%/16% for 12s. Max 2 stacks.",
+        "zh": "施放元素战技后，普通攻击和重击造成的伤害提高8%/10%/12%/14%/16%。该效果持续12秒，最多叠加2层。"
+      }
+    },
+    "prototype_rancour": {
+      "name": {
+        "en": "Prototype Rancour",
+        "zh": "试作斩岩"
+      },
+      "effect": {
+        "en": "On hit, Normal or Charged Attacks increase ATK and DEF by 4%/5%/6%/7%/8% for 6s. Max 4 stacks. This effect can only occur once every 0.3s.",
+        "zh": "普通攻击或重击命中时，攻击力和防御力提高4%/5%/6%/7%/8%，持续6秒，最多叠加4层。该效果每0.3秒只能触发一次。"
+      }
+    },
+    "prototype_archaic": {
+      "name": {
+        "en": "Prototype Archaic",
+        "zh": "试作古华"
+      },
+      "effect": {
+        "en": "On hit, Normal or Charged Attacks have a 50% chance to deal an additional 240%/300%/360%/420%/480% ATK DMG to opponents within a small AoE. Can only occur once every 15s.",
+        "zh": "普通攻击和重击命中时，有50%的概率对小范围内的敌人造成240%/300%/360%/420%/480%攻击力的额外伤害。该效果每15秒只能触发一次。"
+      }
+    },
+    "oathsworn_eye": {
+      "name": {
+        "en": "Oathsworn Eye",
+        "zh": "证誓之明瞳"
+      },
+      "effect": {
+        "en": "Increases Energy Recharge by 24%/30%/36%/42%/48% for 10s after using an Elemental Skill.",
+        "zh": "施放元素战技后，元素充能效率提升24%/30%/36%/42%/48%，持续10秒。"
+      }
+    },
+    "thrilling_tales_of_dragon_slayers": {
+      "name": {
+        "en": "Thrilling Tales of Dragon Slayers",
+        "zh": "讨龙英杰谭"
+      },
+      "effect": {
+        "en": "When switching characters, the new character taking the field has their ATK increased by 24%/30%/36%/42%/48% for 10s. This effect can only occur once every 20s.",
+        "zh": "主动切换角色时，新登场的角色攻击力提升24%/30%/36%/42%/48%，持续10秒。该效果每20秒只能触发一次。"
+      }
+    },
+    "favonius_lance": {
+      "name": {
+        "en": "Favonius Lance",
+        "zh": "西风长枪"
+      },
+      "effect": {
+        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
+        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
+      }
+    },
+    "favonius_codex": {
+      "name": {
+        "en": "Favonius Codex",
+        "zh": "西风秘典"
+      },
+      "effect": {
+        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
+        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
+      }
+    },
+    "favonius_warbow": {
+      "name": {
+        "en": "Favonius Warbow",
+        "zh": "西风猎弓"
+      },
+      "effect": {
+        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
+        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
+      }
+    },
+    "favonius_greatsword": {
+      "name": {
+        "en": "Favonius Greatsword",
+        "zh": "西风大剑"
+      },
+      "effect": {
+        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
+        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
+      }
+    },
+    "favonius_sword": {
+      "name": {
+        "en": "Favonius Sword",
+        "zh": "西风剑"
+      },
+      "effect": {
+        "en": "CRIT Hits have a 60%/70%/80%/90%/100% chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every 12/10.5/9/7.5/6s.",
+        "zh": "攻击造成暴击时，有60%/70%/80%/90%/100%的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每12/10.5/9/7.5/6秒只能触发一次。"
+      }
+    },
+    "luxurious_sealord": {
+      "name": {
+        "en": "Luxurious Sea-Lord",
+        "zh": "衔珠海皇"
+      },
+      "effect": {
+        "en": "Increases Elemental Burst DMG by 12%/15%/18%/21%/24%. When Elemental Burst hits opponents, there is a 100% chance of summoning a huge onrush of tuna that deals 100%/125%/150%/175%/200% ATK as AoE DMG. This effect can occur once every 15s.",
+        "zh": "元素爆发造成的伤害提升12%/15%/18%/21%/24%。元素爆发命中敌人时，有100%概率召唤大鲔冲击，造成100%/125%/150%/175%/200%攻击力的范围伤害。该效果每15秒至多触发一次。"
+      }
+    },
+    "serpent_spine": {
+      "name": {
+        "en": "Serpent Spine",
+        "zh": "螭骨剑"
+      },
+      "effect": {
+        "en": "Every 4s a character is on the field, they will deal 6%/7%/8%/9%/10% more DMG and take 3%/2.7%/2.4%/2.2%/2% more DMG. This effect has a maximum of 5 stacks and will not be reset if the character leaves the field, but will be reduced by 1 stack when the character takes DMG.",
+        "zh": "角色在场上时，每4秒提升6%/7%/8%/9%/10%造成的伤害，3%/2.7%/2.4%/2.2%/2%受到的伤害。该效果最多叠加5层，不随角色退场重置，受到伤害后会减少1层效果。"
+      }
+    },
+    "engulfing_lightning": {
+      "name": {
+        "en": "Engulfing Lightning",
+        "zh": "薙草之稻光"
+      },
+      "effect": {
+        "en": "ATK increased by 28%/35%/42%/49%/56% of Energy Recharge over the base 100%. You can gain a maximum bonus of 80%/90%/100%/110%/120% ATK. Gain 30%/35%/40%/45%/50% Energy Recharge for 12s after using an Elemental Burst.",
+        "zh": "攻击力获得提升，提升程度相当于元素充能效率超出100%部分的28%/35%/42%/49%/56%，至多通过这种方式提升80%/90%/100%/110%/120%。施放元素爆发后的12秒内，元素充能效率提升30%/35%/40%/45%/50%。"
+      }
+    },
+    "the_viridescent_hunt": {
+      "name": {
+        "en": "The Viridescent Hunt",
+        "zh": "苍翠猎弓"
+      },
+      "effect": {
+        "en": "Upon hit, Normal and Aimed Shot Attacks have a 50% chance to generate a Cyclone, which will continuously attract surrounding opponents, dealing 40%/50%/60%/70%/80% of ATK as DMG to these opponents every 0.5s for 4s. This effect can only occur once every 14/13/12/11/10s.",
+        "zh": "普通攻击与重击命中时，有50%几率生成一个风之眼，持续吸引周围敌人，并对其中的敌人每0.5秒造成40%/50%/60%/70%/80%攻击的伤害。该效果持续4秒，每14/13/12/11/10秒至多触发一次。"
+      }
+    },
+    "freedomsworn": {
+      "name": {
+        "en": "Freedom-Sworn",
+        "zh": "苍古自由之誓"
+      },
+      "effect": {
+        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases DMG by 10%/12.5%/15%/17.5%/20%. When the character wielding this weapon triggers Elemental Reactions, they gain a Sigil of Rebellion. This effect can be triggered once every 0.5s and can be triggered even if said character is not on the field. When you possess 2 Sigils of Rebellion, all of them will be consumed and all nearby party members will obtain \"Millennial Movement: Song of Resistance\" for 12s. \"Millennial Movement: Song of Resistance\" increases Normal, Charged and Plunging Attack DMG by 16%/20%/24%/28%/32% and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Rebellion for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
+        "zh": "飘游风中的「千年的大乐章」的一部分。造成的伤害提高10%/12.5%/15%/17.5%/20%；触发元素反应时，角色获得一枚奋起之符，每0.5秒内至多触发一次，角色处于队伍后台也能触发。拥有2枚奋起之符时，将消耗所有奋起之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·抗争之歌」效果：普通攻击、重击、下落攻击造成的伤害提高16%/20%/24%/28%/32%，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得奋起之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
+      }
+    },
+    "festering_desire": {
+      "name": {
+        "en": "Festering Desire",
+        "zh": "腐殖之剑"
+      },
+      "effect": {
+        "en": "Increases Elemental Skill DMG by 16%/20%/24%/28%/32% and Elemental Skill CRIT Rate by 6%/7.5%/9%/10.5%/12%.",
+        "zh": "元素战技造成的伤害增加16%/20%/24%/28%/32%，元素战技的暴击率提升6%/7.5%/9%/10.5%/12%。"
+      }
+    },
+    "emerald_orb": {
+      "name": {
+        "en": "Emerald Orb",
+        "zh": "翡玉法球"
+      },
+      "effect": {
+        "en": "Upon causing a Vaporize, Electro-Charged, Frozen, Bloom, Lunar-Charged, or a Hydro-infused Swirl reaction, ATK is increased by 20%/25%/30%/35%/40% for 12s.",
+        "zh": "触发蒸发、感电、冰冻、绽放或水元素扩散反应后的12秒内，攻击力提高20%/25%/30%/35%/40%。"
+      }
+    },
+    "the_stringless": {
+      "name": {
+        "en": "The Stringless",
+        "zh": "绝弦"
+      },
+      "effect": {
+        "en": "Increases Elemental Skill and Elemental Burst DMG by 24%/30%/36%/42%/48%.",
+        "zh": "元素战技与元素爆发的伤害提高24%/30%/36%/42%/48%。"
+      }
+    },
+    "elegy_for_the_end": {
+      "name": {
+        "en": "Elegy for the End",
+        "zh": "终末嗟叹之诗"
+      },
+      "effect": {
+        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases Elemental Mastery by 60/75/90/105/120. When the Elemental Skills or Elemental Bursts of the character wielding this weapon hit opponents, that character gains a Sigil of Remembrance. This effect can be triggered once every 0.2s and can be triggered even if said character is not on the field. When you possess 4 Sigils of Remembrance, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Farewell Song\" effect for 12s. \"Millennial Movement: Farewell Song\" increases Elemental Mastery by 100/125/150/175/200 and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Remembrance for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
+        "zh": "飘游风中的「千年的大乐章」的一部分。元素精通提高60/75/90/105/120点；元素战技或元素爆发命中敌人时，角色获得一枚追思之符，每0.2秒内至多触发一次，角色处于队伍后台也能触发。拥有4枚追思之符时，将消耗所有追思之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·别离之歌」效果：元素精通提高100/125/150/175/200点，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得追思之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
+      }
+    },
+    "the_flute": {
+      "name": {
+        "en": "The Flute",
+        "zh": "笛剑"
+      },
+      "effect": {
+        "en": "Normal or Charged Attacks grant a Harmonic on hits. Gaining 5 Harmonics triggers the power of music and deals 100%/125%/150%/175%/200% ATK DMG to surrounding opponents. Harmonics last up to 30s, and a maximum of 1 can be gained every 0.5s.",
+        "zh": "普通攻击或重击命中时，会获得一个和音。积攒了5个和音后，释放音律的力量，对周围的敌人造成100%/125%/150%/175%/200%攻击力的伤害。和音最多存在30秒，每0.5秒至多获得1个和音。"
+      }
+    },
+    "sacrificial_fragments": {
+      "name": {
+        "en": "Sacrificial Fragments",
+        "zh": "祭礼残章"
+      },
+      "effect": {
+        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
+        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
+      }
+    },
+    "sacrificial_bow": {
+      "name": {
+        "en": "Sacrificial Bow",
+        "zh": "祭礼弓"
+      },
+      "effect": {
+        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
+        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
+      }
+    },
+    "sacrificial_greatsword": {
+      "name": {
+        "en": "Sacrificial Greatsword",
+        "zh": "祭礼大剑"
+      },
+      "effect": {
+        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
+        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
+      }
+    },
+    "sacrificial_sword": {
+      "name": {
+        "en": "Sacrificial Sword",
+        "zh": "祭礼剑"
+      },
+      "effect": {
+        "en": "After damaging an opponent with an Elemental Skill, the skill has a 40%/50%/60%/70%/80% chance to end its own CD. Can only occur once every 30/26/22s/19/16s.",
+        "zh": "元素战技造成伤害时，有40%/50%/60%/70%/80%的概率重置该技能的冷却时间，该效果每30/26/22/19/16秒只能触发一次。"
+      }
+    },
+    "sharpshooters_oath": {
+      "name": {
+        "en": "Sharpshooter's Oath",
+        "zh": "神射手之誓"
+      },
+      "effect": {
+        "en": "Increases DMG against weak spots by 24%/30%/36%/42%/48%.",
+        "zh": "针对要害造成的伤害提升24%/30%/36%/42%/48%。"
+      }
+    },
+    "kaguras_verity": {
+      "name": {
+        "en": "Kagura's Verity",
+        "zh": "神乐之真意"
+      },
+      "effect": {
+        "en": "Gains the Kagura Dance effect when using an Elemental Skill, causing the Elemental Skill DMG of the character wielding this weapon to increase by 12%/15%/18%/21%/24% for 16s. Max 3 stacks. This character will gain 12%/15%/18%/21%/24% All Elemental DMG Bonus when they possess 3 stacks.",
+        "zh": "施放元素战技时，将获得「神乐舞」的效果，使装备该武器的角色的元素战技造成的伤害提高12%/15%/18%/21%/24%，该效果持续16秒，至多叠加3层。持有3层时，该角色获得12%/15%/18%/21%/24%所有元素伤害加成。"
+      }
+    },
+    "primordial_jade_cutter": {
+      "name": {
+        "en": "Primordial Jade Cutter",
+        "zh": "磐岩结绿"
+      },
+      "effect": {
+        "en": "HP increased by 20%/25%/30%/35%/40%. Additionally, provides an ATK Bonus based on 1.2%/1.5%/1.8%/2.1%/2.4% of the wielder's Max HP.",
+        "zh": "生命值提升20%/25%/30%/35%/40%。此外，基于装备该武器的角色生命值上限的1.2%/1.5%/1.8%/2.1%/2.4%，获得攻击力加成。"
+      }
+    },
+    "hamayumi": {
+      "name": {
+        "en": "Hamayumi",
+        "zh": "破魔之弓"
+      },
+      "effect": {
+        "en": "Increases Normal Attack DMG by 16%/20%/24%/28%/32% and Charged Attack DMG by 12%/15%/18%/21%/24%. When the equipping character's Energy reaches 100%, this effect is increased by 100%.",
+        "zh": "普通攻击造成的伤害提升16%/20%/24%/28%/32%，重击造成的伤害提升12%/15%/18%/21%/24%。当装备该武器的角色元素能量等于100%时，这个效果提升100%。"
+      }
+    },
+    "white_iron_greatsword": {
+      "name": {
+        "en": "White Iron Greatsword",
+        "zh": "白铁大剑"
+      },
+      "effect": {
+        "en": "Defeating an opponent restores 8%/10%/12%/14%/16% HP.",
+        "zh": "击败敌人时，恢复8%/10%/12%/14%/16%生命值。"
+      }
+    },
+    "hakushin_ring": {
+      "name": {
+        "en": "Hakushin Ring",
+        "zh": "白辰之环"
+      },
+      "effect": {
+        "en": "After the character equipped with this weapon triggers an Electro elemental reaction, nearby party members of an Elemental Type involved in the elemental reaction receive a 10%/12.5%/15%/17.5%/20% Elemental DMG Bonus for their element, lasting 6s. Elemental Bonuses gained in this way cannot be stacked.",
+        "zh": "装备该武器的角色触发雷元素相关反应后，队伍中附近的与该元素反应相关的元素类型的角色，获得10%/12.5%/15%/17.5%/20%对应元素的元素伤害加成，持续6秒。通过这种方式，角色获得的元素伤害加成无法叠加。"
+      }
+    },
+    "white_tassel": {
+      "name": {
+        "en": "White Tassel",
+        "zh": "白缨枪"
+      },
+      "effect": {
+        "en": "Increases Normal Attack DMG by 24%/30%/36%/42%/48%.",
+        "zh": "普通攻击造成的伤害提升24%/30%/36%/42%/48%。"
+      }
+    },
+    "whiteblind": {
+      "name": {
+        "en": "Whiteblind",
+        "zh": "白影剑"
+      },
+      "effect": {
+        "en": "On hit, Normal or Charged Attacks increase ATK and DEF by 6%/7.5%/9%/10.5%/12% for 6s. Max 4 stacks. This effect can only occur once every 0.5s.",
+        "zh": "普通攻击和重击命中后，攻击力和防御力提高6%/7.5%/9%/10.5%/12%。该效果持续6秒，最多叠加4层，每0.5秒只能触发一次。"
+      }
+    },
+    "twin_nephrite": {
+      "name": {
+        "en": "Twin Nephrite",
+        "zh": "甲级宝珏"
+      },
+      "effect": {
+        "en": "Defeating an opponent increases Movement SPD and ATK by 12%/14%/16%/18%/20% for 15s.",
+        "zh": "击败敌人后的15秒内，移动速度和攻击力提升12%/14%/16%/18%/20%。"
+      }
+    },
+    "wolfs_gravestone": {
+      "name": {
+        "en": "Wolf's Gravestone",
+        "zh": "狼的末路"
+      },
+      "effect": {
+        "en": "Increases ATK by 20%/25%/30%/35%/40%. On hit, attacks against opponents with less than 30% HP increase all party members' ATK by 40%/50%/60%/70%/80% for 12s. Can only occur once every 30s.",
+        "zh": "攻击力提高20%/25%/30%/35%/40%；攻击命中生命值低于30%的敌人时，队伍中所有成员的攻击力提高40%/50%/60%/70%/80%，持续12秒。该效果30秒只能触发一次。"
+      }
+    },
+    "the_widsith": {
+      "name": {
+        "en": "The Widsith",
+        "zh": "流浪乐章"
+      },
+      "effect": {
+        "en": "When the character takes the field, they will gain a random theme song for 10s. This can only occur once every 30s. Recitative: ATK is increased by 60%/75%/90%/105%/120%. Aria: Increases all Elemental DMG by 48%/60%/72%/84%/96%. Interlude: Elemental Mastery is increased by 240/300/360/420/480.",
+        "zh": "角色登场时，随机获得一个主题曲，持续10秒。每30秒只能触发一次。宣叙调：攻击力提升60%/75%/90%/105%/120%；咏叹调：全元素伤害提升48%/60%/72%/84%/96%;间奏曲：元素精通提升240/300/360/420/480。"
+      }
+    },
+    "crescent_pike": {
+      "name": {
+        "en": "Crescent Pike",
+        "zh": "流月针"
+      },
+      "effect": {
+        "en": "After picking up an Elemental Orb/Particle, Normal and Charged Attacks deal additional DMG equal to 20%/25%/30%/35%/40% of ATK for 5s.",
+        "zh": "获得元素微粒或元素晶球后的5秒内，普通攻击和重击额外造成20/25/30/35/40%攻击力伤害。"
+      }
+    },
+    "haran_geppaku_futsu": {
+      "name": {
+        "en": "Haran Geppaku Futsu",
+        "zh": "波乱月白经津"
+      },
+      "effect": {
+        "en": "Obtain 12%/15%/18%/21%/24% All Elemental DMG Bonus. When other nearby party members use Elemental Skills, the character equipping this weapon will gain 1 Wavespike stack. Max 2 stacks. This effect can be triggered once every 0.3s. When the character equipping this weapon uses an Elemental Skill, all stacks of Wavespike will be consumed to gain Rippling Upheaval: each stack of Wavespike consumed will increase Normal Attack DMG by 20%/25%/30%/35%/40% for 8s.",
+        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成；队伍中附近的其他角色在施放元素战技时，会为装备该武器的角色产生1层「波穗」效果，至多叠加2层，每0.3秒最多触发1次。装备该武器的角色施放元素战技时，如果有积累的「波穗」效果，则将消耗已有的「波穗」，获得「波乱」：根据消耗的层数，每层提升20%/25%/30%/35%/40%普通攻击伤害，持续8秒。"
+      }
+    },
+    "bloodtainted_greatsword": {
+      "name": {
+        "en": "Bloodtainted Greatsword",
+        "zh": "沐浴龙血的剑"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Pyro or Electro by 12%/15%/18%/21%/24%.",
+        "zh": "对处于火元素或雷元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
+      }
+    },
+    "katsuragikiri_nagamasa": {
+      "name": {
+        "en": "Katsuragikiri Nagamasa",
+        "zh": "桂木斩长正"
+      },
+      "effect": {
+        "en": "Increases Elemental Skill DMG by 6%/7.5%/9%/10.5%/12%. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates 3/3.5/4/4.5/5 Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
+        "zh": "元素战技造成的伤害提升6%/7.5%/9%/10.5%/12%。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复3/3.5/4/4.5/5点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。"
+      }
+    },
+    "song_of_broken_pines": {
+      "name": {
+        "en": "Song of Broken Pines",
+        "zh": "松籁响起之时"
+      },
+      "effect": {
+        "en": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases ATK by 16%/20%/24%/28%/32%, and when Normal or Charged Attacks hit opponents, the character gains a Sigil of Whispers. This effect can be triggered once every 0.3s. When you possess 4 Sigils of Whispers, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Banner-Hymn\" effect for 12s. \"Millennial Movement: Banner-Hymn\" increases Normal ATK SPD by 12%/15%/18%/21%/24% and increases ATK by 20%/25%/30%/35%/40%. Once this effect is triggered, you will not gain Sigils of Whispers for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
+        "zh": "飘游风中的「千年的大乐章」的一部分。攻击力提高16%/20%/24%/28%/32%；普通攻击或重击命中敌人时，角色获得一枚低语之符，每0.3秒内至多触发一次。拥有4枚低语之符时，将消耗所有低语之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·揭旗之歌」效果：普通攻击速度提高12%/15%/18%/21%/24%，攻击力提升20%/25%/30%/35%/40%。触发后20秒内，无法再次获得低语之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。"
+      }
+    },
+    "mouuns_moon": {
+      "name": {
+        "en": "Mouun's Moon",
+        "zh": "曚云之月"
+      },
+      "effect": {
+        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
+        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
+      }
+    },
+    "dark_iron_sword": {
+      "name": {
+        "en": "Dark Iron Sword",
+        "zh": "暗铁剑"
+      },
+      "effect": {
+        "en": "Upon causing an Overloaded, Superconduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, or Electro-infused Swirl reaction, ATK is increased by 20%/25%/30%/35%/40% for 12s.",
+        "zh": "触发超载、超导、感电、原激化、超激化、超绽放或雷元素扩散反应后的12秒内，攻击力提高20%/25%。"
+      }
+    },
+    "the_alley_flash": {
+      "name": {
+        "en": "The Alley Flash",
+        "zh": "暗巷闪光"
+      },
+      "effect": {
+        "en": "Increases DMG dealt by the character equipping this weapon by 12%/15%/18%/21%/24%. Taking DMG disables this effect for 5s.",
+        "zh": "角色造成的伤害提升12%/15%/18%/21%/24%。受到伤害后，该伤害提升效果会失效5秒。"
+      }
+    },
+    "wine_and_song": {
+      "name": {
+        "en": "Wine and Song",
+        "zh": "暗巷的酒与诗"
+      },
+      "effect": {
+        "en": "Hitting an opponent with a Normal Attack decreases the Stamina consumption of Sprint or Alternate Sprint by 14%/16%/18%/20%/22% for 5s. Additionally, using a Sprint or Alternate Sprint ability increases ATK by 20%/25%/30%/35%/40% for 5s.",
+        "zh": "普通攻击命中敌人后，冲刺或替代冲刺的能力消耗的体力降低14%/16%/18%/20%/22%，持续5秒。此外，使用冲刺或替代冲刺的能力后，攻击力提升20%/25%/30%/35%/40%，持续5秒。"
+      }
+    },
+    "alley_hunter": {
+      "name": {
+        "en": "Alley Hunter",
+        "zh": "暗巷猎手"
+      },
+      "effect": {
+        "en": "While the character equipped with this weapon is in the party but not on the field, their DMG increases by 2%/2.5%/3%/3.5%/4% every second up to a max of 20%/25%/30%/35%/40%. When the character is on the field for more than 4s, the aforementioned DMG buff decreases by 4%/5%/6%/7%/8% per second until it reaches 0%.",
+        "zh": "装备该武器的角色处于队伍后台时，每1秒角色造成的伤害提升2%/2.5%/3%/3.5%/4%，最多通过这种方式获得20%/25%/30%/35%/40%的伤害提升；在场上超过4秒后，上述伤害提升效果每1秒会流失4%/5%/6%/7%/8%，直到降低至0%。"
+      }
+    },
+    "eye_of_perception": {
+      "name": {
+        "en": "Eye of Perception",
+        "zh": "昭心"
+      },
+      "effect": {
+        "en": "Normal and Charged Attacks have a 50% chance to fire a Bolt of Perception, dealing 240%/270%/300%/330%/360% ATK as DMG. This bolt can bounce between opponents a maximum of 4 times. This effect can occur once every 12/11/10/9/8s.",
+        "zh": "普通攻击与重击命中时，有50%几率发射一枚昭心法球，造成240%/270%/300%/330%/360%攻击力伤害，至多在敌人之间弹射4次。该效果每12/11/10/9/8秒至多触发一次。"
+      }
+    },
+    "the_unforged": {
+      "name": {
+        "en": "The Unforged",
+        "zh": "无工之剑"
+      },
+      "effect": {
+        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
+        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
+      }
+    },
+    "travelers_handy_sword": {
+      "name": {
+        "en": "Traveler's Handy Sword",
+        "zh": "旅行剑"
+      },
+      "effect": {
+        "en": "Each Elemental Orb or Particle collected restores 1%/1.25%/1.5%/1.75%/2% HP.",
+        "zh": "获得元素晶球或元素微粒时，恢复1%/1.25%/1.5%/1.75%/2%生命值。"
+      }
+    },
+    "wavebreakers_fin": {
+      "name": {
+        "en": "Wavebreaker's Fin",
+        "zh": "断浪长鳍"
+      },
+      "effect": {
+        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
+        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
+      }
+    },
+    "summit_shaper": {
+      "name": {
+        "en": "Summit Shaper",
+        "zh": "斫峰之刃"
+      },
+      "effect": {
+        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
+        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
+      }
+    },
+    "predator": {
+      "name": {
+        "en": "Predator",
+        "zh": "掠食者"
+      },
+      "effect": {
+        "en": "Effective only on the following platform: \"PlayStation Network\"Dealing Cryo DMG to opponents increases this character's Normal and Charged Attack DMG by 10% for 6s. This effect can have a maximum of 2 stacks. Additionally, when Aloy equips Predator, ATK is increased by 66.",
+        "zh": "普通攻击造成的伤害提升16%，重击造成的伤害提升12%。当装备该武器的角色元素能量等于100%时，这个效果提升100%。"
+      }
+    },
+    "staff_of_homa": {
+      "name": {
+        "en": "Staff of Homa",
+        "zh": "护摩之杖"
+      },
+      "effect": {
+        "en": "HP increased by 20%/25%/30%/35%/40%. Additionally, provides an ATK Bonus based on 0.8%/1%/1.2%/1.4%/1.6% of the wielder's Max HP. When the wielder's HP is less than 50%, this ATK Bonus is increased by an additional 1%/1.2%/1.4%/1.6%/1.8% of Max HP.",
+        "zh": "生命值提升20%/25%/30%/35%/40%。此外，基于装备该武器的角色生命值上限的0.8%/1%/1.2%/1.4%/1.6%，获得攻击力加成。当装备该武器的角色生命值低于50%时，进一步获得1%/1.2%/1.4%/1.6%/1.8%基于生命值上限的攻击力提升。"
+      }
+    },
+    "akuoumaru": {
+      "name": {
+        "en": "Akuoumaru",
+        "zh": "恶王丸"
+      },
+      "effect": {
+        "en": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by 0.12%/0.15%/0.18%/0.21%/0.24%. A maximum of 40%/50%/60%/70%/80% increased Elemental Burst DMG can be achieved this way.",
+        "zh": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高0.12%/0.15%/0.18%/0.21%/0.24%，通过这种方式，元素爆发造成的伤害至多提高40%/50%/60%/70%/80%。"
+      }
+    },
+    "calamity_queller": {
+      "name": {
+        "en": "Calamity Queller",
+        "zh": "息灾"
+      },
+      "effect": {
+        "en": "Gain 12%/15%/18%/21%/24% All Elemental DMG Bonus. Obtain Consummation for 20s after using an Elemental Skill, causing ATK to increase by 3.2%/4%/4.8%/5.6%/6.4% per second. This ATK increase has a maximum of 6 stacks. When the character equipped with this weapon is not on the field, Consummation's ATK increase is doubled.",
+        "zh": "获得12%/15%/18%/21%/24%所有元素伤害加成；施放元素战技后，获得持续20秒的「圆顿」，攻击力每1秒提升3.2%/4%/4.8%/5.6%/6.4%，该攻击力提升效果至多叠加6次。当装备此武器的角色处于队伍后台时，「圆顿」的攻击力提升效果翻倍。"
+      }
+    },
+    "frostbearer": {
+      "name": {
+        "en": "Frostbearer",
+        "zh": "忍冬之果"
+      },
+      "effect": {
+        "en": "Hitting an opponent with Normal and Charged Attacks has a 60%/70%/80%/90%/100% chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to 80%/95%/110%/125%/140% of ATK. Opponents affected by Cryo are instead dealt DMG equal to 200%/240%/280%/320%/360% of ATK. Can only occur once every 10s.",
+        "zh": "普通攻击与重击命中敌人时，有60%/70%/80%/90%/100%概率在敌人上方生成恒冰晶核并坠落，造成80%/95%/110%/125%/140%攻击力的范围伤害。若敌人处于冰元素影响下，则造成200%/240%/280%/320%/360%攻击力的伤害。该效果每10秒至多触发一次。"
+      }
+    },
+    "slingshot": {
+      "name": {
+        "en": "Slingshot",
+        "zh": "弹弓"
+      },
+      "effect": {
+        "en": "If a Normal or Charged Attack hits a target within 0.3s of being fired, increases DMG by 36%/42%/48%/54%/60%. Otherwise, decreases DMG by 10%.",
+        "zh": "普通攻击与重击的箭矢若在发射后的0.3秒内击中敌人，则造成的伤害增加36%/42%/48%/54%/60%；否则，造成的伤害下降10%。"
+      }
+    },
+    "rust": {
+      "name": {
+        "en": "Rust",
+        "zh": "弓藏"
+      },
+      "effect": {
+        "en": "Increases Normal Attack DMG by 40%/50%/60%/70%/80% but decreases Charged Attack DMG by 10%.",
+        "zh": "普通攻击造成的伤害提升40%/50%/60%/70%/80%，重击造成的伤害下降10%。"
+      }
+    },
+    "otherworldly_story": {
+      "name": {
+        "en": "Otherworldly Story",
+        "zh": "异世界行记"
+      },
+      "effect": {
+        "en": "Each Elemental Orb or Particle collected restores 1%/1.25%/1.5%/1.75%/2% HP.",
+        "zh": "获得元素微粒或元素晶球时，恢复1%/1.25%/1.5%/1.75%/2%生命值。"
+      }
+    },
+    "mitternachts_waltz": {
+      "name": {
+        "en": "Mitternachts Waltz",
+        "zh": "幽夜华尔兹"
+      },
+      "effect": {
+        "en": "Normal Attack hits on opponents increase Elemental Skill DMG by 20%/25%/30%/35%/40% for 5s. Elemental Skill hits on opponents increase Normal Attack DMG by 20%/25%/30%/35%/40% for 5s.",
+        "zh": "普通攻击命中敌人后的5秒内，元素战技造成的伤害提升20%/25%/30%/35%/40%；元素战技命中敌人后的5秒内，普通攻击造成的伤害提升20%/25%/30%/35%/40%。"
+      }
+    },
+    "memory_of_dust": {
+      "name": {
+        "en": "Memory of Dust",
+        "zh": "尘世之锁"
+      },
+      "effect": {
+        "en": "Increases Shield Strength by 20%/25%/30%/35%/40%. Scoring hits on opponents increases ATK by 4%/5%/6%/7%/8% for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
+        "zh": "护盾强效提升20%/25%/30%/35%/40%。攻击命中后的8秒内，攻击力提升4%/5%/6%/7%/8%。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。"
+      }
+    },
+    "royal_bow": {
+      "name": {
+        "en": "Royal Bow",
+        "zh": "宗室长弓"
+      },
+      "effect": {
+        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
+        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+      }
+    },
+    "royal_longsword": {
+      "name": {
+        "en": "Royal Longsword",
+        "zh": "宗室长剑"
+      },
+      "effect": {
+        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
+        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+      }
+    },
+    "royal_grimoire": {
+      "name": {
+        "en": "Royal Grimoire",
+        "zh": "宗室秘法录"
+      },
+      "effect": {
+        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
+        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+      }
+    },
+    "royal_spear": {
+      "name": {
+        "en": "Royal Spear",
+        "zh": "宗室猎枪"
+      },
+      "effect": {
+        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
+        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+      }
+    },
+    "royal_greatsword": {
+      "name": {
+        "en": "Royal Greatsword",
+        "zh": "宗室大剑"
+      },
+      "effect": {
+        "en": "Upon damaging an opponent, increases CRIT Rate by 8%/10%/12%/14%/16%. Max 5 stacks. A CRIT Hit removes all stacks.",
+        "zh": "攻击造成伤害时，暴击率提升8%/10%/12%/14%/16%，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。"
+      }
+    },
+    "skyward_spine": {
+      "name": {
+        "en": "Skyward Spine",
+        "zh": "天空之脊"
+      },
+      "effect": {
+        "en": "Increases CRIT Rate by 8%/10%/12%/14%/16% and increases Normal ATK SPD by 12%. Additionally, Normal and Charged Attacks hits on opponents have a 50% chance to trigger a vacuum blade that deals 40%/55%/70%/85%/100% of ATK as DMG in a small AoE. This effect can occur no more than once every 2s.",
+        "zh": "暴击率提升8%/10%/12%/14%/16%，普通攻击速度提升12%/12%/12%/12%/12%。此外，普通攻击与重击命中敌人时，有50%/50%/50%/50%/50%概率触发真空刃，在小范围内造成额外40%/55%/70%/85%/100%攻击力的伤害。该效果每2秒至多触发一次。"
+      }
+    },
+    "skyward_harp": {
+      "name": {
+        "en": "Skyward Harp",
+        "zh": "天空之翼"
+      },
+      "effect": {
+        "en": "Increases CRIT DMG by 20%/25%/30%/35%/40%. Hits have a 60%/70%/80%/90%/100% chance to inflict a small AoE attack, dealing 125% Physical ATK DMG. Can only occur once every 4/3.5/3/2.5/2s.",
+        "zh": "暴击伤害提高20%/25%/30%/35%/40%；攻击命中时有60%/70%/80%/90%/100%概率造成125%攻击力的小范围物理伤害，该效果每4/3.5/3/2.5/2秒只能触发一次。"
+      }
+    },
+    "skyward_atlas": {
+      "name": {
+        "en": "Skyward Atlas",
+        "zh": "天空之卷"
+      },
+      "effect": {
+        "en": "Increases Elemental DMG Bonus by 12%/15%/18%/21%/24%. Normal Attack hits have a 50% chance to earn the favor of the clouds, which actively seek out nearby opponents to attack for 15s, dealing 160%/200%/240%/280%/320% ATK DMG. Can only occur once every 30s.",
+        "zh": "元素伤害加成提升12%/15%/18%/21%/24%；普通攻击命中时，有50%的概率获得高天流云的青睐，在15秒内主动攻击附近的敌人，造成等同于160%/200%/240%/280%/320%攻击力的伤害。该效果每30秒只能触发一次。"
+      }
+    },
+    "skyward_blade": {
+      "name": {
+        "en": "Skyward Blade",
+        "zh": "天空之刃"
+      },
+      "effect": {
+        "en": "CRIT Rate increased by 4%/5%/6%/7%/8%. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by 10%, increases ATK SPD by 10%, and Normal and Charged hits deal additional DMG equal to 20%/25%/30%/35%/40% of ATK. Skypiercing Might lasts for 12s.",
+        "zh": "暴击率提升4%/5%/6%/7%/8%；施放元素爆发时，获得破空之势：移动速度提升10%/10%/10%/10%/10%，攻击速度提升10%/10%/10%/10%/10%，普通攻击与重击命中时，额外造成20%/25%/30%/35%/40%攻击力的伤害，持续12秒。"
+      }
+    },
+    "skyward_pride": {
+      "name": {
+        "en": "Skyward Pride",
+        "zh": "天空之傲"
+      },
+      "effect": {
+        "en": "Increases all DMG by 8%/10%/12%/14%/16%. After using an Elemental Burst, Normal or Charged Attack, on hit, creates a vacuum blade that does 80%/100%/120%/140%/160% of ATK as DMG to opponents along its path. Lasts for 20s or 8 vacuum blades.",
+        "zh": "造成的伤害提高8%/10%/12%/14%/16%；施放元素爆发后：普通攻击和重击命中时会发出真空刃，对路径上的敌人造成80%/100%/120%/140%/160%攻击力的伤害，持续20秒或直至发出8次真空刃。"
+      }
+    },
+    "amenoma_kageuchi": {
+      "name": {
+        "en": "Amenoma Kageuchi",
+        "zh": "天目影打刀"
+      },
+      "effect": {
+        "en": "After casting an Elemental Skill, gain 1 Succession Seed. This effect can be triggered once every 5s. The Succession Seed lasts for 30s. Up to 3 Succession Seeds may exist simultaneously. After using an Elemental Burst, all Succession Seeds are consumed and after 2s, the character regenerates 6/7.5/9/10.5/12 Energy for each seed consumed.",
+        "zh": "施放元素战技后，获得1个胤种，该效果每5秒至多触发一次。胤种持续30秒，至多同时存在3个。施放元素爆发后，会清除持有的所有胤种，并在2秒之后，基于消耗的胤种数量，每个为该角色恢复6/7.5/9/10.5/12点元素能量。"
+      }
+    },
+    "lost_prayer_to_the_sacred_winds": {
+      "name": {
+        "en": "Lost Prayer to the Sacred Winds",
+        "zh": "四风原典"
+      },
+      "effect": {
+        "en": "Increases Movement SPD by 10%. When in battle, gain a 8%/10%/12%/14%/16% Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat.",
+        "zh": "移动速度提高10%；在场上每4秒获得8%/10%/12%/14%/16%元素伤害加成。该效果最多叠加4层，持续直到角色倒下或离场。"
+      }
+    },
+    "dodoco_tales": {
+      "name": {
+        "en": "Dodoco Tales",
+        "zh": "嘟嘟可故事集"
+      },
+      "effect": {
+        "en": "Normal Attack hits on opponents increase Charged Attack DMG by 16%/20%/24%/28%/32% for 6s. Charged Attack hits on opponents increase ATK by 8%/10%/12%/14%/16% for 6s.",
+        "zh": "普通攻击命中敌人后的6秒内，重击造成的伤害提升16%/20%/24%/28%/32%；重击命中敌人后的6秒内，攻击力提升8%/10%/12%/14%/16%。"
+      }
+    },
+    "kitain_cross_spear": {
+      "name": {
+        "en": "Kitain Cross Spear",
+        "zh": "喜多院十文字"
+      },
+      "effect": {
+        "en": "Increases Elemental Skill DMG by 6%/7.5%/9%/10.5%/12%. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates 3/3.5/4/4.5/5 Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
+        "zh": "元素战技造成的伤害提升6%/7.5%/9%/10.5%/12%。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复3/3.5/4/4.5/5点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。"
+      }
+    },
+    "primordial_jade_wingedspear": {
+      "name": {
+        "en": "Primordial Jade Winged-Spear",
+        "zh": "和璞鸢"
+      },
+      "effect": {
+        "en": "On hit, increases ATK by 3.2%/3.9%/4.6%/5.3%/6% for 6s. Max 7 stacks. This effect can only occur once every 0.3s. While in possession of the maximum possible stacks, DMG dealt is increased by 12%/15%/18%/21%/24%.",
+        "zh": "命中敌人时自身攻击力提高3.2%/3.9%/4.6%/5.3%/6%，持续6秒，最高可以叠加7层。该效果每0.3秒最多触发一次。满层状态时伤害提升12%/15%/18%/21%/24%。"
+      }
+    },
+    "fillet_blade": {
+      "name": {
+        "en": "Fillet Blade",
+        "zh": "吃虎鱼刀"
+      },
+      "effect": {
+        "en": "On hit, has a 50% chance to deal 240%/280%/320%/360%/400% ATK DMG to a single target. Can only occur once every 15/14/13/12/11s.",
+        "zh": "攻击命中时，有50%的概率对单个敌人造成240%/280%/320%/360%/400%攻击力的伤害。该效果每15/14/13/12/11秒只能触发一次。"
+      }
+    },
+    "recurve_bow": {
+      "name": {
+        "en": "Recurve Bow",
+        "zh": "反曲弓"
+      },
+      "effect": {
+        "en": "Defeating an opponent restores 8%/10%/12%/14%/16% HP.",
+        "zh": "击败敌人时，恢复8%/10%/12%/14%/16%生命值。"
+      }
+    },
+    "lithic_spear": {
+      "name": {
+        "en": "Lithic Spear",
+        "zh": "千岩长枪"
+      },
+      "effect": {
+        "en": "For every character in the party who hails from Liyue, the character who equips this weapon gains a 7%/8%/9%/10%/11% ATK increase and a 3%/4%/5%/6%/7% CRIT Rate increase. This effect stacks up to 4 times.",
+        "zh": "队伍中每有一位璃月角色，装备此武器的角色便获得7%/8%/9%/10%/11%攻击力提升与3%/4%/5%/6%/7%暴击率提升。至多获得4层提升效果。"
+      }
+    },
+    "lithic_blade": {
+      "name": {
+        "en": "Lithic Blade",
+        "zh": "千岩古剑"
+      },
+      "effect": {
+        "en": "For every character in the party who hails from Liyue, the character who equips this weapon gains a 7%/8%/9%/10%/11% ATK increase and a 3%/4%/5%/6%/7% CRIT Rate increase. This effect stacks up to 4 times.",
+        "zh": "队伍中每有一位璃月角色，装备该武器的角色便获得7%/8%/9%/10%/11%攻击力提升与3%/4%/5%/6%/7%暴击率提升。至多获得4层提升效果。"
+      }
+    },
+    "lions_roar": {
+      "name": {
+        "en": "Lion's Roar",
+        "zh": "匣里龙吟"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Pyro or Electro by 20%/24%/28%/32%/36%.",
+        "zh": "对处于火元素或雷元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
+      }
+    },
+    "dragons_bane": {
+      "name": {
+        "en": "Dragon's Bane",
+        "zh": "匣里灭辰"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Hydro or Pyro by 20%/24%/28%/32%/36%.",
+        "zh": "对处于水元素或火元素影响下的敌人，造成的伤害提高20%/24%/28%/32%/36%。"
+      }
+    },
+    "solar_pearl": {
+      "name": {
+        "en": "Solar Pearl",
+        "zh": "匣里日月"
+      },
+      "effect": {
+        "en": "Normal Attack hits increase Elemental Skill and Elemental Burst DMG by 20%/25%/30%/35%/40% for 6s. Likewise, Elemental Skill or Elemental Burst hits increase Normal Attack DMG by 20%/25%/30%/35%/40% for 6s.",
+        "zh": "普通攻击命中后的6秒内，元素战技与元素爆发的伤害提高20%/25%/30%/35%/40%；元素战技与元素爆发命中后的6秒内，普通攻击的伤害提高20%/25%/30%/35%/40%。"
+      }
+    },
+    "cool_steel": {
+      "name": {
+        "en": "Cool Steel",
+        "zh": "冷刃"
+      },
+      "effect": {
+        "en": "Increases DMG against opponents affected by Hydro or Cryo by 12%/15%/18%/21%/24%.",
+        "zh": "对处于水元素或冰元素影响下的敌人，造成的伤害提高12%/15%/18%/21%/24%。"
+      }
+    },
+    "deathmatch": {
+      "name": {
+        "en": "Deathmatch",
+        "zh": "决斗之枪"
+      },
+      "effect": {
+        "en": "If there are at least 2 opponents nearby, ATK is increased by 16%/20%/24%/28%/32% and DEF is increased by 16%/20%/24%/28%/32%. If there are fewer than 2 opponents nearby, ATK is increased by 24%/30%/36%/42%/48%.",
+        "zh": "身边至少有2个敌人时，获得16%/20%/24%/28%/32%攻击力提升与16%/20%/24%/28%/32%防御力提升；身边的敌人少于2个时，获得24%/30%/36%/42%/48%攻击力提升。"
+      }
+    },
+    "polar_star": {
+      "name": {
+        "en": "Polar Star",
+        "zh": "冬极白星"
+      },
+      "effect": {
+        "en": "Elemental Skill and Elemental Burst DMG increased by 12%/15%/18%/21%/24%. After a Normal Attack, Charged Attack, Elemental Skill or Elemental Burst hits an opponent, 1 stack of Ashen Nightstar will be gained for 12s. When 1/2/3/4 stacks of Ashen Nightstar are present, ATK is increased by 10%/20%/30%/48% | 12.5%/25%/37.5%/60% | 15%/30%/45%/72% | 17.5%/35%/52.5%/84% | 20%/40%/60%/96%. The stack of Ashen Nightstar created by the Normal Attack, Charged Attack, Elemental Skill or Elemental Burst will be counted independently of the others.",
+        "zh": "元素战技和元素爆发造成的伤害提高12%/15%/18%/21%/24%；普通攻击、重击、元素战技或元素爆发命中敌人后，将产生1层持续12秒的「白夜极星」效果。处于1/2/3/4层「白夜极星」效果下时，攻击力将提高10/20/30/48%/12.5/25/37.5/60%/15/30/45/72%/17.5/35/52.5/84%/20/40/60/96%。由普通攻击、重击、元素战技或元素爆发产生的「白夜极星」将分别独立存在。"
+      }
+    },
+    "messenger": {
+      "name": {
+        "en": "Messenger",
+        "zh": "信使"
+      },
+      "effect": {
+        "en": "Charged Attack hits on weak points deal an additional 100%/125%/150%/175%/200% ATK DMG as CRIT DMG. Can only occur once every 10s.",
+        "zh": "重击若命中要害，则额外造成100%/125%/150%/175%/200%攻击力的伤害，该伤害必定暴击。此效果每10秒只能触发一次。"
+      }
+    },
+    "debate_club": {
+      "name": {
+        "en": "Debate Club",
+        "zh": "以理服人"
+      },
+      "effect": {
+        "en": "After using an Elemental Skill, on hit, Normal and Charged Attacks deal additional DMG equal to 60%/75%/90%/105%/120% of ATK in a small AoE. Effect lasts 15s. DMG can only occur once every 3s.",
+        "zh": "施放元素战技后，普通攻击和重击命中时会在小范围内额外造成60%/75%/90%/105%/120%攻击力的伤害。该效果持续15秒，伤害每3秒只能触发一次。"
+      }
+    },
+    "everlasting_moonglow": {
+      "name": {
+        "en": "Everlasting Moonglow",
+        "zh": "不灭月华"
+      },
+      "effect": {
+        "en": "Healing Bonus increased by 10%/12.5%/15%/17.5%/20%, Normal Attack DMG is increased by 1%/1.5%/2%/2.5%/3% of the Max HP of the character equipping this weapon. For 12s after using an Elemental Burst, Normal Attacks that hit opponents will restore 0.6 Energy. Energy can be restored this way once every 0.1s.",
+        "zh": "治疗加成提升10%/12.5%/15%/17.5%/20%；普通攻击造成的伤害增加，增加值为装备该武器的角色生命值上限的1%/1.5%/2%/2.5%/3%。在施放元素爆发后的12秒内，普通攻击命中敌人时恢复0.6点元素能量，每0.1秒至多通过这种方式恢复一次元素能量。"
+      }
+    },
+    "mappa_mare": {
+      "name": {
+        "en": "Mappa Mare",
+        "zh": "万国诸海图谱"
+      },
+      "effect": {
+        "en": "Triggering an Elemental reaction grants a 8%/10%/12%/14%/16% Elemental DMG Bonus for 10s. Max 2 stacks.",
+        "zh": "触发元素反应后的10秒内，获得8%/10%/12%/14%/16%元素伤害加成，该效果最多可以叠加2层。"
+      }
+    },
+    "the_catch": {
+      "name": {
+        "en": "\"The Catch\"",
+        "zh": "「渔获」"
+      },
+      "effect": {
+        "en": "Increases Elemental Burst DMG by 16%/20%/24%/28%/32% and Elemental Burst CRIT Rate by 6%/7.5%/9%/10.5%/12%.",
+        "zh": "元素爆发造成的伤害提升16%/20%/24%/28%/32%，元素爆发的暴击率提升6%/7.5%/9%/10.5%/12%。"
       }
     }
   },

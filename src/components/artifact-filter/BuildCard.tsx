@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -33,17 +29,10 @@ import {
   type SubStat,
   mainStatSlots,
 } from "@/data/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import {
-  AlertCircle,
-  Check,
-  ChevronDown,
-  ChevronUp,
-  Copy,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, Check, Copy, Trash2 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArtifactSelect, ArtifactSelectHalf } from "./ArtifactSelect";
 import { StatSelect } from "./StatSelect";
@@ -64,11 +53,10 @@ function BuildCardComponent({
   element,
 }: BuildCardProps) {
   const { t } = useLanguage();
-  const isMobile = useIsMobile();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   const build = useBuildsStore((state) => state.builds[buildId]);
   const setBuild = useBuildsStore((state) => state.setBuild);
 
-  const [isExpanded, setIsExpanded] = useState(true);
   // Only keep local state for the name field (for typing smoothness)
   const [localName, setLocalName] = useState("");
   const nameUpdateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -166,20 +154,6 @@ function BuildCardComponent({
     };
   }, [build, t]);
 
-  const compositionLabel = useMemo(() => {
-    if (!build) return "";
-
-    if (build.composition === "2pc+2pc") {
-      return t.ui("buildCard.2pc+2pc");
-    }
-
-    if (build.artifactSet) {
-      return t.artifact(build.artifactSet);
-    }
-
-    return t.ui("buildCard.4pc");
-  }, [build, t]);
-
   const localStatPools = useMemo(
     () => ({
       sands: statPools.sands,
@@ -206,8 +180,8 @@ function BuildCardComponent({
   }
 
   const minCountInput = (
-    <div className="flex items-center gap-1">
-      <span className="text-sm text-muted-foreground select-none">
+    <div className="flex items-center gap-1 whitespace-nowrap">
+      <span className="text-xs text-muted-foreground select-none">
         {t.ui("buildCard.atLeast")}
       </span>
       <Input
@@ -222,242 +196,205 @@ function BuildCardComponent({
               : undefined,
           })
         }
-        className="w-12 h-7 text-sm border-2 border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="w-10 h-6 text-xs border border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         placeholder={Math.min(build.substats.length, 4).toString()}
       />
-      <span className="text-sm text-muted-foreground select-none">
+      <span className="text-xs text-muted-foreground select-none">
         {t.ui("buildCard.affixes")}
       </span>
     </div>
   );
 
   return (
-    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-      <div className="border border-border/50 rounded-lg bg-muted/30">
-        {/* Build Header - More Compact */}
-        <div className="flex items-center gap-2 px-3 pt-2">
-          <Switch
-            checked={build.visible}
-            onCheckedChange={handleToggleVisibility}
-            className="data-[state=checked]:bg-primary"
+    <div className="border border-border/50 rounded-lg bg-muted/30">
+      {/* Build Header - More Compact */}
+      <div className="flex items-center gap-2 px-3 pt-2">
+        <Switch
+          checked={build.visible}
+          onCheckedChange={handleToggleVisibility}
+          className="data-[state=checked]:bg-primary"
+        />
+
+        <div className="flex-1 min-w-0 flex items-center gap-3 px-4">
+          <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none">
+            {t.ui("buildCard.buildLabel")} {buildIndex}
+          </span>
+          <Input
+            value={localName}
+            onChange={(e) => handleNameChange(e.target.value)}
+            onBlur={handleNameBlur}
+            placeholder=""
+            className="h-8 rounded-full text-base bg-transparent border-none px-3 mx-6 py-0 text-foreground flex-1"
           />
-
-          <div className="flex-1 min-w-0 flex items-center gap-3 px-6">
-            <span className="text-sm text-muted-foreground italic flex-shrink-0 select-none">
-              {t.ui("buildCard.buildLabel")} {buildIndex}
-            </span>
-            <Input
-              value={localName}
-              onChange={(e) => handleNameChange(e.target.value)}
-              onBlur={handleNameBlur}
-              placeholder=""
-              className="h-9 rounded-full text-lg bg-transparent border-none px-3 mx-8 py-0 text-foreground flex-1"
-            />
-          </div>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex-shrink-0">
-                {validation.isValid ? (
-                  <Check className="w-6 h-6 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-6 h-6 text-amber-500" />
-                )}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span className="whitespace-pre-line">
-                {validation.isValid
-                  ? t.ui("buildCard.buildComplete")
-                  : validation.warningMessage}
-              </span>
-            </TooltipContent>
-          </Tooltip>
-
-          {isExpanded ? (
-            <LightweightSelect
-              value={build.composition}
-              onValueChange={(value) => {
-                const composition = value as "4pc" | "2pc+2pc";
-                // Clear opposite composition fields when switching
-                if (composition === "4pc") {
-                  handleBuildChange({
-                    composition,
-                    halfSet1: undefined,
-                    halfSet2: undefined,
-                  });
-                } else {
-                  handleBuildChange({ composition, artifactSet: undefined });
-                }
-              }}
-            >
-              <LightweightSelectTrigger className="w-32 h-8 text-base bg-gradient-select">
-                <LightweightSelectValue />
-              </LightweightSelectTrigger>
-              <LightweightSelectContent>
-                <LightweightSelectItem value="4pc">
-                  {t.ui("buildCard.4pc")}
-                </LightweightSelectItem>
-                <LightweightSelectItem value="2pc+2pc">
-                  {t.ui("buildCard.2pc+2pc")}
-                </LightweightSelectItem>
-              </LightweightSelectContent>
-            </LightweightSelect>
-          ) : (
-            <span
-              className="w-32 h-8 text-base flex items-center justify-center rounded-md border border-border/40 px-2 select-none text-muted-foreground"
-              title={compositionLabel}
-            >
-              {compositionLabel}
-            </span>
-          )}
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDuplicate}
-            className="p-1 h-8 w-8"
-          >
-            <Copy />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDelete}
-            className="p-1 h-8 w-8 text-destructive hover:text-destructive"
-          >
-            <Trash2 />
-          </Button>
-
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-1 h-8 w-8">
-              {isExpanded ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
         </div>
 
-        {/* Build Details */}
-        <CollapsibleContent className="px-3 py-2">
-          <div className="pt-1 border-t border-border/30">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex-shrink-0">
+              {validation.isValid ? (
+                <Check className="w-6 h-6 text-green-500" />
+              ) : (
+                <AlertCircle className="w-6 h-6 text-amber-500" />
+              )}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <span className="whitespace-pre-line">
+              {validation.isValid
+                ? t.ui("buildCard.buildComplete")
+                : validation.warningMessage}
+            </span>
+          </TooltipContent>
+        </Tooltip>
+
+        <LightweightSelect
+          value={build.composition}
+          onValueChange={(value) => {
+            const composition = value as "4pc" | "2pc+2pc";
+            // Clear opposite composition fields when switching
+            if (composition === "4pc") {
+              handleBuildChange({
+                composition,
+                halfSet1: undefined,
+                halfSet2: undefined,
+              });
+            } else {
+              handleBuildChange({ composition, artifactSet: undefined });
+            }
+          }}
+        >
+          <LightweightSelectTrigger className="w-28 h-7 text-sm bg-gradient-select">
+            <LightweightSelectValue />
+          </LightweightSelectTrigger>
+          <LightweightSelectContent>
+            <LightweightSelectItem value="4pc">
+              {t.ui("buildCard.4pc")}
+            </LightweightSelectItem>
+            <LightweightSelectItem value="2pc+2pc">
+              {t.ui("buildCard.2pc+2pc")}
+            </LightweightSelectItem>
+          </LightweightSelectContent>
+        </LightweightSelect>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDuplicate}
+          className="p-1 h-8 w-8"
+        >
+          <Copy />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onDelete}
+          className="p-1 h-8 w-8 text-destructive hover:text-destructive"
+        >
+          <Trash2 />
+        </Button>
+      </div>
+
+      {/* Build Details */}
+      <div className="px-3 py-2">
+        <div className="pt-1 border-t border-border/30">
+          <div
+            className={cn(
+              "flex gap-3",
+              isMobile
+                ? "flex-col items-center"
+                : "flex-row items-center justify-center"
+            )}
+          >
+            {/* Artifact Set Selection - Left Side */}
+            <div className={cn("flex-shrink-0", isMobile ? "w-full" : "w-28")}>
+              {build.composition === "4pc" ? (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ArtifactSelect
+                    value={build.artifactSet || ""}
+                    onValueChange={(value) =>
+                      handleBuildChange({ artifactSet: value })
+                    }
+                    placeholder={t.ui("buildCard.selectSet")}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <ArtifactSelectHalf
+                    value={build.halfSet1}
+                    onValueChange={(value) =>
+                      handleBuildChange({ halfSet1: value })
+                    }
+                    placeholder={t.ui("buildCard.effect1")}
+                  />
+
+                  <div className="flex justify-center">
+                    <span className="text-lg text-muted-foreground select-none">
+                      +
+                    </span>
+                  </div>
+
+                  <ArtifactSelectHalf
+                    value={build.halfSet2}
+                    onValueChange={(value) =>
+                      handleBuildChange({ halfSet2: value })
+                    }
+                    placeholder={t.ui("buildCard.effect2")}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Vertical Divider (Hidden on Mobile) */}
             <div
               className={cn(
-                "flex gap-3",
-                isMobile
-                  ? "flex-col items-center"
-                  : "flex-row items-center justify-center"
+                "w-px h-full bg-border/70 min-h-32",
+                isMobile ? "hidden" : "block"
               )}
-            >
-              {/* Artifact Set Selection - Left Side */}
-              <div
-                className={cn("flex-shrink-0", isMobile ? "w-full" : "w-36")}
-              >
-                {build.composition === "4pc" ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ArtifactSelect
-                      value={build.artifactSet || ""}
-                      onValueChange={(value) =>
-                        handleBuildChange({ artifactSet: value })
+            />
+
+            {/* Stats Section - Right Side */}
+            <div className={cn("space-y-1", isMobile ? "w-full" : "flex-1")}>
+              {/* Main Stats Row - 3 Units */}
+              <div className="grid grid-cols-3 gap-2">
+                {mainStatSlots.map((slot) => (
+                  <div key={slot} className="space-y-1">
+                    <Label className="text-xs font-medium text-muted-foreground select-none">
+                      {mainStatLabel(slot)}
+                    </Label>
+                    <StatSelect
+                      values={build[slot]}
+                      onValuesChange={(values) =>
+                        handleBuildChange({ [slot]: values as MainStat[] })
                       }
-                      placeholder={t.ui("buildCard.selectSet")}
+                      options={localStatPools[slot]}
+                      maxLength={3}
                     />
                   </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center">
-                    <ArtifactSelectHalf
-                      value={build.halfSet1}
-                      onValueChange={(value) =>
-                        handleBuildChange({ halfSet1: value })
-                      }
-                      placeholder={t.ui("buildCard.effect1")}
-                    />
-
-                    <div className="flex justify-center">
-                      <span className="text-lg text-muted-foreground select-none">
-                        +
-                      </span>
-                    </div>
-
-                    <ArtifactSelectHalf
-                      value={build.halfSet2}
-                      onValueChange={(value) =>
-                        handleBuildChange({ halfSet2: value })
-                      }
-                      placeholder={t.ui("buildCard.effect2")}
-                    />
-                  </div>
-                )}
+                ))}
               </div>
 
-              {/* Vertical Divider (Hidden on Mobile) */}
-              <div
-                className={cn(
-                  "w-px h-full bg-border/70 min-h-32",
-                  isMobile ? "hidden" : "block"
-                )}
-              />
-
-              {/* Stats Section - Right Side */}
-              <div className={cn("space-y-1", isMobile ? "w-full" : "flex-1")}>
-                {/* Main Stats Row - 3 Units */}
-                <div className="grid grid-cols-3 gap-2">
-                  {mainStatSlots.map((slot) => (
-                    <div key={slot} className="space-y-1">
-                      <Label className="text-sm font-medium text-muted-foreground select-none">
-                        {mainStatLabel(slot)}
-                      </Label>
-                      <StatSelect
-                        values={build[slot]}
-                        onValuesChange={(values) =>
-                          handleBuildChange({ [slot]: values as MainStat[] })
-                        }
-                        options={localStatPools[slot]}
-                        maxLength={3}
-                      />
-                    </div>
-                  ))}
+              {/* Substats Row - Bottom Unit */}
+              <div className="space-y-1">
+                <div className="flex items-center gap-4 lg:gap-12 2xl:gap-20">
+                  <Label className="text-xs font-medium text-muted-foreground select-none whitespace-nowrap">
+                    {t.ui("buildCard.substats")}
+                  </Label>
+                  {minCountInput}
                 </div>
-
-                {/* Substats Row - Bottom Unit */}
-                <div className="space-y-1">
-                  {isMobile ? (
-                    <div className="flex items-center">
-                      <Label className="text-sm font-medium text-muted-foreground select-none">
-                        {t.ui("buildCard.substats")}
-                      </Label>
-                      <div className="pl-12">{minCountInput}</div>
-                    </div>
-                  ) : (
-                    <Label className="text-sm font-medium text-muted-foreground select-none">
-                      {t.ui("buildCard.substats")}
-                    </Label>
-                  )}
-                  <div
-                    className={cn(
-                      "flex items-center",
-                      isMobile ? "w-full" : "justify-between"
-                    )}
-                  >
-                    <StatSelect
-                      values={build.substats}
-                      onValuesChange={(values) =>
-                        handleBuildChange({ substats: values as SubStat[] })
-                      }
-                      options={statPools.substat}
-                      maxLength={5}
-                    />
-                    {!isMobile && minCountInput}
-                  </div>
-                </div>
+                <StatSelect
+                  values={build.substats}
+                  onValuesChange={(values) =>
+                    handleBuildChange({ substats: values as SubStat[] })
+                  }
+                  options={statPools.substat}
+                  maxLength={5}
+                />
               </div>
             </div>
           </div>
-        </CollapsibleContent>
+        </div>
       </div>
-    </Collapsible>
+    </div>
   );
 }
 

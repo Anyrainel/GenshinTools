@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 

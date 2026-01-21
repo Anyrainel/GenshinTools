@@ -28,7 +28,7 @@ export function ArtifactCard({
           <ItemIcon
             imagePath={setImagePath}
             rarity={artifactsById[setId]?.rarity || 5}
-            size="xl"
+            size="lg"
             alt={setId}
           />
           <div className="flex-1 min-w-0">
@@ -45,7 +45,7 @@ export function ArtifactCard({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 pb-3">
+      <CardContent className="space-y-3 pb-3">
         {filter.configurations.map((config, index) => (
           <ArtifactConfigCard
             key={index}

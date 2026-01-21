@@ -3,12 +3,16 @@ import { CharacterView } from "@/components/account-data/CharacterView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { StatWeightView } from "@/components/account-data/StatWeightView";
 import { SummaryView } from "@/components/account-data/SummaryView";
+import {
+  type ActionConfig,
+  AppBar,
+  type ControlHandle,
+  type TabConfig,
+} from "@/components/layout/AppBar";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
-import { ToolHeader } from "@/components/shared/ToolHeader";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import {
@@ -22,12 +26,20 @@ import {
   convertGOODToAccountData,
 } from "@/lib/goodConversion";
 import type { ConversionWarning } from "@/lib/goodConversion";
-import { THEME } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/styles";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { AlertTriangle, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import {
+  AlertTriangle,
+  Box,
+  LayoutGrid,
+  Scale,
+  Trash2,
+  Upload,
+  Users,
+  X,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -99,6 +111,10 @@ export default function AccountDataPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "characters";
 
+  // Control refs for ref-based dialog pattern
+  const clearRef = useRef<ControlHandle>(null);
+  const importRef = useRef<ControlHandle>(null);
+
   const setActiveTab = (tab: string) => {
     setSearchParams((prev) => {
       const newParams = new URLSearchParams(prev);
@@ -137,7 +153,6 @@ export default function AccountDataPage() {
   const [conversionWarnings, setConversionWarnings] = useState<
     ConversionWarning[]
   >([]);
-  const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
   const showConversionWarnings = (result: ConversionResult) => {
     if (result.warnings.length === 0) {
@@ -234,66 +249,63 @@ export default function AccountDataPage() {
     }
   };
 
+  // Tab configuration for AppBar
+  const tabs: TabConfig[] = useMemo(
+    () => [
+      {
+        value: "characters",
+        label: t.ui("accountData.characters"),
+        icon: Users,
+      },
+      {
+        value: "summary",
+        label: t.ui("accountData.summary"),
+        icon: LayoutGrid,
+      },
+      { value: "weights", label: t.ui("accountData.statWeights"), icon: Scale },
+      { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
+    ],
+    [t]
+  );
+
+  // Actions configuration
+  const actions: ActionConfig[] = useMemo(
+    () => [
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "import",
+        icon: Upload,
+        label: t.ui("app.import"),
+        onTrigger: () => importRef.current?.open(),
+        alwaysShow: true,
+      },
+    ],
+    [t]
+  );
+
   return (
-    <div className={THEME.layout.pageContainer}>
-      <ToolHeader
-        actions={
-          <>
-            <ClearAllControl onConfirm={clearAccountData} />
-            <AccountImportControl
-              onLocalImport={handleLocalImport}
-              onUidImport={handleUidImport}
-              initialUid={lastUid}
-            />
-          </>
-        }
+    <div className={THEME.layout.page}>
+      <AppBar
+        actions={actions}
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
-      <ClearAllControl
-        onConfirm={clearAccountData}
-        open={clearDialogOpen}
-        onOpenChange={setClearDialogOpen}
-        renderTrigger={false}
+      {/* Control dialogs - render without triggers, opened via ref */}
+      <ClearAllControl ref={clearRef} onConfirm={clearAccountData} />
+      <AccountImportControl
+        ref={importRef}
+        onLocalImport={handleLocalImport}
+        onUidImport={handleUidImport}
+        initialUid={lastUid}
       />
-
-      <div className={cn(THEME.layout.headerBorder, "z-40")}>
-        <div className="container mx-auto pt-2 pb-2">
-          <div className="flex justify-center">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 h-11">
-                <TabsTrigger
-                  value="characters"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("accountData.characters")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="summary"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("accountData.summary")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="weights"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("accountData.statWeights")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="inventory"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("accountData.inventory")}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </div>
-      </div>
 
       {/* Conversion Warnings - visible on all tabs */}
       {conversionWarnings.length > 0 && (
@@ -353,48 +365,42 @@ export default function AccountDataPage() {
         </div>
       )}
 
-      <main className="flex-1 overflow-hidden">
-        <div className="px-2 mx-auto h-full">
-          {accountData ? (
-            <Tabs value={activeTab} className="h-full">
-              <TabsContent
-                value="characters"
-                className="h-full mt-0 data-[state=inactive]:hidden"
-              >
-                <CharacterView scores={scores} />
-              </TabsContent>
+      {accountData ? (
+        <Tabs value={activeTab} className="flex-1 min-h-0 overflow-hidden">
+          <TabsContent
+            value="characters"
+            className="h-full mt-0 data-[state=inactive]:hidden"
+          >
+            <CharacterView scores={scores} />
+          </TabsContent>
 
-              <TabsContent
-                value="summary"
-                className="mt-0 pt-4 data-[state=inactive]:hidden h-full overflow-y-auto"
-              >
-                <SummaryView scores={scores} />
-              </TabsContent>
+          <TabsContent
+            value="summary"
+            className="mt-0 pt-4 data-[state=inactive]:hidden h-full overflow-y-auto"
+          >
+            <SummaryView scores={scores} />
+          </TabsContent>
 
-              <TabsContent
-                value="weights"
-                className="mt-0 pt-4 data-[state=inactive]:hidden h-full overflow-y-auto"
-              >
-                <StatWeightView />
-              </TabsContent>
+          <TabsContent
+            value="weights"
+            className="mt-0 data-[state=inactive]:hidden h-full overflow-y-auto"
+          >
+            <StatWeightView />
+          </TabsContent>
 
-              <TabsContent
-                value="inventory"
-                className="h-full overflow-y-auto mt-0 pb-10 pt-4 data-[state=inactive]:hidden"
-              >
-                <InventoryView data={accountData} />
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-              <p>{t.ui("accountData.noAccountDataLoaded")}</p>
-              <p className="text-sm">
-                {t.ui("accountData.importGOODInstruction")}
-              </p>
-            </div>
-          )}
+          <TabsContent
+            value="inventory"
+            className="h-full overflow-y-auto mt-0 pb-10 pt-4 data-[state=inactive]:hidden"
+          >
+            <InventoryView data={accountData} />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+          <p>{t.ui("accountData.noAccountDataLoaded")}</p>
+          <p className="text-sm">{t.ui("accountData.importGOODInstruction")}</p>
         </div>
-      </main>
+      )}
     </div>
   );
 }

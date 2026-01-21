@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { Download } from "lucide-react";
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,105 +20,96 @@ type ExportVariant = "default" | "tier-list";
 interface ExportControlProps {
   onExport: (author: string, description: string) => void;
   variant?: ExportVariant;
-  disabled?: boolean;
   defaultAuthor?: string;
   defaultDescription?: string;
-  className?: string;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  renderTrigger?: boolean;
 }
 
-export function ExportControl({
-  onExport,
-  variant = "default",
-  disabled = false,
-  defaultAuthor = "",
-  defaultDescription = "",
-  className,
-  open: controlledOpen,
-  onOpenChange: setControlledOpen,
-  renderTrigger = true,
-}: ExportControlProps) {
-  const { t } = useLanguage();
-  const [internalOpen, setInternalOpen] = useState(false);
+/**
+ * ExportControl - A dialog-only control for exporting data with author/description metadata.
+ *
+ * Usage with ref pattern:
+ * ```tsx
+ * const exportRef = useRef<ControlHandle>(null);
+ *
+ * const actions: ActionConfig[] = [
+ *   { key: "export", icon: Download, label: "Export", onTrigger: () => exportRef.current?.open() },
+ * ];
+ *
+ * <ExportControl ref={exportRef} onExport={handleExport} />
+ * <AppBar actions={actions} />
+ * ```
+ */
+export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
+  function ExportControl(
+    {
+      onExport,
+      variant = "default",
+      defaultAuthor = "",
+      defaultDescription = "",
+    },
+    ref
+  ) {
+    const { t } = useLanguage();
+    const [isOpen, setIsOpen] = useState(false);
+    const [author, setAuthor] = useState(defaultAuthor);
+    const [description, setDescription] = useState(defaultDescription);
+    const [errors, setErrors] = useState<{
+      author?: string;
+      description?: string;
+    }>({});
 
-  const widthOpen = controlledOpen ?? internalOpen;
-  const setOpen = (newOpen: boolean) => {
-    if (setControlledOpen) setControlledOpen(newOpen);
-    else setInternalOpen(newOpen);
-  };
+    // Expose open() method via ref
+    useImperativeHandle(ref, () => ({
+      open: () => {
+        // Reset form to defaults when opening
+        setAuthor(defaultAuthor);
+        setDescription(defaultDescription);
+        setErrors({});
+        setIsOpen(true);
+      },
+    }));
 
-  // Use a derived state or effect to sync inputs?
-  // For simplicity, we keep internal form state but "reset" it when dialog opens
-  const [author, setAuthor] = useState(defaultAuthor);
-  const [description, setDescription] = useState(defaultDescription);
-  const [errors, setErrors] = useState<{
-    author?: string;
-    description?: string;
-  }>({});
+    // Variant-based i18n keys
+    const prefix = variant === "tier-list" ? "tierList" : "configure";
+    const messages = {
+      dialogTitle: t.ui(`${prefix}.exportDialogTitle`),
+      dialogDescription: t.ui(`${prefix}.exportDialogDescription`),
+      authorLabel: t.ui(`${prefix}.exportAuthorLabel`),
+      authorPlaceholder: t.ui(`${prefix}.exportAuthorPlaceholder`),
+      descriptionLabel: t.ui(`${prefix}.exportDescriptionLabel`),
+      descriptionPlaceholder: t.ui(`${prefix}.exportDescriptionPlaceholder`),
+      authorRequiredError: t.ui(`${prefix}.exportAuthorRequired`),
+      descriptionRequiredError: t.ui(`${prefix}.exportDescriptionRequired`),
+      confirmAction: t.ui(`${prefix}.exportConfirmAction`),
+    };
 
-  // Variant-based i18n keys
-  const prefix = variant === "tier-list" ? "tierList" : "configure";
-  const messages = {
-    dialogTitle: t.ui(`${prefix}.exportDialogTitle`),
-    dialogDescription: t.ui(`${prefix}.exportDialogDescription`),
-    authorLabel: t.ui(`${prefix}.exportAuthorLabel`),
-    authorPlaceholder: t.ui(`${prefix}.exportAuthorPlaceholder`),
-    descriptionLabel: t.ui(`${prefix}.exportDescriptionLabel`),
-    descriptionPlaceholder: t.ui(`${prefix}.exportDescriptionPlaceholder`),
-    authorRequiredError: t.ui(`${prefix}.exportAuthorRequired`),
-    descriptionRequiredError: t.ui(`${prefix}.exportDescriptionRequired`),
-    confirmAction: t.ui(`${prefix}.exportConfirmAction`),
-  };
-
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-    if (newOpen) {
-      setAuthor(defaultAuthor);
-      setDescription(defaultDescription);
-    } else {
-      // Reset form when closing (optional, but keeps state clean)
+    const handleClose = () => {
+      setIsOpen(false);
       setErrors({});
-    }
-  };
+    };
 
-  const handleExport = () => {
-    // Validate
-    const newErrors: { author?: string; description?: string } = {};
-    if (!author.trim()) {
-      newErrors.author = messages.authorRequiredError;
-    }
-    if (!description.trim()) {
-      newErrors.description = messages.descriptionRequiredError;
-    }
+    const handleExport = () => {
+      // Validate
+      const newErrors: { author?: string; description?: string } = {};
+      if (!author.trim()) {
+        newErrors.author = messages.authorRequiredError;
+      }
+      if (!description.trim()) {
+        newErrors.description = messages.descriptionRequiredError;
+      }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+      }
 
-    // Valid - call onExport
-    onExport(author.trim(), description.trim());
-    handleOpenChange(false);
-  };
+      // Valid - call onExport
+      onExport(author.trim(), description.trim());
+      handleClose();
+    };
 
-  return (
-    <>
-      {renderTrigger && (
-        <Button
-          variant="outline"
-          size="sm"
-          className={cn("gap-2", className)}
-          onClick={() => handleOpenChange(true)}
-          disabled={disabled}
-        >
-          <Download className="w-4 h-4" />
-          {t.ui("app.export")}
-        </Button>
-      )}
-
-      <Dialog open={widthOpen} onOpenChange={handleOpenChange}>
+    return (
+      <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{messages.dialogTitle}</DialogTitle>
@@ -168,7 +159,7 @@ export function ExportControl({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => handleOpenChange(false)}>
+            <Button variant="outline" onClick={handleClose}>
               {t.ui("common.cancel")}
             </Button>
             <Button onClick={handleExport} className="gap-2">
@@ -178,6 +169,6 @@ export function ExportControl({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
-  );
-}
+    );
+  }
+);

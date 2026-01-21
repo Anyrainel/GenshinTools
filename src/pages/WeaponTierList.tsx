@@ -1,22 +1,19 @@
+import {
+  type ActionConfig,
+  AppBar,
+  type ControlHandle,
+} from "@/components/layout/AppBar";
+import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import { ToolHeader } from "@/components/shared/ToolHeader";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   sortedWeaponSecondaryStats,
@@ -35,13 +32,13 @@ import type {
   WeaponType,
 } from "@/data/types";
 import { weaponTypes } from "@/data/types";
+
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { THEME } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { STYLES } from "@/lib/styles";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
-import { Download, FileDown, Filter, Settings, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // Placeholder for weapon tier list presets
@@ -89,6 +86,11 @@ export default function WeaponTierListPage() {
   const author = useWeaponTierStore((state) => state.author);
   const description = useWeaponTierStore((state) => state.description);
 
+  // Control refs for ref-based dialog pattern
+  const clearRef = useRef<ControlHandle>(null);
+  const importRef = useRef<ControlHandle>(null);
+  const exportRef = useRef<ControlHandle>(null);
+
   // Local UI state for filters (not persisted)
   const [showRarity, setShowRarity] = useState<Record<Rarity, boolean>>({
     5: true,
@@ -102,8 +104,6 @@ export default function WeaponTierListPage() {
     MainStat[]
   >(sortedWeaponSecondaryStats);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
-  const [clearDialogOpen, setClearDialogOpen] = useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -126,14 +126,14 @@ export default function WeaponTierListPage() {
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
-  const handleExport = (author: string, description: string) => {
+  const handleExport = (exportAuthor: string, exportDescription: string) => {
     const data: TierListData = {
       tierAssignments,
       tierCustomization,
       customTitle: customTitle || undefined,
       language,
-      author,
-      description,
+      author: exportAuthor,
+      description: exportDescription,
     };
     try {
       const dataStr = JSON.stringify(data, null, 2);
@@ -141,11 +141,13 @@ export default function WeaponTierListPage() {
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `[${author}] ${description}.json`;
+      link.download = `[${exportAuthor}] ${exportDescription}.json`;
       link.click();
       URL.revokeObjectURL(url);
 
-      useWeaponTierStore.getState().setMetadata(author, description);
+      useWeaponTierStore
+        .getState()
+        .setMetadata(exportAuthor, exportDescription);
 
       toast.success(t.ui("messages.tierListSaved"));
     } catch (error) {
@@ -189,7 +191,7 @@ export default function WeaponTierListPage() {
     setTierAssignments(newAssignments);
   };
 
-  const handleDownloadImage = async () => {
+  const handleDownloadImage = useCallback(async () => {
     if (!tableRef.current) return;
 
     await downloadTierListImage({
@@ -198,199 +200,152 @@ export default function WeaponTierListPage() {
       filename: "weapon-tier-list",
       t,
     });
-  };
+  }, [customTitle, t]);
 
-  const renderFilters = (isMobile: boolean) => (
-    <div
-      className={cn(
-        "flex gap-4",
-        isMobile ? "flex-col items-start" : "items-center flex-wrap justify-end"
-      )}
-    >
-      <div
-        className={cn(
-          "flex gap-4",
-          isMobile ? "flex-col items-start" : "items-center"
-        )}
-      >
-        {WEAPON_RARITIES.map((rarity) => (
-          <div key={rarity} className="flex items-center space-x-2">
-            <Checkbox
-              id={`rarity-${rarity}-${isMobile ? "m" : "d"}`}
-              checked={showRarity[rarity]}
-              onCheckedChange={(checked) =>
-                setShowRarity((prev) => ({
-                  ...prev,
-                  [rarity]: checked === true,
-                }))
-              }
-            />
-            <Label
-              htmlFor={`rarity-${rarity}-${isMobile ? "m" : "d"}`}
-              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-            >
-              {t.ui(`buttons.includeRarity${rarity}`)}
-            </Label>
-          </div>
-        ))}
-      </div>
+  // Actions configuration
+  const actions: ActionConfig[] = useMemo(
+    () => [
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "import",
+        icon: Upload,
+        label: t.ui("app.import"),
+        onTrigger: () => importRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "export",
+        icon: Download,
+        label: t.ui("app.export"),
+        onTrigger: () => exportRef.current?.open(),
+      },
+      {
+        key: "print",
+        icon: FileDown,
+        label: t.ui("app.print"),
+        onTrigger: handleDownloadImage,
+      },
+    ],
+    [t, handleDownloadImage]
+  );
 
-      {!isMobile && (
-        <div className="w-px h-6 bg-gray-600 mx-2 hidden xl:block" />
-      )}
-      {isMobile && <div className="w-full h-px bg-border my-2" />}
-
-      <div
-        className={cn(
-          "grid gap-y-2 gap-x-4",
-          isMobile ? "grid-cols-2" : "flex items-center flex-wrap justify-end"
-        )}
-      >
-        {sortedWeaponSecondaryStats.map((stat) => (
-          <div key={stat} className="flex items-center space-x-2">
-            <Checkbox
-              id={`stat-${stat}-${isMobile ? "m" : "d"}`}
-              checked={selectedSecondaryStats.includes(stat)}
-              onCheckedChange={(checked) => {
-                if (checked) {
-                  setSelectedSecondaryStats([...selectedSecondaryStats, stat]);
-                } else {
-                  setSelectedSecondaryStats(
-                    selectedSecondaryStats.filter((s) => s !== stat)
-                  );
-                }
-              }}
-            />
-            <Label
-              htmlFor={`stat-${stat}-${isMobile ? "m" : "d"}`}
-              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-            >
-              {t.statShort(stat)}
-            </Label>
-          </div>
-        ))}
-      </div>
-    </div>
+  // Filter groups for WideLayout
+  const filterGroups = useMemo(
+    () => [
+      {
+        key: "rarity",
+        content: (
+          <>
+            {WEAPON_RARITIES.map((rarity) => (
+              <div key={rarity} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`rarity-${rarity}`}
+                  checked={showRarity[rarity]}
+                  onCheckedChange={(checked) =>
+                    setShowRarity((prev) => ({
+                      ...prev,
+                      [rarity]: checked === true,
+                    }))
+                  }
+                />
+                <Label
+                  htmlFor={`rarity-${rarity}`}
+                  className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+                >
+                  {t.ui(`buttons.includeRarity${rarity}`)}
+                </Label>
+              </div>
+            ))}
+          </>
+        ),
+      },
+      {
+        key: "stats",
+        content: (
+          <>
+            {sortedWeaponSecondaryStats.map((stat) => (
+              <div key={stat} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`stat-${stat}`}
+                  checked={selectedSecondaryStats.includes(stat)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      setSelectedSecondaryStats([
+                        ...selectedSecondaryStats,
+                        stat,
+                      ]);
+                    } else {
+                      setSelectedSecondaryStats(
+                        selectedSecondaryStats.filter((s) => s !== stat)
+                      );
+                    }
+                  }}
+                />
+                <Label
+                  htmlFor={`stat-${stat}`}
+                  className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+                >
+                  {t.statShort(stat)}
+                </Label>
+              </div>
+            ))}
+          </>
+        ),
+      },
+    ],
+    [showRarity, selectedSecondaryStats, t]
   );
 
   return (
-    <div className={THEME.layout.pageContainer}>
-      <ToolHeader
-        actions={
-          <>
-            {/* Desktop Actions */}
-            <ClearAllControl onConfirm={handleClear} variant="tier-list" />
+    <div className={STYLES.layout.page}>
+      <AppBar actions={actions} />
 
-            <ImportControl<TierListData>
-              options={presetOptions}
-              loadPreset={loadPreset}
-              onApply={handleImport}
-              onLocalImport={handleImport}
-              variant="tier-list"
-            />
-
-            <ExportControl
-              onExport={handleExport}
-              variant="tier-list"
-              defaultAuthor={author}
-              defaultDescription={description}
-              className="hidden md:flex"
-            />
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownloadImage}
-              className="gap-2 hidden md:flex"
-            >
-              <FileDown className="w-4 h-4" />
-              {t.ui("app.print")}
-            </Button>
-          </>
-        }
-        mobileMenuItems={
-          <>
-            <DropdownMenuItem
-              onSelect={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {t.ui("app.export")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDownloadImage} className="gap-2">
-              <FileDown className="w-4 h-4" />
-              {t.ui("app.print")}
-            </DropdownMenuItem>
-          </>
-        }
-      />
-
-      {/* Hidden Controlled Dialogs for Mobile */}
+      {/* Control dialogs - render without triggers, opened via ref */}
       <ClearAllControl
+        ref={clearRef}
         onConfirm={handleClear}
         variant="tier-list"
-        open={clearDialogOpen}
-        onOpenChange={setClearDialogOpen}
-        renderTrigger={false}
+      />
+      <ImportControl<TierListData>
+        ref={importRef}
+        options={presetOptions}
+        loadPreset={loadPreset}
+        onApply={handleImport}
+        onLocalImport={handleImport}
+        variant="tier-list"
       />
       <ExportControl
+        ref={exportRef}
         onExport={handleExport}
         variant="tier-list"
         defaultAuthor={author}
         defaultDescription={description}
-        open={exportDialogOpen}
-        onOpenChange={setExportDialogOpen}
-        renderTrigger={false}
       />
 
-      <div
-        className={cn(
-          THEME.layout.headerBorder,
-          "z-40 flex-shrink-0 sticky top-0"
-        )}
+      <WideLayout
+        title={customTitle || t.ui("app.weaponTierListTitle")}
+        actions={
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsCustomizeDialogOpen(true)}
+            className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
+          >
+            <Settings className="w-4 h-4" />
+            <span className="hidden sm:inline">
+              {t.ui("buttons.customize")}
+            </span>
+          </Button>
+        }
+        filters={filterGroups}
       >
-        <div className="container mx-auto flex items-center py-2 gap-4">
-          <div className="flex items-center gap-4 flex-1">
-            <h1 className="text-2xl font-bold text-gray-200 truncate">
-              {customTitle || t.ui("app.weaponTierListTitle")}
-            </h1>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsCustomizeDialogOpen(true)}
-              className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white flex-shrink-0"
-            >
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">
-                {t.ui("buttons.customize")}
-              </span>
-            </Button>
-          </div>
-
-          {/* Quick Filter Button on Mobile Toolbar */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="lg:hidden gap-2">
-                <Filter className="w-4 h-4" />
-                <span className="sr-only">Filter</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[240px] overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>{t.ui("filters.filterWeapons")}</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6">{renderFilters(true)}</div>
-            </SheetContent>
-          </Sheet>
-
-          <div className="hidden lg:flex flex-wrap items-center gap-4 justify-end">
-            {renderFilters(false)}
-          </div>
-        </div>
-      </div>
-
-      <main className="flex-1 overflow-y-auto pb-2">
-        <div className="w-[95%] mx-auto h-full">
+        <div className="w-full h-full">
           <TierTable<Weapon, WeaponType>
             items={sortedWeapons}
             itemsById={weaponsById}
@@ -412,7 +367,7 @@ export default function WeaponTierListPage() {
             tableRef={tableRef}
           />
         </div>
-      </main>
+      </WideLayout>
 
       <TierCustomizationDialog
         isOpen={isCustomizeDialogOpen}

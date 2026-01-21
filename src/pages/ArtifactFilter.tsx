@@ -1,12 +1,16 @@
 import { ComputeView } from "@/components/artifact-filter/ComputeView";
 import { ConfigureView } from "@/components/artifact-filter/ConfigureView";
+import {
+  type ActionConfig,
+  AppBar,
+  type ControlHandle,
+  type TabConfig,
+} from "@/components/layout/AppBar";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import { ToolHeader } from "@/components/shared/ToolHeader";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   Build,
@@ -15,13 +19,19 @@ import type {
   PresetOption,
 } from "@/data/types";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { THEME } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/styles";
 import { serializeBuildExportPayload } from "@/stores/jsonUtils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
-import { Download, FileDown } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Download,
+  FileDown,
+  Filter,
+  Settings,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -34,7 +44,11 @@ export default function ArtifactFilterPage() {
   const { t } = useLanguage();
   const computeContentRef = useRef<HTMLDivElement>(null);
   const [targetCharacterId, setTargetCharacterId] = useState<string>();
-  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+
+  // Control refs for ref-based dialog pattern
+  const clearRef = useRef<ControlHandle>(null);
+  const importRef = useRef<ControlHandle>(null);
+  const exportRef = useRef<ControlHandle>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "configure";
@@ -63,7 +77,7 @@ export default function ArtifactFilterPage() {
     return loadPresetPayload(presetModules, path);
   }, []);
 
-  const handleExport = (author: string, description: string) => {
+  const handleExport = (exportAuthor: string, exportDescription: string) => {
     // Read data directly from store at export time (not as a subscription)
     const state = useBuildsStore.getState();
     const {
@@ -95,22 +109,22 @@ export default function ArtifactFilterPage() {
     const dataStr = serializeBuildExportPayload(
       exportData,
       computeOptions,
-      author,
-      description
+      exportAuthor,
+      exportDescription
     );
     const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `[${author}] ${description}.json`;
+    link.download = `[${exportAuthor}] ${exportDescription}.json`;
     link.click();
     URL.revokeObjectURL(url);
 
     // Save metadata to store
-    state.setMetadata(author, description);
+    state.setMetadata(exportAuthor, exportDescription);
   };
 
-  const handleDownloadImage = async () => {
+  const handleDownloadImage = useCallback(async () => {
     if (!computeContentRef.current) return;
 
     try {
@@ -146,125 +160,116 @@ export default function ArtifactFilterPage() {
       console.error(err);
       toast.error(t.ui("app.imageGenerationFailed"));
     }
-  };
+  }, [t]);
+
+  // Tab configuration for AppBar
+  const tabs: TabConfig[] = useMemo(
+    () => [
+      {
+        value: "configure",
+        label: t.ui("navigation.configure"),
+        icon: Settings,
+      },
+      {
+        value: "filters",
+        label: t.ui("navigation.computeFilters"),
+        icon: Filter,
+      },
+    ],
+    [t]
+  );
+
+  // Actions depend on active tab
+  const actions: ActionConfig[] = useMemo(() => {
+    if (activeTab === "filters") {
+      return [
+        {
+          key: "print",
+          icon: FileDown,
+          label: t.ui("app.print"),
+          onTrigger: handleDownloadImage,
+          alwaysShow: true,
+        },
+      ];
+    }
+    return [
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "import",
+        icon: Upload,
+        label: t.ui("app.import"),
+        onTrigger: () => importRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "export",
+        icon: Download,
+        label: t.ui("app.export"),
+        onTrigger: () => exportRef.current?.open(),
+      },
+    ];
+  }, [activeTab, t, handleDownloadImage]);
 
   return (
-    <div className={THEME.layout.pageContainer}>
-      <ToolHeader
-        actions={
-          activeTab === "filters" ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownloadImage}
-              className="gap-2"
-            >
-              <FileDown className="w-4 h-4" />
-              {t.ui("app.print")}
-            </Button>
-          ) : (
-            <>
-              <ClearAllControl onConfirm={clearAllBuilds} />
-
-              <ImportControl
-                options={presetOptions}
-                loadPreset={loadPreset}
-                onApply={importBuilds}
-                onLocalImport={importBuilds}
-              />
-
-              <ExportControl
-                onExport={handleExport}
-                defaultAuthor={author}
-                defaultDescription={description}
-                className="hidden md:flex"
-              />
-            </>
-          )
-        }
-        mobileMenuItems={
-          activeTab === "filters" ? undefined : (
-            <DropdownMenuItem
-              onSelect={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {t.ui("app.export")}
-            </DropdownMenuItem>
-          )
-        }
+    <div className={THEME.layout.page}>
+      <AppBar
+        actions={actions}
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
+      {/* Control dialogs - render without triggers, opened via ref */}
+      <ClearAllControl ref={clearRef} onConfirm={clearAllBuilds} />
+      <ImportControl
+        ref={importRef}
+        options={presetOptions}
+        loadPreset={loadPreset}
+        onApply={importBuilds}
+        onLocalImport={importBuilds}
+      />
       <ExportControl
+        ref={exportRef}
         onExport={handleExport}
         defaultAuthor={author}
         defaultDescription={description}
-        open={exportDialogOpen}
-        onOpenChange={setExportDialogOpen}
-        renderTrigger={false}
       />
 
-      <div className={cn(THEME.layout.headerBorder, "z-40")}>
-        <div className="px-2 mx-auto pt-2 pb-2">
-          {/* Tab Bar */}
-          <div className="flex justify-center">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
-              <TabsList className="grid w-full max-w-lg mx-auto grid-cols-2 h-11">
-                <TabsTrigger
-                  value="configure"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("navigation.configure")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="filters"
-                  className="text-base py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                >
-                  {t.ui("navigation.computeFilters")}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content Area - Takes remaining height */}
-      <main className="flex-1 overflow-hidden">
-        <div className="px-2 mx-auto h-full">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="h-full"
-          >
-            <TabsContent
-              value="configure"
-              className="mt-0 h-full data-[state=inactive]:hidden"
-            >
-              <ConfigureView
-                targetCharacterId={targetCharacterId}
-                onTargetProcessed={() => setTargetCharacterId(undefined)}
-              />
-            </TabsContent>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex-1 min-h-0 overflow-hidden"
+      >
+        <TabsContent
+          value="configure"
+          className="mt-0 h-full data-[state=inactive]:hidden"
+        >
+          <ConfigureView
+            targetCharacterId={targetCharacterId}
+            onTargetProcessed={() => setTargetCharacterId(undefined)}
+          />
+        </TabsContent>
 
-            <TabsContent
-              value="filters"
-              className="mt-0 h-full data-[state=inactive]:hidden"
-            >
-              <ComputeView
-                contentRef={computeContentRef}
-                onJumpToCharacter={(characterId) => {
-                  setTargetCharacterId(characterId);
-                  setActiveTab("configure");
-                }}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
+        <TabsContent
+          value="filters"
+          className="mt-0 h-full data-[state=inactive]:hidden"
+        >
+          <ComputeView
+            contentRef={computeContentRef}
+            onJumpToCharacter={(characterId) => {
+              setTargetCharacterId(characterId);
+              setActiveTab("configure");
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

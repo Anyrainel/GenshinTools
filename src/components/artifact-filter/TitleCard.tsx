@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Character } from "@/data/types";
 import type { Weapon } from "@/data/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
@@ -42,7 +42,7 @@ const WeaponSlot = memo(
         onClear={!isAddSlot ? handleClear : undefined}
         filter={filter}
         tooltipSide="left"
-        triggerSize="xl"
+        triggerSize="lg"
       />
     );
   }
@@ -108,7 +108,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
   );
 
   /* Mobile: Show max 1 weapon */
-  const isMobile = useIsMobile();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   const visibleWeapons = isMobile
     ? characterWeapons.slice(0, 1)
     : characterWeapons;
@@ -122,7 +122,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
         imagePath={character.imagePath}
         rarity={character.rarity}
         alt={displayName}
-        size="xl"
+        size="lg"
         className="rounded-lg shadow-md"
       />
 

@@ -1,4 +1,5 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -69,7 +70,7 @@ export function SummaryView({ scores }: SummaryViewProps) {
   if (!accountData) return null;
 
   return (
-    <div className="space-y-8 pb-10">
+    <ScrollLayout className="space-y-8 pb-10">
       {tiers.map((tier) => {
         const customization = tierCustomization[tier];
         if (customization?.hidden) return null;
@@ -87,7 +88,7 @@ export function SummaryView({ scores }: SummaryViewProps) {
                 ({chars.length})
               </span>
             </h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+            <div className="flex flex-wrap gap-3">
               {chars.map(({ char, scoreResult }) => {
                 const charInfo = charactersById[char.key];
                 if (!charInfo) return null;
@@ -117,7 +118,7 @@ export function SummaryView({ scores }: SummaryViewProps) {
                 return (
                   <div
                     key={char.key}
-                    className="flex flex-col items-center bg-white/5 rounded-lg p-2 hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center bg-gradient-card rounded-lg p-2 w-fit"
                   >
                     <div className="flex flex-row items-end justify-center gap-1.5 mb-1.5">
                       {/* Character Icon + Tooltip */}
@@ -191,6 +192,6 @@ export function SummaryView({ scores }: SummaryViewProps) {
           </div>
         );
       })}
-    </div>
+    </ScrollLayout>
   );
 }

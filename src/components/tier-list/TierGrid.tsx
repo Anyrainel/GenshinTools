@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";

@@ -63,24 +63,24 @@ function ArtifactSelectComponent({
     >
       <Tooltip disableHoverableContent>
         <TooltipTrigger asChild>
-          <SelectTrigger className="w-36 h-36 p-0 border-2 border-border/50 bg-gradient-select [&>svg:last-child]:hidden group hover:ring-2 hover:ring-primary/40 transition-shadow">
+          <SelectTrigger className="w-28 h-28 p-0 border-2 border-border/50 bg-gradient-select [&>svg:last-child]:hidden group hover:ring-2 hover:ring-primary/40 transition-shadow">
             <div className="w-full h-full rounded flex flex-col items-center justify-center">
               {selectedArtifact ? (
                 <>
                   <ItemIcon
                     imagePath={selectedArtifact.imagePath}
                     rarity={artifactsById[value]?.rarity || 5}
-                    size="xl"
+                    size="lg"
                     alt={selectedArtifact.name}
                   />
-                  <span className="text-base font-medium mt-1 text-center leading-tight px-1 w-full line-clamp-2">
+                  <span className="text-xs font-medium mt-1 text-center leading-tight px-1 w-full line-clamp-2">
                     {selectedArtifact.name}
                   </span>
                 </>
               ) : (
-                <div className="border-2 border-dashed border-muted-foreground/40 rounded-lg w-28 h-28 flex flex-col items-center justify-center transition-colors group-hover:border-primary/50">
-                  <Plus className="w-8 h-8 text-muted-foreground/60 mb-1" />
-                  <span className="text-sm text-muted-foreground">
+                <div className="border-2 border-dashed border-muted-foreground/40 rounded-lg w-20 h-20 flex flex-col items-center justify-center transition-colors group-hover:border-primary/50">
+                  <Plus className="w-6 h-6 text-muted-foreground/60 mb-1" />
+                  <span className="text-xs text-muted-foreground">
                     {placeholder}
                   </span>
                 </div>
@@ -182,12 +182,12 @@ function ArtifactSelectHalfComponent({
   const displayValue = selectedHalfSet ? selectedHalfSet.text : placeholder;
 
   return (
-    <div className="px-1">
+    <div className="w-full max-w-full overflow-hidden px-1">
       <Select
         value={value?.toString() || ""}
         onValueChange={(val) => onValueChange(Number.parseInt(val))}
       >
-        <SelectTrigger className="w-full min-h-8 h-auto text-sm px-2 py-1 [&>span]:line-clamp-2 bg-gradient-select">
+        <SelectTrigger className="w-full min-h-7 h-auto text-xs px-2 py-1 whitespace-normal [&>span]:line-clamp-2 bg-gradient-select">
           <SelectValue placeholder={placeholder}>{displayValue}</SelectValue>
         </SelectTrigger>
         <SelectContent
@@ -197,7 +197,7 @@ function ArtifactSelectHalfComponent({
           {halfSetList.map((halfSet) => (
             <SelectItem key={halfSet.id} value={halfSet.id.toString()}>
               <div className="flex items-center gap-2">
-                <span className="text-base max-w-80 break-words leading-tight">
+                <span className="text-sm max-w-80 break-words leading-tight">
                   {halfSet.text}
                 </span>
                 <div className="flex gap-1 flex-shrink-0">

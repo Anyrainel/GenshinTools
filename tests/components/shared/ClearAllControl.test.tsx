@@ -1,57 +1,59 @@
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import userEvent from "@testing-library/user-event";
+import { createRef } from "react";
 import { render, screen } from "../../utils/render";
 
 describe("ClearAllControl", () => {
-  it("renders a clear button", () => {
-    render(<ClearAllControl onConfirm={() => {}} />);
+  it("opens confirmation dialog via ref.open()", async () => {
+    const ref = createRef<ControlHandle>();
+    render(<ClearAllControl ref={ref} onConfirm={() => {}} />);
 
-    const button = screen.getByRole("button");
-    expect(button).toBeInTheDocument();
-    // Button shows trash icon and Clear text
-    expect(button).toHaveTextContent(/clear/i);
-  });
+    // Dialog should not be visible initially
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
 
-  it("opens confirmation dialog when clicked", async () => {
-    const user = userEvent.setup();
-    render(<ClearAllControl onConfirm={() => {}} />);
-
-    await user.click(screen.getByRole("button"));
+    // Open via ref
+    ref.current?.open();
 
     // Dialog should now be visible
-    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
   });
 
-  it("shows default dialog with cancel and confirm buttons", async () => {
-    const user = userEvent.setup();
-    render(<ClearAllControl onConfirm={() => {}} />);
+  it("shows cancel and confirm buttons in dialog", async () => {
+    const ref = createRef<ControlHandle>();
+    render(<ClearAllControl ref={ref} onConfirm={() => {}} />);
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
 
     // Should show dialog
-    const dialog = screen.getByRole("alertdialog");
+    const dialog = await screen.findByRole("alertdialog");
     expect(dialog).toBeInTheDocument();
+
     // Dialog should have cancel and confirm buttons
     expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
   });
 
   it("uses tier-list variant messages when specified", async () => {
-    const user = userEvent.setup();
-    render(<ClearAllControl onConfirm={() => {}} variant="tier-list" />);
+    const ref = createRef<ControlHandle>();
+    render(
+      <ClearAllControl ref={ref} onConfirm={() => {}} variant="tier-list" />
+    );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
 
-    // Dialog should still open with tier-list specific messages
-    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    // Dialog should open with tier-list specific messages
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
   });
 
   it("calls onConfirm when confirm button is clicked", async () => {
     const user = userEvent.setup();
     const mockOnConfirm = vi.fn();
-    render(<ClearAllControl onConfirm={mockOnConfirm} />);
+    const ref = createRef<ControlHandle>();
+    render(<ClearAllControl ref={ref} onConfirm={mockOnConfirm} />);
 
-    // Open dialog
-    await user.click(screen.getByRole("button"));
+    // Open dialog via ref
+    ref.current?.open();
+    await screen.findByRole("alertdialog");
 
     // Find and click the confirm action button (has destructive styling)
     const confirmButton = screen.getByRole("button", { name: /clear|delete/i });
@@ -62,11 +64,12 @@ describe("ClearAllControl", () => {
 
   it("closes dialog when cancel is clicked", async () => {
     const user = userEvent.setup();
-    render(<ClearAllControl onConfirm={() => {}} />);
+    const ref = createRef<ControlHandle>();
+    render(<ClearAllControl ref={ref} onConfirm={() => {}} />);
 
     // Open dialog
-    await user.click(screen.getByRole("button"));
-    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    ref.current?.open();
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
 
     // Cancel
     await user.click(screen.getByRole("button", { name: /cancel/i }));
@@ -78,21 +81,16 @@ describe("ClearAllControl", () => {
   it("does not call onConfirm when cancel is clicked", async () => {
     const user = userEvent.setup();
     const mockOnConfirm = vi.fn();
-    render(<ClearAllControl onConfirm={mockOnConfirm} />);
+    const ref = createRef<ControlHandle>();
+    render(<ClearAllControl ref={ref} onConfirm={mockOnConfirm} />);
 
     // Open dialog
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("alertdialog");
 
     // Cancel
     await user.click(screen.getByRole("button", { name: /cancel/i }));
 
     expect(mockOnConfirm).not.toHaveBeenCalled();
-  });
-
-  it("disables button when disabled prop is true", () => {
-    render(<ClearAllControl onConfirm={() => {}} disabled />);
-
-    const button = screen.getByRole("button");
-    expect(button).toBeDisabled();
   });
 });

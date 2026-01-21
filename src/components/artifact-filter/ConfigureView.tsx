@@ -1,6 +1,5 @@
+import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { characters } from "@/data/resources";
@@ -13,7 +12,6 @@ import {
 } from "@/lib/characterFilters";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Filter } from "lucide-react";
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { CharacterBuildCard } from "./CharacterBuildCard";
 
@@ -36,7 +34,6 @@ export function ConfigureView({
   const [filters, setFilters] = useState<CharacterFilters>(
     defaultCharacterFilters
   );
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // When targetCharacterId is set, configure filters to show that character
   useEffect(() => {
@@ -74,87 +71,57 @@ export function ConfigureView({
 
   const activeFilters = hasActiveFilters(filters);
 
+  // Build trigger label with filter count
+  const triggerLabel = activeFilters
+    ? `${t.ui("filters.title")} (${
+        [
+          filters.elements,
+          filters.weaponTypes,
+          filters.regions,
+          filters.rarities,
+        ].flat().length
+      })`
+    : t.ui("filters.title");
+
   return (
-    <>
-      <div
-        ref={containerRef}
-        className="flex flex-col gap-4 lg:flex-row lg:gap-6 h-full pt-4"
-      >
-        {/* Desktop Sidebar - Fixed height with internal scroll */}
-        <aside className="hidden lg:block lg:flex-shrink-0 h-full">
+    <div ref={containerRef} className="h-full">
+      <SidebarLayout
+        sidebar={
           <CharacterFilterSidebar
             filters={filters}
             onFiltersChange={setFilters}
             hasTierData={hasTierData}
           />
-        </aside>
-
-        {/* Main Column - Scrollable */}
-        <section className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
-          {/* Mobile Filter Trigger */}
-          <div className="lg:hidden flex items-center justify-between mb-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsFilterOpen(true)}
-              className="gap-2"
-            >
-              <Filter className="w-4 h-4" />
-              {t.ui("filters.title")}
-              {activeFilters && (
-                <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-                  {
-                    [
-                      filters.elements,
-                      filters.weaponTypes,
-                      filters.regions,
-                      filters.rarities,
-                    ].flat().length
-                  }
-                </span>
-              )}
-            </Button>
-          </div>
-
-          {/* Scrollable Content */}
-          {deferredCharacters.length === 0 ? (
-            <div
-              ref={mainScrollRef}
-              className="flex-1 overflow-y-auto overflow-hidden"
-              style={{ scrollBehavior: "auto" }}
-            >
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">??</div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {t.ui("configure.noCharactersFound")}
-                </h3>
-                <p className="text-muted-foreground">
-                  {t.ui("configure.noCharactersDescription")}
-                </p>
-              </div>
+        }
+        triggerLabel={triggerLabel}
+        contentScrollRef={mainScrollRef}
+        contentScrollsInternally
+        className="pt-4"
+      >
+        {deferredCharacters.length === 0 ? (
+          <div
+            ref={mainScrollRef}
+            className="flex-1 overflow-y-auto overflow-hidden"
+            style={{ scrollBehavior: "auto" }}
+          >
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {t.ui("configure.noCharactersFound")}
+              </h3>
+              <p className="text-muted-foreground">
+                {t.ui("configure.noCharactersDescription")}
+              </p>
             </div>
-          ) : (
-            <VirtualizedCharacterList
-              characters={deferredCharacters}
-              scrollRef={mainScrollRef}
-            />
-          )}
-        </section>
-      </div>
-
-      {/* Mobile Filter Sheet */}
-      <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-        <SheetContent side="left" className="w-80 p-0 flex flex-col">
-          <div className="flex-1 overflow-y-auto my-4">
-            <CharacterFilterSidebar
-              filters={filters}
-              onFiltersChange={setFilters}
-              isInSidePanel={false}
-              hasTierData={hasTierData}
-            />
           </div>
-        </SheetContent>
-      </Sheet>
-    </>
+        ) : (
+          <VirtualizedCharacterList
+            characters={deferredCharacters}
+            scrollRef={mainScrollRef}
+          />
+        )}
+      </SidebarLayout>
+    </div>
   );
 }
 
@@ -200,7 +167,7 @@ function VirtualizedCharacterList({
               transform: `translateY(${virtualItem.start}px)`,
             }}
           >
-            <div className="mb-6">
+            <div className="mb-4">
               <CharacterBuildCard character={characters[virtualItem.index]} />
             </div>
           </div>

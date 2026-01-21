@@ -5,8 +5,8 @@ import {
   weaponResourcesByName,
 } from "@/data/constants";
 import type { Character } from "@/data/types";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { THEME } from "@/lib/theme";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { THEME } from "@/lib/styles";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { memo, useMemo } from "react";
 
@@ -66,7 +66,7 @@ export const CharacterInfo = memo(
       [t, character.releaseDate]
     );
 
-    const isMobile = useIsMobile();
+    const isMobile = !useMediaQuery("(min-width: 768px)");
 
     return (
       <div className={cn("flex flex-col gap-2", className)}>
@@ -74,7 +74,7 @@ export const CharacterInfo = memo(
           <h3
             className={cn(
               "font-bold text-foreground",
-              isMobile ? "text-xl" : "text-2xl",
+              isMobile ? "text-lg" : "text-xl",
               nameClassName
             )}
           >
@@ -95,7 +95,7 @@ export const CharacterInfo = memo(
               "rounded-full shadow-none border-current border-2 flex items-center gap-1",
               isMobile
                 ? "px-1.5 py-0 text-sm font-normal"
-                : "font-medium text-base"
+                : "font-medium text-sm"
             )}
           >
             <img
@@ -113,7 +113,7 @@ export const CharacterInfo = memo(
               variant="outline"
               className={cn(
                 rarityTextColor,
-                "rounded-full shadow-none border-current border-2 font-semibold text-base"
+                "rounded-full shadow-none border-current border-2 font-semibold text-sm"
               )}
             >
               ★ {character.rarity}
@@ -126,7 +126,7 @@ export const CharacterInfo = memo(
               "rounded-full shadow-none text-slate-400 border-slate-400 border-2 capitalize flex items-center gap-1",
               isMobile
                 ? "px-1.5 py-0 text-sm font-normal"
-                : "font-medium text-base"
+                : "font-medium text-sm"
             )}
           >
             <img
@@ -144,7 +144,7 @@ export const CharacterInfo = memo(
               "rounded-full shadow-none text-slate-500 border-slate-500 border-2 capitalize",
               isMobile
                 ? "px-1.5 py-0 text-sm font-normal"
-                : "font-medium text-base"
+                : "font-medium text-sm"
             )}
           >
             {regionName}
@@ -154,7 +154,7 @@ export const CharacterInfo = memo(
             <span
               className={cn(
                 "text-muted-foreground pl-2",
-                isMobile ? "text-sm" : "text-base"
+                isMobile ? "text-xs" : "text-sm"
               )}
             >
               {formattedDate}

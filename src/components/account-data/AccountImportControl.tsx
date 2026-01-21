@@ -1,16 +1,17 @@
 import { Loader2, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { GOODData } from "@/lib/goodConversion";
 
@@ -18,17 +19,35 @@ interface AccountImportControlProps {
   onLocalImport: (data: GOODData) => void;
   onUidImport: (uid: string, clearData: boolean) => Promise<void>;
   initialUid?: string;
-  disabled?: boolean;
 }
 
-export function AccountImportControl({
-  onLocalImport,
-  onUidImport,
-  initialUid,
-  disabled = false,
-}: AccountImportControlProps) {
+/**
+ * AccountImportControl - A dialog-only control for importing account data.
+ *
+ * Supports both GOOD JSON file import and Enka UID import.
+ * Uses ResponsiveDialog for mobile Drawer support.
+ *
+ * Usage with ref pattern:
+ * ```tsx
+ * const importRef = useRef<ControlHandle>(null);
+ *
+ * const actions: ActionConfig[] = [
+ *   { key: "import", icon: Upload, label: "Import", onTrigger: () => importRef.current?.open() },
+ * ];
+ *
+ * <AccountImportControl ref={importRef} onLocalImport={...} onUidImport={...} />
+ * <AppBar actions={actions} />
+ * ```
+ */
+export const AccountImportControl = forwardRef<
+  ControlHandle,
+  AccountImportControlProps
+>(function AccountImportControl(
+  { onLocalImport, onUidImport, initialUid },
+  ref
+) {
   const { t } = useLanguage();
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uidInput, setUidInput] = useState(initialUid || "");
@@ -40,6 +59,14 @@ export function AccountImportControl({
       setUidInput(initialUid);
     }
   }, [initialUid]);
+
+  // Expose open() method via ref
+  useImperativeHandle(ref, () => ({
+    open: () => {
+      setErrorMessage(null);
+      setIsOpen(true);
+    },
+  }));
 
   const handleLocalImport = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -57,7 +84,7 @@ export function AccountImportControl({
       try {
         const imported = JSON.parse(e.target?.result as string);
         onLocalImport(imported);
-        setPickerOpen(false);
+        setIsOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
         setErrorMessage(t.ui("configure.importDialogLoadError"));
@@ -76,7 +103,7 @@ export function AccountImportControl({
     setErrorMessage(null);
     try {
       await onUidImport(uidInput, clearData);
-      setPickerOpen(false);
+      setIsOpen(false);
     } catch (error: unknown) {
       console.error("UID Import failed", error);
       let message = t.ui("configure.importDialogLoadError");
@@ -90,78 +117,69 @@ export function AccountImportControl({
   };
 
   return (
-    <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2"
-        onClick={() => setPickerOpen(true)}
-        disabled={disabled || isBusy}
-      >
-        <Upload className="w-4 h-4" />
-        {t.ui("app.import")}
-      </Button>
-
-      <Dialog
-        open={pickerOpen}
-        onOpenChange={(open) => {
-          setPickerOpen(open);
-          if (!open) setErrorMessage(null);
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t.ui("accountData.importDialogTitle")}</DialogTitle>
-            <DialogDescription asChild>
-              <div className="flex flex-col gap-4 py-2 text-sm text-muted-foreground">
-                <div>
-                  <span className="font-semibold block mb-1 text-foreground">
-                    {t.ui("accountData.importHelpGood")}
-                  </span>
-                  <span>
-                    {t.ui("accountData.importHelpGoodDesc")}{" "}
-                    <a
-                      href="https://konkers.github.io/irminsul/02-quickstart.html"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Irminsul
-                    </a>
-                    {" / "}
-                    <a
-                      href="https://github.com/taiwenlee/Inventory_Kamera"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Inventory Kamera
-                    </a>
-                    .
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold block mb-1 text-foreground">
-                    {t.ui("accountData.importHelpUid")}
-                  </span>
-                  <span>{t.ui("accountData.importHelpUidDesc")}</span>
-                </div>
+    <ResponsiveDialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) setErrorMessage(null);
+      }}
+    >
+      <ResponsiveDialogContent className="sm:max-w-md">
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>
+            {t.ui("accountData.importDialogTitle")}
+          </ResponsiveDialogTitle>
+          <ResponsiveDialogDescription asChild>
+            <div className="flex flex-col gap-4 py-2 text-sm text-muted-foreground">
+              <div>
+                <span className="font-semibold block mb-1 text-foreground">
+                  {t.ui("accountData.importHelpGood")}
+                </span>
+                <span>
+                  {t.ui("accountData.importHelpGoodDesc")}{" "}
+                  <a
+                    href="https://konkers.github.io/irminsul/02-quickstart.html"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Irminsul
+                  </a>
+                  {" / "}
+                  <a
+                    href="https://github.com/taiwenlee/Inventory_Kamera"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Inventory Kamera
+                  </a>
+                  .
+                </span>
               </div>
-            </DialogDescription>
-          </DialogHeader>
+              <div>
+                <span className="font-semibold block mb-1 text-foreground">
+                  {t.ui("accountData.importHelpUid")}
+                </span>
+                <span>{t.ui("accountData.importHelpUidDesc")}</span>
+              </div>
+            </div>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
 
-          {/* UID Import Section */}
-          <div className="pt-4 border-t space-y-3">
+        {/* UID Import Section */}
+        <div className="pt-4 border-t space-y-3 flex-1 overflow-y-auto px-1">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <input
+              type="text"
+              placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
+              value={uidInput}
+              onChange={(e) => setUidInput(e.target.value)}
+              className="flex h-9 flex-1 min-w-[100px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isBusy}
+              onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
+            />
             <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
-                value={uidInput}
-                onChange={(e) => setUidInput(e.target.value)}
-                className="flex h-9 flex-1 min-w-[100px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isBusy}
-                onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
-              />
               <div className="flex items-center space-x-1.5 shrink-0 px-1">
                 <Checkbox
                   id="clearData"
@@ -189,30 +207,30 @@ export function AccountImportControl({
                 )}
               </Button>
             </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 w-full relative overflow-hidden"
-              disabled={isBusy}
-            >
-              <Upload className="w-4 h-4" />
-              {t.ui("accountData.importGOOD")}
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleLocalImport}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                disabled={isBusy}
-              />
-            </Button>
           </div>
 
-          {errorMessage && (
-            <div className="text-sm text-destructive">{errorMessage}</div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 w-full relative overflow-hidden"
+            disabled={isBusy}
+          >
+            <Upload className="w-4 h-4" />
+            {t.ui("accountData.importGOOD")}
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleLocalImport}
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              disabled={isBusy}
+            />
+          </Button>
+        </div>
+
+        {errorMessage && (
+          <div className="text-sm text-destructive px-1">{errorMessage}</div>
+        )}
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
-}
+});

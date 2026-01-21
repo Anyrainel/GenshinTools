@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { weaponsById } from "@/data/constants";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 interface WeaponTooltipProps {

@@ -27,7 +27,7 @@ import {
   weaponsById,
 } from "@/data/constants";
 import type { ArtifactSet, Character, Weapon } from "@/data/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { Ban, Search } from "lucide-react";
 import { memo, useMemo, useState } from "react";
@@ -66,7 +66,7 @@ function ItemPickerComponent({
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const isMobile = useIsMobile();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
 
   // Determine configuration based on type
   const config = useMemo(() => {

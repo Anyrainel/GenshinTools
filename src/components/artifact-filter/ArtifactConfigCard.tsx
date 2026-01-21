@@ -72,7 +72,7 @@ export function ArtifactConfigCard({
   // Helper function to render main stat cell
   const renderMainStatCell = (slotName: string, mainStats: MainStatPlus[]) => (
     <div>
-      <Label className="text-sm text-muted-foreground block mb-1">
+      <Label className="text-xs text-muted-foreground block mb-1">
         {slotName} {t.ui("computeFilters.mainStat")}
       </Label>
       <div className="flex flex-wrap gap-1">
@@ -81,13 +81,13 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="outline"
-              className="font-normal shadow-none text-sm bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+              className="font-normal shadow-none text-xs bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
             >
               {getStatDisplayName(stat)}
             </Badge>
           ))
         ) : (
-          <span className="text-sm text-muted-foreground italic">
+          <span className="text-xs text-muted-foreground italic">
             {t.ui("computeFilters.any")}
           </span>
         )}
@@ -98,7 +98,7 @@ export function ArtifactConfigCard({
   // Helper function to render substat cell
   const renderSubstatCell = (slotName: string, slotConfig: SlotConfig) => (
     <div>
-      <Label className="text-sm text-muted-foreground block mb-1">
+      <Label className="text-xs text-muted-foreground block mb-1">
         {slotName} {t.ui("computeFilters.subStat")}{" "}
         <span className="font-semibold text-foreground">
           [{t.ui("computeFilters.atLeast")} {slotConfig.minStatCount}]
@@ -111,7 +111,7 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="secondary"
-              className={`font-normal shadow-none text-sm ${
+              className={`font-normal shadow-none text-xs ${
                 isMustPresent
                   ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
                   : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"

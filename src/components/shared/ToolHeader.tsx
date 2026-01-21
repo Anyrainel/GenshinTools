@@ -1,3 +1,13 @@
+/**
+ * @deprecated Use AppBar from "@/components/layout" instead.
+ * This component is kept for backwards compatibility during migration.
+ *
+ * Migration guide:
+ * 1. Replace `import { ToolHeader }` with `import { AppBar }`
+ * 2. Convert `actions` ReactNode to `legacyActions` prop
+ * 3. For new code, use the `actions: ActionConfig[]` pattern
+ */
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,7 +29,7 @@ import {
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 import {
   Check,

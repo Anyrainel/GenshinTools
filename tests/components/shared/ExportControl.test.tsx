@@ -1,5 +1,7 @@
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { ExportControl } from "@/components/shared/ExportControl";
 import userEvent from "@testing-library/user-event";
+import { createRef } from "react";
 import { render, screen } from "../../utils/render";
 
 describe("ExportControl", () => {
@@ -9,28 +11,24 @@ describe("ExportControl", () => {
     defaultOnExport.mockClear();
   });
 
-  it("renders an export button", () => {
-    render(<ExportControl onExport={defaultOnExport} />);
+  it("opens dialog via ref.open()", async () => {
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    const button = screen.getByRole("button");
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveTextContent(/export/i);
-  });
+    // Dialog should not be visible initially
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-  it("opens dialog when button is clicked", async () => {
-    const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    ref.current?.open();
 
-    await user.click(screen.getByRole("button"));
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 
   it("shows author and description inputs in dialog", async () => {
-    const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
 
     expect(screen.getByLabelText(/author/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
@@ -38,9 +36,12 @@ describe("ExportControl", () => {
 
   it("validates empty author field", async () => {
     const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
+
     // Fill description only
     await user.type(screen.getByLabelText(/description/i), "Test Description");
     // Click export without filling author
@@ -56,9 +57,12 @@ describe("ExportControl", () => {
 
   it("validates empty description field", async () => {
     const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
+
     // Fill author only
     await user.type(screen.getByLabelText(/author/i), "Test Author");
     // Click export without filling description
@@ -74,9 +78,12 @@ describe("ExportControl", () => {
 
   it("calls onExport with author and description", async () => {
     const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
+
     await user.type(screen.getByLabelText(/author/i), "Test Author");
     await user.type(screen.getByLabelText(/description/i), "Test Description");
 
@@ -93,16 +100,18 @@ describe("ExportControl", () => {
   });
 
   it("uses default author and description values", async () => {
-    const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ExportControl
+        ref={ref}
         onExport={defaultOnExport}
         defaultAuthor="Default Author"
         defaultDescription="Default Description"
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
 
     expect(screen.getByLabelText(/author/i)).toHaveValue("Default Author");
     expect(screen.getByLabelText(/description/i)).toHaveValue(
@@ -110,19 +119,13 @@ describe("ExportControl", () => {
     );
   });
 
-  it("disables button when disabled prop is true", () => {
-    render(<ExportControl onExport={defaultOnExport} disabled />);
-
-    const button = screen.getByRole("button");
-    expect(button).toBeDisabled();
-  });
-
   it("closes dialog when cancel is clicked", async () => {
     const user = userEvent.setup();
-    render(<ExportControl onExport={defaultOnExport} />);
+    const ref = createRef<ControlHandle>();
+    render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    await user.click(screen.getByRole("button"));
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    ref.current?.open();
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /cancel/i }));
 

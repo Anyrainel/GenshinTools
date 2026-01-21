@@ -13,12 +13,28 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        md: "1.5rem",
+        lg: "2rem",
+        "2xl": "3rem",
+      },
       screens: {
-        "2xl": "1800px",
+        sm: "100%",
+        md: "100%",
+        lg: "1024px",
+        xl: "1380px",
+        "2xl": "1600px",
       },
     },
     extend: {
+      width: {
+        sidebar: "17.5rem", // 280px
+        "sidebar-wide": "20rem", // 320px
+      },
+      minWidth: {
+        card: "22rem", // 352px
+      },
       gridTemplateColumns: {
         "14": "repeat(14, minmax(0, 1fr))",
         "16": "repeat(16, minmax(0, 1fr))",
@@ -56,16 +72,6 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
         },
         element: {
           pyro: "#b8483f",
@@ -107,10 +113,9 @@ export default {
         },
       },
       backgroundImage: {
-        "gradient-mystical": "var(--gradient-mystical)",
-        "gradient-select": "var(--gradient-select)",
-        "gradient-golden": "var(--gradient-golden)",
+        "gradient-page": "var(--gradient-page)",
         "gradient-card": "var(--gradient-card)",
+        "gradient-select": "var(--gradient-select)",
         "rarity-1": "linear-gradient(180deg, #6a6d74, #868586)",
         "rarity-2": "linear-gradient(180deg, #4b6c67, #519072)",
         "rarity-3": "linear-gradient(180deg, #567496, #5392b8)",

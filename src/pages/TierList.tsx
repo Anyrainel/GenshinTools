@@ -1,13 +1,19 @@
+import {
+  type ActionConfig,
+  AppBar,
+  type ControlHandle,
+} from "@/components/layout/AppBar";
+import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { ClearAllControl } from "@/components/shared/ClearAllControl"; // Updated import
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import { ToolHeader } from "@/components/shared/ToolHeader";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   charactersById,
@@ -26,11 +32,10 @@ import type {
 import { elements } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { THEME } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { THEME } from "@/lib/styles";
 import { useTierStore } from "@/stores/useTierStore";
-import { Download, FileDown, Settings, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: TierListData }>(
@@ -79,10 +84,13 @@ export default function TierListPage() {
   const author = useTierStore((state) => state.author);
   const description = useTierStore((state) => state.description);
 
+  // Control refs for ref-based dialog pattern
+  const clearRef = useRef<ControlHandle>(null);
+  const importRef = useRef<ControlHandle>(null);
+  const exportRef = useRef<ControlHandle>(null);
+
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
-  const [clearDialogOpen, setClearDialogOpen] = useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Load preset metadata on mount
@@ -129,14 +137,14 @@ export default function TierListPage() {
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
-  const handleExport = (author: string, description: string) => {
+  const handleExport = (exportAuthor: string, exportDescription: string) => {
     const data: TierListData = {
       tierAssignments,
       tierCustomization,
       customTitle: customTitle || undefined,
       language,
-      author, // Add author to export data
-      description, // Add description to export data
+      author: exportAuthor,
+      description: exportDescription,
     };
     try {
       const dataStr = JSON.stringify(data, null, 2);
@@ -144,12 +152,12 @@ export default function TierListPage() {
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `[${author}] ${description}.json`;
+      link.download = `[${exportAuthor}] ${exportDescription}.json`;
       link.click();
       URL.revokeObjectURL(url);
 
       // Save metadata to store
-      useTierStore.getState().setMetadata(author, description);
+      useTierStore.getState().setMetadata(exportAuthor, exportDescription);
 
       toast.success(t.ui("messages.tierListSaved"));
     } catch (error) {
@@ -193,7 +201,7 @@ export default function TierListPage() {
     setTierAssignments(newAssignments);
   };
 
-  const handleDownloadImage = async () => {
+  const handleDownloadImage = useCallback(async () => {
     if (!tableRef.current) return;
 
     await downloadTierListImage({
@@ -202,123 +210,127 @@ export default function TierListPage() {
       filename: "tier-list",
       t,
     });
-  };
+  }, [customTitle, t]);
+
+  // Actions configuration
+  const actions: ActionConfig[] = useMemo(
+    () => [
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "import",
+        icon: Upload,
+        label: t.ui("app.import"),
+        onTrigger: () => importRef.current?.open(),
+        alwaysShow: true,
+      },
+      {
+        key: "export",
+        icon: Download,
+        label: t.ui("app.export"),
+        onTrigger: () => exportRef.current?.open(),
+      },
+      {
+        key: "print",
+        icon: FileDown,
+        label: t.ui("app.print"),
+        onTrigger: handleDownloadImage,
+      },
+    ],
+    [t, handleDownloadImage]
+  );
+
+  // Filter groups for WideLayout
+  const filterGroups = useMemo(
+    () => [
+      {
+        key: "display",
+        content: (
+          <>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-weapons"
+                checked={showWeapons}
+                onCheckedChange={(checked) => setShowWeapons(checked === true)}
+              />
+              <Label
+                htmlFor="show-weapons"
+                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+              >
+                {t.ui("buttons.showWeapons")}
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-travelers"
+                checked={showTravelers}
+                onCheckedChange={(checked) =>
+                  setShowTravelers(checked === true)
+                }
+              />
+              <Label
+                htmlFor="show-travelers"
+                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+              >
+                {t.ui("buttons.showTravelers")}
+              </Label>
+            </div>
+          </>
+        ),
+      },
+    ],
+    [showWeapons, showTravelers, setShowWeapons, setShowTravelers, t]
+  );
 
   return (
-    <div className={THEME.layout.pageContainer}>
-      <ToolHeader
-        actions={
-          <>
-            <ClearAllControl onConfirm={handleClear} variant="tier-list" />
+    <div className={THEME.layout.page}>
+      <AppBar actions={actions} />
 
-            <ImportControl<TierListData>
-              options={presetOptions}
-              loadPreset={loadPreset}
-              onApply={handleImport}
-              onLocalImport={handleImport}
-              variant="tier-list"
-            />
-
-            <ExportControl
-              onExport={handleExport}
-              variant="tier-list"
-              defaultAuthor={author}
-              defaultDescription={description}
-              className="hidden md:flex"
-            />
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownloadImage}
-              className="gap-2 hidden md:flex"
-            >
-              <FileDown className="w-4 h-4" />
-              {t.ui("app.print")}
-            </Button>
-          </>
-        }
-        mobileMenuItems={
-          <>
-            <DropdownMenuItem
-              onClick={() => setExportDialogOpen(true)}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              {t.ui("app.export")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDownloadImage} className="gap-2">
-              <FileDown className="w-4 h-4" />
-              {t.ui("app.print")}
-            </DropdownMenuItem>
-          </>
-        }
-      />
-
-      {/* Hidden Controlled Dialogs for Mobile */}
+      {/* Control dialogs - render without triggers, opened via ref */}
       <ClearAllControl
+        ref={clearRef}
         onConfirm={handleClear}
         variant="tier-list"
-        open={clearDialogOpen}
-        onOpenChange={setClearDialogOpen}
-        renderTrigger={false}
+      />
+      <ImportControl<TierListData>
+        ref={importRef}
+        options={presetOptions}
+        loadPreset={loadPreset}
+        onApply={handleImport}
+        onLocalImport={handleImport}
+        variant="tier-list"
       />
       <ExportControl
+        ref={exportRef}
         onExport={handleExport}
         variant="tier-list"
         defaultAuthor={author}
         defaultDescription={description}
-        open={exportDialogOpen}
-        onOpenChange={setExportDialogOpen}
-        renderTrigger={false}
       />
 
-      <div
-        className={cn(
-          THEME.layout.headerBorder,
-          "z-40 flex-shrink-0 sticky top-0"
-        )}
-      >
-        <div className="container mx-auto flex items-center gap-4 py-2">
-          <h1 className="text-2xl font-bold text-gray-200">
-            {customTitle || t.ui("app.tierListTitle")}
-          </h1>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsCustomizeDialogOpen(true)}
-              className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
-            >
-              <Settings className="w-4 h-4" />
+      <WideLayout
+        title={customTitle || t.ui("app.tierListTitle")}
+        actions={
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsCustomizeDialogOpen(true)}
+            className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
+          >
+            <Settings className="w-4 h-4" />
+            <span className="hidden sm:inline">
               {t.ui("buttons.customize")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowWeapons(!showWeapons)}
-              className="gap-2"
-            >
-              {showWeapons
-                ? t.ui("buttons.hideWeapons")
-                : t.ui("buttons.showWeapons")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowTravelers(!showTravelers)}
-              className="gap-2"
-            >
-              {showTravelers
-                ? t.ui("buttons.hideTravelers")
-                : t.ui("buttons.showTravelers")}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <main className="flex-1 overflow-y-auto pb-2">
-        <div className="w-[95%] mx-auto h-full">
+            </span>
+          </Button>
+        }
+        filters={filterGroups}
+      >
+        <div className="w-full h-full">
           <TierTable<Character, Element>
             items={sortedCharacters}
             itemsById={charactersById}
@@ -346,7 +358,7 @@ export default function TierListPage() {
             tableRef={tableRef}
           />
         </div>
-      </main>
+      </WideLayout>
 
       <TierCustomizationDialog
         isOpen={isCustomizeDialogOpen}

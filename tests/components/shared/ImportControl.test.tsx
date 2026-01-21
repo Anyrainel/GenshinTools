@@ -1,6 +1,8 @@
+import type { ControlHandle } from "@/components/layout/AppBar";
 import { ImportControl } from "@/components/shared/ImportControl";
 import type { PresetOption } from "@/data/types";
 import userEvent from "@testing-library/user-event";
+import { createRef } from "react";
 import { render, screen } from "../../utils/render";
 
 describe("ImportControl", () => {
@@ -17,45 +19,38 @@ describe("ImportControl", () => {
     vi.clearAllMocks();
   });
 
-  it("renders import button", () => {
+  it("opens dialog via ref.open()", async () => {
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
-        options={[]}
-        loadPreset={mockLoadPreset}
-        onApply={mockOnApply}
-      />
-    );
-
-    const button = screen.getByRole("button");
-    expect(button).toHaveTextContent(/import/i);
-  });
-
-  it("opens dialog when button is clicked", async () => {
-    const user = userEvent.setup();
-    render(
-      <ImportControl
+        ref={ref}
         options={sampleOptions}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    // Dialog should not be visible initially
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    ref.current?.open();
+
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 
   it("displays preset options in dialog", async () => {
-    const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
+        ref={ref}
         options={sampleOptions}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
 
     // Should show preset options sorted alphabetically
     expect(screen.getByText("Preset A")).toBeInTheDocument();
@@ -64,33 +59,42 @@ describe("ImportControl", () => {
 
   it("shows confirmation dialog when preset is selected", async () => {
     const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
+        ref={ref}
         options={sampleOptions}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
+
     await user.click(screen.getByText("Preset A"));
 
     // Should show alert dialog for confirmation
-    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
   });
 
   it("calls loadPreset and onApply when confirmed", async () => {
     const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
+        ref={ref}
         options={sampleOptions}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
+
     await user.click(screen.getByText("Preset A"));
+    await screen.findByRole("alertdialog");
 
     // Find and click confirm button in alert dialog
     const buttons = screen.getAllByRole("button");
@@ -104,9 +108,10 @@ describe("ImportControl", () => {
   });
 
   it("shows file import button when onLocalImport is provided", async () => {
-    const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
+        ref={ref}
         options={sampleOptions}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
@@ -114,7 +119,8 @@ describe("ImportControl", () => {
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
+    await screen.findByRole("dialog");
 
     // Should show "Import from File" button area
     const fileButtons = screen.getAllByText(/import/i);
@@ -126,32 +132,20 @@ describe("ImportControl", () => {
   });
 
   it("shows empty list message when no options available", async () => {
-    const user = userEvent.setup();
+    const ref = createRef<ControlHandle>();
     render(
       <ImportControl
+        ref={ref}
         options={[]}
         loadPreset={mockLoadPreset}
         onApply={mockOnApply}
       />
     );
 
-    await user.click(screen.getByRole("button"));
+    ref.current?.open();
 
     // Should show empty list message
-    const dialog = screen.getByRole("dialog");
+    const dialog = await screen.findByRole("dialog");
     expect(dialog).toBeInTheDocument();
-  });
-
-  it("disables button when disabled prop is true", () => {
-    render(
-      <ImportControl
-        options={[]}
-        loadPreset={mockLoadPreset}
-        onApply={mockOnApply}
-        disabled
-      />
-    );
-
-    expect(screen.getByRole("button")).toBeDisabled();
   });
 });

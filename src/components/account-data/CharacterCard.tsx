@@ -12,7 +12,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData } from "@/data/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   type ArtifactScoreResult,
   calculateArtifactScore,
@@ -30,7 +30,7 @@ interface CharacterCardProps {
 
 function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
-  const isMobile = useIsMobile();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
   if (!charInfo) return null; // Should not happen if conversion is correct

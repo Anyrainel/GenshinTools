@@ -1,7 +1,7 @@
-import { ToolHeader } from "@/components/shared/ToolHeader";
+import { AppBar } from "@/components/layout/AppBar";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME } from "@/lib/theme";
+import { THEME } from "@/lib/styles";
 import { getAssetUrl } from "@/lib/utils";
 import {
   ArrowRight,
@@ -17,8 +17,8 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-full bg-gradient-mystical text-foreground flex flex-col">
-      <ToolHeader />
+    <div className="min-h-full bg-gradient-page text-foreground flex flex-col">
+      <AppBar />
 
       <div className="flex-1 container mx-auto p-4 flex flex-col gap-8 max-w-[1400px]">
         {/* Hero Section - Genshin Style */}
