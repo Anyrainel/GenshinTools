@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { AlertOctagon, AlertTriangle } from "lucide-react";
 
 interface ArtifactConfigCardProps {
@@ -26,6 +27,7 @@ export function ArtifactConfigCard({
   onJumpToCharacter,
 }: ArtifactConfigCardProps) {
   const { t } = useLanguage();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
 
   const getStatDisplayName = (stat: string) => {
     return t.statShort(stat);
@@ -209,7 +211,7 @@ export function ArtifactConfigCard({
       detail.base > 0.1 && detail.tightened !== null && detail.tightenedLabel;
 
     return (
-      <div className="rounded-md bg-muted/50 mr-3 px-3 py-1.5 space-y-1">
+      <div className="rounded-md bg-muted/50 md:mr-3 px-3 py-1.5 space-y-1">
         {renderChanceRow(
           t.ui("computeFilters.passChance"),
           detail.base,
@@ -263,26 +265,27 @@ export function ArtifactConfigCard({
   return (
     <div className="p-3 bg-muted/20 rounded-lg border border-border/30">
       {/* Title row with config number and character groups */}
-      <div className="flex gap-3 mb-1.5">
-        <h4 className="self-center font-medium text-foreground px-2">
+      {/* Title row with config number and character groups */}
+      <div className="flex flex-wrap gap-2 md:gap-3 mb-1.5 items-center">
+        <h4 className="font-medium text-foreground px-2 whitespace-nowrap">
           {t.ui("computeFilters.configurationNumber")} {configNumber}
         </h4>
 
-        <Label className="self-end text-sm text-muted-foreground pb-0.5">
-          {t.ui("computeFilters.for")}
-        </Label>
-
         {/* Character groups */}
-        <div className="flex-1 flex items-end gap-x-5 gap-y-1 text-sm">
+        <div className="flex-1 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm min-w-0">
+          <Label className="text-sm text-muted-foreground hidden md:block">
+            {t.ui("computeFilters.for")}
+          </Label>
+
           {/* 4pc group */}
           {(fourPcPerfect.length > 0 || fourPcImperfect.length > 0) && (
-            <div className="flex gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {fourPcPerfect.map(renderCharacter)}
               {fourPcPerfect.length > 0 && fourPcImperfect.length > 0 && (
-                <div className="w-px bg-border self-stretch mx-0.5" />
+                <div className="w-px bg-border h-5 mx-0.5" />
               )}
               {fourPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
+              <Label className="text-sm text-muted-foreground mx-0.5 whitespace-nowrap">
                 ({t.ui("computeFilters.fourPc")})
               </Label>
             </div>
@@ -290,13 +293,13 @@ export function ArtifactConfigCard({
 
           {/* 2pc group */}
           {(twoPcPerfect.length > 0 || twoPcImperfect.length > 0) && (
-            <div className="flex items-end gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               {twoPcPerfect.map(renderCharacter)}
               {twoPcPerfect.length > 0 && twoPcImperfect.length > 0 && (
-                <div className="w-px bg-border self-stretch mx-0.5" />
+                <div className="w-px bg-border h-5 mx-0.5" />
               )}
               {twoPcImperfect.map(renderCharacter)}
-              <Label className="self-end text-sm text-muted-foreground mx-0.5 pb-0.5">
+              <Label className="text-sm text-muted-foreground mx-0.5 whitespace-nowrap">
                 ({t.ui("computeFilters.twoPc")})
               </Label>
             </div>
@@ -304,51 +307,113 @@ export function ArtifactConfigCard({
         </div>
       </div>
 
-      {/* Grid layout with explicit rows - 3 rows per column */}
-      <div
-        className="grid grid-cols-4 gap-x-3 gap-y-2 pt-2 border-t border-border/40"
-        style={{ gridTemplateRows: "auto auto auto" }}
-      >
-        {/* Row 1: Main Stats */}
-        <div /> {/* Flower/Plume - empty */}
-        {renderMainStatCell(
-          t.ui("computeFilters.sands"),
-          config.sands.mainStats
-        )}
-        {renderMainStatCell(
-          t.ui("computeFilters.goblet"),
-          config.goblet.mainStats
-        )}
-        {renderMainStatCell(
-          t.ui("computeFilters.circlet"),
-          config.circlet.mainStats
-        )}
-        {/* Row 2: Substats */}
-        {renderSubstatCell(
-          `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
-          config.flowerPlume
-        )}
-        {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
-        {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
-        {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
-        {/* Row 3: Chances */}
-        {renderChanceCell(
-          `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
-          slotChanceDetails.flowerPlume
-        )}
-        {renderChanceCell(
-          t.ui("computeFilters.sands"),
-          slotChanceDetails.sands
-        )}
-        {renderChanceCell(
-          t.ui("computeFilters.goblet"),
-          slotChanceDetails.goblet
-        )}
-        {renderChanceCell(
-          t.ui("computeFilters.circlet"),
-          slotChanceDetails.circlet
-        )}
-      </div>
+      {/* Grid layout - Mobile vs Desktop */}
+      {isMobile ? (
+        <div className="grid grid-cols-1 gap-4 pt-2 border-t border-border/40">
+          {/* Flower/Plume Block */}
+          <div className="space-y-2">
+            {renderSubstatCell(
+              `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+              config.flowerPlume
+            )}
+            {renderChanceCell(
+              `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+              slotChanceDetails.flowerPlume
+            )}
+          </div>
+
+          <div className="w-full h-px bg-border/30" />
+
+          {/* Sands Block */}
+          <div className="space-y-2">
+            {renderMainStatCell(
+              t.ui("computeFilters.sands"),
+              config.sands.mainStats
+            )}
+            {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
+            {renderChanceCell(
+              t.ui("computeFilters.sands"),
+              slotChanceDetails.sands
+            )}
+          </div>
+
+          <div className="w-full h-px bg-border/30" />
+
+          {/* Goblet Block */}
+          <div className="space-y-2">
+            {renderMainStatCell(
+              t.ui("computeFilters.goblet"),
+              config.goblet.mainStats
+            )}
+            {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
+            {renderChanceCell(
+              t.ui("computeFilters.goblet"),
+              slotChanceDetails.goblet
+            )}
+          </div>
+
+          <div className="w-full h-px bg-border/30" />
+
+          {/* Circlet Block */}
+          <div className="space-y-2">
+            {renderMainStatCell(
+              t.ui("computeFilters.circlet"),
+              config.circlet.mainStats
+            )}
+            {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
+            {renderChanceCell(
+              t.ui("computeFilters.circlet"),
+              slotChanceDetails.circlet
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Desktop Grid */
+        <div
+          className="grid grid-cols-4 gap-x-3 gap-y-2 pt-2 border-t border-border/40"
+          style={{ gridTemplateRows: "auto auto auto" }}
+        >
+          {/* Row 1: Main Stats */}
+          <div /> {/* Flower/Plume - empty */}
+          {renderMainStatCell(
+            t.ui("computeFilters.sands"),
+            config.sands.mainStats
+          )}
+          {renderMainStatCell(
+            t.ui("computeFilters.goblet"),
+            config.goblet.mainStats
+          )}
+          {renderMainStatCell(
+            t.ui("computeFilters.circlet"),
+            config.circlet.mainStats
+          )}
+          {/* Row 2: Substats */}
+          {renderSubstatCell(
+            `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+            config.flowerPlume
+          )}
+          {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
+          {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
+          {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
+          {/* Row 3: Chances */}
+          {renderChanceCell(
+            `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+            slotChanceDetails.flowerPlume
+          )}
+          {renderChanceCell(
+            t.ui("computeFilters.sands"),
+            slotChanceDetails.sands
+          )}
+          {renderChanceCell(
+            t.ui("computeFilters.goblet"),
+            slotChanceDetails.goblet
+          )}
+          {renderChanceCell(
+            t.ui("computeFilters.circlet"),
+            slotChanceDetails.circlet
+          )}
+        </div>
+      )}
     </div>
   );
 }

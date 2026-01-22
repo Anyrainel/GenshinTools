@@ -54,12 +54,12 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
 
   return (
     <Card className="bg-gradient-card">
-      <CardHeader className="pb-3 pt-5">
+      <CardHeader className="pb-3 pt-3 md:pt-5">
         <TitleCard character={character} />
       </CardHeader>
 
       {!isHidden && (
-        <CardContent className="pb-3">
+        <CardContent className="pb-3 px-3 md:px-6">
           <div className="grid gap-2 grid-cols-1 xl:grid-cols-2">
             {buildIds.length === 0 ? (
               <div className="text-center py-2 text-muted-foreground">

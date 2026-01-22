@@ -117,7 +117,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
     : characterWeapons.length < 3;
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-3 md:gap-4">
       <ItemIcon
         imagePath={character.imagePath}
         rarity={character.rarity}

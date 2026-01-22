@@ -208,23 +208,25 @@ function BuildCardComponent({
   return (
     <div className="border border-border/50 rounded-lg bg-muted/30">
       {/* Build Header - More Compact */}
-      <div className="flex items-center gap-2 px-3 pt-2">
+      <div className="flex items-center gap-2 px-2 md:px-3 pt-2">
         <Switch
           checked={build.visible}
           onCheckedChange={handleToggleVisibility}
           className="data-[state=checked]:bg-primary"
         />
 
-        <div className="flex-1 min-w-0 flex items-center gap-3 px-4">
-          <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none">
+        <div className="flex-1 min-w-0 flex items-center gap-2 md:gap-3 md:px-4">
+          <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none hidden md:block">
             {t.ui("buildCard.buildLabel")} {buildIndex}
           </span>
           <Input
             value={localName}
             onChange={(e) => handleNameChange(e.target.value)}
             onBlur={handleNameBlur}
-            placeholder=""
-            className="h-8 rounded-full text-base bg-transparent border-none px-3 mx-6 py-0 text-foreground flex-1"
+            placeholder={
+              isMobile ? `${t.ui("buildCard.buildLabel")} ${buildIndex}` : ""
+            }
+            className="h-8 rounded-full text-base bg-transparent border-none px-3 mx-1 md:mx-6 py-0 text-foreground flex-1"
           />
         </div>
 
@@ -263,7 +265,7 @@ function BuildCardComponent({
             }
           }}
         >
-          <LightweightSelectTrigger className="w-28 h-7 text-sm bg-gradient-select">
+          <LightweightSelectTrigger className="w-24 md:w-28 h-7 text-sm bg-gradient-select">
             <LightweightSelectValue />
           </LightweightSelectTrigger>
           <LightweightSelectContent>

@@ -253,7 +253,8 @@ export const i18nAppData = {
       },
     },
     app: {
-      title: { en: "Genshin Tools", zh: "原神工具箱" },
+      title: { en: "GG Artifact", zh: "GG Artifact" },
+      language: { en: "Language", zh: "语言" },
       navArtifactFilter: { en: "Artifact Filter", zh: "圣遗物过滤器" },
       navAccountData: { en: "Account Data", zh: "账号数据" },
       navTierList: { en: "Character Tier List", zh: "角色榜单" },
@@ -484,10 +485,10 @@ export const i18nAppData = {
       },
     },
     navigation: {
-      configure: { en: "1. Configure Character Builds", zh: "1. 配置角色配装" },
+      configure: { en: "Configure Builds", zh: "配置配装" },
       computeFilters: {
-        en: "2. Compute Artifact Filters",
-        zh: "2. 计算圣遗物过滤器",
+        en: "Compute Filters",
+        zh: "计算过滤器",
       },
     },
     characterCard: {

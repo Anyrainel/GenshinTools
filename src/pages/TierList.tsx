@@ -250,37 +250,40 @@ export default function TierListPage() {
     () => [
       {
         key: "display",
+        title: "Display", // Optional title if supported by WideLayout, otherwise just separation
         content: (
-          <>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-weapons"
-                checked={showWeapons}
-                onCheckedChange={(checked) => setShowWeapons(checked === true)}
-              />
-              <Label
-                htmlFor="show-weapons"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                {t.ui("buttons.showWeapons")}
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="show-travelers"
-                checked={showTravelers}
-                onCheckedChange={(checked) =>
-                  setShowTravelers(checked === true)
-                }
-              />
-              <Label
-                htmlFor="show-travelers"
-                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
-              >
-                {t.ui("buttons.showTravelers")}
-              </Label>
-            </div>
-          </>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-weapons"
+              checked={showWeapons}
+              onCheckedChange={(checked) => setShowWeapons(checked === true)}
+            />
+            <Label
+              htmlFor="show-weapons"
+              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+            >
+              {t.ui("buttons.showWeapons")}
+            </Label>
+          </div>
+        ),
+      },
+      {
+        key: "filter",
+        title: "Filter",
+        content: (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-travelers"
+              checked={showTravelers}
+              onCheckedChange={(checked) => setShowTravelers(checked === true)}
+            />
+            <Label
+              htmlFor="show-travelers"
+              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+            >
+              {t.ui("buttons.showTravelers")}
+            </Label>
+          </div>
         ),
       },
     ],

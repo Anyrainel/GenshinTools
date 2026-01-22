@@ -17,13 +17,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { getNavigationConfig } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
 import { THEME } from "@/lib/styles";
 import { cn } from "@/lib/utils";
 import {
   Check,
-  Home,
   Languages,
   type LucideIcon,
   Menu,
@@ -123,38 +123,7 @@ export function AppBar({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isArtifactFilter = location.pathname.includes("/artifact-filter");
-  const isTierList = location.pathname.includes("/tier-list");
-  const isWeaponTierList = location.pathname.includes("/weapon-tier-list");
-  const isTeamBuilder = location.pathname.includes("/team-builder");
-
-  const navItems = [
-    {
-      label: t.ui("app.navArtifactFilter"),
-      href: "/artifact-filter",
-      isActive: isArtifactFilter,
-    },
-    {
-      label: t.ui("app.navAccountData"),
-      href: "/account-data",
-      isActive: location.pathname.includes("/account-data"),
-    },
-    {
-      label: t.ui("app.navTierList"),
-      href: "/tier-list",
-      isActive: isTierList && !isWeaponTierList,
-    },
-    {
-      label: t.ui("app.navWeaponTierList"),
-      href: "/weapon-tier-list",
-      isActive: isWeaponTierList,
-    },
-    {
-      label: t.ui("app.navTeamBuilder"),
-      href: "/team-builder",
-      isActive: isTeamBuilder,
-    },
-  ];
+  const navItems = getNavigationConfig(t);
 
   // Split actions into always visible and collapsible
   const alwaysShowActions = actions?.filter((a) => a.alwaysShow) ?? [];
@@ -166,9 +135,6 @@ export function AppBar({
     onTabChange?.(tabValue);
     setIsMenuOpen(false);
   };
-
-  // Find the current page's nav item for displaying in mobile sheet
-  const currentNavItem = navItems.find((item) => item.isActive);
 
   return (
     <>
@@ -194,47 +160,58 @@ export function AppBar({
               <SheetContent side="left" className="w-[280px]">
                 <SheetHeader>
                   <SheetTitle className="text-left flex items-center gap-2">
-                    <Home className="w-5 h-5" />
+                    <img src="/logo_gt.svg" className="w-6 h-6" alt="Logo" />
                     {t.ui("app.title")}
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-1.5 mt-6">
                   {navItems.map((item) => {
-                    const isCurrentPage = item.isActive;
-                    const hasSubTabs = isCurrentPage && hasTabs;
+                    const isActive = location.pathname.startsWith(item.href);
+                    const hasChildren =
+                      item.children && item.children.length > 0;
 
-                    if (hasSubTabs) {
-                      // Render page label with sub-tabs always visible below
+                    if (hasChildren) {
                       return (
                         <div key={item.href} className="space-y-1">
-                          <div
+                          <Button
+                            variant="ghost"
+                            asChild
                             className={cn(
-                              "flex items-center gap-2 h-10 px-4 text-sm font-medium rounded-md",
-                              "bg-primary/10 text-primary"
+                              "justify-start gap-2 h-10 text-sm font-semibold w-full",
+                              isActive && "text-primary"
                             )}
+                            onClick={() => setIsMenuOpen(false)}
                           >
-                            {item.label}
-                          </div>
-                          <div className="pl-4 space-y-1">
-                            {tabs?.map((tab) => (
-                              <Button
-                                key={tab.value}
-                                variant={
-                                  activeTab === tab.value
-                                    ? "secondary"
-                                    : "ghost"
-                                }
-                                className={cn(
-                                  "justify-start gap-2 h-9 text-sm w-full",
-                                  activeTab === tab.value &&
-                                    "bg-accent text-accent-foreground"
-                                )}
-                                onClick={() => handleTabClick(tab.value)}
-                              >
-                                {tab.icon && <tab.icon className="h-4 w-4" />}
-                                {tab.label}
-                              </Button>
-                            ))}
+                            <Link to={item.href}>{item.label}</Link>
+                          </Button>
+                          <div className="pl-4 space-y-1 border-l ml-4 border-border/50">
+                            {item.children?.map((child) => {
+                              const isChildActive =
+                                location.pathname === item.href &&
+                                activeTab === child.value;
+                              return (
+                                <Button
+                                  key={child.href}
+                                  variant={
+                                    isChildActive ? "secondary" : "ghost"
+                                  }
+                                  asChild
+                                  className={cn(
+                                    "justify-start gap-2 h-9 text-sm w-full",
+                                    isChildActive &&
+                                      "bg-accent text-accent-foreground"
+                                  )}
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  <Link to={child.href}>
+                                    {child.icon && (
+                                      <child.icon className="h-4 w-4" />
+                                    )}
+                                    {child.label}
+                                  </Link>
+                                </Button>
+                              );
+                            })}
                           </div>
                         </div>
                       );
@@ -243,11 +220,11 @@ export function AppBar({
                     return (
                       <Button
                         key={item.href}
-                        variant={item.isActive ? "secondary" : "ghost"}
+                        variant={isActive ? "secondary" : "ghost"}
                         asChild
                         className={cn(
                           "justify-start gap-2 h-10 text-sm font-medium",
-                          item.isActive &&
+                          isActive &&
                             "bg-primary/10 text-primary hover:bg-primary/20"
                         )}
                         onClick={() => setIsMenuOpen(false)}
@@ -264,28 +241,31 @@ export function AppBar({
               to="/"
               className="flex items-center lg:pl-4 gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Home className="w-5 h-5" />
-              <span className="font-semibold text-lg whitespace-nowrap">
+              <img src="/logo_gt.svg" className="w-8 h-8" alt="Logo" />
+              <span className="font-semibold text-lg whitespace-nowrap hidden md:block">
                 {t.ui("app.title")}
               </span>
             </Link>
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-2">
-              {navItems.map((item) => (
-                <Button
-                  key={item.href}
-                  variant={item.isActive ? "secondary" : "ghost"}
-                  asChild
-                  className={cn(
-                    "gap-2",
-                    item.isActive &&
-                      "bg-primary/10 text-primary hover:bg-primary/20"
-                  )}
-                >
-                  <Link to={item.href}>{item.label}</Link>
-                </Button>
-              ))}
+              {navItems.map((item) => {
+                const isActive = location.pathname.startsWith(item.href);
+                return (
+                  <Button
+                    key={item.href}
+                    variant={isActive ? "secondary" : "ghost"}
+                    asChild
+                    className={cn(
+                      "gap-2",
+                      isActive &&
+                        "bg-primary/10 text-primary hover:bg-primary/20"
+                    )}
+                  >
+                    <Link to={item.href}>{item.label}</Link>
+                  </Button>
+                );
+              })}
             </div>
           </div>
 
@@ -300,7 +280,7 @@ export function AppBar({
                 className="gap-2"
               >
                 <action.icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{action.label}</span>
+                <span>{action.label}</span>
               </Button>
             ))}
 
