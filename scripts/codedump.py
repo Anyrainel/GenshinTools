@@ -16,6 +16,7 @@ from typing import Any, Literal, cast
 from pydantic import BaseModel
 from tqdm import tqdm
 
+import enka
 import fandom
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -584,16 +585,21 @@ def main():
     parser.add_argument("--weapon", action="store_true", help="Update weapon data")
     parser.add_argument("--artifact", action="store_true", help="Update artifact data")
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
+    parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
     args = parser.parse_args()
 
     # Default to all if no flags provided
-    if not (args.character or args.weapon or args.artifact or args.half_set):
+    if not (args.character or args.weapon or args.artifact or args.half_set or args.enka):
         args.character = True
         args.weapon = True
         args.artifact = True
+        args.enka = True
 
     print("=== Genshin Impact Data Scraper ===")
-    print(f"Modes: Character={args.character}, Weapon={args.weapon}, Artifact={args.artifact}")
+    print(
+        f"Modes: Character={args.character}, Weapon={args.weapon}, Artifact={args.artifact}, "
+        f"Enka={args.enka}"
+    )
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
@@ -706,18 +712,26 @@ def main():
             print("Warning: Skipping half set computation due to missing artifact data")
 
     # 3. Save Data
-    write_data(
-        character_data,
-        artifact_data,
-        weapon_data,
-        half_sets,
-        elements,
-        weapon_types,
-        i18n_data,
-    )
+    if args.character or args.weapon or args.artifact or args.half_set:
+        write_data(
+            character_data,
+            artifact_data,
+            weapon_data,
+            half_sets,
+            elements,
+            weapon_types,
+            i18n_data,
+        )
 
-    # 4. Download Images (only for updated items)
-    download_all_images(matched_chars, matched_arts, matched_weaps, new_elements, new_weapon_types)
+        # 4. Download Images (only for updated items)
+        download_all_images(
+            matched_chars, matched_arts, matched_weaps, new_elements, new_weapon_types
+        )
+
+    # 5. Enka Map Generation
+    if args.enka:
+        print("=== [5/5] Enka Map Generation ===")
+        enka.run()
 
 
 if __name__ == "__main__":
