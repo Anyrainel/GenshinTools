@@ -62,7 +62,7 @@ function CharacterBuildCardComponent({ character }: CharacterBuildCardProps) {
         <CardContent className="pb-3 px-3 md:px-6">
           <div className="grid gap-2 grid-cols-1 xl:grid-cols-2">
             {buildIds.length === 0 ? (
-              <div className="text-center py-2 text-muted-foreground">
+              <div className="flex justify-center py-2 text-muted-foreground col-span-full">
                 <Button
                   onClick={handleAddBuild}
                   variant="outline"

@@ -1,8 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
-import { THEME } from "@/lib/styles";
-import { cn } from "@/lib/utils";
+import { cn, getRarityColor } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 
 interface StatDisplayProps {
@@ -19,7 +18,8 @@ export function StatDisplay({
   slotSubScore,
   slotMaxSubScore,
   isMainStatWrong,
-}: StatDisplayProps) {
+  compact = false,
+}: StatDisplayProps & { compact?: boolean }) {
   const { t } = useLanguage();
 
   const renderStatLine = (statKey: string, value: number, weight = 0) => {
@@ -30,16 +30,23 @@ export function StatDisplay({
       statKey === "er";
     const displayValue = isPercent ? `${value.toFixed(1)}%` : Math.round(value);
 
+    const statName = compact ? t.statMin(statKey) : t.statShort(statKey);
+
     return (
       <div
         key={statKey}
         className={cn(
-          "flex justify-between items-center text-sm",
+          "flex justify-between items-center",
+          compact ? "text-xs" : "text-sm",
           weight > 0 ? "text-gray-200" : "text-muted-foreground"
         )}
       >
-        <span>{t.statShort(statKey)}</span>
-        <span>{displayValue}</span>
+        <span className="flex-1 whitespace-nowrap overflow-hidden">
+          {statName}
+        </span>
+        <span className={cn("flex-shrink-0", compact && "text-xs")}>
+          {displayValue}
+        </span>
       </div>
     );
   };
@@ -54,7 +61,8 @@ export function StatDisplay({
       <div className="flex items-center justify-between mb-2">
         <div
           className={cn(
-            "text-base font-bold truncate flex-1",
+            "font-bold truncate flex-1",
+            compact ? "text-sm" : "text-base",
             // If scoreResult is provided, dim unweighted stats. If not (inventory), show default color.
             scoreResult
               ? mainStatWeight > 0
@@ -63,12 +71,15 @@ export function StatDisplay({
               : "text-amber-100"
           )}
         >
-          {t.statShort(artifact.mainStatKey)}
+          {compact
+            ? t.statMin(artifact.mainStatKey)
+            : t.statShort(artifact.mainStatKey)}
         </div>
         <div
           className={cn(
-            "text-xs px-1 rounded bg-black/40 font-mono",
-            THEME.rarity.text[artifact.rarity as keyof typeof THEME.rarity.text]
+            "rounded bg-black/40 font-mono",
+            compact ? "text-[10px]" : "text-xs px-1",
+            getRarityColor(artifact.rarity, "text")
           )}
         >
           +{artifact.level}
@@ -84,7 +95,7 @@ export function StatDisplay({
         {/* Add empty rows to ensure consistent height (4 substat rows) */}
         {Array.from({ length: 4 - Object.keys(artifact.substats).length }).map(
           (_, i) => (
-            <div key={`empty-${i}`} className="text-sm">
+            <div key={`empty-${i}`} className={compact ? "text-xs" : "text-sm"}>
               &nbsp;
             </div>
           )

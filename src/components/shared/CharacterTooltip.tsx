@@ -1,7 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { THEME } from "@/lib/styles";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 interface CharacterTooltipProps {
   characterId: string;
@@ -19,12 +18,12 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
   const region = t.region(character.region);
 
   return (
-    <div className="w-[240px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
+    <div className="w-60 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div
         className={cn(
           "p-3 flex items-start gap-3 relative overflow-hidden",
-          THEME.rarity.bg[character.rarity as keyof typeof THEME.rarity.bg]
+          getRarityColor(character.rarity, "bg")
         )}
       >
         {/* Background gradient overlay */}

@@ -35,19 +35,47 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { elementResourcesByName, sortedCharacters } from "@/data/constants";
 import type { Character, Element } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { CircleHelp, RotateCcw, Save, Search } from "lucide-react";
+import {
+  CircleHelp,
+  RotateCcw,
+  Save,
+  Search,
+  TriangleAlert,
+} from "lucide-react";
 import React, { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 
 // Helper to map element string to stat key
 const elementToStatKey = (element: Element): string => {
   return `${element.toLowerCase()}%`;
+};
+
+// Check if weight configuration is valid:
+// 1. One of ATK%, HP%, DEF%, EM is 100
+// 2. OR at least two substats from pool are 100
+const isWeightConfigValid = (weights: Record<string, number>): boolean => {
+  const mainStats = ["atk%", "hp%", "def%", "em"];
+  const subStats = ["atk%", "hp%", "def%", "cr", "cd", "em", "er"];
+
+  // Condition 1: Main stat check
+  if (mainStats.some((key) => (weights[key] ?? 0) === 100)) {
+    return true;
+  }
+
+  // Condition 2: Two substats check
+  const count100 = subStats.filter((key) => (weights[key] ?? 0) === 100).length;
+  return count100 >= 2;
 };
 
 const ScoreExplanationDialog = () => {
@@ -65,7 +93,7 @@ const ScoreExplanationDialog = () => {
         <CircleHelp className="w-4 h-4" />
       </Button>
       <ResponsiveDialog open={isOpen} onOpenChange={setIsOpen}>
-        <ResponsiveDialogContent className="max-w-2xl bg-slate-950 border-slate-800 text-slate-200">
+        <ResponsiveDialogContent className="md:max-w-2xl bg-slate-950 border-slate-800 text-slate-200">
           <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>
               {t.ui("scoreExplanation.title")}
@@ -74,7 +102,7 @@ const ScoreExplanationDialog = () => {
               {t.ui("scoreExplanation.description")}
             </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
-          <div className="space-y-6 pt-2 text-sm overflow-y-auto flex-1 pr-2">
+          <div className="space-y-6 pt-2 text-sm overflow-y-auto flex-1 px-4 md:px-0 md:pr-2">
             <div className="p-3 rounded-md bg-slate-900 border border-slate-800 font-mono text-amber-200/90 text-center text-xs sm:text-sm">
               {t.ui("scoreExplanation.formula")}
             </div>
@@ -195,21 +223,37 @@ const CharacterWeightRow = React.memo(
 
     return (
       <TableRow className="border-white/5 hover:bg-white/5">
-        <TableCell className="p-2">
-          <div className="flex items-center gap-3">
-            <ItemIcon
-              imagePath={char.imagePath}
-              rarity={char.rarity}
-              size="xs"
-            />
-            <span className="font-medium text-lg text-gray-200 truncate">
-              {t.character(char.id)}
-            </span>
+        <TableCell className="p-2 w-60">
+          <div className="flex items-center gap-1">
             <img
               src={getAssetUrl(elementResourcesByName[char.element]?.imagePath)}
               alt={char.element}
               className="w-6 h-6 flex-shrink-0 opacity-80"
             />
+            <ItemIcon
+              imagePath={char.imagePath}
+              rarity={char.rarity}
+              size="xs"
+            />
+            <div className="flex items-center gap-1 min-w-0 flex-1">
+              <span className="font-medium text-lg text-gray-200 truncate">
+                {t.character(char.id)}
+              </span>
+              {/* Warning if config is invalid */}
+              {!isWeightConfigValid(weights) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TriangleAlert className="w-4 h-4 text-amber-500 cursor-help flex-shrink-0" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="bg-amber-950 border-amber-800 text-amber-100"
+                  >
+                    {t.ui("accountData.weightWarning")}
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </TableCell>
         <TableCell className="p-1">
@@ -561,18 +605,18 @@ export function StatWeightView() {
 
         <CardContent
           className={cn(
-            "p-0 px-4 pb-4",
+            "p-0 px-4 pb-4 2xl:px-36",
             isDesktop && "flex-1 min-h-0 overflow-hidden"
           )}
         >
           {/* Desktop: Table View */}
           {isDesktop ? (
-            <div className="h-full rounded-md border border-white/10 overflow-hidden bg-gradient-card">
-              <ScrollArea className="h-full">
-                <Table className="table-fixed">
-                  <TableHeader className="bg-black/40 sticky top-0 z-10 backdrop-blur-sm">
+            <div className="h-full rounded-md border border-white/10 overflow-hidden">
+              <ScrollArea className="h-full bg-transparent">
+                <table className="w-full caption-bottom text-sm table-fixed border-collapse">
+                  <TableHeader className="sticky top-0 z-20 bg-black/80 backdrop-blur-md shadow-sm">
                     <TableRow className="hover:bg-transparent border-white/10 text-base">
-                      <TableHead className="w-[240px] pl-4">
+                      <TableHead className="w-60 pl-4">
                         {t.ui("accountData.characters")}
                       </TableHead>
                       <TableHead className="text-center">
@@ -617,7 +661,7 @@ export function StatWeightView() {
                       />
                     ))}
                   </TableBody>
-                </Table>
+                </table>
               </ScrollArea>
             </div>
           ) : (
@@ -649,13 +693,11 @@ export function StatWeightView() {
           )}
         </CardContent>
       </Card>
-
-      {/* Mobile: Character Weight Dialog */}
       <ResponsiveDialog
         open={selectedCharacter !== null}
         onOpenChange={(open) => !open && setSelectedCharacter(null)}
       >
-        <ResponsiveDialogContent className="max-w-md">
+        <ResponsiveDialogContent className="md:max-w-md">
           <ResponsiveDialogHeader>
             <ResponsiveDialogTitle className="flex items-center gap-3">
               {selectedCharacter && (
@@ -674,7 +716,7 @@ export function StatWeightView() {
             </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
           {selectedCharacter && (
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-4 px-4 md:px-0 w-full max-w-sm mx-auto">
               {/* Weight sliders for each stat */}
               {[
                 { key: "atk", label: t.stat("atk"), isMerged: true },

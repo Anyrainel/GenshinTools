@@ -1,3 +1,4 @@
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import {
   HoverCard,
   HoverCardContent,
@@ -11,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 interface ArtifactScoreHoverCardProps {
   score: ArtifactScoreResult;
   className?: string;
+  compact?: boolean;
 }
 
 /**
@@ -25,6 +27,7 @@ interface ArtifactScoreHoverCardProps {
 export function ArtifactScoreHoverCard({
   score,
   className,
+  compact = false,
 }: ArtifactScoreHoverCardProps) {
   const [isPinned, setIsPinned] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -74,6 +77,49 @@ export function ArtifactScoreHoverCard({
     setIsHovering(open);
   };
 
+  const TriggerContent = (
+    <>
+      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+        {score.mainScore.toFixed(0)}
+      </span>
+      <span
+        className={cn(
+          "text-amber-100/40 font-light not-italic tracking-normal",
+          compact ? "mx-0.5 text-[0.8em]" : "mx-1"
+        )}
+      >
+        /
+      </span>
+      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+        {score.subScore.toFixed(0)}
+      </span>
+    </>
+  );
+
+  if (compact) {
+    return (
+      <Drawer>
+        <DrawerTrigger asChild>
+          <button
+            type="button"
+            className={cn(
+              "cursor-pointer flex items-center",
+              "bg-transparent border-none p-0 font-inherit",
+              className
+            )}
+          >
+            {TriggerContent}
+          </button>
+        </DrawerTrigger>
+        <DrawerContent className="bg-slate-950/95 border-t border-white/10">
+          <div className="p-4 pt-0 safe-area-bottom">
+            <ArtifactScoreContent artifactScore={score} />
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
   return (
     <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
       <HoverCardTrigger asChild>
@@ -88,15 +134,7 @@ export function ArtifactScoreHoverCard({
           )}
           onClick={handleClick}
         >
-          <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-            {score.mainScore.toFixed(0)}
-          </span>
-          <span className="mx-1 text-amber-100/40 font-light not-italic tracking-normal">
-            /
-          </span>
-          <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-            {score.subScore.toFixed(0)}
-          </span>
+          {TriggerContent}
         </button>
       </HoverCardTrigger>
       <HoverCardContent

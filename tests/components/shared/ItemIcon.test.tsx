@@ -116,18 +116,10 @@ describe("ItemIcon", () => {
     expect(screen.getByText("Child")).toBeInTheDocument();
   });
 
-  it("sets alt attribute when provided", () => {
-    render(<ItemIcon {...defaultProps} alt="Hu Tao Icon" />);
-
-    const img = screen.getByRole("img");
-    expect(img).toHaveAttribute("alt", "Hu Tao Icon");
-  });
-
-  it("sets empty alt attribute by default", () => {
+  it("uses imagePath as alt attribute", () => {
     const { container } = render(<ItemIcon {...defaultProps} />);
 
-    // Empty alt has role="presentation", so query by tag
     const img = container.querySelector("img");
-    expect(img).toHaveAttribute("alt", "");
+    expect(img).toHaveAttribute("alt", defaultProps.imagePath);
   });
 });

@@ -237,11 +237,12 @@ export type ArtifactSetConfigs = {
   configurations: SetConfig[];
 };
 
-export const tiers = ["S", "A", "B", "C", "D", "Pool"];
+export type Tier = "S" | "A" | "B" | "C" | "D" | "Pool";
+export const tiers: Tier[] = ["S", "A", "B", "C", "D", "Pool"];
 
 export type TierAssignment = {
   [characterId: string]: {
-    tier: string;
+    tier: Tier;
     position: number;
   };
 };
@@ -274,7 +275,7 @@ export type ArtifactData = {
   setKey: string;
   slotKey: Slot;
   level: number;
-  rarity: number;
+  rarity: Rarity;
   mainStatKey: MainStat;
   lock: boolean;
   substats: Partial<Record<SubStat, number>>;

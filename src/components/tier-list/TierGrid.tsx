@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME } from "@/lib/styles";
-import { cn, getAssetUrl } from "@/lib/utils";
+import type { Tier } from "@/data/types";
+import { cn, getAssetUrl, getTierColor } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import type { ReactNode } from "react";
@@ -49,7 +49,7 @@ function TierGroupCell<T extends TierItemData>({
       key={cellId}
       className={cn(
         "min-h-[5rem]",
-        THEME.tier.bg[tier as keyof typeof THEME.tier.bg],
+        getTierColor(tier as Tier, "bg"),
         TIER_GRID_STYLES.gridBorder
       )}
       data-tier={tier}
@@ -182,7 +182,7 @@ export function TierGrid<T extends TierItemData, K extends string>({
             className={cn(
               TIER_GRID_STYLES.centerBox,
               "min-h-[5rem]",
-              THEME.tier.color[tier as keyof typeof THEME.tier.color],
+              getTierColor(tier as Tier, "header"),
               TIER_GRID_STYLES.gridBorder,
               "rounded-l-md",
               hasCustomNames && "max-w-48"

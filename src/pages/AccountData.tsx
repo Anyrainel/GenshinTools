@@ -9,6 +9,7 @@ import {
   type ControlHandle,
   type TabConfig,
 } from "@/components/layout/AppBar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -26,14 +27,14 @@ import {
   convertGOODToAccountData,
 } from "@/lib/goodConversion";
 import type { ConversionWarning } from "@/lib/goodConversion";
-import { THEME } from "@/lib/styles";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   AlertTriangle,
   Box,
+  Database,
   LayoutGrid,
-  Scale,
+  Settings,
   Trash2,
   Upload,
   Users,
@@ -105,6 +106,45 @@ const reassignIds = (
     wp.id = `weapon-${wId++}`;
   }
 };
+
+const NoDataPlaceholder = ({
+  t,
+  onAction,
+}: {
+  t: ReturnType<typeof useLanguage>["t"];
+  onAction: () => void;
+}) => (
+  <div className="flex flex-col items-center pt-24 h-full p-4">
+    <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
+      <div className="relative">
+        <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+        <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
+          <Database className="w-12 h-12 text-primary opacity-80" />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-2xl font-bold tracking-tight text-foreground">
+          {t.ui("accountData.noAccountDataLoaded")}
+        </h3>
+        <p className="text-muted-foreground text-base max-w-md mx-auto">
+          {t.ui("accountData.importPrompt")}
+        </p>
+      </div>
+
+      <div className="flex flex-col items-center gap-3 w-full max-w-xs">
+        <Button
+          onClick={onAction}
+          size="lg"
+          className="w-full gap-2 text-base shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <Upload className="w-5 h-5" />
+          {t.ui("app.import")}
+        </Button>
+      </div>
+    </div>
+  </div>
+);
 
 export default function AccountDataPage() {
   const { t } = useLanguage();
@@ -203,10 +243,13 @@ export default function AccountDataPage() {
     try {
       setLastUid(uid); // Save UID to store
       const rawData = await fetchEnkaData(uid);
-      const goodData = convertEnkaToGOOD(rawData);
-      const result = convertGOODToAccountData(goodData);
+      const enkaResult = convertEnkaToGOOD(rawData);
+      const result = convertGOODToAccountData(enkaResult.data);
       const newData = result.data;
-      showConversionWarnings(result);
+
+      // Merge warnings from Enka conversion (missing IDs) and GOOD conversion
+      const allWarnings = [...enkaResult.warnings, ...result.warnings];
+      showConversionWarnings({ ...result, warnings: allWarnings });
 
       if (clearBeforeImport || !accountData) {
         setAccountData(newData);
@@ -262,8 +305,12 @@ export default function AccountDataPage() {
         label: t.ui("accountData.summary"),
         icon: LayoutGrid,
       },
-      { value: "weights", label: t.ui("accountData.statWeights"), icon: Scale },
       { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
+      {
+        value: "weights",
+        label: t.ui("accountData.statWeights"),
+        icon: Settings,
+      },
     ],
     [t]
   );
@@ -272,40 +319,37 @@ export default function AccountDataPage() {
   const actions: ActionConfig[] = useMemo(
     () => [
       {
-        key: "clear",
-        icon: Trash2,
-        label: t.ui("app.clear"),
-        onTrigger: () => clearRef.current?.open(),
-        alwaysShow: true,
-      },
-      {
         key: "import",
         icon: Upload,
         label: t.ui("app.import"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+      },
     ],
     [t]
   );
 
   return (
-    <div className={THEME.layout.page}>
-      <AppBar
-        actions={actions}
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-
+    <PageLayout
+      actions={actions}
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    >
       {/* Control dialogs - render without triggers, opened via ref */}
-      <ClearAllControl ref={clearRef} onConfirm={clearAccountData} />
       <AccountImportControl
         ref={importRef}
         onLocalImport={handleLocalImport}
         onUidImport={handleUidImport}
         initialUid={lastUid}
       />
+      <ClearAllControl ref={clearRef} onConfirm={clearAccountData} />
 
       {/* Conversion Warnings - visible on all tabs */}
       {conversionWarnings.length > 0 && (
@@ -365,42 +409,44 @@ export default function AccountDataPage() {
         </div>
       )}
 
-      {accountData ? (
-        <Tabs value={activeTab} className="flex-1 min-h-0 overflow-hidden">
-          <TabsContent
-            value="characters"
-            className="h-full mt-0 data-[state=inactive]:hidden"
-          >
+      <Tabs value={activeTab} className="h-full overflow-hidden">
+        <TabsContent value="characters" className="mt-0 h-full">
+          {accountData ? (
             <CharacterView scores={scores} />
-          </TabsContent>
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
 
-          <TabsContent
-            value="summary"
-            className="mt-0 pt-4 data-[state=inactive]:hidden h-full overflow-y-auto"
-          >
+        <TabsContent value="summary" className="mt-0 h-full">
+          {accountData ? (
             <SummaryView scores={scores} />
-          </TabsContent>
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
 
-          <TabsContent
-            value="weights"
-            className="mt-0 data-[state=inactive]:hidden h-full overflow-y-auto"
-          >
-            <StatWeightView />
-          </TabsContent>
-
-          <TabsContent
-            value="inventory"
-            className="h-full overflow-y-auto mt-0 pb-10 pt-4 data-[state=inactive]:hidden"
-          >
+        <TabsContent value="inventory" className="mt-0 h-full">
+          {accountData ? (
             <InventoryView data={accountData} />
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-          <p>{t.ui("accountData.noAccountDataLoaded")}</p>
-          <p className="text-sm">{t.ui("accountData.importGOODInstruction")}</p>
-        </div>
-      )}
-    </div>
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="weights" className="mt-0 h-full">
+          <StatWeightView />
+        </TabsContent>
+      </Tabs>
+    </PageLayout>
   );
 }

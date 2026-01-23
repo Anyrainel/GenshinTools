@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { charactersById } from "@/data/constants";
 import { characters } from "@/data/resources";
-import type { CharacterFilters } from "@/data/types";
+import type { CharacterFilters, Tier } from "@/data/types";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
@@ -177,9 +177,9 @@ describe("Integration: Configure View Filter Flow", () => {
   describe("tier-based sorting", () => {
     it("sorts characters by tier when assignments exist", () => {
       const tierAssignments = {
-        hu_tao: { tier: "S", position: 0 },
-        xingqiu: { tier: "A", position: 0 },
-        bennett: { tier: "S", position: 1 },
+        hu_tao: { tier: "S" as Tier, position: 0 },
+        xingqiu: { tier: "A" as Tier, position: 0 },
+        bennett: { tier: "S" as Tier, position: 1 },
       };
 
       const filters: CharacterFilters = {

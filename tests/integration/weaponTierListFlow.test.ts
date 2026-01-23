@@ -11,7 +11,7 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { TierAssignment, TierCustomization } from "@/data/types";
+import type { Tier, TierAssignment, TierCustomization } from "@/data/types";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
 describe("Integration: Weapon Tier List Page Flow", () => {
@@ -87,7 +87,7 @@ describe("Integration: Weapon Tier List Page Flow", () => {
     it("loads weapon tier list data from import", () => {
       const importData = {
         tierAssignments: {
-          staff_of_homa: { tier: "S", position: 0 },
+          staff_of_homa: { tier: "S" as Tier, position: 0 },
         },
         tierCustomization: {
           S: { displayName: "BiS", hidden: false },

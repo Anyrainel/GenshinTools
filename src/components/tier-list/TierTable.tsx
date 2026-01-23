@@ -1,6 +1,6 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/types";
+import { type Tier, type TierAssignment, tiers } from "@/data/types";
 import {
   DndContext,
   type DragEndEvent,
@@ -30,13 +30,11 @@ interface TierTableProps<T extends TierItemData, K extends string> {
   // Data
   items: T[];
   itemsById: Record<string, T>;
-  tierAssignments: { [itemId: string]: { tier: string; position: number } };
+  tierAssignments: TierAssignment;
   tierCustomization: {
     [tier: string]: { displayName?: string; hidden?: boolean };
   };
-  onAssignmentsChange: (newAssignments: {
-    [itemId: string]: { tier: string; position: number };
-  }) => void;
+  onAssignmentsChange: (newAssignments: TierAssignment) => void;
 
   // Grouping configuration
   groups: readonly K[];
@@ -184,12 +182,12 @@ export function TierTable<T extends TierItemData, K extends string>({
     // Debounce the state update to prevent jitter
     dragOverTimeoutRef.current = setTimeout(() => {
       // Helper to get tier from ID (item or container)
-      const getTier = (id: string): string => {
+      const getTier = (id: string): Tier => {
         if (itemsById[id]) {
           return localAssignments[id]?.tier || "Pool";
         }
         if (id.includes("-")) {
-          return id.split("-")[0];
+          return id.split("-")[0] as Tier;
         }
         return "Pool";
       };
@@ -286,7 +284,7 @@ export function TierTable<T extends TierItemData, K extends string>({
   const handleTierAssignmentInternal = (
     draggedItemId: string,
     dropTargetItemId: string | null,
-    tier: string,
+    tier: Tier,
     direction: "left" | "right"
   ) => {
     const newAssignments = { ...tierAssignments };
@@ -455,12 +453,7 @@ export function TierTable<T extends TierItemData, K extends string>({
   };
 
   const renderPreview = (item: T) => (
-    <ItemIcon
-      imagePath={item.imagePath}
-      rarity={item.rarity}
-      alt={getItemName(item)}
-      size="lg"
-    />
+    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size="lg" />
   );
 
   return (

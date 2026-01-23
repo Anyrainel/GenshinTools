@@ -6,8 +6,7 @@ import {
 } from "@/data/constants";
 import type { Character } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { THEME } from "@/lib/styles";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getElementColor, getRarityColor } from "@/lib/utils";
 import { memo, useMemo } from "react";
 
 interface CharacterInfoProps {
@@ -41,13 +40,8 @@ export const CharacterInfo = memo(
       return weaponResourcesByName[character.weaponType]?.imagePath || "";
     }, [character.weaponType]);
 
-    const rarityTextColor = useMemo(() => {
-      return THEME.rarity.text[character.rarity];
-    }, [character.rarity]);
-
-    const elementTextColor = useMemo(() => {
-      return THEME.element.text[character.element];
-    }, [character.element]);
+    const rarityTextColor = getRarityColor(character.rarity, "text");
+    const elementTextColor = getElementColor(character.element, "text");
 
     const elementName = useMemo(
       () => t.element(character.element),
@@ -73,7 +67,7 @@ export const CharacterInfo = memo(
         <div className="flex items-center gap-2">
           <h3
             className={cn(
-              "font-bold text-foreground",
+              "font-bold text-foreground whitespace-nowrap",
               isMobile ? "text-lg" : "text-xl",
               nameClassName
             )}
@@ -138,19 +132,19 @@ export const CharacterInfo = memo(
             {weaponName}
           </Badge>
 
-          <Badge
-            variant="outline"
-            className={cn(
-              "rounded-full shadow-none text-slate-500 border-slate-500 border-2 capitalize",
-              isMobile
-                ? "px-1.5 py-0 text-sm font-normal"
-                : "font-medium text-sm"
-            )}
-          >
-            {regionName}
-          </Badge>
+          {!isMobile && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "rounded-full shadow-none text-slate-400 border-slate-400 border-2 capitalize",
+                "font-medium text-sm"
+              )}
+            >
+              {regionName}
+            </Badge>
+          )}
 
-          {showDate && (
+          {showDate && !isMobile && (
             <span
               className={cn(
                 "text-muted-foreground pl-2",

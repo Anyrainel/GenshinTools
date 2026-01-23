@@ -20,7 +20,7 @@ import {
 import { getNavigationConfig } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
-import { THEME } from "@/lib/styles";
+
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -64,7 +64,7 @@ export interface TabConfig {
   icon?: LucideIcon;
 }
 
-interface AppBarProps {
+export interface AppBarProps {
   /** Action buttons rendered in the header. See ActionConfig. */
   actions?: ActionConfig[];
   /** Tab configuration for pages with multiple views */
@@ -140,7 +140,7 @@ export function AppBar({
     <>
       <header
         className={cn(
-          THEME.layout.headerBorder,
+          "border-b border-border/50 bg-card/20 backdrop-blur-sm",
           "flex-shrink-0 z-50 sticky top-0 transition-transform duration-300",
           // Hide on mobile when scrolling down
           isHidden && "md:translate-y-0 -translate-y-full",
@@ -430,7 +430,7 @@ export function AppBar({
       {hasTabs && (
         <div
           className={cn(
-            THEME.layout.headerBorder,
+            "border-b border-border/50 bg-card/20 backdrop-blur-sm",
             "hidden md:block flex-shrink-0 z-40"
           )}
         >

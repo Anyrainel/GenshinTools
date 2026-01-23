@@ -3,6 +3,7 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { CharacterFilters } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import {
   defaultCharacterFilters,
@@ -21,6 +22,10 @@ export function CharacterView({ scores }: CharacterViewProps) {
   const { t } = useLanguage();
   const { accountData } = useAccountStore();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
+
+  // 640px is a safe breakpoint where 35rem (560px) fits comfortably with margins
+  const isSmallScreen = useMediaQuery("(max-width: 640px)");
+
   const [filters, setFilters] = useState<CharacterFilters>(
     defaultCharacterFilters
   );
@@ -38,9 +43,6 @@ export function CharacterView({ scores }: CharacterViewProps) {
   const activeFilters = hasActiveFilters(filters);
 
   // Tier data exists if there are any tier assignments
-  const hasTierData = Object.keys(tierAssignments).length > 0;
-
-  // Count active filter items for badge
   const activeFilterCount = activeFilters
     ? [
         filters.elements,
@@ -54,6 +56,8 @@ export function CharacterView({ scores }: CharacterViewProps) {
     activeFilterCount > 0
       ? `${t.ui("filters.title")} (${activeFilterCount})`
       : t.ui("filters.title");
+
+  const hasTierData = Object.keys(tierAssignments).length > 0;
 
   if (!accountData) return null;
 
@@ -73,7 +77,9 @@ export function CharacterView({ scores }: CharacterViewProps) {
         <div
           className="grid gap-4 pb-4"
           style={{
-            gridTemplateColumns: "repeat(auto-fit, minmax(35rem, 1fr))",
+            gridTemplateColumns: isSmallScreen
+              ? "1fr"
+              : "repeat(auto-fit, minmax(35rem, 1fr))",
           }}
         >
           {filteredCharacters.map((char) => (

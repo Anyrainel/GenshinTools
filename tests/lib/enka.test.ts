@@ -49,11 +49,11 @@ describe("enka", () => {
         avatarInfoList: [],
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result } = convertEnkaToGOOD(enkaData);
 
       expect(result.format).toBe("GOOD");
       expect(result.version).toBe(1);
-      expect(result.source).toBe("GenshinTools");
+      expect(result.source).toBe("enka");
       expect(result.characters).toEqual([]);
       expect(result.artifacts).toEqual([]);
       expect(result.weapons).toEqual([]);
@@ -64,7 +64,7 @@ describe("enka", () => {
         avatarInfoList: undefined,
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result } = convertEnkaToGOOD(enkaData);
 
       expect(result.format).toBe("GOOD");
       expect(result.characters).toEqual([]);
@@ -94,7 +94,7 @@ describe("enka", () => {
         ],
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result } = convertEnkaToGOOD(enkaData);
 
       // If character ID is in the map, it should be converted
       // If not, the character array would be empty (skipped with warning)
@@ -113,7 +113,7 @@ describe("enka", () => {
         ],
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result } = convertEnkaToGOOD(enkaData);
 
       // Should not throw
       expect(result.format).toBe("GOOD");
@@ -133,7 +133,7 @@ describe("enka", () => {
         ],
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result } = convertEnkaToGOOD(enkaData);
 
       // Should not throw
       expect(result.format).toBe("GOOD");
@@ -150,10 +150,15 @@ describe("enka", () => {
         ],
       });
 
-      const result = convertEnkaToGOOD(enkaData);
+      const { data: result, warnings } = convertEnkaToGOOD(enkaData);
 
       // Unknown characters should be skipped
       expect(result.characters?.length ?? 0).toBe(0);
+
+      // Should report warning
+      expect(warnings.length).toBeGreaterThan(0);
+      expect(warnings[0].type).toBe("character");
+      expect(warnings[0].key).toContain("ID:99999999");
     });
 
     describe("weapon conversion", () => {
@@ -185,7 +190,7 @@ describe("enka", () => {
           ],
         });
 
-        const result = convertEnkaToGOOD(enkaData);
+        const { data: result } = convertEnkaToGOOD(enkaData);
 
         expect(result.weapons!.length).toBe(1);
         expect(result.weapons![0].key).toBe("StaffofHoma");
@@ -231,7 +236,7 @@ describe("enka", () => {
           ],
         });
 
-        const result = convertEnkaToGOOD(enkaData);
+        const { data: result } = convertEnkaToGOOD(enkaData);
 
         expect(result.artifacts!.length).toBe(1);
         const artifact = result.artifacts![0];
@@ -280,7 +285,7 @@ describe("enka", () => {
             ],
           });
 
-          const result = convertEnkaToGOOD(enkaData);
+          const { data: result } = convertEnkaToGOOD(enkaData);
           if (result.artifacts!.length > 0) {
             expect(result.artifacts![0].slotKey).toBe(expectedSlot);
           }
@@ -323,7 +328,7 @@ describe("enka", () => {
             ],
           });
 
-          const result = convertEnkaToGOOD(enkaData);
+          const { data: result } = convertEnkaToGOOD(enkaData);
           if (result.artifacts!.length > 0) {
             expect(result.artifacts![0].mainStatKey).toBe(expected);
           }

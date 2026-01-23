@@ -2,7 +2,9 @@ import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreH
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
+import { DoubleItemIcon } from "@/components/shared/DoubleItemIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +13,9 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById } from "@/data/constants";
 import { type CharacterData, tiers } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useMemo } from "react";
@@ -24,6 +28,7 @@ export function SummaryView({ scores }: SummaryViewProps) {
   const { t } = useLanguage();
   const { accountData } = useAccountStore();
   const { tierAssignments, tierCustomization } = useTierStore();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const charactersByTier = useMemo(() => {
     if (!accountData) return {};
@@ -88,7 +93,9 @@ export function SummaryView({ scores }: SummaryViewProps) {
                 ({chars.length})
               </span>
             </h2>
-            <div className="flex flex-wrap gap-3">
+            <div
+              className={cn("flex flex-wrap", isMobile ? "gap-1.5" : "gap-3")}
+            >
               {chars.map(({ char, scoreResult }) => {
                 const charInfo = charactersById[char.key];
                 if (!charInfo) return null;
@@ -118,7 +125,10 @@ export function SummaryView({ scores }: SummaryViewProps) {
                 return (
                   <div
                     key={char.key}
-                    className="flex flex-col items-center bg-gradient-card rounded-lg p-2 w-fit"
+                    className={cn(
+                      "flex flex-col items-center bg-gradient-card rounded-lg w-fit transition-all",
+                      isMobile ? "p-1.5" : "p-2"
+                    )}
                   >
                     <div className="flex flex-row items-end justify-center gap-1.5 mb-1.5">
                       {/* Character Icon + Tooltip */}
@@ -127,8 +137,8 @@ export function SummaryView({ scores }: SummaryViewProps) {
                           <ItemIcon
                             imagePath={charInfo.imagePath}
                             rarity={charInfo.rarity}
-                            size="xl"
-                            className="shadow-md"
+                            badge={char.constellation}
+                            size={isMobile ? "md" : "xl"}
                           />
                         </TooltipTrigger>
                         <TooltipContent
@@ -142,34 +152,52 @@ export function SummaryView({ scores }: SummaryViewProps) {
                       {/* Artifact Icons */}
                       {activeSetIds.length > 0 && (
                         <div className="flex flex-col gap-0.5">
-                          {activeSetIds.map((setId) => {
-                            const artInfo = artifactsById[setId];
-                            if (!artInfo) return null;
-                            return (
-                              <Tooltip key={setId}>
-                                <TooltipTrigger>
-                                  <ItemIcon
-                                    imagePath={artInfo.imagePaths.flower}
-                                    rarity={artInfo.rarity}
-                                    size={
-                                      activeSetIds.length === 1 ? "sm" : "xs"
-                                    }
-                                  />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  side="right"
-                                  className="p-0 border-none bg-transparent"
-                                >
-                                  <ArtifactTooltip
-                                    setId={setId}
-                                    hideFourPieceEffect={
-                                      activeSetIds.length > 1
-                                    }
-                                  />
-                                </TooltipContent>
-                              </Tooltip>
-                            );
-                          })}
+                          {activeSetIds.length === 2
+                            ? (() => {
+                                const [id1, id2] = activeSetIds;
+                                const art1 = artifactsById[id1];
+                                const art2 = artifactsById[id2];
+                                if (!art1 || !art2) return null;
+                                return (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <DoubleItemIcon
+                                        imagePath1={art1.imagePaths.flower}
+                                        imagePath2={art2.imagePaths.flower}
+                                        size={isMobile ? "xs" : "sm"}
+                                        className="shadow-md"
+                                      />
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="right"
+                                      className="p-0 border-none bg-transparent"
+                                    >
+                                      <MixedSetTooltip set1={id1} set2={id2} />
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })()
+                            : activeSetIds.map((setId) => {
+                                const artInfo = artifactsById[setId];
+                                if (!artInfo) return null;
+                                return (
+                                  <Tooltip key={setId}>
+                                    <TooltipTrigger>
+                                      <ItemIcon
+                                        imagePath={artInfo.imagePaths.flower}
+                                        rarity={artInfo.rarity}
+                                        size={isMobile ? "xs" : "sm"}
+                                      />
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="right"
+                                      className="p-0 border-none bg-transparent"
+                                    >
+                                      <ArtifactTooltip setId={setId} />
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })}
                         </div>
                       )}
                     </div>
@@ -178,7 +206,13 @@ export function SummaryView({ scores }: SummaryViewProps) {
                     {scoreResult ? (
                       <ArtifactScoreHoverCard
                         score={scoreResult}
-                        className="text-2xl font-black italic tracking-tighter"
+                        className={cn(
+                          "italic tracking-tighter",
+                          isMobile
+                            ? "text-xl font-extrabold"
+                            : "text-2xl font-black"
+                        )}
+                        compact={isMobile}
                       />
                     ) : (
                       <div className="px-1.5 py-0 rounded bg-black/20 border border-white/5 text-muted-foreground text-sm">

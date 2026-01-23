@@ -1,7 +1,7 @@
 import { AppBar } from "@/components/layout/AppBar";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME } from "@/lib/styles";
+
 import { getAssetUrl } from "@/lib/utils";
 import {
   ArrowRight,
@@ -13,14 +13,14 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { PageLayout } from "@/components/layout/PageLayout";
+
 export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-full bg-gradient-page text-foreground flex flex-col">
-      <AppBar />
-
-      <div className="flex-1 container mx-auto p-4 flex flex-col gap-8 max-w-[1400px]">
+    <PageLayout>
+      <div className="flex-1 container mx-auto p-4 flex flex-col gap-8">
         {/* Hero Section - Genshin Style */}
         <div className="text-center space-y-1 pb-0">
           <div className="relative flex flex-col items-center justify-center pt-6">
@@ -71,7 +71,7 @@ export default function Home() {
               </svg>
             </div>
             {/* Crown/Star Icon */}
-            <div className="mb-[-14px] z-10 drop-shadow-[0_0_10px_rgba(255,220,100,0.3)]">
+            <div className="mb-[-14px] -translate-y-2 z-10 drop-shadow-[0_0_10px_rgba(255,220,100,0.3)]">
               {" "}
               <svg
                 width="48"
@@ -110,23 +110,13 @@ export default function Home() {
               {t.ui("app.title")}
             </h1>
           </div>{" "}
-          <p className="text-xl text-muted-foreground/80 font-light max-w-2xl mx-auto">
+          <p className="text-xl text-foreground/70 font-light max-w-2xl mx-auto">
             {t.ui("app.heroDescription")}
           </p>
         </div>
 
         {/* Tools List - Split View */}
         <div className="flex flex-col gap-5 w-full pb-1">
-          <FeatureRow
-            icon={<Filter className="w-5 h-5" />}
-            title={t.ui("app.navArtifactFilter")}
-            problem={t.ui("app.artifactFilterProblem")}
-            guideline={t.ui("app.artifactFilterGuideline")}
-            link="/artifact-filter"
-            bgImage="assets/home/artifact_bg.jpeg"
-            bgPosition="center 50%"
-          />
-
           <FeatureRow
             icon={<Database className="w-5 h-5" />}
             title={t.ui("app.navAccountData")}
@@ -135,6 +125,16 @@ export default function Home() {
             link="/account-data"
             bgImage="assets/home/account_bg.png"
             bgPosition="center 13%"
+          />
+
+          <FeatureRow
+            icon={<Filter className="w-5 h-5" />}
+            title={t.ui("app.navArtifactFilter")}
+            problem={t.ui("app.artifactFilterProblem")}
+            guideline={t.ui("app.artifactFilterGuideline")}
+            link="/artifact-filter"
+            bgImage="assets/home/artifact_bg.jpeg"
+            bgPosition="center 50%"
           />
 
           <FeatureRow
@@ -168,7 +168,7 @@ export default function Home() {
           />
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
 
@@ -196,14 +196,14 @@ const FeatureRow = ({
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <div
-            className="absolute inset-0 bg-cover transition-transform duration-700 group-hover:scale-105"
+            className="absolute inset-0 bg-cover"
             style={{
               backgroundImage: `url('${getAssetUrl(bgImage)}')`,
               backgroundPosition: bgPosition,
             }}
           />
           {/* Gradient Overlay: Heavy dark shade to ensure text readability */}
-          <div className="absolute inset-0 bg-black/70 transition-colors duration-300 group-hover:bg-black/60" />
+          <div className="absolute inset-0 bg-black/70 transition-colors duration-300 group-hover:bg-black/40" />
         </div>
 
         {/* Content */}
@@ -215,12 +215,12 @@ const FeatureRow = ({
       </div>
 
       {/* Right: Solution (Button + Guideline) */}
-      <div className="relative h-full flex items-center p-4 md:px-8 bg-gradient-card border-t md:border-t-0 md:border-l border-white/5">
+      <div className="relative h-full flex items-center p-4 md:px-8 bg-card border-t md:border-t-0 md:border-l border-white/5">
         <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] items-start md:items-center gap-4 md:gap-6 w-full">
           <Link to={link} className="shrink-0 w-full md:w-auto">
             <Button
               variant="outline"
-              className="h-10 w-full md:w-[240px] relative rounded-full border-primary/30 bg-background/50 hover:bg-background/80 hover:border-primary/60 shadow-md text-base md:text-lg font-medium flex items-center justify-center px-10 backdrop-blur-sm"
+              className="h-10 w-full md:w-60 relative rounded-full border-primary/80 bg-background/50 hover:bg-background/80 hover:border-primary shadow-md text-base md:text-lg font-medium flex items-center justify-center px-10 backdrop-blur-sm"
             >
               <span className="absolute left-5 text-primary shrink-0">
                 {icon}

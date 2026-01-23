@@ -1,4 +1,4 @@
-import type { TierAssignment } from "@/data/types";
+import type { Tier, TierAssignment } from "@/data/types";
 import { useTierStore } from "@/stores/useTierStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -35,7 +35,7 @@ describe("useTierStore", () => {
 
   describe("setTierAssignments", () => {
     it("sets tier assignments directly", () => {
-      const assignments = {
+      const assignments: TierAssignment = {
         kaedehara_kazuha: { tier: "S", position: 0 },
         venti: { tier: "A", position: 0 },
       };
@@ -132,7 +132,7 @@ describe("useTierStore", () => {
   describe("loadTierListData", () => {
     it("loads complete tier list data", () => {
       const data = {
-        tierAssignments: { venti: { tier: "S", position: 0 } },
+        tierAssignments: { venti: { tier: "S" as Tier, position: 0 } },
         tierCustomization: { S: { displayName: "Best", hidden: false } },
         customTitle: "Imported List",
         author: "Test Author",
@@ -151,7 +151,7 @@ describe("useTierStore", () => {
 
     it("handles missing optional fields", () => {
       const data = {
-        tierAssignments: { venti: { tier: "S", position: 0 } },
+        tierAssignments: { venti: { tier: "S" as Tier, position: 0 } },
         tierCustomization: {},
         // No customTitle, author, description
       };

@@ -154,6 +154,15 @@ export const artifactHalfSetsById = freezeRecord(
   )
 );
 
+export const artifactIdToHalfSetId = freezeRecord(
+  artifactHalfSets.reduce<Record<string, number>>((acc, halfSet) => {
+    for (const setId of halfSet.setIds) {
+      acc[setId] = halfSet.id;
+    }
+    return acc;
+  }, {})
+);
+
 export const elementResourcesByName = freezeRecord(
   createRecord<ElementResource, ElementResource["name"]>(
     elementResources,

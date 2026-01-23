@@ -1,7 +1,7 @@
 [project]
-name = "genshin-tools-scripts"
+name = "ggartifact-scripts"
 version = "0.1.0"
-description = "Scripts for Genshin Tools"
+description = "Scripts for GG Artifact"
 requires-python = ">=3.13"
 dependencies = [
     "playwright>=1.49.0",

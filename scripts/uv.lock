@@ -84,7 +84,7 @@ wheels = [
 ]
 
 [[package]]
-name = "genshin-tools-scripts"
+name = "ggartifact-scripts"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

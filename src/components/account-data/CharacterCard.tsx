@@ -31,6 +31,7 @@ interface CharacterCardProps {
 function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
   const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
   const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
   if (!charInfo) return null; // Should not happen if conversion is correct
@@ -59,15 +60,22 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   return (
     <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col p-3 gap-2 bg-gradient-select border-b border-border/40">
+      <div
+        className={cn(
+          "flex flex-col gap-2 bg-gradient-select border-b border-border/40",
+          isVeryNarrow ? "p-1.5" : "p-3"
+        )}
+      >
         {/* Top Row: Icon + Name/Badges + Weapon */}
-        <div className="flex items-center gap-3">
+        <div
+          className={cn("flex items-center", isVeryNarrow ? "gap-2" : "gap-3")}
+        >
           {/* Character Icon - No Tooltip */}
           <ItemIcon
             imagePath={charInfo.imagePath}
             rarity={charInfo.rarity}
-            label={`C${char.constellation}`}
-            size="xl"
+            badge={char.constellation}
+            size={isVeryNarrow ? "lg" : "xl"}
           />
 
           {/* Info */}
@@ -76,20 +84,46 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
               character={charInfo}
               showDate={false}
               className="gap-1"
-            />
+              nameClassName={isVeryNarrow ? "text-base" : undefined}
+            >
+              {!isVeryNarrow && (
+                <div className="flex-1 flex items-center gap-2 text-muted-foreground text-sm min-w-0">
+                  <span className="flex-shrink-0">Lv.{char.level}</span>
+                  <div className="flex-[1]" />
+                  <span className="flex-shrink-0 flex items-center gap-3 overflow-hidden text-ellipsis whitespace-nowrap">
+                    <span>
+                      {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
+                      <span className="text-foreground">{talents.auto}</span>
+                    </span>
+                    <span>
+                      {isMobile ? "E" : t.ui("accountData.talents.skill")}{" "}
+                      <span className="text-foreground">{talents.skill}</span>
+                    </span>
+                    <span>
+                      {isMobile ? "Q" : t.ui("accountData.talents.burst")}{" "}
+                      <span className="text-foreground">{talents.burst}</span>
+                    </span>
+                  </span>
+                  <div className="flex-[3]" />
+                  {weapon && (
+                    <span className="flex-shrink-0">Lv.{weapon.level}</span>
+                  )}
+                </div>
+              )}
+            </CharacterInfo>
           </div>
 
           {/* Weapon Icon */}
           <Tooltip>
+            {/* ... tooltip trigger ... */}
             <TooltipTrigger asChild>
               {weapon && weaponInfo ? (
                 <div className="cursor-help flex-shrink-0">
                   <ItemIcon
                     imagePath={weaponInfo.imagePath}
                     rarity={weaponInfo.rarity}
-                    label={`R${weapon.refinement}`}
-                    size="xl"
-                    alt={weaponName || ""}
+                    badge={weapon.refinement}
+                    size={isVeryNarrow ? "lg" : "xl"}
                   />
                 </div>
               ) : (
@@ -108,47 +142,15 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             )}
           </Tooltip>
         </div>
-
-        {/* Bottom Row: Levels & Talents */}
-        <div className="flex items-center gap-3">
-          <div className="w-20 text-center text-base text-muted-foreground leading-none flex-shrink-0">
-            Lv.{char.level}
-          </div>
-
-          <div
-            className={cn(
-              "flex-1 flex items-center justify-start px-2 gap-3 text-muted-foreground leading-none overflow-hidden",
-              isMobile ? "text-sm" : "text-base"
-            )}
-          >
-            <span>
-              {t.ui("accountData.talents.auto")}:{" "}
-              <span className="font-bold">{talents.auto}</span>
-            </span>
-            <span>
-              {t.ui("accountData.talents.skill")}:{" "}
-              <span className="font-bold">{talents.skill}</span>
-            </span>
-            <span>
-              {t.ui("accountData.talents.burst")}:{" "}
-              <span className="font-bold">{talents.burst}</span>
-            </span>
-          </div>
-
-          <div className="w-20 flex-shrink-0 flex justify-center">
-            {weapon ? (
-              <span className="w-full text-center text-base text-muted-foreground leading-none">
-                Lv.{weapon.level}
-              </span>
-            ) : (
-              <div className="w-full" />
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Artifact Sets Row */}
-      <div className="px-3 py-2 bg-black/20 border-b border-border/20 flex flex-wrap gap-x-6 gap-y-2 min-h-[56px] items-center justify-between">
+      <div
+        className={cn(
+          "bg-black/20 border-b border-border/20 flex flex-wrap gap-y-2 min-h-[56px] items-center justify-between",
+          isVeryNarrow ? "px-1.5 gap-x-2" : "px-4 gap-x-6"
+        )}
+      >
         <div className="flex flex-wrap gap-x-6 gap-y-2 items-center">
           {activeSets.length > 0 ? (
             activeSets.map(([setKey, count]) => (
@@ -157,17 +159,26 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                   <ItemIcon
                     imagePath={artifactsById[setKey]?.imagePaths.flower || ""}
                     rarity={artifactsById[setKey]?.rarity || 5}
-                    size="md"
+                    size={isVeryNarrow ? "sm" : "md"}
                   />
                   <div className="flex flex-col items-start">
+                    {/* Hide set name in compact mode for 2-piece sets to save space */}
+                    {(!isVeryNarrow || count >= 4) && (
+                      <span
+                        className={cn(
+                          "font-semibold text-gray-200 hover:text-primary transition-colors leading-tight block truncate",
+                          isVeryNarrow ? "text-xs max-w-[160px]" : "text-base"
+                        )}
+                      >
+                        {t.artifact(setKey)}
+                      </span>
+                    )}
                     <span
                       className={cn(
-                        "text-lg font-semibold text-gray-200 hover:text-primary transition-colors leading-tight"
+                        "text-muted-foreground font-mono leading-tight",
+                        isVeryNarrow ? "text-[10px]" : "text-base"
                       )}
                     >
-                      {t.artifact(setKey)}
-                    </span>
-                    <span className="text-base text-muted-foreground font-mono leading-tight">
                       {count >= 4
                         ? t.ui("accountData.fourPiece")
                         : t.ui("accountData.twoPiece")}
@@ -194,13 +205,22 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
 
         {/* Artifact Score */}
         {artifactScore.isComplete && (
-          <div className="flex flex-col items-end leading-none mr-1">
-            <span className="text-base text-muted-foreground uppercase font-bold tracking-wider mb-0.5">
+          <div className="flex flex-col items-end leading-none mr-2">
+            <span
+              className={cn(
+                "text-muted-foreground uppercase font-bold tracking-wider mb-0.5",
+                isVeryNarrow ? "text-xs" : "text-base"
+              )}
+            >
               {t.ui("accountData.score")}
             </span>
             <ArtifactScoreHoverCard
               score={artifactScore}
-              className="text-3xl font-black italic tracking-tighter"
+              className={cn(
+                "italic tracking-tighter",
+                isVeryNarrow ? "text-2xl font-extrabold" : "text-3xl font-black"
+              )}
+              compact={isVeryNarrow}
             />
           </div>
         )}
@@ -208,7 +228,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
 
       {/* Artifacts Body */}
       <CardContent className="p-0 bg-black/15">
-        <div className="grid grid-cols-5 divide-x divide-border/20">
+        <div className="grid grid-cols-5 divide-x divide-border/20 px-0.5">
           {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
@@ -222,7 +242,8 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             const content = (
               <div
                 className={cn(
-                  "flex flex-col p-2 relative transition-colors",
+                  "flex flex-col relative transition-colors",
+                  isVeryNarrow ? "p-0.5" : "p-2",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >
@@ -233,6 +254,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                     slotSubScore={artifactScore.slotSubScores[slot]}
                     slotMaxSubScore={artifactScore.slotMaxSubScores[slot]}
                     isMainStatWrong={isMainStatWrong}
+                    compact={isVeryNarrow}
                   />
                 ) : (
                   <div className="flex-1 flex items-center justify-center py-4">

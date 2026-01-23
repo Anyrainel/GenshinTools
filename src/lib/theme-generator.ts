@@ -233,9 +233,9 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     foreground: hslVar(0, 0, 95),
 
     // Card/popover surfaces - slightly lifted
-    card: hslVar(base.h, base.s + 5, base.l + 3),
+    card: hslVar(base.h, base.s, base.l),
     "card-foreground": hslVar(0, 0, 95),
-    popover: hslVar(base.h, base.s + 5, base.l + 3),
+    popover: hslVar(base.h, base.s + 2, base.l + 1),
     "popover-foreground": hslVar(0, 0, 95),
 
     // Primary - vivid elemental accent

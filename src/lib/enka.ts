@@ -5,6 +5,7 @@ import {
   weaponIdMap,
 } from "@/data/enkaIdMap";
 import type {
+  ConversionWarning,
   GOODData,
   IGOODArtifact,
   IGOODCharacter,
@@ -152,10 +153,19 @@ const SLOT_MAP: Record<string, SlotKey> = {
   EQUIP_DRESS: "circlet",
 };
 
-export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
+export interface EnkaConversionResult {
+  data: GOODData;
+  warnings: ConversionWarning[];
+}
+
+export function convertEnkaToGOOD(
+  enkaData: EnkaResponse
+): EnkaConversionResult {
   const characters: IGOODCharacter[] = [];
   const artifacts: IGOODArtifact[] = [];
   const weapons: IGOODWeapon[] = [];
+  const warnings: ConversionWarning[] = [];
+  const seenIds = new Set<string>();
 
   if (enkaData.avatarInfoList) {
     for (const avatar of enkaData.avatarInfoList) {
@@ -163,7 +173,11 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
       const charName = characterIdMap[charId];
 
       if (!charName) {
-        console.warn(`Unknown character ID: ${charId}`);
+        if (!seenIds.has(charId)) {
+          console.warn(`Unknown character ID: ${charId}`);
+          warnings.push({ type: "character", key: `ID:${charId}` });
+          seenIds.add(charId);
+        }
         continue;
       }
 
@@ -204,6 +218,11 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
                 location: charKey,
                 lock: false,
               });
+            } else if (!weaponName) {
+              if (!seenIds.has(weaponId)) {
+                warnings.push({ type: "weapon", key: `ID:${weaponId}` });
+                seenIds.add(weaponId);
+              }
             }
           } else if (flat.itemType === "ITEM_RELIQUARY" && equip.reliquary) {
             let foundSetId = "";
@@ -250,6 +269,11 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
                   substats,
                 });
               }
+            } else if (foundSetId) {
+              if (!seenIds.has(foundSetId)) {
+                warnings.push({ type: "artifact", key: `ID:${foundSetId}` });
+                seenIds.add(foundSetId);
+              }
             }
           }
         }
@@ -258,11 +282,14 @@ export function convertEnkaToGOOD(enkaData: EnkaResponse): GOODData {
   }
 
   return {
-    format: "GOOD",
-    version: 1,
-    source: "GenshinTools",
-    characters,
-    artifacts,
-    weapons,
+    data: {
+      format: "GOOD",
+      version: 1,
+      source: "enka",
+      characters,
+      artifacts,
+      weapons,
+    },
+    warnings,
   };
 }

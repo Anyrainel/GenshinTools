@@ -74,7 +74,7 @@ export function TierCustomizationDialog({
 
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
-      <ResponsiveDialogContent className="sm:max-w-[700px]">
+      <ResponsiveDialogContent className="md:max-w-[700px]">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {t.ui("customizeDialog.title")}
@@ -127,7 +127,9 @@ export function TierCustomizationDialog({
                     onChange={(e) =>
                       handleTierChange(tier, "displayName", e.target.value)
                     }
-                    placeholder={`${t.ui("customizeDialog.defaultPrefix")}${tier}`}
+                    placeholder={`${t.ui("customizeDialog.defaultPrefix")}${t.ui(
+                      `tiers.${tier}`
+                    )}`}
                     className="w-full"
                   />
                 </div>

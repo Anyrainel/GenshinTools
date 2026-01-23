@@ -121,9 +121,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
       <ItemIcon
         imagePath={character.imagePath}
         rarity={character.rarity}
-        alt={displayName}
         size="lg"
-        className="rounded-lg shadow-md"
       />
 
       <div className="flex-1 flex items-center justify-between gap-4">
@@ -155,7 +153,7 @@ function TitleCardComponent({ character }: TitleCardProps) {
             )}
           </Button>
           {isHidden && (
-            <span className="text-muted-foreground text-base italic select-none">
+            <span className="text-muted-foreground text-xs md:text-base italic select-none">
               {t.ui("characterCard.hiddenNotice")}
             </span>
           )}

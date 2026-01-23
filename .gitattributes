@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Explicitly keep Windows scripts as CRLF
+*.{cmd,bat,ps1} text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary

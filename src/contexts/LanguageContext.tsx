@@ -23,6 +23,7 @@ interface LanguageContextType {
     region: (key: string) => string;
     stat: (key: string) => string;
     statShort: (key: string) => string;
+    statMin: (key: string) => string;
     mainStat: (key: string) => string;
     subStat: (key: string) => string;
     element: (key: string) => string;
@@ -146,6 +147,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return stats[statKey]?.[language] || statKey;
     },
     [language]
+  );
+
+  const getStatMinName = useCallback(
+    (statKey: string): string => {
+      // @ts-ignore - statsMin exists in the object but might not be inferred yet if types are strict
+      const statsMin = i18nAppData.statsMin as Record<
+        string,
+        Record<string, string>
+      >;
+      // Fallback to short name if min name not found
+      return statsMin?.[statKey]?.[language] || getStatShortName(statKey);
+    },
+    [language, getStatShortName]
   );
 
   const getMainStatName = useCallback(
@@ -274,6 +288,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       region: getRegionName,
       stat: getStatName,
       statShort: getStatShortName,
+      statMin: getStatMinName,
       mainStat: getMainStatName,
       subStat: getSubStatName,
       element: getElementName,
@@ -293,6 +308,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getRegionName,
       getStatName,
       getStatShortName,
+      getStatMinName,
       getMainStatName,
       getSubStatName,
       getElementName,

@@ -66,7 +66,7 @@ describe("ItemPicker", () => {
       const { container } = render(
         <ItemPicker
           type="artifact"
-          value="emblem_of_severed_fate"
+          value={{ type: "4pc", setId: "emblem_of_severed_fate" }}
           onChange={mockOnChange}
         />
       );

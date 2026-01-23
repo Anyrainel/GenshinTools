@@ -99,7 +99,7 @@ export function WideLayout({
       </header>
 
       {/* Content - Full width for dense tabular data */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 xl:px-8">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 xl:px-8 2xl:px-12">
         {children}
       </div>
     </div>

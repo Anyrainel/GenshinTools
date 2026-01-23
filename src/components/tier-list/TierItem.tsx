@@ -66,12 +66,7 @@ function TierItemComponent<T extends TierItemData>({
   ) : null;
 
   const content = (
-    <ItemIcon
-      imagePath={item.imagePath}
-      rarity={item.rarity}
-      alt={alt}
-      size={size}
-    >
+    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size={size}>
       {overlay}
     </ItemIcon>
   );

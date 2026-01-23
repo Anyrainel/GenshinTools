@@ -3,6 +3,7 @@ import {
   AppBar,
   type ControlHandle,
 } from "@/components/layout/AppBar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
@@ -32,7 +33,8 @@ import type {
 import { elements } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { THEME } from "@/lib/styles";
+
+import { getElementColor } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
 import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -58,7 +60,7 @@ const elementGroupConfig: Record<Element, TierGroupConfig> = Object.fromEntries(
   elements.map((element) => [
     element,
     {
-      bgClass: THEME.element.bg[element],
+      bgClass: getElementColor(element, "bg"),
       iconPath: elementResourcesByName[element].imagePath,
     },
   ])
@@ -108,18 +110,12 @@ export default function TierListPage() {
     if (importedData.tierAssignments) {
       for (const [key, value] of Object.entries(importedData.tierAssignments)) {
         if (charactersById[key]) {
-          normalizedAssignments[key] = value as {
-            tier: string;
-            position: number;
-          };
+          normalizedAssignments[key] = value;
         } else {
           // Try to generate ID from the key (assuming it's an English name)
           const generatedId = generateId(key);
           if (charactersById[generatedId]) {
-            normalizedAssignments[generatedId] = value as {
-              tier: string;
-              position: number;
-            };
+            normalizedAssignments[generatedId] = value;
           }
         }
       }
@@ -216,13 +212,6 @@ export default function TierListPage() {
   const actions: ActionConfig[] = useMemo(
     () => [
       {
-        key: "clear",
-        icon: Trash2,
-        label: t.ui("app.clear"),
-        onTrigger: () => clearRef.current?.open(),
-        alwaysShow: true,
-      },
-      {
         key: "import",
         icon: Upload,
         label: t.ui("app.import"),
@@ -234,6 +223,12 @@ export default function TierListPage() {
         icon: Download,
         label: t.ui("app.export"),
         onTrigger: () => exportRef.current?.open(),
+      },
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
       },
       {
         key: "print",
@@ -291,15 +286,8 @@ export default function TierListPage() {
   );
 
   return (
-    <div className={THEME.layout.page}>
-      <AppBar actions={actions} />
-
+    <PageLayout actions={actions}>
       {/* Control dialogs - render without triggers, opened via ref */}
-      <ClearAllControl
-        ref={clearRef}
-        onConfirm={handleClear}
-        variant="tier-list"
-      />
       <ImportControl<TierListData>
         ref={importRef}
         options={presetOptions}
@@ -314,6 +302,11 @@ export default function TierListPage() {
         variant="tier-list"
         defaultAuthor={author}
         defaultDescription={description}
+      />
+      <ClearAllControl
+        ref={clearRef}
+        onConfirm={handleClear}
+        variant="tier-list"
       />
 
       <WideLayout
@@ -333,34 +326,32 @@ export default function TierListPage() {
         }
         filters={filterGroups}
       >
-        <div className="w-full h-full">
-          <TierTable<Character, Element>
-            items={sortedCharacters}
-            itemsById={charactersById}
-            tierAssignments={tierAssignments}
-            tierCustomization={tierCustomization}
-            onAssignmentsChange={handleAssignmentsChange}
-            groups={elements}
-            groupKey="element"
-            groupConfig={elementGroupConfig}
-            getGroupName={(group) => t.element(group)}
-            getItemName={(item) => t.character(item.id)}
-            getTooltip={(character) => (
-              <CharacterTooltip characterId={character.id} />
-            )}
-            filterItem={(character) => {
-              if (character.id.startsWith("traveler") && !showTravelers) {
-                return false;
-              }
-              return true;
-            }}
-            getOverlayImage={(character) => {
-              if (!showWeapons) return undefined;
-              return weaponResourcesByName[character.weaponType].imagePath;
-            }}
-            tableRef={tableRef}
-          />
-        </div>
+        <TierTable<Character, Element>
+          items={sortedCharacters}
+          itemsById={charactersById}
+          tierAssignments={tierAssignments}
+          tierCustomization={tierCustomization}
+          onAssignmentsChange={handleAssignmentsChange}
+          groups={elements}
+          groupKey="element"
+          groupConfig={elementGroupConfig}
+          getGroupName={(group) => t.element(group)}
+          getItemName={(item) => t.character(item.id)}
+          getTooltip={(character) => (
+            <CharacterTooltip characterId={character.id} />
+          )}
+          filterItem={(character) => {
+            if (character.id.startsWith("traveler") && !showTravelers) {
+              return false;
+            }
+            return true;
+          }}
+          getOverlayImage={(character) => {
+            if (!showWeapons) return undefined;
+            return weaponResourcesByName[character.weaponType].imagePath;
+          }}
+          tableRef={tableRef}
+        />
       </WideLayout>
 
       <TierCustomizationDialog
@@ -370,6 +361,6 @@ export default function TierListPage() {
         initialCustomization={tierCustomization}
         initialCustomTitle={customTitle}
       />
-    </div>
+    </PageLayout>
   );
 }

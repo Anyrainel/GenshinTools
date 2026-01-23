@@ -6,6 +6,7 @@ import {
   type ControlHandle,
   type TabConfig,
 } from "@/components/layout/AppBar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
@@ -19,7 +20,6 @@ import type {
   PresetOption,
 } from "@/data/types";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { THEME } from "@/lib/styles";
 import { serializeBuildExportPayload } from "@/stores/jsonUtils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
@@ -194,13 +194,6 @@ export default function ArtifactFilterPage() {
     }
     return [
       {
-        key: "clear",
-        icon: Trash2,
-        label: t.ui("app.clear"),
-        onTrigger: () => clearRef.current?.open(),
-        alwaysShow: true,
-      },
-      {
         key: "import",
         icon: Upload,
         label: t.ui("app.import"),
@@ -213,20 +206,23 @@ export default function ArtifactFilterPage() {
         label: t.ui("app.export"),
         onTrigger: () => exportRef.current?.open(),
       },
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
+      },
     ];
   }, [activeTab, t, handleDownloadImage]);
 
   return (
-    <div className={THEME.layout.page}>
-      <AppBar
-        actions={actions}
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-
+    <PageLayout
+      actions={actions}
+      tabs={tabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    >
       {/* Control dialogs - render without triggers, opened via ref */}
-      <ClearAllControl ref={clearRef} onConfirm={clearAllBuilds} />
       <ImportControl
         ref={importRef}
         options={presetOptions}
@@ -240,27 +236,22 @@ export default function ArtifactFilterPage() {
         defaultAuthor={author}
         defaultDescription={description}
       />
+      <ClearAllControl ref={clearRef} onConfirm={clearAllBuilds} />
 
       {/* Main Content Area - Takes remaining height */}
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="flex-1 min-h-0 overflow-hidden"
+        className="h-full overflow-hidden"
       >
-        <TabsContent
-          value="configure"
-          className="mt-0 h-full data-[state=inactive]:hidden"
-        >
+        <TabsContent value="configure" className="mt-0 h-full">
           <ConfigureView
             targetCharacterId={targetCharacterId}
             onTargetProcessed={() => setTargetCharacterId(undefined)}
           />
         </TabsContent>
 
-        <TabsContent
-          value="filters"
-          className="mt-0 h-full data-[state=inactive]:hidden"
-        >
+        <TabsContent value="filters" className="mt-0 h-full">
           <ComputeView
             contentRef={computeContentRef}
             onJumpToCharacter={(characterId) => {
@@ -270,6 +261,6 @@ export default function ArtifactFilterPage() {
           />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageLayout>
   );
 }

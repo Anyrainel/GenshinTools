@@ -1,4 +1,4 @@
-import type { TierAssignment } from "@/data/types";
+import type { Tier, TierAssignment } from "@/data/types";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +29,7 @@ describe("useWeaponTierStore", () => {
 
   describe("setTierAssignments", () => {
     it("sets tier assignments directly", () => {
-      const assignments = {
+      const assignments: TierAssignment = {
         staff_of_homa: { tier: "S", position: 0 },
         primordial_jade_winged_spear: { tier: "A", position: 0 },
       };
@@ -130,7 +130,7 @@ describe("useWeaponTierStore", () => {
   describe("loadTierListData", () => {
     it("loads complete tier list data", () => {
       const data = {
-        tierAssignments: { staff_of_homa: { tier: "S", position: 0 } },
+        tierAssignments: { staff_of_homa: { tier: "S" as Tier, position: 0 } },
         tierCustomization: { S: { displayName: "Best", hidden: false } },
         customTitle: "Imported Weapon List",
         author: "Test Author",
@@ -149,7 +149,7 @@ describe("useWeaponTierStore", () => {
 
     it("handles missing optional fields", () => {
       const data = {
-        tierAssignments: { staff_of_homa: { tier: "S", position: 0 } },
+        tierAssignments: { staff_of_homa: { tier: "S" as Tier, position: 0 } },
         tierCustomization: {},
         // No customTitle, author, description
       };

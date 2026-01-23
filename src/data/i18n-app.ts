@@ -70,8 +70,16 @@ export const i18nAppData = {
     "heal%": { en: "Heal%", zh: "治疗%" },
     "elemental%": { en: "Elemental%", zh: "元素伤%" },
   },
+  statsMin: {
+    em: { en: "EM", zh: "精通" },
+    er: { en: "ER", zh: "充能" },
+    cr: { en: "CR", zh: "暴击" },
+    cd: { en: "CD", zh: "暴伤" },
+  },
   ui: {
     common: {
+      search: { en: "Search...", zh: "搜索..." },
+      clear: { en: "Clear", zh: "清除" },
       cancel: { en: "Cancel", zh: "取消" },
       elements: { en: "Elements", zh: "元素" },
       none: { en: "None", zh: "无" },
@@ -86,9 +94,11 @@ export const i18nAppData = {
       characters: { en: "Characters", zh: "角色" },
       inventory: { en: "Inventory", zh: "库存" },
       evaluation: { en: "Evaluation", zh: "评估" },
-      summary: { en: "Summary", zh: "数据概览" },
-      unequippedWeapons: { en: "Unequipped Weapons", zh: "未装备武器" },
-      unequippedArtifacts: { en: "Unequipped Artifacts", zh: "未装备圣遗物" },
+      summary: { en: "Summary", zh: "概览" },
+      maxLvlWeapons: { en: "Max Level Weapons", zh: "满级武器" },
+      otherWeapons: { en: "Other Weapons", zh: "其他武器" },
+      maxLvlArtifacts: { en: "Max Level Artifacts", zh: "满级圣遗物" },
+      otherArtifacts: { en: "Other Artifacts", zh: "其他圣遗物" },
       buildEvaluationComingSoon: {
         en: "Build evaluation coming soon...",
         zh: "配装评估即将推出...",
@@ -96,6 +106,10 @@ export const i18nAppData = {
       noAccountDataLoaded: {
         en: "No account data loaded.",
         zh: "未加载账号数据。",
+      },
+      importPrompt: {
+        en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
+        zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
       },
       importGOODInstruction: {
         en: "Import a GOOD format JSON file to get started.",
@@ -205,6 +219,10 @@ export const i18nAppData = {
       searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
       wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
       subStatScore: { en: "Sub", zh: "副词条" },
+      weightWarning: {
+        en: "Set a main stat (ATK%, HP%, DEF%, EM) to 100, or set at least two substats (CR, CD, ER, etc.) to 100.",
+        zh: "需将一个主属性 (攻击%, 生命%, 防御%, 精通) 设为 100，或将至少两个副词条设为 100。",
+      },
     },
     scoreExplanation: {
       title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },
@@ -253,7 +271,7 @@ export const i18nAppData = {
       },
     },
     app: {
-      title: { en: "GG Artifact", zh: "GG Artifact" },
+      title: { en: "GG Artifact", zh: "GG圣遗物" },
       language: { en: "Language", zh: "语言" },
       navArtifactFilter: { en: "Artifact Filter", zh: "圣遗物过滤器" },
       navAccountData: { en: "Account Data", zh: "账号数据" },
@@ -523,6 +541,14 @@ export const i18nAppData = {
       missing2pcSets: {
         en: "Missing 2-piece artifact sets",
         zh: "缺少2件套圣遗物套装",
+      },
+      select2pcPrompt: {
+        en: "Select two different 2-piece Set Effects",
+        zh: "选择两个不同的2件套效果",
+      },
+      select2pcPromptHint: {
+        en: "You can combine any set that gives the same stat bonus.",
+        zh: "您可以组合任意提供相同属性加成的套装。",
       },
       notEnoughSame2pcSets: {
         en: "Not enough artifact sets with the same 2-piece effect",

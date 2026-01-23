@@ -1,14 +1,11 @@
 import { Button } from "@/components/ui/button";
 
+import {
+  type ArtifactConfig,
+  ItemPicker,
+} from "@/components/shared/ItemPicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  LightweightSelect,
-  LightweightSelectContent,
-  LightweightSelectItem,
-  LightweightSelectTrigger,
-  LightweightSelectValue,
-} from "@/components/ui/lightweight-select";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
@@ -34,7 +31,6 @@ import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { AlertCircle, Check, Copy, Trash2 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArtifactSelect, ArtifactSelectHalf } from "./ArtifactSelect";
 import { StatSelect } from "./StatSelect";
 
 interface BuildCardProps {
@@ -179,6 +175,34 @@ function BuildCardComponent({
     return null;
   }
 
+  // Derive picker value from build state
+  const pickerValue: ArtifactConfig | null =
+    build.composition === "4pc"
+      ? build.artifactSet
+        ? { type: "4pc", setId: build.artifactSet }
+        : null
+      : build.halfSet1 && build.halfSet2
+        ? { type: "2pc+2pc", id1: build.halfSet1, id2: build.halfSet2 }
+        : null;
+
+  const handlePickerChange = (val: ArtifactConfig) => {
+    if (val.type === "4pc") {
+      handleBuildChange({
+        composition: "4pc",
+        artifactSet: val.setId,
+        halfSet1: undefined,
+        halfSet2: undefined,
+      });
+    } else {
+      handleBuildChange({
+        composition: "2pc+2pc",
+        halfSet1: val.id1,
+        halfSet2: val.id2,
+        artifactSet: undefined,
+      });
+    }
+  };
+
   const minCountInput = (
     <div className="flex items-center gap-1 whitespace-nowrap">
       <span className="text-xs text-muted-foreground select-none">
@@ -249,35 +273,6 @@ function BuildCardComponent({
           </TooltipContent>
         </Tooltip>
 
-        <LightweightSelect
-          value={build.composition}
-          onValueChange={(value) => {
-            const composition = value as "4pc" | "2pc+2pc";
-            // Clear opposite composition fields when switching
-            if (composition === "4pc") {
-              handleBuildChange({
-                composition,
-                halfSet1: undefined,
-                halfSet2: undefined,
-              });
-            } else {
-              handleBuildChange({ composition, artifactSet: undefined });
-            }
-          }}
-        >
-          <LightweightSelectTrigger className="w-24 md:w-28 h-7 text-sm bg-gradient-select">
-            <LightweightSelectValue />
-          </LightweightSelectTrigger>
-          <LightweightSelectContent>
-            <LightweightSelectItem value="4pc">
-              {t.ui("buildCard.4pc")}
-            </LightweightSelectItem>
-            <LightweightSelectItem value="2pc+2pc">
-              {t.ui("buildCard.2pc+2pc")}
-            </LightweightSelectItem>
-          </LightweightSelectContent>
-        </LightweightSelect>
-
         <Button
           variant="ghost"
           size="sm"
@@ -308,51 +303,18 @@ function BuildCardComponent({
             )}
           >
             {/* Artifact Set Selection - Left Side */}
-            <div className={cn("flex-shrink-0", isMobile ? "w-full" : "w-28")}>
-              {build.composition === "4pc" ? (
-                <div className="w-full h-full flex items-center justify-center">
-                  <ArtifactSelect
-                    value={build.artifactSet || ""}
-                    onValueChange={(value) =>
-                      handleBuildChange({ artifactSet: value })
-                    }
-                    placeholder={t.ui("buildCard.selectSet")}
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center">
-                  <ArtifactSelectHalf
-                    value={build.halfSet1}
-                    onValueChange={(value) =>
-                      handleBuildChange({ halfSet1: value })
-                    }
-                    placeholder={t.ui("buildCard.effect1")}
-                  />
-
-                  <div className="flex justify-center">
-                    <span className="text-lg text-muted-foreground select-none">
-                      +
-                    </span>
-                  </div>
-
-                  <ArtifactSelectHalf
-                    value={build.halfSet2}
-                    onValueChange={(value) =>
-                      handleBuildChange({ halfSet2: value })
-                    }
-                    placeholder={t.ui("buildCard.effect2")}
-                  />
-                </div>
-              )}
+            <div className={cn("flex-shrink-0", isMobile ? "w-full" : "pl-2")}>
+              <div className="w-full h-full flex items-center justify-center">
+                <ItemPicker
+                  type="artifact"
+                  value={pickerValue}
+                  onChange={handlePickerChange}
+                  triggerSize="xl"
+                  showItemName={true}
+                  className={cn(isMobile ? "w-28 mx-auto" : "w-20")}
+                />
+              </div>
             </div>
-
-            {/* Vertical Divider (Hidden on Mobile) */}
-            <div
-              className={cn(
-                "w-px h-full bg-border/70 min-h-32",
-                isMobile ? "hidden" : "block"
-              )}
-            />
 
             {/* Stats Section - Right Side */}
             <div className={cn("space-y-1", isMobile ? "w-full" : "flex-1")}>

@@ -256,7 +256,6 @@ export function ArtifactConfigCard({
           imagePath={character.imagePath}
           rarity={character.rarity}
           size="sm"
-          alt={t.character(character.id)}
         />
       </div>
     );

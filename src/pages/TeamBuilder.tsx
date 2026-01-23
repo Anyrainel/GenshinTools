@@ -1,7 +1,7 @@
 import { AppBar } from "@/components/layout/AppBar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { TeamCard } from "@/components/team-builder/TeamCard";
-import { STYLES } from "@/lib/styles";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { useEffect } from "react";
 
@@ -28,10 +28,9 @@ export default function TeamBuilderPage() {
   }, [teams, addTeam]);
 
   return (
-    <div className={STYLES.layout.page}>
-      <AppBar />
+    <PageLayout>
       <ScrollLayout className="py-8">
-        <div className="w-[95%] max-w-[1900px] mx-auto grid grid-cols-[repeat(auto-fit,minmax(400px,440px))] gap-4 justify-center items-center">
+        <div className="mx-auto grid grid-cols-[repeat(auto-fit,minmax(400px,440px))] gap-4 justify-center items-center">
           {teams.map((team, index) => {
             const isLast = index === teams.length - 1;
             return (
@@ -48,6 +47,6 @@ export default function TeamBuilderPage() {
           })}
         </div>
       </ScrollLayout>
-    </div>
+    </PageLayout>
   );
 }

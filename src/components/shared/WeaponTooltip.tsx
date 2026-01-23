@@ -1,7 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { weaponsById } from "@/data/constants";
-import { THEME } from "@/lib/styles";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 interface WeaponTooltipProps {
   weaponId: string;
@@ -20,12 +19,12 @@ export function WeaponTooltip({ weaponId }: WeaponTooltipProps) {
   const weaponType = t.weaponType(weapon.type);
 
   return (
-    <div className="w-[340px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
+    <div className="w-96 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          THEME.rarity.bg[weapon.rarity as keyof typeof THEME.rarity.bg]
+          getRarityColor(weapon.rarity, "bg")
         )}
       >
         {/* Background gradient overlay */}

@@ -3,6 +3,7 @@ import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
+import type { Tier } from "@/data/types";
 import { render, screen } from "../../utils/render";
 
 interface TestItem extends TierItemData {
@@ -53,8 +54,8 @@ const defaultProps = {
   items: mockItems,
   itemsById: mockItemsById,
   tierAssignments: {
-    hu_tao: { tier: "S", position: 0 },
-    xingqiu: { tier: "A", position: 0 },
+    hu_tao: { tier: "S" as Tier, position: 0 },
+    xingqiu: { tier: "A" as Tier, position: 0 },
   },
   tierCustomization: {},
   onAssignmentsChange: vi.fn(),
@@ -158,9 +159,9 @@ describe("TierTable", () => {
     const propsWithPositions = {
       ...defaultProps,
       tierAssignments: {
-        hu_tao: { tier: "S", position: 1 },
-        bennett: { tier: "S", position: 0 },
-        xingqiu: { tier: "A", position: 0 },
+        hu_tao: { tier: "S" as Tier, position: 1 },
+        bennett: { tier: "S" as Tier, position: 0 },
+        xingqiu: { tier: "A" as Tier, position: 0 },
       },
     };
 

@@ -21,6 +21,11 @@ interface ResponsiveDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
+  /**
+   * Width in pixels at which to switch from Drawer (mobile) to Dialog (desktop).
+   * Default: 768
+   */
+  triggerWidth?: number;
 }
 
 interface ResponsiveDialogContentProps {
@@ -80,8 +85,9 @@ function ResponsiveDialog({
   open,
   onOpenChange,
   children,
+  triggerWidth = 768,
 }: ResponsiveDialogProps) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery(`(min-width: ${triggerWidth}px)`);
 
   if (isDesktop) {
     return (

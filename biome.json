@@ -28,6 +28,7 @@
   },
   "formatter": {
     "enabled": true,
+    "lineEnding": "lf",
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 80

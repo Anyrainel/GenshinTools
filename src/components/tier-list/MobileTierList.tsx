@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { THEME } from "@/lib/styles";
-import { cn, getAssetUrl } from "@/lib/utils";
+import type { Tier } from "@/data/types";
+import { cn, getAssetUrl, getTierColor } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import type { ReactNode } from "react";
@@ -9,7 +9,7 @@ import { TierItem } from "./TierItem";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 
 interface MobileTierRowProps<T extends TierItemData> {
-  tier: string;
+  tier: Tier;
   group: string;
   items: T[];
   groupKey: keyof T;
@@ -47,7 +47,7 @@ function MobileTierRow<T extends TierItemData>({
       <div
         className={cn(
           "px-3 py-1 text-sm font-bold text-gray-100 rounded-t-md",
-          THEME.tier.bg[tier as keyof typeof THEME.tier.bg] || "bg-gray-700"
+          getTierColor(tier, "bg")
         )}
       >
         {displayName}
@@ -89,7 +89,7 @@ function MobileTierRow<T extends TierItemData>({
 }
 
 interface MobileTierListProps<T extends TierItemData, K extends string> {
-  allTiers: string[];
+  allTiers: Tier[];
   groups: readonly K[];
   itemsPerTier: { [tier: string]: T[] };
   tierCustomization: {

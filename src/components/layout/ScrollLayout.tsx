@@ -13,8 +13,10 @@ interface ScrollLayoutProps {
  */
 export function ScrollLayout({ children, className }: ScrollLayoutProps) {
   return (
-    <div className="container flex-1 min-h-0 overflow-y-auto pt-4">
-      <div className={cn("h-full", className)}>{children}</div>
+    <div className="h-full w-full overflow-y-auto">
+      <div className={cn("container min-h-full mt-2", className)}>
+        {children}
+      </div>
     </div>
   );
 }

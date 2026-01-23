@@ -52,14 +52,14 @@ export function SidebarLayout({
   return (
     <div
       className={cn(
-        "h-full overflow-hidden flex flex-col lg:flex-row gap-4",
-        "w-full max-w-full lg:max-w-[95%] xl:max-w-[90%] 2xl:max-w-[80%] mx-auto",
-        "px-4 md:px-6 lg:px-8",
+        "h-full overflow-hidden flex flex-col lg:flex-row gap-3",
+        "w-full max-w-full lg:max-w-[90%] xl:max-w-[80%] 2xl:max-w-[70%] mx-auto",
+        "px-2 md:px-4 lg:px-6",
         className
       )}
     >
       {/* Mobile/Tablet trigger button */}
-      <div className="lg:hidden shrink-0 pt-3">
+      <div className="lg:hidden shrink-0">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" className="gap-2">

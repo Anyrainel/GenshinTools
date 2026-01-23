@@ -1,7 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
-import { THEME } from "@/lib/styles";
-import { cn } from "@/lib/utils";
+import { cn, getRarityColor } from "@/lib/utils";
 
 interface ArtifactTooltipProps {
   setId: string;
@@ -21,12 +20,12 @@ export function ArtifactTooltip({
   const effects = t.artifactEffects(artifact.id);
 
   return (
-    <div className="w-[320px] bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
+    <div className="w-80 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
       {/* Header */}
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          THEME.rarity.bg[artifact.rarity]
+          getRarityColor(artifact.rarity, "bg")
         )}
       >
         {/* Background gradient overlay */}

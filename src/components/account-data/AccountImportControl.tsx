@@ -124,7 +124,7 @@ export const AccountImportControl = forwardRef<
         if (!open) setErrorMessage(null);
       }}
     >
-      <ResponsiveDialogContent className="sm:max-w-md">
+      <ResponsiveDialogContent className="md:max-w-md">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {t.ui("accountData.importDialogTitle")}
@@ -175,7 +175,7 @@ export const AccountImportControl = forwardRef<
               placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
               value={uidInput}
               onChange={(e) => setUidInput(e.target.value)}
-              className="flex h-9 flex-1 min-w-[100px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-9 flex-1 min-w-[12rem] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               disabled={isBusy}
               onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
             />

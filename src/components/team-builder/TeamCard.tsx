@@ -212,11 +212,14 @@ export function TeamCard({
           >
             <ItemPicker
               type="artifact"
-              value={artId}
+              value={artId ? { type: "4pc" as const, setId: artId } : null}
               onChange={(val) => {
-                const newArts = [...team.artifacts];
-                newArts[idx] = val;
-                onUpdate({ artifacts: newArts });
+                // Team Builder only supports 4pc sets for now
+                if (val.type === "4pc") {
+                  const newArts = [...team.artifacts];
+                  newArts[idx] = val.setId;
+                  onUpdate({ artifacts: newArts });
+                }
               }}
               onClear={() => {
                 const newArts = [...team.artifacts];

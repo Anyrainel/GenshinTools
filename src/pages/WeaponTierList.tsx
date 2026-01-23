@@ -3,6 +3,7 @@ import {
   AppBar,
   type ControlHandle,
 } from "@/components/layout/AppBar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
@@ -35,7 +36,7 @@ import { weaponTypes } from "@/data/types";
 
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
-import { STYLES } from "@/lib/styles";
+
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -206,13 +207,6 @@ export default function WeaponTierListPage() {
   const actions: ActionConfig[] = useMemo(
     () => [
       {
-        key: "clear",
-        icon: Trash2,
-        label: t.ui("app.clear"),
-        onTrigger: () => clearRef.current?.open(),
-        alwaysShow: true,
-      },
-      {
         key: "import",
         icon: Upload,
         label: t.ui("app.import"),
@@ -224,6 +218,12 @@ export default function WeaponTierListPage() {
         icon: Download,
         label: t.ui("app.export"),
         onTrigger: () => exportRef.current?.open(),
+      },
+      {
+        key: "clear",
+        icon: Trash2,
+        label: t.ui("app.clear"),
+        onTrigger: () => clearRef.current?.open(),
       },
       {
         key: "print",
@@ -303,15 +303,8 @@ export default function WeaponTierListPage() {
   );
 
   return (
-    <div className={STYLES.layout.page}>
-      <AppBar actions={actions} />
-
+    <PageLayout actions={actions}>
       {/* Control dialogs - render without triggers, opened via ref */}
-      <ClearAllControl
-        ref={clearRef}
-        onConfirm={handleClear}
-        variant="tier-list"
-      />
       <ImportControl<TierListData>
         ref={importRef}
         options={presetOptions}
@@ -326,6 +319,11 @@ export default function WeaponTierListPage() {
         variant="tier-list"
         defaultAuthor={author}
         defaultDescription={description}
+      />
+      <ClearAllControl
+        ref={clearRef}
+        onConfirm={handleClear}
+        variant="tier-list"
       />
 
       <WideLayout
@@ -345,28 +343,26 @@ export default function WeaponTierListPage() {
         }
         filters={filterGroups}
       >
-        <div className="w-full h-full">
-          <TierTable<Weapon, WeaponType>
-            items={sortedWeapons}
-            itemsById={weaponsById}
-            tierAssignments={tierAssignments}
-            tierCustomization={tierCustomization}
-            onAssignmentsChange={handleAssignmentsChange}
-            groups={weaponTypes}
-            groupKey="type"
-            groupConfig={weaponGroupConfig}
-            getGroupName={(group) => t.weaponType(group)}
-            getItemName={(item) => t.weaponName(item.id)}
-            getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
-            filterItem={(weapon) => {
-              if (!showRarity[weapon.rarity]) return false;
-              if (!selectedSecondaryStats.includes(weapon.secondaryStat))
-                return false;
-              return true;
-            }}
-            tableRef={tableRef}
-          />
-        </div>
+        <TierTable<Weapon, WeaponType>
+          items={sortedWeapons}
+          itemsById={weaponsById}
+          tierAssignments={tierAssignments}
+          tierCustomization={tierCustomization}
+          onAssignmentsChange={handleAssignmentsChange}
+          groups={weaponTypes}
+          groupKey="type"
+          groupConfig={weaponGroupConfig}
+          getGroupName={(group) => t.weaponType(group)}
+          getItemName={(item) => t.weaponName(item.id)}
+          getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
+          filterItem={(weapon) => {
+            if (!showRarity[weapon.rarity]) return false;
+            if (!selectedSecondaryStats.includes(weapon.secondaryStat))
+              return false;
+            return true;
+          }}
+          tableRef={tableRef}
+        />
       </WideLayout>
 
       <TierCustomizationDialog
@@ -376,6 +372,6 @@ export default function WeaponTierListPage() {
         initialCustomization={tierCustomization}
         initialCustomTitle={customTitle}
       />
-    </div>
+    </PageLayout>
   );
 }

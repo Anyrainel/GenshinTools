@@ -6,7 +6,7 @@
 
 ### _A collection of useful tools for Genshin Impact travelers._
 
-[🎮 Launch Tool](https://anyrainel.github.io/GenshinTools)
+[🎮 Launch Tool](https://ggartifact.com)
 
 </div>
 
@@ -41,12 +41,15 @@ A modern, interactive tier list maker that:
 - **Organizes by Element**: Characters are sorted by element within tiers for better clarity.
 - **Save/Load**: Save your tier lists to JSON and load them later.
 - **Drag & Drop**: Easy-to-use interface.
+- **Export Image**: Share your tier lists with high-quality image exports.
 
 ### Weapon Tier List Maker
 
 **Rank weapons by type.**
 
 Compare weapons within their specific categories (Sword, Claymore, etc.) with advanced filtering by **Secondary Stat** (e.g., CRIT Rate, EM) and Rarity.
+
+- **Export Image**: Share your weapon rankings.
 
 ### Team Builder
 
@@ -56,12 +59,19 @@ Compare weapons within their specific categories (Sword, Claymore, etc.) with ad
 - **Interactive**: Smart pickers with filtering (e.g., only show weapons usable by the character).
 - **Manage**: Create, copy, and organize multiple team compositions.
 
+## 🖥️ Desktop App
+
+**Native performance and offline capability.**
+
+The application is wrapped with **Tauri**, allowing you to run it as a standalone desktop application on Windows.
+
 ## 💻 Tech Stack
 
 - **Framework**: React with TypeScript
 - **Build Tool**: Vite
 - **UI**: Tailwind CSS, shadcn/ui
-- **State Management**: Zustand / React Context
+- **State Management**: Zustand
+- **Desktop**: Tauri
 
 ## 🤝 Contributing
 

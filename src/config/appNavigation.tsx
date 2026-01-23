@@ -1,6 +1,6 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { LucideIcon } from "lucide-react";
-import { Box, Filter, LayoutGrid, Scale, Settings, Users } from "lucide-react";
+import { Box, Filter, LayoutGrid, Settings, Users } from "lucide-react";
 
 export interface NavTab {
   label: string;
@@ -18,24 +18,6 @@ export interface NavItem {
 export const getNavigationConfig = (
   t: ReturnType<typeof useLanguage>["t"]
 ): NavItem[] => [
-  {
-    label: t.ui("app.navArtifactFilter"),
-    href: "/artifact-filter",
-    children: [
-      {
-        label: t.ui("navigation.configure"),
-        href: "/artifact-filter?tab=configure",
-        value: "configure",
-        icon: Settings,
-      },
-      {
-        label: t.ui("navigation.computeFilters"),
-        href: "/artifact-filter?tab=filters",
-        value: "filters",
-        icon: Filter,
-      },
-    ],
-  },
   {
     label: t.ui("app.navAccountData"),
     href: "/account-data",
@@ -56,13 +38,31 @@ export const getNavigationConfig = (
         label: t.ui("accountData.statWeights"),
         href: "/account-data?tab=weights",
         value: "weights",
-        icon: Scale,
+        icon: Settings,
       },
       {
         label: t.ui("accountData.inventory"),
         href: "/account-data?tab=inventory",
         value: "inventory",
         icon: Box,
+      },
+    ],
+  },
+  {
+    label: t.ui("app.navArtifactFilter"),
+    href: "/artifact-filter",
+    children: [
+      {
+        label: t.ui("navigation.configure"),
+        href: "/artifact-filter?tab=configure",
+        value: "configure",
+        icon: Settings,
+      },
+      {
+        label: t.ui("navigation.computeFilters"),
+        href: "/artifact-filter?tab=filters",
+        value: "filters",
+        icon: Filter,
       },
     ],
   },
