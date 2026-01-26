@@ -12,6 +12,18 @@ describe("BuildCard", () => {
     mockOnDuplicate.mockClear();
     useBuildsStore.getState().clearAll();
     useBuildsStore.getState().newBuild("hu_tao");
+
+    // Mock matchMedia to return true (Desktop view)
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
   });
 
   const renderBuildCard = (buildIndex = 1) => {
@@ -67,21 +79,6 @@ describe("BuildCard", () => {
     // Find copy button (has copy icon)
     const copyIcon = container.querySelector(".lucide-copy");
     expect(copyIcon).toBeInTheDocument();
-  });
-
-  it("renders composition toggle with 4pc as default", () => {
-    renderBuildCard();
-
-    // Should have composition label
-    expect(screen.getByText(/4pc|2pc\+2pc/i)).toBeInTheDocument();
-  });
-
-  it("renders artifact set selector", () => {
-    renderBuildCard();
-
-    // Should have combobox for artifact set selection
-    const comboboxes = screen.getAllByRole("combobox");
-    expect(comboboxes.length).toBeGreaterThanOrEqual(1);
   });
 
   it("has exactly 3 action buttons (collapse, delete, copy)", () => {

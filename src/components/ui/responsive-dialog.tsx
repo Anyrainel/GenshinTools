@@ -169,7 +169,9 @@ function ResponsiveDialogDescription({
   }
 
   return (
-    <DrawerDescription className={className}>{children}</DrawerDescription>
+    <DrawerDescription className={className} asChild={asChild}>
+      {children}
+    </DrawerDescription>
   );
 }
 

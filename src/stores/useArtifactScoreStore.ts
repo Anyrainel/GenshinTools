@@ -2,6 +2,7 @@ import { STAT_WEIGHTS } from "@/data/statWeights";
 import type { ArtifactScoreConfig } from "@/data/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { useAccountStore } from "./useAccountStore";
 
 function generateDefaultArtifactScoreConfig(): ArtifactScoreConfig {
   return {
@@ -30,7 +31,7 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
   persist(
     (set) => ({
       config: generateDefaultArtifactScoreConfig(),
-      setGlobalWeight: (key, value) =>
+      setGlobalWeight: (key, value) => {
         set((state) => ({
           config: {
             ...state.config,
@@ -39,8 +40,10 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
               [key]: value,
             },
           },
-        })),
-      setCharacterWeight: (charId, stat, value) =>
+        }));
+        useAccountStore.getState().invalidateScores();
+      },
+      setCharacterWeight: (charId, stat, value) => {
         set((state) => ({
           config: {
             ...state.config,
@@ -52,25 +55,33 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
               },
             },
           },
-        })),
-      resetConfig: () =>
+        }));
+        useAccountStore.getState().invalidateScores();
+      },
+      resetConfig: () => {
         set(() => ({
           config: generateDefaultArtifactScoreConfig(),
-        })),
-      resetGlobalConfig: () =>
+        }));
+        useAccountStore.getState().invalidateScores();
+      },
+      resetGlobalConfig: () => {
         set((state) => ({
           config: {
             ...state.config,
             global: generateDefaultArtifactScoreConfig().global,
           },
-        })),
-      resetCharacterWeights: () =>
+        }));
+        useAccountStore.getState().invalidateScores();
+      },
+      resetCharacterWeights: () => {
         set((state) => ({
           config: {
             ...state.config,
             characters: generateDefaultArtifactScoreConfig().characters,
           },
-        })),
+        }));
+        useAccountStore.getState().invalidateScores();
+      },
     }),
     {
       name: "artifact-score-storage",

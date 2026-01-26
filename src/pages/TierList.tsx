@@ -1,8 +1,4 @@
-import {
-  type ActionConfig,
-  AppBar,
-  type ControlHandle,
-} from "@/components/layout/AppBar";
+import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
@@ -15,6 +11,7 @@ import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   charactersById,
@@ -33,10 +30,19 @@ import type {
 import { elements } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 
 import { getElementColor } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
-import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
+import {
+  Download,
+  FileDown,
+  HelpCircle,
+  Settings,
+  Trash2,
+  Upload,
+  Wrench,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -68,6 +74,7 @@ const elementGroupConfig: Record<Element, TierGroupConfig> = Object.fromEntries(
 
 export default function TierListPage() {
   const { t, language, setLanguage } = useLanguage();
+  const tour = useTour();
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const tierCustomization = useTierStore((state) => state.tierCustomization);
@@ -94,6 +101,17 @@ export default function TierListPage() {
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
+
+  // Start tour on first visit (after a short delay for page to render)
+  useEffect(() => {
+    if (!isTourCompleted("tier-list")) {
+      const timer = setTimeout(() => {
+        tour.start("tier-list");
+        markTourCompleted("tier-list");
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [tour]);
 
   // Load preset metadata on mount
   useEffect(() => {
@@ -223,6 +241,7 @@ export default function TierListPage() {
         icon: Download,
         label: t.ui("app.export"),
         onTrigger: () => exportRef.current?.open(),
+        tourStepId: "tl-export",
       },
       {
         key: "clear",
@@ -236,8 +255,14 @@ export default function TierListPage() {
         label: t.ui("app.print"),
         onTrigger: handleDownloadImage,
       },
+      {
+        key: "help",
+        icon: HelpCircle,
+        label: t.ui("buttons.help"),
+        onTrigger: () => tour.start("tier-list"),
+      },
     ],
-    [t, handleDownloadImage]
+    [t, handleDownloadImage, tour]
   );
 
   // Filter groups for WideLayout
@@ -317,8 +342,9 @@ export default function TierListPage() {
             size="sm"
             onClick={() => setIsCustomizeDialogOpen(true)}
             className="gap-2 bg-yellow-600 hover:bg-yellow-700 text-white"
+            data-tour-step-id="tl-customize"
           >
-            <Settings className="w-4 h-4" />
+            <Wrench className="w-4 h-4" />
             <span className="hidden sm:inline">
               {t.ui("buttons.customize")}
             </span>

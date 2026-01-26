@@ -1,6 +1,7 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { type Tier, type TierAssignment, tiers } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   DndContext,
   type DragEndEvent,
@@ -16,8 +17,7 @@ import {
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { MobileTierList } from "./MobileTierList";
-import { TierGrid } from "./TierGrid";
+import { type LayoutMode, TierLayout } from "./TierLayout";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 
 /**
@@ -69,6 +69,20 @@ export function TierTable<T extends TierItemData, K extends string>({
   tableRef,
 }: TierTableProps<T, K>) {
   const { t } = useLanguage();
+
+  // Responsive layout mode: desktop >= 1000px, tablet >= 560px, compact < 560px
+  const isDesktop = useMediaQuery("(min-width: 1000px)");
+  const isTablet = useMediaQuery("(min-width: 560px)");
+  const layoutMode: LayoutMode = isDesktop
+    ? "desktop"
+    : isTablet
+      ? "tablet"
+      : "compact";
+
+  // Responsive icon size based on mode and screen width
+  const isWideScreen = useMediaQuery("(min-width: 1850px)");
+  const iconSize = layoutMode === "compact" ? "sm" : isWideScreen ? "lg" : "md";
+
   const [activeItem, setActiveItem] = useState<T | null>(null);
   const [localAssignments, setLocalAssignments] =
     useState<typeof tierAssignments>(tierAssignments);
@@ -453,7 +467,7 @@ export function TierTable<T extends TierItemData, K extends string>({
   };
 
   const renderPreview = (item: T) => (
-    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size="lg" />
+    <ItemIcon imagePath={item.imagePath} rarity={item.rarity} size={iconSize} />
   );
 
   return (
@@ -465,38 +479,45 @@ export function TierTable<T extends TierItemData, K extends string>({
       onDragEnd={handleDragEnd}
     >
       <div className="flex flex-col h-full">
-        <div ref={tableRef} className="flex-1 h-full overflow-hidden">
-          {/* Desktop View */}
-          <div className="hidden md:block h-full p-4 overflow-y-auto">
-            <TierGrid
-              allTiers={allTiers}
-              groups={groups}
-              itemsPerTier={itemsPerTier}
-              tierCustomization={tierCustomization}
-              groupKey={groupKey}
-              groupConfig={groupConfig}
-              getGroupName={getGroupName}
-              getItemName={getItemName}
-              getTooltip={getTooltip}
-              getOverlayImage={getOverlayImage}
-            />
-          </div>
-
-          {/* Mobile View */}
-          <div className="md:hidden h-full">
-            <MobileTierList
-              allTiers={allTiers}
-              groups={groups}
-              itemsPerTier={itemsPerTier}
-              tierCustomization={tierCustomization}
-              groupKey={groupKey}
-              groupConfig={groupConfig}
-              getGroupName={getGroupName}
-              getItemName={getItemName}
-              getTooltip={getTooltip}
-              getOverlayImage={getOverlayImage}
-            />
-          </div>
+        <div className="flex-1 h-full overflow-hidden">
+          {layoutMode === "desktop" ? (
+            // Desktop View - needs wrapper for padding and scroll
+            <div className="h-full p-4 overflow-y-auto">
+              <TierLayout
+                ref={tableRef}
+                mode={layoutMode}
+                iconSize={iconSize}
+                allTiers={allTiers}
+                groups={groups}
+                itemsPerTier={itemsPerTier}
+                tierCustomization={tierCustomization}
+                groupKey={groupKey}
+                groupConfig={groupConfig}
+                getGroupName={getGroupName}
+                getItemName={getItemName}
+                getTooltip={getTooltip}
+                getOverlayImage={getOverlayImage}
+              />
+            </div>
+          ) : (
+            // Tablet/Compact View - TierLayout handles its own scroll
+            <div className="h-full">
+              <TierLayout
+                mode={layoutMode}
+                iconSize={iconSize}
+                allTiers={allTiers}
+                groups={groups}
+                itemsPerTier={itemsPerTier}
+                tierCustomization={tierCustomization}
+                groupKey={groupKey}
+                groupConfig={groupConfig}
+                getGroupName={getGroupName}
+                getItemName={getItemName}
+                getTooltip={getTooltip}
+                getOverlayImage={getOverlayImage}
+              />
+            </div>
+          )}
         </div>
       </div>
 

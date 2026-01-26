@@ -75,7 +75,8 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             imagePath={charInfo.imagePath}
             rarity={charInfo.rarity}
             badge={char.constellation}
-            size={isVeryNarrow ? "lg" : "xl"}
+            level={`Lv. ${char.level}`}
+            size={isVeryNarrow ? "md" : "lg"}
           />
 
           {/* Info */}
@@ -88,8 +89,6 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             >
               {!isVeryNarrow && (
                 <div className="flex-1 flex items-center gap-2 text-muted-foreground text-sm min-w-0">
-                  <span className="flex-shrink-0">Lv.{char.level}</span>
-                  <div className="flex-[1]" />
                   <span className="flex-shrink-0 flex items-center gap-3 overflow-hidden text-ellipsis whitespace-nowrap">
                     <span>
                       {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
@@ -104,10 +103,6 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                       <span className="text-foreground">{talents.burst}</span>
                     </span>
                   </span>
-                  <div className="flex-[3]" />
-                  {weapon && (
-                    <span className="flex-shrink-0">Lv.{weapon.level}</span>
-                  )}
                 </div>
               )}
             </CharacterInfo>
@@ -123,7 +118,8 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                     imagePath={weaponInfo.imagePath}
                     rarity={weaponInfo.rarity}
                     badge={weapon.refinement}
-                    size={isVeryNarrow ? "lg" : "xl"}
+                    level={`Lv. ${weapon.level}`}
+                    size={isVeryNarrow ? "md" : "lg"}
                   />
                 </div>
               ) : (
@@ -166,7 +162,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                     {(!isVeryNarrow || count >= 4) && (
                       <span
                         className={cn(
-                          "font-semibold text-gray-200 hover:text-primary transition-colors leading-tight block truncate",
+                          "font-semibold text-gray-200 leading-tight block truncate",
                           isVeryNarrow ? "text-xs max-w-[160px]" : "text-base"
                         )}
                       >
@@ -205,11 +201,11 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
 
         {/* Artifact Score */}
         {artifactScore.isComplete && (
-          <div className="flex flex-col items-end leading-none mr-2">
+          <div className="flex flex-col gap-0 items-end leading-none mr-2">
             <span
               className={cn(
-                "text-muted-foreground uppercase font-bold tracking-wider mb-0.5",
-                isVeryNarrow ? "text-xs" : "text-base"
+                "text-muted-foreground font-bold leading-none",
+                isVeryNarrow ? "text-xs" : "text-sm"
               )}
             >
               {t.ui("accountData.score")}
@@ -217,7 +213,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             <ArtifactScoreHoverCard
               score={artifactScore}
               className={cn(
-                "italic tracking-tighter",
+                "italic tracking-tighter leading-none",
                 isVeryNarrow ? "text-2xl font-extrabold" : "text-3xl font-black"
               )}
               compact={isVeryNarrow}

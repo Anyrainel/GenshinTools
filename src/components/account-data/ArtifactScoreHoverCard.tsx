@@ -197,31 +197,60 @@ function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.mainStat")}
         </div>
-        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => (
-          <div
-            key={slot}
-            className="text-center font-mono text-amber-200 bg-white/5 rounded py-1 px-2"
-          >
-            {artifactScore.slotMainScores[slot] !== undefined
-              ? artifactScore.slotMainScores[slot].toFixed(1)
-              : "-"}
-          </div>
-        ))}
+        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
+          const mainScore = artifactScore.slotMainScores[slot];
+          const subScore = artifactScore.slotSubScores[slot];
+          // Warning: artifact exists (has sub score) but main stat weight is 0
+          // Only applies to sands/goblet/circlet where main stat choice matters
+          const hasZeroWeightMainStat =
+            ["sands", "goblet", "circlet"].includes(slot) &&
+            subScore !== undefined &&
+            subScore > 0 &&
+            mainScore === 0;
+
+          return (
+            <div
+              key={slot}
+              className={cn(
+                "text-center font-mono bg-white/5 rounded py-1 px-2",
+                hasZeroWeightMainStat ? "text-orange-400" : "text-amber-200"
+              )}
+            >
+              {mainScore !== undefined ? mainScore.toFixed(1) : "-"}
+            </div>
+          );
+        })}
 
         {/* Sub Stat Row */}
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.subStat")}
         </div>
-        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => (
-          <div
-            key={slot}
-            className="text-center font-mono text-amber-200 bg-white/5 rounded py-1 px-2"
-          >
-            {artifactScore.slotSubScores[slot] !== undefined
-              ? artifactScore.slotSubScores[slot].toFixed(1)
-              : "-"}
-          </div>
-        ))}
+        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
+          const subScore = artifactScore.slotSubScores[slot];
+          const maxScore = artifactScore.slotMaxSubScores[slot];
+          const percent =
+            maxScore && maxScore > 0 ? (subScore ?? 0) / maxScore : 0;
+
+          // Dynamic font weight based on percentage of potential
+          // <60%: normal, 60-80%: medium, 80-90%: semibold, 90-100%: bold, 100%+: extrabold
+          let fontWeight = "font-normal";
+          if (percent >= 1.0) fontWeight = "font-extrabold";
+          else if (percent >= 0.9) fontWeight = "font-bold";
+          else if (percent >= 0.8) fontWeight = "font-semibold";
+          else if (percent >= 0.6) fontWeight = "font-medium";
+
+          return (
+            <div
+              key={slot}
+              className={cn(
+                "text-center font-mono text-amber-200 bg-white/5 rounded py-1 px-2",
+                fontWeight
+              )}
+            >
+              {subScore !== undefined ? subScore.toFixed(1) : "-"}
+            </div>
+          );
+        })}
       </div>
 
       {/* Breakdown by Stat */}

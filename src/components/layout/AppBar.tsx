@@ -30,8 +30,8 @@ import {
   MoreVertical,
   Palette,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 /**
  * Handle interface for control components that can be opened programmatically.
@@ -52,6 +52,8 @@ export interface ActionConfig {
   onTrigger: () => void;
   /** If true, always visible; otherwise collapses into overflow menu on mobile (< md) */
   alwaysShow?: boolean;
+  /** Tour step ID for onboarding spotlight */
+  tourStepId?: string;
 }
 
 /**
@@ -62,6 +64,8 @@ export interface TabConfig {
   value: string;
   label: string;
   icon?: LucideIcon;
+  /** Tour step ID for onboarding spotlight */
+  tourStepId?: string;
 }
 
 export interface AppBarProps {
@@ -99,9 +103,26 @@ export function AppBar({
   const { language, toggleLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isPending, startTransition] = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
+
+  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+    // Allow default behavior for modifier keys (new tab, etc.)
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) {
+      setIsMenuOpen(false);
+      return;
+    }
+
+    e.preventDefault();
+    setIsMenuOpen(false);
+
+    startTransition(() => {
+      navigate(href);
+    });
+  };
 
   // Hide-on-scroll behavior for mobile
   useEffect(() => {
@@ -180,11 +201,11 @@ export function AppBar({
                               "justify-start gap-2 h-10 text-sm font-semibold w-full",
                               isActive && "text-primary"
                             )}
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={(e) => handleLinkClick(e, item.href)}
                           >
                             <Link to={item.href}>{item.label}</Link>
                           </Button>
-                          <div className="pl-4 space-y-1 border-l ml-4 border-border/50">
+                          <div className="pl-2 space-y-1 border-l ml-2 border-border/50">
                             {item.children?.map((child) => {
                               const isChildActive =
                                 location.pathname === item.href &&
@@ -201,7 +222,10 @@ export function AppBar({
                                     isChildActive &&
                                       "bg-accent text-accent-foreground"
                                   )}
-                                  onClick={() => setIsMenuOpen(false)}
+                                  onClick={(e) =>
+                                    handleLinkClick(e, child.href)
+                                  }
+                                  data-tour-step-id={child.tourStepId}
                                 >
                                   <Link to={child.href}>
                                     {child.icon && (
@@ -227,7 +251,7 @@ export function AppBar({
                           isActive &&
                             "bg-primary/10 text-primary hover:bg-primary/20"
                         )}
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={(e) => handleLinkClick(e, item.href)}
                       >
                         <Link to={item.href}>{item.label}</Link>
                       </Button>
@@ -242,7 +266,7 @@ export function AppBar({
               className="flex items-center lg:pl-4 gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <img src="/logo_gt.svg" className="w-8 h-8" alt="Logo" />
-              <span className="font-semibold text-lg whitespace-nowrap hidden md:block">
+              <span className="font-semibold text-lg whitespace-nowrap">
                 {t.ui("app.title")}
               </span>
             </Link>
@@ -261,6 +285,7 @@ export function AppBar({
                       isActive &&
                         "bg-primary/10 text-primary hover:bg-primary/20"
                     )}
+                    onClick={(e) => handleLinkClick(e, item.href)}
                   >
                     <Link to={item.href}>{item.label}</Link>
                   </Button>
@@ -278,6 +303,7 @@ export function AppBar({
                 size="sm"
                 onClick={action.onTrigger}
                 className="gap-2"
+                data-tour-step-id={action.tourStepId}
               >
                 <action.icon className="w-4 h-4" />
                 <span>{action.label}</span>
@@ -293,6 +319,7 @@ export function AppBar({
                   size="sm"
                   onClick={action.onTrigger}
                   className="gap-2"
+                  data-tour-step-id={action.tourStepId}
                 >
                   <action.icon className="w-4 h-4" />
                   {action.label}
@@ -447,6 +474,7 @@ export function AppBar({
                       activeTab === tab.value &&
                         "bg-primary text-primary-foreground"
                     )}
+                    data-tour-step-id={tab.tourStepId}
                   >
                     {tab.icon && <tab.icon className="h-5 w-5" />}
                     {tab.label}

@@ -14,6 +14,19 @@ const mockCharacter: Character = {
 };
 
 describe("CharacterInfo", () => {
+  beforeEach(() => {
+    // Mock matchMedia to return true (Desktop view)
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+  });
   it("renders character name", () => {
     render(<CharacterInfo character={mockCharacter} />);
 

@@ -111,6 +111,14 @@ export const i18nAppData = {
         en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
         zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
       },
+      noCharactersMatchFilters: {
+        en: "No characters match your filters",
+        zh: "没有角色匹配当前过滤条件",
+      },
+      noCharactersMatchFiltersDescription: {
+        en: "Try adjusting your filter settings or clear all filters to see your characters.",
+        zh: "尝试调整过滤设置或清除所有过滤条件以查看角色。",
+      },
       importGOODInstruction: {
         en: "Import a GOOD format JSON file to get started.",
         zh: "导入 GOOD 格式的 JSON 文件以开始使用。",
@@ -273,10 +281,11 @@ export const i18nAppData = {
     app: {
       title: { en: "GG Artifact", zh: "GG圣遗物" },
       language: { en: "Language", zh: "语言" },
-      navArtifactFilter: { en: "Artifact Filter", zh: "圣遗物过滤器" },
+      navArtifactFilter: { en: "Artifact Builds", zh: "圣遗物配装" },
       navAccountData: { en: "Account Data", zh: "账号数据" },
       navTierList: { en: "Character Tier List", zh: "角色榜单" },
       navWeaponTierList: { en: "Weapon Tier List", zh: "武器榜单" },
+      navWeaponBrowser: { en: "Weapon Browser", zh: "武器图鉴" },
       navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
       heroDescription: {
         en: "Powerful utilities to optimize your builds and organize your roster.",
@@ -314,6 +323,14 @@ export const i18nAppData = {
         en: "Filter by rarity and secondary stats to find the perfect match for your character.",
         zh: "按稀有度和副属性快速筛选，全武器数据一览无余。",
       },
+      weaponBrowserProblem: {
+        en: "Need a quick weapon reference?",
+        zh: "想快速查阅或筛选武器？",
+      },
+      weaponBrowserGuideline: {
+        en: "Browse all weapons by type, filter by rarity and stats. A convenient visual reference.",
+        zh: "按武器类型浏览，按稀有度和属性筛选，便捷的可视化武器图鉴。",
+      },
       teamBuilderProblem: {
         en: "Need help theory-crafting new teams?",
         zh: "正在科研新配队？",
@@ -337,6 +354,7 @@ export const i18nAppData = {
         en: "Failed to generate image",
         zh: "图片生成失败",
       },
+      explore: { en: "Explore", zh: "探索" },
     },
     theme: {
       switcherButton: { en: "Theme", zh: "主题" },
@@ -381,7 +399,12 @@ export const i18nAppData = {
       weaponTypes: { en: "Weapon Types", zh: "武器类型" },
       regions: { en: "Regions", zh: "地区" },
       rarity: { en: "Rarity", zh: "稀有度" },
+      secondaryStat: { en: "Substat", zh: "副属性" },
       filterWeapons: { en: "Filter Weapons", zh: "筛选武器" },
+      noWeaponsFound: {
+        en: "No weapons match filters",
+        zh: "没有武器匹配当前筛选",
+      },
     },
     computeFilters: {
       title: { en: "Filters", zh: "过滤" },
@@ -503,10 +526,10 @@ export const i18nAppData = {
       },
     },
     navigation: {
-      configure: { en: "Configure Builds", zh: "配置配装" },
+      configure: { en: "Character Builds", zh: "角色配装" },
       computeFilters: {
-        en: "Compute Filters",
-        zh: "计算过滤器",
+        en: "Artifact Filters",
+        zh: "圣遗物过滤器",
       },
     },
     characterCard: {
@@ -643,6 +666,7 @@ export const i18nAppData = {
       includeRarity5: { en: "5★ Weapons", zh: "5★武器" },
       includeRarity4: { en: "4★ Weapons", zh: "4★武器" },
       includeRarity3: { en: "3★ Weapons", zh: "3★武器" },
+      help: { en: "Help", zh: "帮助" },
     },
     resetConfirmDialog: {
       title: { en: "Reset Tier List", zh: "重置榜单" },
@@ -674,6 +698,85 @@ export const i18nAppData = {
       B: { en: "B", zh: "人上人" },
       C: { en: "C", zh: "NPC" },
       D: { en: "D", zh: "拉完了" },
+    },
+    tour: {
+      guide: {
+        title: { en: "Guide", zh: "指南" },
+        gotIt: { en: "Got it", zh: "知道了" },
+        artifactFilter: {
+          en: "1. Click {import} to use presets, or configure builds in {builds} tab.\n2. In {filters} tab, tweak custom controls to generate your own lock rules.",
+          zh: "1. 点击 {import} 使用预设，或在 {builds} 标签页中配置配装。\n2. 在 {filters} 标签页中调整自定义选项以生成属于你的锁定规则。",
+        },
+        tierList: {
+          en: "1. Use {import} to load community tier list presets.\n2. Use {customize} to modify tier names and settings.",
+          zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。",
+        },
+        accountData: {
+          en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Configure scoring weights in {weights} tab.",
+          zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {weights} 标签页中配置评分权重。",
+        },
+      },
+      artifactFilter: {
+        presetsTitle: { en: "Import Presets", zh: "导入预设" },
+        presetsContent: {
+          en: "Start by importing community presets for quick setup, or create custom builds for each character.",
+          zh: "从社区预设快速开始，或为每个角色创建自定义配装。",
+        },
+        buildCardTitle: { en: "Configure Builds", zh: "配置配装" },
+        buildCardContent: {
+          en: "Select artifact sets and substats for each character. The filter will keep artifacts that match your criteria.",
+          zh: "为每个角色选择圣遗物套装和副词条。过滤器会保留符合条件的圣遗物。",
+        },
+        computeTabTitle: { en: "Generate Filters", zh: "生成过滤器" },
+        computeTabContent: {
+          en: "Switch to the Compute tab to see your optimized filter configuration, ready to use with artifact filtering tools.",
+          zh: "切换到计算标签页查看优化后的过滤配置，可直接用于圣遗物过滤工具。",
+        },
+      },
+      tierList: {
+        unassignedTitle: { en: "Character Pool", zh: "角色池" },
+        unassignedContent: {
+          en: "All your characters start here. Drag them to tiers below to set your farming priorities.",
+          zh: "所有角色都从这里开始。将他们拖到下方的梯度来设置培养优先级。",
+        },
+        tierRowTitle: { en: "Tier Rows", zh: "梯度行" },
+        tierRowContent: {
+          en: "Drag characters into tiers to rank them. Higher tiers = higher priority for farming and building.",
+          zh: "将角色拖入梯度进行排名。梯度越高 = 培养优先级越高。",
+        },
+        customizeTitle: { en: "Customize Tiers", zh: "自定义梯度" },
+        customizeContent: {
+          en: "Rename tiers, hide unused ones, or add a custom list title for sharing.",
+          zh: "重命名梯度、隐藏未使用的梯度，或添加自定义榜单标题以便分享。",
+        },
+        exportTitle: { en: "Share Your List", zh: "分享榜单" },
+        exportContent: {
+          en: "Export your tier list as an image to share with friends or on social media.",
+          zh: "将榜单导出为图片，分享给朋友或发布到社交媒体。",
+        },
+      },
+      accountData: {
+        importTitle: { en: "Import Your Data", zh: "导入数据" },
+        importContent: {
+          en: "Import your character data using GOOD format (from Inventory Kamera or similar tools) or fetch directly from Enka.Network using your UID.",
+          zh: "使用 GOOD 格式导入角色数据（来自 Inventory Kamera 等工具），或通过 UID 从 Enka.Network 获取。",
+        },
+        charactersTitle: { en: "Character Overview", zh: "角色概览" },
+        charactersContent: {
+          en: "View all your imported characters with their equipped artifacts and weapons. Click any character to see detailed stats.",
+          zh: "查看所有导入的角色及其装备的圣遗物和武器。点击任意角色查看详细属性。",
+        },
+        summaryTitle: { en: "Artifact Summary", zh: "圣遗物概览" },
+        summaryContent: {
+          en: "Get a bird's-eye view of your artifact collection with scoring and quality metrics for each character.",
+          zh: "全局查看你的圣遗物收藏，包含每个角色的评分和质量指标。",
+        },
+        weightsTitle: { en: "Stat Weights", zh: "词条权重" },
+        weightsContent: {
+          en: "Customize how artifact substats are weighted for scoring. Adjust these to match your playstyle preferences.",
+          zh: "自定义圣遗物副词条的评分权重。根据你的玩法偏好进行调整。",
+        },
+      },
     },
   },
 };

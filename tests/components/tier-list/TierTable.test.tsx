@@ -6,6 +6,20 @@ import type {
 import type { Tier } from "@/data/types";
 import { render, screen } from "../../utils/render";
 
+// Mock useMediaQuery to always return true for desktop mode
+vi.mock("@/hooks/useMediaQuery", () => ({
+  useMediaQuery: (query: string) => {
+    // Return true for desktop breakpoints to ensure TierTable renders in desktop mode
+    if (
+      query.includes("min-width: 1000px") ||
+      query.includes("min-width: 560px")
+    ) {
+      return true;
+    }
+    return false;
+  },
+}));
+
 interface TestItem extends TierItemData {
   element: string;
 }
@@ -103,12 +117,12 @@ describe("TierTable", () => {
       },
     };
 
-    render(<TierTable {...propsWithHiddenTier} />);
+    const { container } = render(<TierTable {...propsWithHiddenTier} />);
 
-    // S tier should not be displayed
-    expect(screen.queryByText("S")).not.toBeInTheDocument();
+    // S tier should not be displayed (check by data-tier attribute as text might be ambiguous or present elsewhere)
+    expect(container.querySelector('[data-tier="S"]')).not.toBeInTheDocument();
     // A tier should still be visible
-    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(container.querySelector('[data-tier="A"]')).toBeInTheDocument();
   });
 
   it("moves items from hidden tiers to Pool", () => {
@@ -175,9 +189,9 @@ describe("TierTable", () => {
   });
 
   it("renders tier grid with all visible tiers", () => {
-    render(<TierTable {...defaultProps} />);
+    const { container } = render(<TierTable {...defaultProps} />);
 
     // Default tiers should be visible (S, A, B, C, D, Pool minus hidden)
-    expect(screen.getByText("Pool")).toBeInTheDocument();
+    expect(container.querySelector('[data-tier="Pool"]')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import { ConfigureView } from "@/components/artifact-filter/ConfigureView";
+import { CharacterBuildView } from "@/components/artifact-filter/CharacterBuildView";
 import type { Character } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { render, screen } from "@testing-library/react";
@@ -102,11 +102,12 @@ vi.mock("@/hooks/useGlobalScroll", () => ({
 // Mock filter logic
 vi.mock("@/lib/characterFilters", () => ({
   defaultCharacterFilters: {},
+  getDefaultCharacterFilters: () => ({}),
   hasActiveFilters: () => false,
   filterAndSortCharacters: vi.fn(),
 }));
 
-describe("ConfigureView", () => {
+describe("CharacterBuildView", () => {
   beforeEach(() => {
     vi.mocked(filterAndSortCharacters).mockReturnValue([
       { id: "char1", element: "Pyro" } as unknown as Character,
@@ -115,7 +116,7 @@ describe("ConfigureView", () => {
   });
 
   it("renders list of characters", () => {
-    render(<ConfigureView />);
+    render(<CharacterBuildView />);
 
     expect(screen.getByTestId("sidebar-layout")).toBeInTheDocument();
     // Check virtualized items
@@ -126,7 +127,7 @@ describe("ConfigureView", () => {
   it("displays no characters found when empty", () => {
     vi.mocked(filterAndSortCharacters).mockReturnValue([]);
 
-    render(<ConfigureView />);
+    render(<CharacterBuildView />);
 
     expect(screen.getByText("configure.noCharactersFound")).toBeInTheDocument();
   });

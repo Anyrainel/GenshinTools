@@ -136,3 +136,15 @@ export const defaultCharacterFilters: CharacterFilters = {
   tierSort: "off",
   releaseSort: "desc",
 };
+
+/**
+ * Get default filters with tier sort enabled if tier data is available.
+ */
+export function getDefaultCharacterFilters(
+  hasTierData: boolean
+): CharacterFilters {
+  return {
+    ...defaultCharacterFilters,
+    tierSort: hasTierData ? "desc" : "off",
+  };
+}

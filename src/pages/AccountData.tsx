@@ -14,25 +14,28 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import {
   type ArtifactScoreResult,
   calculateArtifactScore,
 } from "@/lib/artifactScore";
-import { convertEnkaToGOOD, fetchEnkaData } from "@/lib/enka";
+import { convertEnkaToGOOD, fetchEnkaData } from "@/lib/enkaFetcher";
 import {
   type ConversionResult,
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/goodConversion";
 import type { ConversionWarning } from "@/lib/goodConversion";
+import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   AlertTriangle,
   Box,
   Database,
+  HelpCircle,
   LayoutGrid,
   Settings,
   Trash2,
@@ -148,6 +151,7 @@ const NoDataPlaceholder = ({
 
 export default function AccountDataPage() {
   const { t } = useLanguage();
+  const tour = useTour();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "characters";
 
@@ -163,20 +167,48 @@ export default function AccountDataPage() {
     });
   };
 
-  const { accountData, setAccountData, clearAccountData, lastUid, setLastUid } =
-    useAccountStore();
+  const {
+    accountData,
+    setAccountData,
+    clearAccountData,
+    lastUid,
+    setLastUid,
+    scores,
+    setScores,
+    isScoresStale,
+  } = useAccountStore();
+
+  // Start tour on first visit (after a short delay for page to render)
+  useEffect(() => {
+    if (!isTourCompleted("account-data") && activeTab === "characters") {
+      const timer = setTimeout(() => {
+        tour.start("account-data");
+        markTourCompleted("account-data");
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [tour, activeTab]);
   const { config: scoreConfig } = useArtifactScoreStore();
 
-  const scores = useMemo(() => {
-    const results: Record<string, ArtifactScoreResult> = {};
-    if (!accountData) return results;
+  // When scores are stale (e.g. weights changed), recalculate them asynchronously
+  // to avoid blocking the UI thread during interaction or navigation.
+  // When scores are stale (e.g. weights changed) OR missing (migration), recalculate them asynchronously
+  // to avoid blocking the UI thread during interaction or navigation.
+  useEffect(() => {
+    const hasData = accountData && accountData.characters.length > 0;
+    const missingScores = hasData && Object.keys(scores).length === 0;
 
-    for (const char of accountData.characters) {
-      results[char.key] = calculateArtifactScore(char, scoreConfig);
+    if ((isScoresStale || missingScores) && accountData) {
+      const timer = setTimeout(() => {
+        const results: Record<string, ArtifactScoreResult> = {};
+        for (const char of accountData.characters) {
+          results[char.key] = calculateArtifactScore(char, scoreConfig);
+        }
+        setScores(results);
+      }, 50); // Short delay to yield to main thread (click/nav animations)
+      return () => clearTimeout(timer);
     }
-
-    return results;
-  }, [accountData, scoreConfig]);
+  }, [isScoresStale, scores, accountData, scoreConfig, setScores]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -230,6 +262,14 @@ export default function AccountDataPage() {
     try {
       const result = convertGOODToAccountData(data);
       setAccountData(result.data);
+
+      // Pre-calculate scores for the new data
+      const newScores: Record<string, ArtifactScoreResult> = {};
+      for (const char of result.data.characters) {
+        newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+      }
+      setScores(newScores);
+
       showConversionWarnings(result);
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error) {
@@ -253,6 +293,12 @@ export default function AccountDataPage() {
 
       if (clearBeforeImport || !accountData) {
         setAccountData(newData);
+        // Pre-calculate scores (new data)
+        const newScores: Record<string, ArtifactScoreResult> = {};
+        for (const char of newData.characters) {
+          newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+        }
+        setScores(newScores);
       } else {
         // Merge logic
         const { maxA, maxW } = getMaxIds(accountData);
@@ -279,6 +325,13 @@ export default function AccountDataPage() {
         };
 
         setAccountData(mergedData);
+
+        // Pre-calculate scores for the merged data
+        const newScores: Record<string, ArtifactScoreResult> = {};
+        for (const char of mergedData.characters) {
+          newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+        }
+        setScores(newScores);
       }
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error: unknown) {
@@ -299,31 +352,35 @@ export default function AccountDataPage() {
         value: "characters",
         label: t.ui("accountData.characters"),
         icon: Users,
+        tourStepId: "ad-characters",
       },
       {
         value: "summary",
         label: t.ui("accountData.summary"),
         icon: LayoutGrid,
+        tourStepId: "ad-summary",
       },
       { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
       {
         value: "weights",
         label: t.ui("accountData.statWeights"),
         icon: Settings,
+        tourStepId: "ad-weights",
       },
     ],
     [t]
   );
 
   // Actions configuration
-  const actions: ActionConfig[] = useMemo(
-    () => [
+  const actions: ActionConfig[] = useMemo(() => {
+    return [
       {
         key: "import",
         icon: Upload,
         label: t.ui("app.import"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
+        tourStepId: "ad-import",
       },
       {
         key: "clear",
@@ -331,9 +388,14 @@ export default function AccountDataPage() {
         label: t.ui("app.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
-    ],
-    [t]
-  );
+      {
+        key: "help",
+        icon: HelpCircle,
+        label: t.ui("buttons.help"),
+        onTrigger: () => tour.start("account-data"),
+      },
+    ];
+  }, [t, tour]);
 
   return (
     <PageLayout

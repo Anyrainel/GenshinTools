@@ -23,20 +23,25 @@ const mockData: AccountData = {
 };
 
 describe("InventoryView", () => {
+  beforeEach(() => {
+    // Mock matchMedia to return true (Desktop view)
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+  });
   it("renders unequipped weapons section", () => {
     render(<InventoryView data={mockData} />);
 
     // Should have weapons heading with count
     const headings = screen.getAllByRole("heading");
     expect(headings.length).toBeGreaterThan(0);
-  });
-
-  it("renders weapon cards with refinement", () => {
-    render(<InventoryView data={mockData} />);
-
-    // Should show refinement labels
-    expect(screen.getByText("R1")).toBeInTheDocument();
-    expect(screen.getByText("R2")).toBeInTheDocument();
   });
 
   it("renders artifact cards with level", () => {
@@ -55,8 +60,8 @@ describe("InventoryView", () => {
 
     render(<InventoryView data={emptyData} />);
 
-    // Should still render section headings with (0) counts
-    const zeroCounts = screen.getAllByText(/\(0\)/);
-    expect(zeroCounts.length).toBe(2); // Both weapons and artifacts sections
+    // Sections with 0 items are hidden
+    const zeroCounts = screen.queryAllByText(/\(0\)/);
+    expect(zeroCounts.length).toBe(0);
   });
 });

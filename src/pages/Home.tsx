@@ -1,15 +1,14 @@
-import { AppBar } from "@/components/layout/AppBar";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-import { getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import {
   ArrowRight,
+  Award,
   Database,
   Filter,
-  ListOrdered,
+  Sparkles,
   Sword,
-  Users,
+  Target,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -115,153 +114,180 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Tools List - Split View */}
-        <div className="flex flex-col gap-5 w-full pb-1">
-          <FeatureRow
-            icon={<Database className="w-5 h-5" />}
+        {/* Feature Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full pb-4">
+          <FeatureCard
+            icon={<Database className="w-6 h-6" />}
+            decorIcon={<Sparkles className="w-16 h-16" />}
             title={t.ui("app.navAccountData")}
             problem={t.ui("app.accountDataProblem")}
             guideline={t.ui("app.accountDataGuideline")}
             link="/account-data"
             bgImage="assets/home/account_bg.png"
             bgPosition="center 13%"
+            accentColor="from-amber-500/20 to-orange-500/10"
+            exploreText={t.ui("app.explore")}
           />
 
-          <FeatureRow
-            icon={<Filter className="w-5 h-5" />}
+          <FeatureCard
+            icon={<Filter className="w-6 h-6" />}
+            decorIcon={<Target className="w-16 h-16" />}
             title={t.ui("app.navArtifactFilter")}
             problem={t.ui("app.artifactFilterProblem")}
             guideline={t.ui("app.artifactFilterGuideline")}
             link="/artifact-filter"
             bgImage="assets/home/artifact_bg.jpeg"
             bgPosition="center 50%"
+            accentColor="from-purple-500/20 to-indigo-500/10"
+            exploreText={t.ui("app.explore")}
           />
 
-          <FeatureRow
-            icon={<ListOrdered className="w-5 h-5" />}
+          <FeatureCard
+            icon={<Award className="w-6 h-6" />}
+            decorIcon={<Award className="w-16 h-16" />}
             title={t.ui("app.navTierList")}
             problem={t.ui("app.tierListProblem")}
             guideline={t.ui("app.tierListGuideline")}
             link="/tier-list"
             bgImage="assets/home/tierlist_bg.jpeg"
             bgPosition="center 55%"
+            accentColor="from-emerald-500/20 to-teal-500/10"
+            exploreText={t.ui("app.explore")}
           />
 
-          <FeatureRow
-            icon={<Sword className="w-5 h-5" />}
-            title={t.ui("app.navWeaponTierList")}
-            problem={t.ui("app.weaponTierListProblem")}
-            guideline={t.ui("app.weaponTierListGuideline")}
-            link="/weapon-tier-list"
-            bgImage="assets/home/weapon_bg.png"
-            bgPosition="center 50%"
+          <FeatureCard
+            icon={<Sword className="w-6 h-6" />}
+            decorIcon={<Sword className="w-16 h-16" />}
+            title={t.ui("app.navWeaponBrowser")}
+            problem={t.ui("app.weaponBrowserProblem")}
+            guideline={t.ui("app.weaponBrowserGuideline")}
+            link="/weapon-browser"
+            bgImage="assets/home/team_bg.jpg"
+            bgPosition="center 40%"
+            accentColor="from-rose-500/20 to-pink-500/10"
+            exploreText={t.ui("app.explore")}
           />
 
-          <FeatureRow
-            icon={<Users className="w-5 h-5" />}
+          {/* TODO: Re-enable when Team Builder is more polished
+          <FeatureCard
+            icon={<Users className="w-6 h-6" />}
+            decorIcon={<Users className="w-16 h-16" />}
             title={t.ui("app.navTeamBuilder")}
             problem={t.ui("app.teamBuilderProblem")}
             guideline={t.ui("app.teamBuilderGuideline")}
             link="/team-builder"
-            bgImage="assets/home/team_bg.jpg"
-            bgPosition="center 40%"
+            bgImage="assets/home/weapon_bg.png"
+            bgPosition="center 50%"
+            accentColor="from-cyan-500/20 to-blue-500/10"
+            exploreText={t.ui("app.explore")}
           />
+          */}
         </div>
       </div>
     </PageLayout>
   );
 }
 
-const FeatureRow = ({
+/**
+ * Immersive feature card with rich visual hierarchy.
+ * Shows tool name prominently, value proposition as hook, and guideline as preview.
+ */
+const FeatureCard = ({
   icon,
+  decorIcon,
   title,
   problem,
   guideline,
   link,
   bgImage,
   bgPosition = "center center",
+  accentColor,
+  className,
+  exploreText,
 }: {
   icon: React.ReactNode;
+  decorIcon: React.ReactNode;
   title: string;
   problem: string;
   guideline: string;
   link: string;
   bgImage: string;
   bgPosition?: string;
+  accentColor: string;
+  className?: string;
+  exploreText: string;
 }) => {
-  return (
-    <div className="group grid grid-cols-1 md:grid-cols-[40%_1fr] items-stretch min-h-[120px] md:h-[120px] rounded-2xl overflow-hidden transition-all duration-300 border border-border/30 hover:border-primary/40 shadow-sm hover:shadow-md bg-card/30">
-      {/* Left: Problem Question with Background Image */}
-      <div className="relative h-32 md:h-full flex items-center px-4 md:px-8 overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute inset-0 bg-cover"
-            style={{
-              backgroundImage: `url('${getAssetUrl(bgImage)}')`,
-              backgroundPosition: bgPosition,
-            }}
-          />
-          {/* Gradient Overlay: Heavy dark shade to ensure text readability */}
-          <div className="absolute inset-0 bg-black/70 transition-colors duration-300 group-hover:bg-black/40" />
-        </div>
+  // Strip markdown links from guideline for display (e.g., "[text](url)" -> "text")
+  const cleanGuideline = guideline.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
-        {/* Content */}
-        <div className="relative z-10 text-left pl-2">
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white group-hover:text-primary transition-colors leading-tight drop-shadow-md">
-            {problem}
-          </h2>
-        </div>
+  return (
+    <Link
+      to={link}
+      className={cn(
+        "group relative flex flex-col justify-between min-h-[180px] md:min-h-[200px] rounded-2xl overflow-hidden transition-all duration-300 border border-border/30 hover:border-primary/50 shadow-md hover:shadow-xl hover:shadow-primary/5 bg-card/30",
+        className
+      )}
+    >
+      {/* Background Image with Animated Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover transition-transform duration-500 group-hover:scale-105"
+          style={{
+            backgroundImage: `url('${getAssetUrl(bgImage)}')`,
+            backgroundPosition: bgPosition,
+          }}
+        />
+        {/* Multi-layer gradient for depth and readability */}
+        <div
+          className={cn(
+            "absolute inset-0 bg-gradient-to-br opacity-80",
+            accentColor
+          )}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/55 transition-opacity duration-300 group-hover:from-black/85 group-hover:via-black/55 group-hover:to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
       </div>
 
-      {/* Right: Solution (Button + Guideline) */}
-      <div className="relative h-full flex items-center p-4 md:px-8 bg-card border-t md:border-t-0 md:border-l border-white/5">
-        <div className="flex flex-col md:grid md:grid-cols-[auto_1fr] items-start md:items-center gap-4 md:gap-6 w-full">
-          <Link to={link} className="shrink-0 w-full md:w-auto">
-            <Button
-              variant="outline"
-              className="h-10 w-full md:w-60 relative rounded-full border-primary/80 bg-background/50 hover:bg-background/80 hover:border-primary shadow-md text-base md:text-lg font-medium flex items-center justify-center px-10 backdrop-blur-sm"
-            >
-              <span className="absolute left-5 text-primary shrink-0">
-                {icon}
-              </span>
-              <span className="truncate text-center">{title}</span>
-              <ArrowRight className="absolute right-5 w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform shrink-0" />
-            </Button>
-          </Link>
+      {/* Decorative Icon - Large, faded in background */}
+      <div className="absolute top-4 right-4 text-white/10 group-hover:text-white/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
+        {decorIcon}
+      </div>
 
-          <div className="text-sm md:text-lg text-muted-foreground/90 leading-snug font-light line-clamp-3">
-            {guideline.split(/(\d+\.)|(\[.*?\]\(.*?\))/).map((part, i) => {
-              if (!part) return null;
-              if (part.match(/^\d+\.$/)) {
-                return (
-                  <span
-                    key={i}
-                    className="font-semibold text-primary ml-1.5 first:ml-0"
-                  >
-                    {part}
-                  </span>
-                );
-              }
-              const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
-              if (linkMatch) {
-                return (
-                  <a
-                    key={i}
-                    href={linkMatch[2]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline underline-offset-4 transition-colors font-medium"
-                  >
-                    {linkMatch[1]}
-                  </a>
-                );
-              }
-              return <span key={i}>{part}</span>;
-            })}
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full p-5 gap-3">
+        {/* Header: Icon + Title */}
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/20 text-primary backdrop-blur-sm border border-primary/30 shadow-lg shadow-primary/10">
+            {icon}
+          </div>
+          <h3 className="text-lg md:text-xl font-bold text-white/90 tracking-wide transition-all group-hover:text-primary group-hover:[text-shadow:_0_0_8px_rgb(0_0_0),_0_0_16px_rgb(0_0_0),_0_2px_4px_rgb(0_0_0)]">
+            {title}
+          </h3>
+        </div>
+
+        {/* Problem Statement - The Hook */}
+        <h2 className="text-xl md:text-2xl font-bold text-white leading-tight drop-shadow-md">
+          {problem}
+        </h2>
+
+        {/* Guideline Preview - Truncated */}
+        <p className="text-sm text-white/60 line-clamp-2 leading-relaxed flex-1">
+          {cleanGuideline}
+        </p>
+
+        {/* CTA Bar */}
+        <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/10">
+          <span className="text-xs text-white/40 uppercase tracking-wider font-medium">
+            {title}
+          </span>
+          <div className="flex items-center gap-2 text-primary group-hover:gap-3 transition-all duration-300">
+            <span className="text-sm font-medium hidden sm:inline">
+              {exploreText}
+            </span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

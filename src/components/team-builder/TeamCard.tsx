@@ -205,21 +205,18 @@ export function TeamCard({
           <Flower className="w-6 h-6 select-none" />
         </div>
         {/* Row 5: Artifact Picker */}
-        {team.artifacts.map((artId, idx) => (
+        {team.artifacts.map((artifactConfig, idx) => (
           <div
             key={`art-picker-wrapper-${idx}`}
             className="flex justify-center items-center"
           >
             <ItemPicker
               type="artifact"
-              value={artId ? { type: "4pc" as const, setId: artId } : null}
+              value={artifactConfig}
               onChange={(val) => {
-                // Team Builder only supports 4pc sets for now
-                if (val.type === "4pc") {
-                  const newArts = [...team.artifacts];
-                  newArts[idx] = val.setId;
-                  onUpdate({ artifacts: newArts });
-                }
+                const newArts = [...team.artifacts];
+                newArts[idx] = val;
+                onUpdate({ artifacts: newArts });
               }}
               onClear={() => {
                 const newArts = [...team.artifacts];

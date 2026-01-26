@@ -1,9 +1,10 @@
 /**
- * Integration Tests: Artifact Filter Configure View Flow
+/**
+ * Integration Tests: Artifact Filter Character Build View Flow
  *
- * Tests the complete flow of ConfigureView:
+ * Tests the complete flow of CharacterBuildView:
  * 1. Character filtering and sorting
- * 2. Target character navigation (from ComputeView)
+ * 2. Target character navigation (from ArtifactFilterView)
  * 3. Tier-based sorting integration
  */
 
@@ -19,7 +20,7 @@ import {
 } from "@/lib/characterFilters";
 import { useTierStore } from "@/stores/useTierStore";
 
-describe("Integration: Configure View Filter Flow", () => {
+describe("Integration: Character Build View Filter Flow", () => {
   beforeEach(() => {
     useTierStore.getState().resetTierList();
   });
@@ -131,7 +132,7 @@ describe("Integration: Configure View Filter Flow", () => {
 
       expect(character).toBeDefined();
 
-      // Simulate what ConfigureView does when targetCharacterId is set
+      // Simulate what CharacterBuildView does when targetCharacterId is set
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
         elements: [character.element],

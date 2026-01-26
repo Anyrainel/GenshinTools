@@ -10,6 +10,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, weaponsById } from "@/data/constants";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
@@ -21,8 +22,10 @@ interface InventoryViewProps {
 
 export function InventoryView({ data }: InventoryViewProps) {
   const { t } = useLanguage();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const iconSize = isMobile ? "lg" : "xl";
 
-  // WEAPONS
+  // WEAPONS - sorted by rarity desc > weapon type
   const allWeapons = (data.extraWeapons || []).slice().sort((a, b) => {
     const infoA = weaponsById[a.key];
     const infoB = weaponsById[b.key];
@@ -30,9 +33,11 @@ export function InventoryView({ data }: InventoryViewProps) {
     if (infoA && infoB && infoA.rarity !== infoB.rarity) {
       return infoB.rarity - infoA.rarity;
     }
-    // Then by level desc
-    if (a.level !== b.level) return b.level - a.level;
-    // Then by key
+    // Then by weapon type
+    if (infoA && infoB && infoA.type !== infoB.type) {
+      return infoA.type.localeCompare(infoB.type);
+    }
+    // Then by key for stability
     return a.key.localeCompare(b.key);
   });
 
@@ -75,8 +80,24 @@ export function InventoryView({ data }: InventoryViewProps) {
   const maxLvlWeapons = groupWeapons(allWeapons.filter((w) => w.level === 90));
   const otherWeapons = groupWeapons(allWeapons.filter((w) => w.level < 90));
 
-  // ARTIFACTS
-  const allArtifacts = data.extraArtifacts || [];
+  // ARTIFACTS - sorted by set key > slot order
+  const slotOrder: Record<string, number> = {
+    flower: 0,
+    plume: 1,
+    sands: 2,
+    goblet: 3,
+    circlet: 4,
+  };
+
+  const sortedArtifacts = (data.extraArtifacts || []).slice().sort((a, b) => {
+    // Sort by set key first
+    if (a.setKey !== b.setKey) {
+      return a.setKey.localeCompare(b.setKey);
+    }
+    // Then by slot order
+    return (slotOrder[a.slotKey] ?? 5) - (slotOrder[b.slotKey] ?? 5);
+  });
+
   // Helper to determine "Max Level" for artifacts
   const isMaxArtifact = (a: ArtifactData) => {
     return (
@@ -84,8 +105,8 @@ export function InventoryView({ data }: InventoryViewProps) {
     );
   };
 
-  const maxLvlArtifacts = allArtifacts.filter(isMaxArtifact);
-  const otherArtifacts = allArtifacts.filter((a) => !isMaxArtifact(a));
+  const maxLvlArtifacts = sortedArtifacts.filter(isMaxArtifact);
+  const otherArtifacts = sortedArtifacts.filter((a) => !isMaxArtifact(a));
 
   return (
     <ScrollLayout className="space-y-4 pb-12">
@@ -94,7 +115,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={maxLvlWeapons.length}
         defaultOpen={true}
       >
-        <WeaponGrid weapons={maxLvlWeapons} t={t} />
+        <WeaponGrid weapons={maxLvlWeapons} iconSize={iconSize} t={t} />
       </Section>
 
       <Section
@@ -102,7 +123,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={otherWeapons.length}
         defaultOpen={false}
       >
-        <WeaponGrid weapons={otherWeapons} t={t} />
+        <WeaponGrid weapons={otherWeapons} iconSize={iconSize} t={t} />
       </Section>
 
       <Section
@@ -110,7 +131,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={maxLvlArtifacts.length}
         defaultOpen={true}
       >
-        <ArtifactGrid artifacts={maxLvlArtifacts} t={t} />
+        <ArtifactGrid artifacts={maxLvlArtifacts} iconSize={iconSize} t={t} />
       </Section>
 
       <Section
@@ -118,7 +139,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={otherArtifacts.length}
         defaultOpen={false}
       >
-        <ArtifactGrid artifacts={otherArtifacts} t={t} />
+        <ArtifactGrid artifacts={otherArtifacts} iconSize={iconSize} t={t} />
       </Section>
     </ScrollLayout>
   );
@@ -174,13 +195,15 @@ function Section({
 
 function WeaponGrid({
   weapons,
+  iconSize,
   t,
 }: {
   weapons: (WeaponData & { count: number })[];
+  iconSize: "lg" | "xl";
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
-    <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 xl:grid-cols-14 2xl:grid-cols-16 gap-3 px-2">
+    <div className="flex flex-wrap gap-3 px-2">
       {weapons.map((w) => {
         const weaponInfo = weaponsById[w.key];
         const name = t.weaponName(w.key);
@@ -188,12 +211,14 @@ function WeaponGrid({
           <Tooltip key={w.id}>
             <TooltipTrigger asChild>
               <Card className="flex flex-col cursor-help bg-transparent border-0 shadow-none group">
-                <div className="aspect-square relative w-full transition-transform group-hover:scale-105 duration-200">
+                <div className="relative transition-transform group-hover:scale-105 duration-200">
                   <ItemIcon
                     imagePath={weaponInfo?.imagePath || ""}
                     rarity={weaponInfo?.rarity || 1}
                     badge={w.refinement}
-                    size="full"
+                    lock={w.lock}
+                    level={`Lv. ${w.level}`}
+                    size={iconSize}
                   />
                   {w.count > 1 && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -204,7 +229,6 @@ function WeaponGrid({
                   )}
                 </div>
                 <div className="pt-1 text-xs text-center font-medium opacity-90 group-hover:opacity-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
-                  <span className="font-semibold mr-1">Lv.{w.level}</span>
                   {name}
                 </div>
               </Card>
@@ -224,52 +248,57 @@ function WeaponGrid({
 
 function ArtifactGrid({
   artifacts,
+  iconSize,
   t,
-}: { artifacts: ArtifactData[]; t: ReturnType<typeof useLanguage>["t"] }) {
+}: {
+  artifacts: ArtifactData[];
+  iconSize: "lg" | "xl";
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   return (
-    <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 xl:grid-cols-14 2xl:grid-cols-16 gap-3 px-2">
+    <div className="flex flex-wrap gap-3 px-2">
       {artifacts.map((a) => {
         const artInfo = artifactsById[a.setKey];
         const name = t.artifact(a.setKey);
+        // Use astralMark as badge (show star if marked)
+        const badge = a.astralMark ? "⭐" : undefined;
 
         return (
-          <div key={a.id} className="w-full">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="aspect-square relative rounded-md overflow-hidden group cursor-help transition-transform hover:scale-105 duration-200">
-                  <ItemIcon
-                    imagePath={artInfo?.imagePaths[a.slotKey] || ""}
-                    rarity={a.rarity}
-                    size="full"
-                  />
-                  <div className="absolute bottom-0 right-0 bg-black/60 px-1 text-xs text-white font-mono rounded-tl">
-                    +{a.level}
+          <Tooltip key={a.id}>
+            <TooltipTrigger asChild>
+              <div className="relative rounded-md overflow-hidden group cursor-help transition-transform hover:scale-105 duration-200">
+                <ItemIcon
+                  imagePath={artInfo?.imagePaths[a.slotKey] || ""}
+                  rarity={a.rarity}
+                  badge={badge}
+                  lock={a.lock}
+                  level={`+${a.level}`}
+                  size={iconSize}
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="p-0 border-none bg-transparent"
+            >
+              <div className="w-48 bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2 text-slate-100 shadow-xl">
+                <div className="border-b border-slate-700 pb-2">
+                  <div
+                    className={cn(
+                      "font-bold text-base",
+                      getRarityColor(a.rarity, "text")
+                    )}
+                  >
+                    {name}
+                  </div>
+                  <div className="text-sm text-slate-400 capitalize">
+                    {t.ui(`computeFilters.${a.slotKey}`)}
                   </div>
                 </div>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="p-0 border-none bg-transparent"
-              >
-                <div className="w-48 bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2 text-slate-100 shadow-xl">
-                  <div className="border-b border-slate-700 pb-2">
-                    <div
-                      className={cn(
-                        "font-bold text-base",
-                        getRarityColor(a.rarity, "text")
-                      )}
-                    >
-                      {name}
-                    </div>
-                    <div className="text-sm text-slate-400 capitalize">
-                      {t.ui(`computeFilters.${a.slotKey}`)}
-                    </div>
-                  </div>
-                  <StatDisplay artifact={a} />
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+                <StatDisplay artifact={a} />
+              </div>
+            </TooltipContent>
+          </Tooltip>
         );
       })}
     </div>

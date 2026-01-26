@@ -1,3 +1,4 @@
+import { artifactsById } from "@/data/constants";
 import { i18nGameData } from "@/data/i18n-game";
 import type {
   AccountData,
@@ -26,6 +27,11 @@ export interface IGOODArtifact {
   location: string;
   lock: boolean;
   substats: IGOODSubstat[];
+  // GOOD v3 fields
+  totalRolls?: number;
+  astralMark?: boolean;
+  elixirCrafted?: boolean;
+  unactivatedSubstats?: IGOODSubstat[];
 }
 
 export interface IGOODWeapon {
@@ -240,6 +246,13 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
       const setKey = artifactMap.get(normalizedSetKey);
       if (setKey) {
+        // Skip unequipped artifacts with lower rarity than the set's max rarity
+        const setData = artifactsById[setKey];
+        if (!art.location && setData && art.rarity < setData.rarity) {
+          artifactIndex++;
+          continue;
+        }
+
         const mainStatKey = statKeyMap[art.mainStatKey] as MainStat;
         const slotKey = slotKeyMap[art.slotKey];
 
@@ -249,6 +262,18 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
           const key = statKeyMap[sub.key] as SubStat;
           if (key) {
             substats[key] = sub.value;
+          }
+        }
+
+        // Convert unactivatedSubstats array to Record (GOOD v3)
+        let unactivatedSubstats: Partial<Record<SubStat, number>> | undefined;
+        if (art.unactivatedSubstats && art.unactivatedSubstats.length > 0) {
+          unactivatedSubstats = {};
+          for (const sub of art.unactivatedSubstats) {
+            const key = statKeyMap[sub.key] as SubStat;
+            if (key) {
+              unactivatedSubstats[key] = sub.value;
+            }
           }
         }
 
@@ -262,6 +287,13 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
             mainStatKey,
             lock: art.lock,
             substats,
+            // GOOD v3 fields (only include if present)
+            ...(art.totalRolls !== undefined && { totalRolls: art.totalRolls }),
+            ...(art.astralMark !== undefined && { astralMark: art.astralMark }),
+            ...(art.elixirCrafted !== undefined && {
+              elixirCrafted: art.elixirCrafted,
+            }),
+            ...(unactivatedSubstats && { unactivatedSubstats }),
           };
 
           let assigned = false;

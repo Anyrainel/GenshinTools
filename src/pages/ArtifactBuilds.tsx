@@ -1,17 +1,16 @@
-import { ComputeView } from "@/components/artifact-filter/ComputeView";
-import { ConfigureView } from "@/components/artifact-filter/ConfigureView";
-import {
-  type ActionConfig,
-  AppBar,
-  type ControlHandle,
-  type TabConfig,
+import { ArtifactFilterView } from "@/components/artifact-filter/ArtifactFilterView";
+import { CharacterBuildView } from "@/components/artifact-filter/CharacterBuildView";
+import type {
+  ActionConfig,
+  ControlHandle,
+  TabConfig,
 } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   Build,
@@ -20,6 +19,7 @@ import type {
   PresetOption,
 } from "@/data/types";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { serializeBuildExportPayload } from "@/stores/jsonUtils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
@@ -27,6 +27,7 @@ import {
   Download,
   FileDown,
   Filter,
+  HelpCircle,
   Settings,
   Trash2,
   Upload,
@@ -40,8 +41,9 @@ const presetModules = import.meta.glob<{ default: BuildPayload }>(
   { eager: false }
 );
 
-export default function ArtifactFilterPage() {
+export default function ArtifactBuildsPage() {
   const { t } = useLanguage();
+  const tour = useTour();
   const computeContentRef = useRef<HTMLDivElement>(null);
   const [targetCharacterId, setTargetCharacterId] = useState<string>();
 
@@ -60,6 +62,17 @@ export default function ArtifactFilterPage() {
       return newParams;
     });
   };
+
+  // Start tour on first visit (after a short delay for page to render)
+  useEffect(() => {
+    if (!isTourCompleted("artifact-filter") && activeTab === "configure") {
+      const timer = setTimeout(() => {
+        tour.start("artifact-filter");
+        markTourCompleted("artifact-filter");
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [tour, activeTab]);
 
   const importBuilds = useBuildsStore((state) => state.importBuilds);
   const clearAllBuilds = useBuildsStore((state) => state.clearAll);
@@ -174,6 +187,7 @@ export default function ArtifactFilterPage() {
         value: "filters",
         label: t.ui("navigation.computeFilters"),
         icon: Filter,
+        tourStepId: "af-compute-tab",
       },
     ],
     [t]
@@ -190,8 +204,15 @@ export default function ArtifactFilterPage() {
           onTrigger: handleDownloadImage,
           alwaysShow: true,
         },
+        {
+          key: "help",
+          icon: HelpCircle,
+          label: t.ui("buttons.help"),
+          onTrigger: () => tour.start("artifact-filter"),
+        },
       ];
     }
+
     return [
       {
         key: "import",
@@ -199,6 +220,7 @@ export default function ArtifactFilterPage() {
         label: t.ui("app.import"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
+        tourStepId: "af-presets",
       },
       {
         key: "export",
@@ -212,8 +234,14 @@ export default function ArtifactFilterPage() {
         label: t.ui("app.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
+      {
+        key: "help",
+        icon: HelpCircle,
+        label: t.ui("buttons.help"),
+        onTrigger: () => tour.start("artifact-filter"),
+      },
     ];
-  }, [activeTab, t, handleDownloadImage]);
+  }, [activeTab, t, handleDownloadImage, tour]);
 
   return (
     <PageLayout
@@ -245,14 +273,14 @@ export default function ArtifactFilterPage() {
         className="h-full overflow-hidden"
       >
         <TabsContent value="configure" className="mt-0 h-full">
-          <ConfigureView
+          <CharacterBuildView
             targetCharacterId={targetCharacterId}
             onTargetProcessed={() => setTargetCharacterId(undefined)}
           />
         </TabsContent>
 
         <TabsContent value="filters" className="mt-0 h-full">
-          <ComputeView
+          <ArtifactFilterView
             contentRef={computeContentRef}
             onJumpToCharacter={(characterId) => {
               setTargetCharacterId(characterId);

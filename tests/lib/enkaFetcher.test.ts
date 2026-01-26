@@ -2,7 +2,7 @@ import {
   type EnkaResponse,
   convertEnkaToGOOD,
   fetchEnkaData,
-} from "@/lib/enka";
+} from "@/lib/enkaFetcher";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("enka", () => {
@@ -52,7 +52,7 @@ describe("enka", () => {
       const { data: result } = convertEnkaToGOOD(enkaData);
 
       expect(result.format).toBe("GOOD");
-      expect(result.version).toBe(1);
+      expect(result.version).toBe(3);
       expect(result.source).toBe("enka");
       expect(result.characters).toEqual([]);
       expect(result.artifacts).toEqual([]);

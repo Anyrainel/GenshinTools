@@ -284,7 +284,7 @@ export function convertEnkaToGOOD(
   return {
     data: {
       format: "GOOD",
-      version: 1,
+      version: 3,
       source: "enka",
       characters,
       artifacts,

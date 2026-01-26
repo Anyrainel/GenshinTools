@@ -279,6 +279,11 @@ export type ArtifactData = {
   mainStatKey: MainStat;
   lock: boolean;
   substats: Partial<Record<SubStat, number>>;
+  // GOOD v3 fields
+  totalRolls?: number;
+  astralMark?: boolean;
+  elixirCrafted?: boolean;
+  unactivatedSubstats?: Partial<Record<SubStat, number>>;
 };
 
 export type WeaponData = {

@@ -1,26 +1,114 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="gradG" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    <!-- Gear Gradient (Mid-Tone Antique Gold) - Brighter for visibility, kept yellow-based -->
+    <linearGradient id="gearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CA8A04;stop-opacity:1" /> <!-- Yellow 600 -->
+      <stop offset="100%" style="stop-color:#854D0E;stop-opacity:1" /> <!-- Yellow 800 -->
     </linearGradient>
 
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.4"/>
+    <!-- 
+      NEW PALETTE based on USER Feedback:
+      1. Pink facets: Darkened slightly again to reduce glare.
+      2. Blue facets: Darkened slightly again.
+    -->
+
+    <!-- PINK: Brightest (Top-Left, Left-Top) - Darkened slightly per user request -->
+    <linearGradient id="pinkBright" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FBCFE8;stop-opacity:1" /> <!-- Pink 200 -->
+      <stop offset="100%" style="stop-color:#F9A8D4;stop-opacity:1" /> <!-- Pink 300 -->
+    </linearGradient>
+    
+    <!-- PINK: Slightly Darker (Top-Right) - Desaturated slightly per user request -->
+    <linearGradient id="pinkDim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E88AB3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D65E92;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- BLUE: Brightest (Bottom-Left, Right-Top) - Was Cyan300->Cyan400, Now Cyan400->Cyan500 -->
+    <linearGradient id="blueBright" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22D3EE;stop-opacity:1" /> <!-- Cyan 400 -->
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" /> <!-- Cyan 500 -->
+    </linearGradient>
+
+    <!-- BLUE: Average (Left-Bottom, Bottom-Right) - Was Blue500->Blue600, Now Blue600->Blue700 -->
+    <linearGradient id="blueAvg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" /> <!-- Blue 600 -->
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" /> <!-- Blue 700 -->
+    </linearGradient>
+
+    <!-- BLUE: Darkest (Right-Bottom) - Was Blue700->Blue900, Now Blue800->Blue950 -->
+    <linearGradient id="blueDark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E40AF;stop-opacity:1" /> <!-- Blue 800 -->
+      <stop offset="100%" style="stop-color:#172554;stop-opacity:1" /> <!-- Blue 950 -->
+    </linearGradient>
+
+    <!-- Inner Texture/Sparkle -->
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+         <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+         <stop offset="70%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-opacity="0.5"/>
     </filter>
+   
+    <!-- Texture Pattern for "Details" -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="10" cy="10" r="1.5" fill="white" opacity="0.2"/>
+    </pattern>
   </defs>
 
-  <!-- Single, bold 'G' letter, designed to look great and clear -->
-  <!-- Centered within the 512x512 viewBox -->
-  <g filter="url(#shadow)">
-    <path d="M 400 130 
-             A 180 180 0 1 0 400 390
-             L 400 256 
-             L 280 256" 
-          fill="none" 
-          stroke="url(#gradG)" 
-          stroke-width="80" 
-          stroke-linecap="round" 
-          stroke-linejoin="round"/>
+  <!-- Gear (Background) -->
+  <g fill="url(#gearGrad)" transform="translate(256, 256)">
+     <!-- Ring -->
+     <path d="M -160 0 A 160 160 0 1 1 160 0 A 160 160 0 1 1 -160 0 M -100 0 A 100 100 0 1 0 100 0 A 100 100 0 1 0 -100 0 Z" fill-rule="evenodd"/>
+     <!-- Teeth -->
+     <path id="tooth" d="M -30 -190 L 30 -190 L 40 -155 L -40 -155 Z" />
+     <use href="#tooth" transform="rotate(45)" />
+     <use href="#tooth" transform="rotate(90)" />
+     <use href="#tooth" transform="rotate(135)" />
+     <use href="#tooth" transform="rotate(180)" />
+     <use href="#tooth" transform="rotate(225)" />
+     <use href="#tooth" transform="rotate(270)" />
+     <use href="#tooth" transform="rotate(315)" />
+  </g>
+
+  <!-- Primogem (Foreground) -->
+  <!-- 
+     Scaled down (0.75) to fit INSIDE the gear teeth (radius ~190), 
+     aligning roughly with the gear's inner ring (radius ~160).
+     
+     Local Coords:
+     Center: 0, 0
+     Tips: 216 distance (0, -216, etc)
+     Valleys: 86, 86 distance (45 degrees)
+  -->
+  <g filter="url(#shadow)" transform="translate(256, 256) scale(0.875)">
+     <!-- TOP ARM -->
+     <!-- Top-Left Facet: Pink (Bright) -->
+     <path d="M 0 0 L 0 -216 L -86 -86 Z" fill="url(#pinkBright)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+     <!-- Top-Right Facet: Pink (Slightly Darker) -->
+     <path d="M 0 0 L 86 -86 L 0 -216 Z" fill="url(#pinkDim)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+     <!-- LEFT ARM -->
+     <!-- Left-Top Facet: Pink (Bright) -->
+     <path d="M 0 0 L -86 -86 L -216 0 Z" fill="url(#pinkBright)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+     <!-- Left-Bottom Facet: Blue (Average) -->
+     <path d="M 0 0 L -216 0 L -86 86 Z" fill="url(#blueAvg)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+     <!-- RIGHT ARM -->
+     <!-- Right-Top Facet: Blue (Bright) -->
+     <path d="M 0 0 L 216 0 L 86 -86 Z" fill="url(#blueBright)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+     <!-- Right-Bottom Facet: Blue (Darkest) -->
+     <path d="M 0 0 L 86 86 L 216 0 Z" fill="url(#blueDark)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+     <!-- BOTTOM ARM -->
+     <!-- Bottom-Left Facet: Blue (Bright) -->
+     <path d="M 0 0 L -86 86 L 0 216 Z" fill="url(#blueBright)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+     <!-- Bottom-Right Facet: Blue (Average) -->
+     <path d="M 0 0 L 0 216 L 86 86 Z" fill="url(#blueAvg)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+     
+
+     
   </g>
 </svg>

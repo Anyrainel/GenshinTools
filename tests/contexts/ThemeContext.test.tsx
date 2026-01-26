@@ -45,12 +45,12 @@ describe("ThemeContext", () => {
   });
 
   describe("initial state", () => {
-    it("defaults to abyss theme", () => {
+    it("defaults to nodkrai theme", () => {
       const { result } = renderHook(() => useTheme(), {
         wrapper: ThemeProvider,
       });
 
-      expect(result.current.theme).toBe("abyss");
+      expect(result.current.theme).toBe("nodkrai");
     });
 
     it("reads theme from localStorage if valid", () => {
@@ -70,7 +70,7 @@ describe("ThemeContext", () => {
         wrapper: ThemeProvider,
       });
 
-      expect(result.current.theme).toBe("abyss");
+      expect(result.current.theme).toBe("nodkrai");
     });
 
     it("applies theme to document element", () => {

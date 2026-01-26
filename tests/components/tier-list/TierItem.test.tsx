@@ -65,7 +65,7 @@ describe("TierItem", () => {
     // ItemIcon should render an image
     const img = container.querySelector("img");
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute("alt", "Hu Tao");
+    expect(img).toHaveAttribute("alt", mockItem.imagePath);
   });
 
   it("renders overlay image when provided", () => {

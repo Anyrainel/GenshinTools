@@ -7,6 +7,7 @@ export interface NavTab {
   href: string;
   icon?: LucideIcon;
   value: string; // Used for matching active state if needed
+  tourStepId?: string; // Tour step ID for onboarding spotlight
 }
 
 export interface NavItem {
@@ -27,24 +28,27 @@ export const getNavigationConfig = (
         href: "/account-data?tab=characters",
         value: "characters",
         icon: Users,
+        tourStepId: "ad-characters",
       },
       {
         label: t.ui("accountData.summary"),
         href: "/account-data?tab=summary",
         value: "summary",
         icon: LayoutGrid,
-      },
-      {
-        label: t.ui("accountData.statWeights"),
-        href: "/account-data?tab=weights",
-        value: "weights",
-        icon: Settings,
+        tourStepId: "ad-summary",
       },
       {
         label: t.ui("accountData.inventory"),
         href: "/account-data?tab=inventory",
         value: "inventory",
         icon: Box,
+      },
+      {
+        label: t.ui("accountData.statWeights"),
+        href: "/account-data?tab=weights",
+        value: "weights",
+        icon: Settings,
+        tourStepId: "ad-weights",
       },
     ],
   },
@@ -63,6 +67,7 @@ export const getNavigationConfig = (
         href: "/artifact-filter?tab=filters",
         value: "filters",
         icon: Filter,
+        tourStepId: "af-compute-tab",
       },
     ],
   },
@@ -71,8 +76,8 @@ export const getNavigationConfig = (
     href: "/tier-list",
   },
   {
-    label: t.ui("app.navWeaponTierList"),
-    href: "/weapon-tier-list",
+    label: t.ui("app.navWeaponBrowser"),
+    href: "/weapon-browser",
   },
   {
     label: t.ui("app.navTeamBuilder"),

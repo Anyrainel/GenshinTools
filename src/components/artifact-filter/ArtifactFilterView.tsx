@@ -8,15 +8,15 @@ import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactCard } from "./ArtifactCard";
 import { ComputeSidebar } from "./ComputeSidebar";
 
-interface ComputeViewProps {
+interface ArtifactFilterViewProps {
   onJumpToCharacter: (characterId: string) => void;
   contentRef?: RefObject<HTMLDivElement>;
 }
 
-export function ComputeView({
+export function ArtifactFilterView({
   onJumpToCharacter,
   contentRef,
-}: ComputeViewProps) {
+}: ArtifactFilterViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Compute options from store

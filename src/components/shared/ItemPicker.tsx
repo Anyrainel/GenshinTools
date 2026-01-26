@@ -310,11 +310,14 @@ function PickerTrigger({
     }
     const half1 = artifactHalfSetsById[conf.id1];
     const half2 = artifactHalfSetsById[conf.id2];
-    const art1 = half1?.setIds[0] ? artifactsById[half1.setIds[0]] : undefined;
-    const art2id = half2 === half1 ? half2?.setIds[1] : half2?.setIds[0];
-    const art2 = art2id ? artifactsById[art2id] : undefined;
-
-    const rarityColor = "bg-[#b27330]"; // Rarity 5 background color
+    // Prefer rarity 5 artifacts for display
+    const art1 = half1?.setIds
+      .map((id) => artifactsById[id])
+      .find((a) => a?.rarity === 5);
+    const art2 = half2?.setIds
+      .filter((id) => half2 !== half1 || id !== art1?.id)
+      .map((id) => artifactsById[id])
+      .find((a) => a?.rarity === 5);
 
     return (
       <DoubleItemIcon
@@ -430,7 +433,7 @@ function PickerContent({
           original: a,
         }));
       }
-      // 2pc Half Sets
+      // 2pc Half Sets - show all that have at least one rarity 5 set
       return artifactHalfSets
         .filter((half) =>
           half.setIds.some((id) => (artifactsById[id]?.rarity ?? 0) === 5)
@@ -596,23 +599,25 @@ function PickerContent({
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium leading-tight">{name}</div>
           </div>
-          {/* Show icons for the sets in this half-set */}
+          {/* Show icons for rarity 5 sets only */}
           <div className="flex -space-x-4">
-            {(original as ArtifactHalfSet).setIds.map((setId: string) => {
-              const art = artifactsById[setId];
-              return (
-                <div
-                  key={setId}
-                  className="w-10 h-10 rounded-full border-2 border-background bg-secondary overflow-hidden shrink-0 z-0 hover:z-10 transition-all"
-                >
-                  <img
-                    src={getAssetUrl(art.imagePaths.flower)}
-                    className="w-full h-full object-cover"
-                    alt={art.id}
-                  />
-                </div>
-              );
-            })}
+            {(original as ArtifactHalfSet).setIds
+              .filter((setId: string) => artifactsById[setId]?.rarity === 5)
+              .map((setId: string) => {
+                const art = artifactsById[setId];
+                return (
+                  <div
+                    key={setId}
+                    className="w-10 h-10 rounded-full border-2 border-background bg-secondary overflow-hidden shrink-0 z-0 hover:z-10 transition-all"
+                  >
+                    <img
+                      src={getAssetUrl(art.imagePaths.flower)}
+                      className="w-full h-full object-cover"
+                      alt={art.id}
+                    />
+                  </div>
+                );
+              })}
           </div>
         </div>
       );

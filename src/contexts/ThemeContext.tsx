@@ -42,7 +42,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const THEME_STORAGE_KEY = "app_theme";
-const DEFAULT_THEME: ThemeId = "abyss";
+const DEFAULT_THEME: ThemeId = "nodkrai";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>(() => {

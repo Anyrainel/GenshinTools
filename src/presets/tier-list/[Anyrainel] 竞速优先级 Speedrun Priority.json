@@ -1,0 +1,302 @@
+{
+  "tierAssignments": {
+    "mavuika": {
+      "tier": "S",
+      "position": 0
+    },
+    "arlecchino": {
+      "tier": "C",
+      "position": 0
+    },
+    "dehya": {
+      "tier": "D",
+      "position": 0
+    },
+    "klee": {
+      "tier": "B",
+      "position": 13
+    },
+    "chevreuse": {
+      "tier": "B",
+      "position": 3
+    },
+    "thoma": {
+      "tier": "D",
+      "position": 1
+    },
+    "bennett": {
+      "tier": "B",
+      "position": 2
+    },
+    "mualani": {
+      "tier": "S",
+      "position": 4
+    },
+    "sigewinne": {
+      "tier": "B",
+      "position": 5
+    },
+    "furina": {
+      "tier": "A",
+      "position": 3
+    },
+    "neuvillette": {
+      "tier": "C",
+      "position": 2
+    },
+    "nilou": {
+      "tier": "A",
+      "position": 4
+    },
+    "yelan": {
+      "tier": "C",
+      "position": 8
+    },
+    "aino": {
+      "tier": "D",
+      "position": 8
+    },
+    "mona": {
+      "tier": "B",
+      "position": 12
+    },
+    "xingqiu": {
+      "tier": "B",
+      "position": 11
+    },
+    "ineffa": {
+      "tier": "A",
+      "position": 1
+    },
+    "varesa": {
+      "tier": "S",
+      "position": 2
+    },
+    "clorinde": {
+      "tier": "C",
+      "position": 10
+    },
+    "raiden_shogun": {
+      "tier": "C",
+      "position": 11
+    },
+    "iansan": {
+      "tier": "B",
+      "position": 4
+    },
+    "ororon": {
+      "tier": "D",
+      "position": 0
+    },
+    "kuki_shinobu": {
+      "tier": "D",
+      "position": 3
+    },
+    "kujou_sara": {
+      "tier": "C",
+      "position": 12
+    },
+    "fischl": {
+      "tier": "A",
+      "position": 12
+    },
+    "skirk": {
+      "tier": "S",
+      "position": 3
+    },
+    "escoffier": {
+      "tier": "A",
+      "position": 8
+    },
+    "citlali": {
+      "tier": "A",
+      "position": 7
+    },
+    "wriothesley": {
+      "tier": "C",
+      "position": 14
+    },
+    "shenhe": {
+      "tier": "A",
+      "position": 13
+    },
+    "kamisato_ayaka": {
+      "tier": "B",
+      "position": 9
+    },
+    "ganyu": {
+      "tier": "B",
+      "position": 10
+    },
+    "charlotte": {
+      "tier": "D",
+      "position": 2
+    },
+    "diona": {
+      "tier": "D",
+      "position": 1
+    },
+    "chasca": {
+      "tier": "S",
+      "position": 5
+    },
+    "xianyun": {
+      "tier": "A",
+      "position": 9
+    },
+    "kaedehara_kazuha": {
+      "tier": "B",
+      "position": 0
+    },
+    "venti": {
+      "tier": "C",
+      "position": 5
+    },
+    "faruzan": {
+      "tier": "B",
+      "position": 7
+    },
+    "sucrose": {
+      "tier": "B",
+      "position": 6
+    },
+    "xilonen": {
+      "tier": "A",
+      "position": 10
+    },
+    "chiori": {
+      "tier": "C",
+      "position": 3
+    },
+    "navia": {
+      "tier": "C",
+      "position": 4
+    },
+    "albedo": {
+      "tier": "A",
+      "position": 11
+    },
+    "zhongli": {
+      "tier": "D",
+      "position": 4
+    },
+    "yun_jin": {
+      "tier": "D",
+      "position": 5
+    },
+    "gorou": {
+      "tier": "B",
+      "position": 8
+    },
+    "lauma": {
+      "tier": "A",
+      "position": 5
+    },
+    "kinich": {
+      "tier": "S",
+      "position": 8
+    },
+    "emilie": {
+      "tier": "A",
+      "position": 6
+    },
+    "alhaitham": {
+      "tier": "C",
+      "position": 0
+    },
+    "yaoyao": {
+      "tier": "D",
+      "position": 10
+    },
+    "flins": {
+      "tier": "S",
+      "position": 1
+    },
+    "nefer": {
+      "tier": "S",
+      "position": 6
+    },
+    "durin": {
+      "tier": "A",
+      "position": 0
+    },
+    "jahoda": {
+      "tier": "D",
+      "position": 13
+    },
+    "lan_yan": {
+      "tier": "D",
+      "position": 12
+    },
+    "baizhu": {
+      "tier": "D",
+      "position": 9
+    },
+    "nahida": {
+      "tier": "A",
+      "position": 14
+    },
+    "jean": {
+      "tier": "D",
+      "position": 11
+    },
+    "wanderer": {
+      "tier": "C",
+      "position": 6
+    },
+    "columbina": {
+      "tier": "A",
+      "position": 2
+    },
+    "zibai": {
+      "tier": "S",
+      "position": 7
+    },
+    "illuga": {
+      "tier": "B",
+      "position": 1
+    },
+    "tartaglia": {
+      "tier": "D",
+      "position": 7
+    },
+    "xiangling": {
+      "tier": "C",
+      "position": 15
+    },
+    "lyney": {
+      "tier": "C",
+      "position": 7
+    },
+    "kachina": {
+      "tier": "D",
+      "position": 6
+    },
+    "traveler_geo": {
+      "tier": "D",
+      "position": 16
+    }
+  },
+  "tierCustomization": {
+    "S": {
+      "displayName": "S: 版本主C"
+    },
+    "A": {
+      "displayName": "A: 富养队友"
+    },
+    "B": {
+      "displayName": "B: 穷养队友"
+    },
+    "C": {
+      "displayName": "C: 备选主副C"
+    },
+    "D": {
+      "displayName": "D: 工具人",
+      "hidden": false
+    }
+  },
+  "customTitle": "竞速优先级",
+  "language": "zh",
+  "author": "Anyrainel",
+  "description": "竞速优先级 Speedrun Priority"
+}

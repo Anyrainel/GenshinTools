@@ -39,7 +39,10 @@ export function SlotProgressIndicator({
             <AlertTriangle className="w-3.5 h-3.5 text-amber-500/80" />
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="text-xs bg-slate-900">
+        <TooltipContent
+          side="bottom"
+          className="text-xs text-white bg-slate-900"
+        >
           {t.ui("accountData.wrongMainStat")}
         </TooltipContent>
       </Tooltip>
@@ -66,7 +69,7 @@ export function SlotProgressIndicator({
       </TooltipTrigger>
       <TooltipContent
         side="bottom"
-        className="text-xs font-mono text-center bg-slate-900"
+        className="text-xs font-mono text-center text-white bg-slate-900"
       >
         <div>
           {t.ui(`computeFilters.${slot}`)} {t.ui("accountData.subStatScore")}

@@ -1,4 +1,4 @@
-import { ItemIcon, SIZE_CLASSES } from "@/components/shared/ItemIcon";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { render, screen } from "../../utils/render";
 
 describe("ItemIcon", () => {
@@ -17,83 +17,128 @@ describe("ItemIcon", () => {
   it("applies rarity background class", () => {
     const { container } = render(<ItemIcon {...defaultProps} rarity={1} />);
 
-    // Rarity uses custom CSS classes like bg-rarity-1
-    const iconDiv = container.firstChild as HTMLElement;
-    expect(iconDiv).toHaveClass("bg-rarity-1");
+    // Find the inner icon div that has the rarity class
+    const iconDiv = container.querySelector(".bg-rarity-1");
+    expect(iconDiv).toBeInTheDocument();
   });
 
   it("applies correct rarity background for 5-star", () => {
     const { container } = render(<ItemIcon {...defaultProps} rarity={5} />);
 
-    const iconDiv = container.firstChild as HTMLElement;
-    expect(iconDiv).toHaveClass("bg-rarity-5");
+    const iconDiv = container.querySelector(".bg-rarity-5");
+    expect(iconDiv).toBeInTheDocument();
   });
 
   it("applies correct rarity background for 4-star", () => {
     const { container } = render(<ItemIcon {...defaultProps} rarity={4} />);
 
-    const iconDiv = container.firstChild as HTMLElement;
-    expect(iconDiv).toHaveClass("bg-rarity-4");
+    const iconDiv = container.querySelector(".bg-rarity-4");
+    expect(iconDiv).toBeInTheDocument();
   });
 
   describe("size variants", () => {
-    // Test width/height from each size, not rounding (component has override)
-    it("applies xs size classes", () => {
+    // ItemIcon now uses inline styles for sizing, not Tailwind classes
+    // Test that the outer wrapper has the correct computed width/height via style
+    it("applies xs size (40px)", () => {
       const { container } = render(<ItemIcon {...defaultProps} size="xs" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-10", "h-10");
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper).toHaveStyle({ width: "40px", height: "40px" });
     });
 
-    it("applies sm size classes", () => {
+    it("applies sm size (48px)", () => {
       const { container } = render(<ItemIcon {...defaultProps} size="sm" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-12", "h-12");
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper).toHaveStyle({ width: "48px", height: "48px" });
     });
 
-    it("applies md size classes", () => {
+    it("applies md size (56px)", () => {
       const { container } = render(<ItemIcon {...defaultProps} size="md" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-14", "h-14");
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper).toHaveStyle({ width: "56px", height: "56px" });
     });
 
-    it("applies lg size classes (default)", () => {
+    it("applies lg size (64px, default)", () => {
       const { container } = render(<ItemIcon {...defaultProps} />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-16", "h-16");
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper).toHaveStyle({ width: "64px", height: "64px" });
     });
 
-    it("applies xl size classes", () => {
+    it("applies xl size (80px)", () => {
       const { container } = render(<ItemIcon {...defaultProps} size="xl" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-20", "h-20");
-    });
-
-    it("applies 2xl size classes", () => {
-      const { container } = render(<ItemIcon {...defaultProps} size="2xl" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-24", "h-24");
-    });
-
-    it("applies full size class", () => {
-      const { container } = render(<ItemIcon {...defaultProps} size="full" />);
-      const iconDiv = container.firstChild as HTMLElement;
-      expect(iconDiv).toHaveClass("w-full", "h-full");
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper).toHaveStyle({ width: "80px", height: "80px" });
     });
   });
 
-  it("renders label when provided", () => {
-    render(<ItemIcon {...defaultProps} label="C6" />);
+  describe("badge", () => {
+    it("renders badge when provided", () => {
+      render(<ItemIcon {...defaultProps} badge="6" />);
+      expect(screen.getByText("6")).toBeInTheDocument();
+    });
 
-    expect(screen.getByText("C6")).toBeInTheDocument();
+    it("renders badge on all sizes including xs", () => {
+      render(<ItemIcon {...defaultProps} badge="6" size="xs" />);
+      expect(screen.getByText("6")).toBeInTheDocument();
+    });
   });
 
-  it("does not render label when not provided", () => {
-    const { container } = render(<ItemIcon {...defaultProps} />);
+  describe("lock", () => {
+    it("renders lock icon when lock is true", () => {
+      const { container } = render(<ItemIcon {...defaultProps} lock={true} />);
+      // Lock uses lucide Lock icon which renders as svg
+      const lockSvg = container.querySelector("svg");
+      expect(lockSvg).toBeInTheDocument();
+    });
 
-    // Label div has absolute positioning
-    const labelDivs = container.querySelectorAll(".absolute");
-    // No label divs when label not provided
-    expect(labelDivs.length).toBe(0);
+    it("does not render lock when lock is false", () => {
+      const { container } = render(<ItemIcon {...defaultProps} lock={false} />);
+      const lockSvg = container.querySelector("svg");
+      expect(lockSvg).not.toBeInTheDocument();
+    });
+
+    it("renders lock on all sizes including xs", () => {
+      const { container } = render(
+        <ItemIcon {...defaultProps} lock={true} size="xs" />
+      );
+      const lockSvg = container.querySelector("svg");
+      expect(lockSvg).toBeInTheDocument();
+    });
+  });
+
+  describe("level", () => {
+    it("renders level bar when level is provided", () => {
+      render(<ItemIcon {...defaultProps} level="Lv. 90" />);
+      expect(screen.getByText("Lv. 90")).toBeInTheDocument();
+    });
+
+    it("renders artifact level format", () => {
+      render(<ItemIcon {...defaultProps} level="+20" />);
+      expect(screen.getByText("+20")).toBeInTheDocument();
+    });
+
+    it("creates layered background for level bar", () => {
+      const { container } = render(
+        <ItemIcon {...defaultProps} level="Lv. 90" />
+      );
+      // Check for the warm white background layer
+      const bgLayer = container.querySelector(".bg-\\[\\#f5f0e6\\]");
+      expect(bgLayer).toBeInTheDocument();
+    });
+
+    it("renders level bar on all sizes including xs", () => {
+      render(<ItemIcon {...defaultProps} level="Lv. 90" size="xs" />);
+      expect(screen.getByText("Lv. 90")).toBeInTheDocument();
+    });
+
+    it("renders level bar on sm size", () => {
+      render(<ItemIcon {...defaultProps} level="Lv. 90" size="sm" />);
+      expect(screen.getByText("Lv. 90")).toBeInTheDocument();
+    });
+
+    it("renders level bar on md size", () => {
+      render(<ItemIcon {...defaultProps} level="Lv. 90" size="md" />);
+      expect(screen.getByText("Lv. 90")).toBeInTheDocument();
+    });
   });
 
   it("applies custom className", () => {

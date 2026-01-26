@@ -18,5 +18,7 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "registries": {}
+  "registries": {
+    "@tour": "https://onboarding-tour.vercel.app/r/{name}.json"
+  }
 }

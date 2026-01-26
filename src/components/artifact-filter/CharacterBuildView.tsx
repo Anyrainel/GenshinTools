@@ -10,29 +10,89 @@ import {
   filterAndSortCharacters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
+import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { CharacterBuildCard } from "./CharacterBuildCard";
 
-interface ConfigureViewProps {
+interface CharacterBuildViewProps {
   /** When set, filters will be configured to show this character */
   targetCharacterId?: string;
   /** Called when targetCharacterId has been processed, so parent can clear it */
   onTargetProcessed?: () => void;
 }
 
-export function ConfigureView({
+export function CharacterBuildView({
   targetCharacterId,
   onTargetProcessed,
-}: ConfigureViewProps) {
+}: CharacterBuildViewProps) {
   const { t } = useLanguage();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [filters, setFilters] = useState<CharacterFilters>(
-    defaultCharacterFilters
+
+  // Get persisted sort preferences
+  const characterSort = usePreferencesStore((state) => state.characterSort);
+  const setCharacterSort = usePreferencesStore(
+    (state) => state.setCharacterSort
+  );
+
+  // Local state for ephemeral filter checkboxes only
+  const [checkboxFilters, setCheckboxFilters] = useState({
+    elements: defaultCharacterFilters.elements,
+    weaponTypes: defaultCharacterFilters.weaponTypes,
+    regions: defaultCharacterFilters.regions,
+    rarities: defaultCharacterFilters.rarities,
+  });
+
+  // Combine local checkbox state with persisted sort preferences
+  const filters: CharacterFilters = useMemo(
+    () => ({
+      ...checkboxFilters,
+      tierSort: hasTierData ? characterSort.tierSort : "off",
+      releaseSort: characterSort.releaseSort,
+    }),
+    [checkboxFilters, characterSort, hasTierData]
+  );
+
+  // Handler that routes updates to the appropriate store
+  const handleFiltersChange = useCallback(
+    (newFilters: CharacterFilters) => {
+      // Update checkbox filters (local state)
+      setCheckboxFilters({
+        elements: newFilters.elements,
+        weaponTypes: newFilters.weaponTypes,
+        regions: newFilters.regions,
+        rarities: newFilters.rarities,
+      });
+
+      // Update sort preferences (persisted state)
+      const newTierSort =
+        newFilters.tierSort !== filters.tierSort
+          ? newFilters.tierSort
+          : undefined;
+      const newReleaseSort =
+        newFilters.releaseSort !== filters.releaseSort
+          ? newFilters.releaseSort
+          : undefined;
+
+      if (newTierSort !== undefined || newReleaseSort !== undefined) {
+        setCharacterSort({
+          ...(newTierSort !== undefined && { tierSort: newTierSort }),
+          ...(newReleaseSort !== undefined && { releaseSort: newReleaseSort }),
+        });
+      }
+    },
+    [filters.tierSort, filters.releaseSort, setCharacterSort]
   );
 
   // When targetCharacterId is set, configure filters to show that character
@@ -45,9 +105,8 @@ export function ConfigureView({
       return;
     }
 
-    // Set filters to match this character's properties
-    setFilters({
-      ...defaultCharacterFilters,
+    // Set checkbox filters to match this character's properties
+    setCheckboxFilters({
       elements: [character.element],
       weaponTypes: [character.weaponType],
       rarities: [character.rarity],
@@ -89,7 +148,7 @@ export function ConfigureView({
         sidebar={
           <CharacterFilterSidebar
             filters={filters}
-            onFiltersChange={setFilters}
+            onFiltersChange={handleFiltersChange}
             hasTierData={hasTierData}
           />
         }
@@ -168,7 +227,12 @@ function VirtualizedCharacterList({
             }}
           >
             <div className="mb-4">
-              <CharacterBuildCard character={characters[virtualItem.index]} />
+              <CharacterBuildCard
+                character={characters[virtualItem.index]}
+                tourStepId={
+                  virtualItem.index === 0 ? "af-build-card" : undefined
+                }
+              />
             </div>
           </div>
         ))}

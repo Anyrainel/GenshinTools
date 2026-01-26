@@ -1,3 +1,4 @@
+import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -7,7 +8,7 @@ export interface Team {
   name: string;
   characters: (string | null)[];
   weapons: (string | null)[];
-  artifacts: (string | null)[]; // Artifact Set ID
+  artifacts: (ArtifactConfig | null)[];
 }
 
 interface TeamState {
