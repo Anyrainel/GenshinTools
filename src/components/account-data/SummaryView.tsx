@@ -75,7 +75,7 @@ export function SummaryView({ scores }: SummaryViewProps) {
   if (!accountData) return null;
 
   return (
-    <ScrollLayout className="space-y-8 pb-10">
+    <ScrollLayout className="space-y-8 pb-10 mt-2">
       {tiers.map((tier) => {
         const customization = tierCustomization[tier];
         if (customization?.hidden) return null;

@@ -373,6 +373,19 @@ export default function AccountDataPage() {
 
   // Actions configuration
   const actions: ActionConfig[] = useMemo(() => {
+    const baseActions = [
+      {
+        key: "help",
+        icon: HelpCircle,
+        label: t.ui("buttons.help"),
+        onTrigger: () => tour.start("account-data"),
+      },
+    ];
+
+    if (activeTab === "weights") {
+      return baseActions;
+    }
+
     return [
       {
         key: "import",
@@ -388,14 +401,9 @@ export default function AccountDataPage() {
         label: t.ui("app.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
-      {
-        key: "help",
-        icon: HelpCircle,
-        label: t.ui("buttons.help"),
-        onTrigger: () => tour.start("account-data"),
-      },
+      ...baseActions,
     ];
-  }, [t, tour]);
+  }, [t, tour, activeTab]);
 
   return (
     <PageLayout

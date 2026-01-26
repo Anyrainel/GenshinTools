@@ -258,7 +258,18 @@ export default function WeaponTierListPage() {
                   htmlFor={`rarity-${rarity}`}
                   className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
                 >
-                  {t.ui(`buttons.includeRarity${rarity}`)}
+                  {(() => {
+                    switch (rarity) {
+                      case 5:
+                        return t.ui("buttons.includeRarity5");
+                      case 4:
+                        return t.ui("buttons.includeRarity4");
+                      case 3:
+                        return t.ui("buttons.includeRarity3");
+                      default:
+                        return "";
+                    }
+                  })()}
                 </Label>
               </div>
             ))}

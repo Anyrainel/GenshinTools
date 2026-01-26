@@ -9,7 +9,13 @@ import {
 import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -171,6 +177,11 @@ function ItemPickerComponent<T extends ItemPickerType>({
         {trigger}
       </DrawerTrigger>
       <DrawerContent className="max-h-[85vh] h-full flex flex-col">
+        <div className="sr-only">
+          <DrawerHeader>
+            <DrawerTitle className="capitalize">Select {type}</DrawerTitle>
+          </DrawerHeader>
+        </div>
         <div className="flex-1 overflow-hidden flex flex-col">{content}</div>
       </DrawerContent>
     </Drawer>

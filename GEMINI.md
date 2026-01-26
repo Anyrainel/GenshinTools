@@ -24,18 +24,20 @@ The application is divided into distinct functional domains, each with its own s
 | Page | Route | Purpose | Layout |
 |------|-------|---------|--------|
 | `Home` | `/` | Landing page with navigation cards | `WideLayout` |
-| `ArtifactFilter` | `/artifact-filter` | Configure builds, compute lock/trash filters | `SidebarLayout` |
-| `AccountData` | `/account-data` | Import GOOD/Enka data, view characters | `SidebarLayout` |
-| `TierList` | `/tier-list` | Character tier list with drag-drop | `WideLayout` |
-| `WeaponTierList` | `/weapon-tier-list` | Weapon tier list with rarity filters | `WideLayout` |
+| `Artifact Builds` | `/artifact-filter` | Configure builds, compute lock/trash filters | `SidebarLayout` |
+| `Account Data` | `/account-data` | Import GOOD/Enka data, view characters | `SidebarLayout` |
+| `Character Tiers` | `/tier-list` | Character tier list with drag-drop | `WideLayout` |
+| `Weapon Tier List` | `/weapon-tier-list` | Weapon tier list with rarity filters (Hidden from AppBar) | `WideLayout` |
+| `Weapon Browser` | `/weapon-browser` | Browse all weapons by type and stats | `ScrollLayout` |
+| `Team Builder` | `/team-builder` | Create and manage team compositions | `ScrollLayout` |
 
 ### Key Directories
 
-- **`src/components/layout`**: Core layout shells (`SidebarLayout`, `AppBar`, `WideLayout`).
+- **`src/components/layout`**: Core layout shells (`PageLayout`, `SidebarLayout`, `WideLayout`, `ScrollLayout`, `AppBar`).
 - **`src/components/ui`**: Reusable shadcn/ui primitives.
 - **`src/components/shared`**: Common domain components (e.g., `ItemPicker`, `ToolHeader`, `Control`s).
 - **`src/stores`**: Zustand state management. **One store per domain** (e.g., `useAccountStore`, `useTierStore`).
-- **`src/data`**: Static data resources (Characters/Weapons/Artifacts JSON), types (`types.ts`), and localization (`i18n-app.ts`).
+- **`src/data`**: Static data resources (Characters/Weapons/Artifacts JSON), types (`types.ts`), and localization (`i18n-app.ts`, `i18n-ui.ts`).
 - **`scripts/`**: Python ETL scripts for fetching game data.
 
 ## Data Flow Philosophy
@@ -60,6 +62,16 @@ The application is divided into distinct functional domains, each with its own s
 | `npm run test` | Run tests once |
 | `npm run test:watch` | Run tests in watch mode |
 
+### Debugging & Diagnostics
+
+1. **Avoid `2>&1` Redirection**:
+   - Do NOT use `2>&1` in commands unless strictly necessary for stream merging. This syntax can trigger safety review rules.
+   - For standard logging, let the terminal handle stdout/stderr naturally.
+
+2. **Log File Hygiene**:
+   - **Prefer Memory**: Read command output directly from the terminal tool response when possible.
+   - **Cleanup Mandatory**: If you must redirect output to a file (e.g., `npm run test > temp_error.log`) to analyze large outputs, you **MUST** delete the file immediately after reading it.
+
 ### Deployment (Cloudflare Pages)
 
 - **Build Command:** `npm run build`
@@ -75,6 +87,7 @@ Data ingestion logic resides in `scripts/`.
   ```bash
   uv run --project scripts/pyproject.toml scripts/codedump.py
   ```
+
 
 ## Development Guidelines
 
@@ -111,7 +124,9 @@ Data ingestion logic resides in `scripts/`.
 ### 4. Code Quality Standards
 
 - **Zero `any`**: All external data (Import/API) must be validated.
-- **Localization**: UI text in `i18n-app.ts`. Game terms via helpers.
+- **Localization**:
+  - **UI Labels**: Use `i18n-ui.ts` for static strings. **CRITICAL**: usage of `t.ui()` MUST use static string literals (e.g. `t.ui('common.save')`) to ensure the unused-label scanner works. Do NOT dynamically construct keys.
+  - **App/Game**: Use `i18n-app.ts` for dynamic/game terms.
 - **Performance**: High-cardinality lists key by ID. Use `memo` for expensive list items (like `TierTable` cells).
 
 ### 5. Testing

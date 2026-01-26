@@ -109,7 +109,7 @@ export function InventoryView({ data }: InventoryViewProps) {
   const otherArtifacts = sortedArtifacts.filter((a) => !isMaxArtifact(a));
 
   return (
-    <ScrollLayout className="space-y-4 pb-12">
+    <ScrollLayout className="space-y-4 pb-12 mt-2">
       <Section
         title={t.ui("accountData.maxLvlWeapons")}
         count={maxLvlWeapons.length}

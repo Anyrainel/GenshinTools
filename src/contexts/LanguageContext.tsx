@@ -9,6 +9,7 @@ import {
 } from "react";
 import { i18nAppData } from "../data/i18n-app";
 import { i18nGameData } from "../data/i18n-game";
+import { i18nUiData } from "../data/i18n-ui";
 import type { Language } from "../data/types";
 
 interface LanguageContextType {
@@ -48,7 +49,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-      return stored === "en" || stored === "zh" ? stored : "en";
+      if (stored === "en" || stored === "zh") {
+        return stored;
+      }
+
+      if (navigator.language.toLowerCase().startsWith("zh")) {
+        // Auto-detect system language
+        // Note: navigator.language can be "zh-CN", "zh-TW", etc.
+        return "zh";
+      }
+
+      return "en";
     } catch {
       return "en";
     }
@@ -251,7 +262,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const getUIMessage = useCallback(
     (path: string): string => {
       const keys = path.split(".");
-      let current: Record<string, unknown> = i18nAppData.ui;
+      let current: Record<string, unknown> = i18nUiData;
 
       for (const key of keys) {
         if (current && typeof current === "object" && key in current) {

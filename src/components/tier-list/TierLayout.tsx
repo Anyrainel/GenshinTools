@@ -67,7 +67,24 @@ export const TierLayout = forwardRef<
   // Get tier display name
   const getTierDisplayName = (tier: string): string => {
     const customName = tierCustomization[tier]?.displayName;
-    return customName || t.ui(`tiers.${tier}`) || tier;
+    if (customName) return customName;
+
+    switch (tier) {
+      case "Pool":
+        return t.ui("tiers.Pool");
+      case "S":
+        return t.ui("tiers.S");
+      case "A":
+        return t.ui("tiers.A");
+      case "B":
+        return t.ui("tiers.B");
+      case "C":
+        return t.ui("tiers.C");
+      case "D":
+        return t.ui("tiers.D");
+      default:
+        return tier;
+    }
   };
 
   // Get group count (for desktop headers)

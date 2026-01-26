@@ -1,25 +1,18 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 
 import { cn, getAssetUrl } from "@/lib/utils";
-import {
-  ArrowRight,
-  Award,
-  Database,
-  Filter,
-  Sparkles,
-  Sword,
-  Target,
-} from "lucide-react";
+import { ArrowRight, Award, Database, Filter, Sword } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { PageLayout } from "@/components/layout/PageLayout";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 
 export default function Home() {
   const { t } = useLanguage();
 
   return (
     <PageLayout>
-      <div className="flex-1 container mx-auto p-4 flex flex-col gap-8">
+      <ScrollLayout className="mx-auto p-4 flex flex-col gap-8">
         {/* Hero Section - Genshin Style */}
         <div className="text-center space-y-1 pb-0">
           <div className="relative flex flex-col items-center justify-center pt-6">
@@ -115,10 +108,9 @@ export default function Home() {
         </div>
 
         {/* Feature Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
           <FeatureCard
             icon={<Database className="w-6 h-6" />}
-            decorIcon={<Sparkles className="w-16 h-16" />}
             title={t.ui("app.navAccountData")}
             problem={t.ui("app.accountDataProblem")}
             guideline={t.ui("app.accountDataGuideline")}
@@ -131,7 +123,6 @@ export default function Home() {
 
           <FeatureCard
             icon={<Filter className="w-6 h-6" />}
-            decorIcon={<Target className="w-16 h-16" />}
             title={t.ui("app.navArtifactFilter")}
             problem={t.ui("app.artifactFilterProblem")}
             guideline={t.ui("app.artifactFilterGuideline")}
@@ -144,7 +135,6 @@ export default function Home() {
 
           <FeatureCard
             icon={<Award className="w-6 h-6" />}
-            decorIcon={<Award className="w-16 h-16" />}
             title={t.ui("app.navTierList")}
             problem={t.ui("app.tierListProblem")}
             guideline={t.ui("app.tierListGuideline")}
@@ -157,7 +147,6 @@ export default function Home() {
 
           <FeatureCard
             icon={<Sword className="w-6 h-6" />}
-            decorIcon={<Sword className="w-16 h-16" />}
             title={t.ui("app.navWeaponBrowser")}
             problem={t.ui("app.weaponBrowserProblem")}
             guideline={t.ui("app.weaponBrowserGuideline")}
@@ -183,7 +172,7 @@ export default function Home() {
           />
           */}
         </div>
-      </div>
+      </ScrollLayout>
     </PageLayout>
   );
 }
@@ -194,7 +183,7 @@ export default function Home() {
  */
 const FeatureCard = ({
   icon,
-  decorIcon,
+
   title,
   problem,
   guideline,
@@ -206,7 +195,7 @@ const FeatureCard = ({
   exploreText,
 }: {
   icon: React.ReactNode;
-  decorIcon: React.ReactNode;
+
   title: string;
   problem: string;
   guideline: string;
@@ -246,11 +235,6 @@ const FeatureCard = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/55 transition-opacity duration-300 group-hover:from-black/85 group-hover:via-black/55 group-hover:to-black/30" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
-      </div>
-
-      {/* Decorative Icon - Large, faded in background */}
-      <div className="absolute top-4 right-4 text-white/10 group-hover:text-white/20 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">
-        {decorIcon}
       </div>
 
       {/* Content */}

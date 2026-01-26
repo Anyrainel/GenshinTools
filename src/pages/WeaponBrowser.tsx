@@ -85,9 +85,22 @@ export default function WeaponBrowserPage() {
     }));
   };
 
+  const getRarityLabel = (rarity: number) => {
+    switch (rarity) {
+      case 5:
+        return t.ui("buttons.includeRarity5");
+      case 4:
+        return t.ui("buttons.includeRarity4");
+      case 3:
+        return t.ui("buttons.includeRarity3");
+      default:
+        return "";
+    }
+  };
+
   return (
     <PageLayout>
-      <ScrollLayout className="pb-8">
+      <ScrollLayout className="pb-8 mt-2">
         {/* Page title */}
         <h1 className="text-2xl md:text-3xl font-bold mb-4">
           {t.ui("app.navWeaponBrowser")}
@@ -117,7 +130,7 @@ export default function WeaponBrowserPage() {
                     htmlFor={`rarity-${rarity}`}
                     className="text-sm cursor-pointer whitespace-nowrap"
                   >
-                    {t.ui(`buttons.includeRarity${rarity}`)}
+                    {getRarityLabel(rarity)}
                   </Label>
                 </div>
               ))}

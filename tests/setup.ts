@@ -11,7 +11,7 @@ afterEach(() => {
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
-    matches: false, // Default to desktop
+    matches: true, // Default to desktop (matches min-width queries)
     media: query,
     onchange: null,
     addListener: vi.fn(), // Deprecated
@@ -73,3 +73,14 @@ Element.prototype.scrollIntoView = vi.fn();
 // Mock URL.createObjectURL (used for file downloads)
 URL.createObjectURL = vi.fn(() => "blob:mock-url");
 URL.revokeObjectURL = vi.fn();
+
+if (typeof Element.prototype.setPointerCapture !== "function") {
+  // Mock Pointer Events methods (required for Vaul/Radix)
+  Element.prototype.setPointerCapture = vi.fn();
+}
+if (typeof Element.prototype.releasePointerCapture !== "function") {
+  Element.prototype.releasePointerCapture = vi.fn();
+}
+if (typeof Element.prototype.hasPointerCapture !== "function") {
+  Element.prototype.hasPointerCapture = vi.fn();
+}

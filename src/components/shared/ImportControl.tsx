@@ -81,18 +81,31 @@ function ImportControlInner<T>(
     },
   }));
 
-  // Variant-based i18n keys
+  // Explicitly map keys to avoid dynamic construction for static analysis
   const getMessages = useCallback(() => {
-    const prefix = variant === "tier-list" ? "tierList" : "configure";
+    if (variant === "tier-list") {
+      return {
+        dialogTitle: t.ui("tierList.importDialogTitle"),
+        dialogDescription: t.ui("tierList.importDialogDescription"),
+        confirmTitle: t.ui("tierList.presetConfirmTitle"),
+        confirmDescription: t.ui("tierList.presetConfirmDescription"),
+        confirmAction: t.ui("tierList.presetConfirmAction"),
+        loadError: t.ui("tierList.loadError"),
+        emptyList: t.ui("tierList.noPresets"),
+        importFromFile: t.ui("tierList.importFromFile"),
+      };
+    }
+
+    // Default variant (configure/builds)
     return {
-      dialogTitle: t.ui(`${prefix}.importDialogTitle`),
-      dialogDescription: t.ui(`${prefix}.importDialogDescription`),
-      confirmTitle: t.ui(`${prefix}.presetConfirmTitle`),
-      confirmDescription: t.ui(`${prefix}.presetConfirmDescription`),
-      confirmAction: t.ui(`${prefix}.presetConfirmAction`),
-      loadError: t.ui(`${prefix}.presetDialogLoadError`),
+      dialogTitle: t.ui("configure.importDialogTitle"),
+      dialogDescription: t.ui("configure.importDialogDescription"),
+      confirmTitle: t.ui("configure.presetConfirmTitle"),
+      confirmDescription: t.ui("configure.presetConfirmDescription"),
+      confirmAction: t.ui("configure.presetConfirmAction"),
+      loadError: t.ui("configure.presetDialogLoadError"),
       emptyList: t.ui("configure.presetDialogEmpty"),
-      importFromFile: t.ui(`${prefix}.importFromFile`),
+      importFromFile: t.ui("configure.importFromFile"),
     };
   }, [variant, t]);
 

@@ -29,7 +29,7 @@ export default function TeamBuilderPage() {
 
   return (
     <PageLayout>
-      <ScrollLayout className="py-8">
+      <ScrollLayout className="py-8 mt-2">
         <div className="mx-auto grid grid-cols-[repeat(auto-fit,minmax(400px,440px))] gap-4 justify-center items-center">
           {teams.map((team, index) => {
             const isLast = index === teams.length - 1;

@@ -88,20 +88,18 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
               nameClassName={isVeryNarrow ? "text-base" : undefined}
             >
               {!isVeryNarrow && (
-                <div className="flex-1 flex items-center gap-2 text-muted-foreground text-sm min-w-0">
-                  <span className="flex-shrink-0 flex items-center gap-3 overflow-hidden text-ellipsis whitespace-nowrap">
-                    <span>
-                      {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
-                      <span className="text-foreground">{talents.auto}</span>
-                    </span>
-                    <span>
-                      {isMobile ? "E" : t.ui("accountData.talents.skill")}{" "}
-                      <span className="text-foreground">{talents.skill}</span>
-                    </span>
-                    <span>
-                      {isMobile ? "Q" : t.ui("accountData.talents.burst")}{" "}
-                      <span className="text-foreground">{talents.burst}</span>
-                    </span>
+                <div className="ml-2 flex flex-shrink-0 items-center gap-3 text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span>
+                    {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
+                    <span className="text-foreground">{talents.auto}</span>
+                  </span>
+                  <span>
+                    {isMobile ? "E" : t.ui("accountData.talents.skill")}{" "}
+                    <span className="text-foreground">{talents.skill}</span>
+                  </span>
+                  <span>
+                    {isMobile ? "Q" : t.ui("accountData.talents.burst")}{" "}
+                    <span className="text-foreground">{talents.burst}</span>
                   </span>
                 </div>
               )}
@@ -239,7 +237,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
               <div
                 className={cn(
                   "flex flex-col relative transition-colors",
-                  isVeryNarrow ? "p-0.5" : "p-2",
+                  isVeryNarrow ? "p-1" : "p-2",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >

@@ -6,6 +6,9 @@ STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(
 if [ -n "$STAGED_TS_FILES" ]; then
   echo "Running TypeScript type check..."
   npm run type-check || exit 1
+
+  echo "Running tests..."
+  npm run test || exit 1
 fi
 
 # Check Python files in scripts directory

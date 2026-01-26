@@ -69,19 +69,39 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
       },
     }));
 
-    // Variant-based i18n keys
-    const prefix = variant === "tier-list" ? "tierList" : "configure";
-    const messages = {
-      dialogTitle: t.ui(`${prefix}.exportDialogTitle`),
-      dialogDescription: t.ui(`${prefix}.exportDialogDescription`),
-      authorLabel: t.ui(`${prefix}.exportAuthorLabel`),
-      authorPlaceholder: t.ui(`${prefix}.exportAuthorPlaceholder`),
-      descriptionLabel: t.ui(`${prefix}.exportDescriptionLabel`),
-      descriptionPlaceholder: t.ui(`${prefix}.exportDescriptionPlaceholder`),
-      authorRequiredError: t.ui(`${prefix}.exportAuthorRequired`),
-      descriptionRequiredError: t.ui(`${prefix}.exportDescriptionRequired`),
-      confirmAction: t.ui(`${prefix}.exportConfirmAction`),
-    };
+    // Explicitly map keys to avoid dynamic construction for static analysis
+    const messages =
+      variant === "tier-list"
+        ? {
+            dialogTitle: t.ui("tierList.exportDialogTitle"),
+            dialogDescription: t.ui("tierList.exportDialogDescription"),
+            authorLabel: t.ui("tierList.exportAuthorLabel"),
+            authorPlaceholder: t.ui("tierList.exportAuthorPlaceholder"),
+            descriptionLabel: t.ui("tierList.exportDescriptionLabel"),
+            descriptionPlaceholder: t.ui(
+              "tierList.exportDescriptionPlaceholder"
+            ),
+            authorRequiredError: t.ui("tierList.exportAuthorRequired"),
+            descriptionRequiredError: t.ui(
+              "tierList.exportDescriptionRequired"
+            ),
+            confirmAction: t.ui("tierList.exportConfirmAction"),
+          }
+        : {
+            dialogTitle: t.ui("configure.exportDialogTitle"),
+            dialogDescription: t.ui("configure.exportDialogDescription"),
+            authorLabel: t.ui("configure.exportAuthorLabel"),
+            authorPlaceholder: t.ui("configure.exportAuthorPlaceholder"),
+            descriptionLabel: t.ui("configure.exportDescriptionLabel"),
+            descriptionPlaceholder: t.ui(
+              "configure.exportDescriptionPlaceholder"
+            ),
+            authorRequiredError: t.ui("configure.exportAuthorRequired"),
+            descriptionRequiredError: t.ui(
+              "configure.exportDescriptionRequired"
+            ),
+            confirmAction: t.ui("configure.exportConfirmAction"),
+          };
 
     const handleClose = () => {
       setIsOpen(false);
