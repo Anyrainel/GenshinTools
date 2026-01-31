@@ -1,4 +1,4 @@
-import { Loader2, Upload } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles, Upload } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 import type { ControlHandle } from "@/components/layout/AppBar";
@@ -124,63 +124,102 @@ export const AccountImportControl = forwardRef<
         if (!open) setErrorMessage(null);
       }}
     >
-      <ResponsiveDialogContent className="md:max-w-md">
+      <ResponsiveDialogContent className="md:max-w-lg">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {t.ui("accountData.importDialogTitle")}
           </ResponsiveDialogTitle>
-          <ResponsiveDialogDescription asChild>
-            <div className="flex flex-col gap-4 py-2 text-sm text-muted-foreground">
-              <div>
-                <span className="font-semibold block mb-1 text-foreground">
-                  {t.ui("accountData.importHelpGood")}
-                </span>
-                <span>
-                  {t.ui("accountData.importHelpGoodDesc")}{" "}
-                  <a
-                    href="https://konkers.github.io/irminsul/02-quickstart.html"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Irminsul
-                  </a>
-                  {" / "}
-                  <a
-                    href="https://github.com/taiwenlee/Inventory_Kamera"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Inventory Kamera
-                  </a>
-                  .
-                </span>
-              </div>
-              <div>
-                <span className="font-semibold block mb-1 text-foreground">
-                  {t.ui("accountData.importHelpUid")}
-                </span>
-                <span>{t.ui("accountData.importHelpUidDesc")}</span>
-              </div>
-            </div>
+          <ResponsiveDialogDescription className="sr-only">
+            {t.ui("accountData.importHelpGood")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        {/* UID Import Section */}
-        <div className="pt-4 border-t space-y-3 flex-1 overflow-y-auto px-1">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <input
-              type="text"
-              placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
-              value={uidInput}
-              onChange={(e) => setUidInput(e.target.value)}
-              className="flex h-9 flex-1 min-w-[12rem] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        <div className="flex flex-col gap-5 pt-2">
+          {/* GOOD Import Section: Title + Explanation + Action */}
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <span className="font-semibold block text-foreground text-sm">
+                {t.ui("accountData.importHelpGood")}
+              </span>
+              <p className="text-sm text-muted-foreground">
+                {t.ui("accountData.importHelpGoodDesc")}{" "}
+                <a
+                  href="https://konkers.github.io/irminsul/02-quickstart.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Irminsul
+                </a>
+                {" / "}
+                <a
+                  href="https://github.com/taiwenlee/Inventory_Kamera"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  Inventory Kamera
+                </a>
+                .
+              </p>
+              {/* Benefit callout */}
+              <div className="flex items-center gap-2 p-2 rounded-md bg-yellow-500/10 border border-yellow-500/20">
+                <Sparkles className="w-4 h-4 text-yellow-500 shrink-0" />
+                <span className="text-xs text-yellow-500">
+                  {t.ui("accountData.importHelpGoodBenefit")}
+                </span>
+              </div>
+            </div>
+            {/* GOOD Import Action */}
+            <Button
+              size="sm"
+              className="gap-2 w-full relative overflow-hidden"
               disabled={isBusy}
-              onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
-            />
-            <div className="flex items-center gap-2">
-              <div className="flex items-center space-x-1.5 shrink-0 px-1">
+            >
+              <Upload className="w-4 h-4" />
+              {t.ui("accountData.importGOOD")}
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleLocalImport}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                disabled={isBusy}
+              />
+            </Button>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-border" />
+
+          {/* UID Import Section: Title + Explanation + Action */}
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <span className="font-semibold block text-foreground text-sm">
+                {t.ui("accountData.importHelpUid")}
+              </span>
+              <p className="text-sm text-muted-foreground">
+                {t.ui("accountData.importHelpUidDesc")}
+              </p>
+              {/* Limitation callout */}
+              <div className="flex items-center gap-2 p-2 rounded-md bg-yellow-500/10 border border-yellow-500/20">
+                <AlertCircle className="w-4 h-4 text-yellow-500 shrink-0" />
+                <span className="text-xs text-yellow-500">
+                  {t.ui("accountData.importHelpUidLimitation")}
+                </span>
+              </div>
+            </div>
+            {/* UID Import Action */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4">
+              <input
+                type="text"
+                placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
+                value={uidInput}
+                onChange={(e) => setUidInput(e.target.value)}
+                className="flex h-9 w-full sm:w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isBusy}
+                onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
+              />
+              <div className="flex items-center space-x-1.5 shrink-0">
                 <Checkbox
                   id="clearData"
                   checked={clearData}
@@ -198,7 +237,7 @@ export const AccountImportControl = forwardRef<
                 size="sm"
                 onClick={handleUidImport}
                 disabled={!uidInput || isBusy}
-                className="shrink-0"
+                className="flex-1"
               >
                 {isBusy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -208,27 +247,12 @@ export const AccountImportControl = forwardRef<
               </Button>
             </div>
           </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 w-full relative overflow-hidden"
-            disabled={isBusy}
-          >
-            <Upload className="w-4 h-4" />
-            {t.ui("accountData.importGOOD")}
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleLocalImport}
-              className="absolute inset-0 opacity-0 cursor-pointer"
-              disabled={isBusy}
-            />
-          </Button>
         </div>
 
         {errorMessage && (
-          <div className="text-sm text-destructive px-1">{errorMessage}</div>
+          <div className="text-sm text-destructive px-1 py-2 bg-destructive/10 rounded-md max-h-24 overflow-y-auto break-words mt-4">
+            {errorMessage}
+          </div>
         )}
       </ResponsiveDialogContent>
     </ResponsiveDialog>

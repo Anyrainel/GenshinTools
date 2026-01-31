@@ -240,6 +240,18 @@ export type ArtifactSetConfigs = {
 export type Tier = "S" | "A" | "B" | "C" | "D" | "Pool";
 export const tiers: Tier[] = ["S", "A", "B", "C", "D", "Pool"];
 
+// Luck expectation for artifact upgrade projections
+// - cautious: 0.80x (pessimistic, expect lower rolls)
+// - balanced: 0.85x (realistic average)
+// - hopeful: 0.90x (optimistic, expect higher rolls)
+export type LuckExpectation = "cautious" | "balanced" | "hopeful";
+
+export const LUCK_MULTIPLIERS: Record<LuckExpectation, number> = {
+  cautious: 0.8,
+  balanced: 0.85,
+  hopeful: 0.9,
+};
+
 export type TierAssignment = {
   [characterId: string]: {
     tier: Tier;
@@ -251,6 +263,7 @@ export type TierCustomization = {
   [tier: string]: {
     displayName: string;
     hidden: boolean;
+    luckExpectation?: LuckExpectation; // Per-tier luck expectation for insights
   };
 };
 
@@ -284,6 +297,7 @@ export type ArtifactData = {
   astralMark?: boolean;
   elixirCrafted?: boolean;
   unactivatedSubstats?: Partial<Record<SubStat, number>>;
+  initialValues?: Partial<Record<SubStat, number>>; // Initial roll values per substat
 };
 
 export type WeaponData = {

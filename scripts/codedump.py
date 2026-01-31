@@ -196,7 +196,7 @@ def enrich_character_data_with_fandom(
 
         if char.name.startswith("Traveler"):
             release_date = "2020-09-28"
-        if fandom_char:
+        elif fandom_char:
             weapon = fandom_char["weaponType"]
             region = fandom_char["region"]
             release_date = fandom_char["releaseDate"]

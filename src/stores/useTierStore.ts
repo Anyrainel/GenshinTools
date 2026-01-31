@@ -1,4 +1,8 @@
-import type { TierAssignment, TierCustomization } from "@/data/types";
+import type {
+  LuckExpectation,
+  TierAssignment,
+  TierCustomization,
+} from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -16,6 +20,7 @@ interface TierListState {
     assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
   ) => void;
   setTierCustomization: (customization: TierCustomization) => void;
+  setTierLuckExpectation: (tier: string, luck: LuckExpectation) => void;
   setCustomTitle: (title: string) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
@@ -53,6 +58,19 @@ export const useTierStore = create<TierListState>()(
 
       setTierCustomization: (customization) =>
         set({ tierCustomization: customization }),
+
+      setTierLuckExpectation: (tier, luck) =>
+        set((state) => ({
+          tierCustomization: {
+            ...state.tierCustomization,
+            [tier]: {
+              ...state.tierCustomization[tier],
+              displayName: state.tierCustomization[tier]?.displayName || tier,
+              hidden: state.tierCustomization[tier]?.hidden || false,
+              luckExpectation: luck,
+            },
+          },
+        })),
 
       setCustomTitle: (title) => set({ customTitle: title }),
 

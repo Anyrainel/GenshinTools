@@ -36,13 +36,27 @@ def fetch_json(url: str) -> Any:
 
 
 def run() -> None:
-    # 1. Fetch Localization
+    # Base URLs for Dimbreath's game data
+    base_dim = "https://gitlab.com/Dimbreath/AnimeGameData/-/raw/master"
+    excel_base = f"{base_dim}/ExcelBinOutput"
+
+    # 1. Fetch Localization - Primary: Enka, Fallback: Dimbreath
     loc_data = fetch_json(
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/master/store/loc.json"
     )
     en_loc = loc_data.get("en", {})
 
-    # 2. Characters
+    # Fetch Dimbreath's TextMap as fallback for new character names
+    try:
+        textmap_en = fetch_json(f"{base_dim}/TextMap/TextMapEN.json")
+        # Merge into en_loc (Enka takes precedence)
+        for k, v in textmap_en.items():
+            if k not in en_loc:
+                en_loc[k] = v
+    except Exception as e:
+        print(f"Warning: Failed to fetch Dimbreath TextMap: {e}")
+
+    # 2. Characters - Primary source: Enka Network
     chars_data = fetch_json(
         "https://raw.githubusercontent.com/EnkaNetwork/API-docs/master/store/characters.json"
     )
@@ -52,17 +66,33 @@ def run() -> None:
         if name_hash in en_loc:
             char_map[avatar_id] = en_loc[name_hash]
 
-    # 3. Stats (Affix & MainProp)
-    # Using Dimbreath data (GitLab mirror often more reliable for raw access
-    # if GitHub fails or blocks)
-    base_dim = "https://gitlab.com/Dimbreath/AnimeGameData/-/raw/master/ExcelBinOutput"
+    # 2b. Characters - Secondary source: Dimbreath's game data
+    # Enka's GitHub repo can lag behind new character releases, so we also check
+    # the raw game data to ensure new characters are included.
+    try:
+        avatar_data = fetch_json(f"{excel_base}/AvatarExcelConfigData.json")
+        for entry in avatar_data:
+            avatar_id = str(entry.get("id", ""))
+            # Skip if already in map (Enka data takes precedence)
+            if avatar_id in char_map:
+                continue
+            # Only include playable characters (IDs starting with 1000)
+            if not avatar_id.startswith("1000"):
+                continue
+            name_hash = str(entry.get("nameTextMapHash"))
+            if name_hash in en_loc:
+                char_map[avatar_id] = en_loc[name_hash]
+    except Exception as e:
+        print(f"Warning: Failed to fetch Dimbreath avatar data: {e}")
+
+    # 3. Stats (Affix & MainProp) - Using Dimbreath data
 
     # Try fetching, if fail, we might need another source or manual map
     sub_affix_data: Any = []
     main_prop_data: Any = []
     try:
-        sub_affix_data = fetch_json(f"{base_dim}/ReliquaryAffixExcelConfigData.json")
-        main_prop_data = fetch_json(f"{base_dim}/ReliquaryMainPropExcelConfigData.json")
+        sub_affix_data = fetch_json(f"{excel_base}/ReliquaryAffixExcelConfigData.json")
+        main_prop_data = fetch_json(f"{excel_base}/ReliquaryMainPropExcelConfigData.json")
     except Exception as e:
         print(f"Failed to fetch stats data: {e}")
 
@@ -88,8 +118,8 @@ def run() -> None:
 
     # 4. Artifact Sets
     # ReliquarySet -> equipAffixId -> EquipAffix -> NameHash -> Name
-    set_data = fetch_json(f"{base_dim}/ReliquarySetExcelConfigData.json")
-    equip_affix_data = fetch_json(f"{base_dim}/EquipAffixExcelConfigData.json")
+    set_data = fetch_json(f"{excel_base}/ReliquarySetExcelConfigData.json")
+    equip_affix_data = fetch_json(f"{excel_base}/EquipAffixExcelConfigData.json")
 
     # Build affix map: ID -> NameHash
     affix_name_map: dict[int, str] = {}
@@ -109,7 +139,7 @@ def run() -> None:
                     artifact_map[set_id] = en_loc[name_hash]
 
     # 5. Weapons
-    weapon_data = fetch_json(f"{base_dim}/WeaponExcelConfigData.json")
+    weapon_data = fetch_json(f"{excel_base}/WeaponExcelConfigData.json")
     weapon_map: dict[str, str] = {}
     for entry in weapon_data:
         id_ = str(entry.get("id"))

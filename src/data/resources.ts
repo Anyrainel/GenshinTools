@@ -5,12 +5,22 @@ import { ArtifactHalfSet, ArtifactSet, Character, ElementResource, Weapon, Weapo
 
 export const characters: Character[] = [
   {
+    "id": "varka",
+    "element": "Anemo",
+    "rarity": 5,
+    "weaponType": "Claymore",
+    "region": "None",
+    "releaseDate": "2026-01-29",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/23/553feb81c3bbc5e3bc69a765e157c33f_5510279580572915554.png",
+    "imagePath": "/character/varka.png"
+  },
+  {
     "id": "illuga",
     "element": "Geo",
     "rarity": 4,
     "weaponType": "Polearm",
-    "region": "Nod-Krai",
-    "releaseDate": "2026-01-21",
+    "region": "None",
+    "releaseDate": "2026-01-29",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/12/b138122c91d1ce61bf7d06d6042ae08a_4301479487552885437.png",
     "imagePath": "/character/illuga.png"
   },
@@ -19,8 +29,8 @@ export const characters: Character[] = [
     "element": "Geo",
     "rarity": 5,
     "weaponType": "Sword",
-    "region": "Liyue",
-    "releaseDate": "2026-01-21",
+    "region": "None",
+    "releaseDate": "2026-01-29",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/11/6a57d2dd9677f63ae7d38f525484c55f_7837326903952372916.png",
     "imagePath": "/character/zibai.png"
   },

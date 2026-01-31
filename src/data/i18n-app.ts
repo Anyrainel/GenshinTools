@@ -76,4 +76,11 @@ export const i18nAppData = {
     cr: { en: "CR", zh: "暴击" },
     cd: { en: "CD", zh: "暴伤" },
   },
+  slots: {
+    flower: { en: "Flower", zh: "生之花" },
+    plume: { en: "Plume", zh: "死之羽" },
+    sands: { en: "Sands", zh: "时之沙" },
+    goblet: { en: "Goblet", zh: "空之杯" },
+    circlet: { en: "Circlet", zh: "理之冠" },
+  },
 };

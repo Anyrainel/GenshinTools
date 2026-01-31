@@ -37,7 +37,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const presetModules = import.meta.glob<{ default: BuildPayload }>(
-  "@/presets/artifact-filter/*.json",
+  "@/presets/artifact-builds/*.json",
   { eager: false }
 );
 

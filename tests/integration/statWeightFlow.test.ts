@@ -23,8 +23,9 @@ const testGOODData: GOODData = {
   characters: [
     {
       key: "HuTao",
-      constellation: 0,
       level: 90,
+      constellation: 0,
+      ascension: 6,
       talent: { auto: 10, skill: 10, burst: 8 },
     },
   ],

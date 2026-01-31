@@ -221,7 +221,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
       </div>
 
       {/* Artifacts Body */}
-      <CardContent className="p-0 bg-black/15">
+      <CardContent className="p-0 bg-black/10">
         <div className="grid grid-cols-5 divide-x divide-border/20 px-0.5">
           {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];

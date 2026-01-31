@@ -31,26 +31,30 @@ const fullGOODData: GOODData = {
   characters: [
     {
       key: "HuTao",
-      constellation: 1,
       level: 90,
+      constellation: 1,
+      ascension: 6,
       talent: { auto: 10, skill: 10, burst: 8 },
     },
     {
       key: "Xingqiu",
-      constellation: 6,
       level: 80,
+      constellation: 6,
+      ascension: 5,
       talent: { auto: 1, skill: 10, burst: 10 },
     },
     {
       key: "Zhongli",
-      constellation: 0,
       level: 90,
+      constellation: 0,
+      ascension: 6,
       talent: { auto: 6, skill: 8, burst: 10 },
     },
     {
       key: "Bennett",
-      constellation: 6,
       level: 80,
+      constellation: 6,
+      ascension: 5,
       talent: { auto: 1, skill: 6, burst: 10 },
     },
   ],
@@ -58,6 +62,7 @@ const fullGOODData: GOODData = {
     {
       key: "StaffOfHoma",
       level: 90,
+      ascension: 6,
       refinement: 1,
       location: "HuTao",
       lock: true,
@@ -65,6 +70,7 @@ const fullGOODData: GOODData = {
     {
       key: "SacrificialSword",
       level: 90,
+      ascension: 6,
       refinement: 5,
       location: "Xingqiu",
       lock: true,
@@ -72,6 +78,7 @@ const fullGOODData: GOODData = {
     {
       key: "BlackTassel",
       level: 90,
+      ascension: 6,
       refinement: 5,
       location: "Zhongli",
       lock: false,

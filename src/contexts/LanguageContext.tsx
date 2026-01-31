@@ -31,6 +31,7 @@ interface LanguageContextType {
     weaponType: (type: string) => string;
     weaponName: (id: string) => string;
     weaponEffect: (id: string) => string;
+    slot: (key: string) => string;
     formatDate: (dateString: string) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
@@ -231,6 +232,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getSlotName = useCallback(
+    (slotKey: string): string => {
+      const slots = i18nAppData.slots as Record<string, Record<string, string>>;
+      return slots[slotKey]?.[language] || slotKey;
+    },
+    [language]
+  );
+
   const formatReleaseDate = useCallback(
     (dateString: string): string => {
       const date = new Date(dateString);
@@ -306,6 +315,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       weaponType: getWeaponTypeName,
       weaponName: getWeaponName,
       weaponEffect: getWeaponEffect,
+      slot: getSlotName,
       formatDate: formatReleaseDate,
       ui: getUIMessage,
       format: formatString,
@@ -326,6 +336,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getWeaponTypeName,
       getWeaponName,
       getWeaponEffect,
+      getSlotName,
       formatReleaseDate,
       getUIMessage,
       formatString,

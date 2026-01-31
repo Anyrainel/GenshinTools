@@ -12,7 +12,7 @@ export const i18nUiData = {
     },
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
-    summary: { en: "Summary", zh: "概览" },
+    recommendations: { en: "Recommendations", zh: "推荐" },
     maxLvlWeapons: { en: "Max Level Weapons", zh: "满级武器" },
     otherWeapons: { en: "Other Weapons", zh: "其他武器" },
     maxLvlArtifacts: { en: "Max Level Artifacts", zh: "满级圣遗物" },
@@ -41,13 +41,21 @@ export const i18nUiData = {
       en: "Import a GOOD format JSON file exported from tools like",
       zh: "导入由第三方工具生成的 GOOD 格式 JSON 文件，例如",
     },
+    importHelpGoodBenefit: {
+      en: "Includes inventory data. You'll get swap, upgrade, and reroll recommendations for all your artifacts.",
+      zh: "包含背包数据。您将获得针对所有圣遗物的替换、强化和洗练建议。",
+    },
     importHelpUid: {
-      en: "UID Import",
-      zh: "UID 导入",
+      en: "UID Import (Quick)",
+      zh: "UID 导入（快捷）",
     },
     importHelpUidDesc: {
-      en: "Fetch data from Enka Network. Limited to characters showcased on your profile.",
-      zh: "从 Enka Network 获取数据。仅限个人资料展示的角色。",
+      en: "Fetch from Enka Network. Limited to 8 showcase characters and equipped artifacts only.",
+      zh: "从 Enka Network 获取。仅限 8 个展示角色及其已装备的圣遗物。",
+    },
+    importHelpUidLimitation: {
+      en: "Only displayed characters are available. Some recommendations require inventory data from tools above.",
+      zh: "仅包含展示角色数据。部分建议功能需要使用上方工具导入背包数据。",
     },
     importDialogTitle: {
       en: "Import Account Data",
@@ -90,6 +98,10 @@ export const i18nUiData = {
       en: "Val / Score",
       zh: "数值 / 分数",
     },
+    current: { en: "Before", zh: "之前" },
+    upgrade: { en: "After", zh: "之后" },
+    artifactDetails: { en: "Artifact Details", zh: "圣遗物详情" },
+    totalRolls: { en: "{0} total rolls", zh: "{0} 总词条数" },
     twoPiece: { en: "2-Piece", zh: "2件套" },
     fourPiece: { en: "4-Piece", zh: "4件套" },
     talents: {
@@ -120,6 +132,56 @@ export const i18nUiData = {
     weightWarning: {
       en: "Set a main stat (ATK%, HP%, DEF%, EM) to 100, or set at least two substats (CR, CD, ER, etc.) to 100.",
       zh: "需将一个主属性 (攻击%, 生命%, 防御%, 精通) 设为 100，或将至少两个副词条设为 100。",
+    },
+    insights: {
+      title: { en: "Recommended Actions", zh: "推荐操作" },
+      upgrade: { en: "Upgrade", zh: "强化" },
+      swap: { en: "Swap", zh: "替换" },
+      reroll: { en: "Reroll", zh: "洗词条" },
+      farm: { en: "Farm", zh: "刷取" },
+      fixMain: { en: "Fix Main", zh: "修正主词条" },
+      equipped: { en: "Equipped", zh: "已装备" },
+      fromInventory: { en: "In Inventory", zh: "背包中" },
+      fromCharacter: { en: "from {0}", zh: "取自 {0}" },
+      rerollCost: {
+        en: "{0} Dust",
+        zh: "{0} 启圣之尘",
+      },
+      farmOrCraft: {
+        en: "Or craft: {0} Elixir",
+        zh: "或制作: {0} 祝圣之霜",
+      },
+      allGood: { en: "All Good!", zh: "完美!" },
+      allGoodDescription: {
+        en: "No suggestions for this character.",
+        zh: "这个角色没有优化建议。",
+      },
+      incomplete: { en: "Incomplete Set", zh: "圣遗物未齐" },
+      incompleteDescription: {
+        en: "Equip all 5 artifact slots to get recommendations.",
+        zh: "装备全部5个圣遗物槽后可获取建议。",
+      },
+      poolInfo: {
+        en: "Pool characters are not computed for recommendations. Their equipped artifacts may be suggested for other characters to swap.",
+        zh: "备用角色不计算推荐操作。他们装备的圣遗物有可能会被推荐给其他角色使用。",
+      },
+      goToTierList: { en: "Manage Tiers", zh: "管理层级" },
+      showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
+      showLess: { en: "Show less", zh: "收起" },
+    },
+    luckExpectation: {
+      label: { en: "Roll Value Expectation", zh: "词条期望" },
+      description: {
+        en: "How much stamina to invest in this group",
+        zh: "为该组角色投入多少体力",
+      },
+      tooltip: {
+        en: "Use {0}× max roll value to predict score",
+        zh: "使用 {0}× 最高词条值来预测分数",
+      },
+      cautious: { en: "Cautious", zh: "保守" },
+      balanced: { en: "Balanced", zh: "平衡" },
+      hopeful: { en: "Hopeful", zh: "乐观" },
     },
   },
   scoreExplanation: {
@@ -291,11 +353,6 @@ export const i18nUiData = {
       zh: "没有找到圣遗物套装",
     },
     configuration: { en: "Configuration", zh: "配置" },
-    flower: { en: "Flower", zh: "生之花" },
-    plume: { en: "Plume", zh: "死之羽" },
-    sands: { en: "Sands", zh: "时之沙" },
-    goblet: { en: "Goblet", zh: "空之杯" },
-    circlet: { en: "Circlet", zh: "理之冠" },
     mainStat: { en: "Main Stat", zh: "主词条" },
     subStat: { en: "Substat", zh: "副词条" },
     atLeast: { en: "at least", zh: "至少" },
@@ -633,10 +690,10 @@ export const i18nUiData = {
         en: "View all your imported characters with their equipped artifacts and weapons. Click any character to see detailed stats.",
         zh: "查看所有导入的角色及其装备的圣遗物和武器。点击任意角色查看详细属性。",
       },
-      summaryTitle: { en: "Artifact Summary", zh: "圣遗物概览" },
-      summaryContent: {
-        en: "Get a bird's-eye view of your artifact collection with scoring and quality metrics for each character.",
-        zh: "全局查看你的圣遗物收藏，包含每个角色的评分和质量指标。",
+      recommendationsTitle: { en: "Recommendations", zh: "推荐" },
+      recommendationsContent: {
+        en: "Get personalized recommendations for artifact upgrades, swaps, and farming priorities based on your collection.",
+        zh: "根据你的圣遗物收藏，获取个性化的强化、替换和刷取建议。",
       },
       weightsTitle: { en: "Stat Weights", zh: "词条权重" },
       weightsContent: {

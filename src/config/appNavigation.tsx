@@ -31,11 +31,11 @@ export const getNavigationConfig = (
         tourStepId: "ad-characters",
       },
       {
-        label: t.ui("accountData.summary"),
-        href: "/account-data?tab=summary",
-        value: "summary",
+        label: t.ui("accountData.recommendations"),
+        href: "/account-data?tab=recommendations",
+        value: "recommendations",
         icon: LayoutGrid,
-        tourStepId: "ad-summary",
+        tourStepId: "ad-recommendations",
       },
       {
         label: t.ui("accountData.inventory"),

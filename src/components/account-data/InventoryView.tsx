@@ -1,3 +1,4 @@
+import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
@@ -11,10 +12,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, weaponsById } from "@/data/constants";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
-import { StatDisplay } from "./StatDisplay";
 
 interface InventoryViewProps {
   data: AccountData;
@@ -131,7 +131,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={maxLvlArtifacts.length}
         defaultOpen={true}
       >
-        <ArtifactGrid artifacts={maxLvlArtifacts} iconSize={iconSize} t={t} />
+        <ArtifactGrid artifacts={maxLvlArtifacts} iconSize={iconSize} />
       </Section>
 
       <Section
@@ -139,7 +139,7 @@ export function InventoryView({ data }: InventoryViewProps) {
         count={otherArtifacts.length}
         defaultOpen={false}
       >
-        <ArtifactGrid artifacts={otherArtifacts} iconSize={iconSize} t={t} />
+        <ArtifactGrid artifacts={otherArtifacts} iconSize={iconSize} />
       </Section>
     </ScrollLayout>
   );
@@ -249,56 +249,34 @@ function WeaponGrid({
 function ArtifactGrid({
   artifacts,
   iconSize,
-  t,
 }: {
   artifacts: ArtifactData[];
   iconSize: "lg" | "xl";
-  t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
     <div className="flex flex-wrap gap-3 px-2">
       {artifacts.map((a) => {
         const artInfo = artifactsById[a.setKey];
-        const name = t.artifact(a.setKey);
-        // Use astralMark as badge (show star if marked)
         const badge = a.astralMark ? "⭐" : undefined;
 
         return (
-          <Tooltip key={a.id}>
-            <TooltipTrigger asChild>
-              <div className="relative rounded-md overflow-hidden group cursor-help transition-transform hover:scale-105 duration-200">
-                <ItemIcon
-                  imagePath={artInfo?.imagePaths[a.slotKey] || ""}
-                  rarity={a.rarity}
-                  badge={badge}
-                  lock={a.lock}
-                  level={`+${a.level}`}
-                  size={iconSize}
-                />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="p-0 border-none bg-transparent"
-            >
-              <div className="w-48 bg-slate-900 border border-slate-700 rounded-lg p-3 space-y-2 text-slate-100 shadow-xl">
-                <div className="border-b border-slate-700 pb-2">
-                  <div
-                    className={cn(
-                      "font-bold text-base",
-                      getRarityColor(a.rarity, "text")
-                    )}
-                  >
-                    {name}
-                  </div>
-                  <div className="text-sm text-slate-400 capitalize">
-                    {t.ui(`computeFilters.${a.slotKey}`)}
-                  </div>
-                </div>
-                <StatDisplay artifact={a} />
-              </div>
-            </TooltipContent>
-          </Tooltip>
+          <ArtifactDataHoverCard
+            key={a.id}
+            artifact={a}
+            slot={a.slotKey}
+            side="right"
+          >
+            <div className="relative rounded-md overflow-hidden group cursor-help transition-transform hover:scale-105 duration-200">
+              <ItemIcon
+                imagePath={artInfo?.imagePaths[a.slotKey] || ""}
+                rarity={a.rarity}
+                badge={badge}
+                lock={a.lock}
+                level={`+${a.level}`}
+                size={iconSize}
+              />
+            </div>
+          </ArtifactDataHoverCard>
         );
       })}
     </div>

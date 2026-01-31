@@ -113,7 +113,9 @@ describe("convertGOODToAccountData", () => {
         characters: [
           {
             key: "Amber",
+            level: 1,
             constellation: 0,
+            ascension: 0,
           },
         ],
       };
@@ -127,7 +129,9 @@ describe("convertGOODToAccountData", () => {
         format: "GOOD",
         version: 1,
         source: "Test",
-        characters: [{ key: "Traveler", constellation: 0 }],
+        characters: [
+          { key: "Traveler", level: 1, constellation: 0, ascension: 0 },
+        ],
       };
       const result = convertGOODToAccountData(travelerData);
       expect(result.data.characters.length).toBeGreaterThanOrEqual(0);
@@ -140,7 +144,9 @@ describe("convertGOODToAccountData", () => {
         format: "GOOD",
         version: 1,
         source: "Test",
-        characters: [{ key: "UnknownCharacter", constellation: 0 }],
+        characters: [
+          { key: "UnknownCharacter", level: 1, constellation: 0, ascension: 0 },
+        ],
       };
       const result = convertGOODToAccountData(dataWithUnknownChar);
       expect(result.warnings).toHaveLength(1);
@@ -153,11 +159,14 @@ describe("convertGOODToAccountData", () => {
         format: "GOOD",
         version: 1,
         source: "Test",
-        characters: [{ key: "Amber", constellation: 0 }],
+        characters: [
+          { key: "Amber", level: 1, constellation: 0, ascension: 0 },
+        ],
         weapons: [
           {
             key: "UnknownWeapon",
             level: 1,
+            ascension: 0,
             refinement: 1,
             location: "",
             lock: false,
@@ -175,7 +184,9 @@ describe("convertGOODToAccountData", () => {
         format: "GOOD",
         version: 1,
         source: "Test",
-        characters: [{ key: "Amber", constellation: 0 }],
+        characters: [
+          { key: "Amber", level: 1, constellation: 0, ascension: 0 },
+        ],
         artifacts: [
           {
             setKey: "UnknownSet",
@@ -202,7 +213,9 @@ describe("convertGOODToAccountData", () => {
         format: "GOOD",
         version: 1,
         source: "Test",
-        characters: [{ key: "Amber", constellation: 0 }],
+        characters: [
+          { key: "Amber", level: 1, constellation: 0, ascension: 0 },
+        ],
         artifacts: [
           {
             setKey: "EmblemOfSeveredFate",

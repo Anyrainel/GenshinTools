@@ -3,6 +3,10 @@
 
 export const i18nGameData = {
   "characters": {
+    "varka": {
+      "en": "Varka",
+      "zh": "法尔伽"
+    },
     "illuga": {
       "en": "Illuga",
       "zh": "叶洛亚"

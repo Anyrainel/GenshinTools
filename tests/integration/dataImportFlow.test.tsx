@@ -26,8 +26,9 @@ const integrationGOODData: GOODData = {
   characters: [
     {
       key: "HuTao",
-      constellation: 1,
       level: 90,
+      constellation: 1,
+      ascension: 6,
       talent: { auto: 10, skill: 10, burst: 8 },
     },
   ],
@@ -35,6 +36,7 @@ const integrationGOODData: GOODData = {
     {
       key: "StaffOfHoma",
       level: 90,
+      ascension: 6,
       refinement: 1,
       location: "HuTao",
       lock: true,
@@ -149,7 +151,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
       ...integrationGOODData,
       characters: [
         ...integrationGOODData.characters!,
-        { key: "UnknownCharacter", constellation: 0 },
+        { key: "UnknownCharacter", level: 1, constellation: 0, ascension: 0 },
       ],
     };
 

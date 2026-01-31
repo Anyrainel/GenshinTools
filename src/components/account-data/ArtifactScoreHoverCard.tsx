@@ -189,11 +189,10 @@ function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
             key={slot}
             className="text-center text-sm text-slate-400 truncate px-1"
           >
-            {t.ui(`computeFilters.${slot}`)}
+            {t.slot(slot)}
           </div>
         ))}
 
-        {/* Main Stat Row */}
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.mainStat")}
         </div>

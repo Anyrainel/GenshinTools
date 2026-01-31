@@ -172,7 +172,7 @@ const MAX_CD_ROLL_4STAR = 6.22;
  * - 5-star: 8 rolls distributed as 5-1-1-1 to top 4 weighted stats
  * - 4-star: 6 rolls distributed as 3-1-1-1 to top 4 weighted stats
  */
-function calculateMaxSlotSubScore(
+export function calculateMaxSlotSubScore(
   mainStat: MainStat,
   weights: StatWeightMap,
   rarity: number

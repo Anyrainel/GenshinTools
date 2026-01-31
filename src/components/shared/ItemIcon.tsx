@@ -40,7 +40,7 @@ export const ICON_CONFIG = {
       fontSize: 10,
       lockIconSize: 8.5,
     },
-    level: { height: 8, fontSize: 9, cornerFill: 8 },
+    level: { height: 10, fontSize: 9, cornerFill: 8 },
   },
   md: {
     icon: 56,
@@ -53,7 +53,7 @@ export const ICON_CONFIG = {
       fontSize: 11,
       lockIconSize: 10,
     },
-    level: { height: 10, fontSize: 10, cornerFill: 8 },
+    level: { height: 11, fontSize: 10, cornerFill: 8 },
   },
   lg: {
     icon: 64, // Base size

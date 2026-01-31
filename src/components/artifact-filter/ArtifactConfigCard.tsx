@@ -312,11 +312,11 @@ export function ArtifactConfigCard({
           {/* Flower/Plume Block */}
           <div className="space-y-2">
             {renderSubstatCell(
-              `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+              `${t.slot("flower")}/${t.slot("plume")}`,
               config.flowerPlume
             )}
             {renderChanceCell(
-              `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+              `${t.slot("flower")}/${t.slot("plume")}`,
               slotChanceDetails.flowerPlume
             )}
           </div>
@@ -325,45 +325,27 @@ export function ArtifactConfigCard({
 
           {/* Sands Block */}
           <div className="space-y-2">
-            {renderMainStatCell(
-              t.ui("computeFilters.sands"),
-              config.sands.mainStats
-            )}
-            {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
-            {renderChanceCell(
-              t.ui("computeFilters.sands"),
-              slotChanceDetails.sands
-            )}
+            {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
+            {renderSubstatCell(t.slot("sands"), config.sands)}
+            {renderChanceCell(t.slot("sands"), slotChanceDetails.sands)}
           </div>
 
           <div className="w-full h-px bg-border/30" />
 
           {/* Goblet Block */}
           <div className="space-y-2">
-            {renderMainStatCell(
-              t.ui("computeFilters.goblet"),
-              config.goblet.mainStats
-            )}
-            {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
-            {renderChanceCell(
-              t.ui("computeFilters.goblet"),
-              slotChanceDetails.goblet
-            )}
+            {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
+            {renderSubstatCell(t.slot("goblet"), config.goblet)}
+            {renderChanceCell(t.slot("goblet"), slotChanceDetails.goblet)}
           </div>
 
           <div className="w-full h-px bg-border/30" />
 
           {/* Circlet Block */}
           <div className="space-y-2">
-            {renderMainStatCell(
-              t.ui("computeFilters.circlet"),
-              config.circlet.mainStats
-            )}
-            {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
-            {renderChanceCell(
-              t.ui("computeFilters.circlet"),
-              slotChanceDetails.circlet
-            )}
+            {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}
+            {renderSubstatCell(t.slot("circlet"), config.circlet)}
+            {renderChanceCell(t.slot("circlet"), slotChanceDetails.circlet)}
           </div>
         </div>
       ) : (
@@ -374,43 +356,25 @@ export function ArtifactConfigCard({
         >
           {/* Row 1: Main Stats */}
           <div /> {/* Flower/Plume - empty */}
-          {renderMainStatCell(
-            t.ui("computeFilters.sands"),
-            config.sands.mainStats
-          )}
-          {renderMainStatCell(
-            t.ui("computeFilters.goblet"),
-            config.goblet.mainStats
-          )}
-          {renderMainStatCell(
-            t.ui("computeFilters.circlet"),
-            config.circlet.mainStats
-          )}
+          {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
+          {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
+          {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}
           {/* Row 2: Substats */}
           {renderSubstatCell(
-            `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+            `${t.slot("flower")}/${t.slot("plume")}`,
             config.flowerPlume
           )}
-          {renderSubstatCell(t.ui("computeFilters.sands"), config.sands)}
-          {renderSubstatCell(t.ui("computeFilters.goblet"), config.goblet)}
-          {renderSubstatCell(t.ui("computeFilters.circlet"), config.circlet)}
+          {renderSubstatCell(t.slot("sands"), config.sands)}
+          {renderSubstatCell(t.slot("goblet"), config.goblet)}
+          {renderSubstatCell(t.slot("circlet"), config.circlet)}
           {/* Row 3: Chances */}
           {renderChanceCell(
-            `${t.ui("computeFilters.flower")}/${t.ui("computeFilters.plume")}`,
+            `${t.slot("flower")}/${t.slot("plume")}`,
             slotChanceDetails.flowerPlume
           )}
-          {renderChanceCell(
-            t.ui("computeFilters.sands"),
-            slotChanceDetails.sands
-          )}
-          {renderChanceCell(
-            t.ui("computeFilters.goblet"),
-            slotChanceDetails.goblet
-          )}
-          {renderChanceCell(
-            t.ui("computeFilters.circlet"),
-            slotChanceDetails.circlet
-          )}
+          {renderChanceCell(t.slot("sands"), slotChanceDetails.sands)}
+          {renderChanceCell(t.slot("goblet"), slotChanceDetails.goblet)}
+          {renderChanceCell(t.slot("circlet"), slotChanceDetails.circlet)}
         </div>
       )}
     </div>

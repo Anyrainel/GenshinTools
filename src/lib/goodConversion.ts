@@ -11,11 +11,12 @@ import type {
   WeaponData,
 } from "@/data/types";
 
-// --- Types from GOOD (Genshin Open Object Description) ---
+// --- Types from GOOD v3 (Genshin Open Object Description) ---
 
 export interface IGOODSubstat {
   key: string;
   value: number;
+  initialValue?: number;
 }
 
 export interface IGOODArtifact {
@@ -27,7 +28,6 @@ export interface IGOODArtifact {
   location: string;
   lock: boolean;
   substats: IGOODSubstat[];
-  // GOOD v3 fields
   totalRolls?: number;
   astralMark?: boolean;
   elixirCrafted?: boolean;
@@ -36,17 +36,18 @@ export interface IGOODArtifact {
 
 export interface IGOODWeapon {
   key: string;
-  level: number;
-  refinement: number;
+  level: number; // 1-90 inclusive
+  refinement: number; // 1-5 inclusive
+  ascension: number; // 0-6 inclusive, disambiguates 80/90 vs 80/80
   location: string;
   lock: boolean;
 }
 
 export interface IGOODCharacter {
   key: string;
-  constellation: number;
-  level?: number;
-  ascension?: number;
+  level: number; // 1-90 inclusive
+  constellation: number; // 0-6 inclusive
+  ascension: number; // 0-6 inclusive, disambiguates 80/90 vs 80/80
   talent?: {
     auto: number;
     skill: number;
@@ -61,6 +62,7 @@ export interface GOODData {
   characters?: IGOODCharacter[];
   weapons?: IGOODWeapon[];
   artifacts?: IGOODArtifact[];
+  // materials are ignored
 }
 
 // --- Conversion Result ---
@@ -258,10 +260,17 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
         // Convert substats array to Record (Map)
         const substats: Partial<Record<SubStat, number>> = {};
+        const initialValues: Partial<Record<SubStat, number>> = {};
+        let hasInitialValues = false;
         for (const sub of art.substats) {
           const key = statKeyMap[sub.key] as SubStat;
           if (key) {
             substats[key] = sub.value;
+            if (sub.initialValue !== undefined && sub.initialValue > 0) {
+              // GOOD v3: extract initialValue if present
+              initialValues[key] = sub.initialValue;
+              hasInitialValues = true;
+            }
           }
         }
 
@@ -294,6 +303,7 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
               elixirCrafted: art.elixirCrafted,
             }),
             ...(unactivatedSubstats && { unactivatedSubstats }),
+            ...(hasInitialValues && { initialValues }),
           };
 
           let assigned = false;

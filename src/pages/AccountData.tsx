@@ -1,8 +1,8 @@
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import { CharacterView } from "@/components/account-data/CharacterView";
 import { InventoryView } from "@/components/account-data/InventoryView";
+import { RecommendationView } from "@/components/account-data/RecommendationView";
 import { StatWeightView } from "@/components/account-data/StatWeightView";
-import { SummaryView } from "@/components/account-data/SummaryView";
 import {
   type ActionConfig,
   AppBar,
@@ -355,10 +355,10 @@ export default function AccountDataPage() {
         tourStepId: "ad-characters",
       },
       {
-        value: "summary",
-        label: t.ui("accountData.summary"),
+        value: "recommendations",
+        label: t.ui("accountData.recommendations"),
         icon: LayoutGrid,
-        tourStepId: "ad-summary",
+        tourStepId: "ad-recommendations",
       },
       { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
       {
@@ -424,57 +424,61 @@ export default function AccountDataPage() {
       {/* Conversion Warnings - visible on all tabs */}
       {conversionWarnings.length > 0 && (
         <div className="container mx-auto px-4 pt-2">
-          <Alert variant="destructive" className="relative">
+          <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2 h-6 w-6"
-              onClick={dismissWarnings}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-            <AlertTitle>{t.ui("accountData.conversionWarning")}</AlertTitle>
-            <AlertDescription className="pr-8">
-              <div className="mt-1">
-                {conversionWarnings.filter((w) => w.type === "character")
-                  .length > 0 && (
-                  <div>
-                    <span className="font-medium">
-                      {t.ui("accountData.characters")}:
-                    </span>{" "}
-                    {conversionWarnings
-                      .filter((w) => w.type === "character")
-                      .map((w) => w.key)
-                      .join(", ")}
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1">
+                <AlertTitle>{t.ui("accountData.conversionWarning")}</AlertTitle>
+                <AlertDescription>
+                  <div className="mt-1">
+                    {conversionWarnings.filter((w) => w.type === "character")
+                      .length > 0 && (
+                      <div>
+                        <span className="font-medium">
+                          {t.ui("accountData.characters")}:
+                        </span>{" "}
+                        {conversionWarnings
+                          .filter((w) => w.type === "character")
+                          .map((w) => w.key)
+                          .join(", ")}
+                      </div>
+                    )}
+                    {conversionWarnings.filter((w) => w.type === "weapon")
+                      .length > 0 && (
+                      <div>
+                        <span className="font-medium">
+                          {t.ui("teamBuilder.weapon")}:
+                        </span>{" "}
+                        {conversionWarnings
+                          .filter((w) => w.type === "weapon")
+                          .map((w) => w.key)
+                          .join(", ")}
+                      </div>
+                    )}
+                    {conversionWarnings.filter((w) => w.type === "artifact")
+                      .length > 0 && (
+                      <div>
+                        <span className="font-medium">
+                          {t.ui("teamBuilder.artifact")}:
+                        </span>{" "}
+                        {conversionWarnings
+                          .filter((w) => w.type === "artifact")
+                          .map((w) => w.key)
+                          .join(", ")}
+                      </div>
+                    )}
                   </div>
-                )}
-                {conversionWarnings.filter((w) => w.type === "weapon").length >
-                  0 && (
-                  <div>
-                    <span className="font-medium">
-                      {t.ui("teamBuilder.weapon")}:
-                    </span>{" "}
-                    {conversionWarnings
-                      .filter((w) => w.type === "weapon")
-                      .map((w) => w.key)
-                      .join(", ")}
-                  </div>
-                )}
-                {conversionWarnings.filter((w) => w.type === "artifact")
-                  .length > 0 && (
-                  <div>
-                    <span className="font-medium">
-                      {t.ui("teamBuilder.artifact")}:
-                    </span>{" "}
-                    {conversionWarnings
-                      .filter((w) => w.type === "artifact")
-                      .map((w) => w.key)
-                      .join(", ")}
-                  </div>
-                )}
+                </AlertDescription>
               </div>
-            </AlertDescription>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 shrink-0 -mt-0.5 -mr-1 hover:bg-destructive/20"
+                onClick={dismissWarnings}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </Alert>
         </div>
       )}
@@ -491,9 +495,9 @@ export default function AccountDataPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="summary" className="mt-0 h-full">
+        <TabsContent value="recommendations" className="mt-0 h-full">
           {accountData ? (
-            <SummaryView scores={scores} />
+            <RecommendationView scores={scores} />
           ) : (
             <NoDataPlaceholder
               t={t}

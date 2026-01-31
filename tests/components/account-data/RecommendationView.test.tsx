@@ -1,4 +1,4 @@
-import { SummaryView } from "@/components/account-data/SummaryView";
+import { RecommendationView } from "@/components/account-data/RecommendationView";
 import type { ArtifactScoreResult } from "@/lib/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -14,14 +14,14 @@ const mockScoreResult: ArtifactScoreResult = {
   isComplete: true,
 };
 
-describe("SummaryView", () => {
+describe("RecommendationView", () => {
   beforeEach(() => {
     useAccountStore.getState().clearAccountData();
     useTierStore.getState().resetTierList();
   });
 
   it("returns null when no account data", () => {
-    const { container } = render(<SummaryView scores={{}} />);
+    const { container } = render(<RecommendationView scores={{}} />);
 
     expect(container.firstChild).toBeNull();
   });
@@ -99,7 +99,7 @@ describe("SummaryView", () => {
       .getState()
       .setTierAssignments({ hu_tao: { tier: "S", position: 0 } });
 
-    render(<SummaryView scores={{ hu_tao: mockScoreResult }} />);
+    render(<RecommendationView scores={{ hu_tao: mockScoreResult }} />);
 
     // Should show tier headings
     const headings = screen.getAllByRole("heading");

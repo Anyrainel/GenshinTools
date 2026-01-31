@@ -78,9 +78,9 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
         side: "bottom",
       },
       {
-        id: "ad-summary",
-        title: t.ui("tour.accountData.summaryTitle"),
-        content: t.ui("tour.accountData.summaryContent"),
+        id: "ad-recommendations",
+        title: t.ui("tour.accountData.recommendationsTitle"),
+        content: t.ui("tour.accountData.recommendationsContent"),
         side: "bottom",
       },
       {

@@ -109,17 +109,76 @@ export interface WeaponStat {
 
 // ----------------------
 
-// Proxy to bypass CORS on static site
-const CORS_PROXY = "https://corsproxy.io/?";
-const ENKA_API_URL = "https://enka.network/api/uid/";
+// Enka API endpoints with fallback strategy
+// Primary: Self-hosted Cloudflare Pages Function (works on ggartifact.com)
+// Fallback: corsproxy.io (for GitHub Pages or other deployments)
+const ENKA_DIRECT_API = "/api/enka/uid/";
+const CORS_PROXY_FALLBACK = "https://corsproxy.io/?";
+const ENKA_EXTERNAL_API = "https://enka.network/api/uid/";
+
+/**
+ * Determines if we're running on a deployment that has our Cloudflare Function.
+ * Returns true for Cloudflare Pages (ggartifact.com, *.pages.dev) and localhost
+ * when running via Wrangler (port 8788).
+ */
+function hasCloudflareProxy(): boolean {
+  const { hostname, port } = window.location;
+
+  // Production: Cloudflare Pages deployments
+  if (
+    hostname.endsWith(".pages.dev") ||
+    hostname === "ggartifact.com" ||
+    hostname.endsWith(".ggartifact.com")
+  ) {
+    return true;
+  }
+
+  // Development: Only when running through Wrangler (port 8788)
+  // If accessing via Vite directly (port 5173), Functions aren't available
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return port === "8788";
+  }
+
+  return false;
+}
 
 export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
   if (!uid || !uid.match(/^\d{9}$/)) {
     throw new Error("Invalid UID format");
   }
 
-  const url = `${CORS_PROXY}${ENKA_API_URL}${uid}`;
-  const response = await fetch(url);
+  // Try primary endpoint first (Cloudflare Pages Function)
+  const useCfProxy = hasCloudflareProxy();
+  const primaryUrl = useCfProxy
+    ? `${ENKA_DIRECT_API}${uid}`
+    : `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`;
+
+  let response: Response;
+  let usedFallback = false;
+
+  try {
+    response = await fetch(primaryUrl);
+
+    // If primary fails with network error or 5xx, try fallback (only if we used CF proxy)
+    if (useCfProxy && !response.ok && response.status >= 500) {
+      console.warn("Cloudflare proxy failed, trying fallback...");
+      response = await fetch(
+        `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`
+      );
+      usedFallback = true;
+    }
+  } catch (error) {
+    // Network error on primary, try fallback if we used CF proxy
+    if (useCfProxy) {
+      console.warn("Cloudflare proxy network error, trying fallback...", error);
+      response = await fetch(
+        `${CORS_PROXY_FALLBACK}${ENKA_EXTERNAL_API}${uid}`
+      );
+      usedFallback = true;
+    } else {
+      throw error;
+    }
+  }
 
   if (!response.ok) {
     if (response.status === 404) {
@@ -131,6 +190,10 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
   const data = (await response.json()) as EnkaResponse;
   if (!data.playerInfo) {
     throw new Error("Invalid Enka response");
+  }
+
+  if (usedFallback) {
+    console.info("Successfully fetched via fallback proxy");
   }
 
   return data;
@@ -186,16 +249,17 @@ export function convertEnkaToGOOD(
       // Character
       characters.push({
         key: charKey,
-        level: Number(avatar.propMap?.["4001"]?.ival) || 1,
-        constellation: avatar.talentIdList ? avatar.talentIdList.length : 0,
-        ascension: Number(avatar.propMap?.["1002"]?.ival) || 0,
+        level: Number(avatar.propMap?.["4001"]?.ival ?? 1),
+        constellation: avatar.talentIdList?.length ?? 0,
+        ascension: Number(avatar.propMap?.["1002"]?.ival ?? 0),
+        // Guess based on order
         talent: {
           auto:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[0]] || 1, // Rough guess, Enka skill map is messy
+            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[0]] ?? 1,
           skill:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[1]] || 1,
+            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[1]] ?? 1,
           burst:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[2]] || 1,
+            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[2]] ?? 1,
         },
       });
 
@@ -210,11 +274,12 @@ export function convertEnkaToGOOD(
             if (weaponName && equip.weapon) {
               weapons.push({
                 key: toPascalKey(weaponName),
-                level: equip.weapon.level,
+                level: equip.weapon.level ?? 1,
+                ascension: equip.weapon.promoteLevel ?? 0,
                 refinement:
                   (equip.weapon.affixMap?.[
                     Object.keys(equip.weapon.affixMap)[0]
-                  ] || 0) + 1,
+                  ] ?? 0) + 1,
                 location: charKey,
                 lock: false,
               });
@@ -258,15 +323,19 @@ export function convertEnkaToGOOD(
               }
 
               if (slotKey && mainStatKey) {
+                // Calculate totalRolls from appendPropIdList length if available
+                const totalRolls = equip.reliquary.appendPropIdList?.length;
+
                 artifacts.push({
                   setKey: toPascalKey(setName),
                   slotKey,
-                  level: equip.reliquary.level - 1,
-                  rarity: flat.rankLevel,
+                  level: (equip.reliquary.level ?? 1) - 1,
+                  rarity: flat.rankLevel ?? 5,
                   mainStatKey: mainStatKey as StatKey,
                   location: charKey,
                   lock: false,
                   substats,
+                  ...(totalRolls !== undefined && { totalRolls }),
                 });
               }
             } else if (foundSetId) {

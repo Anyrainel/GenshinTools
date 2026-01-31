@@ -29,6 +29,7 @@
     {
       "key": "StaffOfHoma",
       "level": 90,
+      "ascension": 6,
       "refinement": 1,
       "location": "HuTao",
       "lock": true
@@ -36,6 +37,7 @@
     {
       "key": "SacrificialSword",
       "level": 90,
+      "ascension": 6,
       "refinement": 5,
       "location": "Xingqiu",
       "lock": true
@@ -43,6 +45,7 @@
     {
       "key": "BlackTassel",
       "level": 90,
+      "ascension": 6,
       "refinement": 5,
       "location": "Zhongli",
       "lock": false

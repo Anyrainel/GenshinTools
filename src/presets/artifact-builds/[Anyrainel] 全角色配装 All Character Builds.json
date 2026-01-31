@@ -1,38 +1,8 @@
 {
   "author": "Anyrainel",
-  "description": "自用全角色配装 AllCharactersBuildSample",
+  "description": "全角色配装 AllCharactersBuildSample",
   "version": 4,
   "data": [
-    {
-      "characterId": "jahoda",
-      "builds": [
-        {
-          "id": "build-1765193935606",
-          "characterId": "jahoda",
-          "name": "治疗辅助",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["atk%", "er"],
-          "goblet": ["atk%"],
-          "circlet": ["atk%", "heal%"],
-          "substats": ["er", "atk%"],
-          "artifactSet": "silken_moons_serenade"
-        },
-        {
-          "id": "build-1765193981718",
-          "characterId": "jahoda",
-          "name": "治疗辅助",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["atk%", "er"],
-          "goblet": ["atk%"],
-          "circlet": ["atk%", "heal%"],
-          "substats": ["er", "atk%"],
-          "artifactSet": "viridescent_venerer"
-        }
-      ],
-      "hidden": false
-    },
     {
       "characterId": "dahlia",
       "builds": [
@@ -77,6 +47,19 @@
           "goblet": ["atk%"],
           "circlet": ["cd", "cr"],
           "substats": ["cd", "cr", "atk%", "em"],
+          "artifactSet": "aubade_of_morningstar_and_moon",
+          "kOverride": 3,
+          "characterId": "ineffa"
+        },
+        {
+          "id": "build-1769425057521",
+          "name": "月感电副C",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%"],
+          "goblet": ["atk%"],
+          "circlet": ["cd", "cr"],
+          "substats": ["cd", "cr", "atk%", "em"],
           "artifactSet": "gilded_dreams",
           "kOverride": 3,
           "characterId": "ineffa"
@@ -90,27 +73,27 @@
       "builds": [
         {
           "id": "build-1759079342747",
-          "name": "月绽放副C",
+          "name": "月绽放辅助",
           "visible": true,
           "composition": "4pc",
           "sands": ["em", "er"],
           "goblet": ["em"],
           "circlet": ["em"],
-          "substats": ["cd", "cr", "em", "er"],
-          "artifactSet": "silken_moons_serenade",
+          "substats": ["em", "er"],
+          "artifactSet": "deepwood_memories",
           "kOverride": 3,
           "characterId": "lauma"
         },
         {
           "id": "build-1759079709770",
-          "name": "月绽放副C",
+          "name": "月绽放辅助",
           "visible": true,
           "composition": "4pc",
           "sands": ["em", "er"],
           "goblet": ["em"],
           "circlet": ["em"],
-          "substats": ["cd", "cr", "em", "er"],
-          "artifactSet": "deepwood_memories",
+          "substats": ["em", "er"],
+          "artifactSet": "silken_moons_serenade",
           "kOverride": 3,
           "characterId": "lauma"
         }
@@ -155,7 +138,7 @@
         {
           "id": "build-1759081278514",
           "name": "辅助",
-          "visible": false,
+          "visible": true,
           "composition": "4pc",
           "sands": ["em", "er"],
           "goblet": ["em"],
@@ -166,7 +149,7 @@
         },
         {
           "id": "build-1759081442681",
-          "name": "双辅助",
+          "name": "双辅助替换",
           "visible": true,
           "composition": "4pc",
           "sands": ["em", "er"],
@@ -209,7 +192,7 @@
         },
         {
           "id": "build-1759083198124",
-          "name": "双辅助",
+          "name": "双辅助替换",
           "visible": true,
           "composition": "4pc",
           "sands": ["def%"],
@@ -223,7 +206,7 @@
         {
           "id": "build-1759084179722",
           "name": "6命输出",
-          "visible": false,
+          "visible": true,
           "composition": "4pc",
           "sands": ["def%"],
           "goblet": ["geo%"],
@@ -750,6 +733,18 @@
           "artifactSet": "golden_troupe",
           "kOverride": 3,
           "characterId": "escoffier"
+        },
+        {
+          "id": "build-1769348921796",
+          "characterId": "escoffier",
+          "name": "幽战辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%"],
+          "substats": ["er", "atk%", "atk"],
+          "artifactSet": "scroll_of_the_hero_of_cinder_city"
         }
       ],
       "hidden": false,
@@ -2520,24 +2515,25 @@
           "sands": ["er"],
           "goblet": ["anemo%"],
           "circlet": ["cd", "cr"],
-          "substats": ["cd", "cr", "er"],
+          "substats": ["er", "em"],
           "artifactSet": "viridescent_venerer"
         },
         {
           "id": "build-1759338035984",
           "characterId": "venti",
-          "name": "副C 扩散",
+          "name": "主C",
           "visible": true,
           "composition": "4pc",
-          "sands": ["em"],
-          "goblet": ["em"],
-          "circlet": ["em"],
-          "substats": ["cd", "cr", "em", "er"],
-          "artifactSet": "viridescent_venerer",
+          "sands": ["atk%"],
+          "goblet": ["anemo%"],
+          "circlet": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "er"],
+          "artifactSet": "a_day_carved_from_rising_winds",
           "kOverride": 3
         }
       ],
-      "hidden": false
+      "hidden": false,
+      "weapons": ["the_daybreak_chronicles", "elegy_for_the_end"]
     },
     {
       "characterId": "bennett",
@@ -2863,7 +2859,7 @@
           "composition": "4pc",
           "sands": ["atk%"],
           "goblet": ["atk%"],
-          "circlet": ["cd", "atk%"],
+          "circlet": ["atk%", "cd"],
           "substats": ["cd", "cr", "atk%", "er"],
           "artifactSet": "noblesse_oblige",
           "kOverride": 3
@@ -2875,10 +2871,10 @@
           "visible": true,
           "composition": "4pc",
           "sands": ["atk%"],
-          "goblet": ["atk%", "pyro%"],
-          "circlet": ["cd", "atk%"],
+          "goblet": ["pyro%"],
+          "circlet": ["cd"],
           "substats": ["cd", "cr", "atk%", "er"],
-          "artifactSet": "emblem_of_severed_fate",
+          "artifactSet": "a_day_carved_from_rising_winds",
           "kOverride": 3
         }
       ],
@@ -2886,23 +2882,41 @@
       "weapons": ["athame_artis"]
     },
     {
+      "characterId": "jahoda",
+      "builds": [
+        {
+          "id": "build-1765193935606",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
+          "artifactSet": "silken_moons_serenade"
+        },
+        {
+          "id": "build-1765193981718",
+          "characterId": "jahoda",
+          "name": "治疗辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["atk%", "er"],
+          "goblet": ["atk%"],
+          "circlet": ["atk%", "heal%"],
+          "substats": ["er", "atk%"],
+          "artifactSet": "viridescent_venerer"
+        }
+      ],
+      "hidden": false,
+      "weapons": ["rainbow_serpents_rain_bow"]
+    },
+    {
       "characterId": "columbina",
       "builds": [
         {
           "id": "build-1768661019006",
-          "characterId": "columbina",
-          "name": "辅助",
-          "visible": true,
-          "composition": "4pc",
-          "sands": ["hp%", "er"],
-          "goblet": ["hp%"],
-          "circlet": ["hp%", "cd"],
-          "substats": ["cr", "cd", "hp%", "er"],
-          "artifactSet": "silken_moons_serenade",
-          "kOverride": 3
-        },
-        {
-          "id": "build-1768661067166",
           "characterId": "columbina",
           "name": "副C",
           "visible": true,
@@ -2912,6 +2926,19 @@
           "circlet": ["cr", "cd"],
           "substats": ["cr", "cd", "hp%", "er"],
           "artifactSet": "aubade_of_morningstar_and_moon",
+          "kOverride": 3
+        },
+        {
+          "id": "build-1768661067166",
+          "characterId": "columbina",
+          "name": "辅助",
+          "visible": true,
+          "composition": "4pc",
+          "sands": ["hp%", "er"],
+          "goblet": ["hp%"],
+          "circlet": ["hp%", "cr"],
+          "substats": ["hp%", "er", "cr", "cd"],
+          "artifactSet": "silken_moons_serenade",
           "kOverride": 3
         }
       ],
@@ -2924,14 +2951,27 @@
         {
           "id": "build-1768661121889",
           "characterId": "illuga",
-          "name": "",
+          "name": "2命辅助",
           "visible": true,
           "composition": "4pc",
-          "sands": ["def%", "er"],
-          "goblet": ["def%"],
-          "circlet": ["def%"],
-          "substats": ["def%", "er"],
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
           "artifactSet": "silken_moons_serenade"
+        },
+        {
+          "id": "build-1769734987112",
+          "characterId": "illuga",
+          "name": "辅助",
+          "visible": false,
+          "composition": "2pc+2pc",
+          "sands": ["em", "er"],
+          "goblet": ["em"],
+          "circlet": ["em"],
+          "substats": ["em", "er"],
+          "halfSet1": 7,
+          "halfSet2": 7
         }
       ],
       "hidden": false
@@ -2942,7 +2982,7 @@
         {
           "id": "build-1768661158868",
           "characterId": "zibai",
-          "name": "",
+          "name": "主C",
           "visible": true,
           "composition": "4pc",
           "sands": ["def%"],

@@ -112,6 +112,34 @@ export const statPoolWithWeights = {
   },
 };
 
+// Max substat roll values per rarity (from ArtifactScore.md documentation)
+export const maxSubstatRolls = {
+  5: {
+    hp: 298.75,
+    atk: 19.45,
+    def: 23.15,
+    "hp%": 5.83,
+    "atk%": 5.83,
+    "def%": 7.29,
+    em: 23.31,
+    er: 6.48,
+    cr: 3.89,
+    cd: 7.77,
+  },
+  4: {
+    hp: 239.0,
+    atk: 15.56,
+    def: 18.52,
+    "hp%": 4.66,
+    "atk%": 4.66,
+    "def%": 5.83,
+    em: 18.65,
+    er: 5.18,
+    cr: 3.11,
+    cd: 6.22,
+  },
+} as const;
+
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],
   getKey: (item: Item) => Key
