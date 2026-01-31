@@ -271,7 +271,6 @@ export type TierListData = {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
   customTitle?: string;
-  language: "en" | "zh";
   author?: string; // Added for export metadata
   description?: string; // Added for export metadata
 };

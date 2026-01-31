@@ -209,13 +209,13 @@ export const AccountImportControl = forwardRef<
               </div>
             </div>
             {/* UID Import Action */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 md:gap-4">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4">
               <input
                 type="text"
                 placeholder={t.ui("accountData.uidPlaceholder") || "UID"}
                 value={uidInput}
                 onChange={(e) => setUidInput(e.target.value)}
-                className="flex h-9 w-full sm:w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-9 w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={isBusy}
                 onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
               />
@@ -237,7 +237,7 @@ export const AccountImportControl = forwardRef<
                 size="sm"
                 onClick={handleUidImport}
                 disabled={!uidInput || isBusy}
-                className="flex-1"
+                className="flex-grow"
               >
                 {isBusy ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

@@ -184,26 +184,26 @@ function ImportControlInner<T>(
           if (!open) setErrorMessage(null);
         }}
       >
-        <DialogContent>
+        <DialogContent className="overflow-x-hidden">
           <DialogHeader>
             <DialogTitle>{messages.dialogTitle}</DialogTitle>
             <DialogDescription>{messages.dialogDescription}</DialogDescription>
           </DialogHeader>
 
           {sortedOptions.length > 0 ? (
-            <div className="grid gap-2 max-h-80 overflow-y-auto pr-1">
+            <div className="grid gap-2 max-h-80 overflow-y-auto overflow-x-hidden pr-1">
               {sortedOptions.map((option) => (
                 <Button
                   key={option.path}
                   variant="outline"
-                  className="justify-between"
+                  className="justify-between h-auto min-h-10 py-2"
                   onClick={() => handleSelect(option)}
                   disabled={isBusy}
                 >
-                  <span className="truncate text-left mr-2">
+                  <span className="line-clamp-2 text-left mr-2">
                     {option.label}
                   </span>
-                  <Layers className="h-4 w-4 text-primary" />
+                  <Layers className="h-4 w-4 shrink-0 text-primary" />
                 </Button>
               ))}
             </div>
@@ -241,13 +241,13 @@ function ImportControlInner<T>(
       </Dialog>
 
       <AlertDialog open={confirmOpen} onOpenChange={handleConfirmChange}>
-        <AlertDialogContent>
+        <AlertDialogContent className="overflow-x-hidden">
           <AlertDialogHeader>
             <AlertDialogTitle>{messages.confirmTitle}</AlertDialogTitle>
             <AlertDialogDescription>
               {messages.confirmDescription}
               {selectedPreset && (
-                <span className="mt-2 block font-semibold text-primary">
+                <span className="mt-2 block font-semibold text-primary line-clamp-2">
                   {selectedPreset.label}
                 </span>
               )}

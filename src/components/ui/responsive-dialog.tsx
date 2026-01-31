@@ -120,7 +120,7 @@ function ResponsiveDialogContent({
 
   return (
     <DrawerContent className={className}>
-      <div className="flex flex-col h-full max-h-[85vh] overflow-hidden">
+      <div className="flex flex-col h-full max-h-[85vh] overflow-y-auto px-4 pb-6 safe-area-bottom">
         {children}
       </div>
     </DrawerContent>

@@ -73,7 +73,7 @@ const elementGroupConfig: Record<Element, TierGroupConfig> = Object.fromEntries(
 ) as Record<Element, TierGroupConfig>;
 
 export default function TierListPage() {
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useLanguage();
   const tour = useTour();
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
@@ -145,9 +145,6 @@ export default function TierListPage() {
       tierCustomization: importedData.tierCustomization,
       customTitle: importedData.customTitle || "",
     });
-    if (importedData.language && importedData.language !== language) {
-      setLanguage(importedData.language);
-    }
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
@@ -156,7 +153,6 @@ export default function TierListPage() {
       tierAssignments,
       tierCustomization,
       customTitle: customTitle || undefined,
-      language,
       author: exportAuthor,
       description: exportDescription,
     };

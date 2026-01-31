@@ -134,7 +134,6 @@ describe("Integration: Tier List Page Flow", () => {
           S: { displayName: "Best", hidden: false },
         },
         customTitle: "Imported Tier List",
-        language: "en",
         author: "Test Author",
         description: "Test Description",
       };
@@ -170,7 +169,6 @@ describe("Integration: Tier List Page Flow", () => {
         tierAssignments: state.tierAssignments,
         tierCustomization: state.tierCustomization,
         customTitle: state.customTitle,
-        language: "en",
         author: state.author,
         description: state.description,
       };

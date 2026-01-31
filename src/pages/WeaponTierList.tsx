@@ -64,7 +64,7 @@ const weaponGroupConfig: Record<WeaponType, TierGroupConfig> =
 const WEAPON_RARITIES = [5, 4, 3] as const;
 
 export default function WeaponTierListPage() {
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useLanguage();
 
   const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
   const tierCustomization = useWeaponTierStore(
@@ -121,9 +121,6 @@ export default function WeaponTierListPage() {
       tierCustomization: importedData.tierCustomization,
       customTitle: importedData.customTitle || "",
     });
-    if (importedData.language && importedData.language !== language) {
-      setLanguage(importedData.language);
-    }
     toast.success(t.ui("messages.tierListLoaded"));
   };
 
@@ -132,7 +129,6 @@ export default function WeaponTierListPage() {
       tierAssignments,
       tierCustomization,
       customTitle: customTitle || undefined,
-      language,
       author: exportAuthor,
       description: exportDescription,
     };
