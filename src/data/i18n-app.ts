@@ -27,6 +27,9 @@ export const i18nAppData = {
     None: { en: "None", zh: "无" },
   },
   stats: {
+    baseHp: { en: "Base HP", zh: "基础生命值" },
+    baseAtk: { en: "Base ATK", zh: "基础攻击力" },
+    baseDef: { en: "Base DEF", zh: "基础防御力" },
     hp: { en: "HP", zh: "生命值" },
     atk: { en: "ATK", zh: "攻击力" },
     def: { en: "DEF", zh: "防御力" },

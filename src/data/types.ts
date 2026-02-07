@@ -82,6 +82,40 @@ export type SubStat =
   | "hp"
   | "def";
 export type MainStatPlus = MainStat | "elemental%" | "cr/cd";
+
+// Base stat keys from hakush.in character stat tables.
+// Every character has baseHp/baseAtk/baseDef/em plus exactly one ascension stat.
+export type BaseStat = "baseHp" | "baseAtk" | "baseDef" | MainStat;
+
+// Per-character stats at two ascension breakpoints
+export type CharacterStats = {
+  Lv90: Partial<Record<BaseStat, string>>;
+  Lv100: Partial<Record<BaseStat, string>>;
+};
+
+// Character kit types (lazy-loaded per-language data from character_*.json)
+export type CharacterSkillDetail = {
+  label: string;
+  lv6: string;
+  lv10: string;
+  lv13: string;
+};
+
+export type CharacterEffect = {
+  name: string;
+  descHtml: string;
+};
+
+export type CharacterSkill = CharacterEffect & {
+  details: CharacterSkillDetail[];
+};
+
+export type CharacterKit = {
+  skills: CharacterSkill[];
+  passives: CharacterEffect[];
+  constellations: CharacterEffect[];
+  dictionary: CharacterEffect[] | null;
+};
 export const mainStatsPlus: MainStatPlus[] = [
   "cr",
   "cd",

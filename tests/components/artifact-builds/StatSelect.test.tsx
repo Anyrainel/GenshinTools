@@ -1,4 +1,4 @@
-import { StatSelect } from "@/components/artifact-filter/StatSelect";
+import { StatSelect } from "@/components/artifact-builds/StatSelect";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 

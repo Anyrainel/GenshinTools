@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
 import type { ArtifactSetConfigs } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/lib/utils";
 import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
@@ -19,20 +21,26 @@ export function ArtifactCard({
   onJumpToCharacter,
 }: ArtifactCardProps) {
   const { t } = useLanguage();
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   const effects = t.artifactEffects(setId);
 
   return (
     <Card className="bg-gradient-card">
-      <CardHeader className="pb-3 pt-5">
-        <div className="flex items-center gap-4">
+      <CardHeader className={cn(isMobile ? "p-3" : "pb-3 pt-5")}>
+        <div className={cn("flex items-center", isMobile ? "gap-2" : "gap-4")}>
           <ItemIcon
             imagePath={setImagePath}
             rarity={artifactsById[setId]?.rarity || 5}
-            size="lg"
+            size={isMobile ? "md" : "lg"}
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <CardTitle className="text-xl text-foreground">
+              <CardTitle
+                className={cn(
+                  isMobile ? "text-base" : "text-xl",
+                  "text-foreground"
+                )}
+              >
                 {t.artifact(setId)}
               </CardTitle>
             </div>
@@ -44,7 +52,7 @@ export function ArtifactCard({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3 pb-3">
+      <CardContent className={cn("space-y-3", isMobile ? "p-3 pt-0" : "pb-3")}>
         {filter.configurations.map((config, index) => (
           <ArtifactConfigCard
             key={index}

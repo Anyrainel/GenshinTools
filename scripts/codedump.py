@@ -586,19 +586,32 @@ def main():
     parser.add_argument("--artifact", action="store_true", help="Update artifact data")
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
+    parser.add_argument(
+        "--hakush",
+        action="store_true",
+        help="Scrape character kit/stats from hakush.in",
+    )
+    parser.add_argument(
+        "--no-incremental",
+        action="store_true",
+        help="Force re-scrape all hakush data (ignore existing files)",
+    )
     args = parser.parse_args()
 
     # Default to all if no flags provided
-    if not (args.character or args.weapon or args.artifact or args.half_set or args.enka):
+    if not (
+        args.character or args.weapon or args.artifact or args.half_set or args.enka or args.hakush
+    ):
         args.character = True
         args.weapon = True
         args.artifact = True
         args.enka = True
+        args.hakush = True
 
     print("=== Genshin Impact Data Scraper ===")
     print(
-        f"Modes: Character={args.character}, Weapon={args.weapon}, Artifact={args.artifact}, "
-        f"Enka={args.enka}"
+        f"Modes: Character={args.character}, Weapon={args.weapon}, "
+        f"Artifact={args.artifact}, Enka={args.enka}, Hakush={args.hakush}"
     )
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -732,6 +745,18 @@ def main():
     if args.enka:
         print("=== [5/5] Enka Map Generation ===")
         enka.run()
+
+    # 6. Hakush.in Character Data
+    if args.hakush:
+        from hakushin import HakushinScraper, save_char_stats_ts, scrape_all_characters
+
+        print("=== Hakush.in Character Scraping ===")
+        with HakushinScraper() as hscraper:
+            all_stats = scrape_all_characters(
+                hscraper,
+                incremental=not args.no_incremental,
+            )
+            save_char_stats_ts(all_stats)
 
 
 if __name__ == "__main__":

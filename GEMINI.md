@@ -18,6 +18,7 @@ The application is divided into distinct functional domains, each with its own s
 - **Tier Lists** (`src/components/tier-list`): Logic for Character and Weapon tier lists, including drag-and-drop grids and customization dialogs.
 - **Artifact Filter** (`src/components/artifact-filter`): The rule engine for generating lock/trash scripts.
 - **Team Builder** (`src/components/team-builder`): Create and manage team compositions.
+- **Archive** (`src/components/archive`): Character and weapon encyclopedia with detailed stats, kit display, and linked data sections.
 
 ### Application Pages
 
@@ -28,7 +29,7 @@ The application is divided into distinct functional domains, each with its own s
 | `Account Data` | `/account-data` | Import GOOD/Enka data, view characters | `SidebarLayout` |
 | `Character Tiers` | `/tier-list` | Character tier list with drag-drop | `WideLayout` |
 | `Weapon Tier List` | `/weapon-tier-list` | Weapon tier list with rarity filters (Hidden from AppBar) | `WideLayout` |
-| `Weapon Browser` | `/weapon-browser` | Browse all weapons by type and stats | `ScrollLayout` |
+| `Archive` | `/archive` | Character & weapon encyclopedia (tabs via `?tab=`) | `SidebarLayout` / `ScrollLayout` |
 | `Team Builder` | `/team-builder` | Create and manage team compositions | `ScrollLayout` |
 
 ### Key Directories
@@ -36,7 +37,7 @@ The application is divided into distinct functional domains, each with its own s
 - **`src/components/layout`**: Core layout shells (`PageLayout`, `SidebarLayout`, `WideLayout`, `ScrollLayout`, `AppBar`).
 - **`src/components/ui`**: Reusable shadcn/ui primitives.
 - **`src/components/shared`**: Common domain components (e.g., `ItemPicker`, `ToolHeader`, `Control`s).
-- **`src/stores`**: Zustand state management. **One store per domain** (e.g., `useAccountStore`, `useTierStore`).
+- **`src/stores`**: Zustand state management. **One store per domain** (e.g., `useAccountStore`, `useTierStore`, `useOwnershipStore`).
 - **`src/data`**: Static data resources (Characters/Weapons/Artifacts JSON), types (`types.ts`), and localization (`i18n-app.ts`, `i18n-ui.ts`).
 - **`scripts/`**: Python ETL scripts for fetching game data.
 
@@ -64,11 +65,18 @@ The application is divided into distinct functional domains, each with its own s
 
 ### Debugging & Diagnostics
 
-1. **Avoid `2>&1` Redirection**:
-   - Do NOT use `2>&1` in commands unless strictly necessary for stream merging. This syntax can trigger safety review rules.
+1. **Use Project Scripts, Not Raw Tools**:
+   - **ALWAYS** use the project's `npm run` scripts instead of invoking tools directly via `npx`.
+   - Use `npm run type-check`, NOT `npx tsc --noEmit`. The project script checks both `src` and `tests` tsconfigs.
+   - Use `npm run lint`, NOT `npx biome check`.
+   - Use `npm run test`, NOT `npx vitest run`.
+   - The project scripts are intentionally configured and more thorough than raw tool invocations.
+
+2. **Avoid `2>&1` Redirection**:
+   - Do NOT use `2>&1` in commands unless strictly necessary. This syntax can trigger safety review rules.
    - For standard logging, let the terminal handle stdout/stderr naturally.
 
-2. **Log File Hygiene**:
+3. **Log File Hygiene**:
    - **Prefer Memory**: Read command output directly from the terminal tool response when possible.
    - **Cleanup Mandatory**: If you must redirect output to a file (e.g., `npm run test > temp_error.log`) to analyze large outputs, you **MUST** delete the file immediately after reading it.
 
@@ -104,12 +112,8 @@ Data ingestion logic resides in `scripts/`.
 
 ### 2. Styling Strategy
 
-- **Design System (`src/lib/styles.ts`)**:
-  - **`THEME` / `STYLES`**: Import these constants for standardized tokens.
-  - **Tokens**: `THEME.rarity.bg[5]`, `THEME.layout.page`, `THEME.grid.cards`.
-  - **Elements**: `THEME.element.text['Pyro']`.
 - **Utility**: Always use `cn()` to merge `THEME` styles with overrides.
-- **Layers**: `tailwind.config.ts` (base) > `index.css` (globals) > `styles.ts` (tokens) > inline (one-offs).
+- **Layers**: `tailwind.config.ts` (base) > `index.css` (globals) > inline (one-offs).
 
 ### 3. Component Patterns
 

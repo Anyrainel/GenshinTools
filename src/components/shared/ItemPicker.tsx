@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -180,6 +181,9 @@ function ItemPickerComponent<T extends ItemPickerType>({
         <div className="sr-only">
           <DrawerHeader>
             <DrawerTitle className="capitalize">Select {type}</DrawerTitle>
+            <DrawerDescription>
+              Browse and select a {type} from the list below
+            </DrawerDescription>
           </DrawerHeader>
         </div>
         <div className="flex-1 overflow-hidden flex flex-col">{content}</div>

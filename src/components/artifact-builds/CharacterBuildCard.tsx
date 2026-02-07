@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Character } from "@/data/types";
 import type { Weapon } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff, Plus } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
@@ -19,7 +20,7 @@ interface WeaponSlotProps {
   onClear: (index: number) => void;
   filter: (item: unknown) => boolean;
   isAddSlot?: boolean;
-  size?: "lg" | "xl";
+  size?: "md" | "lg" | "xl";
 }
 
 const WeaponSlot = memo(
@@ -134,13 +135,14 @@ function CharacterBuildCardComponent({
 
   /* Mobile: Show max 1 weapon */
   const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
   const visibleWeapons = isMobile
     ? characterWeapons.slice(0, 1)
     : characterWeapons;
   const showAddSlot = isMobile
     ? characterWeapons.length < 1
     : characterWeapons.length < 3;
-  const iconSize = isMobile ? "lg" : "xl";
+  const iconSize = isVeryNarrow ? "md" : isMobile ? "lg" : "xl";
 
   const handleAddBuild = useCallback(() => {
     newBuild(character.id);
@@ -162,9 +164,16 @@ function CharacterBuildCardComponent({
 
   return (
     <Card className="bg-gradient-card" data-tour-step-id={tourStepId}>
-      <CardHeader className="pb-3 pt-3 md:pt-5">
+      <CardHeader
+        className={cn("pb-3 pt-3 md:pt-5", isVeryNarrow ? "px-3" : "")}
+      >
         {/* Title card content (formerly TitleCard) */}
-        <div className="flex items-center gap-3 md:gap-4">
+        <div
+          className={cn(
+            "flex items-center",
+            isVeryNarrow ? "gap-2" : "gap-3 md:gap-4"
+          )}
+        >
           <ItemIcon
             imagePath={character.imagePath}
             rarity={character.rarity}
@@ -239,16 +248,21 @@ function CharacterBuildCardComponent({
       </CardHeader>
 
       {!isHidden && (
-        <CardContent className="pb-3 px-3 md:px-6">
+        <CardContent
+          className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3 md:px-6")}
+        >
           <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
             {buildIds.length === 0 ? (
               <div className="flex justify-center py-2 text-muted-foreground col-span-full">
                 <Button
                   onClick={handleAddBuild}
                   variant="outline"
-                  className="gap-2 text-sm h-9"
+                  className={cn(
+                    "gap-2",
+                    isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+                  )}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
                   {t.ui("characterCard.addFirstBuild")}
                 </Button>
               </div>
@@ -278,9 +292,12 @@ function CharacterBuildCardComponent({
               onClick={handleAddBuild}
               variant="outline"
               size="sm"
-              className="w-full gap-2 text-sm h-9 mt-2"
+              className={cn(
+                "w-full gap-2 mt-2",
+                isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+              )}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
               {t.ui("characterCard.addBuild")}
             </Button>
           )}

@@ -4,13 +4,20 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import { i18nAppData } from "../data/i18n-app";
 import { i18nGameData } from "../data/i18n-game";
 import { i18nUiData } from "../data/i18n-ui";
-import type { Language } from "../data/types";
+import type {
+  CharacterEffect,
+  CharacterKit,
+  CharacterSkill,
+  Language,
+} from "../data/types";
+import { loadCharacterKits } from "../lib/characterKitLoader";
 
 interface LanguageContextType {
   language: Language;
@@ -35,6 +42,11 @@ interface LanguageContextType {
     formatDate: (dateString: string) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
+    characterKit: (id: string) => CharacterKit | null;
+    skills: (id: string) => CharacterSkill[] | null;
+    passives: (id: string) => CharacterEffect[] | null;
+    constellations: (id: string) => CharacterEffect[] | null;
+    dictionary: (id: string) => CharacterEffect[] | null;
     lang: Language;
   };
 }
@@ -86,6 +98,41 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return newLang;
     });
   }, []);
+
+  // Preload character kit bundle for the current language
+  const [kitData, setKitData] = useState<Record<string, CharacterKit>>({});
+  useEffect(() => {
+    loadCharacterKits(language).then(setKitData);
+  }, [language]);
+
+  const getCharacterKit = useCallback(
+    (characterId: string): CharacterKit | null => kitData[characterId] ?? null,
+    [kitData]
+  );
+
+  const getSkills = useCallback(
+    (characterId: string): CharacterSkill[] | null =>
+      kitData[characterId]?.skills ?? null,
+    [kitData]
+  );
+
+  const getPassives = useCallback(
+    (characterId: string): CharacterEffect[] | null =>
+      kitData[characterId]?.passives ?? null,
+    [kitData]
+  );
+
+  const getConstellations = useCallback(
+    (characterId: string): CharacterEffect[] | null =>
+      kitData[characterId]?.constellations ?? null,
+    [kitData]
+  );
+
+  const getDictionary = useCallback(
+    (characterId: string): CharacterEffect[] | null =>
+      kitData[characterId]?.dictionary ?? null,
+    [kitData]
+  );
 
   const getCharacterName = useCallback(
     (characterId: string): string => {
@@ -319,6 +366,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       formatDate: formatReleaseDate,
       ui: getUIMessage,
       format: formatString,
+      characterKit: getCharacterKit,
+      skills: getSkills,
+      passives: getPassives,
+      constellations: getConstellations,
+      dictionary: getDictionary,
       lang: language,
     }),
     [
@@ -340,6 +392,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       formatReleaseDate,
       getUIMessage,
       formatString,
+      getCharacterKit,
+      getSkills,
+      getPassives,
+      getConstellations,
+      getDictionary,
       language,
     ]
   );

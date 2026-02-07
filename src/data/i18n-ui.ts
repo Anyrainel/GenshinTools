@@ -162,8 +162,8 @@ export const i18nUiData = {
         zh: "装备全部5个圣遗物槽后可获取建议。",
       },
       poolInfo: {
-        en: "Pool characters are not computed for recommendations. Their equipped artifacts may be suggested for other characters to swap.",
-        zh: "备用角色不计算推荐操作。他们装备的圣遗物有可能会被推荐给其他角色使用。",
+        en: "Characters in the Pool are not computed for recommendations. Their equipped artifacts may even be suggested for other characters to swap.",
+        zh: "角色池中的角色不计算推荐操作。他们装备的圣遗物甚至有可能被推荐给其他角色使用。",
       },
       goToTierList: { en: "Manage Tiers", zh: "管理层级" },
       showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
@@ -236,7 +236,7 @@ export const i18nUiData = {
     navArtifactFilter: { en: "Artifact Builds", zh: "圣遗物配装" },
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Character Tiers", zh: "角色榜单" },
-    navWeaponBrowser: { en: "Weapon Browser", zh: "武器图鉴" },
+    navArchive: { en: "Archive", zh: "图鉴" },
     navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
     heroDescription: {
       en: "Powerful utilities to optimize your builds and organize your roster.",
@@ -266,13 +266,13 @@ export const i18nUiData = {
       en: "1. Import via UID or tools like [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera). 2. Get automated artifact scoring.",
       zh: "1. 通过 UID 或 [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera) 导入数据。 2. 自动计算圣遗物评分。",
     },
-    weaponBrowserProblem: {
-      en: "Need a quick weapon reference?",
-      zh: "想快速查阅或筛选武器？",
+    archiveProblem: {
+      en: "Looking up character or weapon details?",
+      zh: "想查阅角色或武器详情？",
     },
-    weaponBrowserGuideline: {
-      en: "Browse all weapons by type, filter by rarity and stats. A convenient visual reference.",
-      zh: "按武器类型浏览，按稀有度和属性筛选，便捷的可视化武器图鉴。",
+    archiveGuideline: {
+      en: "Browse detailed character kits, base stats, and weapons. A comprehensive in-game reference.",
+      zh: "浏览角色天赋、基础属性和武器详情，全面的游戏资料库。",
     },
     teamBuilderProblem: {
       en: "Need help theory-crafting new teams?",
@@ -298,6 +298,49 @@ export const i18nUiData = {
       zh: "图片生成失败",
     },
     explore: { en: "Explore", zh: "探索" },
+  },
+  archive: {
+    characters: { en: "Character Archive", zh: "角色图鉴" },
+    weapons: { en: "Weapon Archive", zh: "武器图鉴" },
+    characterLabel: { en: "characters", zh: "角色" },
+    searchPlaceholder: {
+      en: "Search names, skills, passives, constellations...",
+      zh: "搜索名称、天赋、被动、命座...",
+    },
+    baseStats: { en: "Base Stats", zh: "基础属性" },
+    lv90: { en: "Lv. 90", zh: "90级" },
+    lv100: { en: "Lv. 100", zh: "100级" },
+    skills: { en: "Skills", zh: "战斗天赋" },
+    passives: { en: "Passives", zh: "固有天赋" },
+    constellations: { en: "Constellations", zh: "命之座" },
+    dictionary: { en: "Glossary", zh: "术语表" },
+    noCharacterSelected: {
+      en: "Select a character to view details",
+      zh: "选择一个角色查看详情",
+    },
+    artifactBuilds: { en: "Artifact Builds", zh: "圣遗物配装" },
+    addBuild: { en: "Add Build", zh: "添加配装" },
+    accountData: { en: "Account Data", zh: "账号数据" },
+    goToArtifactBuilds: {
+      en: "Configure builds in Artifact Builds",
+      zh: "前往圣遗物配装页面配置",
+    },
+    goToAccountData: {
+      en: "Import data in Account Data",
+      zh: "前往账号数据页面导入",
+    },
+    noResults: {
+      en: "No characters match your search",
+      zh: "没有角色匹配搜索",
+    },
+    weaponSearchPlaceholder: {
+      en: "Search weapons...",
+      zh: "搜索武器...",
+    },
+    noWeaponResults: {
+      en: "No weapons match your search",
+      zh: "没有武器匹配搜索",
+    },
   },
   theme: {
     switcherButton: { en: "Theme", zh: "主题" },

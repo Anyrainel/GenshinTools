@@ -58,7 +58,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const talents = char.talent || { auto: 1, skill: 1, burst: 1 };
 
   return (
-    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden">
+    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-2xl">
       {/* Header */}
       <div
         className={cn(

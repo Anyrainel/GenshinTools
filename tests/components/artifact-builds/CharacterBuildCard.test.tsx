@@ -1,4 +1,4 @@
-import { CharacterBuildCard } from "@/components/artifact-filter/CharacterBuildCard";
+import { CharacterBuildCard } from "@/components/artifact-builds/CharacterBuildCard";
 import type { Character } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { render, screen } from "../../utils/render";

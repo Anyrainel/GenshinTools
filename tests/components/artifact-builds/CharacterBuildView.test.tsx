@@ -1,4 +1,4 @@
-import { CharacterBuildView } from "@/components/artifact-filter/CharacterBuildView";
+import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
 import type { Character } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { render, screen } from "@testing-library/react";
@@ -43,7 +43,7 @@ vi.mock("@/components/shared/CharacterFilterSidebar", () => ({
   ),
 }));
 
-vi.mock("@/components/artifact-filter/CharacterBuildCard", () => ({
+vi.mock("@/components/artifact-builds/CharacterBuildCard", () => ({
   CharacterBuildCard: ({ character }: { character: { id: string } }) => (
     <div data-testid={`char-card-${character.id}`}>Card {character.id}</div>
   ),

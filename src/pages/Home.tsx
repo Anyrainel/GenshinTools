@@ -147,10 +147,10 @@ export default function Home() {
 
           <FeatureCard
             icon={<Sword className="w-6 h-6" />}
-            title={t.ui("app.navWeaponBrowser")}
-            problem={t.ui("app.weaponBrowserProblem")}
-            guideline={t.ui("app.weaponBrowserGuideline")}
-            link="/weapon-browser"
+            title={t.ui("app.navArchive")}
+            problem={t.ui("app.archiveProblem")}
+            guideline={t.ui("app.archiveGuideline")}
+            link="/archive"
             bgImage="assets/home/team_bg.jpg"
             bgPosition="center 40%"
             accentColor="from-rose-500/20 to-pink-500/10"

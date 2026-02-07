@@ -1,4 +1,4 @@
-import { ArtifactConfigCard } from "@/components/artifact-filter/ArtifactConfigCard";
+import { ArtifactConfigCard } from "@/components/artifact-builds/ArtifactConfigCard";
 import type { SetConfig } from "@/data/types";
 import { fireEvent, render, screen } from "../../utils/render";
 

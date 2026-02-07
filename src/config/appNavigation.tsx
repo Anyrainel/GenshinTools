@@ -1,6 +1,14 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { LucideIcon } from "lucide-react";
-import { Box, Filter, LayoutGrid, Settings, Users } from "lucide-react";
+import {
+  Book,
+  Box,
+  Filter,
+  LayoutGrid,
+  Settings,
+  Sword,
+  Users,
+} from "lucide-react";
 
 export interface NavTab {
   label: string;
@@ -76,8 +84,22 @@ export const getNavigationConfig = (
     href: "/tier-list",
   },
   {
-    label: t.ui("app.navWeaponBrowser"),
-    href: "/weapon-browser",
+    label: t.ui("app.navArchive"),
+    href: "/archive",
+    children: [
+      {
+        label: t.ui("archive.characters"),
+        href: "/archive?tab=characters",
+        value: "characters",
+        icon: Book,
+      },
+      {
+        label: t.ui("archive.weapons"),
+        href: "/archive?tab=weapons",
+        value: "weapons",
+        icon: Sword,
+      },
+    ],
   },
   {
     label: t.ui("app.navTeamBuilder"),

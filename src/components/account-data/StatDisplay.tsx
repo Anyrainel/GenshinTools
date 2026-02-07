@@ -61,8 +61,8 @@ export function StatDisplay({
       <div className="flex items-center justify-between mb-2">
         <div
           className={cn(
-            "font-bold truncate flex-1",
-            compact ? "text-sm" : "text-base",
+            "font-bold flex-1",
+            compact ? "text-xs" : "text-base",
             // If scoreResult is provided, dim unweighted stats. If not (inventory), show default color.
             scoreResult
               ? mainStatWeight > 0

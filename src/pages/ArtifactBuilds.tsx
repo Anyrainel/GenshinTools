@@ -1,5 +1,5 @@
-import { ArtifactFilterView } from "@/components/artifact-filter/ArtifactFilterView";
-import { CharacterBuildView } from "@/components/artifact-filter/CharacterBuildView";
+import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
+import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
 import type {
   ActionConfig,
   ControlHandle,
@@ -280,7 +280,7 @@ export default function ArtifactBuildsPage() {
         </TabsContent>
 
         <TabsContent value="filters" className="mt-0 h-full">
-          <ArtifactFilterView
+          <ArtifactBuildsView
             contentRef={computeContentRef}
             onJumpToCharacter={(characterId) => {
               setTargetCharacterId(characterId);

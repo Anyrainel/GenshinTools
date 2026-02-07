@@ -7,6 +7,7 @@ import {
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -15,6 +16,7 @@ interface StatSelectProps {
   onValuesChange: (values: string[]) => void;
   options: readonly string[];
   maxLength: number;
+  compact?: boolean;
 }
 
 interface StatSelectItemProps {
@@ -22,6 +24,7 @@ interface StatSelectItemProps {
   onValueChange: (value: string) => void;
   availableOptions: string[];
   autoOpen?: boolean;
+  compact?: boolean;
 }
 
 function StatSelectItem({
@@ -29,6 +32,7 @@ function StatSelectItem({
   onValueChange,
   availableOptions,
   autoOpen = false,
+  compact = false,
 }: StatSelectItemProps) {
   const { t } = useLanguage();
 
@@ -38,7 +42,14 @@ function StatSelectItem({
       onValueChange={onValueChange}
       defaultOpen={autoOpen}
     >
-      <LightweightSelectTrigger className="w-auto min-w-[4.5rem] h-7 text-sm hover:brightness-110 bg-gradient-select px-2 gap-1">
+      <LightweightSelectTrigger
+        className={cn(
+          "w-auto hover:brightness-110 bg-gradient-select gap-1",
+          compact
+            ? "min-w-[3rem] h-5 text-xs px-1 [&>svg]:h-3 [&>svg]:w-3"
+            : "min-w-[4.5rem] h-7 text-sm px-2"
+        )}
+      >
         {value && value !== "__DESELECT__" ? (
           <span>{t.statShort(value)}</span>
         ) : (
@@ -48,7 +59,7 @@ function StatSelectItem({
       <LightweightSelectContent>
         <LightweightSelectItem
           value="__DESELECT__"
-          className="text-muted-foreground"
+          className={cn("text-muted-foreground", compact && "text-xs")}
         >
           {t.ui("buildCard.deselect")}
         </LightweightSelectItem>
@@ -56,7 +67,7 @@ function StatSelectItem({
           <LightweightSelectItem
             key={option}
             value={option}
-            className="text-sm"
+            className={compact ? "text-xs" : "text-sm"}
           >
             {t.stat(option)}
           </LightweightSelectItem>
@@ -71,6 +82,7 @@ function StatSelectComponent({
   onValuesChange,
   options,
   maxLength,
+  compact = false,
 }: StatSelectProps) {
   const [isAdding, setIsAdding] = useState(false);
 
@@ -126,7 +138,12 @@ function StatSelectComponent({
   );
 
   return (
-    <div className="flex text-sm min-h-7 items-center gap-1 flex-wrap">
+    <div
+      className={cn(
+        "flex items-center gap-1 flex-wrap",
+        compact ? "text-xs min-h-5" : "text-sm min-h-7"
+      )}
+    >
       {/* Existing value selects */}
       {values.map((value, index) => (
         <div key={index} className="flex items-center gap-1">
@@ -134,6 +151,7 @@ function StatSelectComponent({
             value={value}
             onValueChange={(newValue) => handleUpdateValue(index, newValue)}
             availableOptions={getAvailableOptionsForSelect(index)}
+            compact={compact}
           />
         </div>
       ))}
@@ -144,9 +162,12 @@ function StatSelectComponent({
           variant="ghost"
           size="sm"
           onClick={handlePlusClick}
-          className="p-1 h-6 w-6 text-muted-foreground"
+          className={cn(
+            "p-1 text-muted-foreground",
+            compact ? "h-5 w-5" : "h-6 w-6"
+          )}
         >
-          <Plus className="w-4 h-4" />
+          <Plus className={compact ? "w-3 h-3" : "w-4 h-4"} />
         </Button>
       )}
 
@@ -157,6 +178,7 @@ function StatSelectComponent({
           onValueChange={handleAddValue}
           availableOptions={availableOptions}
           autoOpen={true}
+          compact={compact}
         />
       )}
     </div>
@@ -169,6 +191,7 @@ export const StatSelect = memo(StatSelectComponent, (prev, next) => {
     prev.values.length === next.values.length &&
     prev.values.every((v, i) => v === next.values[i]) &&
     prev.options === next.options &&
-    prev.maxLength === next.maxLength
+    prev.maxLength === next.maxLength &&
+    prev.compact === next.compact
   );
 });

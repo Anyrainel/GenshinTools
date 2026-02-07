@@ -1,4 +1,4 @@
-import { ArtifactCard } from "@/components/artifact-filter/ArtifactCard";
+import { ArtifactCard } from "@/components/artifact-builds/ArtifactCard";
 import type { ArtifactSetConfigs } from "@/data/types";
 import { render, screen } from "../../utils/render";
 

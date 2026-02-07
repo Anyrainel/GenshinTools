@@ -205,7 +205,12 @@ function BuildCardComponent({
 
   const minCountInput = (
     <div className="flex items-center gap-1 whitespace-nowrap">
-      <span className="text-xs text-muted-foreground select-none">
+      <span
+        className={cn(
+          "text-muted-foreground select-none",
+          isMobile ? "text-[10px]" : "text-xs"
+        )}
+      >
         {t.ui("buildCard.atLeast")}
       </span>
       <Input
@@ -220,10 +225,18 @@ function BuildCardComponent({
               : undefined,
           })
         }
-        className="w-10 h-6 text-xs border border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className={cn(
+          "border border-border/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+          isMobile ? "w-8 h-5 text-[10px]" : "w-10 h-6 text-xs"
+        )}
         placeholder={Math.min(build.substats.length, 4).toString()}
       />
-      <span className="text-xs text-muted-foreground select-none">
+      <span
+        className={cn(
+          "text-muted-foreground select-none",
+          isMobile ? "text-[10px]" : "text-xs"
+        )}
+      >
         {t.ui("buildCard.affixes")}
       </span>
     </div>
@@ -250,7 +263,10 @@ function BuildCardComponent({
             placeholder={
               isMobile ? `${t.ui("buildCard.buildLabel")} ${buildIndex}` : ""
             }
-            className="h-8 rounded-full text-base bg-transparent border-none px-3 mx-1 md:mx-6 py-0 text-foreground flex-1"
+            className={cn(
+              "rounded-full bg-transparent border-none py-0 text-foreground flex-1",
+              isMobile ? "h-7 text-sm px-2 mx-1" : "h-8 text-base px-3 mx-6"
+            )}
           />
         </div>
 
@@ -258,9 +274,19 @@ function BuildCardComponent({
           <TooltipTrigger asChild>
             <div className="flex-shrink-0">
               {validation.isValid ? (
-                <Check className="w-6 h-6 text-green-500" />
+                <Check
+                  className={cn(
+                    isMobile ? "w-5 h-5" : "w-6 h-6",
+                    "text-green-500"
+                  )}
+                />
               ) : (
-                <AlertCircle className="w-6 h-6 text-amber-500" />
+                <AlertCircle
+                  className={cn(
+                    isMobile ? "w-5 h-5" : "w-6 h-6",
+                    "text-amber-500"
+                  )}
+                />
               )}
             </div>
           </TooltipTrigger>
@@ -277,7 +303,7 @@ function BuildCardComponent({
           variant="ghost"
           size="sm"
           onClick={onDuplicate}
-          className="p-1 h-8 w-8"
+          className={cn("p-1", isMobile ? "h-7 w-7" : "h-8 w-8")}
         >
           <Copy />
         </Button>
@@ -285,44 +311,60 @@ function BuildCardComponent({
           variant="ghost"
           size="sm"
           onClick={onDelete}
-          className="p-1 h-8 w-8 text-destructive hover:text-destructive"
+          className={cn(
+            "p-1 text-destructive hover:text-destructive",
+            isMobile ? "h-7 w-7" : "h-8 w-8"
+          )}
         >
           <Trash2 />
         </Button>
       </div>
 
       {/* Build Details */}
-      <div className="px-3 py-2">
+      <div className={cn(isMobile ? "px-2 py-1.5" : "px-3 py-2")}>
         <div className="pt-1 border-t border-border/30">
           <div
             className={cn(
-              "flex gap-3",
-              isMobile
-                ? "flex-col items-center"
-                : "flex-row items-center justify-center"
+              "flex items-center justify-center",
+              isMobile ? "gap-2" : "gap-3"
             )}
           >
             {/* Artifact Set Selection - Left Side */}
-            <div className={cn("flex-shrink-0", isMobile ? "w-full" : "pl-2")}>
-              <div className="w-full h-full flex items-center justify-center">
+            <div className={cn("flex-shrink-0", !isMobile && "pl-2")}>
+              <div className="h-full flex items-center justify-center">
                 <ItemPicker
                   type="artifact"
                   value={pickerValue}
                   onChange={handlePickerChange}
-                  triggerSize="xl"
+                  triggerSize={isMobile ? "md" : "xl"}
                   showItemName={true}
-                  className={cn(isMobile ? "w-28 mx-auto" : "w-20")}
+                  className="w-20"
                 />
               </div>
             </div>
 
             {/* Stats Section - Right Side */}
-            <div className={cn("space-y-1", isMobile ? "w-full" : "flex-1")}>
+            <div
+              className={cn(
+                "flex-1 min-w-0",
+                isMobile ? "space-y-0.5" : "space-y-1"
+              )}
+            >
               {/* Main Stats Row - 3 Units */}
-              <div className="grid grid-cols-3 gap-2">
+              <div
+                className={cn("grid grid-cols-3", isMobile ? "gap-1" : "gap-2")}
+              >
                 {mainStatSlots.map((slot) => (
-                  <div key={slot} className="space-y-1">
-                    <Label className="text-xs font-medium text-muted-foreground select-none">
+                  <div
+                    key={slot}
+                    className={cn(isMobile ? "space-y-0.5" : "space-y-1")}
+                  >
+                    <Label
+                      className={cn(
+                        "font-medium text-muted-foreground select-none",
+                        isMobile ? "text-[10px]" : "text-xs"
+                      )}
+                    >
                       {mainStatLabel(slot)}
                     </Label>
                     <StatSelect
@@ -332,15 +374,26 @@ function BuildCardComponent({
                       }
                       options={localStatPools[slot]}
                       maxLength={3}
+                      compact={isMobile}
                     />
                   </div>
                 ))}
               </div>
 
               {/* Substats Row - Bottom Unit */}
-              <div className="space-y-1">
-                <div className="flex items-center gap-4 lg:gap-12 2xl:gap-20">
-                  <Label className="text-xs font-medium text-muted-foreground select-none whitespace-nowrap">
+              <div className={cn(isMobile ? "space-y-0.5" : "space-y-1")}>
+                <div
+                  className={cn(
+                    "flex items-center",
+                    isMobile ? "gap-2" : "gap-4 lg:gap-12 2xl:gap-20"
+                  )}
+                >
+                  <Label
+                    className={cn(
+                      "font-medium text-muted-foreground select-none whitespace-nowrap",
+                      isMobile ? "text-[10px]" : "text-xs"
+                    )}
+                  >
                     {t.ui("buildCard.substats")}
                   </Label>
                   {minCountInput}
@@ -352,6 +405,7 @@ function BuildCardComponent({
                   }
                   options={statPools.substat}
                   maxLength={5}
+                  compact={isMobile}
                 />
               </div>
             </div>

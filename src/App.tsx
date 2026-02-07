@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import AccountDataPage from "./pages/AccountData";
+import ArchivePage from "./pages/Archive";
 import ArtifactBuildsPage from "./pages/ArtifactBuilds";
 import Home from "./pages/Home";
 import TeamBuilderPage from "./pages/TeamBuilder";
 import TierListPage from "./pages/TierList";
-import WeaponBrowserPage from "./pages/WeaponBrowser";
 import WeaponTierListPage from "./pages/WeaponTierList";
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
             <Route path="/artifact-filter" element={<ArtifactBuildsPage />} />
             <Route path="/tier-list" element={<TierListPage />} />
             <Route path="/weapon-tier-list" element={<WeaponTierListPage />} />
-            <Route path="/weapon-browser" element={<WeaponBrowserPage />} />
+            <Route path="/archive" element={<ArchivePage />} />
             <Route path="/team-builder" element={<TeamBuilderPage />} />
           </Routes>
         </main>

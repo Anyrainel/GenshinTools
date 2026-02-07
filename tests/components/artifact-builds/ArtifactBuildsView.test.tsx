@@ -1,8 +1,8 @@
-import { ArtifactFilterView } from "@/components/artifact-filter/ArtifactFilterView";
+import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { render, screen } from "../../utils/render";
 
-describe("ArtifactFilterView", () => {
+describe("ArtifactBuildsView", () => {
   const mockOnJumpToCharacter = vi.fn();
 
   beforeEach(() => {
@@ -11,7 +11,7 @@ describe("ArtifactFilterView", () => {
   });
 
   it("shows empty state when no builds configured", () => {
-    render(<ArtifactFilterView onJumpToCharacter={mockOnJumpToCharacter} />);
+    render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Should show the empty state message (gear emoji and message)
     expect(screen.getByText("⚙️")).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("ArtifactFilterView", () => {
       visible: true,
     });
 
-    render(<ArtifactFilterView onJumpToCharacter={mockOnJumpToCharacter} />);
+    render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // When a build is set up with an artifact set, it should compute filters
     // and show the artifact card (not the empty state)
@@ -49,7 +49,7 @@ describe("ArtifactFilterView", () => {
     // Hide the character
     useBuildsStore.getState().setCharacterHidden("hu_tao", true);
 
-    render(<ArtifactFilterView onJumpToCharacter={mockOnJumpToCharacter} />);
+    render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Hidden character's build should not generate artifact filters
     // So we should see empty state
@@ -66,7 +66,7 @@ describe("ArtifactFilterView", () => {
       visible: false, // Not visible!
     });
 
-    render(<ArtifactFilterView onJumpToCharacter={mockOnJumpToCharacter} />);
+    render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Non-visible build should not generate artifact filters
     expect(screen.getByText("⚙️")).toBeInTheDocument();

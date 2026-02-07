@@ -4,16 +4,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { MainStatPlus, SetConfig, SlotConfig } from "@/data/types";
 import { computeSlotChance } from "@/lib/artifactChance";
+import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { AlertOctagon, AlertTriangle } from "lucide-react";
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -74,7 +69,12 @@ export function ArtifactConfigCard({
   // Helper function to render main stat cell
   const renderMainStatCell = (slotName: string, mainStats: MainStatPlus[]) => (
     <div>
-      <Label className="text-xs text-muted-foreground block mb-1">
+      <Label
+        className={cn(
+          "text-muted-foreground block mb-1",
+          isMobile ? "text-[11px]" : "text-xs"
+        )}
+      >
         {slotName} {t.ui("computeFilters.mainStat")}
       </Label>
       <div className="flex flex-wrap gap-1">
@@ -83,13 +83,21 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="outline"
-              className="font-normal shadow-none text-xs bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+              className={cn(
+                "font-normal shadow-none bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10",
+                isMobile ? "text-[11px] px-1 py-0" : "text-xs"
+              )}
             >
               {getStatDisplayName(stat)}
             </Badge>
           ))
         ) : (
-          <span className="text-xs text-muted-foreground italic">
+          <span
+            className={cn(
+              "text-muted-foreground italic",
+              isMobile ? "text-[11px]" : "text-xs"
+            )}
+          >
             {t.ui("computeFilters.any")}
           </span>
         )}
@@ -100,7 +108,12 @@ export function ArtifactConfigCard({
   // Helper function to render substat cell
   const renderSubstatCell = (slotName: string, slotConfig: SlotConfig) => (
     <div>
-      <Label className="text-xs text-muted-foreground block mb-1">
+      <Label
+        className={cn(
+          "text-muted-foreground block mb-1",
+          isMobile ? "text-[11px]" : "text-xs"
+        )}
+      >
         {slotName} {t.ui("computeFilters.subStat")}{" "}
         <span className="font-semibold text-foreground">
           [{t.ui("computeFilters.atLeast")} {slotConfig.minStatCount}]
@@ -113,11 +126,13 @@ export function ArtifactConfigCard({
             <Badge
               key={stat}
               variant="secondary"
-              className={`font-normal shadow-none text-xs ${
+              className={cn(
+                "font-normal shadow-none",
+                isMobile ? "text-[11px] px-1 py-0" : "text-xs",
                 isMustPresent
                   ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
                   : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
-              }`}
+              )}
             >
               {getStatDisplayName(stat)}
             </Badge>
@@ -135,94 +150,35 @@ export function ArtifactConfigCard({
   };
 
   const getChanceIndicator = (chance: number) => {
-    const warningThreshold = 0.1;
-    const dangerThreshold = 0.2;
-
-    if (chance >= dangerThreshold) {
-      return {
-        textClass: "text-destructive",
-        Icon: AlertOctagon,
-        message: t.ui("computeFilters.highPassChance"),
-      };
-    }
-
-    if (chance >= warningThreshold) {
-      return {
-        textClass: "text-amber-500 dark:text-amber-400",
-        Icon: AlertTriangle,
-        message: t.ui("computeFilters.moderatePassChance"),
-      };
-    }
-
-    return {
-      textClass: "text-foreground",
-      Icon: null,
-      message: "",
-    };
+    if (chance >= 0.2) return { textClass: "text-destructive" };
+    if (chance >= 0.1)
+      return { textClass: "text-amber-500 dark:text-amber-400" };
+    return { textClass: "text-foreground" };
   };
 
-  const renderChanceCell = (slotName: string, detail: ChanceDetail) => {
-    const renderChanceRow = (
-      label: string,
-      chance: number,
-      indicator: ReturnType<typeof getChanceIndicator>
-    ) => {
-      const { textClass, Icon, message } = indicator;
-      const content = (
-        <>
-          {Icon && (
-            <Icon className={`h-3.5 w-3.5 ${textClass}`} aria-hidden="true" />
-          )}
-          {formatChance(chance)}
-        </>
-      );
-
-      return (
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-muted-foreground">{label}</div>
-          {Icon && message ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div
-                  className={`text-sm flex items-center gap-1 cursor-help ${textClass}`}
-                >
-                  {content}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                align="center"
-                className="text-xs max-w-xs"
-              >
-                {message}
-              </TooltipContent>
-            </Tooltip>
-          ) : (
-            <div className={`text-sm flex items-center gap-1 ${textClass}`}>
-              {content}
-            </div>
-          )}
-        </div>
-      );
-    };
-
-    const baseIndicator = getChanceIndicator(detail.base);
-    const showTightened =
-      detail.base > 0.1 && detail.tightened !== null && detail.tightenedLabel;
+  const renderChanceCell = (_slotName: string, detail: ChanceDetail) => {
+    const { textClass } = getChanceIndicator(detail.base);
+    const label = t.ui("computeFilters.passChance");
+    const value = formatChance(detail.base);
 
     return (
-      <div className="rounded-md bg-muted/50 md:mr-3 px-3 py-1.5 space-y-1">
-        {renderChanceRow(
-          t.ui("computeFilters.passChance"),
-          detail.base,
-          baseIndicator
+      <div
+        className={cn(
+          "rounded-md bg-muted/50",
+          isMobile ? "px-1.5 py-1" : "md:mr-3 px-3 py-1.5"
         )}
-        {showTightened &&
-          renderChanceRow(
-            detail.tightenedLabel!,
-            detail.tightened!,
-            getChanceIndicator(detail.tightened!)
-          )}
+      >
+        {isMobile ? (
+          <div className="space-y-0.5">
+            <div className="text-[11px] text-muted-foreground">{label}</div>
+            <div className={cn("text-xs font-medium", textClass)}>{value}</div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-muted-foreground">{label}</div>
+            <div className={cn("text-sm font-medium", textClass)}>{value}</div>
+          </div>
+        )}
       </div>
     );
   };
@@ -262,11 +218,26 @@ export function ArtifactConfigCard({
   };
 
   return (
-    <div className="p-3 bg-muted/20 rounded-lg border border-border/30">
+    <div
+      className={cn(
+        "bg-muted/20 rounded-lg border border-border/30",
+        isMobile ? "px-1.5 py-2" : "p-3"
+      )}
+    >
       {/* Title row with config number and character groups */}
       {/* Title row with config number and character groups */}
-      <div className="flex flex-wrap gap-2 md:gap-3 mb-1.5 items-center">
-        <h4 className="font-medium text-foreground px-2 whitespace-nowrap">
+      <div
+        className={cn(
+          "flex flex-wrap items-center mb-1.5",
+          isMobile ? "gap-1.5" : "gap-2 md:gap-3"
+        )}
+      >
+        <h4
+          className={cn(
+            "font-medium text-foreground px-2 whitespace-nowrap",
+            isMobile && "text-sm"
+          )}
+        >
           {t.ui("computeFilters.configurationNumber")} {configNumber}
         </h4>
 
@@ -306,77 +277,36 @@ export function ArtifactConfigCard({
         </div>
       </div>
 
-      {/* Grid layout - Mobile vs Desktop */}
-      {isMobile ? (
-        <div className="grid grid-cols-1 gap-4 pt-2 border-t border-border/40">
-          {/* Flower/Plume Block */}
-          <div className="space-y-2">
-            {renderSubstatCell(
-              `${t.slot("flower")}/${t.slot("plume")}`,
-              config.flowerPlume
-            )}
-            {renderChanceCell(
-              `${t.slot("flower")}/${t.slot("plume")}`,
-              slotChanceDetails.flowerPlume
-            )}
-          </div>
-
-          <div className="w-full h-px bg-border/30" />
-
-          {/* Sands Block */}
-          <div className="space-y-2">
-            {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
-            {renderSubstatCell(t.slot("sands"), config.sands)}
-            {renderChanceCell(t.slot("sands"), slotChanceDetails.sands)}
-          </div>
-
-          <div className="w-full h-px bg-border/30" />
-
-          {/* Goblet Block */}
-          <div className="space-y-2">
-            {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
-            {renderSubstatCell(t.slot("goblet"), config.goblet)}
-            {renderChanceCell(t.slot("goblet"), slotChanceDetails.goblet)}
-          </div>
-
-          <div className="w-full h-px bg-border/30" />
-
-          {/* Circlet Block */}
-          <div className="space-y-2">
-            {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}
-            {renderSubstatCell(t.slot("circlet"), config.circlet)}
-            {renderChanceCell(t.slot("circlet"), slotChanceDetails.circlet)}
-          </div>
-        </div>
-      ) : (
-        /* Desktop Grid */
-        <div
-          className="grid grid-cols-4 gap-x-3 gap-y-2 pt-2 border-t border-border/40"
-          style={{ gridTemplateRows: "auto auto auto" }}
-        >
-          {/* Row 1: Main Stats */}
-          <div /> {/* Flower/Plume - empty */}
-          {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
-          {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
-          {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}
-          {/* Row 2: Substats */}
-          {renderSubstatCell(
-            `${t.slot("flower")}/${t.slot("plume")}`,
-            config.flowerPlume
-          )}
-          {renderSubstatCell(t.slot("sands"), config.sands)}
-          {renderSubstatCell(t.slot("goblet"), config.goblet)}
-          {renderSubstatCell(t.slot("circlet"), config.circlet)}
-          {/* Row 3: Chances */}
-          {renderChanceCell(
-            `${t.slot("flower")}/${t.slot("plume")}`,
-            slotChanceDetails.flowerPlume
-          )}
-          {renderChanceCell(t.slot("sands"), slotChanceDetails.sands)}
-          {renderChanceCell(t.slot("goblet"), slotChanceDetails.goblet)}
-          {renderChanceCell(t.slot("circlet"), slotChanceDetails.circlet)}
-        </div>
-      )}
+      {/* Grid layout - Always 4 columns */}
+      <div
+        className={cn(
+          "grid grid-cols-4 pt-2 border-t border-border/40",
+          isMobile ? "gap-x-1.5 gap-y-1" : "gap-x-3 gap-y-2"
+        )}
+        style={{ gridTemplateRows: "auto auto auto" }}
+      >
+        {/* Row 1: Main Stats */}
+        <div /> {/* Flower/Plume - empty */}
+        {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
+        {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
+        {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}
+        {/* Row 2: Substats */}
+        {renderSubstatCell(
+          `${t.slot("flower")}/${t.slot("plume")}`,
+          config.flowerPlume
+        )}
+        {renderSubstatCell(t.slot("sands"), config.sands)}
+        {renderSubstatCell(t.slot("goblet"), config.goblet)}
+        {renderSubstatCell(t.slot("circlet"), config.circlet)}
+        {/* Row 3: Chances */}
+        {renderChanceCell(
+          `${t.slot("flower")}/${t.slot("plume")}`,
+          slotChanceDetails.flowerPlume
+        )}
+        {renderChanceCell(t.slot("sands"), slotChanceDetails.sands)}
+        {renderChanceCell(t.slot("goblet"), slotChanceDetails.goblet)}
+        {renderChanceCell(t.slot("circlet"), slotChanceDetails.circlet)}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,10 @@
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import {
   HoverCard,
   HoverCardContent,
@@ -112,6 +118,10 @@ export function ArtifactScoreHoverCard({
           </button>
         </DrawerTrigger>
         <DrawerContent className="bg-slate-950/95 border-t border-white/10">
+          <DrawerTitle className="sr-only">Artifact Score</DrawerTitle>
+          <DrawerDescription className="sr-only">
+            Artifact score breakdown by stat
+          </DrawerDescription>
           <div className="p-4 pt-0 safe-area-bottom">
             <ArtifactScoreContent artifactScore={score} />
           </div>

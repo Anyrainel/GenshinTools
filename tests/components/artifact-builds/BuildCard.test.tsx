@@ -1,4 +1,4 @@
-import { BuildCard } from "@/components/artifact-filter/BuildCard";
+import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import userEvent from "@testing-library/user-event";
 import { fireEvent, render, screen } from "../../utils/render";

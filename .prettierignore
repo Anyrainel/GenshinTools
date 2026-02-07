@@ -11,3 +11,6 @@ scripts
 src/components/ui/*.tsx
 src/data/resources.ts
 src/data/i18n-game.ts
+src/data/charStats.ts
+src/data/character_en.json
+src/data/character_zh.json
