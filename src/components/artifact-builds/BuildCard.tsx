@@ -6,12 +6,20 @@ import {
 } from "@/components/shared/ItemPicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { LightweightMultiSelect } from "@/components/ui/lightweight-multiselect";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  LightweightSelect,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactHalfSetsById,
@@ -20,12 +28,36 @@ import {
 } from "@/data/constants";
 import {
   type Build,
+  type BuildConstellation,
+  type BuildRole,
+  type BuildStyle,
   type Element,
   type MainStat,
   type MainStatSlot,
   type SubStat,
+  buildConstellations,
+  buildRoles,
+  buildStyles,
   mainStatSlots,
 } from "@/data/types";
+
+// Subtle color hints — high lightness, moderate saturation for cross-theme legibility
+const STYLE_COLORS: Record<BuildStyle, string> = {
+  "on-field": "hsl(35, 80%, 75%)",
+  "off-field": "hsl(200, 75%, 78%)",
+};
+const ROLE_COLORS: Record<BuildRole, string> = {
+  dps: "hsl(350, 70%, 78%)",
+  support: "hsl(275, 70%, 78%)",
+  sustain: "hsl(155, 60%, 72%)",
+};
+const CONS_COLORS: Record<BuildConstellation, string | undefined> = {
+  0: undefined,
+  1: "hsl(45, 40%, 82%)",
+  2: "hsl(45, 75%, 75%)",
+  4: "hsl(45, 75%, 75%)",
+  6: "hsl(25, 85%, 72%)",
+};
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -35,15 +67,90 @@ import { StatSelect } from "./StatSelect";
 
 interface BuildCardProps {
   buildId: string;
-  buildIndex: number;
   onDelete: () => void;
   onDuplicate: () => void;
   element: Element;
 }
 
+// Managed popover: show on hover, pin on click, dismiss on click-outside
+function ValidationPopover({
+  isValid,
+  message,
+  isMobile,
+}: {
+  isValid: boolean;
+  message: string | undefined;
+  isMobile: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (pinned) return;
+    hoverTimeout.current = setTimeout(() => setOpen(true), 100);
+  }, [pinned]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+    if (!pinned) setOpen(false);
+  }, [pinned]);
+
+  const handleClick = useCallback(() => {
+    if (pinned) {
+      setPinned(false);
+      setOpen(false);
+    } else {
+      setPinned(true);
+      setOpen(true);
+    }
+  }, [pinned]);
+
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    // Only allow closing via our managed logic
+    if (!newOpen) {
+      setPinned(false);
+      setOpen(false);
+    }
+  }, []);
+
+  const icon = isValid ? (
+    <Check className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-green-500")} />
+  ) : (
+    <AlertCircle
+      className={cn(isMobile ? "w-5 h-5" : "w-6 h-6", "text-amber-500")}
+    />
+  );
+
+  return (
+    <Popover open={open} onOpenChange={handleOpenChange}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="flex-shrink-0 cursor-pointer"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
+        >
+          {icon}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-auto max-w-64 px-3 py-2"
+        side="top"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <span className="whitespace-pre-line text-sm">
+          {isValid ? message : message}
+        </span>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function BuildCardComponent({
   buildId,
-  buildIndex,
   onDelete,
   onDuplicate,
   element,
@@ -101,10 +208,27 @@ function BuildCardComponent({
     }
   }, [build, buildId, setBuild]);
 
+  const handleConstellationChange = useCallback(
+    (value: string) => {
+      const cons = Number(value) as BuildConstellation;
+      // Store undefined for C0 (default)
+      setBuild(buildId, { minCons: cons === 0 ? undefined : cons });
+    },
+    [buildId, setBuild]
+  );
+
   const validation = useMemo(() => {
     if (!build) return { isValid: false };
 
     const warnings: string[] = [];
+
+    if (!build.styles || build.styles.length === 0) {
+      warnings.push(t.ui("buildCard.missingStyle"));
+    }
+
+    if (!build.roles || build.roles.length === 0) {
+      warnings.push(t.ui("buildCard.missingRole"));
+    }
 
     // Check artifact set configuration
     if (build.composition === "4pc") {
@@ -170,6 +294,25 @@ function BuildCardComponent({
     }
   };
 
+  const styleOptions = useMemo(
+    () =>
+      buildStyles.map((s) => ({
+        value: s,
+        label: t.ui(`buildCard.styles.${s}`),
+        color: STYLE_COLORS[s],
+      })),
+    [t]
+  );
+  const roleOptions = useMemo(
+    () =>
+      buildRoles.map((r) => ({
+        value: r,
+        label: t.ui(`buildCard.roles.${r}`),
+        color: ROLE_COLORS[r],
+      })),
+    [t]
+  );
+
   // If build is not found, don't render
   if (!build) {
     return null;
@@ -201,6 +344,18 @@ function BuildCardComponent({
         artifactSet: undefined,
       });
     }
+  };
+
+  const currentStyles = build.styles ?? [];
+  const currentRoles = build.roles ?? [];
+  const currentCons = build.minCons ?? 0;
+
+  const constellationKeyMap: Record<BuildConstellation, string> = {
+    0: "buildCard.constellation.c0",
+    1: "buildCard.constellation.c1",
+    2: "buildCard.constellation.c2",
+    4: "buildCard.constellation.c4",
+    6: "buildCard.constellation.c6",
   };
 
   const minCountInput = (
@@ -242,82 +397,146 @@ function BuildCardComponent({
     </div>
   );
 
+  const multiSelectTriggerClass = cn(
+    "border-border/40 bg-foreground/5 rounded-full h-auto w-auto",
+    // Mobile (default)
+    "min-w-10 pl-2 pr-1 py-1 text-xs [&>svg]:h-3 [&>svg]:w-3",
+    // Tablet+
+    "md:min-w-12 md:pl-3 md:pr-1.5 md:text-sm md:[&>svg]:h-3.5 md:[&>svg]:w-3.5",
+    // Desktop+
+    "lg:pl-4 lg:pr-2"
+  );
+
+  const multiSelectItemClass = "text-xs md:text-sm";
+
+  // Labels row: style multi-select + role multi-select + constellation select
+  const labelsRow = (
+    <div className="flex items-center flex-wrap gap-1 md:gap-3 lg:gap-4">
+      {/* Style multi-select */}
+      <LightweightMultiSelect
+        className="ml-1 md:ml-3 lg:ml-4"
+        options={styleOptions}
+        value={currentStyles}
+        onValueChange={(value) =>
+          handleBuildChange({ styles: value as BuildStyle[] })
+        }
+        placeholder={t.ui("buildCard.styles.label")}
+        triggerClassName={multiSelectTriggerClass}
+        itemClassName={multiSelectItemClass}
+      />
+
+      {/* Role multi-select */}
+      <LightweightMultiSelect
+        options={roleOptions}
+        value={currentRoles}
+        onValueChange={(value) =>
+          handleBuildChange({ roles: value as BuildRole[] })
+        }
+        placeholder={t.ui("buildCard.roles.label")}
+        triggerClassName={multiSelectTriggerClass}
+        itemClassName={multiSelectItemClass}
+      />
+
+      {/* Constellation select */}
+      <LightweightSelect
+        value={currentCons.toString()}
+        onValueChange={handleConstellationChange}
+      >
+        <LightweightSelectTrigger
+          className={multiSelectTriggerClass}
+          style={{ color: CONS_COLORS[currentCons] }}
+        >
+          <LightweightSelectValue />
+        </LightweightSelectTrigger>
+        <LightweightSelectContent>
+          {buildConstellations.map((cons) => (
+            <LightweightSelectItem
+              key={cons}
+              value={cons.toString()}
+              className={multiSelectItemClass}
+            >
+              <span style={{ color: CONS_COLORS[cons] }}>
+                {t.ui(constellationKeyMap[cons])}
+              </span>
+            </LightweightSelectItem>
+          ))}
+        </LightweightSelectContent>
+      </LightweightSelect>
+    </div>
+  );
+
   return (
     <div className="border border-border/50 rounded-lg bg-muted/30">
-      {/* Build Header - More Compact */}
-      <div className="flex items-center gap-2 px-2 md:px-3 pt-2">
-        <Switch
-          checked={build.visible}
-          onCheckedChange={handleToggleVisibility}
-          className="data-[state=checked]:bg-primary"
-        />
-
-        <div className="flex-1 min-w-0 flex items-center gap-2 md:gap-3 md:px-4">
-          <span className="text-xs text-muted-foreground italic flex-shrink-0 select-none hidden md:block">
-            {t.ui("buildCard.buildLabel")} {buildIndex}
-          </span>
-          <Input
-            value={localName}
-            onChange={(e) => handleNameChange(e.target.value)}
-            onBlur={handleNameBlur}
-            placeholder={
-              isMobile ? `${t.ui("buildCard.buildLabel")} ${buildIndex}` : ""
-            }
-            className={cn(
-              "rounded-full bg-transparent border-none py-0 text-foreground flex-1",
-              isMobile ? "h-7 text-sm px-2 mx-1" : "h-8 text-base px-3 mx-6"
-            )}
+      {/* Build Header */}
+      <div className={cn("px-2 md:px-3 pt-2", isMobile ? "space-y-1.5" : "")}>
+        {/* Row 1: Switch + Labels + Name (desktop) / Switch + Labels + Buttons (mobile) */}
+        <div className="flex items-center gap-2">
+          <Switch
+            checked={build.visible}
+            onCheckedChange={handleToggleVisibility}
+            className="data-[state=checked]:bg-primary flex-shrink-0"
           />
+
+          {labelsRow}
+
+          {/* Desktop: name input inline */}
+          {!isMobile && (
+            <div className="flex-1 min-w-0 px-2">
+              <Input
+                value={localName}
+                onChange={(e) => handleNameChange(e.target.value)}
+                onBlur={handleNameBlur}
+                placeholder=""
+                className="rounded-full bg-transparent border-none py-0 text-primary flex-1 h-8 text-base px-3"
+              />
+            </div>
+          )}
+
+          <div className="flex items-center gap-0.5 ml-auto flex-shrink-0">
+            <ValidationPopover
+              isValid={validation.isValid}
+              message={
+                validation.isValid
+                  ? t.ui("buildCard.buildComplete")
+                  : validation.warningMessage
+              }
+              isMobile={isMobile}
+            />
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDuplicate}
+              className={cn("p-1", isMobile ? "h-7 w-7" : "h-8 w-8")}
+            >
+              <Copy />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDelete}
+              className={cn(
+                "p-1 text-destructive hover:text-destructive",
+                isMobile ? "h-7 w-7" : "h-8 w-8"
+              )}
+            >
+              <Trash2 />
+            </Button>
+          </div>
         </div>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex-shrink-0">
-              {validation.isValid ? (
-                <Check
-                  className={cn(
-                    isMobile ? "w-5 h-5" : "w-6 h-6",
-                    "text-green-500"
-                  )}
-                />
-              ) : (
-                <AlertCircle
-                  className={cn(
-                    isMobile ? "w-5 h-5" : "w-6 h-6",
-                    "text-amber-500"
-                  )}
-                />
-              )}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <span className="whitespace-pre-line">
-              {validation.isValid
-                ? t.ui("buildCard.buildComplete")
-                : validation.warningMessage}
-            </span>
-          </TooltipContent>
-        </Tooltip>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDuplicate}
-          className={cn("p-1", isMobile ? "h-7 w-7" : "h-8 w-8")}
-        >
-          <Copy />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDelete}
-          className={cn(
-            "p-1 text-destructive hover:text-destructive",
-            isMobile ? "h-7 w-7" : "h-8 w-8"
-          )}
-        >
-          <Trash2 />
-        </Button>
+        {/* Row 2 (mobile only): Name input */}
+        {isMobile && (
+          <div className="flex items-center gap-2 px-1">
+            <Input
+              value={localName}
+              onChange={(e) => handleNameChange(e.target.value)}
+              onBlur={handleNameBlur}
+              placeholder=""
+              className="rounded-full bg-transparent border-none py-0 text-primary flex-1 h-7 text-sm px-2"
+            />
+          </div>
+        )}
       </div>
 
       {/* Build Details */}
@@ -419,7 +638,6 @@ function BuildCardComponent({
 export const BuildCard = memo(BuildCardComponent, (prevProps, nextProps) => {
   return (
     prevProps.buildId === nextProps.buildId &&
-    prevProps.buildIndex === nextProps.buildIndex &&
     prevProps.element === nextProps.element
     // onDelete and onDuplicate are not compared since they should be stable from parent
   );

@@ -10,7 +10,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff, Plus } from "lucide-react";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { BuildCard } from "./BuildCard";
 
 interface WeaponSlotProps {
@@ -53,6 +54,59 @@ const WeaponSlot = memo(
   }
 );
 WeaponSlot.displayName = "WeaponSlot";
+
+/** Compact + button that spawns a defaultOpen ItemPicker on click */
+const CompactAddWeapon = memo(
+  ({
+    index,
+    onUpdate,
+    filter,
+  }: {
+    index: number;
+    onUpdate: (index: number, val: string) => void;
+    filter: (item: unknown) => boolean;
+  }) => {
+    const [isAdding, setIsAdding] = useState(false);
+
+    const handleChange = useCallback(
+      (val: string) => {
+        onUpdate(index, val);
+        setIsAdding(false);
+      },
+      [index, onUpdate]
+    );
+
+    const handleClose = useCallback((open: boolean) => {
+      if (!open) setIsAdding(false);
+    }, []);
+
+    if (isAdding) {
+      return (
+        <ItemPicker
+          type="weapon"
+          value={null}
+          onChange={handleChange}
+          filter={filter}
+          tooltipSide="left"
+          defaultOpen
+          onOpenChange={handleClose}
+        />
+      );
+    }
+
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setIsAdding(true)}
+        className="p-1 h-7 w-7 text-muted-foreground"
+      >
+        <Plus className="w-4 h-4" />
+      </Button>
+    );
+  }
+);
+CompactAddWeapon.displayName = "CompactAddWeapon";
 
 interface CharacterBuildCardProps {
   character: Character;
@@ -139,10 +193,15 @@ function CharacterBuildCardComponent({
   const visibleWeapons = isMobile
     ? characterWeapons.slice(0, 1)
     : characterWeapons;
-  const showAddSlot = isMobile
-    ? characterWeapons.length < 1
-    : characterWeapons.length < 3;
   const iconSize = isVeryNarrow ? "md" : isMobile ? "lg" : "xl";
+
+  // Full placeholder when no weapons — creates urgency to add at least one
+  const showFullPlaceholder = isMobile
+    ? characterWeapons.length < 1
+    : characterWeapons.length === 0;
+  // Compact + button when weapons exist but can add more (desktop only)
+  const showCompactAdd =
+    !isMobile && characterWeapons.length > 0 && characterWeapons.length < 3;
 
   const handleAddBuild = useCallback(() => {
     newBuild(character.id);
@@ -174,11 +233,13 @@ function CharacterBuildCardComponent({
             isVeryNarrow ? "gap-2" : "gap-3 md:gap-4"
           )}
         >
-          <ItemIcon
-            imagePath={character.imagePath}
-            rarity={character.rarity}
-            size={iconSize}
-          />
+          <Link to={`/archive?tab=characters&character=${character.id}`}>
+            <ItemIcon
+              imagePath={character.imagePath}
+              rarity={character.rarity}
+              size={iconSize}
+            />
+          </Link>
 
           <div className="flex-1 flex items-center justify-between gap-4">
             <CharacterInfo
@@ -218,7 +279,7 @@ function CharacterBuildCardComponent({
             </CharacterInfo>
 
             {!isHidden && (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 {visibleWeapons.map((weaponId, index) => (
                   <WeaponSlot
                     key={index}
@@ -230,7 +291,7 @@ function CharacterBuildCardComponent({
                     size={iconSize}
                   />
                 ))}
-                {showAddSlot && (
+                {showFullPlaceholder && (
                   <WeaponSlot
                     index={characterWeapons.length}
                     weaponId={null}
@@ -239,6 +300,13 @@ function CharacterBuildCardComponent({
                     filter={weaponFilter}
                     isAddSlot
                     size={iconSize}
+                  />
+                )}
+                {showCompactAdd && (
+                  <CompactAddWeapon
+                    index={characterWeapons.length}
+                    onUpdate={handleWeaponUpdate}
+                    filter={weaponFilter}
                   />
                 )}
               </div>
@@ -277,7 +345,6 @@ function CharacterBuildCardComponent({
                     <BuildCard
                       key={buildId}
                       buildId={buildId}
-                      buildIndex={index + 1}
                       onDelete={handleDelete}
                       onDuplicate={handleDuplicate}
                       element={character.element}

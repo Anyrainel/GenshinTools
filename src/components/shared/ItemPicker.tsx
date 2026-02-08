@@ -78,6 +78,10 @@ interface ItemPickerProps<T extends ItemPickerType> {
   menuSize?: ItemIconSize;
   placeholder?: string;
   showItemName?: boolean;
+  /** Open the picker immediately on mount (for add-on-demand flows) */
+  defaultOpen?: boolean;
+  /** Called when the picker's open state changes (e.g. on close) */
+  onOpenChange?: (open: boolean) => void;
 }
 
 const CHARACTER_RARITY_FILTERS = [5, 4] as const;
@@ -95,15 +99,20 @@ function ItemPickerComponent<T extends ItemPickerType>({
   triggerSize = "lg",
   menuSize = "md",
   showItemName = false,
+  defaultOpen = false,
+  onOpenChange: onOpenChangeProp,
 }: ItemPickerProps<T>) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      if (!disabled) setIsOpen(open);
+      if (!disabled) {
+        setIsOpen(open);
+        onOpenChangeProp?.(open);
+      }
     },
-    [disabled]
+    [disabled, onOpenChangeProp]
   );
 
   const handleSelect = useCallback(
@@ -293,19 +302,12 @@ function PickerTrigger({
   const baseClasses = cn(
     SIZE_CLASSES[size],
     "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-sm relative overflow-hidden",
-    disabled
-      ? "bg-muted border-dashed opacity-70"
-      : "bg-gradient-select hover:shadow-md"
+    disabled ? "bg-muted opacity-70" : "bg-gradient-select hover:shadow-md"
   );
 
   if (!value) {
     return (
-      <div
-        className={cn(
-          baseClasses,
-          "border-dashed ring-1 ring-inset ring-foreground/20"
-        )}
-      >
+      <div className={cn(baseClasses, "ring-1 ring-inset ring-foreground/20")}>
         <span className="text-4xl text-muted-foreground/50 select-none pb-1 group-hover:text-primary transition-colors">
           +
         </span>

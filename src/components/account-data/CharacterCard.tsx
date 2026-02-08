@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { Sword } from "lucide-react";
 import { memo } from "react";
+import { Link } from "react-router-dom";
 import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
@@ -70,14 +71,16 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
         <div
           className={cn("flex items-center", isVeryNarrow ? "gap-2" : "gap-3")}
         >
-          {/* Character Icon - No Tooltip */}
-          <ItemIcon
-            imagePath={charInfo.imagePath}
-            rarity={charInfo.rarity}
-            badge={char.constellation}
-            level={`Lv. ${char.level}`}
-            size={isVeryNarrow ? "md" : "lg"}
-          />
+          {/* Character Icon — links to archive */}
+          <Link to={`/archive?tab=characters&character=${char.key}`}>
+            <ItemIcon
+              imagePath={charInfo.imagePath}
+              rarity={charInfo.rarity}
+              badge={char.constellation}
+              level={`Lv. ${char.level}`}
+              size={isVeryNarrow ? "md" : "lg"}
+            />
+          </Link>
 
           {/* Info */}
           <div className="flex-1 min-w-0">

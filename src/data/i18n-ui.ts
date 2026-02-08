@@ -580,6 +580,32 @@ export const i18nUiData = {
       en: "Need at least 1 substat",
       zh: "需要至少1个副词条",
     },
+    missingStyle: {
+      en: "Select at least one style (On-Field / Off-Field)",
+      zh: "请选择至少一个定位（前台/后台）",
+    },
+    missingRole: {
+      en: "Select at least one role (DPS / Support / Sustain)",
+      zh: "请选择至少一个职能（输出/辅助/生存）",
+    },
+    styles: {
+      label: { en: "Style", zh: "定位" },
+      "on-field": { en: "On-Field", zh: "前台" },
+      "off-field": { en: "Off-Field", zh: "后台" },
+    },
+    roles: {
+      label: { en: "Role", zh: "职能" },
+      dps: { en: "DPS", zh: "输出" },
+      support: { en: "Support", zh: "辅助" },
+      sustain: { en: "Sustain", zh: "生存" },
+    },
+    constellation: {
+      c0: { en: "C0+", zh: "0命+" },
+      c1: { en: "C1+", zh: "1命+" },
+      c2: { en: "C2+", zh: "2命+" },
+      c4: { en: "C4+", zh: "4命+" },
+      c6: { en: "C6", zh: "6命" },
+    },
   },
   tierList: {
     importDialogTitle: { en: "Import Tier List", zh: "导入榜单" },

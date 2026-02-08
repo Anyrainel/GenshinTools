@@ -26,12 +26,11 @@ describe("BuildCard", () => {
     }));
   });
 
-  const renderBuildCard = (buildIndex = 1) => {
+  const renderBuildCard = () => {
     const buildId = Object.keys(useBuildsStore.getState().builds)[0];
     return render(
       <BuildCard
         buildId={buildId}
-        buildIndex={buildIndex}
         onDelete={mockOnDelete}
         onDuplicate={mockOnDuplicate}
         element="Pyro"
@@ -39,11 +38,10 @@ describe("BuildCard", () => {
     );
   };
 
-  it("displays build index number in header", () => {
-    renderBuildCard(3);
+  it("renders without error", () => {
+    const { container } = renderBuildCard();
 
-    // Build index should be visible (format may vary: "#3" or "3")
-    expect(screen.getByText(/3/)).toBeInTheDocument();
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it("shows build name input field", () => {

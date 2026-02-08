@@ -22,7 +22,7 @@ import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { ArrowLeft, Book, Bookmark, ChevronRight, Plus } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "./ArchiveToolbar";
 import { BaseStatsTable } from "./BaseStatsTable";
 import { EffectCard } from "./EffectCard";
@@ -133,7 +133,6 @@ function LinkedBuildSection({ character }: { character: Character }) {
             <BuildCard
               key={buildId}
               buildId={buildId}
-              buildIndex={index + 1}
               onDelete={() => removeBuild(character.id, buildId)}
               onDuplicate={() => copyBuild(character.id, buildId)}
               element={character.element}
@@ -463,7 +462,8 @@ function CharacterFilterChips({
 export function CharacterArchiveView() {
   const { t } = useLanguage();
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedId = searchParams.get("character");
   const [searchQuery, setSearchQuery] = useState("");
   const [elementFilter, setElementFilter] = useState<Element[]>([]);
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
@@ -505,20 +505,37 @@ export function CharacterArchiveView() {
     });
   }, [searchQuery, elementFilter, weaponTypeFilter, rarityFilter, t]);
 
-  const handleSelect = useCallback((id: string) => {
-    setSelectedId(id);
-  }, []);
+  const handleSelect = useCallback(
+    (id: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("character", id);
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
 
   const handleBack = useCallback(() => {
-    setSelectedId(null);
-  }, []);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("character");
+        return next;
+      },
+      { replace: true }
+    );
+  }, [setSearchParams]);
 
   // Auto-select first character on desktop if none selected
   useEffect(() => {
     if (isDesktop && !selectedId && filteredCharacters.length > 0) {
-      setSelectedId(filteredCharacters[0].id);
+      handleSelect(filteredCharacters[0].id);
     }
-  }, [isDesktop, selectedId, filteredCharacters]);
+  }, [isDesktop, selectedId, filteredCharacters, handleSelect]);
 
   const toggleElement = (el: Element) => {
     setElementFilter((prev) =>

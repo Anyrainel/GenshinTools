@@ -189,11 +189,23 @@ export type WeaponTypeResource = {
   imagePath: string; // Local serving path
 };
 
+export type BuildStyle = "on-field" | "off-field";
+export const buildStyles: BuildStyle[] = ["on-field", "off-field"];
+
+export type BuildRole = "dps" | "support" | "sustain";
+export const buildRoles: BuildRole[] = ["dps", "support", "sustain"];
+
+export type BuildConstellation = 0 | 1 | 2 | 4 | 6;
+export const buildConstellations: BuildConstellation[] = [0, 1, 2, 4, 6];
+
 export type Build = {
   id: string;
   characterId: string; // Back link to character
   name: string;
   visible: boolean;
+  styles?: BuildStyle[];
+  roles?: BuildRole[];
+  minCons?: BuildConstellation; // minimum constellation for this build, default 0
   composition: "4pc" | "2pc+2pc";
   artifactSet?: string; // for 4pc
   halfSet1?: number; // for 2pc+2pc - ID of the first half set

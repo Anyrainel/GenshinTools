@@ -17,7 +17,11 @@ function matchesFilters(
   filters: CharacterFilters,
   isOwned?: OwnershipCheck
 ): boolean {
-  if (filters.ownedOnly && isOwned && !isOwned(character.id)) return false;
+  if (filters.ownedOnly) {
+    // Unreleased characters (null releaseDate) can't be owned yet
+    if (!character.releaseDate) return false;
+    if (isOwned && !isOwned(character.id)) return false;
+  }
   if (
     filters.elements.length > 0 &&
     !filters.elements.includes(character.element)
