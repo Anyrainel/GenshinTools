@@ -172,6 +172,16 @@ export default function Home() {
           />
           */}
         </div>
+
+        {/* Footer - Disclaimer & Attribution */}
+        <footer className="mt-auto pt-6 pb-2 border-t border-border/20 text-center space-y-1">
+          <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            {t.ui("app.disclaimer")}
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {t.ui("app.dataAttribution")}
+          </p>
+        </footer>
       </ScrollLayout>
     </PageLayout>
   );

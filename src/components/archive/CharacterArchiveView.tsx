@@ -183,72 +183,85 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
   if (!character) return null;
 
   return (
-    <Card className="bg-gradient-card">
-      <CardContent className="py-6 space-y-6">
-        {/* Character header + stats side-by-side on wide screens */}
-        <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <ItemIcon
-              imagePath={character.imagePath}
-              rarity={character.rarity}
-              size="xl"
-            />
-            <CharacterInfo character={character} showDate />
+    <>
+      <Card className="bg-gradient-card">
+        <CardContent className="py-6 space-y-6">
+          {/* Character header + stats side-by-side on wide screens */}
+          <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <ItemIcon
+                imagePath={character.imagePath}
+                rarity={character.rarity}
+                size="xl"
+              />
+              <CharacterInfo character={character} showDate />
+            </div>
+            {/* Base Stats — top-right on wide screens */}
+            <BaseStatsTable characterId={characterId} />
           </div>
-          {/* Base Stats — top-right on wide screens */}
-          <BaseStatsTable characterId={characterId} />
-        </div>
 
-        {/* Skills */}
-        {skills && skills.length > 0 && (
-          <KitSection title={t.ui("archive.skills")}>
-            {skills.map((skill, i) => (
-              <SkillCard
-                key={skill.name || i}
-                skill={skill}
-                constellations={constellations}
-              />
-            ))}
-          </KitSection>
-        )}
+          {/* Skills */}
+          {skills && skills.length > 0 && (
+            <KitSection title={t.ui("archive.skills")}>
+              {skills.map((skill, i) => (
+                <SkillCard
+                  key={skill.name || i}
+                  skill={skill}
+                  constellations={constellations}
+                />
+              ))}
+            </KitSection>
+          )}
 
-        {/* Passives — 2 columns on wide screens */}
-        {passives && passives.length > 0 && (
-          <KitSection title={t.ui("archive.passives")} columns>
-            {passives.map((passive, i) => (
-              <EffectCard key={passive.name || i} effect={passive} />
-            ))}
-          </KitSection>
-        )}
+          {/* Passives — 2 columns on wide screens */}
+          {passives && passives.length > 0 && (
+            <KitSection title={t.ui("archive.passives")} columns>
+              {passives.map((passive, i) => (
+                <EffectCard key={passive.name || i} effect={passive} />
+              ))}
+            </KitSection>
+          )}
 
-        {/* Constellations — 2 columns on wide screens */}
-        {constellations && constellations.length > 0 && (
-          <KitSection title={t.ui("archive.constellations")} columns>
-            {constellations.map((constellation, i) => (
-              <EffectCard
-                key={constellation.name || i}
-                effect={constellation}
-              />
-            ))}
-          </KitSection>
-        )}
+          {/* Constellations — 2 columns on wide screens */}
+          {constellations && constellations.length > 0 && (
+            <KitSection title={t.ui("archive.constellations")} columns>
+              {constellations.map((constellation, i) => (
+                <EffectCard
+                  key={constellation.name || i}
+                  effect={constellation}
+                />
+              ))}
+            </KitSection>
+          )}
 
-        {/* Dictionary */}
-        {dictionary && dictionary.length > 0 && (
-          <KitSection title={t.ui("archive.dictionary")} columns>
-            {dictionary.map((entry, i) => (
-              <EffectCard key={entry.name || i} effect={entry} />
-            ))}
-          </KitSection>
-        )}
+          {/* Dictionary */}
+          {dictionary && dictionary.length > 0 && (
+            <KitSection title={t.ui("archive.dictionary")} columns>
+              {dictionary.map((entry, i) => (
+                <EffectCard key={entry.name || i} effect={entry} />
+              ))}
+            </KitSection>
+          )}
 
-        {/* Linked: Artifact Builds */}
-        <LinkedBuildSection character={character} />
+          {/* Linked: Artifact Builds */}
+          <LinkedBuildSection character={character} />
 
-        {/* Linked: Account Data */}
-        <LinkedAccountSection character={character} />
-      </CardContent>
-    </Card>
+          {/* Linked: Account Data */}
+          <LinkedAccountSection character={character} />
+        </CardContent>
+      </Card>
+      <p className="text-xs text-muted-foreground text-right mt-1 mr-1">
+        {t.ui("archive.dataFrom")}
+        <a
+          href="https://gi.hakush.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-primary/70 hover:text-primary"
+        >
+          hakush.in
+        </a>
+      </p>
+    </>
   );
 }
 

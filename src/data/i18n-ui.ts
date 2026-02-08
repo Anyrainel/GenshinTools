@@ -298,6 +298,14 @@ export const i18nUiData = {
       zh: "图片生成失败",
     },
     explore: { en: "Explore", zh: "探索" },
+    disclaimer: {
+      en: "Genshin Impact is a trademark of HoYoverse. This project is not affiliated with or endorsed by HoYoverse.",
+      zh: "《原神》为米哈游/HoYoverse的商标，本项目与其无关联。",
+    },
+    dataAttribution: {
+      en: "Game data sourced from HoYoWiki and hakush.in.",
+      zh: "游戏数据来源于 HoYoWiki 和 hakush.in。",
+    },
   },
   archive: {
     characters: { en: "Character Archive", zh: "角色图鉴" },
@@ -341,6 +349,7 @@ export const i18nUiData = {
       en: "No weapons match your search",
       zh: "没有武器匹配搜索",
     },
+    dataFrom: { en: "Data from ", zh: "数据来自 " },
   },
   theme: {
     switcherButton: { en: "Theme", zh: "主题" },
