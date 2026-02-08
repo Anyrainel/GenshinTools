@@ -17,7 +17,7 @@ type RawKit = {
   skills: RawSkill[];
   passives: CharacterEffect[];
   constellations: CharacterEffect[];
-  dictionary: CharacterEffect[] | null;
+  glossary: CharacterEffect[] | null;
 };
 
 type RawBundle = Record<string, RawKit>;
@@ -55,7 +55,7 @@ function transformBundle(raw: RawBundle): Record<string, CharacterKit> {
       skills: kit.skills.map(transformSkill),
       passives: kit.passives,
       constellations: kit.constellations,
-      dictionary: kit.dictionary,
+      glossary: kit.glossary,
     };
   }
   return result;
@@ -120,9 +120,9 @@ export function getCachedConstellations(
   return getCachedKit(characterId, lang)?.constellations ?? null;
 }
 
-export function getCachedDictionary(
+export function getCachedGlossary(
   characterId: string,
   lang: Language
 ): CharacterEffect[] | null {
-  return getCachedKit(characterId, lang)?.dictionary ?? null;
+  return getCachedKit(characterId, lang)?.glossary ?? null;
 }

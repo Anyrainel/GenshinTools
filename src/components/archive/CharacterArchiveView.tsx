@@ -19,7 +19,8 @@ import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { ArrowLeft, Book, ChevronRight, Plus } from "lucide-react";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
+import { ArrowLeft, Book, Bookmark, ChevronRight, Plus } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArchiveToolbar } from "./ArchiveToolbar";
@@ -38,6 +39,10 @@ const CharacterListItem = memo(
   ({ character, isSelected, onSelect }: CharacterListItemProps) => {
     const { t } = useLanguage();
     const name = t.character(character.id);
+    const owned = useOwnershipStore((s) =>
+      s.isOwned("character", character.id)
+    );
+    const unreleased = character.releaseDate === null;
 
     return (
       <button
@@ -47,7 +52,8 @@ const CharacterListItem = memo(
           "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg transition-colors text-left",
           isSelected
             ? "bg-primary/15 ring-1 ring-primary/30"
-            : "hover:bg-accent/50"
+            : "hover:bg-accent/50",
+          (unreleased || !owned) && "opacity-40"
         )}
       >
         <ItemIcon
@@ -178,7 +184,11 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
   const skills = t.skills(characterId);
   const passives = t.passives(characterId);
   const constellations = t.constellations(characterId);
-  const dictionary = t.dictionary(characterId);
+  const glossary = t.glossary(characterId);
+  const unreleased = character?.releaseDate === null;
+  const owned = useOwnershipStore((s) => s.isOwned("character", characterId));
+  const effectiveOwned = !unreleased && owned;
+  const toggleOwned = useOwnershipStore((s) => s.toggleOwned);
 
   if (!character) return null;
 
@@ -195,6 +205,27 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
                 size="xl"
               />
               <CharacterInfo character={character} showDate />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleOwned("character", characterId)}
+                disabled={unreleased}
+                className={cn(
+                  "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
+                  effectiveOwned
+                    ? "text-amber-400 hover:text-amber-300"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <Bookmark
+                  className={cn("h-4 w-4", effectiveOwned && "fill-current")}
+                />
+                <span className="text-xs font-medium">
+                  {effectiveOwned
+                    ? t.ui("archive.owned")
+                    : t.ui("archive.notOwned")}
+                </span>
+              </Button>
             </div>
             {/* Base Stats — top-right on wide screens */}
             <BaseStatsTable characterId={characterId} />
@@ -222,6 +253,15 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
             </KitSection>
           )}
 
+          {/* Glossary */}
+          {glossary && glossary.length > 0 && (
+            <KitSection title={t.ui("archive.glossary")} columns>
+              {glossary.map((entry, i) => (
+                <EffectCard key={entry.name || i} effect={entry} />
+              ))}
+            </KitSection>
+          )}
+
           {/* Constellations — 2 columns on wide screens */}
           {constellations && constellations.length > 0 && (
             <KitSection title={t.ui("archive.constellations")} columns>
@@ -230,15 +270,6 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
                   key={constellation.name || i}
                   effect={constellation}
                 />
-              ))}
-            </KitSection>
-          )}
-
-          {/* Dictionary */}
-          {dictionary && dictionary.length > 0 && (
-            <KitSection title={t.ui("archive.dictionary")} columns>
-              {dictionary.map((entry, i) => (
-                <EffectCard key={entry.name || i} effect={entry} />
               ))}
             </KitSection>
           )}
@@ -307,6 +338,7 @@ function CharacterGrid({
   onSelect: (id: string) => void;
 }) {
   const { t } = useLanguage();
+  const isOwnedFn = useOwnershipStore((s) => s.isOwned);
 
   if (characters.length === 0) {
     return (
@@ -321,19 +353,26 @@ function CharacterGrid({
       className="grid gap-2 p-2"
       style={{ gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))" }}
     >
-      {characters.map((c) => (
-        <button
-          key={c.id}
-          type="button"
-          onClick={() => onSelect(c.id)}
-          className="flex flex-col items-center gap-1 p-1 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          <ItemIcon imagePath={c.imagePath} rarity={c.rarity} size="sm" />
-          <span className="text-xs text-foreground text-center line-clamp-1 w-full">
-            {t.character(c.id)}
-          </span>
-        </button>
-      ))}
+      {characters.map((c) => {
+        const unreleased = c.releaseDate === null;
+        const owned = isOwnedFn("character", c.id);
+        return (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => onSelect(c.id)}
+            className={cn(
+              "flex flex-col items-center gap-1 p-1 rounded-lg hover:bg-white/10 transition-colors",
+              (unreleased || !owned) && "opacity-40"
+            )}
+          >
+            <ItemIcon imagePath={c.imagePath} rarity={c.rarity} size="sm" />
+            <span className="text-xs text-foreground text-center line-clamp-1 w-full">
+              {t.character(c.id)}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -448,7 +487,7 @@ export function CharacterArchiveView() {
         const skills = t.skills(c.id);
         const passives = t.passives(c.id);
         const constellations = t.constellations(c.id);
-        const dictionary = t.dictionary(c.id);
+        const glossary = t.glossary(c.id);
         if (
           !characterMatchesSearch(
             c.id,
@@ -457,7 +496,7 @@ export function CharacterArchiveView() {
             skills,
             passives,
             constellations,
-            dictionary
+            glossary
           )
         )
           return false;

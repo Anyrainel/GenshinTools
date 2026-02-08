@@ -114,7 +114,7 @@ export type CharacterKit = {
   skills: CharacterSkill[];
   passives: CharacterEffect[];
   constellations: CharacterEffect[];
-  dictionary: CharacterEffect[] | null;
+  glossary: CharacterEffect[] | null;
 };
 export const mainStatsPlus: MainStatPlus[] = [
   "cr",
@@ -369,6 +369,7 @@ export interface CharacterFilters {
   rarities: Rarity[];
   tierSort: SortDirection;
   releaseSort: SortDirection;
+  ownedOnly: boolean;
 }
 
 export type StatWeightMap = Record<string, number>; // key: MainStat | SubStat (e.g. "atk%", "cr", "pyro%"), value: 0-100

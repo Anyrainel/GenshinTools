@@ -30,7 +30,7 @@ export function characterMatchesSearch(
   skills: CharacterSkill[] | null,
   passives: CharacterEffect[] | null,
   constellations: CharacterEffect[] | null,
-  dictionary: CharacterEffect[] | null
+  glossary: CharacterEffect[] | null
 ): boolean {
   if (fuzzyMatch(query, characterName)) return true;
   if (fuzzyMatch(query, characterId)) return true;
@@ -38,6 +38,6 @@ export function characterMatchesSearch(
   if (skills?.some((s) => matchesEffect(query, s))) return true;
   if (passives?.some((e) => matchesEffect(query, e))) return true;
   if (constellations?.some((e) => matchesEffect(query, e))) return true;
-  if (dictionary?.some((e) => matchesEffect(query, e))) return true;
+  if (glossary?.some((e) => matchesEffect(query, e))) return true;
   return false;
 }

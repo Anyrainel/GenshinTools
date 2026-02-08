@@ -149,8 +149,8 @@ describe("characterMatchesSearch", () => {
     ).toBe(true);
   });
 
-  it("matches by dictionary entry", () => {
-    const dictionary = [
+  it("matches by glossary entry", () => {
+    const glossary = [
       makeEffect("Blood Blossom", "Enemies affected by Blood Blossom"),
     ];
     expect(
@@ -161,7 +161,7 @@ describe("characterMatchesSearch", () => {
         null,
         null,
         null,
-        dictionary
+        glossary
       )
     ).toBe(true);
   });

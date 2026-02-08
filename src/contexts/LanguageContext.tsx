@@ -46,7 +46,7 @@ interface LanguageContextType {
     skills: (id: string) => CharacterSkill[] | null;
     passives: (id: string) => CharacterEffect[] | null;
     constellations: (id: string) => CharacterEffect[] | null;
-    dictionary: (id: string) => CharacterEffect[] | null;
+    glossary: (id: string) => CharacterEffect[] | null;
     lang: Language;
   };
 }
@@ -128,9 +128,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [kitData]
   );
 
-  const getDictionary = useCallback(
+  const getGlossary = useCallback(
     (characterId: string): CharacterEffect[] | null =>
-      kitData[characterId]?.dictionary ?? null,
+      kitData[characterId]?.glossary ?? null,
     [kitData]
   );
 
@@ -371,7 +371,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       skills: getSkills,
       passives: getPassives,
       constellations: getConstellations,
-      dictionary: getDictionary,
+      glossary: getGlossary,
       lang: language,
     }),
     [
@@ -397,7 +397,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getSkills,
       getPassives,
       getConstellations,
-      getDictionary,
+      getGlossary,
       language,
     ]
   );

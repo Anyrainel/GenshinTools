@@ -11,6 +11,7 @@ import {
   hasActiveFilters,
 } from "@/lib/characterFilters";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useCallback, useMemo, useState } from "react";
@@ -40,7 +41,15 @@ export function CharacterView({ scores }: CharacterViewProps) {
     weaponTypes: defaultCharacterFilters.weaponTypes,
     regions: defaultCharacterFilters.regions,
     rarities: defaultCharacterFilters.rarities,
+    ownedOnly: false,
   });
+
+  // Ownership check callback
+  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isCharacterOwned = useCallback(
+    (id: string) => isOwned("character", id),
+    [isOwned]
+  );
 
   // Combine local checkbox state with persisted sort preferences
   const filters: CharacterFilters = useMemo(
@@ -61,6 +70,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
         weaponTypes: newFilters.weaponTypes,
         regions: newFilters.regions,
         rarities: newFilters.rarities,
+        ownedOnly: newFilters.ownedOnly,
       });
 
       // Update sort preferences (persisted state)
@@ -89,9 +99,10 @@ export function CharacterView({ scores }: CharacterViewProps) {
     return filterAndSortCharacterData(
       accountData.characters,
       filters,
-      tierAssignments
+      tierAssignments,
+      isCharacterOwned
     );
-  }, [accountData, filters, tierAssignments]);
+  }, [accountData, filters, tierAssignments, isCharacterOwned]);
 
   const activeFilters = hasActiveFilters(filters);
 
@@ -143,6 +154,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
                     weaponTypes: [],
                     regions: [],
                     rarities: [],
+                    ownedOnly: false,
                   })
                 }
                 className="text-primary hover:underline underline-offset-4 font-medium"

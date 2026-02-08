@@ -5,7 +5,7 @@ Extracts:
 - Skills (name, description HTML, detail tables at Lv 6, 10 & 13) (per language)
 - Passives (name, description HTML) (per language)
 - Constellations (name, description HTML) (per language)
-- Dictionary entries from hover-card <a> tags (per language)
+- Glossary entries from hover-card <a> tags (per language)
 
 Usage:
     uv run --project scripts/pyproject.toml scripts/hakushin.py
@@ -279,11 +279,11 @@ def _extract_tooltip_content(raw_tooltip: str) -> str:
 
 
 def process_description_html(html: str) -> tuple[str, dict[str, str]]:
-    """Process description HTML: extract dictionary entries and strip special <a> tags.
+    """Process description HTML: extract glossary entries and strip special <a> tags.
 
-    Returns (cleaned_html, dictionary) where dictionary maps keyword -> tooltip content.
+    Returns (cleaned_html, glossary) where glossary maps keyword -> tooltip content.
     """
-    dictionary: dict[str, str] = {}
+    glossary: dict[str, str] = {}
 
     # Pattern 1: Hover-card <a> with data-tooltip and cursor-help class
     hover_pattern = re.compile(
@@ -297,15 +297,15 @@ def process_description_html(html: str) -> tuple[str, dict[str, str]]:
         keyword = re.sub(r"<[^>]+>", "", match.group(2)).strip()  # Strip inner HTML tags
         tooltip_content = _extract_tooltip_content(unescape(tooltip_escaped))
 
-        if keyword in dictionary:
-            if dictionary[keyword] != tooltip_content:
+        if keyword in glossary:
+            if glossary[keyword] != tooltip_content:
                 raise ValueError(
-                    f"Inconsistent dictionary for '{keyword}':\n"
-                    f"  Existing: {dictionary[keyword][:100]}...\n"
+                    f"Inconsistent glossary for '{keyword}':\n"
+                    f"  Existing: {glossary[keyword][:100]}...\n"
                     f"  New:      {tooltip_content[:100]}..."
                 )
         else:
-            dictionary[keyword] = tooltip_content
+            glossary[keyword] = tooltip_content
 
     # Remove hover-card <a> wrapping (keep inner text/HTML)
     html = hover_pattern.sub(r"\2", html)
@@ -327,7 +327,7 @@ def process_description_html(html: str) -> tuple[str, dict[str, str]]:
         print(f"  WARNING: <strong> tags with attributes found (not replaced): {strong_with_attrs}")
     html = html.replace("<strong>", "<b>").replace("</strong>", "</b>")
 
-    return html, dictionary
+    return html, glossary
 
 
 # ---------------------------------------------------------------------------
@@ -658,11 +658,11 @@ class HakushinScraper:
             raw = self._extract_section(section_id)
             if raw is None:
                 return None
-            desc_html, dictionary = process_description_html(raw["descHtml"])
-            # Merge dictionary entries
-            for kw, tooltip in dictionary.items():
+            desc_html, glossary = process_description_html(raw["descHtml"])
+            # Merge glossary entries
+            for kw, tooltip in glossary.items():
                 if kw in merged_dict and merged_dict[kw] != tooltip:
-                    raise ValueError(f"Inconsistent dictionary for '{kw}' in {character_id}/{lang}")
+                    raise ValueError(f"Inconsistent glossary for '{kw}' in {character_id}/{lang}")
                 merged_dict[kw] = tooltip
             return {"name": raw["name"], "descHtml": desc_html}
 
@@ -722,8 +722,8 @@ class HakushinScraper:
         # Constellations
         constellations = [process_section(cid) for cid in sections["constellations"]]
 
-        # Convert dictionary to list format matching other sections
-        dict_entries = (
+        # Convert glossary to list format matching other sections
+        glossary_entries = (
             [{"name": kw, "descHtml": desc} for kw, desc in merged_dict.items()]
             if merged_dict
             else None
@@ -733,7 +733,7 @@ class HakushinScraper:
             "skills": skills,
             "passives": passives,
             "constellations": constellations,
-            "dictionary": dict_entries,
+            "glossary": glossary_entries,
         }
 
 
@@ -854,7 +854,7 @@ def scrape_all_characters(
         return eng_id in existing_kits.get(lang, {})
 
     def _log_kit(data: dict) -> None:
-        dict_count = len(data["dictionary"]) if data["dictionary"] else 0
+        dict_count = len(data["glossary"]) if data["glossary"] else 0
         print(
             f"    skills={len(data['skills'])} "
             f"passives={len(data['passives'])} "

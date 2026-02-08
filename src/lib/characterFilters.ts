@@ -7,13 +7,17 @@ import {
   tiers,
 } from "@/data/types";
 
+type OwnershipCheck = (id: string) => boolean;
+
 /**
  * Check if a character matches the given filters.
  */
 function matchesFilters(
   character: Character,
-  filters: CharacterFilters
+  filters: CharacterFilters,
+  isOwned?: OwnershipCheck
 ): boolean {
+  if (filters.ownedOnly && isOwned && !isOwned(character.id)) return false;
   if (
     filters.elements.length > 0 &&
     !filters.elements.includes(character.element)
@@ -85,9 +89,12 @@ function createSortComparator(
 export function filterAndSortCharacters(
   characters: Character[],
   filters: CharacterFilters,
-  tierAssignments?: TierAssignment
+  tierAssignments?: TierAssignment,
+  isOwned?: OwnershipCheck
 ): Character[] {
-  const filtered = characters.filter((c) => matchesFilters(c, filters));
+  const filtered = characters.filter((c) =>
+    matchesFilters(c, filters, isOwned)
+  );
   return [...filtered].sort(createSortComparator(filters, tierAssignments));
 }
 
@@ -99,11 +106,12 @@ export function filterAndSortCharacters(
 export function filterAndSortCharacterData(
   characterData: CharacterData[],
   filters: CharacterFilters,
-  tierAssignments?: TierAssignment
+  tierAssignments?: TierAssignment,
+  isOwned?: OwnershipCheck
 ): CharacterData[] {
   const filtered = characterData.filter((cd) => {
     const character = charactersById[cd.key];
-    return character && matchesFilters(character, filters);
+    return character && matchesFilters(character, filters, isOwned);
   });
 
   const comparator = createSortComparator(filters, tierAssignments);
@@ -137,6 +145,7 @@ export const defaultCharacterFilters: CharacterFilters = {
   rarities: [],
   tierSort: "off",
   releaseSort: "desc",
+  ownedOnly: false,
 };
 
 /**

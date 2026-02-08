@@ -70,7 +70,8 @@ export function CharacterFilterSidebar({
     filters.elements.length > 0 ||
     filters.weaponTypes.length > 0 ||
     filters.regions.length > 0 ||
-    filters.rarities.length > 0;
+    filters.rarities.length > 0 ||
+    filters.ownedOnly;
 
   const handleClearAll = () => {
     onFiltersChange({
@@ -79,6 +80,7 @@ export function CharacterFilterSidebar({
       weaponTypes: [],
       regions: [],
       rarities: [],
+      ownedOnly: false,
     });
   };
 
@@ -143,6 +145,26 @@ export function CharacterFilterSidebar({
               {t.ui("filters.clearAll")}
             </Button>
           )}
+        </div>
+
+        {/* Owned Only */}
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="owned-only"
+              checked={filters.ownedOnly}
+              onCheckedChange={(checked) =>
+                onFiltersChange({ ...filters, ownedOnly: checked === true })
+              }
+              className="h-4 w-4"
+            />
+            <Label
+              htmlFor="owned-only"
+              className="text-base text-foreground cursor-pointer font-medium"
+            >
+              {t.ui("filters.ownedOnly")}
+            </Label>
+          </div>
         </div>
 
         {/* Elements (Level 2 under Filter) */}

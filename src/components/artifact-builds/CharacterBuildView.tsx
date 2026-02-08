@@ -10,6 +10,7 @@ import {
   filterAndSortCharacters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -52,7 +53,15 @@ export function CharacterBuildView({
     weaponTypes: defaultCharacterFilters.weaponTypes,
     regions: defaultCharacterFilters.regions,
     rarities: defaultCharacterFilters.rarities,
+    ownedOnly: true,
   });
+
+  // Ownership check callback
+  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isCharacterOwned = useCallback(
+    (id: string) => isOwned("character", id),
+    [isOwned]
+  );
 
   // Combine local checkbox state with persisted sort preferences
   const filters: CharacterFilters = useMemo(
@@ -73,6 +82,7 @@ export function CharacterBuildView({
         weaponTypes: newFilters.weaponTypes,
         regions: newFilters.regions,
         rarities: newFilters.rarities,
+        ownedOnly: newFilters.ownedOnly,
       });
 
       // Update sort preferences (persisted state)
@@ -111,6 +121,7 @@ export function CharacterBuildView({
       weaponTypes: [character.weaponType],
       rarities: [character.rarity],
       regions: [character.region],
+      ownedOnly: false,
     });
 
     onTargetProcessed?.();
@@ -121,8 +132,14 @@ export function CharacterBuildView({
 
   // Compute filtered characters
   const filteredAndSortedCharacters = useMemo(
-    () => filterAndSortCharacters(characters, filters, tierAssignments),
-    [filters, tierAssignments]
+    () =>
+      filterAndSortCharacters(
+        characters,
+        filters,
+        tierAssignments,
+        isCharacterOwned
+      ),
+    [filters, tierAssignments, isCharacterOwned]
   );
 
   // Defer the list to allow UI to stay responsive

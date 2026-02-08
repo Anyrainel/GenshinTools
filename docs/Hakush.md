@@ -109,7 +109,7 @@ One bundled file per language (currently `en`, `zh`), structured as `Record<engl
     }
     // Always 6
   ],
-  "dictionary": [                               // null if no entries
+  "glossary": [                               // null if no entries
     {
       "name": "Sturm und Drang",
       "descHtml": "Tap to unleash..."
@@ -123,10 +123,10 @@ One bundled file per language (currently `en`, `zh`), structured as `Record<engl
 - Raw HTML with `<br>`, `<strong>`, `<span style="color: ...">` tags preserved.
 - All `<a>` tags are **unwrapped** (text kept, tag removed).
 - Consecutive whitespace collapsed to single spaces.
-- Dictionary `<a>` tags (with `data-tooltip` + `cursor-help` class) are extracted into the `dictionary` map before unwrapping.
+- Glossary `<a>` tags (with `data-tooltip` + `cursor-help` class) are extracted into the `glossary` map before unwrapping.
 - Internal link `<a>` tags (e.g. `href="#S11282"`, class `underline`) are simply unwrapped.
 
-**`dictionary` value format**:
+**`glossary` value format**:
 - Contains only the **description content** from the tooltip, not the title.
 - The tooltip HTML has two divs: `<div class="...font-bold">Title</div>` and `<div class="...font-normal">Content</div>`. We extract only the inner HTML of the second div, stripped of leading/trailing whitespace.
 
@@ -193,7 +193,7 @@ The name container has class `.text-lg`. Its structure:
 - **Table container**: `.grid.grid-cols-1` within the skill section
 - **Table rows**: `.grid.grid-cols-2` within the container — each row has two children (label, value)
 
-### 8. Dictionary Entries (hover-card links)
+### 8. Glossary Entries (hover-card links)
 
 Found inside `descHtml`. These are `<a>` tags with **both**:
 - `class` containing `cursor-help`
@@ -279,4 +279,4 @@ The scraper skips characters by **name** (`BLOCKLIST_NAMES`): "Traveler", "Manek
 | Skill tables empty | `.grid.grid-cols-1 > .grid.grid-cols-2` nesting changed |
 | Language switch fails (no sidebar) | `<sidebar>` element renamed or not rendered (timing/viewport) |
 | Language switch fails (wrong data) | Language labels changed; or active language isn't excluded from options anymore |
-| Dictionary values include title | Tooltip HTML structure changed; check `.font-normal` div selector |
+| Glossary values include title | Tooltip HTML structure changed; check `.font-normal` div selector |

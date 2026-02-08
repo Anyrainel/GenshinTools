@@ -264,7 +264,7 @@ export function WeaponArchiveView() {
   return (
     <div className="space-y-4 pb-8">
       {/* Toolbar with search + filter chips */}
-      <div className="sticky top-0 z-10 pb-4">
+      <div className="pb-4">
         <ArchiveToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

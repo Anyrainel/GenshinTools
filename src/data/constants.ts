@@ -217,13 +217,12 @@ function sortItemsByRarityDesc<T extends { rarity?: number }>(
   return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
 }
 
-// Sorted lists (Rarity Descending -> Release Date Descending)
+// Sorted by release date descending (null = unreleased, sorted first)
 export const sortedCharacters = [...characters].sort((a, b) => {
-  const getRarity = (c: Character) => {
-    if (c.id.startsWith("traveler")) return 3;
-    return c.rarity;
-  };
-  return getRarity(b) - getRarity(a);
+  if (!a.releaseDate && !b.releaseDate) return 0;
+  if (!a.releaseDate) return -1;
+  if (!b.releaseDate) return 1;
+  return b.releaseDate.localeCompare(a.releaseDate);
 });
 export const sortedWeapons = sortItemsByRarityDesc(weapons);
 export const sortedArtifacts = sortItemsByRarityDesc(artifacts);

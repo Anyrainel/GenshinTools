@@ -32,6 +32,7 @@ import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 
 import { getElementColor } from "@/lib/utils";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
   Download,
@@ -106,7 +107,11 @@ export function CharacterTierListView({
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const [show5Star, setShow5Star] = useState(true);
   const [show4Star, setShow4Star] = useState(true);
+  const [ownedOnly, setOwnedOnly] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
+
+  // Ownership check callback
+  const isOwned = useOwnershipStore((s) => s.isOwned);
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {
@@ -338,6 +343,24 @@ export function CharacterTierListView({
           </>
         ),
       },
+      {
+        key: "ownership",
+        content: (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="owned-only"
+              checked={ownedOnly}
+              onCheckedChange={(checked) => setOwnedOnly(checked === true)}
+            />
+            <Label
+              htmlFor="owned-only"
+              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+            >
+              {t.ui("buttons.ownedOnly")}
+            </Label>
+          </div>
+        ),
+      },
     ],
     [
       showWeapons,
@@ -346,6 +369,7 @@ export function CharacterTierListView({
       setShowTravelers,
       show5Star,
       show4Star,
+      ownedOnly,
       t,
     ]
   );
@@ -412,6 +436,7 @@ export function CharacterTierListView({
             if (character.id.startsWith("traveler") && !showTravelers) {
               return false;
             }
+            if (ownedOnly && !isOwned("character", character.id)) return false;
             return true;
           }}
           getOverlayImage={(character) => {

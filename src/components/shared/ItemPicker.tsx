@@ -53,7 +53,8 @@ import type {
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { Ban, Check, Search, X } from "lucide-react";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
+import { Ban, Bookmark, Check, Search, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 export type ItemPickerType = "character" | "weapon" | "artifact";
@@ -79,7 +80,8 @@ interface ItemPickerProps<T extends ItemPickerType> {
   showItemName?: boolean;
 }
 
-const RARITY_FILTERS = [5, 4, 3] as const;
+const CHARACTER_RARITY_FILTERS = [5, 4] as const;
+const WEAPON_RARITY_FILTERS = [5, 4, 3] as const;
 
 function ItemPickerComponent<T extends ItemPickerType>({
   type,
@@ -525,6 +527,15 @@ function PickerContent({
       }
     }
 
+    if (
+      activeFilters.ownedOnly &&
+      (type === "character" || type === "weapon")
+    ) {
+      const itemType = type as "character" | "weapon";
+      const { isOwned } = useOwnershipStore.getState();
+      result = result.filter((item) => isOwned(itemType, item.id as string));
+    }
+
     // 4. (Special) 2pc Duplicate Checking
     if (type === "artifact" && artifactTab === "2pc" && pickingSlot) {
       const otherValue = pickingSlot === 1 ? mixedSlot2 : mixedSlot1;
@@ -695,7 +706,7 @@ function PickerContent({
       }}
       className="flex flex-col h-full w-full"
     >
-      <div className="p-3 space-y-3 shrink-0 bg-background/95 backdrop-blur z-10 border-b">
+      <div className="p-3 space-y-2 shrink-0 bg-background/95 backdrop-blur z-10 border-b">
         {type === "artifact" && (
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="4pc">{t.ui("buildCard.4pc")}</TabsTrigger>
@@ -863,10 +874,13 @@ function FilterBar({
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col gap-3 py-1">
-      {/* Rarity */}
+    <div className="flex flex-col gap-1.5">
+      {/* Rarity + Owned Only */}
       <div className="flex flex-wrap gap-1 items-center">
-        {RARITY_FILTERS.map((r) => (
+        {(type === "character"
+          ? CHARACTER_RARITY_FILTERS
+          : WEAPON_RARITY_FILTERS
+        ).map((r) => (
           <FilterChip
             key={`r-${r}`}
             isActive={activeFilters.rarity === r}
@@ -877,6 +891,22 @@ function FilterBar({
             <span className="text-amber-500 text-sm">{"★".repeat(r)}</span>
           </FilterChip>
         ))}
+        {(type === "character" || type === "weapon") && (
+          <FilterChip
+            isActive={!!activeFilters.ownedOnly}
+            onClick={() => toggle("ownedOnly", 1)}
+            className="w-auto px-2 gap-1"
+            title={t.ui("filters.ownedOnly")}
+          >
+            <Bookmark
+              className={cn(
+                "h-3 w-3",
+                activeFilters.ownedOnly && "fill-current"
+              )}
+            />
+            <span className="text-xs">{t.ui("filters.ownedOnly")}</span>
+          </FilterChip>
+        )}
       </div>
 
       {/* Elements (Char only) */}
@@ -913,7 +943,7 @@ function FilterBar({
             >
               <img
                 src={getAssetUrl(w.imagePath)}
-                className="w-5 h-5 invert dark:invert-0"
+                className="w-5 h-5"
                 alt={w.name}
               />
             </FilterChip>

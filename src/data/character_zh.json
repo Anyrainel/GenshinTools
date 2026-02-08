@@ -80,7 +80,7 @@
         "descHtml": "施放元素爆发<b><span style=\"color: #FFD780FF;\">精密水冷仪</span></b>后的15秒内，附近的当前场上角色触发的感电、绽放、月感电、月绽放、月结晶造成的伤害提升15%。<br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：上述反应造成的伤害额外提升20%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "albedo": {
     "skills": [
@@ -164,7 +164,7 @@
         "descHtml": "处于阳华的领域中的队伍中当前场上角色，若处于结晶反应产生的护盾庇护下，或阳华的领域中存在月笼时，造成的伤害提升17%。<br>此外，施放元素爆发<b><span style=\"color: #FFD780FF;\">诞生式·大地之潮</span></b>时，还会摧毁场上所有的瑰银；通过这种方式摧毁瑰银时，本次元素爆发将会视为清除了4层命之座<b><span style=\"color: #FFD780FF;\">显生之宙</span></b>中的生灭计数，并在接下来的20秒内，使生灭之花造成的伤害提升，提升值相当于阿贝多防御力的250%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "alhaitham": {
     "skills": [
@@ -250,7 +250,7 @@
         "descHtml": "艾尔海森获得如下效果：<br>·<b><span style=\"color: #FFD780FF;\">殊境·显象缚结</span></b>施放完成2秒后，将无视消耗琢光镜的个数，固定产生3枚琢光镜；<br>·艾尔海森产生琢光镜时，若琢光镜数量已达到上限，艾尔海森的暴击率提升10%，暴击伤害提升70%，持续6秒。该效果在持续期间重复触发时，剩余持续时间将增加6秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "aloy": {
     "skills": [
@@ -332,7 +332,7 @@
         "descHtml": "点亮此人一方星空之刻尚未到来。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "amber": {
     "skills": [
@@ -412,7 +412,7 @@
         "descHtml": "使用<b><span style=\"color: #FFD780FF;\">箭雨</span></b>后的10秒内，队伍中所有角色的移动速度提升15%，攻击力提升15%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "arataki_itto": {
     "skills": [
@@ -495,7 +495,7 @@
         "descHtml": "荒泷一斗的重击的暴击伤害提高70%；此外，施展「荒泷逆袈裟」时，有50%的几率不消耗「乱神之怪力」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "arlecchino": {
     "skills": [
@@ -578,7 +578,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">厄月将升</span></b>造成的伤害提高，提升值相当于阿蕾奇诺的攻击力乘以当前生命之契百分比的700%。<br>施放<b><span style=\"color: #FFD780FF;\">万相化灰</span></b>后的20秒内，阿蕾奇诺的普通攻击与元素爆发的暴击率提升10%、暴击伤害提升70%。该效果每15秒至多触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "baizhu": {
     "skills": [
@@ -659,7 +659,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">愈气全形论</span></b>的灵气脉造成的伤害提高，提升值相当于白术生命值上限的8%。<br>此外，<b><span style=\"color: #FFD780FF;\">游丝徵灵</span></b>或游丝徵灵·切在命中敌人时，有100%概率产生<b><span style=\"color: #FFD780FF;\">愈气全形论</span></b>的无郤气护盾，该效果每个游丝徵灵或游丝徵灵·切只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "barbara": {
     "skills": [
@@ -738,7 +738,7 @@
         "descHtml": "芭芭拉处于队伍后台时，队伍中自己的角色倒下时，则立即：<br>·复苏该角色；<br>·将该角色生命值恢复至100%。<br>该效果每15分钟只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "beidou": {
     "skills": [
@@ -822,7 +822,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">斫雷</span></b>持续期间，周围敌人的<b><span style=\"color: #FFACFFFF;\">雷元素抗性</span></b>降低15%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "bennett": {
     "skills": [
@@ -905,7 +905,7 @@
         "descHtml": "处在<b><span style=\"color: #FFD780FF;\">美妙旅程</span></b>领域内的队伍中当前场上单手剑、双手剑、长柄武器角色获得15%<b><span style=\"color: #FF9999FF;\">火元素伤害加成</span></b>，并获得<b><span style=\"color: #FF9999FF;\">火元素附魔</span></b>。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "candace": {
     "skills": [
@@ -988,7 +988,7 @@
         "descHtml": "处于<b><span style=\"color: #FFD780FF;\">圣仪·灰鸰衒潮</span></b>的赤冕祝祷状态下的当前场上角色（不包括坎蒂丝自己），在普通攻击对敌人造成元素伤害时，将释放衍潮冲击，造成相当于坎蒂丝生命值上限15%<b><span style=\"color: #80C0FFFF;\">水元素范围伤害</span></b>。<br>该效果每2.3秒至多触发一次，造成的伤害视为元素爆发伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "charlotte": {
     "skills": [
@@ -1077,7 +1077,7 @@
         "descHtml": "当前场上角色的普通攻击与重击命中附有<b><span style=\"color: #FFD780FF;\">取景·冰点构图法</span></b>的「聚焦印象」的敌人后，「温亨廷先生」将进行协同攻击，造成相当于夏洛蒂攻击力180%的<b><span style=\"color: #99FFFFFF;\">冰元素范围伤害</span></b>，并为攻击范围内的当前场上角色恢复生命值，回复量相当于夏洛蒂攻击力的42%。该效果每6秒至多触发一次，通过这种方式造成的伤害与治疗效果视为夏洛蒂的元素爆发造成的伤害与治疗效果。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chasca": {
     "skills": [
@@ -1163,7 +1163,7 @@
         "descHtml": "恰斯卡进行<b><span style=\"color: #FFD780FF;\">多重瞄准</span></b>所需的蓄力时间减少，且触发突破天赋「子弹的戏法」中的「附灵转化」后，恰斯卡将获得「命袭」状态，在接下来的3秒内，恰斯卡下一次施放元素战技<b><span style=\"color: #FFD780FF;\">灵缰追影</span></b>中的<b><span style=\"color: #FFD780FF;\">多重瞄准</span></b>时，会立即完成蓄力，并且本次<b><span style=\"color: #FFD780FF;\">多重瞄准</span></b>中的<b><span style=\"color: #FFD780FF;\">追影弹</span></b>和<b><span style=\"color: #FFD780FF;\">焕光追影弹</span></b>的暴击伤害提升120%。每3秒至多获得一次「命袭」效果。<br><br>上述效果需要解锁突破天赋「子弹的戏法」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chevreuse": {
     "skills": [
@@ -1246,7 +1246,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">近迫式急促拦射</span></b>的治疗效果持续12秒后，将为队伍中附近的所有角色恢复一次生命值，回复量相当于夏沃蕾生命值上限的10%。<br>队伍中的角色受到「近迫式急促拦射」的治疗后，获得20%<b><span style=\"color: #FF9999FF;\">火元素伤害加成</span></b>与<b><span style=\"color: #FFACFFFF;\">雷元素伤害加成</span></b>，持续8秒，此效果至多叠加3层，每层独立计算持续时间。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chiori": {
     "skills": [
@@ -1325,7 +1325,7 @@
         "descHtml": "触发突破天赋「量体裁衣」的后续效果后，千织自己的<b><span style=\"color: #FFD780FF;\">羽袖一触</span></b>的冷却时间减少12秒。需要解锁突破天赋「量体裁衣」。<br>此外，千织自己的普通攻击造成的伤害提升，提升值相当于千织自己的防御力的235%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chongyun": {
     "skills": [
@@ -1405,7 +1405,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">灵刃·云开星落</span></b>对生命值百分比低于重云的敌人造成伤害时，伤害提升15%；<br>此外，施放时，会召唤一柄额外的灵刃。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "citlali": {
     "skills": [
@@ -1493,7 +1493,7 @@
         "descHtml": "元素战技<b><span style=\"color: #FFD780FF;\">霜昼黑星</span></b>中召唤的伊兹帕帕将始终为白燧状态，夜魂值耗尽时，伊兹帕帕的白燧状态也不会结束。<br>此外，施放元素战技<b><span style=\"color: #FFD780FF;\">霜昼黑星</span></b>时，伊兹帕帕将消耗所有夜魂值，并在存在期间内持续消耗夜魂值；每通过上述方式消耗1点夜魂值，茜特菈莉就会获得1点「秘律之数」。<br>「秘律之数」上限为40点，基于茜特菈莉持有的「秘律之数」，每1点「秘律之数」会使附近的队伍中所有角色获得1.5%<b><span style=\"color: #FF9999FF;\">火元素</span></b>与<b><span style=\"color: #80C0FFFF;\">水元素</span></b>伤害加成，并使茜特菈莉造成的伤害提升2.5%。<br>伊兹帕帕退场时，或再次施放元素战技时，茜特菈莉持有的「秘律之数」将被移除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "clorinde": {
     "skills": [
@@ -1578,7 +1578,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">狩夜之巡</span></b>后的12秒内，克洛琳德的暴击率提升10%，暴击伤害提升70%。<br>此外，夜巡状态持续期间，明烛之影会在特定条件下出现，进行追击，造成克洛琳德200%攻击力的<b><span style=\"color: #FFACFFFF;\">雷元素伤害</span></b>，通过这种方式造成的伤害视为普通攻击伤害。<br>明烛之影会在如下情况下出现：<br>·克洛琳德即将被攻击命中时；<br>·克洛琳德进行贯夜·契令时。<br>每1秒至多通过上述方式唤出1次明烛之影，一次夜巡状态持续期间，至多唤出6次明烛之影。<br>此外，夜巡状态持续期间，克洛琳德受到的伤害降低80%，抗打断能力提高，该效果将在夜巡状态结束或唤出6次明烛之影的1秒后移除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "collei": {
     "skills": [
@@ -1656,7 +1656,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">飞叶轮</span></b>命中时，会产生一个迷你柯里安巴，造成相当于柯莱攻击力200%的<b><span style=\"color: #99FF88FF;\">草元素伤害</span></b>。<br>每次施放<b><span style=\"color: #FFD780FF;\">拂花偈叶</span></b>至多产生1次迷你柯里安巴。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "columbina": {
     "skills": [
@@ -1744,7 +1744,7 @@
         "descHtml": "处于 <b><span style=\"color: #FFD780FF;\">月之领域</span></b>中的所有角色触发月曜反应后的8秒内，依据参与反应的元素类型，使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%。同种元素类型的暴击伤害提升效果无法叠加。<br><br>队伍中附近的所有角色造成的月曜反应伤害 <b><span style=\"color: #FFD780FF;\">擢升</span></b>7%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "草露",
         "descHtml": "队伍中的角色触发月绽放反应后，会为队伍提供的资源。</br>触发月绽放反应后的2.5秒内，每2.5秒便会为队伍提供一枚草露，草露上限为三枚。持续期间，再次触发月绽放反应时，将刷新上述效果的持续时间。"
@@ -1862,7 +1862,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">圣仪·煟煌随狼行</span></b>或触发突破天赋「落羽的裁择」的「裁定」后，赛诺将获得4层「豺祭」效果。赛诺的普通攻击命中敌人时，将消耗一层「豺祭」效果，并发射一道渡荒之雷。<br>「豺祭」持续8秒，至多叠加8层，并将在圣仪·煟煌随狼行的启途誓使状态结束后移除。<br>每0.4秒至多通过这种方式发射一道渡荒之雷。<br>需要解锁突破天赋「落羽的裁择」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dahlia": {
     "skills": [
@@ -1940,7 +1940,7 @@
         "descHtml": "处于元素爆发<b><span style=\"color: #FFD780FF;\">纯耀的祷咏</span></b>中的「西风之眷」效果影响下的当前场上角色的攻击速度提升10%。<br>此外，处于西风之眷效果影响下的当前场上角色倒下时，则立即：<br>·复苏该角色；<br>·将该角色生命值恢复至100%。<br>该效果每15分钟只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dehya": {
     "skills": [
@@ -2025,7 +2025,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">炎啸狮子咬</span></b>的暴击率提升10%。<br>此外，在一次炽炎狮子的持续期间，炽鬃拳命中敌人并造成暴击后，将使持续期间内炎啸狮子咬的暴击伤害提升15%，炽炎狮子的持续时间延长0.5秒。该效果每0.2秒至多触发一次，至多通过这种方式使持续时间延长2秒，暴击伤害提升60%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "diluc": {
     "skills": [
@@ -2108,7 +2108,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">逆焰之刃</span></b>后，接下来6秒内的2次普通攻击速度提升30%，造成的伤害提高30%。<br>此外，逆焰之刃不再重置普通攻击连击段数。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "diona": {
     "skills": [
@@ -2191,7 +2191,7 @@
         "descHtml": "处在<b><span style=\"color: #FFD780FF;\">最烈特调</span></b>领域内的角色，依据生命值获得如下效果：<br>·生命值低于或等于50%时，受治疗加成提升30%；<br>·生命值高于50%时，元素精通提升200。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dori": {
     "skills": [
@@ -2272,7 +2272,7 @@
         "descHtml": "多莉施放<b><span style=\"color: #FFD780FF;\">镇灵之灯·烦恼解决炮</span></b>后的3秒内，将获得以下效果：<br>·<b><span style=\"color: #FFACFFFF;\">雷元素附魔</span></b>；<br>·普通攻击命中敌人时，为队伍中附近的所有角色恢复相当于多莉生命值上限4%的生命值，每0.1秒至多通过这种方式恢复一次生命值。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "durin": {
     "skills": [
@@ -2359,7 +2359,7 @@
         "descHtml": "杜林造成的元素爆发伤害将无视敌人30%的防御力。<br>此外，杜林的元素爆发<b><span style=\"color: #FFD780FF;\">白化法·如光流变</span></b>与<b><span style=\"color: #FFD780FF;\">黑度法·如星阴燃</span></b>分别获得强化：<br>·元素爆发<b><span style=\"color: #FFD780FF;\">白化法·如光流变</span></b>与<b><span style=\"color: #FFD780FF;\">「白焰之龙」</span></b>命中敌人时，该敌人的防御力降低30%，持续6秒；<br>·元素爆发<b><span style=\"color: #FFD780FF;\">黑度法·如星阴燃</span></b>与<b><span style=\"color: #FFD780FF;\">「黑蚀之龙」</span></b>造成的伤害将额外无视敌人40%的防御力。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "精质转变",
         "descHtml": "杜林施放元素战技<b><span style=\"color: #FFD780FF;\">二元式·聚分熔炼</span></b>后获得的效果，持续6秒。</br>持续期间，杜林可以通过点按元素战技进入<b><span style=\"color: #FFD780FF;\">白化之是</span></b>状态，或是通过点按普通攻击进入<b><span style=\"color: #FFD780FF;\">黑度之否</span></b>状态。</br>在两种状态下，杜林会获得不同的强化效果，并可以分别施放不同的元素爆发。"
@@ -2446,7 +2446,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">撷萃调香</span></b>或<b><span style=\"color: #FFD780FF;\">香氛演绎</span></b>时，艾梅莉埃将获得「香迹留驻」，持续5秒。<br>持续期间，艾梅莉埃进行普通攻击或重击后，将会产生一枚香韵，且艾梅莉埃的普通攻击与重击将转为无法被附魔覆盖的<b><span style=\"color: #99FF88FF;\">草元素伤害</span></b>，并提升造成的伤害，提升值相当于艾梅莉埃攻击力的300%。<br><br>「香迹留驻」效果将在通过这种方式产生4枚香韵或持续时间结束时解除。每12秒至多获得一次「香迹留驻」效果。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "escoffier": {
     "skills": [
@@ -2527,7 +2527,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">厨艺机关·低温冷藏模式</span></b>获得强化：<br>·队伍中自己的当前场上角色的普通攻击、重击或下落攻击命中敌人时，厨艺机关·低温冷藏模式将发射一枚额外的特级冻霜芭菲，造成爱可菲500%攻击力的<b><span style=\"color: #99FFFFFF;\">冰元素范围伤害</span></b>。该伤害视为元素战技伤害。<br>该效果每0.5秒至多触发一次，一次厨艺机关·低温冷藏模式持续期间，该效果至多触发6次。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "即兴烹饪模式",
         "descHtml": "<b><span style=\"color: #FFD780FF;\">厨艺机关·即兴烹饪模式</span></b></br>·在场上放置厨艺机关。厨艺机关可以吸收元素攻击。吸收的元素能量达到临界值时，将使爱可菲事先放入其中的食材转化为美食。</br>·爱可菲需要时间采购新的食材，每周只能通过这种方式制作一定数量的料理。制作料理的次数每周一凌晨4点重置。"
@@ -2630,7 +2630,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">凝浪之光剑</span></b>创造的光降之剑立即获得5层能量。普通攻击、元素战技或元素爆发造成伤害使其积蓄能量层数时，有50%的概率额外获得一层。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "faruzan": {
     "skills": [
@@ -2713,7 +2713,7 @@
         "descHtml": "处于<b><span style=\"color: #FFD780FF;\">抟风秘道</span></b>的「祈风之赐」效果影响下的角色，造成<b><span style=\"color: #80FFD7FF;\">风元素伤害</span></b>时的暴击伤害提升40%；处于「祈风之赐」效果影响下的当前场上角色造成伤害时，将为该敌人施加「风压坍陷」。此效果3秒至多触发一次，队伍中所有角色共享冷却时间。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "fischl": {
     "skills": [
@@ -2796,7 +2796,7 @@
         "descHtml": "奥兹的存在时间延长2秒。此外，奥兹会协同当前场上自己的角色一起攻击，造成菲谢尔30%攻击力的<b><span style=\"color: #FFACFFFF;\">雷元素伤害</span></b>。<br>奥兹进行协同攻击后，<b><span style=\"color: #FFD780FF;\">魔女的前夜礼·宵世幻奏</span></b>中提升攻击力与元素精通的效果提高100%，持续10秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "flins": {
     "skills": [
@@ -2890,7 +2890,7 @@
         "descHtml": "菲林斯对敌人造成的月感电反应伤害 <b><span style=\"color: #FFD780FF;\">擢升</span></b>35%。<br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：队伍中附近的所有角色造成的月感电反应伤害<b><span style=\"color: #FFD780FF;\">擢升</span></b>10%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "雷霆交响",
         "descHtml": "消耗更少的元素能量便可以施放的特殊元素爆发。菲林斯造成一次视为月感电反应伤害的<b><span style=\"color: #FFACFFFF;\">雷元素范围伤害</span></b>。</br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：若附近存在雷暴云，还会额外造成一次视为月感电反应伤害的<b><span style=\"color: #FFACFFFF;\">雷元素范围伤害</span></b>。"
@@ -2986,7 +2986,7 @@
         "descHtml": "菲米尼对敌人触发冰冻、碎冰、超导反应后，暴击伤害提升12%。该效果持续6秒，至多叠加3次，每0.3秒至多触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "furina": {
     "skills": [
@@ -3076,7 +3076,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">孤心沙龙</span></b>时，芙宁娜将获得「万众瞩目」，持续10秒。<br>持续期间，芙宁娜的普通攻击、重击与下落攻击将转为无法被附魔覆盖的<b><span style=\"color: #80C0FFFF;\">水元素伤害</span></b>，且造成的伤害提升，提升值相当于芙宁娜生命值上限的18%。<br>持续期间，每0.1秒，芙宁娜的普通攻击（不包括「始基力：圣俗杂座」的攻击）、重击与下落攻击坠地冲击命中敌人后，将根据芙宁娜当前的始基力属性产生不同的效果：<br><br>始基力：荒性<br>每1秒，基于芙宁娜生命值上限的4%，为附近的队伍中所有角色恢复生命值，持续2.9秒，重复触发将延长持续时间。<br>始基力：芒性<br>本次普通攻击（不包括「始基力：圣俗杂座」的攻击）、重击与下落攻击坠地冲击造成的伤害进一步提高，提升值相当于芙宁娜生命值上限的25%，上述攻击命中敌人时，附近的队伍中所有角色将消耗相当于当前生命值1%的生命值。<br><br>一次「万众瞩目」持续期间，上述效果至多触发6次，该效果将在触发次数达到6次或持续时间结束时解除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "gaming": {
     "skills": [
@@ -3157,7 +3157,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">瑞兽登高楼</span></b>的下落攻击·踏云献瑞的暴击率提升20%，暴击伤害提升40%，攻击范围提升。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ganyu": {
     "skills": [
@@ -3240,7 +3240,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">山泽麟迹</span></b>后30秒内的第一次霜华矢，无需蓄力即可施放。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "gorou": {
     "skills": [
@@ -3321,7 +3321,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">犬坂吠吠方圆阵</span></b>或<b><span style=\"color: #FFD780FF;\">兽牙逐突形胜战法</span></b>后的12秒内，依据施放时的领域等级，提高附近的队伍中所有角色<b><span style=\"color: #FFE699FF;\">岩元素伤害</span></b>的暴击伤害：<br>·「坚牢」：提高10%；<br>·「难破」：提高20%；<br>·「摧碎」：提高40%。<br><br>该效果无法叠加，以后生效的为准。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "hu_tao": {
     "skills": [
@@ -3406,7 +3406,7 @@
         "descHtml": "胡桃的生命值降至25%以下，或承受足以使她倒下的伤害时触发：<br>此次伤害不会使胡桃倒下，并在接下来的10秒内，胡桃的所有元素抗性和物理抗性提高200%，暴击率提高100%，并极大地提高抗打断能力。<br>这个效果在胡桃生命值为1时会自动触发。<br>该效果每60秒只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "iansan": {
     "skills": [
@@ -3492,7 +3492,7 @@
         "descHtml": "动能标示的持续时间延长3秒。<br>此外，伊安珊触发恢复夜魂值的效果时，若夜魂值恢复量溢出，将获得「极限发力」效果，使队伍中自己的当前场上角色造成的伤害提升25%，持续3秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ifa": {
     "skills": [
@@ -3574,7 +3574,7 @@
         "descHtml": "伊法长按进行 <b><span style=\"color: #FFD780FF;\">「援护射击」</span></b>时，有50%几率发射一枚额外的秘药弹，造成相当于伊法攻击力120%的风元素伤害。该伤害视为普通攻击伤害。<br>此外，不处于战斗状态下时，伊法的夜魂加持状态消耗的夜魂值与燃素降低20%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "夜魂加持",
         "descHtml": "持续消耗夜魂值。夜魂值耗尽时，或是再次施放时，伊法的夜魂加持将会结束。夜魂加持状态具有如下特性：</br>·在咔库库的帮助下悬浮，提升伊法的移动速度与抗打断能力，在这种状态下，伊法将持续消耗夜魂值，维持悬浮状态，进行冲刺或抬升高度时，将额外消耗夜魂值。</br>·进行普通攻击时，将依据点按、长按，转为以不同的方式进行「援护射击」。"
@@ -3677,7 +3677,7 @@
         "descHtml": "突破天赋<b><span style=\"color: #FFD780FF;\">铸灯者的盟约</span></b>中「执灯之誓」的效果获得强化：对敌人造成的<b><span style=\"color: #FFE699FF;\">岩元素伤害</span></b>，暴击率提升10%，暴击伤害提升30%。<br><br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b> <br>处于「执灯之誓」效果影响下的角色，元素精通提升80点。<br>需要解锁突破天赋<b><span style=\"color: #FFD780FF;\">铸灯者的盟约</span></b>。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "「夜莺之歌」",
         "descHtml": "叶洛亚施放元素爆发<b><span style=\"color: #FFD780FF;\">鉴照无影</span></b>后获得的效果，可以提升当前场上角色造成的<b><span style=\"color: #FFE699FF;\">岩元素伤害</span></b>。"
@@ -3766,7 +3766,7 @@
         "descHtml": "伊涅芙处于「载流复合」效果影响下时，附近的雷暴云对敌人进行雷击后，伊涅芙将对当前场上自己的角色周围的敌人造成相当于伊涅芙攻击力135%的<b><span style=\"color: #FFACFFFF;\">雷元素范围伤害</span></b>，该伤害视为月感电反应造成的伤害，上述效果每3.5秒至多触发一次。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "「薇尔琪塔」",
         "descHtml": "与伊涅芙一同战斗的好帮手，可以通过施放元素战技或元素爆发召唤至场上。</br>若周围存在敌人，每隔2秒，薇尔琪塔将快速移动至一名敌人附近，对其进行放电攻击，造成<b><span style=\"color: #FFACFFFF;\">雷元素范围伤害</span></b>。</br>同时至多存在一个伊涅芙自己创造的薇尔琪塔。</br></br>此外，在挪德卡莱，似乎可以通过某种途径来改变薇尔琪塔的外观…"
@@ -3858,7 +3858,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：元素战技<b><span style=\"color: #FFD780FF;\">奇策·财富分配方案</span></b>中的 <b><span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span></b>装满后的20秒内，队伍中附近的月兆角色的暴击率提升5%，暴击伤害提升40%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "呼噜噜秘藏瓶",
         "descHtml": "雅珂达施放元素战技<b><span style=\"color: #FFD780FF;\">奇策·财富分配方案</span></b>后取出的小型元素瓶。</br>雅珂达处于「掠影追袭」状态下时，若附近的敌人处于<b><span style=\"color: #FF9999FF;\">火元素</span></b>、<b><span style=\"color: #80C0FFFF;\">水元素</span></b>、<b><span style=\"color: #FFACFFFF;\">雷元素</span></b>或<b><span style=\"color: #99FFFFFF;\">冰元素</span></b>附着下，呼噜噜秘藏瓶会转化为对应的元素类型，并持续进行装填，且会按照<b><span style=\"color: #FF9999FF;\">火元素</span></b>、<b><span style=\"color: #80C0FFFF;\">水元素</span></b>、<b><span style=\"color: #FFACFFFF;\">雷元素</span></b>、<b><span style=\"color: #99FFFFFF;\">冰元素</span></b>的优先级进行转化。每次施放元素战技后，呼噜噜秘藏瓶至多能进行一次转化。</br>呼噜噜秘藏瓶装满时，雅珂达将会退出「掠影追袭」状态，对附近的敌人造成一次<b><span style=\"color: #80FFD7FF;\">风元素伤害</span></b>，并清空呼噜噜秘藏瓶。</br>每次施放元素战技时，雅珂达都会重新取出一个新的呼噜噜秘藏瓶。</br></br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：<b><span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span></b>装满时，雅珂达不会立刻清空<b><span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span></b>，而是会在接下来的一段时间内，持续消耗瓶中装填的元素，并间歇性向附近的敌人发射<b><span style=\"color: #FFD780FF;\">软绒绒猫猫球</span></b>，造成<b><span style=\"color: #FFD780FF;\">呼噜噜秘藏瓶</span></b>对应元素类型的伤害。"
@@ -3949,7 +3949,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">蒲公英之风</span></b>的领域内，角色受到的伤害降低35%。<br>离开领域后，这个效果会在承受3次攻击或10秒后消失。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kachina": {
     "skills": [
@@ -4032,7 +4032,7 @@
         "descHtml": "队伍中自己的当前场上角色的护盾因任何原因被替换或摧毁时，卡齐娜将造成相当于她的防御力200%的<b><span style=\"color: #FFE699FF;\">岩元素范围伤害</span></b>，该效果5秒内至多触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaedehara_kazuha": {
     "skills": [
@@ -4114,7 +4114,7 @@
         "descHtml": "枫原万叶施放<b><span style=\"color: #FFD780FF;\">千早振</span></b>或<b><span style=\"color: #FFD780FF;\">万叶之一刀</span></b>后的5秒内，获得<b><span style=\"color: #80FFD7FF;\">风元素附魔</span></b>，并且枫原万叶的每点元素精通，都会使他的普通攻击、重击、下落攻击造成的伤害提高0.2%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaeya": {
     "skills": [
@@ -4192,7 +4192,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">凛冽轮舞</span></b>会产生一个额外的寒冰之棱，并在施放时返还15点元素能量。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kamisato_ayaka": {
     "skills": [
@@ -4275,7 +4275,7 @@
         "descHtml": "每过10秒，神里绫华会获得「薄冰舞踏」，使重击造成的伤害提高298%。薄冰舞踏效果将在重击命中敌人的0.5秒后清除，并重新开始计算时间。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kamisato_ayato": {
     "skills": [
@@ -4360,7 +4360,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">神里流·镜花</span></b>之后，神里绫人的下一次瞬水剑攻击命中敌人时，将进行2次额外的瞬水剑攻击，各自能造成神里绫人攻击力450%的伤害。<br>此两次瞬水剑攻击不会受到浪闪的增益。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaveh": {
     "skills": [
@@ -4440,7 +4440,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">繁绘隅穹</span></b>持续期间，卡维的普通攻击、重击或下落攻击命中敌人时，将在敌人的位置释放天园之光，造成卡维攻击力61.8%的<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>，并使影响范围内的所有草原核迸发。该效果每3秒最多触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "keqing": {
     "skills": [
@@ -4521,7 +4521,7 @@
         "descHtml": "进行普通攻击、重击、施放元素战技或元素爆发时，刻晴获得6%<b><span style=\"color: #FFACFFFF;\">雷元素伤害加成</span></b>，持续8秒。<br>由普通攻击、重击、元素战技或元素爆发引起的效果分别独立存在。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kinich": {
     "skills": [
@@ -4605,7 +4605,7 @@
         "descHtml": "迴猎贯鳞炮在命中敌人后，将在敌人间弹跳一次，造成基尼奇的攻击力700%的<b><span style=\"color: #99FF88FF;\">草元素伤害</span></b>。<br>如果本次迴猎贯鳞炮触发了突破天赋「焰灵的契约」或命之座「星虎之掌」对迴猎贯鳞炮的增强效果，它所引发的弹跳攻击也会获得上述效果的增强。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kirara": {
     "skills": [
@@ -4689,7 +4689,7 @@
         "descHtml": "绮良良施放元素战技或元素爆发后的15秒内，附近的队伍中所有角色获得12%所有元素伤害加成。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "klee": {
     "skills": [
@@ -4771,7 +4771,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">轰轰火花</span></b>的状态下，可莉每3秒会为队伍中所有角色（不包括可莉自己）恢复3点元素能量；<br>施放<b><span style=\"color: #FFD780FF;\">轰轰火花</span></b>后的25秒内，队伍中所有其他角色获得10%<b><span style=\"color: #FF9999FF;\">火元素伤害加成</span></b>，可莉获得50%<b><span style=\"color: #FF9999FF;\">火元素伤害加成</span></b>。<br><br><b><span style=\"color: #FFD780FF;\">魔导·秘仪</span></b><br>触发消耗<b><span style=\"color: #FFD780FF;\">爆裂火花</span></b>的效果时，有50%几率不会消耗<b><span style=\"color: #FFD780FF;\">爆裂火花</span></b>。此外，在<b><span style=\"color: #FFD780FF;\">轰轰火花</span></b>的状态下，可莉进行普通攻击时，第一段攻击和第二段攻击有40%几率消耗一朵爆裂火花，对敌人追加一次等同于「嘭嘭轰击」的攻击。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kujou_sara": {
     "skills": [
@@ -4851,7 +4851,7 @@
         "descHtml": "处于天狗咒雷带来的攻击力提升效果状态下的角色，其<b><span style=\"color: #FFACFFFF;\">雷元素伤害</span></b>的暴击伤害提高60%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kuki_shinobu": {
     "skills": [
@@ -4933,7 +4933,7 @@
         "descHtml": "久岐忍承受足以使她倒下的伤害时，此次伤害不会使她倒下，这个效果在久岐忍生命值为1时会自动触发，该效果每60秒只能触发一次。<br>久岐忍生命值降至25%以下时，会提升自身150点精通，持续15秒，该效果每60秒只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lan_yan": {
     "skills": [
@@ -5011,7 +5011,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">凤缕随翦舞</span></b>的可使用次数增加1次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lauma": {
     "skills": [
@@ -5105,7 +5105,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">霜林圣域</span></b>攻击敌人时，会额外造成一次视为月绽放反应伤害的<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>。该伤害基于菈乌玛元素精通的185%，不会消耗 <b><span style=\"color: #FFD780FF;\">「苍色祷歌」</span></b>，而是会使菈乌玛获得2层「苍色祷歌」，并刷新通过这种方式获得的「苍色祷歌」的持续时间。<br>一次霜林圣域持续期间，该效果至多触发8次；施放元素战技<b><span style=\"color: #FFD780FF;\">圣言述咏·终宵永眠</span></b>时，将清除通过这种方式获得的「苍色祷歌」。<br><br>此外，菈乌玛在拥有「苍色祷歌」的情况下进行普通攻击时，会消耗一层「苍色祷歌」，转为造成相当于菈乌玛元素精通150%的<b><span style=\"color: #99FF88FF;\">草元素伤害</span></b>，该伤害视为月绽放反应造成的伤害。<br><br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b>：队伍中附近的所有角色造成的月绽放反应伤害 <b><span style=\"color: #FFD780FF;\">擢升</span></b>25%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "霜林圣域",
         "descHtml": "用以护守咏月使的术阵，通过施放元素战技<b><span style=\"color: #FFD780FF;\">圣言述咏·终宵永眠</span></b>唤出。</br>霜林圣域将跟随当前场上角色，每2秒对术阵中的敌人造成一次<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>，该伤害视为元素战技伤害。"
@@ -5205,7 +5205,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">垂裳端凝之夜</span></b>的飞星造成的伤害提升40%，<b><span style=\"color: #FFD780FF;\">星流摇床之梦</span></b>的星光弹造成的伤害提升40%。<br>此外，垂裳端凝之夜产生晚星的间隔时间减少20%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lisa": {
     "skills": [
@@ -5287,7 +5287,7 @@
         "descHtml": "丽莎登场时，对附近的敌人施加3层<b><span style=\"color: #FFD780FF;\">苍雷</span></b>的引雷效果。<br>该效果每5秒只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lynette": {
     "skills": [
@@ -5371,7 +5371,7 @@
         "descHtml": "琳妮特施放<b><span style=\"color: #FFD780FF;\">谜影障身法</span></b>的谜影突刺时，将获得<b><span style=\"color: #80FFD7FF;\">风元素附魔</span></b>，<b><span style=\"color: #80FFD7FF;\">风元素伤害加成</span></b>提升20%，持续6秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lyney": {
     "skills": [
@@ -5458,7 +5458,7 @@
         "descHtml": "林尼发射<b><span style=\"color: #FFD780FF;\">隐具魔术箭</span></b>时，将发射一枚礼花术弹·重奏，造成礼花术弹80%的伤害。该伤害视为重击伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mavuika": {
     "skills": [
@@ -5554,7 +5554,7 @@
         "descHtml": "元素战技<b><span style=\"color: #FFD780FF;\">称名之刻</span></b>中的诸火武装获得完全强化：<br>·焚曜之环：焚曜之环的攻击命中敌人时，将会有一辆驰轮车撞向被命中的敌人，造成200%攻击力的具有夜魂性质的<b><span style=\"color: #FF9999FF;\">火元素范围伤害</span></b>；<br>·驰轮车：玛薇卡驾驶驰轮车时，还会召唤出持续跟随玛薇卡的「焚曜之环·灼象」，使附近的敌人的防御力降低20%，并且每3秒对周围的敌人造成一次500%攻击力的具有夜魂性质的<b><span style=\"color: #FF9999FF;\">火元素范围伤害</span></b>，且玛薇卡通过各种地形的能力也会进一步提升。<br><br>此外，玛薇卡驾驶驰轮车且不处于战斗状态下时，当玛薇卡的夜魂值降低至5点时，将获得80点夜魂值，该效果每15秒至多触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mika": {
     "skills": [
@@ -5638,7 +5638,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">星霜的流旋</span></b>灵风状态下的侦明效果叠加层数上限提升1层。需要解锁突破天赋「速射牵制」。<br>此外，处于灵风状态下的当前场上角色，其物理伤害的暴击伤害提高60%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mona": {
     "skills": [
@@ -5726,7 +5726,7 @@
         "descHtml": "莫娜在当前场上，处于<b><span style=\"color: #FFD780FF;\">虚实流动</span></b>状态或附近存在处于星异状态下的敌人时，每1秒，莫娜的下一次重击伤害就增加60%，通过这种方式至多可以获得180%重击伤害加成，该效果至多持续8秒。<br>此外，对处于星异状态下的敌人，莫娜的重击将会造成原本200%的伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mualani": {
     "skills": [
@@ -5809,7 +5809,7 @@
         "descHtml": "对命之座「悠闲的「梅兹特利」…」的伤害提升效果，移除原本每次夜魂加持只能触发一次的限制。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nahida": {
     "skills": [
@@ -5896,7 +5896,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">心景幻成</span></b>后，纳西妲的普通攻击或重击命中处于<b><span style=\"color: #FFD780FF;\">所闻遍计</span></b>的蕴种印状态下的敌人时，将对该敌人及其所处连结中的所有敌人释放灭净三业·业障除，基于纳西妲攻击力的200%与元素精通的400%，造成<b><span style=\"color: #99FF88FF;\">草元素伤害</span></b>。<br>灭净三业·业障除造成的伤害视为元素战技伤害，每0.2秒至多触发一次。<br>该效果至多持续10秒，将在纳西妲释放6次灭净三业·业障除后移除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "navia": {
     "skills": [
@@ -5979,7 +5979,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">典仪式晶火</span></b>时，若消耗的「裂晶弹片」超过3枚，超过3枚的每枚「裂晶弹片」都将使本次典仪式晶火的暴击伤害提升45%，且消耗的超过3枚的部分将在施放后返还。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nefer": {
     "skills": [
@@ -6070,7 +6070,7 @@
         "descHtml": "奈芙尔施放 <b><span style=\"color: #FFD780FF;\">幻戏</span></b>时，自身的第二段伤害将转为造成相当于奈芙尔元素精通85%的<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>；此外，幻戏的攻击结束时，还会造成一次相当于奈芙尔元素精通120%的<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>。上述伤害均视为由幻戏造成的月绽放反应伤害。<br><br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b> <br>奈芙尔造成的月绽放反应伤害 <b><span style=\"color: #FFD780FF;\">擢升</span></b>15%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "「影舞」",
         "descHtml": "施放元素战技<b><span style=\"color: #FFD780FF;\">弈术·千夜一舞</span></b>后，奈芙尔将会进入该状态。</br>处于「影舞」状态下时，若拥有至少1枚草露，奈芙尔施放的重击将会被替换为特殊的重击「幻戏」。</br>「影舞」状态将在奈芙尔施放3次幻戏或持续时间结束时解除。"
@@ -6173,7 +6173,7 @@
         "descHtml": "施放重击·衡平推裁时，那维莱特可以吸收附近一定范围内的源水之滴，每吸收一枚源水之滴，都将使重击·衡平推裁的持续时间延长1秒。<br>此外，重击·衡平推裁命中敌人时，每2秒，将额外释放两道洪流，每道洪流造成相当于那维莱特生命值上限10%的<b><span style=\"color: #80C0FFFF;\">水元素伤害</span></b>。通过这种方式造成的伤害视为重击·衡平推裁造成的伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nilou": {
     "skills": [
@@ -6255,7 +6255,7 @@
         "descHtml": "每1000点生命值上限，将使妮露的暴击率提升0.6%，暴击伤害提升1.2%。<br>通过这种方式，妮露的暴击率至多提升30%，暴击伤害至多提升60%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ningguang": {
     "skills": [
@@ -6330,7 +6330,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">天权崩玉</span></b>时，会为凝光生成七枚星璇。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "noelle": {
     "skills": [
@@ -6415,7 +6415,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">大扫除</span></b>额外提高诺艾尔防御力50%的攻击力；<br>此外，在技能持续时间内，每打倒1个敌人，其持续时间将延长1秒，最多不会超过10秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ororon": {
     "skills": [
@@ -6496,7 +6496,7 @@
         "descHtml": "触发突破天赋「夜翳的通感」的「显象超感」后，会使队伍中自己的当前场上角色的攻击力提升10%，持续9秒。该效果至多叠加3层，每层独立计算持续时间。<br>此外，施放元素爆发<b><span style=\"color: #FFD780FF;\">黯声回响</span></b>时，将触发一次等同于「显象超感」的效果，造成原本200%的伤害。<br>该效果需要解锁突破天赋「夜翳的通感」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "qiqi": {
     "skills": [
@@ -6579,7 +6579,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">仙法·救苦度厄</span></b>时，复苏附近队伍中所有倒下的角色，并将其生命值恢复至50%。<br>该效果每15分钟只能触发一次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "raiden_shogun": {
     "skills": [
@@ -6672,7 +6672,7 @@
         "descHtml": "处于<b><span style=\"color: #FFD780FF;\">奥义·梦想真说</span></b>施加的<b><span style=\"color: #FFD780FF;\">梦想一心</span></b>状态下时，雷电将军的元素爆发伤害命中敌人时，使附近的队伍中所有角色（不包括雷电将军自己）元素爆发的冷却时间缩短1秒。<br>该效果每1秒至多触发一次，在持续期间内至多触发5次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "razor": {
     "skills": [
@@ -6763,7 +6763,7 @@
         "descHtml": "每10秒，雷泽的大剑将自动充能，使下一次普通攻击引发落雷，造成100%攻击力的<b><span style=\"color: #FFACFFFF;\">雷元素伤害</span></b>。<br>不处于<b><span style=\"color: #FFD780FF;\">雷牙</span></b>状态下时，若落雷击中敌人，会为雷泽积攒三个元素战技<b><span style=\"color: #FFD780FF;\">利爪与苍雷</span></b>中的雷之印。<br>此外，雷泽通过元素战技<b><span style=\"color: #FFD780FF;\">利爪与苍雷</span></b>积攒雷之印时，会改为为雷泽积攒三个雷之印。<br>消耗雷之印后的15秒内，雷泽的暴击率提升10%，暴击伤害提升50%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "rosaria": {
     "skills": [
@@ -6842,7 +6842,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">终命的圣礼</span></b>的攻击会使敌人的物理抗性降低20%，持续10秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sangonomiya_kokomi": {
     "skills": [
@@ -6928,7 +6928,7 @@
         "descHtml": "处于<b><span style=\"color: #FFD780FF;\">海人化羽</span></b>的仪来羽衣状态下时，珊瑚宫心海的普通攻击和重击对生命值高于或等于80%的角色进行治疗时，将获得40%<b><span style=\"color: #80C0FFFF;\">水元素伤害加成</span></b>，持续4秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sayu": {
     "skills": [
@@ -7015,7 +7015,7 @@
         "descHtml": "早柚自己通过<b><span style=\"color: #FFD780FF;\">呜呼流·影貉缭乱</span></b>召唤的不倒貉貉的攻击与回复量，受益于早柚的元素精通。早柚的每点元素精通，能产生如下效果：<br>·使不倒貉貉的攻击额外造成0.2%攻击力的伤害。通过这种方式至多额外造成400%攻击力的伤害；<br>·使不倒貉貉的回复量提高3点。通过这种方式，至多提高6000点回复量。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sethos": {
     "skills": [
@@ -7093,7 +7093,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">贯影箭</span></b>命中敌人后，将返还因突破天赋「黑鸢的密喻」消耗的元素能量，此效果每15秒至多触发一次，需要解锁突破天赋「黑鸢的密喻」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "shenhe": {
     "skills": [
@@ -7178,7 +7178,7 @@
         "descHtml": "角色通过普通攻击伤害与重击伤害触发<b><span style=\"color: #FFD780FF;\">「冰翎」</span></b>的效果时，将不再会减少「冰翎」的生效次数。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "shikanoin_heizou": {
     "skills": [
@@ -7259,7 +7259,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">勠心拳</span></b>时，每层「变格」都将为本次勠心拳提升4%暴击率。拥有「正论」时，本次勠心拳的暴击伤害将提升32%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sigewinne": {
     "skills": [
@@ -7340,7 +7340,7 @@
         "descHtml": "希格雯进行治疗时，将基于生命值上限，提升自己的<b><span style=\"color: #FFD780FF;\">过饱和心意注射</span></b>的暴击率和暴击伤害：每1000点生命值上限都将提升0.4%暴击率与2.2%暴击伤害，持续15秒。至多通过这种方式提升20%暴击率与110%暴击伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "skirk": {
     "skills": [
@@ -7429,7 +7429,7 @@
         "descHtml": "丝柯克每通过突破天赋 <b><span style=\"color: #FFD780FF;\">理外之理</span></b>的效果汲取一枚虚境裂隙，就会获得一层极恶技·斩效果，丝柯克可以消耗该效果进行协同攻击，并降低在 <b><span style=\"color: #FFD780FF;\">七相一闪</span></b>模式下受到的伤害，该效果持续15秒，至多叠加3层，每层独立计算持续时间。<br>需要解锁突破天赋「理外之理」。<br><br><b><span style=\"color: #FFD780FF;\">极恶技·斩</span></b><br>·施放元素爆发<b><span style=\"color: #FFD780FF;\">极恶技·灭</span></b>时，将消耗所有的<b><span style=\"color: #FFD780FF;\">极恶技·斩</span></b>层数进行协同攻击，每层<b><span style=\"color: #FFD780FF;\">极恶技·斩</span></b>会造成相当于丝柯克攻击力750%的<b><span style=\"color: #99FFFFFF;\">冰元素伤害</span></b>，该伤害视为元素爆发伤害；<br>·丝柯克在七相一闪模式下进行的普通攻击，第三段攻击或第五段攻击命中敌人时，将消耗一层<b><span style=\"color: #FFD780FF;\">极恶技·斩</span></b>，进行3次协同攻击，每次协同攻击造成相当于丝柯克攻击力180%的<b><span style=\"color: #99FFFFFF;\">冰元素伤害</span></b>，该伤害视为普通攻击伤害；<br>·丝柯克在七相一闪模式下受到伤害时，将消耗一层<b><span style=\"color: #FFD780FF;\">极恶技·斩</span></b>，使本次受到的伤害降低80%，并对附近的敌人进行3次攻击，每次攻击造成相当于丝柯克攻击力180%的<b><span style=\"color: #99FFFFFF;\">冰元素伤害</span></b>，该伤害视为重击伤害。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "蛇之狡谋",
         "descHtml": "丝柯克可以消耗蛇之狡谋，以维持七相一闪模式，或是施放元素爆发极恶技·灭。</br></br>丝柯克可以通过以下方式获得蛇之狡谋：</br>·施放元素战技极恶技·闪后；</br>·触发突破天赋理外之理中汲取虚境裂隙的效果后。</br></br>丝柯克在七相一闪模式下退场时，或七相一闪模式结束时，将移除丝柯克持有的蛇之狡谋。"
@@ -7528,7 +7528,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">禁·风灵作成·柒伍同构贰型</span></b>如果发生了元素转化，则使队伍中所有角色在技能持续时间内获得20%的对应元素伤害加成，并使队伍中附近的魔导角色额外获得8.57142%的对应元素伤害加成。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "tartaglia": {
     "skills": [
@@ -7623,7 +7623,7 @@
         "descHtml": "在近战状态下施放<b><span style=\"color: #FFD780FF;\">极恶技·尽灭闪</span></b>时，清除<b><span style=\"color: #FFD780FF;\">魔王武装·狂澜</span></b>的冷却时间。<br>该效果会在回到远程状态后触发。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "thoma": {
     "skills": [
@@ -7706,7 +7706,7 @@
         "descHtml": "获取或刷新<b><span style=\"color: #FFD780FF;\">烈烧佑命护盾</span></b>时，队伍中所有角色的普通攻击，重击与下落攻击造成的伤害提升15%，持续6秒。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "tighnari": {
     "skills": [
@@ -7787,7 +7787,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">花筥箭</span></b>所需的蓄力时间减少0.9秒，并在命中后能产生1枚额外的藏蕴花矢，能造成提纳里攻击力150%的伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "varesa": {
     "skills": [
@@ -7879,7 +7879,7 @@
         "descHtml": "进入极限驱动状态时，将为瓦雷莎恢复30点元素能量。<br>瓦雷莎的下落攻击与元素爆发<b><span style=\"color: #FFD780FF;\">闪烈降临！</span></b>的暴击率提升10%，暴击伤害提升100%。<br>此外，瓦雷莎长按施放元素战技<b><span style=\"color: #FFD780FF;\">夜虹逐跃</span></b>时，或是在「突驰烈进」模式下点按施放元素战技时，瓦雷莎将恢复夜魂值至上限。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "varka": {
     "skills": [
@@ -7972,7 +7972,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">狂飙突进</span></b>模式获得强化：<br>·施放特殊元素战技 <b><span style=\"color: #FFD780FF;\">四风将起</span></b>后的短暂时间内，法尔伽可以点按元素战技或长按普通攻击，不消耗四风将起的可用次数，进行一次额外的特殊重击<b><span style=\"color: #FFD780FF;\">苍噬</span></b>；<br>·进行特殊重击<b><span style=\"color: #FFD780FF;\">苍噬</span></b>后的短暂时间内，法尔伽可以点按元素战技，不消耗四风将起的可用次数，施放一次额外的<b><span style=\"color: #FFD780FF;\">四风将起</span></b>。<br>通过上述方式进行额外的特殊重击苍噬或施放额外的特殊元素战技四风将起时，无法触发上述效果。<br><br>此外，突破天赋<b><span style=\"color: #FFD780FF;\">「风帜的先引」</span></b>中<b><span style=\"color: #FFD780FF;\">「苍牙之誓」</span></b>的效果获得强化：每层<b><span style=\"color: #FFD780FF;\">「苍牙之誓」</span></b>还会使法尔伽的暴击伤害提升20%。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "狂飙突进",
         "descHtml": "点按施放元素战技<b><span style=\"color: #FFD780FF;\">烈风终坠</span></b>后，法尔伽将切换至该模式。</br>处于该模式下时，法尔伽的普通攻击与重击造成的伤害提高，无法进行下落攻击；法尔伽进行普通攻击与重击时，将根据队伍中角色的元素类型，使双持的大剑分别造成无法被附魔覆盖的对应元素伤害：</br>·左手持握的大剑将转为造成无法被附魔覆盖的<b><span style=\"color: #80FFD7FF;\">风元素伤害</span></b>；</br>·队伍中存在<b><span style=\"color: #FF9999FF;\">火元素</span></b>、<b><span style=\"color: #80C0FFFF;\">水元素</span></b>、<b><span style=\"color: #FFACFFFF;\">雷元素</span></b>或<b><span style=\"color: #99FFFFFF;\">冰元素</span></b>角色时，右手持握的大剑将按照上述元素类型的优先级，造成无法被附魔覆盖的对应元素伤害。</br></br>此外，处于该模式下时，若队伍中存在<b><span style=\"color: #FF9999FF;\">火元素</span></b>、<b><span style=\"color: #80C0FFFF;\">水元素</span></b>、<b><span style=\"color: #FFACFFFF;\">雷元素</span></b>或<b><span style=\"color: #99FFFFFF;\">冰元素</span></b>角色，法尔伽的元素战技<b><span style=\"color: #FFD780FF;\">烈风终坠</span></b>将会被替换为特殊的元素战技<b><span style=\"color: #FFD780FF;\">四风将起</span></b>。"
@@ -8068,7 +8068,7 @@
         "descHtml": "受<b><span style=\"color: #FFD780FF;\">风神之诗</span></b>伤害的敌人，<b><span style=\"color: #80FFD7FF;\">风元素抗性</span></b>降低20%；<br>若产生了元素转化，则使转换的元素抗性也降低20%。<br>此外，温迪对这些敌人造成的伤害，还会获得100%暴击伤害加成。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "wanderer": {
     "skills": [
@@ -8146,7 +8146,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">优风倾姿</span></b>状态下，流浪者主动施放的空居·不生断命中敌人时，将产生如下效果：<br>·在命中的位置额外进行一次空居·不生断，造成原本40%的伤害，该伤害视为普通攻击伤害；<br>·当流浪者的空居力低于40点时，为流浪者恢复4点空居力。每0.2秒至多通过这种方式恢复1次空居力，在一次优风倾姿的持续期间，至多触发5次。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "wriothesley": {
     "skills": [
@@ -8227,7 +8227,7 @@
         "descHtml": "惩戒·凌跃拳的暴击率提升10%，暴击伤害提升80%，并能够额外生成冰锥，造成原本100%的<b><span style=\"color: #99FFFFFF;\">冰元素伤害</span></b>，通过这种方式造成的伤害视为重击伤害。<br>需要解锁突破天赋「公理终有辩诉之日」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xiangling": {
     "skills": [
@@ -8308,7 +8308,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">旋火轮</span></b>持续期间，队伍中所有角色获得15%<b><span style=\"color: #FF9999FF;\">火元素伤害加成</span></b>。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xianyun": {
     "skills": [
@@ -8389,7 +8389,7 @@
         "descHtml": "在一次<b><span style=\"color: #FFD780FF;\">朝起鹤云</span></b>的鹤云幻化期间施放了1/2/3次步天梯后，该次鹤云幻化期间的闲云冲击波的暴击伤害提升15%/35%/70%。<br>闲云施放<b><span style=\"color: #FFD780FF;\">暮集竹星</span></b>后的16秒内，朝起鹤云将不再进入冷却，该效果将在闲云施放8次朝起鹤云后移除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xiao": {
     "skills": [
@@ -8469,7 +8469,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">靖妖傩舞</span></b>状态下，下落攻击命中至少2个敌人时，<b><span style=\"color: #FFD780FF;\">风轮两立</span></b>立刻获得1次可使用次数，并且在接下来1秒内，可以无视冷却时间施放风轮两立。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xilonen": {
     "skills": [
@@ -8559,7 +8559,7 @@
         "descHtml": "处于夜魂加持状态下时，希诺宁进行冲刺、腾跃、普通攻击、下落攻击时，将获得「永夜的祝福」，无视夜魂加持状态下的限制，并提升普通攻击与下落攻击造成的伤害，持续5秒。<br>持续期间：<br>·暂停希诺宁的夜魂值时间限制计时，希诺宁的夜魂值、燃素、体力将不再下降，且夜魂值达到上限时，希诺宁的夜魂加持也不会结束；<br>·希诺宁在夜魂加持状态下的普通攻击与下落攻击造成的伤害提升，提升值相当于希诺宁的防御力的300%。<br>·每1.5秒为附近的队伍中所有角色恢复生命值，回复量相当于希诺宁的防御力的120%。<br>每15秒至多获得一次「永夜的祝福」。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xingqiu": {
     "skills": [
@@ -8639,7 +8639,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">古华剑·裁雨留虹</span></b>每发动2次剑雨攻击，就大幅增强下一次剑雨攻击，并在命中敌人时为行秋恢复3点元素能量。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xinyan": {
     "skills": [
@@ -8724,7 +8724,7 @@
         "descHtml": "辛焱的重击的体力消耗降低30%；此外，进行重击时，将基于防御力的50%获得攻击力加成。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yae_miko": {
     "skills": [
@@ -8804,7 +8804,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">杀生樱</span></b>在攻击时无视敌人60%的防御力。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yanfei": {
     "skills": [
@@ -8884,7 +8884,7 @@
         "descHtml": "烟绯持有的丹火印最大数量增加一枚。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yaoyao": {
     "skills": [
@@ -8967,7 +8967,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">月桂·抛掷型</span></b>每投掷2次白玉萝卜，就会在下次投掷时额外投掷1枚超厉害·大萝卜。相比白玉萝卜，超厉害·大萝卜炸裂时的影响范围更大，炸裂时产生如下效果：<br>·基于瑶瑶攻击力的75%，造成<b><span style=\"color: #99FF88FF;\">草元素范围伤害</span></b>；<br>·基于瑶瑶生命值上限的7.5%，为其中的当前场上角色恢复生命值。<br><br>每个月桂·抛掷型至多投掷2次超厉害·大萝卜。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yelan": {
     "skills": [
@@ -9047,7 +9047,7 @@
         "descHtml": "施放<b><span style=\"color: #FFD780FF;\">渊图玲珑骰</span></b>后，夜兰将进入「运筹帷幄」状态：<br>夜兰的普通攻击将转为发射特殊的「破局矢」。这种箭矢具有与破局矢近似的特性，造成的伤害视为重击伤害，能造成破局矢156%的伤害。<br><br>「运筹帷幄」状态至多持续20秒，将在夜兰发射5枚箭矢后移除。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yoimiya": {
     "skills": [
@@ -9128,7 +9128,7 @@
         "descHtml": "在<b><span style=\"color: #FFD780FF;\">焰硝庭火舞</span></b>的持续期间内，宵宫主动进行普通攻击时，有50%几率发射一枚额外的炽焰箭，造成原本60%的伤害。该伤害视为普通攻击伤害。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yumemizuki_mizuki": {
     "skills": [
@@ -9209,7 +9209,7 @@
         "descHtml": "梦见月瑞希处于梦浮状态下时，队伍中附近的角色触发的扩散反应造成的伤害能够造成暴击，暴击率固定为30%，暴击伤害固定为100%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yun_jin": {
     "skills": [
@@ -9292,7 +9292,7 @@
         "descHtml": "处于<b><span style=\"color: #FFD780FF;\">「飞云旗阵」</span></b>状态下的角色，普通攻击的攻击速度提升12%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "zhongli": {
     "skills": [
@@ -9376,7 +9376,7 @@
         "descHtml": "玉璋护盾受到伤害时，将为当前角色恢复生命值，回复量为伤害的40%。<br>单次回复量不超过当前角色最大生命值的8%。"
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "zibai": {
     "skills": [
@@ -9465,7 +9465,7 @@
         "descHtml": "处于 <b><span style=\"color: #FFD780FF;\">「月转时隙」</span></b>模式下时，兹白积攒<b><span style=\"color: #FFD780FF;\">「时隙浮光」</span></b>的效率提升50%。<br>此外，<b><span style=\"color: #FFD780FF;\">灵驹飞踏</span></b>将转为消耗所有的「时隙浮光」，基于消耗的「时隙浮光」超过70点的部分，每额外消耗1点「时隙浮光」，都会使本次灵驹飞踏与接下来3秒内兹白造成的月结晶反应伤害 <b><span style=\"color: #FFD780FF;\">擢升</span></b>1.6%。该效果无法叠加。"
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "「月转时隙」",
         "descHtml": "施放元素战技<b><span style=\"color: #FFD780FF;\">天地忽然身</span></b>后，兹白将切换至该模式。该模式至多持续15秒，并具有以下特性：</br>·进行普通攻击与重击时，将转为造成无法被附魔覆盖的<b><span style=\"color: #FFE699FF;\">岩元素伤害</span></b>；</br>·元素战技<b><span style=\"color: #FFD780FF;\">天地忽然身</span></b>将会被替换为特殊的元素战技<b><span style=\"color: #FFD780FF;\">灵驹飞踏</span></b>：当兹白拥有至少70点<b><span style=\"color: #FFD780FF;\">「时隙浮光」</span></b>时，兹白可以消耗70点「时隙浮光」，施放灵驹飞踏，造成两次<b><span style=\"color: #FFE699FF;\">岩元素伤害</span></b>，其中的第二段伤害视为月结晶反应伤害。</br></br><b><span style=\"color: #FFD780FF;\">「时隙浮光」</span></b>上限为100点，兹白可以通过以下方式积攒「时隙浮光」：</br>·处于<b><span style=\"color: #FFD780FF;\">「月转时隙」</span></b>模式下时，每秒积攒10点「时隙浮光」；</br>·普通攻击命中敌人时，会积攒5点「时隙浮光」，每0.5秒至多通过这种方式为兹白积攒一次「时隙浮光」。</br></br><b><span style=\"color: #FFD780FF;\">月兆·满辉</span></b> </br>队伍中附近的角色触发月结晶反应时，也会为兹白积攒35点<b><span style=\"color: #FFD780FF;\">「时隙浮光」</span></b>，每4秒至多通过这种方式为兹白积攒一次「时隙浮光」，施放特殊元素战技<b><span style=\"color: #FFD780FF;\">灵驹飞踏</span></b>将会重置通过这种方式积攒<b><span style=\"color: #FFD780FF;\">「时隙浮光」</span></b>的冷却时间。</br></br>施放4次<b><span style=\"color: #FFD780FF;\">灵驹飞踏</span></b>后，或持续时间结束时，兹白将退出该模式。"

@@ -31,6 +31,7 @@ import type { ConversionWarning } from "@/lib/goodConversion";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import {
   AlertTriangle,
   Box,
@@ -271,6 +272,17 @@ export default function AccountDataPage() {
       setScores(newScores);
 
       showConversionWarnings(result);
+
+      // Mark imported characters and weapons as owned
+      const characterIds = result.data.characters.map((c) => c.key);
+      const weaponIds = result.data.characters
+        .filter((c) => c.weapon)
+        .map((c) => c.weapon!.key);
+      useOwnershipStore
+        .getState()
+        .bulkSetOwned("character", characterIds, true);
+      useOwnershipStore.getState().bulkSetOwned("weapon", weaponIds, true);
+
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error) {
       console.error("Failed to convert GOOD data", error);
@@ -333,6 +345,15 @@ export default function AccountDataPage() {
         }
         setScores(newScores);
       }
+
+      // Mark imported characters and weapons as owned
+      const charIds = newData.characters.map((c) => c.key);
+      const weaponIds = newData.characters
+        .filter((c) => c.weapon)
+        .map((c) => c.weapon!.key);
+      useOwnershipStore.getState().bulkSetOwned("character", charIds, true);
+      useOwnershipStore.getState().bulkSetOwned("weapon", weaponIds, true);
+
       toast.success(t.ui("accountData.importSuccess"));
     } catch (error: unknown) {
       console.error("UID Import failed", error);

@@ -321,7 +321,7 @@ export const i18nUiData = {
     skills: { en: "Skills", zh: "战斗天赋" },
     passives: { en: "Passives", zh: "固有天赋" },
     constellations: { en: "Constellations", zh: "命之座" },
-    dictionary: { en: "Glossary", zh: "术语表" },
+    glossary: { en: "Glossary", zh: "术语表" },
     noCharacterSelected: {
       en: "Select a character to view details",
       zh: "选择一个角色查看详情",
@@ -350,6 +350,8 @@ export const i18nUiData = {
       zh: "没有武器匹配搜索",
     },
     dataFrom: { en: "Data from ", zh: "数据来自 " },
+    owned: { en: "Owned", zh: "已拥有" },
+    notOwned: { en: "Not Owned", zh: "未拥有" },
   },
   theme: {
     switcherButton: { en: "Theme", zh: "主题" },
@@ -391,6 +393,7 @@ export const i18nUiData = {
     regions: { en: "Regions", zh: "地区" },
     rarity: { en: "Rarity", zh: "稀有度" },
     secondaryStat: { en: "Substat", zh: "副属性" },
+    ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
     noWeaponsFound: {
       en: "No weapons match filters",
       zh: "没有武器匹配当前筛选",
@@ -643,6 +646,7 @@ export const i18nUiData = {
     includeRarity5: { en: "5★", zh: "5★" },
     includeRarity4: { en: "4★", zh: "4★" },
     includeRarity3: { en: "3★", zh: "3★" },
+    ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
     help: { en: "Help", zh: "帮助" },
   },
   resetConfirmDialog: {

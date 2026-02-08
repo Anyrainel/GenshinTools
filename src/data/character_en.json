@@ -80,7 +80,7 @@
         "descHtml": "For the next 15s after using the Elemental Burst <b><span style=\"color: #FFD780FF;\">Precision Hydronic Cooler</span></b>, DMG from nearby active characters' Electro-Charged, Bloom, Lunar-Charged, Lunar-Bloom, and Lunar-Crystallize reactions is increased by 15%.<br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: DMG from the aforementioned reactions will be further increased by 20%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "albedo": {
     "skills": [
@@ -164,7 +164,7 @@
         "descHtml": "Current active party members within the Solar Isotoma field who are protected by a Shield created by Crystallize, or when Moondrifts are present within the Solar Isotoma field, have their DMG increased by 17%.<br>Additionally, use of the Elemental Burst <b><span style=\"color: #FFD780FF;\">Rite of Progeniture: Tectonic Tide</span></b> destroys all Silver Isotomas present on the field, and whenever a Silver Isotoma is destroyed this way the current instance of Elemental Burst will also be considered as having cleared 4 Fatal Reckoning stacks from the Constellation <b><span style=\"color: #FFD780FF;\">Opening of Phanerozoic</span></b>. This increases the DMG dealt by Fatal Blossom by 250% of Albedo's DEF for the next 20s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "alhaitham": {
     "skills": [
@@ -250,7 +250,7 @@
         "descHtml": "Alhaitham gains the following effects:<br>· 2 seconds after <b><span style=\"color: #FFD780FF;\">Particular Field: Fetters of Phenomena</span></b> is unleashed, he will generate 3 Chisel-Light Mirrors regardless of the number of mirrors consumed.<br>· If Alhaitham generates Chisel-Light Mirrors when their numbers have already maxed out, his CRIT Rate and CRIT DMG will increase by 10% and 70% respectively for 6s. If this effect is triggered again during its initial duration, the duration remaining will be increased by 6s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "aloy": {
     "skills": [
@@ -332,7 +332,7 @@
         "descHtml": "The time has not yet come for this person's corner of the night sky to light up."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "amber": {
     "skills": [
@@ -412,7 +412,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Fiery Rain</span></b> increases all party members' Movement SPD by 15% and ATK by 15% for 10s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "arataki_itto": {
     "skills": [
@@ -495,7 +495,7 @@
         "descHtml": "Arataki Itto's Charged Attacks deal +70% CRIT DMG. Additionally, when he uses Arataki Kesagiri, he has a 50% chance to not consume stacks of Superlative Superstrength."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "arlecchino": {
     "skills": [
@@ -578,7 +578,7 @@
         "descHtml": "The DMG of <b><span style=\"color: #FFD780FF;\">Balemoon Rising</span></b> is increased by Arlecchino's ATK multiplied by 700% of Arlecchino's current Bond of Life percentage.<br>For 20s after Arlecchino uses <b><span style=\"color: #FFD780FF;\">All Is Ash</span></b>, both her Normal Attacks and Elemental Burst gain 10% increased CRIT Rate and 70% increased CRIT DMG. This effect can be triggered up to once every 15s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "baizhu": {
     "skills": [
@@ -659,7 +659,7 @@
         "descHtml": "Increases the DMG dealt by <b><span style=\"color: #FFD780FF;\">Holistic Revivification</span></b>'s Spiritveins by 8% of Baizhu's Max HP.<br>Additionally, when a <b><span style=\"color: #FFD780FF;\">Gossamer Sprite</span></b> or Gossamer Sprite: Splice hits opponents, there is a 100% chance of generating one of <b><span style=\"color: #FFD780FF;\">Holistic Revivification</span></b>'s Seamless Shields. This effect can only be triggered once by each Gossamer Sprite or Gossamer Sprite: Splice."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "barbara": {
     "skills": [
@@ -738,7 +738,7 @@
         "descHtml": "When Barbara is in the party but not on the field, and one of your own party members falls:<br>·Automatically revives the fallen character.<br>·Fully restores the revived character's HP to 100%.<br>This effect can only occur once every 15 mins."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "beidou": {
     "skills": [
@@ -822,7 +822,7 @@
         "descHtml": "During the duration of <b><span style=\"color: #FFD780FF;\">Stormbreaker</span></b>, the <b><span style=\"color: #FFACFFFF;\">Electro RES</span></b> of surrounding opponents is decreased by 15%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "bennett": {
     "skills": [
@@ -905,7 +905,7 @@
         "descHtml": "Sword, Claymore, or Polearm-wielding characters inside <b><span style=\"color: #FFD780FF;\">Fantastic Voyage</span></b>'s radius gain a 15% <b><span style=\"color: #FF9999FF;\">Pyro DMG Bonus</span></b> and their weapons are infused with <b><span style=\"color: #FF9999FF;\">Pyro</span></b>."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "candace": {
     "skills": [
@@ -988,7 +988,7 @@
         "descHtml": "When characters (excluding Candace herself) affected by the Prayer of the Crimson Crown caused by <b><span style=\"color: #FFD780FF;\">Sacred Rite: Wagtail's Tide</span></b> deal Elemental DMG to opponents using Normal Attacks, an attack wave will be unleashed that deals <b><span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span></b> equal to 15% of Candace's Max HP.<br>This effect can trigger once every 2.3s and is considered Elemental Burst DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "charlotte": {
     "skills": [
@@ -1077,7 +1077,7 @@
         "descHtml": "When the active character's Normal and Charged Attacks hit an opponent marked by <b><span style=\"color: #FFD780FF;\">Framing: Freezing Point Composition</span></b>'s Focused Impression, Monsieur Verite will initiate a coordinated attack that deals 180% of Charlotte's ATK as <b><span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span></b> and heals active character(s) within the AoE for 42% of Charlotte's ATK. This effect can be triggered once every 6s and both DMG and healing dealt in this way will be considered as having been done by Charlotte's Elemental Burst."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chasca": {
     "skills": [
@@ -1163,7 +1163,7 @@
         "descHtml": "Chasca's <b><span style=\"color: #FFD780FF;\">Multitarget Fire</span></b> charge time is decreased, and after the Ascension Talent \"Bullet Trick\"'s \"Spiritbinding Conversion\" is triggered, Chasca will gain the \"Fatal Rounds\" state: For the next 3s, the next time Chasca uses <b><span style=\"color: #FFD780FF;\">Spirit Reins, Shadow Hunt</span></b>'s <b><span style=\"color: #FFD780FF;\">Multitarget Fire</span></b>, the shots will finish charging instantly, and the CRIT DMG of that instance of <b><span style=\"color: #FFD780FF;\">Multitarget Fire</span></b>'s <b><span style=\"color: #FFD780FF;\">Shadowhunt Shells</span></b> and <b><span style=\"color: #FFD780FF;\">Shining Shadowhunt Shells</span></b> increases by 120%. 1 \"Fatal Rounds\" effect can be gained once every 3s.<br><br>You must first unlock the Ascension Talent \"Bullet Trick\" to gain access to the above effect."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chevreuse": {
     "skills": [
@@ -1246,7 +1246,7 @@
         "descHtml": "After 12s of the healing effect from <b><span style=\"color: #FFD780FF;\">Short-Range Rapid Interdiction Fire</span></b>, all nearby party members recover HP equivalent to 10% of Chevreuse's Max HP once.<br>After a party member is healed by Short-Range Rapid Interdiction Fire, they gain a 20% <b><span style=\"color: #FF9999FF;\">Pyro DMG Bonus</span></b> and <b><span style=\"color: #FFACFFFF;\">Electro DMG Bonus</span></b> for 8s. Max 3 stacks. Each stack's duration is counted independently."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chiori": {
     "skills": [
@@ -1325,7 +1325,7 @@
         "descHtml": "After triggering a follow-up effect of the Ascension Talent \"Tailor-Made,\" Chiori's own <b><span style=\"color: #FFD780FF;\">Fluttering Hasode</span></b>'s CD is decreased by 12s. You must first unlock the Ascension Talent \"Tailor-Made.\".<br>In addition, the DMG dealt by Chiori's own Normal Attacks is increased by an amount equal to 235% of her own DEF."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "chongyun": {
     "skills": [
@@ -1405,7 +1405,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Spirit Blade: Cloud-Parting Star</span></b> deals 15% more DMG to opponents with a lower percentage of their Max HP remaining than Chongyun.<br>This skill will also summon 1 additional spirit blade."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "citlali": {
     "skills": [
@@ -1493,7 +1493,7 @@
         "descHtml": "After being summoned with the Elemental Skill <b><span style=\"color: #FFD780FF;\">Dawnfrost Darkstar</span></b>, Itzpapa will always be in the Opal Fire state, and when Nightsoul points are exhausted, this state will not end.<br>Additionally, when <b><span style=\"color: #FFD780FF;\">Dawnfrost Darkstar</span></b> is used, Itzpapa will consume all Nightsoul points, and while it is on the field, it will continuously consume Nightsoul points. Each Nightsoul point consumed in this way will grant Citlali 1 \"Cifra of the Secret Law\" point.<br>A maximum of 40 such points can be gained, and each point Citlali possesses will grant all nearby party members a 1.5% <b><span style=\"color: #FF9999FF;\">Pyro</span></b> and <b><span style=\"color: #80C0FFFF;\">Hydro</span></b> DMG Bonus, and increase the DMG Citlali deals by 2.5%.<br>When Itzpapa leaves the field, or upon using Citlali's Elemental Skill again, all \"Cifra of the Secret Law\" points she has will be removed."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "clorinde": {
     "skills": [
@@ -1578,7 +1578,7 @@
         "descHtml": "For 12s after <b><span style=\"color: #FFD780FF;\">Hunter's Vigil</span></b> is used, Clorinde's CRIT Rate will be increased by 10%, and her CRIT DMG by 70%.<br>Additionally, while Night Vigil is active, a Glimbright Shade will appear under specific circumstances, executing an attack that deals 200% of Clorinde's ATK as <b><span style=\"color: #FFACFFFF;\">Electro DMG</span></b>. DMG dealt this way is considered Normal Attack DMG.<br>The Glimbright Shade will appear under the following circumstances:<br>· When Clorinde is about to be hit by an attack.<br>· When Clorinde uses Impale the Night: Pact.<br>1 Glimbright Shade can be summoned in the aforementioned ways every 1s. 6 Shades can be summoned per single Night Vigil duration.<br>In addition, while Night Vigil is active, the DMG Clorinde receives is decreased by 80% and her interruption resistance is increased. This effect will disappear after the Night Vigil state ends or 1s after she summons 6 Glimbright Shades."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "collei": {
     "skills": [
@@ -1656,7 +1656,7 @@
         "descHtml": "When the <b><span style=\"color: #FFD780FF;\">Floral Ring</span></b> hits, it will create a miniature Cuilein-Anbar that will deal 200% of Collei's ATK as <b><span style=\"color: #99FF88FF;\">Dendro DMG</span></b>.<br>Each <b><span style=\"color: #FFD780FF;\">Floral Brush</span></b> can only create one such miniature Cuilein-Anbar."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "columbina": {
     "skills": [
@@ -1744,7 +1744,7 @@
         "descHtml": "For 8s after characters in the <b><span style=\"color: #FFD780FF;\">Lunar Domain</span></b> trigger a Lunar reaction, based on the elements involved in the reaction, the CRIT DMG of the corresponding Elemental DMG is increased by 80%. The CRIT DMG-increasing effects for the same Elemental Type do not stack.<br><br>All nearby party members' Lunar Reaction DMG is <b><span style=\"color: #FFD780FF;\">elevated</span></b> by 7%."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Verdant Dew",
         "descHtml": "When party members trigger Lunar-Bloom reactions, the party will receive such a resource.</br>Your party will receive 1 Verdant Dew every 2.5s for 2.5s after triggering a Lunar-Bloom reaction. Your party can have up to 3 Verdant Dew. If you trigger another Lunar-Bloom reaction during this time, the duration of this effect will be reset."
@@ -1862,7 +1862,7 @@
         "descHtml": "After using <b><span style=\"color: #FFD780FF;\">Sacred Rite: Wolf's Swiftness</span></b> or triggering the Judication effect of the Ascension Talent \"Featherfall Judgment,\" Cyno will gain 4 stacks of the \"Day of the Jackal\" effect. When he hits opponents with Normal Attacks, he will consume 1 stack of \"Day of the Jackal\" to fire off one Duststalker Bolt.<br>\"Day of the Jackal\" lasts for 8s. Max 8 stacks. It will be canceled once Pactsworn Pathclearer ends.<br>A maximum of 1 Duststalker Bolt can be unleashed this way every 0.4s.<br>You must first unlock the Ascension Talent \"Featherfall Judgment.\""
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dahlia": {
     "skills": [
@@ -1940,7 +1940,7 @@
         "descHtml": "The current active character affected by the Elemental Burst <b><span style=\"color: #FFD780FF;\">Radiant Psalter</span></b>'s Favonian Favor has their ATK SPD increased by 10%.<br>Additionally, when an active character affected by Favonian Favor falls, immediately:<br>· Revive them.<br>· Restore their HP to 100%.<br>This effect can trigger once every 15 minutes."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dehya": {
     "skills": [
@@ -2025,7 +2025,7 @@
         "descHtml": "The CRIT Rate of <b><span style=\"color: #FFD780FF;\">Leonine Bite</span></b> is increased by 10%.<br>Additionally, after a Flame-Mane's Fist attack hits an opponent and deals CRIT Hits during a single Blazing Lioness state, it will cause the CRIT DMG of Leonine Bite to increase by 15% for the rest of Blazing Lioness's duration and extend that duration by 0.5s. This effect can be triggered every 0.2s. The duration can be extended for a maximum of 2s and CRIT DMG can be increased by a maximum of 60% this way."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "diluc": {
     "skills": [
@@ -2108,7 +2108,7 @@
         "descHtml": "After casting <b><span style=\"color: #FFD780FF;\">Searing Onslaught</span></b>, the next 2 Normal Attacks within the next 6s will have their DMG and ATK SPD increased by 30%.<br>Additionally, Searing Onslaught will not interrupt the Normal Attack combo."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "diona": {
     "skills": [
@@ -2191,7 +2191,7 @@
         "descHtml": "Characters within <b><span style=\"color: #FFD780FF;\">Signature Mix</span></b>'s radius will gain the following effects based on their HP amounts:<br>·Increases Incoming Healing Bonus by 30% when HP falls below or is equal to 50%.<br>·Elemental Mastery increased by 200 when HP is above 50%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "dori": {
     "skills": [
@@ -2272,7 +2272,7 @@
         "descHtml": "Dori gains the following effects for 3s after using <b><span style=\"color: #FFD780FF;\">Spirit-Warding Lamp: Troubleshooter Cannon</span></b>:<br>·<b><span style=\"color: #FFACFFFF;\">Electro Infusion</span></b>.<br>·When Normal Attacks hit opponents, all nearby party members will heal HP equivalent to 4% of Dori's Max HP. This type of healing can occur once every 0.1s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "durin": {
     "skills": [
@@ -2359,7 +2359,7 @@
         "descHtml": "Durin's Elemental Burst DMG ignores 30% of opponents' DEF.<br>Additionally, Durin's Elemental Bursts <b><span style=\"color: #FFD780FF;\">Principle of Purity: As the Light Shifts</span></b> and <b><span style=\"color: #FFD780FF;\">Principle of Darkness: As the Stars Smolder</span></b> are each enhanced:<br>· After <b><span style=\"color: #FFD780FF;\">Principle of Purity: As the Light Shifts</span></b> and <b><span style=\"color: #FFD780FF;\">Dragon of White Flame</span></b> hit an opponent, that opponent's DEF is decreased by 30% for 6s.<br>· DMG from <b><span style=\"color: #FFD780FF;\">Principle of Darkness: As the Stars Smolder</span></b> and <b><span style=\"color: #FFD780FF;\">Dragon of Dark Decay</span></b> will ignore an additional 40% of opponents' DEF."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Essential Transmutation",
         "descHtml": "After unleashing the Elemental Skill <b><span style=\"color: #FFD780FF;\">Binary Form: Convergence and Division</span></b>, Durin gains this effect for 6s.</br>While the effect is active, press the Elemental Skill button to enter the <b><span style=\"color: #FFD780FF;\">Confirmation of Purity</span></b> state, or press the Normal Attack button to enter the <b><span style=\"color: #FFD780FF;\">Denial of Darkness</span></b> state.</br>Durin will gain different buffs and can unleash different Elemental Bursts while in these states."
@@ -2446,7 +2446,7 @@
         "descHtml": "When using <b><span style=\"color: #FFD780FF;\">Fragrance Extraction</span></b> or <b><span style=\"color: #FFD780FF;\">Aromatic Explication</span></b>, Emilie will gain Abiding Fragrance for 5s.<br>While this is active, after Emilie uses Normal or Charged Attacks, she will generate 1 Scent, and her Normal and Charged Attack DMG will be converted into <b><span style=\"color: #99FF88FF;\">Dendro DMG</span></b> that cannot be overridden, and the DMG dealt will be increased by 300% of Emilie's ATK.<br><br>The Abiding Fragrance effect will be removed after 4 Scents are created this way or after its duration expires. Abiding Fragrance can be triggered once every 12s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "escoffier": {
     "skills": [
@@ -2527,7 +2527,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Cooking Mek: Cold Storage Mode</span></b> is enhanced:<br>· When your party's active character's Normal, Charged, or Plunging Attacks hit opponents, Cooking Mek: Cold Storage Mode will fire off another Special-Grade Frosty Parfait, dealing 500% of Escoffier's ATK as <b><span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span></b>. This DMG is considered Elemental Skill DMG.<br>This effect can be triggered once every 0.5s, and this effect can be triggered 6 times within the duration of one Cooking Mek: Cold Storage Mode."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Off-the-Cuff Cookery Mode",
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Cooking Mek: Off-the-Cuff Cookery Mode</span></b></br>· Places the Cooking Mek on the field. The Cooking Mek can absorb elemental attacks. When the absorbed elemental energy hits a certain limit, Escoffier can convert the ingredients placed within it into wonderful food.</br>· Escoffier needs time to purchase new ingredients, so she can only make a certain number of dishes like this each week. The number of dishes Escoffier can make resets every Monday at 4:00 AM."
@@ -2630,7 +2630,7 @@
         "descHtml": "Lightfall Swords created by <b><span style=\"color: #FFD780FF;\">Glacial Illumination</span></b> start with 5 stacks of energy. Normal Attacks, Elemental Skills, and Elemental Bursts have a 50% chance to grant the Lightfall Sword an additional stack of energy."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "faruzan": {
     "skills": [
@@ -2713,7 +2713,7 @@
         "descHtml": "Characters affected by <b><span style=\"color: #FFD780FF;\">The Wind's Secret Ways</span></b>' Prayerful Wind's Benefit have 40% increased CRIT DMG when they deal <b><span style=\"color: #80FFD7FF;\">Anemo DMG</span></b>. When the active character deals DMG while affected by Prayerful Wind's Benefit, they will apply Pressurized Collapse to the opponent damaged. This effect can be triggered once every 3s. This CD is shared between all party members."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "fischl": {
     "skills": [
@@ -2796,7 +2796,7 @@
         "descHtml": "Extends the duration of Oz's presence on the field by 2s. Additionally, Oz performs coordinated attacks with your active character when present, dealing 30% of Fischl's ATK as <b><span style=\"color: #FFACFFFF;\">Electro DMG</span></b>.<br>After Oz performs a coordinated attack, the increased ATK and Elemental Mastery effects of <b><span style=\"color: #FFD780FF;\">Witch's Eve Rite: Phantasmal Nocturne</span></b> are further increased by 100% for 10s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "flins": {
     "skills": [
@@ -2890,7 +2890,7 @@
         "descHtml": "The DMG dealt to opponents by Flins's Lunar-Charged reactions is <b><span style=\"color: #FFD780FF;\">elevated</span></b> by 35%.<br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: All nearby party members' Lunar-Charged DMG is <b><span style=\"color: #FFD780FF;\">elevated</span></b> by 10%."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Thunderous Symphony",
         "descHtml": "Consume less Elemental Energy to unleash a special Elemental Burst. Flins deals a single instance of <b><span style=\"color: #FFACFFFF;\">AoE Electro DMG</span></b>. This DMG is considered Lunar-Charged DMG.</br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: If there are thunderclouds nearby, Flins will deal 1 additional instance of <b><span style=\"color: #FFACFFFF;\">AoE Electro DMG</span></b>. This DMG is considered Lunar-Charged DMG."
@@ -2986,7 +2986,7 @@
         "descHtml": "After Freminet triggers Frozen, Shatter, or Superconduct against opponents, his CRIT DMG will be increased by 12% for 6s. Max 3 stacks. This can be triggered once every 0.3s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "furina": {
     "skills": [
@@ -3076,7 +3076,7 @@
         "descHtml": "When using <b><span style=\"color: #FFD780FF;\">Salon Solitaire</span></b>, Furina gains \"Center of Attention\" for 10s.<br>Throughout the duration, Furina's Normal Attacks, Charged Attacks, and Plunging Attacks are converted into <b><span style=\"color: #80C0FFFF;\">Hydro DMG</span></b> which cannot be overridden by any other elemental infusion. DMG is also increased by an amount equivalent to 18% of Furina's max HP.<br>Throughout the duration, Furina's Normal Attacks (not including Arkhe: Seats Sacred and Secular Attacks), Charged Attacks, and the impact of Plunging Attacks will cause different effects up to every 0.1s after hitting opponents depending on her current Arkhe alignment:<br><br>Arkhe: Ousia<br>Every 1s, all nearby characters in the party will be healed by 4% of Furina's max HP, for a duration of 2.9s. Triggering this effect again will extend its duration.<br>Arkhe: Pneuma<br>This Normal Attack (not including Arkhe: Seats Sacred and Secular Attacks), Charged Attack, or Plunging Attack ground impact DMG will be further increased by an amount equivalent to 25% of Furina's max HP. When any of the attacks mentioned previously hit an opponent, all nearby characters in the party will consume 1% of their current HP.<br><br>During the duration of each instance of \"Center of Attention,\" the above effects can be triggered up to 6 times. \"Center of Attention\" will end when its effects have triggered 6 times or when the duration expires."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "gaming": {
     "skills": [
@@ -3157,7 +3157,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Bestial Ascent</span></b>'s Plunging Attack: Charmed Cloudstrider CRIT Rate increased by 20% and CRIT DMG increased by 40%, and its attack radius will be increased."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ganyu": {
     "skills": [
@@ -3240,7 +3240,7 @@
         "descHtml": "Using <b><span style=\"color: #FFD780FF;\">Trail of the Qilin</span></b> causes the next Frostflake Arrow shot within 30s to not require charging."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "gorou": {
     "skills": [
@@ -3321,7 +3321,7 @@
         "descHtml": "For 12s after using <b><span style=\"color: #FFD780FF;\">Inuzaka All-Round Defense</span></b> or <b><span style=\"color: #FFD780FF;\">Juuga: Forward Unto Victory</span></b>, increases the CRIT DMG of all nearby party members' <b><span style=\"color: #FFE699FF;\">Geo DMG</span></b> based on the buff level of the skill's field at the time of use:<br>· \"Standing Firm\": +10%<br>· \"Impregnable\": +20%<br>· \"Crunch\": +40%<br><br>This effect cannot stack and will take reference from the last instance of the effect that is triggered."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "hu_tao": {
     "skills": [
@@ -3406,7 +3406,7 @@
         "descHtml": "Triggers when Hu Tao's HP drops below 25%, or when she suffers a lethal strike:<br>Hu Tao will not fall as a result of the DMG sustained. Additionally, for the next 10s, her All Elemental and Physical RES is increased by 200%, her CRIT Rate is increased by 100%, and her resistance to interruption is greatly increased.<br>This effect triggers automatically when Hu Tao has 1 HP left.<br>Can only occur once every 60s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "iansan": {
     "skills": [
@@ -3492,7 +3492,7 @@
         "descHtml": "The Kinetic Energy Scale's duration is increased by 3s.<br>Additionally, when Iansan triggers Nightsoul point restoration, if there is any overflow, she will gain the Extreme Force effect, which increases the DMG dealt by your current active character by 25% for 3s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ifa": {
     "skills": [
@@ -3574,7 +3574,7 @@
         "descHtml": "When Ifa uses the Hold version of his <b><span style=\"color: #FFD780FF;\">Supporting Fire</span></b>, there is a 50% chance that he will fire an additional Tonicshot that deals 120% of Ifa's ATK as Anemo DMG. This DMG is considered Normal Attack DMG.<br>Additionally, when he is not in combat, Ifa will consume 20% less Nightsoul points and Phlogiston in his Nightsoul's Blessing state."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Nightsoul's Blessing",
         "descHtml": "Continuously consumes Nightsoul points. This state will end when Ifa runs out of Nightsoul points or if he uses this skill again. His Nightsoul's Blessing state has the following properties:</br>· Hovers with Cacucu's help, increasing Ifa's Movement SPD and interruption resistance. In this state, Ifa will continuously consume Nightsoul points to maintain this hovering state. If he sprints or accelerates, he will consume additional points.</br>· When he uses Normal Attacks, he will use different kinds of Supporting Fire depending on whether you Tap or Hold."
@@ -3677,7 +3677,7 @@
         "descHtml": "Enhances the Lightkeeper's Oath effect of the Passive Talent <b><span style=\"color: #FFD780FF;\">Torchforger's Covenant</span></b>: For <b><span style=\"color: #FFE699FF;\">Geo DMG</span></b> dealt to opponents, CRIT Rate is increased by 10%, CRIT DMG is increased by 30%.<br><br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam:</span></b><br>When characters are affected by Lightkeeper's Oath, Elemental Mastery is increased by 80.<br>Requires the Passive Talent <b><span style=\"color: #FFD780FF;\">Torchforger's Covenant</span></b>."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Nightingale's Song",
         "descHtml": "The effect gained after Illuga unleashes his Elemental Burst <b><span style=\"color: #FFD780FF;\">Shadowless Reflection</span></b>. It can increase the <b><span style=\"color: #FFE699FF;\">Geo DMG</span></b> inflicted by current active characters."
@@ -3766,7 +3766,7 @@
         "descHtml": "When Ineffa is affected by the Carrier Flow Composite effect, she will deal <b><span style=\"color: #FFACFFFF;\">AoE Electro DMG</span></b> equal to 135% of her ATK to opponents in the current active character's vicinity after nearby thunderclouds release bursts of lightning at opponents. This DMG is considered Lunar-Charged DMG. The aforementioned effect can trigger once every 3.5s."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Birgitta",
         "descHtml": "Ineffa's assistant and companion in battle, she can be summoned to the battlefield via Elemental Skill or Elemental Burst.</br>If there are opponents nearby, Birgitta will quickly move close to an opponent and unleash Discharge attacks every 2s, dealing <b><span style=\"color: #FFACFFFF;\">AoE Electro DMG</span></b>.</br>Only one Birgitta that has been summoned by Ineffa herself can exist at any one time.</br></br>Additionally, in Nod-Krai, it seems you'll be able to change Birgitta's appearance through certain means..."
@@ -3858,7 +3858,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: After the <b><span style=\"color: #FFD780FF;\">Purr-loined Treasure Flask</span></b> from the Elemental Skill <b><span style=\"color: #FFD780FF;\">Savvy Strategy: Splitting the Spoils</span></b> is full, nearby Moonsign characters in your party have their CRIT Rate increased by 5% and CRIT DMG increased by 40% for 20s."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Purr-loined Treasure Flask",
         "descHtml": "A small elemental vessel that Jahoda retrieves after casting her Elemental Skill <b><span style=\"color: #FFD780FF;\">Savvy Strategy: Splitting the Spoils</span></b>.</br>While Jahoda is in the Shadow Pursuit state, if nearby opponents are affected by <b><span style=\"color: #FF9999FF;\">Pyro</span></b>, <b><span style=\"color: #80C0FFFF;\">Hydro</span></b>, <b><span style=\"color: #FFACFFFF;\">Electro</span></b>, or <b><span style=\"color: #99FFFFFF;\">Cryo</span></b>, the Purr-loined Treasure Flask will convert to that element and begin filling up. The order of priority that determines which element will be converted to is: <b><span style=\"color: #FF9999FF;\">Pyro</span></b>, <b><span style=\"color: #80C0FFFF;\">Hydro</span></b>, <b><span style=\"color: #FFACFFFF;\">Electro</span></b>, then <b><span style=\"color: #99FFFFFF;\">Cryo</span></b>. After each use of her Elemental Skill, the Purr-loined Treasure Flask can undergo one such conversion.</br>When the Purr-loined Treasure Flask is full, Jahoda immediately drains it, exiting the Shadow Pursuit state and dealing a single instance of <b><span style=\"color: #80FFD7FF;\">Anemo DMG</span></b> to nearby opponents.</br>Each time the Elemental Skill is cast, Jahoda takes out a brand-new Purr-loined Treasure Flask.</br></br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: When the <b><span style=\"color: #FFD780FF;\">Purr-loined Treasure Flask</span></b> becomes full, Jahoda will not immediately discharge it. Instead, for a short duration, she steadily consumes the stored element inside and periodically fires <b><span style=\"color: #FFD780FF;\">Fluffy Meowballs</span></b> at nearby opponents, dealing DMG of the corresponding element stored in the <b><span style=\"color: #FFD780FF;\">Purr-loined Treasure Flask</span></b>."
@@ -3953,7 +3953,7 @@
         "descHtml": "Incoming DMG is decreased by 35% within the Field created by <b><span style=\"color: #FFD780FF;\">Dandelion Breeze</span></b>. Upon leaving the Dandelion Field, this effect lasts for 3 attacks or 10s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kachina": {
     "skills": [
@@ -4036,7 +4036,7 @@
         "descHtml": "When your active character's Shield is replaced or destroyed for any reason, Kachina will deal 200% of her DEF as <b><span style=\"color: #FFE699FF;\">AoE Geo DMG</span></b>. This effect can be triggered once every 5s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaedehara_kazuha": {
     "skills": [
@@ -4118,7 +4118,7 @@
         "descHtml": "After using <b><span style=\"color: #FFD780FF;\">Chihayaburu</span></b> or <b><span style=\"color: #FFD780FF;\">Kazuha Slash</span></b>, Kaedehara Kazuha gains an <b><span style=\"color: #80FFD7FF;\">Anemo Infusion</span></b> for 5s. Additionally, each point of Elemental Mastery will increase the DMG dealt by Kaedehara Kazuha's Normal, Charged, and Plunging Attacks by 0.2%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaeya": {
     "skills": [
@@ -4196,7 +4196,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Glacial Waltz</span></b> will generate 1 additional icicle, and will regenerate 15 Energy when cast."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kamisato_ayaka": {
     "skills": [
@@ -4279,7 +4279,7 @@
         "descHtml": "Kamisato Ayaka gains Usurahi Butou every 10s, increasing her Charged Attack DMG by 298%. This buff will be cleared 0.5s after Ayaka's Charged ATK hits an opponent, after which the timer for this ability will restart."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kamisato_ayato": {
     "skills": [
@@ -4364,7 +4364,7 @@
         "descHtml": "After using <b><span style=\"color: #FFD780FF;\">Kamisato Art: Kyouka</span></b>, Ayato's next Shunsuiken attack will create 2 extra Shunsuiken strikes when they hit opponents, each one dealing 450% of Ayato's ATK as DMG.<br>Both these Shunsuiken attacks will not be affected by Namisen."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kaveh": {
     "skills": [
@@ -4444,7 +4444,7 @@
         "descHtml": "When Kaveh's Normal, Charged, or Plunging Attacks hit opponents during <b><span style=\"color: #FFD780FF;\">Painted Dome</span></b>, they will unleash Pairidaeza's Light upon the opponent's position, dealing 61.8% of Kaveh's ATK as <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> and causing all Dendro Cores within that AoE to burst. This effect can be triggered once every 3s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "keqing": {
     "skills": [
@@ -4525,7 +4525,7 @@
         "descHtml": "When initiating a Normal Attack, a Charged Attack, Elemental Skill or Elemental Burst, Keqing gains a 6% <b><span style=\"color: #FFACFFFF;\">Electro DMG Bonus</span></b> for 8s.<br>Effects triggered by Normal Attacks, Charged Attacks, Elemental Skills and Elemental Bursts are considered independent entities."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kinich": {
     "skills": [
@@ -4609,7 +4609,7 @@
         "descHtml": "After Scalespiker Cannon hits an opponent, it will bounce between opponents once, dealing 700% of Kinich's ATK as <b><span style=\"color: #99FF88FF;\">Dendro DMG</span></b>.<br>If this Scalespiker Cannon triggers the buffs that Ascension Talent \"Flame Spirit Pact\" or the Constellation \"Tiger Beetle's Palm\" grant to the Cannon, the bouncing attack will also obtain the relevant buffs."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kirara": {
     "skills": [
@@ -4693,7 +4693,7 @@
         "descHtml": "All nearby party members gain a 12% All Elemental DMG Bonus for 15s after Kirara uses her Elemental Skill or Burst."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "klee": {
     "skills": [
@@ -4775,7 +4775,7 @@
         "descHtml": "While under the effects of <b><span style=\"color: #FFD780FF;\">Sparks 'n' Splash</span></b>, Klee will regenerate 3 Energy for all members of the party (excluding Klee) every 3s.<br>For 25s after <b><span style=\"color: #FFD780FF;\">Sparks 'n' Splash</span></b> is used, all other party members will gain a 10% <b><span style=\"color: #FF9999FF;\">Pyro DMG Bonus</span></b>, and Klee will gain a 50% <b><span style=\"color: #FF9999FF;\">Pyro DMG Bonus</span></b>.<br><br><b><span style=\"color: #FFD780FF;\">Hexerei: Secret Rite</span></b><br>· When Klee uses an <b><span style=\"color: #FFD780FF;\">Explosive Spark</span></b>, there is a 50% chance it will not be consumed. Additionally, while <b><span style=\"color: #FFD780FF;\">Sparks 'n' Splash</span></b> is active, Klee's Normal Attacks have a 40% chance on the first and second hits to consume an Explosive Spark, dealing an additional attack equivalent to Boom-Boom Strike to her opponent(s)."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kujou_sara": {
     "skills": [
@@ -4855,7 +4855,7 @@
         "descHtml": "The <b><span style=\"color: #FFACFFFF;\">Electro DMG</span></b> of characters who have had their ATK increased by Tengu Juurai has its CRIT DMG increased by 60%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "kuki_shinobu": {
     "skills": [
@@ -4937,7 +4937,7 @@
         "descHtml": "When Kuki Shinobu takes lethal DMG, this instance of DMG will not take her down. This effect will automatically trigger when her HP reaches 1 and will trigger once every 60s.<br>When Shinobu's HP drops below 25%, she will gain 150 Elemental Mastery for 15s. This effect will trigger once every 60s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lan_yan": {
     "skills": [
@@ -5015,7 +5015,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Swallow-Wisp Pinion Dance</span></b> gains 1 additional charge."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lauma": {
     "skills": [
@@ -5109,7 +5109,7 @@
         "descHtml": "When the <b><span style=\"color: #FFD780FF;\">Frostgrove Sanctuary</span></b> attacks opponents, it will deal 1 additional instance of <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> equal to 185% of Lauma's Elemental Mastery. This DMG is considered Lunar-Bloom DMG. This instance of DMG will not consume any <b><span style=\"color: #FFD780FF;\">Pale Hymn</span></b> stacks and will provide Lauma with 2 stacks of Pale Hymn, as well as refreshing the duration of Pale Hymn stacks gained in this manner.<br>This effect can occur up to 8 times during each Frostgrove Sanctuary. When using the Elemental Skill <b><span style=\"color: #FFD780FF;\">Runo: Dawnless Rest of Karsikko</span></b>, all Pale Hymn stacks gained in this manner will be removed.<br><br>Additionally, when Lauma uses a Normal Attack while she has Pale Hymn stacks, she will consume 1 stack to convert this to deal <b><span style=\"color: #99FF88FF;\">Dendro DMG</span></b> equal to 150% of her Elemental Mastery. This DMG is considered Lunar-Bloom DMG.<br><br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b>: All nearby party members' Lunar-Bloom DMG is <b><span style=\"color: #FFD780FF;\">elevated</span></b> by 25%."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Frostgrove Sanctuary",
         "descHtml": "A magical array that protects the Moonchanters and can be summoned by using the Elemental Skill <b><span style=\"color: #FFD780FF;\">Runo: Dawnless Rest of Karsikko</span></b>.</br>The Frostgrove Sanctuary will follow the active character, dealing a single instance of <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> to opponents within the array every 2s. This DMG is considered Elemental Skill DMG."
@@ -5209,7 +5209,7 @@
         "descHtml": "Shooting Stars from <b><span style=\"color: #FFD780FF;\">Nights of Formal Focus</span></b> deal 40% increased DMG, and Starlight Slugs from <b><span style=\"color: #FFD780FF;\">Dream of the Star-Stream Shaker</span></b> deal 40% increased DMG.<br>Additionally, the interval between the creation of Night Stars via Nights of Formal Focus is decreased by 20%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lisa": {
     "skills": [
@@ -5291,7 +5291,7 @@
         "descHtml": "When Lisa takes the field, she applies 3 stacks of <b><span style=\"color: #FFD780FF;\">Violet Arc</span></b>'s Conductive status onto nearby opponents.<br>This effect can only occur once every 5s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lynette": {
     "skills": [
@@ -5375,7 +5375,7 @@
         "descHtml": "When Lynette uses <b><span style=\"color: #FFD780FF;\">Enigmatic Feint</span></b>'s Enigma Thrust, she will gain an <b><span style=\"color: #80FFD7FF;\">Anemo Infusion</span></b> and 20% <b><span style=\"color: #80FFD7FF;\">Anemo DMG Bonus</span></b> for 6s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "lyney": {
     "skills": [
@@ -5462,7 +5462,7 @@
         "descHtml": "When Lyney fires a <b><span style=\"color: #FFD780FF;\">Prop Arrow</span></b>, he will fire a Pyrotechnic Strike: Reprised that will deal 80% of a Pyrotechnic Strike's DMG. This DMG is considered Charged Attack DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mavuika": {
     "skills": [
@@ -5558,7 +5558,7 @@
         "descHtml": "The All-Fire Armaments from the Elemental Skill <b><span style=\"color: #FFD780FF;\">The Named Moment</span></b> receive all-round improvements:<br>· Ring of Searing Radiance: When the Ring's attacks hit opponents, a Flamestrider will crash into the struck opponent, dealing 200% of ATK as Nightsoul-aligned <b><span style=\"color: #FF9999FF;\">AoE Pyro DMG</span></b>.<br>· Flamestrider: When Mavuika is riding the Flamestrider, she will also summon a Scorching Ring of Searing Radiance to follow her, which will decrease nearby opponents' DEF by 20% and deal 500% of ATK as Nightsoul-aligned <b><span style=\"color: #FF9999FF;\">AoE Pyro DMG</span></b> to nearby opponents once every 3s. Mavuika's terrain-crossing abilities will also be further improved.<br><br>Additionally, when Mavuika is riding her Flamestrider and is not in combat, when her Nightsoul points drop to 5, she will gain 80 Nightsoul points. This effect can trigger once every 15s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mika": {
     "skills": [
@@ -5642,7 +5642,7 @@
         "descHtml": "The maximum number of Detector stacks that <b><span style=\"color: #FFD780FF;\">Starfrost Swirl</span></b>'s Soulwind can gain is increased by 1. You must first unlock the Ascension Talent \"Suppressive Barrage.\".<br>Additionally, active characters affected by Soulwind will deal 60% more Physical CRIT DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mona": {
     "skills": [
@@ -5730,7 +5730,7 @@
         "descHtml": "While Mona is the active character, while she is in the <b><span style=\"color: #FFD780FF;\">Illusory Torrent</span></b> state or there are opponents affected by an Omen nearby, she gains a 60% increase to the DMG of her next Charged Attack per second. A maximum DMG Bonus of 180% can be achieved in this manner. The effect lasts for no more than 8s.<br>Additionally, the DMG Mona's Charged Attacks deal to opponents affected by an Omen will be increased to 200% of the original DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "mualani": {
     "skills": [
@@ -5813,7 +5813,7 @@
         "descHtml": "The DMG increase from the Constellation \"The Leisurely 'Meztli'...\" is no longer limited to being triggered once every Nightsoul's Blessing."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nahida": {
     "skills": [
@@ -5900,7 +5900,7 @@
         "descHtml": "When Nahida hits an opponent affected by <b><span style=\"color: #FFD780FF;\">All Schemes to Know</span></b>'s Seeds of Skandha with Normal or Charged Attacks after unleashing <b><span style=\"color: #FFD780FF;\">Illusory Heart</span></b>, she will use Tri-Karma Purification: Karmic Oblivion on this opponent and all connected opponents, dealing <b><span style=\"color: #99FF88FF;\">Dendro DMG</span></b> based on 200% of Nahida's ATK and 400% of her Elemental Mastery.<br>DMG dealt by Tri-Karma Purification: Karmic Oblivion is considered Elemental Skill DMG and can be triggered once every 0.2s.<br>This effect can last up to 10s and will be removed after Nahida has unleashed 6 instances of Tri-Karma Purification: Karmic Oblivion."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "navia": {
     "skills": [
@@ -5983,7 +5983,7 @@
         "descHtml": "If more than 3 stacks of Crystal Shrapnel are consumed when using <b><span style=\"color: #FFD780FF;\">Ceremonial Crystalshot</span></b>, each stack consumed beyond the first 3 increases the CRIT DMG of that Ceremonial Crystalshot by 45%, and any stacks consumed beyond the first 3 are returned to Navia."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nefer": {
     "skills": [
@@ -6074,7 +6074,7 @@
         "descHtml": "When Nefer unleashes <b><span style=\"color: #FFD780FF;\">Phantasm Performance</span></b>, the second stage of DMG dealt by herself will be converted to deal <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> equal to 85% of her Elemental Mastery. Additionally, when the attacks from Phantasm Performance end, an extra instance of <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> equal to 120% of Nefer's Elemental Mastery will be dealt. All of the aforementioned DMG is considered Lunar-Bloom DMG dealt by Phantasm Performance.<br><br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b><br>Nefer's Lunar-Bloom DMG is <b><span style=\"color: #FFD780FF;\">elevated</span></b> by 15%."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Shadow Dance",
         "descHtml": "After using the Elemental Skill <b><span style=\"color: #FFD780FF;\">Senet Strategy: Dance of a Thousand Nights</span></b>, Nefer will enter this state.</br>While in the Shadow Dance state, if you have at least 1 Verdant Dew, Nefer's Charged Attacks will be replaced with the special Charged Attack Phantasm Performance.</br>Nefer will exit the Shadow Dance state when she unleashes 3 Phantasm Performance(s) or the state's duration ends."
@@ -6181,7 +6181,7 @@
         "descHtml": "When using Charged Attack: Equitable Judgment, Neuvillette can absorb nearby Sourcewater Droplets in an AoE. Each absorbed Droplet will increase the duration of Charged Attack: Equitable Judgment by 1s.<br>Additionally, when Equitable Judgment hits opponents, it will fire off 2 additional currents every 2s, each of which will deal 10% of Neuvillette's Max HP as <b><span style=\"color: #80C0FFFF;\">Hydro DMG</span></b>. DMG dealt this way will count as DMG dealt by Equitable Judgment."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "nilou": {
     "skills": [
@@ -6263,7 +6263,7 @@
         "descHtml": "For every 1,000 points of Max HP, Nilou's CRIT Rate and CRIT DMG will increase by 0.6% and 1.2% respectively.<br>The maximum increase in CRIT Rate and CRIT DMG via this method is 30% and 60% respectively."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ningguang": {
     "skills": [
@@ -6338,7 +6338,7 @@
         "descHtml": "When <b><span style=\"color: #FFD780FF;\">Starshatter</span></b> is used, Ningguang gains 7 Star Jades."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "noelle": {
     "skills": [
@@ -6423,7 +6423,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Sweeping Time</span></b> increases Noelle's ATK by an additional 50% of her DEF.<br>Additionally, every opponent defeated during the skill's duration adds 1s to the duration, up to 10s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "ororon": {
     "skills": [
@@ -6504,7 +6504,7 @@
         "descHtml": "After triggering Hypersense through the Ascension Talent, Nightshade Synesthesia, your current active character's ATK is increased by 10% for 9s. Max 3 stacks, each stack is counted independently.<br>Additionally, when you use the Elemental Burst <b><span style=\"color: #FFD780FF;\">Dark Voices Echo</span></b>, you will trigger one instance of an effect equivalent to Hypersense, dealing 200% of its original DMG.<br>You must first unlock the Ascension Talent \"Nightshade Synesthesia.\""
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "qiqi": {
     "skills": [
@@ -6587,7 +6587,7 @@
         "descHtml": "Using <b><span style=\"color: #FFD780FF;\">Adeptus Art: Preserver of Fortune</span></b> revives all fallen party members nearby and regenerates 50% of their HP.<br>This effect can only occur once every 15 mins."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "raiden_shogun": {
     "skills": [
@@ -6680,7 +6680,7 @@
         "descHtml": "While in the <b><span style=\"color: #FFD780FF;\">Musou Isshin</span></b> state applied by <b><span style=\"color: #FFD780FF;\">Secret Art: Musou Shinsetsu</span></b>, attacks by the Raiden Shogun that are considered part of her Elemental Burst will decrease all nearby party members' (not including the Raiden Shogun herself) Elemental Burst CD by 1s when they hit opponents.<br>This effect can trigger once every 1s and can trigger a total of 5 times during Musou Isshin's duration."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "razor": {
     "skills": [
@@ -6771,7 +6771,7 @@
         "descHtml": "Every 10s, Razor's sword charges up, causing the next Normal Attack to release lightning that deals 100% of Razor's ATK as <b><span style=\"color: #FFACFFFF;\">Electro DMG</span></b>.<br>When Razor is not using <b><span style=\"color: #FFD780FF;\">Lightning Fang</span></b>, lightning strikes on an opponent will grant 3 Electro Sigils for his Elemental Skill <b><span style=\"color: #FFD780FF;\">Claw and Thunder</span></b>.<br>Additionally, when Razor gains Electro Sigils through his Elemental Skill <b><span style=\"color: #FFD780FF;\">Claw and Thunder</span></b>, he will gain 3 Sigils instead.<br>For 15s after consuming Electro Sigils, Razor's CRIT Rate is increased by 10% and CRIT DMG by 50%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "rosaria": {
     "skills": [
@@ -6850,7 +6850,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Rites of Termination</span></b>'s attack decreases opponents' Physical RES by 20% for 10s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sangonomiya_kokomi": {
     "skills": [
@@ -6936,7 +6936,7 @@
         "descHtml": "While donning the Ceremonial Garment created by <b><span style=\"color: #FFD780FF;\">Nereid's Ascension</span></b>, Sangonomiya Kokomi gains a 40% <b><span style=\"color: #80C0FFFF;\">Hydro DMG Bonus</span></b> for 4s when her Normal and Charged Attacks heal, or would heal, any party member with 80% or more HP."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sayu": {
     "skills": [
@@ -7023,7 +7023,7 @@
         "descHtml": "The Muji-Muji Daruma created by Sayu's <b><span style=\"color: #FFD780FF;\">Yoohoo Art: Mujina Flurry</span></b> will now also benefit from her Elemental Mastery. Each point of Sayu's Elemental Mastery will produce the following effects:<br>·Increases the damage dealt by the Muji-Muji Daruma's attacks by 0.2% ATK. A maximum DMG increase of 400% ATK can be gained via this method.<br>·Increases the HP restored by the Muji-Muji Daruma by 3. A maximum of 6,000 additional HP can be restored in this manner."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sethos": {
     "skills": [
@@ -7101,7 +7101,7 @@
         "descHtml": "After <b><span style=\"color: #FFD780FF;\">Shadowpiercing Shot</span></b> strikes an opponent, the Elemental Energy consumed by the Ascension Talent \"Black Kite's Enigma\" will be returned. This effect can be triggered up to once every 15s. You must first unlock the Ascension Talent \"Black Kite's Enigma.\""
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "shenhe": {
     "skills": [
@@ -7186,7 +7186,7 @@
         "descHtml": "When characters trigger <b><span style=\"color: #FFD780FF;\">Icy Quill</span></b>'s effects using Normal and Charged Attack DMG, it does not count toward the Trigger Quota."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "shikanoin_heizou": {
     "skills": [
@@ -7267,7 +7267,7 @@
         "descHtml": "Each Declension stack will increase the CRIT Rate of the <b><span style=\"color: #FFD780FF;\">Heartstopper Strike</span></b> unleashed by 4%. When Heizou possesses Conviction, this Heartstopper Strike's CRIT DMG is increased by 32%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "sigewinne": {
     "skills": [
@@ -7348,7 +7348,7 @@
         "descHtml": "When Sigewinne performs healing, she will increase the CRIT Rate and CRIT DMG of her <b><span style=\"color: #FFD780FF;\">Super Saturated Syringing</span></b> based on her Max HP. Every 1,000 Max HP she has will increase CRIT Rate by 0.4% and CRIT DMG by 2.2% for 15s. The maximum increase achievable this way is 20% CRIT Rate and 110% CRIT DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "skirk": {
     "skills": [
@@ -7437,7 +7437,7 @@
         "descHtml": "Each Void Rift Skirk absorbs via the effects of the Ascension Talent <b><span style=\"color: #FFD780FF;\">Reason Beyond Reason</span></b> will grant her 1 Havoc: Sever stack. She can consume such stacks to initiate coordinated attacks and decrease the DMG she takes while in <b><span style=\"color: #FFD780FF;\">Seven-Phase Flash</span></b> mode. These stacks last for 15s, and each stack's duration is counted independently (max 3 stacks).<br>You must first unlock the Ascension Talent \"Reason Beyond Reason.\"<br><br><b><span style=\"color: #FFD780FF;\">Havoc: Sever</span></b><br>· When Skirk uses the Elemental Burst <b><span style=\"color: #FFD780FF;\">Havoc: Ruin</span></b>, she will consume all <b><span style=\"color: #FFD780FF;\">Havoc: Sever</span></b> stacks to initiate a coordinated attack in which each <b><span style=\"color: #FFD780FF;\">Havoc: Sever</span></b> stack will deal 750% of Skirk's ATK as <b><span style=\"color: #99FFFFFF;\">Cryo DMG</span></b>. This DMG is considered Elemental Burst DMG.<br>· When she uses Normal Attacks while in Seven-Phase Flash mode, 1 <b><span style=\"color: #FFD780FF;\">Havoc: Sever</span></b> stack will be consumed when her third or fifth sequenced attacks hit an opponent to launch 3 coordinated attacks. Each coordinated attack deals 180% of Skirk's ATK as <b><span style=\"color: #99FFFFFF;\">Cryo DMG</span></b>. This damage is considered Normal Attack DMG.<br>· When Skirk takes DMG while in Seven-Phase Flash mode, 1 <b><span style=\"color: #FFD780FF;\">Havoc: Sever</span></b> stack will be consumed to decrease this DMG instance by 80% and attack nearby opponents 3 times, with each attack dealing 180% of Skirk's ATK as <b><span style=\"color: #99FFFFFF;\">Cryo DMG</span></b>. This DMG is considered Charged Attack DMG."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Serpent's Subtlety",
         "descHtml": "Skirk can consume Serpent's Subtlety to maintain her Seven-Phase Flash mode or to use her Elemental Burst, Havoc: Ruin.</br></br>Skirk can gain Serpent's Subtlety points in the following ways:</br>· After using her Elemental Skill, Havoc: Warp.</br>· After triggering the effect of her Ascension Talent, Reason Beyond Reason, and absorbing Void Rifts.</br></br>When Skirk leaves the field while in Seven-Phase Flash mode or when Seven-Phase Flash ends, her Serpent's Subtlety points will be removed."
@@ -7536,7 +7536,7 @@
         "descHtml": "If <b><span style=\"color: #FFD780FF;\">Forbidden Creation - Isomer 75 / Type II</span></b> triggers an Elemental Absorption, all party members gain a 20% Elemental DMG Bonus for the corresponding absorbed element during the skill's duration, while nearby Hexerei characters in the party gain an additional 8.57142% Elemental DMG Bonus for the corresponding absorbed element."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "tartaglia": {
     "skills": [
@@ -7631,7 +7631,7 @@
         "descHtml": "When <b><span style=\"color: #FFD780FF;\">Havoc: Obliteration</span></b> is cast in Melee Stance, the CD of <b><span style=\"color: #FFD780FF;\">Foul Legacy: Raging Tide</span></b> is reset.<br>This effect will only take place once Tartaglia returns to his Ranged Stance."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "thoma": {
     "skills": [
@@ -7714,7 +7714,7 @@
         "descHtml": "When a <b><span style=\"color: #FFD780FF;\">Blazing Barrier</span></b> is obtained or refreshed, the DMG dealt by all party members' Normal, Charged, and Plunging Attacks is increased by 15% for 6s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "tighnari": {
     "skills": [
@@ -7795,7 +7795,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Wreath Arrow</span></b>'s charging time is decreased by 0.9s, and will produce 1 additional Clusterbloom Arrow upon hit. This arrow deals 150% of Tighnari's ATK as DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "varesa": {
     "skills": [
@@ -7887,7 +7887,7 @@
         "descHtml": "Varesa restores 30 Energy when she enters Apex Drive.<br>Her Plunging Attacks and Elemental Burst <b><span style=\"color: #FFD780FF;\">Guardian Vent!</span></b> gain 10% CRIT Rate and 100% CRIT DMG.<br>Additionally, when Varesa uses the Hold version of her Elemental Skill <b><span style=\"color: #FFD780FF;\">Riding the Night-Rainbow</span></b>, or Taps her Elemental Skill while in the Sudden Onrush mode, she will restore Nightsoul points up to her maximum."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "varka": {
     "skills": [
@@ -7980,7 +7980,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">Sturm und Drang</span></b> is enhanced:<br>· For a short time after unleashing the special Elemental Skill <b><span style=\"color: #FFD780FF;\">Four Winds' Ascension</span></b>, Tapping on Varka's Elemental Skill or Holding his Normal Attack will not expend any uses of Four Winds' Ascension, and will perform one additional instance of the special Charged Attack, <b><span style=\"color: #FFD780FF;\">Azure Devour</span></b>.<br>· For a short time after performing the special Charged Attack <b><span style=\"color: #FFD780FF;\">Azure Devour</span></b>, tap on Varka's Elemental Skill to unleash an additional instance of <b><span style=\"color: #FFD780FF;\">Four Winds' Ascension</span></b> without expending any uses of Four Winds' Ascension.<br>When triggering an additional special Charged Attack, Azure Devour, or unleashing an additional special Elemental Skill, Four Winds' Ascension, in this manner, the above effect cannot be triggered.<br><br>Additionally, the <b><span style=\"color: #FFD780FF;\">Azure Fang's Oath</span></b> effect in Ascension Talent <b><span style=\"color: #FFD780FF;\">Wind's Vanguard</span></b> is enhanced: Every stack of <b><span style=\"color: #FFD780FF;\">Azure Fang's Oath</span></b> will increase Varka's CRIT DMG by 20%."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Sturm und Drang",
         "descHtml": "Tap to unleash Elemental Skill <b><span style=\"color: #FFD780FF;\">Windbound Execution</span></b> for Varka to switch to this mode.</br>While in this mode, Varka's Normal Attacks deal increased DMG, and he cannot perform Plunging Attacks. When Varka executes Normal or Charged Attacks, his dual-wielded claymores will deal corresponding Elemental DMG based on the Elemental Types of the characters in the party respectively:</br>· DMG dealt by the claymore wielded in his left hand will be converted to <b><span style=\"color: #80FFD7FF;\">Anemo DMG</span></b> that cannot be overridden by other infusions.</br>· When there are <b><span style=\"color: #FF9999FF;\">Pyro</span></b>, <b><span style=\"color: #80C0FFFF;\">Hydro</span></b>, <b><span style=\"color: #FFACFFFF;\">Electro</span></b> or <b><span style=\"color: #99FFFFFF;\">Cryo</span></b> characters in the party, the claymore wielded in his right hand deals corresponding Elemental DMG that cannot be overridden by infusions following the priority order of the aforementioned Elemental Types.</br></br>Additionally, while in this mode, if there are <b><span style=\"color: #FF9999FF;\">Pyro</span></b>, <b><span style=\"color: #80C0FFFF;\">Hydro</span></b>, <b><span style=\"color: #FFACFFFF;\">Electro</span></b> or <b><span style=\"color: #99FFFFFF;\">Cryo</span></b> characters in the party, Varka's Elemental Skill <b><span style=\"color: #FFD780FF;\">Windbound Execution</span></b> will be converted to the special Elemental Skill, <b><span style=\"color: #FFD780FF;\">Four Winds' Ascension</span></b>."
@@ -8076,7 +8076,7 @@
         "descHtml": "Targets who take DMG from <b><span style=\"color: #FFD780FF;\">Wind's Grand Ode</span></b> have their <b><span style=\"color: #80FFD7FF;\">Anemo RES</span></b> decreased by 20%.<br>If an Elemental Absorption occurred, then their RES towards the corresponding Element is also decreased by 20%.<br>Additionally, the DMG Venti deals to these opponents will gain a CRIT DMG Bonus of 100%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "wanderer": {
     "skills": [
@@ -8154,7 +8154,7 @@
         "descHtml": "When the Wanderer actively hits an opponent with Kuugo: Fushoudan while in the <b><span style=\"color: #FFD780FF;\">Windfavored</span></b> state, the following effects will occur:<br>·Deals an additional instance of Kuugo: Fushoudan at the position hit, dealing 40% of the attack's original DMG. This DMG will be considered Normal Attack DMG.<br>·When the Wanderer falls below 40 Kuugoryoku Points, restores 4 Points to him. Kuugoryoku Points can be restored in this manner once every 0.2s. This restoration can occur up to 5 times within one Windfavored duration."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "wriothesley": {
     "skills": [
@@ -8235,7 +8235,7 @@
         "descHtml": "The CRIT Rate of Rebuke: Vaulting Fist will be increased by 10%, and its CRIT DMG by 80%. When unleashed, it will also create an additional icicle that deals 100% of Rebuke: Vaulting Fist's Base DMG as <b><span style=\"color: #99FFFFFF;\">Cryo DMG</span></b>. DMG dealt this way is regarded as Charged Attack DMG.<br>You must first unlock the Ascension Talent \"There Shall Be a Plea for Justice.\""
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xiangling": {
     "skills": [
@@ -8316,7 +8316,7 @@
         "descHtml": "For the duration of <b><span style=\"color: #FFD780FF;\">Pyronado</span></b>, all party members receive a 15% <b><span style=\"color: #FF9999FF;\">Pyro DMG Bonus</span></b>."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xianyun": {
     "skills": [
@@ -8397,7 +8397,7 @@
         "descHtml": "After Xianyun uses 1/2/3 Skyladders within one Cloud Transmogrification caused by <b><span style=\"color: #FFD780FF;\">White Clouds at Dawn</span></b>, the CRIT DMG of a Driftcloud Wave created in this instance of Cloud Transmogrification will be increased by 15%/35%/70%.<br>Within 16s after Xianyun has used <b><span style=\"color: #FFD780FF;\">Stars Gather at Dusk</span></b>, White Clouds at Dawn will not enter CD. This effect will be canceled once she has used White Clouds at Dawn 8 times."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xiao": {
     "skills": [
@@ -8477,7 +8477,7 @@
         "descHtml": "While under the effects of <b><span style=\"color: #FFD780FF;\">Bane of All Evil</span></b>, hitting at least 2 opponents with Xiao's Plunging Attack will immediately grant him 1 charge of <b><span style=\"color: #FFD780FF;\">Lemniscatic Wind Cycling</span></b>, and for the next 1s, he may use Lemniscatic Wind Cycling while ignoring its CD."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xilonen": {
     "skills": [
@@ -8567,7 +8567,7 @@
         "descHtml": "When Xilonen is in the Nightsoul's Blessing state, when she sprints, leaps, or uses Normal or Plunging Attacks, she will gain Imperishable Night's Blessing, ignoring the limitations of her Nightsoul's Blessing state and increasing the DMG dealt by her Normal and Plunging Attacks for 5s.<br>During this time:<br>·Her Nightsoul's Blessing time limit countdown will be paused. Xilonen's Nightsoul points, Phlogiston, and Stamina will not decrease, and when her Nightsoul points reach the maximum, her Nightsoul's Blessing state will not end either.<br>·Xilonen deals 300% of her DEF as increased Normal and Plunging Attack DMG while in the Nightsoul's Blessing state.<br>·She heals nearby party members for 120% of her DEF every 1.5s.<br>She can gain 1 Imperishable Night's Blessing once every 15s."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xingqiu": {
     "skills": [
@@ -8647,7 +8647,7 @@
         "descHtml": "Activating 2 of <b><span style=\"color: #FFD780FF;\">Guhua Sword: Raincutter</span></b>'s sword rain attacks greatly enhances the third sword rain attack. On hit, the third sword rain attack also regenerates 3 Energy for Xingqiu."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "xinyan": {
     "skills": [
@@ -8732,7 +8732,7 @@
         "descHtml": "Decreases the Stamina Consumption of Xinyan's Charged Attacks by 30%. Additionally, Xinyan's Charged Attacks gain an ATK Bonus equal to 50% of her DEF."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yae_miko": {
     "skills": [
@@ -8812,7 +8812,7 @@
         "descHtml": "<b><span style=\"color: #FFD780FF;\">The Sesshou Sakura's</span></b> attacks will ignore 60% of the opponents' DEF."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yanfei": {
     "skills": [
@@ -8892,7 +8892,7 @@
         "descHtml": "Increases the maximum number of Scarlet Seals by 1."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yaoyao": {
     "skills": [
@@ -8975,7 +8975,7 @@
         "descHtml": "For every 2 White Jade Radishes <b><span style=\"color: #FFD780FF;\">Yuegui: Throwing Mode</span></b> throws out, the next throw will also release a Mega Radish that will have a larger AoE than the standard White Jade Radish and have the following effects upon exploding:<br>·Deals <b><span style=\"color: #99FF88FF;\">AoE Dendro DMG</span></b> based on 75% of Yaoyao's ATK.<br>·Restores HP for the active character based on 7.5% of Yaoyao's Max HP.<br><br>Every Yuegui: Throwing Mode can throw out a maximum of 2 Mega Radishes."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yelan": {
     "skills": [
@@ -9055,7 +9055,7 @@
         "descHtml": "After using <b><span style=\"color: #FFD780FF;\">Depth-Clarion Dice</span></b>, Yelan will enter the Mastermind state.<br>In this state, all of Yelan's Normal Attacks will be special Breakthrough Barbs. These Breakthrough Barbs will have similar abilities to normal ones and the DMG dealt will be considered Charged Attack DMG, dealing 156% of a normal Breakthrough Barb's DMG.<br><br>The Mastermind state lasts 20s and will be cleared after Yelan fires 5 arrows."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yoimiya": {
     "skills": [
@@ -9136,7 +9136,7 @@
         "descHtml": "During <b><span style=\"color: #FFD780FF;\">Niwabi Fire-Dance</span></b>, Yoimiya's Normal Attacks have a 50% chance of firing an extra Blazing Arrow that deals 60% of its original DMG. This DMG is considered Normal Attack DMG."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yumemizuki_mizuki": {
     "skills": [
@@ -9217,7 +9217,7 @@
         "descHtml": "While Yumemizuki Mizuki is in the Dreamdrifter state, Swirl DMG dealt by nearby party members can score CRIT Hits, with CRIT Rate fixed at 30%, and CRIT DMG fixed at 100%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "yun_jin": {
     "skills": [
@@ -9300,7 +9300,7 @@
         "descHtml": "Characters under the effects of the <b><span style=\"color: #FFD780FF;\">Flying Cloud Flag Formation</span></b> have their Normal ATK SPD increased by 12%."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "zhongli": {
     "skills": [
@@ -9384,7 +9384,7 @@
         "descHtml": "When the Jade Shield takes DMG, 40% of that incoming DMG is converted to HP for the current character.<br>A single instance of regeneration cannot exceed 8% of that character's Max HP."
       }
     ],
-    "dictionary": null
+    "glossary": null
   },
   "zibai": {
     "skills": [
@@ -9473,7 +9473,7 @@
         "descHtml": "While Zibai is in the <b><span style=\"color: #FFD780FF;\">Lunar Phase Shift</span></b> mode, her <b><span style=\"color: #FFD780FF;\">Phase Shift Radiance</span></b> gain rate is increased by 50%.<br>Additionally, <b><span style=\"color: #FFD780FF;\">Spirit Steed's Stride</span></b> will change such that it will consume all Phase Shift Radiance. This will <b><span style=\"color: #FFD780FF;\">elevate</span></b> the DMG dealt by this instance of Spirit Steed's Stride and the Lunar-Crystallize Reaction DMG dealt by Zibai within the next 3s by 1.6% for every point consumed above 70. This effect cannot stack."
       }
     ],
-    "dictionary": [
+    "glossary": [
       {
         "name": "Lunar Phase Shift",
         "descHtml": "After using the Elemental Skill <b><span style=\"color: #FFD780FF;\">Heaven and Earth Made Manifest</span></b>, Zibai will change to this mode. This mode lasts at most 15s and has the following properties:</br>· Normal and Charged Attacks are converted into <b><span style=\"color: #FFE699FF;\">Geo DMG</span></b> that cannot be overridden by other infusions.</br>· The Elemental Skill <b><span style=\"color: #FFD780FF;\">Heaven and Earth Made Manifest</span></b> will also be converted to the Elemental Skill <b><span style=\"color: #FFD780FF;\">Spirit Steed's Stride</span></b>: When Zibai has at least 70 <b><span style=\"color: #FFD780FF;\">Phase Shift Radiance</span></b>, she can consume 70 Phase Shift Radiance to unleash Spirit Steed's Stride and cause two instances of <b><span style=\"color: #FFE699FF;\">Geo DMG</span></b>. The second instance will be considered Lunar-Crystallize Reaction DMG.</br></br>A maximum of 100 <b><span style=\"color: #FFD780FF;\">Phase Shift Radiance</span></b> points can be accrued, and Zibai can accumulate them in the following ways:</br>· She gains 10 points every second she is in the <b><span style=\"color: #FFD780FF;\">Lunar Phase Shift</span></b> mode.</br>· She gains 5 points when hitting an opponent with her Normal Attacks. She can gain Phase Shift Radiance points in this way once every 0.5s.</br></br><b><span style=\"color: #FFD780FF;\">Moonsign: Ascendant Gleam</span></b></br>When nearby party members trigger Lunar-Crystallize, they will also accrue 35 <b><span style=\"color: #FFD780FF;\">Phase Shift Radiance</span></b> points for Zibai. Points can be gained this way once every 4s. Unleashing the special elemental skill <b><span style=\"color: #FFD780FF;\">Spirit Steed's Stride</span></b> will reset the CD for <b><span style=\"color: #FFD780FF;\">Phase Shift Radiance</span></b> gained this way.</br></br>Zibai will leave this mode after unleashing <b><span style=\"color: #FFD780FF;\">Spirit Steed's Stride</span></b> 4 times, or when the skill's duration ends."

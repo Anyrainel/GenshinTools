@@ -32,6 +32,7 @@ import { weaponTypes } from "@/data/types";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -103,8 +104,12 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const [selectedSecondaryStats, setSelectedSecondaryStats] = useState<
     MainStat[]
   >(sortedWeaponSecondaryStats);
+  const [ownedOnly, setOwnedOnly] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
+
+  // Ownership check callback
+  const isOwned = useOwnershipStore((s) => s.isOwned);
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
@@ -304,8 +309,26 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
           </>
         ),
       },
+      {
+        key: "ownership",
+        content: (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="owned-only"
+              checked={ownedOnly}
+              onCheckedChange={(checked) => setOwnedOnly(checked === true)}
+            />
+            <Label
+              htmlFor="owned-only"
+              className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+            >
+              {t.ui("buttons.ownedOnly")}
+            </Label>
+          </div>
+        ),
+      },
     ],
-    [showRarity, selectedSecondaryStats, t]
+    [showRarity, selectedSecondaryStats, ownedOnly, t]
   );
 
   return (
@@ -365,6 +388,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
             if (!showRarity[weapon.rarity]) return false;
             if (!selectedSecondaryStats.includes(weapon.secondaryStat))
               return false;
+            if (ownedOnly && !isOwned("weapon", weapon.id)) return false;
             return true;
           }}
           tableRef={tableRef}
