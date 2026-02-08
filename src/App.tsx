@@ -11,7 +11,6 @@ import ArtifactBuildsPage from "./pages/ArtifactBuilds";
 import Home from "./pages/Home";
 import TeamBuilderPage from "./pages/TeamBuilder";
 import TierListPage from "./pages/TierList";
-import WeaponTierListPage from "./pages/WeaponTierList";
 
 function App() {
   const location = useLocation();
@@ -35,7 +34,6 @@ function App() {
             <Route path="/account-data" element={<AccountDataPage />} />
             <Route path="/artifact-filter" element={<ArtifactBuildsPage />} />
             <Route path="/tier-list" element={<TierListPage />} />
-            <Route path="/weapon-tier-list" element={<WeaponTierListPage />} />
             <Route path="/archive" element={<ArchivePage />} />
             <Route path="/team-builder" element={<TeamBuilderPage />} />
           </Routes>

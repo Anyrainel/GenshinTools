@@ -53,20 +53,24 @@ function createSortComparator(
     if (filters.tierSort !== "off" && tierAssignments) {
       const tierA = tierAssignments[a.id];
       const tierB = tierAssignments[b.id];
-      // Characters without tier go to the end
       const tierIndexA = tierA ? tiers.indexOf(tierA.tier) : tiers.length;
       const tierIndexB = tierB ? tiers.indexOf(tierB.tier) : tiers.length;
       if (tierIndexA !== tierIndexB) {
         return filters.tierSort === "asc"
-          ? tierIndexB - tierIndexA // Pool -> S
-          : tierIndexA - tierIndexB; // S -> Pool
+          ? tierIndexB - tierIndexA
+          : tierIndexA - tierIndexB;
       }
     }
 
     // Release date sort (secondary or standalone)
+    // null releaseDate = unknown/unreleased, sorted as newest
     if (filters.releaseSort !== "off") {
-      const dateA = new Date(a.releaseDate).getTime();
-      const dateB = new Date(b.releaseDate).getTime();
+      const dateA = a.releaseDate
+        ? new Date(a.releaseDate).getTime()
+        : Number.POSITIVE_INFINITY;
+      const dateB = b.releaseDate
+        ? new Date(b.releaseDate).getTime()
+        : Number.POSITIVE_INFINITY;
       return filters.releaseSort === "asc" ? dateA - dateB : dateB - dateA;
     }
 
@@ -97,13 +101,11 @@ export function filterAndSortCharacterData(
   filters: CharacterFilters,
   tierAssignments?: TierAssignment
 ): CharacterData[] {
-  // Filter based on static character metadata
   const filtered = characterData.filter((cd) => {
     const character = charactersById[cd.key];
     return character && matchesFilters(character, filters);
   });
 
-  // Sort using Character metadata for comparison
   const comparator = createSortComparator(filters, tierAssignments);
   return [...filtered].sort((a, b) => {
     const charA = charactersById[a.key];

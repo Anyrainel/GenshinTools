@@ -39,7 +39,7 @@ interface LanguageContextType {
     weaponName: (id: string) => string;
     weaponEffect: (id: string) => string;
     slot: (key: string) => string;
-    formatDate: (dateString: string) => string;
+    formatDate: (dateString: string | null) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
     characterKit: (id: string) => CharacterKit | null;
@@ -288,7 +288,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   const formatReleaseDate = useCallback(
-    (dateString: string): string => {
+    (dateString: string | null): string => {
+      if (!dateString) return "???";
       const date = new Date(dateString);
       const year = date.getFullYear();
       const month = date.getMonth() + 1; // getMonth() returns 0-11

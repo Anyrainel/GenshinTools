@@ -1173,6 +1173,16 @@ export const i18nGameData = {
         "zh": "生命值上限提高10%/12%/14%/16%/18%。装备者触发月曜反应或对敌人造成月曜反应伤害时，将为装备者恢复14/15/16/17/18点元素能量，并获得持续12秒的「丰饶海的神酒」效果：生命值上限进一步提高14%/16%/18%/20%/22%，月曜反应伤害的暴击伤害提升60%/80%/100%/120%/140%。恢复元素能量效果每18秒至多触发一次，装备者处于队伍后台时，依然能触发上述效果。"
       }
     },
+    "lightbearing_moonshard": {
+      "name": {
+        "en": "Lightbearing Moonshard",
+        "zh": "朏魄含光"
+      },
+      "effect": {
+        "en": "Increases DEF by 20%/25%/30%/35%/40%. DMG inflicted by Lunar-Crystallize reactions increases by 64%/80%/96%/112%/128% for 5s after the equipping character uses an Elemental Skill.",
+        "zh": "防御力提高20%/25%/30%/35%/40%。装备者施放元素战技后的5秒内，月结晶反应伤害提升64%/80%/96%/112%/128%。"
+      }
+    },
     "the_daybreak_chronicles": {
       "name": {
         "en": "The Daybreak Chronicles",

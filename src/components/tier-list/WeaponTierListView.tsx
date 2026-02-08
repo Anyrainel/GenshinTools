@@ -1,9 +1,4 @@
-import {
-  type ActionConfig,
-  AppBar,
-  type ControlHandle,
-} from "@/components/layout/AppBar";
-import { PageLayout } from "@/components/layout/PageLayout";
+import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { WideLayout } from "@/components/layout/WideLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
@@ -63,7 +58,11 @@ const weaponGroupConfig: Record<WeaponType, TierGroupConfig> =
 // Weapon rarities to show in the filter (descending order for display)
 const WEAPON_RARITIES = [5, 4, 3] as const;
 
-export default function WeaponTierListPage() {
+interface WeaponTierListViewProps {
+  onActions: (actions: ActionConfig[]) => void;
+}
+
+export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const { t } = useLanguage();
 
   const tierAssignments = useWeaponTierStore((state) => state.tierAssignments);
@@ -199,9 +198,9 @@ export default function WeaponTierListPage() {
     });
   }, [customTitle, t]);
 
-  // Actions configuration
-  const actions: ActionConfig[] = useMemo(
-    () => [
+  // Push actions to the parent page
+  useEffect(() => {
+    const actions: ActionConfig[] = [
       {
         key: "import",
         icon: Upload,
@@ -227,9 +226,9 @@ export default function WeaponTierListPage() {
         label: t.ui("app.print"),
         onTrigger: handleDownloadImage,
       },
-    ],
-    [t, handleDownloadImage]
-  );
+    ];
+    onActions(actions);
+  }, [t, handleDownloadImage, onActions]);
 
   // Filter groups for WideLayout
   const filterGroups = useMemo(
@@ -310,7 +309,7 @@ export default function WeaponTierListPage() {
   );
 
   return (
-    <PageLayout actions={actions}>
+    <>
       {/* Control dialogs - render without triggers, opened via ref */}
       <ImportControl<TierListData>
         ref={importRef}
@@ -379,6 +378,6 @@ export default function WeaponTierListPage() {
         initialCustomization={tierCustomization}
         initialCustomTitle={customTitle}
       />
-    </PageLayout>
+    </>
   );
 }

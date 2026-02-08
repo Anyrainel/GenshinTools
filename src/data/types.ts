@@ -149,7 +149,7 @@ export type Character = {
   element: Element;
   weaponType: WeaponType;
   region: Region;
-  releaseDate: string; // Format: YYYY-MM-DD
+  releaseDate: string | null; // Format: YYYY-MM-DD, null = unknown/unreleased
   imageUrl: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };

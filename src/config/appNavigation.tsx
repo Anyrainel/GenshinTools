@@ -82,6 +82,20 @@ export const getNavigationConfig = (
   {
     label: t.ui("app.navTierList"),
     href: "/tier-list",
+    children: [
+      {
+        label: t.ui("app.tierListTitle"),
+        href: "/tier-list?tab=characters",
+        value: "characters",
+        icon: LayoutGrid,
+      },
+      {
+        label: t.ui("app.weaponTierListTitle"),
+        href: "/tier-list?tab=weapons",
+        value: "weapons",
+        icon: Sword,
+      },
+    ],
   },
   {
     label: t.ui("app.navArchive"),

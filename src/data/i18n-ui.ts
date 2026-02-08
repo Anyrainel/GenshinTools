@@ -235,7 +235,7 @@ export const i18nUiData = {
     language: { en: "Language", zh: "语言" },
     navArtifactFilter: { en: "Artifact Builds", zh: "圣遗物配装" },
     navAccountData: { en: "Account Data", zh: "账号数据" },
-    navTierList: { en: "Character Tiers", zh: "角色榜单" },
+    navTierList: { en: "Tier List", zh: "榜单" },
     navArchive: { en: "Archive", zh: "图鉴" },
     navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
     heroDescription: {
@@ -631,9 +631,9 @@ export const i18nUiData = {
     showWeapons: { en: "Show Weapon Types", zh: "显示武器类型" },
     showTravelers: { en: "Show Travelers", zh: "显示旅行者" },
     customize: { en: "Customize", zh: "自定义" },
-    includeRarity5: { en: "5★ Weapons", zh: "5★武器" },
-    includeRarity4: { en: "4★ Weapons", zh: "4★武器" },
-    includeRarity3: { en: "3★ Weapons", zh: "3★武器" },
+    includeRarity5: { en: "5★", zh: "5★" },
+    includeRarity4: { en: "4★", zh: "4★" },
+    includeRarity3: { en: "3★", zh: "3★" },
     help: { en: "Help", zh: "帮助" },
   },
   resetConfirmDialog: {

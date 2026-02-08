@@ -25,7 +25,7 @@ class EnrichedCharacterSource(CharacterSource):
 
     weapon: str
     region: str
-    release_date: str = Field(alias="releaseDate")
+    release_date: str | None = Field(alias="releaseDate")
 
 
 class ArtifactSource(BaseItemSource):
@@ -85,7 +85,7 @@ class CharacterOutput(BaseModel):
     rarity: int
     weaponType: str
     region: str
-    releaseDate: str
+    releaseDate: str | None
     imageUrl: str
     imagePath: str
 

@@ -10,7 +10,6 @@ import os
 import re
 import sys
 from collections.abc import Sequence
-from datetime import datetime
 from typing import Any, Literal, cast
 
 from pydantic import BaseModel
@@ -172,6 +171,7 @@ def match_items[T: BaseItemSource](
 def enrich_character_data_with_fandom(
     characters_en: list[CharacterSource],
     fandom_data: dict[tuple[str, int, str], fandom.CharacterData],
+    existing_characters: dict[str, dict[str, Any]],
 ) -> list[EnrichedCharacterSource]:
     """Enrich character data with weapon, region, and release date from Fandom data"""
     enriched_characters: list[EnrichedCharacterSource] = []
@@ -188,11 +188,10 @@ def enrich_character_data_with_fandom(
             key = ("None", 5, "Traveler")
         fandom_char = fandom_data.get(key)
 
-        # Create new EnrichedCharacterSource
         # Default fallback values
         weapon = "Sword"
         region = "None"
-        release_date = datetime.now().strftime("%Y-%m-%d")
+        release_date: str | None = None
 
         if char.name.startswith("Traveler"):
             release_date = "2020-09-28"
@@ -202,19 +201,32 @@ def enrich_character_data_with_fandom(
             release_date = fandom_char["releaseDate"]
             matched_count += 1
         else:
-            tqdm.write(f"Character {char.name} not found in Fandom data.")
+            # Reuse values from existing data, prompt only as last resort
+            char_id = generate_id(char.name)
+            existing = existing_characters.get(char_id, {})
+            weapon = existing.get("weaponType", "")
+            region = existing.get("region", "None")
+            release_date = existing.get("releaseDate")
 
-            valid_weapons = ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"]
-            while True:
-                val = input(
-                    f"Please enter weapon type for {char.name} ({'/'.join(valid_weapons)}): "
-                ).strip()
-                # Case-insensitive matching
-                matched_weapon = next((w for w in valid_weapons if w.lower() == val.lower()), None)
-                if matched_weapon:
-                    weapon = matched_weapon
-                    break
-                print(f"Invalid weapon type. Please choose from: {', '.join(valid_weapons)}")
+            if not weapon:
+                tqdm.write(f"Character {char.name} not in Fandom or existing data.")
+                valid = ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"]
+                while True:
+                    val = input(f"Enter weapon type for {char.name} ({'/'.join(valid)}): ").strip()
+                    matched_w = next(
+                        (w for w in valid if w.lower() == val.lower()),
+                        None,
+                    )
+                    if matched_w:
+                        weapon = matched_w
+                        break
+                    print(f"Invalid. Choose from: {', '.join(valid)}")
+            else:
+                tqdm.write(
+                    f"Character {char.name} not in Fandom. "
+                    f"Reusing: weapon={weapon}, region={region}, "
+                    f"date={release_date}"
+                )
 
         # Construct enriched object
         enriched_char = EnrichedCharacterSource(
@@ -236,9 +248,12 @@ def process_characters(
     characters_en: list[CharacterSource],
     characters_zh: list[CharacterSource],
     fandom_data: dict[tuple[str, int, str], fandom.CharacterData],
+    existing_characters: dict[str, dict[str, Any]],
     scraper: HoyolabScraper | None = None,
 ) -> tuple[list[CharacterOutput], dict[str, dict[str, str]], list[MatchedItem[CharacterSource]]]:
-    enriched_characters_en = enrich_character_data_with_fandom(characters_en, fandom_data)
+    enriched_characters_en = enrich_character_data_with_fandom(
+        characters_en, fandom_data, existing_characters
+    )
 
     matched_characters = match_items(enriched_characters_en, characters_zh, "character", scraper)
 
@@ -254,30 +269,33 @@ def process_characters(
         en = m["en"]
         zh = m["zh"]
 
-        # Interactive Rarity Check
+        # Rarity fallback: check existing data before prompting
         if en.rarity == 0:
-            print(f"\nWARNING: Rarity 0 detected for Character: {en.name} / {zh.name}")
-            while True:
-                try:
-                    val = input(f"Please enter actual rarity (4/5) for {en.name}: ").strip()
-                    rarity_int = int(val)
-                    if rarity_int in [4, 5]:
-                        en.rarity = rarity_int
-                        # Also update matched zh item if it was 0 or incorrect (keep in sync)
-                        zh.rarity = rarity_int
-                        break
-                    else:
-                        print("Invalid rarity. Please enter 4 or 5.")
-                except ValueError:
-                    print("Invalid number.")
-
-        # Check if 'en' is EnrichedCharacterSource to access extra fields
-        # If it came from match_items(enriched...), it should be.
-        # However, match_items might have inserted dummy entries (CharacterSource) if missing.
+            char_id = generate_id(en.name)
+            existing_rarity = existing_characters.get(char_id, {}).get("rarity", 0)
+            if existing_rarity in (4, 5):
+                en.rarity = existing_rarity
+                zh.rarity = existing_rarity
+                tqdm.write(f"Rarity 0 for {en.name}: reusing existing rarity={existing_rarity}")
+            else:
+                print(f"\nWARNING: Rarity 0 detected for Character: {en.name} / {zh.name}")
+                print("No existing rarity found. Please enter manually.")
+                while True:
+                    try:
+                        val = input(f"Please enter actual rarity (4/5) for {en.name}: ").strip()
+                        rarity_int = int(val)
+                        if rarity_int in [4, 5]:
+                            en.rarity = rarity_int
+                            zh.rarity = rarity_int
+                            break
+                        else:
+                            print("Invalid rarity. Please enter 4 or 5.")
+                    except ValueError:
+                        print("Invalid number.")
 
         weapon = getattr(en, "weapon", "Sword")
         region = getattr(en, "region", "None")
-        release_date = getattr(en, "release_date", "2020-09-28")
+        release_date = getattr(en, "release_date", None)
 
         character_id = generate_id(en.name)
         output = CharacterOutput(
@@ -349,6 +367,7 @@ def process_artifacts(
 def process_weapons(
     weapons_en: list[WeaponSource],
     weapons_zh: list[WeaponSource],
+    existing_weapons: dict[str, dict[str, Any]],
     scraper: HoyolabScraper | None = None,
 ) -> tuple[list[WeaponOutput], dict[str, dict[str, Any]], list[MatchedItem[WeaponSource]]]:
     matched_weapons = match_items(weapons_en, weapons_zh, "weapon", scraper)
@@ -364,28 +383,45 @@ def process_weapons(
     ):
         en = m["en"]
         zh = m["zh"]
-
-        # Interactive Rarity Check
-        if en.rarity == 0:
-            print(f"\nWARNING: Rarity 0 detected for Weapon: {en.name} / {zh.name}")
-            while True:
-                try:
-                    val = input(f"Please enter actual rarity (1-5) for {en.name}: ").strip()
-                    rarity_int = int(val)
-                    if 1 <= rarity_int <= 5:
-                        en.rarity = rarity_int
-                        zh.rarity = rarity_int
-                        break
-                    else:
-                        print("Invalid rarity. Please enter 1-5.")
-                except ValueError:
-                    print("Invalid number.")
-
         weapon_id = generate_id(en.name)
+        existing = existing_weapons.get(weapon_id, {})
+
+        # Rarity fallback: check existing data before prompting
+        if en.rarity == 0:
+            existing_rarity = existing.get("rarity", 0)
+            if 1 <= existing_rarity <= 5:
+                en.rarity = existing_rarity
+                zh.rarity = existing_rarity
+                tqdm.write(f"Rarity 0 for {en.name}: reusing existing rarity={existing_rarity}")
+            else:
+                print(f"\nWARNING: Rarity 0 for Weapon: {en.name} / {zh.name}")
+                print("No existing rarity found. Please enter manually.")
+                while True:
+                    try:
+                        val = input(f"Please enter actual rarity (1-5) for {en.name}: ").strip()
+                        rarity_int = int(val)
+                        if 1 <= rarity_int <= 5:
+                            en.rarity = rarity_int
+                            zh.rarity = rarity_int
+                            break
+                        else:
+                            print("Invalid rarity. Please enter 1-5.")
+                    except ValueError:
+                        print("Invalid number.")
+
+        # Weapon type fallback: reuse from existing data if scraping missed it
+        weapon_type = en.type
+        if not weapon_type:
+            weapon_type = existing.get("type", "")
+            if weapon_type:
+                tqdm.write(
+                    f"Weapon type missing for {en.name}: reusing existing type={weapon_type}"
+                )
+
         output = WeaponOutput(
             id=weapon_id,
             rarity=en.rarity,
-            type=en.type,
+            type=weapon_type,
             secondaryStat=en.secondary_stat,
             baseAtk=en.base_atk,
             secondaryStatValue=en.secondary_stat_value,
@@ -628,6 +664,14 @@ def main():
     elements = existing_resources.get("elementResources", [])
     weapon_types = existing_resources.get("weaponTypeResources", [])
 
+    # Build ID-keyed lookups for fallback during processing
+    existing_char_map: dict[str, dict[str, Any]] = {
+        c["id"]: c for c in character_data if isinstance(c, dict) and "id" in c
+    }
+    existing_weapon_map: dict[str, dict[str, Any]] = {
+        w["id"]: w for w in weapon_data if isinstance(w, dict) and "id" in w
+    }
+
     i18n_data: dict[str, dict[str, Any]] = (
         cast(dict[str, dict[str, Any]], existing_i18n)
         if existing_i18n
@@ -661,7 +705,7 @@ def main():
 
                     print("=== [3/4] Processing & Matching (Characters) ===")
                     c_data, c_i18n, matched_chars = process_characters(
-                        chars_en, chars_zh, fandom_data, scraper
+                        chars_en, chars_zh, fandom_data, existing_char_map, scraper
                     )
                     character_data = c_data
                     i18n_data["characters"] = c_i18n
@@ -680,7 +724,9 @@ def main():
                     weaps_en = scraper.scrape_weapons("en")
                     weaps_zh = scraper.scrape_weapons("zh")
 
-                    w_data, w_i18n, matched_weaps = process_weapons(weaps_en, weaps_zh, scraper)
+                    w_data, w_i18n, matched_weaps = process_weapons(
+                        weaps_en, weaps_zh, existing_weapon_map, scraper
+                    )
                     weapon_data = w_data
                     i18n_data["weapons"] = w_i18n
 

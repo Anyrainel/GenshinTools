@@ -491,7 +491,7 @@ class HoyolabScraper:
         try:
             desc_items = card.locator("div.artifact-card-desc-item").all()
             if len(desc_items) < 2:
-                tqdm.write(f"SKIP ({name}): Less than 2 desc items found")
+                # tqdm.write(f"SKIP ({name}): Less than 2 desc items found")
                 return None
 
             effects: list[str] = []

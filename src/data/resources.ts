@@ -10,7 +10,7 @@ export const characters: Character[] = [
     "rarity": 5,
     "weaponType": "Claymore",
     "region": "None",
-    "releaseDate": "2026-01-29",
+    "releaseDate": null,
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/23/553feb81c3bbc5e3bc69a765e157c33f_5510279580572915554.png",
     "imagePath": "/character/varka.png"
   },
@@ -19,9 +19,9 @@ export const characters: Character[] = [
     "element": "Geo",
     "rarity": 4,
     "weaponType": "Polearm",
-    "region": "None",
-    "releaseDate": "2026-01-29",
-    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/12/b138122c91d1ce61bf7d06d6042ae08a_4301479487552885437.png",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-02-03",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/29/d585407867aa47b4d925613cea9f00c2_5864597966579326880.png",
     "imagePath": "/character/illuga.png"
   },
   {
@@ -29,9 +29,9 @@ export const characters: Character[] = [
     "element": "Geo",
     "rarity": 5,
     "weaponType": "Sword",
-    "region": "None",
-    "releaseDate": "2026-01-29",
-    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2025/12/11/6a57d2dd9677f63ae7d38f525484c55f_7837326903952372916.png",
+    "region": "Liyue",
+    "releaseDate": "2026-02-03",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/29/72161f01ff431c9f099710f92c811454_1654176825175164246.png",
     "imagePath": "/character/zibai.png"
   },
   {
@@ -1937,6 +1937,16 @@ export const weapons: Weapon[] = [
     "secondaryStatValue": "88.2%",
     "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/07/670440ccb460f5f58e014c68ad569d78_7754520756837248808.png",
     "imagePath": "/weapon/nocturnes_curtain_call.png"
+  },
+  {
+    "id": "lightbearing_moonshard",
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "baseAtk": 542,
+    "secondaryStatValue": "88.2%",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2026/01/07/5df9a7e1f45c7967eb263a37362c76d9_5509634125074303398.png",
+    "imagePath": "/weapon/lightbearing_moonshard.png"
   },
   {
     "id": "the_daybreak_chronicles",
