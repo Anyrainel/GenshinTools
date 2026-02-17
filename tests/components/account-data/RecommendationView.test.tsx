@@ -1,10 +1,10 @@
 import { RecommendationView } from "@/components/account-data/RecommendationView";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";
 
-const mockScoreResult: ArtifactScoreResult = {
+const mockScoreResult: BuildAwareScoreResult = {
   mainScore: 25,
   subScore: 45,
   slotMainScores: {},
@@ -12,6 +12,7 @@ const mockScoreResult: ArtifactScoreResult = {
   slotMaxSubScores: {},
   statScores: {},
   isComplete: true,
+  matchedBuild: null,
 };
 
 describe("RecommendationView", () => {

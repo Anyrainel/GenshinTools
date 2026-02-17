@@ -1,15 +1,15 @@
 import type { AccountData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface AccountStore {
   accountData: AccountData | null;
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, BuildAwareScoreResult>;
   isScoresStale: boolean;
   lastUid: string;
   setAccountData: (data: AccountData) => void;
-  setScores: (scores: Record<string, ArtifactScoreResult>) => void;
+  setScores: (scores: Record<string, BuildAwareScoreResult>) => void;
   invalidateScores: () => void;
   setLastUid: (uid: string) => void;
   clearAccountData: () => void;

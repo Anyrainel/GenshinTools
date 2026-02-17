@@ -56,7 +56,7 @@ const MAIN_STAT_VALUES_4STAR: Record<string, number> = {
   "heal%": 26.8,
 };
 
-function getFixedMainStatValue(key: MainStat, rarity: number): number {
+export function getFixedMainStatValue(key: MainStat, rarity: number): number {
   const is4Star = rarity === 4;
   const maxValues = is4Star ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
   return maxValues[key] || 0;
@@ -88,7 +88,7 @@ export interface ArtifactScoreResult {
  * Calculates the score for a single attribute.
  * Returns { score, weight }
  */
-function calculateAttributeScore(
+export function calculateAttributeScore(
   stat: MainStat | SubStat,
   value: number,
   weights: StatWeightMap,

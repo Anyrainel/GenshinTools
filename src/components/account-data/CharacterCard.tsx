@@ -11,14 +11,10 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import type { CharacterData } from "@/data/types";
+import type { CharacterData, MainStatSlot } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import {
-  type ArtifactScoreResult,
-  calculateArtifactScore,
-} from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import { cn } from "@/lib/utils";
-import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { Sword } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
@@ -26,14 +22,13 @@ import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
   char: CharacterData;
-  score?: ArtifactScoreResult;
+  score?: BuildAwareScoreResult;
 }
 
 function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
-  const { config: scoreConfig } = useArtifactScoreStore();
   const charInfo = charactersById[char.key];
   if (!charInfo) return null; // Should not happen if conversion is correct
 
@@ -41,8 +36,9 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const weaponInfo = weapon ? weaponsById[weapon.key] : null;
   const weaponName = weapon ? t.weaponName(weapon.key) : null;
 
-  // Use provided score or calculate on the fly (fallback)
-  const artifactScore = score || calculateArtifactScore(char, scoreConfig);
+  // Score must be pre-calculated
+  const artifactScore = score;
+  if (!artifactScore) return null;
 
   // Set Bonus Logic
   const setCounts: Record<string, number> = {};
@@ -59,7 +55,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const talents = char.talent || { auto: 1, skill: 1, burst: 1 };
 
   return (
-    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-2xl">
+    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl">
       {/* Header */}
       <div
         className={cn(
@@ -213,6 +209,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             </span>
             <ArtifactScoreHoverCard
               score={artifactScore}
+              characterId={char.key}
               className={cn(
                 "italic tracking-tighter leading-none",
                 isVeryNarrow ? "text-2xl font-extrabold" : "text-3xl font-black"
@@ -230,11 +227,16 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
             // Determine if main stat is "wrong" for this character
-            // (only for sands/goblet/circlet where main stat choice matters)
+            // Uses build match result for accurate detection
             const isMainStatWrong =
               art &&
               ["sands", "goblet", "circlet"].includes(slot) &&
-              (artifactScore.statScores[art.mainStatKey]?.weight ?? 0) === 0;
+              (artifactScore.matchedBuild
+                ? artifactScore.matchedBuild.mainStatMismatches.some(
+                    (m) => m.slot === (slot as MainStatSlot)
+                  )
+                : (artifactScore.statScores[art.mainStatKey]?.weight ?? 0) ===
+                  0);
 
             const content = (
               <div
@@ -256,7 +258,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                 ) : (
                   <div className="flex-1 flex items-center justify-center py-4">
                     <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-sm text-muted-foreground/50 text-center px-1">
-                      {t.ui(`computeFilters.${slot}`)}
+                      {t.slot(slot)}
                     </div>
                   </div>
                 )}

@@ -87,28 +87,4 @@ describe("AccountImportControl", () => {
       expect(screen.getByText("Network Error")).toBeInTheDocument();
     });
   });
-
-  // Skipped flaky file import test in JSDOM environment
-  it.skip("handles file import", async () => {
-    const onLocalImport = vi.fn();
-    render(<TestWrapper onLocalImport={onLocalImport} />);
-
-    await waitFor(() => {
-      expect(screen.getByText("accountData.importGOOD")).toBeInTheDocument();
-    });
-
-    const file = new File(['{"test": true}'], "test.json", {
-      type: "application/json",
-    });
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
-
-    if (fileInput) {
-      await userEvent.upload(fileInput, file);
-      await waitFor(() => {
-        expect(onLocalImport).toHaveBeenCalledWith({ test: true });
-      });
-    }
-  });
 });

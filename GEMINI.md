@@ -45,9 +45,11 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 
 1. **Static data** (`src/data/*.json`) is the immutable source of truth for game data.
 2. **User data** enters via GOOD Format (JSON), Enka.Network (UID), or preset subscription → persists in `localStorage`.
-3. **Preset system**: presets in `src/presets/artifact-builds/` seed the store on subscribe. Local edits overlay as deltas. See `presetRegistry.ts`, `presetLoader.ts`, and the `subscribePreset` action in `useBuildsStore`.
-4. **Build resolution**: `useResolvedBuilds` hook merges preset + local data, derives source (`preset` | `modified` | `custom`). Ordering tracked in `characterToBuildIds`.
-5. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts. See `src/lib/` for all algorithms.
+3. **Preset system**: presets in `src/presets/artifact-builds/` serve as the **Immutable Base**. They DO NOT exist in `useBuildsStore` directly.
+4. **Build Store (`useBuildsStore`)**: Contains **ONLY** User Overrides, Custom Builds, and Ordering (`characterToBuildIds`). It is a Delta Store. **DO NOT** read `builds` directly from the store for scoring!
+5. **Build Resolution**: `useResolvedBuilds` (single char) / `useAllResolvedBuilds` (all chars) are the **Single Source of Truth**. They merge the `Preset Base` + `Store Deltas` to produce the effective `Build[]`.
+   - **Rule**: Always use these hooks to get builds. Never traverse `useBuildsStore.builds` or `presetRegistry` manually.
+6. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts. See `src/lib/` for all algorithms.
 6. **Zero `any`**: all external data (Import/API) must be typed and validated.
 
 ## Commands

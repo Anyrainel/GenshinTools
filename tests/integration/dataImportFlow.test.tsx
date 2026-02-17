@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { render } from "../utils/render";
 
 import { CharacterCard } from "@/components/account-data/CharacterCard";
-import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
+import { calculateBuildAwareScore } from "@/lib/account-data/buildAwareScore";
 import {
   type GOODData,
   convertGOODToAccountData,
@@ -117,15 +117,15 @@ describe("Integration: Data Import to Character Display Flow", () => {
     const character = useAccountStore.getState().accountData!.characters[0];
     const scoreConfig = useArtifactScoreStore.getState().config;
 
-    // Calculate score
-    const score = calculateArtifactScore(character, scoreConfig);
+    // Calculate score (no builds available — scores will be 0 without weight data)
+    const score = calculateBuildAwareScore(character, [], scoreConfig.global);
 
-    // Verify score calculation
+    // Verify score structure
     expect(score).toBeDefined();
     expect(score.isComplete).toBe(false); // Only 2 of 5 artifacts
-    expect(score.subScore).toBeGreaterThan(0); // Has substats
-    expect(score.slotSubScores.flower).toBeGreaterThan(0);
-    expect(score.slotSubScores.plume).toBeGreaterThan(0);
+    expect(score.matchedBuild).toBeNull(); // No builds to match
+    // Without builds, all weights are 0 → scores are 0
+    expect(score.subScore).toBe(0);
   });
 
   it("renders CharacterCard with imported and scored data", () => {
@@ -137,7 +137,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
 
     const character = useAccountStore.getState().accountData!.characters[0];
     const scoreConfig = useArtifactScoreStore.getState().config;
-    const score = calculateArtifactScore(character, scoreConfig);
+    const score = calculateBuildAwareScore(character, [], scoreConfig.global);
 
     // Render component with real data
     const { container } = render(

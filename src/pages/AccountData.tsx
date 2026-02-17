@@ -16,11 +16,17 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
+import type {
+  AccountData,
+  ArtifactData,
+  Build,
+  WeaponData,
+} from "@/data/types";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
-  type ArtifactScoreResult,
-  calculateArtifactScore,
-} from "@/lib/account-data/artifactScore";
+  type BuildAwareScoreResult,
+  calculateBuildAwareScore,
+} from "@/lib/account-data/buildAwareScore";
 import {
   convertEnkaToGOOD,
   fetchEnkaData,
@@ -31,9 +37,11 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import type { ConversionWarning } from "@/lib/account-data/goodConversion";
+import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import {
   AlertTriangle,
@@ -193,26 +201,60 @@ export default function AccountDataPage() {
     }
   }, [tour, activeTab]);
   const { config: scoreConfig } = useArtifactScoreStore();
+  const buildsMap = useBuildsStore((s) => s.builds);
+  const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
 
-  // When scores are stale (e.g. weights changed), recalculate them asynchronously
-  // to avoid blocking the UI thread during interaction or navigation.
   // When scores are stale (e.g. weights changed) OR missing (migration), recalculate them asynchronously
   // to avoid blocking the UI thread during interaction or navigation.
+
+  // Use the hook to get all resolved builds efficiently
+  const buildGroups = useAllResolvedBuilds();
+
+  // Convert array of groups to a map for quick lookup during scoring
+  const resolvedBuildsMap = useMemo(() => {
+    const map: Record<string, Build[]> = {};
+    for (const group of buildGroups) {
+      if (group.builds.length > 0) {
+        map[group.characterId] = group.builds;
+      }
+    }
+    return map;
+  }, [buildGroups]);
+
   useEffect(() => {
     const hasData = accountData && accountData.characters.length > 0;
     const missingScores = hasData && Object.keys(scores).length === 0;
 
-    if ((isScoresStale || missingScores) && accountData) {
+    // Detect schema drift: if any score is missing the matchedBuild property (from old schema)
+    // Note: old scores might not have this property at all (undefined)
+    const hasSchemaDrift =
+      hasData &&
+      Object.keys(scores).length > 0 &&
+      Object.values(scores).some((s) => s.matchedBuild === undefined);
+
+    if ((isScoresStale || missingScores || hasSchemaDrift) && accountData) {
       const timer = setTimeout(() => {
-        const results: Record<string, ArtifactScoreResult> = {};
+        const results: Record<string, BuildAwareScoreResult> = {};
         for (const char of accountData.characters) {
-          results[char.key] = calculateArtifactScore(char, scoreConfig);
+          const builds = resolvedBuildsMap[char.key] ?? [];
+          results[char.key] = calculateBuildAwareScore(
+            char,
+            builds,
+            scoreConfig.global
+          );
         }
         setScores(results);
       }, 50); // Short delay to yield to main thread (click/nav animations)
       return () => clearTimeout(timer);
     }
-  }, [isScoresStale, scores, accountData, scoreConfig, setScores]);
+  }, [
+    isScoresStale,
+    scores,
+    accountData,
+    scoreConfig,
+    setScores,
+    resolvedBuildsMap,
+  ]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -268,9 +310,14 @@ export default function AccountDataPage() {
       setAccountData(result.data);
 
       // Pre-calculate scores for the new data
-      const newScores: Record<string, ArtifactScoreResult> = {};
+      const newScores: Record<string, BuildAwareScoreResult> = {};
       for (const char of result.data.characters) {
-        newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+        const builds = resolvedBuildsMap[char.key] ?? [];
+        newScores[char.key] = calculateBuildAwareScore(
+          char,
+          builds,
+          scoreConfig.global
+        );
       }
       setScores(newScores);
 
@@ -309,9 +356,14 @@ export default function AccountDataPage() {
       if (clearBeforeImport || !accountData) {
         setAccountData(newData);
         // Pre-calculate scores (new data)
-        const newScores: Record<string, ArtifactScoreResult> = {};
+        const newScores: Record<string, BuildAwareScoreResult> = {};
         for (const char of newData.characters) {
-          newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+          const builds = resolvedBuildsMap[char.key] ?? [];
+          newScores[char.key] = calculateBuildAwareScore(
+            char,
+            builds,
+            scoreConfig.global
+          );
         }
         setScores(newScores);
       } else {
@@ -342,9 +394,14 @@ export default function AccountDataPage() {
         setAccountData(mergedData);
 
         // Pre-calculate scores for the merged data
-        const newScores: Record<string, ArtifactScoreResult> = {};
+        const newScores: Record<string, BuildAwareScoreResult> = {};
         for (const char of mergedData.characters) {
-          newScores[char.key] = calculateArtifactScore(char, scoreConfig);
+          const builds = resolvedBuildsMap[char.key] ?? [];
+          newScores[char.key] = calculateBuildAwareScore(
+            char,
+            builds,
+            scoreConfig.global
+          );
         }
         setScores(newScores);
       }

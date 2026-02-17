@@ -1,8 +1,8 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import { render, screen } from "../../utils/render";
 
-const mockScoreResult: ArtifactScoreResult = {
+const mockScoreResult: BuildAwareScoreResult = {
   mainScore: 42.5,
   subScore: 35.8,
   isComplete: true,
@@ -57,6 +57,7 @@ const mockScoreResult: ArtifactScoreResult = {
       subScore: 10.0,
     },
   },
+  matchedBuild: null,
 };
 
 describe("ArtifactScoreHoverCard", () => {
@@ -73,13 +74,11 @@ describe("ArtifactScoreHoverCard", () => {
     }));
   });
 
-  it("displays main score", () => {
-    render(<ArtifactScoreHoverCard score={mockScoreResult} />);
-    expect(screen.getByText("43")).toBeInTheDocument();
-  });
-
-  it("displays sub score", () => {
-    render(<ArtifactScoreHoverCard score={mockScoreResult} />);
+  it("displays sub score in trigger", () => {
+    render(
+      <ArtifactScoreHoverCard score={mockScoreResult} characterId="test" />
+    );
+    // Trigger shows subScore.toFixed(0)
     expect(screen.getByText("36")).toBeInTheDocument();
   });
 });

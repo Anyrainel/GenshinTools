@@ -350,9 +350,7 @@ export function TierTable<T extends TierItemData, K extends string>({
     const movedItem = itemsById[draggedItemId];
     if (movedItem) {
       const itemName = getItemName(movedItem);
-      const tierLabel =
-        tierCustomization[tier]?.displayName ||
-        (tier === "Pool" ? t.ui("tiers.Pool") : tier);
+      const tierLabel = tierCustomization[tier]?.displayName || t.tier(tier);
       toast.success(t.format("messages.itemMoved", itemName, tierLabel), {
         duration: 2000,
       });

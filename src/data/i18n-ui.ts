@@ -151,6 +151,11 @@ export const i18nUiData = {
     searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
     wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
     subStatScore: { en: "Sub", zh: "副词条" },
+    scoredUsing: {
+      en: "Scored using: {0}",
+      zh: "基于配装评分: {0}",
+    },
+    viewBuilds: { en: "View Builds", zh: "查看配装" },
     weightWarning: {
       en: "Set a main stat (ATK%, HP%, DEF%, EM) to 100, or set at least two substats (CR, CD, ER, etc.) to 100.",
       zh: "需将一个主属性 (攻击%, 生命%, 防御%, 精通) 设为 100，或将至少两个副词条设为 100。",
@@ -682,24 +687,8 @@ export const i18nUiData = {
       en: "Select at least one role (DPS / Support / Sustain)",
       zh: "请选择至少一个职能（输出/辅助/生存）",
     },
-    styles: {
-      label: { en: "Style", zh: "定位" },
-      "on-field": { en: "On-Field", zh: "前台" },
-      "off-field": { en: "Off-Field", zh: "后台" },
-    },
-    roles: {
-      label: { en: "Role", zh: "职能" },
-      dps: { en: "DPS", zh: "输出" },
-      support: { en: "Support", zh: "辅助" },
-      sustain: { en: "Sustain", zh: "生存" },
-    },
-    constellation: {
-      c0: { en: "C0+", zh: "0命+" },
-      c1: { en: "C1+", zh: "1命+" },
-      c2: { en: "C2+", zh: "2命+" },
-      c4: { en: "C4+", zh: "4命+" },
-      c6: { en: "C6", zh: "6命" },
-    },
+    stylesLabel: { en: "Style", zh: "定位" },
+    rolesLabel: { en: "Role", zh: "职能" },
   },
   tierList: {
     importDialogTitle: { en: "Import Tier List", zh: "导入榜单" },
@@ -791,14 +780,7 @@ export const i18nUiData = {
     cancel: { en: "Cancel", zh: "取消" },
     save: { en: "Save", zh: "保存" },
   },
-  tiers: {
-    Pool: { en: "Pool", zh: "角色池" },
-    S: { en: "S", zh: "夯" },
-    A: { en: "A", zh: "顶级" },
-    B: { en: "B", zh: "人上人" },
-    C: { en: "C", zh: "NPC" },
-    D: { en: "D", zh: "拉完了" },
-  },
+
   tour: {
     guide: {
       title: { en: "Guide", zh: "指南" },

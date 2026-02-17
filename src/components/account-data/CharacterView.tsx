@@ -4,7 +4,7 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { CharacterFilters } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import {
   defaultCharacterFilters,
   filterAndSortCharacterData,
@@ -17,7 +17,7 @@ import { useTierStore } from "@/stores/useTierStore";
 import { useCallback, useMemo, useState } from "react";
 
 interface CharacterViewProps {
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, BuildAwareScoreResult>;
 }
 
 export function CharacterView({ scores }: CharacterViewProps) {

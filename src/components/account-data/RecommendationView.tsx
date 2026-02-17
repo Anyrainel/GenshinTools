@@ -10,7 +10,7 @@ import {
   tiers,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import {
   type Insight,
   generateAllInsights,
@@ -23,7 +23,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 interface RecommendationViewProps {
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, BuildAwareScoreResult>;
 }
 
 export function RecommendationView({ scores }: RecommendationViewProps) {
@@ -58,7 +58,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
     const byTier: Record<
       string,
-      { char: CharacterData; scoreResult: ArtifactScoreResult }[]
+      { char: CharacterData; scoreResult: BuildAwareScoreResult }[]
     > = {};
     for (const tier of tiers) {
       byTier[tier] = [];
@@ -104,7 +104,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
         const chars = charactersByTier[tier] || [];
         if (chars.length === 0) return null;
 
-        const displayName = customization?.displayName || t.ui(`tiers.${tier}`);
+        const displayName = customization?.displayName || t.tier(tier);
         const isPoolTier = tier === "Pool";
         const luckExpectation = customization?.luckExpectation || "balanced";
 

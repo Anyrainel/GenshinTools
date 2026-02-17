@@ -17,7 +17,7 @@ import {
   charactersById,
 } from "@/data/constants";
 import type { CharacterData, Tier } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import type { Insight } from "@/lib/account-data/insightEngine";
 import { memo } from "react";
 import { InsightList } from "./InsightList";
@@ -26,7 +26,7 @@ interface RecommendationCardProps {
   char: CharacterData;
   tier?: Tier;
   insights?: Insight[];
-  score?: ArtifactScoreResult;
+  score?: BuildAwareScoreResult;
 }
 
 function RecommendationCardComponent({
@@ -187,6 +187,7 @@ function RecommendationCardComponent({
               </span>
               <ArtifactScoreHoverCard
                 score={score}
+                characterId={char.key}
                 className="italic tracking-tighter leading-none text-2xl font-extrabold mt-1"
               />
             </div>

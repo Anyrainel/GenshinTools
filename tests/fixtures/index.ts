@@ -9,7 +9,7 @@ import type {
   CharacterData,
   WeaponData,
 } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 
 // ============================================================================
 // Character Fixtures
@@ -174,8 +174,8 @@ export const MOCK_ACCOUNT_DATA = {
 // ============================================================================
 
 export const createArtifactScoreResult = (
-  overrides: Partial<ArtifactScoreResult> = {}
-): ArtifactScoreResult => ({
+  overrides: Partial<BuildAwareScoreResult> = {}
+): BuildAwareScoreResult => ({
   mainScore: 25,
   subScore: 45,
   slotMainScores: {},
@@ -183,6 +183,7 @@ export const createArtifactScoreResult = (
   slotMaxSubScores: {},
   statScores: {},
   isComplete: true,
+  matchedBuild: null,
   ...overrides,
 });
 

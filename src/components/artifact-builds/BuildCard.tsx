@@ -225,7 +225,7 @@ function BuildCardComponent({
     () =>
       buildStyles.map((s) => ({
         value: s,
-        label: t.ui(`buildCard.styles.${s}`),
+        label: t.style(s),
         color: STYLE_COLORS[s],
       })),
     [t]
@@ -234,7 +234,7 @@ function BuildCardComponent({
     () =>
       buildRoles.map((r) => ({
         value: r,
-        label: t.ui(`buildCard.roles.${r}`),
+        label: t.role(r),
         color: ROLE_COLORS[r],
       })),
     [t]
@@ -273,14 +273,6 @@ function BuildCardComponent({
   const currentRoles = build.roles ?? [];
   const currentCons = build.minCons ?? 0;
 
-  const constellationKeyMap: Record<BuildConstellation, string> = {
-    0: "buildCard.constellation.c0",
-    1: "buildCard.constellation.c1",
-    2: "buildCard.constellation.c2",
-    4: "buildCard.constellation.c4",
-    6: "buildCard.constellation.c6",
-  };
-
   const multiSelectTriggerClass = cn(
     "border-border/40 bg-foreground/5 rounded-full h-auto w-auto",
     "min-w-10 pl-2 pr-1 py-1 text-xs [&>svg]:h-3 [&>svg]:w-3",
@@ -298,7 +290,7 @@ function BuildCardComponent({
         onValueChange={(value: string[]) =>
           handleBuildChange({ styles: value as BuildStyle[] })
         }
-        placeholder={t.ui("buildCard.styles.label")}
+        placeholder={t.ui("buildCard.stylesLabel")}
         triggerClassName={multiSelectTriggerClass}
         itemClassName={multiSelectItemClass}
       />
@@ -308,7 +300,7 @@ function BuildCardComponent({
         onValueChange={(value: string[]) =>
           handleBuildChange({ roles: value as BuildRole[] })
         }
-        placeholder={t.ui("buildCard.roles.label")}
+        placeholder={t.ui("buildCard.rolesLabel")}
         triggerClassName={multiSelectTriggerClass}
         itemClassName={multiSelectItemClass}
       />
@@ -330,7 +322,7 @@ function BuildCardComponent({
               className={multiSelectItemClass}
             >
               <span style={{ color: CONS_COLORS[cons] }}>
-                {t.ui(constellationKeyMap[cons])}
+                {t.constellation(cons)}
               </span>
             </LightweightSelectItem>
           ))}

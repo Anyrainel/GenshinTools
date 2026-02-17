@@ -39,6 +39,10 @@ interface LanguageContextType {
     weaponName: (id: string) => string;
     weaponEffect: (id: string) => string;
     slot: (key: string) => string;
+    style: (key: string) => string;
+    role: (key: string) => string;
+    constellation: (key: string | number) => string;
+    tier: (key: string) => string;
     formatDate: (dateString: string | null) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
@@ -287,6 +291,44 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getStyleName = useCallback(
+    (styleKey: string): string => {
+      const styles = i18nAppData.styles as Record<
+        string,
+        Record<string, string>
+      >;
+      return styles[styleKey]?.[language] || styleKey;
+    },
+    [language]
+  );
+
+  const getRoleName = useCallback(
+    (roleKey: string): string => {
+      const roles = i18nAppData.roles as Record<string, Record<string, string>>;
+      return roles[roleKey]?.[language] || roleKey;
+    },
+    [language]
+  );
+
+  const getConstellationName = useCallback(
+    (consKey: string | number): string => {
+      const cons = i18nAppData.constellations as Record<
+        string,
+        Record<string, string>
+      >;
+      return cons[String(consKey)]?.[language] || `C${consKey}`;
+    },
+    [language]
+  );
+
+  const getTierName = useCallback(
+    (tierKey: string): string => {
+      const tiers = i18nAppData.tiers as Record<string, Record<string, string>>;
+      return tiers[tierKey]?.[language] || tierKey;
+    },
+    [language]
+  );
+
   const formatReleaseDate = useCallback(
     (dateString: string | null): string => {
       if (!dateString) return "???";
@@ -364,6 +406,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       weaponName: getWeaponName,
       weaponEffect: getWeaponEffect,
       slot: getSlotName,
+      style: getStyleName,
+      role: getRoleName,
+      constellation: getConstellationName,
+      tier: getTierName,
       formatDate: formatReleaseDate,
       ui: getUIMessage,
       format: formatString,
@@ -390,6 +436,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getWeaponName,
       getWeaponEffect,
       getSlotName,
+      getStyleName,
+      getRoleName,
+      getConstellationName,
+      getTierName,
       formatReleaseDate,
       getUIMessage,
       formatString,

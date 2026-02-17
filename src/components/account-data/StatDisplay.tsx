@@ -51,9 +51,6 @@ export function StatDisplay({
     );
   };
 
-  const mainStatWeight =
-    scoreResult?.statScores[artifact.mainStatKey]?.weight || 0;
-
   return (
     <div className="flex flex-col">
       {" "}
@@ -62,13 +59,8 @@ export function StatDisplay({
         <div
           className={cn(
             "font-bold flex-1",
-            compact ? "text-xs" : "text-base",
-            // If scoreResult is provided, dim unweighted stats. If not (inventory), show default color.
-            scoreResult
-              ? mainStatWeight > 0
-                ? "text-amber-100"
-                : "text-amber-100/50"
-              : "text-amber-100"
+            isMainStatWrong ? "text-amber-100/70" : "text-amber-100",
+            compact ? "text-xs" : "text-base"
           )}
         >
           {compact

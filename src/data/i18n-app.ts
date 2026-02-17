@@ -86,4 +86,28 @@ export const i18nAppData = {
     goblet: { en: "Goblet", zh: "空之杯" },
     circlet: { en: "Circlet", zh: "理之冠" },
   },
+  styles: {
+    "on-field": { en: "On-Field", zh: "前台" },
+    "off-field": { en: "Off-Field", zh: "后台" },
+  },
+  roles: {
+    dps: { en: "DPS", zh: "输出" },
+    support: { en: "Support", zh: "辅助" },
+    sustain: { en: "Sustain", zh: "生存" },
+  },
+  constellations: {
+    0: { en: "C0+", zh: "0命+" },
+    1: { en: "C1+", zh: "1命+" },
+    2: { en: "C2+", zh: "2命+" },
+    4: { en: "C4+", zh: "4命+" },
+    6: { en: "C6", zh: "6命" },
+  },
+  tiers: {
+    S: { en: "S", zh: "夯" },
+    A: { en: "A", zh: "顶级" },
+    B: { en: "B", zh: "人上人" },
+    C: { en: "C", zh: "NPC" },
+    D: { en: "D", zh: "拉完了" },
+    Pool: { en: "Pool", zh: "角色池" },
+  },
 };

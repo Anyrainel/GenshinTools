@@ -11,12 +11,16 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { Slot } from "@/data/types";
+import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
 import { cn } from "@/lib/utils";
+import { Check, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface ArtifactScoreHoverCardProps {
-  score: ArtifactScoreResult;
+  score: BuildAwareScoreResult;
+  characterId: string;
   className?: string;
   compact?: boolean;
 }
@@ -32,6 +36,7 @@ interface ArtifactScoreHoverCardProps {
  */
 export function ArtifactScoreHoverCard({
   score,
+  characterId,
   className,
   compact = false,
 }: ArtifactScoreHoverCardProps) {
@@ -83,20 +88,21 @@ export function ArtifactScoreHoverCard({
     setIsHovering(open);
   };
 
+  // Show warning icon when scored using a non-matching artifact set
+  const hasSetMismatch =
+    score.matchedBuild != null && score.matchedBuild.setMatched === false;
+
   const TriggerContent = (
     <>
-      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-        {score.mainScore.toFixed(0)}
-      </span>
-      <span
-        className={cn(
-          "text-amber-100/40 font-light not-italic tracking-normal",
-          compact ? "mx-0.5 text-[0.8em]" : "mx-1"
-        )}
-      >
-        /
-      </span>
-      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+      {hasSetMismatch && (
+        <Info
+          className={cn(
+            "shrink-0 text-amber-400",
+            compact ? "w-3 h-3 mr-0.5" : "w-3.5 h-3.5 mr-1"
+          )}
+        />
+      )}
+      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm pr-[2px]">
         {score.subScore.toFixed(0)}
       </span>
     </>
@@ -123,7 +129,10 @@ export function ArtifactScoreHoverCard({
             Artifact score breakdown by stat
           </DrawerDescription>
           <div className="p-4 pt-0 safe-area-bottom">
-            <ArtifactScoreContent artifactScore={score} />
+            <ArtifactScoreContent
+              artifactScore={score}
+              characterId={characterId}
+            />
           </div>
         </DrawerContent>
       </Drawer>
@@ -151,34 +160,69 @@ export function ArtifactScoreHoverCard({
         ref={contentRef}
         className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl"
       >
-        <ArtifactScoreContent artifactScore={score} />
+        <ArtifactScoreContent artifactScore={score} characterId={characterId} />
       </HoverCardContent>
     </HoverCard>
   );
 }
 
 interface ArtifactScoreContentProps {
-  artifactScore: ArtifactScoreResult;
+  artifactScore: BuildAwareScoreResult;
+  characterId: string;
 }
 
-function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
+/** Format the build's artifact set name for display */
+function useBuildSetLabel(score: BuildAwareScoreResult): string | null {
   const { t } = useLanguage();
+  const build = score.matchedBuild?.build;
+  if (!build) return null;
+
+  if (build.composition === "4pc" && build.artifactSet) {
+    return t.artifact(build.artifactSet);
+  }
+  if (
+    build.composition === "2pc+2pc" &&
+    build.halfSet1 != null &&
+    build.halfSet2 != null
+  ) {
+    return `${t.artifactHalfSet(build.halfSet1)} + ${t.artifactHalfSet(build.halfSet2)}`;
+  }
+  return build.name;
+}
+
+function ArtifactScoreContent({
+  artifactScore,
+  characterId,
+}: ArtifactScoreContentProps) {
+  const { t } = useLanguage();
+  const buildSetLabel = useBuildSetLabel(artifactScore);
+  const hasSetMismatch =
+    artifactScore.matchedBuild != null &&
+    !artifactScore.matchedBuild.setMatched;
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Set build banner - Only show if there is a mismatch */}
+      {buildSetLabel && hasSetMismatch && (
+        <div className="flex items-center gap-2 rounded-md border px-3 py-1 text-sm bg-amber-500/10 border-amber-500/20 text-amber-300">
+          <Info className="w-4 h-4 shrink-0 text-amber-400" />
+          <span className="flex-1">
+            {t.ui("accountData.scoredUsing").replace("{0}", buildSetLabel)}
+          </span>
+          <Link
+            to={`/artifact-filter?tab=configure&target=${characterId}`}
+            className="text-amber-400 hover:text-amber-300 underline text-xs whitespace-nowrap ml-2"
+          >
+            {t.ui("accountData.viewBuilds")}
+          </Link>
+        </div>
+      )}
+
       <div className="flex justify-between items-end border-b border-white/10 pb-2">
         <span className="text-lg font-bold text-amber-200 uppercase tracking-wider">
           {t.ui("accountData.artifactScore")}
         </span>
         <div className="flex gap-4 text-base text-slate-400 font-mono">
-          <span className="flex gap-1">
-            <span className="text-sm font-sans">
-              {t.ui("computeFilters.mainStat")}:
-            </span>
-            <span className="text-amber-200">
-              {artifactScore.mainScore.toFixed(1)}
-            </span>
-          </span>
           <span className="flex gap-1">
             <span className="text-sm font-sans">
               {t.ui("computeFilters.subStat")}:
@@ -203,29 +247,40 @@ function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
           </div>
         ))}
 
+        {/* Main Stat Row */}
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.mainStat")}
         </div>
         {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
-          const mainScore = artifactScore.slotMainScores[slot];
-          const subScore = artifactScore.slotSubScores[slot];
-          // Warning: artifact exists (has sub score) but main stat weight is 0
-          // Only applies to sands/goblet/circlet where main stat choice matters
-          const hasZeroWeightMainStat =
-            ["sands", "goblet", "circlet"].includes(slot) &&
-            subScore !== undefined &&
-            subScore > 0 &&
-            mainScore === 0;
+          const isMainStat = ["sands", "goblet", "circlet"].includes(slot);
+          const isEquipped =
+            artifactScore.slotMaxSubScores[slot as Slot] !== undefined;
+
+          // If it's a flower/plume, or slot is empty, or no build matched (cant judge)
+          if (!isMainStat || !isEquipped || !artifactScore.matchedBuild) {
+            return (
+              <div key={slot} className="text-center text-slate-600">
+                -
+              </div>
+            );
+          }
+
+          const hasMismatch =
+            artifactScore.matchedBuild.mainStatMismatches.some(
+              (m) => m.slot === slot
+            );
+
+          if (hasMismatch) {
+            return (
+              <div key={slot} className="flex justify-center items-center">
+                <TriangleAlert className="w-4 h-4 text-amber-500" />
+              </div>
+            );
+          }
 
           return (
-            <div
-              key={slot}
-              className={cn(
-                "text-center font-mono bg-white/5 rounded py-1 px-2",
-                hasZeroWeightMainStat ? "text-orange-400" : "text-amber-200"
-              )}
-            >
-              {mainScore !== undefined ? mainScore.toFixed(1) : "-"}
+            <div key={slot} className="flex justify-center items-center">
+              <Check className="w-4 h-4 text-emerald-500" />
             </div>
           );
         })}
@@ -263,17 +318,11 @@ function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
       </div>
 
       {/* Breakdown by Stat */}
-      <table className="w-full text-base mt-2 border-collapse">
+      <table className="w-full text-base mt-1 border-collapse">
         <thead>
           <tr className="text-sm text-slate-400 border-b border-white/5">
             <th className="text-left font-normal pb-2">
               {t.ui("accountData.breakdownByStat")}
-            </th>
-            <th className="text-right font-normal pb-2 pl-4">
-              {t.ui("computeFilters.mainStat")}{" "}
-              <span className="text-xs opacity-70">
-                ({t.ui("accountData.valOverScore")})
-              </span>
             </th>
             <th className="text-right font-normal pb-2 pl-4">
               {t.ui("computeFilters.subStat")}{" "}
@@ -311,23 +360,6 @@ function ArtifactScoreContent({ artifactScore }: ArtifactScoreContentProps) {
                         {data.weight.toFixed(1)}
                       </span>
                     </div>
-                  </td>
-
-                  {/* Main Stat Col */}
-                  <td className="text-right py-1 pl-4 font-mono text-gray-400 whitespace-nowrap">
-                    {data.mainValue > 0 ? (
-                      <>
-                        <span className="text-gray-300">
-                          {formatValue(data.mainValue)}
-                        </span>
-                        <span className="text-muted-foreground mx-1.5">/</span>
-                        <span className="text-amber-200">
-                          {data.mainScore.toFixed(1)}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-muted-foreground/30">-</span>
-                    )}
                   </td>
 
                   {/* Sub Stat Col */}
