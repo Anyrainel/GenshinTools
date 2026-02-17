@@ -13,12 +13,15 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import type { CharacterFilters } from "@/data/types";
 import { tiers } from "@/data/types";
-import { calculateArtifactScore } from "@/lib/artifactScore";
+import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
+import {
+  type GOODData,
+  convertGOODToAccountData,
+} from "@/lib/account-data/goodConversion";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
 } from "@/lib/characterFilters";
-import { type GOODData, convertGOODToAccountData } from "@/lib/goodConversion";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";

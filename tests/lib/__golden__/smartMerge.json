@@ -1,0 +1,3216 @@
+[
+  {
+    "setId": "a_day_carved_from_rising_winds",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "er", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%", "er", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "atk%", "er", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "er", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "durin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "fischl",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "klee",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "razor",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "venti",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "archaic_petra",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["def%", "er"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "aubade_of_morningstar_and_moon",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "hp%", "er"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%"],
+          "substats": ["cd", "cr", "atk%", "hp%", "er"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%"],
+          "substats": ["cd", "cr", "atk%", "hp%", "er"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "hp%", "er"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "columbina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "ineffa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "blizzard_strayer",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "kamisato_ayaka",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "crimson_witch_of_flames",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "em", "atk%", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "em"],
+          "substats": ["cd", "cr", "em", "atk%", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "em", "atk%", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "em", "atk%", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "diluc",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "gaming",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "hu_tao",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yanfei",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "deepwood_memories",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "er", "hp"],
+          "mustPresent": ["hp%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["hp%", "er", "hp"],
+          "mustPresent": ["hp%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "er", "hp"],
+          "mustPresent": ["hp%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "er", "hp"],
+          "mustPresent": ["hp%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "baizhu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kirara",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yaoyao",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "baizhu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lauma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "em", "er"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "em", "elemental%"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "atk%"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "collei",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "emilie",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "nahida",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "traveler_dendro",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "desert_pavilion_chronicle",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "wanderer",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "echoes_of_an_offering",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cr", "cd", "atk%"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cr", "cd", "atk%"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cr", "cd", "atk%"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "kamisato_ayato",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "wanderer",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yoimiya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "emblem_of_severed_fate",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%", "def%", "er"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "hp%", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "er"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "beidou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "dehya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kaeya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kujou_sara",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lisa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "raiden_shogun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xiangling",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xingqiu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yelan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "finale_of_the_deep_galleries",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "skirk",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "flower_of_paradise_lost",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "kaveh",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "hp%"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "sands": {
+          "mainStats": ["em"],
+          "substats": ["em", "hp%"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "hp%"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "hp%"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "servedCharacters": [
+          {
+            "characterId": "kuki_shinobu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "sangonomiya_kokomi",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "cr", "cd"],
+          "mustPresent": ["em", "cr", "cd"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em"],
+          "substats": ["em", "cr", "cd"],
+          "mustPresent": ["em", "cr", "cd"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "cr", "cd"],
+          "mustPresent": ["em", "cr", "cd"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "cr", "cd"],
+          "mustPresent": ["em", "cr", "cd"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "dehya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "fragment_of_harmonic_whimsy",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "arlecchino",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "clorinde",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "gilded_dreams",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em"],
+          "substats": ["cd", "cr", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em", "elemental%"],
+          "substats": ["cd", "cr", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "alhaitham",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "cyno",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "nahida",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "gladiators_finale",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "golden_troupe",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "def%", "er"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%", "elemental%"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "albedo",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "chiori",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "escoffier",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "fischl",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "furina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yae_miko",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "heart_of_depth",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["cd", "cr", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr"],
+          "substats": ["cd", "cr", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "yelan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "husk_of_opulent_dreams",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["def%", "er"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "def%"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "gorou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "def%"],
+          "mustPresent": ["cd", "cr", "def%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["def%", "er"],
+          "substats": ["cd", "cr", "def%"],
+          "mustPresent": ["cd", "cr", "def%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "def%"],
+          "mustPresent": ["cd", "cr", "def%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "def%"],
+          "mustPresent": ["cd", "cr", "def%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "albedo",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "arataki_itto",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "chiori",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "noelle",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "instructor",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "aino",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["er"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["def%", "er", "cr"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "gorou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xilonen",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "nilou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "em"],
+          "substats": ["cd", "cr", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "klee",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "long_nights_oath",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "varesa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "marechaussee_hunter",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "def%", "er"],
+          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["hp%", "def%", "elemental%"],
+          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "lyney",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "neuvillette",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "ningguang",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "noelle",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "wriothesley",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xiao",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "night_of_the_skys_unveiling",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "def%", "em"],
+          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "def%", "em"],
+          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "flins",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "nefer",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "zibai",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "nighttime_whispers_in_the_echoing_woods",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "navia",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "ningguang",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "noblesse_oblige",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "er", "atk%", "cr"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["hp%", "er", "atk%", "cr"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%", "elemental%"],
+          "substats": ["hp%", "er", "atk%", "cr"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "atk%", "hp%", "heal%"],
+          "substats": ["hp%", "er", "atk%", "cr"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "amber",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "bennett",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "chevreuse",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "dahlia",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "diona",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "dori",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mika",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "tartaglia",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cr", "atk%", "atk"],
+          "mustPresent": ["cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["er"],
+          "substats": ["cr", "atk%", "atk"],
+          "mustPresent": ["cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["cr", "atk%", "atk"],
+          "mustPresent": ["cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cr", "atk%", "atk"],
+          "mustPresent": ["cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "chongyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kamisato_ayaka",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "cr", "cd"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "cr", "cd"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["atk%", "er", "cr", "cd"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "atk%"],
+          "substats": ["atk%", "er", "cr", "cd"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "durin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mona",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "rosaria",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "nymphs_dream",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "tartaglia",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yelan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "obsidian_codex",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "hp%", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "em"],
+          "substats": ["cd", "cr", "hp%", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%", "elemental%"],
+          "substats": ["cd", "cr", "hp%", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "hp%", "em", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "chasca",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kinich",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mavuika",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mualani",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "oceanhued_clam",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["heal%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "qiqi",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "pale_flame",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "eula",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "freminet",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "scroll_of_the_hero_of_cinder_city",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er", "atk%", "cr", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["atk%", "def%", "em", "er"],
+          "substats": ["em", "er", "atk%", "cr", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "def%", "em"],
+          "substats": ["em", "er", "atk%", "cr", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["atk%", "def%", "em"],
+          "substats": ["em", "er", "atk%", "cr", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "citlali",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "escoffier",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "iansan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kachina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em"],
+          "mustPresent": ["em"],
+          "minStatCount": 1
+        },
+        "sands": {
+          "mainStats": ["em"],
+          "substats": ["em"],
+          "mustPresent": ["em"],
+          "minStatCount": 1
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em"],
+          "mustPresent": ["em"],
+          "minStatCount": 1
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em"],
+          "mustPresent": ["em"],
+          "minStatCount": 1
+        },
+        "servedCharacters": [
+          {
+            "characterId": "citlali",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "def"],
+          "mustPresent": ["def%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xilonen",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cr", "cd", "atk%", "er"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["cr", "cd", "atk%", "er"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cr", "cd", "atk%", "er"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cr", "cd", "atk%", "er"],
+          "mustPresent": ["cr", "cd"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "ororon",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "rosaria",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "traveler_pyro",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "shimenawas_reminiscence",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "yoimiya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "silken_moons_serenade",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "aino",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lauma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "hp%", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "def%", "er"],
+          "substats": ["atk%", "er", "hp%", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%", "def%"],
+          "substats": ["atk%", "er", "hp%", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "atk%", "hp%", "def%", "heal%"],
+          "substats": ["atk%", "er", "hp%", "def%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "jahoda",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "er", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "hp%", "er"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "hp%"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "atk%", "hp%"],
+          "substats": ["cd", "cr", "atk%", "er", "hp%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "columbina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "ineffa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "song_of_days_past",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "circlet": {
+          "mainStats": ["hp%", "heal%"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "servedCharacters": [
+          {
+            "characterId": "barbara",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "chevreuse",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%", "heal%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "sigewinne",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "tenacity_of_the_millelith",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["er", "hp%", "hp"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["er", "hp%", "hp"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["er", "hp%", "hp"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "hp%"],
+          "substats": ["er", "hp%", "hp"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "baizhu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "furina",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kirara",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "layla",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "zhongli",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er"],
+          "mustPresent": ["em"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["em"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "citlali",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "atk%", "atk", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 4
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "atk%", "atk", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 4
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "atk%", "atk", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 4
+        },
+        "circlet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "atk%", "atk", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 4
+        },
+        "servedCharacters": [
+          {
+            "characterId": "dehya",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["heal%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "sangonomiya_kokomi",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%", "heal%"],
+          "substats": ["hp%", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "sigewinne",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "nilou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "faruzan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "klee",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "mona",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "thundering_fury",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%", "em"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "keqing",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "unfinished_reverie",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr", "atk%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "emilie",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "vermillion_hereafter",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xiao",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "viridescent_venerer",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd", "em"],
+          "substats": ["em", "er"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "ifa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "kaedehara_kazuha",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lynette",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "sucrose",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "venti",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "yumemizuki_mizuki",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "em"],
+          "mustPresent": ["atk%"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["atk%", "em", "er"],
+          "substats": ["atk%", "er", "em"],
+          "mustPresent": ["atk%"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["atk%", "em"],
+          "substats": ["atk%", "er", "em"],
+          "mustPresent": ["atk%"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["atk%", "em", "heal%"],
+          "substats": ["atk%", "er", "em"],
+          "mustPresent": ["atk%"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "jahoda",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "jean",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lan_yan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "sayu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%", "elemental%"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "lynette",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "shikanoin_heizou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "vourukashas_glow",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "sands": {
+          "mainStats": ["hp%", "er"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "circlet": {
+          "mainStats": ["hp%", "heal%"],
+          "substats": ["hp%", "er"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 1
+        },
+        "servedCharacters": [
+          {
+            "characterId": "baizhu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "kirara",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "sigewinne",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["hp%"],
+          "substats": ["hp%", "em", "hp"],
+          "mustPresent": ["hp%"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "nilou",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "wanderers_troupe",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "em", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "em"],
+          "substats": ["cd", "cr", "em", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["elemental%"],
+          "substats": ["cd", "cr", "em", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "cd"],
+          "substats": ["cd", "cr", "em", "er", "atk%"],
+          "mustPresent": ["cd", "cr"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "sethos",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "tighnari",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn, getRarityColor } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
 

@@ -13,7 +13,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { GOODData } from "@/lib/goodConversion";
+import type { GOODData } from "@/lib/account-data/goodConversion";
 
 interface AccountImportControlProps {
   onLocalImport: (data: GOODData) => void;

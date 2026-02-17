@@ -31,28 +31,28 @@ describe("ComputeSidebar", () => {
     expect(onSearchChange).toHaveBeenCalled();
   });
 
-  it("renders compute options", async () => {
+  it("renders compute options with algorithm selector", async () => {
     const onComputeOptionChange = vi.fn();
     render(
       <ComputeSidebar
         searchQuery=""
         onSearchChange={vi.fn()}
         computeOptions={{
-          skipCritBuilds: false, // unchecked
-          expandElementalGoblet: true, // checked
+          mergeAlgorithm: "bruteForce",
+          expandElementalGoblet: true,
         }}
         onComputeOptionChange={onComputeOptionChange}
       />
     );
 
-    // Verify checked state for expandElementalGoblet
-    // Note: Radix Checkbox uses button[role="checkbox"][data-state="checked"/"unchecked"]
-    // But finding it via label is standard.
-    // We will just verify we can click "skipCritBuilds" label to trigger change.
+    // Verify the algorithm selector label renders
+    expect(
+      screen.getByText("computeFilters.mergeAlgorithm")
+    ).toBeInTheDocument();
 
-    const skipCritLabel = screen.getByText("computeFilters.skipCritBuilds");
-    await userEvent.click(skipCritLabel);
-
-    expect(onComputeOptionChange).toHaveBeenCalledWith("skipCritBuilds", true);
+    // Verify the expand elemental goblet checkbox renders
+    expect(
+      screen.getByText("computeFilters.expandElementalGoblet")
+    ).toBeInTheDocument();
   });
 });

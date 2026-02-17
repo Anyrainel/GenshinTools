@@ -23,7 +23,8 @@
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json,css,md}": [
       "biome check --write --no-errors-on-unmatched"
-    ]
+    ],
+    "scripts/**/*.py": ["ruff format", "ruff check --fix"]
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

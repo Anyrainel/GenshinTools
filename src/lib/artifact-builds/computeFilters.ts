@@ -3,7 +3,7 @@
  * Based on V3 algorithm with coverage theorem and merge rules
  */
 
-import { artifactHalfSetsById, elementalMainStats } from "../data/constants";
+import { artifactHalfSetsById, elementalMainStats } from "../../data/constants";
 import {
   type ArtifactSetConfigs,
   type Build,
@@ -12,37 +12,37 @@ import {
   type MainStat,
   type MainStatPlus,
   type MainStatSlot,
+  type MergeAlgorithm,
   type SetConfig,
   type SlotConfig,
   type SubStat,
   mainStatsPlus,
-} from "../data/types";
-import { simpleMerge } from "./simpleMerge";
+} from "../../data/types";
+import { bruteForcePartitionAsync } from "./bruteForcePartition";
+import { greedyMerge } from "./greedyMerge";
+import { SLOT_KEYS, mergeConfigGroup } from "./mergeUtils";
+import { smartMerge } from "./smartMerge";
 
 export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {
-  skipCritBuilds: false,
   expandElementalGoblet: true,
   expandCritCirclet: true,
-  mergeSingleFlexVariants: true,
-  findRigidCommonSubset: true,
+  mergeAlgorithm: "smartMerge",
+  normalizeFlatStats: true,
+  substatWeightThreshold: 70,
+  mustPresentWeightThreshold: 90,
 };
 
 /**
- * Main entry point: Compute artifact filters from character builds
- *
- * Process:
- * 1. Add phase: Create individual configs from each build
- * 2. Merge phase: Merge configs using Coverage Theorem rules
+ * PHASE 1 (sync): Create raw per-set configs from all builds.
+ * This is always fast — no merging happens here.
  */
-export function computeArtifactFilters(
+export function buildRawConfigs(
   buildGroups: BuildGroup[],
   options: ComputeOptions = DEFAULT_COMPUTE_OPTIONS
-): ArtifactSetConfigs[] {
+): Record<string, SetConfig[]> {
   const mergedOptions = { ...DEFAULT_COMPUTE_OPTIONS, ...options };
   const setFilters: Record<string, SetConfig[]> = {};
 
-  // PHASE 1: ADD - Create configs from all builds
-  // Filter out hidden build groups first
   const visibleGroups = buildGroups.filter((group) => !group.hidden);
   for (const { characterId, builds } of visibleGroups) {
     const visibleBuilds = builds.filter((build) => build.visible);
@@ -54,39 +54,141 @@ export function computeArtifactFilters(
         if (!setFilters[setId]) {
           setFilters[setId] = [];
         }
-
         const config = createConfigFromBuild(
           build,
           characterId,
           is4pc,
           mergedOptions
         );
-
-        // Skip CR+CD builds if option enabled
-        if (mergedOptions.skipCritBuilds && hasCrCdMustPresent(config)) {
-          continue;
-        }
         setFilters[setId].push(config);
       }
     }
   }
+  return setFilters;
+}
 
-  // PHASE 2: MERGE - Merge configs using Coverage Theorem rules
-  for (const setId in setFilters) {
-    const mergedConfigs = simpleMerge(setFilters[setId], {
-      mergeSingleFlexVariants: mergedOptions.mergeSingleFlexVariants,
-      findRigidCommonSubset: mergedOptions.findRigidCommonSubset,
-    });
-    setFilters[setId] = mergedConfigs.map(finalizeMainStatsConversion);
+/**
+ * When k - |mustPresent| ≤ 1 (at most 1 flexible slot), merging all configs
+ * barely affects pass chance. Beyond that, pool expansion matters.
+ */
+function isSafeToMergeAll(configs: SetConfig[]): boolean {
+  const merged = mergeConfigGroup(configs);
+  const flexSlots =
+    merged.flowerPlume.minStatCount - merged.flowerPlume.mustPresent.length;
+  return flexSlots <= 1;
+}
+
+/**
+ * Post-process: if a config only has 2 substats (N=k=2), append corresponding
+ * flat stats (e.g. ATK% → ATK) to widen the filter.
+ */
+function appendFlatStats(config: SetConfig): SetConfig {
+  if (
+    config.flowerPlume.substats.length > 2 ||
+    config.flowerPlume.minStatCount !== config.flowerPlume.substats.length
+  ) {
+    return config;
   }
 
-  // Convert to output format
-  return Object.entries(setFilters).map(([setId, configurations]) => {
-    return {
-      setId,
-      configurations: sortConfigurations(configurations),
+  const currentStats = new Set(config.flowerPlume.substats);
+  let added = false;
+
+  const pctToFlat: Record<string, SubStat> = {
+    "atk%": "atk",
+    "hp%": "hp",
+    "def%": "def",
+  };
+
+  for (const pct of Object.keys(pctToFlat)) {
+    if (currentStats.has(pct as SubStat)) {
+      const flat = pctToFlat[pct];
+      if (!currentStats.has(flat)) {
+        currentStats.add(flat);
+        added = true;
+      }
+    }
+  }
+
+  if (!added) return config;
+
+  const newSubstats = Array.from(currentStats);
+  const newMinCount = newSubstats.length;
+
+  const result = { ...config };
+  for (const key of SLOT_KEYS) {
+    result[key] = {
+      ...config[key],
+      substats: newSubstats,
+      minStatCount: newMinCount,
     };
-  });
+  }
+  return result;
+}
+
+async function splitAndMergeAsync(
+  configs: SetConfig[],
+  algorithm: MergeAlgorithm,
+  normalizeFlatStats: boolean,
+  signal: AbortSignal
+): Promise<SetConfig[]> {
+  const mergeFn = async (group: SetConfig[]) => {
+    if (algorithm === "smartMerge") return smartMerge(group);
+    if (algorithm === "greedyMerge") return greedyMerge(group);
+    return await bruteForcePartitionAsync(group, signal);
+  };
+
+  const nonCrit = configs.filter((c) => !hasCrCdMustPresent(c));
+  const crit = configs.filter((c) => hasCrCdMustPresent(c));
+
+  const primary = nonCrit.length > 0 ? await mergeFn(nonCrit) : [];
+
+  if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+  const critMerged =
+    crit.length > 0
+      ? isSafeToMergeAll(crit)
+        ? [mergeConfigGroup(crit)]
+        : await mergeFn(crit)
+      : [];
+
+  let results = [...primary, ...critMerged];
+  if (normalizeFlatStats) {
+    results = results.map(appendFlatStats);
+  }
+  return results.map(finalizeMainStatsConversion);
+}
+
+/**
+ * PHASE 2 (async): Merge raw configs incrementally, yielding control
+ * between sets so the main thread stays responsive.
+ * Checks `signal.aborted` between sets for cancellation.
+ */
+export async function mergeConfigsAsync(
+  rawConfigs: Record<string, SetConfig[]>,
+  algorithm: MergeAlgorithm,
+  normalizeFlatStats: boolean,
+  signal: AbortSignal
+): Promise<ArtifactSetConfigs[]> {
+  const results: ArtifactSetConfigs[] = [];
+  const entries = Object.entries(rawConfigs);
+
+  for (const [setId, configs] of entries) {
+    if (signal.aborted) throw new DOMException("Aborted", "AbortError");
+
+    const mergedConfigs = await splitAndMergeAsync(
+      configs,
+      algorithm,
+      normalizeFlatStats,
+      signal
+    );
+
+    results.push({
+      setId,
+      configurations: sortConfigurations(mergedConfigs),
+    });
+  }
+
+  return results;
 }
 
 function finalizeMainStatsConversion(config: SetConfig): SetConfig {
@@ -147,50 +249,17 @@ function sortMainStats(mainStats: MainStatPlus[]): MainStatPlus[] {
 }
 
 function getMainStatOrder(stat: MainStatPlus): number {
-  if (typeof stat === "string" && stat.endsWith("%") && stat !== "elemental%") {
-    return mainStatIndex[stat] ?? Number.MAX_SAFE_INTEGER;
-  }
-
   if (stat === "elemental%") {
     return SPECIAL_MAIN_STAT_ORDER.elemental ?? Number.MAX_SAFE_INTEGER;
   }
-
-  return mainStatIndex[String(stat)] ?? Number.MAX_SAFE_INTEGER;
-}
-
-/**
- * Detect must-present substats using conservative heuristics
- *
- * Only detect patterns that are very likely to be must-present:
- * 1. CR+CD: Critical rate + critical damage (DPS builds)
- * 2. ER+ATK%: Energy recharge + attack% (burst DPS) - only if k=2
- * 3. ER+HP%: Energy recharge + HP% (support/healer) - only if k=2
- * 4. ER+DEF%: Energy recharge + DEF% (DEF-scaling support) - only if k=2
- */
-function detectMustPresent(
-  substats: SubStat[],
-  minStatCount: number
-): SubStat[] {
-  if (substats.length < 2) return [];
-
-  // Pattern 1: CR+CD (DPS builds) - most reliable pattern
-  if (substats.includes("cr") && substats.includes("cd")) {
-    return ["cr", "cd"];
-  }
-
-  // Pattern 2: all substats are required by the count
-  if (substats.length === minStatCount) {
-    return substats;
-  }
-
-  return [];
+  return mainStatIndex[stat] ?? Number.MAX_SAFE_INTEGER;
 }
 
 /**
  * Check if build should be skipped (CR+CD auto-lock)
  * Uses must-present detection to determine if both CR and CD are required
  */
-function hasCrCdMustPresent(config: SetConfig): boolean {
+export function hasCrCdMustPresent(config: SetConfig): boolean {
   return (
     config.flowerPlume.mustPresent.includes("cr") &&
     config.flowerPlume.mustPresent.includes("cd")
@@ -232,10 +301,27 @@ function createConfigFromBuild(
   is4pc: boolean,
   options: ComputeOptions
 ): SetConfig {
-  const minStatCount = build.kOverride ?? build.substats.length;
+  const includeThreshold =
+    options.substatWeightThreshold ??
+    DEFAULT_COMPUTE_OPTIONS.substatWeightThreshold!;
+  const mustPresentThreshold =
+    options.mustPresentWeightThreshold ??
+    DEFAULT_COMPUTE_OPTIONS.mustPresentWeightThreshold!;
 
-  // Detect must-present (CR+CD heuristic only)
-  const mustPresent = detectMustPresent(build.substats, minStatCount);
+  // Filter substats by weight: only include those at or above the inclusion threshold
+  const effectiveSubstats = build.substats
+    .filter((s) => s.weight >= includeThreshold)
+    .map((s) => s.stat);
+
+  // Derive must-present from substat weights at or above the must-present threshold
+  const mustPresent = build.substats
+    .filter((s) => s.weight >= mustPresentThreshold)
+    .map((s) => s.stat);
+
+  // Always derive k from substat count, capped at 3.
+  // k=3 is the practical ceiling for reliable artifact locking
+  // (4+ substats rarely all appear together).
+  const minStatCount = Math.min(effectiveSubstats.length, 3);
 
   // Preprocess main stats (expand elemental DMG and crit circlet early)
   const sandsMainStats = expandMainStats(build.sands, "sands", options, is4pc);
@@ -255,25 +341,25 @@ function createConfigFromBuild(
   return {
     flowerPlume: {
       mainStats: [],
-      substats: build.substats,
+      substats: effectiveSubstats,
       mustPresent,
       minStatCount,
     },
     sands: {
       mainStats: sandsMainStats,
-      substats: build.substats,
+      substats: effectiveSubstats,
       mustPresent,
       minStatCount,
     },
     goblet: {
       mainStats: gobletMainStats,
-      substats: build.substats,
+      substats: effectiveSubstats,
       mustPresent,
       minStatCount,
     },
     circlet: {
       mainStats: circletMainStats,
-      substats: build.substats,
+      substats: effectiveSubstats,
       mustPresent,
       minStatCount,
     },
@@ -328,16 +414,22 @@ function expandMainStats(
 }
 
 /**
- * Sort configurations by priority
+ * Sort configurations by priority.
+ * CR+CD configs are ranked last so users see non-crit configs first.
  */
 function sortConfigurations(configs: SetConfig[]): SetConfig[] {
   return configs.slice().sort((a, b) => {
-    // Primary: 4pc count
+    // Primary: CR+CD configs go last
+    const aCrit = hasCrCdMustPresent(a) ? 1 : 0;
+    const bCrit = hasCrCdMustPresent(b) ? 1 : 0;
+    if (aCrit !== bCrit) return aCrit - bCrit;
+
+    // Secondary: 4pc count
     const a4pc = a.servedCharacters.filter((c) => c.has4pcBuild).length;
     const b4pc = b.servedCharacters.filter((c) => c.has4pcBuild).length;
     if (b4pc !== a4pc) return b4pc - a4pc;
 
-    // Secondary: total character count
+    // Tertiary: total character count
     return b.servedCharacters.length - a.servedCharacters.length;
   });
 }

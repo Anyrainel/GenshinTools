@@ -2,141 +2,90 @@
 
 ## Overview
 
-This is a **React + TypeScript + Vite** application using **Tailwind CSS** and **shadcn/ui**. It provides utilities for Genshin Impact players (Artifact Filter, Tier List Maker, Team Builder).
+**React 19 + TypeScript + Vite 7** app using **Tailwind CSS 3** and **shadcn/ui**. Provides utilities for Genshin Impact players: Artifact Filter, Tier List Maker, Account Analytics, Team Builder, and Archive.
 
-- **Desktop App:** Wrapped with **Tauri** (`src-tauri/`) for offline capability.
-- **Data Pipeline:** Python scripts (`scripts/`) fetch and preprocess game data using `uv` for dependency management.
-- **Web Deployment:** Hosted on **Cloudflare Pages**.
+- **UI**: shadcn/ui, Radix primitives, Vaul (drawers)
+- **State**: Zustand 5 (Immer + persist middleware)
+- **Desktop**: Tauri 2 (`src-tauri/`)
+- **Edge**: Cloudflare Workers (`functions/api/`, Wrangler)
+- **Quality**: Biome (lint/format), Husky + lint-staged
+- **Testing**: Vitest 4 + React Testing Library, Playwright (`e2e/`)
+- **Data Pipeline**: Python scripts (`scripts/`) with `uv`
+
+Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 
 ## Project Structure
 
-### Core Domains
+### Pages & Routes
 
-The application is divided into distinct functional domains, each with its own state store and component subdirectory:
+- `/` — Home (`WideLayout`)
+- `/account-data` — tabs: `characters`, `recommendations`, `inventory`, `weights` (`SidebarLayout`)
+- `/artifact-filter` — tabs: `configure`, `filters` (`SidebarLayout`)
+- `/tier-list` — tabs: `characters`, `weapons` (`WideLayout`)
+- `/archive` — tabs: `characters`, `weapons` (`SidebarLayout` / `ScrollLayout`)
+- `/team-builder` (`ScrollLayout`)
 
-- **Account Data** (`src/components/account-data`): Logic for imported GOOD/Enka data, inventory management, and artifact scoring.
-- **Tier Lists** (`src/components/tier-list`): Logic for Character and Weapon tier lists, including drag-and-drop grids and customization dialogs.
-- **Artifact Filter** (`src/components/artifact-filter`): The rule engine for generating lock/trash scripts.
-- **Team Builder** (`src/components/team-builder`): Create and manage team compositions.
-- **Archive** (`src/components/archive`): Character and weapon encyclopedia with detailed stats, kit display, and linked data sections.
+Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/components/layout/`.
 
-### Application Pages
+### Directory Map
 
-| Page | Route | Purpose | Layout |
-|------|-------|---------|--------|
-| `Home` | `/` | Landing page with navigation cards | `WideLayout` |
-| `Artifact Builds` | `/artifact-filter` | Configure builds, compute lock/trash filters | `SidebarLayout` |
-| `Account Data` | `/account-data` | Import GOOD/Enka data, view characters | `SidebarLayout` |
-| `Character Tiers` | `/tier-list` | Character tier list with drag-drop | `WideLayout` |
-| `Weapon Tier List` | `/weapon-tier-list` | Weapon tier list with rarity filters (Hidden from AppBar) | `WideLayout` |
-| `Archive` | `/archive` | Character & weapon encyclopedia (tabs via `?tab=`) | `SidebarLayout` / `ScrollLayout` |
-| `Team Builder` | `/team-builder` | Create and manage team compositions | `ScrollLayout` |
+- `src/components/{domain}` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-builder`, `archive`
+- `src/components/shared` — Cross-domain: `ItemPicker`, `ItemIcon`, `CharacterFilterSidebar`, controls, tooltips
+- `src/components/ui` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
+- `src/stores` — One Zustand store per domain (persist to `localStorage`)
+- `src/data` — Static JSON resources, `types.ts`, `constants.ts`, localization (`i18n-ui.ts`, `i18n-app.ts`, `i18n-game.ts`)
+- `src/lib` — Pure logic: merge algorithms, filter computation, artifact scoring, insight engine, preset system, build utilities
+- `src/hooks` — `useResolvedBuilds`, `useAsyncCompute`, `useMediaQuery`, `useGlobalScroll`
+- `src/contexts` — `LanguageContext` (EN/ZH), `ThemeContext` (per-element palette via `themeGenerator.ts`)
+- `src/presets` — Bundled preset JSONs for artifact builds, character tier lists, weapon tier lists
+- `scripts/` — Python ETL (Enka, Hakush.in, HoYoLab, Fandom). Run `update_data.cmd` or `uv run --project scripts/pyproject.toml scripts/<script>.py`
+- `docs/` — Design docs, product specs, roadmap
 
-### Key Directories
+## Data Flow & Build System
 
-- **`src/components/layout`**: Core layout shells (`PageLayout`, `SidebarLayout`, `WideLayout`, `ScrollLayout`, `AppBar`).
-- **`src/components/ui`**: Reusable shadcn/ui primitives.
-- **`src/components/shared`**: Common domain components (e.g., `ItemPicker`, `ToolHeader`, `Control`s).
-- **`src/stores`**: Zustand state management. **One store per domain** (e.g., `useAccountStore`, `useTierStore`, `useOwnershipStore`).
-- **`src/data`**: Static data resources (Characters/Weapons/Artifacts JSON), types (`types.ts`), and localization (`i18n-app.ts`, `i18n-ui.ts`).
-- **`scripts/`**: Python ETL scripts for fetching game data.
+1. **Static data** (`src/data/*.json`) is the immutable source of truth for game data.
+2. **User data** enters via GOOD Format (JSON), Enka.Network (UID), or preset subscription → persists in `localStorage`.
+3. **Preset system**: presets in `src/presets/artifact-builds/` seed the store on subscribe. Local edits overlay as deltas. See `presetRegistry.ts`, `presetLoader.ts`, and the `subscribePreset` action in `useBuildsStore`.
+4. **Build resolution**: `useResolvedBuilds` hook merges preset + local data, derives source (`preset` | `modified` | `custom`). Ordering tracked in `characterToBuildIds`.
+5. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts. See `src/lib/` for all algorithms.
+6. **Zero `any`**: all external data (Import/API) must be typed and validated.
 
-## Data Flow Philosophy
+## Commands
 
-1. **Static Data Rule**: The frontend treats `src/data/*.json` as the immutable source of truth for Game Data.
-2. **User Data Rule**: User data (Artifacts, Tier Lists) enters via **GOOD Format** (JSON import) or Enka API, and persists in `localStorage`.
-3. **ZERO `any` Policy**: All data crossing the boundary (Network/File -> App) must be typed and validated.
+- `npm run dev` — Vite + Wrangler dev server (Cloudflare Functions proxy)
+- `npm run dev:vite` — Vite only (no Cloudflare Functions)
+- `npm run build` / `build:tauri` — Production build (Web / Tauri Desktop)
+- `npm run lint` / `lint:fix` — Biome check / auto-fix
+- `npm run type-check` — TypeScript check (src + tests tsconfigs)
+- `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
+- `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
-## Workflows & Commands
+**ALWAYS use `npm run` scripts, NOT raw `npx` invocations.** The project scripts are configured to check both `src` and `tests` tsconfigs, etc.
 
-### Development
+## Development Rules
 
-| Command | Purpose |
-|---------|---------|
-| `npm run dev` | Start Vite dev server |
-| `npm run build` | Production build (Web) |
-| `npm run build:tauri` | Production build (Tauri Desktop) |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Check lint + format (Biome) |
-| `npm run lint:fix` | Auto-fix lint + format |
-| `npm run type-check` | TypeScript check (src + tests) |
-| `npm run test` | Run tests once |
-| `npm run test:watch` | Run tests in watch mode |
+### Architecture
 
-### Debugging & Diagnostics
+- **`SidebarLayout`**: Drawer on mobile, fixed sidebar on desktop (lg+). Standard for pages with filter panels.
+- **`AppBar`**: Sticky header. Actions via `ActionConfig[]`; dialog controls use ref forwarding (`useImperativeHandle`).
+- **Mobile first**: `Drawer` (vaul) for mobile interactions, `Popover` for desktop. See `ItemPicker.tsx`.
 
-1. **Use Project Scripts, Not Raw Tools**:
-   - **ALWAYS** use the project's `npm run` scripts instead of invoking tools directly via `npx`.
-   - Use `npm run type-check`, NOT `npx tsc --noEmit`. The project script checks both `src` and `tests` tsconfigs.
-   - Use `npm run lint`, NOT `npx biome check`.
-   - Use `npm run test`, NOT `npx vitest run`.
-   - The project scripts are intentionally configured and more thorough than raw tool invocations.
+### Styling
 
-2. **Avoid `2>&1` Redirection**:
-   - Do NOT use `2>&1` in commands unless strictly necessary. This syntax can trigger safety review rules.
-   - For standard logging, let the terminal handle stdout/stderr naturally.
+- Always use `cn()` to merge styles. Layers: `tailwind.config.ts` → `index.css` → inline.
+- `ThemeContext` + `themeGenerator.ts` for per-element color palettes.
 
-3. **Log File Hygiene**:
-   - **Prefer Memory**: Read command output directly from the terminal tool response when possible.
-   - **Cleanup Mandatory**: If you must redirect output to a file (e.g., `npm run test > temp_error.log`) to analyze large outputs, you **MUST** delete the file immediately after reading it.
+### Localization
 
-### Deployment (Cloudflare Pages)
+- **`i18n-ui.ts`**: Static UI strings. **CRITICAL**: `t.ui()` calls MUST use string literals (e.g. `t.ui('common.save')`), never dynamically constructed keys.
+- **`i18n-app.ts`**: Dynamic/game terms. **`i18n-game.ts`**: Game entity names.
 
-- **Build Command:** `npm run build`
-- **Output Directory:** `dist`
-- **Node Version:** Latest LTS (managed by Cloudflare or `.nvmrc`)
+### Testing
 
-### Data Updates
+- Unit tests in `tests/` mirror `src/`. Use `@/` path alias.
+- Store tests: use `useStore.getState()` to verify state after actions.
 
-Data ingestion logic resides in `scripts/`.
+### Terminal Hygiene
 
-- **Full Update:** Run `update_data.cmd` (Windows) to fetch and process all data.
-- **Single Script:** Use `uv`:
-  ```bash
-  uv run --project scripts/pyproject.toml scripts/codedump.py
-  ```
-
-
-## Development Guidelines
-
-### 1. Architecture & Layouts
-
-- **`SidebarLayout`**: The standard layout for tools requires filters. Uses a `Sheet` (Drawer) on mobile and a fixed sidebar on desktop (lg+).
-- **`AppBar`**: Sticky header for all pages. Handles navigation and page-specific actions.
-  - **Actions Pattern**: Pass `ActionConfig[]` to `AppBar`.
-  - **Dialog Controls**: For actions that open dialogs (Import/Export), use **Ref forwarding** (`useImperativeHandle`).
-    - Example: `<ImportControl ref={importRef} ... />` then call `importRef.current.open()`.
-- **Responsive Design**:
-  - **Mobile First**: Use `Hidden` utilities or `lg:block` to differentiate mobile/desktop layouts.
-  - **Drawers vs Popovers**: Use `Drawer` (via `vaul`) for complex interactions on mobile, and `Popover` on desktop. See `ItemPicker.tsx` for the canonical example.
-
-### 2. Styling Strategy
-
-- **Utility**: Always use `cn()` to merge `THEME` styles with overrides.
-- **Layers**: `tailwind.config.ts` (base) > `index.css` (globals) > inline (one-offs).
-
-### 3. Component Patterns
-
-- **`ItemPicker`**: The universal picker for Characters, Weapons, and Artifacts.
-  - Supports "4pc" and "2pc+2pc" artifact selection modes.
-  - Adapts display (Grid vs List) based on type.
-- **Controls**: `ImportControl`, `ExportControl`, `ClearAllControl` are standardized.
-  - Use `variant="tier-list"` vs `variant="default"` to switch specific i18n label sets.
-- **`ItemIcon`**: The canonical way to render Game Items with correct rarity backgrounds.
-- **Tooltips**: Essential for Game Items. Use `CharacterTooltip`, `WeaponTooltip`, etc. extensions.
-
-### 4. Code Quality Standards
-
-- **Zero `any`**: All external data (Import/API) must be validated.
-- **Localization**:
-  - **UI Labels**: Use `i18n-ui.ts` for static strings. **CRITICAL**: usage of `t.ui()` MUST use static string literals (e.g. `t.ui('common.save')`) to ensure the unused-label scanner works. Do NOT dynamically construct keys.
-  - **App/Game**: Use `i18n-app.ts` for dynamic/game terms.
-- **Performance**: High-cardinality lists key by ID. Use `memo` for expensive list items (like `TierTable` cells).
-
-### 5. Testing
-
-Tests use **Vitest** with **React Testing Library**.
-
-- **Structure**: Tests live in `tests/` mirroring `src/`.
-- **Path Aliases**: Use `@/` in tests.
-- **Store Testing**: Store tests require `useStore.getState()` to verify state changes after actions.
+- Avoid `2>&1` redirection (triggers safety review).
+- If redirecting to a file, delete it immediately after reading.

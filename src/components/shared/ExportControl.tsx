@@ -53,6 +53,10 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [author, setAuthor] = useState(defaultAuthor);
     const [description, setDescription] = useState(defaultDescription);
+    const [validationInfo, setValidationInfo] = useState<{
+      warnings: string[];
+      count: number;
+    }>({ warnings: [], count: 0 });
     const [errors, setErrors] = useState<{
       author?: string;
       description?: string;
@@ -60,11 +64,22 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
 
     // Expose open() method via ref
     useImperativeHandle(ref, () => ({
-      open: () => {
+      // biome-ignore lint/suspicious/noExplicitAny: Options are loosely typed
+      open: (options?: any) => {
         // Reset form to defaults when opening
         setAuthor(defaultAuthor);
         setDescription(defaultDescription);
         setErrors({});
+
+        if (options && typeof options === "object") {
+          setValidationInfo({
+            warnings: Array.isArray(options.warnings) ? options.warnings : [],
+            count: typeof options.count === "number" ? options.count : 0,
+          });
+        } else {
+          setValidationInfo({ warnings: [], count: 0 });
+        }
+
         setIsOpen(true);
       },
     }));
@@ -137,6 +152,19 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
+            {validationInfo.count > 0 && (
+              <div className="rounded-md bg-destructive/15 p-3 text-destructive text-sm border border-destructive/20">
+                <p className="font-semibold mb-2">
+                  Validation Warnings ({validationInfo.count} builds):
+                </p>
+                <ul className="list-disc pl-4 space-y-1 text-xs">
+                  {validationInfo.warnings.map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="grid gap-2">
               <Label htmlFor="export-author">{messages.authorLabel}</Label>
               <Input

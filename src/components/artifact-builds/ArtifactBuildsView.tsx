@@ -2,8 +2,10 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifacts } from "@/data/resources";
 import type { Build, ComputeOptions } from "@/data/types";
-import { computeArtifactFilters } from "@/lib/computeFilters";
+import { useAsyncCompute } from "@/hooks/useAsyncCompute";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+import { Loader2 } from "lucide-react";
 import { type RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { ArtifactCard } from "./ArtifactCard";
 import { ComputeSidebar } from "./ComputeSidebar";
@@ -26,30 +28,15 @@ export function ArtifactBuildsView({
   const { t } = useLanguage();
   const mainScrollRef = useRef<HTMLDivElement>(null);
 
-  // Get data from Zustand store
-  const characterToBuildIds = useBuildsStore(
-    (state) => state.characterToBuildIds
+  // Get data from resolved builds hook
+  // This automatically handles union of Local and Preset builds
+  const characterBuilds = useAllResolvedBuilds();
+
+  // Async compute with caching and cancellation
+  const { results: artifactFilters, isComputing } = useAsyncCompute(
+    characterBuilds,
+    computeOptions
   );
-  const buildsMap = useBuildsStore((state) => state.builds);
-  const hiddenCharacters = useBuildsStore((state) => state.hiddenCharacters);
-
-  // Convert to the format expected by the rest of the component
-  const characterBuilds = useMemo(() => {
-    return Object.entries(characterToBuildIds)
-      .filter(([characterId]) => !hiddenCharacters[characterId])
-      .map(([characterId, buildIds]) => ({
-        characterId,
-        builds: buildIds
-          .map((id) => buildsMap[id])
-          .filter((b): b is Build => b?.visible),
-        hidden: false,
-      }));
-  }, [characterToBuildIds, buildsMap, hiddenCharacters]);
-
-  // Compute artifact filters from character builds with options
-  const artifactFilters = useMemo(() => {
-    return computeArtifactFilters(characterBuilds, computeOptions);
-  }, [characterBuilds, computeOptions]);
 
   const filteredSets = useMemo(() => {
     return artifacts.filter((set) => {
@@ -91,7 +78,15 @@ export function ArtifactBuildsView({
         style={{ scrollBehavior: "auto" }}
       >
         <div ref={contentRef} className="space-y-4">
-          {filteredSets.length === 0 ? (
+          {/* Sticky computing indicator */}
+          {isComputing && (
+            <div className="sticky top-0 z-10 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary backdrop-blur-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>{t.ui("computeFilters.computing")}</span>
+            </div>
+          )}
+
+          {filteredSets.length === 0 && !isComputing ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">⚙️</div>
               <h3 className="text-xl font-semibold text-foreground mb-2">

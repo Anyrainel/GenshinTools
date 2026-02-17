@@ -1,6 +1,6 @@
 import { StatDisplay } from "@/components/account-data/StatDisplay";
 import type { ArtifactData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
 
 // Sample artifact for testing

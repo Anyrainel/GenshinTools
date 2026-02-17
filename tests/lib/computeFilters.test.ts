@@ -1,8 +1,9 @@
-import { type Build, type BuildGroup, ComputeOptions } from "@/data/types";
+import type { Build, BuildGroup } from "@/data/types";
 import {
   DEFAULT_COMPUTE_OPTIONS,
-  computeArtifactFilters,
-} from "@/lib/computeFilters";
+  buildRawConfigs,
+  mergeConfigsAsync,
+} from "@/lib/artifact-builds/computeFilters";
 import { describe, expect, it } from "vitest";
 
 // Helper to create a complete Build matching the actual type
@@ -17,7 +18,12 @@ function createBuild(overrides: Partial<Build> = {}): Build {
     sands: ["atk%"],
     goblet: ["anemo%"],
     circlet: ["cr"],
-    substats: ["cr", "cd", "atk%", "er"],
+    substats: [
+      { stat: "cr", weight: 100 },
+      { stat: "cd", weight: 100 },
+      { stat: "atk%", weight: 100 },
+      { stat: "er", weight: 100 },
+    ],
     ...overrides,
   };
 }
@@ -32,11 +38,27 @@ function createBuildGroup(overrides: Partial<BuildGroup> = {}): BuildGroup {
   };
 }
 
-describe("computeArtifactFilters", () => {
+/** Run the full two-phase pipeline synchronously (smartMerge/greedyMerge are sync). */
+async function computeFilters(
+  buildGroups: BuildGroup[],
+  options = DEFAULT_COMPUTE_OPTIONS
+) {
+  const raw = buildRawConfigs(buildGroups, options);
+  const algorithm = options.mergeAlgorithm ?? "smartMerge";
+  const normalizeFlatStats = options.normalizeFlatStats ?? true;
+  return mergeConfigsAsync(
+    raw,
+    algorithm,
+    normalizeFlatStats,
+    new AbortController().signal
+  );
+}
+
+describe("computeFilters (async pipeline)", () => {
   describe("basic computation", () => {
-    it("generates configs from a single visible build", () => {
+    it("generates configs from a single visible build", async () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
 
       expect(result.length).toBeGreaterThan(0);
       // Each result should have a setId and configurations
@@ -44,7 +66,7 @@ describe("computeArtifactFilters", () => {
       expect(result[0].configurations).toBeDefined();
     });
 
-    it("generates configs for 2pc+2pc composition", () => {
+    it("generates configs for 2pc+2pc composition", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({
           builds: [
@@ -57,15 +79,15 @@ describe("computeArtifactFilters", () => {
           ],
         }),
       ];
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
 
       // Should generate configs for 2pc combinations
       expect(result.length).toBeGreaterThanOrEqual(0);
     });
 
-    it("includes character info in served characters", () => {
+    it("includes character info in served characters", async () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
 
       if (result.length > 0 && result[0].configurations.length > 0) {
         const config = result[0].configurations[0];
@@ -77,7 +99,7 @@ describe("computeArtifactFilters", () => {
   });
 
   describe("hidden builds", () => {
-    it("excludes hidden build groups", () => {
+    it("excludes hidden build groups", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({ hidden: true }),
         createBuildGroup({
@@ -87,7 +109,7 @@ describe("computeArtifactFilters", () => {
         }),
       ];
 
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
 
       // Should only include venti, not the hidden character
       if (result.length > 0 && result[0].configurations.length > 0) {
@@ -100,7 +122,7 @@ describe("computeArtifactFilters", () => {
       }
     });
 
-    it("excludes builds with visible=false", () => {
+    it("excludes builds with visible=false", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({
           builds: [
@@ -110,83 +132,150 @@ describe("computeArtifactFilters", () => {
         }),
       ];
 
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
       // Should still process the visible build
       expect(result.length).toBeGreaterThan(0);
     });
   });
 
   describe("empty input", () => {
-    it("returns empty array for no build groups", () => {
-      const result = computeArtifactFilters([]);
+    it("returns empty array for no build groups", async () => {
+      const result = await computeFilters([]);
       expect(result).toEqual([]);
     });
 
-    it("handles all hidden builds", () => {
+    it("handles all hidden builds", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({ hidden: true }),
         createBuildGroup({ hidden: true, characterId: "venti" }),
       ];
 
-      const result = computeArtifactFilters(buildGroups);
-      // Hidden builds should be excluded from processing
-      // This may or may not return empty depending on implementation
+      const result = await computeFilters(buildGroups);
       expect(result).toBeDefined();
     });
 
-    it("handles all invisible builds", () => {
+    it("handles all invisible builds", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({
           builds: [createBuild({ visible: false })],
         }),
       ];
 
-      const result = computeArtifactFilters(buildGroups);
-      // Invisible builds should be excluded from processing
+      const result = await computeFilters(buildGroups);
       expect(result).toBeDefined();
     });
   });
 
   describe("compute options", () => {
-    it("respects skipCritBuilds option", () => {
+    it("respects mergeAlgorithm option", async () => {
       const buildGroups: BuildGroup[] = [
         createBuildGroup({
           builds: [
             createBuild({
-              substats: ["cr", "cd"], // CR+CD build
-              kOverride: 2,
+              substats: [
+                { stat: "cr", weight: 100 },
+                { stat: "cd", weight: 100 },
+                { stat: "atk%", weight: 100 },
+                { stat: "er", weight: 100 },
+              ],
             }),
           ],
         }),
       ];
 
-      const withSkip = computeArtifactFilters(buildGroups, {
+      const withBruteForce = await computeFilters(buildGroups, {
         ...DEFAULT_COMPUTE_OPTIONS,
-        skipCritBuilds: true,
+        mergeAlgorithm: "bruteForce",
       });
 
-      const withoutSkip = computeArtifactFilters(buildGroups, {
+      const withGreedy = await computeFilters(buildGroups, {
         ...DEFAULT_COMPUTE_OPTIONS,
-        skipCritBuilds: false,
+        mergeAlgorithm: "greedyMerge",
       });
 
-      // With skip should have fewer or no configs for auto-lock crit builds
-      expect(withSkip.length).toBeLessThanOrEqual(withoutSkip.length);
+      // Both algorithms should produce valid results
+      expect(withBruteForce.length).toBeGreaterThan(0);
+      expect(withGreedy.length).toBeGreaterThan(0);
     });
 
-    it("applies default compute options", () => {
+    it("applies default compute options", async () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
 
       // Test with defaults
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
       expect(result.length).toBeGreaterThan(0);
     });
   });
 
+  describe("weight thresholds", () => {
+    it("filters substats by weight threshold", () => {
+      const buildGroups: BuildGroup[] = [
+        createBuildGroup({
+          builds: [
+            createBuild({
+              substats: [
+                { stat: "cr", weight: 100 },
+                { stat: "cd", weight: 100 },
+                { stat: "atk%", weight: 80 },
+                { stat: "er", weight: 50 },
+              ],
+            }),
+          ],
+        }),
+      ];
+
+      // threshold=70 should include cr, cd, atk% but exclude er (50)
+      const raw = buildRawConfigs(buildGroups, {
+        ...DEFAULT_COMPUTE_OPTIONS,
+        substatWeightThreshold: 70,
+      });
+
+      const configs = Object.values(raw).flat();
+      expect(configs.length).toBeGreaterThan(0);
+      const substats = configs[0].flowerPlume.substats;
+      expect(substats).toContain("cr");
+      expect(substats).toContain("cd");
+      expect(substats).toContain("atk%");
+      expect(substats).not.toContain("er");
+    });
+
+    it("marks must-present substats by weight threshold", () => {
+      const buildGroups: BuildGroup[] = [
+        createBuildGroup({
+          builds: [
+            createBuild({
+              substats: [
+                { stat: "cr", weight: 100 },
+                { stat: "cd", weight: 100 },
+                { stat: "atk%", weight: 80 },
+                { stat: "er", weight: 80 },
+              ],
+            }),
+          ],
+        }),
+      ];
+
+      // mustPresentThreshold=100 should only mark cr and cd
+      const raw = buildRawConfigs(buildGroups, {
+        ...DEFAULT_COMPUTE_OPTIONS,
+        substatWeightThreshold: 70,
+        mustPresentWeightThreshold: 100,
+      });
+
+      const configs = Object.values(raw).flat();
+      expect(configs.length).toBeGreaterThan(0);
+      const mustPresent = configs[0].flowerPlume.mustPresent;
+      expect(mustPresent).toContain("cr");
+      expect(mustPresent).toContain("cd");
+      expect(mustPresent).not.toContain("atk%");
+      expect(mustPresent).not.toContain("er");
+    });
+  });
+
   describe("slot config structure", () => {
-    it("generates configs with correct slot structure", () => {
+    it("generates configs with correct slot structure", async () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
-      const result = computeArtifactFilters(buildGroups);
+      const result = await computeFilters(buildGroups);
 
       if (result.length > 0 && result[0].configurations.length > 0) {
         const config = result[0].configurations[0];

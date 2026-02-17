@@ -21,7 +21,8 @@
 Everyone plays Genshin differently. This tool allows you to:
 
 - **Configure once**: Define builds for each character (sets + stats) based on your specific needs.
-- **Intelligent merging**: Combines all your builds into optimized filter configs.
+- **Preset Subscription**: Subscribe to curated community presets, then customize on top. Revert individual builds or restore entire characters to preset defaults.
+- **Intelligent merging**: Two merge algorithms (Greedy for speed, Smart for optimality) combine builds into compact filter configs.
 - **Export & Share**: Easily share your configurations or import from the community.
 
 ### Account Analytics
@@ -29,27 +30,28 @@ Everyone plays Genshin differently. This tool allows you to:
 **Visualize your account progress.**
 
 - **Data Import**: Import account data via **GOOD** files (from scanners) or directly via **Enka.Network** (UID).
-- **Artifact Scoring**: Automatically score your characters' artifacts based on custom weights.
+- **Artifact Scoring**: Automatically score your characters' artifacts based on custom stat weights.
+- **Personalized Recommendations**: Get actionable insights on which characters and artifacts to invest in.
 - **Inventory Overview**: View distribution of artifacts and weapons across your account.
 
 ### Tier List Maker
 
-**Create and manage character tier lists.**
+**Create and manage character & weapon tier lists.**
 
 A modern, interactive tier list maker that:
 
 - **Organizes by Element**: Characters are sorted by element within tiers for better clarity.
-- **Save/Load**: Save your tier lists to JSON and load them later.
+- **Character & Weapon Tabs**: Switch between character and weapon tier lists in one unified view.
+- **Save/Load**: Save your tier lists to JSON and load them later, or subscribe to community presets.
 - **Drag & Drop**: Easy-to-use interface.
 - **Export Image**: Share your tier lists with high-quality image exports.
 
-### Weapon Tier List Maker
+### Archive
 
-**Rank weapons by type.**
+**Browse the complete character and weapon encyclopedia.**
 
-Compare weapons within their specific categories (Sword, Claymore, etc.) with advanced filtering by **Secondary Stat** (e.g., CRIT Rate, EM) and Rarity.
-
-- **Export Image**: Share your weapon rankings.
+- **Character Details**: View base stats at multiple ascension levels, full skill/talent kits, passives, constellations, and glossary.
+- **Weapon Details**: Compare weapons by type, secondary stat, and rarity.
 
 ### Team Builder
 
@@ -67,8 +69,7 @@ The application is wrapped with **Tauri**, allowing you to run it as a standalon
 
 ## 💻 Tech Stack
 
-- **Framework**: React with TypeScript
-- **Build Tool**: Vite
+- **Framework**: React, TypeScript, Vite
 - **UI**: Tailwind CSS, shadcn/ui
 - **State Management**: Zustand
 - **Desktop**: Tauri

@@ -17,7 +17,7 @@ import {
 import {
   calculateArtifactScore,
   calculateMaxSlotSubScore,
-} from "@/lib/artifactScore";
+} from "./artifactScore";
 
 // ----------------------------------------------------------------------------
 // Types

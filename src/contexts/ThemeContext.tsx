@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-import { applyThemeVars } from "@/lib/theme-generator";
+import { applyThemeVars } from "@/lib/themeGenerator";
 
 export type ThemeId =
   | "abyss"

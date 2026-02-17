@@ -3,12 +3,14 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { MainStatPlus, SetConfig, SlotConfig } from "@/data/types";
-import { computeSlotChance } from "@/lib/artifactChance";
+import { computeSlotChance } from "@/lib/artifact-builds/artifactChance";
+import { hasCrCdMustPresent } from "@/lib/artifact-builds/computeFilters";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
 
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { Info } from "lucide-react";
 
 interface ArtifactConfigCardProps {
   config: SetConfig;
@@ -120,24 +122,36 @@ export function ArtifactConfigCard({
         </span>
       </Label>
       <div className="flex flex-wrap gap-1">
-        {slotConfig.substats.map((stat) => {
-          const isMustPresent = slotConfig.mustPresent.includes(stat);
-          return (
-            <Badge
-              key={stat}
-              variant="secondary"
-              className={cn(
-                "font-normal shadow-none",
-                isMobile ? "text-[11px] px-1 py-0" : "text-xs",
-                isMustPresent
-                  ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
-                  : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
-              )}
-            >
-              {getStatDisplayName(stat)}
-            </Badge>
-          );
-        })}
+        {/* Must-have stats first, then optional (hide optional when mustPresent >= k) */}
+        {[...slotConfig.substats]
+          .filter((stat) =>
+            slotConfig.mustPresent.length >= slotConfig.minStatCount
+              ? slotConfig.mustPresent.includes(stat)
+              : true
+          )
+          .sort((a, b) => {
+            const aMust = slotConfig.mustPresent.includes(a) ? 0 : 1;
+            const bMust = slotConfig.mustPresent.includes(b) ? 0 : 1;
+            return aMust - bMust;
+          })
+          .map((stat) => {
+            const isMustPresent = slotConfig.mustPresent.includes(stat);
+            return (
+              <Badge
+                key={stat}
+                variant="secondary"
+                className={cn(
+                  "font-normal shadow-none",
+                  isMobile ? "text-[11px] px-1 py-0" : "text-xs",
+                  isMustPresent
+                    ? "bg-amber-500/15 border-amber-500/40 text-amber-400 hover:bg-amber-500/15"
+                    : "bg-slate-500/10 border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+                )}
+              >
+                {getStatDisplayName(stat)}
+              </Badge>
+            );
+          })}
       </div>
     </div>
   );
@@ -286,7 +300,22 @@ export function ArtifactConfigCard({
         style={{ gridTemplateRows: "auto auto auto" }}
       >
         {/* Row 1: Main Stats */}
-        <div /> {/* Flower/Plume - empty */}
+        {/* Flower/Plume cell — reused for optional config tip */}
+        {hasCrCdMustPresent(config) ? (
+          <div
+            className={cn(
+              "flex items-center gap-1.5 w-fit self-start rounded-md bg-emerald-950/30 text-emerald-300/70",
+              isMobile ? "text-[10px] px-1.5 py-1" : "text-xs px-2 py-1.5"
+            )}
+          >
+            <Info className="w-3 h-3 shrink-0" />
+            <span className="leading-tight">
+              {t.ui("computeFilters.optionalConfig")}
+            </span>
+          </div>
+        ) : (
+          <div />
+        )}
         {renderMainStatCell(t.slot("sands"), config.sands.mainStats)}
         {renderMainStatCell(t.slot("goblet"), config.goblet.mainStats)}
         {renderMainStatCell(t.slot("circlet"), config.circlet.mainStats)}

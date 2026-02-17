@@ -1,6 +1,6 @@
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import type { ControlHandle } from "@/components/layout/AppBar";
-import type { GOODData } from "@/lib/goodConversion";
+import type { GOODData } from "@/lib/account-data/goodConversion";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React, { useRef, useEffect } from "react";

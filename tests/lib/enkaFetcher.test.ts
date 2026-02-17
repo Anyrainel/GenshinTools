@@ -2,7 +2,7 @@ import {
   type EnkaResponse,
   convertEnkaToGOOD,
   fetchEnkaData,
-} from "@/lib/enkaFetcher";
+} from "@/lib/account-data/enkaFetcher";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("enka", () => {

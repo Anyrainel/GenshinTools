@@ -38,7 +38,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
  * Controls expose `.open()` via ref using forwardRef + useImperativeHandle.
  */
 export interface ControlHandle {
-  open: () => void;
+  open: (options?: unknown) => void;
 }
 
 /**

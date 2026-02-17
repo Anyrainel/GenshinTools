@@ -3,7 +3,7 @@
  *
  * Tests the complete pipeline:
  * 1. Build configuration stored in useBuildsStore
- * 2. Filter computation via computeArtifactFilters
+ * 2. Filter computation via buildRawConfigs + mergeConfigsAsync
  * 3. Correct artifact filter rules generated
  */
 
@@ -13,9 +13,26 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { Build, BuildGroup } from "@/data/types";
 import {
   DEFAULT_COMPUTE_OPTIONS,
-  computeArtifactFilters,
-} from "@/lib/computeFilters";
+  buildRawConfigs,
+  mergeConfigsAsync,
+} from "@/lib/artifact-builds/computeFilters";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+
+/** Run the full two-phase pipeline with a non-aborting signal. */
+async function computeFilters(
+  buildGroups: BuildGroup[],
+  options = DEFAULT_COMPUTE_OPTIONS
+) {
+  const raw = buildRawConfigs(buildGroups, options);
+  const algorithm = options.mergeAlgorithm ?? "smartMerge";
+  const normalizeFlatStats = options.normalizeFlatStats ?? true;
+  return mergeConfigsAsync(
+    raw,
+    algorithm,
+    normalizeFlatStats,
+    new AbortController().signal
+  );
+}
 
 describe("Integration: Build Configuration to Filter Computation Flow", () => {
   beforeEach(() => {
@@ -41,7 +58,7 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
     );
   }
 
-  it("generates filters from a single character build", () => {
+  it("generates filters from a single character build", async () => {
     // Create a build for hu_tao
     act(() => {
       useBuildsStore.getState().newBuild("hu_tao");
@@ -57,12 +74,17 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
         sands: ["hp%"],
         goblet: ["pyro%"],
         circlet: ["cr", "cd"],
-        substats: ["cr", "cd", "hp%", "em"],
+        substats: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+          { stat: "hp%", weight: 100 },
+          { stat: "em", weight: 100 },
+        ],
       });
     });
 
     const buildGroups = createBuildGroupsFromStore();
-    const result = computeArtifactFilters(buildGroups, DEFAULT_COMPUTE_OPTIONS);
+    const result = await computeFilters(buildGroups);
 
     // Verify filter generation
     expect(result.length).toBeGreaterThan(0);
@@ -76,7 +98,7 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
     expect(hasCrimsonConfig).toBe(true);
   });
 
-  it("excludes hidden characters from filter computation", () => {
+  it("excludes hidden characters from filter computation", async () => {
     // Create builds for two characters
     act(() => {
       useBuildsStore.getState().newBuild("hu_tao");
@@ -108,12 +130,9 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
 
     const buildGroups = createBuildGroupsFromStore();
 
-    // Filter out hidden groups before passing to computeArtifactFilters
+    // Filter out hidden groups before passing to compute
     const visibleGroups = buildGroups.filter((g) => !g.hidden);
-    const result = computeArtifactFilters(
-      visibleGroups,
-      DEFAULT_COMPUTE_OPTIONS
-    );
+    const result = await computeFilters(visibleGroups);
 
     // xingqiu is hidden, so should not appear in results
     const hasXingqiu = result.some((cfg) =>
@@ -161,7 +180,7 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
     expect(finalBuild.visible).toBe(true);
   });
 
-  it("merges compatible configs from multiple builds", () => {
+  it("merges compatible configs from multiple builds", async () => {
     // Create builds with same artifact set
     act(() => {
       useBuildsStore.getState().newBuild("hu_tao");
@@ -180,7 +199,10 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
         sands: ["hp%"],
         goblet: ["pyro%"],
         circlet: ["cr"],
-        substats: ["cr", "cd"],
+        substats: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+        ],
       });
       useBuildsStore.getState().setBuild(xianglingBuildId, {
         artifactSet: "crimson_witch_of_flames",
@@ -188,12 +210,16 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
         sands: ["atk%", "em"],
         goblet: ["pyro%"],
         circlet: ["cr", "cd"],
-        substats: ["cr", "cd", "er"],
+        substats: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+          { stat: "er", weight: 100 },
+        ],
       });
     });
 
     const buildGroups = createBuildGroupsFromStore();
-    const result = computeArtifactFilters(buildGroups, DEFAULT_COMPUTE_OPTIONS);
+    const result = await computeFilters(buildGroups);
 
     // Both builds use crimson_witch_of_flames
     expect(result.length).toBeGreaterThan(0);
@@ -205,8 +231,8 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
     expect(crimsonConfig).toBeDefined();
   });
 
-  it("handles empty builds store gracefully", () => {
-    const result = computeArtifactFilters([], DEFAULT_COMPUTE_OPTIONS);
+  it("handles empty builds store gracefully", async () => {
+    const result = await computeFilters([]);
 
     expect(result).toHaveLength(0);
   });

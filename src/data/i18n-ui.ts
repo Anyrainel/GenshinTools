@@ -4,7 +4,29 @@ export const i18nUiData = {
     clear: { en: "Clear", zh: "清除" },
     cancel: { en: "Cancel", zh: "取消" },
     noResults: { en: "No results found", zh: "未找到结果" },
+    duplicate: { en: "Duplicate", zh: "复制" },
+    moveUp: { en: "Move Up", zh: "上移" },
+    moveDown: { en: "Move Down", zh: "下移" },
+    revert: { en: "Revert Changes", zh: "撤销更改" },
+    delete: { en: "Delete", zh: "删除" },
+    restore: { en: "Restore Preset", zh: "恢复预设" },
+    deleteTitle: { en: "Delete Build?", zh: "删除配装？" },
+    revertTitle: { en: "Revert Changes?", zh: "撤销更改？" },
+    restoreTitle: { en: "Restore Preset Defaults?", zh: "恢复预设默认值？" },
+    deleteConfirm: {
+      en: "This will delete this build configuration. If it belongs to a preset, it will be hidden.",
+      zh: "这将删除此配装配置。如果它属于预设，它将被隐藏。",
+    },
+    revertConfirm: {
+      en: "This will discard your local changes and restore the original preset configuration.",
+      zh: "这将丢弃您的本地更改并恢复原始预设配置。",
+    },
+    restoreConfirm: {
+      en: "This will remove all custom builds and weapon settings for this character. This action cannot be undone.",
+      zh: "这将删除此角色的所有自定义配装和武器设置。此操作无法撤销。",
+    },
   },
+
   accountData: {
     importGOOD: {
       en: "Import .json file (GOOD)",
@@ -298,13 +320,15 @@ export const i18nUiData = {
       zh: "图片生成失败",
     },
     explore: { en: "Explore", zh: "探索" },
+    presetLoaded: { en: "Preset loaded", zh: "预设已加载" },
+    imported: { en: "Builds imported", zh: "配装已导入" },
     disclaimer: {
       en: "Genshin Impact is a trademark of HoYoverse. This project is not affiliated with or endorsed by HoYoverse.",
       zh: "《原神》为米哈游/HoYoverse的商标，本项目与其无关联。",
     },
     dataAttribution: {
-      en: "Game data sourced from HoYoWiki and hakush.in.",
-      zh: "游戏数据来源于 HoYoWiki 和 hakush.in。",
+      en: "Game data sourced from HoYoWiki.",
+      zh: "游戏数据来源于 HoYoWiki。",
     },
   },
   archive: {
@@ -349,7 +373,7 @@ export const i18nUiData = {
       en: "No weapons match your search",
       zh: "没有武器匹配搜索",
     },
-    dataFrom: { en: "Data from ", zh: "数据来自 " },
+    notReleased: { en: "Character is not released yet", zh: "该角色尚未实装" },
     owned: { en: "Owned", zh: "已拥有" },
     notOwned: { en: "Not Owned", zh: "未拥有" },
   },
@@ -417,9 +441,34 @@ export const i18nUiData = {
     twoPc: { en: "2pc", zh: "两件套" },
     configurationNumber: { en: "Config", zh: "配置" },
     computeOptions: { en: "Compute Options", zh: "计算选项" },
-    skipCritBuilds: {
-      en: "Skip builds with both CR and CD required (if you already use CR+CD auto-lock in game)",
-      zh: "跳过必选双暴的配装（如果你在游戏中已经使用双暴自动锁定）",
+    mergeAlgorithm: { en: "Merge Algorithm", zh: "合并算法" },
+    algorithmBruteForce: {
+      en: "Brute-Force Merge",
+      zh: "暴力合并",
+    },
+    algorithmBruteForceDesc: {
+      en: "Exhaustive search and merge builds to find the 2 configs with highest recall.",
+      zh: "穷举搜索并合并配装，找到召回率最高的2个配置。",
+    },
+    algorithmGreedyMerge: {
+      en: "Greedy Merge",
+      zh: "贪心合并",
+    },
+    algorithmGreedyMergeDesc: {
+      en: "Merge builds greedily (one by one) using heuristic rules. May produce more than 2 configs.",
+      zh: "贪婪地逐个合并配装(借助一些启发式规则)。可能产生超过2个配置。",
+    },
+    algorithmSmartMerge: {
+      en: "Smart Merge (Recommended)",
+      zh: "智能合并（推荐）",
+    },
+    algorithmSmartMergeDesc: {
+      en: "Groups builds by DPS and Support builds, then merge builds down to 2 configs.",
+      zh: "按不同输出和辅助配装类型分组，然后合并到2个配置中。",
+    },
+    normalizeFlatStats: {
+      en: "Optimize flat stats (add flat HP/ATK/DEF to 2 substats only configs)",
+      zh: "优化小词条（自动添加至只有2副词条的配置）",
     },
     expandElementalGoblet: {
       en: "Treat any elemental DMG% goblet as all elemental DMG% (recommended)",
@@ -429,13 +478,29 @@ export const i18nUiData = {
       en: "In 4pc builds, treat CR or CD circlet as both CR/CD (recommended)",
       zh: "4件套配装中，将暴击或暴伤理之冠视为两者皆可（推荐）",
     },
-    mergeSingleFlexVariants: {
-      en: "Merge configs that share must-have stats and only differ by one optional stat (recommended)",
-      zh: "合并必选词条相同的配置（推荐）",
+    substatWeightThreshold: {
+      en: "Included substat weight threshold",
+      zh: "副词条纳入权重阈值",
     },
-    findRigidCommonSubset: {
-      en: "Find common subset among configs with all substats required (recommended)",
-      zh: "在类似配置中寻找共同必选词条（推荐）",
+    substatWeightThresholdDesc: {
+      en: "Substats with weight ≥ this value are included in the filter pool.",
+      zh: "权重 ≥ 此值的副词条会被纳入过滤池。",
+    },
+    mustPresentWeightThreshold: {
+      en: "Must-present substat weight threshold",
+      zh: "必须存在副词条权重阈值",
+    },
+    mustPresentWeightThresholdDesc: {
+      en: "Substats with weight ≥ this value must appear on every artifact.",
+      zh: "权重 ≥ 此值的副词条必须出现在每件圣遗物上。",
+    },
+    optionalConfig: {
+      en: "Optional — skip if CR+CD auto-lock is enabled",
+      zh: "此配置可跳过——如已开启双暴自动锁定",
+    },
+    computing: {
+      en: "Recomputing configurations…",
+      zh: "正在重新计算配置…",
     },
     passChance: { en: "Pass chance", zh: "达标概率" },
     moderatePassChance: {
@@ -512,6 +577,30 @@ export const i18nUiData = {
       en: "Description is required",
       zh: "需要填写描述",
     },
+    importActionPrompt: {
+      en: "Choose how you want to import these builds:",
+      zh: "请选择导入方式：",
+    },
+    actionSubscribe: {
+      en: "Subscribe",
+      zh: "订阅",
+    },
+    actionSubscribeDesc: {
+      en: "You will receive updates automatically. Your customizations will be saved alongside the preset.",
+      zh: "您将接收自动预设更新。您的自定义修改将作为增量保存。",
+    },
+    actionCopy: {
+      en: "Copy to Local",
+      zh: "复制到本地",
+    },
+    actionCopyDesc: {
+      en: "One-time import. No future updates unless manual re-import.",
+      zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
+    },
+    importFileTitle: {
+      en: "Import File",
+      zh: "导入文件",
+    },
   },
   navigation: {
     configure: { en: "Character Builds", zh: "角色配装" },
@@ -531,11 +620,12 @@ export const i18nUiData = {
     },
   },
   buildCard: {
+    presetBuild: { en: "Preset Build", zh: "预设配装" },
+    modifiedPreset: { en: "Modified Preset", zh: "修改后的预设" },
+    customBuild: { en: "Custom Build", zh: "自定义配装" },
     buildLabel: { en: "Build", zh: "配装" },
     substats: { en: "Substats", zh: "副词条" },
     deselect: { en: "Deselect", zh: "取消选择" },
-    atLeast: { en: "at least", zh: "至少" },
-    affixes: { en: "affixes", zh: "个词条" },
     effect1: { en: "Effect 1", zh: "效果1" },
     effect2: { en: "Effect 2", zh: "效果2" },
     "4pc": { en: "4pc", zh: "4件套" },
@@ -579,6 +669,10 @@ export const i18nUiData = {
     missingSubstat: {
       en: "Need at least 1 substat",
       zh: "需要至少1个副词条",
+    },
+    weightWarning: {
+      en: "Set at least one substat weight to 100",
+      zh: "请将至少一个副词条权重设为100",
     },
     missingStyle: {
       en: "Select at least one style (On-Field / Off-Field)",

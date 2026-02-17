@@ -1,30 +1,104 @@
+import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
+import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { Build, BuildPayload, ComputeOptions } from "../data/types";
-import { DEFAULT_COMPUTE_OPTIONS } from "../lib/computeFilters";
-import { BUILD_DATA_VERSION } from "./jsonUtils";
+import type {
+  Build,
+  BuildPayload,
+  BuildPayloadV5,
+  ComputeOptions,
+  SubStat,
+  WeightedSubStat,
+} from "../data/types";
+import { BUILD_DATA_VERSION } from "../lib/artifact-builds/buildUtils";
+import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
+import { useArtifactScoreStore } from "./useArtifactScoreStore";
+
+// Migrates old SubStat[] to WeightedSubStat[]
+const migrateSubstats = (
+  oldSubstats: string[],
+  characterId: string
+): WeightedSubStat[] => {
+  const flatStats = ["hp", "atk", "def"];
+  const scoreConfig =
+    useArtifactScoreStore.getState().config.characters[characterId];
+
+  const weighted = oldSubstats
+    .filter((stat) => !flatStats.includes(stat))
+    .map((stat) => {
+      // Map flat stat key if needed
+      const weightKey = stat; // e.g. "atk%"
+
+      let weight = 100;
+      if (scoreConfig && typeof scoreConfig[weightKey] === "number") {
+        weight = scoreConfig[weightKey];
+      }
+
+      return {
+        stat: stat as SubStat,
+        weight,
+      };
+    });
+
+  // Sort by weight descending
+  return weighted.sort((a, b) => b.weight - a.weight);
+};
 
 interface BuildsState {
   // State
-  characterToBuildIds: Record<string, string[]>;
-  builds: Record<string, Build>;
-  hiddenCharacters: Record<string, boolean>;
-  characterWeapons: Record<string, string[]>; // [weaponId1, weaponId2, weaponId3]
-  computeOptions: ComputeOptions;
+  // Metadata about the current "Net Sum" state
   author: string;
   description: string;
 
+  // Reference to the active preset ID (if any)
+  activePresetId: string | null;
+
+  // Build storage (Delta + User Created)
+  // Maps BuildID -> Build object (only modified presets + custom builds)
+  builds: Record<string, Build>;
+
+  // Character mapping (Canonical Ordering)
+  // Maps CharacterID -> ordered list of ALL BuildIDs (preset + modified + custom)
+  // This is the single source of truth for build ordering.
+  characterToBuildIds: Record<string, string[]>;
+
+  // Preset Deletions
+  // IDs of builds from the active preset that the user has deleted
+  presetDeletedBuildIds: string[];
+
+  // UI State (Local only)
+  hiddenCharacters: Record<string, boolean>;
+
+  // Validation cache
+  validationErrors: Record<string, string[]>;
+
+  // Weapon defaults (User overrides)
+  characterWeapons: Record<string, string[]>;
+
+  // Global compute options
+  computeOptions: ComputeOptions;
+
   // Getters
-  getCharacterBuildIds: (characterId: string) => string[];
+  getBuildIds: (characterId: string) => string[];
   getBuild: (buildId: string) => Build | undefined;
   getCharacterWeapons: (characterId: string) => string[];
 
   // Actions
   newBuild: (characterId: string) => Build;
-  copyBuild: (characterId: string, buildId: string) => Build;
-  setBuild: (buildId: string, patch: Partial<Build>) => void;
-  removeBuild: (characterId: string, buildId: string) => void;
+  copyBuild: (characterId: string, buildId: string, baseBuild?: Build) => Build;
+  setBuild: (buildId: string, patch: Partial<Build>, baseBuild?: Build) => void;
+  removeBuild: (characterId: string, buildId: string) => void; // Legacy/Smart delete
+  deleteBuild: (characterId: string, buildId: string) => void; // Complete delete (hides preset)
+  revertBuild: (characterId: string, buildId: string) => void; // Reverts local override
+  restoreCharacter: (characterId: string) => void; // Restores preset state for a character
+  subscribePreset: (presetId: string, payload: BuildPayloadV5) => void;
+  moveBuild: (
+    characterId: string,
+    resolvedIds: string[],
+    buildId: string,
+    direction: "up" | "down"
+  ) => void;
 
   // Character visibility
   setCharacterHidden: (characterId: string, hidden: boolean) => void;
@@ -34,12 +108,14 @@ interface BuildsState {
   setCharacterWeapons: (characterId: string, weaponIds: string[]) => void;
 
   // Utility for import
-  importBuilds: (payload: BuildPayload) => void;
+  // Handles both V4 (Legacy) and V5 (Flat) payloads
+  importBuilds: (payload: BuildPayload | BuildPayloadV5) => void;
   clearAll: () => void;
 
   // Compute options
   setComputeOptions: (options: Partial<ComputeOptions>) => void;
   setMetadata: (author: string, description: string) => void;
+  setActivePreset: (presetId: string | null) => void;
 }
 
 // Empty array constant to avoid creating new arrays
@@ -49,16 +125,19 @@ export const useBuildsStore = create<BuildsState>()(
   persist(
     immer((set, get) => ({
       // Initial state
+      activePresetId: null,
       characterToBuildIds: {},
       builds: {},
+      presetDeletedBuildIds: [],
       hiddenCharacters: {},
+      validationErrors: {},
       characterWeapons: {},
       computeOptions: { ...DEFAULT_COMPUTE_OPTIONS },
       author: "",
       description: "",
 
       // Getters
-      getCharacterBuildIds: (characterId: string) => {
+      getBuildIds: (characterId: string) => {
         return get().characterToBuildIds[characterId] ?? EMPTY_ARRAY;
       },
 
@@ -72,7 +151,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       // Create a new build for a character
       newBuild: (characterId: string) => {
-        const buildId = `build-${Date.now()}`;
+        const buildId = `b${Date.now()}`;
         const newBuild: Build = {
           id: buildId,
           characterId,
@@ -87,6 +166,7 @@ export const useBuildsStore = create<BuildsState>()(
 
         set((state) => {
           state.builds[buildId] = newBuild;
+          state.validationErrors[buildId] = getBuildValidationErrors(newBuild);
           if (!state.characterToBuildIds[characterId]) {
             state.characterToBuildIds[characterId] = [];
           }
@@ -97,13 +177,16 @@ export const useBuildsStore = create<BuildsState>()(
       },
 
       // Copy an existing build for a character
-      copyBuild: (characterId: string, buildId: string) => {
-        const originalBuild = get().builds[buildId];
+      copyBuild: (characterId: string, buildId: string, baseBuild?: Build) => {
+        const originalBuild = get().builds[buildId] || baseBuild;
+
         if (!originalBuild) {
+          console.error(`Build ${buildId} not found and no baseBuild provided`);
+          // Fallback or throw? Let's create a blank one to avoid crash, or throw.
           throw new Error(`Build ${buildId} not found`);
         }
 
-        const newBuildId = `build-${Date.now()}`;
+        const newBuildId = `b${Date.now()}`;
         const copiedBuild: Build = {
           ...originalBuild,
           id: newBuildId,
@@ -112,6 +195,8 @@ export const useBuildsStore = create<BuildsState>()(
 
         set((state) => {
           state.builds[newBuildId] = copiedBuild;
+          state.validationErrors[newBuildId] =
+            getBuildValidationErrors(copiedBuild);
           if (!state.characterToBuildIds[characterId]) {
             state.characterToBuildIds[characterId] = [];
           }
@@ -121,28 +206,138 @@ export const useBuildsStore = create<BuildsState>()(
         return copiedBuild;
       },
 
-      // Update a build with partial changes
-      setBuild: (buildId: string, patch: Partial<Build>) => {
+      restoreCharacter: (characterId: string) => {
         set((state) => {
-          const existingBuild = state.builds[buildId];
-          if (!existingBuild) {
-            console.warn(`Build ${buildId} not found`);
-            return;
+          // 1. Delete local builds for this character
+          const idsToRemove: string[] = [];
+          for (const [bid, build] of Object.entries(state.builds)) {
+            if (build.characterId === characterId) {
+              idsToRemove.push(bid);
+            }
+          }
+          for (const bid of idsToRemove) {
+            delete state.builds[bid];
+            delete state.validationErrors[bid];
           }
 
-          // With Immer, just mutate directly
-          Object.assign(state.builds[buildId], patch);
+          // 2. Reset ordering to preset defaults (or clear if no preset)
+          const preset = getCachedPreset(state.activePresetId);
+          const presetBuildIds = preset?.characterBuilds?.[characterId];
+          if (presetBuildIds?.length) {
+            state.characterToBuildIds[characterId] = [...presetBuildIds];
+          } else {
+            delete state.characterToBuildIds[characterId];
+          }
+
+          // 3. Restore weapons from preset (or clear if no preset)
+          const presetWeapons = preset?.characterWeapons?.[characterId];
+          if (presetWeapons?.length) {
+            state.characterWeapons[characterId] = [...presetWeapons];
+          } else {
+            delete state.characterWeapons[characterId];
+          }
+
+          // 4. Clear hidden status
+          delete state.hiddenCharacters[characterId];
+
+          // 5. Un-delete preset builds for this character
+          if (presetBuildIds?.length) {
+            const presetIdSet = new Set(presetBuildIds);
+            state.presetDeletedBuildIds = state.presetDeletedBuildIds.filter(
+              (id) => !presetIdSet.has(id)
+            );
+          }
+        });
+      },
+
+      // Update a build with partial changes
+      setBuild: (buildId: string, patch: Partial<Build>, baseBuild?: Build) => {
+        set((state) => {
+          let targetBuild = state.builds[buildId];
+
+          if (!targetBuild) {
+            if (baseBuild) {
+              // Copy-on-Write: Initialize with baseBuild + patch
+              targetBuild = { ...baseBuild, ...patch };
+
+              // Ensure it's tracked in the character list (Union survival)
+              const charId = targetBuild.characterId;
+              if (!state.characterToBuildIds[charId]) {
+                state.characterToBuildIds[charId] = [];
+              }
+              if (!state.characterToBuildIds[charId].includes(buildId)) {
+                state.characterToBuildIds[charId].push(buildId);
+              }
+
+              // Proceed to register it
+              state.builds[buildId] = targetBuild;
+            } else {
+              console.warn(
+                `Build ${buildId} not found and no baseBuild provided`
+              );
+              return;
+            }
+          } else {
+            // Apply patch to existing local build
+            Object.assign(targetBuild, patch);
+          }
+
+          // Bug fix: Clean up mutually exclusive fields when composition changes
+          if (patch.composition) {
+            if (patch.composition === "4pc") {
+              targetBuild.halfSet1 = undefined;
+              targetBuild.halfSet2 = undefined;
+            } else if (patch.composition === "2pc+2pc") {
+              targetBuild.artifactSet = undefined;
+            }
+          }
+
           // Ensure id and characterId cannot be changed
-          state.builds[buildId].id = existingBuild.id;
-          state.builds[buildId].characterId = existingBuild.characterId;
+          targetBuild.id = buildId; // Enforce ID consistency
+
+          // Re-validate
+          state.validationErrors[buildId] =
+            getBuildValidationErrors(targetBuild);
         });
       },
 
       // Remove a build from a character
       removeBuild: (characterId: string, buildId: string) => {
         set((state) => {
-          delete state.builds[buildId];
+          // Remove local override if it exists
+          if (state.builds[buildId]) {
+            delete state.builds[buildId];
+            delete state.validationErrors[buildId];
+          }
 
+          // Remove from ordering
+          const existingBuildIds = state.characterToBuildIds[characterId] || [];
+          const newBuildIds = existingBuildIds.filter((id) => id !== buildId);
+          if (newBuildIds.length === 0) {
+            delete state.characterToBuildIds[characterId];
+          } else {
+            state.characterToBuildIds[characterId] = newBuildIds;
+          }
+
+          // Track deletion for preset builds
+          const preset = getCachedPreset(state.activePresetId);
+          if (preset?.builds[buildId]) {
+            if (!state.presetDeletedBuildIds.includes(buildId)) {
+              state.presetDeletedBuildIds.push(buildId);
+            }
+          }
+        });
+      },
+
+      deleteBuild: (characterId: string, buildId: string) => {
+        set((state) => {
+          // Remove local override
+          if (state.builds[buildId]) {
+            delete state.builds[buildId];
+            delete state.validationErrors[buildId];
+          }
+
+          // Remove from character mapping
           const existingBuildIds = state.characterToBuildIds[characterId] || [];
           const newBuildIds = existingBuildIds.filter((id) => id !== buildId);
 
@@ -150,6 +345,29 @@ export const useBuildsStore = create<BuildsState>()(
             delete state.characterToBuildIds[characterId];
           } else {
             state.characterToBuildIds[characterId] = newBuildIds;
+          }
+
+          // Mark as deleted in preset (always try to add, safe if no preset active as list is ignored then)
+          if (!state.presetDeletedBuildIds.includes(buildId)) {
+            state.presetDeletedBuildIds.push(buildId);
+          }
+        });
+      },
+
+      revertBuild: (characterId: string, buildId: string) => {
+        set((state) => {
+          // Remove local override (reverts to preset version)
+          if (state.builds[buildId]) {
+            delete state.builds[buildId];
+            delete state.validationErrors[buildId];
+          }
+
+          // Keep in characterToBuildIds to preserve ordering
+
+          // Un-mark deletion (in case build was deleted then reverted)
+          const deletedIndex = state.presetDeletedBuildIds.indexOf(buildId);
+          if (deletedIndex !== -1) {
+            state.presetDeletedBuildIds.splice(deletedIndex, 1);
           }
         });
       },
@@ -176,71 +394,173 @@ export const useBuildsStore = create<BuildsState>()(
         });
       },
 
+      subscribePreset: (presetId: string, payload: BuildPayloadV5) => {
+        set((state) => {
+          state.activePresetId = presetId;
+          state.presetDeletedBuildIds = [];
+          if (payload.author) state.author = payload.author;
+          if (payload.description) state.description = payload.description;
+
+          // Populate characterToBuildIds from preset, preserving custom builds
+          for (const [charId, presetBuildIds] of Object.entries(
+            payload.characterBuilds
+          )) {
+            const existingIds = state.characterToBuildIds[charId] || [];
+            const presetIdSet = new Set(presetBuildIds);
+            // Append any custom builds not in preset after the preset order
+            const customIds = existingIds.filter((id) => !presetIdSet.has(id));
+            state.characterToBuildIds[charId] = [
+              ...presetBuildIds,
+              ...customIds,
+            ];
+          }
+
+          // Copy weapons only for characters without existing customizations
+          for (const [charId, weapons] of Object.entries(
+            payload.characterWeapons
+          )) {
+            if (!state.characterWeapons[charId]?.length) {
+              state.characterWeapons[charId] = [...weapons];
+            }
+          }
+        });
+      },
+
+      moveBuild: (
+        characterId: string,
+        resolvedIds: string[],
+        buildId: string,
+        direction: "up" | "down"
+      ) => {
+        set((state) => {
+          const ids = [...resolvedIds];
+          const idx = ids.indexOf(buildId);
+          if (idx === -1) return;
+
+          const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+          if (swapIdx < 0 || swapIdx >= ids.length) return;
+
+          [ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]];
+          state.characterToBuildIds[characterId] = ids;
+        });
+      },
+
       setCharacterWeapons: (characterId: string, weaponIds: string[]) => {
         set((state) => {
           if (weaponIds.length === 0) {
             delete state.characterWeapons[characterId];
           } else {
-            state.characterWeapons[characterId] = weaponIds.slice(0, 3);
+            state.characterWeapons[characterId] = weaponIds.slice(0, 5);
           }
         });
       },
 
       // Import builds from exported data
-      importBuilds: (payload: BuildPayload) => {
+      // Import builds from exported data
+      importBuilds: (payload: BuildPayload | BuildPayloadV5) => {
         set((state) => {
+          // Reset to "Custom Mode" (No Preset)
+          state.activePresetId = null;
+          state.presetDeletedBuildIds = [];
+
           // Set metadata if available
           if (payload.author) state.author = payload.author;
           if (payload.description) state.description = payload.description;
 
-          for (const { characterId, builds } of payload.data) {
-            const buildIds: string[] = [];
-            for (const build of builds) {
-              const buildWithCharacterId: Build = {
-                ...build,
-                characterId,
-              };
+          // Clear existing data?
+          // Previous behavior was merge/overwrite? No, previous implementation was:
+          // state.builds[id] = build; ...
+          // It didn't clear old builds. It was an upsert.
+          // Let's maintain upsert behavior for now, but usually import means "Load this state".
+          // However, the user might want to keep other characters.
 
-              state.builds[build.id] = buildWithCharacterId;
-              buildIds.push(build.id);
+          if (payload.version === 5) {
+            const v5 = payload as BuildPayloadV5;
+
+            // Merge Configs
+            state.computeOptions = {
+              ...DEFAULT_COMPUTE_OPTIONS,
+              ...(v5.computeOptions ?? {}),
+            };
+
+            // Merge Builds
+            for (const [id, build] of Object.entries(v5.builds)) {
+              state.builds[id] = build;
+              state.validationErrors[id] = getBuildValidationErrors(build);
             }
 
-            if (buildIds.length > 0) {
-              state.characterToBuildIds[characterId] = buildIds;
+            // Merge Character Mappings
+            for (const [charId, ids] of Object.entries(v5.characterBuilds)) {
+              state.characterToBuildIds[charId] = ids;
             }
+
+            // Merge Weapons
+            for (const [charId, weapons] of Object.entries(
+              v5.characterWeapons
+            )) {
+              state.characterWeapons[charId] = weapons;
+            }
+
+            // Note: hiddenCharacters not imported from V5 (it's UI state)
+          } else {
+            // Legacy V4 Import
+            const v4 = payload as BuildPayload;
+
+            for (const { characterId, builds } of v4.data) {
+              const buildIds: string[] = [];
+              for (const build of builds) {
+                const buildWithCharacterId: Build = {
+                  ...build,
+                  characterId,
+                };
+
+                state.builds[build.id] = buildWithCharacterId;
+                state.validationErrors[build.id] =
+                  getBuildValidationErrors(buildWithCharacterId);
+                buildIds.push(build.id);
+              }
+
+              if (buildIds.length > 0) {
+                state.characterToBuildIds[characterId] = buildIds;
+              }
+            }
+
+            // Handle character weapons if present in payload
+            for (const { characterId, weapons } of v4.data) {
+              if (weapons && weapons.length > 0) {
+                state.characterWeapons[characterId] = weapons.slice(0, 5);
+              } else {
+                delete state.characterWeapons[characterId];
+              }
+            }
+
+            // Apply character hidden flags (Legacy only)
+            // We migrate them to local hidden state
+            for (const { characterId, hidden } of v4.data) {
+              if (hidden) {
+                state.hiddenCharacters[characterId] = true;
+              } else {
+                delete state.hiddenCharacters[characterId];
+              }
+            }
+
+            state.computeOptions = {
+              ...DEFAULT_COMPUTE_OPTIONS,
+              ...(v4.computeOptions ?? {}),
+            };
           }
-
-          // Handle character weapons if present in payload
-          for (const { characterId, weapons } of payload.data) {
-            if (weapons && weapons.length > 0) {
-              state.characterWeapons[characterId] = weapons.slice(0, 3);
-            } else {
-              delete state.characterWeapons[characterId];
-            }
-          }
-
-          // Apply character hidden flags (default to false if not provided)
-          for (const { characterId, hidden } of payload.data) {
-            if (hidden) {
-              state.hiddenCharacters[characterId] = true;
-            } else {
-              delete state.hiddenCharacters[characterId];
-            }
-          }
-
-          state.computeOptions = {
-            ...DEFAULT_COMPUTE_OPTIONS,
-            ...(payload.computeOptions ?? {}),
-          };
         });
       },
 
       // Clear all data (useful for testing)
       clearAll: () => {
         set((state) => {
+          state.activePresetId = null;
           state.characterToBuildIds = {};
           state.builds = {};
+          state.presetDeletedBuildIds = [];
           state.hiddenCharacters = {};
+          state.validationErrors = {};
           state.characterWeapons = {};
           state.computeOptions = { ...DEFAULT_COMPUTE_OPTIONS };
           state.author = "";
@@ -263,10 +583,53 @@ export const useBuildsStore = create<BuildsState>()(
           state.description = description;
         });
       },
+
+      setActivePreset: (presetId: string | null) => {
+        set((state) => {
+          state.activePresetId = presetId;
+          state.presetDeletedBuildIds = [];
+        });
+      },
     })),
     {
       name: "artifact-filter-builds",
       version: BUILD_DATA_VERSION,
+      migrate: (persistedState: unknown, version: number) => {
+        if (version < 5) {
+          // Migration from version < 5 (SubStat[] -> WeightedSubStat[])
+          const state = persistedState as BuildsState;
+
+          for (const build of Object.values(state.builds)) {
+            // biome-ignore lint/suspicious/noExplicitAny: Migration handling for old data shape
+            const buildAny = build as any;
+            if (
+              Array.isArray(buildAny.substats) &&
+              typeof buildAny.substats[0] === "string"
+            ) {
+              build.substats = migrateSubstats(
+                buildAny.substats,
+                build.characterId
+              );
+            }
+            // Remove legacy kOverride field
+            // biome-ignore lint/performance/noDelete: Migration cleanup
+            delete buildAny.kOverride;
+          }
+        }
+        return persistedState as BuildsState;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Ensure validationErrors are populated
+          if (!state.validationErrors) {
+            state.validationErrors = {};
+          }
+          // Re-validate all builds to be safe (cheap operation)
+          for (const build of Object.values(state.builds)) {
+            state.validationErrors[build.id] = getBuildValidationErrors(build);
+          }
+        }
+      },
     }
   )
 );

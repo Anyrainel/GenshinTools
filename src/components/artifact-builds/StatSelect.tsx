@@ -44,10 +44,10 @@ function StatSelectItem({
     >
       <LightweightSelectTrigger
         className={cn(
-          "w-auto hover:brightness-110 bg-gradient-select gap-1",
+          "w-auto hover:brightness-110 bg-gradient-select",
           compact
-            ? "min-w-[3rem] h-5 text-xs px-1 [&>svg]:h-3 [&>svg]:w-3"
-            : "min-w-[4.5rem] h-7 text-sm px-2"
+            ? "min-w-[3rem] h-5 text-xs [&>svg]:h-3 [&>svg]:w-3"
+            : "min-w-[4.5rem] h-7 text-sm"
         )}
       >
         {value && value !== "__DESELECT__" ? (
@@ -163,7 +163,7 @@ function StatSelectComponent({
           size="sm"
           onClick={handlePlusClick}
           className={cn(
-            "p-1 text-muted-foreground",
+            "p-0 text-muted-foreground",
             compact ? "h-5 w-5" : "h-6 w-6"
           )}
         >

@@ -1,5 +1,5 @@
 import type { ArtifactScoreConfig, CharacterData } from "@/data/types";
-import { calculateArtifactScore } from "@/lib/artifactScore";
+import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
 import { describe, expect, it } from "vitest";
 
 // Test config with known weights

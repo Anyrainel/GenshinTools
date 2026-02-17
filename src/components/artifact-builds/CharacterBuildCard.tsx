@@ -1,15 +1,26 @@
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Character } from "@/data/types";
+import type { Build, Character } from "@/data/types";
 import type { Weapon } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { BuildCard } from "./BuildCard";
@@ -136,18 +147,22 @@ function CharacterBuildCardComponent({
     state.getCharacterWeapons(character.id)
   );
 
+  // Has customizations = any build for this character has a local override (modified or custom)
+  const hasCustomizations = useBuildsStore((state) => {
+    const ids = state.characterToBuildIds[character.id];
+    if (!ids) return false;
+    return ids.some((id) => id in state.builds);
+  });
+
   // Use useMemo with shallow comparison for array to prevent re-renders on reference changes
-  const buildIdsFromStore = useBuildsStore(
-    (state) => state.characterToBuildIds[character.id]
-  );
-  const buildIds = useMemo(
-    () => buildIdsFromStore ?? EMPTY_BUILD_IDS,
-    [buildIdsFromStore]
-  );
+  const builds = useResolvedBuilds(character.id);
 
   const newBuild = useBuildsStore((state) => state.newBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);
   const removeBuild = useBuildsStore((state) => state.removeBuild);
+  const restoreCharacter = useBuildsStore((state) => state.restoreCharacter);
+
+  const [confirmRestore, setConfirmRestore] = useState(false);
 
   const handleToggle = useCallback(() => {
     toggleHidden(character.id);
@@ -187,21 +202,23 @@ function CharacterBuildCardComponent({
     [character.id]
   );
 
-  /* Mobile: Show max 1 weapon */
+  /* Responsive weapon caps: mobile=1, tablet=3, desktop=5 */
   const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
-  const visibleWeapons = isMobile
-    ? characterWeapons.slice(0, 1)
-    : characterWeapons;
+  const maxWeapons = isMobile ? 1 : isDesktop ? 5 : 3;
+  const visibleWeapons = characterWeapons.slice(0, maxWeapons);
   const iconSize = isVeryNarrow ? "md" : isMobile ? "lg" : "xl";
 
   // Full placeholder when no weapons — creates urgency to add at least one
   const showFullPlaceholder = isMobile
     ? characterWeapons.length < 1
     : characterWeapons.length === 0;
-  // Compact + button when weapons exist but can add more (desktop only)
+  // Compact + button when weapons exist but can add more
   const showCompactAdd =
-    !isMobile && characterWeapons.length > 0 && characterWeapons.length < 3;
+    !isMobile &&
+    characterWeapons.length > 0 &&
+    characterWeapons.length < maxWeapons;
 
   const handleAddBuild = useCallback(() => {
     newBuild(character.id);
@@ -215,16 +232,34 @@ function CharacterBuildCardComponent({
   );
 
   const handleDuplicateBuild = useCallback(
-    (buildId: string) => {
-      copyBuild(character.id, buildId);
+    (buildId: string, build: Build) => {
+      copyBuild(character.id, buildId, build);
     },
     [copyBuild, character.id]
   );
 
+  const moveBuild = useBuildsStore((state) => state.moveBuild);
+
+  const handleMoveBuild = useCallback(
+    (buildId: string, direction: "up" | "down") => {
+      const resolvedIds = builds.map((b) => b.id);
+      moveBuild(character.id, resolvedIds, buildId, direction);
+    },
+    [moveBuild, character.id, builds]
+  );
+
+  const handleRestore = useCallback(() => {
+    restoreCharacter(character.id);
+    setConfirmRestore(false);
+  }, [restoreCharacter, character.id]);
+
   return (
     <Card className="bg-gradient-card" data-tour-step-id={tourStepId}>
       <CardHeader
-        className={cn("pb-3 pt-3 md:pt-5", isVeryNarrow ? "px-3" : "")}
+        className={cn(
+          "pb-3 pt-3 md:pt-4",
+          isVeryNarrow ? "px-3" : "px-3 md:px-4"
+        )}
       >
         {/* Title card content (formerly TitleCard) */}
         <div
@@ -317,10 +352,10 @@ function CharacterBuildCardComponent({
 
       {!isHidden && (
         <CardContent
-          className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3 md:px-6")}
+          className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3 md:px-4")}
         >
           <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
-            {buildIds.length === 0 ? (
+            {builds.length === 0 ? (
               <div className="flex justify-center py-2 text-muted-foreground col-span-full">
                 <Button
                   onClick={handleAddBuild}
@@ -336,17 +371,29 @@ function CharacterBuildCardComponent({
               </div>
             ) : (
               <>
-                {buildIds.map((buildId, index) => {
+                {builds.map((build, index) => {
                   // Memoize inline callbacks to prevent BuildCard re-renders
-                  const handleDelete = () => handleDeleteBuild(buildId);
-                  const handleDuplicate = () => handleDuplicateBuild(buildId);
+                  const handleDelete = () => handleDeleteBuild(build.id);
+                  const handleDuplicate = () =>
+                    handleDuplicateBuild(build.id, build);
 
                   return (
                     <BuildCard
-                      key={buildId}
-                      buildId={buildId}
+                      key={build.id}
+                      build={build}
+                      buildId={build.id}
                       onDelete={handleDelete}
                       onDuplicate={handleDuplicate}
+                      onMoveUp={
+                        index > 0
+                          ? () => handleMoveBuild(build.id, "up")
+                          : undefined
+                      }
+                      onMoveDown={
+                        index < builds.length - 1
+                          ? () => handleMoveBuild(build.id, "down")
+                          : undefined
+                      }
                       element={character.element}
                     />
                   );
@@ -354,22 +401,58 @@ function CharacterBuildCardComponent({
               </>
             )}
           </div>
-          {buildIds.length > 0 && (
-            <Button
-              onClick={handleAddBuild}
-              variant="outline"
-              size="sm"
-              className={cn(
-                "w-full gap-2 mt-2",
-                isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+          {builds.length > 0 && (
+            <div className="mt-2 flex gap-2">
+              {hasCustomizations && (
+                <Button
+                  onClick={() => setConfirmRestore(true)}
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "w-auto max-w-[50%] gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10",
+                    isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+                  )}
+                >
+                  <RotateCcw className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
+                  {t.ui("common.restore") || "Restore"}
+                </Button>
               )}
-            >
-              <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
-              {t.ui("characterCard.addBuild")}
-            </Button>
+              <Button
+                onClick={handleAddBuild}
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "gap-2 flex-1",
+                  isVeryNarrow ? "text-xs h-7" : "text-sm h-9"
+                )}
+              >
+                <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
+                {t.ui("characterCard.addBuild")}
+              </Button>
+            </div>
           )}
         </CardContent>
       )}
+
+      <AlertDialog open={confirmRestore} onOpenChange={setConfirmRestore}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.ui("common.restoreTitle") || "Restore Preset Defaults?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("common.restoreConfirm") ||
+                "This will remove all custom builds and weapon settings for this character. This action cannot be undone."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRestore}>
+              {t.ui("common.restore") || "Restore"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

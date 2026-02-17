@@ -3,7 +3,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
-import type { Insight, InsightType } from "@/lib/insightEngine";
+import type { Insight, InsightType } from "@/lib/account-data/insightEngine";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,

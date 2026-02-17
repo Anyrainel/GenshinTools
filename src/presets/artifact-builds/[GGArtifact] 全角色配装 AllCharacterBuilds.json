@@ -1,0 +1,4732 @@
+{
+  "version": 5,
+  "id": "export-1771276379704",
+  "author": "GGArtifact",
+  "description": "全角色配装 AllCharacterBuilds",
+  "builds": {
+    "FeFe-le": {
+      "id": "FeFe-le",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "aubade_of_morningstar_and_moon",
+      "kOverride": 3,
+      "characterId": "ineffa",
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"],
+      "source": "preset"
+    },
+    "FeFecam": {
+      "id": "FeFecam",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cr", "atk%"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "kOverride": 3,
+      "characterId": "ineffa",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "FeFYVj8": {
+      "id": "FeFYVj8",
+      "name": "",
+      "visible": false,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "gilded_dreams",
+      "kOverride": 3,
+      "characterId": "ineffa",
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"],
+      "source": "preset"
+    },
+    "FeFPkRG": {
+      "id": "FeFPkRG",
+      "name": "",
+      "visible": false,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        },
+        {
+          "stat": "cd",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "kOverride": 3,
+      "characterId": "ineffa",
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
+      "source": "preset"
+    },
+    "EB78-0G": {
+      "id": "EB78-0G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "citlali",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "EB6x_xG": {
+      "id": "EB6x_xG",
+      "name": "队友带勇者",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 70
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "citlali",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "EB78-9e": {
+      "id": "EB78-9e",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 50
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "citlali",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "minCons": 6
+    },
+    "CRMaUWu": {
+      "id": "CRMaUWu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "pyro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "fragment_of_harmonic_whimsy",
+      "characterId": "arlecchino",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "CagdSmu": {
+      "id": "CagdSmu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "electro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "fragment_of_harmonic_whimsy",
+      "characterId": "clorinde",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "D0cmoNe": {
+      "id": "D0cmoNe",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "dendro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "unfinished_reverie",
+      "characterId": "emilie",
+      "styles": ["off-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "D0cic3m": {
+      "id": "D0cic3m",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "dendro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "emilie",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "DSYwRWO": {
+      "id": "DSYwRWO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "hp%"],
+      "goblet": ["hp%", "hydro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 90
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "obsidian_codex",
+      "kOverride": 3,
+      "characterId": "mualani",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "D9wqV0O": {
+      "id": "D9wqV0O",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["dendro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "obsidian_codex",
+      "characterId": "kinich",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "DuV3MGO": {
+      "id": "DuV3MGO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "obsidian_codex",
+      "characterId": "chasca",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "E1p6POu": {
+      "id": "E1p6POu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "em"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "obsidian_codex",
+      "characterId": "mavuika",
+      "kOverride": 3,
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "CtIb09u": {
+      "id": "CtIb09u",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "wanderers_troupe",
+      "characterId": "sethos",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "EKR4iOm": {
+      "id": "EKR4iOm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "lan_yan",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "EmNLaAu": {
+      "id": "EmNLaAu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["electro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "long_nights_oath",
+      "characterId": "varesa",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "F2_Ouiu": {
+      "id": "F2_Ouiu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "kOverride": 3,
+      "characterId": "escoffier",
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
+      "source": "preset"
+    },
+    "F2_QoXm": {
+      "id": "F2_QoXm",
+      "characterId": "escoffier",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        },
+        {
+          "stat": "cd",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "Ap3NaYO": {
+      "id": "Ap3NaYO",
+      "name": "冰伤流",
+      "visible": false,
+      "composition": "2pc+2pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "cryo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "pale_flame",
+      "halfSet1": 21,
+      "characterId": "freminet",
+      "halfSet2": 1,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "Aqvzh8u": {
+      "id": "Aqvzh8u",
+      "name": "物伤流",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "phys%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "pale_flame",
+      "characterId": "freminet",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "Dbsz50G": {
+      "id": "Dbsz50G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "xilonen",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "Dbso01G": {
+      "id": "Dbso01G",
+      "name": "队友带勇者",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "instructor",
+      "characterId": "xilonen",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "BioKxKO": {
+      "id": "BioKxKO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["geo%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "nighttime_whispers_in_the_echoing_woods",
+      "characterId": "navia",
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "Bs6OFoG": {
+      "id": "Bs6OFoG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "song_of_days_past",
+      "characterId": "chevreuse",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "Bs6EjRm": {
+      "id": "Bs6EjRm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "chevreuse",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "BXiLODm": {
+      "id": "BXiLODm",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["heal%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "halfSet1": 9,
+      "halfSet2": 15,
+      "characterId": "charlotte",
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
+      "source": "preset"
+    },
+    "AYHtOwG": {
+      "id": "AYHtOwG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["anemo%", "atk%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "lynette",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "AYHtOwH": {
+      "id": "AYHtOwH",
+      "name": "超绽放（染雷）",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "lynette",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "FnZb4pm": {
+      "id": "FnZb4pm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "lauma",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "FnZhZsG": {
+      "id": "FnZhZsG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "characterId": "lauma",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "FnZh8vG": {
+      "id": "FnZh8vG",
+      "characterId": "lauma",
+      "name": "",
+      "visible": false,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "night_of_the_skys_unveiling",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "minCons": 6
+    },
+    "GfRzPMG": {
+      "id": "GfRzPMG",
+      "characterId": "columbina",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%", "er"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%", "cr"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 90
+        },
+        {
+          "stat": "cd",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "kOverride": 3,
+      "roles": ["support"],
+      "styles": ["off-field"],
+      "source": "preset"
+    },
+    "GfRzo0O": {
+      "id": "GfRzo0O",
+      "characterId": "columbina",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["cr", "cd"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "aubade_of_morningstar_and_moon",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["dps", "support"]
+    },
+    "Gy43LvO": {
+      "id": "Gy43LvO",
+      "characterId": "illuga",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em", "cr"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        },
+        {
+          "stat": "def%",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "minCons": 2,
+      "roles": ["support"],
+      "styles": ["off-field"],
+      "source": "preset"
+    },
+    "GMpgtBm": {
+      "id": "GMpgtBm",
+      "characterId": "durin",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%", "cd"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 90
+        },
+        {
+          "stat": "cd",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "GMpuDRe": {
+      "id": "GMpuDRe",
+      "characterId": "durin",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "G4Bn5Fu": {
+      "id": "G4Bn5Fu",
+      "characterId": "flins",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "night_of_the_skys_unveiling",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "Gol_yVu": {
+      "id": "Gol_yVu",
+      "characterId": "zibai",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["def%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "night_of_the_skys_unveiling",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "GW7wS4m": {
+      "id": "GW7wS4m",
+      "characterId": "jahoda",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%", "heal%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "GW7nI8m": {
+      "id": "GW7nI8m",
+      "characterId": "jahoda",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%", "heal%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "preset"
+    },
+    "FwtkY6G": {
+      "id": "FwtkY6G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "silken_moons_serenade",
+      "characterId": "aino",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "FwtXa1G": {
+      "id": "FwtXa1G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "instructor",
+      "characterId": "aino",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "BQAEaSu": {
+      "id": "BQAEaSu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 30
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "characterId": "furina",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support", "dps"]
+    },
+    "BQA3WCm": {
+      "id": "BQA3WCm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["cr", "hp%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 75
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "furina",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "BORtHRG": {
+      "id": "BORtHRG",
+      "name": "",
+      "visible": false,
+      "composition": "2pc+2pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["cr", "hp%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "halfSet1": 15,
+      "halfSet2": 15,
+      "characterId": "furina",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset"
+    },
+    "GDVq3Vu": {
+      "id": "GDVq3Vu",
+      "characterId": "nefer",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "night_of_the_skys_unveiling",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "FUxP1hm": {
+      "id": "FUxP1hm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "dahlia",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "C8kNIIm": {
+      "id": "C8kNIIm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "crimson_witch_of_flames",
+      "characterId": "gaming",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "minCons": 6
+    },
+    "CI2WPTe": {
+      "id": "CI2WPTe",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["geo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "characterId": "chiori",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "CI2LmTG": {
+      "id": "CI2LmTG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["geo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "characterId": "chiori",
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
+      "minCons": 6
+    },
+    "BzeS0Um": {
+      "id": "BzeS0Um",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 70
+        }
+      ],
+      "halfSet1": 9,
+      "halfSet2": 9,
+      "characterId": "xianyun",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "Cj-g6Gm": {
+      "id": "Cj-g6Gm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%", "hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "song_of_days_past",
+      "characterId": "sigewinne",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "Ci8TA_G": {
+      "id": "Ci8TA_G",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%", "hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "song_of_days_past",
+      "halfSet1": 2,
+      "halfSet2": 2,
+      "characterId": "sigewinne",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "DJEt7Xm": {
+      "id": "DJEt7Xm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%", "er"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "kachina",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "DlB02Hm": {
+      "id": "DlB02Hm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "kOverride": 3,
+      "characterId": "ororon",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "EvhNqHm": {
+      "id": "EvhNqHm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "iansan",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "FLdXrbO": {
+      "id": "FLdXrbO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["cryo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "finale_of_the_deep_galleries",
+      "characterId": "skirk",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "B7Y8Ccu": {
+      "id": "B7Y8Ccu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["cryo%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "characterId": "wriothesley",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "BGsBAsu": {
+      "id": "BGsBAsu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%", "hydro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "characterId": "neuvillette",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "Ahb_Hsu": {
+      "id": "Ahb_Hsu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "characterId": "lyney",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "48VnABm": {
+      "id": "48VnABm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "shenhe",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "46jxU0G": {
+      "id": "46jxU0G",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "characterId": "shenhe",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "halfSet1": 9,
+      "halfSet2": 9
+    },
+    "AN7jcW0": {
+      "id": "AN7jcW0",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "halfSet1": 2,
+      "halfSet2": 2,
+      "characterId": "kirara",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "AOzt6YG": {
+      "id": "AOzt6YG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "halfSet1": 2,
+      "halfSet2": 2,
+      "characterId": "kirara",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "AFfq7p0": {
+      "id": "AFfq7p0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "baizhu",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "AFfq7Jm": {
+      "id": "AFfq7Jm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "baizhu",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "ADpgeG0": {
+      "id": "ADpgeG0",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "characterId": "baizhu",
+      "styles": ["off-field"],
+      "roles": ["sustain"],
+      "halfSet1": 2,
+      "halfSet2": 2
+    },
+    "4t42ffO": {
+      "id": "4t42ffO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "hp%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 80
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "crimson_witch_of_flames",
+      "kOverride": 3,
+      "characterId": "hu_tao",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "6cqXQxG": {
+      "id": "6cqXQxG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "zhongli",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "7UiubVO": {
+      "id": "7UiubVO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hydro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 80
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "kOverride": 3,
+      "characterId": "yelan",
+      "styles": ["off-field"],
+      "roles": ["dps", "support"]
+    },
+    "7SyCssm": {
+      "id": "7SyCssm",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["hp%"],
+      "goblet": ["hydro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 80
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "kOverride": 3,
+      "halfSet1": 11,
+      "halfSet2": 11,
+      "characterId": "yelan",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "minCons": 6
+    },
+    "8fDJmIO": {
+      "id": "8fDJmIO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["electro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "gilded_dreams",
+      "kOverride": 3,
+      "characterId": "cyno",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "9NnZONO": {
+      "id": "9NnZONO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "desert_pavilion_chronicle",
+      "characterId": "wanderer",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "9NnSX3m": {
+      "id": "9NnSX3m",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "echoes_of_an_offering",
+      "characterId": "wanderer",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "minCons": 6
+    },
+    "9gPea2O": {
+      "id": "9gPea2O",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["dendro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "gilded_dreams",
+      "kOverride": 3,
+      "characterId": "alhaitham",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "8xrPPle": {
+      "id": "8xrPPle",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["dendro%", "em"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "nahida",
+      "styles": ["off-field", "on-field"],
+      "roles": ["support", "dps"]
+    },
+    "8xrPngu": {
+      "id": "8xrPngu",
+      "name": "队友带深林",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["dendro%", "em"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "gilded_dreams",
+      "characterId": "nahida",
+      "styles": ["off-field", "on-field"],
+      "roles": ["dps"]
+    },
+    "9z1h4w8": {
+      "id": "9z1h4w8",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "characterId": "dehya",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "minCons": 4
+    },
+    "9z1kxem": {
+      "id": "9z1kxem",
+      "name": "烈绽放",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "flower_of_paradise_lost",
+      "characterId": "dehya",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "9z1bnim": {
+      "id": "9z1bnim",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "dehya",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "9X5bGZ0": {
+      "id": "9X5bGZ0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "yaoyao",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "9ETMwc8": {
+      "id": "9ETMwc8",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["anemo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "faruzan",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "minCons": 6
+    },
+    "9pjb5xm": {
+      "id": "9pjb5xm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["cr", "hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "mika",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "959Jyi0": {
+      "id": "959Jyi0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "layla",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "8U36ymm": {
+      "id": "8U36ymm",
+      "name": "原绽放",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "halfSet1": 2,
+      "halfSet2": 2,
+      "characterId": "nilou",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "8Vv9zIq": {
+      "id": "8Vv9zIq",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "characterId": "nilou",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "artifactSet": "instructor",
+      "minCons": 1
+    },
+    "A6LntCu": {
+      "id": "A6LntCu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "flower_of_paradise_lost",
+      "characterId": "kaveh",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "Ed3AbU0": {
+      "id": "Ed3AbU0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "yumemizuki_mizuki",
+      "styles": ["on-field"],
+      "roles": ["support"]
+    },
+    "FCJMUU0": {
+      "id": "FCJMUU0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "ifa",
+      "styles": ["on-field"],
+      "roles": ["support"]
+    },
+    "8oXGIBm": {
+      "id": "8oXGIBm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "candace",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "8mhHsfG": {
+      "id": "8mhHsfG",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "halfSet1": 15,
+      "halfSet2": 2,
+      "characterId": "candace",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "8DH4PBm": {
+      "id": "8DH4PBm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%", "hp%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "dori",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "83z7XZm": {
+      "id": "83z7XZm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["dendro%"],
+      "circlet": ["atk%", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "collei",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "7we_xfu": {
+      "id": "7we_xfu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["dendro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "wanderers_troupe",
+      "characterId": "tighnari",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "7nK-tk0": {
+      "id": "7nK-tk0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "shikanoin_heizou",
+      "styles": ["on-field"],
+      "roles": ["support"]
+    },
+    "7e0_ONe": {
+      "id": "7e0_ONe",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "flower_of_paradise_lost",
+      "characterId": "kuki_shinobu",
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"]
+    },
+    "4R7tSQO": {
+      "id": "4R7tSQO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["hydro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "hp%",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "echoes_of_an_offering",
+      "kOverride": 3,
+      "characterId": "kamisato_ayato",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "14wxWDe": {
+      "id": "14wxWDe",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["electro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "characterId": "yae_miko",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "2MvF3fG": {
+      "id": "2MvF3fG",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "halfSet1": 15,
+      "halfSet2": 2,
+      "characterId": "thoma",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "2OlKMP8": {
+      "id": "2OlKMP8",
+      "name": "烈绽放",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "characterId": "thoma",
+      "artifactSet": "flower_of_paradise_lost",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "oIguNG": {
+      "id": "oIguNG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["def%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "characterId": "gorou",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "oIiQ1G": {
+      "id": "oIiQ1G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["def%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "instructor",
+      "characterId": "gorou",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "59i41BO": {
+      "id": "59i41BO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["geo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "characterId": "arataki_itto",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "3ZFY_hG": {
+      "id": "3ZFY_hG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["hp%", "er"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "characterId": "sangonomiya_kokomi",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "3ZFi6xO": {
+      "id": "3ZFi6xO",
+      "name": "原绽放",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 55
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "flower_of_paradise_lost",
+      "characterId": "sangonomiya_kokomi",
+      "styles": ["on-field"],
+      "roles": ["dps", "sustain"]
+    },
+    "72mliiO": {
+      "id": "72mliiO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%", "electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "characterId": "raiden_shogun",
+      "kOverride": 3,
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"]
+    },
+    "VgfvFm": {
+      "id": "VgfvFm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "characterId": "kujou_sara",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "2z_Squm": {
+      "id": "2z_Squm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "em"],
+      "goblet": ["atk%", "em"],
+      "circlet": ["heal%", "em"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 70
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "sayu",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "e-dw7G": {
+      "id": "e-dw7G",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%", "er"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "characterId": "yun_jin",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "d9HY3G": {
+      "id": "d9HY3G",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["def%", "er"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "halfSet1": 3,
+      "halfSet2": 15,
+      "characterId": "yun_jin",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "e-f3Mm": {
+      "id": "e-f3Mm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%", "er"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "archaic_petra",
+      "characterId": "yun_jin",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "2FRFq2u": {
+      "id": "2FRFq2u",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "shimenawas_reminiscence",
+      "characterId": "yoimiya",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "2FRAsgO": {
+      "id": "2FRAsgO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "echoes_of_an_offering",
+      "characterId": "yoimiya",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "4aRtNc0": {
+      "id": "4aRtNc0",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["cryo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "blizzard_strayer",
+      "characterId": "kamisato_ayaka",
+      "styles": ["on-field"],
+      "roles": ["support"]
+    },
+    "4aRw4xm": {
+      "id": "4aRw4xm",
+      "characterId": "kamisato_ayaka",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 30
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "37JVoAG": {
+      "id": "37JVoAG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "kaedehara_kazuha",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "xcpY8u": {
+      "id": "xcpY8u",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["phys%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 30
+        }
+      ],
+      "artifactSet": "pale_flame",
+      "kOverride": 3,
+      "characterId": "eula",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "6KCTmwG": {
+      "id": "6KCTmwG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%", "hp%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "diona",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "3Pxax9O": {
+      "id": "3Pxax9O",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "em"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "crimson_witch_of_flames",
+      "characterId": "yanfei",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "4jlz3Bm": {
+      "id": "4jlz3Bm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%", "cryo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "characterId": "rosaria",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "4jm7knm": {
+      "id": "4jm7knm",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%", "cryo%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "characterId": "rosaria",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "7LOtUOO": {
+      "id": "7LOtUOO",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "vermillion_hereafter",
+      "kOverride": 3,
+      "characterId": "xiao",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "7LOww6u": {
+      "id": "7LOww6u",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "kOverride": 3,
+      "characterId": "xiao",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "3_Blgvu": {
+      "id": "3_Blgvu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["cryo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "wanderers_troupe",
+      "characterId": "ganyu",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "3_BnF08": {
+      "id": "3_BnF08",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "kOverride": 3,
+      "characterId": "ganyu",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "3zTVghG": {
+      "id": "3zTVghG",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "halfSet1": 15,
+      "halfSet2": 15,
+      "characterId": "ganyu",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "6m8amNe": {
+      "id": "6m8amNe",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "characterId": "albedo",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "6m8lRze": {
+      "id": "6m8lRze",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "characterId": "albedo",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "5sQyZYW": {
+      "id": "5sQyZYW",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["def%"],
+      "goblet": ["def%"],
+      "circlet": ["def%"],
+      "substats": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "halfSet1": 3,
+      "halfSet2": 15,
+      "characterId": "xinyan",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "61aVP1u": {
+      "id": "61aVP1u",
+      "characterId": "tartaglia",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["hydro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "nymphs_dream",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "61aNpY0": {
+      "id": "61aNpY0",
+      "characterId": "tartaglia",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "minCons": 4
+    },
+    "1pVEv_O": {
+      "id": "1pVEv_O",
+      "characterId": "klee",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "1pV1DqO": {
+      "id": "1pV1DqO",
+      "characterId": "klee",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "em"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "instructor",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "minCons": 2
+    },
+    "1pU_Jlu": {
+      "id": "1pU_Jlu",
+      "characterId": "klee",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "minCons": 2
+    },
+    "7C4oeW8": {
+      "id": "7C4oeW8",
+      "characterId": "xiangling",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "ETlEvXm": {
+      "id": "ETlEvXm",
+      "characterId": "traveler_pyro",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "scroll_of_the_hero_of_cinder_city",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "8MbDU3m": {
+      "id": "8MbDU3m",
+      "characterId": "traveler_dendro",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["dendro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "D2Yp_W": {
+      "id": "D2Yp_W",
+      "characterId": "qiqi",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["heal%"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "oceanhued_clam",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "1EE-qRu": {
+      "id": "1EE-qRu",
+      "characterId": "ningguang",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "nighttime_whispers_in_the_echoing_woods",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "1EE-3cu": {
+      "id": "1EE-3cu",
+      "characterId": "ningguang",
+      "name": "带芙",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "1Wsw5Lu": {
+      "id": "1Wsw5Lu",
+      "characterId": "keqing",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "thundering_fury",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "1NYxkW8": {
+      "id": "1NYxkW8",
+      "characterId": "kaeya",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["cryo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "3GdieVO": {
+      "id": "3GdieVO",
+      "characterId": "venti",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["anemo%"],
+      "circlet": ["cr", "cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "3GdYmQG": {
+      "id": "3GdYmQG",
+      "characterId": "venti",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["em"],
+      "circlet": ["em", "cr"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "3iZeFRm": {
+      "id": "3iZeFRm",
+      "characterId": "bennett",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hp%", "atk%"],
+      "circlet": ["heal%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "3rtkgOm": {
+      "id": "3rtkgOm",
+      "characterId": "jean",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%", "er"],
+      "goblet": ["atk%"],
+      "circlet": ["atk%", "heal%"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"]
+    },
+    "4HptccW": {
+      "id": "4HptccW",
+      "characterId": "sucrose",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "styles": ["off-field", "on-field"],
+      "roles": ["support"]
+    },
+    "5J08yBm": {
+      "id": "5J08yBm",
+      "characterId": "mona",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "5J06fim": {
+      "id": "5J06fim",
+      "characterId": "mona",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 75
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "tenacity_of_the_millelith",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "50OCYXW": {
+      "id": "50OCYXW",
+      "characterId": "barbara",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er", "hp%"],
+      "goblet": ["hp%"],
+      "circlet": ["heal%"],
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "song_of_days_past",
+      "styles": ["off-field"],
+      "roles": ["sustain"]
+    },
+    "5SKKhje": {
+      "id": "5SKKhje",
+      "characterId": "fischl",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "golden_troupe",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "5SKPGhe": {
+      "id": "5SKPGhe",
+      "characterId": "fischl",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "1gB1iEG": {
+      "id": "1gB1iEG",
+      "characterId": "beidou",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "kOverride": 3,
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"]
+    },
+    "2677Yhm": {
+      "id": "2677Yhm",
+      "characterId": "amber",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    },
+    "5beHxm8": {
+      "id": "5beHxm8",
+      "characterId": "xingqiu",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["hydro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "5kyFwBO": {
+      "id": "5kyFwBO",
+      "characterId": "noelle",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%", "er"],
+      "goblet": ["geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "husk_of_opulent_dreams",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "5kyQDMu": {
+      "id": "5kyQDMu",
+      "characterId": "noelle",
+      "name": "带芙",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["def%", "er"],
+      "goblet": ["def%", "geo%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "marechaussee_hunter",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "MMcwm8": {
+      "id": "MMcwm8",
+      "characterId": "lisa",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["electro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "emblem_of_severed_fate",
+      "styles": ["off-field"],
+      "roles": ["dps"]
+    },
+    "6AuTPvO": {
+      "id": "6AuTPvO",
+      "characterId": "diluc",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em", "atk%"],
+      "goblet": ["pyro%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "em",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "crimson_witch_of_flames",
+      "kOverride": 3,
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "6vSsylO": {
+      "id": "6vSsylO",
+      "characterId": "razor",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cd", "cr"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "styles": ["on-field"],
+      "roles": ["dps"]
+    },
+    "6TWWkBm": {
+      "id": "6TWWkBm",
+      "characterId": "chongyun",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["er"],
+      "goblet": ["atk%"],
+      "circlet": ["cr"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
+        },
+        {
+          "stat": "er",
+          "weight": 55
+        }
+      ],
+      "artifactSet": "noblesse_oblige",
+      "styles": ["off-field"],
+      "roles": ["support"]
+    }
+  },
+  "characterBuilds": {
+    "ineffa": ["FeFe-le", "FeFecam", "FeFYVj8", "FeFPkRG"],
+    "citlali": ["EB78-0G", "EB6x_xG", "EB78-9e"],
+    "arlecchino": ["CRMaUWu"],
+    "clorinde": ["CagdSmu"],
+    "emilie": ["D0cmoNe", "D0cic3m"],
+    "mualani": ["DSYwRWO"],
+    "kinich": ["D9wqV0O"],
+    "chasca": ["DuV3MGO"],
+    "mavuika": ["E1p6POu"],
+    "sethos": ["CtIb09u"],
+    "lan_yan": ["EKR4iOm"],
+    "varesa": ["EmNLaAu"],
+    "escoffier": ["F2_Ouiu", "F2_QoXm"],
+    "freminet": ["Ap3NaYO", "Aqvzh8u"],
+    "xilonen": ["Dbsz50G", "Dbso01G"],
+    "navia": ["BioKxKO"],
+    "chevreuse": ["Bs6OFoG", "Bs6EjRm"],
+    "charlotte": ["BXiLODm"],
+    "lynette": ["AYHtOwG", "AYHtOwH"],
+    "lauma": ["FnZb4pm", "FnZhZsG", "FnZh8vG"],
+    "columbina": ["GfRzPMG", "GfRzo0O"],
+    "illuga": ["Gy43LvO"],
+    "durin": ["GMpgtBm", "GMpuDRe"],
+    "flins": ["G4Bn5Fu"],
+    "zibai": ["Gol_yVu"],
+    "jahoda": ["GW7wS4m", "GW7nI8m"],
+    "aino": ["FwtkY6G", "FwtXa1G"],
+    "furina": ["BQAEaSu", "BQA3WCm", "BORtHRG"],
+    "nefer": ["GDVq3Vu"],
+    "dahlia": ["FUxP1hm"],
+    "gaming": ["C8kNIIm"],
+    "chiori": ["CI2WPTe", "CI2LmTG"],
+    "xianyun": ["BzeS0Um"],
+    "sigewinne": ["Cj-g6Gm", "Ci8TA_G"],
+    "kachina": ["DJEt7Xm"],
+    "ororon": ["DlB02Hm"],
+    "iansan": ["EvhNqHm"],
+    "skirk": ["FLdXrbO"],
+    "wriothesley": ["B7Y8Ccu"],
+    "neuvillette": ["BGsBAsu"],
+    "lyney": ["Ahb_Hsu"],
+    "shenhe": ["48VnABm", "46jxU0G"],
+    "kirara": ["AN7jcW0", "AOzt6YG"],
+    "baizhu": ["AFfq7p0", "AFfq7Jm", "ADpgeG0"],
+    "hu_tao": ["4t42ffO"],
+    "zhongli": ["6cqXQxG"],
+    "yelan": ["7UiubVO", "7SyCssm"],
+    "cyno": ["8fDJmIO"],
+    "wanderer": ["9NnZONO", "9NnSX3m"],
+    "alhaitham": ["9gPea2O"],
+    "nahida": ["8xrPPle", "8xrPngu"],
+    "dehya": ["9z1h4w8", "9z1kxem", "9z1bnim"],
+    "yaoyao": ["9X5bGZ0"],
+    "faruzan": ["9ETMwc8"],
+    "mika": ["9pjb5xm"],
+    "layla": ["959Jyi0"],
+    "nilou": ["8U36ymm", "8Vv9zIq"],
+    "kaveh": ["A6LntCu"],
+    "yumemizuki_mizuki": ["Ed3AbU0"],
+    "ifa": ["FCJMUU0"],
+    "candace": ["8oXGIBm", "8mhHsfG"],
+    "dori": ["8DH4PBm"],
+    "collei": ["83z7XZm"],
+    "tighnari": ["7we_xfu"],
+    "shikanoin_heizou": ["7nK-tk0"],
+    "kuki_shinobu": ["7e0_ONe"],
+    "kamisato_ayato": ["4R7tSQO"],
+    "yae_miko": ["14wxWDe"],
+    "thoma": ["2MvF3fG", "2OlKMP8"],
+    "gorou": ["oIguNG", "oIiQ1G"],
+    "arataki_itto": ["59i41BO"],
+    "sangonomiya_kokomi": ["3ZFY_hG", "3ZFi6xO"],
+    "raiden_shogun": ["72mliiO"],
+    "kujou_sara": ["VgfvFm"],
+    "sayu": ["2z_Squm"],
+    "yun_jin": ["e-dw7G", "d9HY3G", "e-f3Mm"],
+    "yoimiya": ["2FRFq2u", "2FRAsgO"],
+    "kamisato_ayaka": ["4aRtNc0", "4aRw4xm"],
+    "kaedehara_kazuha": ["37JVoAG"],
+    "eula": ["xcpY8u"],
+    "diona": ["6KCTmwG"],
+    "yanfei": ["3Pxax9O"],
+    "rosaria": ["4jlz3Bm", "4jm7knm"],
+    "xiao": ["7LOtUOO", "7LOww6u"],
+    "ganyu": ["3_Blgvu", "3_BnF08", "3zTVghG"],
+    "albedo": ["6m8amNe", "6m8lRze"],
+    "xinyan": ["5sQyZYW"],
+    "tartaglia": ["61aVP1u", "61aNpY0"],
+    "klee": ["1pVEv_O", "1pV1DqO", "1pU_Jlu"],
+    "xiangling": ["7C4oeW8"],
+    "traveler_pyro": ["ETlEvXm"],
+    "traveler_dendro": ["8MbDU3m"],
+    "qiqi": ["D2Yp_W"],
+    "ningguang": ["1EE-qRu", "1EE-3cu"],
+    "keqing": ["1Wsw5Lu"],
+    "kaeya": ["1NYxkW8"],
+    "venti": ["3GdieVO", "3GdYmQG"],
+    "bennett": ["3iZeFRm"],
+    "jean": ["3rtkgOm"],
+    "sucrose": ["4HptccW"],
+    "mona": ["5J08yBm", "5J06fim"],
+    "barbara": ["50OCYXW"],
+    "fischl": ["5SKKhje", "5SKPGhe"],
+    "beidou": ["1gB1iEG"],
+    "amber": ["2677Yhm"],
+    "xingqiu": ["5beHxm8"],
+    "noelle": ["5kyFwBO", "5kyQDMu"],
+    "lisa": ["MMcwm8"],
+    "diluc": ["6AuTPvO"],
+    "razor": ["6vSsylO"],
+    "chongyun": ["6TWWkBm"]
+  },
+  "characterWeapons": {
+    "ineffa": ["fractured_halo"],
+    "citlali": ["starcallers_watch"],
+    "arlecchino": ["crimson_moons_semblance"],
+    "clorinde": ["absolution"],
+    "emilie": ["lumidouce_elegy"],
+    "mualani": ["surfs_up"],
+    "kinich": ["fang_of_the_mountain_king"],
+    "chasca": ["astral_vultures_crimson_plumage"],
+    "mavuika": ["a_thousand_blazing_suns"],
+    "sethos": ["slingshot", "scion_of_the_blazing_sun"],
+    "lan_yan": ["memory_of_dust", "oathsworn_eye"],
+    "varesa": ["vivid_notions"],
+    "escoffier": ["symphonist_of_scents"],
+    "xilonen": ["peak_patrol_song"],
+    "navia": ["verdict"],
+    "chevreuse": ["rightful_reward"],
+    "charlotte": ["favonius_codex"],
+    "lynette": ["favonius_sword"],
+    "lauma": ["nightweavers_looking_glass"],
+    "columbina": ["nocturnes_curtain_call"],
+    "illuga": ["kitain_cross_spear", "favonius_lance"],
+    "durin": ["athame_artis"],
+    "flins": ["bloodsoaked_ruins"],
+    "zibai": ["lightbearing_moonshard"],
+    "jahoda": ["rainbow_serpents_rain_bow"],
+    "aino": ["flameforged_insight"],
+    "furina": [
+      "splendor_of_tranquil_waters",
+      "freedomsworn",
+      "key_of_khajnisut"
+    ],
+    "nefer": ["reliquary_of_truth"],
+    "dahlia": ["sacrificial_sword"],
+    "gaming": ["fruitful_hook"],
+    "chiori": ["uraku_misugiri"],
+    "xianyun": ["cranes_echoing_call"],
+    "sigewinne": ["silvershower_heartstrings"],
+    "kachina": ["footprint_of_the_rainbow"],
+    "ororon": ["favonius_warbow"],
+    "iansan": ["skyward_spine", "tamayuratei_no_ohanashi"],
+    "skirk": ["azurelight"],
+    "wriothesley": ["cashflow_supervision"],
+    "neuvillette": ["tome_of_the_eternal_flow"],
+    "lyney": ["the_first_great_magic"],
+    "shenhe": ["calamity_queller"],
+    "kirara": ["the_dockhands_assistant"],
+    "baizhu": ["jadefalls_splendor"],
+    "hu_tao": ["staff_of_homa"],
+    "zhongli": ["black_tassel"],
+    "yelan": ["aqua_simulacra"],
+    "cyno": ["staff_of_the_scarlet_sands"],
+    "wanderer": ["tulaytullahs_remembrance"],
+    "alhaitham": ["light_of_foliar_incision"],
+    "nahida": ["a_thousand_floating_dreams"],
+    "dehya": ["beacon_of_the_reed_sea"],
+    "yaoyao": ["dialogues_of_the_desert_sages"],
+    "faruzan": ["favonius_warbow"],
+    "mika": ["favonius_lance"],
+    "layla": ["the_dockhands_assistant"],
+    "nilou": ["key_of_khajnisut"],
+    "kaveh": ["mailed_flower"],
+    "yumemizuki_mizuki": ["sunny_morning_sleepin"],
+    "ifa": ["wandering_evenstar"],
+    "candace": ["black_tassel"],
+    "dori": ["sacrificial_greatsword"],
+    "collei": ["windblume_ode"],
+    "tighnari": ["hunters_path"],
+    "kuki_shinobu": ["xiphos_moonlight"],
+    "kamisato_ayato": ["haran_geppaku_futsu"],
+    "yae_miko": ["kaguras_verity"],
+    "thoma": ["kitain_cross_spear"],
+    "gorou": ["favonius_warbow"],
+    "arataki_itto": ["redhorn_stonethresher"],
+    "sangonomiya_kokomi": [
+      "everlasting_moonglow",
+      "thrilling_tales_of_dragon_slayers",
+      "sacrificial_fragments"
+    ],
+    "raiden_shogun": ["engulfing_lightning"],
+    "kujou_sara": ["skyward_harp"],
+    "sayu": ["sacrificial_greatsword"],
+    "yun_jin": ["footprint_of_the_rainbow"],
+    "yoimiya": ["thundering_pulse"],
+    "kamisato_ayaka": ["mistsplitter_reforged"],
+    "kaedehara_kazuha": ["freedomsworn"],
+    "eula": ["song_of_broken_pines"],
+    "diona": ["sacrificial_bow"],
+    "yanfei": ["thrilling_tales_of_dragon_slayers"],
+    "rosaria": ["favonius_lance"],
+    "xiao": ["primordial_jade_wingedspear"],
+    "ganyu": ["amos_bow", "elegy_for_the_end"],
+    "albedo": ["cinnabar_spindle", "flute_of_ezpitzal"],
+    "xinyan": ["whiteblind"],
+    "tartaglia": ["polar_star"],
+    "klee": ["lost_prayer_to_the_sacred_winds"],
+    "xiangling": ["engulfing_lightning", "the_catch"],
+    "traveler_pyro": ["favonius_sword"],
+    "venti": ["the_daybreak_chronicles", "elegy_for_the_end"],
+    "mona": [
+      "thrilling_tales_of_dragon_slayers",
+      "the_widsith",
+      "reliquary_of_truth"
+    ],
+    "fischl": [
+      "the_daybreak_chronicles",
+      "elegy_for_the_end",
+      "aqua_simulacra"
+    ],
+    "diluc": ["wolfs_gravestone", "beacon_of_the_reed_sea"],
+    "razor": ["serpent_spine"]
+  },
+  "computeOptions": {
+    "expandElementalGoblet": true,
+    "expandCritCirclet": true,
+    "mergeAlgorithm": "smartMerge",
+    "normalizeFlatStats": true,
+    "substatWeightThreshold": 70,
+    "mustPresentWeightThreshold": 90
+  }
+}

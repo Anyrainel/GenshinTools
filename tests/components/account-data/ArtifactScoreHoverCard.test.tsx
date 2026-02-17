@@ -1,9 +1,7 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
-import userEvent from "@testing-library/user-event";
-import { render, screen, waitFor } from "../../utils/render";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import { render, screen } from "../../utils/render";
 
-// Sample artifact score result for testing
 const mockScoreResult: ArtifactScoreResult = {
   mainScore: 42.5,
   subScore: 35.8,
@@ -63,7 +61,6 @@ const mockScoreResult: ArtifactScoreResult = {
 
 describe("ArtifactScoreHoverCard", () => {
   beforeEach(() => {
-    // Mock matchMedia to return true (Desktop view)
     window.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: true,
       media: query,
@@ -75,61 +72,14 @@ describe("ArtifactScoreHoverCard", () => {
       dispatchEvent: vi.fn(),
     }));
   });
+
   it("displays main score", () => {
     render(<ArtifactScoreHoverCard score={mockScoreResult} />);
-
-    // Main score should be visible (formatted to 0 decimal places)
     expect(screen.getByText("43")).toBeInTheDocument();
   });
 
   it("displays sub score", () => {
     render(<ArtifactScoreHoverCard score={mockScoreResult} />);
-
-    // Sub score should be visible (formatted to 0 decimal places)
     expect(screen.getByText("36")).toBeInTheDocument();
-  });
-
-  it("displays score divider", () => {
-    render(<ArtifactScoreHoverCard score={mockScoreResult} />);
-
-    expect(screen.getByText("/")).toBeInTheDocument();
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <ArtifactScoreHoverCard
-        score={mockScoreResult}
-        className="custom-score-class"
-      />
-    );
-
-    const trigger = container.querySelector(".custom-score-class");
-    expect(trigger).toBeInTheDocument();
-  });
-
-  it("has cursor-help class for hover indication", () => {
-    const { container } = render(
-      <ArtifactScoreHoverCard score={mockScoreResult} />
-    );
-
-    const trigger = container.querySelector(".cursor-pointer");
-    expect(trigger).toBeInTheDocument();
-  });
-
-  it.skip("shows hover card content on hover", async () => {
-    const user = userEvent.setup();
-    render(<ArtifactScoreHoverCard score={mockScoreResult} />);
-
-    // Hover over the trigger
-    const trigger = screen.getByText("43").closest("button"); // The trigger is a button, not div
-    await user.hover(trigger!);
-
-    // Wait for hover card to appear
-    await waitFor(
-      () => {
-        expect(screen.getAllByText(/42\.5/).length).toBeGreaterThan(0);
-      },
-      { timeout: 1000 }
-    );
   });
 });

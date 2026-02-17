@@ -4,7 +4,7 @@ import type {
   SlotConfig,
   SubStat,
 } from "@/data/types";
-import { DEFAULT_SIMPLE_MERGE_OPTIONS, simpleMerge } from "@/lib/simpleMerge";
+import { greedyMerge } from "@/lib/artifact-builds/greedyMerge";
 import { describe, expect, it } from "vitest";
 
 // Helper to create a slot config for testing
@@ -36,16 +36,16 @@ function createSetConfig(overrides: Partial<SetConfig> = {}): SetConfig {
   };
 }
 
-describe("simpleMerge", () => {
+describe("greedyMerge", () => {
   describe("edge cases", () => {
     it("returns empty array for empty input", () => {
-      const result = simpleMerge([]);
+      const result = greedyMerge([]);
       expect(result).toEqual([]);
     });
 
     it("returns single config unchanged for single-element input", () => {
       const config = createSetConfig();
-      const result = simpleMerge([config]);
+      const result = greedyMerge([config]);
 
       expect(result.length).toBe(1);
       expect(result[0].servedCharacters[0].characterId).toBe(
@@ -63,7 +63,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2]);
+      const result = greedyMerge([config1, config2]);
 
       // Should merge into one config since substats/mustPresent/minStatCount are identical
       expect(result.length).toBe(1);
@@ -103,7 +103,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2]);
+      const result = greedyMerge([config1, config2]);
 
       // Should NOT merge - different substats
       expect(result.length).toBe(2);
@@ -120,10 +120,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge(
-        [config1, config2],
-        DEFAULT_SIMPLE_MERGE_OPTIONS
-      );
+      const result = greedyMerge([config1, config2]);
 
       expect(result.length).toBe(1);
       expect(result[0].servedCharacters.length).toBe(2);
@@ -164,10 +161,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2], {
-        mergeSingleFlexVariants: true,
-        findRigidCommonSubset: false,
-      });
+      const result = greedyMerge([config1, config2]);
 
       // Should merge since they have same mustPresent and k = |mustPresent| + 1
       expect(result.length).toBe(1);
@@ -211,10 +205,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2], {
-        mergeSingleFlexVariants: false,
-        findRigidCommonSubset: true,
-      });
+      const result = greedyMerge([config1, config2]);
 
       // Should merge since they share 1 common substat (cr) and k=2
       expect(result.length).toBe(1);
@@ -236,7 +227,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2]);
+      const result = greedyMerge([config1, config2]);
 
       // Same character merged - hasPerfectMerge should be false (AND of true, false)
       expect(result.length).toBe(1);
@@ -258,7 +249,7 @@ describe("simpleMerge", () => {
         ],
       });
 
-      const result = simpleMerge([config1, config2]);
+      const result = greedyMerge([config1, config2]);
 
       // Same character merged - has4pcBuild should be true (OR of false, true)
       expect(result.length).toBe(1);

@@ -7,7 +7,10 @@
  */
 
 import type { SetConfig, SlotConfig } from "@/data/types";
-import { computeSlotChance, computeSlotChances } from "@/lib/artifactChance";
+import {
+  computeSlotChance,
+  computeSlotChances,
+} from "@/lib/artifact-builds/artifactChance";
 import { describe, expect, it } from "vitest";
 
 // Helper to create a minimal SlotConfig

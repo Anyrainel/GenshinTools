@@ -20,14 +20,17 @@ import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import {
   type ArtifactScoreResult,
   calculateArtifactScore,
-} from "@/lib/artifactScore";
-import { convertEnkaToGOOD, fetchEnkaData } from "@/lib/enkaFetcher";
+} from "@/lib/account-data/artifactScore";
+import {
+  convertEnkaToGOOD,
+  fetchEnkaData,
+} from "@/lib/account-data/enkaFetcher";
 import {
   type ConversionResult,
   type GOODData,
   convertGOODToAccountData,
-} from "@/lib/goodConversion";
-import type { ConversionWarning } from "@/lib/goodConversion";
+} from "@/lib/account-data/goodConversion";
+import type { ConversionWarning } from "@/lib/account-data/goodConversion";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

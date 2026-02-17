@@ -15,12 +15,20 @@ import {
 import type { Character, Element, Rarity, WeaponType } from "@/data/types";
 import { elements, weaponTypes } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
-import { ArrowLeft, Book, Bookmark, ChevronRight, Plus } from "lucide-react";
+import {
+  ArrowLeft,
+  Book,
+  Bookmark,
+  ChevronRight,
+  Info,
+  Plus,
+} from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "./ArchiveToolbar";
@@ -103,10 +111,7 @@ const EMPTY_BUILD_IDS: string[] = [];
 
 function LinkedBuildSection({ character }: { character: Character }) {
   const { t } = useLanguage();
-  const buildIdsFromStore = useBuildsStore(
-    (state) => state.characterToBuildIds[character.id]
-  );
-  const buildIds = buildIdsFromStore ?? EMPTY_BUILD_IDS;
+  const builds = useResolvedBuilds(character.id);
   const newBuild = useBuildsStore((state) => state.newBuild);
   const removeBuild = useBuildsStore((state) => state.removeBuild);
   const copyBuild = useBuildsStore((state) => state.copyBuild);
@@ -127,14 +132,15 @@ function LinkedBuildSection({ character }: { character: Character }) {
           {t.ui("archive.addBuild")}
         </Button>
       </div>
-      {buildIds.length > 0 ? (
+      {builds.length > 0 ? (
         <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
-          {buildIds.map((buildId, index) => (
+          {builds.map((build) => (
             <BuildCard
-              key={buildId}
-              buildId={buildId}
-              onDelete={() => removeBuild(character.id, buildId)}
-              onDuplicate={() => copyBuild(character.id, buildId)}
+              key={build.id}
+              build={build}
+              buildId={build.id}
+              onDelete={() => removeBuild(character.id, build.id)}
+              onDuplicate={() => copyBuild(character.id, build.id)}
               element={character.element}
             />
           ))}
@@ -189,6 +195,8 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
   const effectiveOwned = !unreleased && owned;
   const toggleOwned = useOwnershipStore((s) => s.toggleOwned);
 
+  const [unlockClicks, setUnlockClicks] = useState(0);
+
   if (!character) return null;
 
   return (
@@ -203,74 +211,91 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
                 rarity={character.rarity}
                 size="xl"
               />
-              <CharacterInfo character={character} showDate />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => toggleOwned("character", characterId)}
-                disabled={unreleased}
-                className={cn(
-                  "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
-                  effectiveOwned
-                    ? "text-amber-400 hover:text-amber-300"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Bookmark
-                  className={cn("h-4 w-4", effectiveOwned && "fill-current")}
-                />
-                <span className="text-xs font-medium">
-                  {effectiveOwned
-                    ? t.ui("archive.owned")
-                    : t.ui("archive.notOwned")}
-                </span>
-              </Button>
+              <CharacterInfo character={character} showDate>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleOwned("character", characterId)}
+                  disabled={unreleased}
+                  className={cn(
+                    "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
+                    effectiveOwned
+                      ? "text-amber-400 hover:text-amber-300"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Bookmark
+                    className={cn("h-4 w-4", effectiveOwned && "fill-current")}
+                  />
+                  <span className="text-xs font-medium">
+                    {effectiveOwned
+                      ? t.ui("archive.owned")
+                      : t.ui("archive.notOwned")}
+                  </span>
+                </Button>
+              </CharacterInfo>
             </div>
             {/* Base Stats — top-right on wide screens */}
-            <BaseStatsTable characterId={characterId} />
+            {(!unreleased || unlockClicks >= 7) && (
+              <BaseStatsTable characterId={characterId} />
+            )}
           </div>
 
-          {/* Skills */}
-          {skills && skills.length > 0 && (
-            <KitSection title={t.ui("archive.skills")}>
-              {skills.map((skill, i) => (
-                <SkillCard
-                  key={skill.name || i}
-                  skill={skill}
-                  constellations={constellations}
-                />
-              ))}
-            </KitSection>
-          )}
+          {!unreleased || unlockClicks >= 7 ? (
+            <>
+              {/* Skills */}
+              {skills && skills.length > 0 && (
+                <KitSection title={t.ui("archive.skills")}>
+                  {skills.map((skill, i) => (
+                    <SkillCard
+                      key={skill.name || i}
+                      skill={skill}
+                      constellations={constellations}
+                    />
+                  ))}
+                </KitSection>
+              )}
 
-          {/* Passives — 2 columns on wide screens */}
-          {passives && passives.length > 0 && (
-            <KitSection title={t.ui("archive.passives")} columns>
-              {passives.map((passive, i) => (
-                <EffectCard key={passive.name || i} effect={passive} />
-              ))}
-            </KitSection>
-          )}
+              {/* Passives — 2 columns on wide screens */}
+              {passives && passives.length > 0 && (
+                <KitSection title={t.ui("archive.passives")} columns>
+                  {passives.map((passive, i) => (
+                    <EffectCard key={passive.name || i} effect={passive} />
+                  ))}
+                </KitSection>
+              )}
 
-          {/* Glossary */}
-          {glossary && glossary.length > 0 && (
-            <KitSection title={t.ui("archive.glossary")} columns>
-              {glossary.map((entry, i) => (
-                <EffectCard key={entry.name || i} effect={entry} />
-              ))}
-            </KitSection>
-          )}
+              {/* Glossary */}
+              {glossary && glossary.length > 0 && (
+                <KitSection title={t.ui("archive.glossary")} columns>
+                  {glossary.map((entry, i) => (
+                    <EffectCard key={entry.name || i} effect={entry} />
+                  ))}
+                </KitSection>
+              )}
 
-          {/* Constellations — 2 columns on wide screens */}
-          {constellations && constellations.length > 0 && (
-            <KitSection title={t.ui("archive.constellations")} columns>
-              {constellations.map((constellation, i) => (
-                <EffectCard
-                  key={constellation.name || i}
-                  effect={constellation}
-                />
-              ))}
-            </KitSection>
+              {/* Constellations — 2 columns on wide screens */}
+              {constellations && constellations.length > 0 && (
+                <KitSection title={t.ui("archive.constellations")} columns>
+                  {constellations.map((constellation, i) => (
+                    <EffectCard
+                      key={constellation.name || i}
+                      effect={constellation}
+                    />
+                  ))}
+                </KitSection>
+              )}
+            </>
+          ) : (
+            <div
+              onClick={() => setUnlockClicks((c) => c + 1)}
+              className="flex flex-col items-center justify-center py-12 text-muted-foreground select-none cursor-default"
+            >
+              <Info className="h-12 w-12 mb-4 opacity-50" />
+              <p className="text-lg font-medium">
+                {t.ui("archive.notReleased")}
+              </p>
+            </div>
           )}
 
           {/* Linked: Artifact Builds */}
@@ -280,17 +305,6 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
           <LinkedAccountSection character={character} />
         </CardContent>
       </Card>
-      <p className="text-xs text-muted-foreground text-right mt-1 mr-1">
-        {t.ui("archive.dataFrom")}
-        <a
-          href="https://gi.hakush.in"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline text-primary/70 hover:text-primary"
-        >
-          hakush.in
-        </a>
-      </p>
     </>
   );
 }
@@ -573,7 +587,7 @@ export function CharacterArchiveView() {
   );
 
   const detailPanel = selectedId ? (
-    <CharacterDetailPanel characterId={selectedId} />
+    <CharacterDetailPanel key={selectedId} characterId={selectedId} />
   ) : (
     <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
       <Book className="h-12 w-12 mb-4 opacity-30" />

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ComputeOptions } from "@/data/types";
+import { cn } from "@/lib/utils";
 import { Filter } from "lucide-react";
 
 interface ComputeSidebarProps {
@@ -54,22 +55,69 @@ export function ComputeSidebar({
           {t.ui("computeFilters.computeOptions")}
         </Label>
 
-        {/* Skip CR+CD builds */}
-        <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
-          <Checkbox
-            id={`${isInSidePanel ? "mobile-" : ""}skip-crit`}
-            checked={computeOptions.skipCritBuilds}
-            onCheckedChange={(checked) =>
-              onComputeOptionChange("skipCritBuilds", checked as boolean)
-            }
-            className="h-4 w-4 mt-0.5"
-          />
-          <Label
-            htmlFor={`${isInSidePanel ? "mobile-" : ""}skip-crit`}
-            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
-          >
-            {t.ui("computeFilters.skipCritBuilds")}
+        {/* Merge Algorithm */}
+        <div className="space-y-2 p-2 rounded-md">
+          <Label className="text-foreground text-sm">
+            {t.ui("computeFilters.mergeAlgorithm")}
           </Label>
+          <div className="space-y-2">
+            {(
+              [
+                {
+                  value: "smartMerge" as const,
+                  name: t.ui("computeFilters.algorithmSmartMerge"),
+                  desc: t.ui("computeFilters.algorithmSmartMergeDesc"),
+                },
+                {
+                  value: "greedyMerge" as const,
+                  name: t.ui("computeFilters.algorithmGreedyMerge"),
+                  desc: t.ui("computeFilters.algorithmGreedyMergeDesc"),
+                },
+                {
+                  value: "bruteForce" as const,
+                  name: t.ui("computeFilters.algorithmBruteForce"),
+                  desc: t.ui("computeFilters.algorithmBruteForceDesc"),
+                },
+              ] as const
+            ).map((option) => {
+              const isSelected =
+                (computeOptions.mergeAlgorithm ?? "bruteForce") ===
+                option.value;
+              const id = `${isInSidePanel ? "mobile-" : ""}algo-${option.value}`;
+              return (
+                <label
+                  key={option.value}
+                  htmlFor={id}
+                  className={cn(
+                    "flex items-start gap-3 p-2.5 rounded-md border cursor-pointer transition-colors",
+                    isSelected
+                      ? "border-primary/50 bg-primary/5"
+                      : "border-border/50 hover:bg-muted/30"
+                  )}
+                >
+                  <input
+                    type="radio"
+                    id={id}
+                    name={`${isInSidePanel ? "mobile-" : ""}merge-algorithm`}
+                    value={option.value}
+                    checked={isSelected}
+                    onChange={() =>
+                      onComputeOptionChange("mergeAlgorithm", option.value)
+                    }
+                    className="mt-0.5 accent-primary"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground">
+                      {option.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground leading-snug mt-0.5">
+                      {option.desc}
+                    </div>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
         </div>
 
         {/* Expand Elemental DMG */}
@@ -108,40 +156,76 @@ export function ComputeSidebar({
           </Label>
         </div>
 
-        {/* Merge single-flex variants */}
+        {/* Normalize Flat Stats */}
         <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
           <Checkbox
-            id={`${isInSidePanel ? "mobile-" : ""}pick-one-merge`}
-            checked={!!computeOptions.mergeSingleFlexVariants}
+            id={`${isInSidePanel ? "mobile-" : ""}normalize-flat`}
+            checked={computeOptions.normalizeFlatStats}
             onCheckedChange={(checked) =>
-              onComputeOptionChange("mergeSingleFlexVariants", !!checked)
+              onComputeOptionChange("normalizeFlatStats", checked as boolean)
             }
             className="h-4 w-4 mt-0.5"
           />
           <Label
-            htmlFor={`${isInSidePanel ? "mobile-" : ""}pick-one-merge`}
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}normalize-flat`}
             className="text-foreground text-base flex-1 leading-tight cursor-pointer"
           >
-            {t.ui("computeFilters.mergeSingleFlexVariants")}
+            {t.ui("computeFilters.normalizeFlatStats")}
           </Label>
         </div>
 
-        {/* Find rigid common subset */}
-        <div className="flex items-start space-x-2 p-2 rounded-md hover:bg-muted/30 transition-colors">
-          <Checkbox
-            id={`${isInSidePanel ? "mobile-" : ""}rigid-promotion`}
-            checked={!!computeOptions.findRigidCommonSubset}
-            onCheckedChange={(checked) =>
-              onComputeOptionChange("findRigidCommonSubset", !!checked)
-            }
-            className="h-4 w-4 mt-0.5"
-          />
+        {/* Substat Weight Threshold */}
+        <div className="space-y-1.5 p-2 rounded-md">
           <Label
-            htmlFor={`${isInSidePanel ? "mobile-" : ""}rigid-promotion`}
-            className="text-foreground text-base flex-1 leading-tight cursor-pointer"
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}substat-weight`}
+            className="text-foreground text-sm font-medium"
           >
-            {t.ui("computeFilters.findRigidCommonSubset")}
+            {t.ui("computeFilters.substatWeightThreshold")}
           </Label>
+          <p className="text-xs text-muted-foreground leading-snug">
+            {t.ui("computeFilters.substatWeightThresholdDesc")}
+          </p>
+          <Input
+            id={`${isInSidePanel ? "mobile-" : ""}substat-weight`}
+            type="number"
+            min={0}
+            max={100}
+            value={computeOptions.substatWeightThreshold ?? 70}
+            onChange={(e) =>
+              onComputeOptionChange(
+                "substatWeightThreshold",
+                Number(e.target.value)
+              )
+            }
+            className="bg-input border-border h-9 sm:w-32"
+          />
+        </div>
+
+        {/* Must-Present Weight Threshold */}
+        <div className="space-y-1.5 p-2 rounded-md">
+          <Label
+            htmlFor={`${isInSidePanel ? "mobile-" : ""}must-present-weight`}
+            className="text-foreground text-sm font-medium"
+          >
+            {t.ui("computeFilters.mustPresentWeightThreshold")}
+          </Label>
+          <p className="text-xs text-muted-foreground leading-snug">
+            {t.ui("computeFilters.mustPresentWeightThresholdDesc")}
+          </p>
+          <Input
+            id={`${isInSidePanel ? "mobile-" : ""}must-present-weight`}
+            type="number"
+            min={0}
+            max={100}
+            value={computeOptions.mustPresentWeightThreshold ?? 100}
+            onChange={(e) =>
+              onComputeOptionChange(
+                "mustPresentWeightThreshold",
+                Number(e.target.value)
+              )
+            }
+            className="bg-input border-border h-9 sm:w-32"
+          />
         </div>
       </div>
     </CardContent>

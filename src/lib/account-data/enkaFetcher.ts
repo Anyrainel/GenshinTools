@@ -11,7 +11,7 @@ import type {
   IGOODCharacter,
   IGOODSubstat,
   IGOODWeapon,
-} from "@/lib/goodConversion";
+} from "./goodConversion";
 
 export type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
 export type StatKey = string;

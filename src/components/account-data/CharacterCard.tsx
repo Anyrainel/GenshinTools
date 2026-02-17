@@ -16,7 +16,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   type ArtifactScoreResult,
   calculateArtifactScore,
-} from "@/lib/artifactScore";
+} from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { Sword } from "lucide-react";

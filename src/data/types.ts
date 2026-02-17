@@ -83,7 +83,7 @@ export type SubStat =
   | "def";
 export type MainStatPlus = MainStat | "elemental%" | "cr/cd";
 
-// Base stat keys from hakush.in character stat tables.
+// Base stat keys from character stat tables.
 // Every character has baseHp/baseAtk/baseDef/em plus exactly one ascension stat.
 export type BaseStat = "baseHp" | "baseAtk" | "baseDef" | MainStat;
 
@@ -198,14 +198,17 @@ export const buildRoles: BuildRole[] = ["dps", "support", "sustain"];
 export type BuildConstellation = 0 | 1 | 2 | 4 | 6;
 export const buildConstellations: BuildConstellation[] = [0, 1, 2, 4, 6];
 
+export type BuildSource = "preset" | "modified" | "custom";
+
 export type Build = {
   id: string;
+  source?: BuildSource; // Derived field
   characterId: string; // Back link to character
-  name: string;
   visible: boolean;
   styles?: BuildStyle[];
   roles?: BuildRole[];
   minCons?: BuildConstellation; // minimum constellation for this build, default 0
+  name: string;
   composition: "4pc" | "2pc+2pc";
   artifactSet?: string; // for 4pc
   halfSet1?: number; // for 2pc+2pc - ID of the first half set
@@ -213,8 +216,12 @@ export type Build = {
   sands: MainStat[];
   goblet: MainStat[];
   circlet: MainStat[];
-  substats: SubStat[];
-  kOverride?: number; // if different from M
+  substats: WeightedSubStat[];
+};
+
+export type WeightedSubStat = {
+  stat: SubStat;
+  weight: number; // 0 to 100
 };
 
 export type ArtifactPattern = {
@@ -233,15 +240,20 @@ export type BuildGroup = {
   weapons?: string[]; // character weapon choices
 };
 
+export type MergeAlgorithm = "greedyMerge" | "bruteForce" | "smartMerge";
+
 export type ComputeOptions = {
-  // Skip CR+CD builds (assume in-game auto-lock)
-  skipCritBuilds?: boolean; // default: false
   // Simplify certain main stats
   expandElementalGoblet?: boolean; // default: true
   expandCritCirclet?: boolean; // default: true
-  // Optional merge heuristics
-  mergeSingleFlexVariants?: boolean; // default: true
-  findRigidCommonSubset?: boolean; // default: true
+  // Merge algorithm selection
+  mergeAlgorithm?: MergeAlgorithm; // default: "bruteForce"
+  // Strip flat stats (HP, ATK, DEF) before merging, restore afterward
+  normalizeFlatStats?: boolean; // default: true
+  // Minimum weight for a substat to be included in the pool (default: 70)
+  substatWeightThreshold?: number;
+  // Minimum weight for a substat to be marked must-present (default: 100)
+  mustPresentWeightThreshold?: number;
 };
 
 export type BuildPayload = {
@@ -249,6 +261,26 @@ export type BuildPayload = {
   description: string;
   version: number;
   data: BuildGroup[];
+  computeOptions?: ComputeOptions;
+};
+
+export type BuildPayloadV5 = {
+  version: 5;
+  id?: string; // Preset ID (e.g. "anyrainel-2025-02-12")
+  author: string;
+  description: string;
+  lastModified?: number; // Timestamp
+
+  // Flat Maps
+  builds: Record<string, Build>;
+
+  // Character mapping
+  characterBuilds: Record<string, string[]>;
+
+  // Weapon defaults
+  characterWeapons: Record<string, string[]>;
+
+  // Compute Options
   computeOptions?: ComputeOptions;
 };
 

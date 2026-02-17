@@ -11,8 +11,11 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { calculateArtifactScore } from "@/lib/artifactScore";
-import { type GOODData, convertGOODToAccountData } from "@/lib/goodConversion";
+import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
+import {
+  type GOODData,
+  convertGOODToAccountData,
+} from "@/lib/account-data/goodConversion";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
 // Test data: Hu Tao with Crimson Witch artifacts

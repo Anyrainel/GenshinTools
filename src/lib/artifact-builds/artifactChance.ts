@@ -1,4 +1,4 @@
-import { elementalMainStats, statPoolWithWeights } from "../data/constants";
+import { elementalMainStats, statPoolWithWeights } from "../../data/constants";
 import type {
   MainStat,
   MainStatPlus,
@@ -6,7 +6,7 @@ import type {
   SetConfig,
   SlotConfig,
   SubStat,
-} from "../data/types";
+} from "../../data/types";
 
 type SlotKind = "flowerPlume" | "sands" | "goblet" | "circlet";
 

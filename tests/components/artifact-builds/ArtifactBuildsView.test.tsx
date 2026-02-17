@@ -1,5 +1,6 @@
 import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
 import { useBuildsStore } from "@/stores/useBuildsStore";
+import { waitFor } from "@testing-library/react";
 import { render, screen } from "../../utils/render";
 
 describe("ArtifactBuildsView", () => {
@@ -10,14 +11,16 @@ describe("ArtifactBuildsView", () => {
     useBuildsStore.getState().clearAll();
   });
 
-  it("shows empty state when no builds configured", () => {
+  it("shows empty state when no builds configured", async () => {
     render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
-    // Should show the empty state message (gear emoji and message)
-    expect(screen.getByText("⚙️")).toBeInTheDocument();
+    // Wait for async computation to settle
+    await waitFor(() => {
+      expect(screen.getByText("⚙️")).toBeInTheDocument();
+    });
   });
 
-  it("computes artifact filters from character builds", () => {
+  it("computes artifact filters from character builds", async () => {
     // Set up a character with a build that uses an artifact set (4pc)
     useBuildsStore.getState().newBuild("xingqiu");
     const buildId = Object.keys(useBuildsStore.getState().builds)[0];
@@ -33,10 +36,12 @@ describe("ArtifactBuildsView", () => {
 
     // When a build is set up with an artifact set, it should compute filters
     // and show the artifact card (not the empty state)
-    expect(screen.queryByText("⚙️")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("⚙️")).not.toBeInTheDocument();
+    });
   });
 
-  it("excludes hidden characters from computation", () => {
+  it("excludes hidden characters from computation", async () => {
     // Set up a build for a character
     useBuildsStore.getState().newBuild("hu_tao");
     const buildId = Object.keys(useBuildsStore.getState().builds)[0];
@@ -52,11 +57,13 @@ describe("ArtifactBuildsView", () => {
     render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Hidden character's build should not generate artifact filters
-    // So we should see empty state
-    expect(screen.getByText("⚙️")).toBeInTheDocument();
+    // So we should see empty state after computation settles
+    await waitFor(() => {
+      expect(screen.getByText("⚙️")).toBeInTheDocument();
+    });
   });
 
-  it("excludes non-visible builds from computation", () => {
+  it("excludes non-visible builds from computation", async () => {
     // Set up a build but mark it as not visible
     useBuildsStore.getState().newBuild("hu_tao");
     const buildId = Object.keys(useBuildsStore.getState().builds)[0];
@@ -69,6 +76,8 @@ describe("ArtifactBuildsView", () => {
     render(<ArtifactBuildsView onJumpToCharacter={mockOnJumpToCharacter} />);
 
     // Non-visible build should not generate artifact filters
-    expect(screen.getByText("⚙️")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("⚙️")).toBeInTheDocument();
+    });
   });
 });

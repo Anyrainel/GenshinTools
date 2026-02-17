@@ -13,7 +13,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "pyright>=1.1.407",
+    "ty>=0.0.1a1",
     "ruff>=0.8.0",
 ]
 
@@ -37,8 +37,3 @@ ignore = []
 quote-style = "double"
 indent-style = "space"
 
-[tool.pyright]
-include = ["."]
-exclude = ["**/__pycache__", "**/node_modules"]
-pythonVersion = "3.13"
-typeCheckingMode = "basic"

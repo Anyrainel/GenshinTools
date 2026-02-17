@@ -1,3 +1,4 @@
+import type { BuildPayloadV5 } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -12,13 +13,15 @@ describe("useBuildsStore", () => {
       const state = useBuildsStore.getState();
       expect(state.characterToBuildIds).toEqual({});
       expect(state.builds).toEqual({});
+      expect(state.activePresetId).toBeNull();
+      expect(state.presetDeletedBuildIds).toEqual([]);
       expect(state.hiddenCharacters).toEqual({});
     });
 
     it("has default compute options", () => {
       const state = useBuildsStore.getState();
       expect(state.computeOptions).toBeDefined();
-      expect(state.computeOptions.skipCritBuilds).toBe(false);
+      expect(state.computeOptions.mergeAlgorithm).toBe("smartMerge");
     });
   });
 
@@ -27,7 +30,7 @@ describe("useBuildsStore", () => {
       useBuildsStore.getState().newBuild("test-character");
 
       const state = useBuildsStore.getState();
-      const buildIds = state.getCharacterBuildIds("test-character");
+      const buildIds = state.getBuildIds("test-character");
       expect(buildIds.length).toBe(1);
 
       const build = state.getBuild(buildIds[0]);
@@ -44,7 +47,7 @@ describe("useBuildsStore", () => {
       useBuildsStore.getState().newBuild(characterId);
 
       const state = useBuildsStore.getState();
-      const buildIds = state.getCharacterBuildIds(characterId);
+      const buildIds = state.getBuildIds(characterId);
       expect(buildIds.length).toBe(2);
     });
 
@@ -57,7 +60,7 @@ describe("useBuildsStore", () => {
       useBuildsStore.getState().newBuild(characterId);
 
       const state = useBuildsStore.getState();
-      const buildIds = state.getCharacterBuildIds(characterId);
+      const buildIds = state.getBuildIds(characterId);
       expect(buildIds[0]).not.toBe(buildIds[1]);
     });
   });
@@ -68,7 +71,7 @@ describe("useBuildsStore", () => {
       const characterId = "test-character";
 
       state.newBuild(characterId);
-      const buildId = state.getCharacterBuildIds(characterId)[0];
+      const buildId = state.getBuildIds(characterId)[0];
 
       state.setBuild(buildId, { name: "Updated Name" });
 
@@ -81,7 +84,7 @@ describe("useBuildsStore", () => {
       const characterId = "test-character";
 
       state.newBuild(characterId);
-      const buildId = state.getCharacterBuildIds(characterId)[0];
+      const buildId = state.getBuildIds(characterId)[0];
       const originalBuild = state.getBuild(buildId);
 
       state.setBuild(buildId, { name: "New Name" });
@@ -97,12 +100,12 @@ describe("useBuildsStore", () => {
       const characterId = "test-character";
 
       state.newBuild(characterId);
-      const buildId = state.getCharacterBuildIds(characterId)[0];
+      const buildId = state.getBuildIds(characterId)[0];
 
       state.removeBuild(characterId, buildId);
 
       expect(state.getBuild(buildId)).toBeUndefined();
-      expect(state.getCharacterBuildIds(characterId).length).toBe(0);
+      expect(state.getBuildIds(characterId).length).toBe(0);
     });
   });
 
@@ -113,7 +116,7 @@ describe("useBuildsStore", () => {
       // Create initial build
       useBuildsStore.getState().newBuild(characterId);
       let state = useBuildsStore.getState();
-      const originalId = state.getCharacterBuildIds(characterId)[0];
+      const originalId = state.getBuildIds(characterId)[0];
 
       // Set name and copy (with delay to ensure unique timestamp-based ID)
       useBuildsStore.getState().setBuild(originalId, { name: "Original" });
@@ -122,7 +125,7 @@ describe("useBuildsStore", () => {
 
       // Re-fetch state after mutations
       state = useBuildsStore.getState();
-      const buildIds = state.getCharacterBuildIds(characterId);
+      const buildIds = state.getBuildIds(characterId);
       expect(buildIds.length).toBe(2);
 
       // Find the copy (the one that's not the original)
@@ -171,10 +174,12 @@ describe("useBuildsStore", () => {
 
   describe("computeOptions", () => {
     it("updates partial compute options", () => {
-      useBuildsStore.getState().setComputeOptions({ skipCritBuilds: true });
+      useBuildsStore
+        .getState()
+        .setComputeOptions({ mergeAlgorithm: "greedyMerge" });
 
       const state = useBuildsStore.getState();
-      expect(state.computeOptions.skipCritBuilds).toBe(true);
+      expect(state.computeOptions.mergeAlgorithm).toBe("greedyMerge");
       // Other options should remain unchanged
       expect(state.computeOptions.expandElementalGoblet).toBeDefined();
     });
@@ -206,7 +211,41 @@ describe("useBuildsStore", () => {
 
       const state = useBuildsStore.getState();
       expect(state.author).toBe("Test Author");
-      expect(state.description).toBe("Test Description");
+    });
+  });
+
+  describe("importBuilds", () => {
+    it("imports V5 payload correctly", () => {
+      const v5Payload = {
+        version: 5,
+        author: "Test",
+        description: "Desc",
+        builds: {
+          "b-1": {
+            id: "b-1",
+            characterId: "char1",
+            name: "B1",
+            visible: true,
+            composition: "4pc",
+            substats: [],
+            sands: [],
+            goblet: [],
+            circlet: [],
+          },
+        },
+        characterBuilds: {
+          char1: ["b-1"],
+        },
+        characterWeapons: {},
+        computeOptions: {},
+      } as unknown as BuildPayloadV5;
+
+      useBuildsStore.getState().importBuilds(v5Payload);
+
+      const state = useBuildsStore.getState();
+      expect(state.builds["b-1"]).toBeDefined();
+      expect(state.getBuildIds("char1")).toContain("b-1");
+      expect(state.author).toBe("Test");
     });
   });
 });

@@ -4,7 +4,7 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { CharacterFilters } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   defaultCharacterFilters,
   filterAndSortCharacterData,

@@ -1,4 +1,7 @@
-import { type GOODData, convertGOODToAccountData } from "@/lib/goodConversion";
+import {
+  type GOODData,
+  convertGOODToAccountData,
+} from "@/lib/account-data/goodConversion";
 import { describe, expect, it } from "vitest";
 import goodMinimal from "../fixtures/good-minimal.json";
 import goodSample from "../fixtures/good-sample.json";

@@ -10,8 +10,11 @@ import {
   tiers,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
-import { type Insight, generateAllInsights } from "@/lib/insightEngine";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import {
+  type Insight,
+  generateAllInsights,
+} from "@/lib/account-data/insightEngine";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";

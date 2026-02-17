@@ -17,8 +17,8 @@ import {
   charactersById,
 } from "@/data/constants";
 import type { CharacterData, Tier } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
-import type { Insight } from "@/lib/insightEngine";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { Insight } from "@/lib/account-data/insightEngine";
 import { memo } from "react";
 import { InsightList } from "./InsightList";
 

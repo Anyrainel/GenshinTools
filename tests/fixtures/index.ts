@@ -9,7 +9,7 @@ import type {
   CharacterData,
   WeaponData,
 } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 
 // ============================================================================
 // Character Fixtures

@@ -1,7 +1,7 @@
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import userEvent from "@testing-library/user-event";
-import { fireEvent, render, screen } from "../../utils/render";
+import { render, screen } from "../../utils/render";
 
 describe("BuildCard", () => {
   const mockOnDelete = vi.fn();
@@ -27,10 +27,13 @@ describe("BuildCard", () => {
   });
 
   const renderBuildCard = () => {
-    const buildId = Object.keys(useBuildsStore.getState().builds)[0];
+    const state = useBuildsStore.getState();
+    const buildId = Object.keys(state.builds)[0];
+    const build = state.builds[buildId];
     return render(
       <BuildCard
         buildId={buildId}
+        build={build}
         onDelete={mockOnDelete}
         onDuplicate={mockOnDuplicate}
         element="Pyro"
@@ -40,14 +43,11 @@ describe("BuildCard", () => {
 
   it("renders without error", () => {
     const { container } = renderBuildCard();
-
     expect(container.firstChild).toBeInTheDocument();
   });
 
   it("shows build name input field", () => {
     renderBuildCard();
-
-    // Should have a textbox input for build name
     const input = screen.getByRole("textbox");
     expect(input).toBeInTheDocument();
   });
@@ -63,27 +63,31 @@ describe("BuildCard", () => {
     expect(input).toHaveValue("Main DPS");
   });
 
-  it("has delete button available", () => {
-    const { container } = renderBuildCard();
-
-    // Find delete button (has trash icon)
-    const trashIcon = container.querySelector(".lucide-trash2");
-    expect(trashIcon).toBeInTheDocument();
+  it("has a visibility switch", () => {
+    renderBuildCard();
+    const toggle = screen.getByRole("switch");
+    expect(toggle).toBeInTheDocument();
   });
 
-  it("has copy button available", () => {
-    const { container } = renderBuildCard();
-
-    // Find copy button (has copy icon)
-    const copyIcon = container.querySelector(".lucide-copy");
-    expect(copyIcon).toBeInTheDocument();
-  });
-
-  it("has exactly 3 action buttons (collapse, delete, copy)", () => {
+  it("has a context menu trigger button", () => {
     renderBuildCard();
 
-    // Collapsible trigger + Delete + Copy = at minimum 3 buttons
+    // Switch + at least one more button (the ⋮ menu trigger)
     const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBeGreaterThanOrEqual(3);
+    expect(buttons.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("toggles visibility via switch", async () => {
+    const user = userEvent.setup();
+    renderBuildCard();
+
+    const toggle = screen.getByRole("switch");
+    const wasChecked = toggle.getAttribute("aria-checked") === "true";
+    await user.click(toggle);
+
+    const state = useBuildsStore.getState();
+    const buildId = Object.keys(state.builds)[0];
+    const build = state.builds[buildId];
+    expect(build.visible).toBe(!wasChecked);
   });
 });

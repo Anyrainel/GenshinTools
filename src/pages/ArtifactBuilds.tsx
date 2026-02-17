@@ -1,5 +1,11 @@
 import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
+import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
+// ... (imports are mostly fine from previous step, just adding ArtifactBuildsView back)
+
+// Skipping re-importing everything, just targeting the file content fix.
+// Actually replace_file_content replaces the block.
+// Let's use multi_replace to fix specific areas.
 import type {
   ActionConfig,
   ControlHandle,
@@ -8,7 +14,6 @@ import type {
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
-import { ImportControl } from "@/components/shared/ImportControl";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -16,11 +21,18 @@ import type {
   Build,
   BuildGroup,
   BuildPayload,
+  BuildPayloadV5,
   PresetOption,
 } from "@/data/types";
-import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
+import {
+  createBuildExportPayloadV5,
+  serializeBuildExportPayload,
+} from "@/lib/artifact-builds/buildUtils";
+import { loadPresetMetadata } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
-import { serializeBuildExportPayload } from "@/stores/jsonUtils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
 import {
@@ -75,9 +87,17 @@ export default function ArtifactBuildsPage() {
   }, [tour, activeTab]);
 
   const importBuilds = useBuildsStore((state) => state.importBuilds);
+  const subscribePreset = useBuildsStore((state) => state.subscribePreset);
   const clearAllBuilds = useBuildsStore((state) => state.clearAll);
   const author = useBuildsStore((state) => state.author);
   const description = useBuildsStore((state) => state.description);
+  const computeOptions = useBuildsStore((state) => state.computeOptions);
+  // Get all resolved builds for export
+  const allResolvedBuilds = useAllResolvedBuilds();
+  const allResolvedBuildsRef = useRef(allResolvedBuilds);
+  useEffect(() => {
+    allResolvedBuildsRef.current = allResolvedBuilds;
+  }, [allResolvedBuilds]);
 
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
 
@@ -87,55 +107,33 @@ export default function ArtifactBuildsPage() {
   }, []);
 
   const loadPreset = useCallback(async (path: string) => {
-    return loadPresetPayload(presetModules, path);
+    return loadPresetFromRegistry(path);
   }, []);
 
-  const handleExport = (exportAuthor: string, exportDescription: string) => {
-    // Read data directly from store at export time (not as a subscription)
-    const state = useBuildsStore.getState();
-    const {
-      characterToBuildIds,
-      builds,
-      hiddenCharacters,
-      characterWeapons,
-      computeOptions,
-    } = state;
+  const handleExport = useCallback(
+    async (exportAuthor: string, exportDescription: string) => {
+      const payload = createBuildExportPayloadV5(
+        allResolvedBuildsRef.current,
+        computeOptions,
+        exportAuthor,
+        exportDescription
+      );
 
-    // Convert store format to export format
-    const exportData: BuildGroup[] = [];
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `[${exportAuthor}] ${exportDescription || "genshin-builds"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
 
-    for (const [characterId, buildIds] of Object.entries(characterToBuildIds)) {
-      const characterBuilds = buildIds
-        .map((id) => builds[id])
-        .filter((b): b is Build => b !== undefined);
-
-      if (characterBuilds.length > 0) {
-        exportData.push({
-          characterId,
-          builds: characterBuilds,
-          hidden: !!hiddenCharacters?.[characterId],
-          weapons: characterWeapons[characterId],
-        });
-      }
-    }
-
-    const dataStr = serializeBuildExportPayload(
-      exportData,
-      computeOptions,
-      exportAuthor,
-      exportDescription
-    );
-    const dataBlob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `[${exportAuthor}] ${exportDescription}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    // Save metadata to store
-    state.setMetadata(exportAuthor, exportDescription);
-  };
+      // Save metadata
+      useBuildsStore.getState().setMetadata(exportAuthor, exportDescription);
+    },
+    [computeOptions]
+  );
 
   const handleDownloadImage = useCallback(async () => {
     if (!computeContentRef.current) return;
@@ -173,6 +171,32 @@ export default function ArtifactBuildsPage() {
       console.error(err);
       toast.error(t.ui("app.imageGenerationFailed"));
     }
+  }, [t]);
+
+  const handleExportTrigger = useCallback(() => {
+    const state = useBuildsStore.getState();
+    const { characterToBuildIds, builds } = state;
+    let count = 0;
+    const warnings: string[] = [];
+
+    for (const [charId, buildIds] of Object.entries(characterToBuildIds)) {
+      for (const buildId of buildIds) {
+        const build = builds[buildId];
+        if (!build) continue;
+
+        const errorKeys = state.validationErrors?.[buildId] || [];
+        if (errorKeys.length > 0) {
+          count++;
+          if (warnings.length < 3) {
+            const charName = t.character(charId);
+            const details = errorKeys.map((k) => t.ui(k)).join(", ");
+            warnings.push(`${charName} (${build.name}): ${details}`);
+          }
+        }
+      }
+    }
+
+    exportRef.current?.open({ warnings, count });
   }, [t]);
 
   // Tab configuration for AppBar
@@ -226,7 +250,7 @@ export default function ArtifactBuildsPage() {
         key: "export",
         icon: Download,
         label: t.ui("app.export"),
-        onTrigger: () => exportRef.current?.open(),
+        onTrigger: handleExportTrigger,
       },
       {
         key: "clear",
@@ -241,7 +265,7 @@ export default function ArtifactBuildsPage() {
         onTrigger: () => tour.start("artifact-filter"),
       },
     ];
-  }, [activeTab, t, handleDownloadImage, tour]);
+  }, [activeTab, t, handleDownloadImage, tour, handleExportTrigger]);
 
   return (
     <PageLayout
@@ -251,12 +275,18 @@ export default function ArtifactBuildsPage() {
       onTabChange={setActiveTab}
     >
       {/* Control dialogs - render without triggers, opened via ref */}
-      <ImportControl
+      <BuildImportControl
         ref={importRef}
         options={presetOptions}
         loadPreset={loadPreset}
-        onApply={importBuilds}
-        onLocalImport={importBuilds}
+        onSubscribe={(id, payload) => {
+          subscribePreset(id, payload);
+          toast.success(t.ui("app.presetLoaded"));
+        }}
+        onCopy={(payload) => {
+          importBuilds(payload);
+          toast.success(t.ui("app.imported"));
+        }}
       />
       <ExportControl
         ref={exportRef}

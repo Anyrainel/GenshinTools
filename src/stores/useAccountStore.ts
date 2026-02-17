@@ -1,5 +1,5 @@
 import type { AccountData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
