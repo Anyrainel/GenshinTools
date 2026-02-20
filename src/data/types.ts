@@ -51,6 +51,8 @@ export const regions: Region[] = [
   "None",
 ];
 
+export type Faction = "Hexerei" | "None";
+
 export type MainStat =
   | "cr"
   | "cd"
@@ -91,6 +93,15 @@ export type BaseStat = "baseHp" | "baseAtk" | "baseDef" | MainStat;
 export type CharacterStats = {
   Lv90: Partial<Record<BaseStat, string>>;
   Lv100: Partial<Record<BaseStat, string>>;
+};
+
+export type CharacterInfo = {
+  energy: number;
+  healerC?: number; // min constellation starting from 0, omitted if none
+  shielderC?: number; // min constellation starting from 0, omitted if none
+  c3Talent: "A" | "E" | "Q";
+  c5Talent: "A" | "E" | "Q";
+  faction?: Faction;
 };
 
 // Character kit types (lazy-loaded per-language data from character_*.json)

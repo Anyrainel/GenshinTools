@@ -11,7 +11,7 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { render, screen } from "../utils/render";
 
-import { TeamCard } from "@/components/team-builder/TeamCard";
+import { TeamCard } from "@/components/team-comp/TeamCard";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 
 describe("Integration: Team Builder Flow", () => {
@@ -132,6 +132,10 @@ describe("Integration: Team Builder Flow", () => {
       characters: ["hu_tao", "xingqiu", null, null],
       weapons: [null, null, null, null],
       artifacts: [null, null, null, null],
+      opts: {},
+      targetEr: {},
+      selectedFormula: null,
+      optimizationResult: null,
     };
 
     const mockUpdate = vi.fn();

@@ -18,6 +18,7 @@ interface TeamCardProps {
   onUpdate: (patch: Partial<Team>) => void;
   onDelete?: () => void;
   onCopy?: () => void;
+  onSelect?: () => void;
   isGhost?: boolean;
 }
 
@@ -27,6 +28,7 @@ export function TeamCard({
   onUpdate,
   onDelete,
   onCopy,
+  onSelect,
   isGhost,
 }: TeamCardProps) {
   const { t } = useLanguage();
@@ -228,6 +230,19 @@ export function TeamCard({
           </div>
         ))}
       </div>
+
+      {/* Action Row */}
+      {!isGhost && (
+        <div className="pt-2 border-t border-border/50">
+          <Button
+            variant="default"
+            className="w-full font-semibold"
+            onClick={onSelect}
+          >
+            {t.ui("common.optimize")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

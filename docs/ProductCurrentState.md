@@ -14,7 +14,7 @@
    - [Artifact Filter](#33-artifact-filter)
    - [Character Tier List](#34-character-tier-list)
    - [Weapon Tier List](#35-weapon-tier-list)
-   - [Team Builder](#36-team-builder)
+   - [Team Comp](#36-team-comp)
 4. [Cross-Cutting Capabilities](#4-cross-cutting-capabilities)
 5. [Data & Persistence](#5-data--persistence)
 6. [Distribution Channels](#6-distribution-channels)

@@ -9,7 +9,7 @@ import AccountDataPage from "./pages/AccountData";
 import ArchivePage from "./pages/Archive";
 import ArtifactBuildsPage from "./pages/ArtifactBuilds";
 import Home from "./pages/Home";
-import TeamBuilderPage from "./pages/TeamBuilder";
+import TeamCompPage from "./pages/TeamComp";
 import TierListPage from "./pages/TierList";
 
 function App() {
@@ -35,7 +35,7 @@ function App() {
             <Route path="/artifact-filter" element={<ArtifactBuildsPage />} />
             <Route path="/tier-list" element={<TierListPage />} />
             <Route path="/archive" element={<ArchivePage />} />
-            <Route path="/team-builder" element={<TeamBuilderPage />} />
+            <Route path="/team-comp" element={<TeamCompPage />} />
           </Routes>
         </main>
         <Toaster />

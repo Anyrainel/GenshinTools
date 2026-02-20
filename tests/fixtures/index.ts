@@ -9,7 +9,7 @@ import type {
   CharacterData,
   WeaponData,
 } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 
 // ============================================================================
 // Character Fixtures

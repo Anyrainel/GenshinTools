@@ -26,6 +26,8 @@ dist-ssr
 # Python
 __pycache__/
 *.pyc
+scripts/.char_review_status.json
+scripts/.char_review_output.txt
 
 # Playwright
 playwright-report/

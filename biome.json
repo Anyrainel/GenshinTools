@@ -62,7 +62,8 @@
       "src/data/enkaIdMap.ts",
       "src/data/charStats.ts",
       "src/data/character_en.json",
-      "src/data/character_zh.json"
+      "src/data/character_zh.json",
+      "src/data/charInfo.ts"
     ]
   },
   "vcs": {

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { Check, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

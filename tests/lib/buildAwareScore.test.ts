@@ -10,7 +10,7 @@ import {
   buildToWeightMap,
   calculateBuildAwareScore,
   matchBuild,
-} from "@/lib/account-data/buildAwareScore";
+} from "@/lib/account-data/artifactScore";
 import { describe, expect, it } from "vitest";
 
 // ---------------------------------------------------------------------------

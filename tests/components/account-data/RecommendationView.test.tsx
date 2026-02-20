@@ -1,5 +1,5 @@
 import { RecommendationView } from "@/components/account-data/RecommendationView";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";

@@ -157,14 +157,14 @@ export default function Home() {
             exploreText={t.ui("app.explore")}
           />
 
-          {/* TODO: Re-enable when Team Builder is more polished
+          {/* TODO: Re-enable when Team Comp is more polished
           <FeatureCard
             icon={<Users className="w-6 h-6" />}
             decorIcon={<Users className="w-16 h-16" />}
-            title={t.ui("app.navTeamBuilder")}
-            problem={t.ui("app.teamBuilderProblem")}
-            guideline={t.ui("app.teamBuilderGuideline")}
-            link="/team-builder"
+            title={t.ui("app.navTeamComp")}
+            problem={t.ui("app.teamCompProblem")}
+            guideline={t.ui("app.teamCompGuideline")}
+            link="/team-comp"
             bgImage="assets/home/weapon_bg.png"
             bgPosition="center 50%"
             accentColor="from-cyan-500/20 to-blue-500/10"

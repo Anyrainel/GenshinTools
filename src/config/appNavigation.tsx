@@ -116,7 +116,7 @@ export const getNavigationConfig = (
     ],
   },
   {
-    label: t.ui("app.navTeamBuilder"),
-    href: "/team-builder",
+    label: t.ui("app.navTeamComp"),
+    href: "/team-comp",
   },
 ];

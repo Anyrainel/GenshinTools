@@ -10,7 +10,7 @@ import {
   tiers,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Insight,
   generateAllInsights,

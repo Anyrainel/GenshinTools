@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { render } from "../utils/render";
 
 import { CharacterCard } from "@/components/account-data/CharacterCard";
-import { calculateBuildAwareScore } from "@/lib/account-data/buildAwareScore";
+import { calculateBuildAwareScore } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,

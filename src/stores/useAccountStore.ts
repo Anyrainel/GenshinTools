@@ -1,5 +1,5 @@
 import type { AccountData } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

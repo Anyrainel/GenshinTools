@@ -17,7 +17,7 @@ import {
   charactersById,
 } from "@/data/constants";
 import type { CharacterData, Tier } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import type { Insight } from "@/lib/account-data/insightEngine";
 import { memo } from "react";
 import { InsightList } from "./InsightList";

@@ -23,13 +23,13 @@ Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 - `/artifact-filter` — tabs: `configure`, `filters` (`SidebarLayout`)
 - `/tier-list` — tabs: `characters`, `weapons` (`WideLayout`)
 - `/archive` — tabs: `characters`, `weapons` (`SidebarLayout` / `ScrollLayout`)
-- `/team-builder` (`ScrollLayout`)
+- `/team-comp` (`ScrollLayout`)
 
 Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/components/layout/`.
 
 ### Directory Map
 
-- `src/components/{domain}` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-builder`, `archive`
+- `src/components/{domain}` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-comp`, `archive`
 - `src/components/shared` — Cross-domain: `ItemPicker`, `ItemIcon`, `CharacterFilterSidebar`, controls, tooltips
 - `src/components/ui` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
 - `src/stores` — One Zustand store per domain (persist to `localStorage`)
@@ -62,6 +62,14 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 - `npm run test` / `test:watch` / `test:coverage` — Vitest unit tests
 - `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
+### Safe & Piped Variants (Agent Use)
+You must use these to avoid explicit pipe (`|`) or redirect (`2>&1`) in the terminal:
+- `npm run type-check:head` / `lint:head` / `test:head` — Limits output to first 20 lines (avoids spam). Pass `-- N` to change (e.g. `npm run test:head -- 100`).
+- `npm run type-check:tail` / `lint:tail` / `test:tail` — Shows only the last 20 lines (error summaries). Pass `-- N` to change.
+- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 10 + last 10 lines (skips middle). Pass `-- N` to change.
+- `npm run type-check:filter -- "Error"` / `lint:filter -- "Pattern"` / `test:filter -- "Pattern"` — Greps output for pattern.
+  - Example: `npm run type-check:filter -- "character5.ts"` to find errors in a specific file.
+
 **ALWAYS use `npm run` scripts, NOT raw `npx` invocations.** The project scripts are configured to check both `src` and `tests` tsconfigs, etc.
 
 ## Development Rules
@@ -89,5 +97,11 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 
 ### Terminal Hygiene
 
-- Avoid `2>&1` redirection (triggers safety review).
-- If redirecting to a file, delete it immediately after reading.
+- Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review).
+- Never inline Python/JS code in terminal commands (e.g. python -c "..." or node -e "..."). Write a temporary .py/.js fil under temp/, run it, then delete it. Always consider all failure modes if the script contains side effects (e.g. write to files). Defer dangerous actions to user.
+
+### File Safety
+
+- **Never run destructive scripts (regex replace, refactor, migration) directly on source files.** Always write output to a `.new` or `.tmp` copy first, diff/inspect the result, and only then replace the original.
+- Before any bulk file transformation, make a backup copy of the target file.
+- Test regex patterns with dry-run (print matches only) before applying replacements.

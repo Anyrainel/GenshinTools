@@ -13,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData, MainStatSlot } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { Sword } from "lucide-react";
 import { memo } from "react";

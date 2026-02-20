@@ -1,4 +1,4 @@
-import { TeamCard } from "@/components/team-builder/TeamCard";
+import { TeamCard } from "@/components/team-comp/TeamCard";
 import type { Team } from "@/stores/useTeamStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
@@ -9,6 +9,10 @@ const mockTeam: Team = {
   characters: ["hu_tao", "xingqiu", "zhongli", null],
   weapons: [null, null, null, null],
   artifacts: [null, null, null, null],
+  opts: {},
+  targetEr: {},
+  selectedFormula: null,
+  optimizationResult: null,
 };
 
 describe("TeamCard", () => {
@@ -84,6 +88,10 @@ describe("TeamCard", () => {
       characters: [null, null, null, null],
       weapons: [null, null, null, null],
       artifacts: [null, null, null, null],
+      opts: {},
+      targetEr: {},
+      selectedFormula: null,
+      optimizationResult: null,
     };
 
     const { container } = render(

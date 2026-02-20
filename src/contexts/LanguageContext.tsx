@@ -46,6 +46,7 @@ interface LanguageContextType {
     formatDate: (dateString: string | null) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
+    resolveLabel: (label: Record<string, string>) => string;
     characterKit: (id: string) => CharacterKit | null;
     skills: (id: string) => CharacterSkill[] | null;
     passives: (id: string) => CharacterEffect[] | null;
@@ -388,6 +389,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [getUIMessage]
   );
 
+  const resolveLabel = useCallback(
+    (label: Record<string, string>): string => {
+      if (!label) return "";
+      return label[language] || label.en || Object.values(label)[0] || "";
+    },
+    [language]
+  );
+
   // Memoize the t object to prevent recreation on every render
   const t = useMemo(
     () => ({
@@ -413,6 +422,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       formatDate: formatReleaseDate,
       ui: getUIMessage,
       format: formatString,
+      resolveLabel,
       characterKit: getCharacterKit,
       skills: getSkills,
       passives: getPassives,
@@ -443,6 +453,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       formatReleaseDate,
       getUIMessage,
       formatString,
+      resolveLabel,
       getCharacterKit,
       getSkills,
       getPassives,

@@ -26,7 +26,7 @@ import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type BuildAwareScoreResult,
   calculateBuildAwareScore,
-} from "@/lib/account-data/buildAwareScore";
+} from "@/lib/account-data/artifactScore";
 import {
   convertEnkaToGOOD,
   fetchEnkaData,

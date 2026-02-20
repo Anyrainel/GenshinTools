@@ -1,5 +1,5 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { BuildAwareScoreResult } from "@/lib/account-data/buildAwareScore";
+import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
 
 const mockScoreResult: BuildAwareScoreResult = {

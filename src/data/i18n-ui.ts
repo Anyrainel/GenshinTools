@@ -3,6 +3,7 @@ export const i18nUiData = {
     search: { en: "Search...", zh: "搜索..." },
     clear: { en: "Clear", zh: "清除" },
     cancel: { en: "Cancel", zh: "取消" },
+    optimize: { en: "Optimize", zh: "优化" },
     noResults: { en: "No results found", zh: "未找到结果" },
     duplicate: { en: "Duplicate", zh: "复制" },
     moveUp: { en: "Move Up", zh: "上移" },
@@ -264,7 +265,7 @@ export const i18nUiData = {
     navAccountData: { en: "Account Data", zh: "账号数据" },
     navTierList: { en: "Tier List", zh: "榜单" },
     navArchive: { en: "Archive", zh: "图鉴" },
-    navTeamBuilder: { en: "Team Builder", zh: "队伍构建" },
+    navTeamComp: { en: "Team Comp", zh: "队伍配队" },
     heroDescription: {
       en: "Powerful utilities to optimize your builds and organize your roster.",
       zh: "强大实用的工具，助您优化配装、管理角色养成。",
@@ -301,11 +302,11 @@ export const i18nUiData = {
       en: "Browse detailed character kits, base stats, and weapons. A comprehensive in-game reference.",
       zh: "浏览角色天赋、基础属性和武器详情，全面的游戏资料库。",
     },
-    teamBuilderProblem: {
+    teamCompProblem: {
       en: "Need help theory-crafting new teams?",
       zh: "正在科研新配队？",
     },
-    teamBuilderGuideline: {
+    teamCompGuideline: {
       en: "A visual workspace to build, experiment, and refine your team compositions.",
       zh: "可视化构筑与实验，打磨你的最强阵容。",
     },
