@@ -38,11 +38,6 @@ export const ELEMENT_DMG_KEYS: StatKey[] = [
   "dendro%",
 ];
 
-/** Map an Element name to its DMG% stat key. */
-export function elementDmgKey(element: Element): StatKey {
-  return `${element.toLowerCase() as Lowercase<Element>}%` as StatKey;
-}
-
 /** Expand "All Elemental DMG Bonus" into 7 individual element DMG entries. */
 export function allElementalDmg(value: number): StatEntry[] {
   return ELEMENT_DMG_KEYS.map((key) => ({ key, value }));

@@ -73,7 +73,7 @@ class Escoffier extends CharacterBase {
     const qMult = this.constellation >= 5 ? 12.597 : 10.67;
     const formulas: Record<string, FormulaEntry> = {
       "escoffier-skill-parfait": {
-        label: { zh: "冻霜芭菲连击", en: "Frosty Parfait Ticks (×6)" },
+        label: { zh: "E 冻霜芭菲连击", en: "E Frosty Parfait Ticks (×6)" },
         parts: [
           {
             formula: new DirectFormula(parfaitMult, {
@@ -86,7 +86,7 @@ class Escoffier extends CharacterBase {
         ],
       },
       "escoffier-burst": {
-        label: { zh: "花刀技法", en: "Scoring Cuts" },
+        label: { zh: "Q 花刀技法", en: "Q Scoring Cuts" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -101,7 +101,7 @@ class Escoffier extends CharacterBase {
     // C6: Special-Grade Frosty Parfait 500% ATK ×6
     if (this.constellation >= 6) {
       formulas["escoffier-c6-parfait"] = {
-        label: { zh: "特级冻霜芭菲", en: "C6 Special Parfait (×6)" },
+        label: { zh: "E 特级冻霜芭菲", en: "E C6 Special Parfait (×6)" },
         parts: [
           {
             formula: new DirectFormula(5.0, {
@@ -168,34 +168,70 @@ class Emilie extends CharacterBase {
   protected readonly formulaMap = (() => {
     const lv2TickMult = this.constellation >= 3 ? 1.785 * 2 : 1.512 * 2;
     const qMult = this.constellation >= 5 ? 4.616 : 3.91;
+    const hasPyro = this.teamMeta.countByElement("Pyro") > 0;
+
+    const normalParts = [
+      {
+        formula: new DirectFormula(0.96, {
+          element: "Dendro",
+          ability: "normal",
+          reaction: "none",
+        }),
+      },
+      {
+        formula: new DirectFormula(0.887, {
+          element: "Dendro",
+          ability: "normal",
+          reaction: "none",
+        }),
+      },
+      {
+        formula: new DirectFormula(1.172, {
+          element: "Dendro",
+          ability: "normal",
+          reaction: "none",
+        }),
+      },
+      {
+        formula: new DirectFormula(1.485, {
+          element: "Dendro",
+          ability: "normal",
+          reaction: "none",
+        }),
+      },
+    ];
+
     return {
-      "emilie-skill-lv2": {
-        label: { zh: "柔灯之匣·二阶连击", en: "Lv2 Case Ticks (×7)" },
-        parts: [
-          {
-            formula: new DirectFormula(lv2TickMult, {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
-            hits: 7,
-          },
-        ],
-      },
-      "emilie-cleardew": {
-        label: { zh: "清露香氛", en: "Cleardew Cologne" },
-        parts: [
-          {
-            formula: new DirectFormula(6.0, {
-              element: "Dendro",
-              ability: "special",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "emilie-burst": {
-        label: { zh: "香氛演绎总伤", en: "Aromatic Explication Total" },
+      ...(hasPyro
+        ? {
+            "emilie-skill-burning": {
+              label: {
+                zh: "E 二阶14击+5次清露",
+                en: "E Lv2 14 Ticks + 5 Cleardew",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(lv2TickMult, {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                  hits: 14,
+                },
+                {
+                  formula: new DirectFormula(6.0, {
+                    element: "Dendro",
+                    ability: "special",
+                    reaction: "none",
+                  }),
+                  hits: 5,
+                },
+              ],
+            },
+          }
+        : {}),
+      "emilie-burst-9hit": {
+        label: { zh: "Q 柔灯之匣·三阶9次", en: "Q Lv3 Case (9 Ticks)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -203,10 +239,18 @@ class Emilie extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            hits: 4,
+            hits: 9,
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "emilie-c6-normal": {
+              label: { zh: "A 一套普通攻击", en: "A Normal ATK Combo" },
+              parts: normalParts,
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -271,9 +315,10 @@ class Sigewinne extends CharacterBase {
   // Lv13 (C3+): 4.84% HP × 5
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 0.0484 : 0.041;
+    const qMult = this.constellation >= 5 ? 0.25 : 0.212;
     return {
       "sigewinne-skill": {
-        label: { zh: "激愈水球(×5)", en: "Bolstering Bubblebalm (×5)" },
+        label: { zh: "E 激愈水球(×5)", en: "E Bolstering Bubblebalm (×5)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -283,6 +328,20 @@ class Sigewinne extends CharacterBase {
               { key: "hp", multiplier: eMult }
             ),
             hits: 5,
+          },
+        ],
+      },
+      "sigewinne-burst": {
+        label: { zh: "Q伤害（命中6次）", en: "Q Super Saturated Syringing" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              0,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "atk",
+              { key: "hp", multiplier: qMult }
+            ),
+            hits: 6,
           },
         ],
       },
@@ -337,35 +396,55 @@ class Clorinde extends CharacterBase {
     // Q Last Lightfall: Lv10 228.4%×5, Lv13 (C5+) 269.6%×5
     const qMult = this.constellation >= 5 ? 2.696 : 2.284;
     // Swift Hunt rotation: 3× piercing shot (76.7%) + Impale Pact (49.6%×3)
-    // Lv10 total: 76.7×3 + 49.6×3 = 378.9%; Lv13 (C3+): 92.9×3 + 60.2×3 = 459.3%
-    const nMult = this.constellation >= 3 ? 4.593 : 3.789;
+    const swiftMult = this.constellation >= 3 ? 0.929 : 0.767;
+    const impaleMult = this.constellation >= 3 ? 0.602 : 0.496;
+
+    const normalBaseTag = {
+      element: "Electro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const aggBaseTag = {
+      ...normalBaseTag,
+      reaction: "aggravate" as const,
+    };
+
+    const normalParts = [
+      { formula: new DirectFormula(swiftMult, normalBaseTag), hits: 3 },
+      { formula: new DirectFormula(impaleMult, normalBaseTag), hits: 3 },
+      ...(this.constellation >= 1
+        ? [{ formula: new DirectFormula(0.3, normalBaseTag), hits: 2 }]
+        : []),
+      ...(this.constellation >= 6
+        ? [{ formula: new DirectFormula(2.0, normalBaseTag), hits: 1 }]
+        : []),
+    ];
+
+    const aggParts = [
+      { formula: new CatalyzeFormula(swiftMult, aggBaseTag), hits: 3 },
+      { formula: new CatalyzeFormula(impaleMult, aggBaseTag), hits: 3 },
+      ...(this.constellation >= 1
+        ? [{ formula: new CatalyzeFormula(0.3, aggBaseTag), hits: 2 }]
+        : []),
+      ...(this.constellation >= 6
+        ? [{ formula: new CatalyzeFormula(2.0, aggBaseTag), hits: 1 }]
+        : []),
+    ];
+
     return {
       "clorinde-normal": {
-        label: { zh: "夜巡连段", en: "Night Vigil Rotation" },
-        parts: [
-          {
-            formula: new DirectFormula(nMult, {
-              element: "Electro",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
-        ],
+        label: { zh: "E 夜巡连段(驰猎+贯夜)", en: "E Night Vigil Rotation" },
+        parts: normalParts,
       },
       "clorinde-normal-aggravate": {
-        label: { zh: "夜巡连段(超激化)", en: "Night Vigil (Aggravate)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(nMult, {
-              element: "Electro",
-              ability: "normal",
-              reaction: "aggravate",
-            }),
-          },
-        ],
+        label: {
+          zh: "E 夜巡连段(超激化/默认全覆盖)",
+          en: "E Night Vigil (Aggravate)",
+        },
+        parts: aggParts,
       },
       "clorinde-burst": {
-        label: { zh: "残光将终", en: "Last Lightfall" },
+        label: { zh: "Q 残光将终", en: "Q Last Lightfall" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -447,7 +526,7 @@ class Navia extends CharacterBase {
     const totalMult = baseMult * 2.0 * 1.45;
     return {
       "navia-crystalshot": {
-        label: { zh: "典仪式晶火(6弹片)", en: "Crystalshot (6 shrapnel)" },
+        label: { zh: "E 典仪式晶火(6弹片)", en: "E Crystalshot (6 shrapnel)" },
         parts: [
           {
             formula: new DirectFormula(totalMult, {
@@ -498,29 +577,39 @@ class Furina extends CharacterBase {
     ),
   ];
 
-  // E Salon Members: scale with HP, ~10 ticks over 30s, ×1.4 power bonus
-  // Combined per tick Lv10: 31.47% HP, Lv13 (C5+): 37.15% HP
-  // ×1.4 (4 members) = 44.06% / 52.01% per tick
+  // E Salon Members: scale with HP
+  // Gentilhomme Usher (乌瑟勋爵): 9 hits
+  // Surintendante Chevalmarin (海薇玛夫人): 18 hits
+  // Mademoiselle Crabaletta (谢贝蕾妲小姐): 5 hits
+  // ×1.4 power bonus with 4 healthy team members
   protected readonly formulaMap = (() => {
-    const combinedTick =
-      this.constellation >= 5
-        ? (0.1267 + 0.0687 + 0.1761) * 1.4
-        : (0.1073 + 0.0582 + 0.1492) * 1.4;
+    const isE13 = this.constellation >= 5;
+    const usherMult = (isE13 ? 0.1267 : 0.1073) * 1.4;
+    const chevalmarinMult = (isE13 ? 0.0687 : 0.0582) * 1.4;
+    const crabalettaMult = (isE13 ? 0.1761 : 0.1492) * 1.4;
+    const hydroTag = {
+      element: "Hydro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
       "furina-salon-total": {
-        label: { zh: "沙龙成员(×10)", en: "Salon Members Total (×10)" },
+        label: {
+          zh: "E 沙龙成员(一轮齐射)",
+          en: "E Salon Members Total (Full Rotation)",
+        },
         parts: [
           {
-            formula: new DirectFormula(
-              combinedTick,
-              {
-                element: "Hydro",
-                ability: "skill",
-                reaction: "none",
-              },
-              "hp"
-            ),
-            hits: 10,
+            formula: new DirectFormula(chevalmarinMult, hydroTag, "hp"),
+            hits: 18,
+          },
+          {
+            formula: new DirectFormula(usherMult, hydroTag, "hp"),
+            hits: 9,
+          },
+          {
+            formula: new DirectFormula(crabalettaMult, hydroTag, "hp"),
+            hits: 5,
           },
         ],
       },
@@ -590,7 +679,7 @@ class Neuvillette extends CharacterBase {
     const tickMult = this.constellation >= 3 ? 0.1753 : 0.1447;
     return {
       "neuvillette-judgment": {
-        label: { zh: "衡平推裁(×10)", en: "Equitable Judgment (×10)" },
+        label: { zh: "A 衡平推裁(×10)", en: "A Equitable Judgment (×10)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -665,7 +754,10 @@ class Wriothesley extends CharacterBase {
 
     return {
       "wriothesley-normal": {
-        label: { zh: "寒烈的惩裁·斥逐拳全套", en: "Chilling Penalty N5 Combo" },
+        label: {
+          zh: "A 寒烈的惩裁·斥逐拳全套",
+          en: "A Chilling Penalty N5 Combo",
+        },
         parts: [
           {
             formula: new DirectFormula(eNMult, {
@@ -677,7 +769,7 @@ class Wriothesley extends CharacterBase {
         ],
       },
       "wriothesley-charge": {
-        label: { zh: "惩戒·凌跃拳", en: "Rebuke: Vaulting Fist" },
+        label: { zh: "A 惩戒·凌跃拳", en: "A Rebuke: Vaulting Fist" },
         parts: [
           {
             formula: new DirectFormula(cMult, {
@@ -689,7 +781,7 @@ class Wriothesley extends CharacterBase {
         ],
       },
       "wriothesley-burst": {
-        label: { zh: "黑金狼噬(全命中)", en: "Darkgold Wolfbite" },
+        label: { zh: "Q 黑金狼噬(全命中)", en: "Q Darkgold Wolfbite" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -740,9 +832,13 @@ class Lyney extends CharacterBase {
   // Prop Arrow: Lv10 311.0%, Lv13 (C3+) 367.2% (C3 boosts Normal talent)
   protected readonly formulaMap = (() => {
     const propMult = this.constellation >= 3 ? 3.672 : 3.11;
+    const strikeMult = this.constellation >= 3 ? 4.505 : 3.816;
+    const eMult =
+      this.constellation >= 5 ? 3.553 + 1.131 * 5 : 3.01 + 0.958 * 5;
+
     return {
       "lyney-prop": {
-        label: { zh: "隐具魔术箭", en: "Prop Arrow" },
+        label: { zh: "隐具魔术箭伤害", en: "A Prop Arrow" },
         parts: [
           {
             formula: new DirectFormula(propMult, {
@@ -753,8 +849,32 @@ class Lyney extends CharacterBase {
           },
         ],
       },
+      "lyney-strike": {
+        label: { zh: "礼花术弹伤害", en: "A Pyrotechnic Strike" },
+        parts: [
+          {
+            formula: new DirectFormula(strikeMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "lyney-skill-max": {
+        label: { zh: "满层E伤害", en: "E Bewildering Lights (Max Stacks)" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "lyney-prop-vape": {
-        label: { zh: "隐具魔术箭(蒸发)", en: "Prop Arrow (Vape)" },
+        label: { zh: "A 隐具魔术箭(蒸发)", en: "A Prop Arrow (Vape)" },
         parts: [
           {
             formula: new DirectFormula(propMult, {

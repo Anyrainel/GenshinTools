@@ -57,7 +57,7 @@ class WolfsGravestone extends WeaponBase {
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
     ]),
-    new StatBuff(wbs(this, ["low-hp-enemy"]), { receiver: "team" }, [
+    new StatBuff(wbs(this, ["enemy-low-hp"]), { receiver: "team" }, [
       { key: "atk%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) },
     ]),
   ];

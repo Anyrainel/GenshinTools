@@ -33,7 +33,7 @@ See `StatKey` and `StatEntry` in [`types.ts`](../src/lib/team-comp/types.ts). Be
 
 ```
 Direct (直伤, none):
-  [ScalingDmg × (1+baseDmg%) + baseDmg] × (1 + element%(元素伤害) + dmg%(伤害加成) + dmgTaken%(承伤))
+  [ScalingDmg × (1+baseDmg%) + baseDmg] × (1 + element%(元素伤害) + dmg%(伤害加成))
   where ScalingDmg = Stat × TalentMult(天赋倍率) [+ ExtraStat × ExtraMult, if dual-stat]
     × DEFMult(防御系数) × RESMult(抗性系数) × CritMult(暴击系数)
 
@@ -51,7 +51,7 @@ Transform (剧变: overloaded/超载, electroCharged/感电, superconduct/超导
 
 Lunar Reaction (月曜反应伤害: lunarCharged/月感电, lunarCrystallize/月结晶):
   LevelMult × Coeff × (1+baseDmg%(基伤倍率)) × (1 + EMBonus + reactionDmg%)
-    × (1+elevated%(擢升)) × (1+dmgTaken%) × RESMult × CritMult
+    × (1+elevated%(擢升)) × RESMult × CritMult
   (no DEF, own EM formula, uses character cr/cd; multi-contributor weighted sum)
 
 Lunar Direct (月曜直伤: character abilities dealing Lunar DMG):
@@ -64,7 +64,7 @@ Each stat key feeds into exactly one zone of these formulas. The table below map
 
 | Key | Multiplicative Zone | Why Separate |
 |-----|---------------------|--------------|
-| `dmg%` | `1 + ${element}% + dmg% + dmgTaken%` | Generic DMG bonus zone |
+| `dmg%` | `1 + ${element}% + dmg%` | Generic DMG bonus zone |
 | `reactionDmg%` | `ReactionBase × (1 + EM + reactionDmg%)` | **Different** multiplicative layer from `dmg%` |
 | `cr` / `cd` | Character CRIT | Normal hit crits |
 | `reactionCr` / `reactionCd` | Reaction CRIT | **Separate** overlay for Transformative reactions that normally can't crit |
@@ -88,20 +88,20 @@ See [`types.ts`](../src/lib/team-comp/types.ts) for full definitions. Key design
 | `self` | Provider's own stat sheet | Construction |
 | `selfOnField` | Provider ONLY when provider IS calcTarget | `getTeamStats()` |
 | `selfOffField` | Provider ONLY when NOT calcTarget (≈ `self` in single-target) | Construction |
+| `otherOnField` | Other characters' stat sheet (support → DPS transfer) | `getTeamStats()` |
 | `onField` | CalcTarget's stat sheet (support → DPS transfer) | `getTeamStats()` |
 | `team` | All 4 party members | Construction |
 
 ### 1.4 Reaction Types
 
-See `AbilityType`, `ReactionType`, and `LunarReactionType` in [`types.ts`](../src/lib/team-comp/types.ts). `AbilityType` includes `"special"` for character mechanics that don't fit standard categories (e.g., Neuvillette's Charged Attack, Clorinde's Bond of Life attacks).
+See `AbilityType`, `ReactionType`, and `LunarReactionType` in [`types.ts`](../src/lib/team-comp/types.ts). `AbilityType` includes `"special"` for character mechanics that don't fit standard categories. For example when a skill effect says "this DMG is not considered X Skill DMG" but didn't specify what it is considered as, we will use `"special"` as the `ability` type.
 
-### 1.5 CalcContext, DamagePart & DamageResult
+### 1.5 CalcContext & DamageResult
 
 See [`types.ts`](../src/lib/team-comp/types.ts) for definitions.
 
 - **CalcContext**: Scenario-level parameters (`enemyLevel`, `enemyRes`, `assumeCrit`). Constant for the entire team, passed at `calc()` time.
-- **DamagePart**: Output of a single `DamageFormula.calc()` — named component zones + final damage.
-- **DamageResult**: Aggregated result for a formulaId — `Σ(part.damage × hits)`.
+- **DamageResult**: Aggregated result for a formulaId — `parts: { damage: number; hits: number }[]` and `Σ(damage × hits)`. Each `damage` is the raw `number` returned by a single `DamageFormula.calc()` invocation. Intermediate component breakdowns are only available via the cold-path `display()` method.
 
 ### 1.6 CombatOpts (Schema-Driven Options)
 
@@ -210,7 +210,6 @@ Utility functions shared across extension implementations. See [`helpers.ts`](..
 - `r(refinement, values)` — Pick a refinement-scaled value (R1–R5).
 - `wbs(self, triggers?, noStackId?)` — Weapon buff source.
 - `cbs(self, triggers?, origin?)` — Character buff source.
-- `elementDmgKey(element)` — Map an Element to its DMG% stat key (`"Pyro"` → `"pyro%"`).
 - `allElementalDmg(value)` — Expand "All Elemental DMG Bonus" into 7 entries.
 
 ### 2.4 Buff Scoping Examples
@@ -251,96 +250,7 @@ entries = [{ key: "atk%", value: 0.25 }]
 
 ## 3. Translating In-Game Text
 
-This section is the **practical guide** for turning a character/weapon/artifact description into the correct `StatBuff` declaration. It covers receiver mapping, stat key mapping, assumption conventions, and common pitfalls.
-
-### 3.1 Receiver Mapping (EN & ZH)
-
-The game uses specific phrasing patterns to describe who an effect targets. The table below maps **actual in-game text patterns** to the correct `BuffTarget.receiver`.
-
-> **Key insight**: The game almost never explicitly says "this buff only applies to yourself while on field." Instead, `selfOnField` is inferred from context — the description names the equipping/casting character as the subject, and the effect is tied to on-field actions or states. When the game wants to describe a buff that transfers to whoever is on field (regardless of who cast it), it always uses explicit phrasing like "当前场上角色" / "your active character."
-
-| Receiver | EN Patterns | ZH Patterns | Real Examples |
-|---|---|---|---|
-| `self` | *(no qualifier — effect implicitly applies to the provider)* | *(implicit)* | Staff of Homa "HP +20%"; VV 2pc "+15% Anemo DMG" |
-| `self` | "can still be triggered even when the character is not on the field" | 处于队伍后台时，依然能触发该效果 | Tenacity 4pc, A Thousand Floating Dreams — `self` buffs that explicitly clarify they persist off-field |
-| `selfOnField` | "while the equipping character is … and is on the field" / "every 4s a character is on the field" | 装备者…在场上时 / 角色在场上时 | Fang of the Mountain King "While in Nightsoul's Blessing and is on the field, DMG +15%"; Serpent Spine "Every 4s a character is on the field, DMG +6%" |
-| `selfOnField` | "will be canceled/dispelled when X leaves the field" | 退场时解除 / 退场时消失 | Raiden Q "Musou Isshin will be cleared when she leaves the field"; Lyney C2 "canceled when Lyney leaves the field"; Nascent Light "dispelled when the character leaves the field" |
-| `onField` | "your active character" / "active characters within the field" | 当前场上角色 / 队伍中自己的当前场上角色 / 附近的当前场上角色 | Barbara C2 "your active character gains 15% Hydro DMG Bonus"; Gorou E "provides buffs to active characters within the field" |
-| `team` | "all nearby party members" / "nearby party members" / "all party members" | 队伍中附近的所有角色 / 队伍中所有角色 / 队伍中附近的角色 | Tenacity 4pc "ATK of all nearby party members +20%"; Pyro Resonance "+25% ATK"; Noblesse 4pc "all party members' ATK +20%" |
-| `selfOffField` | "not on the field" / "while in the party but not on the field" | 处于队伍后台时 / 处于队伍后台超过5秒后 | Fleuve Cendre Ferryman "not on the field for more than 5s, Max HP +32%" |
-
-**Disambiguation guide** — when the text is ambiguous:
-
-1. **Buff subject is the provider, condition is on-field** → `selfOnField`. Example: Hu Tao passive "+33% Pyro DMG" only applies when Hu Tao is the active character.
-2. **Effect explicitly ends when the character leaves the field** → `selfOnField`. The "退场时解除" / "leaves the field" phrasing is the game's way of saying "on-field only" without stating it directly.
-3. **Buff subject is "当前场上角色" / "your active character"** → `onField`. The buff transfers to whoever is on field, even if the provider is off-field.
-4. **No qualifier at all** → `self`. Base passive stats, weapon substats, ascension stats — these are always-on.
-5. **"处于队伍后台时也能触发" / "can be triggered even when not on the field"** → still `self`. This phrasing clarifies that a *conditional* `self` buff (e.g., "after triggering an elemental reaction") persists off-field. It does NOT mean the buff is `selfOffField`.
-6. **"处于队伍后台" as an enabling condition** → `selfOffField`. Example: "When not on the field for more than 5s, Max HP +32%" — the buff only activates while off-field.
-
-### 3.2 Stat Key Mapping
-
-This table maps common in-game phrasing to the correct `StatKey` + `DamageTagFilter`.
-
-| In-Game Text | StatKey | Filter | Notes |
-|---|---|---|---|
-| "ATK +18%" | `atk%` | none | Percentage of total ATK |
-| "ATK increased by 400" | `atk` (flat) | none | Flat ATK addition |
-| "Base ATK ×119%" (Bennett Q) | dynamic: `baseAtk` → `atk` | none | Uses `ScalingBuff` with `inputKey: "baseAtk"` |
-| "Normal ATK DMG +35%" | `dmg%` | `{ abilities: ["normal"] }` | |
-| "Elemental Burst DMG +20%" | `dmg%` | `{ abilities: ["burst"] }` | |
-| "Normal and Charged ATK DMG +50%" | `dmg%` | `{ abilities: ["normal", "charge"] }` | |
-| "Pyro DMG Bonus +15%" | `pyro%` | none | Inherently element-scoped — no filter needed |
-| "All Elemental DMG Bonus +12%" | 7× `${element}%` entries | none | Use `allElementalDmg(0.12)` helper |
-| "Elemental DMG Bonus +X%" | `${element}%` for equipping char | none | Check context — usually means the character's own element |
-| "DMG +20%" (generic) | `dmg%` | none | Universal — applies to all formulas |
-| "DMG dealt by Normal/Charged/Plunging ATK increases by X%" | `dmg%` | `{ abilities: ["normal", "charge", "plunge"] }` | |
-| "Increases CRIT Rate by 12%" | `cr` | none | |
-| "increases Elemental Skill CRIT Rate by 12%" | `cr` | `{ abilities: ["skill"] }` | |
-| "opponents' Elemental RES -40%" / "decreases RES by X%" | `resReduction%` | none | |
-| "reduce DEF -15%" | `defReduction%` | none | |
-| "ignore 30% DEF" | `defIgnore%` | none | |
-| "increases DMG taken by opponents by X%" | `dmgTaken%` | none | Mechanically an enemy debuff but same zone as DMG% |
-| "Bloom reaction DMG +40%" | `reactionDmg%` | `{ reactions: ["bloom"] }` | **Not** `dmg%` — different multiplicative zone |
-| "Bloom, Hyperbloom, Burgeon DMG +X%" | `reactionDmg%` | `{ reactions: ["bloom", "hyperbloom", "burgeon"] }` | |
-| "Swirl CRIT Rate +30%" | `reactionCr` | `{ reactions: ["swirl"] }` | **Not** `cr` — only for reaction damage |
-| "Melt/Vaporize DMG +15%" | `reactionDmg%` | `{ reactions: ["melt", "vaporize"] }` | |
-| "Normal ATK DMG increased by X% of DEF" (Yun Jin) | `baseDmg` | `{ abilities: ["normal"] }` | Flat base DMG add — dynamic, scales off DEF |
-| "the damage is elevated by X%" | `elevated%` | varies | §4, Nod-Krai constellations |
-
-### 3.3 Assumption Conventions
-
-We model **peak damage** — not average across a rotation. These assumptions ensure comparable results:
-
-| Assumption | Rule | Rationale |
-|---|---|---|
-| **Conditional buffs** | Always active | "after using E" / "upon triggering reaction" → assume the condition is met |
-| **Stacks** | Maxed — **if the team comp can theoretically reach max** | If max stacks require 4 unique elements but the team only has 3, cap at the theoretical max |
-| **Low HP conditions** | Active | "when HP < 50%" → assume active (Hu Tao, Staff of Homa, etc.) |
-| **Shield conditions** | Team has shielder | "while protected by a shield" → check `teamMeta.hasShielder()` (incorporates `charInfo` + constellations) |
-| **Heal conditions** | Team has healer | "after receiving healing" → check `teamMeta.hasHealer()` (incorporates `charInfo` + constellations) |
-| **Enemy element affection** | Team comp has the element | "against Pyro-affected enemies" → team must have Pyro character.|
-| **Self element affection** | Active | "while under the effect of Pyro" → assume active, add code comments to note the assumption. |
-| **Talent levels** | Lv10 (including C3/C5 +3 → Lv13) | Lv10 is max before cons; C3/C5 raises to Lv13 |
-| **Reaction conditions** | Team comp must support it | "when Swirl is triggered" → team must have Anemo + a reactive element |
-| **Constellation gates** | Check `this.constellation ≥ N` | Only include buff if constellation is met |
-| **Refinement scaling** | Use `this.refinement` | Only numeric values change — types/targets stay the same |
-
-### 3.4 Common Pitfalls
-
-1. **`dmg%` vs `reactionDmg%`**: "Bloom DMG +40%" is `reactionDmg%` (inside the reaction bonus zone), NOT `dmg%`. `dmg%` is for ability/hit damage bonuses. Mixing these up produces incorrect numbers for all reaction formulas.
-
-2. **`cr`/`cd` vs `reactionCr`/`reactionCd`**: Reaction CRIT is a separate overlay. Nahida C2's "+20% Bloom CR" is `reactionCr`, not `cr`. Only Transformative & Lunar reactions use this — Amplifying/Catalyze use the character's normal `cr`/`cd`.
-
-3. **Element-specific `${element}%` vs generic `dmg%`**: A goblet's "Pyro DMG Bonus +46.6%" is `pyro%`. A weapon's "Normal ATK DMG +35%" is `dmg%` with ability filter. Don't use `dmg%` for element bonuses — they're inherently scoped by stat key name.
-
-4. **`baseDmg` (flat) vs `baseDmg%` (multiplier)**: Shenhe's Quill adds flat damage → `baseDmg`. Moonsign passives that say "deal X% original DMG" → `baseDmg%`. These are different multiplicative zones.
-
-5. **Receiver `onField` vs `self`**: Bennett Q gives ATK to "the active character" → `onField`. Xingqiu E gives himself DMG Reduction → `self`. If the text says "party members" → `team`. Buff to oneself's skills is usually `selfOnField`.
-
-6. **`noStackId`**: When the description says "buffs of the same type will not stack" (e.g., Millennial Movement weapons), all buffs sharing that effect must use the same `noStackId`. The pipeline keeps only the highest value.
-
-7. **Team-comp conditions**: Nilou passive (+60% Bloom DMG) only activates in Hydro+Dendro-only teams. Evaluate at construction time via `teamMeta.countByElement()`. If the team doesn't meet the condition, don't include the buff.
+For the comprehensive guide on translating an in-game text into the correct `StatBuff` parameter, picking the correct `StatKey` (such as `dmg%` vs `reactionDmg%`), determining the `BuffTarget.receiver`, and the general **Assumption Conventions** (Peak Damage modeling), please refer to the **[DmgRunbook.md](./DmgRunbook.md)**. The runbook captures all standard text mapping conventions, specific edge cases, and common pitfalls when bridging descriptions and math.
 
 ---
 
@@ -350,7 +260,7 @@ All formula classes live in `damageFormulas.ts`. Every formula takes a `DamageTa
 
 ### 4.1 DamageFormula (Abstract Base)
 
-See `DamageFormula` in [`damageFormulas.ts`](../src/lib/team-comp/damageFormulas.ts). Constructor: `(talentMultiplier, tag: DamageTag, scalingKey = "atk", extraTerm?)`. Abstract `calc(stats, charLevel, ctx)` returns `DamagePart`. Shared helpers: `getBaseDmg()`, `computeDmgBonusMult()`, `computeCritMult()`, `computeDefMult()`, `computeResMult()`.
+See `DamageFormula` in [`damageFormulas.ts`](../src/lib/team-comp/damageFormulas.ts). Constructor: `(talentMultiplier, tag: DamageTag, scalingKey = "atk", extraTerm?)`. Abstract `calc(stats, charLevel, ctx)` returns `number` (the final damage). Intermediate breakdowns are provided by the separate `display()` method which returns a `DisplayPart`. Shared helpers: `getBaseDmg()`, `computeDmgBonusMult()`, `computeCritMult()`, `computeDefMult()`, `computeResMult()`.
 
 **Dual-stat scaling**: Some talents scale off two stats (e.g., Nahida E: ATK + EM). Pass `extraTerm: { key, multiplier }` where `key` is `"atk" | "hp" | "def" | "em"`. The extra term is additive with the primary in base damage: `ScalingDmg = Stat × TalentMult + ExtraStat × ExtraMult`.
 
@@ -367,16 +277,16 @@ new DirectFormula(1.859, tag, "atk", { key: "em", multiplier: 3.717 })
 | `AmplifyFormula` | melt, vaporize | `Direct × ReactionBase(element) × (1 + EMBonus + reactionDmg%)` |
 | `CatalyzeFormula` | spread, aggravate | `(BaseDmg + FlatAdditive) × DmgBonus × DEFMult × RESMult × CritMult` |
 | `TransformFormula` | overloaded, electroCharged, superconduct, swirl, shatter, bloom, hyperbloom, burgeon, burning | `LevelMult × Coeff × (1 + EMBonus + reactionDmg%) × RESMult × ReactionCritMult` |
-| `LunarFormula` | lunarCharged, lunarCrystallize | `LevelMult × Coeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) × (1+elevated%) × (1+dmgTaken%) × RESMult × CritMult` |
+| `LunarFormula` | lunarCharged, lunarCrystallize | `LevelMult × Coeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) × (1+elevated%) × RESMult × CritMult` |
 | `LunarDirectFormula` | lunarCharged, lunarCrystallize | `(Stat × TalentMult × DirectCoeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) + baseDmg) × (1+elevated%) × CritMult × RESMult` |
 
 All formula implementations live in [`damageFormulas.ts`](../src/lib/team-comp/damageFormulas.ts). Key design notes per subclass:
 
 - **DirectFormula**: Straightforward product of all five multiplier zones.
-- **AmplifyFormula** (`extends DirectFormula`): Calls `super.calc()` then multiplies by `ReactionBase × (1 + EMBonus + reactionDmg%)`. EMBonus uses the standard EM formula `2.78×EM / (1400+EM)`.
+- **AmplifyFormula** (`extends DirectFormula`): Calls `super.calc()` then multiplies the result by `ReactionBase × (1 + EMBonus + reactionDmg%)`. EMBonus uses the standard EM formula `2.78×EM / (1400+EM)`.
 - **CatalyzeFormula**: Adds a flat `levelMult × reactionCoeff × (1+EMBonus+reactionDmg%)` bonus to BaseDmg **before** all normal multipliers. Same standard EM formula as Amplify.
 - **TransformFormula**: No DEF multiplier. Uses a different EM formula: `16×EM / (2000+EM)`. Optional reaction CRIT via separate `reactionCr`/`reactionCd` stats.
-- **LunarFormula**: No DEF multiplier. Unique EM formula: `6×EM / (2000+EM)`. Has separate `baseDmg%` and `elevated%` multiplicative layers plus `dmgTaken%`. Uses character `cr`/`cd` (not reaction CRIT).
+- **LunarFormula**: No DEF multiplier. Unique EM formula: `6×EM / (2000+EM)`. Has separate `baseDmg%` and `elevated%` multiplicative layers. Uses character `cr`/`cd` (not reaction CRIT).
 - **LunarDirectFormula**: Like LunarFormula but uses the character's talent multiplier × `DirectCoeff` instead of level-based reaction damage. No DEF multiplier.
 
 ---

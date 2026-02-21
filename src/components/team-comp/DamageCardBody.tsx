@@ -1,11 +1,14 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
-import type { I18nLabel } from "@/lib/team-comp/types";
+import type { DisplayResult, I18nLabel, StatKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
+import { BuffLedger } from "./BuffLedger";
+import { FormulaBreakdown } from "./FormulaBreakdown";
+import { StatSheetPanel } from "./StatSheetPanel";
 
 /**
  * Shared card body for both Card 2 (current) and Card 3 (optimized).
@@ -17,9 +20,8 @@ export function DamageCardBody({
   emptyMessage,
   artifactsByChar,
   targetCharId,
-  damageLabel,
   damageValue,
-  damageColorCls,
+  displayResult,
   t,
 }: {
   team: Team;
@@ -27,11 +29,15 @@ export function DamageCardBody({
   emptyMessage: string;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId?: string;
-  damageLabel: string;
   damageValue: number | null;
-  damageColorCls: string;
+  displayResult?: DisplayResult | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const [highlightedStat, setHighlightedStat] = useState<{
+    key: StatKey;
+    charId: string;
+  } | null>(null);
+
   return (
     <div className="space-y-4">
       {!hasFormula && (
@@ -40,76 +46,53 @@ export function DamageCardBody({
         </div>
       )}
 
-      {/* Artifact grid per character */}
+      {/* Artifact grid & Stat Sheet Panel per character */}
       {hasFormula && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          {team.characters.map((cid) => {
-            if (!cid) return null;
-            const artifactsObj = artifactsByChar[cid] || {};
-            const charIdx = team.characters.indexOf(cid);
-            return (
-              <ArtifactSlotGrid
-                key={cid}
-                charId={cid}
-                artifactsObj={artifactsObj}
-                isTarget={cid === targetCharId}
-                goalConfig={charIdx >= 0 ? team.artifacts[charIdx] : undefined}
-                t={t}
-              />
-            );
-          })}
-        </div>
+        <StatSheetPanel
+          result={displayResult}
+          team={team}
+          artifactsByChar={artifactsByChar}
+          targetCharId={targetCharId || ""}
+          highlightedStat={highlightedStat}
+          onStatHover={setHighlightedStat}
+          t={t}
+        />
       )}
 
-      {/* Formula equation placeholder */}
+      {/* Formula equation */}
       {hasFormula && (
         <div className="p-3 border border-dashed border-border/20 rounded-lg bg-black/5 text-sm">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-semibold text-muted-foreground uppercase tracking-widest text-[10px]">
-              Damage Model
-            </span>
-            <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded font-mono">
-              Pending
-            </span>
+          <div className="flex flex-col items-center justify-center">
+            {damageValue != null ? (
+              <div className={cn("text-lg text-primary/70 font-medium")}>
+                Total Expected Damage:{" "}
+                <span className="text-foreground font-[math]">
+                  {Math.round(damageValue).toLocaleString()}
+                </span>
+              </div>
+            ) : (
+              <div className="text-sm uppercase tracking-widest bg-primary/20 text-primary px-3 py-1 rounded font-mono font-bold">
+                Pending
+              </div>
+            )}
           </div>
-          <div className="flex justify-center items-center py-2 opacity-40 space-x-1.5 font-mono text-[11px]">
-            <span className="bg-card px-1.5 py-0.5 rounded border border-border/20">
-              Mult
-            </span>
-            <span>×</span>
-            <span className="bg-card px-1.5 py-0.5 rounded border border-border/20">
-              Base
-            </span>
-            <span>×</span>
-            <span className="bg-card px-1.5 py-0.5 rounded border border-border/20">
-              1+DMG%
-            </span>
-            <span>×</span>
-            <span className="bg-card px-1.5 py-0.5 rounded border border-border/20">
-              Crit
-            </span>
-            <span>…</span>
-          </div>
+          {displayResult && targetCharId && (
+            <FormulaBreakdown
+              parts={displayResult.parts}
+              highlightedStat={
+                highlightedStat?.charId === targetCharId
+                  ? highlightedStat?.key
+                  : null
+              }
+              t={t}
+            />
+          )}
         </div>
       )}
 
-      {/* Damage readout */}
-      {hasFormula && damageValue != null && (
-        <div className="bg-black/15 border border-border/20 rounded-lg p-4 flex items-center justify-between gap-4">
-          <div>
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-0.5">
-              {damageLabel}
-            </div>
-            <div
-              className={cn(
-                "text-2xl md:text-3xl font-black tracking-tight",
-                damageColorCls
-              )}
-            >
-              {Math.round(damageValue).toLocaleString()}
-            </div>
-          </div>
-        </div>
+      {/* Buff Ledger */}
+      {hasFormula && displayResult && (
+        <BuffLedger buffs={displayResult.buffs} team={team} t={t} />
       )}
     </div>
   );

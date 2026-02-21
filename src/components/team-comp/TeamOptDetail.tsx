@@ -41,7 +41,15 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { ArrowLeft, ChevronDown, Loader2, Play, Swords } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronDown,
+  Loader2,
+  Play,
+  RefreshCw,
+  Swords,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { DamageCardBody, FormulaTabBar } from "./DamageCardBody";
 import { buildTeamConfigs } from "./teamOptUtils";
@@ -63,8 +71,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const scoreConfig = useArtifactScoreStore((state) => state.config);
 
   const [metricOpen, setMetricOpen] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   // Independent formula selection for Card 3 (optimizer)
   const [optFormulaTab, setOptFormulaTab] = useState<string | null>(null);
+  const [renderError, setRenderError] = useState<string | null>(null);
 
   const {
     result: optResult,
@@ -83,8 +93,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   );
 
   const { teamBuild, buildError } = useMemo(() => {
+    refreshKey;
     try {
-      return { teamBuild: new TeamBuild(configs, team.opts), buildError: null };
+      return {
+        teamBuild: new TeamBuild(configs, team.opts || {}),
+        buildError: null,
+      };
     } catch (e: unknown) {
       console.error("Failed to construct TeamBuild:", e);
       return {
@@ -92,13 +106,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError: e instanceof Error ? e.message : String(e),
       };
     }
-  }, [configs, team.opts]);
+  }, [configs, team.opts, refreshKey]);
 
   const availableFormulas = useMemo(() => {
     return teamBuild ? teamBuild.getFormulaIds() : {};
   }, [teamBuild]);
 
   const artifactSheets = useMemo(() => {
+    refreshKey;
     if (!accountData) return {};
     const sheets: Record<string, StatSheet> = {};
     for (const charId of team.characters) {
@@ -109,10 +124,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       sheets[charId] = StatSheet.fromArtifacts(artifacts);
     }
     return sheets;
-  }, [accountData, team.characters]);
+  }, [accountData, team.characters, refreshKey]);
 
   const handleOptionChange = (entityId: string, val: string) => {
-    updateTeam(team.id, { opts: { ...team.opts, [entityId]: val } });
+    updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
   };
 
   /** Render a single combat option toggle/select. */
@@ -120,7 +135,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     const schema = getEntityOption(entityId);
     if (!schema) return null;
 
-    const value = team.opts[entityId] || schema.default;
+    const value = team.opts?.[entityId] || schema.default;
     const resource = isWeapon
       ? weaponsById[entityId]
       : charactersById[entityId];
@@ -225,6 +240,26 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     }
   }, [teamBuild, resolvedFormula, artifactSheets]);
 
+  const currentDisplayResult = useMemo(() => {
+    if (!teamBuild || !resolvedFormula) return null;
+    try {
+      const { charId, formulaId } = resolvedFormula;
+
+      const formulas = teamBuild.getFormulaIds()[charId];
+      if (!formulas || !formulas[formulaId]) return null;
+
+      const ctx: CalcContext = {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      };
+      return teamBuild.getDisplayResult(charId, formulaId, artifactSheets, ctx);
+    } catch (e) {
+      console.error("Display calc failed:", e);
+      return null;
+    }
+  }, [teamBuild, resolvedFormula, artifactSheets]);
+
   const activeTab = resolvedFormula
     ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
     : "";
@@ -243,7 +278,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     : "";
 
   const targetErRaw =
-    (resolvedOptFormula && team.targetEr[resolvedOptFormula.charId]) ?? 1.0;
+    (resolvedOptFormula && team.targetEr?.[resolvedOptFormula.charId]) ?? 1.0;
 
   const handleOptimize = () => {
     if (!teamBuild || !accountData || !resolvedOptFormula) return;
@@ -310,374 +345,473 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return map;
   }, [optResult, equippedArtifactsByChar, resolvedOptFormula]);
 
-  // ─── Render ──────────────────────────────────────────────────
-  return (
-    <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300 pb-12">
-      {/* ── Page Header ── */}
-      <div className="flex items-center gap-3 px-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onBack}
-          className="shrink-0 h-9 w-9 hover:bg-white/10"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground/70" />
-        </Button>
-        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate">
-          {team.name || "Team Optimization"}
-        </h2>
-      </div>
+  const optArtifactSheets = useMemo(() => {
+    const sheets: Record<string, StatSheet> = {};
+    for (const charId of team.characters) {
+      if (!charId) continue;
+      const artifacts = Object.values(optimizedArtifactsByChar[charId] || {});
+      sheets[charId] = StatSheet.fromArtifacts(artifacts);
+    }
+    return sheets;
+  }, [optimizedArtifactsByChar, team.characters]);
 
-      {/* ══════════════════════════════════════════════════════════
+  const optimizedDisplayResult = useMemo(() => {
+    if (!teamBuild || !resolvedOptFormula || !optResult?.bestDamageResult)
+      return null;
+    try {
+      const { charId, formulaId } = resolvedOptFormula;
+
+      const formulas = teamBuild.getFormulaIds()[charId];
+      if (!formulas || !formulas[formulaId]) return null;
+
+      const ctx: CalcContext = {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      };
+      return teamBuild.getDisplayResult(
+        charId,
+        formulaId,
+        optArtifactSheets,
+        ctx
+      );
+    } catch (e) {
+      console.error("Opt display calc failed:", e);
+      return null;
+    }
+  }, [teamBuild, resolvedOptFormula, optArtifactSheets, optResult]);
+
+  const handleClearTeam = () => {
+    updateTeam(team.id, {
+      characters: [null, null, null, null],
+      weapons: [null, null, null, null],
+      artifacts: [null, null, null, null],
+      opts: {},
+      selectedFormula: null,
+      targetEr: {},
+    });
+    setRenderError(null);
+  };
+
+  if (renderError) {
+    return (
+      <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300 pb-12">
+        <div className="flex items-center gap-3 px-1">
+          <Button variant="ghost" size="icon" onClick={onBack}>
+            <ArrowLeft className="w-5 h-5 text-foreground/70" />
+          </Button>
+          <h2 className="text-xl font-black text-destructive">Render Error</h2>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleClearTeam}
+            className="ml-auto text-xs h-8"
+          >
+            <Trash2 className="w-4 h-4 mr-1.5" />
+            Clear Team Data
+          </Button>
+        </div>
+        <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-lg font-mono text-xs whitespace-pre-wrap overflow-auto">
+          {renderError}
+        </div>
+      </div>
+    );
+  }
+
+  try {
+    // ─── Render ──────────────────────────────────────────────────
+    return (
+      <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300 pb-12">
+        {/* ── Page Header ── */}
+        <div className="flex items-center gap-3 px-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            className="shrink-0 h-9 w-9 hover:bg-white/10"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground/70" />
+          </Button>
+          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+            {team.name || "Team Optimization"}
+          </h2>
+        </div>
+
+        {/* ══════════════════════════════════════════════════════════
           Card 1 — Team Roster + Combat Options (always expanded)
          ══════════════════════════════════════════════════════════ */}
-      <Card className={CARD_CLS}>
-        <CardHeader className={cn(CARD_HEADER_CLS, "py-2.5")}>
-          <h3 className={CARD_TITLE_CLS}>
-            <Swords className="w-4 h-4 opacity-70" />
-            Team Roster
-          </h3>
-        </CardHeader>
-        <CardContent className={cn(CARD_BODY_CLS, "py-3")}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {team.characters.map((charId, i) => {
-              if (!charId)
+        <Card className={CARD_CLS}>
+          <CardHeader className={cn(CARD_HEADER_CLS, "py-2.5")}>
+            <h3 className={CARD_TITLE_CLS}>
+              <Swords className="w-4 h-4 opacity-70" />
+              Team Roster
+            </h3>
+          </CardHeader>
+          <CardContent className={cn(CARD_BODY_CLS, "py-3")}>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {team.characters.map((charId, i) => {
+                if (!charId)
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center justify-center opacity-20 py-4"
+                    >
+                      <div className="w-14 h-14 rounded-full border-2 border-dashed border-border/50" />
+                    </div>
+                  );
+
+                const char = charactersById[charId];
+                const weaponId = team.weapons[i];
+                const weapon = weaponId ? weaponsById[weaponId] : null;
+                const charHasOption = getEntityOption(charId) != null;
+                const weaponHasOption =
+                  weaponId != null && getEntityOption(weaponId) != null;
+
                 return (
                   <div
                     key={i}
-                    className="flex items-center justify-center opacity-20 py-4"
+                    className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
                   >
-                    <div className="w-14 h-14 rounded-full border-2 border-dashed border-border/50" />
+                    {/* Row 1: All icons in same row, bottom-aligned */}
+                    <div className="flex items-end gap-1.5">
+                      <Tooltip delayDuration={300}>
+                        <TooltipTrigger asChild>
+                          <div className="cursor-help shrink-0">
+                            <ItemIcon
+                              imagePath={char?.imagePath || ""}
+                              rarity={char?.rarity || 5}
+                              size="xl"
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="bottom"
+                          className="p-0 border-0 shadow-xl pointer-events-none"
+                        >
+                          <CharacterTooltip characterId={charId} />
+                        </TooltipContent>
+                      </Tooltip>
+
+                      {weapon && (
+                        <Tooltip delayDuration={300}>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help shrink-0">
+                              <ItemIcon
+                                imagePath={weapon.imagePath}
+                                rarity={weapon.rarity}
+                                size="lg"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="p-0 border-0 shadow-xl pointer-events-none"
+                          >
+                            <WeaponTooltip weaponId={weaponId!} />
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      {team.artifacts[i]?.type === "4pc" && (
+                        <Tooltip delayDuration={300}>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help shrink-0">
+                              <ItemIcon
+                                imagePath={
+                                  artifactsById[team.artifacts[i]!.setId]
+                                    ?.imagePaths?.flower || ""
+                                }
+                                rarity={
+                                  artifactsById[team.artifacts[i]!.setId]
+                                    ?.rarity || 5
+                                }
+                                size="lg"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="p-0 border-0 shadow-xl pointer-events-none"
+                          >
+                            <ArtifactTooltip setId={team.artifacts[i]!.setId} />
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                      {team.artifacts[i]?.type === "2pc+2pc" && (
+                        <Tooltip delayDuration={300}>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help shrink-0">
+                              <DoubleItemIcon
+                                imagePath1={
+                                  artifactsById[
+                                    artifactHalfSetsById[team.artifacts[i]!.id1]
+                                      ?.setIds[0]
+                                  ]?.imagePaths?.flower || ""
+                                }
+                                imagePath2={
+                                  artifactsById[
+                                    artifactHalfSetsById[team.artifacts[i]!.id2]
+                                      ?.setIds[0]
+                                  ]?.imagePaths?.flower || ""
+                                }
+                                size="lg"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="p-0 border-0 shadow-xl pointer-events-none"
+                          >
+                            <MixedSetTooltip
+                              id1={team.artifacts[i]!.id1}
+                              id2={team.artifacts[i]!.id2}
+                            />
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+
+                    {/* Row 2: Name + Min. ER */}
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-base text-foreground/90 truncate">
+                        {t.character(charId)}
+                      </span>
+                      <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
+                        <span className="text-xs font-bold text-foreground/70">
+                          Min. ER
+                        </span>
+                        <Input
+                          type="number"
+                          min={100}
+                          max={400}
+                          step={5}
+                          value={Math.round(
+                            (team.targetEr[charId] ?? 1.0) * 100
+                          )}
+                          onChange={(e) => {
+                            const val = Number(e.target.value) / 100;
+                            if (!Number.isNaN(val)) {
+                              updateTeam(team.id, {
+                                targetEr: {
+                                  ...team.targetEr,
+                                  [charId]: val,
+                                },
+                              });
+                            }
+                          }}
+                          className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <span className="text-xs font-bold text-muted-foreground">
+                          %
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Per-character combat options */}
+                    {(charHasOption || weaponHasOption) && (
+                      <div className="w-full border-t border-border/15 pt-2 mt-1 space-y-0">
+                        {charHasOption && renderOption(charId, false)}
+                        {weaponHasOption &&
+                          weaponId &&
+                          renderOption(weaponId, true)}
+                      </div>
+                    )}
                   </div>
                 );
-
-              const char = charactersById[charId];
-              const weaponId = team.weapons[i];
-              const weapon = weaponId ? weaponsById[weaponId] : null;
-              const charHasOption = getEntityOption(charId) != null;
-              const weaponHasOption =
-                weaponId != null && getEntityOption(weaponId) != null;
-
-              return (
-                <div
-                  key={i}
-                  className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
-                >
-                  {/* Row 1: All icons in same row, bottom-aligned */}
-                  <div className="flex items-end gap-1.5">
-                    <Tooltip delayDuration={300}>
-                      <TooltipTrigger asChild>
-                        <div className="cursor-help shrink-0">
-                          <ItemIcon
-                            imagePath={char?.imagePath || ""}
-                            rarity={char?.rarity || 5}
-                            size="xl"
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="bottom"
-                        className="p-0 border-0 shadow-xl pointer-events-none"
-                      >
-                        <CharacterTooltip characterId={charId} />
-                      </TooltipContent>
-                    </Tooltip>
-
-                    {weapon && (
-                      <Tooltip delayDuration={300}>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-help shrink-0">
-                            <ItemIcon
-                              imagePath={weapon.imagePath}
-                              rarity={weapon.rarity}
-                              size="lg"
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          className="p-0 border-0 shadow-xl pointer-events-none"
-                        >
-                          <WeaponTooltip weaponId={weaponId!} />
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                    {team.artifacts[i]?.type === "4pc" && (
-                      <Tooltip delayDuration={300}>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-help shrink-0">
-                            <ItemIcon
-                              imagePath={
-                                artifactsById[team.artifacts[i]!.setId]
-                                  ?.imagePaths?.flower || ""
-                              }
-                              rarity={
-                                artifactsById[team.artifacts[i]!.setId]
-                                  ?.rarity || 5
-                              }
-                              size="lg"
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          className="p-0 border-0 shadow-xl pointer-events-none"
-                        >
-                          <ArtifactTooltip setId={team.artifacts[i]!.setId} />
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                    {team.artifacts[i]?.type === "2pc+2pc" && (
-                      <Tooltip delayDuration={300}>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-help shrink-0">
-                            <DoubleItemIcon
-                              imagePath1={
-                                artifactsById[
-                                  artifactHalfSetsById[team.artifacts[i]!.id1]
-                                    ?.setIds[0]
-                                ]?.imagePaths?.flower || ""
-                              }
-                              imagePath2={
-                                artifactsById[
-                                  artifactHalfSetsById[team.artifacts[i]!.id2]
-                                    ?.setIds[0]
-                                ]?.imagePaths?.flower || ""
-                              }
-                              size="lg"
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          className="p-0 border-0 shadow-xl pointer-events-none"
-                        >
-                          <MixedSetTooltip
-                            id1={team.artifacts[i]!.id1}
-                            id2={team.artifacts[i]!.id2}
-                          />
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                  </div>
-
-                  {/* Row 2: Name + Min. ER */}
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-base text-foreground/90 truncate">
-                      {t.character(charId)}
-                    </span>
-                    <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
-                      <span className="text-xs font-bold text-foreground/70">
-                        Min. ER
-                      </span>
-                      <Input
-                        type="number"
-                        min={100}
-                        max={400}
-                        step={5}
-                        value={Math.round((team.targetEr[charId] ?? 1.0) * 100)}
-                        onChange={(e) => {
-                          const val = Number(e.target.value) / 100;
-                          if (!Number.isNaN(val)) {
-                            updateTeam(team.id, {
-                              targetEr: {
-                                ...team.targetEr,
-                                [charId]: val,
-                              },
-                            });
-                          }
-                        }}
-                        className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      />
-                      <span className="text-xs font-bold text-muted-foreground">
-                        %
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Per-character combat options */}
-                  {(charHasOption || weaponHasOption) && (
-                    <div className="w-full border-t border-border/15 pt-2 mt-1 space-y-0">
-                      {charHasOption && renderOption(charId, false)}
-                      {weaponHasOption &&
-                        weaponId &&
-                        renderOption(weaponId, true)}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ══════════════════════════════════════════════════════════
-          Tabs + Card 2 — Current Equipment & Damage (collapsible)
-         ══════════════════════════════════════════════════════════ */}
-      <div>
-        {allFormulas.length > 0 ? (
-          <FormulaTabBar
-            formulas={allFormulas}
-            selectedTab={activeTab}
-            onSelect={(charId, formulaId) =>
-              updateTeam(team.id, {
-                selectedFormula: { charId, formulaId },
-              })
-            }
-            t={t}
-          />
-        ) : (
-          buildError && (
-            <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
-              <span className="font-bold">Setup Error:</span> {buildError}
+              })}
             </div>
-          )
-        )}
-
-        <Collapsible open={metricOpen} onOpenChange={setMetricOpen}>
-          <Card className={cn(CARD_CLS, "rounded-tl-none")}>
-            <CollapsibleTrigger asChild>
-              <CardHeader
-                className={cn(CARD_HEADER_CLS, "cursor-pointer select-none")}
-              >
-                <div className="flex items-center justify-between w-full">
-                  <h3 className={CARD_TITLE_CLS}>
-                    <Play className="w-4 h-4 opacity-70" />
-                    Current Equipment & Damage
-                  </h3>
-                  <ChevronDown
-                    className={cn(
-                      "w-4 h-4 text-primary-foreground/50 transition-transform",
-                      metricOpen && "rotate-180"
-                    )}
-                  />
-                </div>
-              </CardHeader>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent>
-              <CardContent className={CARD_BODY_CLS}>
-                <DamageCardBody
-                  team={team}
-                  hasFormula={resolvedFormula != null}
-                  emptyMessage="Configure characters and weapons to see damage metrics."
-                  artifactsByChar={equippedArtifactsByChar}
-                  damageLabel="Current Equipped Damage"
-                  damageValue={currentDamage?.totalDamage ?? null}
-                  damageColorCls="text-primary"
-                  t={t}
-                />
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════
-          Tabs + Card 3 — Optimization Results (independent tabs)
-         ══════════════════════════════════════════════════════════ */}
-      <div>
-        {allFormulas.length > 0 && (
-          <FormulaTabBar
-            formulas={allFormulas}
-            selectedTab={activeOptTab}
-            onSelect={(_charId, _formulaId) =>
-              setOptFormulaTab(`${_charId}.${_formulaId}`)
-            }
-            t={t}
-          />
-        )}
-
-        <Card
-          className={cn(CARD_CLS, allFormulas.length > 0 && "rounded-tl-none")}
-        >
-          <CardHeader className={CARD_HEADER_CLS}>
-            <div className="flex items-center justify-between w-full">
-              <h3 className={CARD_TITLE_CLS}>
-                <Loader2
-                  className={cn(
-                    "w-4 h-4 opacity-70",
-                    isComputing && "animate-spin"
-                  )}
-                />
-                Optimization Results
-              </h3>
-              <Button
-                onClick={handleOptimize}
-                disabled={isComputing || !resolvedOptFormula}
-                size="sm"
-                className="gap-1.5 font-bold px-4 shadow-md text-xs"
-              >
-                {isComputing ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
-                  <Play className="w-3.5 h-3.5" />
-                )}
-                {isComputing ? "Optimizing…" : "Run Optimization"}
-              </Button>
-            </div>
-          </CardHeader>
-
-          <CardContent className={CARD_BODY_CLS}>
-            {/* Empty state */}
-            {!isComputing && !optResult && (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                <Swords className="w-8 h-8 opacity-15" />
-                <p>
-                  Press{" "}
-                  <strong className="text-foreground/70">
-                    Run Optimization
-                  </strong>{" "}
-                  to find the best artifact loadout.
-                </p>
-              </div>
-            )}
-
-            {/* Progress bar */}
-            {isComputing && optResult && (
-              <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-semibold">Searching combinations…</span>
-                  <span className="font-mono font-bold">
-                    {Math.round(optResult.progress * 100)}%
-                  </span>
-                </div>
-                <Progress
-                  value={optResult.progress * 100}
-                  className="h-1.5 bg-black/40"
-                />
-                <div className="text-[10px] text-muted-foreground font-mono text-right opacity-60">
-                  {optResult.combinationsEvaluated.toLocaleString()} /{" "}
-                  {optResult.combinationsTotal.toLocaleString()}
-                </div>
-              </div>
-            )}
-
-            {/* Results — identical layout to Card 2 */}
-            {optResult?.bestDamageResult && (
-              <DamageCardBody
-                team={team}
-                hasFormula
-                emptyMessage=""
-                artifactsByChar={optimizedArtifactsByChar}
-                targetCharId={resolvedOptFormula?.charId}
-                damageLabel="Maximized Damage"
-                damageValue={optResult.bestDamage}
-                damageColorCls="text-green-400"
-                t={t}
-              />
-            )}
-
-            {/* No results found */}
-            {optResult?.done && !optResult.bestDamageResult && (
-              <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                No valid combinations found for ER{" "}
-                {Math.round(targetErRaw * 100)}%.
-              </div>
-            )}
           </CardContent>
         </Card>
+
+        {/* ══════════════════════════════════════════════════════════
+          Tabs + Card 2 — Current Equipment & Damage (collapsible)
+         ══════════════════════════════════════════════════════════ */}
+        <div>
+          {allFormulas.length > 0 ? (
+            <FormulaTabBar
+              formulas={allFormulas}
+              selectedTab={activeTab}
+              onSelect={(charId, formulaId) =>
+                updateTeam(team.id, {
+                  selectedFormula: { charId, formulaId },
+                })
+              }
+              t={t}
+            />
+          ) : (
+            buildError && (
+              <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
+                <span className="font-bold">Setup Error:</span> {buildError}
+              </div>
+            )
+          )}
+
+          <Collapsible open={metricOpen} onOpenChange={setMetricOpen}>
+            <Card className={cn(CARD_CLS, "rounded-tl-none")}>
+              <CollapsibleTrigger asChild>
+                <CardHeader
+                  className={cn(CARD_HEADER_CLS, "cursor-pointer select-none")}
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <h3 className={CARD_TITLE_CLS}>
+                      <Play className="w-4 h-4 opacity-70" />
+                      Current Equipment & Damage
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-6 h-6 ml-1 hover:bg-black/20"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRefreshKey((k) => k + 1);
+                        }}
+                      >
+                        <RefreshCw className="w-3.5 h-3.5 opacity-70 hover:opacity-100 transition-opacity" />
+                      </Button>
+                    </h3>
+                    <ChevronDown
+                      className={cn(
+                        "w-4 h-4 text-primary-foreground/50 transition-transform",
+                        metricOpen && "rotate-180"
+                      )}
+                    />
+                  </div>
+                </CardHeader>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent>
+                <CardContent className={CARD_BODY_CLS}>
+                  <DamageCardBody
+                    team={team}
+                    hasFormula={resolvedFormula != null}
+                    emptyMessage="Configure characters and weapons to see damage metrics."
+                    artifactsByChar={equippedArtifactsByChar}
+                    targetCharId={resolvedFormula?.charId}
+                    damageValue={currentDamage?.totalDamage ?? null}
+                    displayResult={currentDisplayResult}
+                    t={t}
+                  />
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+        </div>
+
+        {/* ══════════════════════════════════════════════════════════
+          Tabs + Card 3 — Optimization Results (independent tabs)
+         ══════════════════════════════════════════════════════════ */}
+        <div>
+          {allFormulas.length > 0 && (
+            <FormulaTabBar
+              formulas={allFormulas}
+              selectedTab={activeOptTab}
+              onSelect={(_charId, _formulaId) =>
+                setOptFormulaTab(`${_charId}.${_formulaId}`)
+              }
+              t={t}
+            />
+          )}
+
+          <Card
+            className={cn(
+              CARD_CLS,
+              allFormulas.length > 0 && "rounded-tl-none"
+            )}
+          >
+            <CardHeader className={CARD_HEADER_CLS}>
+              <div className="flex items-center justify-between w-full">
+                <h3 className={CARD_TITLE_CLS}>
+                  <Loader2
+                    className={cn(
+                      "w-4 h-4 opacity-70",
+                      isComputing && "animate-spin"
+                    )}
+                  />
+                  Optimization Results
+                </h3>
+                <Button
+                  onClick={handleOptimize}
+                  disabled={isComputing || !resolvedOptFormula}
+                  size="sm"
+                  className="gap-1.5 font-bold px-4 shadow-md text-xs"
+                >
+                  {isComputing ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Play className="w-3.5 h-3.5" />
+                  )}
+                  {isComputing ? "Optimizing…" : "Run Optimization"}
+                </Button>
+              </div>
+            </CardHeader>
+
+            <CardContent className={CARD_BODY_CLS}>
+              {/* Empty state */}
+              {!isComputing && !optResult && (
+                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <Swords className="w-8 h-8 opacity-15" />
+                  <p>
+                    Press{" "}
+                    <strong className="text-foreground/70">
+                      Run Optimization
+                    </strong>{" "}
+                    to find the best artifact loadout.
+                  </p>
+                </div>
+              )}
+
+              {/* Progress bar */}
+              {isComputing && optResult && (
+                <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span className="font-semibold">
+                      Searching combinations…
+                    </span>
+                    <span className="font-mono font-bold">
+                      {Math.round(optResult.progress * 100)}%
+                    </span>
+                  </div>
+                  <Progress
+                    value={optResult.progress * 100}
+                    className="h-1.5 bg-black/40"
+                  />
+                  <div className="text-[10px] text-muted-foreground font-mono text-right opacity-60">
+                    {optResult.combinationsEvaluated.toLocaleString()} /{" "}
+                    {optResult.combinationsTotal.toLocaleString()}
+                  </div>
+                </div>
+              )}
+
+              {/* Results — identical layout to Card 2 */}
+              {optResult?.bestDamageResult && (
+                <DamageCardBody
+                  team={team}
+                  hasFormula
+                  emptyMessage=""
+                  artifactsByChar={optimizedArtifactsByChar}
+                  targetCharId={resolvedOptFormula?.charId}
+                  damageValue={optResult.bestDamage}
+                  displayResult={optimizedDisplayResult}
+                  t={t}
+                />
+              )}
+
+              {/* No results found */}
+              {optResult?.done && !optResult.bestDamageResult && (
+                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                  No valid combinations found for ER{" "}
+                  {Math.round(targetErRaw * 100)}%.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch (e: unknown) {
+    // Try-catch block specifically to catch pure render-phase crashes
+    // Use queueMicrotask to avoid React "cannot update during render" warning
+    queueMicrotask(() => {
+      setRenderError(e instanceof Error ? e.stack || e.message : String(e));
+    });
+    return null;
+  }
 }

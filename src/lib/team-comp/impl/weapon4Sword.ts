@@ -181,37 +181,6 @@ class FinaleOfTheDeep extends WeaponBase {
   ];
 }
 
-const fadingTwilightOption = {
-  label: { zh: "随时间转换状态", en: "State" },
-  choices: [
-    { value: "evengleam", label: { zh: "夕暮", en: "Evengleam" } },
-    { value: "afterglow", label: { zh: "流霞", en: "Afterglow" } },
-    { value: "dawnblaze", label: { zh: "朝辉", en: "Dawnblaze" } },
-    { value: "average", label: { zh: "期望平均", en: "Average" } },
-  ] as const,
-  default: "average",
-} satisfies OptionDef;
-
-@RegisterWeapon("fading_twilight", fadingTwilightOption)
-class FadingTwilight extends WeaponBase {
-  private readonly o = resolveOption(fadingTwilightOption, this.option);
-
-  get buffs() {
-    const valEvengleam = r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]);
-    const valAfterglow = r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]);
-    const valDawnblaze = r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]);
-
-    let value = (valEvengleam + valAfterglow + valDawnblaze) / 3;
-    if (this.o === "evengleam") value = valEvengleam;
-    else if (this.o === "afterglow") value = valAfterglow;
-    else if (this.o === "dawnblaze") value = valDawnblaze;
-
-    return [
-      new StatBuff(wbs(this), { receiver: "self" }, [{ key: "dmg%", value }]),
-    ];
-  }
-}
-
 @RegisterWeapon("toukabou_shigure")
 class ToukabouShigure extends WeaponBase {
   // DMG% against cursed enemy

@@ -611,8 +611,8 @@ describe("calculateBuildAwareScore", () => {
         GLOBAL_CONFIG
       );
       for (const slot of ["flower", "plume", "sands", "goblet", "circlet"]) {
-        expect(result.slotSubScores[slot]).toBeDefined();
-        expect(result.slotMaxSubScores[slot]).toBeDefined();
+        expect(result.slotSubScores[slot]).toBeGreaterThanOrEqual(0);
+        expect(result.slotMaxSubScores[slot]).toBeGreaterThan(0);
       }
     });
   });

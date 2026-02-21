@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wrangler pages dev --proxy 5173 -- vite",
-    "dev:vite": "vite",
+    "dev": "vite",
+    "dev:wrangler": "wrangler pages dev --proxy 5173 -- vite",
     "build": "tsc -b && vite build",
     "build:tauri": "tsc -b && vite build --mode tauri",
     "preview": "vite preview",
@@ -112,6 +112,7 @@
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitejs/plugin-react-swc": "^4.2.2",
+    "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.21",
     "husky": "^9.1.7",
     "javascript-lp-solver": "^0.4.24",

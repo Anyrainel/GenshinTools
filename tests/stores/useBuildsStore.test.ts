@@ -92,6 +92,44 @@ describe("useBuildsStore", () => {
       const updatedBuild = state.getBuild(buildId);
       expect(updatedBuild?.characterId).toBe(originalBuild?.characterId);
     });
+
+    it("copy-on-write: initializes from baseBuild when build doesn't exist locally", () => {
+      const baseBuild = {
+        id: "preset-build-1",
+        characterId: "char1",
+        name: "Preset Original",
+        visible: true,
+        composition: "4pc" as const,
+        artifactSet: "gladiators_finale",
+        sands: ["atk%" as const],
+        goblet: ["pyro%" as const],
+        circlet: ["cr" as const],
+        substats: [
+          { stat: "cr" as const, weight: 100 },
+          { stat: "cd" as const, weight: 100 },
+        ],
+      };
+
+      // Build doesn't exist in the local store yet
+      expect(
+        useBuildsStore.getState().getBuild("preset-build-1")
+      ).toBeUndefined();
+
+      // setBuild with baseBuild should create it via copy-on-write
+      useBuildsStore
+        .getState()
+        .setBuild("preset-build-1", { name: "User Override" }, baseBuild);
+
+      const result = useBuildsStore.getState().getBuild("preset-build-1");
+      expect(result).toBeDefined();
+      expect(result!.name).toBe("User Override");
+      expect(result!.characterId).toBe("char1");
+      expect(result!.artifactSet).toBe("gladiators_finale");
+      // Should also be tracked in character ordering
+      expect(useBuildsStore.getState().getBuildIds("char1")).toContain(
+        "preset-build-1"
+      );
+    });
   });
 
   describe("removeBuild", () => {
@@ -246,6 +284,364 @@ describe("useBuildsStore", () => {
       expect(state.builds["b-1"]).toBeDefined();
       expect(state.getBuildIds("char1")).toContain("b-1");
       expect(state.author).toBe("Test");
+    });
+
+    it("imports V4 legacy payload correctly", () => {
+      const v4Payload = {
+        version: 4,
+        author: "Legacy",
+        description: "Legacy Desc",
+        data: [
+          {
+            characterId: "char1",
+            builds: [
+              {
+                id: "v4-b1",
+                name: "Legacy Build",
+                visible: true,
+                composition: "4pc" as const,
+                artifactSet: "gladiators_finale",
+                sands: ["atk%" as const],
+                goblet: ["pyro%" as const],
+                circlet: ["cr" as const],
+                substats: [
+                  { stat: "cr" as const, weight: 100 },
+                  { stat: "cd" as const, weight: 100 },
+                ],
+              },
+            ],
+            weapons: ["staff_of_homa"],
+            hidden: true,
+          },
+        ],
+      };
+
+      useBuildsStore
+        .getState()
+        .importBuilds(v4Payload as unknown as BuildPayloadV5);
+
+      const state = useBuildsStore.getState();
+      expect(state.builds["v4-b1"]).toBeDefined();
+      expect(state.builds["v4-b1"].characterId).toBe("char1");
+      expect(state.getBuildIds("char1")).toContain("v4-b1");
+      expect(state.characterWeapons.char1).toEqual(["staff_of_homa"]);
+      expect(state.hiddenCharacters.char1).toBe(true);
+    });
+
+    it("resets activePresetId to null on import", () => {
+      // Set up a preset first
+      useBuildsStore.getState().setActivePreset("some-preset");
+      expect(useBuildsStore.getState().activePresetId).toBe("some-preset");
+
+      useBuildsStore.getState().importBuilds({
+        version: 5,
+        author: "",
+        description: "",
+        builds: {},
+        characterBuilds: {},
+        characterWeapons: {},
+      } as BuildPayloadV5);
+
+      expect(useBuildsStore.getState().activePresetId).toBeNull();
+    });
+  });
+
+  describe("moveBuild", () => {
+    it("moves a build up in the ordering", async () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      await new Promise((r) => setTimeout(r, 5));
+      useBuildsStore.getState().newBuild(charId);
+
+      const ids = useBuildsStore.getState().getBuildIds(charId);
+      const [first, second] = ids;
+
+      useBuildsStore.getState().moveBuild(charId, [...ids], second, "up");
+
+      const reordered = useBuildsStore.getState().getBuildIds(charId);
+      expect(reordered[0]).toBe(second);
+      expect(reordered[1]).toBe(first);
+    });
+
+    it("moves a build down in the ordering", async () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      await new Promise((r) => setTimeout(r, 5));
+      useBuildsStore.getState().newBuild(charId);
+
+      const ids = useBuildsStore.getState().getBuildIds(charId);
+      const [first, second] = ids;
+
+      useBuildsStore.getState().moveBuild(charId, [...ids], first, "down");
+
+      const reordered = useBuildsStore.getState().getBuildIds(charId);
+      expect(reordered[0]).toBe(second);
+      expect(reordered[1]).toBe(first);
+    });
+
+    it("no-ops when moving first build up", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+
+      const ids = useBuildsStore.getState().getBuildIds(charId);
+      useBuildsStore.getState().moveBuild(charId, [...ids], ids[0], "up");
+
+      expect(useBuildsStore.getState().getBuildIds(charId)).toEqual(ids);
+    });
+
+    it("no-ops when moving last build down", async () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      await new Promise((r) => setTimeout(r, 5));
+      useBuildsStore.getState().newBuild(charId);
+
+      const ids = useBuildsStore.getState().getBuildIds(charId);
+      useBuildsStore.getState().moveBuild(charId, [...ids], ids[1], "down");
+
+      expect(useBuildsStore.getState().getBuildIds(charId)).toEqual(ids);
+    });
+  });
+
+  describe("deleteBuild", () => {
+    it("removes build and tracks deletion in presetDeletedBuildIds", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+
+      useBuildsStore.getState().deleteBuild(charId, buildId);
+
+      expect(useBuildsStore.getState().getBuild(buildId)).toBeUndefined();
+      expect(useBuildsStore.getState().getBuildIds(charId)).toHaveLength(0);
+      expect(useBuildsStore.getState().presetDeletedBuildIds).toContain(
+        buildId
+      );
+    });
+  });
+
+  describe("revertBuild", () => {
+    it("removes local override while keeping ordering", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+
+      // Modify the build locally
+      useBuildsStore.getState().setBuild(buildId, { name: "Modified" });
+      expect(useBuildsStore.getState().getBuild(buildId)?.name).toBe(
+        "Modified"
+      );
+
+      // Revert: removes local override
+      useBuildsStore.getState().revertBuild(charId, buildId);
+
+      // Build removed from local store, but ordering preserved
+      expect(useBuildsStore.getState().getBuild(buildId)).toBeUndefined();
+      expect(useBuildsStore.getState().getBuildIds(charId)).toContain(buildId);
+    });
+
+    it("un-marks previously deleted build", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+
+      // Delete then revert
+      useBuildsStore.getState().deleteBuild(charId, buildId);
+      expect(useBuildsStore.getState().presetDeletedBuildIds).toContain(
+        buildId
+      );
+
+      useBuildsStore.getState().revertBuild(charId, buildId);
+      expect(useBuildsStore.getState().presetDeletedBuildIds).not.toContain(
+        buildId
+      );
+    });
+  });
+
+  describe("subscribePreset", () => {
+    const presetPayload: BuildPayloadV5 = {
+      version: 5,
+      id: "test-preset",
+      author: "Preset Author",
+      description: "Preset Desc",
+      builds: {
+        "p-1": {
+          id: "p-1",
+          characterId: "char1",
+          name: "Preset Build",
+          visible: true,
+          composition: "4pc",
+          substats: [],
+          sands: [],
+          goblet: [],
+          circlet: [],
+        },
+      },
+      characterBuilds: { char1: ["p-1"] },
+      characterWeapons: { char1: ["some_weapon"] },
+    };
+
+    it("sets activePresetId and metadata", () => {
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+
+      const state = useBuildsStore.getState();
+      expect(state.activePresetId).toBe("test-preset");
+      expect(state.author).toBe("Preset Author");
+    });
+
+    it("populates characterToBuildIds from preset", () => {
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+
+      expect(useBuildsStore.getState().getBuildIds("char1")).toContain("p-1");
+    });
+
+    it("preserves custom builds appended after preset builds", () => {
+      // Create a custom build first
+      useBuildsStore.getState().newBuild("char1");
+      const customId = useBuildsStore.getState().getBuildIds("char1")[0];
+
+      // Subscribe to preset
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+
+      const ids = useBuildsStore.getState().getBuildIds("char1");
+      // Preset builds first, then custom
+      expect(ids[0]).toBe("p-1");
+      expect(ids).toContain(customId);
+    });
+
+    it("resets presetDeletedBuildIds", () => {
+      // Add a deleted ID
+      useBuildsStore.getState().newBuild("char1");
+      const buildId = useBuildsStore.getState().getBuildIds("char1")[0];
+      useBuildsStore.getState().deleteBuild("char1", buildId);
+      expect(useBuildsStore.getState().presetDeletedBuildIds.length).toBe(1);
+
+      // Subscribe clears deletions
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+      expect(useBuildsStore.getState().presetDeletedBuildIds).toEqual([]);
+    });
+
+    it("does not overwrite existing weapon customizations", () => {
+      useBuildsStore.getState().setCharacterWeapons("char1", ["custom_weapon"]);
+
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+
+      // Custom weapon preserved over preset default
+      expect(useBuildsStore.getState().getCharacterWeapons("char1")).toEqual([
+        "custom_weapon",
+      ]);
+    });
+  });
+
+  describe("setCharacterWeapons", () => {
+    it("stores weapon IDs for a character", () => {
+      useBuildsStore
+        .getState()
+        .setCharacterWeapons("char1", ["weapon_a", "weapon_b"]);
+
+      expect(useBuildsStore.getState().getCharacterWeapons("char1")).toEqual([
+        "weapon_a",
+        "weapon_b",
+      ]);
+    });
+
+    it("clears weapons when given empty array", () => {
+      useBuildsStore.getState().setCharacterWeapons("char1", ["weapon_a"]);
+      useBuildsStore.getState().setCharacterWeapons("char1", []);
+
+      expect(useBuildsStore.getState().getCharacterWeapons("char1")).toEqual(
+        []
+      );
+    });
+
+    it("caps weapons at 5", () => {
+      useBuildsStore
+        .getState()
+        .setCharacterWeapons("char1", [
+          "w1",
+          "w2",
+          "w3",
+          "w4",
+          "w5",
+          "w6",
+          "w7",
+        ]);
+
+      expect(
+        useBuildsStore.getState().getCharacterWeapons("char1").length
+      ).toBe(5);
+    });
+  });
+
+  describe("setActivePreset", () => {
+    it("sets preset ID and clears deleted builds list", () => {
+      // Simulate some deleted IDs
+      useBuildsStore.getState().newBuild("char1");
+      const buildId = useBuildsStore.getState().getBuildIds("char1")[0];
+      useBuildsStore.getState().deleteBuild("char1", buildId);
+
+      useBuildsStore.getState().setActivePreset("new-preset");
+
+      const state = useBuildsStore.getState();
+      expect(state.activePresetId).toBe("new-preset");
+      expect(state.presetDeletedBuildIds).toEqual([]);
+    });
+
+    it("clears preset when set to null", () => {
+      useBuildsStore.getState().setActivePreset("some-preset");
+      useBuildsStore.getState().setActivePreset(null);
+
+      expect(useBuildsStore.getState().activePresetId).toBeNull();
+    });
+  });
+
+  describe("setBuild composition switch", () => {
+    it("clears halfSet fields when switching to 4pc", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+
+      // Set 2pc+2pc first
+      useBuildsStore.getState().setBuild(buildId, {
+        composition: "2pc+2pc",
+        halfSet1: 1,
+        halfSet2: 2,
+      });
+      expect(useBuildsStore.getState().getBuild(buildId)?.halfSet1).toBe(1);
+
+      // Switch to 4pc — should clear halfSet fields
+      useBuildsStore
+        .getState()
+        .setBuild(buildId, { composition: "4pc", artifactSet: "vv" });
+
+      const build = useBuildsStore.getState().getBuild(buildId);
+      expect(build?.composition).toBe("4pc");
+      expect(build?.halfSet1).toBeUndefined();
+      expect(build?.halfSet2).toBeUndefined();
+    });
+
+    it("clears artifactSet when switching to 2pc+2pc", () => {
+      const charId = "test-char";
+      useBuildsStore.getState().newBuild(charId);
+      const buildId = useBuildsStore.getState().getBuildIds(charId)[0];
+
+      // Set 4pc first
+      useBuildsStore.getState().setBuild(buildId, {
+        composition: "4pc",
+        artifactSet: "viridescent_venerer",
+      });
+      expect(useBuildsStore.getState().getBuild(buildId)?.artifactSet).toBe(
+        "viridescent_venerer"
+      );
+
+      // Switch to 2pc+2pc — should clear artifactSet
+      useBuildsStore.getState().setBuild(buildId, {
+        composition: "2pc+2pc",
+        halfSet1: 1,
+        halfSet2: 2,
+      });
+
+      const build = useBuildsStore.getState().getBuild(buildId);
+      expect(build?.composition).toBe("2pc+2pc");
+      expect(build?.artifactSet).toBeUndefined();
     });
   });
 });

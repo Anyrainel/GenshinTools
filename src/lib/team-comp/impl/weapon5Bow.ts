@@ -48,24 +48,6 @@ class TheFirstGreatMagic extends WeaponBase {
   }
 }
 
-@RegisterWeapon("athame_artis")
-class AthameArtis extends WeaponBase {
-  // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%
-  readonly buffs = [
-    new StatBuff(
-      wbs(this),
-      { receiver: "self", filter: { abilities: ["burst"] } },
-      [{ key: "cd", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) }]
-    ),
-    new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
-      { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-    ]),
-    new StatBuff(wbs(this, ["Q"]), { receiver: "onField" }, [
-      { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-    ]),
-  ];
-}
-
 @RegisterWeapon("the_daybreak_chronicles")
 class TheDaybreakChronicles extends WeaponBase {
   // Stirring Dawn Breeze: max cap NA/E/Q DMG bonus (reachable out-of-combat or via stacking)

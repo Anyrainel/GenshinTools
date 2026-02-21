@@ -81,20 +81,19 @@ describe("computeFilters (async pipeline)", () => {
       ];
       const result = await computeFilters(buildGroups);
 
-      // Should generate configs for 2pc combinations
-      expect(result.length).toBeGreaterThanOrEqual(0);
+      // 2pc+2pc may or may not resolve depending on half set IDs
+      expect(result).toBeDefined();
     });
 
     it("includes character info in served characters", async () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
       const result = await computeFilters(buildGroups);
 
-      if (result.length > 0 && result[0].configurations.length > 0) {
-        const config = result[0].configurations[0];
-        expect(config.servedCharacters).toBeDefined();
-        expect(config.servedCharacters.length).toBeGreaterThan(0);
-        expect(config.servedCharacters[0].characterId).toBe("kaedehara_kazuha");
-      }
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].configurations.length).toBeGreaterThan(0);
+      const config = result[0].configurations[0];
+      expect(config.servedCharacters.length).toBeGreaterThan(0);
+      expect(config.servedCharacters[0].characterId).toBe("kaedehara_kazuha");
     });
   });
 
@@ -112,14 +111,13 @@ describe("computeFilters (async pipeline)", () => {
       const result = await computeFilters(buildGroups);
 
       // Should only include venti, not the hidden character
-      if (result.length > 0 && result[0].configurations.length > 0) {
-        const allCharIds = result.flatMap((r) =>
-          r.configurations.flatMap((c) =>
-            c.servedCharacters.map((s) => s.characterId)
-          )
-        );
-        expect(allCharIds).not.toContain("kaedehara_kazuha");
-      }
+      const allCharIds = result.flatMap((r) =>
+        r.configurations.flatMap((c) =>
+          c.servedCharacters.map((s) => s.characterId)
+        )
+      );
+      expect(allCharIds).not.toContain("kaedehara_kazuha");
+      expect(allCharIds).toContain("venti");
     });
 
     it("excludes builds with visible=false", async () => {
@@ -277,21 +275,21 @@ describe("computeFilters (async pipeline)", () => {
       const buildGroups: BuildGroup[] = [createBuildGroup()];
       const result = await computeFilters(buildGroups);
 
-      if (result.length > 0 && result[0].configurations.length > 0) {
-        const config = result[0].configurations[0];
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].configurations.length).toBeGreaterThan(0);
+      const config = result[0].configurations[0];
 
-        // Check that all slot configs exist
-        expect(config.flowerPlume).toBeDefined();
-        expect(config.sands).toBeDefined();
-        expect(config.goblet).toBeDefined();
-        expect(config.circlet).toBeDefined();
+      // All slot configs must exist
+      expect(config.flowerPlume).toBeDefined();
+      expect(config.sands).toBeDefined();
+      expect(config.goblet).toBeDefined();
+      expect(config.circlet).toBeDefined();
 
-        // Each slot config should have the expected structure
-        expect(config.sands.mainStats).toBeDefined();
-        expect(config.sands.substats).toBeDefined();
-        expect(config.sands.mustPresent).toBeDefined();
-        expect(config.sands.minStatCount).toBeDefined();
-      }
+      // Each slot config has the expected shape
+      expect(config.sands.mainStats).toBeDefined();
+      expect(config.sands.substats).toBeDefined();
+      expect(config.sands.mustPresent).toBeDefined();
+      expect(config.sands.minStatCount).toBeDefined();
     });
   });
 });

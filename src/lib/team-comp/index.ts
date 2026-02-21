@@ -1,6 +1,9 @@
 // Side-effect barrel: importing this module registers all character, weapon,
 // and artifact implementations into their respective registries.
 
+import "./impl/artifact2pc";
+import "./impl/artifact4pc";
+
 import "./impl/character4Mondstadt";
 import "./impl/character4Liyue";
 import "./impl/character4Inazuma";
@@ -18,7 +21,7 @@ import "./impl/character5Sumeru";
 import "./impl/character5Fontaine";
 import "./impl/character5Natlan";
 import "./impl/character5NodKrai";
-// import "./impl/character5Snezhnaya"; // No such characters yet
+import "./impl/character5Snezhnaya";
 import "./impl/character5None";
 
 import "./impl/weapon3"; // 3* weapons are not split
@@ -34,6 +37,3 @@ import "./impl/weapon5Catalyst";
 import "./impl/weapon5Claymore";
 import "./impl/weapon5Polearm";
 import "./impl/weapon5Sword";
-
-import "./impl/artifact2pc";
-import "./impl/artifact4pc";

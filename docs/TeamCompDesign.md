@@ -23,7 +23,7 @@ Redesign the `/team-comp` page to integrate with the new `team-comp` damage calc
     - Show the current damage (using currently equipped artifacts on the account for the selected formula).
     - Display optimized artifacts using existing components (`ArtifactDataHoverCard`).
     - **TODO**: Display active (and inactive) buffs evaluated during the run.
-    - **TODO**: Break down the damage formula components natively (requires backend API support).
+    - **DONE**: Break down the damage formula via `display()` → `DisplayPart` (template, params, statValues, scalingKeys).
 
 ## 4. Optimizer Logic (`useAsyncCompute` & Heuristics)
 - Execution: Run the optimizer on the main thread via `useAsyncCompute` to prevent UI freezing without needing a complex Web Worker setup.

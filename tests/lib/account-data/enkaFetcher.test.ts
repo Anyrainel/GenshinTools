@@ -286,9 +286,8 @@ describe("enka", () => {
           });
 
           const { data: result } = convertEnkaToGOOD(enkaData);
-          if (result.artifacts!.length > 0) {
-            expect(result.artifacts![0].slotKey).toBe(expectedSlot);
-          }
+          expect(result.artifacts!.length).toBe(1);
+          expect(result.artifacts![0].slotKey).toBe(expectedSlot);
         }
       });
 
@@ -329,9 +328,8 @@ describe("enka", () => {
           });
 
           const { data: result } = convertEnkaToGOOD(enkaData);
-          if (result.artifacts!.length > 0) {
-            expect(result.artifacts![0].mainStatKey).toBe(expected);
-          }
+          expect(result.artifacts!.length).toBe(1);
+          expect(result.artifacts![0].mainStatKey).toBe(expected);
         }
       });
     });

@@ -187,16 +187,24 @@ export class StatSheet {
     artifacts: Iterable<ArtifactData | undefined>
   ): StatSheet {
     const entries: StatEntry[] = [];
+
+    const isPct = (k: string) =>
+      k.endsWith("%") || k === "cr" || k === "cd" || k === "er";
+
     for (const art of artifacts) {
       if (!art || !art.mainStatKey) continue;
 
-      const mainStatVal = getFixedMainStatValue(art.mainStatKey, art.rarity);
+      let mainStatVal = getFixedMainStatValue(art.mainStatKey, art.rarity);
+      if (isPct(art.mainStatKey)) mainStatVal /= 100;
+
       entries.push({ key: art.mainStatKey as StatKey, value: mainStatVal });
 
       if (art.substats) {
         for (const [subKey, subVal] of Object.entries(art.substats)) {
           if (subVal) {
-            entries.push({ key: subKey as StatKey, value: subVal });
+            let v = subVal;
+            if (isPct(subKey)) v /= 100;
+            entries.push({ key: subKey as StatKey, value: v });
           }
         }
       }
@@ -305,32 +313,48 @@ export class StatSheet {
   }
 
   /**
-   * Apply dynamic buff contributions to produce a new StatSheet.
-   * Evaluates each buff's dynamicBuffs() with the given stats context.
+   * Return all non-zero computed stat values as a flat record.
+   * Scaled stats (ATK/HP/DEF) are returned as computed totals.
+   * Intermediate % keys (atk%, hp%, def%) are excluded.
    */
-  applyDynamic(
-    buffs: StatBuff[],
-    selfStats: StatSheet,
-    teamStats: StatSheet[]
-  ): StatSheet {
-    const merged = new Map<StatKey, Map<string, number>>();
-    for (const [key, bucket] of this.data) {
-      merged.set(key, new Map(bucket));
-    }
-    for (const buff of buffs) {
-      const filter = extractFilter(buff.target);
-      const fk = serializeFilter(filter);
-      for (const { key, value } of buff.dynamicBuffs(selfStats, teamStats)) {
-        validateStatFilter(key, filter, buff.source);
-        let target = merged.get(key);
-        if (!target) {
-          target = new Map();
-          merged.set(key, target);
+  getAll(tag?: DamageTag): Partial<Record<StatKey, number>> {
+    const result: Partial<Record<StatKey, number>> = {};
+    const evalKeys = new Set(this.data.keys());
+    evalKeys.add("atk" as StatKey);
+    evalKeys.add("hp" as StatKey);
+    evalKeys.add("def" as StatKey);
+
+    for (const key of evalKeys) {
+      if (SCALED_PERCENT_KEYS.has(key)) continue;
+      if (key === "baseAtk" || key === "baseHp" || key === "baseDef") continue;
+
+      let value = this.get(key, tag);
+      if (value !== 0) {
+        if (key === "atk" || key === "hp" || key === "def" || key === "em") {
+          value = Math.round(value);
         }
-        target.set(fk, (target.get(fk) ?? 0) + value);
+        result[key] = value;
       }
     }
-    return StatSheet.fromData(merged);
+    return result;
+  }
+
+  /**
+   * Return a new StatSheet with one universal stat bumped by `delta`.
+   * Immutable — does not modify the original.
+   */
+  withDelta(key: StatKey, delta: number): StatSheet {
+    const cloned = new Map<StatKey, Map<string, number>>();
+    for (const [k, bucket] of this.data) {
+      cloned.set(k, new Map(bucket));
+    }
+    let bucket = cloned.get(key);
+    if (!bucket) {
+      bucket = new Map();
+      cloned.set(key, bucket);
+    }
+    bucket.set(EMPTY_FILTER_KEY, (bucket.get(EMPTY_FILTER_KEY) ?? 0) + delta);
+    return StatSheet.fromData(cloned);
   }
 }
 
@@ -597,6 +621,11 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     return result;
   }
 
+  /** Public accessor for a single formula entry (used by display path). */
+  getFormulaEntry(formulaId: string): FormulaEntry | undefined {
+    return this.formulaMap[formulaId];
+  }
+
   /** Iterates the formulaMap entry's parts, calls .calc() on each, and aggregates. */
   getDamageResult(
     formulaId: string,
@@ -607,11 +636,11 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const parts = entry.parts.map(({ formula, hits }) => ({
-      part: formula.calc(selfStats, this.charLevel, ctx),
+      damage: formula.calc(selfStats, this.charLevel, ctx),
       hits: hits ?? 1,
     }));
     const totalDamage = parts.reduce(
-      (sum, { part, hits }) => sum + part.damage * hits,
+      (sum, { damage, hits }) => sum + damage * hits,
       0
     );
     return { parts, totalDamage };

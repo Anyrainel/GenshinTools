@@ -125,7 +125,7 @@ class SymphonistOfScents extends WeaponBase {
 class StaffOfHoma extends WeaponBase {
   readonly buffs = [
     new ScalingBuff(
-      wbs(this, ["low-hp"]),
+      wbs(this, ["self-low-hp"]),
       { receiver: "self" },
       [{ key: "hp%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }],
       "hp",

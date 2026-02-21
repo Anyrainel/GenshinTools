@@ -1,5 +1,11 @@
 import type { StatSheet } from "./damageModels";
-import type { CalcContext, DamagePart, DamageTag, ReactionType } from "./types";
+import type {
+  CalcContext,
+  DamageTag,
+  DisplayPart,
+  ReactionType,
+  StatKey,
+} from "./types";
 
 const LEVEL_MULTIPLIERS: Record<number, number> = {
   90: 1446.85,
@@ -83,11 +89,24 @@ export abstract class DamageFormula {
     readonly extraTerm?: ExtraScalingTerm
   ) {}
 
-  abstract calc(
+  abstract calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number;
+
+  abstract display(
     stats: StatSheet,
     charLevel: number,
     ctx: CalcContext
-  ): DamagePart;
+  ): DisplayPart;
+
+  /** Build the scalingKeys/scalingMulti arrays from constructor fields. */
+  protected getScalingInfo(): { keys: StatKey[]; multi: number[] } {
+    const keys: StatKey[] = [this.scalingKey];
+    const multi: number[] = [this.talentMultiplier];
+    if (this.extraTerm) {
+      keys.push(this.extraTerm.key);
+      multi.push(this.extraTerm.multiplier);
+    }
+    return { keys, multi };
+  }
 
   protected computeDefMult(
     stats: StatSheet,
@@ -130,12 +149,11 @@ export abstract class DamageFormula {
   protected computeDmgBonusMult(stats: StatSheet): number {
     // Element DMG% is inherently scoped by key name (e.g., `pyro%`)
     const elementDmg = stats.get(
-      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as "pyro%"
+      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey
     );
     // dmg% picks up generic, ability-scoped, and element-scoped entries via tag
     const dmgBonus = stats.get("dmg%", this.tag);
-    const dmgTaken = stats.get("dmgTaken%", this.tag);
-    return 1 + elementDmg + dmgBonus + dmgTaken;
+    return 1 + elementDmg + dmgBonus;
   }
 
   /**
@@ -155,16 +173,58 @@ export abstract class DamageFormula {
 
 /** Direct damage: BaseDmg × DmgBonus × DEFMult × RESMult × CritMult */
 export class DirectFormula extends DamageFormula {
-  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): DamagePart {
+  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const baseDmg = this.getBaseDmg(stats);
     const dmgBonusMult = this.computeDmgBonusMult(stats);
     const defMult = this.computeDefMult(stats, charLevel, ctx);
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
 
+    return baseDmg * dmgBonusMult * defMult * resMult * critMult;
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const { keys, multi } = this.getScalingInfo();
+    const elementKey =
+      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey;
+
+    const baseDmg = this.getBaseDmg(stats);
+    const dmgBonusMult = this.computeDmgBonusMult(stats);
+    const defMult = this.computeDefMult(stats, charLevel, ctx);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
     const damage = baseDmg * dmgBonusMult * defMult * resMult * critMult;
+
+    const statValues: Partial<Record<StatKey, number>> = {
+      [this.scalingKey]: stats.get(this.scalingKey),
+      [elementKey]: stats.get(elementKey),
+      "dmg%": stats.get("dmg%", this.tag),
+      cr: stats.get("cr", this.tag),
+      cd: stats.get("cd", this.tag),
+      "defReduction%": stats.get("defReduction%", this.tag),
+      "defIgnore%": stats.get("defIgnore%", this.tag),
+      "resReduction%": stats.get("resReduction%", this.tag),
+    };
+    if (this.extraTerm) {
+      statValues[this.extraTerm.key] = stats.get(this.extraTerm.key);
+    }
+    // Include baseDmg% and flat baseDmg if non-zero
+    const bdp = stats.get("baseDmg%", this.tag);
+    const fbd = stats.get("baseDmg", this.tag);
+    if (bdp !== 0) statValues["baseDmg%"] = bdp;
+    if (fbd !== 0) statValues.baseDmg = fbd;
+
     return {
-      components: { baseDmg, dmgBonusMult, defMult, resMult, critMult },
+      template: "direct",
+      statValues,
+      params: {
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+        assumeCrit: ctx.assumeCrit ? 1 : 0,
+      },
+      scalingKeys: keys,
+      scalingMulti: multi,
       damage,
     };
   }
@@ -172,12 +232,8 @@ export class DirectFormula extends DamageFormula {
 
 /** Amplifying reactions: Direct × ReactionBase × (1 + EMBonus + ReactionDmgBonus%) */
 export class AmplifyFormula extends DirectFormula {
-  override calc(
-    stats: StatSheet,
-    charLevel: number,
-    ctx: CalcContext
-  ): DamagePart {
-    const direct = super.calc(stats, charLevel, ctx);
+  override calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
+    const directDmg = super.calc(stats, charLevel, ctx);
     const reactionBase =
       AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
     const em = stats.get("em");
@@ -185,16 +241,44 @@ export class AmplifyFormula extends DirectFormula {
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const ampMult = reactionBase * (1 + emBonus + reactionDmgBonus);
 
+    return directDmg * ampMult;
+  }
+
+  override display(
+    stats: StatSheet,
+    charLevel: number,
+    ctx: CalcContext
+  ): DisplayPart {
+    const base = super.display(stats, charLevel, ctx);
+    const reactionCoeff =
+      AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
+    const em = stats.get("em");
+    const emCoeff = 2.78;
+    const emBonus = (emCoeff * em) / (1400 + em);
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const ampMult = reactionCoeff * (1 + emBonus + reactionDmgBonus);
+
     return {
-      components: { ...direct.components, ampMult },
-      damage: direct.damage * ampMult,
+      ...base,
+      template: "amplify",
+      statValues: {
+        ...base.statValues,
+        em,
+        "reactionDmg%": reactionDmgBonus,
+      },
+      params: {
+        ...base.params,
+        reactionCoeff,
+        emCoeff,
+      },
+      damage: base.damage * ampMult,
     };
   }
 }
 
 /** Additive reactions (Spread/Aggravate): BaseDmg + FlatAdditive, then normal multipliers */
 export class CatalyzeFormula extends DamageFormula {
-  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): DamagePart {
+  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
     if (this.extraTerm) {
       scalingDmg += stats.get(this.extraTerm.key) * this.extraTerm.multiplier;
@@ -215,16 +299,67 @@ export class CatalyzeFormula extends DamageFormula {
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
 
+    return baseDmg * dmgBonusMult * defMult * resMult * critMult;
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const { keys, multi } = this.getScalingInfo();
+    const elementKey =
+      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey;
+
+    const em = stats.get("em");
+    const emCoeff = 2.78;
+    const emBonus = (emCoeff * em) / (1400 + em);
+    const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const flatBonus =
+      levelCoeff * reactionCoeff * (1 + emBonus + reactionDmgBonus);
+
+    let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
+    if (this.extraTerm) {
+      scalingDmg += stats.get(this.extraTerm.key) * this.extraTerm.multiplier;
+    }
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const baseDmg = scalingDmg * (1 + baseDmgPct) + flatBonus + flatBaseDmg;
+    const dmgBonusMult = this.computeDmgBonusMult(stats);
+    const defMult = this.computeDefMult(stats, charLevel, ctx);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
     const damage = baseDmg * dmgBonusMult * defMult * resMult * critMult;
+
+    const statValues: Partial<Record<StatKey, number>> = {
+      [this.scalingKey]: stats.get(this.scalingKey),
+      em,
+      [elementKey]: stats.get(elementKey),
+      "dmg%": stats.get("dmg%", this.tag),
+      "reactionDmg%": reactionDmgBonus,
+      cr: stats.get("cr", this.tag),
+      cd: stats.get("cd", this.tag),
+      "defReduction%": stats.get("defReduction%", this.tag),
+      "defIgnore%": stats.get("defIgnore%", this.tag),
+      "resReduction%": stats.get("resReduction%", this.tag),
+    };
+    if (this.extraTerm)
+      statValues[this.extraTerm.key] = stats.get(this.extraTerm.key);
+    if (baseDmgPct !== 0) statValues["baseDmg%"] = baseDmgPct;
+    if (flatBaseDmg !== 0) statValues.baseDmg = flatBaseDmg;
+
     return {
-      components: {
-        baseDmg,
-        flatBonus,
-        dmgBonusMult,
-        defMult,
-        resMult,
-        critMult,
+      template: "catalyze",
+      statValues,
+      params: {
+        reactionCoeff,
+        levelCoeff,
+        emCoeff,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
+      scalingKeys: keys,
+      scalingMulti: multi,
       damage,
     };
   }
@@ -232,7 +367,7 @@ export class CatalyzeFormula extends DamageFormula {
 
 /** Transformative reactions: LevelMult × ReactionCoeff × (1 + EMBonus + ReactionDmgBonus%) × RESMult. No DEF. Optional CRIT via reaction-specific CR/CD. */
 export class TransformFormula extends DamageFormula {
-  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): DamagePart {
+  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em");
     const emBonus = (16 * em) / (2000 + em);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -252,10 +387,59 @@ export class TransformFormula extends DamageFormula {
         : 1;
 
     const baseDmg = levelMult * reactionCoeff;
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    return (
+      (baseDmg * (1 + emBonus + reactionDmgBonus) + flatBaseDmg) *
+      resMult *
+      critMult
+    );
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const em = stats.get("em");
+    const emCoeff = 16;
+    const emBonus = (emCoeff * em) / (2000 + em);
+    const reactionCoeff = REACTION_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const reactionCr = stats.get("reactionCr", this.tag);
+    const reactionCd = stats.get("reactionCd", this.tag);
+    const critMult =
+      reactionCr > 0
+        ? ctx.assumeCrit
+          ? 1 + reactionCd
+          : 1 + Math.min(reactionCr, 1) * reactionCd
+        : 1;
+
+    const baseDmg = levelCoeff * reactionCoeff;
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
     const damage =
-      baseDmg * (1 + emBonus + reactionDmgBonus) * resMult * critMult;
+      (baseDmg * (1 + emBonus + reactionDmgBonus) + flatBaseDmg) *
+      resMult *
+      critMult;
+
     return {
-      components: { baseDmg, emBonus, reactionDmgBonus, resMult, critMult },
+      template: "transform",
+      statValues: {
+        em,
+        "reactionDmg%": reactionDmgBonus,
+        "resReduction%": stats.get("resReduction%", this.tag),
+        reactionCr,
+        reactionCd,
+        ...(flatBaseDmg !== 0 ? { baseDmg: flatBaseDmg } : {}),
+      },
+      params: {
+        reactionCoeff,
+        levelCoeff,
+        emCoeff,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+        assumeCrit: ctx.assumeCrit ? 1 : 0,
+      },
+      scalingKeys: [],
+      scalingMulti: [],
       damage,
     };
   }
@@ -266,7 +450,7 @@ export class TransformFormula extends DamageFormula {
  * Has separate multiplicative layers: BaseDmgBonus (§8.7) and Elevation (§4).
  */
 export class LunarFormula extends DamageFormula {
-  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): DamagePart {
+  calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em");
     const emBonus = (6 * em) / (2000 + em);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -274,32 +458,65 @@ export class LunarFormula extends DamageFormula {
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
-    const dmgTaken = stats.get("dmgTaken%", this.tag);
 
     // Separate multiplicative layers for Lunar reactions
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelMult * reactionCoeff;
+    return (
+      baseDmg *
+      (1 + baseDmgBonus) *
+      (1 + emBonus + reactionDmgBonus) *
+      (1 + elevated) *
+      resMult *
+      critMult
+    );
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const em = stats.get("em");
+    const emCoeff = 6;
+    const emBonus = (emCoeff * em) / (2000 + em);
+    const reactionCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.8;
+    const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+
+    const baseDmg = levelCoeff * reactionCoeff;
     const damage =
       baseDmg *
       (1 + baseDmgBonus) *
       (1 + emBonus + reactionDmgBonus) *
       (1 + elevated) *
-      (1 + dmgTaken) *
       resMult *
       critMult;
+
     return {
-      components: {
-        baseDmg,
-        baseDmgBonus,
-        emBonus,
-        reactionDmgBonus,
-        elevated,
-        dmgTaken,
-        resMult,
-        critMult,
+      template: "lunar",
+      statValues: {
+        em,
+        "reactionDmg%": reactionDmgBonus,
+        "baseDmg%": baseDmgBonus,
+        "elevated%": elevated,
+        cr: stats.get("cr", this.tag),
+        cd: stats.get("cd", this.tag),
+        "resReduction%": stats.get("resReduction%", this.tag),
       },
+      params: {
+        reactionCoeff,
+        levelCoeff,
+        emCoeff,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+        assumeCrit: ctx.assumeCrit ? 1 : 0,
+      },
+      scalingKeys: [],
+      scalingMulti: [],
       damage,
     };
   }
@@ -315,7 +532,7 @@ export class LunarFormula extends DamageFormula {
  *     × (1+elevated%) × CritMult × RESMult
  */
 export class LunarDirectFormula extends DamageFormula {
-  calc(stats: StatSheet, _charLevel: number, ctx: CalcContext): DamagePart {
+  calc(stats: StatSheet, _charLevel: number, ctx: CalcContext): number {
     let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
     if (this.extraTerm) {
       scalingDmg += stats.get(this.extraTerm.key) * this.extraTerm.multiplier;
@@ -337,21 +554,62 @@ export class LunarDirectFormula extends DamageFormula {
       (1 + baseDmgBonus) *
       (1 + emBonus + reactionDmgBonus);
     const baseDmg = talentDmg + flatBaseDmg;
+    return baseDmg * (1 + elevated) * critMult * resMult;
+  }
+
+  display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
+    const { keys, multi } = this.getScalingInfo();
+    const directCoeff = LUNAR_DIRECT_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+
+    const em = stats.get("em");
+    const emCoeff = 6;
+    const emBonus = (emCoeff * em) / (2000 + em);
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+    const resMult = this.computeResMult(stats, ctx);
+    const critMult = this.computeCritMult(stats, ctx);
+
+    let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
+    if (this.extraTerm) {
+      scalingDmg += stats.get(this.extraTerm.key) * this.extraTerm.multiplier;
+    }
+    const talentDmg =
+      scalingDmg *
+      directCoeff *
+      (1 + baseDmgBonus) *
+      (1 + emBonus + reactionDmgBonus);
+    const baseDmg = talentDmg + flatBaseDmg;
     const damage = baseDmg * (1 + elevated) * critMult * resMult;
 
+    const statValues: Partial<Record<StatKey, number>> = {
+      [this.scalingKey]: stats.get(this.scalingKey),
+      em,
+      "reactionDmg%": reactionDmgBonus,
+      "baseDmg%": baseDmgBonus,
+      "elevated%": elevated,
+      cr: stats.get("cr", this.tag),
+      cd: stats.get("cd", this.tag),
+      "resReduction%": stats.get("resReduction%", this.tag),
+    };
+    if (this.extraTerm)
+      statValues[this.extraTerm.key] = stats.get(this.extraTerm.key);
+    if (flatBaseDmg !== 0) statValues.baseDmg = flatBaseDmg;
+
     return {
-      components: {
-        scalingDmg,
-        talentDmg,
+      template: "lunarDirect",
+      statValues,
+      params: {
         directCoeff,
-        baseDmgBonus,
-        emBonus,
-        reactionDmgBonus,
-        flatBaseDmg,
-        elevated,
-        critMult,
-        resMult,
+        emCoeff,
+        charLevel,
+        enemyLevel: ctx.enemyLevel,
+        enemyRes: ctx.enemyRes,
+        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
+      scalingKeys: keys,
+      scalingMulti: multi,
       damage,
     };
   }

@@ -105,7 +105,7 @@ describe("Silken Moon's Serenade preset regression", () => {
   function loadPresetBuilds(): BuildGroup[] {
     const filePath = resolve(
       __dirname,
-      "../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
+      "../../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
     );
     const payload: BuildPayloadV5 = JSON.parse(readFileSync(filePath, "utf-8"));
     const groups = new Map<string, BuildGroup>();

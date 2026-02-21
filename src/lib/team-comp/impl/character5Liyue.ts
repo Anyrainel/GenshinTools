@@ -102,8 +102,8 @@ class Zibai extends CharacterBase {
     return {
       "zibai-e-combo": {
         label: {
-          zh: "月转时隙普攻(四段全中)",
-          en: "Phase Shift Normal Combo (N1-N4)",
+          zh: "A 月转时隙普攻(四段全中)",
+          en: "A Phase Shift Normal Combo (N1-N4)",
         },
         parts: [
           {
@@ -127,7 +127,7 @@ class Zibai extends CharacterBase {
         ],
       },
       "zibai-steed": {
-        label: { zh: "灵驹飞踏", en: "Spirit Steed's Stride" },
+        label: { zh: "E 灵驹飞踏", en: "E Spirit Steed's Stride" },
         parts: [
           {
             formula: new DirectFormula(
@@ -150,7 +150,7 @@ class Zibai extends CharacterBase {
         ],
       },
       "zibai-burst": {
-        label: { zh: "三垣威仪法", en: "Tri-Sphere Eminence" },
+        label: { zh: "Q 三垣威仪法", en: "Q Tri-Sphere Eminence" },
         parts: [
           {
             formula: new DirectFormula(
@@ -229,8 +229,8 @@ class Xianyun extends CharacterBase {
     return {
       "xianyun-driftcloud": {
         label: {
-          zh: "闲云冲击波(三段跳)",
-          en: "Driftcloud Wave (3 Skyladders)",
+          zh: "A 闲云冲击波(三段跳)",
+          en: "A Driftcloud Wave (3 Skyladders)",
         },
         parts: [
           {
@@ -303,6 +303,16 @@ class Baizhu extends CharacterBase {
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 80 }] : [])
     ),
+    // C6: Spiritvein DMG +8% Max HP
+    new ScalingSkillBuff(
+      cbs(this, ["Q"], "C6"),
+      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+      [],
+      "hp",
+      "baseDmg",
+      this.constellation,
+      (c) => ({ scale: c >= 6 ? 0.08 : 0 })
+    ),
   ];
 
   protected readonly formulaMap = (() => {
@@ -311,7 +321,7 @@ class Baizhu extends CharacterBase {
     const qMult = this.constellation >= 3 ? 2.063 : 1.747;
     return {
       "baizhu-burst": {
-        label: { zh: "灵气脉总伤", en: "Spiritveins Total" },
+        label: { zh: "Q 灵气脉总伤", en: "Q Spiritveins Total" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -374,7 +384,7 @@ class Yelan extends CharacterBase {
 
     const formulas: Record<string, FormulaEntry> = {
       "yelan-barb": {
-        label: { zh: "破局矢伤害", en: "Breakthrough Barb DMG" },
+        label: { zh: "A 破局矢伤害", en: "A Breakthrough Barb DMG" },
         parts: [
           {
             formula: new DirectFormula(
@@ -386,7 +396,7 @@ class Yelan extends CharacterBase {
         ],
       },
       "yelan-skill": {
-        label: { zh: "萦络纵命索", en: "Lingering Lifeline" },
+        label: { zh: "E 萦络纵命索", en: "E Lingering Lifeline" },
         parts: [
           {
             formula: new DirectFormula(
@@ -398,7 +408,7 @@ class Yelan extends CharacterBase {
         ],
       },
       "yelan-burst": {
-        label: { zh: "渊图玲珑骰(爆发)", en: "Depth-Clarion Dice" },
+        label: { zh: "Q 渊图玲珑骰(爆发)", en: "Q Depth-Clarion Dice" },
         parts: [
           {
             formula: new DirectFormula(
@@ -410,7 +420,10 @@ class Yelan extends CharacterBase {
         ],
       },
       "yelan-burst-throw": {
-        label: { zh: "玄掷玲珑(单次3箭)", en: "Exquisite Throw (3 Arrows)" },
+        label: {
+          zh: "Q 玄掷玲珑(单次3箭)",
+          en: "Q Exquisite Throw (3 Arrows)",
+        },
         parts: [
           {
             formula: new DirectFormula(
@@ -493,7 +506,7 @@ class Xiao extends CharacterBase {
   protected readonly formulaMap = (() => {
     return {
       "xiao-plunge-high": {
-        label: { zh: "靖妖傩舞·高空坠地", en: "High Plunge (Q)" },
+        label: { zh: "A 靖妖傩舞·高空坠地", en: "A High Plunge (Q)" },
         parts: [
           {
             formula: new DirectFormula(4.04, {
@@ -534,7 +547,7 @@ class Zhongli extends CharacterBase {
 
     return {
       "zhongli-skill-stele": {
-        label: { zh: "岩脊伤害", en: "Stone Stele DMG" },
+        label: { zh: "E 岩脊伤害", en: "E Stone Stele DMG" },
         parts: [
           {
             formula: new DirectFormula(
@@ -547,7 +560,7 @@ class Zhongli extends CharacterBase {
         ],
       },
       "zhongli-skill-resonance": {
-        label: { zh: "共鸣伤害", en: "Resonance DMG" },
+        label: { zh: "E 共鸣伤害", en: "E Resonance DMG" },
         parts: [
           {
             formula: new DirectFormula(
@@ -560,7 +573,7 @@ class Zhongli extends CharacterBase {
         ],
       },
       "zhongli-skill-hold": {
-        label: { zh: "长按伤害", en: "Hold E DMG" },
+        label: { zh: "E 长按伤害", en: "E Hold E DMG" },
         parts: [
           {
             formula: new DirectFormula(
@@ -573,7 +586,7 @@ class Zhongli extends CharacterBase {
         ],
       },
       "zhongli-burst": {
-        label: { zh: "天星(包含炊金馔玉)", en: "Planet Befall (incl. P2)" },
+        label: { zh: "Q 天星(包含炊金馔玉)", en: "Q Planet Befall (incl. P2)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -592,36 +605,78 @@ class Zhongli extends CharacterBase {
 // 5-Star Character Implementations
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterCharacter("hu_tao")
+const huTaoOption = {
+  label: { zh: "生命值状态", en: "HP State" },
+  choices: [
+    { value: "high", label: { zh: "生命值 > 50%", en: "HP > 50%" } },
+    { value: "low", label: { zh: "生命值 ≤ 50%", en: "HP ≤ 50%" } },
+    {
+      value: "1",
+      label: { zh: "生命值为 1 (C6触发)", en: "HP = 1 (C6 Triggered)" },
+    },
+  ] as const,
+  default: "low",
+} satisfies OptionDef;
+
+@RegisterCharacter("hu_tao", huTaoOption)
 class HuTao extends CharacterBase {
-  readonly buffs = [
-    // P1: After E ends, team (excl. self) CR +12%
-    new StatBuff(cbs(this, ["E"], "P1"), { receiver: "team" }, [
-      { key: "cr", value: 0.12 },
-    ]),
-    // P2: Below 50% HP → +33% Pyro DMG
-    new StatBuff(cbs(this, ["low-hp"], "P2"), { receiver: "selfOnField" }, [
-      { key: "pyro%", value: 0.33 },
-    ]),
-    // E: Guide to Afterlife — HP → ATK conversion
-    // Lv10: 6.26% HP, Lv13 (C3+): 7.15% HP
-    new ScalingSkillBuff(
-      cbs(this, ["E"]),
-      { receiver: "selfOnField" },
-      [],
-      "hp",
-      "atk",
-      this.constellation,
-      (c) => ({ scale: c >= 3 ? 0.0715 : 0.0626 })
-    ),
-  ];
+  private readonly hpState = resolveOption(huTaoOption, this.option);
+
+  readonly buffs = (() => {
+    const isLowHP = this.hpState === "low" || this.hpState === "1";
+    const isC6Trigger = this.hpState === "1" && this.constellation >= 6;
+
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingSkillBuff>[] = [
+      // P1: After E ends, team (excl. self) CR +12%
+      new StatBuff(cbs(this, ["E"], "P1"), { receiver: "team" }, [
+        { key: "cr", value: 0.12 },
+      ]),
+      // E: Guide to Afterlife — HP → ATK conversion
+      // Lv10: 6.26% HP, Lv13 (C3+): 7.15% HP
+      new ScalingSkillBuff(
+        cbs(this, ["E"]),
+        { receiver: "selfOnField" },
+        [],
+        "hp",
+        "atk",
+        this.constellation,
+        (c) => ({ scale: c >= 3 ? 0.0715 : 0.0626 })
+      ),
+    ];
+
+    if (isLowHP) {
+      // P2: Below 50% HP → +33% Pyro DMG
+      buffs.push(
+        new StatBuff(cbs(this, ["low-hp"], "P2"), { receiver: "selfOnField" }, [
+          { key: "pyro%", value: 0.33 },
+        ])
+      );
+    }
+
+    if (isC6Trigger) {
+      // C6: +100% CR, +200% all RES (RES omitted as it is purely defensive)
+      buffs.push(
+        new StatBuff(cbs(this, ["low-hp"], "C6"), { receiver: "selfOnField" }, [
+          { key: "cr", value: 1.0 },
+        ])
+      );
+    }
+
+    return buffs;
+  })();
 
   // Charged ATK (Normal ATK talent, no constellation boost): Lv10 242.6%
   // Blood Blossom: Lv10 115%, Lv13 (C3+) 136%
   // Q (low HP): Lv10 617%, Lv13 (C5+) 706%
+  // Q (high HP): Lv10 494%, Lv13 (C5+) 565%
   protected readonly formulaMap = (() => {
     const bbMult = this.constellation >= 3 ? 1.36 : 1.15;
-    const qMult = this.constellation >= 5 ? 7.06 : 6.17;
+    const isLowHP = this.hpState === "low" || this.hpState === "1";
+
+    const qMultLv10 = isLowHP ? 6.17 : 4.94;
+    const qMultLv13 = isLowHP ? 7.06 : 5.65;
+    const qMult = this.constellation >= 5 ? qMultLv13 : qMultLv10;
+
     const pyroTag = {
       element: "Pyro" as const,
       ability: "charge" as const,
@@ -643,8 +698,8 @@ class HuTao extends CharacterBase {
           },
         ],
       },
-      "hutao-burst-low": {
-        label: { zh: "安神秘法(低血量)", en: "Burst (Low HP)" },
+      "hutao-burst": {
+        label: { zh: "Q 安神秘法", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -656,7 +711,7 @@ class HuTao extends CharacterBase {
         ],
       },
       "hutao-burst-vape": {
-        label: { zh: "安神秘法(蒸发)", en: "Burst Low HP (Vape)" },
+        label: { zh: "Q 安神秘法(蒸发)", en: "Q Burst (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(qMult, {
@@ -711,7 +766,7 @@ class Shenhe extends CharacterBase {
     const eMult = this.constellation >= 3 ? 3.55 : 3.01;
     return {
       "shenhe-skill": {
-        label: { zh: "仰灵威召将役咒(点按)", en: "Spring Spirit (Press)" },
+        label: { zh: "E 仰灵威召将役咒(点按)", en: "E Spring Spirit (Press)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -760,7 +815,7 @@ class Ganyu extends CharacterBase {
   // Arrow Lv10: 230%, Bloom Lv10: 392%, Total: 622%
   protected readonly formulaMap = {
     "ganyu-frostflake": {
-      label: { zh: "霜华矢+霜华绽发", en: "Frostflake Arrow + Bloom" },
+      label: { zh: "A 霜华矢+霜华绽发", en: "A Frostflake Arrow + Bloom" },
       parts: [
         {
           formula: new DirectFormula(2.3 + 3.92, {
@@ -772,7 +827,7 @@ class Ganyu extends CharacterBase {
       ],
     },
     "ganyu-frostflake-melt": {
-      label: { zh: "霜华矢+绽发(融化)", en: "Frostflake + Bloom (Melt)" },
+      label: { zh: "A 霜华矢+绽发(融化)", en: "A Frostflake + Bloom (Melt)" },
       parts: [
         {
           formula: new AmplifyFormula(2.3 + 3.92, {
@@ -850,7 +905,7 @@ class Keqing extends CharacterBase {
       this.constellation >= 3 ? 1.87 + 0.51 * 8 + 4.01 : 1.58 + 0.432 * 8 + 3.4;
     return {
       "keqing-charged": {
-        label: { zh: "重击", en: "Charged ATK" },
+        label: { zh: "A 重击", en: "A Charged ATK" },
         parts: [
           {
             formula: new DirectFormula(3.22, {
@@ -862,7 +917,7 @@ class Keqing extends CharacterBase {
         ],
       },
       "keqing-charged-aggravate": {
-        label: { zh: "重击(超激化)", en: "Charged ATK (Aggravate)" },
+        label: { zh: "A 重击(超激化)", en: "A Charged ATK (Aggravate)" },
         parts: [
           {
             formula: new DirectFormula(3.22, {
@@ -874,7 +929,7 @@ class Keqing extends CharacterBase {
         ],
       },
       "keqing-burst": {
-        label: { zh: "天街巡游", en: "Starward Sword" },
+        label: { zh: "Q 天街巡游", en: "Q Starward Sword" },
         parts: [
           {
             formula: new DirectFormula(qTotal, {
@@ -899,7 +954,7 @@ class Qiqi extends CharacterBase {
     // Lv13 (C3+): 76.7% × 8
     return {
       "skill-hit": {
-        label: { zh: "寒病鬼差(×8)", en: "Herald of Frost (×8)" },
+        label: { zh: "E 寒病鬼差(×8)", en: "E Herald of Frost (×8)" },
         parts: [
           {
             formula: new DirectFormula(

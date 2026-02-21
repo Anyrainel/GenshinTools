@@ -1,6 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { allElementalDmg, elementDmgKey, r, wbs } from "../helpers";
+import { allElementalDmg, r, wbs } from "../helpers";
+import type { StatKey } from "../types";
 
 // ══════════════════════════
 // 5★ Catalysts
@@ -165,9 +166,7 @@ class JadefallsSplendor extends WeaponBase {
   // Per 1000 Max HP → wielder's elemental DMG%, capped. Trigger: Q or shield.
   get buffs() {
     const wielderElement = this.teamMeta.elements[this.charId];
-    const outKey = wielderElement
-      ? elementDmgKey(wielderElement)
-      : ("dmg%" as const);
+    const outKey = `${wielderElement.toLowerCase()}%` as StatKey;
     return [
       new ScalingBuff(
         wbs(this, ["Q", "shield"]),
@@ -351,29 +350,6 @@ class EverlastingMoonglow extends WeaponBase {
       "hp",
       "baseDmg",
       r(this.refinement, [0.01, 0.015, 0.02, 0.025, 0.03])
-    ),
-  ];
-}
-
-@RegisterWeapon("key_of_khajnisut")
-class KeyOfKhajNisut extends WeaponBase {
-  // HP% + 3-stack EM from HP + team EM buff at 3 stacks
-  readonly buffs = [
-    new ScalingBuff(
-      wbs(this, ["E"]),
-      { receiver: "self" },
-      [{ key: "hp%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }],
-      "hp",
-      "em",
-      3 * r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024])
-    ),
-    new ScalingBuff(
-      wbs(this, ["E"]),
-      { receiver: "team" },
-      [],
-      "hp",
-      "em",
-      r(this.refinement, [0.002, 0.0025, 0.003, 0.0035, 0.004])
     ),
   ];
 }

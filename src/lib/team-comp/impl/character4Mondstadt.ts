@@ -138,8 +138,34 @@ class Razor extends CharacterBase {
     ),
   ];
 
-  // On-field Physical DPS with Q infusion — Normal ATK-based combat
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = (() => {
+    // Normal attack string total at Lv10 without external buffs
+    const naTotal = 1.71 + 1.47 + 1.84 + 2.43; // = 7.45
+    // Soul companion scaling: Lv10 = 43.2%, Lv13 = 51.0%
+    const wolfScaling = this.constellation >= 3 ? 0.51 : 0.432;
+
+    return {
+      "razor-burst-na": {
+        label: { zh: "Q后普攻一套伤害", en: "Q + NA Combo" },
+        parts: [
+          {
+            formula: new DirectFormula(naTotal, {
+              element: "Physical",
+              ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(naTotal * wolfScaling, {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("diona")

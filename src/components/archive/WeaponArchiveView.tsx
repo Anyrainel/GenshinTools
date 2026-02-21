@@ -203,6 +203,7 @@ export function WeaponArchiveView() {
       )
         return false;
       if (query) {
+        const lowerQuery = query.toLowerCase();
         const name = t.weaponName(weapon.id);
         const statLabel = t.statShort(weapon.secondaryStat);
         const effect = t.weaponEffect(weapon.id);
@@ -210,7 +211,7 @@ export function WeaponArchiveView() {
           !fuzzyMatch(query, name) &&
           !fuzzyMatch(query, weapon.id) &&
           !fuzzyMatch(query, statLabel) &&
-          !fuzzyMatch(query, effect)
+          !effect.toLowerCase().includes(lowerQuery)
         )
           return false;
       }

@@ -340,6 +340,7 @@ export const i18nUiData = {
   archive: {
     characters: { en: "Character Archive", zh: "角色图鉴" },
     weapons: { en: "Weapon Archive", zh: "武器图鉴" },
+    artifacts: { en: "Artifact Archive", zh: "圣遗物图鉴" },
     characterLabel: { en: "characters", zh: "角色" },
     searchPlaceholder: {
       en: "Search names, skills, passives, constellations...",
@@ -378,6 +379,14 @@ export const i18nUiData = {
     noWeaponResults: {
       en: "No weapons match your search",
       zh: "没有武器匹配搜索",
+    },
+    artifactSearchPlaceholder: {
+      en: "Search artifacts...",
+      zh: "搜索圣遗物...",
+    },
+    noArtifactResults: {
+      en: "No artifacts match your search",
+      zh: "没有圣遗物匹配搜索",
     },
     notReleased: { en: "Character is not released yet", zh: "该角色尚未实装" },
     owned: { en: "Owned", zh: "已拥有" },

@@ -90,28 +90,47 @@ class Dehya extends CharacterBase {
   // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
   // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
+    const eAtk = this.constellation >= 5 ? 1.279 : 1.084;
+    const eHp = this.constellation >= 5 ? 0.0219 : 0.0186;
+
     const fistAtk = this.constellation >= 3 ? 2.097 : 1.777;
     const fistHp = this.constellation >= 3 ? 0.036 : 0.0305;
     const driveAtk = this.constellation >= 3 ? 2.96 : 2.507;
     const driveHp = this.constellation >= 3 ? 0.0507 : 0.043;
-    const tag = {
+    const qTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
-      "dehya-burst-combo": {
-        label: { zh: "炎啸狮子咬连段", en: "Leonine Bite Combo" },
+      "dehya-skill": {
+        label: { zh: "E 净焰剑狱协同攻击", en: "E Fiery Sanctum Field Hit" },
         parts: [
           {
-            formula: new DirectFormula(fistAtk, tag, "atk", {
+            formula: new DirectFormula(
+              eAtk,
+              { element: "Pyro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "hp", multiplier: eHp }
+            ),
+          },
+        ],
+      },
+      "dehya-burst-combo": {
+        label: {
+          zh: "Q 炎啸狮子咬(10拳+1踢)",
+          en: "Q Leonine Bite (10 Fists + 1 Drive)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(fistAtk, qTag, "atk", {
               key: "hp",
               multiplier: fistHp,
             }),
-            hits: 4,
+            hits: 10,
           },
           {
-            formula: new DirectFormula(driveAtk, tag, "atk", {
+            formula: new DirectFormula(driveAtk, qTag, "atk", {
               key: "hp",
               multiplier: driveHp,
             }),
@@ -147,7 +166,7 @@ class Alhaitham extends CharacterBase {
     ...(() => {
       if (this.constellation < 4) return [];
       return [
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "otherOnField" }, [
           { key: "em", value: 90 },
         ]),
         new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "selfOnField" }, [
@@ -171,10 +190,10 @@ class Alhaitham extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // 2-Mirror Projection per hit: Lv10 121.0% ATK + 241.9% EM, C3+: 142.8% ATK + 285.6% EM
-    // × 2 mirrors
-    const projAtk = (this.constellation >= 3 ? 1.428 : 1.21) * 2;
-    const projEm = (this.constellation >= 3 ? 2.856 : 2.419) * 2;
+    // 3-Mirror Projection per hit: Lv10 121.0% ATK + 241.9% EM, C3+: 142.8% ATK + 285.6% EM
+    // × 3 mirrors
+    const projAtk = (this.constellation >= 3 ? 1.428 : 1.21) * 3;
+    const projEm = (this.constellation >= 3 ? 2.856 : 2.419) * 3;
     // Burst single-instance: Lv10 218.9% ATK + 175.1% EM, C5+: 258.4% ATK + 206.7% EM
     // With 3 mirrors consumed = 10 hits
     const burstAtk = (this.constellation >= 5 ? 2.584 : 2.189) * 10;
@@ -186,7 +205,7 @@ class Alhaitham extends CharacterBase {
     };
     return {
       "alhaitham-projection": {
-        label: { zh: "光幕攻击(2镜)", en: "Projection (2 Mirrors)" },
+        label: { zh: "E 光幕攻击(3镜)", en: "E Projection (3 Mirrors)" },
         parts: [
           {
             formula: new DirectFormula(projAtk, projTag, "atk", {
@@ -197,7 +216,7 @@ class Alhaitham extends CharacterBase {
         ],
       },
       "alhaitham-proj-spread": {
-        label: { zh: "光幕攻击(蔓激化)", en: "Projection 2M (Spread)" },
+        label: { zh: "E 光幕攻击(蔓激化)", en: "E Projection 3M (Spread)" },
         parts: [
           {
             formula: new CatalyzeFormula(
@@ -210,7 +229,7 @@ class Alhaitham extends CharacterBase {
         ],
       },
       "alhaitham-burst": {
-        label: { zh: "元素爆发(3镜)", en: "Burst (3 Mirrors, 10 hits)" },
+        label: { zh: "Q 元素爆发(3镜)", en: "Q Burst (3 Mirrors, 10 hits)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -291,7 +310,7 @@ class Wanderer extends CharacterBase {
 
     return {
       "wanderer-normal": {
-        label: { zh: "空居·不生断(全套)", en: "Kuugo: Fushoudan (N3)" },
+        label: { zh: "A 空居·不生断(全套)", en: "A Kuugo: Fushoudan (N3)" },
         parts: [
           {
             formula: new DirectFormula(eNMult, {
@@ -303,7 +322,7 @@ class Wanderer extends CharacterBase {
         ],
       },
       "wanderer-charge": {
-        label: { zh: "空居·刀风界", en: "Kuugo: Toufukai" },
+        label: { zh: "A 空居·刀风界", en: "A Kuugo: Toufukai" },
         parts: [
           {
             formula: new DirectFormula(eCMult, {
@@ -315,7 +334,10 @@ class Wanderer extends CharacterBase {
         ],
       },
       "wanderer-burst": {
-        label: { zh: "狂言·式乐五番", en: "Kyougen: Five Ceremonial Plays" },
+        label: {
+          zh: "Q 狂言·式乐五番",
+          en: "Q Kyougen: Five Ceremonial Plays",
+        },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -403,7 +425,7 @@ class Nahida extends CharacterBase {
     const emMult = this.constellation >= 3 ? 4.386 : 3.715;
     return {
       "nahida-karma": {
-        label: { zh: "灭净三业", en: "Tri-Karma Purification" },
+        label: { zh: "E 灭净三业", en: "E Tri-Karma Purification" },
         parts: [
           {
             formula: new DirectFormula(
@@ -416,7 +438,7 @@ class Nahida extends CharacterBase {
         ],
       },
       "nahida-karma-spread": {
-        label: { zh: "灭净三业(蔓激化)", en: "Tri-Karma (Spread)" },
+        label: { zh: "E 灭净三业(蔓激化)", en: "E Tri-Karma (Spread)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -428,6 +450,26 @@ class Nahida extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "nahida-c6-karma": {
+              label: {
+                zh: "【C6】灭净三业·业障除伤害",
+                en: "C6 Karmic Oblivion DMG",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    2.0,
+                    { element: "Dendro", ability: "skill", reaction: "none" },
+                    "atk",
+                    { key: "em", multiplier: 4.0 }
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -483,43 +525,56 @@ class Cyno extends CharacterBase {
     const nMult = this.constellation >= 3 ? 11.966 : 8.875;
     // Mortuary Rite: Lv10 282.2%, C5+ 333.2%
     const eMult = this.constellation >= 5 ? 3.332 : 2.822;
+
+    const normalBaseTag = {
+      element: "Electro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const normalAggTag = {
+      ...normalBaseTag,
+      reaction: "aggravate" as const,
+    };
+    const eBaseTag = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const eAggTag = { ...eBaseTag, reaction: "aggravate" as const };
+
+    const comboParts = [
+      { formula: new DirectFormula(nMult / 6, normalBaseTag), hits: 6 },
+      { formula: new DirectFormula(eMult, eBaseTag), hits: 1 },
+    ];
+
+    const comboAggParts = [
+      { formula: new CatalyzeFormula(nMult / 6, normalAggTag), hits: 3 },
+      { formula: new DirectFormula(nMult / 6, normalBaseTag), hits: 3 },
+      { formula: new CatalyzeFormula(eMult, eAggTag), hits: 1 },
+    ];
+
+    const hasDendro =
+      this.teamMeta.elements[this.charId] === "Dendro" ||
+      Object.keys(this.teamMeta.elements).some(
+        (k) => k !== this.charId && this.teamMeta.elements[k] === "Dendro"
+      );
+
     return {
-      "cyno-normal": {
-        label: { zh: "启途誓使连段", en: "Pathclearer Combo" },
-        parts: [
-          {
-            formula: new DirectFormula(nMult, {
-              element: "Electro",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
-        ],
+      "cyno-combo": {
+        label: { zh: "Q 普攻一套+E冥祭", en: "Q NA Combo + E Mortuary Rite" },
+        parts: comboParts,
       },
-      "cyno-normal-aggravate": {
-        label: { zh: "启途誓使连段(超激化)", en: "Pathclearer (Aggravate)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(nMult, {
-              element: "Electro",
-              ability: "normal",
-              reaction: "aggravate",
-            }),
-          },
-        ],
-      },
-      "cyno-skill": {
-        label: { zh: "冥祭", en: "Mortuary Rite" },
-        parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Electro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
+      ...(hasDendro
+        ? {
+            "cyno-combo-aggravate": {
+              label: {
+                zh: "Q 普攻一套+E冥祭(激化)",
+                en: "Q NA Combo + E (Aggravate)",
+              },
+              parts: comboAggParts,
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -549,7 +604,10 @@ class Nilou extends CharacterBase {
       buffs.push(
         new ScalingBuff(
           cbs(this, [], "P2"),
-          { receiver: "onField", filter: { reactions: ["bloom"] } },
+          {
+            receiver: "onField",
+            filter: { reactions: ["bloom", "lunarBloom"] },
+          },
           [],
           "hp",
           "reactionDmg%",
@@ -559,13 +617,14 @@ class Nilou extends CharacterBase {
         )
       );
     }
-
-    // C2: Hydro RES -35% on Bloom hit
+    // C2: Hydro/Dendro RES -35% on Bloom hit
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["bloom"], "C2"), { receiver: "onField" }, [
-          { key: "resReduction%", value: 0.35 },
-        ])
+        new StatBuff(
+          cbs(this, ["bloom", "lunarBloom"], "C2"),
+          { receiver: "onField", filter: { elements: ["Hydro", "Dendro"] } },
+          [{ key: "resReduction%", value: 0.35 }]
+        )
       );
     }
 
@@ -610,9 +669,17 @@ class Nilou extends CharacterBase {
   // Q total: Lv10 (33.2%+40.6%) HP = 73.8% HP, Lv13 (C3+) (39.2%+47.9%) = 87.1% HP
   protected readonly formulaMap = (() => {
     const qMult = this.constellation >= 3 ? 0.871 : 0.738;
+    const elements = Object.values(this.teamMeta.elements);
+    const allDendroHydro = elements.every(
+      (e) => e === "Dendro" || e === "Hydro"
+    );
+    const hasDendro = elements.some((e) => e === "Dendro");
+    const hasHydro = elements.some((e) => e === "Hydro");
+    const isBountiful = allDendroHydro && hasDendro && hasHydro;
+
     return {
       "nilou-burst": {
-        label: { zh: "浮莲舞步(全段)", en: "Dance of Abzendegi (Full)" },
+        label: { zh: "Q 浮莲舞步(全段)", en: "Q Dance of Abzendegi (Full)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -624,6 +691,22 @@ class Nilou extends CharacterBase {
           },
         ],
       },
+      ...(isBountiful
+        ? {
+            "nilou-bountiful-core": {
+              label: { zh: "丰穰之核", en: "Bountiful Core DMG" },
+              parts: [
+                {
+                  formula: new TransformFormula(0, {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "bloom",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -701,7 +784,7 @@ class Tighnari extends CharacterBase {
     const qMult = this.constellation >= 5 ? 15.84 : 13.35; // approximate Q upgrade
     return {
       "tighnari-charge": {
-        label: { zh: "花筥箭+藏蕴花矢", en: "Wreath Arrow + Clusterbloom" },
+        label: { zh: "A 花筥箭+藏蕴花矢", en: "A Wreath Arrow + Clusterbloom" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -713,7 +796,10 @@ class Tighnari extends CharacterBase {
         ],
       },
       "tighnari-burst": {
-        label: { zh: "造生缠藤箭(全中)", en: "Fashioner's Tanglevine Shaft" },
+        label: {
+          zh: "Q 造生缠藤箭(全中)",
+          en: "Q Fashioner's Tanglevine Shaft",
+        },
         parts: [
           {
             formula: new DirectFormula(qMult, {

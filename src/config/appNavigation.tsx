@@ -113,6 +113,12 @@ export const getNavigationConfig = (
         value: "weapons",
         icon: Sword,
       },
+      {
+        label: t.ui("archive.artifacts"),
+        href: "/archive?tab=artifacts",
+        value: "artifacts",
+        icon: Box,
+      },
     ],
   },
   {

@@ -6,6 +6,47 @@ import { ELEMENT_DMG_KEYS, allElementalDmg, r, wbs } from "../helpers";
 // 5★ Swords
 // ══════════════════════════
 
+@RegisterWeapon("athame_artis")
+class AthameArtis extends WeaponBase {
+  // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%
+  readonly buffs = [
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [{ key: "cd", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) }]
+    ),
+    new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
+      { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+    ]),
+    new StatBuff(wbs(this, ["Q"]), { receiver: "onField" }, [
+      { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
+    ]),
+  ];
+}
+
+@RegisterWeapon("key_of_khajnisut")
+class KeyOfKhajNisut extends WeaponBase {
+  // HP% + 3-stack EM from HP + team EM buff at 3 stacks
+  readonly buffs = [
+    new ScalingBuff(
+      wbs(this, ["E"]),
+      { receiver: "self" },
+      [{ key: "hp%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }],
+      "hp",
+      "em",
+      3 * r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024])
+    ),
+    new ScalingBuff(
+      wbs(this, ["E"]),
+      { receiver: "team" },
+      [],
+      "hp",
+      "em",
+      r(this.refinement, [0.002, 0.0025, 0.003, 0.0035, 0.004])
+    ),
+  ];
+}
+
 @RegisterWeapon("primordial_jade_cutter")
 class PrimordialJadeCutter extends WeaponBase {
   readonly buffs = [

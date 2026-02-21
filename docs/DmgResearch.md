@@ -15,21 +15,21 @@ FinalDmg = BaseDmg × DmgBonusMult × ElevationMult × DEFMult × RESMult × Amp
 ## 2. Base Damage
 
 ```
-BaseDmg = Σ(ScalingStat × TalentMult% × BaseDmgMultiplier) + AdditiveFlatDmg
+BaseDmg = Σ(ScalingStat × TalentMult% × BaseDmgMult) + AdditiveFlatDmg
 ```
 
 | Component | Description |
 |-----------|-------------|
 | **ScalingStat** | Usually `TotalATK`, but can be `TotalDEF`, `TotalHP`, or `EM`. Formula: `Base × (1 + %Bonus) + Flat` |
 | **TalentMult%** | Per-talent-level percentage from skill tables |
-| **BaseDmgMultiplier** | Rare modifier (e.g., Yoimiya E). Defaults to 1.0. Modeled by adjusting TalentMult per-character |
+| **BaseDmgMult** | Rare modifier (e.g., Yoimiya E). Defaults to 1.0. Modeled by adjusting TalentMult per-character |
 | **Σ** | Some talents sum multiple scaling terms (e.g., ATK + HP) before AdditiveFlatDmg |
 | **AdditiveFlatDmg** | Flat damage added post-scaling: Spread/Aggravate, Shenhe Quill, Zhongli A4, Yun Jin Q, Song of Days Past 4pc. Tracked via `baseDmg` (scoped by `DamageTagFilter`) |
 
 ## 3. Damage Bonus (DMG%)
 
 ```
-DmgBonusMult = 1 + ElementalDmg% + AbilityDmg% + GeneralDmg% + DmgTakenIncrease%
+DmgBonusMult = 1 + ElementalDmg% + AbilityDmg% + GeneralDmg%
 ```
 
 All sources within this multiplier zone are **additive** with each other.
@@ -39,9 +39,8 @@ All sources within this multiplier zone are **additive** with each other.
 | ElementalDmg% | Goblet main stat, ascension stat | `${element}%` (e.g. `pyro%`) |
 | AbilityDmg% | Gladiator 4pc (+35% Normal ATK) | `dmg%` with `DamageTagFilter: { abilities: ["normal"] }` |
 | GeneralDmg% | Mona Q (Omen), Raiden E | `dmg%` (unfiltered) |
-| DmgTakenIncrease% | Debuff on enemy; Klee C2, Kokomi Q | `dmgTaken%` |
 
-> **Impl note**: `dmgTaken%` is mechanically an enemy debuff but is additive with DMG Bonus, so it shares the same multiplier zone.
+> Research note: increase enemy damage taken is very rare and applied by Mona Q (not Klee C2 or Kokomi Q). Since it shares the same multiplier and we don't model enemies, we can just treat it as a team-wide dmg% buff.
 
 ## 4. Elevation Multiplier
 
@@ -64,7 +63,7 @@ DEFMult = (CharLv + 100) / [(CharLv + 100) + (EnemyLv + 100) × (1 - defReductio
 ## 6. RES Multiplier
 
 ```
-EffectiveRES = BaseRES - RESReduction%
+EffectiveRES = BaseRES% - RESReduction%
 
 RESMult = { 1 - EffectiveRES/2       if EffectiveRES < 0
           { 1 - EffectiveRES          if 0 ≤ EffectiveRES ≤ 0.75
@@ -257,10 +256,10 @@ Bonuses sharing the same `(1 + Σ)` multiplier can share a single stat key pool:
 
 | Multiplier Zone | Components | Stat Key | Scoped Via |
 |----------------|------------|----------|------------|
-| **DMG Bonus** (§3) | ElementalDmg%, AbilityDmg%, GeneralDmg%, DmgTaken% | `${element}%`, `dmg%`, `dmgTaken%` | `DamageTagFilter.abilities` |
+| **DMG Bonus** (§3) | ElementalDmg%, AbilityDmg%, GeneralDmg% | `${element}%`, `dmg%` | `DamageTagFilter.abilities` |
 | **Reaction DMG Bonus** (§8.4) | EMBonus (computed) + ReactionDmgBonus% | `reactionDmg%` | `DamageTagFilter.reactions` |
 | **DEF Reduction** (§5) | Multiple DEF shred sources | `defReduction%` | — |
-| **Reaction Base DMG Bonus** (§8.7) | Moonsign Benediction sources | `baseDmg%` | `DamageTagFilter.reactions` |
+| **Base DMG Bonus** (§8.7) | Moonsign Benediction sources or specific constellations that "deals X% of original damage" | `baseDmg%` | `DamageTagFilter.reactions` |
 | **Elevation** (§4) | Nod-Krai constellation sources | `elevated%` | `DamageTagFilter.reactions` |
 | **Reaction CRIT** (§8.8) | Fixed CR/CD overlay for Transformative | `reactionCr`, `reactionCd` | `DamageTagFilter.reactions` |
 

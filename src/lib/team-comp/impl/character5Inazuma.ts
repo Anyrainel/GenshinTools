@@ -88,8 +88,8 @@ class YumemizukiMizuki extends CharacterBase {
     return {
       "mizuki-skill-initial": {
         label: {
-          zh: "秋沙歌枕巡礼(爆发伤害)",
-          en: "Aisa Utamakura Pilgrimage (Initial)",
+          zh: "E 秋沙歌枕巡礼(爆发伤害)",
+          en: "E Aisa Utamakura Pilgrimage (Initial)",
         },
         parts: [
           {
@@ -102,7 +102,7 @@ class YumemizukiMizuki extends CharacterBase {
         ],
       },
       "mizuki-skill-tick": {
-        label: { zh: "梦浮(持续伤害)", en: "Dreamdrifter (Tick)" },
+        label: { zh: "E 梦浮(持续伤害)", en: "E Dreamdrifter (Tick)" },
         parts: [
           {
             formula: new DirectFormula(eTickMult, {
@@ -115,8 +115,8 @@ class YumemizukiMizuki extends CharacterBase {
       },
       "mizuki-burst-initial": {
         label: {
-          zh: "安乐秘汤疗法(爆发)",
-          en: "Anraku Secret Spring Therapy (Initial)",
+          zh: "Q 安乐秘汤疗法(爆发)",
+          en: "Q Anraku Secret Spring Therapy (Initial)",
         },
         parts: [
           {
@@ -129,7 +129,7 @@ class YumemizukiMizuki extends CharacterBase {
         ],
       },
       "mizuki-burst-shockwave": {
-        label: { zh: "梦念冲击波", en: "Munen Shockwave" },
+        label: { zh: "Q 梦念冲击波", en: "Q Munen Shockwave" },
         parts: [
           {
             formula: new DirectFormula(qShockwaveMult, {
@@ -141,7 +141,7 @@ class YumemizukiMizuki extends CharacterBase {
         ],
       },
       "mizuki-swirl": {
-        label: { zh: "扩散反应", en: "Swirl" },
+        label: { zh: "E 扩散反应", en: "E Swirl" },
         parts: [
           {
             formula: new TransformFormula(1.0, {
@@ -180,12 +180,31 @@ class Chiori extends CharacterBase {
     // ~5 hits over 17s (3.6s interval)
     const tAtk = this.constellation >= 3 ? 1.74 : 1.48;
     const tDef = this.constellation >= 3 ? 2.18 : 1.85;
+    // Upward Sweep: Lv10 269% ATK + 336% DEF, C3+: 317% ATK + 397% DEF
+    const sweepAtk = this.constellation >= 3 ? 3.17 : 2.69;
+    const sweepDef = this.constellation >= 3 ? 3.97 : 3.36;
+    // C6 Normal Attack: 5 hits total, 459% ATK total at Lv10. We average the mult per hit so 'hits: 5' applies baseDmg 5 times.
+    const naTotalArg = 4.59 / 5;
     // Burst: Lv10 461% ATK + 577% DEF, C5+: 545% ATK + 681% DEF
     const qAtk = this.constellation >= 5 ? 5.45 : 4.61;
     const qDef = this.constellation >= 5 ? 6.81 : 5.77;
+
     return {
+      "chiori-sweep": {
+        label: { zh: "E 上挑攻击伤害", en: "E Upward Sweep" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              sweepAtk,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "def", multiplier: sweepDef }
+            ),
+          },
+        ],
+      },
       "chiori-tamoto": {
-        label: { zh: "袖攻击总伤", en: "Tamoto Total" },
+        label: { zh: "E 袖攻击总伤", en: "E Tamoto Total" },
         parts: [
           {
             formula: new DirectFormula(
@@ -198,8 +217,28 @@ class Chiori extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "chiori-na": {
+              label: {
+                zh: "A 普通攻击一套(C6)",
+                en: "A Normal ATK Combo (C6)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(naTotalArg, {
+                    element: "Geo",
+                    ability: "normal",
+                    reaction: "none",
+                  }),
+                  hits: 5,
+                },
+              ],
+            },
+          }
+        : {}),
       "chiori-burst": {
-        label: { zh: "二刀之形", en: "Twin Blades" },
+        label: { zh: "Q 二刀之形", en: "Q Twin Blades" },
         parts: [
           {
             formula: new DirectFormula(
@@ -270,12 +309,34 @@ class RaidenShogun extends CharacterBase {
   protected readonly formulaMap = (() => {
     const initialMult =
       this.constellation >= 3 ? 8.51 + 0.0942 * 60 : 7.21 + 0.0798 * 60;
+    const chargeMult =
+      this.constellation >= 3
+        ? 2.843 + 2 * 0.0154 * 60
+        : 2.426 + 2 * 0.0131 * 60;
     return {
       "raiden-initial": {
-        label: { zh: "梦想一刀(60愿力)", en: "Musou Shinsetsu (60 Resolve)" },
+        label: {
+          zh: "满愿力Q梦想一刀伤害",
+          en: "Q Musou Shinsetsu (60 Resolve)",
+        },
         parts: [
           {
             formula: new DirectFormula(initialMult, {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "raiden-charge": {
+        label: {
+          zh: "Q后梦想一心重击伤害",
+          en: "Q Musou Isshin Charged ATK (60 Resolve)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(chargeMult, {
               element: "Electro",
               ability: "burst",
               reaction: "none",
@@ -346,17 +407,43 @@ class AratakiItto extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Arataki Kesagiri: 4 combo slashes + 1 final slash
-    // Combo Lv10: 180.2%, Lv13 (C3+ via N): 229.1%
-    // Final Lv10: 377.4%, Lv13 (C3+ via N): 479.7%
-    const combo = this.constellation >= 3 ? 2.291 : 1.802;
-    const final_ = this.constellation >= 3 ? 4.797 : 3.774;
-    const totalMult = combo * 4 + final_;
+    // Combo Lv10: 180.2%, Final Lv10: 377.4%
+    const combo = 1.802;
+    const final_ = 3.774;
     return {
       "itto-kesagiri": {
-        label: { zh: "荒泷逆袈裟连斩", en: "Arataki Kesagiri (4+Final)" },
+        label: { zh: "A 特殊重击(4+终结)", en: "A Arataki Kesagiri (4+Final)" },
         parts: [
           {
-            formula: new DirectFormula(totalMult, {
+            formula: new DirectFormula(combo, {
+              element: "Geo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(combo, {
+              element: "Geo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(combo, {
+              element: "Geo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(combo, {
+              element: "Geo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(final_, {
               element: "Geo",
               ability: "charge",
               reaction: "none",
@@ -409,7 +496,7 @@ class KamisatoAyaka extends CharacterBase {
     };
     return {
       "ayaka-charged": {
-        label: { zh: "重击(×3)", en: "Charged ATK (×3)" },
+        label: { zh: "A 重击(×3)", en: "A Charged ATK (×3)" },
         parts: [
           {
             formula: new DirectFormula(1.09 * 3, {
@@ -496,7 +583,7 @@ class KamisatoAyato extends CharacterBase {
         ],
       },
       "ayato-bloomwater": {
-        label: { zh: "水花剑(×30)", en: "Bloomwater Blades (×30)" },
+        label: { zh: "Q 水花剑(×30)", en: "Q Bloomwater Blades (×30)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -589,7 +676,7 @@ class KaedeharaKazuha extends CharacterBase {
     const qDot = this.constellation >= 5 ? 2.55 : 2.16;
     return {
       "kazuha-skill": {
-        label: { zh: "千早振", en: "Chihayaburu (Press)" },
+        label: { zh: "E 千早振", en: "E Chihayaburu (Press)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -601,7 +688,7 @@ class KaedeharaKazuha extends CharacterBase {
         ],
       },
       "kazuha-plunge": {
-        label: { zh: "乱岚拨止", en: "Midare Ranzan (Plunge)" },
+        label: { zh: "A 乱岚拨止", en: "A Midare Ranzan (Plunge)" },
         parts: [
           {
             formula: new DirectFormula(4.04, {
@@ -613,7 +700,7 @@ class KaedeharaKazuha extends CharacterBase {
         ],
       },
       "kazuha-burst": {
-        label: { zh: "万叶之一刀", en: "Kazuha Slash + DoT (×5)" },
+        label: { zh: "Q 万叶之一刀", en: "Q Kazuha Slash + DoT (×5)" },
         parts: [
           {
             formula: new DirectFormula(qSlash, {
@@ -688,7 +775,10 @@ class Yoimiya extends CharacterBase {
 
     return {
       "yoimiya-normal": {
-        label: { zh: "首轮普攻(E强化/无反应)", en: "N1-N5 Combo (E active)" },
+        label: {
+          zh: "A 首轮普攻(E强化/无反应)",
+          en: "A N1-N5 Combo (E active)",
+        },
         parts: [
           {
             formula: new DirectFormula(naTotal * eMult * c6AvgProd, {
@@ -701,8 +791,8 @@ class Yoimiya extends CharacterBase {
       },
       "yoimiya-vape": {
         label: {
-          zh: "首轮普攻(E强化/含蒸发)",
-          en: "N1-N5 Combo (Vape N1a, N3, N5)",
+          zh: "A 首轮普攻(E强化/含蒸发)",
+          en: "A N1-N5 Combo (Vape N1a, N3, N5)",
         },
         parts: [
           {
@@ -723,8 +813,8 @@ class Yoimiya extends CharacterBase {
       },
       "yoimiya-burst": {
         label: {
-          zh: "琉金云间草(爆发+2次爆炸)",
-          en: "Ryuukin Saxifrage (Initial + 2 Explosions)",
+          zh: "Q 琉金云间草(爆发+2次爆炸)",
+          en: "Q Ryuukin Saxifrage (Initial + 2 Explosions)",
         },
         parts: [
           {
@@ -746,8 +836,8 @@ class Yoimiya extends CharacterBase {
       },
       "yoimiya-burst-vape": {
         label: {
-          zh: "琉金云间草(次次蒸发)",
-          en: "Ryuukin Saxifrage (All Vapes)",
+          zh: "Q 琉金云间草(次次蒸发)",
+          en: "Q Ryuukin Saxifrage (All Vapes)",
         },
         parts: [
           {
@@ -820,7 +910,7 @@ class YaeMiko extends CharacterBase {
 
     return {
       "yae_miko-skill": {
-        label: { zh: "杀生樱(单次)", en: "Sesshou Sakura (Single Hit)" },
+        label: { zh: "E 杀生樱(单次)", en: "E Sesshou Sakura (Single Hit)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -832,7 +922,7 @@ class YaeMiko extends CharacterBase {
         ],
       },
       "yae_miko-skill-aggravate": {
-        label: { zh: "杀生樱(超激化)", en: "Sesshou Sakura (Aggravate)" },
+        label: { zh: "E 杀生樱(超激化)", en: "E Sesshou Sakura (Aggravate)" },
         parts: [
           {
             formula: new CatalyzeFormula(eMult, {
@@ -844,7 +934,7 @@ class YaeMiko extends CharacterBase {
         ],
       },
       "yae_miko-burst": {
-        label: { zh: "天狐显真(总伤害)", en: "Tenko Kenshin (Complete)" },
+        label: { zh: "Q 天狐显真(总伤害)", en: "Q Tenko Kenshin (Complete)" },
         parts: [
           {
             formula: new DirectFormula(qInitialMult, {
@@ -865,8 +955,8 @@ class YaeMiko extends CharacterBase {
       },
       "yae_miko-burst-aggravate": {
         label: {
-          zh: "天狐显真(一次超激化)",
-          en: "Tenko Kenshin (1 Aggravate)",
+          zh: "Q 天狐显真(一次超激化)",
+          en: "Q Tenko Kenshin (1 Aggravate)",
         },
         parts: [
           {

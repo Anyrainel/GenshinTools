@@ -285,8 +285,8 @@ class KujouSara extends CharacterBase {
       },
       "sara-burst": {
         label: {
-          zh: `煌煌千道(金刚+${clusterCount}雷砾)`,
-          en: `Koukou Sendou (Titanbreaker+${clusterCount}×Cluster)`,
+          zh: `Q天狗咒雷·金刚坏+${clusterCount}次雷砾伤害`,
+          en: `Q Koukou Sendou (Titanbreaker+${clusterCount}×Cluster)`,
         },
         parts: [
           {

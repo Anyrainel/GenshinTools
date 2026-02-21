@@ -49,10 +49,10 @@ export class ScalingBuff extends StatBuff {
     source: BuffSource,
     target: BuffTarget,
     staticBuffs: StatEntry[],
-    private readonly inputKey: StatKey,
-    private readonly outputKey: StatKey,
+    readonly inputKey: StatKey,
+    readonly outputKey: StatKey,
     private readonly scale: number,
-    private readonly cap?: number,
+    readonly cap?: number,
     /** Subtract this from input before scaling (e.g. "HP above 30000") */
     private readonly threshold?: number
   ) {
@@ -75,14 +75,14 @@ export class ScalingBuff extends StatBuff {
  */
 export class ScalingSkillBuff extends StatBuff {
   private readonly scale: number;
-  private readonly cap?: number;
+  readonly cap?: number;
 
   constructor(
     source: BuffSource,
     target: BuffTarget,
     staticBuffs: StatEntry[],
-    private readonly inputKey: StatKey,
-    private readonly outputKey: StatKey,
+    readonly inputKey: StatKey,
+    readonly outputKey: StatKey,
     constellation: number,
     resolve: (c: number) => { scale: number; cap?: number }
   ) {
@@ -130,10 +130,10 @@ export class ScalingMultiBuff extends StatBuff {
     source: BuffSource,
     target: BuffTarget,
     staticBuffs: StatEntry[],
-    private readonly inputKey: StatKey,
+    readonly inputKey: StatKey,
     private readonly outputKeys: StatKey[],
     private readonly scale: number,
-    private readonly cap?: number
+    readonly cap?: number
   ) {
     super(source, target, staticBuffs);
   }
@@ -143,4 +143,49 @@ export class ScalingMultiBuff extends StatBuff {
     const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
     return this.outputKeys.map((key) => ({ key, value }));
   }
+}
+
+/**
+ * Filter a list of buffs such that only one buff per noStackId is kept.
+ * Ties are broken by the maximum sum of the returned StatEntry values.
+ */
+export function deduplicateBuffs<T extends { source: BuffSource }>(
+  buffs: T[],
+  evaluator: (b: T) => StatEntry[]
+): T[] {
+  const result: T[] = [];
+  const groups = new Map<string, T[]>();
+
+  for (const b of buffs) {
+    if (!b.source.noStackId) {
+      result.push(b);
+    } else {
+      let g = groups.get(b.source.noStackId);
+      if (!g) {
+        g = [];
+        groups.set(b.source.noStackId, g);
+      }
+      g.push(b);
+    }
+  }
+
+  for (const group of groups.values()) {
+    if (group.length === 1) {
+      result.push(group[0]!);
+    } else {
+      let bestBuff = group[0]!;
+      let maxSum = Number.NEGATIVE_INFINITY;
+      for (const b of group) {
+        let sum = 0;
+        for (const e of evaluator(b)) sum += e.value;
+        if (sum > maxSum) {
+          maxSum = sum;
+          bestBuff = b;
+        }
+      }
+      result.push(bestBuff);
+    }
+  }
+
+  return result;
 }

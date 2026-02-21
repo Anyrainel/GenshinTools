@@ -19,8 +19,8 @@ describe("useArtifactScoreStore", () => {
     it("has character weights from STAT_WEIGHTS", () => {
       const state = useArtifactScoreStore.getState();
       expect(state.config.characters).toBeDefined();
-      // STAT_WEIGHTS should have some characters
-      expect(typeof state.config.characters).toBe("object");
+      // STAT_WEIGHTS should contain actual character entries
+      expect(Object.keys(state.config.characters).length).toBeGreaterThan(0);
     });
   });
 
@@ -114,7 +114,13 @@ describe("useArtifactScoreStore", () => {
     it("resets character weights but keeps global", () => {
       // Modify both global and character weights
       useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 100);
-      useArtifactScoreStore.getState().setCharacterWeight("venti", "cr", 100);
+      // Use a value (42) that differs from venti's default cr weight (100)
+      useArtifactScoreStore.getState().setCharacterWeight("venti", "cr", 42);
+
+      // venti.cr should be our custom 42 right now
+      expect(useArtifactScoreStore.getState().config.characters.venti.cr).toBe(
+        42
+      );
 
       // Reset only characters
       useArtifactScoreStore.getState().resetCharacterWeights();
@@ -122,8 +128,8 @@ describe("useArtifactScoreStore", () => {
       const state = useArtifactScoreStore.getState();
       // Global should remain modified
       expect(state.config.global.flatAtk).toBe(100);
-      // Character weights should be reset (venti's custom cr should be gone)
-      // Note: The exact value depends on STAT_WEIGHTS default
+      // Character weights should be reset — custom cr:42 override should be gone
+      expect(state.config.characters.venti?.cr).not.toBe(42);
     });
   });
 });

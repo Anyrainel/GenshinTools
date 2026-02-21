@@ -221,7 +221,7 @@ class SharpshootersOath extends WeaponBase {
 @RegisterWeapon("ferrous_shadow")
 class FerrousShadow extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this, ["low-hp"]), { receiver: "self" }, [
+    new StatBuff(wbs(this, ["self-low-hp"]), { receiver: "self" }, [
       {
         key: "dmg%",
         value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]),

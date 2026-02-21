@@ -1,3 +1,4 @@
+import type { Element } from "@/data/types";
 import { LUNAR_REACTIONS } from "../constants";
 import {
   ScalingBuff,
@@ -10,6 +11,7 @@ import {
   AmplifyFormula,
   CatalyzeFormula,
   DirectFormula,
+  LunarDirectFormula,
   LunarFormula,
   TransformFormula,
 } from "../damageFormulas";
@@ -20,7 +22,7 @@ import {
   resolveOption,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
+import type { OptionDef, ReactionType } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Nod-Krai Characters
@@ -134,32 +136,104 @@ class Columbina extends CharacterBase {
     return buffs;
   })();
 
-  protected readonly formulaMap = {
-    "columbina-skill": {
-      label: { zh: "万古潮汐", en: "Eternal Tides" },
-      parts: [
-        {
-          formula: new DirectFormula(
-            this.constellation >= 3 ? 0.355 : 0.301,
-            { element: "Hydro", ability: "skill", reaction: "none" },
-            "hp"
-          ),
-        },
-      ],
-    },
-    "columbina-burst": {
-      label: { zh: "她的乡愁", en: "Moonlit Melancholy" },
-      parts: [
-        {
-          formula: new DirectFormula(
-            this.constellation >= 5 ? 0.685 : 0.58,
-            { element: "Hydro", ability: "burst", reaction: "none" },
-            "hp"
-          ),
-        },
-      ],
-    },
-  };
+  protected readonly formulaMap = (() => {
+    const isE13 = this.constellation >= 3;
+    const isQ13 = this.constellation >= 5;
+
+    const eInitMult = isE13 ? 0.355 : 0.301;
+    const eRippleMult = isE13 ? 0.199 : 0.168;
+
+    let eInterferenceMult = 0;
+    let eInterferenceHits = 1;
+    let eInterferenceElement: Element = "Electro";
+    let eInterferenceReaction: ReactionType = "lunarCharged";
+
+    if (this.o === "lunarCharged") {
+      eInterferenceMult = isE13 ? 0.1 : 0.0847;
+      eInterferenceElement = "Electro";
+      eInterferenceReaction = "lunarCharged";
+    } else if (this.o === "lunarBloom") {
+      eInterferenceMult = isE13 ? 0.0299 : 0.0253;
+      eInterferenceHits = 5;
+      eInterferenceElement = "Dendro";
+      eInterferenceReaction = "lunarBloom";
+    } else if (this.o === "lunarCrystallize") {
+      eInterferenceMult = isE13 ? 0.1875 : 0.1588;
+      eInterferenceElement = "Geo";
+      eInterferenceReaction = "lunarCrystallize";
+    }
+
+    const qMult = isQ13 ? 0.685 : 0.58;
+
+    return {
+      "columbina-charge": {
+        label: { zh: "A 月露涤荡", en: "A Moondew Cleanse" },
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              0.0272,
+              { element: "Dendro", ability: "charge", reaction: "lunarBloom" },
+              "hp"
+            ),
+            hits: 3,
+          },
+        ],
+      },
+      "columbina-skill": {
+        label: { zh: "E 万古潮汐", en: "E Eternal Tides" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eInitMult,
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
+      "columbina-skill-ripple": {
+        label: { zh: "E 引力涟漪持续伤害", en: "E Gravity Ripple" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eRippleMult,
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
+      "columbina-skill-interference": {
+        label: { zh: "E 引力干涉", en: "E Gravity Interference" },
+        parts: [
+          {
+            formula: new LunarDirectFormula(
+              eInterferenceMult,
+              {
+                element: eInterferenceElement,
+                ability: "skill",
+                reaction: eInterferenceReaction,
+              },
+              "hp"
+            ),
+            hits: eInterferenceHits,
+          },
+        ],
+      },
+      "columbina-burst": {
+        label: { zh: "Q 她的乡愁", en: "Q Moonlit Melancholy" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              qMult,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("nefer")
@@ -208,7 +282,7 @@ class Nefer extends CharacterBase {
     const qEmMult = this.constellation >= 5 ? 23.868 : 20.218;
     return {
       "nefer-shades": {
-        label: { zh: "幻戏虚影(3段)", en: "Phantasm Shades (3 hits)" },
+        label: { zh: "E 幻戏虚影(3段)", en: "E Phantasm Shades (3 hits)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -221,7 +295,7 @@ class Nefer extends CharacterBase {
         ],
       },
       "nefer-burst": {
-        label: { zh: "真眸幻戏(全段)", en: "True Eye's Phantasm (Full)" },
+        label: { zh: "Q 真眸幻戏(全段)", en: "Q True Eye's Phantasm (Full)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -319,11 +393,11 @@ class Flins extends CharacterBase {
     };
     return {
       "flins-spearstorm": {
-        label: { zh: "北国枪阵", en: "Northland Spearstorm" },
+        label: { zh: "E 北国枪阵", en: "E Northland Spearstorm" },
         parts: [{ formula: new DirectFormula(spearstormMult, skillTag) }],
       },
       "flins-burst-total": {
-        label: { zh: "旧仪·夜客致访", en: "Ancient Ritual Total" },
+        label: { zh: "Q 旧仪·夜客致访(总计)", en: "Q Ancient Ritual Total" },
         parts: [
           // Initial Electro DMG
           { formula: new DirectFormula(qInitMult, burstTag) },
@@ -332,7 +406,7 @@ class Flins extends CharacterBase {
         ],
       },
       "flins-thunderous": {
-        label: { zh: "雷霆交响", en: "Thunderous Symphony" },
+        label: { zh: "Q 雷霆交响", en: "Q Thunderous Symphony" },
         parts: [{ formula: new LunarFormula(1.0, lunarTag) }],
       },
     };
@@ -411,9 +485,14 @@ class Lauma extends CharacterBase {
     const pressMult = this.constellation >= 5 ? 2.584 : 2.189;
     const sanctAtkMult = this.constellation >= 5 ? 2.04 : 1.728;
     const sanctEmMult = this.constellation >= 5 ? 4.08 : 3.456;
+
+    const hold1Mult = this.constellation >= 5 ? 3.359 : 2.845;
+    const hold2Mult = this.constellation >= 5 ? 3.23 : 2.736;
+    const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
+
     return {
       "lauma-press": {
-        label: { zh: "狩猎祷歌", en: "Hymn of Hunting" },
+        label: { zh: "E 狩猎祷歌", en: "E Hymn of Hunting" },
         parts: [
           {
             formula: new DirectFormula(pressMult, {
@@ -425,7 +504,7 @@ class Lauma extends CharacterBase {
         ],
       },
       "lauma-sanctuary": {
-        label: { zh: "霜林圣域(单次)", en: "Frostgrove Sanctuary (×1)" },
+        label: { zh: "E 霜林圣域(单次)", en: "E Frostgrove Sanctuary (×1)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -437,6 +516,61 @@ class Lauma extends CharacterBase {
           },
         ],
       },
+      ...(hasHydro
+        ? {
+            "lauma-hold": {
+              label: {
+                zh: "【如有水队友】E长按伤害",
+                en: "E Hold DMG (3 Verdant Dews)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(hold1Mult, {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                },
+                {
+                  formula: new DirectFormula(
+                    0,
+                    {
+                      element: "Dendro",
+                      ability: "skill",
+                      reaction: "lunarBloom",
+                    },
+                    "atk",
+                    { key: "em", multiplier: hold2Mult * 3 }
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
+      ...(this.constellation >= 6
+        ? {
+            "lauma-c6-normal": {
+              label: {
+                zh: "【C6】普攻1段伤害",
+                en: "C6 Normal 1-Hit DMG",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    0,
+                    {
+                      element: "Dendro",
+                      ability: "normal",
+                      reaction: "lunarBloom",
+                    },
+                    "atk",
+                    { key: "em", multiplier: 1.5 }
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -486,7 +620,7 @@ class Ineffa extends CharacterBase {
     const qMult = this.constellation >= 5 ? 14.382 : 12.182;
     return {
       "ineffa-birgitta": {
-        label: { zh: "薇尔琪塔放电(×10)", en: "Birgitta Discharge (×10)" },
+        label: { zh: "E 薇尔琪塔放电(×10)", en: "E Birgitta Discharge (×10)" },
         parts: [
           {
             formula: new DirectFormula(dischargeMult, {
@@ -499,7 +633,7 @@ class Ineffa extends CharacterBase {
         ],
       },
       "ineffa-burst": {
-        label: { zh: "至高律令", en: "Cyclonic Exterminator" },
+        label: { zh: "Q 至高律令", en: "Q Cyclonic Exterminator" },
         parts: [
           {
             formula: new DirectFormula(qMult, {

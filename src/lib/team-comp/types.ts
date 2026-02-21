@@ -24,7 +24,6 @@ export type StatKey =
   | "reactionCd" // reaction CRIT DMG §8.8 (replaces ${ReactionType}Cd, separate from cd)
   | "atkSpd%" // Attack Speed Bonus
   // Enemy debuff / modifier stats
-  | "dmgTaken%" // enemy DMG Taken Increase — additive with DMG Bonus zone
   | "defReduction%"
   | "defIgnore%"
   | "resReduction%";
@@ -62,6 +61,7 @@ export type BuffReceiverType =
   | "self"
   | "selfOnField"
   | "selfOffField"
+  | "otherOnField"
   | "onField"
   | "team";
 
@@ -166,19 +166,94 @@ export type ReactionType =
 /** Bilingual label used for formula entries, option controls, etc. */
 export type I18nLabel = { zh: string; en: string };
 
-/** Output of a single DamageFormula.calc() invocation. */
-export type DamagePart = {
-  /** Named components for UI display (e.g., { baseDmg: 8678, dmgBonusMult: 2.68, ... }) */
-  components: Record<string, number>;
-  /** The computed damage for this single formula */
+/** Aggregated result for a formulaId — may combine multiple formulas with hit counts. */
+export type DamageResult = {
+  parts: { damage: number; hits: number }[];
+  /** Σ(damage × hits) */
+  totalDamage: number;
+};
+
+// ─── Display Types (cold path — not used by optimizer) ───
+
+/**
+ * Formula template identifier. Each value maps 1:1 to a UI renderer
+ * component that knows the equation structure for that formula type.
+ */
+export type FormulaTemplate =
+  | "direct"
+  | "amplify"
+  | "catalyze"
+  | "transform"
+  | "lunar"
+  | "lunarDirect";
+
+/**
+ * One formula part's structured display data.
+ * Produced by DamageFormula.display(), consumed by UI template renderers.
+ */
+export type DisplayPart = {
+  template: FormulaTemplate;
+  /** Stat values read from the StatSheet — keys serve as cross-highlight targets */
+  statValues: Partial<Record<StatKey, number>>;
+  /** Formula-specific numeric coefficients for the template renderer
+   *  (e.g. reactionCoeff, emCoeff, defCoeff). Keys are well-known per template. */
+  params: Record<string, number>;
+  /** Which StatKeys the formula scales off of (primary + optional extra) */
+  scalingKeys: StatKey[];
+  /** Talent/scaling multipliers, 1:1 with scalingKeys */
+  scalingMulti: number[];
   damage: number;
 };
 
-/** Aggregated result for a formulaId — may combine multiple formulas with hit counts. */
-export type DamageResult = {
-  parts: { part: DamagePart; hits: number }[];
-  /** Σ(part.damage × hits) */
+/** StatEntry augmented with an optional cap for scaling buff display. */
+export type ResolvedStatEntry = StatEntry & {
+  cap?: number;
+  inputKey?: StatKey;
+};
+
+/** A single buff, pre-resolved for display. */
+export type ResolvedBuff = {
+  source: BuffSource;
+  /**
+   * The ID of the character who provided this buff.
+   * Undefined for team resonance buffs.
+   */
+  providerCharId?: string;
+  target: BuffTarget;
+  /** Whether this buff contributed to the calc target's stat sheet */
+  active: boolean;
+  /** Entries always present on this buff */
+  staticEntries: StatEntry[];
+  /** Entries evaluated at post-stats time, with per-entry caps. Empty for non-scaling buffs. */
+  dynamicEntries: ResolvedStatEntry[];
+};
+
+/**
+ * Full display payload returned by TeamBuild.getDisplayResult().
+ * Single entry point for all UI display needs — formulas, buffs, stats.
+ */
+export type DisplayResult = {
+  // ── Formula ──
+  parts: DisplayPart[];
   totalDamage: number;
+
+  // ── Buffs ──
+  buffs: ResolvedBuff[];
+
+  // ── Stats (all keyed by charId, full team) ──
+
+  /** Out-of-combat stats: base + static buffs + artifacts, BEFORE dynamic buffs.
+   *  Comparable to in-game character screen. */
+  idleStats: Record<string, Partial<Record<StatKey, number>>>;
+
+  /** In-combat stats: after ALL buffs applied.
+   *  These are the actual values consumed by formulas. */
+  combatStats: Record<string, Partial<Record<StatKey, number>>>;
+
+  /** Relative damage gain (fractional, e.g. 0.023 = 2.3%) for +1 avg 5★ substat roll.
+   *  Calc target: filtered by stat keys used in formula parts.
+   *  Teammates: filtered by inputKeys of their scaling buffs that affect calc target. */
+  marginalGains: Record<string, Partial<Record<StatKey, number>>>;
 };
 
 // ─── Team ───

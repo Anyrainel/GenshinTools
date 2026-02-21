@@ -189,7 +189,22 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
   const skills = t.skills(characterId);
   const passives = t.passives(characterId);
   const constellations = t.constellations(characterId);
-  const glossary = t.glossary(characterId);
+  const rawGlossary = t.glossary(characterId);
+
+  const glossary = useMemo(() => {
+    if (!rawGlossary) return null;
+    const grouped = new Map<string, (typeof rawGlossary)[0]>();
+    for (const entry of rawGlossary) {
+      if (grouped.has(entry.descHtml)) {
+        const existing = grouped.get(entry.descHtml)!;
+        existing.name = `${existing.name}, ${entry.name}`;
+      } else {
+        grouped.set(entry.descHtml, { ...entry });
+      }
+    }
+    return Array.from(grouped.values());
+  }, [rawGlossary]);
+
   const unreleased = character?.releaseDate === null;
   const owned = useOwnershipStore((s) => s.isOwned("character", characterId));
   const effectiveOwned = !unreleased && owned;
@@ -642,7 +657,7 @@ export function CharacterArchiveView() {
     >
       <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
       <div className="flex-1 min-h-0 flex flex-row gap-3 pb-3">
-        <aside className="w-1/3 max-w-[16rem] shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1">
+        <aside className="w-1/3 max-w-[14rem] shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1">
           <CharacterListPanel
             characters={filteredCharacters}
             selectedId={selectedId}

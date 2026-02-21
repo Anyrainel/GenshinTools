@@ -3,8 +3,8 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { describe, expect, it } from "vitest";
-import goodMinimal from "../fixtures/good-minimal.json";
-import goodSample from "../fixtures/good-sample.json";
+import goodMinimal from "../../fixtures/good-minimal.json";
+import goodSample from "../../fixtures/good-sample.json";
 
 describe("convertGOODToAccountData", () => {
   describe("with sample GOOD data", () => {

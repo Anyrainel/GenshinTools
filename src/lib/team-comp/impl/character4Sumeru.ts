@@ -1,5 +1,9 @@
 import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
+import {
+  CatalyzeFormula,
+  DirectFormula,
+  TransformFormula,
+} from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
@@ -42,8 +46,41 @@ class Sethos extends CharacterBase {
     ),
   ];
 
-  // On-field Electro charged shot DPS — formula is primarily EM-based via P2
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = (() => {
+    const atkMult = this.constellation >= 3 ? 2.975 : 2.52;
+    const emMult = this.constellation >= 3 ? 2.859 : 2.422;
+    return {
+      "sethos-shadowpiercer": {
+        label: { zh: "贯影箭伤害", en: "Shadowpiercing Shot" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              atkMult,
+              { element: "Electro", ability: "charge", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: emMult }
+            ),
+          },
+        ],
+      },
+      "sethos-shadowpiercer-aggravate": {
+        label: {
+          zh: "贯影箭伤害(超激化)",
+          en: "Shadowpiercing Shot (Aggravate)",
+        },
+        parts: [
+          {
+            formula: new CatalyzeFormula(
+              atkMult,
+              { element: "Electro", ability: "charge", reaction: "aggravate" },
+              "atk",
+              { key: "em", multiplier: emMult }
+            ),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("kaveh")
@@ -62,7 +99,7 @@ class Kaveh extends CharacterBase {
     // Q: Bloom burst DMG bonus (team Dendro Cores)
     new StatBuff(
       cbs(this, ["Q"]),
-      { receiver: "team", filter: { reactions: ["bloom"] } },
+      { receiver: "team", filter: { reactions: ["bloom", "lunarBloom"] } },
       [
         {
           key: "reactionDmg%",
@@ -73,7 +110,7 @@ class Kaveh extends CharacterBase {
     // C4: Self-triggered Bloom DMG +60%
     new StaticSkillBuff(
       cbs(this, ["Q"], "C4"),
-      { receiver: "selfOnField", filter: { reactions: ["bloom"] } },
+      { receiver: "self", filter: { reactions: ["bloom", "lunarBloom"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "reactionDmg%", value: 0.6 }] : [])
     ),
@@ -98,13 +135,25 @@ class Kaveh extends CharacterBase {
         ],
       },
       "kaveh-burst": {
-        label: { zh: "繁绘隅穹", en: "Painted Dome" },
+        label: { zh: "Q 繁绘隅穹", en: "Q Painted Dome" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
+            }),
+          },
+        ],
+      },
+      "kaveh-core": {
+        label: { zh: "草原核伤害(含Q加成)", en: "Dendro Core DMG (w/ Q Buff)" },
+        parts: [
+          {
+            formula: new TransformFormula(0, {
+              element: "Dendro",
+              ability: "special",
+              reaction: "bloom",
             }),
           },
         ],
@@ -147,8 +196,23 @@ class Faruzan extends CharacterBase {
     ),
   ];
 
-  // Support — no damage formulas modeled
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = (() => {
+    const vortexMult = this.constellation >= 3 ? 2.295 : 1.944;
+    return {
+      "faruzan-vortex": {
+        label: { zh: "E 风压坍陷风涡", en: "E Pressurized Collapse Vortex" },
+        parts: [
+          {
+            formula: new DirectFormula(vortexMult, {
+              element: "Anemo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("layla")

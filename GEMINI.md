@@ -66,11 +66,9 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 You must use these to avoid explicit pipe (`|`) or redirect (`2>&1`) in the terminal:
 - `npm run type-check:head` / `lint:head` / `test:head` — Limits output to first 20 lines (avoids spam). Pass `-- N` to change (e.g. `npm run test:head -- 100`).
 - `npm run type-check:tail` / `lint:tail` / `test:tail` — Shows only the last 20 lines (error summaries). Pass `-- N` to change.
-- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 10 + last 10 lines (skips middle). Pass `-- N` to change.
+- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15 lines (skips middle). Pass `-- N` to change.
 - `npm run type-check:filter -- "Error"` / `lint:filter -- "Pattern"` / `test:filter -- "Pattern"` — Greps output for pattern.
   - Example: `npm run type-check:filter -- "character5.ts"` to find errors in a specific file.
-
-**ALWAYS use `npm run` scripts, NOT raw `npx` invocations.** The project scripts are configured to check both `src` and `tests` tsconfigs, etc.
 
 ## Development Rules
 

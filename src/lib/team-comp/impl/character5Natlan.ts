@@ -87,7 +87,7 @@ class Varesa extends CharacterBase {
     const qMult = this.constellation >= 3 ? 8.556 : 7.248;
     return {
       "varesa-plunge": {
-        label: { zh: "炽热激情高空坠地", en: "Fiery Passion High Plunge" },
+        label: { zh: "A 炽热激情高空坠地", en: "A Fiery Passion High Plunge" },
         parts: [
           {
             formula: new DirectFormula(naMult, {
@@ -99,7 +99,10 @@ class Varesa extends CharacterBase {
         ],
       },
       "varesa-kablam": {
-        label: { zh: "大火山崩落(下落伤害)", en: "Volcano Kablam (Plunge)" },
+        label: {
+          zh: "Q 大火山崩落(下落伤害)",
+          en: "Q Volcano Kablam (Plunge)",
+        },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -180,14 +183,56 @@ class Citlali extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // E Obsidian Tzitzimitl: Lv10 131.3%, Lv13 (C3+) 155.0%
+    const eBaseMult = this.constellation >= 3 ? 1.55 : 1.313;
+    // E Frostfall Storm: Lv10 30.6%, Lv13 (C3+) 36.2%
+    const eStormMult = this.constellation >= 3 ? 0.362 : 0.306;
     // Q Ice Storm: Lv10 967.7%, Lv13 (C5+) 1142.4%
     const qMult = this.constellation >= 5 ? 11.424 : 9.677;
+    // Q Spiritvessel Skull: Lv10 241.9%, Lv13 (C5+) 285.6%
+    const qSkullMult = this.constellation >= 5 ? 2.856 : 2.419;
     return {
+      "citlali-skill": {
+        label: { zh: "E 黑曜星魔", en: "E Obsidian Tzitzimitl" },
+        parts: [
+          {
+            formula: new DirectFormula(eBaseMult, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "citlali-skill-storm": {
+        label: { zh: "E 霜陨风暴", en: "E Frostfall Storm" },
+        parts: [
+          {
+            formula: new DirectFormula(eStormMult, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "citlali-burst": {
-        label: { zh: "冰风暴", en: "Ice Storm" },
+        label: { zh: "Q 冰风暴", en: "Q Ice Storm" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
+              element: "Cryo",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "citlali-burst-skull": {
+        label: { zh: "Q 宿灵之髑", en: "Q Spiritvessel Skull" },
+        parts: [
+          {
+            formula: new DirectFormula(qSkullMult, {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -244,16 +289,32 @@ class Mavuika extends CharacterBase {
 
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
   // + Fighting Spirit bonus: 200 × 2.9%/3.4% ATK = 580%/680% extra baseDmg
-  // Flamestrider Normal combo (5 hits): Lv10 686.1%, Lv13 (C5+) 831.4%
   protected readonly formulaMap = (() => {
-    const sunfellMult = this.constellation >= 3 ? 9.452 : 8.006;
-    const comboMult =
-      this.constellation >= 5
-        ? 1.372 + 1.416 + 1.676 + 1.67 + 2.18
-        : 1.132 + 1.169 + 1.383 + 1.378 + 1.799;
+    const eLvl = this.constellation >= 5 ? 13 : 10;
+    const qLvl = this.constellation >= 3 ? 13 : 10;
+
+    let sunfellMult = qLvl === 13 ? 9.452 : 8.006;
+    let n1Mult = eLvl === 13 ? 1.372 : 1.132;
+    let caMult = eLvl === 13 ? 3.296 : 2.72;
+    const sprintMult = eLvl === 13 ? 1.936 : 1.598;
+
+    const sunfellFs = qLvl === 13 ? 6.8 : 5.8;
+    const nFs = qLvl === 13 ? 1.24 : 1.02;
+    const caFs = qLvl === 13 ? 2.48 : 2.04;
+
+    sunfellMult += sunfellFs;
+    n1Mult += nFs;
+    caMult += caFs;
+
+    if (this.constellation >= 2) {
+      sunfellMult += 1.2;
+      n1Mult += 0.6;
+      caMult += 0.9;
+    }
+
     return {
       "mavuika-sunfell": {
-        label: { zh: "坠日斩", en: "Sunfell Slice" },
+        label: { zh: "Q 满战意坠日斩", en: "Q Sunfell Slice (Max Spirit)" },
         parts: [
           {
             formula: new DirectFormula(sunfellMult, {
@@ -264,13 +325,27 @@ class Mavuika extends CharacterBase {
           },
         ],
       },
-      "mavuika-flamestrider": {
-        label: { zh: "驰轮车连击", en: "Flamestrider Normal Combo" },
+      "mavuika-combo": {
+        label: { zh: "满战意Q后 A1+重击+冲刺", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
-            formula: new DirectFormula(comboMult, {
+            formula: new DirectFormula(n1Mult, {
               element: "Pyro",
               ability: "normal",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(caMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(sprintMult, {
+              element: "Pyro",
+              ability: "skill",
               reaction: "none",
             }),
           },
@@ -313,37 +388,69 @@ class Chasca extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Shining Shadowhunt Shell: Lv10 299.8%, Lv13 (C3+) 354%
-    // 6 shells per volley, assumed all Shining with 3 eligible types
-    const shellMult = this.constellation >= 3 ? 3.54 : 2.998;
-    const shellCount = Math.min(3 + this.eligibleTypes, 6);
+    const shellMult = this.constellation >= 3 ? 1.037 : 0.878;
+    const shiningMult = this.constellation >= 3 ? 3.54 : 2.998;
+    const shiningCount =
+      this.eligibleTypes === 0
+        ? 0
+        : this.eligibleTypes + (this.constellation >= 1 ? 2 : 1);
+    const normalCount = 6 - shiningCount;
     // Q Radiant Soulseeker Shell: Lv10 372.2%, Lv13 (C5+) 439.4%
     const qMult = this.constellation >= 5 ? 4.394 : 3.722;
+    // Q Soulseeker Shell: Lv10 186.1%, Lv13 (C5+) 219.7%
+    const qNormMult = this.constellation >= 5 ? 2.197 : 1.861;
+    // Q Galesplitting: Lv10 158.4%, Lv13 (C5+) 187%
+    const qInitMult = this.constellation >= 5 ? 1.87 : 1.584;
+    const qRadiantCount = this.eligibleTypes === 0 ? 0 : this.eligibleTypes * 2;
+    const qNormalCount = 6 - qRadiantCount;
+
+    const baseTag = {
+      element: "Anemo" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const qTag = {
+      element: "Anemo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+
     return {
       "chasca-shining-volley": {
-        label: { zh: "焕光追影弹齐射", en: "Shining Shell Volley" },
+        label: {
+          zh: "E 一轮6枚追影弹直伤",
+          en: "E 6 Shadowhunt Shells Volley",
+        },
         parts: [
-          {
-            formula: new DirectFormula(shellMult, {
-              element: "Anemo",
-              ability: "charge",
-              reaction: "none",
-            }),
-            hits: shellCount,
-          },
+          ...Array(normalCount)
+            .fill(0)
+            .map(() => ({
+              formula: new DirectFormula(shellMult, baseTag),
+            })),
+          ...Array(shiningCount)
+            .fill(0)
+            .map(() => ({
+              formula: new DirectFormula(shiningMult, baseTag),
+            })),
         ],
       },
       "chasca-burst": {
-        label: { zh: "溢光索魂弹", en: "Radiant Soulseeker Shells" },
+        label: {
+          zh: "Q 裂风+6枚索魂弹(爆发)",
+          en: "Q Galesplitting + 6 Soulseeker Shells",
+        },
         parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Anemo",
-              ability: "burst",
-              reaction: "none",
-            }),
-            hits: 6,
-          },
+          { formula: new DirectFormula(qInitMult, qTag) },
+          ...Array(qNormalCount)
+            .fill(0)
+            .map(() => ({
+              formula: new DirectFormula(qNormMult, qTag),
+            })),
+          ...Array(qRadiantCount)
+            .fill(0)
+            .map(() => ({
+              formula: new DirectFormula(qMult, qTag),
+            })),
         ],
       },
     };
@@ -439,7 +546,7 @@ class Xilonen extends CharacterBase {
     const qMult = this.constellation >= 5 ? 5.977 : 5.063;
     return {
       "xilonen-normal": {
-        label: { zh: "刃轮巡猎·全套四闪", en: "Blade Roller N4 Combo" },
+        label: { zh: "A 刃轮巡猎·全套四闪", en: "A Blade Roller N4 Combo" },
         parts: [
           {
             formula: new DirectFormula(
@@ -451,7 +558,7 @@ class Xilonen extends CharacterBase {
         ],
       },
       "xilonen-skill": {
-        label: { zh: "音火锻淬·突进伤害", en: "Yohual's Scratch (Rush)" },
+        label: { zh: "E 音火锻淬·突进伤害", en: "E Yohual's Scratch (Rush)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -467,7 +574,7 @@ class Xilonen extends CharacterBase {
         ],
       },
       "xilonen-burst": {
-        label: { zh: "豹烈律动", en: "Ocelotlicue Point!" },
+        label: { zh: "Q 豹烈律动", en: "Q Ocelotlicue Point!" },
         parts: [
           {
             formula: new DirectFormula(
@@ -506,7 +613,7 @@ class Mualani extends CharacterBase {
     const burstMult = this.constellation >= 5 ? 1.242 : 1.052;
     return {
       "mualani-bite": {
-        label: { zh: "巨浪鲨鲨撕咬", en: "Sharky's Surging Bite" },
+        label: { zh: "A 巨浪鲨鲨撕咬", en: "A Sharky's Surging Bite" },
         parts: [
           {
             formula: new DirectFormula(
@@ -523,7 +630,7 @@ class Mualani extends CharacterBase {
         ],
       },
       "mualani-bite-vape": {
-        label: { zh: "巨浪撕咬(蒸发)", en: "Surging Bite (Vape)" },
+        label: { zh: "A 巨浪撕咬(蒸发)", en: "A Surging Bite (Vape)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -540,7 +647,7 @@ class Mualani extends CharacterBase {
         ],
       },
       "mualani-burst": {
-        label: { zh: "爆瀑飞弹", en: "Boomsharka-laka" },
+        label: { zh: "Q 爆瀑飞弹", en: "Q Boomsharka-laka" },
         parts: [
           {
             formula: new DirectFormula(
@@ -602,7 +709,7 @@ class Kinich extends CharacterBase {
     const qBreath = this.constellation >= 5 ? 2.566 : 2.173;
     return {
       "kinich-cannon": {
-        label: { zh: "迴猎贯鳞炮", en: "Scalespiker Cannon" },
+        label: { zh: "E 迴猎贯鳞炮", en: "E Scalespiker Cannon" },
         parts: [
           {
             formula: new DirectFormula(cannonMult, {
@@ -614,7 +721,10 @@ class Kinich extends CharacterBase {
         ],
       },
       "kinich-cannon-spread": {
-        label: { zh: "迴猎贯鳞炮(蔓激化)", en: "Scalespiker Cannon (Spread)" },
+        label: {
+          zh: "E 迴猎贯鳞炮(蔓激化)",
+          en: "E Scalespiker Cannon (Spread)",
+        },
         parts: [
           {
             formula: new DirectFormula(cannonMult, {
@@ -626,7 +736,7 @@ class Kinich extends CharacterBase {
         ],
       },
       "kinich-burst": {
-        label: { zh: "圣龙致意", en: "Dragonlord (init + breath ×5)" },
+        label: { zh: "Q 圣龙致意", en: "Q Dragonlord (init + breath ×5)" },
         parts: [
           {
             formula: new DirectFormula(qInit, {

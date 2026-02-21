@@ -36,3 +36,5 @@ blob-report/
 
 # Wrangler (Cloudflare)
 .wrangler/
+
+coverage/

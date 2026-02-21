@@ -4,8 +4,10 @@ import { TeamCard } from "@/components/team-comp/TeamCard";
 import { TeamOptDetail } from "@/components/team-comp/TeamOptDetail";
 import { useLanguage } from "@/contexts/LanguageContext";
 import "@/lib/team-comp";
+import type { ControlHandle } from "@/components/layout/AppBar";
+import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Download, Upload } from "lucide-react";
+import { Download, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function TeamCompPage() {
@@ -20,7 +22,10 @@ export default function TeamCompPage() {
   const importTeams = useTeamStore((state) => state.importTeams);
   const exportTeams = useTeamStore((state) => state.exportTeams);
 
+  const clearTeams = useTeamStore((state) => state.clearTeams);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const clearRef = useRef<ControlHandle>(null);
 
   useEffect(() => {
     // Ensure we always have an empty card at the end
@@ -95,8 +100,15 @@ export default function TeamCompPage() {
           label: t.ui("app.export"),
           onTrigger: handleExport,
         },
+        {
+          key: "clear",
+          icon: Trash2,
+          label: t.ui("app.clear"),
+          onTrigger: () => clearRef.current?.open(),
+        },
       ]}
     >
+      <ClearAllControl ref={clearRef} onConfirm={clearTeams} />
       <input
         type="file"
         accept=".json"

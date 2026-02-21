@@ -6,9 +6,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, charactersById } from "@/data/constants";
+import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { AlertTriangle } from "lucide-react";
 import { detectEquippedSets, setsMatch } from "./teamOptUtils";
@@ -39,36 +38,8 @@ export function ArtifactSlotGrid({
   const hasMismatch = goalConfig && !setsMatch(goalConfig, equipped);
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-2 p-3 rounded-lg border bg-black/15",
-        isTarget ? "border-primary/40 bg-primary/5" : "border-border/15"
-      )}
-    >
-      <div className="flex items-center gap-2">
-        <div className="shrink-0 rounded-full border border-border/20 overflow-hidden w-6 h-6 bg-secondary">
-          <img
-            src={getAssetUrl(charactersById[charId]?.imagePath)}
-            alt={charId}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <span className="font-bold text-xs truncate text-foreground/80">
-          {t.character(charId)}
-          {isTarget && <span className="text-primary/70 ml-1">★</span>}
-        </span>
-        {hasMismatch && (
-          <Tooltip delayDuration={200}>
-            <TooltipTrigger asChild>
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-xs max-w-[200px]">
-              Equipped set differs from Team Roster goal
-            </TooltipContent>
-          </Tooltip>
-        )}
-      </div>
-      <div className="grid grid-cols-5 gap-1">
+    <div className="flex items-center gap-2">
+      <div className="grid grid-cols-5 gap-1.5 flex-1">
         {ARTIFACT_SLOTS.map((slot) => {
           const art = artifactsObj[slot];
           if (!art)
@@ -98,6 +69,18 @@ export function ArtifactSlotGrid({
           );
         })}
       </div>
+      {hasMismatch && (
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            <div className="bg-amber-500/10 p-1.5 rounded flex items-center justify-center shrink-0 h-10 w-10 border border-amber-500/20">
+              <AlertTriangle className="w-5 h-5 text-amber-400" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs max-w-[200px]">
+            Equipped set differs from Team Roster goal
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 }

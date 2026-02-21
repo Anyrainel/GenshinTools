@@ -34,8 +34,8 @@ describe("fuzzyMatch", () => {
     expect(fuzzyMatch("攻击", "普通攻击伤害提升")).toBe(true);
   });
 
-  it("matches Chinese characters with gaps", () => {
-    expect(fuzzyMatch("攻伤", "攻击伤害提升")).toBe(true);
+  it("rejects consecutive Chinese characters with gaps", () => {
+    expect(fuzzyMatch("攻伤", "攻击伤害提升")).toBe(false);
   });
 });
 

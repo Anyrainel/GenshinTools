@@ -1,5 +1,10 @@
 import type { Element } from "@/data/types";
-
+import {
+  ScalingBuff,
+  ScalingMultiBuff,
+  ScalingSkillBuff,
+  deduplicateBuffs,
+} from "./damageBuffs";
 import {
   type ArtifactHalfSetBase,
   type ArtifactSetBase,
@@ -13,13 +18,22 @@ import {
   createCharacter,
   createWeapon,
 } from "./damageModels";
+import { AVG_SUBSTAT_ROLL } from "./inspection";
 import type {
+  BuffSource,
+  BuffTarget,
   CalcContext,
   CharCompConfig,
   CombatOpts,
   DamageResult,
+  DamageTag,
+  DisplayPart,
+  DisplayResult,
   I18nLabel,
+  ResolvedBuff,
+  ResolvedStatEntry,
   StatEntry,
+  StatKey,
 } from "./types";
 
 export { TeamMeta };
@@ -95,6 +109,13 @@ export class TeamResonance {
   }
 }
 
+export type EvaluatedDynamicBuff = {
+  buff: StatBuff;
+  source: BuffSource;
+  providerCharId: string;
+  entries: StatEntry[];
+};
+
 // ═══════════════════════════════════════════════════════════════
 // CharBuild
 // ═══════════════════════════════════════════════════════════════
@@ -166,9 +187,10 @@ export class CharBuild {
    * Target-dependent buffs (onField, selfOnField) are deferred to getTeamStats.
    */
   applyStaticBuffs(teamStaticBuffs: StatBuff[], selfCharId: string): void {
-    const applicable = teamStaticBuffs.filter((b) =>
+    let applicable = teamStaticBuffs.filter((b) =>
       isBuffApplicable(b, selfCharId, null)
     );
+    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
     this.innerStatSheet = this.innerStatSheet.apply(applicable);
   }
 
@@ -182,17 +204,32 @@ export class CharBuild {
   ): StatSheet {
     const merged = this.innerStatSheet.merge(artifactStats);
     if (targetDependentBuffs.length === 0) return merged;
-    return merged.apply(targetDependentBuffs);
+    const applicable = deduplicateBuffs(
+      targetDependentBuffs,
+      (b) => b.staticBuffs
+    );
+    return merged.apply(applicable);
   }
 
   /** Collect this build's dynamic buffs, evaluated against pre-stats */
   getDynamicBuffs(
+    selfCharId: string,
     selfPreStats: StatSheet,
     teamPreStats: StatSheet[]
-  ): StatBuff[] {
-    return this.getAllBuffs().filter(
-      (b) => b.dynamicBuffs(selfPreStats, teamPreStats).length > 0
-    );
+  ): EvaluatedDynamicBuff[] {
+    const results: EvaluatedDynamicBuff[] = [];
+    for (const b of this.getAllBuffs()) {
+      const entries = b.dynamicBuffs(selfPreStats, teamPreStats);
+      if (entries.length > 0) {
+        results.push({
+          buff: b,
+          source: b.source,
+          providerCharId: selfCharId,
+          entries,
+        });
+      }
+    }
+    return results;
   }
 
   /**
@@ -201,15 +238,19 @@ export class CharBuild {
    */
   getPostStats(
     selfPreStats: StatSheet,
-    teamDynamicBuffs: StatBuff[],
+    teamDynamicBuffs: EvaluatedDynamicBuff[],
     selfCharId: string,
-    calcTargetId: string,
-    teamPreStats: StatSheet[]
+    calcTargetId: string
   ): StatSheet {
-    const applicable = teamDynamicBuffs.filter((b) =>
-      isBuffApplicable(b, selfCharId, calcTargetId)
+    let applicable = teamDynamicBuffs.filter((b) =>
+      isBuffApplicable(b.buff, selfCharId, calcTargetId)
     );
-    return selfPreStats.applyDynamic(applicable, selfPreStats, teamPreStats);
+    applicable = deduplicateBuffs(applicable, (b) => b.entries);
+
+    const mappedToStatic = applicable.map(
+      (b) => new StatBuff(b.buff.source, b.buff.target, b.entries)
+    );
+    return selfPreStats.apply(mappedToStatic);
   }
 
   getFormulaIds(): Record<string, I18nLabel> {
@@ -229,6 +270,25 @@ export class CharBuild {
       ctx
     );
   }
+
+  /** Cold path: produce structured display data for a formula. */
+  getDisplayParts(
+    formulaId: string,
+    selfPostStats: StatSheet,
+    ctx: CalcContext
+  ): { parts: DisplayPart[]; totalDamage: number } {
+    const entry = this.charBase.getFormulaEntry(formulaId);
+    if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
+    const displayParts: DisplayPart[] = [];
+    let totalDamage = 0;
+    for (const { formula, hits } of entry.parts) {
+      const dp = formula.display(selfPostStats, this.charBase.charLevel, ctx);
+      const h = hits ?? 1;
+      totalDamage += dp.damage * h;
+      displayParts.push(dp);
+    }
+    return { parts: displayParts, totalDamage };
+  }
 }
 
 /**
@@ -239,7 +299,7 @@ export class CharBuild {
  * @param calcTargetId The character being optimized (on-field).
  *                     null = target-independent filtering only (construction phase).
  */
-function isBuffApplicable(
+export function isBuffApplicable(
   buff: StatBuff,
   selfCharId: string,
   calcTargetId: string | null
@@ -266,6 +326,11 @@ function isBuffApplicable(
       // During construction (calcTargetId=null), skip — deferred to getTeamStats.
       if (calcTargetId === null) return false;
       return selfCharId === calcTargetId;
+
+    case "otherOnField":
+      // Applies if calc target is not provider
+      if (calcTargetId === null) return false;
+      return selfCharId !== buffOwnerId && selfCharId === calcTargetId;
 
     case "team":
       return true;
@@ -355,10 +420,10 @@ export class TeamBuild {
 
     // Phase 3: Collect dynamic buffs from all members
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs: StatBuff[] = [];
+    const allDynamicBuffs: EvaluatedDynamicBuff[] = [];
     for (const [id, build] of Object.entries(this.charBuilds)) {
       allDynamicBuffs.push(
-        ...build.getDynamicBuffs(preStats[id]!, teamPreStatsArr)
+        ...build.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
       );
     }
 
@@ -369,8 +434,7 @@ export class TeamBuild {
         preStats[id]!,
         allDynamicBuffs,
         id,
-        calcTargetId,
-        teamPreStatsArr
+        calcTargetId
       );
     }
 
@@ -402,5 +466,284 @@ export class TeamBuild {
       teamStatsArr,
       ctx
     );
+  }
+
+  /**
+   * Cold-path display entry point.
+   * Produces all data needed for UI display: formula breakdown, buffs, stats, marginal gains.
+   */
+  getDisplayResult(
+    charId: string,
+    formulaId: string,
+    artifactStats: Record<string, StatSheet>,
+    ctx: CalcContext
+  ): DisplayResult {
+    const build = this.charBuilds[charId];
+    if (!build) throw new Error(`No CharBuild for character: ${charId}`);
+
+    // ── Stat resolution (mirrors getTeamStats but captures intermediate phases) ──
+    const targetDependent: Record<string, StatBuff[]> = {};
+    for (const cid of Object.keys(this.charBuilds)) {
+      targetDependent[cid] = this.allStaticBuffs.filter((b) => {
+        const r = b.target.receiver;
+        if (r !== "onField" && r !== "selfOnField") return false;
+        return isBuffApplicable(b, cid, charId);
+      });
+    }
+
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      preStats[id] = cb.getPreStats(
+        artifactStats[id] ?? new StatSheet([]),
+        targetDependent[id]!
+      );
+    }
+
+    const teamPreStatsArr = Object.values(preStats);
+    const allDynamicBuffs: EvaluatedDynamicBuff[] = [];
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      allDynamicBuffs.push(
+        ...cb.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
+      );
+    }
+
+    const postStats: Record<string, StatSheet> = {};
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      postStats[id] = cb.getPostStats(
+        preStats[id]!,
+        allDynamicBuffs,
+        id,
+        charId
+      );
+    }
+
+    // ── Formula display ──
+    const entry = build.charBase.getFormulaEntry(formulaId);
+    let commonTag: DamageTag | undefined;
+    if (entry && entry.parts.length > 0) {
+      commonTag = entry.parts[0].formula.tag;
+    }
+
+    const { parts, totalDamage } = build.getDisplayParts(
+      formulaId,
+      postStats[charId]!,
+      ctx
+    );
+
+    // ── Buff resolution ──
+    const buffs = this.resolveBuffs(charId, preStats, teamPreStatsArr);
+
+    // ── Stats (full team) ──
+    const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
+    const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
+    for (const cid of Object.keys(this.charBuilds)) {
+      idleStats[cid] = preStats[cid]!.getAll();
+      combatStats[cid] = postStats[cid]!.getAll(
+        cid === charId ? commonTag : undefined
+      );
+    }
+
+    // ── Marginal gains ──
+    const marginalGains = this.computeMarginalGains(
+      charId,
+      formulaId,
+      artifactStats,
+      ctx,
+      totalDamage,
+      parts
+    );
+
+    return {
+      parts,
+      totalDamage,
+      buffs,
+      idleStats,
+      combatStats,
+      marginalGains,
+    };
+  }
+
+  /** Resolve all buffs into active/inactive ResolvedBuff[] for display. */
+  private resolveBuffs(
+    calcTargetId: string,
+    preStats: Record<string, StatSheet>,
+    teamPreStatsArr: StatSheet[]
+  ): ResolvedBuff[] {
+    const result: ResolvedBuff[] = [];
+
+    // Determine tie-breakers for calcTargetId
+    let applicableStatic = this.allStaticBuffs.filter((b) =>
+      isBuffApplicable(b, calcTargetId, calcTargetId)
+    );
+    applicableStatic = deduplicateBuffs(applicableStatic, (b) => b.staticBuffs);
+    const activeStaticSet = new Set<StatBuff>(applicableStatic);
+
+    const allDynamic: EvaluatedDynamicBuff[] = [];
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      allDynamic.push(
+        ...cb.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
+      );
+    }
+    let applicableDynamic = allDynamic.filter((b) =>
+      isBuffApplicable(b.buff, calcTargetId, calcTargetId)
+    );
+    applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
+    const activeDynamicSet = new Set<StatBuff>(
+      applicableDynamic.map((e) => e.buff)
+    );
+
+    for (const [ownerId, cb] of Object.entries(this.charBuilds)) {
+      for (const buff of cb.getAllBuffs()) {
+        const applicable = isBuffApplicable(buff, calcTargetId, calcTargetId);
+
+        // Resolve dynamic entries with per-entry caps
+        let dynamicEntries: ResolvedStatEntry[] = [];
+        let active = false;
+
+        if (applicable) {
+          const ownerStats = preStats[ownerId]!;
+          const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+          if (raw.length > 0) {
+            active = activeDynamicSet.has(buff);
+            dynamicEntries = raw.map((entry) => {
+              const resolved: ResolvedStatEntry = { ...entry };
+              // Extract per-entry cap and input key from known scaling buff types
+              if (
+                buff instanceof ScalingBuff ||
+                buff instanceof ScalingSkillBuff
+              ) {
+                const cap = (buff as { cap?: number }).cap;
+                if (cap !== undefined) resolved.cap = cap;
+                resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+              } else if (buff instanceof ScalingMultiBuff) {
+                const cap = (buff as { cap?: number }).cap;
+                if (cap !== undefined) resolved.cap = cap;
+                resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+              }
+              return resolved;
+            });
+          } else {
+            active = activeStaticSet.has(buff);
+          }
+        }
+
+        result.push({
+          source: buff.source,
+          providerCharId: ownerId,
+          target: buff.target,
+          active,
+          staticEntries: buff.staticBuffs,
+          dynamicEntries,
+        });
+      }
+    }
+
+    // Also include resonance buffs
+    for (const buff of this.teamResonance.buffs) {
+      result.push({
+        source: buff.source,
+        target: buff.target,
+        active: true,
+        staticEntries: buff.staticBuffs,
+        dynamicEntries: [],
+      });
+    }
+
+    return result;
+  }
+
+  /** Compute marginal damage gains for +1 avg substat roll. */
+  private computeMarginalGains(
+    calcTargetId: string,
+    formulaId: string,
+    artifactStats: Record<string, StatSheet>,
+    ctx: CalcContext,
+    baseDamage: number,
+    displayParts: DisplayPart[]
+  ): Record<string, Partial<Record<StatKey, number>>> {
+    if (baseDamage === 0) return {};
+
+    const gains: Record<string, Partial<Record<StatKey, number>>> = {};
+
+    // For calc target: check stat keys used by the formula
+    const usedKeys = new Set<StatKey>();
+    for (const dp of displayParts) {
+      for (const key of Object.keys(dp.statValues) as StatKey[]) {
+        usedKeys.add(key);
+      }
+      for (const key of dp.scalingKeys) {
+        usedKeys.add(key);
+      }
+    }
+
+    // Filter to rollable stat keys only
+    const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
+    const targetRollable = rollableKeys.filter((k) => usedKeys.has(k));
+
+    if (targetRollable.length > 0) {
+      const charGains: Partial<Record<StatKey, number>> = {};
+      for (const key of targetRollable) {
+        const delta = AVG_SUBSTAT_ROLL[key];
+        if (!delta) continue;
+        const tweaked = { ...artifactStats };
+        tweaked[calcTargetId] = (
+          artifactStats[calcTargetId] ?? new StatSheet([])
+        ).withDelta(key, delta);
+        const newStats = this.getTeamStats(tweaked, calcTargetId);
+        const build = this.charBuilds[calcTargetId]!;
+        const newResult = build.getDamageResult(
+          formulaId,
+          newStats[calcTargetId]!,
+          Object.values(newStats),
+          ctx
+        );
+        charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
+      }
+      gains[calcTargetId] = charGains;
+    }
+
+    // For teammates: check inputKeys of their scaling buffs that affect calc target
+    for (const [cid, cb] of Object.entries(this.charBuilds)) {
+      if (cid === calcTargetId) continue;
+      const relevantKeys = new Set<StatKey>();
+      for (const buff of cb.getAllBuffs()) {
+        if (!isBuffApplicable(buff, calcTargetId, calcTargetId)) continue;
+        if (buff instanceof ScalingBuff || buff instanceof ScalingSkillBuff) {
+          const inputKey = (buff as { inputKey: StatKey }).inputKey;
+          relevantKeys.add(inputKey);
+        } else if (buff instanceof ScalingMultiBuff) {
+          const inputKey = (buff as { inputKey: StatKey }).inputKey;
+          relevantKeys.add(inputKey);
+        }
+      }
+
+      const teamRollable = rollableKeys.filter((k) => relevantKeys.has(k));
+      if (teamRollable.length === 0) continue;
+
+      const charGains: Partial<Record<StatKey, number>> = {};
+      for (const key of teamRollable) {
+        const delta = AVG_SUBSTAT_ROLL[key];
+        if (!delta) continue;
+        const tweaked = { ...artifactStats };
+        tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(
+          key,
+          delta
+        );
+        const newStats = this.getTeamStats(tweaked, calcTargetId);
+        const build = this.charBuilds[calcTargetId]!;
+        const newResult = build.getDamageResult(
+          formulaId,
+          newStats[calcTargetId]!,
+          Object.values(newStats),
+          ctx
+        );
+        charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
+      }
+      if (Object.keys(charGains).length > 0) {
+        gains[cid] = charGains;
+      }
+    }
+
+    return gains;
   }
 }

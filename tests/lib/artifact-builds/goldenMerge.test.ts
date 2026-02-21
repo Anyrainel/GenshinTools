@@ -6,7 +6,7 @@
  * and compares the output against stored golden JSON files.
  *
  * To update golden files after an intentional behavioral change:
- *   UPDATE_GOLDEN=1 npm run test -- tests/lib/goldenMerge.test.ts
+ *   UPDATE_GOLDEN=1 npm run test -- tests/lib/artifact-builds/goldenMerge.test.ts
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -30,7 +30,7 @@ const UPDATE = process.env.UPDATE_GOLDEN === "1";
 function loadPresetBuilds(): BuildGroup[] {
   const filePath = resolve(
     __dirname,
-    "../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
+    "../../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
   );
   const payload: BuildPayloadV5 = JSON.parse(readFileSync(filePath, "utf-8"));
   const groups = new Map<string, BuildGroup>();
