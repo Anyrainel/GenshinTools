@@ -3,6 +3,7 @@ import { CharacterView } from "@/components/account-data/CharacterView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
 import { StatWeightView } from "@/components/account-data/StatWeightView";
+import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import {
   type ActionConfig,
   AppBar,
@@ -493,6 +494,8 @@ export default function AccountDataPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
     >
+      <BuildsDefaultPresetPrompt />
+
       {/* Control dialogs - render without triggers, opened via ref */}
       <AccountImportControl
         ref={importRef}

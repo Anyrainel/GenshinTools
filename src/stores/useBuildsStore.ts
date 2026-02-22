@@ -67,6 +67,9 @@ interface BuildsState {
   // IDs of builds from the active preset that the user has deleted
   presetDeletedBuildIds: string[];
 
+  // Global UI State
+  hasPromptedForPreset: boolean;
+
   // UI State (Local only)
   hiddenCharacters: Record<string, boolean>;
 
@@ -116,6 +119,7 @@ interface BuildsState {
   setComputeOptions: (options: Partial<ComputeOptions>) => void;
   setMetadata: (author: string, description: string) => void;
   setActivePreset: (presetId: string | null) => void;
+  setHasPromptedForPreset: (prompted: boolean) => void;
 }
 
 // Empty array constant to avoid creating new arrays
@@ -129,6 +133,7 @@ export const useBuildsStore = create<BuildsState>()(
       characterToBuildIds: {},
       builds: {},
       presetDeletedBuildIds: [],
+      hasPromptedForPreset: false,
       hiddenCharacters: {},
       validationErrors: {},
       characterWeapons: {},
@@ -588,6 +593,12 @@ export const useBuildsStore = create<BuildsState>()(
         set((state) => {
           state.activePresetId = presetId;
           state.presetDeletedBuildIds = [];
+        });
+      },
+
+      setHasPromptedForPreset: (prompted: boolean) => {
+        set((state) => {
+          state.hasPromptedForPreset = prompted;
         });
       },
     })),

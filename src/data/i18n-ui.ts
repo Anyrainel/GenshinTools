@@ -336,6 +336,19 @@ export const i18nUiData = {
       en: "Game data sourced from HoYoWiki.",
       zh: "游戏数据来源于 HoYoWiki。",
     },
+    presetPromptTitle: { en: "Default Preset", zh: "默认预设" },
+    presetPromptDesc: {
+      en: "Do you want to enable the default artifact builds preset?",
+      zh: "是否启用默认圣遗物配装预设？",
+    },
+    presetPromptYes: { en: "Yes", zh: "是" },
+    presetPromptNo: { en: "No", zh: "否" },
+    presetPromptNoticeTitle: { en: "Notice", zh: "提示" },
+    presetPromptNoticeDesc: {
+      en: "You can always access and import the default preset later through the Import feature on the Artifact Builds page.",
+      zh: "您以后可以随时通过圣遗物配装页面的导入功能访问并应用默认预设。",
+    },
+    presetPromptGotIt: { en: "Got it", zh: "知道了" },
   },
   archive: {
     characters: { en: "Character Archive", zh: "角色图鉴" },

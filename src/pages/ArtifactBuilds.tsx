@@ -1,6 +1,8 @@
 import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsView";
 import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
+import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
+
 // ... (imports are mostly fine from previous step, just adding ArtifactBuildsView back)
 
 // Skipping re-importing everything, just targeting the file content fix.
@@ -274,6 +276,8 @@ export default function ArtifactBuildsPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
     >
+      <BuildsDefaultPresetPrompt />
+
       {/* Control dialogs - render without triggers, opened via ref */}
       <BuildImportControl
         ref={importRef}

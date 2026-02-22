@@ -1,5 +1,6 @@
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
+import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
@@ -616,6 +617,7 @@ export function CharacterArchiveView() {
     if (selectedId) {
       return (
         <div className="flex flex-col h-full overflow-hidden px-2">
+          <BuildsDefaultPresetPrompt />
           <div className="shrink-0 py-2">
             <Button
               variant="ghost"
@@ -637,6 +639,7 @@ export function CharacterArchiveView() {
     // Show grid view
     return (
       <div className="flex flex-col h-full overflow-y-auto px-2">
+        <BuildsDefaultPresetPrompt />
         <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
         <CharacterGrid
           characters={filteredCharacters}
@@ -655,6 +658,7 @@ export function CharacterArchiveView() {
         "px-2 md:px-4 lg:px-6"
       )}
     >
+      <BuildsDefaultPresetPrompt />
       <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
       <div className="flex-1 min-h-0 flex flex-row gap-3 pb-3">
         <aside className="w-1/3 max-w-[14rem] shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1">
