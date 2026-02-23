@@ -336,19 +336,47 @@ export const i18nUiData = {
       en: "Game data sourced from HoYoWiki.",
       zh: "游戏数据来源于 HoYoWiki。",
     },
-    presetPromptTitle: { en: "Default Preset", zh: "默认预设" },
-    presetPromptDesc: {
-      en: "Do you want to enable the default artifact builds preset?",
-      zh: "是否启用默认圣遗物配装预设？",
+    presetPromptTitle: {
+      en: "Get Started with Presets",
+      zh: "使用预设快速开始",
     },
-    presetPromptYes: { en: "Yes", zh: "是" },
-    presetPromptNo: { en: "No", zh: "否" },
-    presetPromptNoticeTitle: { en: "Notice", zh: "提示" },
+    presetPromptDesc: {
+      en: "Load optimized artifact builds for every character — curated by GGArtifact, customizable by you.",
+      zh: "加载GGArtifact精选的全角色圣遗物配装——随时可按你的想法自定义。",
+    },
+    presetPromptBenefit: {
+      en: "All characters covered. Sets, main stats, and substats optimized for all constellations. Tweak anything anytime.",
+      zh: "覆盖全部角色。各种命座的配装一应俱全。随时可调。",
+    },
+    presetPromptYes: { en: "Enable Preset", zh: "启用预设" },
+    presetPromptNo: { en: "No Thanks", zh: "暂时不用" },
+    presetPromptNoticeTitle: {
+      en: "No Problem!",
+      zh: "没问题！",
+    },
     presetPromptNoticeDesc: {
-      en: "You can always access and import the default preset later through the Import feature on the Artifact Builds page.",
-      zh: "您以后可以随时通过圣遗物配装页面的导入功能访问并应用默认预设。",
+      en: "You can load presets anytime from the Import button on the Artifact Builds page.",
+      zh: "随时可通过圣遗物配装页面的导入按钮加载预设。",
     },
     presetPromptGotIt: { en: "Got it", zh: "知道了" },
+    presetMigrateTitle: {
+      en: "Existing Builds Found",
+      zh: "检测到已有配装",
+    },
+    presetMigrateDesc: {
+      en: "You already have custom builds. How would you like to proceed?",
+      zh: "你已有自定义配装数据，请选择如何处理：",
+    },
+    presetMigrateFresh: { en: "Start Fresh", zh: "从零开始" },
+    presetMigrateFreshDesc: {
+      en: "Clear existing builds and use the preset only.",
+      zh: "清除现有配装，仅使用预设。",
+    },
+    presetMigrateKeep: { en: "Keep My Builds", zh: "保留我的配装" },
+    presetMigrateKeepDesc: {
+      en: "Layer the preset underneath your existing builds.",
+      zh: "在你现有配装的基础上加载预设。",
+    },
   },
   archive: {
     characters: { en: "Character Archive", zh: "角色图鉴" },

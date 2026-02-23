@@ -80,6 +80,7 @@ function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["
 const TourContext = React.createContext<{
     start: (tourId: string) => void
     close: () => void
+    isActive: boolean
 } | null>(null)
 
 function useTour() {
@@ -185,6 +186,7 @@ function TourProvider({
             value={{
                 start,
                 close,
+                isActive: isOpen || isGuideOpen,
             }}>
             {children}
             
