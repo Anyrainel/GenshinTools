@@ -278,7 +278,6 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
     en_glossary = en_kit.get("glossary", [])
     zh_glossary = zh_kit.get("glossary", [])
     if en_glossary:
-        print("--- Glossary ---")
         groups: dict[str, list[str]] = {}
         order: list[str] = []
         zh_by_desc: dict[str, Any] = {}
@@ -326,7 +325,7 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
 
         req_formulas = load_required_formulas()
         if entity_id in req_formulas:
-            print("  [RUNBOOK] Required Formulas:")
+            print("  [RUNBOOK] Required Formulas: (【...】express the precondition.)")
             print(f"    {req_formulas[entity_id]}")
 
         print("═" * 80)

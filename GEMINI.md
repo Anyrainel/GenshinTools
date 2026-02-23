@@ -96,7 +96,7 @@ You must use these to avoid explicit pipe (`|`) or redirect (`2>&1`) in the term
 ### Terminal Hygiene
 
 - Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review).
-- Never inline Python/JS code in terminal commands (e.g. python -c "..." or node -e "..."). Write a temporary .py/.js fil under temp/, run it, then delete it. Always consider all failure modes if the script contains side effects (e.g. write to files). Defer dangerous actions to user.
+- Never inline Python/JS code in terminal commands (e.g. python -c "..." or node -e "..."). Write a temporary .py/.js fil under temp/, run it, then delete it. Consider all side effects and failure modes, avoid dangerous actions and defer to user decision.
 
 ### File Safety
 

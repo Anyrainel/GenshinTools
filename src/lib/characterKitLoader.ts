@@ -14,6 +14,7 @@ type RawSkill = {
 };
 
 type RawKit = {
+  name: string; // Present in JSON but not propagated to CharacterKit
   skills: RawSkill[];
   passives: CharacterEffect[];
   constellations: CharacterEffect[];
@@ -26,7 +27,7 @@ type RawBundle = Record<string, RawKit>;
 const cache = new Map<Language, Record<string, CharacterKit>>();
 const pending = new Map<Language, Promise<Record<string, CharacterKit>>>();
 
-const modules = import.meta.glob<RawBundle>("../data/character_*.json", {
+const modules = import.meta.glob<RawBundle>("../data/game/character_*.json", {
   eager: false,
 });
 
@@ -71,7 +72,7 @@ export function loadCharacterKits(
   const inflight = pending.get(lang);
   if (inflight) return inflight;
 
-  const path = `../data/character_${lang}.json`;
+  const path = `../data/game/character_${lang}.json`;
   const loader = modules[path];
   if (!loader) {
     return Promise.reject(new Error(`No character kit bundle for: ${lang}`));

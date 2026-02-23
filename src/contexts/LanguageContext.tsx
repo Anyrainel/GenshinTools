@@ -19,6 +19,22 @@ import type {
 } from "../data/types";
 import { loadCharacterKits } from "../lib/characterKitLoader";
 
+// Per-language JSON shape for weapon/artifact game data
+type WeaponGameEntry = { name: string; effect: string };
+type ArtifactGameEntry = { name: string; effect2: string; effect4: string };
+type WeaponGameData = Record<string, WeaponGameEntry>;
+type ArtifactGameData = Record<string, ArtifactGameEntry>;
+
+// Lazy-loaded game data modules (weapon/artifact per-language JSONs)
+const weaponModules = import.meta.glob<WeaponGameData>(
+  "../data/game/weapon_*.json",
+  { eager: false }
+);
+const artifactModules = import.meta.glob<ArtifactGameData>(
+  "../data/game/artifact_*.json",
+  { eager: false }
+);
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
@@ -32,9 +48,11 @@ interface LanguageContextType {
     stat: (key: string) => string;
     statShort: (key: string) => string;
     statMin: (key: string) => string;
+    formula: (key: string) => string;
     mainStat: (key: string) => string;
     subStat: (key: string) => string;
     element: (key: string) => string;
+    reaction: (key: string) => string;
     weaponType: (type: string) => string;
     weaponName: (id: string) => string;
     weaponEffect: (id: string) => string;
@@ -110,6 +128,31 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     loadCharacterKits(language).then(setKitData);
   }, [language]);
 
+  // Preload weapon & artifact game data for the current language
+  const [weaponData, setWeaponData] = useState<WeaponGameData>({});
+  const [artifactData, setArtifactData] = useState<ArtifactGameData>({});
+  useEffect(() => {
+    const weaponPath = `../data/game/weapon_${language}.json`;
+    const artifactPath = `../data/game/artifact_${language}.json`;
+    const weaponLoader = weaponModules[weaponPath];
+    const artifactLoader = artifactModules[artifactPath];
+
+    if (weaponLoader) {
+      weaponLoader().then((mod) => {
+        const data =
+          (mod as unknown as { default: WeaponGameData }).default ?? mod;
+        setWeaponData(data);
+      });
+    }
+    if (artifactLoader) {
+      artifactLoader().then((mod) => {
+        const data =
+          (mod as unknown as { default: ArtifactGameData }).default ?? mod;
+        setArtifactData(data);
+      });
+    }
+  }, [language]);
+
   const getCharacterKit = useCallback(
     (characterId: string): CharacterKit | null => kitData[characterId] ?? null,
     [kitData]
@@ -163,13 +206,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getArtifactSetEffects = useCallback(
     (setId: string): string[] => {
-      const arts = i18nGameData.artifacts as Record<
-        string,
-        { name: Record<string, string>; effects: Record<string, string[]> }
-      >;
-      return arts[setId]?.effects?.[language] || [];
+      const entry = artifactData[setId];
+      if (!entry) return [];
+      const effects: string[] = [];
+      if (entry.effect2) effects.push(entry.effect2);
+      if (entry.effect4) effects.push(entry.effect4);
+      return effects;
     },
-    [language]
+    [artifactData]
   );
 
   const getArtifactHalfSetName = useCallback(
@@ -226,6 +270,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language, getStatShortName]
   );
 
+  const getFormulaLabel = useCallback(
+    (formulaKey: string): string => {
+      // @ts-ignore - formulas exists in the object but might not be inferred yet
+      const formulas = i18nAppData.formulas as Record<
+        string,
+        Record<string, string>
+      >;
+      return formulas?.[formulaKey]?.[language] || formulaKey;
+    },
+    [language]
+  );
+
   const getMainStatName = useCallback(
     (statKey: string): string => {
       return getStatName(statKey);
@@ -247,6 +303,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         Record<string, string>
       >;
       return elems[element]?.[language] || element;
+    },
+    [language]
+  );
+
+  const getReactionName = useCallback(
+    (reactionKey: string): string => {
+      // @ts-ignore - reactions exists in the object but might not be inferred yet if types are strict
+      const rxns = i18nAppData.reactions as Record<
+        string,
+        Record<string, string>
+      >;
+      return rxns[reactionKey]?.[language] || reactionKey;
     },
     [language]
   );
@@ -275,13 +343,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getWeaponEffect = useCallback(
     (weaponId: string): string => {
-      const weaponData = i18nGameData.weapons as Record<
-        string,
-        { effect: Record<string, string> }
-      >;
-      return weaponData[weaponId]?.effect?.[language] || "";
+      return weaponData[weaponId]?.effect || "";
     },
-    [language]
+    [weaponData]
   );
 
   const getSlotName = useCallback(
@@ -408,9 +472,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       stat: getStatName,
       statShort: getStatShortName,
       statMin: getStatMinName,
+      formula: getFormulaLabel,
       mainStat: getMainStatName,
       subStat: getSubStatName,
       element: getElementName,
+      reaction: getReactionName,
       weaponType: getWeaponTypeName,
       weaponName: getWeaponName,
       weaponEffect: getWeaponEffect,
@@ -439,9 +505,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getStatName,
       getStatShortName,
       getStatMinName,
+      getFormulaLabel,
       getMainStatName,
       getSubStatName,
       getElementName,
+      getReactionName,
       getWeaponTypeName,
       getWeaponName,
       getWeaponEffect,

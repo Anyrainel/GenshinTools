@@ -31,6 +31,7 @@ from hoyolab import generate_id
 
 CANONICAL_URL = "https://gi.hakush.in"
 DATA_DIR = Path(__file__).parent.parent / "src" / "data"
+GAME_DATA_DIR = DATA_DIR / "game"
 LANGUAGES = ("en", "zh")
 
 # Characters to skip by English name (Traveler/Manekin have per-element variants)
@@ -749,9 +750,9 @@ def compact_json(data: object) -> str:
         # Match arrays containing only quoted strings across multiple lines
         r'\[\s*\n\s+"(?:[^"\\]|\\.)*"'
         r'(?:\s*,\s*\n\s+"(?:[^"\\]|\\.)*")*\s*\n\s*\]',
-        lambda m: "["
-        + ", ".join(s.strip() for s in re.findall(r'"(?:[^"\\]|\\.)*"', m.group(0)))
-        + "]",
+        lambda m: (
+            "[" + ", ".join(s.strip() for s in re.findall(r'"(?:[^"\\]|\\.)*"', m.group(0))) + "]"
+        ),
         raw,
     )
 
@@ -760,7 +761,7 @@ def load_existing_kits() -> dict[str, dict[str, dict]]:
     """Load existing bundled kit files into {lang: {char_id: kit_data}}."""
     result: dict[str, dict[str, dict]] = {}
     for lang in LANGUAGES:
-        kit_path = DATA_DIR / f"character_{lang}.json"
+        kit_path = GAME_DATA_DIR / f"character_{lang}.json"
         if kit_path.exists():
             result[lang] = json.loads(kit_path.read_text(encoding="utf-8"))
         else:
@@ -780,16 +781,57 @@ def load_existing_stat_keys() -> set[str]:
     return set(json.loads(match.group(1)).keys())
 
 
+def _load_character_names() -> dict[str, dict[str, str]]:
+    """Load character names from i18n-game.ts: {char_id: {en: str, zh: str}}."""
+    i18n_path = DATA_DIR / "i18n-game.ts"
+    if not i18n_path.exists():
+        return {}
+    content = i18n_path.read_text(encoding="utf-8")
+    match = re.search(
+        r"export const i18nGameData(?::.*?)? = (.*?);\s*(?:export|$)",
+        content,
+        re.DOTALL,
+    )
+    if not match:
+        return {}
+    try:
+        data = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return {}
+    return data.get("characters", {})
+
+
 def save_character_kits(
     all_kits: dict[str, dict[str, dict]],
 ) -> None:
-    """Write bundled kit files, upserting into existing data."""
+    """Write bundled kit files, upserting into existing data.
+
+    Augments each kit with a 'name' field from i18n-game.ts so the
+    character JSON files are self-contained.
+    """
     existing = load_existing_kits()
+    char_names = _load_character_names()
+
     for lang in LANGUAGES:
         existing[lang].update(all_kits.get(lang, {}))
+
+        # Inject name as first field for each character
+        for cid, kit in existing[lang].items():
+            name = char_names.get(cid, {}).get(lang, "")
+            if name:
+                kit["name"] = name
+
         sorted_kits = dict(sorted(existing[lang].items()))
-        out_path = DATA_DIR / f"character_{lang}.json"
-        out_path.write_text(compact_json(sorted_kits), encoding="utf-8")
+        # Ensure 'name' key comes first in each entry
+        final: dict[str, dict] = {}
+        for cid, kit in sorted_kits.items():
+            if "name" in kit:
+                final[cid] = {"name": kit.pop("name"), **kit}
+            else:
+                final[cid] = kit
+
+        out_path = GAME_DATA_DIR / f"character_{lang}.json"
+        out_path.write_text(compact_json(final), encoding="utf-8")
 
 
 def save_char_stats_ts(
