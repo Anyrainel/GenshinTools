@@ -76,10 +76,10 @@ const LUNAR_DIRECT_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
 // All stat reads use `stats.get(key, this.tag)` so that
 // DamageTagFilter-scoped buffs are correctly included/excluded.
 
-type ScalingKey = "atk" | "hp" | "def";
+type ScalingKey = "atk" | "hp" | "def" | "em";
 
 /** Additional stat term for talents that scale off two stats (e.g., X% ATK + Y% EM). */
-type ExtraScalingTerm = { key: ScalingKey | "em"; multiplier: number };
+type ExtraScalingTerm = { key: ScalingKey; multiplier: number };
 
 export abstract class DamageFormula {
   constructor(
@@ -137,13 +137,13 @@ export abstract class DamageFormula {
   }
 
   protected computeCritMult(stats: StatSheet, ctx: CalcContext): number {
-    const cr = stats.get("cr", this.tag);
-    const cd = stats.get("cd", this.tag);
+    const cr = stats.get("cr", this.tag) + stats.get("reactionCr", this.tag);
+    const cd = stats.get("cd", this.tag) + stats.get("reactionCd", this.tag);
 
     if (ctx.assumeCrit) {
       return 1 + cd;
     }
-    return 1 + Math.min(cr, 1.0) * cd;
+    return 1 + Math.max(0, Math.min(cr, 1.0)) * cd;
   }
 
   protected computeDmgBonusMult(stats: StatSheet): number {
@@ -179,8 +179,11 @@ export class DirectFormula extends DamageFormula {
     const defMult = this.computeDefMult(stats, charLevel, ctx);
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
+    const elevated = stats.get("elevated%", this.tag);
 
-    return baseDmg * dmgBonusMult * defMult * resMult * critMult;
+    return (
+      baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated)
+    );
   }
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
@@ -193,14 +196,16 @@ export class DirectFormula extends DamageFormula {
     const defMult = this.computeDefMult(stats, charLevel, ctx);
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
-    const damage = baseDmg * dmgBonusMult * defMult * resMult * critMult;
+    const elevated = stats.get("elevated%", this.tag);
+    const damage =
+      baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated);
 
     const statValues: Partial<Record<StatKey, number>> = {
       [this.scalingKey]: stats.get(this.scalingKey),
       [elementKey]: stats.get(elementKey),
       "dmg%": stats.get("dmg%", this.tag),
-      cr: stats.get("cr", this.tag),
-      cd: stats.get("cd", this.tag),
+      cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+      cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
       "defReduction%": stats.get("defReduction%", this.tag),
       "defIgnore%": stats.get("defIgnore%", this.tag),
       "resReduction%": stats.get("resReduction%", this.tag),
@@ -213,6 +218,7 @@ export class DirectFormula extends DamageFormula {
     const fbd = stats.get("baseDmg", this.tag);
     if (bdp !== 0) statValues["baseDmg%"] = bdp;
     if (fbd !== 0) statValues.baseDmg = fbd;
+    if (elevated !== 0) statValues["elevated%"] = elevated;
 
     return {
       template: "direct",
@@ -226,6 +232,7 @@ export class DirectFormula extends DamageFormula {
       scalingKeys: keys,
       scalingMulti: multi,
       damage,
+      tag: this.tag,
     };
   }
 }
@@ -272,6 +279,7 @@ export class AmplifyFormula extends DirectFormula {
         emCoeff,
       },
       damage: base.damage * ampMult,
+      tag: this.tag,
     };
   }
 }
@@ -284,7 +292,7 @@ export class CatalyzeFormula extends DamageFormula {
       scalingDmg += stats.get(this.extraTerm.key) * this.extraTerm.multiplier;
     }
     const em = stats.get("em");
-    const emBonus = (2.78 * em) / (1400 + em);
+    const emBonus = (5 * em) / (1200 + em);
     const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -298,8 +306,11 @@ export class CatalyzeFormula extends DamageFormula {
     const defMult = this.computeDefMult(stats, charLevel, ctx);
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
+    const elevated = stats.get("elevated%", this.tag);
 
-    return baseDmg * dmgBonusMult * defMult * resMult * critMult;
+    return (
+      baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated)
+    );
   }
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
@@ -308,8 +319,8 @@ export class CatalyzeFormula extends DamageFormula {
       `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey;
 
     const em = stats.get("em");
-    const emCoeff = 2.78;
-    const emBonus = (emCoeff * em) / (1400 + em);
+    const emCoeff = 5;
+    const emBonus = (emCoeff * em) / (1200 + em);
     const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
@@ -327,7 +338,9 @@ export class CatalyzeFormula extends DamageFormula {
     const defMult = this.computeDefMult(stats, charLevel, ctx);
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
-    const damage = baseDmg * dmgBonusMult * defMult * resMult * critMult;
+    const elevated = stats.get("elevated%", this.tag);
+    const damage =
+      baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated);
 
     const statValues: Partial<Record<StatKey, number>> = {
       [this.scalingKey]: stats.get(this.scalingKey),
@@ -335,8 +348,8 @@ export class CatalyzeFormula extends DamageFormula {
       [elementKey]: stats.get(elementKey),
       "dmg%": stats.get("dmg%", this.tag),
       "reactionDmg%": reactionDmgBonus,
-      cr: stats.get("cr", this.tag),
-      cd: stats.get("cd", this.tag),
+      cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+      cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
       "defReduction%": stats.get("defReduction%", this.tag),
       "defIgnore%": stats.get("defIgnore%", this.tag),
       "resReduction%": stats.get("resReduction%", this.tag),
@@ -345,6 +358,7 @@ export class CatalyzeFormula extends DamageFormula {
       statValues[this.extraTerm.key] = stats.get(this.extraTerm.key);
     if (baseDmgPct !== 0) statValues["baseDmg%"] = baseDmgPct;
     if (flatBaseDmg !== 0) statValues.baseDmg = flatBaseDmg;
+    if (elevated !== 0) statValues["elevated%"] = elevated;
 
     return {
       template: "catalyze",
@@ -361,6 +375,7 @@ export class CatalyzeFormula extends DamageFormula {
       scalingKeys: keys,
       scalingMulti: multi,
       damage,
+      tag: this.tag,
     };
   }
 }
@@ -383,16 +398,11 @@ export class TransformFormula extends DamageFormula {
       reactionCr > 0
         ? ctx.assumeCrit
           ? 1 + reactionCd
-          : 1 + Math.min(reactionCr, 1) * reactionCd
+          : 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
         : 1;
 
     const baseDmg = levelMult * reactionCoeff;
-    const flatBaseDmg = stats.get("baseDmg", this.tag);
-    return (
-      (baseDmg * (1 + emBonus + reactionDmgBonus) + flatBaseDmg) *
-      resMult *
-      critMult
-    );
+    return baseDmg * (1 + emBonus + reactionDmgBonus) * resMult * critMult;
   }
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
@@ -409,15 +419,12 @@ export class TransformFormula extends DamageFormula {
       reactionCr > 0
         ? ctx.assumeCrit
           ? 1 + reactionCd
-          : 1 + Math.min(reactionCr, 1) * reactionCd
+          : 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
         : 1;
 
     const baseDmg = levelCoeff * reactionCoeff;
-    const flatBaseDmg = stats.get("baseDmg", this.tag);
     const damage =
-      (baseDmg * (1 + emBonus + reactionDmgBonus) + flatBaseDmg) *
-      resMult *
-      critMult;
+      baseDmg * (1 + emBonus + reactionDmgBonus) * resMult * critMult;
 
     return {
       template: "transform",
@@ -427,7 +434,6 @@ export class TransformFormula extends DamageFormula {
         "resReduction%": stats.get("resReduction%", this.tag),
         reactionCr,
         reactionCd,
-        ...(flatBaseDmg !== 0 ? { baseDmg: flatBaseDmg } : {}),
       },
       params: {
         reactionCoeff,
@@ -441,6 +447,7 @@ export class TransformFormula extends DamageFormula {
       scalingKeys: [],
       scalingMulti: [],
       damage,
+      tag: this.tag,
     };
   }
 }
@@ -502,8 +509,8 @@ export class LunarFormula extends DamageFormula {
         "reactionDmg%": reactionDmgBonus,
         "baseDmg%": baseDmgBonus,
         "elevated%": elevated,
-        cr: stats.get("cr", this.tag),
-        cd: stats.get("cd", this.tag),
+        cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+        cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
         "resReduction%": stats.get("resReduction%", this.tag),
       },
       params: {
@@ -518,6 +525,7 @@ export class LunarFormula extends DamageFormula {
       scalingKeys: [],
       scalingMulti: [],
       damage,
+      tag: this.tag,
     };
   }
 }
@@ -589,9 +597,10 @@ export class LunarDirectFormula extends DamageFormula {
       "reactionDmg%": reactionDmgBonus,
       "baseDmg%": baseDmgBonus,
       "elevated%": elevated,
-      cr: stats.get("cr", this.tag),
-      cd: stats.get("cd", this.tag),
+      cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
+      cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
       "resReduction%": stats.get("resReduction%", this.tag),
+      "defIgnore%": stats.get("defIgnore%", this.tag),
     };
     if (this.extraTerm)
       statValues[this.extraTerm.key] = stats.get(this.extraTerm.key);
@@ -611,6 +620,7 @@ export class LunarDirectFormula extends DamageFormula {
       scalingKeys: keys,
       scalingMulti: multi,
       damage,
+      tag: this.tag,
     };
   }
 }

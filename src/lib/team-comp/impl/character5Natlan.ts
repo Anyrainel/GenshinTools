@@ -32,7 +32,7 @@ class Varesa extends CharacterBase {
     const buffs: StatBuff[] = [
       // P1: Fiery Passion Tag-Team Triple Jump → Plunge ground impact +180% ATK
       new ScalingBuff(
-        cbs(this, ["E"], "P1"),
+        cbs(this, "P1", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
         [],
         "atk",
@@ -41,7 +41,7 @@ class Varesa extends CharacterBase {
       ),
       // P2: Nightsoul Burst → ATK +35% (max 2 stacks = 70%)
       new StatBuff(
-        cbs(this, ["nightsoul-burst"], "P2"),
+        cbs(this, "P2", ["nightsoul-burst"]),
         { receiver: "selfOnField" },
         [{ key: "atk%", value: 0.7 }]
       ),
@@ -51,7 +51,7 @@ class Varesa extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C4"),
+          cbs(this, "C4", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 1.0 }]
         )
@@ -62,7 +62,7 @@ class Varesa extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q", "plunge"], "C6"),
+          cbs(this, "C6", ["Q", "plunge"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["plunge", "burst"] },
@@ -123,14 +123,14 @@ class Citlali extends CharacterBase {
   readonly buffs = [
     // P1: After Frozen/Melt, enemies' Pyro/Hydro RES -20% (C2: -40%)
     new StaticSkillBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       { receiver: "onField", filter: { elements: ["Pyro", "Hydro"] } },
       this.constellation,
       (c) => [{ key: "resReduction%", value: c >= 2 ? 0.4 : 0.2 }]
     ),
     // P2: EM → baseDmg for Frostfall Storm (skill, 90% EM)
     new ScalingBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -139,7 +139,7 @@ class Citlali extends CharacterBase {
     ),
     // P2: EM → baseDmg for Q Ice Storm (burst, 1200% EM)
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       [],
       "em",
@@ -148,20 +148,20 @@ class Citlali extends CharacterBase {
     ),
     // C2: Self EM +125, team (shielded/followed) EM +250
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "em", value: 125 }] : [])
     ),
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "em", value: 250 }] : [])
     ),
     // C6: 40 stacks → team Pyro/Hydro DMG +60%, self DMG +100%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       {
         receiver: "team",
       },
@@ -175,7 +175,7 @@ class Citlali extends CharacterBase {
           : []
     ),
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "dmg%", value: 1.0 }] : [])
@@ -250,13 +250,13 @@ class Mavuika extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [
       // P1: After Nightsoul Burst, self ATK +30%
       new StatBuff(
-        cbs(this, ["nightsoul"], "P1"),
+        cbs(this, "P1", ["nightsoul"]),
         { receiver: "selfOnField" },
         [{ key: "atk%", value: 0.3 }]
       ),
       // P2 "Kiongozi": After Q, on-field DMG +0.2% per Spirit (max 200 = 40%)
       // Assume full 200 Spirit → 40%. C4 adds +10% and removes decay.
-      new StatBuff(cbs(this, ["Q"], "P2"), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
         {
           key: "dmg%",
           value: this.constellation >= 4 ? 0.5 : 0.4,
@@ -266,7 +266,7 @@ class Mavuika extends CharacterBase {
     // C1: ATK +40% after gaining Fighting Spirit
     if (this.constellation >= 1) {
       buffs.push(
-        new StatBuff(cbs(this, [], "C1"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
           { key: "atk%", value: 0.4 },
         ])
       );
@@ -274,12 +274,12 @@ class Mavuika extends CharacterBase {
     // C2: Base ATK +200, Ring form → enemy DEF -20%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
           { key: "baseAtk", value: 200 },
         ])
       );
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
           { key: "defReduction%", value: 0.2 },
         ])
       );
@@ -374,13 +374,13 @@ class Chasca extends CharacterBase {
     // P1: Per eligible element type, Shining Shell DMG bonus (non-linear)
     // 1 type → +15%, 2 → +35%, 3 → +65%
     new StatBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.eligibleTypes] }]
     ),
     // C6: After Spiritbinding Conversion, Shining Shell CD +120%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "cd", value: 1.2 }] : [])
@@ -464,14 +464,14 @@ class Xilonen extends CharacterBase {
       // E: Source Samples — RES shred
       // -36% RES at Lv10, -42.5% at Lv13 (C3+)
       new StaticSkillBuff(
-        cbs(this, ["E"]),
+        cbs(this, "E", ["E"]),
         { receiver: "team" },
         this.constellation,
         (c) => [{ key: "resReduction%", value: c >= 3 ? 0.425 : 0.36 }]
       ),
       // P1: Fewer than 2 samples → Normal/Plunge DMG +30%
       new StatBuff(
-        cbs(this, ["A1"], "P1"),
+        cbs(this, "P1", ["A1"]),
         {
           receiver: "selfOnField",
           filter: { abilities: ["normal", "plunge"] },
@@ -480,7 +480,7 @@ class Xilonen extends CharacterBase {
       ),
       // P2: Nightsoul Burst → DEF +20%
       new StatBuff(
-        cbs(this, ["nightsoul-burst"], "P2"),
+        cbs(this, "P2", ["nightsoul-burst"]),
         { receiver: "selfOnField" },
         [{ key: "def%", value: 0.2 }]
       ),
@@ -490,27 +490,27 @@ class Xilonen extends CharacterBase {
     if (this.constellation >= 2) {
       if (Object.values(this.teamMeta.elements).includes("Pyro")) {
         buffs.push(
-          new StatBuff(cbs(this, ["E"], "C2"), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
             { key: "atk%", value: 0.45 },
           ])
         );
       }
       if (Object.values(this.teamMeta.elements).includes("Hydro")) {
         buffs.push(
-          new StatBuff(cbs(this, ["E"], "C2"), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
             { key: "hp%", value: 0.45 },
           ])
         );
       }
       if (Object.values(this.teamMeta.elements).includes("Cryo")) {
         buffs.push(
-          new StatBuff(cbs(this, ["E"], "C2"), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
             { key: "cd", value: 0.6 },
           ])
         );
       }
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
           { key: "geo%", value: 0.5 },
         ])
       ); // Geo is always active
@@ -520,7 +520,7 @@ class Xilonen extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["E"], "C4"),
+          cbs(this, "C4", ["E"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["normal", "charge", "plunge"] },
@@ -598,7 +598,7 @@ class Mualani extends CharacterBase {
   readonly buffs = [
     // C4: Q DMG +75%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "dmg%", value: 0.75 }] : [])
@@ -676,7 +676,7 @@ class Kinich extends CharacterBase {
       // P2: After Nightsoul Burst, Hunter's Experience ×2 → +640% ATK as baseDmg to Scalespiker
       // We model the ATK scaling as a ScalingBuff applied to self Skill
       new ScalingBuff(
-        cbs(this, ["nightsoul"], "P2"),
+        cbs(this, "P2", ["nightsoul"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [],
         "atk",
@@ -685,14 +685,14 @@ class Kinich extends CharacterBase {
       ),
       // C1: Scalespiker Cannon CD +100%
       new StaticSkillBuff(
-        cbs(this, ["E"], "C1"),
+        cbs(this, "C1", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         this.constellation,
         (c) => (c >= 1 ? [{ key: "cd", value: 1.0 }] : [])
       ),
       // C2: Dendro RES -30% on E hit
       new StaticSkillBuff(
-        cbs(this, ["E"], "C2"),
+        cbs(this, "C2", ["E"]),
         { receiver: "onField", filter: { elements: ["Dendro"] } },
         this.constellation,
         (c) => (c >= 2 ? [{ key: "resReduction%", value: 0.3 }] : [])

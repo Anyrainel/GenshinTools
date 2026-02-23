@@ -21,14 +21,14 @@ function MathZone({
   highlight,
 }: {
   label: string;
-  value: React.ReactNode;
+  value?: React.ReactNode;
   mathLine?: React.ReactNode;
   highlight?: boolean;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center bg-black/10 border p-2.5 rounded-md transition-all duration-200 min-w-[90px] shrink-0 gap-1.5",
+        "flex flex-col items-center justify-center bg-card/40 border p-2 rounded-md min-w-[90px] shrink-0 gap-2",
         highlight
           ? "border-primary/60 bg-primary/10 shadow-[0_0_8px_rgba(var(--primary),0.3)] ring-1 ring-primary/40"
           : "border-border/40 hover:border-border/60"
@@ -38,13 +38,15 @@ function MathZone({
         <span className="text-base font-medium text-foreground/70 tracking-wide">
           {label}
         </span>
-        <span className="font-[math] text-sm font-bold text-primary/70">
-          {value}
-        </span>
+        {value !== undefined && value !== null && (
+          <span className="font-[math] text-sm font-bold text-primary/70">
+            {value}
+          </span>
+        )}
       </div>
 
       {mathLine && (
-        <div className="font-[math] text-sm md:text-base font-semibold flex items-center justify-center whitespace-nowrap pt-0.5">
+        <div className="font-[math] text-xs md:text-base font-semibold flex items-center justify-center whitespace-nowrap pb-1.5">
           {mathLine}
         </div>
       )}
@@ -61,7 +63,7 @@ function MathVar({
   label?: string;
   highlight?: boolean;
 }) {
-  if (!label) return <span className="px-0.5 mx-0.5">{val}</span>;
+  if (!label) return <span className="font-[math]">{val}</span>;
   return (
     <span
       className={cn(
@@ -69,7 +71,7 @@ function MathVar({
         highlight && "text-primary font-bold"
       )}
     >
-      <span className="text-base leading-none">{val}</span>
+      <span className="text-sm leading-none">{val}</span>
       <span className="text-xs text-muted-foreground opacity-80 mt-1 font-sans leading-none tracking-tight">
         {label}
       </span>
@@ -79,20 +81,76 @@ function MathVar({
 
 function Op({ char = "×" }: { char?: string }) {
   return (
-    <div className="flex h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-lg px-2 shrink-0">
+    <div className="flex h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-lg px-1 shrink-0">
       {char}
     </div>
   );
 }
 
 function MathOp({ char = "×" }: { char?: string }) {
-  return <span className="font-[math] px-0.5 mx-0.5">{char}</span>;
+  return <span className="font-[math] opacity-80 px-1">{char}</span>;
+}
+
+function Paren({ char }: { char: string }) {
+  return <span className="font-[math] opacity-60 px-0.5 text-lg">{char}</span>;
+}
+
+function ResMathLine({
+  effRes,
+  hl,
+  t,
+}: { effRes: number; hl: boolean; t: ReturnType<typeof useLanguage>["t"] }) {
+  if (effRes < 0) {
+    return (
+      <span className="flex items-center">
+        <MathVar val={1} label="" />
+        <MathOp char="-" />
+        <MathVar
+          val={fmtPercent(effRes)}
+          label={t.formula("Target")}
+          highlight={hl}
+        />
+        <MathOp char="/" />
+        <MathVar val={2} label="" />
+      </span>
+    );
+  }
+  if (effRes <= 0.75) {
+    return (
+      <span className="flex items-center">
+        <MathVar val={1} label="" />
+        <MathOp char="-" />
+        <MathVar
+          val={fmtPercent(effRes)}
+          label={t.formula("Target")}
+          highlight={hl}
+        />
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center">
+      <MathVar val={1} label="" />
+      <MathOp char="/" />
+      <Paren char="(" />
+      <MathVar val={1} label="" />
+      <MathOp char="+" />
+      <MathVar val={4} label="" />
+      <MathOp char="×" />
+      <MathVar
+        val={fmtPercent(effRes)}
+        label={t.formula("Target")}
+        highlight={hl}
+      />
+      <Paren char=")" />
+    </span>
+  );
 }
 
 // ─── Computational Helpers ───
 
 function getEmBonus(em: number, emCoeff: number): number {
-  const denominator = emCoeff === 2.78 ? 1400 : 2000;
+  const denominator = emCoeff === 2.78 ? 1400 : emCoeff === 5 ? 1200 : 2000;
   return (emCoeff * em) / (denominator + em);
 }
 
@@ -143,7 +201,10 @@ function ScalingZone({
               highlight={kHl}
             />
             <MathOp />
-            <MathVar val={fmtPercent(p.scalingMulti[i] ?? 0)} label="Mult" />
+            <MathVar
+              val={fmtPercent(p.scalingMulti[i] ?? 0)}
+              label={t.formula("Mult")}
+            />
             {i < p.scalingKeys.length - 1 && <MathOp char="+" />}
           </span>
         );
@@ -153,7 +214,7 @@ function ScalingZone({
 
   return (
     <MathZone
-      label="Base"
+      label={t.formula("Base")}
       value={Math.round(val).toLocaleString()}
       mathLine={mathLine}
       highlight={isHl}
@@ -161,21 +222,29 @@ function ScalingZone({
   );
 }
 
-function BaseBonusZone({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
+function BaseBonusZone({
+  p,
+  hl,
+  t,
+}: {
+  p: DisplayPart;
+  hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   const bp = p.statValues["baseDmg%"] || 0;
   if (!bp) return null;
   return (
     <>
       <Op />
       <MathZone
-        label="BaseBonus"
-        value={fmtPercent(1 + bp)}
+        label={t.formula("BaseBonus")}
         mathLine={
           <span className="flex items-center">
-            <MathVar val={1} label="" /> <MathOp char="+" />
+            <MathVar val={1} label="" />
+            <MathOp char="+" />
             <MathVar
               val={fmtPercent(bp)}
-              label="DMG%"
+              label={t.formula("BaseDmgPercent")}
               highlight={hl === "baseDmg%"}
             />
           </span>
@@ -185,20 +254,27 @@ function BaseBonusZone({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
   );
 }
 
-function FlatBonusZone({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
+function FlatBonusZone({
+  p,
+  hl,
+  t,
+}: {
+  p: DisplayPart;
+  hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   const fb = p.statValues.baseDmg || 0;
   if (!fb) return null;
   return (
     <>
       <Op char="+" />
       <MathZone
-        label="Flat"
-        value={Math.round(fb).toLocaleString()}
+        label={t.formula("Flat")}
         mathLine={
           <span className="flex items-center">
             <MathVar
               val={Math.round(fb).toLocaleString()}
-              label="Add"
+              label={t.formula("Add")}
               highlight={hl === "baseDmg"}
             />
           </span>
@@ -211,9 +287,11 @@ function FlatBonusZone({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
 function CatalyzeAdditiveZone({
   p,
   hl,
+  t,
 }: {
   p: DisplayPart;
   hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
 }) {
   const em = p.statValues.em || 0;
   const emCoeff = p.params.emCoeff || 2.78;
@@ -226,30 +304,32 @@ function CatalyzeAdditiveZone({
 
   return (
     <MathZone
-      label="Additive"
+      label={t.formula("Additive")}
       value={Math.round(val).toLocaleString()}
       mathLine={
         <span className="flex items-center">
           <MathVar
             val={Math.round(levelMult).toLocaleString()}
-            label="LvMult"
+            label={t.formula("LvMult")}
           />
           <MathOp />
-          <MathVar val={reactBase} label="RxnBase" />
-          <MathOp /> (
-          <MathVar val={1} label="" /> <MathOp char="+" />
+          <MathVar val={reactBase} label={t.formula("RxnBase")} />
+          <MathOp />
+          <Paren char="(" />
+          <MathVar val={1} label="" />
+          <MathOp char="+" />
           <MathVar
             val={fmtPercent(emBonus)}
-            label="EMBonus"
+            label={t.formula("EMBonus")}
             highlight={hl === "em"}
           />
           <MathOp char="+" />
           <MathVar
             val={fmtPercent(reactDmg)}
-            label="Rxn%"
+            label={t.formula("RxnPercent")}
             highlight={hl === "reactionDmg%"}
           />
-          )
+          <Paren char=")" />
         </span>
       }
     />
@@ -274,14 +354,14 @@ function BaseGroup({
   const content = (
     <>
       <ScalingZone p={p} hl={hl} t={t} />
-      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} />}
+      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} t={t} />}
       {isCatalyze && (
         <>
           <Op char="+" />
-          <CatalyzeAdditiveZone p={p} hl={hl} />
+          <CatalyzeAdditiveZone p={p} hl={hl} t={t} />
         </>
       )}
-      {hasFlatBonus && <FlatBonusZone p={p} hl={hl} />}
+      {hasFlatBonus && <FlatBonusZone p={p} hl={hl} t={t} />}
     </>
   );
 
@@ -289,13 +369,9 @@ function BaseGroup({
 
   return (
     <div className="flex h-[72px] items-center mx-1 bg-black/5 border border-border/20 px-1 rounded-md">
-      <span className="font-[math] text-muted-foreground mr-1 opacity-60 text-xl font-light">
-        (
-      </span>
+      <Paren char="(" />
       {content}
-      <span className="font-[math] text-muted-foreground ml-1 opacity-60 text-xl font-light">
-        )
-      </span>
+      <Paren char=")" />
     </div>
   );
 }
@@ -303,11 +379,13 @@ function BaseGroup({
 function ReactionBonusZone({
   p,
   hl,
-  label = "EM / Rxn%",
+  t,
+  labelKey = "EmOrRxn",
 }: {
   p: DisplayPart;
   hl: StatKey | null;
-  label?: string;
+  t: ReturnType<typeof useLanguage>["t"];
+  labelKey?: string;
 }) {
   const em = p.statValues.em || 0;
   const emCoeff = p.params.emCoeff || 0;
@@ -316,20 +394,21 @@ function ReactionBonusZone({
 
   return (
     <MathZone
-      label={label}
+      label={t.formula(labelKey)}
       value={fmtPercent(1 + emBonus + reactDmg)}
       mathLine={
         <span className="flex items-center">
-          <MathVar val={1} label="" /> <MathOp char="+" />
+          <MathVar val={1} label="" />
+          <MathOp char="+" />
           <MathVar
             val={fmtPercent(emBonus)}
-            label="EMBonus"
+            label={t.formula("EMBonus")}
             highlight={hl === "em"}
           />
           <MathOp char="+" />
           <MathVar
             val={fmtPercent(reactDmg)}
-            label="Rxn%"
+            label={t.formula("RxnPercent")}
             highlight={hl === "reactionDmg%"}
           />
         </span>
@@ -341,9 +420,11 @@ function ReactionBonusZone({
 function DmgBonusZone({
   p,
   hl,
+  t,
 }: {
   p: DisplayPart;
   hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
 }) {
   let elementDmg = 0;
   for (const k of ELEMENTAL_KEYS) {
@@ -356,14 +437,15 @@ function DmgBonusZone({
 
   return (
     <MathZone
-      label="DMG Bonus"
-      value={fmtPercent(total, true)}
+      label={t.formula("DmgBonus")}
+      value={total === 1 ? undefined : fmtPercent(total)}
       mathLine={
         <span className="flex items-center">
-          <MathVar val={1} label="" /> <MathOp char="+" />
+          <MathVar val={1} label="" />
+          <MathOp char="+" />
           <MathVar
             val={fmtPercent(elementDmg + dmgBonus)}
-            label="DMG%"
+            label={t.formula("DmgPercent")}
             highlight={hl === "dmg%" || hl?.includes("%")}
           />
         </span>
@@ -375,12 +457,16 @@ function DmgBonusZone({
 function CommonMultipliers({
   p,
   hl,
+  t,
+  showDef = true,
 }: {
   p: DisplayPart;
   hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+  showDef?: boolean;
 }) {
   const charLevel = p.params.charLevel || 90;
-  const enemyLevel = p.params.enemyLevel || 90;
+  const enemyLevel = p.params.enemyLevel || 110;
   const defReduc = p.statValues["defReduction%"] || 0;
   const defIgnore = p.statValues["defIgnore%"] || 0;
 
@@ -397,6 +483,8 @@ function CommonMultipliers({
     (charLevel + 100) /
     (charLevel + 100 + (enemyLevel + 100) * (1 - defReduc) * (1 - defIgnore));
 
+  const elv = p.statValues["elevated%"] || 0;
+
   const cr =
     p.template === "transform"
       ? p.statValues.reactionCr || 0
@@ -408,67 +496,104 @@ function CommonMultipliers({
 
   const assumeCrit = p.params.assumeCrit === 1;
   const critMult =
-    cr > 0 || cd > 0 ? (assumeCrit ? 1 + cd : 1 + Math.min(cr, 1) * cd) : 1;
+    cr > 0 || cd > 0
+      ? assumeCrit
+        ? 1 + cd
+        : 1 + Math.max(0, Math.min(cr, 1)) * cd
+      : 1;
+
+  const hasCrit = critMult !== 1;
 
   return (
     <>
+      {hasCrit && (
+        <>
+          <MathZone
+            label={t.formula("Crit")}
+            value={fmtPercent(critMult)}
+            mathLine={
+              <span className="flex items-center">
+                <MathVar val={1} label="" />
+                <MathOp char="+" />
+                {!assumeCrit && (
+                  <>
+                    <Paren char="(" />
+                    <MathVar
+                      val={fmtPercent(Math.max(0, Math.min(cr, 1)))}
+                      label={t.statShort("cr")}
+                      highlight={hl === "cr" || hl === "reactionCr"}
+                    />
+                    <MathOp />
+                  </>
+                )}
+                <MathVar
+                  val={fmtPercent(cd)}
+                  label={t.statShort("cd")}
+                  highlight={hl === "cd" || hl === "reactionCd"}
+                />
+                {!assumeCrit && <Paren char=")" />}
+              </span>
+            }
+          />
+          <Op />
+        </>
+      )}
       <MathZone
-        label="DEF"
-        value={fmtPercent(defMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={charLevel + 100} label="Char" />
-            <MathOp char="/" />
-            (
-            <MathVar val={charLevel + 100} label="Char" />
-            <MathOp char="+" />
-            <MathVar val={enemyLevel + 100} label="Enemy" />
-            <MathOp char="×" />
-            <MathVar
-              val={fmtPercent((1 - defReduc) * (1 - defIgnore))}
-              label="DefFactor"
-              highlight={hl === "defReduction%" || hl === "defIgnore%"}
-            />
-            )
-          </span>
-        }
-      />
-      <Op />
-      <MathZone
-        label="RES"
+        label={t.formula("Res")}
         value={fmtPercent(resMult)}
         mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={fmtPercent(effRes)}
-              label="Target"
-              highlight={hl === "resReduction%"}
-            />
-          </span>
+          <ResMathLine effRes={effRes} hl={hl === "resReduction%"} t={t} />
         }
       />
-      <Op />
-      <MathZone
-        label="CRIT"
-        value={fmtPercent(critMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={1} label="" /> <MathOp char="+" /> (
-            <MathVar
-              val={fmtPercent(Math.min(cr, 1))}
-              label="CR"
-              highlight={hl === "cr" || hl === "reactionCr"}
-            />{" "}
-            <MathOp />{" "}
-            <MathVar
-              val={fmtPercent(cd)}
-              label="CD"
-              highlight={hl === "cd" || hl === "reactionCd"}
-            />
-            )
-          </span>
-        }
-      />
+      {showDef && (
+        <>
+          <Op />
+          <MathZone
+            label={t.formula("Def")}
+            value={fmtPercent(defMult)}
+            mathLine={
+              <span className="flex items-center">
+                <MathVar val={charLevel + 100} label={t.formula("Char")} />
+                <MathOp char="/" />
+                <Paren char="(" />
+                <MathVar val={charLevel + 100} label={t.formula("Char")} />
+                <MathOp char="+" />
+                <MathVar val={enemyLevel + 100} label={t.formula("Enemy")} />
+                {defReduc === 0 && defIgnore === 0 ? null : (
+                  <>
+                    <MathOp char="×" />
+                    <MathVar
+                      val={fmtPercent((1 - defReduc) * (1 - defIgnore))}
+                      label={t.formula("DefFactor")}
+                      highlight={hl === "defReduction%" || hl === "defIgnore%"}
+                    />
+                  </>
+                )}
+                <Paren char=")" />
+              </span>
+            }
+          />
+        </>
+      )}
+      {elv ? (
+        <>
+          <Op />
+          <MathZone
+            label={t.statShort("elevated%")}
+            mathLine={
+              <span className="flex items-center">
+                <MathVar val={1} label="" />
+                <MathOp char="+" />
+                <MathVar
+                  val={fmtPercent(elv)}
+                  label={t.statShort("elevated%")}
+                  highlight={hl === "elevated%"}
+                />
+              </span>
+            }
+          />
+        </>
+      ) : null}
     </>
   );
 }
@@ -488,9 +613,9 @@ function DirectEq({
     <>
       <BaseGroup p={p} hl={hl} t={t} />
       <Op />
-      <DmgBonusZone p={p} hl={hl} />
+      <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} />
+      <CommonMultipliers p={p} hl={hl} t={t} />
     </>
   );
 }
@@ -508,12 +633,12 @@ function AmplifyEq({
     <>
       <BaseGroup p={p} hl={hl} t={t} />
       <Op />
-      <DmgBonusZone p={p} hl={hl} />
+      <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} />
+      <CommonMultipliers p={p} hl={hl} t={t} />
       <Op />
       <MathZone
-        label="AMP"
+        label={t.formula("Amp")}
         value={fmtPercent(
           (p.params.reactionCoeff || 1) *
             (1 +
@@ -522,22 +647,25 @@ function AmplifyEq({
         )}
         mathLine={
           <span className="flex items-center">
-            <MathVar val={p.params.reactionCoeff} label="Base" /> <MathOp /> (
-            <MathVar val={1} label="" /> <MathOp char="+" />{" "}
+            <MathVar val={p.params.reactionCoeff} label={t.formula("Base")} />
+            <MathOp />
+            <Paren char="(" />
+            <MathVar val={1} label="" />
+            <MathOp char="+" />
             <MathVar
               val={fmtPercent(
                 getEmBonus(p.statValues.em || 0, p.params.emCoeff || 2.78)
               )}
-              label="EMBonus"
+              label={t.formula("EMBonus")}
               highlight={hl === "em"}
-            />{" "}
-            <MathOp char="+" />{" "}
+            />
+            <MathOp char="+" />
             <MathVar
               val={fmtPercent(p.statValues["reactionDmg%"] || 0)}
-              label="Rxn%"
+              label={t.formula("RxnPercent")}
               highlight={hl === "reactionDmg%"}
             />
-            )
+            <Paren char=")" />
           </span>
         }
       />
@@ -558,201 +686,102 @@ function CatalyzeEq({
     <>
       <BaseGroup p={p} hl={hl} t={t} isCatalyze />
       <Op />
-      <DmgBonusZone p={p} hl={hl} />
+      <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} />
+      <CommonMultipliers p={p} hl={hl} t={t} />
     </>
   );
 }
 
-function TransformEq({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
+function TransformEq({
+  p,
+  hl,
+  t,
+}: {
+  p: DisplayPart;
+  hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
   const baseDmg = levelMult * reactBase;
 
-  const resReduc = p.statValues["resReduction%"] || 0;
-  const enemyRes = p.params.enemyRes || 0.1;
-  const effRes = enemyRes - resReduc;
-  let resMult = 1;
-  if (effRes < 0) resMult = 1 - effRes / 2;
-  else if (effRes <= 0.75) resMult = 1 - effRes;
-  else resMult = 1 / (1 + 4 * effRes);
-
-  const cr = p.statValues.reactionCr || 0;
-  const cd = p.statValues.reactionCd || 0;
-  const assumeCrit = p.params.assumeCrit === 1;
-  const critMult =
-    cr > 0 || cd > 0 ? (assumeCrit ? 1 + cd : 1 + Math.min(cr, 1) * cd) : 1;
-
   return (
     <>
       <MathZone
-        label="BaseRxn"
+        label={t.formula("BaseRxn")}
         value={Math.round(baseDmg).toLocaleString()}
         mathLine={
           <span className="flex items-center">
             <MathVar
               val={Math.round(levelMult).toLocaleString()}
-              label="LvMult"
+              label={t.formula("LvMult")}
             />{" "}
-            <MathOp /> <MathVar val={reactBase} label="RxnBase" />
+            <MathOp /> <MathVar val={reactBase} label={t.formula("RxnBase")} />
           </span>
         }
       />
       <Op />
-      <ReactionBonusZone p={p} hl={hl} />
+      <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
+      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
+    </>
+  );
+}
+
+function LunarEq({
+  p,
+  hl,
+  t,
+}: {
+  p: DisplayPart;
+  hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const levelMult = p.params.levelCoeff || 0;
+  const reactBase = p.params.reactionCoeff || 0;
+  const baseDmg = levelMult * reactBase;
+  const bdp = p.statValues["baseDmg%"] || 0;
+
+  return (
+    <>
       <MathZone
-        label="RES"
-        value={fmtPercent(resMult)}
+        label={t.formula("BaseRxn")}
+        value={Math.round(baseDmg).toLocaleString()}
         mathLine={
           <span className="flex items-center">
             <MathVar
-              val={fmtPercent(effRes)}
-              label="Target"
-              highlight={hl === "resReduction%"}
+              val={Math.round(levelMult).toLocaleString()}
+              label={t.formula("LvMult")}
             />
+            <MathOp />
+            <MathVar val={reactBase} label={t.formula("RxnBase")} />
           </span>
         }
       />
-      {(cr > 0 || cd > 0) && (
+      <Op />
+      <ReactionBonusZone p={p} hl={hl} t={t} />
+      {bdp ? (
         <>
           <Op />
           <MathZone
-            label="CRIT"
-            value={fmtPercent(critMult)}
+            label={t.formula("BaseDmgPercent")}
             mathLine={
               <span className="flex items-center">
-                <MathVar val={1} label="" /> <MathOp char="+" /> (
-                <MathVar
-                  val={fmtPercent(Math.min(cr, 1))}
-                  label="CR"
-                  highlight={hl === "reactionCr"}
-                />{" "}
-                <MathOp />{" "}
-                <MathVar
-                  val={fmtPercent(cd)}
-                  label="CD"
-                  highlight={hl === "reactionCd"}
-                />
-                )
-              </span>
-            }
-          />
-        </>
-      )}
-    </>
-  );
-}
-
-function LunarEq({ p, hl }: { p: DisplayPart; hl: StatKey | null }) {
-  const levelMult = p.params.levelCoeff || 0;
-  const reactBase = p.params.reactionCoeff || 0;
-  const baseDmg = levelMult * reactBase;
-
-  const resReduc = p.statValues["resReduction%"] || 0;
-  const enemyRes = p.params.enemyRes || 0.1;
-  const effRes = enemyRes - resReduc;
-  let resMult = 1;
-  if (effRes < 0) resMult = 1 - effRes / 2;
-  else if (effRes <= 0.75) resMult = 1 - effRes;
-  else resMult = 1 / (1 + 4 * effRes);
-
-  const cr = p.statValues.cr || 0;
-  const cd = p.statValues.cd || 0;
-  const assumeCrit = p.params.assumeCrit === 1;
-  const critMult =
-    cr > 0 || cd > 0 ? (assumeCrit ? 1 + cd : 1 + Math.min(cr, 1) * cd) : 1;
-
-  const bdp = p.statValues["baseDmg%"] || 0;
-  const elv = p.statValues["elevated%"] || 0;
-
-  return (
-    <>
-      <MathZone
-        label="BaseRxn"
-        value={Math.round(baseDmg).toLocaleString()}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={Math.round(levelMult).toLocaleString()}
-              label="LvMult"
-            />{" "}
-            <MathOp /> <MathVar val={reactBase} label="RxnBase" />
-          </span>
-        }
-      />
-      <Op />
-      <ReactionBonusZone p={p} hl={hl} />
-      <Op />
-      {bdp ? (
-        <>
-          <MathZone
-            label="BaseDMG%"
-            value={fmtPercent(1 + bdp)}
-            mathLine={
-              <span className="flex items-center">
-                <MathVar val={1} label="" /> <MathOp char="+" />{" "}
+                <MathVar val={1} label="" />
+                <MathOp char="+" />
                 <MathVar
                   val={fmtPercent(bdp)}
-                  label="DMG%"
+                  label={t.formula("DmgPercent")}
                   highlight={hl === "baseDmg%"}
                 />
               </span>
             }
           />
-          <Op />
         </>
       ) : null}
-      {elv ? (
-        <>
-          <MathZone
-            label="Elevated"
-            value={fmtPercent(1 + elv)}
-            mathLine={
-              <span className="flex items-center">
-                <MathVar val={1} label="" /> <MathOp char="+" />{" "}
-                <MathVar
-                  val={fmtPercent(elv)}
-                  label="Elevated"
-                  highlight={hl === "elevated%"}
-                />
-              </span>
-            }
-          />
-          <Op />
-        </>
-      ) : null}
-      <MathZone
-        label="RES"
-        value={fmtPercent(resMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={fmtPercent(effRes)}
-              label="Target"
-              highlight={hl === "resReduction%"}
-            />
-          </span>
-        }
-      />
       <Op />
-      <MathZone
-        label="CRIT"
-        value={fmtPercent(critMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={1} label="" /> <MathOp char="+" /> (
-            <MathVar
-              val={fmtPercent(Math.min(cr, 1))}
-              label="CR"
-              highlight={hl === "cr"}
-            />{" "}
-            <MathOp />{" "}
-            <MathVar val={fmtPercent(cd)} label="CD" highlight={hl === "cd"} />)
-          </span>
-        }
-      />
+      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
     </>
   );
 }
@@ -769,27 +798,36 @@ function LunarDirectGroup({
   const hasBaseBonus = !!p.statValues["baseDmg%"];
   const hasFlatBonus = !!p.statValues.baseDmg;
 
+  const directCoeff = p.params.directCoeff ?? 1;
+
   const content = (
     <>
       <ScalingZone p={p} hl={hl} t={t} />
+      {directCoeff !== 1 && (
+        <>
+          <Op />
+          <MathZone
+            label={t.formula("DirectCoeff")}
+            mathLine={
+              <span className="flex items-center">
+                <MathVar val={directCoeff} label={t.formula("DirectCoeff")} />
+              </span>
+            }
+          />
+        </>
+      )}
+      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} t={t} />}
       <Op />
-      <MathZone label="DirectCoeff" value={p.params.directCoeff} />
-      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} />}
-      <Op />
-      <ReactionBonusZone p={p} hl={hl} label="Lunar Dmg%" />
-      {hasFlatBonus && <FlatBonusZone p={p} hl={hl} />}
+      <ReactionBonusZone p={p} hl={hl} t={t} labelKey="Lunar DMG%" />
+      {hasFlatBonus && <FlatBonusZone p={p} hl={hl} t={t} />}
     </>
   );
 
   return (
     <div className="flex h-[72px] items-center mx-1 bg-black/5 border border-border/20 px-1 rounded-md">
-      <span className="font-[math] text-muted-foreground mr-1 opacity-60 text-xl font-light">
-        (
-      </span>
+      <Paren char="(" />
       {content}
-      <span className="font-[math] text-muted-foreground ml-1 opacity-60 text-xl font-light">
-        )
-      </span>
+      <Paren char=")" />
     </div>
   );
 }
@@ -803,75 +841,11 @@ function LunarDirectEq({
   hl: StatKey | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
-  const elv = p.statValues["elevated%"] || 0;
-
-  const resReduc = p.statValues["resReduction%"] || 0;
-  const enemyRes = p.params.enemyRes || 0.1;
-  const effRes = enemyRes - resReduc;
-  let resMult = 1;
-  if (effRes < 0) resMult = 1 - effRes / 2;
-  else if (effRes <= 0.75) resMult = 1 - effRes;
-  else resMult = 1 / (1 + 4 * effRes);
-
-  const cr = p.statValues.cr || 0;
-  const cd = p.statValues.cd || 0;
-  const assumeCrit = p.params.assumeCrit === 1;
-  const critMult =
-    cr > 0 || cd > 0 ? (assumeCrit ? 1 + cd : 1 + Math.min(cr, 1) * cd) : 1;
-
   return (
     <>
       <LunarDirectGroup p={p} hl={hl} t={t} />
       <Op />
-      {elv ? (
-        <>
-          <MathZone
-            label="Elevated"
-            value={fmtPercent(1 + elv)}
-            mathLine={
-              <span className="flex items-center">
-                <MathVar val={1} label="" /> <MathOp char="+" />{" "}
-                <MathVar
-                  val={fmtPercent(elv)}
-                  label="Elevated"
-                  highlight={hl === "elevated%"}
-                />
-              </span>
-            }
-          />
-          <Op />
-        </>
-      ) : null}
-      <MathZone
-        label="RES"
-        value={fmtPercent(resMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={fmtPercent(effRes)}
-              label="Target"
-              highlight={hl === "resReduction%"}
-            />
-          </span>
-        }
-      />
-      <Op />
-      <MathZone
-        label="CRIT"
-        value={fmtPercent(critMult)}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={1} label="" /> <MathOp char="+" /> (
-            <MathVar
-              val={fmtPercent(Math.min(cr, 1))}
-              label="CR"
-              highlight={hl === "cr"}
-            />{" "}
-            <MathOp />{" "}
-            <MathVar val={fmtPercent(cd)} label="CD" highlight={hl === "cd"} />)
-          </span>
-        }
-      />
+      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
     </>
   );
 }
@@ -892,45 +866,63 @@ const RENDERERS: Record<
   lunarDirect: LunarDirectEq,
 };
 
-const TEMPLATE_NAMES: Record<FormulaTemplate, string> = {
-  direct: "Direct Damage",
-  amplify: "Amplifying Reaction",
-  catalyze: "Additive Reaction",
-  transform: "Transformative Reaction",
-  lunar: "Lunar Reaction",
-  lunarDirect: "Lunar Direct",
+const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
+  direct: "DirectDamage",
+  amplify: "AmplifyingReaction",
+  catalyze: "AdditiveReaction",
+  transform: "TransformativeReaction",
+  lunar: "LunarReaction",
+  lunarDirect: "LunarDirect",
 };
 
 // ─── Main Component ───
 
+function getTemplateName(
+  p: DisplayPart,
+  t: ReturnType<typeof useLanguage>["t"]
+) {
+  if (p.template === "direct") return t.formula("DirectDamage");
+  if (p.tag?.reaction && p.tag.reaction !== "none") {
+    const rxn = t.reaction(p.tag.reaction);
+    if (p.template === "lunarDirect") return rxn + t.formula("DirectSuffix");
+    return rxn + t.formula("ReactionSuffix");
+  }
+  return t.formula(TEMPLATE_KEYS[p.template]);
+}
+
 export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
   return (
-    <div className="flex flex-col gap-4 py-2">
-      {parts.map((p, idx) => {
-        const Renderer = RENDERERS[p.template];
-        return (
-          <div
-            key={idx}
-            className="flex justify-center overflow-x-auto scrollbar-none py-1.5 px-0.5 pb-2"
-          >
-            <div className="flex items-center min-w-max">
+    <div className="w-full overflow-x-auto pt-3 px-1">
+      <div className="w-max mx-auto flex flex-col items-center gap-4">
+        {parts.map((p, idx) => {
+          const Renderer = RENDERERS[p.template];
+          return (
+            <div key={idx} className="flex items-center pt-2">
               <Renderer p={p} hl={highlightedStat} t={t} />
               <div className="flex px-2 shrink-0 h-16 items-center">
                 <Op char="=" />
               </div>
               <div className="flex flex-col items-center justify-between gap-2 bg-primary/5 border border-primary/20 px-4 py-2 rounded-lg">
                 <span className="text-sm text-primary/70 tracking-wide leading-none opacity-80 whitespace-nowrap">
-                  {TEMPLATE_NAMES[p.template]}{" "}
-                  {parts.length > 1 ? `(#${idx + 1})` : ""}
+                  {getTemplateName(p, t)}
                 </span>
-                <span className="font-[math] text-xl md:text-2xl font-black text-foreground">
-                  {fmtDamage(p.damage)}
+                <span className="font-[math] text-lg md:text-xl font-black text-foreground flex flex-wrap items-baseline justify-center gap-x-1.5 h-full">
+                  {p.hits && p.hits !== 1 ? (
+                    <>
+                      <span>{fmtDamage(p.damage)}</span>
+                      <span className="text-primary bg-primary/10 rounded-full px-2 py-0.5 text-xs font-semibold ml-1 tracking-wider">
+                        × {p.hits}
+                      </span>
+                    </>
+                  ) : (
+                    <span>{fmtDamage(p.damage)}</span>
+                  )}
                 </span>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

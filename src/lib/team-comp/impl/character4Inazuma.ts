@@ -17,7 +17,7 @@ class Kirara extends CharacterBase {
   readonly buffs = [
     // C6: After E/Q, team All Elemental DMG +12%
     new StaticSkillBuff(
-      cbs(this, ["E", "Q"], "C6"),
+      cbs(this, "C6", ["E", "Q"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "dmg%", value: 0.12 }] : [])
@@ -32,12 +32,12 @@ class Kirara extends CharacterBase {
 class ShikanoinHeizou extends CharacterBase {
   readonly buffs = [
     // P2: E hit → Team EM +80 for 10s
-    new StatBuff(cbs(this, ["E"], "P2"), { receiver: "team" }, [
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "team" }, [
       { key: "em", value: 80 },
     ]),
     // C6: E (4 stacks) → CR +16%, CD +32%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       this.constellation,
       (c) =>
@@ -90,7 +90,7 @@ class KukiShinobu extends CharacterBase {
   readonly buffs = [
     // P2: E ring DMG boosted by EM×25% (as flat baseDmg per hit)
     new ScalingBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField" },
       [],
       "em",
@@ -99,7 +99,7 @@ class KukiShinobu extends CharacterBase {
     ),
     // C6: Self EM +150 when HP < 25%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "em", value: 150 }] : [])
@@ -160,7 +160,7 @@ class Thoma extends CharacterBase {
     // P1: Shield Strength +25% (5 stacks at 5%) - not modeled
     // C6: Shield proc → Team Normal, Charged, Plunge DMG +15%
     new StaticSkillBuff(
-      cbs(this, ["E", "Q"], "C6"),
+      cbs(this, "C6", ["E", "Q"]),
       {
         receiver: "team",
         filter: { abilities: ["normal", "charge", "plunge"] },
@@ -201,21 +201,21 @@ class Gorou extends CharacterBase {
     // E/Q: flat DEF — Lv10 371, Lv13 (C3+) 438
     const defFlat = this.constellation >= 3 ? 438 : 371;
     buffs.push(
-      new StatBuff(cbs(this, ["E", "Q"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "onField" }, [
         { key: "def", value: defFlat },
       ])
     );
     // E/Q: 3+ Geo → Geo DMG +15%
     if (this.geoCount >= 3) {
       buffs.push(
-        new StatBuff(cbs(this, ["E", "Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "onField" }, [
           { key: "geo%", value: 0.15 },
         ])
       );
     }
     // P1: After Q, team DEF +25%
     buffs.push(
-      new StatBuff(cbs(this, ["Q"], "P1"), { receiver: "team" }, [
+      new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "team" }, [
         { key: "def%", value: 0.25 },
       ])
     );
@@ -226,7 +226,7 @@ class Gorou extends CharacterBase {
       if (cdValue > 0) {
         buffs.push(
           new StatBuff(
-            cbs(this, ["E", "Q"], "C6"),
+            cbs(this, "C6", ["E", "Q"]),
             { receiver: "team", filter: { elements: ["Geo"] } },
             [{ key: "cd", value: cdValue }]
           )
@@ -246,7 +246,7 @@ class KujouSara extends CharacterBase {
     // E/Q: ATK bonus = 77%/91% of Sara's Base ATK to active character
     // C5 boosts E talent → Lv13 ratio 91%
     new ScalingSkillBuff(
-      cbs(this, ["E", "Q"]),
+      cbs(this, "E", ["E", "Q"]),
       { receiver: "onField" },
       [],
       "baseAtk",
@@ -256,7 +256,7 @@ class KujouSara extends CharacterBase {
     ),
     // C6: Buffed characters gain +60% Electro CD
     new StaticSkillBuff(
-      cbs(this, ["E", "Q"], "C6"),
+      cbs(this, "C6", ["E", "Q"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "cd", value: 0.6 }] : [])

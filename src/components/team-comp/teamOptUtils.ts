@@ -3,7 +3,6 @@ import type { AccountData, ArtifactData } from "@/data/types";
 import type { CharCompConfig } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 
-// ─── Types ────────────────────────────────────────────────────────
 export interface TeamOptDetailProps {
   team: Team;
   onBack: () => void;
@@ -13,8 +12,6 @@ export interface DetectedSets {
   artifactSetId: string | null;
   artifactHalfSetIds: string[];
 }
-
-// ─── Helpers ──────────────────────────────────────────────────────
 
 /** Detect what artifact set bonuses the equipped pieces actually form. */
 export function detectEquippedSets(artifacts: ArtifactData[]): DetectedSets {
@@ -88,29 +85,34 @@ export function buildTeamConfigs(
     const charId = team.characters[i];
     if (!charId) continue;
 
-    let charLevel = 90;
-    let constellation = 0;
-    let refinement = 1;
+    const acctChar = accountData?.characters.find((c) => c.key === charId);
+    const defaultLevel = acctChar ? (acctChar.level > 90 ? 100 : 90) : 90;
+    const defaultConst = acctChar ? acctChar.constellation : 0;
 
-    if (accountData) {
-      const acctChar = accountData.characters.find((c) => c.key === charId);
-      if (acctChar) {
-        charLevel = acctChar.level;
-        constellation = acctChar.constellation;
-      }
+    const charLevel =
+      team.opts?.[`${charId}.overrideLevel`] !== undefined
+        ? Number(team.opts[`${charId}.overrideLevel`])
+        : defaultLevel;
+    const constellation =
+      team.opts?.[`${charId}.overrideConstellation`] !== undefined
+        ? Number(team.opts[`${charId}.overrideConstellation`])
+        : defaultConst;
 
-      const weaponKey = team.weapons[i];
-      if (weaponKey) {
-        const acctWeapons = accountData.extraWeapons.filter(
-          (w) => w.key === weaponKey
-        );
-        if (acctWeapons.length > 0) {
-          refinement = Math.max(...acctWeapons.map((w) => w.refinement));
-        }
+    let defaultRefine = 1;
+    const weaponId = team.weapons[i] || "dull_blade";
+    if (weaponId && accountData) {
+      const acctWeapons = accountData.extraWeapons.filter(
+        (w) => w.key === weaponId
+      );
+      if (acctWeapons.length > 0) {
+        defaultRefine = Math.max(...acctWeapons.map((w) => w.refinement));
       }
     }
 
-    const weaponId = team.weapons[i] || "dull_blade";
+    const refinement =
+      team.opts?.[`${charId}.overrideRefinement`] !== undefined
+        ? Number(team.opts[`${charId}.overrideRefinement`])
+        : defaultRefine;
 
     // Detect equipped artifact sets for accurate damage calc
     let artifactSetId: string | null = null;

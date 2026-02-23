@@ -1,6 +1,10 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData } from "@/data/types";
-import type { CombatOpts, DamageResult } from "@/lib/team-comp/types";
+import type {
+  CalcContext,
+  CombatOpts,
+  DamageResult,
+} from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -21,6 +25,7 @@ export interface Team {
   targetEr: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: OptimizationResult | null;
+  calcContext?: Partial<CalcContext>;
 }
 
 interface TeamState {
@@ -124,6 +129,7 @@ export const useTeamStore = create<TeamState>()(
                 targetEr: t.targetEr || {},
                 selectedFormula: t.selectedFormula || null,
                 optimizationResult: t.optimizationResult || null,
+                calcContext: t.calcContext || undefined,
               }));
 
             if (validTeams.length > 0) {

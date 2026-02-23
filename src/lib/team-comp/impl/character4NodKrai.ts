@@ -19,20 +19,20 @@ class Illuga extends CharacterBase {
     >[] = [
       // P1 (C6 enhanced): After E/Q, team Geo CR/CD + EM
       new StatBuff(
-        cbs(this, ["E", "Q"], "P1"),
+        cbs(this, "P1", ["E", "Q"]),
         { receiver: "team", filter: { elements: ["Geo"] } },
         [
           { key: "cr", value: isC6 ? 0.1 : 0.05 },
           { key: "cd", value: isC6 ? 0.3 : 0.1 },
         ]
       ),
-      new StatBuff(cbs(this, ["E", "Q"], "P1"), { receiver: "team" }, [
+      new StatBuff(cbs(this, "P1", ["E", "Q"]), { receiver: "team" }, [
         { key: "em", value: isC6 ? 80 : 50 },
       ]),
       // Q: Nightingale's Song — EM → Geo baseDmg
       // Lv10: 60.5% EM, Lv13 (C3+): 71.4% EM
       new ScalingBuff(
-        cbs(this, ["Q"]),
+        cbs(this, "Q", ["Q"]),
         { receiver: "onField", filter: { elements: ["Geo"] } },
         [],
         "em",
@@ -47,7 +47,7 @@ class Illuga extends CharacterBase {
     if (p2Scale > 0) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["Q"], "P2"),
+          cbs(this, "P2", ["Q"]),
           { receiver: "onField", filter: { elements: ["Geo"] } },
           [],
           "em",
@@ -59,7 +59,7 @@ class Illuga extends CharacterBase {
     // C4: During Q, on-field DEF +200
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
           { key: "def", value: 200 },
         ])
       );
@@ -75,12 +75,12 @@ class Illuga extends CharacterBase {
 class Jahoda extends CharacterBase {
   readonly buffs = [
     // P2: After Q heals at >70% HP, on-field EM +100
-    new StatBuff(cbs(this, ["Q"], "P2"), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
       { key: "em", value: 100 },
     ]),
     // C6: After E flask full, Moonsign characters CR +5%, CD +40%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "team" },
       this.constellation,
       (c) =>
@@ -102,7 +102,7 @@ class Aino extends CharacterBase {
   readonly buffs = [
     // P2: Burst DMG increased by 50% of EM → flat baseDmg on burst
     new ScalingBuff(
-      cbs(this, [], "P2"),
+      cbs(this, "P2", []),
       { receiver: "self", filter: { abilities: ["burst"] } },
       [],
       "em",
@@ -113,10 +113,10 @@ class Aino extends CharacterBase {
     ...(() => {
       if (this.constellation < 1) return [];
       return [
-        new StatBuff(cbs(this, ["E", "Q"], "C1"), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C1", ["E", "Q"]), { receiver: "self" }, [
           { key: "em", value: 80 },
         ]),
-        new StatBuff(cbs(this, ["E", "Q"], "C1"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C1", ["E", "Q"]), { receiver: "onField" }, [
           { key: "em", value: 80 },
         ]),
       ];
@@ -136,7 +136,7 @@ class Aino extends CharacterBase {
       ];
       return [
         new StatBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "onField", filter: { reactions } },
           [{ key: "reactionDmg%", value: bonus }]
         ),

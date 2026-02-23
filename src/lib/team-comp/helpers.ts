@@ -12,18 +12,24 @@ export function r(
 
 /** Weapon buff source. */
 export function wbs(
-  self: { weaponId: string },
+  self: { weaponId: string; refinement: number },
   triggers?: string[],
   noStackId?: string
 ): BuffSource {
-  return { type: "weapon", id: self.weaponId, triggers, noStackId };
+  return {
+    type: "weapon",
+    id: self.weaponId,
+    triggers,
+    noStackId,
+    origin: `R${self.refinement}`,
+  };
 }
 
 /** Character buff source. */
 export function cbs(
   self: { charId: string },
-  triggers?: string[],
-  origin?: string
+  origin: string,
+  triggers?: string[]
 ): BuffSource {
   return { type: "character", id: self.charId, triggers, origin };
 }

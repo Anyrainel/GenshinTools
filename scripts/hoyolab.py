@@ -408,7 +408,6 @@ class HoyolabScraper:
 
     def scrape_characters(self, language: str = "en") -> list[CharacterSource]:
         page = self._ensure_page()
-        print(f"--- Character ({language.upper()}) ---")  # Keep distinct header
         character_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/2"
 
         if not self._navigate_with_language(character_url, language):
@@ -515,7 +514,6 @@ class HoyolabScraper:
 
     def scrape_artifacts(self, language: str = "en") -> list[ArtifactSource]:
         page = self._ensure_page()
-        print(f"--- Artifact ({language.upper()}) ---")
         artifact_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/5"
 
         if not self._navigate_with_language(artifact_url, language):
@@ -676,7 +674,6 @@ class HoyolabScraper:
 
     def scrape_weapons(self, language: str = "en") -> list[WeaponSource]:
         page = self._ensure_page()
-        print(f"--- Weapon ({language.upper()}) ---")
         weapon_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/4"
 
         if not self._navigate_with_language(weapon_url, language):

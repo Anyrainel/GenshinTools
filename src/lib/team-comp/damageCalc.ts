@@ -35,6 +35,7 @@ import type {
   StatEntry,
   StatKey,
 } from "./types";
+import { filterMatchesTag } from "./types";
 
 export { TeamMeta };
 
@@ -52,7 +53,6 @@ export class TeamResonance {
 
   constructor(teamMeta: TeamMeta) {
     const buffs: StatBuff[] = [];
-    const src = { type: "teamResonance" as const, id: "resonance" };
 
     const elemCounts = new Map<Element, number>();
     for (const el of Object.values(teamMeta.elements)) {
@@ -63,45 +63,82 @@ export class TeamResonance {
     // Pyro 2+: ATK +25%
     if ((elemCounts.get("Pyro") ?? 0) >= 2) {
       buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "atk%", value: 0.25 }])
+        new StatBuff(
+          { type: "teamResonance", id: "pyro" },
+          { receiver: "team" },
+          [{ key: "atk%", value: 0.25 }]
+        )
       );
     }
 
     // Hydro 2+: HP +25%
     if ((elemCounts.get("Hydro") ?? 0) >= 2) {
       buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "hp%", value: 0.25 }])
+        new StatBuff(
+          { type: "teamResonance", id: "hydro" },
+          { receiver: "team" },
+          [{ key: "hp%", value: 0.25 }]
+        )
       );
     }
 
     // Cryo 2+: CR +15% against Cryo-affected/Frozen (assume active)
     if ((elemCounts.get("Cryo") ?? 0) >= 2) {
       buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "cr", value: 0.15 }])
+        new StatBuff(
+          { type: "teamResonance", id: "cryo" },
+          { receiver: "team" },
+          [{ key: "cr", value: 0.15 }]
+        )
       );
     }
 
-    // Geo 2+: DMG +15% when shielded (assume active)
+    // Geo 2+: DMG +15% when shielded + Geo RES -20% when dealing DMG (assume active)
     if ((elemCounts.get("Geo") ?? 0) >= 2) {
       buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "dmg%", value: 0.15 }])
+        new StatBuff(
+          { type: "teamResonance", id: "geo" },
+          { receiver: "team" },
+          [{ key: "dmg%", value: 0.15 }]
+        ),
+        new StatBuff(
+          { type: "teamResonance", id: "geo" },
+          { receiver: "team", filter: { elements: ["Geo"] } },
+          [{ key: "resReduction%", value: 0.2 }]
+        )
       );
     }
 
-    // Dendro 2+: EM +50 (base), +30 after Burning/Quicken/Bloom (assume active: total EM +80)
+    // Dendro 2+: EM +50 (base), +30 after Burning/Quicken/Bloom/LunarBloom, +20 after Aggravate/Spread/Hyperbloom/Burgeon (assume active: total EM +100)
     if ((elemCounts.get("Dendro") ?? 0) >= 2) {
+      let emBonus = 50;
+      if (
+        teamMeta.hasReaction("burning") ||
+        teamMeta.hasReaction("quicken") ||
+        teamMeta.hasReaction("bloom") ||
+        teamMeta.hasReaction("lunarBloom")
+      ) {
+        emBonus += 30;
+      }
+      if (
+        teamMeta.hasReaction("aggravate") ||
+        teamMeta.hasReaction("spread") ||
+        teamMeta.hasReaction("hyperbloom") ||
+        teamMeta.hasReaction("burgeon")
+      ) {
+        emBonus += 20;
+      }
+
       buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "em", value: 80 }])
+        new StatBuff(
+          { type: "teamResonance", id: "dendro" },
+          { receiver: "team" },
+          [{ key: "em", value: emBonus }]
+        )
       );
     }
 
-    // 4 unique elements: All RES +15%, EM +50 (Nod-Krai universal resonance)
-    if (uniqueElements >= 4) {
-      buffs.push(
-        new StatBuff(src, { receiver: "team" }, [{ key: "em", value: 50 }])
-      );
-    }
-
+    // 4 unique elements: All Elemental RES +15%, Physical RES +15% (defensive, out of scope)
     // Electro 2+ and Anemo 2+: no directly modellable damage bonuses
     // (energy particles, stamina, movement speed, cooldown reduction are out of scope)
 
@@ -114,6 +151,11 @@ export type EvaluatedDynamicBuff = {
   source: BuffSource;
   providerCharId: string;
   entries: StatEntry[];
+};
+
+export type ProvidedStaticBuff = {
+  buff: StatBuff;
+  providerCharId: string;
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -135,6 +177,7 @@ export class CharBuild {
   readonly weaponBase: WeaponBase;
   readonly artifactSetBase: ArtifactSetBase | null;
   readonly artifactHalfSetBases: ArtifactHalfSetBase[];
+  private readonly resonanceBuffs: StatBuff[] = [];
   private innerStatSheet: StatSheet;
 
   constructor(
@@ -163,6 +206,42 @@ export class CharBuild {
       createArtifactHalfSet(id, config.charId, teamMeta)
     );
 
+    if (
+      teamMeta.countByRegion("Nod-Krai") >= 2 &&
+      teamMeta.regions[config.charId] !== "Nod-Krai"
+    ) {
+      const src: BuffSource = {
+        type: "teamResonance",
+        id: "gleam",
+        noStackId: "nk_resonance_reaction_dmg",
+      };
+      const tgt: BuffTarget = {
+        receiver: "team",
+        filter: {
+          reactions: ["lunarBloom", "lunarCharged", "lunarCrystallize"],
+        },
+      };
+      const el = teamMeta.elements[config.charId];
+
+      if (el === "Pyro" || el === "Electro" || el === "Cryo") {
+        this.resonanceBuffs.push(
+          new ScalingBuff(src, tgt, [], "atk", "reactionDmg%", 0.00009, 0.36)
+        );
+      } else if (el === "Hydro") {
+        this.resonanceBuffs.push(
+          new ScalingBuff(src, tgt, [], "hp", "reactionDmg%", 0.000006, 0.36)
+        );
+      } else if (el === "Geo") {
+        this.resonanceBuffs.push(
+          new ScalingBuff(src, tgt, [], "def", "reactionDmg%", 0.0001, 0.36)
+        );
+      } else if (el === "Anemo" || el === "Dendro") {
+        this.resonanceBuffs.push(
+          new ScalingBuff(src, tgt, [], "em", "reactionDmg%", 0.000225, 0.36)
+        );
+      }
+    }
+
     // Phase 1: Assemble base stats from character + weapon
     const baseEntries: StatEntry[] = [
       ...this.charBase.stats,
@@ -174,6 +253,7 @@ export class CharBuild {
   /** Collect all buffs from this build's providers */
   getAllBuffs(): StatBuff[] {
     return [
+      ...this.resonanceBuffs,
       ...this.charBase.buffs,
       ...this.weaponBase.buffs,
       ...(this.artifactSetBase?.buffs ?? []),
@@ -186,10 +266,15 @@ export class CharBuild {
    * Called once during TeamBuild construction.
    * Target-dependent buffs (onField, selfOnField) are deferred to getTeamStats.
    */
-  applyStaticBuffs(teamStaticBuffs: StatBuff[], selfCharId: string): void {
-    let applicable = teamStaticBuffs.filter((b) =>
-      isBuffApplicable(b, selfCharId, null)
-    );
+  applyStaticBuffs(
+    teamStaticBuffs: ProvidedStaticBuff[],
+    selfCharId: string
+  ): void {
+    let applicable = teamStaticBuffs
+      .filter((b) =>
+        isBuffApplicable(b.buff, b.providerCharId, selfCharId, null)
+      )
+      .map((b) => b.buff);
     applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
     this.innerStatSheet = this.innerStatSheet.apply(applicable);
   }
@@ -243,7 +328,7 @@ export class CharBuild {
     calcTargetId: string
   ): StatSheet {
     let applicable = teamDynamicBuffs.filter((b) =>
-      isBuffApplicable(b.buff, selfCharId, calcTargetId)
+      isBuffApplicable(b.buff, b.providerCharId, selfCharId, calcTargetId)
     );
     applicable = deduplicateBuffs(applicable, (b) => b.entries);
 
@@ -285,6 +370,7 @@ export class CharBuild {
       const dp = formula.display(selfPostStats, this.charBase.charLevel, ctx);
       const h = hits ?? 1;
       totalDamage += dp.damage * h;
+      dp.hits = h;
       displayParts.push(dp);
     }
     return { parts: displayParts, totalDamage };
@@ -301,11 +387,12 @@ export class CharBuild {
  */
 export function isBuffApplicable(
   buff: StatBuff,
+  providerCharId: string,
   selfCharId: string,
   calcTargetId: string | null
 ): boolean {
   const receiver = buff.target.receiver;
-  const buffOwnerId = buff.source.id;
+  const buffOwnerId = providerCharId;
 
   switch (receiver) {
     case "self":
@@ -352,7 +439,7 @@ export class TeamBuild {
   readonly charBuilds: Record<string, CharBuild>;
   readonly teamMeta: TeamMeta;
   readonly teamResonance: TeamResonance;
-  private readonly allStaticBuffs: StatBuff[];
+  private readonly allStaticBuffs: ProvidedStaticBuff[];
 
   constructor(configs: CharCompConfig[], combatOpts: CombatOpts = {}) {
     const charIds = configs.map((c) => c.charId);
@@ -376,10 +463,15 @@ export class TeamBuild {
     }
 
     // Collect all static buffs across the team
-    this.allStaticBuffs = [
-      ...this.teamResonance.buffs,
-      ...Object.values(this.charBuilds).flatMap((b) => b.getAllBuffs()),
-    ];
+    this.allStaticBuffs = this.teamResonance.buffs.map((buff) => ({
+      buff,
+      providerCharId: "resonance",
+    }));
+    for (const [charId, build] of Object.entries(this.charBuilds)) {
+      for (const buff of build.getAllBuffs()) {
+        this.allStaticBuffs.push({ buff, providerCharId: charId });
+      }
+    }
 
     // Apply target-independent static buffs (self, selfOffField, team) at construction.
     // Target-dependent buffs (onField, selfOnField) are deferred to getTeamStats.
@@ -402,11 +494,18 @@ export class TeamBuild {
     // Collect target-dependent static buffs (onField, selfOnField) for each character
     const targetDependent: Record<string, StatBuff[]> = {};
     for (const charId of Object.keys(this.charBuilds)) {
-      targetDependent[charId] = this.allStaticBuffs.filter((b) => {
-        const r = b.target.receiver;
-        if (r !== "onField" && r !== "selfOnField") return false;
-        return isBuffApplicable(b, charId, calcTargetId);
-      });
+      targetDependent[charId] = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField") return false;
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            charId,
+            calcTargetId
+          );
+        })
+        .map((b) => b.buff);
     }
 
     // Phase 2: Pre-stats (base + all static buffs + artifacts)
@@ -484,11 +583,13 @@ export class TeamBuild {
     // ── Stat resolution (mirrors getTeamStats but captures intermediate phases) ──
     const targetDependent: Record<string, StatBuff[]> = {};
     for (const cid of Object.keys(this.charBuilds)) {
-      targetDependent[cid] = this.allStaticBuffs.filter((b) => {
-        const r = b.target.receiver;
-        if (r !== "onField" && r !== "selfOnField") return false;
-        return isBuffApplicable(b, cid, charId);
-      });
+      targetDependent[cid] = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField") return false;
+          return isBuffApplicable(b.buff, b.providerCharId, cid, charId);
+        })
+        .map((b) => b.buff);
     }
 
     const preStats: Record<string, StatSheet> = {};
@@ -519,9 +620,13 @@ export class TeamBuild {
 
     // ── Formula display ──
     const entry = build.charBase.getFormulaEntry(formulaId);
-    let commonTag: DamageTag | undefined;
+    const formulaTags: DamageTag[] = [];
     if (entry && entry.parts.length > 0) {
-      commonTag = entry.parts[0].formula.tag;
+      for (const part of entry.parts) {
+        if (part.formula.tag) {
+          formulaTags.push(part.formula.tag);
+        }
+      }
     }
 
     const { parts, totalDamage } = build.getDisplayParts(
@@ -531,7 +636,12 @@ export class TeamBuild {
     );
 
     // ── Buff resolution ──
-    const buffs = this.resolveBuffs(charId, preStats, teamPreStatsArr);
+    const buffs = this.resolveBuffs(
+      charId,
+      preStats,
+      teamPreStatsArr,
+      formulaTags
+    );
 
     // ── Stats (full team) ──
     const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
@@ -539,7 +649,7 @@ export class TeamBuild {
     for (const cid of Object.keys(this.charBuilds)) {
       idleStats[cid] = preStats[cid]!.getAll();
       combatStats[cid] = postStats[cid]!.getAll(
-        cid === charId ? commonTag : undefined
+        cid === charId ? formulaTags[0] : undefined
       );
     }
 
@@ -567,14 +677,17 @@ export class TeamBuild {
   private resolveBuffs(
     calcTargetId: string,
     preStats: Record<string, StatSheet>,
-    teamPreStatsArr: StatSheet[]
+    teamPreStatsArr: StatSheet[],
+    formulaTags: DamageTag[]
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
 
     // Determine tie-breakers for calcTargetId
-    let applicableStatic = this.allStaticBuffs.filter((b) =>
-      isBuffApplicable(b, calcTargetId, calcTargetId)
-    );
+    let applicableStatic = this.allStaticBuffs
+      .filter((b) =>
+        isBuffApplicable(b.buff, b.providerCharId, calcTargetId, calcTargetId)
+      )
+      .map((b) => b.buff);
     applicableStatic = deduplicateBuffs(applicableStatic, (b) => b.staticBuffs);
     const activeStaticSet = new Set<StatBuff>(applicableStatic);
 
@@ -585,7 +698,7 @@ export class TeamBuild {
       );
     }
     let applicableDynamic = allDynamic.filter((b) =>
-      isBuffApplicable(b.buff, calcTargetId, calcTargetId)
+      isBuffApplicable(b.buff, b.providerCharId, calcTargetId, calcTargetId)
     );
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
     const activeDynamicSet = new Set<StatBuff>(
@@ -594,7 +707,12 @@ export class TeamBuild {
 
     for (const [ownerId, cb] of Object.entries(this.charBuilds)) {
       for (const buff of cb.getAllBuffs()) {
-        const applicable = isBuffApplicable(buff, calcTargetId, calcTargetId);
+        const applicable = isBuffApplicable(
+          buff,
+          ownerId,
+          calcTargetId,
+          calcTargetId
+        );
 
         // Resolve dynamic entries with per-entry caps
         let dynamicEntries: ResolvedStatEntry[] = [];
@@ -605,25 +723,37 @@ export class TeamBuild {
           const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
           if (raw.length > 0) {
             active = activeDynamicSet.has(buff);
-            dynamicEntries = raw.map((entry) => {
-              const resolved: ResolvedStatEntry = { ...entry };
-              // Extract per-entry cap and input key from known scaling buff types
-              if (
-                buff instanceof ScalingBuff ||
-                buff instanceof ScalingSkillBuff
-              ) {
-                const cap = (buff as { cap?: number }).cap;
-                if (cap !== undefined) resolved.cap = cap;
-                resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
-              } else if (buff instanceof ScalingMultiBuff) {
-                const cap = (buff as { cap?: number }).cap;
-                if (cap !== undefined) resolved.cap = cap;
-                resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
-              }
-              return resolved;
-            });
+            if (active && formulaTags.length > 0 && buff.target.filter) {
+              active = formulaTags.some((tag) =>
+                filterMatchesTag(buff.target.filter!, tag)
+              );
+            }
+            if (active) {
+              dynamicEntries = raw.map((entry) => {
+                const resolved: ResolvedStatEntry = { ...entry };
+                // Extract per-entry cap and input key from known scaling buff types
+                if (
+                  buff instanceof ScalingBuff ||
+                  buff instanceof ScalingSkillBuff
+                ) {
+                  const cap = (buff as { cap?: number }).cap;
+                  if (cap !== undefined) resolved.cap = cap;
+                  resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+                } else if (buff instanceof ScalingMultiBuff) {
+                  const cap = (buff as { cap?: number }).cap;
+                  if (cap !== undefined) resolved.cap = cap;
+                  resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+                }
+                return resolved;
+              });
+            }
           } else {
             active = activeStaticSet.has(buff);
+            if (active && formulaTags.length > 0 && buff.target.filter) {
+              active = formulaTags.some((tag) =>
+                filterMatchesTag(buff.target.filter!, tag)
+              );
+            }
           }
         }
 
@@ -640,10 +770,16 @@ export class TeamBuild {
 
     // Also include resonance buffs
     for (const buff of this.teamResonance.buffs) {
+      let active = true;
+      if (formulaTags.length > 0 && buff.target.filter) {
+        active = formulaTags.some((tag) =>
+          filterMatchesTag(buff.target.filter!, tag)
+        );
+      }
       result.push({
         source: buff.source,
         target: buff.target,
-        active: true,
+        active,
         staticEntries: buff.staticBuffs,
         dynamicEntries: [],
       });
@@ -707,7 +843,7 @@ export class TeamBuild {
       if (cid === calcTargetId) continue;
       const relevantKeys = new Set<StatKey>();
       for (const buff of cb.getAllBuffs()) {
-        if (!isBuffApplicable(buff, calcTargetId, calcTargetId)) continue;
+        if (!isBuffApplicable(buff, cid, calcTargetId, calcTargetId)) continue;
         if (buff instanceof ScalingBuff || buff instanceof ScalingSkillBuff) {
           const inputKey = (buff as { inputKey: StatKey }).inputKey;
           relevantKeys.add(inputKey);

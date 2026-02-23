@@ -23,7 +23,7 @@ class Chevreuse extends CharacterBase {
       // P1: After Overloaded, enemies' Pyro+Electro RES -40% for 6s
       buffs.push(
         new StatBuff(
-          cbs(this, [], "P1"),
+          cbs(this, "P1", []),
           {
             receiver: "onField",
             filter: { elements: ["Pyro", "Electro"] },
@@ -36,7 +36,7 @@ class Chevreuse extends CharacterBase {
     // P2: Per 1000 Max HP → Pyro/Electro team ATK +1% (cap 40%)
     buffs.push(
       new ScalingBuff(
-        cbs(this, ["E"], "P2"),
+        cbs(this, "P2", ["E"]),
         { receiver: "team" },
         [],
         "hp",
@@ -50,7 +50,7 @@ class Chevreuse extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C6"),
+          cbs(this, "C6", ["E"]),
           {
             receiver: "team",
             filter: { elements: ["Pyro", "Electro"] },
@@ -76,7 +76,7 @@ class Charlotte extends CharacterBase {
     ).length;
     if (nonFontaine > 0) {
       buffs.push(
-        new StatBuff(cbs(this, [], "P2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
           { key: "cryo%", value: Math.min(nonFontaine, 3) * 0.05 },
         ])
       );
@@ -84,7 +84,7 @@ class Charlotte extends CharacterBase {
     // C2: After E hit, self ATK +10%/20%/30% based on enemies hit (assume 1)
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
           { key: "atk%", value: 0.1 },
         ])
       );
@@ -111,7 +111,7 @@ class Freminet extends CharacterBase {
       // P2: After Shatter, E Shattering Pressure DMG +40%
       buffs.push(
         new StatBuff(
-          cbs(this, ["shatter"], "P2"),
+          cbs(this, "P2", ["shatter"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "dmg%", value: 0.4 }]
         )
@@ -121,7 +121,7 @@ class Freminet extends CharacterBase {
     // C1: E Shattering Pressure CR +15%
     buffs.push(
       new StaticSkillBuff(
-        cbs(this, [], "C1"),
+        cbs(this, "C1", []),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         this.constellation,
         (c) => (c >= 1 ? [{ key: "cr", value: 0.15 }] : [])
@@ -132,7 +132,7 @@ class Freminet extends CharacterBase {
       // C4: After Frozen/Shatter/Superconduct, ATK +9% ×2 stacks
       buffs.push(
         new StaticSkillBuff(
-          cbs(this, ["frozen", "shatter", "superconduct"], "C4"),
+          cbs(this, "C4", ["frozen", "shatter", "superconduct"]),
           { receiver: "selfOnField" },
           this.constellation,
           (c) => (c >= 4 ? [{ key: "atk%", value: 0.18 }] : [])
@@ -142,7 +142,7 @@ class Freminet extends CharacterBase {
       // C6: After Frozen/Shatter/Superconduct, CD +12% ×3 stacks
       buffs.push(
         new StaticSkillBuff(
-          cbs(this, ["frozen", "shatter", "superconduct"], "C6"),
+          cbs(this, "C6", ["frozen", "shatter", "superconduct"]),
           { receiver: "selfOnField" },
           this.constellation,
           (c) => (c >= 6 ? [{ key: "cd", value: 0.36 }] : [])
@@ -189,18 +189,18 @@ class Freminet extends CharacterBase {
 class Lynette extends CharacterBase {
   readonly buffs = [
     // P1: After Q, team ATK% based on # element types (assume 4 = 20%)
-    new StatBuff(cbs(this, ["Q"], "P1"), { receiver: "team" }, [
+    new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "team" }, [
       { key: "atk%", value: 0.2 },
     ]),
     // P2: After Q absorption, self Q DMG +15%
     new StatBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       [{ key: "dmg%", value: 0.15 }]
     ),
     // C6: After E, self Anemo DMG +20%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "anemo%", value: 0.2 }] : [])

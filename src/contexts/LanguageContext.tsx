@@ -197,9 +197,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     (setId: string): string => {
       const arts = i18nGameData.artifacts as Record<
         string,
-        { name: Record<string, string>; effects: Record<string, string[]> }
+        Record<string, string>
       >;
-      return arts[setId]?.name?.[language] || setId;
+      return arts[setId]?.[language] || setId;
     },
     [language]
   );
@@ -332,11 +332,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const getWeaponName = useCallback(
     (weaponId: string): string => {
-      const weaponData = i18nGameData.weapons as Record<
+      const weapons = i18nGameData.weapons as Record<
         string,
-        { name: Record<string, string> }
+        Record<string, string>
       >;
-      return weaponData[weaponId]?.name?.[language] || weaponId;
+      return weapons[weaponId]?.[language] || weaponId;
     },
     [language]
   );

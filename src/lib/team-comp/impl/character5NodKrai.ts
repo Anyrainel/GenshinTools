@@ -51,7 +51,7 @@ class Columbina extends CharacterBase {
     >[] = [
       // P3: Moonsign Benediction — per 1000 Max HP, lunar reaction baseDmg% +0.2%, cap 7%
       new ScalingBuff(
-        cbs(this, [], "P3"),
+        cbs(this, "P3", []),
         { receiver: "team", filter: { reactions: [...LUNAR_REACTIONS] } },
         [],
         "hp",
@@ -60,12 +60,12 @@ class Columbina extends CharacterBase {
         0.07
       ),
       // P1: Lunacy's Lure — on Gravity Interference, CR +5% × 3 = +15%
-      new StatBuff(cbs(this, ["E"], "P1"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
         { key: "cr", value: 0.15 },
       ]),
       // Q: Lunar Reaction DMG Bonus +40% (Lv10) / +49% (C5+)
       new StaticSkillBuff(
-        cbs(this, ["Q"]),
+        cbs(this, "Q", ["Q"]),
         { receiver: "team", filter: { reactions: [...LUNAR_REACTIONS] } },
         this.constellation,
         (c) => [{ key: "reactionDmg%", value: c >= 5 ? 0.49 : 0.4 }]
@@ -73,7 +73,7 @@ class Columbina extends CharacterBase {
       // C1–C6 cumulative "elevated" bonus:
       // C1: 1.5%, C2: 7%, C3: 1.5%, C4: 1.5%, C5: 1.5%, C6: 7%
       new StaticSkillBuff(
-        cbs(this, [], "C1"),
+        cbs(this, "C1", []),
         { receiver: "team", filter: { reactions: [...LUNAR_REACTIONS] } },
         this.constellation,
         (c) => {
@@ -92,7 +92,7 @@ class Columbina extends CharacterBase {
     // C2: HP +40% for 8s on Gravity Interference
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
           { key: "hp%", value: 0.4 },
         ])
       );
@@ -107,7 +107,7 @@ class Columbina extends CharacterBase {
       const c2 = c2Map[this.o];
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["E"], "C2"),
+          cbs(this, "C2", ["E"]),
           { receiver: "onField" },
           [],
           "hp",
@@ -126,7 +126,7 @@ class Columbina extends CharacterBase {
       }[this.o];
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "onField", filter: { elements: [c6Element] } },
           [{ key: "cd", value: 0.8 }]
         )
@@ -241,7 +241,7 @@ class Nefer extends CharacterBase {
   readonly buffs = [
     // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom BaseDmg, cap 14%
     new ScalingBuff(
-      cbs(this, ["passive"], "P3"),
+      cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
@@ -251,21 +251,21 @@ class Nefer extends CharacterBase {
     ),
     // P1: EM +100 when Veil of Falsehood stacks hit threshold (C2: +200)
     new StaticSkillBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => [{ key: "em", value: c >= 2 ? 200 : 100 }]
     ),
     // C4: Dendro RES -20% during Shadow Dance
     new StaticSkillBuff(
-      cbs(this, ["E"], "C4"),
+      cbs(this, "C4", ["E"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "resReduction%", value: 0.2 }] : [])
     ),
     // C6: Nefer's Lunar-Bloom DMG elevated 15%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { reactions: ["lunarBloom"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "elevated%", value: 0.15 }] : [])
@@ -316,7 +316,7 @@ class Flins extends CharacterBase {
   readonly buffs = [
     // Passive 2 (combat): Per 100 ATK → +0.7% Lunar-Charged BaseDmg, cap 14%
     new ScalingBuff(
-      cbs(this, ["passive"]),
+      cbs(this, "P1", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
@@ -326,13 +326,13 @@ class Flins extends CharacterBase {
     ),
     // A1: Flins's Lunar-Charged reactions +20% DMG
     new StatBuff(
-      cbs(this, ["A1"]),
+      cbs(this, "P1", ["A1"]),
       { receiver: "selfOnField", filter: { reactions: ["lunarCharged"] } },
       [{ key: "reactionDmg%", value: 0.2 }]
     ),
     // A4: EM = 8% ATK (cap 160). C4 enhances to 10% ATK (cap 220)
     new ScalingBuff(
-      cbs(this, ["A4"]),
+      cbs(this, "P2", ["A4"]),
       { receiver: "self" },
       [],
       "atk",
@@ -342,27 +342,27 @@ class Flins extends CharacterBase {
     ),
     // C2: Electro RES -25% (Ascendant Gleam)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "resReduction%", value: 0.25 }] : [])
     ),
     // C4: ATK +20%
     new StaticSkillBuff(
-      cbs(this, [], "C4"),
+      cbs(this, "C4", []),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "atk%", value: 0.2 }] : [])
     ),
     // C6: Lunar-Charged elevated 35% self, team 10%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { reactions: ["lunarCharged"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "elevated%", value: 0.35 }] : [])
     ),
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "elevated%", value: 0.1 }] : [])
@@ -418,7 +418,7 @@ class Lauma extends CharacterBase {
   readonly buffs = [
     // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom BaseDmg, cap 14%
     new ScalingBuff(
-      cbs(this, ["passive"], "P3"),
+      cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
@@ -428,7 +428,7 @@ class Lauma extends CharacterBase {
     ),
     // P1 (Moonsign Nascent): After E, Bloom/Hyperbloom/Burgeon can crit, CR 15% CD 100%
     new StatBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
@@ -439,12 +439,12 @@ class Lauma extends CharacterBase {
       ]
     ),
     // E: Dendro+Hydro RES decrease 25% (Lv10) / 34% (Lv13, C5+)
-    new StatBuff(cbs(this, ["E"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "E", ["E"]), { receiver: "onField" }, [
       { key: "resReduction%", value: this.constellation >= 5 ? 0.34 : 0.25 },
     ]),
     // Q Pale Hymn: Bloom/Hyperbloom/Burgeon DMG + EM×500%/590.2%
     new ScalingBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
@@ -456,7 +456,7 @@ class Lauma extends CharacterBase {
     ),
     // Q Pale Hymn: Lunar-Bloom DMG + EM×400%/472.3%
     new ScalingBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
@@ -465,14 +465,14 @@ class Lauma extends CharacterBase {
     ),
     // C2 (Ascendant Gleam): Lunar-Bloom DMG +40%
     new StaticSkillBuff(
-      cbs(this, [], "C2"),
+      cbs(this, "C2", []),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "reactionDmg%", value: 0.4 }] : [])
     ),
     // C6: Lunar-Bloom elevated 25%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "elevated%", value: 0.25 }] : [])
@@ -580,7 +580,7 @@ class Ineffa extends CharacterBase {
   readonly buffs = [
     // P3: Per 100 ATK → +0.7% Lunar-Charged BaseDmg, cap 14%
     new ScalingBuff(
-      cbs(this, ["passive"]),
+      cbs(this, "P2", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
@@ -590,7 +590,7 @@ class Ineffa extends CharacterBase {
     ),
     // P2: After Q, team EM = 6% of Ineffa ATK
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "team" },
       [],
       "atk",
@@ -601,7 +601,7 @@ class Ineffa extends CharacterBase {
     ...(this.constellation >= 1
       ? [
           new ScalingBuff(
-            cbs(this, ["E"], "C1"),
+            cbs(this, "C1", ["E"]),
             { receiver: "team", filter: { reactions: ["lunarCharged"] } },
             [],
             "atk",

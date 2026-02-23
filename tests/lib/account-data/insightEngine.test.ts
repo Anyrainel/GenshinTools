@@ -13,8 +13,6 @@ import {
 } from "@/lib/account-data/insightEngine";
 import { describe, expect, it } from "vitest";
 
-// ── Fixtures ────────────────────────────────────────────────────────────
-
 const DEFAULT_GLOBAL = { flatAtk: 30, flatHp: 30, flatDef: 30 };
 
 const CR_CD_WEIGHTS: StatWeightMap = {
@@ -69,8 +67,6 @@ function makeCharacter(
 const DEFAULT_TIERS: TierAssignment = {
   test_char: { tier: "S", position: 0 },
 };
-
-// ── Tests ───────────────────────────────────────────────────────────────
 
 describe("generateCharacterInsights", () => {
   describe("empty / edge cases", () => {

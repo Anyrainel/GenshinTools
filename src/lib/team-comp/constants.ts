@@ -10,20 +10,7 @@ export const LUNAR_REACTIONS: LunarReactionType[] = [
   "lunarCrystallize",
 ];
 
-// ─── Default Calc Parameters ───
-
-export const DEFAULT_CHAR_LEVEL = 100;
-export const DEFAULT_ENEMY_LEVEL = 110;
-export const DEFAULT_ENEMY_RES = 0.1;
-
 // ─── Scaled Stats ───
-
-/** Stats that use the base × (1 + %) + flat formula */
-export const SCALED_STAT_BASES = {
-  atk: "baseAtk",
-  hp: "baseHp",
-  def: "baseDef",
-} as const;
 
 // ─── Level Multipliers (for transformative/additive reactions) ───
 
@@ -62,7 +49,7 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
   hyperbloom: { requiredElements: [["Hydro"], ["Dendro"], ["Electro"]] },
   burgeon: { requiredElements: [["Hydro"], ["Dendro"], ["Pyro"]] },
   burning: { requiredElements: [["Pyro"], ["Dendro"]] },
-  quicken: { requiredElements: [["Hydro"], ["Electro"]] },
+  quicken: { requiredElements: [["Dendro"], ["Electro"]] },
   spread: { requiredElements: [["Dendro"], ["Electro"]] },
   aggravate: { requiredElements: [["Dendro"], ["Electro"]] },
   frozen: { requiredElements: [["Cryo"], ["Hydro"]] },

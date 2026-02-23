@@ -14,8 +14,6 @@ import type {
   SubStat,
 } from "../../data/types";
 
-// ── Shared Types & Constants ────────────────────────────────────────────
-
 export type SlotKey = "flowerPlume" | "sands" | "goblet" | "circlet";
 export const SLOT_KEYS: SlotKey[] = [
   "flowerPlume",
@@ -23,8 +21,6 @@ export const SLOT_KEYS: SlotKey[] = [
   "goblet",
   "circlet",
 ];
-
-// ── Clone Helpers ───────────────────────────────────────────────────────
 
 export function cloneSlot(slot: SlotConfig): SlotConfig {
   return {

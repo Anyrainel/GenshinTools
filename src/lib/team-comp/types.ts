@@ -203,6 +203,8 @@ export type DisplayPart = {
   /** Talent/scaling multipliers, 1:1 with scalingKeys */
   scalingMulti: number[];
   damage: number;
+  hits?: number;
+  tag?: DamageTag;
 };
 
 /** StatEntry augmented with an optional cap for scaling buff display. */

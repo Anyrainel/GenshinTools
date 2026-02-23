@@ -181,22 +181,17 @@ export function StatSheetPanel({
             <CollapsibleTrigger className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10 w-full hover:bg-white/5 transition-colors group">
               <img
                 src={getAssetUrl(char?.imagePath)}
-                className="w-6 h-6 rounded-full bg-black/20 shrink-0"
+                className="w-7 h-7 rounded-full bg-black/20 shrink-0"
                 alt={charId}
               />
               <span
                 className={cn(
-                  "font-bold text-xs truncate",
+                  "font-bold text-sm truncate",
                   isTarget ? "text-primary/90" : "text-foreground/70"
                 )}
               >
                 {t.character(charId)}
               </span>
-              {isTarget && (
-                <span className="text-[9px] font-bold uppercase tracking-widest bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">
-                  Target
-                </span>
-              )}
 
               {result && (
                 <div className="ml-auto flex items-center gap-2 group-hover:text-foreground transition-all">
@@ -215,32 +210,34 @@ export function StatSheetPanel({
                         setShowIdle((s) => !s);
                       }
                     }}
-                    className="flex items-center gap-0.5 bg-black/40 border border-border/10 rounded-full p-0.5 cursor-pointer"
+                    className="flex items-center gap-0.5 bg-black/40 border border-border/10 rounded-full p-1 cursor-pointer"
                   >
                     <span
                       className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-full transition-all leading-relaxed",
+                        "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
                         showIdle
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      Idle
+                      {t.ui("teamBuilder.idle")}
                     </span>
                     <span
                       className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-full transition-all leading-relaxed",
+                        "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
                         !showIdle
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      Combat
+                      {t.ui("teamBuilder.combat")}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] font-semibold text-muted-foreground opacity-60 ml-1">
-                    <span className="hidden sm:inline-block">Stats</span>
-                    <ChevronDown className="w-3.5 h-3.5 transition-transform group-data-[state=open]:rotate-180" />
+                  <div className="flex items-center gap-1 text-sm font-semibold text-muted-foreground opacity-60 ml-2">
+                    <span className="hidden sm:inline-block">
+                      {t.ui("teamBuilder.stats")}
+                    </span>
+                    <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
                   </div>
                 </div>
               )}
@@ -279,7 +276,7 @@ export function StatSheetPanel({
                   ))}
                   {sortedKeys.length === 0 && (
                     <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
-                      No stats resolved.
+                      {t.ui("teamBuilder.noStatsResolved")}
                     </span>
                   )}
                 </div>
@@ -288,7 +285,7 @@ export function StatSheetPanel({
                 {marginalKeys.length > 0 && (
                   <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
                     <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
-                      Marginal Gains
+                      {t.ui("teamBuilder.marginalGains")}
                     </div>
                     {marginalKeys.map((k) => {
                       const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
@@ -309,11 +306,11 @@ export function StatSheetPanel({
                           )}
                         >
                           <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
-                            +1 Roll
+                            +1
                           </span>
                           <span
                             className={cn(
-                              "font-bold text-sm",
+                              "font-bold text-base",
                               isHl
                                 ? "text-[color:hsl(var(--primary))] opacity-100"
                                 : "text-primary/80"
@@ -323,7 +320,7 @@ export function StatSheetPanel({
                           </span>
                           <span className="text-xs whitespace-nowrap">
                             <span className="text-muted-foreground opacity-60">
-                              (Avg.{" "}
+                              ({t.ui("teamBuilder.avgVal")}
                             </span>
                             <span className="font-bold text-foreground opacity-90">
                               +{fmtStat(k, rollVal)}
@@ -339,7 +336,7 @@ export function StatSheetPanel({
                             {fmtPercent(gain, true)}
                           </span>
                           <span className="text-foreground opacity-60">
-                            Gain
+                            {t.ui("teamBuilder.gain")}
                           </span>
                         </div>
                       );

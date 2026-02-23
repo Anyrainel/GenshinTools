@@ -33,7 +33,7 @@ class YumemizukiMizuki extends CharacterBase {
     const buffs: StatBuff[] = [
       // E: Dreamdrifter — increases team Swirl DMG by 0.45% per EM (lv10) / 0.54% (lv13, C3+)
       new ScalingBuff(
-        cbs(this, ["E"]),
+        cbs(this, "E", ["E"]),
         { receiver: "team", filter: { reactions: ["swirl"] } },
         [],
         "em",
@@ -41,7 +41,7 @@ class YumemizukiMizuki extends CharacterBase {
         eReactDmg
       ),
       // P2: EM +100 when teammates hit with Pyro/Hydro/Cryo/Electro
-      new StatBuff(cbs(this, ["A4", "E"], "P2"), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [
         { key: "em", value: 100 },
       ]),
     ];
@@ -50,7 +50,7 @@ class YumemizukiMizuki extends CharacterBase {
       // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to team
       buffs.push(
         new ScalingMultiBuff(
-          cbs(this, ["E"], "C2"),
+          cbs(this, "C2", ["E"]),
           { receiver: "team" },
           [],
           "em",
@@ -63,7 +63,7 @@ class YumemizukiMizuki extends CharacterBase {
       // C6: Swirl can crit — fixed CR 30%, CD 100%
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C6"),
+          cbs(this, "C6", ["E"]),
           { receiver: "team", filter: { reactions: ["swirl"] } },
           [
             { key: "reactionCr", value: 0.3 },
@@ -160,12 +160,12 @@ class YumemizukiMizuki extends CharacterBase {
 class Chiori extends CharacterBase {
   readonly buffs = [
     // P2: When team creates Geo construct → Chiori Geo DMG +20%
-    new StatBuff(cbs(this, [], "P2"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
       { key: "geo%", value: 0.2 },
     ]),
     // C6: Normal ATK baseDmg +235% DEF (additive, not formula dual-scaling)
     new ScalingSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [],
       "def",
@@ -262,7 +262,7 @@ class RaidenShogun extends CharacterBase {
     >[] = [
       // P2: Each 1% ER above 100% → 0.4% Electro DMG Bonus
       new ScalingBuff(
-        cbs(this, [], "P2"),
+        cbs(this, "P2", []),
         { receiver: "selfOnField" },
         [],
         "er",
@@ -274,7 +274,7 @@ class RaidenShogun extends CharacterBase {
       // E: Team Burst DMG bonus based on energy cost (0.3%/0.36% per energy)
       // Assume average 70 energy cost Q
       new StaticSkillBuff(
-        cbs(this, ["E"]),
+        cbs(this, "E", ["E"]),
         { receiver: "onField", filter: { abilities: ["burst"] } },
         this.constellation,
         (c) => {
@@ -287,7 +287,7 @@ class RaidenShogun extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "defIgnore%", value: 0.6 }]
         )
@@ -296,7 +296,7 @@ class RaidenShogun extends CharacterBase {
     // C4: After Q, team (excl self) ATK +30%
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
@@ -354,7 +354,7 @@ class AratakiItto extends CharacterBase {
     // Q: Royal Descent — DEF → ATK conversion
     // Lv10: 103.7% DEF → ATK, Lv13 (C5+): 122.4% DEF → ATK
     new ScalingSkillBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "def",
@@ -364,7 +364,7 @@ class AratakiItto extends CharacterBase {
     ),
     // P2: Arataki Kesagiri DMG +35% of DEF → flat baseDmg on charge
     new ScalingBuff(
-      cbs(this, [], "P2"),
+      cbs(this, "P2", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       [],
       "def",
@@ -373,7 +373,7 @@ class AratakiItto extends CharacterBase {
     ),
     // C4: After Q ends, team +20% DEF, +20% ATK for 10s
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "team" },
       this.constellation,
       (c) =>
@@ -386,20 +386,20 @@ class AratakiItto extends CharacterBase {
     ),
     // C6: Charged ATK CD +70%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "cd", value: 0.7 }] : [])
     ),
     // P1: Kesagiri ATK SPD (assume max +30%)
     new StatBuff(
-      cbs(this, [], "P1"),
+      cbs(this, "P1", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       [{ key: "atkSpd%", value: 0.3 }]
     ),
     // Q: Raging Oni King State Normal ATK SPD +10%
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [{ key: "atkSpd%", value: 0.1 }]
     ),
@@ -459,23 +459,23 @@ class AratakiItto extends CharacterBase {
 class KamisatoAyaka extends CharacterBase {
   readonly buffs = [
     // P2: After E, Normal/Charged DMG +30% for 6s
-    new StatBuff(cbs(this, ["E"], "P2"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
       { key: "dmg%", value: 0.3 },
     ]),
     // P3: After alternate sprint hit, Cryo DMG +18%
-    new StatBuff(cbs(this, ["dash"], "P3"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P3", ["dash"]), { receiver: "selfOnField" }, [
       { key: "cryo%", value: 0.18 },
     ]),
     // C4: Enemies hit by Q: DEF -30% for 6s
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "defReduction%", value: 0.3 }] : [])
     ),
     // C6: Charged ATK DMG +298% every 10s
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "dmg%", value: 2.98 }] : [])
@@ -529,7 +529,7 @@ class KamisatoAyato extends CharacterBase {
     const ibuffs: StatBuff[] = [
       // Q: Normal ATK DMG +20% for characters in field
       new StatBuff(
-        cbs(this, ["Q"]),
+        cbs(this, "Q", ["Q"]),
         { receiver: "onField", filter: { abilities: ["normal"] } },
         [{ key: "dmg%", value: 0.2 }]
       ),
@@ -537,7 +537,7 @@ class KamisatoAyato extends CharacterBase {
     // C2: At ≥3 Namisen stacks, HP +50%
     if (this.constellation >= 2) {
       ibuffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
           { key: "hp%", value: 0.5 },
         ])
       );
@@ -546,7 +546,7 @@ class KamisatoAyato extends CharacterBase {
     if (this.constellation >= 4) {
       ibuffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C4"),
+          cbs(this, "C4", ["Q"]),
           { receiver: "team", filter: { abilities: ["normal"] } },
           [{ key: "atkSpd%", value: 0.15 }]
         )
@@ -603,13 +603,13 @@ class KamisatoAyato extends CharacterBase {
 class SangonomiyaKokomi extends CharacterBase {
   readonly buffs = [
     // P4 (Flawless Strategy): CR -100%, Healing Bonus +25%
-    new StatBuff(cbs(this, [], "P4"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P4", []), { receiver: "selfOnField" }, [
       { key: "cr", value: -1.0 },
       { key: "heal%", value: 0.25 },
     ]),
     // P2 (Song of Pearls): During Q, 15% of heal% → Normal/Charged DMG baseDmg%
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge"] },
@@ -622,7 +622,7 @@ class SangonomiyaKokomi extends CharacterBase {
     // Q: Nereid's Ascension — HP → baseDmg for Normal/Charged
     // Lv10: 10.63% HP, Lv13 (C3+): 12.55% HP
     new ScalingSkillBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge"] },
@@ -635,7 +635,7 @@ class SangonomiyaKokomi extends CharacterBase {
     ),
     // C6: Q heal on 80%+ HP → Hydro DMG +40%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "hydro%", value: 0.4 }] : [])
@@ -651,7 +651,7 @@ class KaedeharaKazuha extends CharacterBase {
   readonly buffs = [
     // P2: Poetics of Fuubutsu — after Swirl, grant 0.04% elemental DMG% per EM
     new ScalingBuff(
-      cbs(this, ["swirl"], "P2"),
+      cbs(this, "P2", ["swirl"]),
       { receiver: "onField" },
       [],
       "em",
@@ -660,7 +660,7 @@ class KaedeharaKazuha extends CharacterBase {
     ),
     // C2: Q field grants 200 EM to the party
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C2"),
+      cbs(this, "C2", ["Q"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "em", value: 200 }] : [])
@@ -728,11 +728,11 @@ class Yoimiya extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P1: During E, Pyro DMG +2% per Normal ATK hit (max 10 stacks = 20%)
-      new StatBuff(cbs(this, ["A1"], "P1"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "selfOnField" }, [
         { key: "pyro%", value: 0.2 },
       ]),
       // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
-      new StatBuff(cbs(this, ["A4", "Q"], "P2"), { receiver: "team" }, [
+      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "team" }, [
         { key: "atk%", value: 0.2 },
       ]),
     ];
@@ -740,7 +740,7 @@ class Yoimiya extends CharacterBase {
     if (this.constellation >= 1) {
       // C1: Defeating Aurous Blaze marked enemy -> +20% ATK
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C1"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "selfOnField" }, [
           { key: "atk%", value: 0.2 },
         ])
       );
@@ -749,7 +749,7 @@ class Yoimiya extends CharacterBase {
       // C2: CRIT Hit -> +25% Pyro DMG
       buffs.push(
         new StatBuff(
-          cbs(this, ["normal", "charge", "skill", "burst"], "C2"),
+          cbs(this, "C2", ["normal", "charge", "skill", "burst"]),
           { receiver: "selfOnField" },
           [{ key: "pyro%", value: 0.25 }]
         )
@@ -867,7 +867,7 @@ class YaeMiko extends CharacterBase {
     const buffs: StatBuff[] = [
       // P2: Each point of EM → Sesshou Sakura DMG +0.15%
       new ScalingBuff(
-        cbs(this, ["A4"], "P2"),
+        cbs(this, "P2", ["A4"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [],
         "em",
@@ -879,7 +879,7 @@ class YaeMiko extends CharacterBase {
     if (this.constellation >= 4) {
       // C4: Totem hit -> Team Electro DMG +20%
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C4"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C4", ["E"]), { receiver: "team" }, [
           { key: "electro%", value: 0.2 },
         ])
       );
@@ -888,7 +888,7 @@ class YaeMiko extends CharacterBase {
       // C6: Sesshou Sakura attacks ignore 60% of opponents' DEF
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C6"),
+          cbs(this, "C6", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "defIgnore%", value: 0.6 }]
         )

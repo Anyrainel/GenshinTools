@@ -20,8 +20,6 @@ import {
 } from "@/lib/artifact-builds/mergeUtils";
 import { describe, expect, it } from "vitest";
 
-// ── Test Helpers ────────────────────────────────────────────────────────
-
 function makeSlot(overrides: Partial<SlotConfig> = {}): SlotConfig {
   return {
     mainStats: ["atk%"] as MainStatPlus[],
@@ -59,8 +57,6 @@ function makeConfig(
     ],
   };
 }
-
-// ── Tests ───────────────────────────────────────────────────────────────
 
 describe("cloneSlot", () => {
   it("produces a value-equal but distinct object", () => {

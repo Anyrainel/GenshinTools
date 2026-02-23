@@ -12,14 +12,14 @@ class LanYan extends CharacterBase {
   readonly buffs = [
     // C4: After Q, team EM +60 for 12s
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 60 }] : [])
     ),
     // P2: E DMG boosted by EM×309%
     new ScalingBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -28,7 +28,7 @@ class LanYan extends CharacterBase {
     ),
     // P2: Q DMG boosted by EM×774%
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       [],
       "em",
@@ -76,20 +76,20 @@ class Gaming extends CharacterBase {
   readonly buffs = [
     // P2: At ≥50% HP, Charmed Cloudstrider DMG +20%
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
       [{ key: "dmg%", value: 0.2 }]
     ),
     // C2: Healing overflow → ATK +20%
     new StaticSkillBuff(
-      cbs(this, [], "C2"),
+      cbs(this, "C2", []),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "atk%", value: 0.2 }] : [])
     ),
     // C6: E plunge CR +20%, CD +40%
     new StaticSkillBuff(
-      cbs(this, [], "C6"),
+      cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
       this.constellation,
       (c) =>
@@ -144,7 +144,7 @@ class Yaoyao extends CharacterBase {
     if (this.constellation >= 1) {
       // C1: Active characters in radish AoE gain 15% Dendro DMG Bonus
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C1"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C1", ["E"]), { receiver: "onField" }, [
           { key: "dendro%", value: 0.15 },
         ])
       );
@@ -153,7 +153,7 @@ class Yaoyao extends CharacterBase {
       // C4: 0.3% of Max HP -> EM (max 120)
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["E", "Q"], "C4"),
+          cbs(this, "C4", ["E", "Q"]),
           { receiver: "self" },
           [],
           "hp",
@@ -237,7 +237,7 @@ class Xiangling extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Pick up chili pepper → +10% ATK
-      new StatBuff(cbs(this, ["E"], "P2"), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "onField" }, [
         { key: "atk%", value: 0.1 },
       ]),
     ];
@@ -245,7 +245,7 @@ class Xiangling extends CharacterBase {
     // C1: Guoba reduces Pyro RES by 15%
     if (this.constellation >= 1) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C1"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C1", ["E"]), { receiver: "team" }, [
           { key: "resReduction%", value: 0.15 },
         ])
       );
@@ -253,7 +253,7 @@ class Xiangling extends CharacterBase {
     // C6: +15% Pyro DMG during Pyronado
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C6"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
           { key: "pyro%", value: 0.15 },
         ])
       );
@@ -307,19 +307,19 @@ class Chongyun extends CharacterBase {
   readonly buffs = [
     // P1: Sword, Claymore, Polearm chars in E field get Normal ATK SPD +8%
     new StatBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       { receiver: "onField", filter: { abilities: ["normal"] } },
       [{ key: "atkSpd%", value: 0.08 }]
     ),
     // P2: After E field disappears, enemies' Cryo RES -10% for 8s
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "onField", filter: { elements: ["Cryo"] } },
       [{ key: "resReduction%", value: 0.1 }]
     ),
     // C6: Q deals +15% DMG to low-HP enemies
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "dmg%", value: 0.15 }] : [])
@@ -353,7 +353,7 @@ class Xinyan extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Shield grants Physical DMG +15%
-      new StatBuff(cbs(this, ["E"], "P2"), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "onField" }, [
         { key: "phys%", value: 0.15 },
       ]),
     ];
@@ -362,7 +362,7 @@ class Xinyan extends CharacterBase {
       // C2: Riff Revolution physical DMG gains +100% CRIT Rate
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["burst"], elements: ["Physical"] },
@@ -375,7 +375,7 @@ class Xinyan extends CharacterBase {
       // C4: E Swing decreases Physical RES by 15%
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C4"),
+          cbs(this, "C4", ["E"]),
           { receiver: "team", filter: { elements: ["Physical"] } },
           [{ key: "resReduction%", value: 0.15 }]
         )
@@ -447,7 +447,7 @@ class Xingqiu extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Xingqiu gains a 20% Hydro DMG Bonus
-      new StatBuff(cbs(this, ["P2"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", ["P2"]), { receiver: "self" }, [
         { key: "hydro%", value: 0.2 },
       ]),
     ];
@@ -455,7 +455,7 @@ class Xingqiu extends CharacterBase {
     // C2: Rain Swords decrease Hydro RES by 15%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C2"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
           { key: "resReduction%", value: 0.15 },
         ])
       );
@@ -523,7 +523,7 @@ class Yanfei extends CharacterBase {
     const maxSeals = this.constellation >= 6 ? 4 : 3;
     const buffs: StatBuff[] = [
       // P1: Each consumed Scarlet Seal grants 5% Pyro DMG Bonus (assuming max seals used)
-      new StatBuff(cbs(this, ["A1"], "P1"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "selfOnField" }, [
         { key: "pyro%", value: 0.05 * maxSeals },
       ]),
     ];
@@ -532,7 +532,7 @@ class Yanfei extends CharacterBase {
     // Lv10: 54%, Lv13 (C5+): 62%
     buffs.push(
       new StaticSkillBuff(
-        cbs(this, ["Q"]),
+        cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
         this.constellation,
         (c) => [{ key: "dmg%", value: c >= 5 ? 0.62 : 0.54 }]
@@ -543,7 +543,7 @@ class Yanfei extends CharacterBase {
       // C2: CA CRIT Rate +20% (assuming enemy below 50% HP)
       buffs.push(
         new StatBuff(
-          cbs(this, ["charge"], "C2"),
+          cbs(this, "C2", ["charge"]),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "cr", value: 0.2 }]
         )
@@ -617,7 +617,7 @@ class Beidou extends CharacterBase {
   readonly buffs = [
     // P2: After max-counter E, Normal/Charged DMG +15% and ATK SPD +15% for 10s
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
       [
         { key: "dmg%", value: 0.15 },
@@ -626,7 +626,7 @@ class Beidou extends CharacterBase {
     ),
     // C6: During Q, enemies' Electro RES -15%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "onField", filter: { elements: ["Electro"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "resReduction%", value: 0.15 }] : [])
@@ -658,7 +658,7 @@ class Ningguang extends CharacterBase {
   readonly buffs = [
     // P2: Passing through Jade Screen → Geo DMG +12%
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "team", filter: { elements: ["Geo"] } },
       [{ key: "dmg%", value: 0.12 }]
     ),
@@ -715,7 +715,7 @@ class YunJin extends CharacterBase {
     const buffs: StatBuff[] = [
       // Q + P2: Adds Base DMG based on Yun Jin's DEF to team's Normal Attacks
       new ScalingBuff(
-        cbs(this, ["A4", "Q"], "P2"),
+        cbs(this, "P2", ["A4", "Q"]),
         { receiver: "team", filter: { abilities: ["normal"] } },
         [],
         "def",
@@ -728,7 +728,7 @@ class YunJin extends CharacterBase {
       // C2: +15% Normal Attack DMG to team
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           { receiver: "team", filter: { abilities: ["normal"] } },
           [{ key: "dmg%", value: 0.15 }]
         )
@@ -737,7 +737,7 @@ class YunJin extends CharacterBase {
     if (this.constellation >= 4) {
       // C4: Crystallize grants +20% DEF
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C4"), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C4", ["E"]), { receiver: "self" }, [
           { key: "def%", value: 0.2 },
         ])
       );
@@ -746,7 +746,7 @@ class YunJin extends CharacterBase {
       // C6: Normal ATK SPD +12% under Q
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "team", filter: { abilities: ["normal"] } },
           [{ key: "atkSpd%", value: 0.12 }]
         )

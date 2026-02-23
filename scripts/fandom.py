@@ -36,7 +36,6 @@ def clean_image_url(image_url: str) -> str:
 
 def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
     """Get character data from Fandom wiki and return a dict keyed by (element, rarity, name)."""
-    print("=== [1/4] Fandom Wiki Data ===")
 
     characters: list[CharacterData] = []
 

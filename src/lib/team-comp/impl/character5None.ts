@@ -31,7 +31,7 @@ class Varka extends CharacterBase {
     // P1: Per 1000 ATK → +10% Anemo & Secondary Element (cap 25%)
     // Simplified as general DMG% to cover both.
     new ScalingBuff(
-      cbs(this, ["Q"], "P1"),
+      cbs(this, "P1", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "atk",
@@ -41,7 +41,7 @@ class Varka extends CharacterBase {
     ),
     // P1: Dual-element team gives 220% multiplier (baseDmg% +1.2) for NA/CA/E
     new StatBuff(
-      cbs(this, ["team-comp"], "P1"),
+      cbs(this, "P1", ["team-comp"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "skill"] },
@@ -50,7 +50,7 @@ class Varka extends CharacterBase {
     ),
     // P2: Swirl → +7.5% DMG per stack (max 4 = 30%)
     new StatBuff(
-      cbs(this, ["swirl"], "P2"),
+      cbs(this, "P2", ["swirl"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "skill"] },
@@ -59,14 +59,14 @@ class Varka extends CharacterBase {
     ),
     // C4: Swirl → team gets 20% Anemo & Secondary (simplified as general DMG%)
     new StaticSkillBuff(
-      cbs(this, ["swirl"], "C4"),
+      cbs(this, "C4", ["swirl"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "dmg%", value: 0.2 }] : [])
     ),
     // C6: P2 stacks also give +20% CD each (max 4 = 80%)
     new StaticSkillBuff(
-      cbs(this, ["swirl"], "C6"),
+      cbs(this, "C6", ["swirl"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "skill"] },
@@ -115,26 +115,26 @@ class Skirk extends CharacterBase {
   readonly buffs = [
     // P2: Death's Crossing max 3 stacks → Normal ATK in E-mode = 170% original (+70%)
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [{ key: "baseDmg%", value: 0.7 }]
     ),
     // P2: Burst DMG = 160% original (+60%)
     new StatBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       [{ key: "baseDmg%", value: 0.6 }]
     ),
     // C2: After Havoc: Extinction (E-mode Q), ATK +70% for 12.5s
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C2"),
+      cbs(this, "C2", ["Q"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "atk%", value: 0.7 }] : [])
     ),
     // C4: Each Death's Crossing stack also ATK +10%/20%/40%. Max 3 stacks = 40%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C4"),
+      cbs(this, "C4", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "atk%", value: 0.4 }] : [])
@@ -204,14 +204,14 @@ class Aloy extends CharacterBase {
   // No constellations available — collab-exclusive character
   readonly buffs = [
     // P1: Self ATK +16% when gaining Coil, other party members ATK +8% (10s)
-    new StatBuff(cbs(this, ["E"], "P1"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
       { key: "atk%", value: 0.16 },
     ]),
-    new StatBuff(cbs(this, ["E"], "P1"), { receiver: "team" }, [
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
       { key: "atk%", value: 0.08 },
     ]),
     // P2: During Rushing Ice, Cryo DMG +3.5%/s for max 10s = +35%
-    new StatBuff(cbs(this, ["E"], "P2"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
       { key: "cryo%", value: 0.35 },
     ]),
   ];

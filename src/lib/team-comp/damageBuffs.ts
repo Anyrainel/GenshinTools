@@ -14,7 +14,24 @@ export class StatBuff {
     readonly source: BuffSource,
     readonly target: BuffTarget,
     readonly staticBuffs: StatEntry[]
-  ) {}
+  ) {
+    if (
+      (source.type === "character" || source.type === "weapon") &&
+      !source.origin
+    ) {
+      throw new Error(
+        `BuffSource origin must not be empty for type ${source.type} (id: ${source.id})`
+      );
+    }
+    if (
+      (source.type === "artifactSet" || source.type === "artifactHalfSet") &&
+      source.origin
+    ) {
+      throw new Error(
+        `BuffSource origin must be empty for artifact related types (id: ${source.id})`
+      );
+    }
+  }
 
   /**
    * Stat contributions that depend on resolved stats.

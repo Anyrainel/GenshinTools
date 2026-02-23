@@ -13,6 +13,54 @@ import type {
 export const BUILD_DATA_VERSION = 5;
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function arraysEqual<T>(
+  a: readonly T[] | undefined,
+  b: readonly T[] | undefined
+): boolean {
+  if (!a && !b) return true;
+  if (!a || !b) return false;
+  if (a.length !== b.length) return false;
+  return [...a].sort().join(",") === [...b].sort().join(",");
+}
+
+export function areBuildsEqual(b1: Build, b2: Build): boolean {
+  // Compare top-level metadata and configuration
+  if (b1.characterId !== b2.characterId) return false;
+  if (b1.name !== b2.name) return false;
+  if (b1.composition !== b2.composition) return false;
+  if (b1.artifactSet !== b2.artifactSet) return false;
+  if (b1.halfSet1 !== b2.halfSet1) return false;
+  if (b1.halfSet2 !== b2.halfSet2) return false;
+  if (!!b1.visible !== !!b2.visible) return false;
+  if (b1.minCons !== b2.minCons) return false;
+
+  // Compare arrays
+  if (!arraysEqual(b1.sands, b2.sands)) return false;
+  if (!arraysEqual(b1.goblet, b2.goblet)) return false;
+  if (!arraysEqual(b1.circlet, b2.circlet)) return false;
+  if (!arraysEqual(b1.styles, b2.styles)) return false;
+  if (!arraysEqual(b1.roles, b2.roles)) return false;
+
+  // Compare substats
+  if (!b1.substats && !b2.substats) return true;
+  if (!b1.substats || !b2.substats) return false;
+  if (b1.substats.length !== b2.substats.length) return false;
+
+  const sub1 = [...b1.substats].sort((a, b) => a.stat.localeCompare(b.stat));
+  const sub2 = [...b2.substats].sort((a, b) => a.stat.localeCompare(b.stat));
+  for (let i = 0; i < sub1.length; i++) {
+    if (sub1[i].stat !== sub2[i].stat || sub1[i].weight !== sub2[i].weight) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// ---------------------------------------------------------------------------
 // Export Payload Generation (V5)
 // ---------------------------------------------------------------------------
 

@@ -4,11 +4,12 @@
 import argparse
 import json
 import re
-import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Literal, TypedDict
+
+from ts_reader import load_ts_data
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
@@ -18,7 +19,6 @@ IMPL_DIR = SRC / "lib/team-comp/impl"
 EN_JSON = DATA / "character_en.json"
 ZH_JSON = DATA / "character_zh.json"
 OUTPUT_FILE = ROOT / "scripts/.impl_audit_output.txt"
-EXT_SCRIPT = ROOT / "scripts/ext_audit_data.ts"
 
 
 Mode = Literal["C", "W", "A"]
@@ -73,25 +73,7 @@ _EXTRACTED_DATACache: dict[str, Any] | None = None
 def get_extracted_data() -> dict[str, Any]:
     global _EXTRACTED_DATACache
     if _EXTRACTED_DATACache is None:
-        try:
-            npx = "npx.cmd" if sys.platform == "win32" else "npx"
-            res = subprocess.run(
-                [npx, "tsx", str(EXT_SCRIPT)],
-                cwd=str(ROOT),
-                capture_output=True,
-                check=True,
-                text=True,
-            )
-            _EXTRACTED_DATACache = json.loads(res.stdout)
-        except subprocess.CalledProcessError as e:
-            print("Failed to extract data via tsx:", e.stderr, file=sys.stderr)
-            sys.exit(1)
-        except json.JSONDecodeError as e:
-            print(
-                f"Failed to parse TSX output: {e}\nOutput was: {res.stdout[:100]}...",
-                file=sys.stderr,
-            )
-            sys.exit(1)
+        _EXTRACTED_DATACache = load_ts_data(ROOT)
     return _EXTRACTED_DATACache
 
 
@@ -299,9 +281,6 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
                 print(f"  ZH: {strip_html(zh_entry.get('descHtml', ''))}")
 
 
-# ── Commands ───────────────────────────────────────────────────────
-
-
 def cmd_show(mode: Mode, entity_id: str) -> None:
     resources = load_resources(mode)
     i18n = load_i18n_names(mode)
@@ -450,8 +429,6 @@ def cmd_check(modes_to_test: list[Mode]) -> None:
         else:
             print("[OK] No missing implementations.")
 
-
-# ── CLI Entry ──────────────────────────────────────────────────────
 
 USAGE = """\\
 Unified Audit & Implementation Script

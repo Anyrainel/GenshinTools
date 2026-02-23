@@ -11,7 +11,14 @@ import type {
   SubStat,
   WeightedSubStat,
 } from "../data/types";
-import { BUILD_DATA_VERSION } from "../lib/artifact-builds/buildUtils";
+import {
+  executeImportBuilds,
+  executeSubscribePreset,
+} from "../lib/artifact-builds/buildImportExport";
+import {
+  BUILD_DATA_VERSION,
+  areBuildsEqual,
+} from "../lib/artifact-builds/buildUtils";
 import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
 import { useArtifactScoreStore } from "./useArtifactScoreStore";
 
@@ -45,7 +52,7 @@ const migrateSubstats = (
   return weighted.sort((a, b) => b.weight - a.weight);
 };
 
-interface BuildsState {
+export interface BuildsState {
   // State
   // Metadata about the current "Net Sum" state
   author: string;
@@ -400,35 +407,7 @@ export const useBuildsStore = create<BuildsState>()(
       },
 
       subscribePreset: (presetId: string, payload: BuildPayloadV5) => {
-        set((state) => {
-          state.activePresetId = presetId;
-          state.presetDeletedBuildIds = [];
-          if (payload.author) state.author = payload.author;
-          if (payload.description) state.description = payload.description;
-
-          // Populate characterToBuildIds from preset, preserving custom builds
-          for (const [charId, presetBuildIds] of Object.entries(
-            payload.characterBuilds
-          )) {
-            const existingIds = state.characterToBuildIds[charId] || [];
-            const presetIdSet = new Set(presetBuildIds);
-            // Append any custom builds not in preset after the preset order
-            const customIds = existingIds.filter((id) => !presetIdSet.has(id));
-            state.characterToBuildIds[charId] = [
-              ...presetBuildIds,
-              ...customIds,
-            ];
-          }
-
-          // Copy weapons only for characters without existing customizations
-          for (const [charId, weapons] of Object.entries(
-            payload.characterWeapons
-          )) {
-            if (!state.characterWeapons[charId]?.length) {
-              state.characterWeapons[charId] = [...weapons];
-            }
-          }
-        });
+        set((state) => executeSubscribePreset(state, presetId, payload));
       },
 
       moveBuild: (
@@ -463,98 +442,7 @@ export const useBuildsStore = create<BuildsState>()(
       // Import builds from exported data
       // Import builds from exported data
       importBuilds: (payload: BuildPayload | BuildPayloadV5) => {
-        set((state) => {
-          // Reset to "Custom Mode" (No Preset)
-          state.activePresetId = null;
-          state.presetDeletedBuildIds = [];
-
-          // Set metadata if available
-          if (payload.author) state.author = payload.author;
-          if (payload.description) state.description = payload.description;
-
-          // Clear existing data?
-          // Previous behavior was merge/overwrite? No, previous implementation was:
-          // state.builds[id] = build; ...
-          // It didn't clear old builds. It was an upsert.
-          // Let's maintain upsert behavior for now, but usually import means "Load this state".
-          // However, the user might want to keep other characters.
-
-          if (payload.version === 5) {
-            const v5 = payload as BuildPayloadV5;
-
-            // Merge Configs
-            state.computeOptions = {
-              ...DEFAULT_COMPUTE_OPTIONS,
-              ...(v5.computeOptions ?? {}),
-            };
-
-            // Merge Builds
-            for (const [id, build] of Object.entries(v5.builds)) {
-              state.builds[id] = build;
-              state.validationErrors[id] = getBuildValidationErrors(build);
-            }
-
-            // Merge Character Mappings
-            for (const [charId, ids] of Object.entries(v5.characterBuilds)) {
-              state.characterToBuildIds[charId] = ids;
-            }
-
-            // Merge Weapons
-            for (const [charId, weapons] of Object.entries(
-              v5.characterWeapons
-            )) {
-              state.characterWeapons[charId] = weapons;
-            }
-
-            // Note: hiddenCharacters not imported from V5 (it's UI state)
-          } else {
-            // Legacy V4 Import
-            const v4 = payload as BuildPayload;
-
-            for (const { characterId, builds } of v4.data) {
-              const buildIds: string[] = [];
-              for (const build of builds) {
-                const buildWithCharacterId: Build = {
-                  ...build,
-                  characterId,
-                };
-
-                state.builds[build.id] = buildWithCharacterId;
-                state.validationErrors[build.id] =
-                  getBuildValidationErrors(buildWithCharacterId);
-                buildIds.push(build.id);
-              }
-
-              if (buildIds.length > 0) {
-                state.characterToBuildIds[characterId] = buildIds;
-              }
-            }
-
-            // Handle character weapons if present in payload
-            for (const { characterId, weapons } of v4.data) {
-              if (weapons && weapons.length > 0) {
-                state.characterWeapons[characterId] = weapons.slice(0, 5);
-              } else {
-                delete state.characterWeapons[characterId];
-              }
-            }
-
-            // Apply character hidden flags (Legacy only)
-            // We migrate them to local hidden state
-            for (const { characterId, hidden } of v4.data) {
-              if (hidden) {
-                state.hiddenCharacters[characterId] = true;
-              } else {
-                delete state.hiddenCharacters[characterId];
-              }
-            }
-
-            state.computeOptions = {
-              ...DEFAULT_COMPUTE_OPTIONS,
-              ...(v4.computeOptions ?? {}),
-            };
-          }
-        });
+        set((state) => executeImportBuilds(state, payload));
       },
 
       // Clear all data (useful for testing)

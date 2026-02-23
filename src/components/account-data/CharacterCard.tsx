@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { charInfo as charInfoData } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData, MainStatSlot } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -54,6 +55,21 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
 
   const talents = char.talent || { auto: 1, skill: 1, burst: 1 };
 
+  const charInfoDataData = charInfoData[char.key];
+  const getTalentPlus = (talent: "A" | "E" | "Q") => {
+    let plus = 0;
+    if (charInfoDataData) {
+      if (charInfoDataData.c3Talent === talent && char.constellation >= 3)
+        plus += 3;
+      if (charInfoDataData.c5Talent === talent && char.constellation >= 5)
+        plus += 3;
+    }
+    return plus;
+  };
+  const plusAuto = getTalentPlus("A");
+  const plusSkill = getTalentPlus("E");
+  const plusBurst = getTalentPlus("Q");
+
   return (
     <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl">
       {/* Header */}
@@ -90,15 +106,26 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                 <div className="ml-2 flex flex-shrink-0 items-center gap-3 text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap">
                   <span>
                     {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
-                    <span className="text-foreground">{talents.auto}</span>
+                    <span className="text-foreground/90">
+                      {talents.auto}
+                      {plusAuto > 0 && (
+                        <span className="text-foreground/90">+{plusAuto}</span>
+                      )}
+                    </span>
                   </span>
                   <span>
                     {isMobile ? "E" : t.ui("accountData.talents.skill")}{" "}
-                    <span className="text-foreground">{talents.skill}</span>
+                    <span className="text-foreground/90">{talents.skill}</span>
+                    {plusSkill > 0 && (
+                      <span className="text-foreground/90">+{plusSkill}</span>
+                    )}
                   </span>
                   <span>
                     {isMobile ? "Q" : t.ui("accountData.talents.burst")}{" "}
-                    <span className="text-foreground">{talents.burst}</span>
+                    <span className="text-foreground/90">{talents.burst}</span>
+                    {plusBurst > 0 && (
+                      <span className="text-foreground/90">+{plusBurst}</span>
+                    )}
                   </span>
                 </div>
               )}

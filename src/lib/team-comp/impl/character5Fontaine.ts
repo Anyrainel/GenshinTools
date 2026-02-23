@@ -34,7 +34,7 @@ class Escoffier extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: Hydro/Cryo RES shred based on # Hydro+Cryo in party
       new StatBuff(
-        cbs(this, ["E", "Q"], "P2"),
+        cbs(this, "P2", ["E", "Q"]),
         { receiver: "onField", filter: { elements: ["Hydro", "Cryo"] } },
         [{ key: "resReduction%", value: shred }]
       ),
@@ -43,7 +43,7 @@ class Escoffier extends CharacterBase {
     if (this.constellation >= 1 && this.hydroCryo >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E", "Q"], "C1"),
+          cbs(this, "C1", ["E", "Q"]),
           { receiver: "team", filter: { elements: ["Cryo"] } },
           [{ key: "cd", value: 0.6 }]
         )
@@ -53,7 +53,7 @@ class Escoffier extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["E"], "C2"),
+          cbs(this, "C2", ["E"]),
           { receiver: "onField", filter: { elements: ["Cryo"] } },
           [],
           "atk",
@@ -126,7 +126,7 @@ class Emilie extends CharacterBase {
     >[] = [
       // P2: vs Burning enemies, per 1000 ATK → DMG +15% (cap 36%)
       new ScalingBuff(
-        cbs(this, [], "P2"),
+        cbs(this, "P2", []),
         { receiver: "selfOnField" },
         [],
         "atk",
@@ -136,21 +136,21 @@ class Emilie extends CharacterBase {
       ),
       // C1: E and P1 Cleardew DMG +20%
       new StaticSkillBuff(
-        cbs(this, ["E"], "C1"),
+        cbs(this, "C1", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         this.constellation,
         (c) => (c >= 1 ? [{ key: "dmg%", value: 0.2 }] : [])
       ),
       // C2: E/Q/Cleardew hit → enemies' Dendro RES -30%
       new StaticSkillBuff(
-        cbs(this, ["E", "Q"], "C2"),
+        cbs(this, "C2", ["E", "Q"]),
         { receiver: "onField", filter: { elements: ["Dendro"] } },
         this.constellation,
         (c) => (c >= 2 ? [{ key: "resReduction%", value: 0.3 }] : [])
       ),
       // C6: After E/Q, Normal/Charged become Dendro + baseDmg from ATK ×300%
       new StaticSkillBuff(
-        cbs(this, ["E"], "C6"),
+        cbs(this, "C6", ["E"]),
         {
           receiver: "selfOnField",
           filter: { abilities: ["normal", "charge"] },
@@ -262,7 +262,7 @@ class Sigewinne extends CharacterBase {
     const buffs: StatBuff[] = [
       // P1: HP > 30k → E baseDmg +80 (C1: 100) per 1000 HP. Max 2800 (C1: 3500)
       new ScalingBuff(
-        cbs(this, ["E"], "P1"),
+        cbs(this, "P1", ["E"]),
         { receiver: "team", filter: { abilities: ["skill"] } },
         [],
         "hp",
@@ -277,7 +277,7 @@ class Sigewinne extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E", "Q"], "C2"),
+          cbs(this, "C2", ["E", "Q"]),
           { receiver: "onField", filter: { elements: ["Hydro"] } },
           [{ key: "resReduction%", value: 0.35 }]
         )
@@ -288,7 +288,7 @@ class Sigewinne extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [],
           "hp",
@@ -297,7 +297,7 @@ class Sigewinne extends CharacterBase {
           0.2
         ),
         new ScalingBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [],
           "hp",
@@ -355,7 +355,7 @@ class Clorinde extends CharacterBase {
     // P1: After Electro reaction, +20% ATK (C2: 30%) × 3 stacks as baseDmg
     // on Normal ATK and Q Electro DMG
     new ScalingSkillBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "burst"], elements: ["Electro"] },
@@ -367,19 +367,19 @@ class Clorinde extends CharacterBase {
       (c) => ({ scale: c >= 2 ? 0.9 : 0.6 })
     ),
     // P2: BoL ≥100% + changes → CR +10% × 2 stacks = +20%
-    new StatBuff(cbs(this, ["E"], "P2"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
       { key: "cr", value: 0.2 },
     ]),
     // C4: Q DMG +2% per 1% BoL (max 200%) — at full BoL ~120%+
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "dmg%", value: 2.0 }] : [])
     ),
     // C6: After E, +10% CR, +70% CD for 12s
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) =>
@@ -467,7 +467,7 @@ class Navia extends CharacterBase {
     // P1: After E, self Normal/Charged/Plunge DMG +40%
     buffs.push(
       new StatBuff(
-        cbs(this, ["E"], "P1"),
+        cbs(this, "P1", ["E"]),
         {
           receiver: "selfOnField",
           filter: { abilities: ["normal", "charge", "plunge"] },
@@ -482,7 +482,7 @@ class Navia extends CharacterBase {
       this.teamMeta.countByElement("Cryo") +
       this.teamMeta.countByElement("Hydro");
     buffs.push(
-      new StatBuff(cbs(this, [], "P2"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
         { key: "atk%", value: Math.min(nonGeoCount, 2) * 0.2 },
       ])
     );
@@ -490,7 +490,7 @@ class Navia extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C2"),
+          cbs(this, "C2", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "cr", value: 0.36 }]
         )
@@ -500,7 +500,7 @@ class Navia extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C4"),
+          cbs(this, "C4", ["Q"]),
           { receiver: "onField", filter: { elements: ["Geo"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )
@@ -510,7 +510,7 @@ class Navia extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C6"),
+          cbs(this, "C6", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "cd", value: 1.35 }]
         )
@@ -546,7 +546,7 @@ class Furina extends CharacterBase {
   readonly buffs = [
     // P2: Per 1000 Max HP → salon members DMG +0.7% (cap 28%)
     new ScalingBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "hp",
@@ -558,7 +558,7 @@ class Furina extends CharacterBase {
     // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
     // Max stacks: 300 (C1: 400). Assume ~250 stacks in practice.
     new StaticSkillBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "team" },
       this.constellation,
       (c) => {
@@ -570,7 +570,7 @@ class Furina extends CharacterBase {
     ),
     // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
     new StaticSkillBuff(
-      cbs(this, [], "C2"),
+      cbs(this, "C2", []),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "hp%", value: 1.4 }] : [])
@@ -634,18 +634,14 @@ class Neuvillette extends CharacterBase {
       // P1: 3 stacks Past Draconic Glories → Charged deals 160% original DMG (+60%)
       buffs.push(
         new StatBuff(
-          cbs(
-            this,
-            [
-              "vaporize",
-              "frozen",
-              "electroCharged",
-              "bloom",
-              "swirl",
-              "crystallize",
-            ],
-            "P1"
-          ),
+          cbs(this, "P1", [
+            "vaporize",
+            "frozen",
+            "electroCharged",
+            "bloom",
+            "swirl",
+            "crystallize",
+          ]),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "baseDmg%", value: 0.6 }]
         )
@@ -654,7 +650,7 @@ class Neuvillette extends CharacterBase {
 
     // P2: HP above 30% → Hydro DMG% (cap 30%). Assume near full HP → 30%
     buffs.push(
-      new StatBuff(cbs(this, [], "P2"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
         { key: "hydro%", value: 0.3 },
       ])
     );
@@ -663,7 +659,7 @@ class Neuvillette extends CharacterBase {
     if (canP1React && this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, [], "C2"),
+          cbs(this, "C2", []),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "cd", value: 0.42 }]
         )
@@ -702,12 +698,12 @@ class Wriothesley extends CharacterBase {
     const buffs: StatBuff[] = [
       // P1/C1: Gracious Rebuke → CA DMG Bonus (50% or 200%)
       new StatBuff(
-        cbs(this, ["charge"], "P1/C1"),
+        cbs(this, "P1/C1", ["charge"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
         [{ key: "dmg%", value: this.constellation >= 1 ? 2.0 : 0.5 }]
       ),
       // P2: Prosecution Edict (max 5 stacks * 6% = 30% ATK)
-      new StatBuff(cbs(this, ["E"], "P2"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
         { key: "atk%", value: 0.3 },
       ]),
     ];
@@ -716,7 +712,7 @@ class Wriothesley extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 2.0 }]
         )
@@ -726,7 +722,7 @@ class Wriothesley extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["charge"], "C6"),
+          cbs(this, "C6", ["charge"]),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [
             { key: "cr", value: 0.1 },
@@ -804,14 +800,14 @@ class Lyney extends CharacterBase {
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
     buffs.push(
-      new StatBuff(cbs(this, [], "P2"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
         { key: "dmg%", value: p2Bonus },
       ])
     );
     // C2: Self CD +60% (3 stacks × 20%)
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, [], "C2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
           { key: "cd", value: 0.6 },
         ])
       );
@@ -820,7 +816,7 @@ class Lyney extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["charge"], "C4"),
+          cbs(this, "C4", ["charge"]),
           { receiver: "onField", filter: { elements: ["Pyro"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )

@@ -1,4 +1,5 @@
 import { ArtifactComparisonHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
@@ -383,29 +384,5 @@ function InsightItem({ insight }: { insight: Insight }) {
     >
       {cardContent}
     </ArtifactComparisonHoverCard>
-  );
-}
-
-interface ArtifactIconProps {
-  artifact: ArtifactData;
-  artInfo: (typeof artifactsById)[string] | undefined;
-  slot: Slot;
-}
-
-/** Simple artifact icon display without hover behavior */
-function ArtifactIcon({ artifact, artInfo, slot }: ArtifactIconProps) {
-  const badge = artifact.astralMark ? "⭐" : undefined;
-
-  return (
-    <div className="relative shrink-0">
-      <ItemIcon
-        imagePath={artInfo?.imagePaths[slot] || ""}
-        rarity={artifact.rarity}
-        badge={badge}
-        lock={artifact.lock}
-        level={`+${artifact.level}`}
-        size="md"
-      />
-    </div>
   );
 }

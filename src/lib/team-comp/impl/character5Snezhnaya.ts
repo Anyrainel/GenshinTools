@@ -196,12 +196,12 @@ class Arlecchino extends CharacterBase {
 
   readonly buffs = [
     // P3: In combat, unconditional Pyro DMG +40%
-    new StatBuff(cbs(this, [], "P3"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P3", []), { receiver: "selfOnField" }, [
       { key: "pyro%", value: 0.4 },
     ]),
     // C6: After E, Normal ATK and Q: CR +10%, CD +70% for 20s
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal", "burst"] } },
       this.constellation,
       (c) =>

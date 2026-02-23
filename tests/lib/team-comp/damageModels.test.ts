@@ -111,7 +111,7 @@ describe("StatSheet", () => {
   it("apply adds static buff entries", () => {
     const sheet = new StatSheet([{ key: "baseAtk", value: 800 }]);
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self" },
       [{ key: "atk%", value: 0.2 }]
     );
@@ -203,7 +203,7 @@ describe("StatSheet.get with DamageTag", () => {
     const sheet = new StatSheet([{ key: "cr", value: 0.5 }]);
     // A buff with ability filter adds tagged cr
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self", filter: { abilities: ["burst"] } },
       [{ key: "cr", value: 0.12 }]
     );
@@ -216,7 +216,7 @@ describe("StatSheet.get with DamageTag", () => {
   it("includes matching tagged entries with tag", () => {
     const sheet = new StatSheet([{ key: "cr", value: 0.5 }]);
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self", filter: { abilities: ["burst"] } },
       [{ key: "cr", value: 0.12 }]
     );
@@ -235,7 +235,7 @@ describe("StatSheet.get with DamageTag", () => {
   it("excludes non-matching tagged entries", () => {
     const sheet = new StatSheet([{ key: "cr", value: 0.5 }]);
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self", filter: { abilities: ["burst"] } },
       [{ key: "cr", value: 0.12 }]
     );
@@ -363,7 +363,7 @@ describe("validateStatFilter", () => {
   it("throws when dmg% is paired with element filter", () => {
     const sheet = new StatSheet([]);
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self", filter: { elements: ["Pyro"] } },
       [{ key: "dmg%", value: 0.2 }]
     );
@@ -375,7 +375,7 @@ describe("validateStatFilter", () => {
   it("throws when defReduction% has element filter", () => {
     const sheet = new StatSheet([]);
     const buff = new StatBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "team", filter: { elements: ["Pyro"] } },
       [{ key: "defReduction%", value: 0.1 }]
     );
@@ -386,7 +386,7 @@ describe("validateStatFilter", () => {
   it("throws when resReduction% has ability filter", () => {
     const sheet = new StatSheet([]);
     const buff = new StatBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "team", filter: { abilities: ["burst"] } },
       [{ key: "resReduction%", value: 0.1 }]
     );
@@ -398,7 +398,7 @@ describe("validateStatFilter", () => {
     const sheet = new StatSheet([]);
     // cr with ability filter is fine
     const buff = new StatBuff(
-      { type: "weapon", id: "test" },
+      { type: "weapon", id: "test", origin: "R1" },
       { receiver: "self", filter: { abilities: ["burst"] } },
       [{ key: "cr", value: 0.12 }]
     );

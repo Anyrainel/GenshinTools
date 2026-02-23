@@ -63,20 +63,16 @@ class Durin extends CharacterBase {
       if (canPyroReact) {
         buffs.push(
           new StatBuff(
-            cbs(
-              this,
-              [
-                "Q",
-                "vaporize",
-                "melt",
-                "overloaded",
-                "burning",
-                "burgeon",
-                "swirl",
-                "crystallize",
-              ],
-              "P1"
-            ),
+            cbs(this, "P1", [
+              "Q",
+              "vaporize",
+              "melt",
+              "overloaded",
+              "burning",
+              "burgeon",
+              "swirl",
+              "crystallize",
+            ]),
             { receiver: "onField" },
             [{ key: "resReduction%", value: 0.2 * hexMult }]
           )
@@ -86,7 +82,7 @@ class Durin extends CharacterBase {
       // P1 (Dark Decay): Vaporize/Melt DMG +40% (×hexMult)
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "P1"),
+          cbs(this, "P1", ["Q"]),
           {
             receiver: "selfOnField",
             filter: { reactions: ["vaporize", "melt"] },
@@ -100,7 +96,7 @@ class Durin extends CharacterBase {
     // baseDmg% is the correct key for "deal X% of original damage"
     buffs.push(
       new ScalingBuff(
-        cbs(this, ["Q"], "P2"),
+        cbs(this, "P2", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["burst"] } },
         [],
         "atk",
@@ -117,7 +113,7 @@ class Durin extends CharacterBase {
       if (isWhite) {
         buffs.push(
           new ScalingBuff(
-            cbs(this, ["Q"], "C1"),
+            cbs(this, "C1", ["Q"]),
             { receiver: "onField" },
             [],
             "atk",
@@ -128,7 +124,7 @@ class Durin extends CharacterBase {
       } else {
         buffs.push(
           new ScalingBuff(
-            cbs(this, ["Q"], "C1"),
+            cbs(this, "C1", ["Q"]),
             { receiver: "selfOnField", filter: { abilities: ["burst"] } },
             [],
             "atk",
@@ -142,7 +138,7 @@ class Durin extends CharacterBase {
     // C2: After burst, Pyro DMG +50% for team (+ reaction element)
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C2"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
           { key: "pyro%", value: 0.5 },
         ])
       );
@@ -152,7 +148,7 @@ class Durin extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, [], "C4"),
+          cbs(this, "C4", []),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 0.4 }]
         )
@@ -166,18 +162,18 @@ class Durin extends CharacterBase {
       if (isWhite) {
         buffs.push(
           new StatBuff(
-            cbs(this, ["Q"], "C6"),
+            cbs(this, "C6", ["Q"]),
             { receiver: "selfOnField", filter: { abilities: ["burst"] } },
             [{ key: "defIgnore%", value: 0.3 }]
           ),
-          new StatBuff(cbs(this, ["Q"], "C6"), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
             { key: "defReduction%", value: 0.3 },
           ])
         );
       } else {
         buffs.push(
           new StatBuff(
-            cbs(this, ["Q"], "C6"),
+            cbs(this, "C6", ["Q"]),
             { receiver: "selfOnField", filter: { abilities: ["burst"] } },
             [{ key: "defIgnore%", value: 0.7 }]
           )
@@ -289,7 +285,7 @@ class Albedo extends CharacterBase {
     >[] = [
       // P1: Transient Blossoms deal +25% DMG vs enemies HP <50% (assume active)
       new StatBuff(
-        cbs(this, ["enemy-low-hp"], "P1"),
+        cbs(this, "P1", ["enemy-low-hp"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [{ key: "dmg%", value: 0.25 }]
       ),
@@ -298,7 +294,7 @@ class Albedo extends CharacterBase {
       ...(isHexerei
         ? [
             new ScalingSkillBuff(
-              cbs(this, ["E"], "P1"),
+              cbs(this, "P1", ["E"]),
               { receiver: "selfOnField", filter: { abilities: ["skill"] } },
               [],
               "def",
@@ -309,12 +305,12 @@ class Albedo extends CharacterBase {
           ]
         : []),
       // P2: After Q, nearby party EM +125 for 10s
-      new StatBuff(cbs(this, ["Q"], "P2"), { receiver: "team" }, [
+      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "team" }, [
         { key: "em", value: 125 },
       ]),
       // P4: After Solar Isotoma, team DMG +4% per 1000 DEF (cap 12%)
       new ScalingBuff(
-        cbs(this, ["E"], "P4"),
+        cbs(this, "P4", ["E"]),
         { receiver: "team", filter: { abilities: [...allAbilities] } },
         [],
         "def",
@@ -327,7 +323,7 @@ class Albedo extends CharacterBase {
       ...(isHexerei
         ? [
             new ScalingBuff(
-              cbs(this, ["E"], "P4"),
+              cbs(this, "P4", ["E"]),
               { receiver: "team", filter: { abilities: [...allAbilities] } },
               [],
               "def",
@@ -339,21 +335,21 @@ class Albedo extends CharacterBase {
         : []),
       // C1: After E, DEF +50% for 20s
       new StaticSkillBuff(
-        cbs(this, ["E"], "C1"),
+        cbs(this, "C1", ["E"]),
         { receiver: "self" },
         this.constellation,
         (c) => (c >= 1 ? [{ key: "def%", value: 0.5 }] : [])
       ),
       // C4: Active characters in Solar Isotoma field: Plunge DMG +30%
       new StaticSkillBuff(
-        cbs(this, ["E"], "C4"),
+        cbs(this, "C4", ["E"]),
         { receiver: "onField", filter: { abilities: ["plunge"] } },
         this.constellation,
         (c) => (c >= 4 ? [{ key: "dmg%", value: 0.3 }] : [])
       ),
       // C6: In Solar Isotoma with Crystallize shield, DMG +17% (assume active)
       new StaticSkillBuff(
-        cbs(this, ["E"], "C6"),
+        cbs(this, "C6", ["E"]),
         { receiver: "onField" },
         this.constellation,
         (c) => (c >= 6 ? [{ key: "dmg%", value: 0.17 }] : [])
@@ -364,7 +360,7 @@ class Albedo extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [],
           "def",
@@ -378,7 +374,7 @@ class Albedo extends CharacterBase {
     if (this.constellation >= 6 && isHexerei) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [],
           "def",
@@ -439,7 +435,7 @@ class Diluc extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: After Q, Pyro DMG +20% during infusion
-      new StatBuff(cbs(this, ["Q"], "P2"), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "selfOnField" }, [
         { key: "pyro%", value: 0.2 },
       ]),
     ];
@@ -447,7 +443,7 @@ class Diluc extends CharacterBase {
     if (this.constellation >= 1) {
       // C1: DMG +15% against enemies with HP > 50% (assume active)
       buffs.push(
-        new StatBuff(cbs(this, [], "C1"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
           { key: "dmg%", value: 0.15 },
         ])
       );
@@ -455,7 +451,7 @@ class Diluc extends CharacterBase {
     if (this.constellation >= 2) {
       // C2: On taking DMG, ATK +10% and ATK SPD +5% × 3 stacks = +30% / +15%
       buffs.push(
-        new StatBuff(cbs(this, [], "C2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
           { key: "atk%", value: 0.3 },
           { key: "atkSpd%", value: 0.15 },
         ])
@@ -465,7 +461,7 @@ class Diluc extends CharacterBase {
       // C4: 2nd/3rd E cast in combo deals +40% DMG — averaged over 3 hits (approx 26.6%)
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C4"),
+          cbs(this, "C4", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "dmg%", value: 0.4 * (2 / 3) }]
         )
@@ -475,7 +471,7 @@ class Diluc extends CharacterBase {
       // C6: After E, next 2 normals DMG +30% and ATK SPD +30%
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C6"),
+          cbs(this, "C6", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["normal"] } },
           [
             { key: "dmg%", value: 0.3 },
@@ -586,7 +582,7 @@ class Mona extends CharacterBase {
   readonly buffs = [
     // P3 (combat): 20% of ER as Hydro DMG%
     new ScalingBuff(
-      cbs(this, ["passive"], "P3"),
+      cbs(this, "P3", ["passive"]),
       { receiver: "selfOnField" },
       [],
       "er",
@@ -594,26 +590,26 @@ class Mona extends CharacterBase {
       0.2
     ),
     // Q: Stellaris Phantasm — Omen DMG Bonus +60%
-    new StatBuff(cbs(this, ["Q"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
       { key: "dmg%", value: 0.6 },
     ]),
     // C1: Hydro reaction effects +15%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C1"),
+      cbs(this, "C1", ["Q"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : [])
     ),
     // C2: Charged ATK hit → team EM +80
     new StaticSkillBuff(
-      cbs(this, ["charge"], "C2"),
+      cbs(this, "C2", ["charge"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "em", value: 80 }] : [])
     ),
     // C4: Omen targets +15% CR
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "cr", value: 0.15 }] : [])
@@ -645,14 +641,14 @@ class Jean extends CharacterBase {
   readonly buffs = [
     // C2: Jean picks up particle -> Team ATK SPD +15%
     new StaticSkillBuff(
-      cbs(this, ["orb"], "C2"),
+      cbs(this, "C2", ["orb"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "atkSpd%", value: 0.15 }] : [])
     ),
     // C4: Q field: Anemo RES -40%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "resReduction%", value: 0.4 }] : [])
@@ -702,7 +698,7 @@ class Venti extends CharacterBase {
     // Simplified as general resReduction
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
           { key: "resReduction%", value: 0.24 },
         ])
       );
@@ -711,7 +707,7 @@ class Venti extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E", "Q"], "C4"),
+          cbs(this, "C4", ["E", "Q"]),
           { receiver: "team" }, // Approximation for active members
           [{ key: "anemo%", value: 0.25 }]
         )
@@ -720,10 +716,10 @@ class Venti extends CharacterBase {
     // C6: Q targets take -20% RES, Venti gets +100% CD against them
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C6"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
           { key: "resReduction%", value: 0.2 },
         ]),
-        new StatBuff(cbs(this, ["Q"], "C6-CD"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C6-CD", ["Q"]), { receiver: "selfOnField" }, [
           { key: "cd", value: 1.0 },
         ])
       );
@@ -797,27 +793,27 @@ class Klee extends CharacterBase {
   readonly buffs = [
     // C1: After spark explosion, self ATK +60% for 12s
     new StaticSkillBuff(
-      cbs(this, [], "C1"),
+      cbs(this, "C1", []),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 1 ? [{ key: "atk%", value: 0.6 }] : [])
     ),
     // C2: Enemies hit by mines: -23% DEF for 10s
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "defReduction%", value: 0.23 }] : [])
     ),
     // C6: Q active → party +10% Pyro DMG, self +50% Pyro DMG
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "pyro%", value: 0.1 }] : [])
     ),
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "pyro%", value: 0.5 }] : [])
@@ -858,7 +854,7 @@ class Eula extends CharacterBase {
   readonly buffs = [
     // E (Hold, 2 stacks): Physical RES -25%, Cryo RES -25%
     new StatBuff(
-      cbs(this, ["E"]),
+      cbs(this, "E", ["E"]),
       {
         receiver: "onField",
         filter: { elements: ["Physical" as const, "Cryo"] },
@@ -867,14 +863,14 @@ class Eula extends CharacterBase {
     ),
     // C1: After consuming Grimheart, Physical DMG +30%
     new StaticSkillBuff(
-      cbs(this, ["E"], "C1"),
+      cbs(this, "C1", ["E"]),
       { receiver: "selfOnField", filter: { elements: ["Physical"] } },
       this.constellation,
       (c) => (c >= 1 ? [{ key: "dmg%", value: 0.3 }] : [])
     ),
     // C4: Lightfall DMG +25% vs enemies HP < 50% (assume active)
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "dmg%", value: 0.25 }] : [])

@@ -36,13 +36,14 @@ import type { ArtifactData } from "@/data/types";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet, getEntityOption } from "@/lib/team-comp/damageModels";
-import type { CalcContext } from "@/lib/team-comp/types";
+import type { CalcContext, I18nLabel } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import {
   ArrowLeft,
+  Check,
   ChevronDown,
   Loader2,
   Play,
@@ -55,7 +56,6 @@ import { DamageCardBody, FormulaTabBar } from "./DamageCardBody";
 import { buildTeamConfigs } from "./teamOptUtils";
 import type { TeamOptDetailProps } from "./teamOptUtils";
 
-// ─── Shared card style constants ──────────────────────────────────
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
 const CARD_HEADER_CLS =
   "bg-gradient-select border-b border-border/40 py-3 px-4 md:px-6";
@@ -63,7 +63,6 @@ const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
 const CARD_BODY_CLS = "p-4 md:px-6 md:py-5 bg-black/10";
 
-// ─── Component ────────────────────────────────────────────────────
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
   const accountData = useAccountStore((state) => state.accountData);
@@ -142,53 +141,55 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!resource) return null;
 
     return (
-      <div key={entityId} className="flex items-center gap-2 py-1.5">
-        <div className="w-6 h-6 rounded-full bg-secondary/30 overflow-hidden shrink-0 border border-border/30">
-          <img
-            src={getAssetUrl(resource.imagePath)}
-            alt={entityId}
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <span className="font-medium text-[11px] text-foreground/70 shrink-0 min-w-0 truncate max-w-[100px]">
-          {t.resolveLabel(schema.label)}
-        </span>
-
-        {schema.choices.length === 2 ? (
-          <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0 ml-auto">
-            {schema.choices.map((c) => (
-              <button
-                type="button"
-                key={c.value}
-                onClick={() => handleOptionChange(entityId, c.value)}
-                className={cn(
-                  "px-2.5 py-0.5 text-[11px] font-semibold rounded transition-all",
-                  value === c.value
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {t.resolveLabel(c.label)}
-              </button>
-            ))}
+      <div key={entityId} className="flex justify-center py-1.5 w-full">
+        <div className="flex items-center gap-2 max-w-full">
+          <div className="w-6 h-6 rounded-full bg-secondary/30 overflow-hidden shrink-0 border border-border/30">
+            <img
+              src={getAssetUrl(resource.imagePath)}
+              alt={entityId}
+              className="w-full h-full object-contain"
+            />
           </div>
-        ) : (
-          <Select
-            value={value}
-            onValueChange={(v) => handleOptionChange(entityId, v)}
-          >
-            <SelectTrigger className="w-[140px] h-7 text-[11px] ml-auto">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
+          <span className="font-medium text-xs text-foreground/70 shrink-0 min-w-0 truncate max-w-[100px]">
+            {t.resolveLabel(schema.label)}
+          </span>
+
+          {schema.choices.length === 2 ? (
+            <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0">
               {schema.choices.map((c) => (
-                <SelectItem key={c.value} value={c.value}>
+                <button
+                  type="button"
+                  key={c.value}
+                  onClick={() => handleOptionChange(entityId, c.value)}
+                  className={cn(
+                    "px-2.5 py-0.5 text-xs font-semibold rounded transition-all",
+                    value === c.value
+                      ? "bg-background shadow-sm text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
                   {t.resolveLabel(c.label)}
-                </SelectItem>
+                </button>
               ))}
-            </SelectContent>
-          </Select>
-        )}
+            </div>
+          ) : (
+            <Select
+              value={value}
+              onValueChange={(v) => handleOptionChange(entityId, v)}
+            >
+              <SelectTrigger className="w-[140px] h-7 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {schema.choices.map((c) => (
+                  <SelectItem key={c.value} value={c.value}>
+                    {t.resolveLabel(c.label)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
       </div>
     );
   };
@@ -196,7 +197,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const validCharIds = Object.keys(availableFormulas);
 
   const allFormulas = useMemo(() => {
-    const list = [];
+    const list: { charId: string; formulaId: string; label: I18nLabel }[] = [];
     for (const charId of validCharIds) {
       const charFormulas = availableFormulas[charId];
       if (charFormulas) {
@@ -218,6 +219,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return isValid ? team.selectedFormula : allFormulas[0] || null;
   }, [team.selectedFormula, allFormulas]);
 
+  const activeContext = useMemo<CalcContext>(() => {
+    return {
+      enemyLevel: team.calcContext?.enemyLevel ?? 110,
+      enemyRes: team.calcContext?.enemyRes ?? 0.1,
+      assumeCrit: team.calcContext?.assumeCrit ?? false,
+    };
+  }, [team.calcContext]);
+
   const currentDamage = useMemo(() => {
     if (!teamBuild || !resolvedFormula) return null;
     try {
@@ -228,17 +237,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
       const postStats = teamBuild.getTeamStats(artifactSheets, charId);
 
-      const ctx: CalcContext = {
-        enemyLevel: 100,
-        enemyRes: 0.1,
-        assumeCrit: false,
-      };
-      return teamBuild.getDamageResult(charId, formulaId, postStats, ctx);
+      return teamBuild.getDamageResult(
+        charId,
+        formulaId,
+        postStats,
+        activeContext
+      );
     } catch (e) {
       console.error("Damage calc failed:", e);
       return null;
     }
-  }, [teamBuild, resolvedFormula, artifactSheets]);
+  }, [teamBuild, resolvedFormula, artifactSheets, activeContext]);
 
   const currentDisplayResult = useMemo(() => {
     if (!teamBuild || !resolvedFormula) return null;
@@ -248,17 +257,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       const formulas = teamBuild.getFormulaIds()[charId];
       if (!formulas || !formulas[formulaId]) return null;
 
-      const ctx: CalcContext = {
-        enemyLevel: 100,
-        enemyRes: 0.1,
-        assumeCrit: false,
-      };
-      return teamBuild.getDisplayResult(charId, formulaId, artifactSheets, ctx);
+      return teamBuild.getDisplayResult(
+        charId,
+        formulaId,
+        artifactSheets,
+        activeContext
+      );
     } catch (e) {
       console.error("Display calc failed:", e);
       return null;
     }
-  }, [teamBuild, resolvedFormula, artifactSheets]);
+  }, [teamBuild, resolvedFormula, artifactSheets, activeContext]);
 
   const activeTab = resolvedFormula
     ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
@@ -314,7 +323,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       globalConfig: scoreConfig.global,
       baseSheets: artifactSheets,
       calcContext: {
-        enemyLevel: 100,
+        enemyLevel: 110,
         enemyRes: 0.1,
         assumeCrit: false,
       },
@@ -364,22 +373,23 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       const formulas = teamBuild.getFormulaIds()[charId];
       if (!formulas || !formulas[formulaId]) return null;
 
-      const ctx: CalcContext = {
-        enemyLevel: 100,
-        enemyRes: 0.1,
-        assumeCrit: false,
-      };
       return teamBuild.getDisplayResult(
         charId,
         formulaId,
         optArtifactSheets,
-        ctx
+        activeContext
       );
     } catch (e) {
       console.error("Opt display calc failed:", e);
       return null;
     }
-  }, [teamBuild, resolvedOptFormula, optArtifactSheets, optResult]);
+  }, [
+    teamBuild,
+    resolvedOptFormula,
+    optArtifactSheets,
+    optResult,
+    activeContext,
+  ]);
 
   const handleClearTeam = () => {
     updateTeam(team.id, {
@@ -400,7 +410,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           <Button variant="ghost" size="icon" onClick={onBack}>
             <ArrowLeft className="w-5 h-5 text-foreground/70" />
           </Button>
-          <h2 className="text-xl font-black text-destructive">Render Error</h2>
+          <h2 className="text-xl font-black text-destructive">
+            {t.ui("teamBuilder.renderError")}
+          </h2>
           <Button
             variant="destructive"
             size="sm"
@@ -408,7 +420,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             className="ml-auto text-xs h-8"
           >
             <Trash2 className="w-4 h-4 mr-1.5" />
-            Clear Team Data
+            {t.ui("teamBuilder.clearTeamData")}
           </Button>
         </div>
         <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-lg font-mono text-xs whitespace-pre-wrap overflow-auto">
@@ -419,7 +431,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }
 
   try {
-    // ─── Render ──────────────────────────────────────────────────
     return (
       <div className="flex flex-col gap-4 w-full animate-in fade-in duration-300 pb-12">
         {/* ── Page Header ── */}
@@ -433,7 +444,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             <ArrowLeft className="w-5 h-5 text-foreground/70" />
           </Button>
           <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-            {team.name || "Team Optimization"}
+            {team.name || t.ui("teamBuilder.teamOptimization")}
           </h2>
         </div>
 
@@ -444,7 +455,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           <CardHeader className={cn(CARD_HEADER_CLS, "py-2.5")}>
             <h3 className={CARD_TITLE_CLS}>
               <Swords className="w-4 h-4 opacity-70" />
-              Team Roster
+              {t.ui("teamBuilder.teamRoster")}
             </h3>
           </CardHeader>
           <CardContent className={cn(CARD_BODY_CLS, "py-3")}>
@@ -467,6 +478,35 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 const weaponHasOption =
                   weaponId != null && getEntityOption(weaponId) != null;
 
+                const acctChar = accountData?.characters.find(
+                  (c) => c.key === charId
+                );
+                const charLevel =
+                  team.opts?.[`${charId}.overrideLevel`] !== undefined
+                    ? Number(team.opts[`${charId}.overrideLevel`])
+                    : acctChar
+                      ? acctChar.level > 90
+                        ? 100
+                        : 90
+                      : 90;
+                const charConst =
+                  team.opts?.[`${charId}.overrideConstellation`] !== undefined
+                    ? Number(team.opts[`${charId}.overrideConstellation`])
+                    : (acctChar?.constellation ?? 0);
+
+                let defaultRefine = 1;
+                if (weaponId && accountData) {
+                  const ws = accountData.extraWeapons.filter(
+                    (w) => w.key === weaponId
+                  );
+                  if (ws.length > 0)
+                    defaultRefine = Math.max(...ws.map((w) => w.refinement));
+                }
+                const weaponRefine =
+                  team.opts?.[`${charId}.overrideRefinement`] !== undefined
+                    ? Number(team.opts[`${charId}.overrideRefinement`])
+                    : defaultRefine;
+
                 return (
                   <div
                     key={i}
@@ -481,6 +521,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                               imagePath={char?.imagePath || ""}
                               rarity={char?.rarity || 5}
                               size="xl"
+                              badge={charConst}
                             />
                           </div>
                         </TooltipTrigger>
@@ -500,6 +541,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                                 imagePath={weapon.imagePath}
                                 rarity={weapon.rarity}
                                 size="lg"
+                                badge={weaponRefine}
                               />
                             </div>
                           </TooltipTrigger>
@@ -571,13 +613,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     </div>
 
                     {/* Row 2: Name + Min. ER */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold text-base text-foreground/90 truncate">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="font-bold text-lg text-foreground/90 ml-2">
                         {t.character(charId)}
                       </span>
                       <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
                         <span className="text-xs font-bold text-foreground/70">
-                          Min. ER
+                          {t.ui("teamBuilder.minEr")}
                         </span>
                         <Input
                           type="number"
@@ -600,15 +642,101 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                           }}
                           className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
-                        <span className="text-xs font-bold text-muted-foreground">
+                        <span className="text-xs font-bold text-muted-foreground mr-2">
                           %
                         </span>
                       </div>
                     </div>
 
+                    {/* Row 3: Overrides */}
+                    <div className="flex items-start gap-1.5 justify-between bg-black/10 px-1.5 rounded-md border border-border/10">
+                      <div className="flex flex-col gap-1 w-full shrink pr-0.5">
+                        <span
+                          className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                          title={t.ui("teamBuilder.overrideLevel")}
+                        >
+                          {t.ui("teamBuilder.overrideLevel")}
+                        </span>
+                        <Select
+                          value={String(charLevel)}
+                          onValueChange={(v) =>
+                            handleOptionChange(`${charId}.overrideLevel`, v)
+                          }
+                        >
+                          <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="90">Lv. 90</SelectItem>
+                            <SelectItem value="100">Lv. 100</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/10">
+                        <span
+                          className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                          title={t.ui("teamBuilder.overrideConst")}
+                        >
+                          {t.ui("teamBuilder.overrideConst")}
+                        </span>
+                        <Select
+                          value={String(charConst)}
+                          onValueChange={(v) =>
+                            handleOptionChange(
+                              `${charId}.overrideConstellation`,
+                              v
+                            )
+                          }
+                        >
+                          <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[0, 1, 2, 3, 4, 5, 6].map((c) => (
+                              <SelectItem key={c} value={String(c)}>
+                                C{c}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {weaponId && (
+                        <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/10">
+                          <span
+                            className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                            title={t.ui("teamBuilder.overrideRefine")}
+                          >
+                            {t.ui("teamBuilder.overrideRefine")}
+                          </span>
+                          <Select
+                            value={String(weaponRefine)}
+                            onValueChange={(v) =>
+                              handleOptionChange(
+                                `${charId}.overrideRefinement`,
+                                v
+                              )
+                            }
+                          >
+                            <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[1, 2, 3, 4, 5].map((r) => (
+                                <SelectItem key={r} value={String(r)}>
+                                  R{r}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+
                     {/* Per-character combat options */}
                     {(charHasOption || weaponHasOption) && (
-                      <div className="w-full border-t border-border/15 pt-2 mt-1 space-y-0">
+                      <div className="w-full border-t border-border/15 mt-1 space-y-0">
                         {charHasOption && renderOption(charId, false)}
                         {weaponHasOption &&
                           weaponId &&
@@ -619,12 +747,89 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 );
               })}
             </div>
+            {/* Global Context Setup */}
+            <div className="mt-4 pt-4 border-t border-border/10 flex flex-wrap items-center gap-y-3">
+              <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
+                {t.ui("teamBuilder.calcContextOptions")}
+              </span>
+              <div className="flex flex-1 justify-center items-center gap-x-8 gap-y-3 flex-wrap opacity-90">
+                <div className="flex items-center gap-2 group">
+                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors select-none">
+                    {t.ui("teamBuilder.enemyLevel")}
+                  </span>
+                  <Input
+                    type="number"
+                    value={activeContext.enemyLevel}
+                    onChange={(e) =>
+                      updateTeam(team.id, {
+                        calcContext: {
+                          ...team.calcContext,
+                          enemyLevel: Number(e.target.value) || 100,
+                        },
+                      })
+                    }
+                    className="h-7 w-20 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0"
+                    min={1}
+                    max={150}
+                  />
+                </div>
+                <div className="flex items-center gap-2 group">
+                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors select-none">
+                    {t.ui("teamBuilder.enemyRes")}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      value={Math.round(activeContext.enemyRes * 100)}
+                      onChange={(e) =>
+                        updateTeam(team.id, {
+                          calcContext: {
+                            ...team.calcContext,
+                            enemyRes: (Number(e.target.value) || 0) / 100,
+                          },
+                        })
+                      }
+                      className="h-7 w-16 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <span className="text-xs font-bold text-muted-foreground">
+                      %
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className="flex items-center gap-2 cursor-pointer group select-none"
+                  onClick={() =>
+                    updateTeam(team.id, {
+                      calcContext: {
+                        ...team.calcContext,
+                        assumeCrit: !activeContext.assumeCrit,
+                      },
+                    })
+                  }
+                >
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded appearance-none border border-border/30 flex items-center justify-center transition-colors shadow-sm cursor-pointer",
+                      activeContext.assumeCrit
+                        ? "bg-primary border-primary text-primary-foreground"
+                        : "bg-background/50"
+                    )}
+                  >
+                    {activeContext.assumeCrit && <Check className="w-3 h-3" />}
+                  </div>
+                  <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
+                    {t.ui("teamBuilder.assumeCrit")}
+                  </span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* ══════════════════════════════════════════════════════════
           Tabs + Card 2 — Current Equipment & Damage (collapsible)
          ══════════════════════════════════════════════════════════ */}
+
         <div>
           {allFormulas.length > 0 ? (
             <FormulaTabBar
@@ -640,7 +845,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           ) : (
             buildError && (
               <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
-                <span className="font-bold">Setup Error:</span> {buildError}
+                <span className="font-bold">
+                  {t.ui("teamBuilder.setupError")}
+                </span>{" "}
+                {buildError}
               </div>
             )
           )}
@@ -654,7 +862,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   <div className="flex items-center justify-between w-full">
                     <h3 className={CARD_TITLE_CLS}>
                       <Play className="w-4 h-4 opacity-70" />
-                      Current Equipment & Damage
+                      {t.ui("teamBuilder.currentEquipAndDamage")}
                       <Button
                         variant="ghost"
                         size="icon"
@@ -682,7 +890,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   <DamageCardBody
                     team={team}
                     hasFormula={resolvedFormula != null}
-                    emptyMessage="Configure characters and weapons to see damage metrics."
+                    emptyMessage={t.ui("teamBuilder.emptyDamageMessage")}
                     artifactsByChar={equippedArtifactsByChar}
                     targetCharId={resolvedFormula?.charId}
                     damageValue={currentDamage?.totalDamage ?? null}
@@ -694,10 +902,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             </Card>
           </Collapsible>
         </div>
-
-        {/* ══════════════════════════════════════════════════════════
-          Tabs + Card 3 — Optimization Results (independent tabs)
-         ══════════════════════════════════════════════════════════ */}
         <div>
           {allFormulas.length > 0 && (
             <FormulaTabBar
@@ -725,7 +929,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                       isComputing && "animate-spin"
                     )}
                   />
-                  Optimization Results
+                  {t.ui("teamBuilder.optimizationResults")}
                 </h3>
                 <Button
                   onClick={handleOptimize}
@@ -738,7 +942,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   ) : (
                     <Play className="w-3.5 h-3.5" />
                   )}
-                  {isComputing ? "Optimizing…" : "Run Optimization"}
+                  {isComputing
+                    ? t.ui("teamBuilder.optimizing")
+                    : t.ui("teamBuilder.runOptimization")}
                 </Button>
               </div>
             </CardHeader>
@@ -763,7 +969,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span className="font-semibold">
-                      Searching combinations…
+                      {t.ui("teamBuilder.searchingCombinations")}
                     </span>
                     <span className="font-mono font-bold">
                       {Math.round(optResult.progress * 100)}%
@@ -773,7 +979,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     value={optResult.progress * 100}
                     className="h-1.5 bg-black/40"
                   />
-                  <div className="text-[10px] text-muted-foreground font-mono text-right opacity-60">
+                  <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
                     {optResult.combinationsEvaluated.toLocaleString()} /{" "}
                     {optResult.combinationsTotal.toLocaleString()}
                   </div>

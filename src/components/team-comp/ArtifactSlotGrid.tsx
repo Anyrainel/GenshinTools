@@ -1,4 +1,5 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
@@ -59,10 +60,11 @@ export function ArtifactSlotGrid({
               side="bottom"
             >
               <div className="cursor-help">
-                <ItemIcon
-                  imagePath={artifactsById[art.setKey]?.imagePaths[slot]}
-                  rarity={art.rarity}
-                  size="sm"
+                <ArtifactIcon
+                  artifact={art}
+                  artInfo={artifactsById[art.setKey]}
+                  slot={slot}
+                  size="md"
                 />
               </div>
             </ArtifactDataHoverCard>
@@ -77,7 +79,7 @@ export function ArtifactSlotGrid({
             </div>
           </TooltipTrigger>
           <TooltipContent side="top" className="text-xs max-w-[200px]">
-            Equipped set differs from Team Roster goal
+            {t.ui("teamBuilder.equippedSetDiffers")}
           </TooltipContent>
         </Tooltip>
       )}

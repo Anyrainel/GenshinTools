@@ -36,11 +36,11 @@ class Dehya extends CharacterBase {
     // C1: HP +20%, E DMG +3.6% Max HP (baseDmg), Q DMG +6% Max HP (baseDmg)
     if (this.constellation >= 1) {
       buffs.push(
-        new StatBuff(cbs(this, [], "C1"), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C1", []), { receiver: "self" }, [
           { key: "hp%", value: 0.2 },
         ]),
         new ScalingBuff(
-          cbs(this, ["E"], "C1"),
+          cbs(this, "C1", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [],
           "hp",
@@ -48,7 +48,7 @@ class Dehya extends CharacterBase {
           0.036
         ),
         new ScalingBuff(
-          cbs(this, ["Q"], "C1"),
+          cbs(this, "C1", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [],
           "hp",
@@ -62,7 +62,7 @@ class Dehya extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C2"),
+          cbs(this, "C2", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
           [{ key: "dmg%", value: 0.5 }]
         )
@@ -73,7 +73,7 @@ class Dehya extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C6"),
+          cbs(this, "C6", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [
             { key: "cr", value: 0.1 },
@@ -146,7 +146,7 @@ class Alhaitham extends CharacterBase {
   readonly buffs = [
     // P2: EM × 0.1% → Projection & Q DMG bonus (cap 100%)
     new ScalingBuff(
-      cbs(this, [], "P2"),
+      cbs(this, "P2", []),
       { receiver: "selfOnField" },
       [],
       "em",
@@ -156,7 +156,7 @@ class Alhaitham extends CharacterBase {
     ),
     // C2: EM +50 per Mirror generated (max 4 stacks = 200)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "em", value: 200 }] : [])
@@ -166,17 +166,17 @@ class Alhaitham extends CharacterBase {
     ...(() => {
       if (this.constellation < 4) return [];
       return [
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "otherOnField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "otherOnField" }, [
           { key: "em", value: 90 },
         ]),
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "selfOnField" }, [
           { key: "dendro%", value: 0.3 },
         ]),
       ];
     })(),
     // C6: CR +10%, CD +70% when mirrors are maxed (assume active)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) =>
@@ -253,14 +253,14 @@ class Wanderer extends CharacterBase {
     // P1: On E, if Pyro absorbed → +30% ATK, Cryo → +20% CR
     if (Object.values(this.teamMeta.elements).includes("Pyro")) {
       buffs.push(
-        new StatBuff(cbs(this, ["E-Pyro"], "P1"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "P1", ["E-Pyro"]), { receiver: "selfOnField" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
     }
     if (Object.values(this.teamMeta.elements).includes("Cryo")) {
       buffs.push(
-        new StatBuff(cbs(this, ["E-Cryo"], "P1"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "P1", ["E-Cryo"]), { receiver: "selfOnField" }, [
           { key: "cr", value: 0.2 },
         ])
       );
@@ -270,7 +270,7 @@ class Wanderer extends CharacterBase {
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C1"),
+          cbs(this, "C1", ["E"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["normal", "charge"] },
@@ -284,7 +284,7 @@ class Wanderer extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["Q"], "C2"),
+          cbs(this, "C2", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 2.0 }]
         )
@@ -357,7 +357,7 @@ class Nahida extends CharacterBase {
   readonly buffs = [
     // P1: Q field grants EM = highest party EM × 25% (cap 250)
     new ScalingBuff(
-      cbs(this, ["Q"], "P1"),
+      cbs(this, "P1", ["Q"]),
       { receiver: "onField" },
       [],
       "em",
@@ -367,7 +367,7 @@ class Nahida extends CharacterBase {
     ),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
     new ScalingBuff(
-      cbs(this, [], "P2"),
+      cbs(this, "P2", []),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -378,7 +378,7 @@ class Nahida extends CharacterBase {
     ),
     // P2: EM above 200 → Tri-Karma CR +0.03%/EM (cap 24%)
     new ScalingBuff(
-      cbs(this, [], "P2"),
+      cbs(this, "P2", []),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -389,14 +389,14 @@ class Nahida extends CharacterBase {
     ),
     // C2: Quicken → DEF -30% for 8s
     new StaticSkillBuff(
-      cbs(this, ["E", "quicken"], "C2"),
+      cbs(this, "C2", ["E", "quicken"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "defReduction%", value: 0.3 }] : [])
     ),
     // C2: Bloom/Hyperbloom/Burgeon can crit (CR 20%, CD 100%)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
@@ -412,7 +412,7 @@ class Nahida extends CharacterBase {
     ),
     // C4: Self EM +140 (model 3 enemies average)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C4"),
+      cbs(this, "C4", ["E"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 140 }] : [])
@@ -478,17 +478,17 @@ class Nahida extends CharacterBase {
 class Cyno extends CharacterBase {
   readonly buffs = [
     // Q: EM +100 and Normal ATK SPD +20% during Pactsworn Pathclearer
-    new StatBuff(cbs(this, ["Q"]), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: 100 },
     ]),
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "C1", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [{ key: "atkSpd%", value: 0.2 }]
     ),
     // P2: Normal ATK DMG += 150% EM as baseDmg (during Q)
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [],
       "em",
@@ -497,7 +497,7 @@ class Cyno extends CharacterBase {
     ),
     // P2: Duststalker Bolt DMG += 250% EM as baseDmg
     new ScalingBuff(
-      cbs(this, ["E"], "P2"),
+      cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -506,13 +506,13 @@ class Cyno extends CharacterBase {
     ),
     // P1: Mortuary Rite (Judication) +35% DMG
     new StatBuff(
-      cbs(this, ["E"], "P1"),
+      cbs(this, "P1", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
       [{ key: "dmg%", value: 0.35 }]
     ),
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C2"),
+      cbs(this, "C2", ["Q"]),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "electro%", value: 0.5 }] : [])
@@ -596,14 +596,14 @@ class Nilou extends CharacterBase {
     if (isBountiful) {
       // P1: EM +100 to all nearby characters (on Dendro hit trigger)
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "P1"), { receiver: "team" }, [
+        new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
           { key: "em", value: 100 },
         ])
       );
       // P2: Per 1000 HP above 30000 → Bloom DMG +9% (max 400%)
       buffs.push(
         new ScalingBuff(
-          cbs(this, [], "P2"),
+          cbs(this, "P2", []),
           {
             receiver: "onField",
             filter: { reactions: ["bloom", "lunarBloom"] },
@@ -621,7 +621,7 @@ class Nilou extends CharacterBase {
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["bloom", "lunarBloom"], "C2"),
+          cbs(this, "C2", ["bloom", "lunarBloom"]),
           { receiver: "onField", filter: { elements: ["Hydro", "Dendro"] } },
           [{ key: "resReduction%", value: 0.35 }]
         )
@@ -632,7 +632,7 @@ class Nilou extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["E"], "C4"),
+          cbs(this, "C4", ["E"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 0.5 }]
         )
@@ -643,7 +643,7 @@ class Nilou extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, [], "C6"),
+          cbs(this, "C6", []),
           { receiver: "self" },
           [],
           "hp",
@@ -652,7 +652,7 @@ class Nilou extends CharacterBase {
           0.3
         ),
         new ScalingBuff(
-          cbs(this, [], "C6"),
+          cbs(this, "C6", []),
           { receiver: "self" },
           [],
           "hp",
@@ -717,13 +717,13 @@ class Tighnari extends CharacterBase {
     const buffs: StatBuff[] = [
       // P1: After Wreath Arrow, EM +50
       new StatBuff(
-        cbs(this, ["charge"], "P1"),
+        cbs(this, "P1", ["charge"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
         [{ key: "em", value: 50 }]
       ),
       // P2: Each point of EM → Charged ATK +0.06% & Q DMG +0.06% (Max 60%)
       new ScalingBuff(
-        cbs(this, [], "P2"),
+        cbs(this, "P2", []),
         {
           receiver: "selfOnField",
           filter: { abilities: ["charge", "burst"] },
@@ -739,7 +739,7 @@ class Tighnari extends CharacterBase {
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(
-          cbs(this, ["charge"], "C1"),
+          cbs(this, "C1", ["charge"]),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "cr", value: 0.15 }]
         )
@@ -748,7 +748,7 @@ class Tighnari extends CharacterBase {
     // C2: Within Vijnana-Khanda Field with enemies → +20% Dendro DMG
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["E"], "C2"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
           { key: "dendro%", value: 0.2 },
         ])
       );
@@ -765,8 +765,8 @@ class Tighnari extends CharacterBase {
         new StatBuff(
           cbs(
             this,
-            canC4React ? ["Q", "burning", "bloom", "quicken", "spread"] : ["Q"],
-            "C4"
+            "C4",
+            canC4React ? ["Q", "burning", "bloom", "quicken", "spread"] : ["Q"]
           ),
           { receiver: "team" },
           [{ key: "em", value: canC4React ? 120 : 60 }]

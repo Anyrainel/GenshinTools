@@ -120,7 +120,7 @@ For performance-critical loops like artifact optimization, use `getDamageResult(
 import type { CalcContext } from "@/lib/team-comp/types";
 
 const ctx: CalcContext = {
-  enemyLevel: 100,
+  enemyLevel: 110,
   enemyRes: 0.10,
   assumeCrit: true,
 };

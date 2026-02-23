@@ -7,8 +7,6 @@ import {
 } from "@/lib/characterFilters";
 import { describe, expect, it } from "vitest";
 
-// ── Test Fixtures ───────────────────────────────────────────────────────
-
 const mockCharacters: Character[] = [
   {
     id: "hu_tao",
@@ -68,8 +66,6 @@ const tierAssignments: TierAssignment = {
   xingqiu: { tier: "A", position: 0 },
   bennett: { tier: "Pool", position: 0 },
 };
-
-// ── Tests ───────────────────────────────────────────────────────────────
 
 describe("filterAndSortCharacters", () => {
   it("returns all characters when no filters active", () => {

@@ -611,7 +611,7 @@ export function CharacterArchiveView() {
     </div>
   );
 
-  // ── Mobile: grid-to-detail ──────────────────────────────────────────────
+  // ────────────────── Mobile: grid-to-detail ──────────────────────────────
   if (!isDesktop) {
     // Show detail view with back button when a character is selected
     if (selectedId) {
@@ -649,7 +649,7 @@ export function CharacterArchiveView() {
     );
   }
 
-  // ── Desktop: sidebar + detail ───────────────────────────────────────────
+  // Desktop: sidebar + detail
   return (
     <div
       className={cn(

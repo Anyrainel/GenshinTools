@@ -18,8 +18,6 @@ import { SLOT_KEYS } from "@/lib/artifact-builds/mergeUtils";
 import { smartMerge } from "@/lib/artifact-builds/smartMerge";
 import { describe, expect, it } from "vitest";
 
-// ── Helpers ─────────────────────────────────────────────────────────────
-
 function makeConfig(
   substats: SubStat[],
   mustPresent: SubStat[],
@@ -66,8 +64,6 @@ function collectCharacterIds(configs: SetConfig[]): Set<string> {
   }
   return ids;
 }
-
-// ── Tests ───────────────────────────────────────────────────────────────
 
 describe("cross-algorithm conformance", () => {
   describe.each(algorithms)("%s", (_name, merge) => {

@@ -23,6 +23,7 @@ from typing import Self
 
 from playwright.sync_api import Browser, BrowserContext, Page, sync_playwright
 
+from codedump import compact_json
 from hoyolab import generate_id
 
 # ---------------------------------------------------------------------------
@@ -736,25 +737,6 @@ class HakushinScraper:
             "constellations": constellations,
             "glossary": glossary_entries,
         }
-
-
-def compact_json(data: object) -> str:
-    """JSON with indent=2 but leaf arrays collapsed to single lines.
-
-    A 'leaf array' is one whose elements are all strings (no nested
-    objects or arrays).  This keeps detail rows like
-    ["1-Hit DMG", "129.4%", "156.8%"] on one line instead of 5.
-    """
-    raw = json.dumps(data, indent=2, ensure_ascii=False)
-    return re.sub(
-        # Match arrays containing only quoted strings across multiple lines
-        r'\[\s*\n\s+"(?:[^"\\]|\\.)*"'
-        r'(?:\s*,\s*\n\s+"(?:[^"\\]|\\.)*")*\s*\n\s*\]',
-        lambda m: (
-            "[" + ", ".join(s.strip() for s in re.findall(r'"(?:[^"\\]|\\.)*"', m.group(0))) + "]"
-        ),
-        raw,
-    )
 
 
 def load_existing_kits() -> dict[str, dict[str, dict]]:

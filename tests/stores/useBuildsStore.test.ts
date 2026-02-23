@@ -1,4 +1,4 @@
-import type { BuildPayloadV5 } from "@/data/types";
+import type { Build, BuildPayloadV5 } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -505,6 +505,51 @@ describe("useBuildsStore", () => {
       // Preset builds first, then custom
       expect(ids[0]).toBe("p-1");
       expect(ids).toContain(customId);
+    });
+
+    it("deduplicates perfectly identical local custom builds", () => {
+      // 1. Setup a local build that mimics the preset exactly
+      useBuildsStore.getState().newBuild("char1");
+      const localId = useBuildsStore.getState().getBuildIds("char1")[0];
+
+      const identicalBuild: Build = {
+        id: localId,
+        characterId: "char1",
+        name: "Preset Build", // Same name
+        visible: true,
+        composition: "4pc",
+        artifactSet: undefined,
+        minCons: undefined,
+        roles: undefined,
+        styles: undefined,
+        halfSet1: undefined,
+        halfSet2: undefined,
+        substats: [],
+        sands: [],
+        goblet: [],
+        circlet: [],
+      };
+
+      // Update local build to perfectly match the incoming preset
+      useBuildsStore.getState().setBuild(localId, identicalBuild);
+
+      // Verify the local ID exists before
+      expect(useBuildsStore.getState().getBuildIds("char1")).toContain(localId);
+
+      // 2. Subscribe to preset
+      useBuildsStore.getState().subscribePreset("test-preset", presetPayload);
+
+      // 3. The identical local build should have been deleted
+      const ids = useBuildsStore.getState().getBuildIds("char1");
+
+      // The preset ID should be there
+      expect(ids).toContain("p-1");
+
+      // But the identical custom ID should NOT be there
+      expect(ids).not.toContain(localId);
+
+      // And the build payload deleted from memory
+      expect(useBuildsStore.getState().getBuild(localId)).toBeUndefined();
     });
 
     it("resets presetDeletedBuildIds", () => {

@@ -4119,3 +4119,4 @@ export const weapons: Weapon[] = [
     "imagePath": "/weapon/the_catch.png"
   }
 ];
+

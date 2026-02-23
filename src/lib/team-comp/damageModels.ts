@@ -12,7 +12,7 @@ import type {
 } from "@/data/types";
 import { getFixedMainStatValue } from "@/lib/account-data/artifactScore";
 
-import { REACTION_ELEMENT_REQUIREMENTS, SCALED_STAT_BASES } from "./constants";
+import { REACTION_ELEMENT_REQUIREMENTS } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
 import type {
   BuffSource,
@@ -56,10 +56,14 @@ export {
   LunarFormula,
 } from "./damageFormulas";
 
-// Import StatBuff for use in this file's abstract declarations
 import type { StatBuff } from "./damageBuffs";
 
-/** The % keys of scaled stats (atk%, hp%, def%) — intermediate values only. */
+/** Stats that use the base × (1 + %) + flat formula */
+const SCALED_STAT_BASES = {
+  atk: "baseAtk",
+  hp: "baseHp",
+  def: "baseDef",
+} as const;
 const SCALED_PERCENT_KEYS = new Set<string>(
   Object.keys(SCALED_STAT_BASES).map((k) => `${k}%`)
 );

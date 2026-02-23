@@ -16,7 +16,7 @@ class Sethos extends CharacterBase {
   readonly buffs = [
     // P2: EM × 700% → baseDmg for Shadowpiercing Shot
     new ScalingBuff(
-      cbs(this, ["charge"], "P2"),
+      cbs(this, "P2", ["charge"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       [],
       "em",
@@ -25,21 +25,21 @@ class Sethos extends CharacterBase {
     ),
     // C1: Shadowpiercing Shot CR +15%
     new StaticSkillBuff(
-      cbs(this, ["charge"], "C1"),
+      cbs(this, "C1", ["charge"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       this.constellation,
       (c) => (c >= 1 ? [{ key: "cr", value: 0.15 }] : [])
     ),
     // C2: Self Electro DMG +30% (2 stacks × 15%)
     new StaticSkillBuff(
-      cbs(this, [], "C2"),
+      cbs(this, "C2", []),
       { receiver: "selfOnField" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "electro%", value: 0.3 }] : [])
     ),
     // C4: Team EM +80 on multi-hit
     new StaticSkillBuff(
-      cbs(this, ["charge"], "C4"),
+      cbs(this, "C4", ["charge"]),
       { receiver: "team" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 80 }] : [])
@@ -87,18 +87,18 @@ class Sethos extends CharacterBase {
 class Kaveh extends CharacterBase {
   readonly buffs = [
     // P2: During Q, self EM +100 (25×4 stacks)
-    new StatBuff(cbs(this, ["Q"], "P2"), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: 100 },
     ]),
     // Q: Normal ATK SPD +15%
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [{ key: "atkSpd%", value: 0.15 }]
     ),
     // Q: Bloom burst DMG bonus (team Dendro Cores)
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { reactions: ["bloom", "lunarBloom"] } },
       [
         {
@@ -109,7 +109,7 @@ class Kaveh extends CharacterBase {
     ),
     // C4: Self-triggered Bloom DMG +60%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "self", filter: { reactions: ["bloom", "lunarBloom"] } },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "reactionDmg%", value: 0.6 }] : [])
@@ -167,20 +167,20 @@ class Faruzan extends CharacterBase {
   readonly buffs = [
     // Q: Anemo RES -30%
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
       [{ key: "resReduction%", value: 0.3 }]
     ),
     // Q: Anemo DMG Bonus — Lv10 32.4%, Lv13 (C5+) 38.3%
     new StaticSkillBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },
       this.constellation,
       (c) => [{ key: "dmg%", value: c >= 5 ? 0.383 : 0.324 }]
     ),
     // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's base ATK
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
       [],
       "atk",
@@ -189,7 +189,7 @@ class Faruzan extends CharacterBase {
     ),
     // C6: Under Q, Anemo CRIT DMG +40%
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C6"),
+      cbs(this, "C6", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "cd", value: 0.4 }] : [])
@@ -225,7 +225,7 @@ class Layla extends CharacterBase {
     if (this.constellation >= 4) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, ["E"], "C4"),
+          cbs(this, "C4", ["E"]),
           { receiver: "team", filter: { abilities: ["normal", "charge"] } },
           [],
           "hp",
@@ -237,7 +237,7 @@ class Layla extends CharacterBase {
     // C6: Shooting Stars and Starlight Slugs DMG +40%
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, [], "C6"), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C6", []), { receiver: "selfOnField" }, [
           { key: "dmg%", value: 0.4 },
         ])
       );
@@ -254,13 +254,13 @@ class Candace extends CharacterBase {
   readonly buffs = [
     // Q: Prayer of Crimson Crown — on-field Normal ATK Elemental DMG +20%
     new StatBuff(
-      cbs(this, ["Q"]),
+      cbs(this, "Q", ["Q"]),
       { receiver: "onField", filter: { abilities: ["normal"] } },
       [{ key: "dmg%", value: 0.2 }]
     ),
     // P2: Per 1000 Max HP, Normal ATK Elemental DMG +0.5%
     new ScalingBuff(
-      cbs(this, ["Q"], "P2"),
+      cbs(this, "P2", ["Q"]),
       { receiver: "onField", filter: { abilities: ["normal"] } },
       [],
       "hp",
@@ -269,7 +269,7 @@ class Candace extends CharacterBase {
     ),
     // C2: After E hit, self Max HP +20% for 15s
     new StaticSkillBuff(
-      cbs(this, ["E"], "C2"),
+      cbs(this, "C2", ["E"]),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 2 ? [{ key: "hp%", value: 0.2 }] : [])
@@ -291,7 +291,7 @@ class Collei extends CharacterBase {
   readonly buffs = [
     // C4: After Q, team EM +60 for 12s (not self)
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 60 }] : [])

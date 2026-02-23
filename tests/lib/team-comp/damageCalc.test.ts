@@ -91,7 +91,7 @@ describe("TeamResonance", () => {
     expect(hpBuff!.staticBuffs.find((e) => e.key === "hp%")!.value).toBe(0.25);
   });
 
-  it("generates EM +50 for all unique elements", () => {
+  it("generates no offensive resonance buffs for 4 unique elements (defensive only)", () => {
     const meta = new TeamMeta([
       "hu_tao",
       "xingqiu",
@@ -103,8 +103,7 @@ describe("TeamResonance", () => {
     const emBuff = resonance.buffs.find((b) =>
       b.staticBuffs.some((e) => e.key === "em")
     );
-    expect(emBuff).toBeDefined();
-    expect(emBuff!.staticBuffs.find((e) => e.key === "em")!.value).toBe(50);
+    expect(emBuff).toBeUndefined();
   });
 
   it("generates no resonance buffs for 3 unique elements (with one pair)", () => {
@@ -132,30 +131,47 @@ describe("isBuffApplicable — buff routing", () => {
     ownerId: string,
     receiver: "self" | "selfOffField" | "selfOnField" | "onField" | "team"
   ) =>
-    new StatBuff({ type: "character", id: ownerId }, { receiver }, [
-      { key: "atk%", value: 0.1 },
-    ]);
+    new StatBuff(
+      { type: "character", id: ownerId, origin: "test" },
+      { receiver },
+      [{ key: "atk%", value: 0.1 }]
+    );
 
   describe('receiver: "self"', () => {
     it("applies to buff owner's own sheet", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao")
+        isBuffApplicable(
+          makeBuff("hu_tao", "self"),
+          "hu_tao",
+          "hu_tao",
+          "hu_tao"
+        )
       ).toBe(true);
     });
 
     it("does not apply to another character's sheet", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "self"), "xingqiu", "hu_tao")
+        isBuffApplicable(
+          makeBuff("hu_tao", "self"),
+          "hu_tao",
+          "xingqiu",
+          "hu_tao"
+        )
       ).toBe(false);
     });
 
     it("applies regardless of calcTarget", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "xingqiu")
+        isBuffApplicable(
+          makeBuff("hu_tao", "self"),
+          "hu_tao",
+          "hu_tao",
+          "xingqiu"
+        )
       ).toBe(true);
-      expect(isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", null)).toBe(
-        true
-      );
+      expect(
+        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", null)
+      ).toBe(true);
     });
   });
 
@@ -164,6 +180,7 @@ describe("isBuffApplicable — buff routing", () => {
       expect(
         isBuffApplicable(
           makeBuff("xingqiu", "selfOffField"),
+          "xingqiu",
           "xingqiu",
           "hu_tao"
         )
@@ -174,6 +191,7 @@ describe("isBuffApplicable — buff routing", () => {
       expect(
         isBuffApplicable(
           makeBuff("xingqiu", "selfOffField"),
+          "xingqiu",
           "hu_tao",
           "hu_tao"
         )
@@ -184,25 +202,45 @@ describe("isBuffApplicable — buff routing", () => {
   describe('receiver: "selfOnField"', () => {
     it("applies when the buff owner IS the calc target", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "selfOnField"), "hu_tao", "hu_tao")
+        isBuffApplicable(
+          makeBuff("hu_tao", "selfOnField"),
+          "hu_tao",
+          "hu_tao",
+          "hu_tao"
+        )
       ).toBe(true);
     });
 
     it("does not apply when buff owner is NOT the calc target", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "selfOnField"), "hu_tao", "xingqiu")
+        isBuffApplicable(
+          makeBuff("hu_tao", "selfOnField"),
+          "hu_tao",
+          "hu_tao",
+          "xingqiu"
+        )
       ).toBe(false);
     });
 
     it("does not apply to another character's sheet even when owner is calc target", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "selfOnField"), "xingqiu", "hu_tao")
+        isBuffApplicable(
+          makeBuff("hu_tao", "selfOnField"),
+          "hu_tao",
+          "xingqiu",
+          "hu_tao"
+        )
       ).toBe(false);
     });
 
     it("is skipped during construction (calcTarget=null)", () => {
       expect(
-        isBuffApplicable(makeBuff("hu_tao", "selfOnField"), "hu_tao", null)
+        isBuffApplicable(
+          makeBuff("hu_tao", "selfOnField"),
+          "hu_tao",
+          "hu_tao",
+          null
+        )
       ).toBe(false);
     });
   });
@@ -211,20 +249,35 @@ describe("isBuffApplicable — buff routing", () => {
     it("applies to the calc target regardless of buff owner", () => {
       // Bennett buff → applies to hu_tao who is calc target
       expect(
-        isBuffApplicable(makeBuff("bennett", "onField"), "hu_tao", "hu_tao")
+        isBuffApplicable(
+          makeBuff("bennett", "onField"),
+          "bennett",
+          "hu_tao",
+          "hu_tao"
+        )
       ).toBe(true);
     });
 
     it("does not apply to non-calc-target characters", () => {
       // Bennett buff → does not apply to xingqiu's sheet when hu_tao is calc target
       expect(
-        isBuffApplicable(makeBuff("bennett", "onField"), "xingqiu", "hu_tao")
+        isBuffApplicable(
+          makeBuff("bennett", "onField"),
+          "bennett",
+          "xingqiu",
+          "hu_tao"
+        )
       ).toBe(false);
     });
 
     it("is skipped during construction (calcTarget=null)", () => {
       expect(
-        isBuffApplicable(makeBuff("bennett", "onField"), "hu_tao", null)
+        isBuffApplicable(
+          makeBuff("bennett", "onField"),
+          "bennett",
+          "hu_tao",
+          null
+        )
       ).toBe(false);
     });
   });
@@ -232,13 +285,23 @@ describe("isBuffApplicable — buff routing", () => {
   describe('receiver: "team"', () => {
     it("always applies regardless of owner/self/target", () => {
       expect(
-        isBuffApplicable(makeBuff("zhongli", "team"), "hu_tao", "hu_tao")
+        isBuffApplicable(
+          makeBuff("zhongli", "team"),
+          "zhongli",
+          "hu_tao",
+          "hu_tao"
+        )
       ).toBe(true);
       expect(
-        isBuffApplicable(makeBuff("zhongli", "team"), "xingqiu", "hu_tao")
+        isBuffApplicable(
+          makeBuff("zhongli", "team"),
+          "zhongli",
+          "xingqiu",
+          "hu_tao"
+        )
       ).toBe(true);
       expect(
-        isBuffApplicable(makeBuff("zhongli", "team"), "hu_tao", null)
+        isBuffApplicable(makeBuff("zhongli", "team"), "zhongli", "hu_tao", null)
       ).toBe(true);
     });
   });
@@ -534,7 +597,7 @@ describe("TeamBuild lifecycle", () => {
       );
 
       const resonanceBuffs = display.buffs.filter(
-        (b) => b.source.type === "teamResonance"
+        (b) => b.source.type === "teamResonance" && b.staticEntries.length > 0
       );
       // 4 unique elements → no resonance (need duplicates)
       // Actually Diluc/Mona/Jean/Eula are Pyro/Hydro/Anemo/Cryo — 4 unique

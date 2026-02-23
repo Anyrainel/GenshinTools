@@ -144,6 +144,39 @@
       {
         "flowerPlume": {
           "mainStats": [],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
           "substats": ["cd", "cr", "atk%", "hp%", "er"],
           "mustPresent": ["cd", "cr"],
           "minStatCount": 3
@@ -278,27 +311,27 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
-          "minStatCount": 3
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
-          "minStatCount": 3
+          "mainStats": ["hp%", "em", "er"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
-          "minStatCount": 3
+          "mainStats": ["hp%", "em"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
-          "minStatCount": 3
+          "mainStats": ["hp%", "em"],
+          "substats": ["em", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
         },
         "servedCharacters": [
           {
@@ -312,6 +345,11 @@
             "has4pcBuild": true
           },
           {
+            "characterId": "lauma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
             "characterId": "yaoyao",
             "hasPerfectMerge": true,
             "has4pcBuild": true
@@ -321,34 +359,29 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["em", "er"],
-          "minStatCount": 2
+          "substats": ["em", "cd", "cr"],
+          "mustPresent": ["em"],
+          "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["em", "er"],
-          "minStatCount": 2
+          "mainStats": ["em"],
+          "substats": ["em", "cd", "cr"],
+          "mustPresent": ["em"],
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": ["em"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["em", "er"],
-          "minStatCount": 2
+          "substats": ["em", "cd", "cr"],
+          "mustPresent": ["em"],
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": ["em"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["em", "er"],
-          "minStatCount": 2
+          "substats": ["em", "cd", "cr"],
+          "mustPresent": ["em"],
+          "minStatCount": 3
         },
         "servedCharacters": [
-          {
-            "characterId": "baizhu",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
-          },
           {
             "characterId": "lauma",
             "hasPerfectMerge": true,
@@ -748,29 +781,34 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "goblet": {
           "mainStats": ["em"],
-          "substats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
           {
             "characterId": "kaveh",
             "hasPerfectMerge": true,
@@ -945,6 +983,39 @@
   {
     "setId": "gilded_dreams",
     "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
       {
         "flowerPlume": {
           "mainStats": [],
@@ -1241,25 +1312,25 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "sands": {
           "mainStats": ["em", "er"],
-          "substats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "goblet": {
           "mainStats": ["em"],
-          "substats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
           "mustPresent": ["em", "er"],
           "minStatCount": 2
         },
@@ -1268,6 +1339,11 @@
             "characterId": "aino",
             "hasPerfectMerge": true,
             "has4pcBuild": true
+          },
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
           }
         ]
       },
@@ -1512,31 +1588,69 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
           "mustPresent": ["cd", "cr"],
           "minStatCount": 3
         },
         "sands": {
           "mainStats": ["atk%", "def%", "em"],
-          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
           "mustPresent": ["cd", "cr"],
           "minStatCount": 3
         },
         "goblet": {
           "mainStats": ["atk%", "def%", "em"],
-          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
           "mustPresent": ["cd", "cr"],
           "minStatCount": 3
         },
         "circlet": {
           "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "def%", "em"],
+          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
           "mustPresent": ["cd", "cr"],
           "minStatCount": 3
         },
         "servedCharacters": [
           {
             "characterId": "flins",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "lauma",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           },
@@ -1705,6 +1819,11 @@
             "has4pcBuild": true
           },
           {
+            "characterId": "kamisato_ayaka",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
             "characterId": "mika",
             "hasPerfectMerge": true,
             "has4pcBuild": true
@@ -1751,11 +1870,6 @@
             "characterId": "chongyun",
             "hasPerfectMerge": true,
             "has4pcBuild": true
-          },
-          {
-            "characterId": "kamisato_ayaka",
-            "hasPerfectMerge": true,
-            "has4pcBuild": true
           }
         ]
       },
@@ -1764,25 +1878,25 @@
           "mainStats": [],
           "substats": ["atk%", "er", "cr", "cd"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": ["atk%", "er"],
           "substats": ["atk%", "er", "cr", "cd"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": ["atk%", "elemental%"],
           "substats": ["atk%", "er", "cr", "cd"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": ["cr", "cd", "atk%"],
           "substats": ["atk%", "er", "cr", "cd"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -2103,25 +2217,25 @@
           "mainStats": [],
           "substats": ["cr", "cd", "atk%", "er"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": ["atk%", "er"],
           "substats": ["cr", "cd", "atk%", "er"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": ["atk%", "elemental%"],
           "substats": ["cr", "cd", "atk%", "er"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": ["cr", "cd"],
           "substats": ["cr", "cd", "atk%", "er"],
           "mustPresent": ["cr", "cd"],
-          "minStatCount": 2
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -3168,6 +3282,39 @@
   {
     "setId": "wanderers_troupe",
     "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["em", "er"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "em"],
+          "substats": ["em", "er", "cr"],
+          "mustPresent": ["em", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "illuga",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
       {
         "flowerPlume": {
           "mainStats": [],

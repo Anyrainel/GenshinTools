@@ -38,3 +38,4 @@ blob-report/
 .wrangler/
 
 coverage/
+temp/

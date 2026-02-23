@@ -12,16 +12,16 @@ class Ifa extends CharacterBase {
   readonly buffs = [
     // P1: Rescue Essentials — ~80 Nightsoul pts → Swirl/EC +120% reactionDmg
     // (Also Lunar-Charged +16%, not separately modeled)
-    new StatBuff(cbs(this, ["E"], "P1"), { receiver: "team" }, [
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
       { key: "reactionDmg%", value: 1.2 },
     ]),
     // P2: After Nightsoul Burst, self EM +80
-    new StatBuff(cbs(this, ["nightsoul"], "P2"), { receiver: "self" }, [
+    new StatBuff(cbs(this, "P2", ["nightsoul"]), { receiver: "self" }, [
       { key: "em", value: 80 },
     ]),
     // C4: After Q, self EM +100
     new StaticSkillBuff(
-      cbs(this, ["Q"], "C4"),
+      cbs(this, "C4", ["Q"]),
       { receiver: "self" },
       this.constellation,
       (c) => (c >= 4 ? [{ key: "em", value: 100 }] : [])
@@ -40,13 +40,13 @@ class Iansan extends CharacterBase {
     >[] = [
       // P1: After Swift Stormflight hit, self ATK +20%
       new StatBuff(
-        cbs(this, ["E", "charge"], "P1"),
+        cbs(this, "P1", ["E", "charge"]),
         { receiver: "selfOnField" },
         [{ key: "atk%", value: 0.2 }]
       ),
       // Q: Kinetic Energy Scale — 27% of Iansan's ATK to on-field (at ≥42 Nightsoul)
       new ScalingBuff(
-        cbs(this, ["Q"]),
+        cbs(this, "Q", ["Q"]),
         { receiver: "onField" },
         [],
         "atk",
@@ -57,7 +57,7 @@ class Iansan extends CharacterBase {
     // C2: While off-field with Precise Movement, on-field ATK +30%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C2"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "onField" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
@@ -65,7 +65,7 @@ class Iansan extends CharacterBase {
     // C6: Extreme Force — on-field DMG +25%
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C6"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
           { key: "dmg%", value: 0.25 },
         ])
       );
@@ -112,7 +112,7 @@ class Ororon extends CharacterBase {
   readonly buffs = [
     // C6: After Hypersense, on-field ATK +30% (3 stacks × 10%)
     new StaticSkillBuff(
-      cbs(this, ["E"], "C6"),
+      cbs(this, "C6", ["E"]),
       { receiver: "onField" },
       this.constellation,
       (c) => (c >= 6 ? [{ key: "atk%", value: 0.3 }] : [])
@@ -144,14 +144,14 @@ class Kachina extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [
       // P1: After Nightsoul Burst, self Geo DMG +20%
-      new StatBuff(cbs(this, ["nightsoul"], "P1"), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P1", ["nightsoul"]), { receiver: "self" }, [
         { key: "geo%", value: 0.2 },
       ]),
     ];
     // C4: In Q field, on-field DEF% +8/12/16/20% (by enemy count, assume 2 → 12%)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, ["Q"], "C4"), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
           { key: "def%", value: 0.12 },
         ])
       );

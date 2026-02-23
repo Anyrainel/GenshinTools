@@ -110,12 +110,12 @@ for (const [id, data] of Object.entries(i18nGameData.characters)) {
 
 const weaponMap = new Map<string, string>();
 for (const [id, data] of Object.entries(i18nGameData.weapons)) {
-  weaponMap.set(normalize(data.name.en), id);
+  weaponMap.set(normalize(data.en), id);
 }
 
 const artifactMap = new Map<string, string>();
 for (const [id, data] of Object.entries(i18nGameData.artifacts)) {
-  artifactMap.set(normalize(data.name.en), id);
+  artifactMap.set(normalize(data.en), id);
 }
 
 // Stat Key Mapping (GOOD -> Internal)

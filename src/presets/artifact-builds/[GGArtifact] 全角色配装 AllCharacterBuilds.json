@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1771276379704",
+  "id": "export-1771744774756",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -907,7 +907,7 @@
       "id": "FnZh8vG",
       "characterId": "lauma",
       "name": "",
-      "visible": false,
+      "visible": true,
       "composition": "4pc",
       "sands": ["em"],
       "goblet": ["em"],
@@ -933,6 +933,36 @@
       "artifactSet": "night_of_the_skys_unveiling",
       "styles": ["on-field"],
       "roles": ["dps"],
+      "minCons": 6,
+      "source": "preset"
+    },
+    "FnZb4z8": {
+      "id": "FnZb4z8",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 75
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        }
+      ],
+      "artifactSet": "deepwood_memories",
+      "characterId": "lauma",
+      "styles": ["off-field"],
+      "roles": ["support"],
+      "source": "preset",
       "minCons": 6
     },
     "GfRzPMG": {
@@ -1032,6 +1062,39 @@
       "roles": ["support"],
       "styles": ["off-field"],
       "source": "preset"
+    },
+    "GwGq0NG": {
+      "id": "GwGq0NG",
+      "characterId": "illuga",
+      "name": "",
+      "visible": true,
+      "composition": "2pc+2pc",
+      "sands": ["em", "er"],
+      "goblet": ["em"],
+      "circlet": ["em", "cr"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 75
+        },
+        {
+          "stat": "def%",
+          "weight": 50
+        }
+      ],
+      "roles": ["support"],
+      "styles": ["off-field"],
+      "source": "preset",
+      "halfSet1": 7,
+      "halfSet2": 7
     },
     "GMpgtBm": {
       "id": "GMpgtBm",
@@ -2408,7 +2471,7 @@
     },
     "8U36ymm": {
       "id": "8U36ymm",
-      "name": "原绽放",
+      "name": "",
       "visible": true,
       "composition": "2pc+2pc",
       "sands": ["hp%"],
@@ -2428,10 +2491,11 @@
       "halfSet2": 2,
       "characterId": "nilou",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
-    "8Vv9zIq": {
-      "id": "8Vv9zIq",
+    "8Vv9zHG": {
+      "id": "8Vv9zHG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2448,7 +2512,7 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "artifactSet": "instructor",
-      "minCons": 1
+      "source": "preset"
     },
     "A6LntCu": {
       "id": "A6LntCu",
@@ -3185,21 +3249,22 @@
       "circlet": ["cr"],
       "substats": [
         {
-          "stat": "cr",
+          "stat": "er",
           "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 90
         },
         {
           "stat": "atk%",
           "weight": 75
-        },
-        {
-          "stat": "er",
-          "weight": 30
         }
       ],
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "37JVoAG": {
       "id": "37JVoAG",
@@ -3325,13 +3390,14 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 75
         }
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "rosaria",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "4jm7knm": {
       "id": "4jm7knm",
@@ -3352,13 +3418,14 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 75
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "rosaria",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "7LOtUOO": {
       "id": "7LOtUOO",
@@ -3383,14 +3450,15 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 50
         }
       ],
       "artifactSet": "vermillion_hereafter",
       "kOverride": 3,
       "characterId": "xiao",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "7LOww6u": {
       "id": "7LOww6u",
@@ -3415,14 +3483,15 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 50
         }
       ],
       "artifactSet": "marechaussee_hunter",
       "kOverride": 3,
       "characterId": "xiao",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "3_Blgvu": {
       "id": "3_Blgvu",
@@ -4488,12 +4557,13 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 50
         }
       ],
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     }
   },
   "characterBuilds": {
@@ -4516,9 +4586,9 @@
     "chevreuse": ["Bs6OFoG", "Bs6EjRm"],
     "charlotte": ["BXiLODm"],
     "lynette": ["AYHtOwG", "AYHtOwH"],
-    "lauma": ["FnZb4pm", "FnZhZsG", "FnZh8vG"],
+    "lauma": ["FnZb4pm", "FnZhZsG", "FnZh8vG", "FnZb4z8"],
     "columbina": ["GfRzPMG", "GfRzo0O"],
-    "illuga": ["Gy43LvO"],
+    "illuga": ["Gy43LvO", "GwGq0NG"],
     "durin": ["GMpgtBm", "GMpuDRe"],
     "flins": ["G4Bn5Fu"],
     "zibai": ["Gol_yVu"],
@@ -4553,7 +4623,7 @@
     "faruzan": ["9ETMwc8"],
     "mika": ["9pjb5xm"],
     "layla": ["959Jyi0"],
-    "nilou": ["8U36ymm", "8Vv9zIq"],
+    "nilou": ["8U36ymm", "8Vv9zHG"],
     "kaveh": ["A6LntCu"],
     "yumemizuki_mizuki": ["Ed3AbU0"],
     "ifa": ["FCJMUU0"],
@@ -4637,9 +4707,9 @@
     "jahoda": ["rainbow_serpents_rain_bow"],
     "aino": ["flameforged_insight"],
     "furina": [
-      "splendor_of_tranquil_waters",
       "freedomsworn",
-      "key_of_khajnisut"
+      "key_of_khajnisut",
+      "splendor_of_tranquil_waters"
     ],
     "nefer": ["reliquary_of_truth"],
     "dahlia": ["sacrificial_sword"],
@@ -4707,19 +4777,30 @@
     "klee": ["lost_prayer_to_the_sacred_winds"],
     "xiangling": ["engulfing_lightning", "the_catch"],
     "traveler_pyro": ["favonius_sword"],
+    "qiqi": ["sacrificial_sword"],
+    "ningguang": ["memory_of_dust"],
+    "keqing": ["mistsplitter_reforged"],
     "venti": ["the_daybreak_chronicles", "elegy_for_the_end"],
+    "bennett": ["skyward_blade", "aquila_favonia"],
+    "jean": ["sacrificial_sword"],
+    "sucrose": ["sacrificial_fragments"],
     "mona": [
       "thrilling_tales_of_dragon_slayers",
       "the_widsith",
       "reliquary_of_truth"
     ],
+    "barbara": ["thrilling_tales_of_dragon_slayers"],
     "fischl": [
       "the_daybreak_chronicles",
       "elegy_for_the_end",
-      "aqua_simulacra"
+      "the_stringless"
     ],
+    "beidou": ["skyward_pride"],
+    "xingqiu": ["sacrificial_sword"],
+    "noelle": ["serpent_spine"],
     "diluc": ["wolfs_gravestone", "beacon_of_the_reed_sea"],
-    "razor": ["serpent_spine"]
+    "razor": ["serpent_spine"],
+    "chongyun": ["favonius_greatsword"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,

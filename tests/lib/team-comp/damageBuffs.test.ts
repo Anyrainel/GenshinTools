@@ -16,7 +16,7 @@ import {
 describe("StatBuff", () => {
   it("base StatBuff has no dynamic buffs", () => {
     const buff = new StatBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "self" },
       [{ key: "atk%", value: 0.25 }]
     );
@@ -28,7 +28,7 @@ describe("StatBuff", () => {
 describe("StaticSkillBuff", () => {
   it("resolves entries based on constellation level", () => {
     const buffC0 = new StaticSkillBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "self" },
       0,
       (c) => [{ key: "cr", value: c >= 2 ? 0.2 : 0.15 }]
@@ -36,7 +36,7 @@ describe("StaticSkillBuff", () => {
     expect(buffC0.staticBuffs[0]!.value).toBeCloseTo(0.15);
 
     const buffC2 = new StaticSkillBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "self" },
       2,
       (c) => [{ key: "cr", value: c >= 2 ? 0.2 : 0.15 }]
@@ -48,7 +48,7 @@ describe("StaticSkillBuff", () => {
 describe("ScalingBuff", () => {
   it("computes dynamic buff from input stat", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "onField" },
       [],
       "em",
@@ -66,7 +66,7 @@ describe("ScalingBuff", () => {
 
   it("respects cap", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "onField" },
       [],
       "em",
@@ -83,7 +83,7 @@ describe("ScalingBuff", () => {
 
   it("exposes inputKey, outputKey, cap as readonly", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "onField" },
       [],
       "em",
@@ -100,7 +100,7 @@ describe("ScalingBuff", () => {
 describe("ScalingSkillBuff", () => {
   it("resolves scale/cap from constellation", () => {
     const buff = new ScalingSkillBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "onField" },
       [],
       "hp",
@@ -123,7 +123,7 @@ describe("ScalingSkillBuff", () => {
 
   it("exposes inputKey, outputKey, cap as readonly", () => {
     const buff = new ScalingSkillBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "onField" },
       [],
       "hp",
@@ -140,7 +140,7 @@ describe("ScalingSkillBuff", () => {
 describe("ScalingBuff with threshold", () => {
   // Pattern: "For every 1 HP above 30000, gain 0.007% ATK"
   const buff = new ScalingBuff(
-    { type: "character", id: "test" },
+    { type: "character", id: "test", origin: "test" },
     { receiver: "self" },
     [],
     "hp",
@@ -181,7 +181,7 @@ describe("ScalingBuff with threshold", () => {
 describe("ErScalingBuff", () => {
   // Pattern: Engulfing Lightning — (ER - 100%) × 28% → ATK%, cap 80%
   const buff = new ErScalingBuff(
-    { type: "weapon", id: "engulfing_lightning" },
+    { type: "weapon", id: "engulfing_lightning", origin: "R1" },
     { receiver: "self" },
     [],
     0.28,
@@ -221,7 +221,7 @@ describe("ScalingMultiBuff", () => {
   it("scales one input into multiple outputs", () => {
     // Pattern: Kazuha A4 — EM × 0.04% → all 7 elemental DMG%
     const buff = new ScalingMultiBuff(
-      { type: "character", id: "kaedehara_kazuha" },
+      { type: "character", id: "kaedehara_kazuha", origin: "A4" },
       { receiver: "team" },
       [],
       "em",
@@ -243,7 +243,7 @@ describe("ScalingMultiBuff", () => {
 
   it("respects cap", () => {
     const buff = new ScalingMultiBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "team" },
       [],
       "em",
@@ -263,7 +263,7 @@ describe("ScalingMultiBuff", () => {
 
   it("exposes inputKey and cap as readonly", () => {
     const buff = new ScalingMultiBuff(
-      { type: "character", id: "test" },
+      { type: "character", id: "test", origin: "test" },
       { receiver: "team" },
       [],
       "em",
@@ -281,12 +281,12 @@ describe("deduplicateBuffs", () => {
 
   it("keeps all buffs if noStackId is absent", () => {
     const b1 = new StatBuff(
-      { type: "weapon", id: "w1" },
+      { type: "weapon", id: "w1", origin: "R1" },
       { receiver: "self" },
       [{ key: "atk%", value: 0.1 }]
     );
     const b2 = new StatBuff(
-      { type: "weapon", id: "w2" },
+      { type: "weapon", id: "w2", origin: "R1" },
       { receiver: "self" },
       [{ key: "atk%", value: 0.2 }]
     );
@@ -301,11 +301,13 @@ describe("deduplicateBuffs", () => {
     const src1 = {
       type: "weapon" as const,
       id: "w1",
+      origin: "R1",
       noStackId: "millennial-atk",
     };
     const src2 = {
       type: "weapon" as const,
       id: "w2",
+      origin: "R1",
       noStackId: "millennial-atk",
     };
 
@@ -358,22 +360,22 @@ describe("deduplicateBuffs", () => {
 
   it("handles a mix of stacked and non-stacked buffs", () => {
     const b1 = new StatBuff(
-      { type: "weapon", id: "w1" },
+      { type: "weapon", id: "w1", origin: "R1" },
       { receiver: "self" },
       [{ key: "hp%", value: 0.1 }]
     );
     const b2 = new StatBuff(
-      { type: "weapon", id: "w2", noStackId: "stacker" },
+      { type: "weapon", id: "w2", origin: "R1", noStackId: "stacker" },
       { receiver: "team" },
       [{ key: "hp%", value: 0.2 }]
     );
     const b3 = new StatBuff(
-      { type: "weapon", id: "w3", noStackId: "stacker" },
+      { type: "weapon", id: "w3", origin: "R1", noStackId: "stacker" },
       { receiver: "team" },
       [{ key: "hp%", value: 0.4 }]
     );
     const b4 = new StatBuff(
-      { type: "weapon", id: "w4" },
+      { type: "weapon", id: "w4", origin: "R1" },
       { receiver: "self" },
       [{ key: "hp%", value: 0.5 }]
     );
