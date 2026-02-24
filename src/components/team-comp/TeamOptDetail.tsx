@@ -34,6 +34,11 @@ import {
 } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
+import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import {
+  type BuildMatchResult,
+  matchBuild,
+} from "@/lib/account-data/artifactScore";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet, getEntityOption } from "@/lib/team-comp/damageModels";
 import type { CalcContext, I18nLabel } from "@/lib/team-comp/types";
@@ -45,9 +50,9 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
+  Eye,
   Loader2,
   Play,
-  RefreshCw,
   Swords,
   Trash2,
 } from "lucide-react";
@@ -68,9 +73,26 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const accountData = useAccountStore((state) => state.accountData);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
+  const buildGroups = useAllResolvedBuilds();
+
+  const optimizerBuildMatchByChar = useMemo(() => {
+    if (!accountData) return {};
+    const map: Record<string, BuildMatchResult | null> = {};
+    for (const group of buildGroups) {
+      const char = accountData.characters.find(
+        (c) => c.key === group.characterId
+      );
+      if (!char) continue;
+      map[group.characterId] = matchBuild(
+        char.artifacts ?? {},
+        group.builds,
+        char.constellation
+      );
+    }
+    return map;
+  }, [accountData, buildGroups]);
 
   const [metricOpen, setMetricOpen] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
   // Independent formula selection for Card 3 (optimizer)
   const [optFormulaTab, setOptFormulaTab] = useState<string | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
@@ -92,7 +114,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   );
 
   const { teamBuild, buildError } = useMemo(() => {
-    refreshKey;
     try {
       return {
         teamBuild: new TeamBuild(configs, team.opts || {}),
@@ -105,14 +126,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError: e instanceof Error ? e.message : String(e),
       };
     }
-  }, [configs, team.opts, refreshKey]);
+  }, [configs, team.opts]);
 
   const availableFormulas = useMemo(() => {
     return teamBuild ? teamBuild.getFormulaIds() : {};
   }, [teamBuild]);
 
   const artifactSheets = useMemo(() => {
-    refreshKey;
     if (!accountData) return {};
     const sheets: Record<string, StatSheet> = {};
     for (const charId of team.characters) {
@@ -123,7 +143,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       sheets[charId] = StatSheet.fromArtifacts(artifacts);
     }
     return sheets;
-  }, [accountData, team.characters, refreshKey]);
+  }, [accountData, team.characters]);
 
   const handleOptionChange = (entityId: string, val: string) => {
     updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
@@ -300,7 +320,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     ];
 
     const { charId, formulaId } = resolvedOptFormula;
-    const weights = scoreConfig.characters[charId] || {};
+    const buildMatch = optimizerBuildMatchByChar[charId];
+    if (!buildMatch) return;
 
     // Use GOAL sets as optimizer constraints (not equipped sets)
     const charIdx = team.characters.indexOf(charId);
@@ -310,7 +331,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (goalArt?.type === "4pc") {
       goalSetId = goalArt.setId;
     } else if (goalArt?.type === "2pc+2pc") {
-      goalHalfSetIds = [goalArt.id1.toString(), goalArt.id2.toString()];
+      goalHalfSetIds = [String(goalArt.id1), String(goalArt.id2)];
     }
 
     startOpt({
@@ -319,7 +340,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       formulaId,
       targetEr: targetErRaw,
       inventory,
-      weights,
+      buildMatch,
       globalConfig: scoreConfig.global,
       baseSheets: artifactSheets,
       calcContext: {
@@ -411,7 +432,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             <ArrowLeft className="w-5 h-5 text-foreground/70" />
           </Button>
           <h2 className="text-xl font-black text-destructive">
-            {t.ui("teamBuilder.renderError")}
+            {t.ui("teamComp.renderError")}
           </h2>
           <Button
             variant="destructive"
@@ -420,7 +441,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             className="ml-auto text-xs h-8"
           >
             <Trash2 className="w-4 h-4 mr-1.5" />
-            {t.ui("teamBuilder.clearTeamData")}
+            {t.ui("teamComp.clearTeamData")}
           </Button>
         </div>
         <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-lg font-mono text-xs whitespace-pre-wrap overflow-auto">
@@ -444,7 +465,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             <ArrowLeft className="w-5 h-5 text-foreground/70" />
           </Button>
           <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-            {team.name || t.ui("teamBuilder.teamOptimization")}
+            {team.name || t.ui("teamComp.teamOptimization")}
           </h2>
         </div>
 
@@ -455,7 +476,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           <CardHeader className={cn(CARD_HEADER_CLS, "py-2.5")}>
             <h3 className={CARD_TITLE_CLS}>
               <Swords className="w-4 h-4 opacity-70" />
-              {t.ui("teamBuilder.teamRoster")}
+              {t.ui("teamComp.teamRoster")}
             </h3>
           </CardHeader>
           <CardContent className={cn(CARD_BODY_CLS, "py-3")}>
@@ -619,7 +640,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                       </span>
                       <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
                         <span className="text-xs font-bold text-foreground/70">
-                          {t.ui("teamBuilder.minEr")}
+                          {t.ui("teamComp.minEr")}
                         </span>
                         <Input
                           type="number"
@@ -653,9 +674,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                       <div className="flex flex-col gap-1 w-full shrink pr-0.5">
                         <span
                           className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                          title={t.ui("teamBuilder.overrideLevel")}
+                          title={t.ui("teamComp.overrideLevel")}
                         >
-                          {t.ui("teamBuilder.overrideLevel")}
+                          {t.ui("teamComp.overrideLevel")}
                         </span>
                         <Select
                           value={String(charLevel)}
@@ -676,9 +697,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                       <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/10">
                         <span
                           className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                          title={t.ui("teamBuilder.overrideConst")}
+                          title={t.ui("teamComp.overrideConst")}
                         >
-                          {t.ui("teamBuilder.overrideConst")}
+                          {t.ui("teamComp.overrideConst")}
                         </span>
                         <Select
                           value={String(charConst)}
@@ -706,9 +727,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                         <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/10">
                           <span
                             className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                            title={t.ui("teamBuilder.overrideRefine")}
+                            title={t.ui("teamComp.overrideRefine")}
                           >
-                            {t.ui("teamBuilder.overrideRefine")}
+                            {t.ui("teamComp.overrideRefine")}
                           </span>
                           <Select
                             value={String(weaponRefine)}
@@ -750,12 +771,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             {/* Global Context Setup */}
             <div className="mt-4 pt-4 border-t border-border/10 flex flex-wrap items-center gap-y-3">
               <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
-                {t.ui("teamBuilder.calcContextOptions")}
+                {t.ui("teamComp.calcContextOptions")}
               </span>
               <div className="flex flex-1 justify-center items-center gap-x-8 gap-y-3 flex-wrap opacity-90">
                 <div className="flex items-center gap-2 group">
                   <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors select-none">
-                    {t.ui("teamBuilder.enemyLevel")}
+                    {t.ui("teamComp.enemyLevel")}
                   </span>
                   <Input
                     type="number"
@@ -775,7 +796,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 </div>
                 <div className="flex items-center gap-2 group">
                   <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors select-none">
-                    {t.ui("teamBuilder.enemyRes")}
+                    {t.ui("teamComp.enemyRes")}
                   </span>
                   <div className="flex items-center gap-1">
                     <Input
@@ -818,7 +839,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     {activeContext.assumeCrit && <Check className="w-3 h-3" />}
                   </div>
                   <span className="text-xs font-semibold text-muted-foreground group-hover:text-foreground transition-colors">
-                    {t.ui("teamBuilder.assumeCrit")}
+                    {t.ui("teamComp.assumeCrit")}
                   </span>
                 </div>
               </div>
@@ -845,9 +866,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           ) : (
             buildError && (
               <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
-                <span className="font-bold">
-                  {t.ui("teamBuilder.setupError")}
-                </span>{" "}
+                <span className="font-bold">{t.ui("teamComp.setupError")}</span>{" "}
                 {buildError}
               </div>
             )
@@ -861,19 +880,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 >
                   <div className="flex items-center justify-between w-full">
                     <h3 className={CARD_TITLE_CLS}>
-                      <Play className="w-4 h-4 opacity-70" />
-                      {t.ui("teamBuilder.currentEquipAndDamage")}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="w-6 h-6 ml-1 hover:bg-black/20"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setRefreshKey((k) => k + 1);
-                        }}
-                      >
-                        <RefreshCw className="w-3.5 h-3.5 opacity-70 hover:opacity-100 transition-opacity" />
-                      </Button>
+                      <Eye className="w-4 h-4 opacity-70" />
+                      {t.ui("teamComp.currentEquipAndDamage")}
                     </h3>
                     <ChevronDown
                       className={cn(
@@ -890,7 +898,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   <DamageCardBody
                     team={team}
                     hasFormula={resolvedFormula != null}
-                    emptyMessage={t.ui("teamBuilder.emptyDamageMessage")}
+                    emptyMessage={t.ui("teamComp.emptyDamageMessage")}
                     artifactsByChar={equippedArtifactsByChar}
                     targetCharId={resolvedFormula?.charId}
                     damageValue={currentDamage?.totalDamage ?? null}
@@ -929,7 +937,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                       isComputing && "animate-spin"
                     )}
                   />
-                  {t.ui("teamBuilder.optimizationResults")}
+                  {t.ui("teamComp.optimizationResults")}
                 </h3>
                 <Button
                   onClick={handleOptimize}
@@ -943,8 +951,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     <Play className="w-3.5 h-3.5" />
                   )}
                   {isComputing
-                    ? t.ui("teamBuilder.optimizing")
-                    : t.ui("teamBuilder.runOptimization")}
+                    ? t.ui("teamComp.optimizing")
+                    : t.ui("teamComp.runOptimization")}
                 </Button>
               </div>
             </CardHeader>
@@ -969,7 +977,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span className="font-semibold">
-                      {t.ui("teamBuilder.searchingCombinations")}
+                      {t.ui("teamComp.searchingCombinations")}
                     </span>
                     <span className="font-mono font-bold">
                       {Math.round(optResult.progress * 100)}%

@@ -29,7 +29,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { PresetOption } from "@/data/types";
 
-type ImportVariant = "default" | "tier-list";
+type ImportVariant = "default" | "tier-list" | "team-comp";
 
 interface ImportControlProps<T> {
   options: PresetOption[];
@@ -85,27 +85,40 @@ function ImportControlInner<T>(
   const getMessages = useCallback(() => {
     if (variant === "tier-list") {
       return {
-        dialogTitle: t.ui("tierList.importDialogTitle"),
-        dialogDescription: t.ui("tierList.importDialogDescription"),
-        confirmTitle: t.ui("tierList.presetConfirmTitle"),
-        confirmDescription: t.ui("tierList.presetConfirmDescription"),
-        confirmAction: t.ui("tierList.presetConfirmAction"),
-        loadError: t.ui("tierList.loadError"),
-        emptyList: t.ui("tierList.noPresets"),
-        importFromFile: t.ui("tierList.importFromFile"),
+        dialogTitle: t.ui("import.titleTierList"),
+        dialogDescription: t.ui("import.dialogDescription"),
+        confirmTitle: t.ui("import.presetConfirmTitle"),
+        confirmDescription: t.ui("import.confirmDescTierList"),
+        confirmAction: t.ui("import.presetConfirmAction"),
+        loadError: t.ui("import.loadErrorTierList"),
+        emptyList: t.ui("import.presetEmptyTierList"),
+        importFromFile: t.ui("import.fromFile"),
+      };
+    }
+
+    if (variant === "team-comp") {
+      return {
+        dialogTitle: t.ui("import.titleTeamComp"),
+        dialogDescription: t.ui("import.dialogDescription"),
+        confirmTitle: t.ui("import.presetConfirmTitle"),
+        confirmDescription: t.ui("import.confirmDescTeamComp"),
+        confirmAction: t.ui("import.presetConfirmAction"),
+        loadError: t.ui("import.loadErrorTeamComp"),
+        emptyList: t.ui("import.presetEmptyTeamComp"),
+        importFromFile: t.ui("import.fromFile"),
       };
     }
 
     // Default variant (configure/builds)
     return {
-      dialogTitle: t.ui("configure.importDialogTitle"),
-      dialogDescription: t.ui("configure.importDialogDescription"),
-      confirmTitle: t.ui("configure.presetConfirmTitle"),
-      confirmDescription: t.ui("configure.presetConfirmDescription"),
-      confirmAction: t.ui("configure.presetConfirmAction"),
-      loadError: t.ui("configure.presetDialogLoadError"),
-      emptyList: t.ui("configure.presetDialogEmpty"),
-      importFromFile: t.ui("configure.importFromFile"),
+      dialogTitle: t.ui("import.titleBuilds"),
+      dialogDescription: t.ui("import.dialogDescription"),
+      confirmTitle: t.ui("import.presetConfirmTitle"),
+      confirmDescription: t.ui("import.confirmDescBuilds"),
+      confirmAction: t.ui("import.presetConfirmAction"),
+      loadError: t.ui("import.presetLoadError"),
+      emptyList: t.ui("import.presetEmptyBuilds"),
+      importFromFile: t.ui("import.fromFile"),
     };
   }, [variant, t]);
 
@@ -166,7 +179,7 @@ function ImportControlInner<T>(
         setPickerOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
-        setErrorMessage(t.ui("configure.importDialogLoadError"));
+        setErrorMessage(t.ui("import.fileLoadError"));
       } finally {
         setIsBusy(false);
       }

@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   CatalyzeFormula,
   DirectFormula,
@@ -24,25 +24,22 @@ class Sethos extends CharacterBase {
       7.0
     ),
     // C1: Shadowpiercing Shot CR +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C1", ["charge"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "cr", value: 0.15 }] : [])
+      this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
     ),
     // C2: Self Electro DMG +30% (2 stacks × 15%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", []),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "electro%", value: 0.3 }] : [])
+      this.constellation >= 2 ? [{ key: "electro%", value: 0.3 }] : []
     ),
     // C4: Team EM +80 on multi-hit
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["charge"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 80 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 80 }] : []
     ),
   ];
 
@@ -108,44 +105,15 @@ class Kaveh extends CharacterBase {
       ]
     ),
     // C4: Self-triggered Bloom DMG +60%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "self", filter: { reactions: ["bloom", "lunarBloom"] } },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "reactionDmg%", value: 0.6 }] : [])
+      this.constellation >= 4 ? [{ key: "reactionDmg%", value: 0.6 }] : []
     ),
   ];
 
-  // E: Lv10 367.2%, Lv13 (C5+) 433.5%
-  // Q: Lv10 288.0%, Lv13 (C3+) 340.0%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 4.335 : 3.672;
-    const qMult = this.constellation >= 3 ? 3.4 : 2.88;
     return {
-      "kaveh-skill": {
-        label: { zh: "画则巧施", en: "Artistic Ingenuity" },
-        parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "kaveh-burst": {
-        label: { zh: "Q 繁绘隅穹", en: "Q Painted Dome" },
-        parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Dendro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
       "kaveh-core": {
         label: { zh: "草原核伤害(含Q加成)", en: "Dendro Core DMG (w/ Q Buff)" },
         parts: [
@@ -165,18 +133,17 @@ class Kaveh extends CharacterBase {
 @RegisterCharacter("faruzan")
 class Faruzan extends CharacterBase {
   readonly buffs = [
-    // Q: Anemo RES -30%
+    // Q: Anemo RES -30% (enemy debuff → always team)
     new StatBuff(
       cbs(this, "Q", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Anemo"] } },
+      { receiver: "team", filter: { elements: ["Anemo"] } },
       [{ key: "resReduction%", value: 0.3 }]
     ),
     // Q: Anemo DMG Bonus — Lv10 32.4%, Lv13 (C5+) 38.3%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },
-      this.constellation,
-      (c) => [{ key: "dmg%", value: c >= 5 ? 0.383 : 0.324 }]
+      [{ key: "anemo%", value: this.constellation >= 5 ? 0.383 : 0.324 }]
     ),
     // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's base ATK
     new ScalingBuff(
@@ -188,11 +155,10 @@ class Faruzan extends CharacterBase {
       0.32
     ),
     // C6: Under Q, Anemo CRIT DMG +40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 0.4 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 0.4 }] : []
     ),
   ];
 
@@ -218,9 +184,7 @@ class Faruzan extends CharacterBase {
 @RegisterCharacter("layla")
 class Layla extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof ScalingBuff | typeof StaticSkillBuff
-    >[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
     // C4: Team Normal/Charged baseDmg + 5% of Layla's HP
     if (this.constellation >= 4) {
       buffs.push(
@@ -268,11 +232,10 @@ class Candace extends CharacterBase {
       0.000005
     ),
     // C2: After E hit, self Max HP +20% for 15s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "self" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "hp%", value: 0.2 }] : [])
+      this.constellation >= 2 ? [{ key: "hp%", value: 0.2 }] : []
     ),
   ];
 
@@ -290,11 +253,10 @@ class Dori extends CharacterBase {
 class Collei extends CharacterBase {
   readonly buffs = [
     // C4: After Q, team EM +60 for 12s (not self)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 60 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
     ),
   ];
 

@@ -4,6 +4,7 @@ import type {
   BuildPayload,
   BuildPayloadV5,
 } from "@/data/types";
+import { migrateBuild } from "./buildMigration";
 
 // Import all presets eagerly or lazily?
 // Current implementation in Page was lazy ({ eager: false }).
@@ -37,6 +38,12 @@ export async function loadPreset(path: string): Promise<BuildPayloadV5> {
 
   // Normalize to V5
   const v5 = normalizeToV5(payload);
+
+  // Run build-level migrations (e.g. legacy halfSet IDs)
+  for (const build of Object.values(v5.builds)) {
+    migrateBuild(build);
+  }
+
   loadedPresets[path] = v5;
 
   // Also cache by internal ID if present

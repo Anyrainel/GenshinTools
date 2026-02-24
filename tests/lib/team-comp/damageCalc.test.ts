@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import { TeamResonance, isBuffApplicable } from "@/lib/team-comp/damageCalc";
 import { StatBuff, TeamMeta } from "@/lib/team-comp/damageModels";
+
+// Preload before any describe runs (describe callbacks create TeamBuild at collect time)
+await preloadGameStats();
 
 describe("TeamMeta", () => {
   // Team: Hu Tao (Pyro), Xingqiu (Hydro), Zhongli (Geo), Kazuha (Anemo)
@@ -323,7 +327,7 @@ describe("TeamBuild lifecycle", () => {
       weaponId: "wolfs_gravestone",
       refinement: 1,
       artifactSetId: null,
-      artifactHalfSetIds: ["1"], // ATK +18%
+      artifactHalfSetIds: ["cryo%-15"], // Cryo DMG +15%
     },
     {
       charId: "mona",

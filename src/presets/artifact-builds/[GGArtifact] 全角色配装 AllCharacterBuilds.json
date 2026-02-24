@@ -623,9 +623,9 @@
         }
       ],
       "artifactSet": "pale_flame",
-      "halfSet1": 21,
+      "halfSet1": "skill-dmg%-20",
       "characterId": "freminet",
-      "halfSet2": 1,
+      "halfSet2": "cryo%-15",
       "styles": ["on-field"],
       "roles": ["dps"],
       "source": "preset"
@@ -799,8 +799,8 @@
           "weight": 100
         }
       ],
-      "halfSet1": 9,
-      "halfSet2": 15,
+      "halfSet1": "atk%-18",
+      "halfSet2": "er-20",
       "characterId": "charlotte",
       "styles": ["off-field"],
       "roles": ["sustain", "support"],
@@ -1093,8 +1093,8 @@
       "roles": ["support"],
       "styles": ["off-field"],
       "source": "preset",
-      "halfSet1": 7,
-      "halfSet2": 7
+      "halfSet1": "em-80",
+      "halfSet2": "em-80"
     },
     "GMpgtBm": {
       "id": "GMpgtBm",
@@ -1417,8 +1417,8 @@
         }
       ],
       "artifactSet": "golden_troupe",
-      "halfSet1": 15,
-      "halfSet2": 15,
+      "halfSet1": "er-20",
+      "halfSet2": "er-20",
       "characterId": "furina",
       "styles": ["off-field"],
       "roles": ["support"],
@@ -1581,8 +1581,8 @@
           "weight": 70
         }
       ],
-      "halfSet1": 9,
-      "halfSet2": 9,
+      "halfSet1": "atk%-18",
+      "halfSet2": "atk%-18",
       "characterId": "xianyun",
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
@@ -1629,8 +1629,8 @@
         }
       ],
       "artifactSet": "song_of_days_past",
-      "halfSet1": 2,
-      "halfSet2": 2,
+      "halfSet1": "hp%-20",
+      "halfSet2": "hp%-20",
       "characterId": "sigewinne",
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
@@ -1862,8 +1862,8 @@
       "characterId": "shenhe",
       "styles": ["off-field"],
       "roles": ["support"],
-      "halfSet1": 9,
-      "halfSet2": 9
+      "halfSet1": "atk%-18",
+      "halfSet2": "atk%-18"
     },
     "AN7jcW0": {
       "id": "AN7jcW0",
@@ -1884,8 +1884,8 @@
         }
       ],
       "artifactSet": "deepwood_memories",
-      "halfSet1": 2,
-      "halfSet2": 2,
+      "halfSet1": "hp%-20",
+      "halfSet2": "hp%-20",
       "characterId": "kirara",
       "styles": ["off-field"],
       "roles": ["sustain"]
@@ -1909,8 +1909,8 @@
         }
       ],
       "artifactSet": "deepwood_memories",
-      "halfSet1": 2,
-      "halfSet2": 2,
+      "halfSet1": "hp%-20",
+      "halfSet2": "hp%-20",
       "characterId": "kirara",
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
@@ -1986,8 +1986,8 @@
       "characterId": "baizhu",
       "styles": ["off-field"],
       "roles": ["sustain"],
-      "halfSet1": 2,
-      "halfSet2": 2
+      "halfSet1": "hp%-20",
+      "halfSet2": "hp%-20"
     },
     "4t42ffO": {
       "id": "4t42ffO",
@@ -2104,8 +2104,8 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
-      "halfSet1": 11,
-      "halfSet2": 11,
+      "halfSet1": "hydro%-15",
+      "halfSet2": "hydro%-15",
       "characterId": "yelan",
       "styles": ["on-field"],
       "roles": ["dps"],
@@ -2487,8 +2487,8 @@
           "weight": 75
         }
       ],
-      "halfSet1": 2,
-      "halfSet2": 2,
+      "halfSet1": "hp%-20",
+      "halfSet2": "hp%-20",
       "characterId": "nilou",
       "styles": ["off-field"],
       "roles": ["support"],
@@ -2625,8 +2625,8 @@
         }
       ],
       "artifactSet": "noblesse_oblige",
-      "halfSet1": 15,
-      "halfSet2": 2,
+      "halfSet1": "er-20",
+      "halfSet2": "hp%-20",
       "characterId": "candace",
       "styles": ["off-field"],
       "roles": ["support"]
@@ -2835,8 +2835,8 @@
           "weight": 90
         }
       ],
-      "halfSet1": 15,
-      "halfSet2": 2,
+      "halfSet1": "er-20",
+      "halfSet2": "hp%-20",
       "characterId": "thoma",
       "styles": ["off-field"],
       "roles": ["support"]
@@ -3128,8 +3128,8 @@
         }
       ],
       "artifactSet": "husk_of_opulent_dreams",
-      "halfSet1": 3,
-      "halfSet2": 15,
+      "halfSet1": "def%-30",
+      "halfSet2": "er-20",
       "characterId": "yun_jin",
       "styles": ["off-field"],
       "roles": ["support"]
@@ -3571,8 +3571,8 @@
         }
       ],
       "artifactSet": "emblem_of_severed_fate",
-      "halfSet1": 15,
-      "halfSet2": 15,
+      "halfSet1": "er-20",
+      "halfSet2": "er-20",
       "characterId": "ganyu",
       "styles": ["off-field"],
       "roles": ["support"]
@@ -3649,8 +3649,8 @@
           "weight": 100
         }
       ],
-      "halfSet1": 3,
-      "halfSet2": 15,
+      "halfSet1": "def%-30",
+      "halfSet2": "er-20",
       "characterId": "xinyan",
       "styles": ["off-field"],
       "roles": ["sustain"]

@@ -1,8 +1,10 @@
 import { charactersById } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import {
-  type Character,
   type CharacterData,
   type CharacterFilters,
+  type CharacterResource,
   type TierAssignment,
   tiers,
 } from "@/data/types";
@@ -11,39 +13,39 @@ type OwnershipCheck = (id: string) => boolean;
 
 /**
  * Check if a character matches the given filters.
+ * Uses character_stats when characterStatsMap is provided (element, weaponType, region, releaseDate, rarity).
  */
 function matchesFilters(
-  character: Character,
+  character: CharacterResource,
   filters: CharacterFilters,
-  isOwned?: OwnershipCheck
+  options?: { isOwned?: OwnershipCheck; characterStatsMap?: CharacterStatsMap }
 ): boolean {
+  const stats = options?.characterStatsMap?.[character.id];
+  const meta = getCharacterDisplayMeta(character, stats);
+
   if (filters.ownedOnly) {
-    // Unreleased characters (null releaseDate) can't be owned yet
-    if (!character.releaseDate) return false;
-    if (isOwned && !isOwned(character.id)) return false;
+    if (!meta.releaseDate) return false;
+    if (options?.isOwned && !options.isOwned(character.id)) return false;
   }
   if (
     filters.elements.length > 0 &&
-    !filters.elements.includes(character.element)
+    (meta.element == null || !filters.elements.includes(meta.element))
   ) {
     return false;
   }
   if (
     filters.weaponTypes.length > 0 &&
-    !filters.weaponTypes.includes(character.weaponType)
+    (meta.weaponType == null || !filters.weaponTypes.includes(meta.weaponType))
   ) {
     return false;
   }
   if (
     filters.regions.length > 0 &&
-    !filters.regions.includes(character.region)
+    (meta.region == null || !filters.regions.includes(meta.region))
   ) {
     return false;
   }
-  if (
-    filters.rarities.length > 0 &&
-    !filters.rarities.includes(character.rarity)
-  ) {
+  if (filters.rarities.length > 0 && !filters.rarities.includes(meta.rarity)) {
     return false;
   }
   return true;
@@ -51,13 +53,14 @@ function matchesFilters(
 
 /**
  * Create a sort comparator for characters based on filters and tier data.
+ * Uses character_stats for release date when characterStatsMap is provided.
  */
 function createSortComparator(
   filters: CharacterFilters,
-  tierAssignments?: TierAssignment
-): (a: Character, b: Character) => number {
+  tierAssignments?: TierAssignment,
+  characterStatsMap?: CharacterStatsMap
+): (a: CharacterResource, b: CharacterResource) => number {
   return (a, b) => {
-    // Tier sort (primary when enabled)
     if (filters.tierSort !== "off" && tierAssignments) {
       const tierA = tierAssignments[a.id];
       const tierB = tierAssignments[b.id];
@@ -70,55 +73,77 @@ function createSortComparator(
       }
     }
 
-    // Release date sort (secondary or standalone)
-    // null releaseDate = unknown/unreleased, sorted as newest
     if (filters.releaseSort !== "off") {
-      const dateA = a.releaseDate
-        ? new Date(a.releaseDate).getTime()
+      const dateA = characterStatsMap?.[a.id]?.releaseDate;
+      const dateB = characterStatsMap?.[b.id]?.releaseDate;
+      const timeA = dateA
+        ? new Date(dateA).getTime()
         : Number.POSITIVE_INFINITY;
-      const dateB = b.releaseDate
-        ? new Date(b.releaseDate).getTime()
+      const timeB = dateB
+        ? new Date(dateB).getTime()
         : Number.POSITIVE_INFINITY;
-      return filters.releaseSort === "asc" ? dateA - dateB : dateB - dateA;
+      return filters.releaseSort === "asc" ? timeA - timeB : timeB - timeA;
     }
 
     return 0;
   };
 }
 
+export type FilterAndSortCharactersOptions = {
+  tierAssignments?: TierAssignment;
+  isOwned?: OwnershipCheck;
+  characterStatsMap?: CharacterStatsMap;
+};
+
 /**
  * Apply character filters and sorting to a list of static Character data.
- * Used by ConfigureView which operates on the full character list.
+ * Pass characterStatsMap when available so element/weaponType/region/releaseDate/rarity come from stats.
  */
 export function filterAndSortCharacters(
-  characters: Character[],
+  characters: CharacterResource[],
   filters: CharacterFilters,
-  tierAssignments?: TierAssignment,
-  isOwned?: OwnershipCheck
-): Character[] {
+  options?: FilterAndSortCharactersOptions
+): CharacterResource[] {
   const filtered = characters.filter((c) =>
-    matchesFilters(c, filters, isOwned)
+    matchesFilters(c, filters, {
+      isOwned: options?.isOwned,
+      characterStatsMap: options?.characterStatsMap,
+    })
   );
-  return [...filtered].sort(createSortComparator(filters, tierAssignments));
+  return [...filtered].sort(
+    createSortComparator(
+      filters,
+      options?.tierAssignments,
+      options?.characterStatsMap
+    )
+  );
 }
 
 /**
  * Apply character filters and sorting to a list of CharacterData (account data).
- * Used by CharacterView which operates on imported account characters.
- * Filters and sorts based on static Character metadata without wasteful conversions.
+ * Pass characterStatsMap when available for filter/sort by stats metadata.
  */
 export function filterAndSortCharacterData(
   characterData: CharacterData[],
   filters: CharacterFilters,
-  tierAssignments?: TierAssignment,
-  isOwned?: OwnershipCheck
+  options?: FilterAndSortCharactersOptions
 ): CharacterData[] {
   const filtered = characterData.filter((cd) => {
     const character = charactersById[cd.key];
-    return character && matchesFilters(character, filters, isOwned);
+    return (
+      character &&
+      matchesFilters(character, filters, {
+        isOwned: options?.isOwned,
+        characterStatsMap: options?.characterStatsMap,
+      })
+    );
   });
 
-  const comparator = createSortComparator(filters, tierAssignments);
+  const comparator = createSortComparator(
+    filters,
+    options?.tierAssignments,
+    options?.characterStatsMap
+  );
   return [...filtered].sort((a, b) => {
     const charA = charactersById[a.key];
     const charB = charactersById[b.key];

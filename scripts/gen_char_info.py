@@ -1,10 +1,18 @@
 import json
 import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+GAME_DIR = ROOT / "src" / "data" / "game"
+CHAR_ZH_PATHS = [GAME_DIR / "character_4_zh.json", GAME_DIR / "character_5_zh.json"]
 
 
 def main():
-    with open("src/data/character_zh.json", encoding="utf-8") as f:
-        data = json.load(f)
+    data = {}
+    for path in CHAR_ZH_PATHS:
+        if path.exists():
+            with open(path, encoding="utf-8") as f:
+                data.update(json.load(f))
 
     # Dictionary mapping char_id to the minimum constellation required to become a healer
     explicit_healers = {
@@ -167,7 +175,8 @@ def main():
     lines.append("};")
     lines.append("")
 
-    with open("src/data/charInfo.ts", "w", encoding="utf-8") as f:
+    out_path = ROOT / "src" / "data" / "charInfo.ts"
+    with open(out_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
 

@@ -1,17 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  ErScalingBuff,
-  ScalingMultiBuff,
-  deduplicateBuffs,
-} from "@/lib/team-comp/damageBuffs";
-import {
-  ScalingBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StatSheet,
-  StaticSkillBuff,
-} from "@/lib/team-comp/damageModels";
+import { ErScalingBuff, deduplicateBuffs } from "@/lib/team-comp/damageBuffs";
+import { ScalingBuff, StatBuff, StatSheet } from "@/lib/team-comp/damageModels";
 
 describe("StatBuff", () => {
   it("base StatBuff has no dynamic buffs", () => {
@@ -22,26 +12,6 @@ describe("StatBuff", () => {
     );
     expect(buff.staticBuffs).toHaveLength(1);
     expect(buff.dynamicBuffs(new StatSheet([]), [])).toHaveLength(0);
-  });
-});
-
-describe("StaticSkillBuff", () => {
-  it("resolves entries based on constellation level", () => {
-    const buffC0 = new StaticSkillBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "self" },
-      0,
-      (c) => [{ key: "cr", value: c >= 2 ? 0.2 : 0.15 }]
-    );
-    expect(buffC0.staticBuffs[0]!.value).toBeCloseTo(0.15);
-
-    const buffC2 = new StaticSkillBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "self" },
-      2,
-      (c) => [{ key: "cr", value: c >= 2 ? 0.2 : 0.15 }]
-    );
-    expect(buffC2.staticBuffs[0]!.value).toBeCloseTo(0.2);
   });
 });
 
@@ -94,46 +64,6 @@ describe("ScalingBuff", () => {
     expect(buff.inputKey).toBe("em");
     expect(buff.outputKey).toBe("pyro%");
     expect(buff.cap).toBeCloseTo(0.2);
-  });
-});
-
-describe("ScalingSkillBuff", () => {
-  it("resolves scale/cap from constellation", () => {
-    const buff = new ScalingSkillBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "onField" },
-      [],
-      "hp",
-      "atk",
-      0,
-      (c) => ({ scale: c >= 3 ? 0.0626 : 0.0556, cap: 4000 })
-    );
-    const stats = new StatSheet([
-      { key: "baseHp", value: 15000 },
-      { key: "hp%", value: 0.466 },
-      { key: "hp", value: 4780 },
-    ]);
-    const dynamic = buff.dynamicBuffs(stats);
-
-    // HP = 15000 × (1 + 0.466) + 4780 = 26770
-    // ATK bonus = 26770 × 0.0556 = 1488.41, under cap
-    expect(dynamic[0]!.key).toBe("atk");
-    expect(dynamic[0]!.value).toBeCloseTo(1488.41, 0);
-  });
-
-  it("exposes inputKey, outputKey, cap as readonly", () => {
-    const buff = new ScalingSkillBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "onField" },
-      [],
-      "hp",
-      "atk",
-      0,
-      () => ({ scale: 0.05, cap: 3000 })
-    );
-    expect(buff.inputKey).toBe("hp");
-    expect(buff.outputKey).toBe("atk");
-    expect(buff.cap).toBe(3000);
   });
 });
 
@@ -214,65 +144,6 @@ describe("ErScalingBuff", () => {
     // ER over base: 5.0 - 1.0 = 4.0
     // Raw ATK% = 4.0 × 0.28 = 1.12, capped to 0.80
     expect(dynamic[0]!.value).toBeCloseTo(0.8);
-  });
-});
-
-describe("ScalingMultiBuff", () => {
-  it("scales one input into multiple outputs", () => {
-    // Pattern: Kazuha A4 — EM × 0.04% → all 7 elemental DMG%
-    const buff = new ScalingMultiBuff(
-      { type: "character", id: "kaedehara_kazuha", origin: "A4" },
-      { receiver: "team" },
-      [],
-      "em",
-      ["pyro%", "hydro%", "electro%", "cryo%", "anemo%", "geo%", "dendro%"],
-      0.0004
-    );
-
-    const stats = new StatSheet([{ key: "em", value: 800 }]);
-    const dynamic = buff.dynamicBuffs(stats);
-
-    // 800 × 0.0004 = 0.32 for each element
-    expect(dynamic).toHaveLength(7);
-    for (const entry of dynamic) {
-      expect(entry.value).toBeCloseTo(0.32);
-    }
-    expect(dynamic[0]!.key).toBe("pyro%");
-    expect(dynamic[6]!.key).toBe("dendro%");
-  });
-
-  it("respects cap", () => {
-    const buff = new ScalingMultiBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "team" },
-      [],
-      "em",
-      ["pyro%", "hydro%"],
-      0.001,
-      0.4 // cap
-    );
-
-    const stats = new StatSheet([{ key: "em", value: 800 }]);
-    const dynamic = buff.dynamicBuffs(stats);
-
-    // 800 × 0.001 = 0.8, capped to 0.4
-    expect(dynamic).toHaveLength(2);
-    expect(dynamic[0]!.value).toBeCloseTo(0.4);
-    expect(dynamic[1]!.value).toBeCloseTo(0.4);
-  });
-
-  it("exposes inputKey and cap as readonly", () => {
-    const buff = new ScalingMultiBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "team" },
-      [],
-      "em",
-      ["pyro%"],
-      0.001,
-      0.5
-    );
-    expect(buff.inputKey).toBe("em");
-    expect(buff.cap).toBe(0.5);
   });
 });
 

@@ -8,14 +8,14 @@ import type { ArtifactHalfSet } from "@/data/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 type MixedSetTooltipProps =
-  | { id1: number; id2: number }
+  | { id1: string | number; id2: string | number }
   | { set1: string; set2: string };
 
 export function MixedSetTooltip(props: MixedSetTooltipProps) {
   const { t } = useLanguage();
 
-  let id1: number;
-  let id2: number;
+  let id1: string | number;
+  let id2: string | number;
 
   if ("set1" in props) {
     id1 = artifactIdToHalfSetId[props.set1];

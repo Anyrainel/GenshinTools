@@ -243,7 +243,7 @@ export default function ArtifactBuildsPage() {
       {
         key: "import",
         icon: Upload,
-        label: t.ui("app.import"),
+        label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
         tourStepId: "af-presets",
@@ -251,13 +251,13 @@ export default function ArtifactBuildsPage() {
       {
         key: "export",
         icon: Download,
-        label: t.ui("app.export"),
+        label: t.ui("export.action"),
         onTrigger: handleExportTrigger,
       },
       {
         key: "clear",
         icon: Trash2,
-        label: t.ui("app.clear"),
+        label: t.ui("common.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
       {

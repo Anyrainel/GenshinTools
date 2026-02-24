@@ -1,11 +1,19 @@
+import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  sortedWeaponSecondaryStats,
+  getSortedWeaponSecondaryStats,
   sortedWeapons,
   weaponResourcesByName,
 } from "@/data/constants";
-import type { MainStat, Rarity, Weapon, WeaponType } from "@/data/types";
+import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
+import type {
+  MainStat,
+  Rarity,
+  WeaponResource,
+  WeaponType,
+} from "@/data/types";
 import { weaponTypes } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { fuzzyMatch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
@@ -17,6 +25,7 @@ import { WeaponCard } from "./WeaponCard";
 // ─── Filter Chips ─────────────────────────────────────────────────────────────
 
 function WeaponFilterChips({
+  sortedWeaponSecondaryStats,
   weaponTypeFilter,
   onToggleWeaponType,
   rarityFilter,
@@ -24,6 +33,7 @@ function WeaponFilterChips({
   secondaryStatFilter,
   onToggleSecondaryStat,
 }: {
+  sortedWeaponSecondaryStats: MainStat[];
   weaponTypeFilter: WeaponType[];
   onToggleWeaponType: (wt: WeaponType) => void;
   rarityFilter: Rarity[];
@@ -110,7 +120,7 @@ function WeaponTypeSection({
   onToggle,
 }: {
   type: WeaponType;
-  weapons: Weapon[];
+  weapons: WeaponResource[];
   isOpen: boolean;
   onToggle: () => void;
 }) {
@@ -170,6 +180,11 @@ function WeaponTypeSection({
 
 export function WeaponArchiveView() {
   const { t } = useLanguage();
+  const { weaponStats } = useGameStats();
+  const sortedWeaponSecondaryStats = useMemo(
+    () => getSortedWeaponSecondaryStats(weaponStats ?? null),
+    [weaponStats]
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
   const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
@@ -190,22 +205,25 @@ export function WeaponArchiveView() {
     const query = searchQuery.trim();
 
     const filtered = sortedWeapons.filter((weapon) => {
-      if (rarityFilter.length > 0 && !rarityFilter.includes(weapon.rarity))
+      const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
+      if (rarityFilter.length > 0 && !rarityFilter.includes(meta.rarity))
         return false;
       if (
         secondaryStatFilter.length > 0 &&
-        !secondaryStatFilter.includes(weapon.secondaryStat)
+        (meta.secondaryStat == null ||
+          !secondaryStatFilter.includes(meta.secondaryStat))
       )
         return false;
       if (
         weaponTypeFilter.length > 0 &&
-        !weaponTypeFilter.includes(weapon.type)
+        (meta.type == null || !weaponTypeFilter.includes(meta.type))
       )
         return false;
       if (query) {
         const lowerQuery = query.toLowerCase();
         const name = t.weaponName(weapon.id);
-        const statLabel = t.statShort(weapon.secondaryStat);
+        const statLabel =
+          meta.secondaryStat != null ? t.statShort(meta.secondaryStat) : "";
         const effect = t.weaponEffect(weapon.id);
         if (
           !fuzzyMatch(query, name) &&
@@ -218,7 +236,7 @@ export function WeaponArchiveView() {
       return true;
     });
 
-    const grouped: Record<WeaponType, Weapon[]> = {
+    const grouped: Record<WeaponType, WeaponResource[]> = {
       Sword: [],
       Claymore: [],
       Polearm: [],
@@ -227,11 +245,19 @@ export function WeaponArchiveView() {
     };
 
     for (const weapon of filtered) {
-      grouped[weapon.type].push(weapon);
+      const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
+      if (meta.type != null) grouped[meta.type].push(weapon);
     }
 
     return grouped;
-  }, [searchQuery, rarityFilter, secondaryStatFilter, weaponTypeFilter, t]);
+  }, [
+    searchQuery,
+    rarityFilter,
+    secondaryStatFilter,
+    weaponTypeFilter,
+    weaponStats,
+    t,
+  ]);
 
   const toggleSection = (type: WeaponType) => {
     setOpenSections((prev) => ({
@@ -263,15 +289,18 @@ export function WeaponArchiveView() {
     weaponTypeFilter.length > 0 ? weaponTypeFilter : weaponTypes;
 
   return (
-    <div className="space-y-4 pb-8">
-      {/* Toolbar with search + filter chips */}
-      <div className="pb-4">
+    <HeaderScrollLayout
+      className="h-full"
+      headerClassName="py-4"
+      bodyClassName="space-y-4 pb-8"
+      header={
         <ArchiveToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder={t.ui("archive.weaponSearchPlaceholder")}
         >
           <WeaponFilterChips
+            sortedWeaponSecondaryStats={sortedWeaponSecondaryStats}
             weaponTypeFilter={weaponTypeFilter}
             onToggleWeaponType={toggleWeaponType}
             rarityFilter={rarityFilter}
@@ -280,9 +309,8 @@ export function WeaponArchiveView() {
             onToggleSecondaryStat={toggleSecondaryStat}
           />
         </ArchiveToolbar>
-      </div>
-
-      {/* Weapon sections */}
+      }
+    >
       {visibleTypes.map((type) => (
         <WeaponTypeSection
           key={type}
@@ -292,6 +320,6 @@ export function WeaponArchiveView() {
           onToggle={() => toggleSection(type)}
         />
       ))}
-    </div>
+    </HeaderScrollLayout>
   );
 }

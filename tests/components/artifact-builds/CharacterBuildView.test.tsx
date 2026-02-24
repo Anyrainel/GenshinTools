@@ -1,5 +1,5 @@
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
-import type { Character } from "@/data/types";
+import type { CharacterResource } from "@/data/types";
 import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -110,8 +110,8 @@ vi.mock("@/lib/characterFilters", () => ({
 describe("CharacterBuildView", () => {
   beforeEach(() => {
     vi.mocked(filterAndSortCharacters).mockReturnValue([
-      { id: "char1", element: "Pyro" } as unknown as Character,
-      { id: "char2", element: "Hydro" } as unknown as Character,
+      { id: "char1", element: "Pyro" } as unknown as CharacterResource,
+      { id: "char2", element: "Hydro" } as unknown as CharacterResource,
     ]);
   });
 

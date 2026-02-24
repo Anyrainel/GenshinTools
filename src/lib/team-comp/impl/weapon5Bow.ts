@@ -52,14 +52,11 @@ class TheFirstGreatMagic extends WeaponBase {
 class TheDaybreakChronicles extends WeaponBase {
   // Stirring Dawn Breeze: max cap NA/E/Q DMG bonus (reachable out-of-combat or via stacking)
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.6, 0.75, 0.9, 1.05, 1.2]),
-      },
-      { key: "dmg%", value: r(this.refinement, [0.6, 0.75, 0.9, 1.05, 1.2]) },
-      { key: "dmg%", value: r(this.refinement, [0.6, 0.75, 0.9, 1.05, 1.2]) },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["normal", "skill", "burst"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.6, 0.75, 0.9, 1.05, 1.2]) }]
+    ),
   ];
 }
 
@@ -135,17 +132,29 @@ class ThunderingPulse extends WeaponBase {
 
 @RegisterWeapon("polar_star")
 class PolarStar extends WeaponBase {
-  // 4-stack Ashen Nightstar
+  // 4-stack Ashen Nightstar: Skill+Burst DMG% + ATK%
   readonly buffs = [
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
     new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
       { key: "atk%", value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]) },
     ]),
   ];

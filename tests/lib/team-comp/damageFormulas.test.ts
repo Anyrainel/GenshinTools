@@ -65,7 +65,8 @@ describe("DirectFormula", () => {
     const dp = formula.display(stats, 90, CTX);
 
     expect(dp.statValues.atk).toBeCloseTo(1500);
-    expect(dp.statValues["pyro%"]).toBeCloseTo(0.466);
+    // Elemental DMG is stored as dmg% with element filter; display shows combined dmg%
+    expect(dp.statValues["dmg%"]).toBeCloseTo(0.466);
     expect(dp.statValues.cr).toBeCloseTo(0.65);
     expect(dp.statValues.cd).toBeCloseTo(1.7);
   });

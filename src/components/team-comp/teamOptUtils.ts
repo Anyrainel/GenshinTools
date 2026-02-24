@@ -37,7 +37,7 @@ export function detectEquippedSets(artifacts: ArtifactData[]): DetectedSets {
       .slice(0, 2)
       .map((setKey) => {
         const hsId = artifactIdToHalfSetId[setKey];
-        return hsId != null ? String(hsId) : "";
+        return hsId ?? "";
       })
       .filter(Boolean);
     return { artifactSetId: null, artifactHalfSetIds: halfSetIds };
@@ -48,7 +48,7 @@ export function detectEquippedSets(artifacts: ArtifactData[]): DetectedSets {
     const hsId = artifactIdToHalfSetId[twoPcSets[0]];
     return {
       artifactSetId: null,
-      artifactHalfSetIds: hsId != null ? [String(hsId)] : [],
+      artifactHalfSetIds: hsId != null ? [hsId] : [],
     };
   }
 
@@ -137,10 +137,7 @@ export function buildTeamConfigs(
         if (artConfig.type === "4pc") {
           artifactSetId = artConfig.setId;
         } else if (artConfig.type === "2pc+2pc") {
-          artifactHalfSetIds = [
-            artConfig.id1.toString(),
-            artConfig.id2.toString(),
-          ];
+          artifactHalfSetIds = [String(artConfig.id1), String(artConfig.id2)];
         }
       }
     }

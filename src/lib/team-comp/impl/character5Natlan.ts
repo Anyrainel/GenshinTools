@@ -1,11 +1,5 @@
 import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -122,11 +116,10 @@ class Varesa extends CharacterBase {
 class Citlali extends CharacterBase {
   readonly buffs = [
     // P1: After Frozen/Melt, enemies' Pyro/Hydro RES -20% (C2: -40%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "P1", ["E"]),
-      { receiver: "onField", filter: { elements: ["Pyro", "Hydro"] } },
-      this.constellation,
-      (c) => [{ key: "resReduction%", value: c >= 2 ? 0.4 : 0.2 }]
+      { receiver: "team", filter: { elements: ["Pyro", "Hydro"] } },
+      [{ key: "resReduction%", value: this.constellation >= 2 ? 0.4 : 0.2 }]
     ),
     // P2: EM → baseDmg for Frostfall Storm (skill, 90% EM)
     new ScalingBuff(
@@ -147,38 +140,31 @@ class Citlali extends CharacterBase {
       12.0
     ),
     // C2: Self EM +125, team (shielded/followed) EM +250
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "self" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "em", value: 125 }] : [])
+      this.constellation >= 2 ? [{ key: "em", value: 125 }] : []
     ),
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "em", value: 250 }] : [])
+      this.constellation >= 2 ? [{ key: "em", value: 250 }] : []
     ),
     // C6: 40 stacks → team Pyro/Hydro DMG +60%, self DMG +100%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
-      {
-        receiver: "team",
-      },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "pyro%", value: 0.6 },
-              { key: "hydro%", value: 0.6 },
-            ]
-          : []
+      { receiver: "team" },
+      this.constellation >= 6
+        ? [
+            { key: "pyro%", value: 0.6 },
+            { key: "hydro%", value: 0.6 },
+          ]
+        : []
     ),
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 1.0 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 1.0 }] : []
     ),
   ];
 
@@ -247,10 +233,11 @@ class Citlali extends CharacterBase {
 @RegisterCharacter("mavuika")
 class Mavuika extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [
-      // P1: After Nightsoul Burst, self ATK +30%
+    const qLvl = this.constellation >= 3 ? 13 : 10;
+    const buffs: StatBuff[] = [
+      // P1: After nearby party member triggers Nightsoul Burst, self ATK +30%
       new StatBuff(
-        cbs(this, "P1", ["nightsoul"]),
+        cbs(this, "P1", ["nightsoul-burst"]),
         { receiver: "selfOnField" },
         [{ key: "atk%", value: 0.3 }]
       ),
@@ -262,16 +249,49 @@ class Mavuika extends CharacterBase {
           value: this.constellation >= 4 ? 0.5 : 0.4,
         },
       ]),
+      // Q: FS bonus to Sunfell Slice (200 × 2.9%/3.4% ATK, scales with Q talent)
+      new ScalingBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        [],
+        "atk",
+        "baseDmg",
+        qLvl === 13 ? 6.8 : 5.8
+      ),
+      // Q: FS bonus to Flamestrider Normal Attacks (200 × 0.51%/0.62% ATK)
+      new ScalingBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [],
+        "atk",
+        "baseDmg",
+        qLvl === 13 ? 1.24 : 1.02
+      ),
+      // Q: FS bonus to Flamestrider Charged Attacks (200 × 1.02%/1.24% ATK)
+      new ScalingBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        [],
+        "atk",
+        "baseDmg",
+        qLvl === 13 ? 2.48 : 2.04
+      ),
     ];
+
     // C1: ATK +40% after gaining Fighting Spirit
     if (this.constellation >= 1) {
       buffs.push(
-        new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.4 },
-        ])
+        new StatBuff(
+          cbs(this, "C1", ["fighting-spirit"]),
+          { receiver: "selfOnField" },
+          [{ key: "atk%", value: 0.4 }]
+        )
       );
     }
-    // C2: Base ATK +200, Ring form → enemy DEF -20%
+
+    // C2: Base ATK +200 (both forms)
+    // Ring form: nearby enemy DEF -20% (enemy debuff → team receiver)
+    // Flamestrider form: N1/CA/Sunfell DMG += 60%/90%/120% ATK as baseDmg
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
@@ -279,38 +299,66 @@ class Mavuika extends CharacterBase {
         ])
       );
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          { key: "defReduction%", value: 0.2 },
+        ])
+      );
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+          [],
+          "atk",
+          "baseDmg",
+          0.6
+        )
+      );
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+          [],
+          "atk",
+          "baseDmg",
+          0.9
+        )
+      );
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          [],
+          "atk",
+          "baseDmg",
+          1.2
+        )
+      );
+    }
+
+    // C6: Flamestrider summons Scorching Ring → nearby enemy DEF -20%
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
           { key: "defReduction%", value: 0.2 },
         ])
       );
     }
+
     return buffs;
   })();
 
   // Q Sunfell Slice: Lv10 800.6%, Lv13 (C3+) 945.2%
-  // + Fighting Spirit bonus: 200 × 2.9%/3.4% ATK = 580%/680% extra baseDmg
+  // FS and C2 ATK bonuses are applied as baseDmg ScalingBuffs (see buffs above)
   protected readonly formulaMap = (() => {
     const eLvl = this.constellation >= 5 ? 13 : 10;
     const qLvl = this.constellation >= 3 ? 13 : 10;
 
-    let sunfellMult = qLvl === 13 ? 9.452 : 8.006;
-    let n1Mult = eLvl === 13 ? 1.372 : 1.132;
-    let caMult = eLvl === 13 ? 3.296 : 2.72;
+    const sunfellMult = qLvl === 13 ? 9.452 : 8.006;
+    const n1Mult = eLvl === 13 ? 1.372 : 1.132;
+    // CA: Cyclic (Lv10 195.5%, Lv13 236.9%) + Final (Lv10 272%, Lv13 329.6%)
+    const caCyclicMult = eLvl === 13 ? 2.369 : 1.955;
+    const caFinalMult = eLvl === 13 ? 3.296 : 2.72;
     const sprintMult = eLvl === 13 ? 1.936 : 1.598;
-
-    const sunfellFs = qLvl === 13 ? 6.8 : 5.8;
-    const nFs = qLvl === 13 ? 1.24 : 1.02;
-    const caFs = qLvl === 13 ? 2.48 : 2.04;
-
-    sunfellMult += sunfellFs;
-    n1Mult += nFs;
-    caMult += caFs;
-
-    if (this.constellation >= 2) {
-      sunfellMult += 1.2;
-      n1Mult += 0.6;
-      caMult += 0.9;
-    }
 
     return {
       "mavuika-sunfell": {
@@ -336,7 +384,14 @@ class Mavuika extends CharacterBase {
             }),
           },
           {
-            formula: new DirectFormula(caMult, {
+            formula: new DirectFormula(caCyclicMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(caFinalMult, {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -362,6 +417,7 @@ class Chasca extends CharacterBase {
     const eligible = new Set<string>();
     for (const [id, el] of Object.entries(this.teamMeta.elements)) {
       if (
+        el != null &&
         id !== this.charId &&
         ["Pyro", "Hydro", "Cryo", "Electro"].includes(el)
       )
@@ -379,11 +435,10 @@ class Chasca extends CharacterBase {
       [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.eligibleTypes] }]
     ),
     // C6: After Spiritbinding Conversion, Shining Shell CD +120%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 1.2 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 1.2 }] : []
     ),
   ];
 
@@ -463,12 +518,9 @@ class Xilonen extends CharacterBase {
     const buffs: StatBuff[] = [
       // E: Source Samples — RES shred
       // -36% RES at Lv10, -42.5% at Lv13 (C3+)
-      new StaticSkillBuff(
-        cbs(this, "E", ["E"]),
-        { receiver: "team" },
-        this.constellation,
-        (c) => [{ key: "resReduction%", value: c >= 3 ? 0.425 : 0.36 }]
-      ),
+      new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
+        { key: "resReduction%", value: this.constellation >= 3 ? 0.425 : 0.36 },
+      ]),
       // P1: Fewer than 2 samples → Normal/Plunge DMG +30%
       new StatBuff(
         cbs(this, "P1", ["A1"]),
@@ -537,58 +589,28 @@ class Xilonen extends CharacterBase {
   })();
 
   // E Blade Roller N4 (Lv10): 110.7 + 108.8 + 130.1 + 170.1 = 519.7% DEF
-  // E Rush DMG (Lv10): 322.6% DEF
-  // E Rush DMG (Lv13 C3+): 380.8% DEF
-  // Q Lv10: 506.3% DEF
-  // Q Lv13 C5+: 597.7% DEF
+  // C6 unlocks on-field DPS rotation; formula is only shown at C6+
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 3.808 : 3.226;
-    const qMult = this.constellation >= 5 ? 5.977 : 5.063;
     return {
-      "xilonen-normal": {
-        label: { zh: "A 刃轮巡猎·全套四闪", en: "A Blade Roller N4 Combo" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              5.197, // N4 doesn't scale with constellations up to C6
-              { element: "Geo", ability: "normal", reaction: "none" },
-              "def"
-            ),
-          },
-        ],
-      },
-      "xilonen-skill": {
-        label: { zh: "E 音火锻淬·突进伤害", en: "E Yohual's Scratch (Rush)" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eMult,
-              {
-                element: "Geo",
-                ability: "skill",
-                reaction: "none",
+      ...(this.constellation >= 6
+        ? {
+            "xilonen-normal": {
+              label: {
+                zh: "A 刃轮巡猎·全套四闪",
+                en: "A Blade Roller N4 Combo",
               },
-              "def"
-            ),
-          },
-        ],
-      },
-      "xilonen-burst": {
-        label: { zh: "Q 豹烈律动", en: "Q Ocelotlicue Point!" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              qMult,
-              {
-                element: "Geo",
-                ability: "burst",
-                reaction: "none",
-              },
-              "def"
-            ),
-          },
-        ],
-      },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    5.197, // N4 doesn't scale with constellations up to C6
+                    { element: "Geo", ability: "normal", reaction: "none" },
+                    "def"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -597,11 +619,10 @@ class Xilonen extends CharacterBase {
 class Mualani extends CharacterBase {
   readonly buffs = [
     // C4: Q DMG +75%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "dmg%", value: 0.75 }] : [])
+      this.constellation >= 4 ? [{ key: "dmg%", value: 0.75 }] : []
     ),
   ];
 
@@ -617,31 +638,13 @@ class Mualani extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              biteMult,
               {
                 element: "Hydro",
                 ability: "normal",
                 reaction: "none",
               },
-              "atk",
-              { key: "hp", multiplier: biteMult }
-            ),
-          },
-        ],
-      },
-      "mualani-bite-vape": {
-        label: { zh: "A 巨浪撕咬(蒸发)", en: "A Surging Bite (Vape)" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              0,
-              {
-                element: "Hydro",
-                ability: "normal",
-                reaction: "vaporize",
-              },
-              "atk",
-              { key: "hp", multiplier: biteMult }
+              "hp"
             ),
           },
         ],
@@ -651,14 +654,13 @@ class Mualani extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              burstMult,
               {
                 element: "Hydro",
                 ability: "burst",
                 reaction: "none",
               },
-              "atk",
-              { key: "hp", multiplier: burstMult }
+              "hp"
             ),
           },
         ],
@@ -670,13 +672,11 @@ class Mualani extends CharacterBase {
 @RegisterCharacter("kinich")
 class Kinich extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof ScalingBuff | typeof StaticSkillBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: After Nightsoul Burst, Hunter's Experience ×2 → +640% ATK as baseDmg to Scalespiker
       // We model the ATK scaling as a ScalingBuff applied to self Skill
       new ScalingBuff(
-        cbs(this, "P2", ["nightsoul"]),
+        cbs(this, "P2", ["nightsoul-burst"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [],
         "atk",
@@ -684,18 +684,16 @@ class Kinich extends CharacterBase {
         6.4 // 320% × 2 stacks = 640% of ATK
       ),
       // C1: Scalespiker Cannon CD +100%
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C1", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation,
-        (c) => (c >= 1 ? [{ key: "cd", value: 1.0 }] : [])
+        this.constellation >= 1 ? [{ key: "cd", value: 1.0 }] : []
       ),
       // C2: Dendro RES -30% on E hit
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C2", ["E"]),
-        { receiver: "onField", filter: { elements: ["Dendro"] } },
-        this.constellation,
-        (c) => (c >= 2 ? [{ key: "resReduction%", value: 0.3 }] : [])
+        { receiver: "team", filter: { elements: ["Dendro"] } },
+        this.constellation >= 2 ? [{ key: "resReduction%", value: 0.3 }] : []
       ),
     ];
     return buffs;

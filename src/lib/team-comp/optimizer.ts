@@ -1,14 +1,11 @@
 import { artifactIdToHalfSetId } from "@/data/constants";
-import type {
-  ArtifactData,
-  GlobalStatWeights,
-  Slot,
-  StatWeightMap,
-  SubStat,
-} from "@/data/types";
+import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
+import { allSlots } from "@/data/types";
 import {
-  calculateAttributeScore,
-  getFixedMainStatValue,
+  type BuildMatchResult,
+  getTargetMainStatsForSlot,
+  scoreMainStat,
+  scoreSlot,
 } from "../account-data/artifactScore";
 import type { TeamBuild } from "./damageCalc";
 import { StatSheet } from "./damageModels";
@@ -20,7 +17,7 @@ export interface OptimizerOptions {
   formulaId: string;
   targetEr: number; // e.g. 1.2 for 120%
   inventory: ArtifactData[];
-  weights: StatWeightMap;
+  buildMatch: BuildMatchResult;
   globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>; // Sheets for other 3 chars
   calcContext: CalcContext;
@@ -43,32 +40,21 @@ export interface OptimizationResult {
   done: boolean;
 }
 
-const ALL_SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
-
 function scorePiece(
   art: ArtifactData,
-  weights: StatWeightMap,
+  buildMatch: BuildMatchResult,
   globalConfig: GlobalStatWeights
 ): number {
-  let score = 0;
-  const mainStatVal = getFixedMainStatValue(art.mainStatKey, art.rarity);
-  score += calculateAttributeScore(
-    art.mainStatKey,
-    mainStatVal,
-    weights,
-    globalConfig
-  ).score;
+  let score = scoreSlot(art, buildMatch.statWeights, globalConfig);
 
-  if (art.substats) {
-    for (const [k, v] of Object.entries(art.substats)) {
-      score += calculateAttributeScore(
-        k as SubStat,
-        v,
-        weights,
-        globalConfig
-      ).score;
-    }
+  // Add main stat contribution when it matches the build recommendation.
+  // scoreMainStat uses w=1 (fully recommended); callers are responsible for
+  // only invoking this for recommended main stats.
+  const recommended = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
+  if (recommended.has(art.mainStatKey)) {
+    score += scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
   }
+
   return score;
 }
 
@@ -81,7 +67,7 @@ export async function* runOptimization(
     formulaId,
     targetEr,
     inventory,
-    weights,
+    buildMatch,
     globalConfig,
     baseSheets,
     calcContext,
@@ -101,7 +87,7 @@ export async function* runOptimization(
     circlet: [],
   };
 
-  for (const slot of ALL_SLOTS) {
+  for (const slot of allSlots) {
     const slotArts = inventory.filter((a) => a.slotKey === slot);
 
     // Apply strict set filtering if 4pc is required
@@ -112,15 +98,13 @@ export async function* runOptimization(
     // If we only take topN, we might discard the only 4pc piece! Let's score sets artificially higher?
     // Actually, simple solution for now: sort unconditionally.
     const withScore = slotArts.map((art) => {
-      let score = scorePiece(art, weights, globalConfig);
+      let score = scorePiece(art, buildMatch, globalConfig);
       // Boost score if it matches a required set to ensure it's not pruned
       if (artifactSetId && art.setKey === artifactSetId) score += 10000;
       if (
         artifactHalfSetIds &&
         artifactIdToHalfSetId[art.setKey] !== undefined &&
-        artifactHalfSetIds.includes(
-          artifactIdToHalfSetId[art.setKey].toString()
-        )
+        artifactHalfSetIds.includes(artifactIdToHalfSetId[art.setKey])
       ) {
         score += 10000;
       }
@@ -200,7 +184,7 @@ export async function* runOptimization(
             let matchesSet = true;
             if (artifactSetId) {
               let count = 0;
-              for (const slot of ALL_SLOTS) {
+              for (const slot of allSlots) {
                 if (piecesRec[slot].setKey === artifactSetId) count++;
               }
               if (count < 4) matchesSet = false;
@@ -212,12 +196,14 @@ export async function* runOptimization(
               artifactHalfSetIds.length === 2
             ) {
               const halfSetCounts = new Map<string, number>();
-              for (const slot of ALL_SLOTS) {
+              for (const slot of allSlots) {
                 const setKey = piecesRec[slot].setKey;
                 const halfSetId = artifactIdToHalfSetId[setKey];
                 if (halfSetId != null) {
-                  const sid = halfSetId.toString();
-                  halfSetCounts.set(sid, (halfSetCounts.get(sid) ?? 0) + 1);
+                  halfSetCounts.set(
+                    halfSetId,
+                    (halfSetCounts.get(halfSetId) ?? 0) + 1
+                  );
                 }
               }
               const [h1, h2] = artifactHalfSetIds;

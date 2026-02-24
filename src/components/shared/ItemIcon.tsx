@@ -8,6 +8,7 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   rarity?: Rarity;
   badge?: string | number; // Top Left - Constellation/Refinement/AstralMark (e.g. "1", "⭐")
   lock?: boolean; // Top Right - Show red lock icon when true
+  elementBadge?: string; // Top Right - Element image path (mutually exclusive with lock)
   level?: string; // Bottom bar - e.g. "Lv. 90", "+20"
   size?: ItemIconSize; // Predefined sizes
   children?: React.ReactNode;
@@ -102,6 +103,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       rarity = 1,
       badge,
       lock,
+      elementBadge,
       level,
       size = "lg",
       children,
@@ -124,6 +126,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
 
     const showBadge = badge !== undefined;
     const showLock = lock;
+    const showElement = !!elementBadge && !showLock;
     const showLevel = !!level;
 
     // Calculate total height (icon + visible level bar portion)
@@ -157,9 +160,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           borderTopLeftRadius: showBadge
             ? corner.containerRadius
             : borderRadius,
-          borderTopRightRadius: showLock
-            ? corner.containerRadius
-            : borderRadius,
+          borderTopRightRadius:
+            showLock || showElement ? corner.containerRadius : borderRadius,
           borderBottomRightRadius: borderRadius,
           borderBottomLeftRadius: borderRadius,
         }}
@@ -209,6 +211,31 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
             }}
           >
             {badge}
+          </div>
+        )}
+
+        {/* Element badge - top right (alternative to lock) */}
+        {showElement && (
+          <div
+            className="absolute flex items-center justify-center bg-black/60 shadow-sm"
+            style={{
+              width: corner.size,
+              height: corner.size,
+              top: corner.offset,
+              right: corner.offset,
+              borderRadius: corner.radius,
+            }}
+          >
+            <img
+              src={getAssetUrl(elementBadge)}
+              alt="element"
+              style={{
+                width: corner.lockIconSize,
+                height: corner.lockIconSize,
+              }}
+              className="object-contain"
+              draggable={false}
+            />
           </div>
         )}
         {children}

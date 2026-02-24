@@ -33,8 +33,21 @@ def match_items[T: BaseItemSource](
     items_zh: Sequence[T],
     item_type: Literal["character", "artifact", "weapon"] = "character",
     scraper: HoyolabScraper | None = None,
+    by_position: bool = False,
 ) -> list[MatchedItem[T]]:
-    """Match items across languages using entry ID and validate consistency"""
+    """Match items across languages using entry ID and validate consistency.
+
+    When by_position=True, items are matched by index order instead of entry_id.
+    Use this when entry IDs were not fetched (lean/no-details mode).
+    """
+    if by_position:
+        if len(items_en) != len(items_zh):
+            print(
+                f"Warning: {item_type} EN ({len(items_en)}) and ZH ({len(items_zh)}) "
+                "counts differ; extra items in the longer list are skipped."
+            )
+        return [MatchedItem(en=en, zh=zh) for en, zh in zip(items_en, items_zh, strict=True)]
+
     matched_items: list[MatchedItem[T]] = []
 
     # Build lookup maps
@@ -195,12 +208,19 @@ def process_characters(
     fandom_data: dict[tuple[str, int, str], fandom.CharacterData],
     existing_characters: dict[str, dict[str, Any]],
     scraper: HoyolabScraper | None = None,
+    details: bool = True,
 ) -> tuple[list[CharacterOutput], dict[str, dict[str, str]], list[MatchedItem[CharacterSource]]]:
-    enriched_characters_en = enrich_character_data_with_fandom(
-        characters_en, fandom_data, existing_characters
-    )
-
-    matched_characters = match_items(enriched_characters_en, characters_zh, "character", scraper)
+    if details:
+        enriched_characters_en = enrich_character_data_with_fandom(
+            characters_en, fandom_data, existing_characters
+        )
+        matched_characters = match_items(
+            enriched_characters_en, characters_zh, "character", scraper
+        )
+    else:
+        matched_characters = match_items(
+            characters_en, characters_zh, "character", by_position=True
+        )
 
     final_characters: list[CharacterOutput] = []
     i18n_chars: dict[str, dict[str, str]] = {}
@@ -267,8 +287,11 @@ def process_artifacts(
     artifacts_en: list[ArtifactSource],
     artifacts_zh: list[ArtifactSource],
     scraper: HoyolabScraper | None = None,
+    details: bool = True,
 ) -> tuple[list[ArtifactOutput], dict[str, I18nArtifactData], list[MatchedItem[ArtifactSource]]]:
-    matched_artifacts = match_items(artifacts_en, artifacts_zh, "artifact", scraper)
+    matched_artifacts = match_items(
+        artifacts_en, artifacts_zh, "artifact", scraper, by_position=not details
+    )
 
     final_artifacts: list[ArtifactOutput] = []
     i18n_artifacts: dict[str, I18nArtifactData] = {}
@@ -314,8 +337,11 @@ def process_weapons(
     weapons_zh: list[WeaponSource],
     existing_weapons: dict[str, dict[str, Any]],
     scraper: HoyolabScraper | None = None,
+    details: bool = True,
 ) -> tuple[list[WeaponOutput], dict[str, dict[str, Any]], list[MatchedItem[WeaponSource]]]:
-    matched_weapons = match_items(weapons_en, weapons_zh, "weapon", scraper)
+    matched_weapons = match_items(
+        weapons_en, weapons_zh, "weapon", scraper, by_position=not details
+    )
 
     final_weapons: list[WeaponOutput] = []
     i18n_weapons: dict[str, dict[str, Any]] = {}

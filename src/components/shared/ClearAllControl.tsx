@@ -52,7 +52,7 @@ export const ClearAllControl = forwardRef<ControlHandle, ClearAllControlProps>(
         ? {
             title: t.ui("resetConfirmDialog.title"),
             description: t.ui("resetConfirmDialog.message"),
-            action: t.ui("resetConfirmDialog.confirm"),
+            action: t.ui("common.reset"),
           }
         : {
             title: t.ui("configure.clearAllConfirmTitle"),

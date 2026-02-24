@@ -111,11 +111,17 @@ const getArtifactCode = (build: Build): number => {
   }
 
   if (build.composition === "2pc+2pc") {
-    const h1 = build.halfSet1 ?? 0;
-    const h2 = build.halfSet2 ?? 0;
-    const sorted = [h1, h2].sort((a, b) => a - b);
-    // 2 + 2 digits + 2 digits (assumes halfSetId <= 99)
-    return 20000 + (sorted[0] % 100) * 100 + (sorted[1] % 100);
+    const h1 = String(build.halfSet1 ?? "");
+    const h2 = String(build.halfSet2 ?? "");
+    const sorted = [h1, h2].sort();
+    // Deterministic hash from string pair
+    const hash = (s: string) => {
+      let h = 0;
+      for (let i = 0; i < s.length; i++)
+        h = (h * 31 + s.charCodeAt(i)) & 0xffff;
+      return h;
+    };
+    return 20000 + (hash(sorted[0]) % 100) * 100 + (hash(sorted[1]) % 100);
   }
 
   return 0; // Fallback

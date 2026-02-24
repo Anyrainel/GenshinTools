@@ -114,16 +114,26 @@ class TheDockhands_assistant extends WeaponBase {
 class WolfFang extends WeaponBase {
   // E/Q DMG% (always) + 4-stack Skill CR + 4-stack Burst CR (separate)
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
     new StatBuff(
       wbs(this, ["E"]),
       { receiver: "self", filter: { abilities: ["skill"] } },

@@ -1,21 +1,6 @@
-import {
-  ScalingBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
-import {
-  AmplifyFormula,
-  CatalyzeFormula,
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-} from "../damageModels";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { CatalyzeFormula, DirectFormula } from "../damageFormulas";
+import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
 // ═══════════════════════════════════════════════════════════════
@@ -35,7 +20,7 @@ class Escoffier extends CharacterBase {
       // P2: Hydro/Cryo RES shred based on # Hydro+Cryo in party
       new StatBuff(
         cbs(this, "P2", ["E", "Q"]),
-        { receiver: "onField", filter: { elements: ["Hydro", "Cryo"] } },
+        { receiver: "team", filter: { elements: ["Hydro", "Cryo"] } },
         [{ key: "resReduction%", value: shred }]
       ),
     ];
@@ -54,7 +39,7 @@ class Escoffier extends CharacterBase {
       buffs.push(
         new ScalingBuff(
           cbs(this, "C2", ["E"]),
-          { receiver: "onField", filter: { elements: ["Cryo"] } },
+          { receiver: "otherOnField", filter: { elements: ["Cryo"] } },
           [],
           "atk",
           "baseDmg",
@@ -65,23 +50,31 @@ class Escoffier extends CharacterBase {
     return buffs;
   })();
 
-  // E: Frosty Parfait Lv10: 216.0%, Lv13 (C3+): 255.0%, ~6 ticks over 20s
+  // E: Skill cast Lv10: 90.7%, Lv13 (C3+): 107.1%
+  // E: Frosty Parfait Lv10: 216.0%, Lv13 (C3+): 255.0%, 21 ticks over 20s
   // Q: Scoring Cuts Lv10: 1067.0%, Lv13 (C5+): 1259.7%
-  // C6: Special Parfait 500% ATK ×6 (skill DMG)
   protected readonly formulaMap = (() => {
+    const skillCastMult = this.constellation >= 3 ? 1.071 : 0.907;
     const parfaitMult = this.constellation >= 3 ? 2.55 : 2.16;
     const qMult = this.constellation >= 5 ? 12.597 : 10.67;
-    const formulas: Record<string, FormulaEntry> = {
+    const skillTag = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    return {
       "escoffier-skill-parfait": {
-        label: { zh: "E 冻霜芭菲连击", en: "E Frosty Parfait Ticks (×6)" },
+        label: {
+          zh: "E 技能释放+21次冻霜芭菲",
+          en: "E Skill Cast + Frosty Parfait (×21)",
+        },
         parts: [
           {
-            formula: new DirectFormula(parfaitMult, {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
-            hits: 6,
+            formula: new DirectFormula(skillCastMult, skillTag),
+          },
+          {
+            formula: new DirectFormula(parfaitMult, skillTag),
+            hits: 21,
           },
         ],
       },
@@ -98,32 +91,13 @@ class Escoffier extends CharacterBase {
         ],
       },
     };
-    // C6: Special-Grade Frosty Parfait 500% ATK ×6
-    if (this.constellation >= 6) {
-      formulas["escoffier-c6-parfait"] = {
-        label: { zh: "E 特级冻霜芭菲", en: "E C6 Special Parfait (×6)" },
-        parts: [
-          {
-            formula: new DirectFormula(5.0, {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
-            hits: 6,
-          },
-        ],
-      };
-    }
-    return formulas;
   })();
 }
 
 @RegisterCharacter("emilie")
 class Emilie extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof StaticSkillBuff | typeof ScalingBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: vs Burning enemies, per 1000 ATK → DMG +15% (cap 36%)
       new ScalingBuff(
         cbs(this, "P2", []),
@@ -135,29 +109,33 @@ class Emilie extends CharacterBase {
         0.36
       ),
       // C1: E and P1 Cleardew DMG +20%
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C1", ["E"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation,
-        (c) => (c >= 1 ? [{ key: "dmg%", value: 0.2 }] : [])
+        this.constellation >= 1 ? [{ key: "dmg%", value: 0.2 }] : []
       ),
       // C2: E/Q/Cleardew hit → enemies' Dendro RES -30%
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C2", ["E", "Q"]),
-        { receiver: "onField", filter: { elements: ["Dendro"] } },
-        this.constellation,
-        (c) => (c >= 2 ? [{ key: "resReduction%", value: 0.3 }] : [])
+        { receiver: "team", filter: { elements: ["Dendro"] } },
+        this.constellation >= 2 ? [{ key: "resReduction%", value: 0.3 }] : []
       ),
-      // C6: After E/Q, Normal/Charged become Dendro + baseDmg from ATK ×300%
-      new StaticSkillBuff(
-        cbs(this, "C6", ["E"]),
-        {
-          receiver: "selfOnField",
-          filter: { abilities: ["normal", "charge"] },
-        },
-        this.constellation,
-        (c) => (c >= 6 ? [{ key: "baseDmg%", value: 3.0 }] : [])
-      ),
+      // C6: After E/Q, Normal/Charged become Dendro + flat baseDmg from ATK ×300%
+      ...(this.constellation >= 6
+        ? [
+            new ScalingBuff(
+              cbs(this, "C6", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { abilities: ["normal", "charge"] },
+              },
+              [],
+              "atk",
+              "baseDmg",
+              3.0
+            ),
+          ]
+        : []),
     ];
     return buffs;
   })();
@@ -278,7 +256,7 @@ class Sigewinne extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C2", ["E", "Q"]),
-          { receiver: "onField", filter: { elements: ["Hydro"] } },
+          { receiver: "team", filter: { elements: ["Hydro"] } },
           [{ key: "resReduction%", value: 0.35 }]
         )
       );
@@ -311,35 +289,18 @@ class Sigewinne extends CharacterBase {
     return buffs;
   })();
 
-  // E Bubble DMG Lv10: 4.10% HP × 5 bounces
-  // Lv13 (C3+): 4.84% HP × 5
+  // Q: Super Saturated Syringing Lv10: 21.2% HP, Lv13 (C5+): 25.0% HP
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 0.0484 : 0.041;
     const qMult = this.constellation >= 5 ? 0.25 : 0.212;
     return {
-      "sigewinne-skill": {
-        label: { zh: "E 激愈水球(×5)", en: "E Bolstering Bubblebalm (×5)" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              0,
-              { element: "Hydro", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: eMult }
-            ),
-            hits: 5,
-          },
-        ],
-      },
       "sigewinne-burst": {
         label: { zh: "Q伤害（命中6次）", en: "Q Super Saturated Syringing" },
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              qMult,
               { element: "Hydro", ability: "burst", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: qMult }
+              "hp"
             ),
             hits: 6,
           },
@@ -354,7 +315,7 @@ class Clorinde extends CharacterBase {
   readonly buffs = [
     // P1: After Electro reaction, +20% ATK (C2: 30%) × 3 stacks as baseDmg
     // on Normal ATK and Q Electro DMG
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "P1", ["E"]),
       {
         receiver: "selfOnField",
@@ -363,32 +324,28 @@ class Clorinde extends CharacterBase {
       [],
       "atk",
       "baseDmg",
-      this.constellation,
-      (c) => ({ scale: c >= 2 ? 0.9 : 0.6 })
+      this.constellation >= 2 ? 0.9 : 0.6
     ),
     // P2: BoL ≥100% + changes → CR +10% × 2 stacks = +20%
     new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
       { key: "cr", value: 0.2 },
     ]),
     // C4: Q DMG +2% per 1% BoL (max 200%) — at full BoL ~120%+
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "dmg%", value: 2.0 }] : [])
+      this.constellation >= 4 ? [{ key: "dmg%", value: 2.0 }] : []
     ),
     // C6: After E, +10% CR, +70% CD for 12s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.1 },
-              { key: "cd", value: 0.7 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.1 },
+            { key: "cd", value: 0.7 },
+          ]
+        : []
     ),
   ];
 
@@ -463,7 +420,7 @@ class Clorinde extends CharacterBase {
 @RegisterCharacter("navia")
 class Navia extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
     // P1: After E, self Normal/Charged/Plunge DMG +40%
     buffs.push(
       new StatBuff(
@@ -501,7 +458,7 @@ class Navia extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C4", ["Q"]),
-          { receiver: "onField", filter: { elements: ["Geo"] } },
+          { receiver: "team", filter: { elements: ["Geo"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )
       );
@@ -557,23 +514,21 @@ class Furina extends CharacterBase {
     // Q: Let the People Rejoice — team DMG% based on Fanfare stacks
     // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
     // Max stacks: 300 (C1: 400). Assume ~250 stacks in practice.
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => {
-        const perStack = c >= 3 ? 0.0031 : 0.0025;
-        const maxStacks = c >= 1 ? 400 : 300;
+      (() => {
+        const perStack = this.constellation >= 3 ? 0.0031 : 0.0025;
+        const maxStacks = this.constellation >= 1 ? 400 : 300;
         const avgStacks = Math.min(250, maxStacks);
         return [{ key: "dmg%", value: perStack * avgStacks }];
-      }
+      })()
     ),
     // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", []),
       { receiver: "self" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "hp%", value: 1.4 }] : [])
+      this.constellation >= 2 ? [{ key: "hp%", value: 1.4 }] : []
     ),
   ];
 
@@ -620,7 +575,7 @@ class Furina extends CharacterBase {
 @RegisterCharacter("neuvillette")
 class Neuvillette extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
 
     const canP1React =
       this.teamMeta.hasReaction("vaporize") ||
@@ -679,10 +634,9 @@ class Neuvillette extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              tickMult,
               { element: "Hydro", ability: "charge", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: tickMult }
+              "hp"
             ),
             hits: 10,
           },
@@ -795,7 +749,7 @@ class Wriothesley extends CharacterBase {
 @RegisterCharacter("lyney")
 class Lyney extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
     // P2: DMG to Pyro-affected enemies +60%, +20% per Pyro teammate (excl self), cap 100%
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
@@ -817,7 +771,7 @@ class Lyney extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C4", ["charge"]),
-          { receiver: "onField", filter: { elements: ["Pyro"] } },
+          { receiver: "team", filter: { elements: ["Pyro"] } },
           [{ key: "resReduction%", value: 0.2 }]
         )
       );
@@ -865,18 +819,6 @@ class Lyney extends CharacterBase {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
-            }),
-          },
-        ],
-      },
-      "lyney-prop-vape": {
-        label: { zh: "A 隐具魔术箭(蒸发)", en: "A Prop Arrow (Vape)" },
-        parts: [
-          {
-            formula: new DirectFormula(propMult, {
-              element: "Pyro",
-              ability: "charge",
-              reaction: "vaporize",
             }),
           },
         ],

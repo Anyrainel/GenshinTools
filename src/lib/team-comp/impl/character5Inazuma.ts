@@ -1,11 +1,4 @@
-import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -49,12 +42,15 @@ class YumemizukiMizuki extends CharacterBase {
     if (this.constellation >= 2) {
       // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to team
       buffs.push(
-        new ScalingMultiBuff(
+        new ScalingBuff(
           cbs(this, "C2", ["E"]),
-          { receiver: "team" },
+          {
+            receiver: "team",
+            filter: { elements: ["Pyro", "Hydro", "Cryo", "Electro"] },
+          },
           [],
           "em",
-          ["pyro%", "hydro%", "cryo%", "electro%"],
+          "dmg%",
           0.0004
         )
       );
@@ -76,82 +72,36 @@ class YumemizukiMizuki extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    const eLevel = this.constellation >= 3 ? 13 : 10;
-    const qLevel = this.constellation >= 5 ? 13 : 10;
-
-    const eInitialMult = eLevel === 13 ? 1.227 : 1.039;
-    const eTickMult = eLevel === 13 ? 0.954 : 0.808;
-
-    const qInitialMult = qLevel === 13 ? 1.999 : 1.693;
-    const qShockwaveMult = qLevel === 13 ? 1.499 : 1.27;
+    const eTickMult = this.constellation >= 3 ? 0.954 : 0.808;
+    const canSwirl = this.teamMeta.hasReaction("swirl");
 
     return {
-      "mizuki-skill-initial": {
-        label: {
-          zh: "E 秋沙歌枕巡礼(爆发伤害)",
-          en: "E Aisa Utamakura Pilgrimage (Initial)",
-        },
-        parts: [
-          {
-            formula: new DirectFormula(eInitialMult, {
-              element: "Anemo",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "mizuki-skill-tick": {
-        label: { zh: "E 梦浮(持续伤害)", en: "E Dreamdrifter (Tick)" },
-        parts: [
-          {
-            formula: new DirectFormula(eTickMult, {
-              element: "Anemo",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "mizuki-burst-initial": {
-        label: {
-          zh: "Q 安乐秘汤疗法(爆发)",
-          en: "Q Anraku Secret Spring Therapy (Initial)",
-        },
-        parts: [
-          {
-            formula: new DirectFormula(qInitialMult, {
-              element: "Anemo",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "mizuki-burst-shockwave": {
-        label: { zh: "Q 梦念冲击波", en: "Q Munen Shockwave" },
-        parts: [
-          {
-            formula: new DirectFormula(qShockwaveMult, {
-              element: "Anemo",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "mizuki-swirl": {
-        label: { zh: "E 扩散反应", en: "E Swirl" },
-        parts: [
-          {
-            formula: new TransformFormula(1.0, {
-              element: "Anemo",
-              ability: "skill", // or "burst" etc
-              reaction: "swirl",
-            }),
-          },
-        ],
-      },
+      ...(canSwirl
+        ? {
+            "mizuki-skill-swirl": {
+              label: {
+                zh: "E 梦浮持续攻击+一次扩散伤害",
+                en: "E Dreamdrifter Tick + Swirl",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(eTickMult, {
+                    element: "Anemo",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                },
+                {
+                  formula: new TransformFormula(1.0, {
+                    element: "Anemo",
+                    ability: "skill",
+                    reaction: "swirl",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -164,14 +114,13 @@ class Chiori extends CharacterBase {
       { key: "geo%", value: 0.2 },
     ]),
     // C6: Normal ATK baseDmg +235% DEF (additive, not formula dual-scaling)
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
       [],
       "def",
       "baseDmg",
-      this.constellation,
-      (c) => ({ scale: c >= 6 ? 2.35 : 0 })
+      this.constellation >= 6 ? 2.35 : 0
     ),
   ];
 
@@ -185,9 +134,6 @@ class Chiori extends CharacterBase {
     const sweepDef = this.constellation >= 3 ? 3.97 : 3.36;
     // C6 Normal Attack: 5 hits total, 459% ATK total at Lv10. We average the mult per hit so 'hits: 5' applies baseDmg 5 times.
     const naTotalArg = 4.59 / 5;
-    // Burst: Lv10 461% ATK + 577% DEF, C5+: 545% ATK + 681% DEF
-    const qAtk = this.constellation >= 5 ? 5.45 : 4.61;
-    const qDef = this.constellation >= 5 ? 6.81 : 5.77;
 
     return {
       "chiori-sweep": {
@@ -237,19 +183,6 @@ class Chiori extends CharacterBase {
             },
           }
         : {}),
-      "chiori-burst": {
-        label: { zh: "Q 二刀之形", en: "Q Twin Blades" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              qAtk,
-              { element: "Geo", ability: "burst", reaction: "none" },
-              "atk",
-              { key: "def", multiplier: qDef }
-            ),
-          },
-        ],
-      },
     };
   })();
 }
@@ -257,9 +190,7 @@ class Chiori extends CharacterBase {
 @RegisterCharacter("raiden_shogun")
 class RaidenShogun extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof StaticSkillBuff | typeof ScalingBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: Each 1% ER above 100% → 0.4% Electro DMG Bonus
       new ScalingBuff(
         cbs(this, "P2", []),
@@ -273,14 +204,13 @@ class RaidenShogun extends CharacterBase {
       ),
       // E: Team Burst DMG bonus based on energy cost (0.3%/0.36% per energy)
       // Assume average 70 energy cost Q
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "E", ["E"]),
         { receiver: "onField", filter: { abilities: ["burst"] } },
-        this.constellation,
-        (c) => {
-          const pctPerEnergy = c >= 5 ? 0.0036 : 0.003;
+        (() => {
+          const pctPerEnergy = this.constellation >= 5 ? 0.0036 : 0.003;
           return [{ key: "dmg%", value: pctPerEnergy * 70 }];
-        }
+        })()
       ),
     ];
     // C2: Q attacks ignore 60% DEF
@@ -353,14 +283,13 @@ class AratakiItto extends CharacterBase {
   readonly buffs = [
     // Q: Royal Descent — DEF → ATK conversion
     // Lv10: 103.7% DEF → ATK, Lv13 (C5+): 122.4% DEF → ATK
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "def",
       "atk",
-      this.constellation,
-      (c) => ({ scale: c >= 5 ? 1.224 : 1.037 })
+      this.constellation >= 5 ? 1.224 : 1.037
     ),
     // P2: Arataki Kesagiri DMG +35% of DEF → flat baseDmg on charge
     new ScalingBuff(
@@ -372,24 +301,21 @@ class AratakiItto extends CharacterBase {
       0.35
     ),
     // C4: After Q ends, team +20% DEF, +20% ATK for 10s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) =>
-        c >= 4
-          ? [
-              { key: "def%", value: 0.2 },
-              { key: "atk%", value: 0.2 },
-            ]
-          : []
+      this.constellation >= 4
+        ? [
+            { key: "def%", value: 0.2 },
+            { key: "atk%", value: 0.2 },
+          ]
+        : []
     ),
     // C6: Charged ATK CD +70%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 0.7 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 0.7 }] : []
     ),
     // P1: Kesagiri ATK SPD (assume max +30%)
     new StatBuff(
@@ -459,26 +385,26 @@ class AratakiItto extends CharacterBase {
 class KamisatoAyaka extends CharacterBase {
   readonly buffs = [
     // P2: After E, Normal/Charged DMG +30% for 6s
-    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
-      { key: "dmg%", value: 0.3 },
-    ]),
+    new StatBuff(
+      cbs(this, "P2", ["E"]),
+      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
+      [{ key: "dmg%", value: 0.3 }]
+    ),
     // P3: After alternate sprint hit, Cryo DMG +18%
     new StatBuff(cbs(this, "P3", ["dash"]), { receiver: "selfOnField" }, [
       { key: "cryo%", value: 0.18 },
     ]),
     // C4: Enemies hit by Q: DEF -30% for 6s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
-      { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "defReduction%", value: 0.3 }] : [])
+      { receiver: "team" },
+      this.constellation >= 4 ? [{ key: "defReduction%", value: 0.3 }] : []
     ),
     // C6: Charged ATK DMG +298% every 10s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 2.98 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 2.98 }] : []
     ),
   ];
 
@@ -621,7 +547,7 @@ class SangonomiyaKokomi extends CharacterBase {
     ),
     // Q: Nereid's Ascension — HP → baseDmg for Normal/Charged
     // Lv10: 10.63% HP, Lv13 (C3+): 12.55% HP
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       {
         receiver: "selfOnField",
@@ -630,15 +556,13 @@ class SangonomiyaKokomi extends CharacterBase {
       [],
       "hp",
       "baseDmg",
-      this.constellation,
-      (c) => ({ scale: c >= 3 ? 0.1255 : 0.1063 })
+      this.constellation >= 3 ? 0.1255 : 0.1063
     ),
     // C6: Q heal on 80%+ HP → Hydro DMG +40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "hydro%", value: 0.4 }] : [])
+      this.constellation >= 6 ? [{ key: "hydro%", value: 0.4 }] : []
     ),
   ];
 
@@ -659,16 +583,15 @@ class KaedeharaKazuha extends CharacterBase {
       0.0004
     ),
     // C2: Q field grants 200 EM to the party
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "em", value: 200 }] : [])
+      this.constellation >= 2 ? [{ key: "em", value: 200 }] : []
     ),
   ];
 
   // E press: Lv10 346%, Lv13 (C3+) 408%
-  // Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
+  // C6 High Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
   // Q slash: Lv10 472%, Lv13 (C5+) 558% + DoT Lv10 216%, Lv13 (C5+) 255% ×5
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.08 : 3.46;
@@ -687,18 +610,22 @@ class KaedeharaKazuha extends CharacterBase {
           },
         ],
       },
-      "kazuha-plunge": {
-        label: { zh: "A 乱岚拨止", en: "A Midare Ranzan (Plunge)" },
-        parts: [
-          {
-            formula: new DirectFormula(4.04, {
-              element: "Anemo",
-              ability: "plunge",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
+      ...(this.constellation >= 6
+        ? {
+            "kazuha-plunge-c6": {
+              label: { zh: "C6 高空下落攻击伤害", en: "C6 High Plunge" },
+              parts: [
+                {
+                  formula: new DirectFormula(4.04, {
+                    element: "Anemo",
+                    ability: "plunge",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
       "kazuha-burst": {
         label: { zh: "Q 万叶之一刀", en: "Q Kazuha Slash + DoT (×5)" },
         parts: [
@@ -770,9 +697,6 @@ class Yoimiya extends CharacterBase {
     // C6: 50% chance of an extra blazing arrow dealing 60% DMG = average +30% motion value
     const c6AvgProd = this.constellation >= 6 ? 1.3 : 1.0;
 
-    const qInitialMult = this.constellation >= 5 ? 2.7 : 2.29;
-    const qExplosionMult = this.constellation >= 5 ? 2.59 : 2.2;
-
     return {
       "yoimiya-normal": {
         label: {
@@ -808,52 +732,6 @@ class Yoimiya extends CharacterBase {
               ability: "normal",
               reaction: "none",
             }),
-          },
-        ],
-      },
-      "yoimiya-burst": {
-        label: {
-          zh: "Q 琉金云间草(爆发+2次爆炸)",
-          en: "Q Ryuukin Saxifrage (Initial + 2 Explosions)",
-        },
-        parts: [
-          {
-            formula: new DirectFormula(qInitialMult, {
-              element: "Pyro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(qExplosionMult, {
-              element: "Pyro",
-              ability: "burst",
-              reaction: "none",
-            }),
-            hits: 2,
-          },
-        ],
-      },
-      "yoimiya-burst-vape": {
-        label: {
-          zh: "Q 琉金云间草(次次蒸发)",
-          en: "Q Ryuukin Saxifrage (All Vapes)",
-        },
-        parts: [
-          {
-            formula: new AmplifyFormula(qInitialMult, {
-              element: "Pyro",
-              ability: "burst",
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(qExplosionMult, {
-              element: "Pyro",
-              ability: "burst",
-              reaction: "vaporize",
-            }),
-            hits: 2,
           },
         ],
       },

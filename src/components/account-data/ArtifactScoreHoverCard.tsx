@@ -11,15 +11,15 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import { type Slot, allSlots } from "@/data/types";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { Check, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 interface ArtifactScoreHoverCardProps {
-  score: BuildAwareScoreResult;
+  score: ArtifactScoreResult;
   characterId: string;
   className?: string;
   compact?: boolean;
@@ -90,7 +90,7 @@ export function ArtifactScoreHoverCard({
 
   // Show warning icon when scored using a non-matching artifact set
   const hasSetMismatch =
-    score.matchedBuild != null && score.matchedBuild.setMatched === false;
+    score.buildMatch != null && score.buildMatch.setMatched === false;
 
   const TriggerContent = (
     <>
@@ -103,7 +103,7 @@ export function ArtifactScoreHoverCard({
         />
       )}
       <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm pr-[2px]">
-        {score.subScore.toFixed(0)}
+        {score.substatScore.subScore.toFixed(0)}
       </span>
     </>
   );
@@ -167,14 +167,14 @@ export function ArtifactScoreHoverCard({
 }
 
 interface ArtifactScoreContentProps {
-  artifactScore: BuildAwareScoreResult;
+  artifactScore: ArtifactScoreResult;
   characterId: string;
 }
 
 /** Format the build's artifact set name for display */
-function useBuildSetLabel(score: BuildAwareScoreResult): string | null {
+function useBuildSetLabel(score: ArtifactScoreResult): string | null {
   const { t } = useLanguage();
-  const build = score.matchedBuild?.build;
+  const build = score.buildMatch?.build;
   if (!build) return null;
 
   if (build.composition === "4pc" && build.artifactSet) {
@@ -197,8 +197,7 @@ function ArtifactScoreContent({
   const { t } = useLanguage();
   const buildSetLabel = useBuildSetLabel(artifactScore);
   const hasSetMismatch =
-    artifactScore.matchedBuild != null &&
-    !artifactScore.matchedBuild.setMatched;
+    artifactScore.buildMatch != null && !artifactScore.buildMatch.setMatched;
 
   return (
     <div className="flex flex-col gap-4">
@@ -228,7 +227,7 @@ function ArtifactScoreContent({
               {t.ui("computeFilters.subStat")}:
             </span>
             <span className="text-amber-200">
-              {artifactScore.subScore.toFixed(1)}
+              {artifactScore.substatScore.subScore.toFixed(1)}
             </span>
           </span>
         </div>
@@ -238,7 +237,7 @@ function ArtifactScoreContent({
       <div className="grid grid-cols-[auto_repeat(5,auto)] gap-y-2 gap-x-4 text-base">
         {/* Header Row */}
         <div />
-        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => (
+        {allSlots.map((slot) => (
           <div
             key={slot}
             className="text-center text-sm text-slate-400 truncate px-1"
@@ -251,13 +250,13 @@ function ArtifactScoreContent({
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.mainStat")}
         </div>
-        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
+        {allSlots.map((slot) => {
           const isMainStat = ["sands", "goblet", "circlet"].includes(slot);
           const isEquipped =
-            artifactScore.slotMaxSubScores[slot as Slot] !== undefined;
+            artifactScore.substatScore.slotMaxSubScores[slot as Slot] > 0;
 
           // If it's a flower/plume, or slot is empty, or no build matched (cant judge)
-          if (!isMainStat || !isEquipped || !artifactScore.matchedBuild) {
+          if (!isMainStat || !isEquipped || !artifactScore.buildMatch) {
             return (
               <div key={slot} className="text-center text-slate-600">
                 -
@@ -265,10 +264,9 @@ function ArtifactScoreContent({
             );
           }
 
-          const hasMismatch =
-            artifactScore.matchedBuild.mainStatMismatches.some(
-              (m) => m.slot === slot
-            );
+          const hasMismatch = artifactScore.buildMatch.mainStatMismatches.some(
+            (m) => m.slot === slot
+          );
 
           if (hasMismatch) {
             return (
@@ -289,9 +287,9 @@ function ArtifactScoreContent({
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
           {t.ui("computeFilters.subStat")}
         </div>
-        {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
-          const subScore = artifactScore.slotSubScores[slot];
-          const maxScore = artifactScore.slotMaxSubScores[slot];
+        {allSlots.map((slot) => {
+          const subScore = artifactScore.substatScore.slotSubScores[slot];
+          const maxScore = artifactScore.substatScore.slotMaxSubScores[slot];
           const percent =
             maxScore && maxScore > 0 ? (subScore ?? 0) / maxScore : 0;
 
@@ -333,11 +331,8 @@ function ArtifactScoreContent({
           </tr>
         </thead>
         <tbody>
-          {Object.entries(artifactScore.statScores)
-            .filter(
-              ([, data]) =>
-                (data.mainValue > 0 || data.subValue > 0) && data.weight > 0
-            )
+          {Object.entries(artifactScore.substatScore.statScores)
+            .filter(([, data]) => data.subValue > 0 && data.weight > 0)
             .sort((a, b) => {
               if (b[1].weight !== a[1].weight) {
                 return b[1].weight - a[1].weight;

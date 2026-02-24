@@ -1,4 +1,4 @@
-import { ScalingMultiBuff, StatBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
 import { r, wbs } from "../helpers";
 
@@ -24,16 +24,26 @@ class AThousandBlazingSuns extends WeaponBase {
 class FangOfTheMountainKing extends WeaponBase {
   // 6-stack Canopy's Favor: max E Skill + E Burst DMG
   readonly buffs = [
-    new StatBuff(wbs(this, ["E", "burning"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 6 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
-      },
-      {
-        key: "dmg%",
-        value: 6 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["E", "burning"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: 6 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["E", "burning"]),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [
+        {
+          key: "dmg%",
+          value: 6 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -73,12 +83,12 @@ class RedhornStonethresher extends WeaponBase {
         value: r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
       },
     ]),
-    new ScalingMultiBuff(
+    new ScalingBuff(
       wbs(this),
-      { receiver: "self" },
+      { receiver: "self", filter: { abilities: ["normal", "charge"] } },
       [],
       "def",
-      ["baseDmg", "baseDmg"],
+      "baseDmg",
       r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
     ),
   ];

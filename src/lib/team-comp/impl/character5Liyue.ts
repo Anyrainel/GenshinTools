@@ -1,11 +1,4 @@
-import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -84,7 +77,7 @@ class Zibai extends CharacterBase {
     const n2 = 0.938;
     const n3 = 0.622; // x2
     const n4 = 1.569;
-    const n4Gleam = 0.53; // Reaction DMG
+    const n4Gleam = 0.53; // Reaction DMG — only with Moonsign: Ascendant Gleam (满辉)
 
     const steed1 = eLevel === 13 ? 3.666 : 3.106;
     let steed2 = eLevel === 13 ? 2.996 : 2.537;
@@ -98,6 +91,9 @@ class Zibai extends CharacterBase {
 
     const q1 = qLevel === 13 ? 2.698 : 2.285;
     const q2 = qLevel === 13 ? 3.777 : 3.199;
+
+    // Moonsign: Ascendant Gleam (满辉) requires 2+ Nod-Krai characters
+    const hasAscendantGleam = this.teamMeta.countByRegion("Nod-Krai") >= 2;
 
     return {
       "zibai-e-combo": {
@@ -113,17 +109,21 @@ class Zibai extends CharacterBase {
               "def"
             ),
           },
-          {
-            formula: new DirectFormula(
-              n4Gleam,
-              {
-                element: "Geo",
-                ability: "normal",
-                reaction: "lunarCrystallize",
-              },
-              "def"
-            ),
-          },
+          ...(hasAscendantGleam
+            ? [
+                {
+                  formula: new DirectFormula(
+                    n4Gleam,
+                    {
+                      element: "Geo",
+                      ability: "normal",
+                      reaction: "lunarCrystallize",
+                    },
+                    "def"
+                  ),
+                },
+              ]
+            : []),
         ],
       },
       "zibai-steed": {
@@ -297,21 +297,19 @@ class Baizhu extends CharacterBase {
       0.35
     ),
     // C4: After Q, team EM +80 for 15s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 80 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 80 }] : []
     ),
     // C6: Spiritvein DMG +8% Max HP
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
       [],
       "hp",
       "baseDmg",
-      this.constellation,
-      (c) => ({ scale: c >= 6 ? 0.08 : 0 })
+      this.constellation >= 6 ? 0.08 : 0
     ),
   ];
 
@@ -367,10 +365,9 @@ class Yelan extends CharacterBase {
     return buffs;
   })();
 
-  // Breakthrough Barb DMG Lv10: 20.84% Max HP
   // E Skill DMG Lv10: 40.7% Max HP, Lv13 (C5+): 48.1% Max HP
-  // Q Initial DMG Lv10: 13.15% Max HP, Lv13 (C3+): 15.53% Max HP
   // Q Throw DMG Lv10: 8.77% Max HP, Lv13 (C3+): 10.35% Max HP
+  // C6 Mastermind Barb DMG: 20.84% × 156% = 32.51% Max HP (×5)
   protected readonly formulaMap = (() => {
     const qLevel = this.constellation >= 3 ? 13 : 10;
     const eLevel = this.constellation >= 5 ? 13 : 10;
@@ -379,22 +376,9 @@ class Yelan extends CharacterBase {
     const c6BarbMult = barbMult * 1.56;
 
     const eMult = eLevel === 13 ? 0.481 : 0.407;
-    const qInitialMult = qLevel === 13 ? 0.1553 : 0.1315;
     const qThrowMult = qLevel === 13 ? 0.1035 : 0.0877;
 
     const formulas: Record<string, FormulaEntry> = {
-      "yelan-barb": {
-        label: { zh: "A 破局矢伤害", en: "A Breakthrough Barb DMG" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              barbMult,
-              { element: "Hydro", ability: "charge", reaction: "none" },
-              "hp"
-            ),
-          },
-        ],
-      },
       "yelan-skill": {
         label: { zh: "E 萦络纵命索", en: "E Lingering Lifeline" },
         parts: [
@@ -402,18 +386,6 @@ class Yelan extends CharacterBase {
             formula: new DirectFormula(
               eMult,
               { element: "Hydro", ability: "skill", reaction: "none" },
-              "hp"
-            ),
-          },
-        ],
-      },
-      "yelan-burst": {
-        label: { zh: "Q 渊图玲珑骰(爆发)", en: "Q Depth-Clarion Dice" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              qInitialMult,
-              { element: "Hydro", ability: "burst", reaction: "none" },
               "hp"
             ),
           },
@@ -436,21 +408,6 @@ class Yelan extends CharacterBase {
         ],
       },
     };
-
-    if (this.constellation >= 2) {
-      formulas["yelan-c2"] = {
-        label: { zh: "额外的水箭(C2)", en: "C2 Additional Arrow" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              0.14,
-              { element: "Hydro", ability: "burst", reaction: "none" },
-              "hp"
-            ),
-          },
-        ],
-      };
-    }
 
     if (this.constellation >= 6) {
       formulas["yelan-c6-barb"] = {
@@ -491,14 +448,13 @@ class Xiao extends CharacterBase {
     ),
     // Q: Bane of All Evil — Normal/Charged/Plunge DMG Bonus
     // Lv10: 95.2%, Lv13 (C5+): 108.9%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "Q", ["Q"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "plunge"] },
       },
-      this.constellation,
-      (c) => [{ key: "dmg%", value: c >= 5 ? 1.089 : 0.952 }]
+      [{ key: "dmg%", value: this.constellation >= 5 ? 1.089 : 0.952 }]
     ),
   ];
 
@@ -532,59 +488,13 @@ class Zhongli extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    const eLevel = this.constellation >= 3 ? 13 : 10;
     const qLevel = this.constellation >= 5 ? 13 : 10;
-
-    const eSteleMult = eLevel === 13 ? 0.34 : 0.288;
-    const eResoMult = eLevel === 13 ? 0.68 : 0.576;
-    const eHoldMult = eLevel === 13 ? 1.7 : 1.44;
-
     const qMult = qLevel === 13 ? 10.84 : 9.0;
 
-    // P2: Dominance of Earth extra damage term based on HP
-    const eExtra = { key: "hp" as const, multiplier: 0.019 };
+    // P2: Dominance of Earth — Q DMG extra term based on HP (33% Max HP)
     const qExtra = { key: "hp" as const, multiplier: 0.33 };
 
     return {
-      "zhongli-skill-stele": {
-        label: { zh: "E 岩脊伤害", en: "E Stone Stele DMG" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eSteleMult,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              eExtra
-            ),
-          },
-        ],
-      },
-      "zhongli-skill-resonance": {
-        label: { zh: "E 共鸣伤害", en: "E Resonance DMG" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eResoMult,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              eExtra
-            ),
-          },
-        ],
-      },
-      "zhongli-skill-hold": {
-        label: { zh: "E 长按伤害", en: "E Hold E DMG" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eHoldMult,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              eExtra
-            ),
-          },
-        ],
-      },
       "zhongli-burst": {
         label: { zh: "Q 天星(包含炊金馔玉)", en: "Q Planet Befall (incl. P2)" },
         parts: [
@@ -626,21 +536,20 @@ class HuTao extends CharacterBase {
     const isLowHP = this.hpState === "low" || this.hpState === "1";
     const isC6Trigger = this.hpState === "1" && this.constellation >= 6;
 
-    const buffs: InstanceType<typeof StatBuff | typeof ScalingSkillBuff>[] = [
+    const buffs: StatBuff[] = [
       // P1: After E ends, team (excl. self) CR +12%
       new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
         { key: "cr", value: 0.12 },
       ]),
       // E: Guide to Afterlife — HP → ATK conversion
       // Lv10: 6.26% HP, Lv13 (C3+): 7.15% HP
-      new ScalingSkillBuff(
+      new ScalingBuff(
         cbs(this, "E", ["E"]),
         { receiver: "selfOnField" },
         [],
         "hp",
         "atk",
-        this.constellation,
-        (c) => ({ scale: c >= 3 ? 0.0715 : 0.0626 })
+        this.constellation >= 3 ? 0.0715 : 0.0626
       ),
     ];
 
@@ -666,11 +575,9 @@ class HuTao extends CharacterBase {
   })();
 
   // Charged ATK (Normal ATK talent, no constellation boost): Lv10 242.6%
-  // Blood Blossom: Lv10 115%, Lv13 (C3+) 136%
   // Q (low HP): Lv10 617%, Lv13 (C5+) 706%
   // Q (high HP): Lv10 494%, Lv13 (C5+) 565%
   protected readonly formulaMap = (() => {
-    const bbMult = this.constellation >= 3 ? 1.36 : 1.15;
     const isLowHP = this.hpState === "low" || this.hpState === "1";
 
     const qMultLv10 = isLowHP ? 6.17 : 4.94;
@@ -731,14 +638,13 @@ class Shenhe extends CharacterBase {
   readonly buffs = [
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
     // Lv10: 87.64% ATK, Lv13 (C3+): 103.5% ATK
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "E", ["E"]),
       { receiver: "onField", filter: { elements: ["Cryo"] } },
       [],
       "atk",
       "baseDmg",
-      this.constellation,
-      (c) => ({ scale: c >= 3 ? 1.035 : 0.8764 })
+      this.constellation >= 3 ? 1.035 : 0.8764
     ),
     // P1: Q field → on-field Cryo DMG +15%
     new StatBuff(
@@ -753,11 +659,10 @@ class Shenhe extends CharacterBase {
       [{ key: "dmg%", value: 0.15 }]
     ),
     // C2: Q field → Cryo CD +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["Q"]),
       { receiver: "onField", filter: { elements: ["Cryo"] } },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "cd", value: 0.15 }] : [])
+      this.constellation >= 2 ? [{ key: "cd", value: 0.15 }] : []
     ),
   ];
 
@@ -794,20 +699,18 @@ class Ganyu extends CharacterBase {
     new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
       { key: "cryo%", value: 0.2 },
     ]),
-    // C1: Cryo RES -15% on Frostflake hit for 6s
-    new StaticSkillBuff(
+    // C1: Cryo RES -15% on Frostflake hit for 6s (enemy debuff — benefits whole team)
+    new StatBuff(
       cbs(this, "C1", ["charge"]),
-      { receiver: "onField", filter: { elements: ["Cryo"] } },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "resReduction%", value: 0.15 }] : [])
+      { receiver: "team", filter: { elements: ["Cryo"] } },
+      this.constellation >= 1 ? [{ key: "resReduction%", value: 0.15 }] : []
     ),
     // C4: Opponents in Q field take increased DMG, ramps 5%→25%
     // Average ≈ 15% over Q duration
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "dmg%", value: 0.15 }] : [])
+      this.constellation >= 4 ? [{ key: "dmg%", value: 0.15 }] : []
     ),
   ];
 
@@ -844,7 +747,7 @@ class Ganyu extends CharacterBase {
 @RegisterCharacter("keqing")
 class Keqing extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [
+    const buffs: StatBuff[] = [
       // P2: After Q, self CR +15%, ER +15%
       new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "selfOnField" }, [
         { key: "cr", value: 0.15 },

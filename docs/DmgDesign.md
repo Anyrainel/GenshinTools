@@ -170,7 +170,6 @@ Reusable helpers for common patterns. All live in `damageBuffs.ts`.
 | `ScalingBuff` | Single input → single output, with optional cap and threshold | Hu Tao E (HP → ATK), Kazuha passive (EM → DMG%) |
 | `ScalingSkillBuff` | `ScalingBuff` where scale/cap vary by constellation | Hu Tao E at Lv10 vs Lv13 |
 | `ErScalingBuff` | ER-over-base → ATK% | Engulfing Lightning passive |
-| `ScalingMultiBuff` | Single input → multiple output keys | Peak Patrol Song (DEF → all 7 elemental DMG%) |
 
 `ScalingBuff` constructor: `(source, target, staticBuffs, inputKey, outputKey, scale, cap?, threshold?)`. The `threshold` subtracts from input before scaling (e.g. "HP above 30,000" → `threshold = 30000`).
 

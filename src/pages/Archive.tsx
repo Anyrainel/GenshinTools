@@ -3,7 +3,6 @@ import { CharacterArchiveView } from "@/components/archive/CharacterArchiveView"
 import { WeaponArchiveView } from "@/components/archive/WeaponArchiveView";
 import type { TabConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Book, Box, Sword } from "lucide-react";
 import { useMemo } from "react";
@@ -51,13 +50,9 @@ export default function ArchivePage() {
       {activeTab === "characters" ? (
         <CharacterArchiveView />
       ) : activeTab === "weapons" ? (
-        <ScrollLayout className="pb-8 mt-2">
-          <WeaponArchiveView />
-        </ScrollLayout>
+        <WeaponArchiveView />
       ) : (
-        <ScrollLayout className="pb-8 mt-2">
-          <ArtifactArchiveView />
-        </ScrollLayout>
+        <ArtifactArchiveView />
       )}
     </PageLayout>
   );

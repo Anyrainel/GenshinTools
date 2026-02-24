@@ -1,4 +1,11 @@
-import type { BaseStat, Element, MainStat, SubStat } from "@/data/types";
+import type {
+  BaseStat,
+  Element,
+  LunarReactionType,
+  MainStat,
+  ReactionType,
+  SubStat,
+} from "@/data/types";
 
 /**
  * All stat keys the engine tracks.
@@ -75,9 +82,11 @@ export type AbilityType =
 
 // ─── Damage Tags ───
 
+export type ElementalOrPhysical = Element | "Physical";
+
 /** Full damage context — one value per dimension. Required on every DamageFormula. */
 export type DamageTag = {
-  element: Element | "Physical";
+  element: ElementalOrPhysical;
   ability: AbilityType;
   reaction: ReactionType;
 };
@@ -89,7 +98,7 @@ export type DamageTag = {
  * Arrays must be sorted for deterministic serialization.
  */
 export type DamageTagFilter = {
-  elements?: (Element | "Physical")[];
+  elements?: ElementalOrPhysical[];
   abilities?: AbilityType[];
   reactions?: ReactionType[];
 };
@@ -125,41 +134,12 @@ export type BuffTarget = {
   filter?: DamageTagFilter;
 };
 
-// ─── Reactions ───
+// ─── Reactions (re-exported from @/data/types — canonical definitions live there) ───
 
-/**
- * Reaction type identifiers for multiplier lookup.
- * AmplifyByX indicates which element triggers the reaction (determines 1.5x vs 2.0x).
- */
-export type LunarReactionType =
-  | "lunarCharged" // 月感电
-  | "lunarBloom" // 月绽放
-  | "lunarCrystallize"; // 月结晶
-
-export type ReactionType =
-  | "none"
-  // Amplifying (coefficient derived from damage element)
-  | "melt" // 融化
-  | "vaporize" // 蒸发
-  // Additive (Catalyze)
-  | "quicken" // 原激化 (no damage)
-  | "spread" // 蔓激化
-  | "aggravate" // 超激化
-  // Transformative
-  | "overloaded" // 超载
-  | "electroCharged" // 感电
-  | "superconduct" // 超导
-  | "swirl" // 扩散
-  | "frozen" // 冻结
-  | "shatter" // 碎冰
-  | "bloom" // 绽放
-  | "hyperbloom" // 超绽放
-  | "burgeon" // 烈绽放
-  | "burning" // 燃烧
-  // Crystallize
-  | "crystallize" // 结晶
-  // Lunar
-  | LunarReactionType;
+export type {
+  LunarReactionType,
+  ReactionType,
+} from "@/data/types";
 
 // ─── Damage Results ───
 

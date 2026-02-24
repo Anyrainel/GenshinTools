@@ -1,3 +1,4 @@
+import { ArtifactScoreGlobalSettings } from "@/components/account-data/ArtifactScoreGlobalSettings";
 import { RecommendationCard } from "@/components/account-data/RecommendationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import {
   tiers,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Insight,
   generateAllInsights,
@@ -23,7 +24,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 interface RecommendationViewProps {
-  scores: Record<string, BuildAwareScoreResult>;
+  scores: Record<string, ArtifactScoreResult>;
 }
 
 export function RecommendationView({ scores }: RecommendationViewProps) {
@@ -34,12 +35,13 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
   const { config: scoreConfig } = useArtifactScoreStore();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Generate insights for all characters
+  // Generate insights from scores (weights + matchedBuild from same source as character view)
   const allInsights = useMemo(() => {
     if (!accountData) return {};
     const results = generateAllInsights(
       accountData,
-      scoreConfig,
+      scores,
+      scoreConfig.global,
       tierAssignments,
       tierCustomization
     );
@@ -50,7 +52,13 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
       },
       {} as Record<string, Insight[]>
     );
-  }, [accountData, scoreConfig, tierAssignments, tierCustomization]);
+  }, [
+    accountData,
+    scores,
+    scoreConfig.global,
+    tierAssignments,
+    tierCustomization,
+  ]);
 
   // Group characters by tier
   const charactersByTier = useMemo(() => {
@@ -58,7 +66,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
     const byTier: Record<
       string,
-      { char: CharacterData; scoreResult: BuildAwareScoreResult }[]
+      { char: CharacterData; scoreResult: ArtifactScoreResult }[]
     > = {};
     for (const tier of tiers) {
       byTier[tier] = [];
@@ -66,7 +74,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
     for (const char of accountData.characters) {
       const scoreResult = scores[char.key];
-      if (!scoreResult || !scoreResult.isComplete) continue;
+      if (!scoreResult || !scoreResult.substatScore.isComplete) continue;
 
       const assignment = tierAssignments[char.key];
       const tier = assignment ? assignment.tier : "Pool";
@@ -97,6 +105,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
   return (
     <ScrollLayout className="space-y-8 pb-10 mt-2">
+      <ArtifactScoreGlobalSettings />
       {tiers.map((tier) => {
         const customization = tierCustomization[tier];
         if (customization?.hidden) return null;

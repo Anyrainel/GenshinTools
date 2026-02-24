@@ -20,10 +20,34 @@ import type {
 import { loadCharacterKits } from "../lib/characterKitLoader";
 
 // Per-language JSON shape for weapon/artifact game data
-type WeaponGameEntry = { name: string; effect: string };
+type WeaponGameEntry = {
+  name: string;
+  descHtmlTpl: string;
+  refinements: string[][];
+};
 type ArtifactGameEntry = { name: string; effect2: string; effect4: string };
 type WeaponGameData = Record<string, WeaponGameEntry>;
 type ArtifactGameData = Record<string, ArtifactGameEntry>;
+
+/** Format a weapon template by substituting placeholders with combined refinement values. */
+function formatWeaponEffect(
+  tpl: string,
+  refinements: string[][],
+  refinement?: number
+): string {
+  if (!tpl || refinements.length === 0) return tpl;
+  // refinements: 5 lists (R1..R5), each with N values for {0}..{N-1}
+  const paramCount = refinements[0].length;
+  return tpl.replace(/\{(\d+)\}/g, (match, idx) => {
+    const i = Number(idx);
+    if (i >= paramCount) return match;
+    if (refinement !== undefined && refinement >= 1 && refinement <= 5) {
+      return refinements[refinement - 1][i];
+    }
+    // Combine all 5 refinement values: "20%/25%/30%/35%/40%"
+    return refinements.map((r) => r[i]).join("/");
+  });
+}
 
 // Lazy-loaded game data modules (weapon/artifact per-language JSONs)
 const weaponModules = import.meta.glob<WeaponGameData>(
@@ -42,7 +66,7 @@ interface LanguageContextType {
   t: {
     character: (id: string) => string;
     artifact: (id: string) => string;
-    artifactHalfSet: (id: number) => string;
+    artifactHalfSet: (id: string | number) => string;
     artifactEffects: (id: string) => string[];
     region: (key: string) => string;
     stat: (key: string) => string;
@@ -53,9 +77,11 @@ interface LanguageContextType {
     subStat: (key: string) => string;
     element: (key: string) => string;
     reaction: (key: string) => string;
+    resonance: (key: string) => string;
     weaponType: (type: string) => string;
     weaponName: (id: string) => string;
-    weaponEffect: (id: string) => string;
+    weaponEffect: (id: string, refinement?: number) => string;
+    weaponEffectHtml: (id: string, refinement?: number) => string;
     slot: (key: string) => string;
     style: (key: string) => string;
     role: (key: string) => string;
@@ -217,12 +243,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   const getArtifactHalfSetName = useCallback(
-    (id: number): string => {
+    (id: string | number): string => {
       const halfSets = i18nGameData.artifactHalfSets as Record<
         string,
         Record<string, string>
       >;
-      return halfSets?.[id.toString()]?.[language] || `Half Set ${id}`;
+      return halfSets?.[String(id)]?.[language] || `Half Set ${id}`;
     },
     [language]
   );
@@ -319,6 +345,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getResonanceName = useCallback(
+    (resonanceKey: string): string => {
+      const res = i18nAppData.resonances as Record<
+        string,
+        Record<string, string>
+      >;
+      return res[resonanceKey]?.[language] || resonanceKey;
+    },
+    [language]
+  );
+
   const getWeaponTypeName = useCallback(
     (weaponType: string): string => {
       const weaps = i18nAppData.weapons as Record<
@@ -342,8 +379,29 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   const getWeaponEffect = useCallback(
-    (weaponId: string): string => {
-      return weaponData[weaponId]?.effect || "";
+    (weaponId: string, refinement?: number): string => {
+      const entry = weaponData[weaponId];
+      if (!entry?.descHtmlTpl) return "";
+      const html = formatWeaponEffect(
+        entry.descHtmlTpl,
+        entry.refinements,
+        refinement
+      );
+      // Strip HTML tags for plain-text usage
+      return html.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "");
+    },
+    [weaponData]
+  );
+
+  const getWeaponEffectHtml = useCallback(
+    (weaponId: string, refinement?: number): string => {
+      const entry = weaponData[weaponId];
+      if (!entry?.descHtmlTpl) return "";
+      return formatWeaponEffect(
+        entry.descHtmlTpl,
+        entry.refinements,
+        refinement
+      );
     },
     [weaponData]
   );
@@ -477,9 +535,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       subStat: getSubStatName,
       element: getElementName,
       reaction: getReactionName,
+      resonance: getResonanceName,
       weaponType: getWeaponTypeName,
       weaponName: getWeaponName,
       weaponEffect: getWeaponEffect,
+      weaponEffectHtml: getWeaponEffectHtml,
       slot: getSlotName,
       style: getStyleName,
       role: getRoleName,
@@ -510,9 +570,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getSubStatName,
       getElementName,
       getReactionName,
+      getResonanceName,
       getWeaponTypeName,
       getWeaponName,
       getWeaponEffect,
+      getWeaponEffectHtml,
       getSlotName,
       getStyleName,
       getRoleName,

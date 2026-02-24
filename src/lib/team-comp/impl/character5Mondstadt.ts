@@ -1,11 +1,4 @@
-import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -45,9 +38,7 @@ class Durin extends CharacterBase {
     const hexMult = isHexerei ? 1.75 : 1.0;
     const isWhite = this.form === "white";
 
-    const buffs: InstanceType<
-      typeof StatBuff | typeof StaticSkillBuff | typeof ScalingBuff
-    >[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     if (isWhite) {
       // P1 (White Flame): Pyro RES -20% (×hexMult) on Pyro/Burning reactions
@@ -73,7 +64,7 @@ class Durin extends CharacterBase {
               "swirl",
               "crystallize",
             ]),
-            { receiver: "onField" },
+            { receiver: "team" },
             [{ key: "resReduction%", value: 0.2 * hexMult }]
           )
         );
@@ -166,7 +157,7 @@ class Durin extends CharacterBase {
             { receiver: "selfOnField", filter: { abilities: ["burst"] } },
             [{ key: "defIgnore%", value: 0.3 }]
           ),
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
             { key: "defReduction%", value: 0.3 },
           ])
         );
@@ -184,25 +175,19 @@ class Durin extends CharacterBase {
     return buffs;
   })();
 
-  // E: White/Dark form skill hits
-  // Q: Burst initial + Dragon ticks
+  // Q: Burst initial (3 hits) + Dragon ticks (10 hits over 20s)
   protected readonly formulaMap: Record<string, FormulaEntry> = ((): Record<
     string,
     FormulaEntry
   > => {
     const isWhite = this.form === "white";
-    // E (Confirmation of Purity): Lv10 190.1%, Lv13 (C5+) 224.4%
-    // E (Denial of Darkness): Lv10 130%+95.8%+116.4%=342.2%, Lv13 (C5+) 153.5%+113.1%+137.4%=404%
-    const eWhiteMult = this.constellation >= 5 ? 2.244 : 1.901;
-    const eDarkMult = this.constellation >= 5 ? 4.04 : 3.422;
-
     // Q initial (White): Lv10 214.1%+173.5%+201.3%=588.9%, Lv13 (C3+) 252.8%+204.9%+237.7%=695.4%
     // Q initial (Dark): Lv10 225.8%+183.2%+201.3%=610.3%, Lv13 (C3+) 266.6%+216.2%+237.7%=720.5%
     const qWhiteInitMult = this.constellation >= 3 ? 6.954 : 5.889;
     const qDarkInitMult = this.constellation >= 3 ? 7.205 : 6.103;
 
-    // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, ~6 ticks over 20s
-    // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, ~6 ticks over 20s
+    // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, 10 ticks over 20s
+    // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, 10 ticks over 20s
     const dragonWhiteMult = this.constellation >= 3 ? 2.011 : 1.704;
     const dragonDarkMult = this.constellation >= 3 ? 2.759 : 2.337;
 
@@ -211,37 +196,24 @@ class Durin extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    const skillTag = {
-      element: "Pyro" as const,
-      ability: "skill" as const,
-      reaction: "none" as const,
-    };
 
     if (isWhite) {
       return {
-        "durin-skill-white": {
-          label: { zh: "白化之是", en: "Confirmation of Purity" },
-          parts: [{ formula: new DirectFormula(eWhiteMult, skillTag) }],
-        },
         "durin-burst-white": {
           label: { zh: "白焰之龙总伤", en: "White Flame Burst + Dragon" },
           parts: [
             { formula: new DirectFormula(qWhiteInitMult, burstTag) },
-            { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 6 },
+            { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 10 },
           ],
         },
       };
     }
     return {
-      "durin-skill-dark": {
-        label: { zh: "黑度之否", en: "Denial of Darkness" },
-        parts: [{ formula: new DirectFormula(eDarkMult, skillTag) }],
-      },
       "durin-burst-dark": {
         label: { zh: "黑蚀之龙总伤", en: "Dark Decay Burst + Dragon" },
         parts: [
           { formula: new DirectFormula(qDarkInitMult, burstTag) },
-          { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 6 },
+          { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 10 },
         ],
       },
       "durin-burst-dark-vape": {
@@ -258,7 +230,7 @@ class Durin extends CharacterBase {
               ...burstTag,
               reaction: "vaporize",
             }),
-            hits: 6,
+            hits: 10,
           },
         ],
       },
@@ -277,30 +249,24 @@ class Albedo extends CharacterBase {
       "skill",
       "burst",
     ] as const;
-    const buffs: InstanceType<
-      | typeof StatBuff
-      | typeof StaticSkillBuff
-      | typeof ScalingBuff
-      | typeof ScalingSkillBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1: Transient Blossoms deal +25% DMG vs enemies HP <50% (assume active)
       new StatBuff(
         cbs(this, "P1", ["enemy-low-hp"]),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [{ key: "dmg%", value: 0.25 }]
       ),
-      // P1: Silver Isotoma — Transient Blossom DMG +240% DEF
+      // P4: Silver Isotoma — Transient Blossom DMG +240% DEF
       // Only when Silver Isotoma exists (Hexerei: Secret Rite)
       ...(isHexerei
         ? [
-            new ScalingSkillBuff(
-              cbs(this, "P1", ["E"]),
+            new ScalingBuff(
+              cbs(this, "P4", ["E"]),
               { receiver: "selfOnField", filter: { abilities: ["skill"] } },
               [],
               "def",
               "baseDmg",
-              this.constellation,
-              (c) => ({ scale: c >= 3 ? 2.84 : 2.4 })
+              this.constellation >= 3 ? 2.84 : 2.4
             ),
           ]
         : []),
@@ -333,26 +299,19 @@ class Albedo extends CharacterBase {
             ),
           ]
         : []),
-      // C1: After E, DEF +50% for 20s
-      new StaticSkillBuff(
-        cbs(this, "C1", ["E"]),
-        { receiver: "self" },
-        this.constellation,
-        (c) => (c >= 1 ? [{ key: "def%", value: 0.5 }] : [])
-      ),
+      // C1: Transient Blossoms regenerate 1.2 Energy (no stat buff)
+      // (Energy is handled by the engine, no StatBuff needed here)
       // C4: Active characters in Solar Isotoma field: Plunge DMG +30%
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C4", ["E"]),
         { receiver: "onField", filter: { abilities: ["plunge"] } },
-        this.constellation,
-        (c) => (c >= 4 ? [{ key: "dmg%", value: 0.3 }] : [])
+        this.constellation >= 4 ? [{ key: "dmg%", value: 0.3 }] : []
       ),
       // C6: In Solar Isotoma with Crystallize shield, DMG +17% (assume active)
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C6", ["E"]),
         { receiver: "onField" },
-        this.constellation,
-        (c) => (c >= 6 ? [{ key: "dmg%", value: 0.17 }] : [])
+        this.constellation >= 6 ? [{ key: "dmg%", value: 0.17 }] : []
       ),
     ];
 
@@ -490,7 +449,6 @@ class Diluc extends CharacterBase {
     const eMult = eLevel === 13 ? 6.82 : 5.78;
     const qSlash = qLevel === 13 ? 4.34 : 3.67;
     const qExplosion = qLevel === 13 ? 4.34 : 3.67;
-    const nTotal = 8.1; // Lv10 N1-N4 total 810%
     const highPlungeMult = 4.42; // Lv10 High Plunge DMG
 
     const hasXianyun = this.teamMeta.characters.includes("xianyun");
@@ -527,28 +485,16 @@ class Diluc extends CharacterBase {
         label: { zh: "Q 黎明(斩击+爆裂)", en: "Q Dawn (Slash + Explosion)" },
         parts: [
           {
-            formula: new DirectFormula(qSlash + qExplosion, {
+            formula: new DirectFormula(qSlash, {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
             }),
           },
-        ],
-      },
-      "diluc-weave-vape": {
-        label: { zh: "E 输出循环(EAEAEA)", en: "E Weave Combo (E + 4xN)" },
-        parts: [
           {
-            formula: new AmplifyFormula(eMult, {
+            formula: new DirectFormula(qExplosion, {
               element: "Pyro",
-              ability: "skill",
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new DirectFormula(nTotal, {
-              element: "Pyro",
-              ability: "normal",
+              ability: "burst",
               reaction: "none",
             }),
           },
@@ -594,25 +540,22 @@ class Mona extends CharacterBase {
       { key: "dmg%", value: 0.6 },
     ]),
     // C1: Hydro reaction effects +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C1", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : [])
+      this.constellation >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : []
     ),
     // C2: Charged ATK hit → team EM +80
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["charge"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "em", value: 80 }] : [])
+      this.constellation >= 2 ? [{ key: "em", value: 80 }] : []
     ),
     // C4: Omen targets +15% CR
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "cr", value: 0.15 }] : [])
+      this.constellation >= 4 ? [{ key: "cr", value: 0.15 }] : []
     ),
   ];
 
@@ -640,18 +583,16 @@ class Mona extends CharacterBase {
 class Jean extends CharacterBase {
   readonly buffs = [
     // C2: Jean picks up particle -> Team ATK SPD +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["orb"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "atkSpd%", value: 0.15 }] : [])
+      this.constellation >= 2 ? [{ key: "atkSpd%", value: 0.15 }] : []
     ),
     // C4: Q field: Anemo RES -40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Anemo"] } },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "resReduction%", value: 0.4 }] : [])
+      { receiver: "team", filter: { elements: ["Anemo"] } },
+      this.constellation >= 4 ? [{ key: "resReduction%", value: 0.4 }] : []
     ),
   ];
 
@@ -703,23 +644,21 @@ class Venti extends CharacterBase {
         ])
       );
     }
-    // C4: E or Q → Venti & active members Anemo DMG +25%
+    // C4: On pickup → Venti Anemo DMG +25%
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(
-          cbs(this, "C4", ["E", "Q"]),
-          { receiver: "team" }, // Approximation for active members
-          [{ key: "anemo%", value: 0.25 }]
-        )
+        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "self" }, [
+          { key: "anemo%", value: 0.25 },
+        ])
       );
     }
-    // C6: Q targets take -20% RES, Venti gets +100% CD against them
+    // C6: Q targets take -20% Anemo/absorbed element RES; Venti gets +100% CD
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
           { key: "resReduction%", value: 0.2 },
         ]),
-        new StatBuff(cbs(this, "C6-CD", ["Q"]), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "selfOnField" }, [
           { key: "cd", value: 1.0 },
         ])
       );
@@ -769,7 +708,7 @@ class Venti extends CharacterBase {
         ? {
             "venti-c2-skill": {
               label: {
-                zh: "【C2】风起之时高天之歌伤害",
+                zh: "C2 风起之时高天之歌伤害",
                 en: "C2 Skyward Sonnet DMG",
               },
               parts: [
@@ -791,32 +730,23 @@ class Venti extends CharacterBase {
 @RegisterCharacter("klee")
 class Klee extends CharacterBase {
   readonly buffs = [
-    // C1: After spark explosion, self ATK +60% for 12s
-    new StaticSkillBuff(
-      cbs(this, "C1", []),
-      { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "atk%", value: 0.6 }] : [])
+    // P1: Explosive Spark — next Charged ATK after E/Normal proc costs no stamina and deals +50% DMG (assume active)
+    new StatBuff(
+      cbs(this, "P1", ["E", "normal"]),
+      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+      [{ key: "dmg%", value: 0.5 }]
     ),
     // C2: Enemies hit by mines: -23% DEF for 10s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
-      { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "defReduction%", value: 0.23 }] : [])
+      { receiver: "team" },
+      this.constellation >= 2 ? [{ key: "defReduction%", value: 0.23 }] : []
     ),
-    // C6: Q active → party +10% Pyro DMG, self +50% Pyro DMG
-    new StaticSkillBuff(
+    // C6: Q active → party +10% Pyro DMG
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "pyro%", value: 0.1 }] : [])
-    ),
-    new StaticSkillBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "pyro%", value: 0.5 }] : [])
+      this.constellation >= 6 ? [{ key: "pyro%", value: 0.1 }] : []
     ),
   ];
 
@@ -838,7 +768,7 @@ class Klee extends CharacterBase {
       label: { zh: "A 重击(蒸发)", en: "A Charged ATK (Vape)" },
       parts: [
         {
-          formula: new DirectFormula(2.83, {
+          formula: new AmplifyFormula(2.83, {
             element: "Pyro",
             ability: "charge",
             reaction: "vaporize",
@@ -856,24 +786,22 @@ class Eula extends CharacterBase {
     new StatBuff(
       cbs(this, "E", ["E"]),
       {
-        receiver: "onField",
+        receiver: "team",
         filter: { elements: ["Physical" as const, "Cryo"] },
       },
       [{ key: "resReduction%", value: 0.25 }]
     ),
     // C1: After consuming Grimheart, Physical DMG +30%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C1", ["E"]),
-      { receiver: "selfOnField", filter: { elements: ["Physical"] } },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "dmg%", value: 0.3 }] : [])
+      { receiver: "selfOnField" },
+      this.constellation >= 1 ? [{ key: "phys%", value: 0.3 }] : []
     ),
     // C4: Lightfall DMG +25% vs enemies HP < 50% (assume active)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "dmg%", value: 0.25 }] : [])
+      this.constellation >= 4 ? [{ key: "dmg%", value: 0.25 }] : []
     ),
   ];
 
@@ -886,8 +814,6 @@ class Eula extends CharacterBase {
     const stacks = this.constellation >= 6 ? 20 : 13;
     const totalMult = baseMult + stackMult * stacks;
     const maxMult = baseMult + stackMult * 30;
-    // E Hold: Lv10 442%, Lv13 (C5+) 522%
-    const eHoldMult = this.constellation >= 5 ? 5.22 : 4.42;
     return {
       "eula-burst-lightfall": {
         label: {
@@ -914,18 +840,6 @@ class Eula extends CharacterBase {
             formula: new DirectFormula(maxMult, {
               element: "Physical",
               ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "eula-skill-hold": {
-        label: { zh: "Q 冰潮的涡旋(长按)", en: "Q Icetide Vortex (Hold)" },
-        parts: [
-          {
-            formula: new DirectFormula(eHoldMult, {
-              element: "Cryo",
-              ability: "skill",
               reaction: "none",
             }),
           },

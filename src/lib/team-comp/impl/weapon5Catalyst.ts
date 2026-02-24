@@ -166,6 +166,7 @@ class JadefallsSplendor extends WeaponBase {
   // Per 1000 Max HP → wielder's elemental DMG%, capped. Trigger: Q or shield.
   get buffs() {
     const wielderElement = this.teamMeta.elements[this.charId];
+    if (wielderElement === undefined) return [];
     const outKey = `${wielderElement.toLowerCase()}%` as StatKey;
     return [
       new ScalingBuff(
@@ -321,15 +322,27 @@ class CashflowSupervision extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this, ["hp-change"]), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["hp-change"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["hp-change"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]),
+        },
+      ]
+    ),
   ];
 }
 

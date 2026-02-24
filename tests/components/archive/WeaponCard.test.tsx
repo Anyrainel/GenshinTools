@@ -1,17 +1,12 @@
 import { WeaponCard } from "@/components/archive/WeaponCard";
-import type { Weapon } from "@/data/types";
+import type { WeaponResource } from "@/data/types";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
-const MOCK_WEAPON: Weapon = {
+const MOCK_WEAPON: WeaponResource = {
   id: "staff_of_homa",
   rarity: 5,
-  type: "Polearm",
-  secondaryStat: "cd",
-  baseAtk: 608,
-  secondaryStatValue: "66.2%",
-  imageUrl: "https://example.com/homa.png",
   imagePath: "/weapon/staff_of_homa.png",
 };
 

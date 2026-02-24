@@ -1,19 +1,71 @@
 import type {
   AccountData,
   ArtifactData,
-  ArtifactScoreConfig,
   CharacterData,
+  GlobalStatWeights,
   Slot,
-  StatWeightMap,
+  SubStat,
   TierAssignment,
 } from "@/data/types";
+import { allSlots } from "@/data/types";
+import type {
+  ArtifactScoreResult,
+  StatScoreBreakdown,
+  StatWeightMap,
+} from "@/lib/account-data/artifactScore";
 import {
   generateAllInsights,
   generateCharacterInsights,
 } from "@/lib/account-data/insightEngine";
 import { describe, expect, it } from "vitest";
 
-const DEFAULT_GLOBAL = { flatAtk: 30, flatHp: 30, flatDef: 30 };
+function emptySlotScores(): Record<Slot, number> {
+  const out = {} as Record<Slot, number>;
+  for (const s of allSlots) out[s] = 0;
+  return out;
+}
+
+/** Build a minimal ArtifactScoreResult with buildMatch so insight engine gets weights and main-stat recommendations. */
+function makeScoreResultFromWeights(
+  weights: StatWeightMap
+): ArtifactScoreResult {
+  return {
+    substatScore: {
+      subScore: 0,
+      slotSubScores: emptySlotScores(),
+      slotMaxSubScores: emptySlotScores(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      statScores: {} as Record<SubStat, StatScoreBreakdown>,
+      isComplete: false,
+    },
+    buildMatch: {
+      build: {
+        id: "test",
+        characterId: "test",
+        visible: true,
+        name: "Test",
+        composition: "4pc",
+        sands: ["atk%"],
+        goblet: ["pyro%"],
+        circlet: ["cr", "cd"],
+        substats: Object.entries(weights)
+          .filter((entry): entry is [string, number] => (entry[1] ?? 0) > 0)
+          .map(([stat, weight]) => ({ stat: stat as SubStat, weight })),
+      },
+      buildIndex: 0,
+      statWeights: weights,
+      setMatched: true,
+      mainStatMatches: 3,
+      mainStatMismatches: [],
+    },
+  };
+}
+
+const DEFAULT_GLOBAL: GlobalStatWeights = {
+  flatAtk: 30,
+  flatHp: 30,
+  flatDef: 30,
+};
 
 const CR_CD_WEIGHTS: StatWeightMap = {
   cr: 100,
@@ -27,16 +79,6 @@ const CR_CD_WEIGHTS: StatWeightMap = {
   hp: 0,
   def: 0,
 };
-
-function makeScoreConfig(
-  charId: string,
-  weights: StatWeightMap = CR_CD_WEIGHTS
-): ArtifactScoreConfig {
-  return {
-    global: DEFAULT_GLOBAL,
-    characters: { [charId]: weights },
-  };
-}
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {
@@ -72,9 +114,14 @@ describe("generateCharacterInsights", () => {
   describe("empty / edge cases", () => {
     it("returns empty insights when character has no stat weights", () => {
       const char = makeCharacter({ key: "unknown_char" });
-      const config = makeScoreConfig("other_char"); // no weights for unknown_char
 
-      const result = generateCharacterInsights(char, [], config, DEFAULT_TIERS);
+      const result = generateCharacterInsights(
+        char,
+        [],
+        undefined,
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
 
       expect(result.characterId).toBe("unknown_char");
       expect(result.insights).toHaveLength(0);
@@ -82,16 +129,21 @@ describe("generateCharacterInsights", () => {
 
     it("returns empty insights when character has no artifacts and no inventory", () => {
       const char = makeCharacter({ key: "test_char" });
-      const config = makeScoreConfig("test_char");
 
-      const result = generateCharacterInsights(char, [], config, DEFAULT_TIERS);
+      const result = generateCharacterInsights(
+        char,
+        [],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
 
       // No artifacts equipped, no candidates → no insights
       expect(result.insights).toHaveLength(0);
     });
 
     it("iterates all 5 slots", () => {
-      const slots: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
+      const slots: Slot[] = allSlots;
       const char = makeCharacter({
         key: "test_char",
         artifacts: Object.fromEntries(
@@ -116,11 +168,11 @@ describe("generateCharacterInsights", () => {
         })
       );
 
-      const config = makeScoreConfig("test_char");
       const result = generateCharacterInsights(
         char,
         great,
-        config,
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -150,7 +202,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [better],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -180,7 +233,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [worse],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -224,7 +278,8 @@ describe("generateCharacterInsights", () => {
       const result1 = generateCharacterInsights(
         char,
         sOwned,
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         tiers
       );
       const swap1 = result1.insights.find((i) => i.type === "SWAP");
@@ -234,7 +289,8 @@ describe("generateCharacterInsights", () => {
       const result2 = generateCharacterInsights(
         char,
         pOwned,
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         tiers
       );
       const swap2 = result2.insights.find((i) => i.type === "SWAP");
@@ -268,7 +324,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [lowLevel],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -292,7 +349,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -320,7 +378,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -344,7 +403,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -380,7 +440,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [],
-        makeScoreConfig("test_char", weights),
+        makeScoreResultFromWeights(weights),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -406,7 +467,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -437,7 +499,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [great],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -471,7 +534,8 @@ describe("generateCharacterInsights", () => {
       const result = generateCharacterInsights(
         char,
         [great],
-        makeScoreConfig("test_char"),
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
         DEFAULT_TIERS
       );
 
@@ -504,15 +568,17 @@ describe("generateAllInsights", () => {
       s_char: { tier: "S", position: 0 },
     };
 
-    const config: ArtifactScoreConfig = {
-      global: DEFAULT_GLOBAL,
-      characters: {
-        pool_char: CR_CD_WEIGHTS,
-        s_char: CR_CD_WEIGHTS,
-      },
+    const scores = {
+      pool_char: makeScoreResultFromWeights(CR_CD_WEIGHTS),
+      s_char: makeScoreResultFromWeights(CR_CD_WEIGHTS),
     };
 
-    const results = generateAllInsights(accountData, config, tiers);
+    const results = generateAllInsights(
+      accountData,
+      scores,
+      DEFAULT_GLOBAL,
+      tiers
+    );
 
     expect(results).toHaveLength(2);
     const poolResult = results.find((r) => r.characterId === "pool_char");
@@ -528,7 +594,8 @@ describe("generateAllInsights", () => {
 
     const results = generateAllInsights(
       accountData,
-      makeScoreConfig("untiered_char"),
+      { untiered_char: makeScoreResultFromWeights(CR_CD_WEIGHTS) },
+      DEFAULT_GLOBAL,
       {} // empty tier assignments
     );
 
@@ -557,7 +624,8 @@ describe("generateAllInsights", () => {
 
     const results = generateAllInsights(
       accountData,
-      makeScoreConfig("test_char"),
+      { test_char: makeScoreResultFromWeights(CR_CD_WEIGHTS) },
+      DEFAULT_GLOBAL,
       DEFAULT_TIERS
     );
 
@@ -581,16 +649,19 @@ describe("generateAllInsights", () => {
       extraWeapons: [],
     };
 
+    const scoreResult = makeScoreResultFromWeights(CR_CD_WEIGHTS);
     const resultCautious = generateAllInsights(
       accountData,
-      makeScoreConfig("test_char"),
+      { test_char: scoreResult },
+      DEFAULT_GLOBAL,
       DEFAULT_TIERS,
       { S: { displayName: "S", hidden: false, luckExpectation: "cautious" } }
     );
 
     const resultHopeful = generateAllInsights(
       accountData,
-      makeScoreConfig("test_char"),
+      { test_char: scoreResult },
+      DEFAULT_GLOBAL,
       DEFAULT_TIERS,
       { S: { displayName: "S", hidden: false, luckExpectation: "hopeful" } }
     );

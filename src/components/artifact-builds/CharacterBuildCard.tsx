@@ -14,8 +14,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Build, Character } from "@/data/types";
-import type { Weapon } from "@/data/types";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
+import type { Build, CharacterResource } from "@/data/types";
+import type { WeaponResource } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { cn } from "@/lib/utils";
@@ -120,7 +125,7 @@ const CompactAddWeapon = memo(
 CompactAddWeapon.displayName = "CompactAddWeapon";
 
 interface CharacterBuildCardProps {
-  character: Character;
+  character: CharacterResource;
   /** Optional tour step ID for onboarding */
   tourStepId?: string;
 }
@@ -168,11 +173,20 @@ function CharacterBuildCardComponent({
     toggleHidden(character.id);
   }, [toggleHidden, character.id]);
 
+  const { characterStats, weaponStats } = useGameStats();
+  const charMeta = useMemo(
+    () => getCharacterDisplayMeta(character, characterStats?.[character.id]),
+    [character, characterStats]
+  );
   const weaponFilter = useCallback(
     (item: unknown) => {
-      return (item as Weapon).type === character.weaponType;
+      const w = item as WeaponResource;
+      const weaponMeta = getWeaponDisplayMeta(w, weaponStats?.[w.id]);
+      return (
+        charMeta.weaponType == null || weaponMeta.type === charMeta.weaponType
+      );
     },
-    [character.weaponType]
+    [charMeta.weaponType, weaponStats]
   );
 
   // Stable callbacks for weapon updates
@@ -394,7 +408,7 @@ function CharacterBuildCardComponent({
                           ? () => handleMoveBuild(build.id, "down")
                           : undefined
                       }
-                      element={character.element}
+                      element={charMeta.element ?? "Pyro"}
                     />
                   );
                 })}
@@ -427,7 +441,7 @@ function CharacterBuildCardComponent({
                 )}
               >
                 <Plus className={isVeryNarrow ? "w-3 h-3" : "w-4 h-4"} />
-                {t.ui("characterCard.addBuild")}
+                {t.ui("common.addBuild")}
               </Button>
             </div>
           )}

@@ -1,0 +1,1822 @@
+{
+  "aino": {
+    "rarity": 4,
+    "element": "Hydro",
+    "weaponType": "Claymore",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-09-09",
+    "levels": {
+      "70": {"baseHp": "9151", "baseAtk": "198", "baseDef": "496", "em": "72"},
+      "80": {"baseHp": "10425", "baseAtk": "225", "baseDef": "565", "em": "96"},
+      "90": {"baseHp": "11201", "baseAtk": "242", "baseDef": "607", "em": "96"},
+      "95": {"baseHp": "11588", "baseAtk": "273", "baseDef": "628", "em": "96"},
+      "100": {"baseHp": "11976", "baseAtk": "304", "baseDef": "649", "em": "96"}
+    }
+  },
+  "albedo": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2020-12-22",
+    "levels": {
+      "70": {"baseHp": "10746", "baseAtk": "204", "baseDef": "712", "em": "0", "geo%": "21.6%"},
+      "80": {"baseHp": "12296", "baseAtk": "233", "baseDef": "815", "em": "0", "geo%": "28.8%"},
+      "90": {"baseHp": "13226", "baseAtk": "251", "baseDef": "876", "em": "0", "geo%": "28.8%"},
+      "95": {"baseHp": "13695", "baseAtk": "279", "baseDef": "907", "em": "0", "geo%": "28.8%"},
+      "100": {"baseHp": "14166", "baseAtk": "308", "baseDef": "938", "em": "0", "geo%": "28.8%"}
+    }
+  },
+  "alhaitham": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "region": "Sumeru",
+    "releaseDate": "2023-01-17",
+    "levels": {
+      "70": {"baseHp": "10846", "baseAtk": "255", "baseDef": "635", "em": "0", "dendro%": "21.6%"},
+      "80": {"baseHp": "12410", "baseAtk": "291", "baseDef": "727", "em": "0", "dendro%": "28.8%"},
+      "90": {"baseHp": "13348", "baseAtk": "313", "baseDef": "782", "em": "0", "dendro%": "28.8%"},
+      "95": {"baseHp": "13822", "baseAtk": "349", "baseDef": "809", "em": "0", "dendro%": "28.8%"},
+      "100": {"baseHp": "14297", "baseAtk": "384", "baseDef": "837", "em": "0", "dendro%": "28.8%"}
+    }
+  },
+  "aloy": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Bow",
+    "region": "None",
+    "releaseDate": "2021-09-01",
+    "levels": {
+      "70": {"baseHp": "8856", "baseAtk": "190", "baseDef": "550", "em": "0", "cryo%": "21.6%"},
+      "80": {"baseHp": "10133", "baseAtk": "217", "baseDef": "629", "em": "0", "cryo%": "28.8%"},
+      "90": {"baseHp": "10899", "baseAtk": "234", "baseDef": "676", "em": "0", "cryo%": "28.8%"},
+      "95": {"baseHp": "11286", "baseAtk": "260", "baseDef": "700", "em": "0", "cryo%": "28.8%"},
+      "100": {"baseHp": "11673", "baseAtk": "287", "baseDef": "724", "em": "0", "cryo%": "28.8%"}
+    }
+  },
+  "amber": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Bow",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7730", "baseAtk": "182", "baseDef": "491", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8806", "baseAtk": "208", "baseDef": "559", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9461", "baseAtk": "223", "baseDef": "601", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9788", "baseAtk": "251", "baseDef": "621", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "10116", "baseAtk": "280", "baseDef": "642", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "arataki_itto": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Claymore",
+    "region": "Inazuma",
+    "releaseDate": "2021-12-14",
+    "levels": {
+      "70": {"baseHp": "10448", "baseAtk": "185", "baseDef": "779", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "11954", "baseAtk": "211", "baseDef": "892", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12858", "baseAtk": "227", "baseDef": "959", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13315", "baseAtk": "253", "baseDef": "993", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13772", "baseAtk": "278", "baseDef": "1027", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "arlecchino": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "region": "Snezhnaya",
+    "releaseDate": "2024-04-23",
+    "levels": {
+      "70": {"baseHp": "10647", "baseAtk": "278", "baseDef": "621", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12182", "baseAtk": "318", "baseDef": "711", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13103", "baseAtk": "342", "baseDef": "765", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13568", "baseAtk": "381", "baseDef": "792", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14034", "baseAtk": "419", "baseDef": "819", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "baizhu": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "region": "Liyue",
+    "releaseDate": "2023-05-02",
+    "levels": {
+      "70": {"baseHp": "10846", "baseAtk": "156", "baseDef": "406", "em": "0", "hp%": "21.6%"},
+      "80": {"baseHp": "12410", "baseAtk": "179", "baseDef": "464", "em": "0", "hp%": "28.8%"},
+      "90": {"baseHp": "13348", "baseAtk": "193", "baseDef": "500", "em": "0", "hp%": "28.8%"},
+      "95": {"baseHp": "13822", "baseAtk": "214", "baseDef": "517", "em": "0", "hp%": "28.8%"},
+      "100": {"baseHp": "14297", "baseAtk": "236", "baseDef": "535", "em": "0", "hp%": "28.8%"}
+    }
+  },
+  "barbara": {
+    "rarity": 4,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7996", "baseAtk": "130", "baseDef": "546", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "9110", "baseAtk": "148", "baseDef": "623", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "9787", "baseAtk": "159", "baseDef": "669", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "10126", "baseAtk": "180", "baseDef": "692", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "10464", "baseAtk": "200", "baseDef": "715", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "beidou": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Claymore",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "10662", "baseAtk": "184", "baseDef": "530", "em": "0", "electro%": "18.0%"},
+      "80": {"baseHp": "12146", "baseAtk": "210", "baseDef": "603", "em": "0", "electro%": "24.0%"},
+      "90": {"baseHp": "13050", "baseAtk": "225", "baseDef": "648", "em": "0", "electro%": "24.0%"},
+      "95": {"baseHp": "13501", "baseAtk": "254", "baseDef": "671", "em": "0", "electro%": "24.0%"},
+      "100": {"baseHp": "13953", "baseAtk": "283", "baseDef": "693", "em": "0", "electro%": "24.0%"}
+    }
+  },
+  "bennett": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "10129", "baseAtk": "156", "baseDef": "630", "em": "0", "er": "20.0%"},
+      "80": {"baseHp": "11539", "baseAtk": "178", "baseDef": "718", "em": "0", "er": "26.7%"},
+      "90": {"baseHp": "12397", "baseAtk": "191", "baseDef": "771", "em": "0", "er": "26.7%"},
+      "95": {"baseHp": "12826", "baseAtk": "216", "baseDef": "798", "em": "0", "er": "26.7%"},
+      "100": {"baseHp": "13255", "baseAtk": "240", "baseDef": "825", "em": "0", "er": "26.7%"}
+    }
+  },
+  "candace": {
+    "rarity": 4,
+    "element": "Hydro",
+    "weaponType": "Polearm",
+    "region": "Sumeru",
+    "releaseDate": "2022-09-27",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "charlotte": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "region": "Fontaine",
+    "releaseDate": "2023-11-07",
+    "levels": {
+      "70": {"baseHp": "8796", "baseAtk": "141", "baseDef": "446", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10021", "baseAtk": "161", "baseDef": "508", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10766", "baseAtk": "173", "baseDef": "546", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11138", "baseAtk": "195", "baseDef": "565", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11511", "baseAtk": "217", "baseDef": "584", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "chasca": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "region": "Natlan",
+    "releaseDate": "2024-11-19",
+    "levels": {
+      "70": {"baseHp": "7960", "baseAtk": "282", "baseDef": "500", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "9108", "baseAtk": "322", "baseDef": "572", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "9797", "baseAtk": "347", "baseDef": "615", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "10144", "baseAtk": "386", "baseDef": "637", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "10493", "baseAtk": "425", "baseDef": "659", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "chevreuse": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "region": "Fontaine",
+    "releaseDate": "2024-01-09",
+    "levels": {
+      "70": {"baseHp": "9773", "baseAtk": "158", "baseDef": "494", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11134", "baseAtk": "180", "baseDef": "563", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "11962", "baseAtk": "193", "baseDef": "605", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12376", "baseAtk": "218", "baseDef": "626", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "12790", "baseAtk": "243", "baseDef": "647", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "chiori": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2024-03-12",
+    "levels": {
+      "70": {"baseHp": "9293", "baseAtk": "262", "baseDef": "774", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "10634", "baseAtk": "300", "baseDef": "886", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "11438", "baseAtk": "323", "baseDef": "953", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "11844", "baseAtk": "359", "baseDef": "987", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "12251", "baseAtk": "396", "baseDef": "1021", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "chongyun": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8974", "baseAtk": "182", "baseDef": "530", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10223", "baseAtk": "208", "baseDef": "603", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10984", "baseAtk": "223", "baseDef": "648", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11363", "baseAtk": "251", "baseDef": "671", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11743", "baseAtk": "280", "baseDef": "693", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "citlali": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "region": "Natlan",
+    "releaseDate": "2024-12-31",
+    "levels": {
+      "70": {"baseHp": "9453", "baseAtk": "103", "baseDef": "620", "em": "86"},
+      "80": {"baseHp": "10816", "baseAtk": "118", "baseDef": "710", "em": "115"},
+      "90": {"baseHp": "11634", "baseAtk": "127", "baseDef": "763", "em": "115"},
+      "95": {"baseHp": "12047", "baseAtk": "141", "baseDef": "790", "em": "115"},
+      "100": {"baseHp": "12460", "baseAtk": "155", "baseDef": "817", "em": "115"}
+    }
+  },
+  "clorinde": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "Fontaine",
+    "releaseDate": "2024-06-04",
+    "levels": {
+      "70": {"baseHp": "10527", "baseAtk": "274", "baseDef": "637", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "12045", "baseAtk": "314", "baseDef": "729", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12956", "baseAtk": "337", "baseDef": "784", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13416", "baseAtk": "375", "baseDef": "812", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13877", "baseAtk": "413", "baseDef": "840", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "collei": {
+    "rarity": 4,
+    "element": "Dendro",
+    "weaponType": "Bow",
+    "region": "Sumeru",
+    "releaseDate": "2022-08-24",
+    "levels": {
+      "70": {"baseHp": "7996", "baseAtk": "163", "baseDef": "491", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "9110", "baseAtk": "186", "baseDef": "559", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9787", "baseAtk": "200", "baseDef": "601", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "10126", "baseAtk": "225", "baseDef": "621", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "10464", "baseAtk": "251", "baseDef": "642", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "columbina": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-01-13",
+    "levels": {
+      "70": {"baseHp": "11940", "baseAtk": "78", "baseDef": "418", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "13662", "baseAtk": "89", "baseDef": "479", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "14695", "baseAtk": "96", "baseDef": "515", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "15217", "baseAtk": "106", "baseDef": "533", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "15740", "baseAtk": "117", "baseDef": "552", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "cyno": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "region": "Sumeru",
+    "releaseDate": "2022-09-27",
+    "levels": {
+      "70": {"baseHp": "10149", "baseAtk": "258", "baseDef": "698", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11613", "baseAtk": "296", "baseDef": "799", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12491", "baseAtk": "318", "baseDef": "859", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "12934", "baseAtk": "354", "baseDef": "890", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13379", "baseAtk": "390", "baseDef": "920", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "dahlia": {
+    "rarity": 4,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2025-06-17",
+    "levels": {
+      "70": {"baseHp": "10217", "baseAtk": "154", "baseDef": "457", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11640", "baseAtk": "176", "baseDef": "521", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12506", "baseAtk": "189", "baseDef": "560", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12938", "baseAtk": "213", "baseDef": "579", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13371", "baseAtk": "237", "baseDef": "598", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "dehya": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "region": "Sumeru",
+    "releaseDate": "2023-02-28",
+    "levels": {
+      "70": {"baseHp": "12736", "baseAtk": "216", "baseDef": "510", "em": "0", "hp%": "21.6%"},
+      "80": {"baseHp": "14573", "baseAtk": "247", "baseDef": "584", "em": "0", "hp%": "28.8%"},
+      "90": {"baseHp": "15675", "baseAtk": "265", "baseDef": "628", "em": "0", "hp%": "28.8%"},
+      "95": {"baseHp": "16231", "baseAtk": "295", "baseDef": "650", "em": "0", "hp%": "28.8%"},
+      "100": {"baseHp": "16789", "baseAtk": "325", "baseDef": "673", "em": "0", "hp%": "28.8%"}
+    }
+  },
+  "diluc": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "10547", "baseAtk": "272", "baseDef": "637", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "12068", "baseAtk": "311", "baseDef": "729", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12981", "baseAtk": "335", "baseDef": "784", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13441", "baseAtk": "373", "baseDef": "812", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13903", "baseAtk": "410", "baseDef": "840", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "diona": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Bow",
+    "region": "Mondstadt",
+    "releaseDate": "2020-11-11",
+    "levels": {
+      "70": {"baseHp": "7818", "baseAtk": "174", "baseDef": "491", "em": "0", "cryo%": "18.0%"},
+      "80": {"baseHp": "8907", "baseAtk": "198", "baseDef": "559", "em": "0", "cryo%": "24.0%"},
+      "90": {"baseHp": "9570", "baseAtk": "212", "baseDef": "601", "em": "0", "cryo%": "24.0%"},
+      "95": {"baseHp": "9901", "baseAtk": "239", "baseDef": "621", "em": "0", "cryo%": "24.0%"},
+      "100": {"baseHp": "10232", "baseAtk": "267", "baseDef": "642", "em": "0", "cryo%": "24.0%"}
+    }
+  },
+  "dori": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Claymore",
+    "region": "Sumeru",
+    "releaseDate": "2022-09-09",
+    "levels": {
+      "70": {"baseHp": "10129", "baseAtk": "182", "baseDef": "591", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11539", "baseAtk": "208", "baseDef": "673", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12397", "baseAtk": "223", "baseDef": "723", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12826", "baseAtk": "251", "baseDef": "748", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13255", "baseAtk": "280", "baseDef": "774", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "durin": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2025-12-02",
+    "levels": {
+      "70": {"baseHp": "10099", "baseAtk": "282", "baseDef": "668", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11556", "baseAtk": "322", "baseDef": "765", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12430", "baseAtk": "347", "baseDef": "822", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "12871", "baseAtk": "386", "baseDef": "852", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13313", "baseAtk": "425", "baseDef": "881", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "emilie": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Polearm",
+    "region": "Fontaine",
+    "releaseDate": "2024-08-06",
+    "levels": {
+      "70": {"baseHp": "11025", "baseAtk": "272", "baseDef": "593", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12615", "baseAtk": "311", "baseDef": "679", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13568", "baseAtk": "335", "baseDef": "730", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "14050", "baseAtk": "373", "baseDef": "756", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14533", "baseAtk": "410", "baseDef": "782", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "escoffier": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "region": "Fontaine",
+    "releaseDate": "2025-05-06",
+    "levels": {
+      "70": {"baseHp": "10846", "baseAtk": "282", "baseDef": "594", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "12410", "baseAtk": "322", "baseDef": "680", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "13348", "baseAtk": "347", "baseDef": "732", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13822", "baseAtk": "386", "baseDef": "758", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "14297", "baseAtk": "425", "baseDef": "784", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "eula": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "region": "Mondstadt",
+    "releaseDate": "2021-05-18",
+    "levels": {
+      "70": {"baseHp": "10746", "baseAtk": "278", "baseDef": "610", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12296", "baseAtk": "318", "baseDef": "698", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13226", "baseAtk": "342", "baseDef": "751", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13695", "baseAtk": "381", "baseDef": "778", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14166", "baseAtk": "419", "baseDef": "804", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "faruzan": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "region": "Sumeru",
+    "releaseDate": "2022-12-06",
+    "levels": {
+      "70": {"baseHp": "7818", "baseAtk": "161", "baseDef": "513", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8907", "baseAtk": "183", "baseDef": "584", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9570", "baseAtk": "196", "baseDef": "628", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9901", "baseAtk": "222", "baseDef": "650", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "10232", "baseAtk": "247", "baseDef": "671", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "fischl": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Bow",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7508", "baseAtk": "200", "baseDef": "485", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8553", "baseAtk": "227", "baseDef": "553", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9189", "baseAtk": "244", "baseDef": "594", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9507", "baseAtk": "275", "baseDef": "614", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "9825", "baseAtk": "307", "baseDef": "635", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "flins": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-09-30",
+    "levels": {
+      "70": {"baseHp": "10149", "baseAtk": "286", "baseDef": "657", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11613", "baseAtk": "327", "baseDef": "752", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12491", "baseAtk": "352", "baseDef": "809", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "12934", "baseAtk": "391", "baseDef": "837", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13379", "baseAtk": "431", "baseDef": "866", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "freminet": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "region": "Fontaine",
+    "releaseDate": "2023-09-05",
+    "levels": {
+      "70": {"baseHp": "9862", "baseAtk": "208", "baseDef": "579", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "11235", "baseAtk": "237", "baseDef": "659", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "12071", "baseAtk": "255", "baseDef": "708", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "12488", "baseAtk": "287", "baseDef": "733", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "12906", "baseAtk": "320", "baseDef": "757", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "furina": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "Fontaine",
+    "releaseDate": "2023-11-07",
+    "levels": {
+      "70": {"baseHp": "12438", "baseAtk": "198", "baseDef": "565", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "14231", "baseAtk": "227", "baseDef": "647", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "15307", "baseAtk": "244", "baseDef": "696", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "15851", "baseAtk": "271", "baseDef": "720", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "16395", "baseAtk": "299", "baseDef": "745", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "gaming": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "region": "Liyue",
+    "releaseDate": "2024-01-30",
+    "levels": {
+      "70": {"baseHp": "9329", "baseAtk": "246", "baseDef": "574", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10628", "baseAtk": "281", "baseDef": "654", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "11419", "baseAtk": "302", "baseDef": "703", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11813", "baseAtk": "340", "baseDef": "727", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "12208", "baseAtk": "379", "baseDef": "752", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "ganyu": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Bow",
+    "region": "Liyue",
+    "releaseDate": "2021-01-12",
+    "levels": {
+      "70": {"baseHp": "7960", "baseAtk": "272", "baseDef": "512", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "9108", "baseAtk": "311", "baseDef": "586", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "9797", "baseAtk": "335", "baseDef": "630", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "10144", "baseAtk": "373", "baseDef": "653", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "10493", "baseAtk": "410", "baseDef": "675", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "gorou": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Bow",
+    "region": "Inazuma",
+    "releaseDate": "2021-12-14",
+    "levels": {
+      "70": {"baseHp": "7818", "baseAtk": "149", "baseDef": "530", "em": "0", "geo%": "18.0%"},
+      "80": {"baseHp": "8907", "baseAtk": "170", "baseDef": "603", "em": "0", "geo%": "24.0%"},
+      "90": {"baseHp": "9570", "baseAtk": "183", "baseDef": "648", "em": "0", "geo%": "24.0%"},
+      "95": {"baseHp": "9901", "baseAtk": "206", "baseDef": "671", "em": "0", "geo%": "24.0%"},
+      "100": {"baseHp": "10232", "baseAtk": "229", "baseDef": "693", "em": "0", "geo%": "24.0%"}
+    }
+  },
+  "hu_tao": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2021-03-02",
+    "levels": {
+      "70": {"baseHp": "12637", "baseAtk": "86", "baseDef": "712", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "14459", "baseAtk": "99", "baseDef": "815", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "15552", "baseAtk": "106", "baseDef": "876", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "16104", "baseAtk": "118", "baseDef": "907", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "16658", "baseAtk": "130", "baseDef": "938", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "iansan": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "region": "Natlan",
+    "releaseDate": "2025-03-25",
+    "levels": {
+      "70": {"baseHp": "8707", "baseAtk": "210", "baseDef": "521", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "9919", "baseAtk": "239", "baseDef": "594", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10657", "baseAtk": "257", "baseDef": "638", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11026", "baseAtk": "290", "baseDef": "660", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11395", "baseAtk": "323", "baseDef": "682", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "ifa": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Natlan",
+    "releaseDate": "2025-05-06",
+    "levels": {
+      "70": {"baseHp": "8236", "baseAtk": "146", "baseDef": "495", "em": "72"},
+      "80": {"baseHp": "9383", "baseAtk": "166", "baseDef": "563", "em": "96"},
+      "90": {"baseHp": "10081", "baseAtk": "178", "baseDef": "605", "em": "96"},
+      "95": {"baseHp": "10429", "baseAtk": "201", "baseDef": "626", "em": "96"},
+      "100": {"baseHp": "10778", "baseAtk": "224", "baseDef": "647", "em": "96"}
+    }
+  },
+  "illuga": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "region": "Nod-Krai",
+    "releaseDate": "2026-02-03",
+    "levels": {
+      "70": {"baseHp": "9773", "baseAtk": "156", "baseDef": "665", "em": "72"},
+      "80": {"baseHp": "11134", "baseAtk": "178", "baseDef": "757", "em": "96"},
+      "90": {"baseHp": "11962", "baseAtk": "191", "baseDef": "814", "em": "96"},
+      "95": {"baseHp": "12376", "baseAtk": "216", "baseDef": "842", "em": "96"},
+      "100": {"baseHp": "12790", "baseAtk": "240", "baseDef": "870", "em": "96"}
+    }
+  },
+  "ineffa": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-07-29",
+    "levels": {
+      "70": {"baseHp": "10249", "baseAtk": "268", "baseDef": "673", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "11727", "baseAtk": "307", "baseDef": "770", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12613", "baseAtk": "330", "baseDef": "828", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13061", "baseAtk": "367", "baseDef": "857", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13510", "baseAtk": "404", "baseDef": "887", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "jahoda": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-12-02",
+    "levels": {
+      "70": {"baseHp": "7881", "baseAtk": "182", "baseDef": "474", "em": "0", "heal%": "13.9%"},
+      "80": {"baseHp": "8978", "baseAtk": "208", "baseDef": "540", "em": "0", "heal%": "18.5%"},
+      "90": {"baseHp": "9646", "baseAtk": "223", "baseDef": "580", "em": "0", "heal%": "18.5%"},
+      "95": {"baseHp": "9979", "baseAtk": "251", "baseDef": "600", "em": "0", "heal%": "18.5%"},
+      "100": {"baseHp": "10313", "baseAtk": "280", "baseDef": "620", "em": "0", "heal%": "18.5%"}
+    }
+  },
+  "jean": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "11940", "baseAtk": "194", "baseDef": "624", "em": "0", "heal%": "16.6%"},
+      "80": {"baseHp": "13662", "baseAtk": "222", "baseDef": "715", "em": "0", "heal%": "22.1%"},
+      "90": {"baseHp": "14695", "baseAtk": "239", "baseDef": "769", "em": "0", "heal%": "22.1%"},
+      "95": {"baseHp": "15217", "baseAtk": "266", "baseDef": "796", "em": "0", "heal%": "22.1%"},
+      "100": {"baseHp": "15740", "baseAtk": "293", "baseDef": "823", "em": "0", "heal%": "22.1%"}
+    }
+  },
+  "kachina": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "region": "Natlan",
+    "releaseDate": "2024-08-27",
+    "levels": {
+      "70": {"baseHp": "9640", "baseAtk": "177", "baseDef": "647", "em": "0", "geo%": "18.0%"},
+      "80": {"baseHp": "10982", "baseAtk": "202", "baseDef": "738", "em": "0", "geo%": "24.0%"},
+      "90": {"baseHp": "11799", "baseAtk": "217", "baseDef": "792", "em": "0", "geo%": "24.0%"},
+      "95": {"baseHp": "12207", "baseAtk": "244", "baseDef": "820", "em": "0", "geo%": "24.0%"},
+      "100": {"baseHp": "12615", "baseAtk": "272", "baseDef": "847", "em": "0", "geo%": "24.0%"}
+    }
+  },
+  "kaedehara_kazuha": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2021-06-29",
+    "levels": {
+      "70": {"baseHp": "10846", "baseAtk": "241", "baseDef": "656", "em": "86"},
+      "80": {"baseHp": "12410", "baseAtk": "276", "baseDef": "750", "em": "115"},
+      "90": {"baseHp": "13348", "baseAtk": "297", "baseDef": "807", "em": "115"},
+      "95": {"baseHp": "13822", "baseAtk": "330", "baseDef": "836", "em": "115"},
+      "100": {"baseHp": "14297", "baseAtk": "363", "baseDef": "864", "em": "115"}
+    }
+  },
+  "kaeya": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "9507", "baseAtk": "182", "baseDef": "647", "em": "0", "er": "20.0%"},
+      "80": {"baseHp": "10830", "baseAtk": "208", "baseDef": "737", "em": "0", "er": "26.7%"},
+      "90": {"baseHp": "11636", "baseAtk": "223", "baseDef": "792", "em": "0", "er": "26.7%"},
+      "95": {"baseHp": "12038", "baseAtk": "251", "baseDef": "819", "em": "0", "er": "26.7%"},
+      "100": {"baseHp": "12441", "baseAtk": "280", "baseDef": "846", "em": "0", "er": "26.7%"}
+    }
+  },
+  "kamisato_ayaka": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2021-07-21",
+    "levels": {
+      "70": {"baseHp": "10448", "baseAtk": "278", "baseDef": "637", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11954", "baseAtk": "318", "baseDef": "729", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12858", "baseAtk": "342", "baseDef": "784", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13315", "baseAtk": "381", "baseDef": "812", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13772", "baseAtk": "419", "baseDef": "840", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "kamisato_ayato": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2022-03-30",
+    "levels": {
+      "70": {"baseHp": "11144", "baseAtk": "243", "baseDef": "624", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12751", "baseAtk": "278", "baseDef": "715", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13715", "baseAtk": "299", "baseDef": "769", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "14202", "baseAtk": "333", "baseDef": "796", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14690", "baseAtk": "366", "baseDef": "823", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "kaveh": {
+    "rarity": 4,
+    "element": "Dendro",
+    "weaponType": "Claymore",
+    "region": "Sumeru",
+    "releaseDate": "2023-05-02",
+    "levels": {
+      "70": {"baseHp": "9773", "baseAtk": "191", "baseDef": "613", "em": "72"},
+      "80": {"baseHp": "11134", "baseAtk": "217", "baseDef": "699", "em": "96"},
+      "90": {"baseHp": "11962", "baseAtk": "234", "baseDef": "751", "em": "96"},
+      "95": {"baseHp": "12376", "baseAtk": "263", "baseDef": "777", "em": "96"},
+      "100": {"baseHp": "12790", "baseAtk": "293", "baseDef": "803", "em": "96"}
+    }
+  },
+  "keqing": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "10647", "baseAtk": "262", "baseDef": "649", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12182", "baseAtk": "300", "baseDef": "743", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13103", "baseAtk": "323", "baseDef": "799", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13568", "baseAtk": "359", "baseDef": "828", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14034", "baseAtk": "396", "baseDef": "856", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "kinich": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Claymore",
+    "region": "Natlan",
+    "releaseDate": "2024-09-17",
+    "levels": {
+      "70": {"baseHp": "10448", "baseAtk": "270", "baseDef": "651", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11954", "baseAtk": "309", "baseDef": "745", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12858", "baseAtk": "332", "baseDef": "802", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13315", "baseAtk": "370", "baseDef": "830", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13772", "baseAtk": "407", "baseDef": "859", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "kirara": {
+    "rarity": 4,
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2023-05-23",
+    "levels": {
+      "70": {"baseHp": "9951", "baseAtk": "182", "baseDef": "446", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11336", "baseAtk": "208", "baseDef": "508", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12180", "baseAtk": "223", "baseDef": "546", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12601", "baseAtk": "251", "baseDef": "565", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13022", "baseAtk": "280", "baseDef": "584", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "klee": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Catalyst",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8358", "baseAtk": "253", "baseDef": "500", "em": "0", "pyro%": "21.6%"},
+      "80": {"baseHp": "9563", "baseAtk": "289", "baseDef": "572", "em": "0", "pyro%": "28.8%"},
+      "90": {"baseHp": "10287", "baseAtk": "311", "baseDef": "615", "em": "0", "pyro%": "28.8%"},
+      "95": {"baseHp": "10652", "baseAtk": "346", "baseDef": "637", "em": "0", "pyro%": "28.8%"},
+      "100": {"baseHp": "11018", "baseAtk": "381", "baseDef": "659", "em": "0", "pyro%": "28.8%"}
+    }
+  },
+  "kujou_sara": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Bow",
+    "region": "Inazuma",
+    "releaseDate": "2021-09-01",
+    "levels": {
+      "70": {"baseHp": "7818", "baseAtk": "160", "baseDef": "513", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8907", "baseAtk": "182", "baseDef": "584", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9570", "baseAtk": "195", "baseDef": "628", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9901", "baseAtk": "220", "baseDef": "650", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "10232", "baseAtk": "245", "baseDef": "671", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "kuki_shinobu": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "Inazuma",
+    "releaseDate": "2022-06-21",
+    "levels": {
+      "70": {"baseHp": "10040", "baseAtk": "174", "baseDef": "613", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11438", "baseAtk": "198", "baseDef": "699", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12289", "baseAtk": "212", "baseDef": "751", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12713", "baseAtk": "239", "baseDef": "777", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13139", "baseAtk": "267", "baseDef": "803", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "lan_yan": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Liyue",
+    "releaseDate": "2025-01-21",
+    "levels": {
+      "70": {"baseHp": "7552", "baseAtk": "205", "baseDef": "474", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8604", "baseAtk": "233", "baseDef": "540", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9244", "baseAtk": "251", "baseDef": "580", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9563", "baseAtk": "283", "baseDef": "600", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "9883", "baseAtk": "315", "baseDef": "620", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "lauma": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-09-09",
+    "levels": {
+      "70": {"baseHp": "8657", "baseAtk": "207", "baseDef": "543", "em": "286"},
+      "80": {"baseHp": "9905", "baseAtk": "237", "baseDef": "622", "em": "315"},
+      "90": {"baseHp": "10654", "baseAtk": "255", "baseDef": "669", "em": "315"},
+      "95": {"baseHp": "11032", "baseAtk": "284", "baseDef": "692", "em": "315"},
+      "100": {"baseHp": "11411", "baseAtk": "312", "baseDef": "716", "em": "315"}
+    }
+  },
+  "layla": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "Sumeru",
+    "releaseDate": "2022-11-18",
+    "levels": {
+      "70": {"baseHp": "9062", "baseAtk": "177", "baseDef": "535", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "10324", "baseAtk": "202", "baseDef": "610", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "11092", "baseAtk": "217", "baseDef": "655", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "11476", "baseAtk": "244", "baseDef": "678", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "11860", "baseAtk": "272", "baseDef": "701", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "lisa": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Catalyst",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7818", "baseAtk": "189", "baseDef": "468", "em": "72"},
+      "80": {"baseHp": "8907", "baseAtk": "215", "baseDef": "534", "em": "96"},
+      "90": {"baseHp": "9570", "baseAtk": "232", "baseDef": "573", "em": "96"},
+      "95": {"baseHp": "9901", "baseAtk": "261", "baseDef": "593", "em": "96"},
+      "100": {"baseHp": "10232", "baseAtk": "291", "baseDef": "613", "em": "96"}
+    }
+  },
+  "lynette": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "Fontaine",
+    "releaseDate": "2023-08-15",
+    "levels": {
+      "70": {"baseHp": "10129", "baseAtk": "189", "baseDef": "582", "em": "0", "anemo%": "18.0%"},
+      "80": {"baseHp": "11539", "baseAtk": "215", "baseDef": "663", "em": "0", "anemo%": "24.0%"},
+      "90": {"baseHp": "12397", "baseAtk": "232", "baseDef": "712", "em": "0", "anemo%": "24.0%"},
+      "95": {"baseHp": "12826", "baseAtk": "261", "baseDef": "736", "em": "0", "anemo%": "24.0%"},
+      "100": {"baseHp": "13255", "baseAtk": "291", "baseDef": "761", "em": "0", "anemo%": "24.0%"}
+    }
+  },
+  "lyney": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Bow",
+    "region": "Fontaine",
+    "releaseDate": "2023-08-15",
+    "levels": {
+      "70": {"baseHp": "8955", "baseAtk": "258", "baseDef": "437", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "10247", "baseAtk": "296", "baseDef": "500", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "11021", "baseAtk": "318", "baseDef": "538", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "11413", "baseAtk": "354", "baseDef": "557", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "11805", "baseAtk": "390", "baseDef": "576", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "manekin_anemo": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_cryo": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_dendro": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_electro": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_geo": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_hydro": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekin_pyro": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_anemo": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_cryo": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_dendro": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_electro": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_geo": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_hydro": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "manekina_pyro": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "mavuika": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "region": "Natlan",
+    "releaseDate": "2024-12-31",
+    "levels": {
+      "70": {"baseHp": "10199", "baseAtk": "292", "baseDef": "643", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11670", "baseAtk": "334", "baseDef": "736", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12552", "baseAtk": "359", "baseDef": "792", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "12998", "baseAtk": "399", "baseDef": "820", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13444", "baseAtk": "439", "baseDef": "848", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "mika": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "region": "Mondstadt",
+    "releaseDate": "2023-03-21",
+    "levels": {
+      "70": {"baseHp": "10217", "baseAtk": "182", "baseDef": "583", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11640", "baseAtk": "208", "baseDef": "664", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12506", "baseAtk": "223", "baseDef": "713", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12938", "baseAtk": "251", "baseDef": "738", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13371", "baseAtk": "280", "baseDef": "763", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "mona": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8458", "baseAtk": "233", "baseDef": "531", "em": "0", "er": "24.0%"},
+      "80": {"baseHp": "9677", "baseAtk": "267", "baseDef": "607", "em": "0", "er": "32.0%"},
+      "90": {"baseHp": "10409", "baseAtk": "287", "baseDef": "653", "em": "0", "er": "32.0%"},
+      "95": {"baseHp": "10779", "baseAtk": "319", "baseDef": "676", "em": "0", "er": "32.0%"},
+      "100": {"baseHp": "11149", "baseAtk": "352", "baseDef": "700", "em": "0", "er": "32.0%"}
+    }
+  },
+  "mualani": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Natlan",
+    "releaseDate": "2024-08-27",
+    "levels": {
+      "70": {"baseHp": "12338", "baseAtk": "148", "baseDef": "463", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "14117", "baseAtk": "169", "baseDef": "530", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "15185", "baseAtk": "182", "baseDef": "570", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "15724", "baseAtk": "202", "baseDef": "591", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "16264", "baseAtk": "223", "baseDef": "611", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "nahida": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "region": "Sumeru",
+    "releaseDate": "2022-11-01",
+    "levels": {
+      "70": {"baseHp": "8418", "baseAtk": "243", "baseDef": "512", "em": "86"},
+      "80": {"baseHp": "9632", "baseAtk": "278", "baseDef": "586", "em": "115"},
+      "90": {"baseHp": "10360", "baseAtk": "299", "baseDef": "630", "em": "115"},
+      "95": {"baseHp": "10728", "baseAtk": "333", "baseDef": "653", "em": "115"},
+      "100": {"baseHp": "11096", "baseAtk": "366", "baseDef": "675", "em": "115"}
+    }
+  },
+  "navia": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Claymore",
+    "region": "Fontaine",
+    "releaseDate": "2023-12-19",
+    "levels": {
+      "70": {"baseHp": "10278", "baseAtk": "286", "baseDef": "644", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11761", "baseAtk": "327", "baseDef": "737", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12650", "baseAtk": "352", "baseDef": "793", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13099", "baseAtk": "391", "baseDef": "821", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13549", "baseAtk": "431", "baseDef": "850", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "nefer": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "region": "Nod-Krai",
+    "releaseDate": "2025-10-21",
+    "levels": {
+      "70": {"baseHp": "10322", "baseAtk": "280", "baseDef": "649", "em": "100", "cd": "28.8%"},
+      "80": {"baseHp": "11811", "baseAtk": "320", "baseDef": "743", "em": "100", "cd": "38.4%"},
+      "90": {"baseHp": "12704", "baseAtk": "344", "baseDef": "799", "em": "100", "cd": "38.4%"},
+      "95": {"baseHp": "13155", "baseAtk": "383", "baseDef": "828", "em": "100", "cd": "38.4%"},
+      "100": {"baseHp": "13607", "baseAtk": "422", "baseDef": "856", "em": "100", "cd": "38.4%"}
+    }
+  },
+  "neuvillette": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Fontaine",
+    "releaseDate": "2023-09-26",
+    "levels": {
+      "70": {"baseHp": "11940", "baseAtk": "169", "baseDef": "468", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "13662", "baseAtk": "194", "baseDef": "536", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "14695", "baseAtk": "208", "baseDef": "576", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "15217", "baseAtk": "232", "baseDef": "597", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "15740", "baseAtk": "255", "baseDef": "617", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "nilou": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "Sumeru",
+    "releaseDate": "2022-10-14",
+    "levels": {
+      "70": {"baseHp": "12338", "baseAtk": "187", "baseDef": "592", "em": "0", "hp%": "21.6%"},
+      "80": {"baseHp": "14117", "baseAtk": "213", "baseDef": "677", "em": "0", "hp%": "28.8%"},
+      "90": {"baseHp": "15185", "baseAtk": "230", "baseDef": "729", "em": "0", "hp%": "28.8%"},
+      "95": {"baseHp": "15724", "baseAtk": "255", "baseDef": "754", "em": "0", "hp%": "28.8%"},
+      "100": {"baseHp": "16264", "baseAtk": "281", "baseDef": "780", "em": "0", "hp%": "28.8%"}
+    }
+  },
+  "ningguang": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Catalyst",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7996", "baseAtk": "174", "baseDef": "468", "em": "0", "geo%": "18.0%"},
+      "80": {"baseHp": "9110", "baseAtk": "198", "baseDef": "534", "em": "0", "geo%": "24.0%"},
+      "90": {"baseHp": "9787", "baseAtk": "212", "baseDef": "573", "em": "0", "geo%": "24.0%"},
+      "95": {"baseHp": "10126", "baseAtk": "239", "baseDef": "593", "em": "0", "geo%": "24.0%"},
+      "100": {"baseHp": "10464", "baseAtk": "267", "baseDef": "613", "em": "0", "geo%": "24.0%"}
+    }
+  },
+  "noelle": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Claymore",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "9862", "baseAtk": "156", "baseDef": "652", "em": "0", "def%": "22.5%"},
+      "80": {"baseHp": "11235", "baseAtk": "178", "baseDef": "743", "em": "0", "def%": "30.0%"},
+      "90": {"baseHp": "12071", "baseAtk": "191", "baseDef": "799", "em": "0", "def%": "30.0%"},
+      "95": {"baseHp": "12488", "baseAtk": "216", "baseDef": "826", "em": "0", "def%": "30.0%"},
+      "100": {"baseHp": "12906", "baseAtk": "240", "baseDef": "854", "em": "0", "def%": "30.0%"}
+    }
+  },
+  "ororon": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Bow",
+    "region": "Natlan",
+    "releaseDate": "2024-11-19",
+    "levels": {
+      "70": {"baseHp": "7552", "baseAtk": "200", "baseDef": "480", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "8604", "baseAtk": "227", "baseDef": "546", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "9244", "baseAtk": "244", "baseDef": "587", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "9563", "baseAtk": "275", "baseDef": "607", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "9883", "baseAtk": "307", "baseDef": "628", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "qiqi": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "10050", "baseAtk": "233", "baseDef": "749", "em": "0", "heal%": "16.6%"},
+      "80": {"baseHp": "11499", "baseAtk": "267", "baseDef": "857", "em": "0", "heal%": "22.1%"},
+      "90": {"baseHp": "12368", "baseAtk": "287", "baseDef": "922", "em": "0", "heal%": "22.1%"},
+      "95": {"baseHp": "12807", "baseAtk": "319", "baseDef": "955", "em": "0", "heal%": "22.1%"},
+      "100": {"baseHp": "13247", "baseAtk": "352", "baseDef": "988", "em": "0", "heal%": "22.1%"}
+    }
+  },
+  "raiden_shogun": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "region": "Inazuma",
+    "releaseDate": "2021-09-01",
+    "levels": {
+      "70": {"baseHp": "10487", "baseAtk": "274", "baseDef": "641", "em": "0", "er": "24.0%"},
+      "80": {"baseHp": "12000", "baseAtk": "314", "baseDef": "734", "em": "0", "er": "32.0%"},
+      "90": {"baseHp": "12907", "baseAtk": "337", "baseDef": "789", "em": "0", "er": "32.0%"},
+      "95": {"baseHp": "13365", "baseAtk": "375", "baseDef": "817", "em": "0", "er": "32.0%"},
+      "100": {"baseHp": "13825", "baseAtk": "413", "baseDef": "845", "em": "0", "er": "32.0%"}
+    }
+  },
+  "razor": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Claymore",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "9773", "baseAtk": "191", "baseDef": "613", "em": "0", "phys%": "22.5%"},
+      "80": {"baseHp": "11134", "baseAtk": "217", "baseDef": "699", "em": "0", "phys%": "30.0%"},
+      "90": {"baseHp": "11962", "baseAtk": "234", "baseDef": "751", "em": "0", "phys%": "30.0%"},
+      "95": {"baseHp": "12376", "baseAtk": "263", "baseDef": "777", "em": "0", "phys%": "30.0%"},
+      "100": {"baseHp": "12790", "baseAtk": "293", "baseDef": "803", "em": "0", "phys%": "30.0%"}
+    }
+  },
+  "rosaria": {
+    "rarity": 4,
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "region": "Mondstadt",
+    "releaseDate": "2021-04-06",
+    "levels": {
+      "70": {"baseHp": "10040", "baseAtk": "196", "baseDef": "580", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "11438", "baseAtk": "223", "baseDef": "661", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "12289", "baseAtk": "240", "baseDef": "710", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "12713", "baseAtk": "271", "baseDef": "734", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "13139", "baseAtk": "301", "baseDef": "759", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "sangonomiya_kokomi": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "region": "Inazuma",
+    "releaseDate": "2021-09-21",
+    "levels": {
+      "70": {"baseHp": "10945", "baseAtk": "190", "baseDef": "534", "em": "0", "hydro%": "21.6%"},
+      "80": {"baseHp": "12524", "baseAtk": "218", "baseDef": "611", "em": "0", "hydro%": "28.8%"},
+      "90": {"baseHp": "13471", "baseAtk": "234", "baseDef": "657", "em": "0", "hydro%": "28.8%"},
+      "95": {"baseHp": "13949", "baseAtk": "261", "baseDef": "680", "em": "0", "hydro%": "28.8%"},
+      "100": {"baseHp": "14428", "baseAtk": "287", "baseDef": "704", "em": "0", "hydro%": "28.8%"}
+    }
+  },
+  "sayu": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Claymore",
+    "region": "Inazuma",
+    "releaseDate": "2021-08-10",
+    "levels": {
+      "70": {"baseHp": "9684", "baseAtk": "200", "baseDef": "608", "em": "72"},
+      "80": {"baseHp": "11033", "baseAtk": "227", "baseDef": "693", "em": "96"},
+      "90": {"baseHp": "11854", "baseAtk": "244", "baseDef": "745", "em": "96"},
+      "95": {"baseHp": "12263", "baseAtk": "275", "baseDef": "770", "em": "96"},
+      "100": {"baseHp": "12674", "baseAtk": "307", "baseDef": "796", "em": "96"}
+    }
+  },
+  "sethos": {
+    "rarity": 4,
+    "element": "Electro",
+    "weaponType": "Bow",
+    "region": "Sumeru",
+    "releaseDate": "2024-06-04",
+    "levels": {
+      "70": {"baseHp": "7996", "baseAtk": "186", "baseDef": "457", "em": "72"},
+      "80": {"baseHp": "9110", "baseAtk": "212", "baseDef": "521", "em": "96"},
+      "90": {"baseHp": "9787", "baseAtk": "227", "baseDef": "560", "em": "96"},
+      "95": {"baseHp": "10126", "baseAtk": "256", "baseDef": "579", "em": "96"},
+      "100": {"baseHp": "10464", "baseAtk": "285", "baseDef": "598", "em": "96"}
+    }
+  },
+  "shenhe": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2022-01-05",
+    "levels": {
+      "70": {"baseHp": "10557", "baseAtk": "247", "baseDef": "674", "em": "0", "atk%": "21.6%"},
+      "80": {"baseHp": "12080", "baseAtk": "282", "baseDef": "772", "em": "0", "atk%": "28.8%"},
+      "90": {"baseHp": "12993", "baseAtk": "304", "baseDef": "830", "em": "0", "atk%": "28.8%"},
+      "95": {"baseHp": "13454", "baseAtk": "338", "baseDef": "860", "em": "0", "atk%": "28.8%"},
+      "100": {"baseHp": "13916", "baseAtk": "372", "baseDef": "889", "em": "0", "atk%": "28.8%"}
+    }
+  },
+  "shikanoin_heizou": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Inazuma",
+    "releaseDate": "2022-07-13",
+    "levels": {
+      "70": {"baseHp": "8707", "baseAtk": "184", "baseDef": "559", "em": "0", "anemo%": "18.0%"},
+      "80": {"baseHp": "9919", "baseAtk": "210", "baseDef": "637", "em": "0", "anemo%": "24.0%"},
+      "90": {"baseHp": "10657", "baseAtk": "225", "baseDef": "684", "em": "0", "anemo%": "24.0%"},
+      "95": {"baseHp": "11026", "baseAtk": "254", "baseDef": "708", "em": "0", "anemo%": "24.0%"},
+      "100": {"baseHp": "11395", "baseAtk": "283", "baseDef": "731", "em": "0", "anemo%": "24.0%"}
+    }
+  },
+  "sigewinne": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "region": "Fontaine",
+    "releaseDate": "2024-06-26",
+    "levels": {
+      "70": {"baseHp": "10846", "baseAtk": "156", "baseDef": "406", "em": "0", "hp%": "21.6%"},
+      "80": {"baseHp": "12410", "baseAtk": "179", "baseDef": "464", "em": "0", "hp%": "28.8%"},
+      "90": {"baseHp": "13348", "baseAtk": "193", "baseDef": "500", "em": "0", "hp%": "28.8%"},
+      "95": {"baseHp": "13822", "baseAtk": "214", "baseDef": "517", "em": "0", "hp%": "28.8%"},
+      "100": {"baseHp": "14297", "baseAtk": "236", "baseDef": "535", "em": "0", "hp%": "28.8%"}
+    }
+  },
+  "skirk": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2025-06-17",
+    "levels": {
+      "70": {"baseHp": "10089", "baseAtk": "292", "baseDef": "655", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11544", "baseAtk": "334", "baseDef": "750", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12417", "baseAtk": "359", "baseDef": "806", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "12858", "baseAtk": "399", "baseDef": "835", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13300", "baseAtk": "439", "baseDef": "864", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "sucrose": {
+    "rarity": 4,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "7552", "baseAtk": "139", "baseDef": "574", "em": "0", "anemo%": "18.0%"},
+      "80": {"baseHp": "8604", "baseAtk": "158", "baseDef": "654", "em": "0", "anemo%": "24.0%"},
+      "90": {"baseHp": "9244", "baseAtk": "170", "baseDef": "703", "em": "0", "anemo%": "24.0%"},
+      "95": {"baseHp": "9563", "baseAtk": "192", "baseDef": "727", "em": "0", "anemo%": "24.0%"},
+      "100": {"baseHp": "9883", "baseAtk": "213", "baseDef": "752", "em": "0", "anemo%": "24.0%"}
+    }
+  },
+  "tartaglia": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "region": "Snezhnaya",
+    "releaseDate": "2020-11-11",
+    "levels": {
+      "70": {"baseHp": "10647", "baseAtk": "245", "baseDef": "662", "em": "0", "hydro%": "21.6%"},
+      "80": {"baseHp": "12182", "baseAtk": "280", "baseDef": "757", "em": "0", "hydro%": "28.8%"},
+      "90": {"baseHp": "13103", "baseAtk": "301", "baseDef": "815", "em": "0", "hydro%": "28.8%"},
+      "95": {"baseHp": "13568", "baseAtk": "335", "baseDef": "844", "em": "0", "hydro%": "28.8%"},
+      "100": {"baseHp": "14034", "baseAtk": "369", "baseDef": "873", "em": "0", "hydro%": "28.8%"}
+    }
+  },
+  "thoma": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "region": "Inazuma",
+    "releaseDate": "2021-11-02",
+    "levels": {
+      "70": {"baseHp": "8440", "baseAtk": "165", "baseDef": "613", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "9616", "baseAtk": "188", "baseDef": "699", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10331", "baseAtk": "202", "baseDef": "751", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "10688", "baseAtk": "228", "baseDef": "777", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11046", "baseAtk": "253", "baseDef": "803", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "tighnari": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Bow",
+    "region": "Sumeru",
+    "releaseDate": "2022-08-24",
+    "levels": {
+      "70": {"baseHp": "8816", "baseAtk": "218", "baseDef": "512", "em": "0", "dendro%": "21.6%"},
+      "80": {"baseHp": "10087", "baseAtk": "249", "baseDef": "586", "em": "0", "dendro%": "28.8%"},
+      "90": {"baseHp": "10850", "baseAtk": "268", "baseDef": "630", "em": "0", "dendro%": "28.8%"},
+      "95": {"baseHp": "11235", "baseAtk": "298", "baseDef": "653", "em": "0", "dendro%": "28.8%"},
+      "100": {"baseHp": "11621", "baseAtk": "328", "baseDef": "675", "em": "0", "dendro%": "28.8%"}
+    }
+  },
+  "traveler_anemo": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "traveler_dendro": {
+    "rarity": 5,
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "traveler_electro": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "traveler_geo": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "traveler_hydro": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "traveler_pyro": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Sword",
+    "region": "None",
+    "releaseDate": "2020-09-14",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "174", "baseDef": "558", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10122", "baseAtk": "198", "baseDef": "635", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10875", "baseAtk": "212", "baseDef": "683", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11251", "baseAtk": "239", "baseDef": "706", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11627", "baseAtk": "267", "baseDef": "730", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "varesa": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Catalyst",
+    "region": "Natlan",
+    "releaseDate": "2025-03-25",
+    "levels": {
+      "70": {"baseHp": "10318", "baseAtk": "290", "baseDef": "635", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "11806", "baseAtk": "331", "baseDef": "727", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12699", "baseAtk": "356", "baseDef": "782", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13150", "baseAtk": "396", "baseDef": "809", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13602", "baseAtk": "437", "baseDef": "837", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "venti": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "region": "Mondstadt",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8557", "baseAtk": "214", "baseDef": "543", "em": "0", "er": "24.0%"},
+      "80": {"baseHp": "9791", "baseAtk": "245", "baseDef": "622", "em": "0", "er": "32.0%"},
+      "90": {"baseHp": "10531", "baseAtk": "263", "baseDef": "669", "em": "0", "er": "32.0%"},
+      "95": {"baseHp": "10905", "baseAtk": "293", "baseDef": "692", "em": "0", "er": "32.0%"},
+      "100": {"baseHp": "11280", "baseAtk": "322", "baseDef": "716", "em": "0", "er": "32.0%"}
+    }
+  },
+  "wanderer": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Sumeru",
+    "releaseDate": "2022-12-06",
+    "levels": {
+      "70": {"baseHp": "8259", "baseAtk": "266", "baseDef": "493", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "9450", "baseAtk": "305", "baseDef": "564", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "10164", "baseAtk": "328", "baseDef": "607", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "10525", "baseAtk": "365", "baseDef": "629", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "10887", "baseAtk": "401", "baseDef": "650", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "wriothesley": {
+    "rarity": 5,
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "region": "Fontaine",
+    "releaseDate": "2023-10-17",
+    "levels": {
+      "70": {"baseHp": "11045", "baseAtk": "253", "baseDef": "620", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12637", "baseAtk": "289", "baseDef": "710", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "13593", "baseAtk": "311", "baseDef": "763", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "14075", "baseAtk": "346", "baseDef": "790", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "14559", "baseAtk": "381", "baseDef": "817", "em": "0", "cd": "38.4%"}
+    }
+  },
+  "xiangling": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8885", "baseAtk": "184", "baseDef": "546", "em": "72"},
+      "80": {"baseHp": "10122", "baseAtk": "210", "baseDef": "623", "em": "96"},
+      "90": {"baseHp": "10875", "baseAtk": "225", "baseDef": "669", "em": "96"},
+      "95": {"baseHp": "11251", "baseAtk": "254", "baseDef": "692", "em": "96"},
+      "100": {"baseHp": "11627", "baseAtk": "283", "baseDef": "715", "em": "96"}
+    }
+  },
+  "xianyun": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Liyue",
+    "releaseDate": "2024-01-30",
+    "levels": {
+      "70": {"baseHp": "8458", "baseAtk": "272", "baseDef": "465", "em": "0", "atk%": "21.6%"},
+      "80": {"baseHp": "9677", "baseAtk": "311", "baseDef": "532", "em": "0", "atk%": "28.8%"},
+      "90": {"baseHp": "10409", "baseAtk": "335", "baseDef": "573", "em": "0", "atk%": "28.8%"},
+      "95": {"baseHp": "10779", "baseAtk": "373", "baseDef": "593", "em": "0", "atk%": "28.8%"},
+      "100": {"baseHp": "11149", "baseAtk": "410", "baseDef": "613", "em": "0", "atk%": "28.8%"}
+    }
+  },
+  "xiao": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2021-02-02",
+    "levels": {
+      "70": {"baseHp": "10348", "baseAtk": "284", "baseDef": "649", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "11840", "baseAtk": "325", "baseDef": "743", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "12736", "baseAtk": "349", "baseDef": "799", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "13188", "baseAtk": "388", "baseDef": "828", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "13641", "baseAtk": "428", "baseDef": "856", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "xilonen": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "Natlan",
+    "releaseDate": "2024-10-08",
+    "levels": {
+      "70": {"baseHp": "10079", "baseAtk": "223", "baseDef": "756", "em": "0", "def%": "27.0%"},
+      "80": {"baseHp": "11533", "baseAtk": "256", "baseDef": "865", "em": "0", "def%": "36.0%"},
+      "90": {"baseHp": "12405", "baseAtk": "275", "baseDef": "930", "em": "0", "def%": "36.0%"},
+      "95": {"baseHp": "12845", "baseAtk": "306", "baseDef": "963", "em": "0", "def%": "36.0%"},
+      "100": {"baseHp": "13287", "baseAtk": "337", "baseDef": "996", "em": "0", "def%": "36.0%"}
+    }
+  },
+  "xingqiu": {
+    "rarity": 4,
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "region": "Liyue",
+    "releaseDate": "2020-09-15",
+    "levels": {
+      "70": {"baseHp": "8352", "baseAtk": "165", "baseDef": "619", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "9514", "baseAtk": "188", "baseDef": "705", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "10222", "baseAtk": "202", "baseDef": "758", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "10576", "baseAtk": "228", "baseDef": "784", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "10930", "baseAtk": "253", "baseDef": "810", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "xinyan": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "region": "Liyue",
+    "releaseDate": "2020-12-02",
+    "levels": {
+      "70": {"baseHp": "9151", "baseAtk": "203", "baseDef": "652", "em": "0", "atk%": "18.0%"},
+      "80": {"baseHp": "10425", "baseAtk": "231", "baseDef": "743", "em": "0", "atk%": "24.0%"},
+      "90": {"baseHp": "11201", "baseAtk": "249", "baseDef": "799", "em": "0", "atk%": "24.0%"},
+      "95": {"baseHp": "11588", "baseAtk": "280", "baseDef": "826", "em": "0", "atk%": "24.0%"},
+      "100": {"baseHp": "11976", "baseAtk": "312", "baseDef": "854", "em": "0", "atk%": "24.0%"}
+    }
+  },
+  "yae_miko": {
+    "rarity": 5,
+    "element": "Electro",
+    "weaponType": "Catalyst",
+    "region": "Inazuma",
+    "releaseDate": "2022-02-16",
+    "levels": {
+      "70": {"baseHp": "8428", "baseAtk": "276", "baseDef": "462", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "9643", "baseAtk": "316", "baseDef": "529", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "10372", "baseAtk": "340", "baseDef": "569", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "10740", "baseAtk": "378", "baseDef": "589", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "11109", "baseAtk": "416", "baseDef": "609", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "yanfei": {
+    "rarity": 4,
+    "element": "Pyro",
+    "weaponType": "Catalyst",
+    "region": "Liyue",
+    "releaseDate": "2021-04-27",
+    "levels": {
+      "70": {"baseHp": "7641", "baseAtk": "196", "baseDef": "480", "em": "0", "pyro%": "18.0%"},
+      "80": {"baseHp": "8705", "baseAtk": "223", "baseDef": "546", "em": "0", "pyro%": "24.0%"},
+      "90": {"baseHp": "9352", "baseAtk": "240", "baseDef": "587", "em": "0", "pyro%": "24.0%"},
+      "95": {"baseHp": "9675", "baseAtk": "271", "baseDef": "607", "em": "0", "pyro%": "24.0%"},
+      "100": {"baseHp": "9999", "baseAtk": "301", "baseDef": "628", "em": "0", "pyro%": "24.0%"}
+    }
+  },
+  "yaoyao": {
+    "rarity": 4,
+    "element": "Dendro",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2023-01-17",
+    "levels": {
+      "70": {"baseHp": "10040", "baseAtk": "174", "baseDef": "613", "em": "0", "hp%": "18.0%"},
+      "80": {"baseHp": "11438", "baseAtk": "198", "baseDef": "699", "em": "0", "hp%": "24.0%"},
+      "90": {"baseHp": "12289", "baseAtk": "212", "baseDef": "751", "em": "0", "hp%": "24.0%"},
+      "95": {"baseHp": "12713", "baseAtk": "239", "baseDef": "777", "em": "0", "hp%": "24.0%"},
+      "100": {"baseHp": "13139", "baseAtk": "267", "baseDef": "803", "em": "0", "hp%": "24.0%"}
+    }
+  },
+  "yelan": {
+    "rarity": 5,
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "region": "Liyue",
+    "releaseDate": "2022-05-31",
+    "levels": {
+      "70": {"baseHp": "11741", "baseAtk": "198", "baseDef": "445", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "13434", "baseAtk": "227", "baseDef": "509", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "14450", "baseAtk": "244", "baseDef": "548", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "14963", "baseAtk": "271", "baseDef": "567", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "15477", "baseAtk": "299", "baseDef": "587", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "yoimiya": {
+    "rarity": 5,
+    "element": "Pyro",
+    "weaponType": "Bow",
+    "region": "Inazuma",
+    "releaseDate": "2021-08-10",
+    "levels": {
+      "70": {"baseHp": "8259", "baseAtk": "262", "baseDef": "500", "em": "0", "cr": "14.4%"},
+      "80": {"baseHp": "9450", "baseAtk": "300", "baseDef": "572", "em": "0", "cr": "19.2%"},
+      "90": {"baseHp": "10164", "baseAtk": "323", "baseDef": "615", "em": "0", "cr": "19.2%"},
+      "95": {"baseHp": "10525", "baseAtk": "359", "baseDef": "637", "em": "0", "cr": "19.2%"},
+      "100": {"baseHp": "10887", "baseAtk": "396", "baseDef": "659", "em": "0", "cr": "19.2%"}
+    }
+  },
+  "yumemizuki_mizuki": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "region": "Inazuma",
+    "releaseDate": "2025-02-11",
+    "levels": {
+      "70": {"baseHp": "10348", "baseAtk": "175", "baseDef": "615", "em": "86"},
+      "80": {"baseHp": "11840", "baseAtk": "200", "baseDef": "704", "em": "115"},
+      "90": {"baseHp": "12736", "baseAtk": "215", "baseDef": "757", "em": "115"},
+      "95": {"baseHp": "13188", "baseAtk": "239", "baseDef": "784", "em": "115"},
+      "100": {"baseHp": "13641", "baseAtk": "264", "baseDef": "811", "em": "115"}
+    }
+  },
+  "yun_jin": {
+    "rarity": 4,
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2022-01-05",
+    "levels": {
+      "70": {"baseHp": "8707", "baseAtk": "156", "baseDef": "600", "em": "0", "er": "20.0%"},
+      "80": {"baseHp": "9919", "baseAtk": "178", "baseDef": "684", "em": "0", "er": "26.7%"},
+      "90": {"baseHp": "10657", "baseAtk": "191", "baseDef": "734", "em": "0", "er": "26.7%"},
+      "95": {"baseHp": "11026", "baseAtk": "216", "baseDef": "760", "em": "0", "er": "26.7%"},
+      "100": {"baseHp": "11395", "baseAtk": "240", "baseDef": "785", "em": "0", "er": "26.7%"}
+    }
+  },
+  "zhongli": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "region": "Liyue",
+    "releaseDate": "2020-12-02",
+    "levels": {
+      "70": {"baseHp": "11940", "baseAtk": "204", "baseDef": "599", "em": "0", "geo%": "21.6%"},
+      "80": {"baseHp": "13662", "baseAtk": "233", "baseDef": "686", "em": "0", "geo%": "28.8%"},
+      "90": {"baseHp": "14695", "baseAtk": "251", "baseDef": "738", "em": "0", "geo%": "28.8%"},
+      "95": {"baseHp": "15217", "baseAtk": "279", "baseDef": "764", "em": "0", "geo%": "28.8%"},
+      "100": {"baseHp": "15740", "baseAtk": "308", "baseDef": "790", "em": "0", "geo%": "28.8%"}
+    }
+  },
+  "zibai": {
+    "rarity": 5,
+    "element": "Geo",
+    "weaponType": "Sword",
+    "region": "Liyue",
+    "releaseDate": "2026-02-03",
+    "levels": {
+      "70": {"baseHp": "10497", "baseAtk": "183", "baseDef": "777", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "12011", "baseAtk": "209", "baseDef": "890", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12919", "baseAtk": "225", "baseDef": "957", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13378", "baseAtk": "250", "baseDef": "991", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13838", "baseAtk": "275", "baseDef": "1025", "em": "0", "cd": "38.4%"}
+    }
+  }
+}

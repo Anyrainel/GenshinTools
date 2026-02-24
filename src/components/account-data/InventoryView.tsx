@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, weaponsById } from "@/data/constants";
+import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
@@ -22,22 +24,30 @@ interface InventoryViewProps {
 
 export function InventoryView({ data }: InventoryViewProps) {
   const { t } = useLanguage();
+  const { weaponStats } = useGameStats();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const iconSize = isMobile ? "lg" : "xl";
 
-  // WEAPONS - sorted by rarity desc > weapon type
+  // WEAPONS - sorted by rarity desc > weapon type (from stats when available)
   const allWeapons = (data.extraWeapons || []).slice().sort((a, b) => {
     const infoA = weaponsById[a.key];
     const infoB = weaponsById[b.key];
-    // Sort by rarity desc
-    if (infoA && infoB && infoA.rarity !== infoB.rarity) {
-      return infoB.rarity - infoA.rarity;
+    const metaA = infoA
+      ? getWeaponDisplayMeta(infoA, weaponStats?.[a.key])
+      : null;
+    const metaB = infoB
+      ? getWeaponDisplayMeta(infoB, weaponStats?.[b.key])
+      : null;
+    if (metaA && metaB && metaA.rarity !== metaB.rarity) {
+      return metaB.rarity - metaA.rarity;
     }
-    // Then by weapon type
-    if (infoA && infoB && infoA.type !== infoB.type) {
-      return infoA.type.localeCompare(infoB.type);
+    if (
+      metaA?.type != null &&
+      metaB?.type != null &&
+      metaA.type !== metaB.type
+    ) {
+      return metaA.type.localeCompare(metaB.type);
     }
-    // Then by key for stability
     return a.key.localeCompare(b.key);
   });
 

@@ -157,10 +157,10 @@ export function TierCustomizationDialog({
 
         <ResponsiveDialogFooter className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="destructive" onClick={handleReset}>
-            {t.ui("customizeDialog.reset")}
+            {t.ui("common.reset")}
           </Button>
           <Button variant="secondary" onClick={handleCancel}>
-            {t.ui("customizeDialog.cancel")}
+            {t.ui("common.cancel")}
           </Button>
           <Button onClick={handleSave}>{t.ui("customizeDialog.save")}</Button>
         </ResponsiveDialogFooter>

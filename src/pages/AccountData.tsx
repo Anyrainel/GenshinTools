@@ -2,7 +2,7 @@ import { AccountImportControl } from "@/components/account-data/AccountImportCon
 import { CharacterView } from "@/components/account-data/CharacterView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
-import { StatWeightView } from "@/components/account-data/StatWeightView";
+
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import {
   type ActionConfig,
@@ -25,8 +25,8 @@ import type {
 } from "@/data/types";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
-  type BuildAwareScoreResult,
-  calculateBuildAwareScore,
+  type ArtifactScoreResult,
+  scoreWithBuilds,
 } from "@/lib/account-data/artifactScore";
 import {
   convertEnkaToGOOD,
@@ -50,7 +50,6 @@ import {
   Database,
   HelpCircle,
   LayoutGrid,
-  Settings,
   Trash2,
   Upload,
   Users,
@@ -155,7 +154,7 @@ const NoDataPlaceholder = ({
           className="w-full gap-2 text-base shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <Upload className="w-5 h-5" />
-          {t.ui("app.import")}
+          {t.ui("import.action")}
         </Button>
       </div>
     </div>
@@ -226,23 +225,12 @@ export default function AccountDataPage() {
     const hasData = accountData && accountData.characters.length > 0;
     const missingScores = hasData && Object.keys(scores).length === 0;
 
-    // Detect schema drift: if any score is missing the matchedBuild property (from old schema)
-    // Note: old scores might not have this property at all (undefined)
-    const hasSchemaDrift =
-      hasData &&
-      Object.keys(scores).length > 0 &&
-      Object.values(scores).some((s) => s.matchedBuild === undefined);
-
-    if ((isScoresStale || missingScores || hasSchemaDrift) && accountData) {
+    if ((isScoresStale || missingScores) && accountData) {
       const timer = setTimeout(() => {
-        const results: Record<string, BuildAwareScoreResult> = {};
+        const results: Record<string, ArtifactScoreResult> = {};
         for (const char of accountData.characters) {
           const builds = resolvedBuildsMap[char.key] ?? [];
-          results[char.key] = calculateBuildAwareScore(
-            char,
-            builds,
-            scoreConfig.global
-          );
+          results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
         }
         setScores(results);
       }, 50); // Short delay to yield to main thread (click/nav animations)
@@ -311,14 +299,10 @@ export default function AccountDataPage() {
       setAccountData(result.data);
 
       // Pre-calculate scores for the new data
-      const newScores: Record<string, BuildAwareScoreResult> = {};
+      const newScores: Record<string, ArtifactScoreResult> = {};
       for (const char of result.data.characters) {
         const builds = resolvedBuildsMap[char.key] ?? [];
-        newScores[char.key] = calculateBuildAwareScore(
-          char,
-          builds,
-          scoreConfig.global
-        );
+        newScores[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
       }
       setScores(newScores);
 
@@ -357,10 +341,10 @@ export default function AccountDataPage() {
       if (clearBeforeImport || !accountData) {
         setAccountData(newData);
         // Pre-calculate scores (new data)
-        const newScores: Record<string, BuildAwareScoreResult> = {};
+        const newScores: Record<string, ArtifactScoreResult> = {};
         for (const char of newData.characters) {
           const builds = resolvedBuildsMap[char.key] ?? [];
-          newScores[char.key] = calculateBuildAwareScore(
+          newScores[char.key] = scoreWithBuilds(
             char,
             builds,
             scoreConfig.global
@@ -395,10 +379,10 @@ export default function AccountDataPage() {
         setAccountData(mergedData);
 
         // Pre-calculate scores for the merged data
-        const newScores: Record<string, BuildAwareScoreResult> = {};
+        const newScores: Record<string, ArtifactScoreResult> = {};
         for (const char of mergedData.characters) {
           const builds = resolvedBuildsMap[char.key] ?? [];
-          newScores[char.key] = calculateBuildAwareScore(
+          newScores[char.key] = scoreWithBuilds(
             char,
             builds,
             scoreConfig.global
@@ -419,9 +403,7 @@ export default function AccountDataPage() {
     } catch (error: unknown) {
       console.error("UID Import failed", error);
       const message =
-        error instanceof Error
-          ? error.message
-          : t.ui("configure.importDialogLoadError");
+        error instanceof Error ? error.message : t.ui("import.fileLoadError");
       toast.error(message);
       throw error; // Re-throw to let ImportControl handle UI state
     }
@@ -443,12 +425,6 @@ export default function AccountDataPage() {
         tourStepId: "ad-recommendations",
       },
       { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
-      {
-        value: "weights",
-        label: t.ui("accountData.statWeights"),
-        icon: Settings,
-        tourStepId: "ad-weights",
-      },
     ],
     [t]
   );
@@ -464,15 +440,11 @@ export default function AccountDataPage() {
       },
     ];
 
-    if (activeTab === "weights") {
-      return baseActions;
-    }
-
     return [
       {
         key: "import",
         icon: Upload,
-        label: t.ui("app.import"),
+        label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
         tourStepId: "ad-import",
@@ -480,12 +452,12 @@ export default function AccountDataPage() {
       {
         key: "clear",
         icon: Trash2,
-        label: t.ui("app.clear"),
+        label: t.ui("common.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
       ...baseActions,
     ];
-  }, [t, tour, activeTab]);
+  }, [t, tour]);
 
   return (
     <PageLayout
@@ -531,7 +503,7 @@ export default function AccountDataPage() {
                       .length > 0 && (
                       <div>
                         <span className="font-medium">
-                          {t.ui("teamBuilder.weapon")}:
+                          {t.ui("teamComp.weapon")}:
                         </span>{" "}
                         {conversionWarnings
                           .filter((w) => w.type === "weapon")
@@ -543,7 +515,7 @@ export default function AccountDataPage() {
                       .length > 0 && (
                       <div>
                         <span className="font-medium">
-                          {t.ui("teamBuilder.artifact")}:
+                          {t.ui("teamComp.artifact")}:
                         </span>{" "}
                         {conversionWarnings
                           .filter((w) => w.type === "artifact")
@@ -599,10 +571,6 @@ export default function AccountDataPage() {
               onAction={() => importRef.current?.open()}
             />
           )}
-        </TabsContent>
-
-        <TabsContent value="weights" className="mt-0 h-full">
-          <StatWeightView />
         </TabsContent>
       </Tabs>
     </PageLayout>

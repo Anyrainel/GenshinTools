@@ -35,22 +35,27 @@ import {
   artifactsById,
   charactersById,
   elementResourcesByName,
+  getSortedCharacters,
+  getSortedWeaponSecondaryStats,
   sortedArtifacts,
-  sortedCharacters,
-  sortedWeaponSecondaryStats,
   sortedWeapons,
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/data/gameStatsLoader";
 import { artifactHalfSets } from "@/data/resources";
 import type {
   ArtifactHalfSet,
-  ArtifactSet,
-  Character,
+  ArtifactSetResource,
+  CharacterResource,
   MainStat,
   Rarity,
-  Weapon,
+  WeaponResource,
 } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
@@ -61,7 +66,7 @@ export type ItemPickerType = "character" | "weapon" | "artifact";
 
 export type ArtifactConfig =
   | { type: "4pc"; setId: string }
-  | { type: "2pc+2pc"; id1: number; id2: number };
+  | { type: "2pc+2pc"; id1: string | number; id2: string | number };
 
 type ValueType<T> = T extends "artifact" ? ArtifactConfig : string;
 
@@ -78,6 +83,8 @@ interface ItemPickerProps<T extends ItemPickerType> {
   menuSize?: ItemIconSize;
   placeholder?: string;
   showItemName?: boolean;
+  /** Show element badge overlay on character icons */
+  showElementBadge?: boolean;
   /** Open the picker immediately on mount (for add-on-demand flows) */
   defaultOpen?: boolean;
   /** Called when the picker's open state changes (e.g. on close) */
@@ -99,11 +106,22 @@ function ItemPickerComponent<T extends ItemPickerType>({
   triggerSize = "lg",
   menuSize = "md",
   showItemName = false,
+  showElementBadge = false,
   defaultOpen = false,
   onOpenChange: onOpenChangeProp,
 }: ItemPickerProps<T>) {
+  const { characterStats, weaponStats } = useGameStats();
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  const sortedCharacters = useMemo(
+    () => getSortedCharacters(characterStats ?? null),
+    [characterStats]
+  );
+  const sortedWeaponSecondaryStats = useMemo(
+    () => getSortedWeaponSecondaryStats(weaponStats ?? null),
+    [weaponStats]
+  );
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -142,6 +160,8 @@ function ItemPickerComponent<T extends ItemPickerType>({
         value={value}
         size={triggerSize}
         disabled={disabled}
+        showElementBadge={showElementBadge}
+        characterStats={characterStats}
       />
       {showItemName && value && <PickerItemName type={type} value={value} />}
     </div>
@@ -157,6 +177,10 @@ function ItemPickerComponent<T extends ItemPickerType>({
       menuSize={menuSize}
       tooltipSide={tooltipSide}
       isDesktop={isDesktop}
+      characterStats={characterStats}
+      weaponStats={weaponStats}
+      sortedCharacters={sortedCharacters}
+      sortedWeaponSecondaryStats={sortedWeaponSecondaryStats}
     />
   );
 
@@ -291,14 +315,16 @@ function PickerTrigger({
   value,
   size,
   disabled,
+  showElementBadge,
+  characterStats,
 }: {
   type: ItemPickerType;
   value: ValueType<ItemPickerType> | null;
   size: ItemIconSize;
   disabled?: boolean;
+  showElementBadge?: boolean;
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
 }) {
-  // const { t } = useLanguage(); // Not used currently?
-
   const baseClasses = cn(
     SIZE_CLASSES[size],
     "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-sm relative overflow-hidden",
@@ -350,12 +376,30 @@ function PickerTrigger({
   }
 
   // Character / Weapon
-  let item: Character | Weapon | undefined;
+  let item: CharacterResource | WeaponResource | undefined;
   if (type === "character") item = charactersById[value as string];
   else item = weaponsById[value as string];
 
+  // Resolve element image path for badge (from stats when available)
+  let elementPath: string | undefined;
+  if (showElementBadge && type === "character" && item) {
+    const meta = getCharacterDisplayMeta(
+      item as CharacterResource,
+      characterStats?.[(item as CharacterResource).id]
+    );
+    elementPath =
+      meta.element != null
+        ? elementResourcesByName[meta.element]?.imagePath
+        : undefined;
+  }
+
   return (
-    <ItemIcon imagePath={item?.imagePath} rarity={item?.rarity} size={size} />
+    <ItemIcon
+      imagePath={item?.imagePath}
+      rarity={item?.rarity}
+      size={size}
+      elementBadge={elementPath}
+    />
   );
 }
 
@@ -366,7 +410,11 @@ interface PickerItem {
   rarity: Rarity;
   name?: string; // Can be lazily loaded in render but good to have for mapping
   // We keep original just in case we need extra properties
-  original: Character | Weapon | ArtifactSet | ArtifactHalfSet;
+  original:
+    | CharacterResource
+    | WeaponResource
+    | ArtifactSetResource
+    | ArtifactHalfSet;
 }
 
 interface PickerContentProps {
@@ -375,11 +423,19 @@ interface PickerContentProps {
   onSelect: (val: ValueType<ItemPickerType>) => void;
   onClear?: () => void;
   filter?: (
-    item: Character | Weapon | ArtifactSet | ArtifactHalfSet
+    item:
+      | CharacterResource
+      | WeaponResource
+      | ArtifactSetResource
+      | ArtifactHalfSet
   ) => boolean;
   menuSize: ItemIconSize;
   tooltipSide: "left" | "right";
   isDesktop: boolean;
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  weaponStats: ReturnType<typeof useGameStats>["weaponStats"];
+  sortedCharacters: CharacterResource[];
+  sortedWeaponSecondaryStats: MainStat[];
 }
 
 function PickerContent({
@@ -391,6 +447,10 @@ function PickerContent({
   menuSize,
   isDesktop,
   tooltipSide,
+  characterStats,
+  weaponStats,
+  sortedCharacters,
+  sortedWeaponSecondaryStats,
 }: PickerContentProps) {
   const { t } = useLanguage();
   const [search, setSearch] = useState("");
@@ -406,7 +466,10 @@ function PickerContent({
   const [artifactTab, setArtifactTab] = useState(initialTab);
 
   // Helper to extract 2pc IDs
-  const getInitialMixedSlots = (): [number | null, number | null] => {
+  const getInitialMixedSlots = (): [
+    string | number | null,
+    string | number | null,
+  ] => {
     if (
       type === "artifact" &&
       value &&
@@ -421,27 +484,37 @@ function PickerContent({
 
   const [initialSlot1, initialSlot2] = getInitialMixedSlots();
 
-  const [mixedSlot1, setMixedSlot1] = useState<number | null>(initialSlot1);
-  const [mixedSlot2, setMixedSlot2] = useState<number | null>(initialSlot2);
+  const [mixedSlot1, setMixedSlot1] = useState<string | number | null>(
+    initialSlot1
+  );
+  const [mixedSlot2, setMixedSlot2] = useState<string | number | null>(
+    initialSlot2
+  );
   const [pickingSlot, setPickingSlot] = useState<1 | 2 | null>(null);
 
-  // Unified Item Mapping
+  // Unified Item Mapping (use stats-based rarity when from stats list)
   const items: PickerItem[] = useMemo(() => {
     if (type === "character") {
-      return sortedCharacters.map((c) => ({
-        id: c.id,
-        imagePath: c.imagePath,
-        rarity: c.rarity,
-        original: c,
-      }));
+      return sortedCharacters.map((c) => {
+        const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+        return {
+          id: c.id,
+          imagePath: c.imagePath,
+          rarity: meta.rarity,
+          original: c,
+        };
+      });
     }
     if (type === "weapon") {
-      return sortedWeapons.map((w) => ({
-        id: w.id,
-        imagePath: w.imagePath,
-        rarity: w.rarity,
-        original: w,
-      }));
+      return sortedWeapons.map((w) => {
+        const meta = getWeaponDisplayMeta(w, weaponStats?.[w.id]);
+        return {
+          id: w.id,
+          imagePath: w.imagePath,
+          rarity: meta.rarity,
+          original: w,
+        };
+      });
     }
     if (type === "artifact") {
       if (artifactTab === "4pc") {
@@ -466,7 +539,7 @@ function PickerContent({
         }));
     }
     return [];
-  }, [type, artifactTab]);
+  }, [type, artifactTab, sortedCharacters, characterStats, weaponStats]);
 
   // Filtering Logic
   const filteredItems = useMemo(() => {
@@ -490,42 +563,47 @@ function PickerContent({
         else if (type === "artifact" && artifactTab === "4pc")
           name = t.artifact(item.id as string);
         else if (type === "artifact" && artifactTab === "2pc")
-          name = t.artifactHalfSet(item.id as number);
+          name = t.artifactHalfSet(item.id);
 
         return name?.toLowerCase().includes(q);
       });
     }
 
-    // 3. Quick Filters
+    // 3. Quick Filters (use stats-based meta when available)
     if (type === "character") {
       if (activeFilters.element) {
-        result = result.filter(
-          (item) =>
-            (item.original as Character).element === activeFilters.element
-        );
+        result = result.filter((item) => {
+          const meta = getCharacterDisplayMeta(
+            item.original as CharacterResource,
+            characterStats?.[(item.original as CharacterResource).id]
+          );
+          return meta.element === activeFilters.element;
+        });
       }
       if (activeFilters.weapon) {
-        result = result.filter(
-          (item) =>
-            (item.original as Character).weaponType === activeFilters.weapon
-        );
+        result = result.filter((item) => {
+          const meta = getCharacterDisplayMeta(
+            item.original as CharacterResource,
+            characterStats?.[(item.original as CharacterResource).id]
+          );
+          return meta.weaponType === activeFilters.weapon;
+        });
       }
       if (activeFilters.rarity) {
-        result = result.filter(
-          (item) => (item.original as Character).rarity === activeFilters.rarity
-        );
+        result = result.filter((item) => item.rarity === activeFilters.rarity);
       }
     } else if (type === "weapon") {
       if (activeFilters.rarity) {
-        result = result.filter(
-          (item) => (item.original as Weapon).rarity === activeFilters.rarity
-        );
+        result = result.filter((item) => item.rarity === activeFilters.rarity);
       }
       if (activeFilters.substat) {
-        result = result.filter(
-          (item) =>
-            (item.original as Weapon).secondaryStat === activeFilters.substat
-        );
+        result = result.filter((item) => {
+          const meta = getWeaponDisplayMeta(
+            item.original as WeaponResource,
+            weaponStats?.[(item.original as WeaponResource).id]
+          );
+          return meta.secondaryStat === activeFilters.substat;
+        });
       }
     }
 
@@ -544,7 +622,7 @@ function PickerContent({
       if (otherValue !== null) {
         result = result.filter((item) => {
           if (item.id !== otherValue) return true;
-          const original = artifactHalfSetsById[item.id as number];
+          const original = artifactHalfSetsById[item.id];
           return original && original.setIds.length >= 2;
         });
       }
@@ -562,14 +640,16 @@ function PickerContent({
     pickingSlot,
     mixedSlot1,
     mixedSlot2,
+    characterStats,
+    weaponStats,
   ]);
 
   // Handler for artifact 2pc selection
   const handleHalfSetSelect = (halfId: string | number) => {
     if (pickingSlot === 1) {
-      setMixedSlot1(halfId as number);
+      setMixedSlot1(halfId);
     } else if (pickingSlot === 2) {
-      setMixedSlot2(halfId as number);
+      setMixedSlot2(halfId);
     }
     setPickingSlot(null);
   };
@@ -602,7 +682,7 @@ function PickerContent({
           ? t.weaponName(item.id as string)
           : type === "artifact" && artifactTab === "4pc"
             ? t.artifact(item.id as string)
-            : t.artifactHalfSet(item.id as number);
+            : t.artifactHalfSet(item.id);
 
     const tooltip =
       type === "character" ? (
@@ -674,17 +754,23 @@ function PickerContent({
             >
               {type === "character" &&
                 (item.id as string).startsWith("traveler") &&
-                (item.original as Character).element && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-5 bg-black/50 backdrop-blur-sm rounded-full p-0.5">
-                    <img
-                      src={getAssetUrl(
-                        `element/${(item.original as Character).element.toLowerCase()}.png`
-                      )}
-                      className="w-full h-full object-contain"
-                      alt={(item.original as Character).element}
-                    />
-                  </div>
-                )}
+                (() => {
+                  const meta = getCharacterDisplayMeta(
+                    item.original as CharacterResource,
+                    characterStats?.[(item.original as CharacterResource).id]
+                  );
+                  return meta.element != null ? (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-5 bg-black/50 backdrop-blur-sm rounded-full p-0.5">
+                      <img
+                        src={getAssetUrl(
+                          `element/${meta.element.toLowerCase()}.png`
+                        )}
+                        className="w-full h-full object-contain"
+                        alt={meta.element}
+                      />
+                    </div>
+                  ) : null;
+                })()}
             </ItemIcon>
           </div>
         </TooltipTrigger>
@@ -755,6 +841,9 @@ function PickerContent({
             type={type}
             activeFilters={activeFilters}
             onChange={setActiveFilters}
+            sortedWeaponSecondaryStats={
+              type === "weapon" ? sortedWeaponSecondaryStats : undefined
+            }
           />
         )}
       </div>
@@ -861,10 +950,12 @@ function FilterBar({
   type,
   activeFilters,
   onChange,
+  sortedWeaponSecondaryStats = [],
 }: {
   type: ItemPickerType;
   activeFilters: Record<string, string | number>;
   onChange: (f: Record<string, string | number>) => void;
+  sortedWeaponSecondaryStats?: MainStat[];
 }) {
   const toggle = (key: string, val: string | number) => {
     const next = { ...activeFilters };
@@ -898,7 +989,7 @@ function FilterBar({
             isActive={!!activeFilters.ownedOnly}
             onClick={() => toggle("ownedOnly", 1)}
             className="w-auto px-2 gap-1"
-            title={t.ui("filters.ownedOnly")}
+            title={t.ui("common.ownedOnly")}
           >
             <Bookmark
               className={cn(
@@ -906,7 +997,7 @@ function FilterBar({
                 activeFilters.ownedOnly && "fill-current"
               )}
             />
-            <span className="text-xs">{t.ui("filters.ownedOnly")}</span>
+            <span className="text-xs">{t.ui("common.ownedOnly")}</span>
           </FilterChip>
         )}
       </div>
@@ -956,15 +1047,15 @@ function FilterBar({
       {/* Substat (Weapon only) */}
       {type === "weapon" && (
         <div className="flex flex-wrap gap-1 items-center">
-          {sortedWeaponSecondaryStats.map((s) => (
+          {sortedWeaponSecondaryStats.map((s: MainStat) => (
             <FilterChip
               key={s}
               isActive={activeFilters.substat === s}
               onClick={() => toggle("substat", s)}
               className="uppercase text-xs px-1"
-              title={t.statShort(s as MainStat)}
+              title={t.statShort(s)}
             >
-              {t.statShort(s as MainStat)}
+              {t.statShort(s)}
             </FilterChip>
           ))}
         </div>

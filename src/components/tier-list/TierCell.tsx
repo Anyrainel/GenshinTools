@@ -13,11 +13,11 @@ import type { TierItemData } from "./tierTableTypes";
  */
 type CellVariant = "grid" | "card";
 
-interface TierCellProps<T extends TierItemData> {
+interface TierCellProps<T extends TierItemData, K extends string = string> {
   tier: Tier;
-  group: string;
+  group: K;
   items: T[];
-  groupKey: keyof T;
+  getItemGroup: (item: T) => K;
   iconSize: "sm" | "md" | "lg" | "xl";
   variant: CellVariant;
   getItemName: (item: T) => string;
@@ -51,11 +51,11 @@ const CELL_STYLES = {
  * Unified drop zone component for tier list cells.
  * Handles both desktop grid cells and compact/tablet card cells.
  */
-export function TierCell<T extends TierItemData>({
+export function TierCell<T extends TierItemData, K extends string = string>({
   tier,
   group,
   items,
-  groupKey,
+  getItemGroup,
   iconSize,
   variant,
   getItemName,
@@ -64,7 +64,7 @@ export function TierCell<T extends TierItemData>({
   displayName,
   className,
   tourStepId,
-}: TierCellProps<T>) {
+}: TierCellProps<T, K>) {
   // MUST match format expected by TierTable: `${tier}-${group}`
   const cellId = `${tier}-${group}`;
 
@@ -73,7 +73,7 @@ export function TierCell<T extends TierItemData>({
     data: { tier, group },
   });
 
-  const cellItems = items.filter((item) => item[groupKey] === group);
+  const cellItems = items.filter((item) => getItemGroup(item) === group);
   const itemIds = cellItems.map((item) => item.id);
 
   const renderItems = () => (
@@ -83,7 +83,7 @@ export function TierCell<T extends TierItemData>({
           key={item.id}
           item={item}
           tier={tier}
-          groupValue={item[groupKey] as string}
+          groupValue={getItemGroup(item)}
           alt={getItemName(item)}
           overlayImage={getOverlayImage?.(item)}
           tooltip={getTooltip(item)}

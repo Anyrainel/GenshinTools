@@ -1,0 +1,2411 @@
+{
+  "a_thousand_blazing_suns": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 741,
+        "secondaryStatValue": "11.0%"
+      }
+    }
+  },
+  "a_thousand_floating_dreams": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "265"
+      }
+    }
+  },
+  "absolution": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "akuoumaru": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "alley_hunter": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "amenoma_kageuchi": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "amos_bow": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "aqua_simulacra": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "aquila_favonia": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "ashgraven_drinking_horn": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "astral_vultures_crimson_plumage": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "athame_artis": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "azurelight": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "ballad_of_the_boundless_blue": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "ballad_of_the_fjords": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "beacon_of_the_reed_sea": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "black_tassel": {
+    "rarity": 3,
+    "type": "Polearm",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "46.9%"
+      }
+    }
+  },
+  "blackcliff_agate": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "blackcliff_longsword": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "blackcliff_pole": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "blackcliff_slasher": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "blackcliff_warbow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "blackmarrow_lantern": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "221"
+      }
+    }
+  },
+  "bloodsoaked_ruins": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "bloodtainted_greatsword": {
+    "rarity": 3,
+    "type": "Claymore",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "187"
+      }
+    }
+  },
+  "calamity_of_eshu": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "calamity_queller": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 741,
+        "secondaryStatValue": "16.5%"
+      }
+    }
+  },
+  "cashflow_supervision": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "chain_breaker": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "cinnabar_spindle": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "69.0%"
+      }
+    }
+  },
+  "cloudforged": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "compound_bow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "69.0%"
+      }
+    }
+  },
+  "cool_steel": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "cranes_echoing_call": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 741,
+        "secondaryStatValue": "16.5%"
+      }
+    }
+  },
+  "crescent_pike": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "34.5%"
+      }
+    }
+  },
+  "crimson_moons_semblance": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "dark_iron_sword": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "141"
+      }
+    }
+  },
+  "dawning_frost": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "deathmatch": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "debate_club": {
+    "rarity": 3,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "dialogues_of_the_desert_sages": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "dodoco_tales": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "dragons_bane": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "221"
+      }
+    }
+  },
+  "dragonspine_spear": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "69.0%"
+      }
+    }
+  },
+  "earth_shaker": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "elegy_for_the_end": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "emerald_orb": {
+    "rarity": 3,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "94"
+      }
+    }
+  },
+  "end_of_the_line": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "engulfing_lightning": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "etherlight_spindlelute": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "everlasting_moonglow": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "eye_of_perception": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "fading_twilight": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "fang_of_the_mountain_king": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 741,
+        "secondaryStatValue": "11.0%"
+      }
+    }
+  },
+  "favonius_codex": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "favonius_greatsword": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "favonius_lance": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "favonius_sword": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "favonius_warbow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "ferrous_shadow": {
+    "rarity": 3,
+    "type": "Claymore",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "festering_desire": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "fillet_blade": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "finale_of_the_deep": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "flameforged_insight": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "fleuve_cendre_ferryman": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "flowerwreathed_feathers": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "flowing_purity": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "flute_of_ezpitzal": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "69.0%"
+      }
+    }
+  },
+  "footprint_of_the_rainbow": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "51.7%"
+      }
+    }
+  },
+  "forest_regalia": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "fractured_halo": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "freedomsworn": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "198"
+      }
+    }
+  },
+  "frostbearer": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "fruit_of_fulfillment": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "fruitful_hook": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "hakushin_ring": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "halberd": {
+    "rarity": 3,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "23.5%"
+      }
+    }
+  },
+  "hamayumi": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "haran_geppaku_futsu": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "harbinger_of_dawn": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "46.9%"
+      }
+    }
+  },
+  "hunters_path": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "ibis_piercer": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "iron_sting": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "jadefalls_splendor": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "kagotsurube_isshin": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "kaguras_verity": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "katsuragikiri_nagamasa": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "key_of_khajnisut": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "kings_squire": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "kitain_cross_spear": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "110"
+      }
+    }
+  },
+  "light_of_foliar_incision": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "lightbearing_moonshard": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "lions_roar": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "lithic_blade": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "lithic_spear": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "lost_prayer_to_the_sacred_winds": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "lumidouce_elegy": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "luxurious_sealord": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "magic_guide": {
+    "rarity": 3,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "187"
+      }
+    }
+  },
+  "mailed_flower": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "110"
+      }
+    }
+  },
+  "makhaira_aquamarine": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "mappa_mare": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "110"
+      }
+    }
+  },
+  "master_key": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "memory_of_dust": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "messenger": {
+    "rarity": 3,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "31.2%"
+      }
+    }
+  },
+  "missive_windspear": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "mistsplitter_reforged": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "mitternachts_waltz": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "51.7%"
+      }
+    }
+  },
+  "moonpiercer": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "110"
+      }
+    }
+  },
+  "moonweavers_dawn": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "mountainbracing_bolt": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "mouuns_moon": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "nightweavers_looking_glass": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "265"
+      }
+    }
+  },
+  "nocturnes_curtain_call": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "oathsworn_eye": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "otherworldly_story": {
+    "rarity": 3,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "39.0%"
+      }
+    }
+  },
+  "peak_patrol_song": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "82.7%"
+      }
+    }
+  },
+  "polar_star": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "portable_power_saw": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "predator": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "primordial_jade_cutter": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "primordial_jade_wingedspear": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "prospectors_drill": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "prospectors_shovel": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "prototype_amber": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "prototype_archaic": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "prototype_crescent": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "prototype_rancour": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "34.5%"
+      }
+    }
+  },
+  "prototype_starglitter": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "rainbow_serpents_rain_bow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "rainslasher": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "range_gauge": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "raven_bow": {
+    "rarity": 3,
+    "type": "Bow",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "94"
+      }
+    }
+  },
+  "recurve_bow": {
+    "rarity": 3,
+    "type": "Bow",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "46.9%"
+      }
+    }
+  },
+  "redhorn_stonethresher": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "reliquary_of_truth": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "rightful_reward": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "ring_of_yaxche": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "royal_bow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "royal_greatsword": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "royal_grimoire": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "royal_longsword": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "royal_spear": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "rust": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "sacrificers_staff": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 620,
+        "secondaryStatValue": "9.2%"
+      }
+    }
+  },
+  "sacrificial_bow": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "sacrificial_fragments": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "221"
+      }
+    }
+  },
+  "sacrificial_greatsword": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "sacrificial_jade": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "sacrificial_sword": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "sapwood_blade": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "scion_of_the_blazing_sun": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "18.4%"
+      }
+    }
+  },
+  "sequence_of_solitude": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "serenitys_call": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "serpent_spine": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "sharpshooters_oath": {
+    "rarity": 3,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "46.9%"
+      }
+    }
+  },
+  "silvershower_heartstrings": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "skyrider_greatsword": {
+    "rarity": 3,
+    "type": "Claymore",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "43.9%"
+      }
+    }
+  },
+  "skyrider_sword": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "52.1%"
+      }
+    }
+  },
+  "skyward_atlas": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "33.1%"
+      }
+    }
+  },
+  "skyward_blade": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "skyward_harp": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "skyward_pride": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "skyward_spine": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "36.8%"
+      }
+    }
+  },
+  "slingshot": {
+    "rarity": 3,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 354,
+        "secondaryStatValue": "31.2%"
+      }
+    }
+  },
+  "snare_hook": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "snowtombed_starsilver": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "34.5%"
+      }
+    }
+  },
+  "solar_pearl": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "song_of_broken_pines": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "phys%",
+    "levels": {
+      "90": {
+        "baseAtk": 741,
+        "secondaryStatValue": "20.7%"
+      }
+    }
+  },
+  "song_of_stillness": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "splendor_of_tranquil_waters": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "staff_of_homa": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "staff_of_the_scarlet_sands": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "starcallers_watch": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "265"
+      }
+    }
+  },
+  "sturdy_bone": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "summit_shaper": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "sunny_morning_sleepin": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "265"
+      }
+    }
+  },
+  "surfs_up": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "sword_of_descension": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 440,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "sword_of_narzissenkreuz": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "symphonist_of_scents": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "talking_stick": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "18.4%"
+      }
+    }
+  },
+  "tamayuratei_no_ohanashi": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "the_alley_flash": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 620,
+        "secondaryStatValue": "55"
+      }
+    }
+  },
+  "the_bell": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "the_black_sword": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "the_catch": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "45.9%"
+      }
+    }
+  },
+  "the_daybreak_chronicles": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "the_dockhands_assistant": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "the_first_great_magic": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "the_flute": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "the_stringless": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "the_unforged": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "the_viridescent_hunt": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "the_widsith": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "55.1%"
+      }
+    }
+  },
+  "thrilling_tales_of_dragon_slayers": {
+    "rarity": 3,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "35.2%"
+      }
+    }
+  },
+  "thundering_pulse": {
+    "rarity": 5,
+    "type": "Bow",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "66.2%"
+      }
+    }
+  },
+  "tidal_shadow": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "41.3%"
+      }
+    }
+  },
+  "tome_of_the_eternal_flow": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "toukabou_shigure": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "travelers_handy_sword": {
+    "rarity": 3,
+    "type": "Sword",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "29.3%"
+      }
+    }
+  },
+  "tulaytullahs_remembrance": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "twin_nephrite": {
+    "rarity": 3,
+    "type": "Catalyst",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 448,
+        "secondaryStatValue": "15.6%"
+      }
+    }
+  },
+  "ultimate_overlords_mega_magic_sword": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "uraku_misugiri": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 542,
+        "secondaryStatValue": "88.2%"
+      }
+    }
+  },
+  "verdict": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "22.1%"
+      }
+    }
+  },
+  "vivid_notions": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {
+        "baseAtk": 674,
+        "secondaryStatValue": "44.1%"
+      }
+    }
+  },
+  "vortex_vanquisher": {
+    "rarity": 5,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "wandering_evenstar": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "wavebreakers_fin": {
+    "rarity": 4,
+    "type": "Polearm",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 620,
+        "secondaryStatValue": "13.8%"
+      }
+    }
+  },
+  "waveriding_whirl": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 454,
+        "secondaryStatValue": "61.3%"
+      }
+    }
+  },
+  "white_iron_greatsword": {
+    "rarity": 3,
+    "type": "Claymore",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "43.9%"
+      }
+    }
+  },
+  "white_tassel": {
+    "rarity": 3,
+    "type": "Polearm",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 401,
+        "secondaryStatValue": "23.4%"
+      }
+    }
+  },
+  "whiteblind": {
+    "rarity": 4,
+    "type": "Claymore",
+    "secondaryStat": "def%",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "51.7%"
+      }
+    }
+  },
+  "windblume_ode": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  },
+  "wine_and_song": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "er",
+    "levels": {
+      "90": {
+        "baseAtk": 565,
+        "secondaryStatValue": "30.6%"
+      }
+    }
+  },
+  "wolffang": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "27.6%"
+      }
+    }
+  },
+  "wolfs_gravestone": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {
+        "baseAtk": 608,
+        "secondaryStatValue": "49.6%"
+      }
+    }
+  },
+  "xiphos_moonlight": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "em",
+    "levels": {
+      "90": {
+        "baseAtk": 510,
+        "secondaryStatValue": "165"
+      }
+    }
+  }
+}

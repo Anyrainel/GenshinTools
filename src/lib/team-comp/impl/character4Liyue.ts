@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { AmplifyFormula, DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
@@ -11,11 +11,10 @@ import { cbs } from "../helpers";
 class LanYan extends CharacterBase {
   readonly buffs = [
     // C4: After Q, team EM +60 for 12s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 60 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
     ),
     // P2: E DMG boosted by EM×309%
     new ScalingBuff(
@@ -81,32 +80,27 @@ class Gaming extends CharacterBase {
       [{ key: "dmg%", value: 0.2 }]
     ),
     // C2: Healing overflow → ATK +20%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", []),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "atk%", value: 0.2 }] : [])
+      this.constellation >= 2 ? [{ key: "atk%", value: 0.2 }] : []
     ),
     // C6: E plunge CR +20%, CD +40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.2 },
-              { key: "cd", value: 0.4 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.2 },
+            { key: "cd", value: 0.4 },
+          ]
+        : []
     ),
   ];
 
   // E Charmed Cloudstrider: Lv10 414.7%, Lv13 (C3+) 489.6% (Pyro plunge)
-  // Q Man Chai: Lv10 666.7%, Lv13 (C5+) 787.1%
   protected readonly formulaMap = (() => {
     const plungeMult = this.constellation >= 3 ? 4.896 : 4.147;
-    const qMult = this.constellation >= 5 ? 7.871 : 6.667;
     return {
       "gaming-cloudstrider": {
         label: { zh: "踏云献瑞", en: "Charmed Cloudstrider" },
@@ -115,18 +109,6 @@ class Gaming extends CharacterBase {
             formula: new DirectFormula(plungeMult, {
               element: "Pyro",
               ability: "plunge",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "gaming-burst": {
-        label: { zh: "文仔砸击", en: "Man Chai Smash" },
-        parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Pyro",
-              ability: "burst",
               reaction: "none",
             }),
           },
@@ -314,15 +296,14 @@ class Chongyun extends CharacterBase {
     // P2: After E field disappears, enemies' Cryo RES -10% for 8s
     new StatBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "onField", filter: { elements: ["Cryo"] } },
+      { receiver: "team", filter: { elements: ["Cryo"] } },
       [{ key: "resReduction%", value: 0.1 }]
     ),
     // C6: Q deals +15% DMG to low-HP enemies
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 0.15 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 0.15 }] : []
     ),
   ];
 
@@ -446,8 +427,8 @@ class Xinyan extends CharacterBase {
 class Xingqiu extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
-      // P2: Xingqiu gains a 20% Hydro DMG Bonus
-      new StatBuff(cbs(this, "P2", ["P2"]), { receiver: "self" }, [
+      // P2: Xingqiu gains a 20% Hydro DMG Bonus (permanent passive)
+      new StatBuff(cbs(this, "P2", ["passive"]), { receiver: "self" }, [
         { key: "hydro%", value: 0.2 },
       ]),
     ];
@@ -474,7 +455,6 @@ class Xingqiu extends CharacterBase {
     if (this.constellation >= 4) eMult *= 1.5;
 
     const qMult = this.constellation >= 3 ? 1.15 : 0.977;
-    const totalHits = this.constellation >= 6 ? 56 : 50;
 
     return {
       "xingqiu-skill": {
@@ -501,18 +481,6 @@ class Xingqiu extends CharacterBase {
           },
         ],
       },
-      "xingqiu-burst-total": {
-        label: { zh: "裁雨留虹(总伤害)", en: "Raincutter (Total)" },
-        parts: [
-          {
-            formula: new DirectFormula(qMult * totalHits, {
-              element: "Hydro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
     };
   })();
 }
@@ -531,11 +499,10 @@ class Yanfei extends CharacterBase {
     // Q: Brilliance grants Charged Attack DMG bonus
     // Lv10: 54%, Lv13 (C5+): 62%
     buffs.push(
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        this.constellation,
-        (c) => [{ key: "dmg%", value: c >= 5 ? 0.62 : 0.54 }]
+        [{ key: "dmg%", value: this.constellation >= 5 ? 0.62 : 0.54 }]
       )
     );
 
@@ -625,11 +592,10 @@ class Beidou extends CharacterBase {
       ]
     ),
     // C6: During Q, enemies' Electro RES -15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Electro"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "resReduction%", value: 0.15 }] : [])
+      { receiver: "team", filter: { elements: ["Electro"] } },
+      this.constellation >= 6 ? [{ key: "resReduction%", value: 0.15 }] : []
     ),
   ];
 

@@ -132,6 +132,7 @@ describe("Integration: Team Builder Flow", () => {
       characters: ["hu_tao", "xingqiu", null, null],
       weapons: [null, null, null, null],
       artifacts: [null, null, null, null],
+      reactions: [],
       opts: {},
       targetEr: {},
       selectedFormula: null,
@@ -149,7 +150,6 @@ describe("Integration: Team Builder Flow", () => {
         onUpdate={mockUpdate}
         onDelete={mockDelete}
         onCopy={mockCopy}
-        isGhost={false}
       />
     );
 

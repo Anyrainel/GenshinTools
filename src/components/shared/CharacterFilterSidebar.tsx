@@ -162,7 +162,7 @@ export function CharacterFilterSidebar({
               htmlFor="owned-only"
               className="text-base text-foreground cursor-pointer font-medium"
             >
-              {t.ui("filters.ownedOnly")}
+              {t.ui("common.ownedOnly")}
             </Label>
           </div>
         </div>
@@ -180,7 +180,7 @@ export function CharacterFilterSidebar({
                 onClick={() => onFiltersChange({ ...filters, elements: [] })}
                 className="text-xs rounded-full h-5 px-2.5"
               >
-                {t.ui("filters.clear")}
+                {t.ui("common.clear")}
               </Button>
             )}
           </div>
@@ -224,7 +224,7 @@ export function CharacterFilterSidebar({
                 onClick={() => onFiltersChange({ ...filters, rarities: [] })}
                 className="text-xs rounded-full h-5 px-2.5"
               >
-                {t.ui("filters.clear")}
+                {t.ui("common.clear")}
               </Button>
             )}
           </div>
@@ -267,7 +267,7 @@ export function CharacterFilterSidebar({
                 onClick={() => onFiltersChange({ ...filters, weaponTypes: [] })}
                 className="text-xs rounded-full h-5 px-2.5"
               >
-                {t.ui("filters.clear")}
+                {t.ui("common.clear")}
               </Button>
             )}
           </div>
@@ -315,7 +315,7 @@ export function CharacterFilterSidebar({
                 onClick={() => onFiltersChange({ ...filters, regions: [] })}
                 className="text-xs rounded-full h-5 px-2.5"
               >
-                {t.ui("filters.clear")}
+                {t.ui("common.clear")}
               </Button>
             )}
           </div>

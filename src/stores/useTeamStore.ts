@@ -1,5 +1,5 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData, ReactionType } from "@/data/types";
 import type {
   CalcContext,
   CombatOpts,
@@ -21,6 +21,7 @@ export interface Team {
   characters: (string | null)[];
   weapons: (string | null)[];
   artifacts: (ArtifactConfig | null)[];
+  reactions: ReactionType[];
   opts: CombatOpts;
   targetEr: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
@@ -28,19 +29,30 @@ export interface Team {
   calcContext?: Partial<CalcContext>;
 }
 
+/** Importable/exportable team composition envelope. Backwards-compatible with raw Team[]. */
+export interface TeamCompData {
+  teams: Team[];
+  author?: string;
+  description?: string;
+}
+
 interface TeamState {
   teams: Team[];
   activeTeamId: string | null;
+  author: string;
+  description: string;
 
   // Actions
-  addTeam: (initialData?: Partial<Team>) => string;
+  addTeam: (initialData?: Partial<Team>, position?: "start" | "end") => string;
   updateTeam: (id: string, patch: Partial<Team>) => void;
   deleteTeam: (id: string) => void;
   copyTeam: (id: string) => void;
+  moveTeam: (id: string, direction: "up" | "down") => void;
   clearTeams: () => void;
   setActiveTeam: (id: string | null) => void;
-  importTeams: (json: string) => boolean;
-  exportTeams: () => string;
+  setMetadata: (author: string, description: string) => void;
+  importTeams: (data: TeamCompData) => void;
+  exportTeams: (author: string, description: string) => TeamCompData;
 }
 
 export const useTeamStore = create<TeamState>()(
@@ -48,8 +60,10 @@ export const useTeamStore = create<TeamState>()(
     immer((set, get) => ({
       teams: [],
       activeTeamId: null,
+      author: "",
+      description: "",
 
-      addTeam: (initialData) => {
+      addTeam: (initialData, position = "end") => {
         const id = `team-${Date.now()}`;
         const newTeam: Team = {
           id,
@@ -57,6 +71,7 @@ export const useTeamStore = create<TeamState>()(
           characters: [null, null, null, null],
           weapons: [null, null, null, null],
           artifacts: [null, null, null, null],
+          reactions: [],
           opts: {},
           targetEr: {},
           selectedFormula: null,
@@ -64,7 +79,11 @@ export const useTeamStore = create<TeamState>()(
           ...initialData,
         };
         set((state) => {
-          state.teams.push(newTeam);
+          if (position === "start") {
+            state.teams.unshift(newTeam);
+          } else {
+            state.teams.push(newTeam);
+          }
         });
         return id;
       },
@@ -103,10 +122,24 @@ export const useTeamStore = create<TeamState>()(
         });
       },
 
+      moveTeam: (id, direction) => {
+        set((state) => {
+          const index = state.teams.findIndex((t) => t.id === id);
+          if (index === -1) return;
+          const targetIndex = direction === "up" ? index - 1 : index + 1;
+          if (targetIndex < 0 || targetIndex >= state.teams.length) return;
+          const temp = state.teams[index];
+          state.teams[index] = state.teams[targetIndex];
+          state.teams[targetIndex] = temp;
+        });
+      },
+
       clearTeams: () => {
         set((state) => {
           state.teams = [];
           state.activeTeamId = null;
+          state.author = "";
+          state.description = "";
         });
       },
 
@@ -116,49 +149,60 @@ export const useTeamStore = create<TeamState>()(
         });
       },
 
-      importTeams: (json) => {
-        try {
-          const parsed = JSON.parse(json);
-          if (Array.isArray(parsed)) {
-            // Very basic validation
-            const validTeams: Team[] = parsed
-              .filter((t) => t.id && Array.isArray(t.characters))
-              .map((t) => ({
-                ...t,
-                opts: t.opts || {},
-                targetEr: t.targetEr || {},
-                selectedFormula: t.selectedFormula || null,
-                optimizationResult: t.optimizationResult || null,
-                calcContext: t.calcContext || undefined,
-              }));
+      setMetadata: (author, description) => set({ author, description }),
 
-            if (validTeams.length > 0) {
-              set((state) => {
-                state.teams = validTeams;
-                state.activeTeamId = null;
-              });
-              return true;
-            }
+      importTeams: (data) => {
+        // Accept both envelope { teams, author?, description? } and legacy raw Team[]
+        const teamsArr = Array.isArray(data) ? data : data.teams;
+        const validTeams: Team[] = teamsArr
+          .filter((t: Partial<Team>) => t.id && Array.isArray(t.characters))
+          .map((t: Partial<Team>) => ({
+            id: t.id!,
+            name: t.name ?? "",
+            characters: t.characters!,
+            weapons: t.weapons ?? [null, null, null, null],
+            artifacts: t.artifacts ?? [null, null, null, null],
+            reactions: t.reactions ?? [],
+            opts: t.opts ?? {},
+            targetEr: t.targetEr ?? {},
+            selectedFormula: t.selectedFormula ?? null,
+            optimizationResult: null,
+            calcContext: t.calcContext,
+          }));
+
+        set((state) => {
+          state.teams = validTeams;
+          state.activeTeamId = null;
+          if (!Array.isArray(data)) {
+            state.author = data.author ?? "";
+            state.description = data.description ?? "";
           }
-          return false;
-        } catch (e) {
-          console.error("Failed to import teams", e);
-          return false;
-        }
+        });
       },
 
-      exportTeams: () => {
+      exportTeams: (author, description) => {
         const { teams } = get();
-        // Export keeping only essential metadata, drop optimization results to save space
+        // Drop optimization results to save space
         const exportable = teams.map((t) => ({
           ...t,
           optimizationResult: null,
         }));
-        return JSON.stringify(exportable, null, 2);
+        return { teams: exportable, author, description };
       },
     })),
     {
       name: "team-builder-storage",
+      version: 1,
+      migrate: (persisted, version) => {
+        if (version === 0) {
+          const state = persisted as TeamState;
+          state.teams = state.teams.map((t) => ({
+            ...t,
+            reactions: (t as Team).reactions || [],
+          }));
+        }
+        return persisted as TeamState;
+      },
     }
   )
 );

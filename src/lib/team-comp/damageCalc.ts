@@ -1,8 +1,7 @@
 import type { Element } from "@/data/types";
 import {
   ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
+  assertNoDuplicateStatKeys,
   deduplicateBuffs,
 } from "./damageBuffs";
 import {
@@ -56,6 +55,7 @@ export class TeamResonance {
 
     const elemCounts = new Map<Element, number>();
     for (const el of Object.values(teamMeta.elements)) {
+      if (el === undefined) continue;
       elemCounts.set(el, (elemCounts.get(el) ?? 0) + 1);
     }
     const uniqueElements = elemCounts.size;
@@ -305,6 +305,10 @@ export class CharBuild {
     const results: EvaluatedDynamicBuff[] = [];
     for (const b of this.getAllBuffs()) {
       const entries = b.dynamicBuffs(selfPreStats, teamPreStats);
+      assertNoDuplicateStatKeys(
+        entries,
+        `dynamicBuffs (source: ${b.source.type}:${b.source.id})`
+      );
       if (entries.length > 0) {
         results.push({
           buff: b,
@@ -732,14 +736,7 @@ export class TeamBuild {
               dynamicEntries = raw.map((entry) => {
                 const resolved: ResolvedStatEntry = { ...entry };
                 // Extract per-entry cap and input key from known scaling buff types
-                if (
-                  buff instanceof ScalingBuff ||
-                  buff instanceof ScalingSkillBuff
-                ) {
-                  const cap = (buff as { cap?: number }).cap;
-                  if (cap !== undefined) resolved.cap = cap;
-                  resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
-                } else if (buff instanceof ScalingMultiBuff) {
+                if (buff instanceof ScalingBuff) {
                   const cap = (buff as { cap?: number }).cap;
                   if (cap !== undefined) resolved.cap = cap;
                   resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
@@ -844,10 +841,7 @@ export class TeamBuild {
       const relevantKeys = new Set<StatKey>();
       for (const buff of cb.getAllBuffs()) {
         if (!isBuffApplicable(buff, cid, calcTargetId, calcTargetId)) continue;
-        if (buff instanceof ScalingBuff || buff instanceof ScalingSkillBuff) {
-          const inputKey = (buff as { inputKey: StatKey }).inputKey;
-          relevantKeys.add(inputKey);
-        } else if (buff instanceof ScalingMultiBuff) {
+        if (buff instanceof ScalingBuff) {
           const inputKey = (buff as { inputKey: StatKey }).inputKey;
           relevantKeys.add(inputKey);
         }

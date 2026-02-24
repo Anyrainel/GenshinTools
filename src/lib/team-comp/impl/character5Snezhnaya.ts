@@ -1,11 +1,4 @@
-import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -200,17 +193,15 @@ class Arlecchino extends CharacterBase {
       { key: "pyro%", value: 0.4 },
     ]),
     // C6: After E, Normal ATK and Q: CR +10%, CD +70% for 20s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal", "burst"] } },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.1 },
-              { key: "cd", value: 0.7 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.1 },
+            { key: "cd", value: 0.7 },
+          ]
+        : []
     ),
   ];
 
@@ -228,6 +219,11 @@ class Arlecchino extends CharacterBase {
     const normalBaseTag = {
       element: "Pyro" as const,
       ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const burstBaseTag = {
+      element: "Pyro" as const,
+      ability: "burst" as const,
       reaction: "none" as const,
     };
     const normalMeltTag = { ...normalBaseTag, reaction: "melt" as const };
@@ -364,7 +360,7 @@ class Arlecchino extends CharacterBase {
           {
             formula: new ArlecchinoBurstFormula(
               qMult,
-              normalBaseTag,
+              burstBaseTag,
               initialBol,
               this.constellation >= 6
             ),

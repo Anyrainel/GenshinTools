@@ -98,6 +98,7 @@ def write_data(
     weapon_types: list[ResourceOutput],
     i18n_data: dict[str, dict[str, Any]],
     updated_types: set[str] | None = None,
+    details: bool = True,
 ) -> None:
     """Write processed data to TypeScript files and per-language game JSON.
 
@@ -105,6 +106,8 @@ def write_data(
         updated_types: entity types that were freshly scraped (e.g. {"weapon", "artifact"}).
             Only these types will have their game JSON files regenerated.
             If None, all types are written (backwards-compatible full run).
+        details: when False, only lean fields (id, rarity, imagePath) are written
+            to resources.ts.
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
@@ -120,8 +123,11 @@ def write_data(
         half_sets,
         elements,
         weapon_types,
+        details=details,
     )
-    _write_game_json(i18n_data, game_dir, updated_types)
+    # NOTE: All game JSON files (weapon_*.json, artifact_*.json, character_*.json)
+    # are now manually maintained. Uncomment to re-enable generation.
+    # _write_game_json(i18n_data, game_dir, updated_types)
     _write_i18n_game_ts(data_dir, i18n_data)
 
 
@@ -134,6 +140,18 @@ def _serialize(items: Sequence[Any]) -> str:
     )
 
 
+_LEAN_ENTITY_KEYS = {"id", "rarity", "imagePath", "imagePaths"}
+
+
+def _serialize_lean(items: Sequence[Any]) -> str:
+    """Serialize only the lean resource fields (id, rarity, imagePath/imagePaths)."""
+    dumped = []
+    for i in items:
+        d = i.model_dump(by_alias=True) if isinstance(i, BaseModel) else dict(i)
+        dumped.append({k: v for k, v in d.items() if k in _LEAN_ENTITY_KEYS})
+    return json.dumps(dumped, indent=2, ensure_ascii=False)
+
+
 def _write_resources_ts(
     data_dir: str,
     character_data: Sequence[CharacterOutput],
@@ -142,15 +160,23 @@ def _write_resources_ts(
     half_sets: Sequence[HalfSet],
     elements: Sequence[ResourceOutput],
     weapon_types: Sequence[ResourceOutput],
+    details: bool = True,
 ) -> None:
-    """Write src/data/resources.ts with all entity arrays."""
-    exports: list[tuple[str, str, Sequence[Any]]] = [
-        ("characters", "Character[]", character_data),
-        ("elementResources", "ElementResource[]", elements),
-        ("weaponTypeResources", "WeaponTypeResource[]", weapon_types),
-        ("artifacts", "ArtifactSet[]", artifact_data),
-        ("artifactHalfSets", "ArtifactHalfSet[]", half_sets),
-        ("weapons", "Weapon[]", weapon_data),
+    """Write src/data/resources.ts with all entity arrays.
+
+    When details=False, only lean fields (id, rarity, imagePath/imagePaths) are
+    written for character/artifact/weapon entries.
+    """
+    ser = _serialize if details else _serialize_lean
+
+    # (var_name, ts_type, data, use_lean_when_no_details)
+    exports: list[tuple[str, str, Sequence[Any], bool]] = [
+        ("characters", "CharacterResource[]", character_data, True),
+        ("elementResources", "ElementResource[]", elements, False),
+        ("weaponTypeResources", "WeaponTypeResource[]", weapon_types, False),
+        ("artifacts", "ArtifactSetResource[]", artifact_data, True),
+        ("artifactHalfSets", "ArtifactHalfSet[]", half_sets, False),
+        ("weapons", "WeaponResource[]", weapon_data, True),
     ]
 
     path = os.path.join(data_dir, "resources.ts")
@@ -161,9 +187,9 @@ def _write_resources_ts(
             "import { ArtifactHalfSet, ArtifactSet, Character, ElementResource, "
             "Weapon, WeaponTypeResource } from './types';\n\n"
         )
-        for var_name, ts_type, data in exports:
+        for var_name, ts_type, data, is_entity in exports:
             f.write(f"export const {var_name}: {ts_type} = ")
-            f.write(_serialize(data))
+            f.write(ser(data) if is_entity else _serialize(data))
             f.write(";\n\n")
 
     print(f"Written resources to {path}")
@@ -282,7 +308,6 @@ def _write_game_json(
     write_all = updated_types is None
     weapons_raw = i18n_data.get("weapons", {})
     artifacts_raw = i18n_data.get("artifacts", {})
-    characters_i18n = i18n_data.get("characters", {})
 
     for lang in ("en", "zh"):
         # ── Weapons ─────────────────────────────────────────────────────
@@ -326,24 +351,6 @@ def _write_game_json(
                 json.dump(artifact_out, f, indent=2, ensure_ascii=False)
                 f.write("\n")
             print(f"Written {len(artifact_out)} artifacts to {ap}")
-
-        # ── Character names into existing character_*.json ──────────────
-        char_path = os.path.join(game_dir, f"character_{lang}.json")
-        if os.path.exists(char_path) and characters_i18n:
-            with open(char_path, encoding="utf-8") as f:
-                char_kits: dict[str, Any] = json.load(f)
-            updated = 0
-            for cid, i18n_entry in characters_i18n.items():
-                if cid in char_kits:
-                    name = i18n_entry.get(lang, "") if isinstance(i18n_entry, dict) else ""
-                    if name and char_kits[cid].get("name") != name:
-                        char_kits[cid]["name"] = name
-                        updated += 1
-            if updated:
-                sorted_kits = dict(sorted(char_kits.items()))
-                with open(char_path, "w", encoding="utf-8") as f:
-                    f.write(compact_json(sorted_kits))
-                print(f"Updated {updated} character names in {char_path}")
 
 
 def download_all_images(
@@ -402,6 +409,16 @@ def main():
     parser.add_argument("--artifact", action="store_true", help="Update artifact data")
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
+    parser.add_argument(
+        "--details",
+        action="store_true",
+        default=False,
+        help=(
+            "Scrape detail pages for full data (weapon stats, effects, character regions, etc.). "
+            "When omitted (default), individual entry pages are skipped and only lean fields "
+            "(id, rarity, imagePath) are written to resources.ts."
+        ),
+    )
     args = parser.parse_args()
 
     # Default to all if no flags provided
@@ -414,8 +431,10 @@ def main():
     print("=== Genshin Impact Data Scraper ===")
     print(
         f"Modes: Character={args.character}, Weapon={args.weapon}, "
-        f"Artifact={args.artifact}, Enka={args.enka}"
+        f"Artifact={args.artifact}, Enka={args.enka}, Details={args.details}"
     )
+    if not args.details:
+        print("  (lean mode: individual entry pages will NOT be visited)")
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
@@ -456,11 +475,13 @@ def main():
     new_elements = None
     new_weapon_types = None
 
-    # 1. Scrape Fandom (only if needed)
-    fandom_data = {}
-    if args.character:
+    # 1. Scrape Fandom (only when --details is set, needed for weapon type / region / release date)
+    fandom_data: dict = {}
+    if args.character and args.details:
         print("=== [1/5] Fandom Wiki Data ===")
         fandom_data = fandom.get_character_data()
+    elif args.character:
+        print("=== [1/5] Fandom Wiki Data (skipped — --details not set) ===")
 
     if args.character or args.artifact or args.weapon:
         print("=== [2/5] Hoyolab Data ===")
@@ -468,11 +489,16 @@ def main():
             try:
                 if args.character:
                     print("--- Character ---")
-                    chars_en = scraper.scrape_characters("en")
+                    chars_en = scraper.scrape_characters("en", fetch_entry_id=args.details)
                     new_elements, new_weapon_types = scraper.scrape_elements_and_weapons("en")
-                    chars_zh = scraper.scrape_characters("zh")
+                    chars_zh = scraper.scrape_characters("zh", fetch_entry_id=args.details)
                     c_data, c_i18n, matched_chars = process_characters(
-                        chars_en, chars_zh, fandom_data, existing_char_map, scraper
+                        chars_en,
+                        chars_zh,
+                        fandom_data,
+                        existing_char_map,
+                        scraper,
+                        details=args.details,
                     )
                     character_data = c_data
                     i18n_data["characters"] = c_i18n
@@ -481,19 +507,21 @@ def main():
 
                 if args.artifact:
                     print("--- Artifact ---")
-                    arts_en = scraper.scrape_artifacts("en")
-                    arts_zh = scraper.scrape_artifacts("zh")
-                    a_data, a_i18n, matched_arts = process_artifacts(arts_en, arts_zh, scraper)
+                    arts_en = scraper.scrape_artifacts("en", fetch_entry_id=args.details)
+                    arts_zh = scraper.scrape_artifacts("zh", fetch_entry_id=args.details)
+                    a_data, a_i18n, matched_arts = process_artifacts(
+                        arts_en, arts_zh, scraper, details=args.details
+                    )
                     artifact_data = a_data
                     i18n_data["artifacts"] = a_i18n
 
                 if args.weapon:
                     print("--- Weapon ---")
-                    weaps_en = scraper.scrape_weapons("en")
-                    weaps_zh = scraper.scrape_weapons("zh")
+                    weaps_en = scraper.scrape_weapons("en", fetch_details=args.details)
+                    weaps_zh = scraper.scrape_weapons("zh", fetch_details=args.details)
 
                     w_data, w_i18n, matched_weaps = process_weapons(
-                        weaps_en, weaps_zh, existing_weapon_map, scraper
+                        weaps_en, weaps_zh, existing_weapon_map, scraper, details=args.details
                     )
                     weapon_data = w_data
                     i18n_data["weapons"] = w_i18n
@@ -554,6 +582,7 @@ def main():
             weapon_types,
             i18n_data,
             updated_types or None,
+            details=args.details,
         )
 
         # 4. Download Images (only for updated items)

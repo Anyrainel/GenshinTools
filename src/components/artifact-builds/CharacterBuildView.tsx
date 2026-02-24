@@ -2,8 +2,10 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
 import type { CharacterFilters } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import {
   defaultCharacterFilters,
@@ -36,6 +38,7 @@ export function CharacterBuildView({
   onTargetProcessed,
 }: CharacterBuildViewProps) {
   const { t } = useLanguage();
+  const { characterStats } = useGameStats();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
   const mainScrollRef = useRef<HTMLDivElement>(null);
@@ -114,18 +117,21 @@ export function CharacterBuildView({
       onTargetProcessed?.();
       return;
     }
+    const meta = getCharacterDisplayMeta(
+      character,
+      characterStats?.[targetCharacterId]
+    );
 
-    // Set checkbox filters to match this character's properties
     setCheckboxFilters({
-      elements: [character.element],
-      weaponTypes: [character.weaponType],
-      rarities: [character.rarity],
-      regions: [character.region],
+      elements: meta.element != null ? [meta.element] : [],
+      weaponTypes: meta.weaponType != null ? [meta.weaponType] : [],
+      rarities: [meta.rarity],
+      regions: meta.region != null ? [meta.region] : [],
       ownedOnly: false,
     });
 
     onTargetProcessed?.();
-  }, [targetCharacterId, onTargetProcessed]);
+  }, [targetCharacterId, characterStats, onTargetProcessed]);
 
   // Use custom hook for scroll forwarding from margin areas to main content
   useGlobalScroll(containerRef, mainScrollRef);
@@ -133,13 +139,12 @@ export function CharacterBuildView({
   // Compute filtered characters
   const filteredAndSortedCharacters = useMemo(
     () =>
-      filterAndSortCharacters(
-        characters,
-        filters,
+      filterAndSortCharacters(characters, filters, {
         tierAssignments,
-        isCharacterOwned
-      ),
-    [filters, tierAssignments, isCharacterOwned]
+        isOwned: isCharacterOwned,
+        characterStatsMap: characterStats ?? undefined,
+      }),
+    [filters, tierAssignments, isCharacterOwned, characterStats]
   );
 
   // Defer the list to allow UI to stay responsive

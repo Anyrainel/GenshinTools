@@ -9,66 +9,66 @@ import type { StatEntry } from "../types";
 // Artifact 2-Piece Set Bonuses
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterArtifactHalfSet("1")
+@RegisterArtifactHalfSet("cryo%-15")
 class CryoDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 1: Cryo DMG +15%
+  // Cryo DMG +15%
   // Sets: Blizzard Strayer, Finale of the Deep Galleries
   readonly stats: StatEntry[] = [{ key: "cryo%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("2")
+@RegisterArtifactHalfSet("hp%-20")
 class Hp2pc extends ArtifactHalfSetBase {
-  // halfSetId 2: HP +20%
+  // HP +20%
   // Sets: Tenacity of the Millelith, Vourukasha's Glow
   readonly stats: StatEntry[] = [{ key: "hp%", value: 0.2 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("3")
+@RegisterArtifactHalfSet("def%-30")
 class Def2pc extends ArtifactHalfSetBase {
-  // halfSetId 3: DEF +30%
+  // DEF +30%
   // Sets: Husk of Opulent Dreams
   readonly stats: StatEntry[] = [{ key: "def%", value: 0.3 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("4")
+@RegisterArtifactHalfSet("electro%-15")
 class ElectroDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 4: Electro DMG +15%
+  // Electro DMG +15%
   // Sets: Thundering Fury
   readonly stats: StatEntry[] = [{ key: "electro%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("5")
+@RegisterArtifactHalfSet("electro-res-40")
 class ElectroRes2pc extends ArtifactHalfSetBase {
-  // halfSetId 5: Electro RES +40% (non-damage stat)
+  // Electro RES +40% (non-damage stat)
   // Sets: Thundersoother
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [];
 }
 
-@RegisterArtifactHalfSet("6")
+@RegisterArtifactHalfSet("geo%-15")
 class GeoDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 6: Geo DMG +15%
+  // Geo DMG +15%
   // Sets: Archaic Petra
   readonly stats: StatEntry[] = [{ key: "geo%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("7")
+@RegisterArtifactHalfSet("em-80")
 class Em2pc extends ArtifactHalfSetBase {
-  // halfSetId 7: EM +80
+  // EM +80
   // Sets: Instructor, Wanderer's Troupe, Gilded Dreams, Flower of Paradise Lost,
   //        Night of the Sky's Unveiling, Aubade of Morningstar and Moon
   readonly stats: StatEntry[] = [{ key: "em", value: 80 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("8")
+@RegisterArtifactHalfSet("burst-dmg%-20")
 class BurstDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 8: Elemental Burst DMG +20%
+  // Elemental Burst DMG +20%
   // Sets: Noblesse Oblige
   readonly stats: StatEntry[] = [];
   readonly buffs = [
@@ -80,9 +80,9 @@ class BurstDmg2pc extends ArtifactHalfSetBase {
   ];
 }
 
-@RegisterArtifactHalfSet("9")
+@RegisterArtifactHalfSet("atk%-18")
 class Atk2pc extends ArtifactHalfSetBase {
-  // halfSetId 9: ATK +18%
+  // ATK +18%
   // Sets: Gladiator's Finale, Shimenawa's Reminiscence, Vermillion Hereafter,
   //        Echoes of an Offering, Nighttime Whispers, Fragment of Harmonic Whimsy,
   //        Unfinished Reverie, A Day Carved From Rising Winds
@@ -90,90 +90,82 @@ class Atk2pc extends ArtifactHalfSetBase {
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("10")
+@RegisterArtifactHalfSet("phys%-25")
 class PhysicalDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 10: Physical DMG +25%
+  // Physical DMG +25%
   // Sets: Bloodstained Chivalry, Pale Flame
   readonly stats: StatEntry[] = [{ key: "phys%", value: 0.25 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("11")
+@RegisterArtifactHalfSet("hydro%-15")
 class HydroDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 11: Hydro DMG +15%
+  // Hydro DMG +15%
   // Sets: Heart of Depth, Nymph's Dream
   readonly stats: StatEntry[] = [{ key: "hydro%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("12")
+@RegisterArtifactHalfSet("heal%-15")
 class HealingBonus2pc extends ArtifactHalfSetBase {
-  // halfSetId 12: Healing Bonus +15%
-  // Sets: Ocean-Hued Clam, Song of Days Past
+  // Healing Bonus +15%
+  // Sets: Ocean-Hued Clam, Song of Days Past, Maiden Beloved
   readonly stats: StatEntry[] = [{ key: "heal%", value: 0.15 }];
   readonly buffs: StatBuff[] = [];
 }
 
-@RegisterArtifactHalfSet("13")
+@RegisterArtifactHalfSet("pyro-res-40")
 class PyroRes2pc extends ArtifactHalfSetBase {
-  // halfSetId 13: Pyro RES +40% (non-damage stat)
+  // Pyro RES +40% (non-damage stat)
   // Sets: Lavawalker
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [];
 }
 
-@RegisterArtifactHalfSet("14")
+@RegisterArtifactHalfSet("pyro%-15")
 class PyroDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 14: Pyro DMG +15%
+  // Pyro DMG +15%
   // Sets: Crimson Witch of Flames
   readonly stats: StatEntry[] = [{ key: "pyro%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("15")
+@RegisterArtifactHalfSet("er-20")
 class Er2pc extends ArtifactHalfSetBase {
-  // halfSetId 15: Energy Recharge +20%
+  // Energy Recharge +20%
   // Sets: Emblem of Severed Fate, Silken Moon's Serenade
   readonly stats: StatEntry[] = [{ key: "er", value: 0.2 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("16")
+@RegisterArtifactHalfSet("anemo%-15")
 class AnemoDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 16: Anemo DMG +15%
+  // Anemo DMG +15%
   // Sets: Viridescent Venerer, Desert Pavilion Chronicle
   readonly stats: StatEntry[] = [{ key: "anemo%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("17")
-class HealingEffectiveness2pc extends ArtifactHalfSetBase {
-  // halfSetId 17: Character Healing Effectiveness +15% (non-damage stat)
-  // Sets: Maiden Beloved
-  readonly stats: StatEntry[] = [{ key: "heal%", value: 0.15 }];
-  readonly buffs: StatBuff[] = [];
-}
-
-@RegisterArtifactHalfSet("18")
+@RegisterArtifactHalfSet("shield-35")
 class ShieldStrength2pc extends ArtifactHalfSetBase {
-  // halfSetId 18: Shield Strength +35% (non-damage stat)
+  // Shield Strength +35% (non-damage stat)
   // TODO: shield strength is not modeled
   // Sets: Retracing Bolide
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [];
 }
 
-@RegisterArtifactHalfSet("19")
+@RegisterArtifactHalfSet("dendro%-15")
 class DendroDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 19: Dendro DMG +15%
+  // Dendro DMG +15%
   // Sets: Deepwood Memories
   readonly stats: StatEntry[] = [{ key: "dendro%", value: 0.15 }];
   readonly buffs = [];
 }
 
-@RegisterArtifactHalfSet("20")
+@RegisterArtifactHalfSet("na-ca-dmg%-15")
 class NormalChargeDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 20: Normal and Charged Attack DMG +15%
+  // Normal and Charged Attack DMG +15%
   // Sets: Marechaussee Hunter
   readonly stats: StatEntry[] = [];
   readonly buffs = [
@@ -185,9 +177,9 @@ class NormalChargeDmg2pc extends ArtifactHalfSetBase {
   ];
 }
 
-@RegisterArtifactHalfSet("21")
+@RegisterArtifactHalfSet("skill-dmg%-20")
 class SkillDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 21: Elemental Skill DMG +20%
+  // Elemental Skill DMG +20%
   // Sets: Golden Troupe
   readonly stats: StatEntry[] = [];
   readonly buffs = [
@@ -199,17 +191,17 @@ class SkillDmg2pc extends ArtifactHalfSetBase {
   ];
 }
 
-@RegisterArtifactHalfSet("22")
+@RegisterArtifactHalfSet("nightsoul-energy-6")
 class NightsoulEnergy2pc extends ArtifactHalfSetBase {
-  // halfSetId 22: Nightsoul Burst → 6 Energy (utility, no damage stat)
+  // Nightsoul Burst → 6 Energy (utility, no damage stat)
   // Sets: Scroll of the Hero of Cinder City
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[] = [];
 }
 
-@RegisterArtifactHalfSet("23")
+@RegisterArtifactHalfSet("nightsoul-dmg%-15")
 class NightsoulDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 23: Nightsoul's Blessing + on-field → DMG +15%
+  // Nightsoul's Blessing + on-field → DMG +15%
   // Sets: Obsidian Codex
   readonly stats: StatEntry[] = [];
   readonly buffs =
@@ -228,9 +220,9 @@ class NightsoulDmg2pc extends ArtifactHalfSetBase {
       : [];
 }
 
-@RegisterArtifactHalfSet("24")
+@RegisterArtifactHalfSet("plunge-dmg%-25")
 class PlungeDmg2pc extends ArtifactHalfSetBase {
-  // halfSetId 24: Plunging Attack DMG +25%
+  // Plunging Attack DMG +25%
   // Sets: Long Night's Oath
   readonly stats: StatEntry[] = [];
   readonly buffs = [

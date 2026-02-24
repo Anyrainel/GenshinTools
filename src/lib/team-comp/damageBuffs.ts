@@ -1,6 +1,24 @@
 import type { StatSheet } from "./damageModels";
 import type { BuffSource, BuffTarget, StatEntry, StatKey } from "./types";
 
+/**
+ * Throws if any StatKey appears more than once in the given entry list.
+ * Call this whenever a list of StatEntries is produced (static or dynamic),
+ * since duplicate keys silently overwrite each other in the StatSheet map.
+ */
+export function assertNoDuplicateStatKeys(
+  entries: StatEntry[],
+  label: string
+): void {
+  const seen = new Set<StatKey>();
+  for (const { key } of entries) {
+    if (seen.has(key)) {
+      throw new Error(`Duplicate StatKey "${key}" in ${label}`);
+    }
+    seen.add(key);
+  }
+}
+
 // The classes below cover the most common buff patterns in Genshin.
 // New reusable buff types should be added here so that all
 // character/weapon/artifact implementations can share them.
@@ -31,6 +49,47 @@ export class StatBuff {
         `BuffSource origin must be empty for artifact related types (id: ${source.id})`
       );
     }
+    assertNoDuplicateStatKeys(
+      staticBuffs,
+      `staticBuffs (id: ${source.id}). Use a single entry or separate buffs with different targets`
+    );
+    for (const { key } of staticBuffs) {
+      if (
+        (key === "resReduction%" || key === "defReduction%") &&
+        target.receiver !== "team"
+      ) {
+        throw new Error(
+          `${key} must use receiver "team" — it is an enemy debuff that affects all party members equally (id: ${source.id})`
+        );
+      }
+      if (key === "defIgnore%" && target.receiver === "team") {
+        throw new Error(
+          `${key} is not expected to use receiver "team" — ask for review for this case. (id: ${source.id})`
+        );
+      }
+    }
+    const filter = target.filter;
+    if (filter) {
+      for (const dim of ["elements", "abilities", "reactions"] as const) {
+        const arr = filter[dim];
+        if (arr !== undefined && arr.length === 0) {
+          throw new Error(
+            `DamageTagFilter.${dim} must not be an empty array — omit the key to mean "any" (id: ${source.id})`
+          );
+        }
+        if (arr) {
+          const seen = new Set<string>();
+          for (const val of arr) {
+            if (seen.has(val)) {
+              throw new Error(
+                `Duplicate "${val}" in DamageTagFilter.${dim} (id: ${source.id})`
+              );
+            }
+            seen.add(val);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -39,21 +98,6 @@ export class StatBuff {
    */
   dynamicBuffs(_selfStats: StatSheet, _teamStats: StatSheet[]): StatEntry[] {
     return [];
-  }
-}
-
-/**
- * Static buff whose entries vary by constellation level.
- * Handles patterns like "C0: +15% CR; C2: +20% CR" or "C6 adds +15% Pyro DMG".
- */
-export class StaticSkillBuff extends StatBuff {
-  constructor(
-    source: BuffSource,
-    target: BuffTarget,
-    constellation: number,
-    resolve: (c: number) => StatEntry[]
-  ) {
-    super(source, target, resolve(constellation));
   }
 }
 
@@ -87,36 +131,6 @@ export class ScalingBuff extends StatBuff {
 }
 
 /**
- * Scaling buff whose coefficient and cap vary by constellation level.
- * Covers patterns like "E conversion: Lv10 = 6.26%, Lv13 = 7.15% of HP as ATK".
- */
-export class ScalingSkillBuff extends StatBuff {
-  private readonly scale: number;
-  readonly cap?: number;
-
-  constructor(
-    source: BuffSource,
-    target: BuffTarget,
-    staticBuffs: StatEntry[],
-    readonly inputKey: StatKey,
-    readonly outputKey: StatKey,
-    constellation: number,
-    resolve: (c: number) => { scale: number; cap?: number }
-  ) {
-    super(source, target, staticBuffs);
-    const resolved = resolve(constellation);
-    this.scale = resolved.scale;
-    this.cap = resolved.cap;
-  }
-
-  override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-    const raw = selfStats.get(this.inputKey) * this.scale;
-    const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
-    return [{ key: this.outputKey, value }];
-  }
-}
-
-/**
  * ER-over-base scaling: scales ATK% from ER exceeding the base 100%.
  * Engulfing Lightning: (ER - 1.0) × scale → atk%, capped.
  */
@@ -135,30 +149,6 @@ export class ErScalingBuff extends StatBuff {
     const erOver = Math.max(0, selfStats.getRaw("er") - 1.0);
     const value = Math.min(erOver * this.scale, this.cap);
     return [{ key: "atk%", value }];
-  }
-}
-
-/**
- * Scaling buff where one input stat scales into multiple output stat keys.
- * Covers patterns like "DEF × scale → all 7 elemental DMG% keys".
- */
-export class ScalingMultiBuff extends StatBuff {
-  constructor(
-    source: BuffSource,
-    target: BuffTarget,
-    staticBuffs: StatEntry[],
-    readonly inputKey: StatKey,
-    private readonly outputKeys: StatKey[],
-    private readonly scale: number,
-    readonly cap?: number
-  ) {
-    super(source, target, staticBuffs);
-  }
-
-  override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-    const raw = selfStats.get(this.inputKey) * this.scale;
-    const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
-    return this.outputKeys.map((key) => ({ key, value }));
   }
 }
 

@@ -19,7 +19,7 @@ Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 ### Pages & Routes
 
 - `/` — Home (`WideLayout`)
-- `/account-data` — tabs: `characters`, `recommendations`, `inventory`, `weights` (`SidebarLayout`)
+- `/account-data` — tabs: `characters`, `recommendations`, `inventory` (`SidebarLayout`)
 - `/artifact-filter` — tabs: `configure`, `filters` (`SidebarLayout`)
 - `/tier-list` — tabs: `characters`, `weapons` (`WideLayout`)
 - `/archive` — tabs: `characters`, `weapons` (`SidebarLayout` / `ScrollLayout`)
@@ -34,7 +34,7 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 - `src/components/ui` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
 - `src/stores` — One Zustand store per domain (persist to `localStorage`)
 - `src/data` — Static JSON resources, `types.ts`, `constants.ts`, localization (`i18n-ui.ts`, `i18n-app.ts`, `i18n-game.ts`)
-- `src/lib` — Pure logic: merge algorithms, filter computation, artifact scoring, insight engine, preset system, build utilities
+- `src/lib` — Pure logic: merge algorithms, filter computation, artifact scoring, insight engine, preset system, build utilities, damage calculation (`team-comp/`)
 - `src/hooks` — `useResolvedBuilds`, `useAsyncCompute`, `useMediaQuery`, `useGlobalScroll`
 - `src/contexts` — `LanguageContext` (EN/ZH), `ThemeContext` (per-element palette via `themeGenerator.ts`)
 - `src/presets` — Bundled preset JSONs for artifact builds, character tier lists, weapon tier lists
@@ -50,7 +50,17 @@ Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/component
 5. **Build Resolution**: `useResolvedBuilds` (single char) / `useAllResolvedBuilds` (all chars) are the **Single Source of Truth**. They merge the `Preset Base` + `Store Deltas` to produce the effective `Build[]`.
    - **Rule**: Always use these hooks to get builds. Never traverse `useBuildsStore.builds` or `presetRegistry` manually.
 6. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts. See `src/lib/` for all algorithms.
-6. **Zero `any`**: all external data (Import/API) must be typed and validated.
+7. **Zero `any`**: all external data (Import/API) must be typed and validated.
+
+## Damage Calculation (Team Comp)
+
+The `src/lib/team-comp/` module implements a full damage calculation pipeline:
+
+1. **Character implementations** (`impl/`): Per-character formula definitions, buff providers, and talent scalings.
+2. **Damage models** (`damageModels.ts`): Zone-based damage calculation (Base DMG, DMG Bonus, CRIT, RES, DEF, Elevate/Reaction).
+3. **Buff system** (`damageBuffs.ts`): Stackable team-wide and character-specific buffs with source tracking.
+4. **Optimizer** (`optimizer.ts`): Artifact assignment optimizer that maximizes total team damage.
+5. **Stat resolution**: Idle → Combat stat pipeline with weapon, artifact, ascension, and buff contributions.
 
 ## Commands
 

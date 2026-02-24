@@ -10,11 +10,18 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   charactersById,
   elementResourcesByName,
-  sortedCharacters,
+  getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
-import type { Character, Element, Rarity, WeaponType } from "@/data/types";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import type {
+  CharacterResource,
+  Element,
+  Rarity,
+  WeaponType,
+} from "@/data/types";
 import { elements, weaponTypes } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { characterMatchesSearch } from "@/lib/search";
@@ -39,19 +46,30 @@ import { FilterChip } from "./FilterChip";
 import { SkillCard } from "./SkillCard";
 
 interface CharacterListItemProps {
-  character: Character;
+  character: CharacterResource;
   isSelected: boolean;
   onSelect: (id: string) => void;
 }
 
 const CharacterListItem = memo(
-  ({ character, isSelected, onSelect }: CharacterListItemProps) => {
+  ({
+    character,
+    characterStats,
+    isSelected,
+    onSelect,
+  }: CharacterListItemProps & {
+    characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  }) => {
     const { t } = useLanguage();
+    const meta = getCharacterDisplayMeta(
+      character,
+      characterStats?.[character.id]
+    );
     const name = t.character(character.id);
     const owned = useOwnershipStore((s) =>
       s.isOwned("character", character.id)
     );
-    const unreleased = character.releaseDate === null;
+    const unreleased = meta.releaseDate == null;
 
     return (
       <button
@@ -67,7 +85,7 @@ const CharacterListItem = memo(
       >
         <ItemIcon
           imagePath={character.imagePath}
-          rarity={character.rarity}
+          rarity={meta.rarity}
           size="sm"
           className="shrink-0"
         />
@@ -110,7 +128,13 @@ function KitSection({
 
 const EMPTY_BUILD_IDS: string[] = [];
 
-function LinkedBuildSection({ character }: { character: Character }) {
+function LinkedBuildSection({
+  character,
+  characterStats,
+}: {
+  character: CharacterResource;
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+}) {
   const { t } = useLanguage();
   const builds = useResolvedBuilds(character.id);
   const newBuild = useBuildsStore((state) => state.newBuild);
@@ -130,7 +154,7 @@ function LinkedBuildSection({ character }: { character: Character }) {
           onClick={() => newBuild(character.id)}
         >
           <Plus className="h-3 w-3" />
-          {t.ui("archive.addBuild")}
+          {t.ui("common.addBuild")}
         </Button>
       </div>
       {builds.length > 0 ? (
@@ -142,7 +166,12 @@ function LinkedBuildSection({ character }: { character: Character }) {
               buildId={build.id}
               onDelete={() => removeBuild(character.id, build.id)}
               onDuplicate={() => copyBuild(character.id, build.id)}
-              element={character.element}
+              element={
+                getCharacterDisplayMeta(
+                  character,
+                  characterStats?.[character.id]
+                ).element ?? "Pyro"
+              }
             />
           ))}
         </div>
@@ -153,7 +182,7 @@ function LinkedBuildSection({ character }: { character: Character }) {
   );
 }
 
-function LinkedAccountSection({ character }: { character: Character }) {
+function LinkedAccountSection({ character }: { character: CharacterResource }) {
   const { t } = useLanguage();
   const accountData = useAccountStore((state) => state.accountData);
   const scores = useAccountStore((state) => state.scores);
@@ -184,9 +213,18 @@ function LinkedAccountSection({ character }: { character: Character }) {
   );
 }
 
-function CharacterDetailPanel({ characterId }: { characterId: string }) {
+function CharacterDetailPanel({
+  characterId,
+  characterStats,
+}: {
+  characterId: string;
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
+}) {
   const { t } = useLanguage();
   const character = charactersById[characterId];
+  const meta = character
+    ? getCharacterDisplayMeta(character, characterStats?.[characterId])
+    : null;
   const skills = t.skills(characterId);
   const passives = t.passives(characterId);
   const constellations = t.constellations(characterId);
@@ -206,7 +244,7 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
     return Array.from(grouped.values());
   }, [rawGlossary]);
 
-  const unreleased = character?.releaseDate === null;
+  const unreleased = meta?.releaseDate == null;
   const owned = useOwnershipStore((s) => s.isOwned("character", characterId));
   const effectiveOwned = !unreleased && owned;
   const toggleOwned = useOwnershipStore((s) => s.toggleOwned);
@@ -224,7 +262,7 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
             <div className="flex items-center gap-4">
               <ItemIcon
                 imagePath={character.imagePath}
-                rarity={character.rarity}
+                rarity={meta?.rarity ?? character.rarity}
                 size="xl"
               />
               <CharacterInfo character={character} showDate>
@@ -266,7 +304,8 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
                     <SkillCard
                       key={skill.name || i}
                       skill={skill}
-                      constellations={constellations}
+                      characterId={characterId}
+                      skillIndex={i}
                     />
                   ))}
                 </KitSection>
@@ -315,7 +354,10 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
           )}
 
           {/* Linked: Artifact Builds */}
-          <LinkedBuildSection character={character} />
+          <LinkedBuildSection
+            character={character}
+            characterStats={characterStats}
+          />
 
           {/* Linked: Account Data */}
           <LinkedAccountSection character={character} />
@@ -327,10 +369,12 @@ function CharacterDetailPanel({ characterId }: { characterId: string }) {
 
 function CharacterListPanel({
   characters,
+  characterStats,
   selectedId,
   onSelect,
 }: {
-  characters: Character[];
+  characters: CharacterResource[];
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
@@ -350,6 +394,7 @@ function CharacterListPanel({
           <CharacterListItem
             key={c.id}
             character={c}
+            characterStats={characterStats}
             isSelected={selectedId === c.id}
             onSelect={onSelect}
           />
@@ -361,9 +406,11 @@ function CharacterListPanel({
 
 function CharacterGrid({
   characters,
+  characterStats,
   onSelect,
 }: {
-  characters: Character[];
+  characters: CharacterResource[];
+  characterStats: ReturnType<typeof useGameStats>["characterStats"];
   onSelect: (id: string) => void;
 }) {
   const { t } = useLanguage();
@@ -383,7 +430,8 @@ function CharacterGrid({
       style={{ gridTemplateColumns: "repeat(auto-fill, minmax(64px, 1fr))" }}
     >
       {characters.map((c) => {
-        const unreleased = c.releaseDate === null;
+        const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+        const unreleased = meta.releaseDate == null;
         const owned = isOwnedFn("character", c.id);
         return (
           <button
@@ -395,7 +443,7 @@ function CharacterGrid({
               (unreleased || !owned) && "opacity-40"
             )}
           >
-            <ItemIcon imagePath={c.imagePath} rarity={c.rarity} size="sm" />
+            <ItemIcon imagePath={c.imagePath} rarity={meta.rarity} size="sm" />
             <span className="text-xs text-foreground text-center line-clamp-1 w-full">
               {t.character(c.id)}
             </span>
@@ -491,6 +539,11 @@ function CharacterFilterChips({
 
 export function CharacterArchiveView() {
   const { t } = useLanguage();
+  const { characterStats } = useGameStats();
+  const sortedCharacters = useMemo(
+    () => getSortedCharacters(characterStats ?? null),
+    [characterStats]
+  );
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("character");
@@ -499,18 +552,21 @@ export function CharacterArchiveView() {
   const [weaponTypeFilter, setWeaponTypeFilter] = useState<WeaponType[]>([]);
   const [rarityFilter, setRarityFilter] = useState<Rarity[]>([]);
 
-  // Filter characters
+  // Filter characters (use stats-based meta)
   const filteredCharacters = useMemo(() => {
     return sortedCharacters.filter((c) => {
-      if (c.id.startsWith("traveler")) return false;
-      if (elementFilter.length > 0 && !elementFilter.includes(c.element))
+      const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+      if (
+        elementFilter.length > 0 &&
+        (meta.element == null || !elementFilter.includes(meta.element))
+      )
         return false;
       if (
         weaponTypeFilter.length > 0 &&
-        !weaponTypeFilter.includes(c.weaponType)
+        (meta.weaponType == null || !weaponTypeFilter.includes(meta.weaponType))
       )
         return false;
-      if (rarityFilter.length > 0 && !rarityFilter.includes(c.rarity))
+      if (rarityFilter.length > 0 && !rarityFilter.includes(meta.rarity))
         return false;
       if (searchQuery.trim()) {
         const name = t.character(c.id);
@@ -533,7 +589,15 @@ export function CharacterArchiveView() {
       }
       return true;
     });
-  }, [searchQuery, elementFilter, weaponTypeFilter, rarityFilter, t]);
+  }, [
+    sortedCharacters,
+    characterStats,
+    searchQuery,
+    elementFilter,
+    weaponTypeFilter,
+    rarityFilter,
+    t,
+  ]);
 
   const handleSelect = useCallback(
     (id: string) => {
@@ -603,7 +667,11 @@ export function CharacterArchiveView() {
   );
 
   const detailPanel = selectedId ? (
-    <CharacterDetailPanel key={selectedId} characterId={selectedId} />
+    <CharacterDetailPanel
+      key={selectedId}
+      characterId={selectedId}
+      characterStats={characterStats}
+    />
   ) : (
     <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
       <Book className="h-12 w-12 mb-4 opacity-30" />
@@ -643,6 +711,7 @@ export function CharacterArchiveView() {
         <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
         <CharacterGrid
           characters={filteredCharacters}
+          characterStats={characterStats}
           onSelect={handleSelect}
         />
       </div>
@@ -664,6 +733,7 @@ export function CharacterArchiveView() {
         <aside className="w-1/3 max-w-[14rem] shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1">
           <CharacterListPanel
             characters={filteredCharacters}
+            characterStats={characterStats}
             selectedId={selectedId}
             onSelect={handleSelect}
           />

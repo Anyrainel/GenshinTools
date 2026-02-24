@@ -1,10 +1,4 @@
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -58,21 +52,19 @@ class Varka extends CharacterBase {
       [{ key: "dmg%", value: 0.3 }]
     ),
     // C4: Swirl → team gets 20% Anemo & Secondary (simplified as general DMG%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["swirl"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "dmg%", value: 0.2 }] : [])
+      this.constellation >= 4 ? [{ key: "dmg%", value: 0.2 }] : []
     ),
     // C6: P2 stacks also give +20% CD each (max 4 = 80%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["swirl"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "charge", "skill"] },
       },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 0.8 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 0.8 }] : []
     ),
   ];
 
@@ -126,18 +118,16 @@ class Skirk extends CharacterBase {
       [{ key: "baseDmg%", value: 0.6 }]
     ),
     // C2: After Havoc: Extinction (E-mode Q), ATK +70% for 12.5s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["Q"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "atk%", value: 0.7 }] : [])
+      this.constellation >= 2 ? [{ key: "atk%", value: 0.7 }] : []
     ),
     // C4: Each Death's Crossing stack also ATK +10%/20%/40%. Max 3 stacks = 40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "atk%", value: 0.4 }] : [])
+      this.constellation >= 4 ? [{ key: "atk%", value: 0.4 }] : []
     ),
   ];
 

@@ -5,6 +5,7 @@ import type {
   CharacterSkillDetail,
   Language,
 } from "@/data/types";
+import { SKILL_LEVELS } from "@/data/types";
 
 // Raw JSON shape before transformation
 type RawSkill = {
@@ -27,17 +28,39 @@ type RawBundle = Record<string, RawKit>;
 const cache = new Map<Language, Record<string, CharacterKit>>();
 const pending = new Map<Language, Promise<Record<string, CharacterKit>>>();
 
-const modules = import.meta.glob<RawBundle>("../data/game/character_*.json", {
+// Split by rarity: character_4_*.json and character_5_*.json (loaded in parallel per language)
+const CHAR_RARITIES = ["4", "5"] as const;
+const modules = import.meta.glob<RawBundle>("../data/game/character_*_*.json", {
   eager: false,
 });
 
+/** Detail row: [label, Lv6, Lv7, …, Lv15] — 1 label + 10 values. */
 function transformDetails(raw: string[][]): CharacterSkillDetail[] {
   return raw.map((row) => {
-    // Support both 3-column (label, lv10, lv13) and 4-column (label, lv6, lv10, lv13)
-    if (row.length >= 4) {
-      return { label: row[0], lv6: row[1], lv10: row[2], lv13: row[3] };
+    const label = row[0] ?? "";
+    const out: CharacterSkillDetail = { label };
+    // New format: 11 columns (label + Lv6..Lv15)
+    if (row.length >= 11) {
+      for (let i = 0; i < SKILL_LEVELS.length; i++) {
+        const level = SKILL_LEVELS[i];
+        const value = row[i + 1];
+        if (value !== undefined && value !== "") out[level] = value;
+      }
+      return out;
     }
-    return { label: row[0], lv6: "", lv10: row[1], lv13: row[2] };
+    // Legacy 4-column (label, lv6, lv10, lv13)
+    if (row.length >= 4) {
+      out["6"] = row[1];
+      out["10"] = row[2];
+      out["13"] = row[3];
+      return out;
+    }
+    // Legacy 3-column (label, lv10, lv13)
+    if (row.length >= 3) {
+      out["10"] = row[1] ?? "";
+      out["13"] = row[2] ?? "";
+    }
+    return out;
   });
 }
 
@@ -72,22 +95,31 @@ export function loadCharacterKits(
   const inflight = pending.get(lang);
   if (inflight) return inflight;
 
-  const path = `../data/game/character_${lang}.json`;
-  const loader = modules[path];
-  if (!loader) {
-    return Promise.reject(new Error(`No character kit bundle for: ${lang}`));
+  const paths = CHAR_RARITIES.map(
+    (r) => `../data/game/character_${r}_${lang}.json`
+  );
+  const loaders = paths.map((p) => modules[p]).filter(Boolean);
+  if (loaders.length !== paths.length) {
+    return Promise.reject(
+      new Error(`Missing character kit bundle(s) for: ${lang}`)
+    );
   }
 
-  const promise = loader().then((mod) => {
-    // Vite JSON dynamic imports return { default: T }
-    const raw =
-      (mod as unknown as { default: RawBundle }).default ??
-      (mod as unknown as RawBundle);
-    const transformed = transformBundle(raw);
-    cache.set(lang, transformed);
-    pending.delete(lang);
-    return transformed;
-  });
+  const promise = Promise.all(loaders.map((loader) => loader!())).then(
+    (mods) => {
+      const raw: RawBundle = {};
+      for (const mod of mods) {
+        const bundle =
+          (mod as unknown as { default: RawBundle }).default ??
+          (mod as unknown as RawBundle);
+        Object.assign(raw, bundle);
+      }
+      const transformed = transformBundle(raw);
+      cache.set(lang, transformed);
+      pending.delete(lang);
+      return transformed;
+    }
+  );
 
   pending.set(lang, promise);
   return promise;

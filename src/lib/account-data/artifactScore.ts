@@ -1,26 +1,26 @@
 import { artifactIdToHalfSetId, statPools } from "@/data/constants";
 import type {
   ArtifactData,
-  ArtifactScoreConfig,
   Build,
   CharacterData,
   GlobalStatWeights,
   MainStat,
   MainStatSlot,
   Slot,
-  StatWeightMap,
   SubStat,
 } from "@/data/types";
+import { allSlots, mainStatSlots } from "@/data/types";
 
 // ----------------------------------------------------------------------------
 // 1. Constants & Helpers
 // ----------------------------------------------------------------------------
 
-const ALL_SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
-const MAIN_STAT_SLOTS: MainStatSlot[] = ["sands", "goblet", "circlet"];
+// Max CD roll value used as baseline for sub-score calculation
+const MAX_CD_ROLL_5STAR = 7.77;
+const MAX_CD_ROLL_4STAR = 6.22;
 
 // All stat keys that can appear as main or sub stats
-const ALL_STATS: (MainStat | SubStat)[] = [
+const SUB_STATS: SubStat[] = [
   "cr",
   "cd",
   "em",
@@ -31,15 +31,6 @@ const ALL_STATS: (MainStat | SubStat)[] = [
   "atk",
   "hp",
   "def",
-  "pyro%",
-  "hydro%",
-  "anemo%",
-  "electro%",
-  "dendro%",
-  "cryo%",
-  "geo%",
-  "phys%",
-  "heal%",
 ];
 
 // Max level main stat values (reference)
@@ -91,34 +82,53 @@ export function getFixedMainStatValue(key: MainStat, rarity: number): number {
   return maxValues[key] || 0;
 }
 
-// ----------------------------------------------------------------------------
-// 2. Attribute Scoring
-// ----------------------------------------------------------------------------
-
+/** Per-stat breakdown for UI (value and weighted sub-score only; main score not exposed). */
 export interface StatScoreBreakdown {
-  mainValue: number;
   subValue: number;
-  mainScore: number;
   subScore: number;
   weight: number;
 }
 
-export interface ArtifactScoreResult {
-  mainScore: number;
+/** Result of substat scoring only. Slot maps use Record<Slot, number> with 0 for unequipped. */
+export interface SubstatScoreResult {
   subScore: number;
-  slotMainScores: Record<string, number>;
-  slotSubScores: Record<string, number>;
-  slotMaxSubScores: Record<string, number>;
-  statScores: Record<string, StatScoreBreakdown>;
+  slotSubScores: Record<Slot, number>;
+  slotMaxSubScores: Record<Slot, number>;
+  statScores: Record<SubStat, StatScoreBreakdown>;
   isComplete: boolean;
 }
+
+export type MainStatMismatch = {
+  slot: MainStatSlot;
+  equipped: MainStat;
+};
+
+export type StatWeightMap = Partial<Record<SubStat, number>>;
+
+export type BuildMatchResult = {
+  build: Build;
+  buildIndex: number;
+  statWeights: StatWeightMap;
+  setMatched: boolean;
+  mainStatMatches: number; // 0-3
+  mainStatMismatches: MainStatMismatch[];
+};
+
+export interface ArtifactScoreResult {
+  substatScore: SubstatScoreResult;
+  buildMatch: BuildMatchResult | null;
+}
+
+// ----------------------------------------------------------------------------
+// 2. Stat Scoring
+// ----------------------------------------------------------------------------
 
 /**
  * Calculates the score for a single attribute.
  * Returns { score, weight }
  */
-export function calculateAttributeScore(
-  stat: MainStat | SubStat,
+export function calculateStatScore(
+  stat: SubStat,
   value: number,
   weights: StatWeightMap,
   globalConfig: GlobalStatWeights
@@ -167,21 +177,6 @@ export function calculateAttributeScore(
       score = value * 0.3356 * (globalConfig.flatDef / 100) * w;
       effectiveWeight = rawWeight * (globalConfig.flatDef / 100);
       break;
-    case "pyro%":
-    case "hydro%":
-    case "anemo%":
-    case "electro%":
-    case "dendro%":
-    case "cryo%":
-    case "geo%":
-      score = value * 1.3348 * w;
-      break;
-    case "phys%":
-      score = value * 1.0669 * w;
-      break;
-    case "heal%":
-      score = value * 1.7326 * w;
-      break;
     default:
       score = 0;
   }
@@ -189,10 +184,54 @@ export function calculateAttributeScore(
   return { score, weight: effectiveWeight };
 }
 
-// Max CD roll value used as baseline for sub-score calculation
-// 5-star: 7.77 (max CD roll), 4-star: 6.22 (max CD roll)
-const MAX_CD_ROLL_5STAR = 7.77;
-const MAX_CD_ROLL_4STAR = 6.22;
+/**
+ * Scores a main stat as-if fully recommended (weight = 1.0).
+ *
+ * SubStat-typed main stats (atk%, cr, cd, em, er, hp%, def%) are routed through
+ * calculateStatScore so they use the same normalization. Main-only stats
+ * (elemental dmg%, phys%, heal%) use their own conversion factors.
+ *
+ * Used for heuristic ranking (e.g., optimizer pre-filtering) where the build
+ * already determines which main stats are recommended — callers should only
+ * invoke this for recommended main stats.
+ */
+export function scoreMainStat(
+  mainStat: MainStat,
+  rarity: number,
+  globalConfig: GlobalStatWeights
+): number {
+  const value = getFixedMainStatValue(mainStat, rarity);
+  if (!value) return 0;
+
+  // SubStat-typed mains: reroute through the substat formula at weight 100.
+  // calculateStatScore returns 0 for unknown stat keys, so a non-zero result
+  // confirms this stat is handled as a substat.
+  const { score: subScore } = calculateStatScore(
+    mainStat as SubStat,
+    value,
+    { [mainStat]: 100 },
+    globalConfig
+  );
+  if (subScore > 0) return subScore;
+
+  // Main-only stats: fixed conversion factors (same normalization as substat formula)
+  switch (mainStat) {
+    case "pyro%":
+    case "hydro%":
+    case "anemo%":
+    case "electro%":
+    case "dendro%":
+    case "cryo%":
+    case "geo%":
+      return value * 1.3348;
+    case "phys%":
+      return value * 1.0669;
+    case "heal%":
+      return value * 1.7326;
+    default:
+      return 0;
+  }
+}
 
 /**
  * Calculate the max potential sub-score for a slot based on:
@@ -218,7 +257,6 @@ export function calculateMaxSlotSubScore(
   // Need at least 1 stat with weight to calculate potential
   if (statWeights.length === 0) return 0;
 
-  // 5-star: 5-1-1-1 (8 rolls), 4-star: 3-1-1-1 (6 rolls)
   const is5Star = rarity === 5;
   const rolls = is5Star ? [5, 1, 1, 1] : [3, 1, 1, 1];
   const maxCdRoll = is5Star ? MAX_CD_ROLL_5STAR : MAX_CD_ROLL_4STAR;
@@ -232,232 +270,28 @@ export function calculateMaxSlotSubScore(
 }
 
 // ----------------------------------------------------------------------------
-// 3. Shared Scoring Loop
+// 3. Scoring Loop
 // ----------------------------------------------------------------------------
 
-/**
- * Core scoring loop shared by both calculateArtifactScore and calculateBuildAwareScore.
- * Iterates over all artifact slots, accumulates main/sub stat scores, and populates
- * the result object.
- */
-function scoreArtifactSlots(
-  char: CharacterData,
-  weights: StatWeightMap,
-  globalConfig: GlobalStatWeights,
-  result: ArtifactScoreResult
-): void {
-  // Pre-populate statScores with zero-value entries for weight lookup
-  for (const key of ALL_STATS) {
-    const { weight } = calculateAttributeScore(
-      key as SubStat,
-      0,
-      weights,
-      globalConfig
-    );
-    result.statScores[key] = {
-      mainValue: 0,
-      subValue: 0,
-      mainScore: 0,
-      subScore: 0,
-      weight,
-    };
-  }
-
-  let equippedCount = 0;
-
-  for (const slot of ALL_SLOTS) {
-    const artifact = char.artifacts?.[slot];
-    if (!artifact) {
-      result.slotMainScores[slot] = 0;
-      result.slotSubScores[slot] = 0;
-      continue;
-    }
-
-    equippedCount++;
-    let slotMain = 0;
-    let slotSub = 0;
-
-    const accumulate = (key: string, val: number, isMain: boolean) => {
-      const { score, weight } = calculateAttributeScore(
-        key as MainStat | SubStat,
-        val,
-        weights,
-        globalConfig
-      );
-
-      if (isMain) {
-        slotMain += score;
-        result.mainScore += score;
-      } else {
-        slotSub += score;
-        result.subScore += score;
-      }
-
-      if (!result.statScores[key]) {
-        result.statScores[key] = {
-          mainValue: 0,
-          subValue: 0,
-          mainScore: 0,
-          subScore: 0,
-          weight: 0,
-        };
-      }
-
-      const entry = result.statScores[key];
-      if (isMain) {
-        entry.mainValue += val;
-        entry.mainScore += score;
-      } else {
-        entry.subValue += val;
-        entry.subScore += score;
-      }
-      entry.weight = weight;
-    };
-
-    // Main stat uses max value based on rarity
-    const mainStatVal = getFixedMainStatValue(
-      artifact.mainStatKey,
-      artifact.rarity
-    );
-    accumulate(artifact.mainStatKey, mainStatVal, true);
-
-    // Substats
-    if (artifact.substats) {
-      for (const [key, val] of Object.entries(artifact.substats)) {
-        accumulate(key, val, false);
-      }
-    }
-
-    result.slotMainScores[slot] = slotMain;
-    result.slotSubScores[slot] = slotSub;
-
-    if (artifact.rarity === 5 || artifact.rarity === 4) {
-      result.slotMaxSubScores[slot] = calculateMaxSlotSubScore(
-        artifact.mainStatKey,
-        weights,
-        artifact.rarity
-      );
-    } else {
-      result.slotMaxSubScores[slot] = 0;
-    }
-  }
-
-  result.isComplete = equippedCount === 5;
-}
-
-// ----------------------------------------------------------------------------
-// 4. Config-Based Scoring (legacy / insight engine)
-// ----------------------------------------------------------------------------
-
-export function calculateArtifactScore(
-  char: CharacterData,
-  config: ArtifactScoreConfig
-): ArtifactScoreResult {
-  const weights = config.characters[char.key] || {};
-  const globalConfig = config.global;
-
-  const result: ArtifactScoreResult = {
-    mainScore: 0,
-    subScore: 0,
-    slotMainScores: {},
-    slotSubScores: {},
-    slotMaxSubScores: {},
-    statScores: {},
-    isComplete: false,
-  };
-
-  scoreArtifactSlots(char, weights, globalConfig, result);
-  return result;
-}
-
-// ----------------------------------------------------------------------------
-// 5. Build Matching
-// ----------------------------------------------------------------------------
-
-export type MainStatMismatch = {
-  slot: MainStatSlot;
-  equipped: MainStat;
-  recommended: MainStat[];
-};
-
-export type BuildMatchResult = {
-  build: Build;
-  buildIndex: number;
-  setMatched: boolean;
-  mainStatMatches: number; // 0-3
-  mainStatMismatches: MainStatMismatch[];
-};
-
-export type BuildAwareScoreResult = ArtifactScoreResult & {
-  matchedBuild: BuildMatchResult | null;
-};
-
-/** Count how many equipped artifacts belong to a given artifact set (string ID). */
-function countSetPieces(
-  artifacts: Partial<Record<Slot, ArtifactData>>,
-  setId: string
-): number {
-  let count = 0;
-  for (const slot of ALL_SLOTS) {
-    if (artifacts[slot]?.setKey === setId) count++;
-  }
-  return count;
-}
-
-/** Check if the equipped artifacts satisfy a build's artifact set requirement. */
-function isSetMatched(
+function matchMainStats(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   build: Build
-): boolean {
-  if (build.composition === "4pc" && build.artifactSet) {
-    return countSetPieces(artifacts, build.artifactSet) >= 4;
-  }
-
-  if (
-    build.composition === "2pc+2pc" &&
-    build.halfSet1 != null &&
-    build.halfSet2 != null
-  ) {
-    // Map equipped set IDs to half set IDs, then check both halves are present
-    const halfSetCounts = new Map<number, number>();
-    for (const slot of ALL_SLOTS) {
-      const setKey = artifacts[slot]?.setKey;
-      if (!setKey) continue;
-      const halfSetId = artifactIdToHalfSetId[setKey];
-      if (halfSetId != null) {
-        halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
-      }
-    }
-    return (
-      (halfSetCounts.get(build.halfSet1) ?? 0) >= 2 &&
-      (halfSetCounts.get(build.halfSet2) ?? 0) >= 2
-    );
-  }
-
-  return false;
-}
-
-/** Score a build's main stat alignment with equipped artifacts (0-3). */
-function scoreMainStats(
-  artifacts: Partial<Record<Slot, ArtifactData>>,
-  build: Build
-): { score: number; mismatches: MainStatMismatch[] } {
-  let score = 0;
+): { match: number; mismatches: MainStatMismatch[] } {
+  let match = 0;
   const mismatches: MainStatMismatch[] = [];
-  for (const slot of MAIN_STAT_SLOTS) {
+  for (const slot of mainStatSlots) {
     const artifact = artifacts[slot];
     if (!artifact) continue;
     if (build[slot].includes(artifact.mainStatKey)) {
-      score++;
+      match++;
     } else {
       mismatches.push({
         slot,
         equipped: artifact.mainStatKey,
-        recommended: build[slot],
       });
     }
   }
-  return { score, mismatches };
+  return { match: match, mismatches };
 }
 
 /**
@@ -479,8 +313,8 @@ export function matchBuild(
 ): BuildMatchResult | null {
   const scored = builds.map((build, index) => {
     const setMatched = isSetMatched(artifacts, build);
-    const { score: mainStatMatches, mismatches: mainStatMismatches } =
-      scoreMainStats(artifacts, build);
+    const { match: mainStatMatches, mismatches: mainStatMismatches } =
+      matchMainStats(artifacts, build);
     const minCons = build.minCons ?? 0;
     // Numeric: actual minCons when satisfied, -1 when not.
     // Allows sorting to prefer the highest satisfied constellation.
@@ -518,17 +352,13 @@ export function matchBuild(
   return {
     build: winner.build,
     buildIndex: winner.index,
+    statWeights: buildToWeightMap(winner.build),
     setMatched: winner.setMatched,
     mainStatMatches: winner.mainStatMatches,
     mainStatMismatches: winner.mainStatMismatches,
   };
 }
 
-// ----------------------------------------------------------------------------
-// 6. Build-Aware Scoring
-// ----------------------------------------------------------------------------
-
-/** Convert a Build's WeightedSubStat[] to the StatWeightMap used by scoring. */
 export function buildToWeightMap(build: Build): StatWeightMap {
   const map: StatWeightMap = {};
   for (const { stat, weight } of build.substats) {
@@ -537,34 +367,171 @@ export function buildToWeightMap(build: Build): StatWeightMap {
   return map;
 }
 
-/**
- * Calculate artifact score using build data instead of static config.
- *
- * - Matches the character's artifacts to the best-fitting build (set → main stat → constellation)
- * - Derives stat weights from that build
- * - Flags main stat mismatches
- * - Falls back gracefully when no builds exist
- */
-export function calculateBuildAwareScore(
+export function getTargetMainStatsForSlot(
+  slot: Slot,
+  build: Build,
+  equippedForSlot?: ArtifactData | null
+): Set<string> {
+  if (slot === "flower") return new Set(["hp"]);
+  if (slot === "plume") return new Set(["atk"]);
+  const weights = buildToWeightMap(build);
+  if (mainStatSlots.includes(slot as MainStatSlot)) {
+    const recommended = build[slot as MainStatSlot];
+    if (recommended?.length > 0) return new Set(recommended);
+  }
+  if (
+    equippedForSlot &&
+    (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
+  )
+    return new Set([equippedForSlot.mainStatKey]);
+  const fallback = new Set<string>();
+  for (const [stat, w] of Object.entries(weights)) {
+    if (w > 40 && !stat.includes("flat")) fallback.add(stat);
+  }
+  return fallback.size > 0 ? fallback : new Set();
+}
+
+const FALLBACK_WEIGHTS: StatWeightMap = { cr: 100, cd: 100 };
+
+export function scoreSlot(
+  artifact: ArtifactData,
+  weights: StatWeightMap,
+  globalConfig: GlobalStatWeights
+): number {
+  let score = 0;
+  if (artifact.substats) {
+    for (const [key, val] of Object.entries(artifact.substats)) {
+      score += calculateStatScore(
+        key as SubStat,
+        val,
+        weights,
+        globalConfig
+      ).score;
+    }
+  }
+  return score;
+}
+
+export function scoreAllSlots(
+  char: CharacterData,
+  weights: StatWeightMap,
+  globalConfig: GlobalStatWeights
+): SubstatScoreResult {
+  const statScores = Object.fromEntries(
+    SUB_STATS.map((key) => {
+      const { weight } = calculateStatScore(key, 0, weights, globalConfig);
+      return [key, { subValue: 0, subScore: 0, weight }];
+    })
+  ) as Record<SubStat, StatScoreBreakdown>;
+
+  const slotSubScores = Object.fromEntries(
+    allSlots.map((s) => [s, 0])
+  ) as Record<Slot, number>;
+  const slotMaxSubScores = Object.fromEntries(
+    allSlots.map((s) => [s, 0])
+  ) as Record<Slot, number>;
+  let subScore = 0;
+  let equippedCount = 0;
+
+  for (const slot of allSlots) {
+    const artifact = char.artifacts?.[slot];
+    if (!artifact) continue;
+
+    equippedCount++;
+    let slotSub = 0;
+
+    for (const [key, val] of Object.entries(artifact.substats ?? {})) {
+      const { score } = calculateStatScore(
+        key as SubStat,
+        val,
+        weights,
+        globalConfig
+      );
+      slotSub += score;
+      subScore += score;
+      statScores[key as SubStat].subValue += val;
+      statScores[key as SubStat].subScore += score;
+    }
+
+    slotSubScores[slot] = slotSub;
+    slotMaxSubScores[slot] =
+      artifact.rarity === 5 || artifact.rarity === 4
+        ? calculateMaxSlotSubScore(
+            artifact.mainStatKey,
+            weights,
+            artifact.rarity
+          )
+        : 0;
+  }
+
+  return {
+    subScore,
+    slotSubScores,
+    slotMaxSubScores,
+    statScores,
+    isComplete: equippedCount === 5,
+  };
+}
+
+export function scoreWithBuilds(
   char: CharacterData,
   builds: Build[],
   globalConfig: GlobalStatWeights
-): BuildAwareScoreResult {
-  const matchResult = matchBuild(char.artifacts, builds, char.constellation);
+): ArtifactScoreResult {
+  const buildMatch = matchBuild(char.artifacts, builds, char.constellation);
+  const substatScore = scoreAllSlots(
+    char,
+    buildMatch?.statWeights ?? FALLBACK_WEIGHTS,
+    globalConfig
+  );
+  return { substatScore, buildMatch };
+}
 
-  const weights = matchResult ? buildToWeightMap(matchResult.build) : {};
+// ----------------------------------------------------------------------------
+// 4. Build Matching
+// ----------------------------------------------------------------------------
 
-  const result: BuildAwareScoreResult = {
-    mainScore: 0,
-    subScore: 0,
-    slotMainScores: {},
-    slotSubScores: {},
-    slotMaxSubScores: {},
-    statScores: {},
-    isComplete: false,
-    matchedBuild: matchResult,
-  };
+/** Count how many equipped artifacts belong to a given artifact set (string ID). */
+function countSetPieces(
+  artifacts: Partial<Record<Slot, ArtifactData>>,
+  setId: string
+): number {
+  let count = 0;
+  for (const slot of allSlots) {
+    if (artifacts[slot]?.setKey === setId) count++;
+  }
+  return count;
+}
 
-  scoreArtifactSlots(char, weights, globalConfig, result);
-  return result;
+/** Check if the equipped artifacts satisfy a build's artifact set requirement. */
+function isSetMatched(
+  artifacts: Partial<Record<Slot, ArtifactData>>,
+  build: Build
+): boolean {
+  if (build.composition === "4pc" && build.artifactSet) {
+    return countSetPieces(artifacts, build.artifactSet) >= 4;
+  }
+
+  if (
+    build.composition === "2pc+2pc" &&
+    build.halfSet1 != null &&
+    build.halfSet2 != null
+  ) {
+    // Map equipped set IDs to half set IDs, then check both halves are present
+    const halfSetCounts = new Map<string | number, number>();
+    for (const slot of allSlots) {
+      const setKey = artifacts[slot]?.setKey;
+      if (!setKey) continue;
+      const halfSetId = artifactIdToHalfSetId[setKey];
+      if (halfSetId != null) {
+        halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
+      }
+    }
+    return (
+      (halfSetCounts.get(build.halfSet1) ?? 0) >= 2 &&
+      (halfSetCounts.get(build.halfSet2) ?? 0) >= 2
+    );
+  }
+
+  return false;
 }

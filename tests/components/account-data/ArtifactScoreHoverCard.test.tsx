@@ -1,63 +1,38 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { SubStat } from "@/data/types";
+import type {
+  ArtifactScoreResult,
+  StatScoreBreakdown,
+} from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
 
-const mockScoreResult: BuildAwareScoreResult = {
-  mainScore: 42.5,
-  subScore: 35.8,
-  isComplete: true,
-  slotMainScores: {
-    flower: 0,
-    plume: 0,
-    sands: 15.0,
-    goblet: 18.0,
-    circlet: 9.5,
-  },
-  slotSubScores: {
-    flower: 8.2,
-    plume: 7.5,
-    sands: 6.3,
-    goblet: 7.1,
-    circlet: 6.7,
-  },
-  slotMaxSubScores: {
-    flower: 40.0,
-    plume: 40.0,
-    sands: 35.0,
-    goblet: 35.0,
-    circlet: 35.0,
-  },
-  statScores: {
-    hp: {
-      weight: 0.5,
-      mainValue: 4780,
-      mainScore: 5.0,
-      subValue: 1200,
-      subScore: 3.5,
+const mockScoreResult: ArtifactScoreResult = {
+  substatScore: {
+    subScore: 35.8,
+    isComplete: true,
+    slotSubScores: {
+      flower: 8.2,
+      plume: 7.5,
+      sands: 6.3,
+      goblet: 7.1,
+      circlet: 6.7,
     },
-    "hp%": {
-      weight: 1.5,
-      mainValue: 46.6,
-      mainScore: 15.0,
-      subValue: 12.5,
-      subScore: 8.0,
+    slotMaxSubScores: {
+      flower: 40.0,
+      plume: 40.0,
+      sands: 35.0,
+      goblet: 35.0,
+      circlet: 35.0,
     },
-    cr: {
-      weight: 2.0,
-      mainValue: 0,
-      mainScore: 0,
-      subValue: 15.2,
-      subScore: 12.0,
-    },
-    cd: {
-      weight: 2.0,
-      mainValue: 0,
-      mainScore: 0,
-      subValue: 28.4,
-      subScore: 10.0,
-    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    statScores: {
+      hp: { weight: 0.5, subValue: 1200, subScore: 3.5 },
+      "hp%": { weight: 1.5, subValue: 12.5, subScore: 8.0 },
+      cr: { weight: 2.0, subValue: 15.2, subScore: 12.0 },
+      cd: { weight: 2.0, subValue: 28.4, subScore: 10.0 },
+    } as Record<SubStat, StatScoreBreakdown>,
   },
-  matchedBuild: null,
+  buildMatch: null,
 };
 
 describe("ArtifactScoreHoverCard", () => {

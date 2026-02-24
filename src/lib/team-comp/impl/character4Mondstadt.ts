@@ -1,15 +1,6 @@
-import {
-  ScalingBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-} from "../damageModels";
+import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
 // ═══════════════════════════════════════════════════════════════
@@ -74,12 +65,9 @@ class Dahlia extends CharacterBase {
 class Mika extends CharacterBase {
   readonly buffs = [
     // E: Soulwind -> active character ATK SPD (Lv10: 22%, Lv13: 25%)
-    new StaticSkillBuff(
-      cbs(this, "E", ["E"]),
-      { receiver: "onField" },
-      this.constellation,
-      (c) => [{ key: "atkSpd%", value: c >= 5 ? 0.25 : 0.22 }]
-    ),
+    new StatBuff(cbs(this, "E", ["E"]), { receiver: "onField" }, [
+      { key: "atkSpd%", value: this.constellation >= 5 ? 0.25 : 0.22 },
+    ]),
     // P1+P2: E Soulwind Detector → on-field Physical DMG +10% per stack
     // Max 3 (P1) + 1 (P2) = 4 stacks = 40%
     new StatBuff(
@@ -88,11 +76,10 @@ class Mika extends CharacterBase {
       [{ key: "dmg%", value: 0.4 }]
     ),
     // C6: Soulwind → Physical CD +60%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "onField", filter: { elements: ["Physical"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 0.6 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 0.6 }] : []
     ),
   ];
 
@@ -110,31 +97,16 @@ class Razor extends CharacterBase {
       [{ key: "atkSpd%", value: 0.4 }]
     ),
     // C1: On elemental particle pickup → self DMG +10%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C1", []),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 1 ? [{ key: "dmg%", value: 0.1 }] : [])
+      this.constellation >= 1 ? [{ key: "dmg%", value: 0.1 }] : []
     ),
     // C4: E tap hit → enemy DEF -15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["E"]),
-      { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "defReduction%", value: 0.15 }] : [])
-    ),
-    // C6: After consuming Sigils → CR+10%, CD+50%
-    new StaticSkillBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.1 },
-              { key: "cd", value: 0.5 },
-            ]
-          : []
+      { receiver: "team" },
+      this.constellation >= 4 ? [{ key: "defReduction%", value: 0.15 }] : []
     ),
   ];
 
@@ -172,18 +144,16 @@ class Razor extends CharacterBase {
 class Diona extends CharacterBase {
   readonly buffs = [
     // C2: Icy Paws DMG +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "dmg%", value: 0.15 }] : [])
+      this.constellation >= 2 ? [{ key: "dmg%", value: 0.15 }] : []
     ),
     // C6: In Q field, HP > 50% → EM +200 (assume active)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "em", value: 200 }] : [])
+      this.constellation >= 6 ? [{ key: "em", value: 200 }] : []
     ),
   ];
 
@@ -195,16 +165,14 @@ class Diona extends CharacterBase {
 class Noelle extends CharacterBase {
   readonly buffs = [
     // Q: DEF → ATK conversion: 72% (Lv10) / 85% (Lv13 C5+), C6 adds +50%
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "selfOnField" },
       [],
       "def",
       "atk",
-      this.constellation,
-      (c) => ({
-        scale: (c >= 5 ? 0.85 : 0.72) + (c >= 6 ? 0.5 : 0),
-      })
+      (this.constellation >= 5 ? 0.85 : 0.72) +
+        (this.constellation >= 6 ? 0.5 : 0)
     ),
   ];
 
@@ -217,7 +185,7 @@ class Fischl extends CharacterBase {
   private readonly isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
 
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
     if (this.isHexerei) {
       const c6Mult = this.constellation >= 6 ? 2 : 1;
       if (this.teamMeta.hasReaction("overloaded")) {
@@ -242,30 +210,20 @@ class Fischl extends CharacterBase {
     return buffs;
   })();
 
-  // E: Oz tick DMG Lv10 160%, Lv13 (C3+) 189%, ~10 ticks
-  // C2: E summon +200% ATK | C6: Oz coordinated 30% ATK per hit
+  // E: Oz tick DMG Lv10 160%, Lv13 (C3+) 189%, 10 ticks over duration
   protected readonly formulaMap = (() => {
     const ozTickMult = this.constellation >= 3 ? 1.89 : 1.6;
-    const c2SummonMult = this.constellation >= 2 ? 2.0 : 0;
-    // P2 80% ATK + C6 30% ATK per tick as additional coordinated
     const tag = {
       element: "Electro" as const,
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    const formulas: Record<string, FormulaEntry> = {
+    return {
       "fischl-oz-total": {
         label: { zh: "奥兹连击", en: "Oz Ticks (×10)" },
         parts: [{ formula: new DirectFormula(ozTickMult, tag), hits: 10 }],
       },
     };
-    if (c2SummonMult > 0) {
-      formulas["fischl-c2-summon"] = {
-        label: { zh: "C2召唤伤害", en: "C2 Summon DMG" },
-        parts: [{ formula: new DirectFormula(c2SummonMult, tag) }],
-      };
-    }
-    return formulas;
   })();
 }
 
@@ -273,11 +231,10 @@ class Fischl extends CharacterBase {
 class Barbara extends CharacterBase {
   readonly buffs = [
     // C2: During E, active character gains Hydro DMG +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "hydro%", value: 0.15 }] : [])
+      this.constellation >= 2 ? [{ key: "hydro%", value: 0.15 }] : []
     ),
   ];
 
@@ -299,24 +256,21 @@ class Rosaria extends CharacterBase {
       0.15
     ),
     // C1: On CRIT hit → ATK SPD +10% and Normal Attack DMG +10%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C1", []),
       { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      this.constellation,
-      (c) =>
-        c >= 1
-          ? [
-              { key: "atkSpd%", value: 0.1 },
-              { key: "dmg%", value: 0.1 },
-            ]
-          : []
+      this.constellation >= 1
+        ? [
+            { key: "atkSpd%", value: 0.1 },
+            { key: "dmg%", value: 0.1 },
+          ]
+        : []
     ),
     // C6: Q hit → Physical RES -20%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Physical"] } },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "resReduction%", value: 0.2 }] : [])
+      { receiver: "team", filter: { elements: ["Physical"] } },
+      this.constellation >= 6 ? [{ key: "resReduction%", value: 0.2 }] : []
     ),
   ];
 
@@ -359,11 +313,10 @@ class Sucrose extends CharacterBase {
     ),
     // C6: Q Elemental Absorption → Team Elemental DMG +20%
     // Represented generally as dmg%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 0.2 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 0.2 }] : []
     ),
   ];
 
@@ -406,24 +359,22 @@ class Bennett extends CharacterBase {
   readonly buffs = [
     // Q: Fantastic Voyage — baseATK → flat ATK to on-field
     // Lv10: 101%, Lv13 (C5+): 119%; C1 adds +20% base ATK bonus
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "onField" },
       [],
       "baseAtk",
       "atk",
-      this.constellation,
-      (c) => {
-        const base = c >= 5 ? 1.19 : 1.01;
-        return { scale: c >= 1 ? base + 0.2 : base };
-      }
+      (() => {
+        const base = this.constellation >= 5 ? 1.19 : 1.01;
+        return this.constellation >= 1 ? base + 0.2 : base;
+      })()
     ),
     // C6: Pyro DMG +15% within Q field (sword/claymore/polearm only — no filter)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "pyro%", value: 0.15 }] : [])
+      this.constellation >= 6 ? [{ key: "pyro%", value: 0.15 }] : []
     ),
   ];
 
@@ -461,11 +412,10 @@ class Amber extends CharacterBase {
       { key: "atk%", value: 0.15 },
     ]),
     // C6: Q → team ATK +15% for 10s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "atk%", value: 0.15 }] : [])
+      this.constellation >= 6 ? [{ key: "atk%", value: 0.15 }] : []
     ),
   ];
 
@@ -536,7 +486,7 @@ class Kaeya extends CharacterBase {
 class Lisa extends CharacterBase {
   readonly buffs = [
     // P2: Q hits decrease enemy DEF -15% for 10s
-    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "team" }, [
       { key: "defReduction%", value: 0.15 },
     ]),
   ];

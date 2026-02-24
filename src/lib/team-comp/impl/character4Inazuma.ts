@@ -1,10 +1,5 @@
-import {
-  ScalingBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
-import { DirectFormula } from "../damageFormulas";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { DirectFormula, TransformFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
@@ -16,11 +11,10 @@ import { cbs } from "../helpers";
 class Kirara extends CharacterBase {
   readonly buffs = [
     // C6: After E/Q, team All Elemental DMG +12%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E", "Q"]),
       { receiver: "team" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 0.12 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 0.12 }] : []
     ),
   ];
 
@@ -36,17 +30,15 @@ class ShikanoinHeizou extends CharacterBase {
       { key: "em", value: 80 },
     ]),
     // C6: E (4 stacks) → CR +16%, CD +32%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.16 },
-              { key: "cd", value: 0.32 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.16 },
+            { key: "cd", value: 0.32 },
+          ]
+        : []
     ),
   ];
 
@@ -98,51 +90,52 @@ class KukiShinobu extends CharacterBase {
       0.25
     ),
     // C6: Self EM +150 when HP < 25%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "em", value: 150 }] : [])
+      this.constellation >= 6 ? [{ key: "em", value: 150 }] : []
     ),
   ];
 
   // Q: Single hit 6.5%/7.7% HP, 7 hits normal duration (total ~45.4%/53.6% HP)
   // Lv13 (C5+) single hit 7.7% HP
-  // E ring hit: 45.4%/53.6% ATK (Lv10/Lv13) — modeled with HP extraTerm ignored (ATK only for DMG calc)
   protected readonly formulaMap = (() => {
     const qHitMult = this.constellation >= 5 ? 0.077 : 0.065;
-    const eRingMult = this.constellation >= 3 ? 0.536 : 0.454;
+    const canHyperbloom = this.teamMeta.hasReaction("hyperbloom");
     return {
-      "shinobu-ring": {
-        label: { zh: "越祓草轮(单次)", en: "Ring Hit" },
-        parts: [
-          {
-            formula: new DirectFormula(eRingMult, {
-              element: "Electro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
       "shinobu-burst": {
         label: { zh: "刈山祭(×7)", en: "Kariyama Rite (×7)" },
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              qHitMult,
               {
                 element: "Electro",
                 ability: "burst",
                 reaction: "none",
               },
-              "atk",
-              { key: "hp", multiplier: qHitMult }
+              "hp"
             ),
             hits: 7,
           },
         ],
       },
+      ...(canHyperbloom
+        ? {
+            "shinobu-hyperbloom": {
+              label: { zh: "超绽放种子伤害", en: "Hyperbloom Seed" },
+              parts: [
+                {
+                  formula: new TransformFormula(0, {
+                    element: "Electro",
+                    ability: "skill",
+                    reaction: "hyperbloom",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -159,14 +152,13 @@ class Thoma extends CharacterBase {
   readonly buffs = [
     // P1: Shield Strength +25% (5 stacks at 5%) - not modeled
     // C6: Shield proc → Team Normal, Charged, Plunge DMG +15%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E", "Q"]),
       {
         receiver: "team",
         filter: { abilities: ["normal", "charge", "plunge"] },
       },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "dmg%", value: 0.15 }] : [])
+      this.constellation >= 6 ? [{ key: "dmg%", value: 0.15 }] : []
     ),
   ];
 
@@ -197,7 +189,7 @@ class Gorou extends CharacterBase {
   private readonly geoCount = this.teamMeta.countByElement("Geo");
 
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
     // E/Q: flat DEF — Lv10 371, Lv13 (C3+) 438
     const defFlat = this.constellation >= 3 ? 438 : 371;
     buffs.push(
@@ -245,44 +237,28 @@ class KujouSara extends CharacterBase {
   readonly buffs = [
     // E/Q: ATK bonus = 77%/91% of Sara's Base ATK to active character
     // C5 boosts E talent → Lv13 ratio 91%
-    new ScalingSkillBuff(
+    new ScalingBuff(
       cbs(this, "E", ["E", "Q"]),
       { receiver: "onField" },
       [],
       "baseAtk",
       "atk",
-      this.constellation,
-      (c) => ({ scale: c >= 5 ? 0.91 : 0.77 })
+      this.constellation >= 5 ? 0.91 : 0.77
     ),
     // C6: Buffed characters gain +60% Electro CD
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E", "Q"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "cd", value: 0.6 }] : [])
+      this.constellation >= 6 ? [{ key: "cd", value: 0.6 }] : []
     ),
   ];
 
-  // E Ambush: Lv10 226.4%, Lv13 (C5+) 267.2%
   // Q Titanbreaker: Lv10 737.3%, Lv13 (C3+) 870.4% + 4×61.4%/72.5% Stormcluster (C4: 6×)
   protected readonly formulaMap = (() => {
-    const ambushMult = this.constellation >= 5 ? 2.672 : 2.264;
     const titanMult = this.constellation >= 3 ? 8.704 : 7.373;
     const clusterMult = this.constellation >= 3 ? 0.725 : 0.614;
     const clusterCount = this.constellation >= 4 ? 6 : 4;
     return {
-      "sara-ambush": {
-        label: { zh: "天狗咒雷·伏", en: "Tengu Juurai: Ambush" },
-        parts: [
-          {
-            formula: new DirectFormula(ambushMult, {
-              element: "Electro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
       "sara-burst": {
         label: {
           zh: `Q天狗咒雷·金刚坏+${clusterCount}次雷砾伤害`,

@@ -193,4 +193,13 @@ export const i18nAppData = {
     D: { en: "D", zh: "拉完了" },
     Pool: { en: "Pool", zh: "角色池" },
   },
+  resonances: {
+    pyro: { en: "Fervent Flames", zh: "热诚之火" },
+    hydro: { en: "Soothing Water", zh: "愈疗之水" },
+    cryo: { en: "Shattering Ice", zh: "粉碎之冰" },
+    geo: { en: "Enduring Rock", zh: "坚定之岩" },
+    dendro: { en: "Sprawling Canopy", zh: "蔓生之草" },
+    unique: { en: "Protective Canopy", zh: "交织之护" },
+    gleam: { en: "Moonsign", zh: "月兆" },
+  },
 };

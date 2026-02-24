@@ -31,9 +31,7 @@ describe("CharacterCard", () => {
   });
 
   const mockScore = createArtifactScoreResult({
-    mainScore: 25,
-    subScore: 45,
-    isComplete: false,
+    substatScore: { subScore: 45, isComplete: false },
   });
 
   it("displays character name heading", () => {
@@ -113,9 +111,7 @@ describe("CharacterCard", () => {
 
   it("handles character with zero score gracefully", () => {
     const zeroScore = createArtifactScoreResult({
-      mainScore: 0,
-      subScore: 0,
-      isComplete: false,
+      substatScore: { subScore: 0, isComplete: false },
     });
 
     const { container } = render(

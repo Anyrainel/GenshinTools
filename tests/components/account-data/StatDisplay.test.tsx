@@ -1,6 +1,9 @@
 import { StatDisplay } from "@/components/account-data/StatDisplay";
-import type { ArtifactData } from "@/data/types";
-import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactData, SubStat } from "@/data/types";
+import type {
+  ArtifactScoreResult,
+  StatScoreBreakdown,
+} from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
 
 // Sample artifact for testing
@@ -22,43 +25,27 @@ const mockArtifact: ArtifactData = {
 
 // Sample score result
 const mockScoreResult: ArtifactScoreResult = {
-  mainScore: 15.0,
-  subScore: 25.0,
-  isComplete: true,
-  slotMainScores: { sands: 15.0 },
-  slotSubScores: { sands: 25.0 },
-  slotMaxSubScores: { sands: 40.0 },
-  statScores: {
-    er: {
-      weight: 1.5,
-      mainValue: 51.8,
-      mainScore: 15.0,
-      subValue: 0,
-      subScore: 0,
+  substatScore: {
+    subScore: 25.0,
+    isComplete: true,
+    slotSubScores: { flower: 0, plume: 0, sands: 25.0, goblet: 0, circlet: 0 },
+    slotMaxSubScores: {
+      flower: 0,
+      plume: 0,
+      sands: 40.0,
+      goblet: 0,
+      circlet: 0,
     },
-    cr: {
-      weight: 2.0,
-      mainValue: 0,
-      mainScore: 0,
-      subValue: 7.8,
-      subScore: 8.0,
-    },
-    cd: {
-      weight: 2.0,
-      mainValue: 0,
-      mainScore: 0,
-      subValue: 14.8,
-      subScore: 10.0,
-    },
-    hp: { weight: 0, mainValue: 0, mainScore: 0, subValue: 508, subScore: 0 },
-    "hp%": {
-      weight: 0.5,
-      mainValue: 0,
-      mainScore: 0,
-      subValue: 9.3,
-      subScore: 2.0,
-    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    statScores: {
+      er: { weight: 1.5, subValue: 0, subScore: 0 },
+      cr: { weight: 2.0, subValue: 7.8, subScore: 8.0 },
+      cd: { weight: 2.0, subValue: 14.8, subScore: 10.0 },
+      hp: { weight: 0, subValue: 508, subScore: 0 },
+      "hp%": { weight: 0.5, subValue: 9.3, subScore: 2.0 },
+    } as Record<SubStat, StatScoreBreakdown>,
   },
+  buildMatch: null,
 };
 
 describe("StatDisplay", () => {

@@ -13,15 +13,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Weapon } from "@/data/types";
+import {
+  getWeaponDisplayMeta,
+  getWeaponStatsAt90,
+} from "@/data/gameStatsLoader";
+import type { WeaponResource } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Bookmark } from "lucide-react";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 
-export const WeaponCard = memo(({ weapon }: { weapon: Weapon }) => {
+export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const { t } = useLanguage();
+  const { weaponStats } = useGameStats();
+  const meta = useMemo(
+    () => getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]),
+    [weapon, weaponStats]
+  );
+  const level90 = useMemo(
+    () =>
+      weaponStats ? getWeaponStatsAt90(weaponStats, weapon.id) : undefined,
+    [weaponStats, weapon.id]
+  );
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const owned = useOwnershipStore((s) => s.isOwned("weapon", weapon.id));
@@ -38,7 +53,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: Weapon }) => {
     >
       <ItemIcon
         imagePath={weapon.imagePath}
-        rarity={weapon.rarity}
+        rarity={meta.rarity}
         size="sm"
         className="shrink-0"
       />
@@ -46,9 +61,11 @@ export const WeaponCard = memo(({ weapon }: { weapon: Weapon }) => {
         <div className="text-sm font-medium line-clamp-2 leading-tight">
           {t.weaponName(weapon.id)}
         </div>
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {t.statShort(weapon.secondaryStat)}
-        </div>
+        {meta.secondaryStat != null && (
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {t.statShort(meta.secondaryStat)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -78,6 +95,8 @@ export const WeaponCard = memo(({ weapon }: { weapon: Weapon }) => {
         </Tooltip>
         <WeaponDetailDrawer
           weapon={weapon}
+          weaponMeta={meta}
+          level90={level90}
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
           owned={owned}
@@ -98,6 +117,8 @@ export const WeaponCard = memo(({ weapon }: { weapon: Weapon }) => {
       </button>
       <WeaponDetailDrawer
         weapon={weapon}
+        weaponMeta={meta}
+        level90={level90}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         owned={owned}
@@ -110,12 +131,16 @@ WeaponCard.displayName = "WeaponCard";
 
 function WeaponDetailDrawer({
   weapon,
+  weaponMeta,
+  level90,
   open,
   onOpenChange,
   owned,
   onToggleOwned,
 }: {
-  weapon: Weapon;
+  weapon: WeaponResource;
+  weaponMeta: ReturnType<typeof getWeaponDisplayMeta>;
+  level90?: { baseAtk: number; secondaryStatValue: string };
   open: boolean;
   onOpenChange: (open: boolean) => void;
   owned: boolean;
@@ -123,9 +148,11 @@ function WeaponDetailDrawer({
 }) {
   const { t } = useLanguage();
   const name = t.weaponName(weapon.id);
-  const effect = t.weaponEffect(weapon.id);
-  const statName = t.stat(weapon.secondaryStat);
-  const weaponType = t.weaponType(weapon.type);
+  const effectHtml = t.weaponEffectHtml(weapon.id);
+  const statName =
+    weaponMeta.secondaryStat != null ? t.stat(weaponMeta.secondaryStat) : "";
+  const weaponType =
+    weaponMeta.type != null ? t.weaponType(weaponMeta.type) : "";
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -137,7 +164,7 @@ function WeaponDetailDrawer({
           <div className="flex items-center gap-3">
             <ItemIcon
               imagePath={weapon.imagePath}
-              rarity={weapon.rarity}
+              rarity={weaponMeta.rarity}
               size="lg"
               className="shrink-0"
             />
@@ -146,10 +173,10 @@ function WeaponDetailDrawer({
               <span
                 className={cn(
                   "text-sm mt-0.5",
-                  getRarityColor(weapon.rarity, "text")
+                  getRarityColor(weaponMeta.rarity, "text")
                 )}
               >
-                {"★".repeat(weapon.rarity)}
+                {"★".repeat(weaponMeta.rarity)}
               </span>
             </div>
             <Button
@@ -172,38 +199,37 @@ function WeaponDetailDrawer({
 
           {/* Stat pills */}
           <div className="flex flex-wrap gap-2">
-            <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5">
-              <img
-                src={getAssetUrl(
-                  `/weapontype/${weapon.type.toLowerCase()}.png`
-                )}
-                alt={weapon.type}
-                className="w-4 h-4 object-contain"
-              />
-              {weaponType}
-            </span>
-            {weapon.baseAtk && (
-              <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium">
-                {t.stat("atk")}: <strong>{weapon.baseAtk}</strong>
+            {weaponMeta.type != null && (
+              <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5">
+                <img
+                  src={getAssetUrl(
+                    `/weapontype/${weaponMeta.type.toLowerCase()}.png`
+                  )}
+                  alt={weaponMeta.type}
+                  className="w-4 h-4 object-contain"
+                />
+                {weaponType}
               </span>
             )}
-            {statName && (
+            {level90 != null && (
               <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium">
-                {statName}
-                {weapon.secondaryStatValue && (
-                  <>
-                    : <strong>{weapon.secondaryStatValue}</strong>
-                  </>
-                )}
+                {t.stat("atk")}: <strong>{level90.baseAtk}</strong>
+              </span>
+            )}
+            {statName && level90 != null && (
+              <span className="bg-secondary text-secondary-foreground px-2.5 py-1 rounded-md text-xs font-medium">
+                {statName}: <strong>{level90.secondaryStatValue}</strong>
               </span>
             )}
           </div>
 
           {/* Effect */}
-          {effect && (
-            <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {effect}
-            </p>
+          {effectHtml && (
+            <div
+              className="text-sm text-muted-foreground leading-relaxed"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Weapon effect HTML from game data pipeline
+              dangerouslySetInnerHTML={{ __html: effectHtml }}
+            />
           )}
         </div>
       </DrawerContent>

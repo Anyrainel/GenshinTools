@@ -53,6 +53,17 @@ export const regions: Region[] = [
 
 export type Faction = "Hexerei" | "None";
 
+export type MainStatSlot = "sands" | "goblet" | "circlet";
+export const mainStatSlots: MainStatSlot[] = ["sands", "goblet", "circlet"];
+export type Slot = MainStatSlot | "flower" | "plume";
+export const allSlots: Slot[] = [
+  "flower",
+  "plume",
+  "sands",
+  "goblet",
+  "circlet",
+];
+
 export type MainStat =
   | "cr"
   | "cd"
@@ -89,44 +100,6 @@ export type MainStatPlus = MainStat | "elemental%" | "cr/cd";
 // Every character has baseHp/baseAtk/baseDef/em plus exactly one ascension stat.
 export type BaseStat = "baseHp" | "baseAtk" | "baseDef" | MainStat;
 
-// Per-character stats at two ascension breakpoints
-export type CharacterStats = {
-  Lv90: Partial<Record<BaseStat, string>>;
-  Lv100: Partial<Record<BaseStat, string>>;
-};
-
-export type CharacterInfo = {
-  energy: number;
-  healerC?: number; // min constellation starting from 0, omitted if none
-  shielderC?: number; // min constellation starting from 0, omitted if none
-  c3Talent: "A" | "E" | "Q";
-  c5Talent: "A" | "E" | "Q";
-  faction?: Faction;
-};
-
-// Character kit types (lazy-loaded per-language data from character_*.json)
-export type CharacterSkillDetail = {
-  label: string;
-  lv6: string;
-  lv10: string;
-  lv13: string;
-};
-
-export type CharacterEffect = {
-  name: string;
-  descHtml: string;
-};
-
-export type CharacterSkill = CharacterEffect & {
-  details: CharacterSkillDetail[];
-};
-
-export type CharacterKit = {
-  skills: CharacterSkill[];
-  passives: CharacterEffect[];
-  constellations: CharacterEffect[];
-  glossary: CharacterEffect[] | null;
-};
 export const mainStatsPlus: MainStatPlus[] = [
   "cr",
   "cd",
@@ -150,53 +123,41 @@ export const mainStatsPlus: MainStatPlus[] = [
   "cr/cd",
 ] as const;
 
-export type MainStatSlot = "sands" | "goblet" | "circlet";
-export const mainStatSlots: MainStatSlot[] = ["sands", "goblet", "circlet"];
-export type Slot = MainStatSlot | "flower" | "plume";
-
-export type Character = {
+export type CharacterResource = {
   id: string;
   rarity: Rarity;
-  element: Element;
-  weaponType: WeaponType;
-  region: Region;
-  releaseDate: string | null; // Format: YYYY-MM-DD, null = unknown/unreleased
-  imageUrl: string; // Original image URL from wiki
+  imageUrl?: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
 
-export type Weapon = {
+export type WeaponResource = {
   id: string;
   rarity: Rarity;
-  type: WeaponType;
-  secondaryStat: MainStat;
-  baseAtk: number;
-  secondaryStatValue: string;
-  imageUrl: string; // Original image URL from wiki
+  imageUrl?: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
 
-export type ArtifactSet = {
+export type ArtifactSetResource = {
   id: string;
   rarity: Rarity;
-  imageUrl: string; // Original image URL from wiki (flower)
+  imageUrl?: string; // Original image URL from wiki (flower)
   imagePaths: Record<Slot, string>; // Local serving paths for all slots
 };
 
 export type ArtifactHalfSet = {
-  id: number;
+  id: string;
   setIds: string[]; // All artifact set IDs that have this 2pc effect
 };
 
 export type ElementResource = {
   name: Element;
-  imageUrl: string; // Original image URL from wiki
+  imageUrl?: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
 
 export type WeaponTypeResource = {
   name: WeaponType;
-  imageUrl: string; // Original image URL from wiki
+  imageUrl?: string; // Original image URL from wiki
   imagePath: string; // Local serving path
 };
 
@@ -208,6 +169,101 @@ export const buildRoles: BuildRole[] = ["dps", "support", "sustain"];
 
 export type BuildConstellation = 0 | 1 | 2 | 4 | 6;
 export const buildConstellations: BuildConstellation[] = [0, 1, 2, 4, 6];
+
+export type LunarReactionType =
+  | "lunarCharged"
+  | "lunarBloom"
+  | "lunarCrystallize";
+
+export type ReactionType =
+  | "none"
+  // Amplifying
+  | "melt"
+  | "vaporize"
+  // Additive (Catalyze)
+  | "quicken"
+  | "spread"
+  | "aggravate"
+  // Transformative
+  | "overloaded"
+  | "electroCharged"
+  | "superconduct"
+  | "swirl"
+  | "frozen"
+  | "shatter"
+  | "bloom"
+  | "hyperbloom"
+  | "burgeon"
+  | "burning"
+  | "crystallize"
+  // Lunar
+  | LunarReactionType;
+
+/** Subset of reactions useful as team composition tags (excludes "none" and intermediate reactions). */
+export const TEAM_REACTION_OPTIONS: ReactionType[] = [
+  "melt",
+  "vaporize",
+  "spread",
+  "aggravate",
+  "overloaded",
+  "electroCharged",
+  "superconduct",
+  "swirl",
+  "frozen",
+  "bloom",
+  "hyperbloom",
+  "burgeon",
+  "burning",
+  "lunarCharged",
+  "lunarBloom",
+  "lunarCrystallize",
+];
+
+export type CharacterInfo = {
+  energy: number;
+  healerC?: number; // min constellation starting from 0, omitted if none
+  shielderC?: number; // min constellation starting from 0, omitted if none
+  c3Talent: "A" | "E" | "Q";
+  c5Talent: "A" | "E" | "Q";
+  faction?: Faction;
+};
+
+// Character kit types (lazy-loaded per-language data from character_*.json)
+/** Skill table levels (Lv6–Lv15). Keys used in CharacterSkillDetail without "lv" prefix. */
+export const SKILL_LEVELS = [
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+] as const;
+export type SkillLevel = (typeof SKILL_LEVELS)[number];
+
+/** One row of the skill details table: label + optional value per level. */
+export type CharacterSkillDetail = { label: string } & Partial<
+  Record<SkillLevel, string>
+>;
+
+export type CharacterEffect = {
+  name: string;
+  descHtml: string;
+};
+
+export type CharacterSkill = CharacterEffect & {
+  details: CharacterSkillDetail[];
+};
+
+export type CharacterKit = {
+  skills: CharacterSkill[];
+  passives: CharacterEffect[];
+  constellations: CharacterEffect[];
+  glossary: CharacterEffect[] | null;
+};
 
 export type BuildSource = "preset" | "modified" | "custom";
 
@@ -222,8 +278,8 @@ export type Build = {
   name: string;
   composition: "4pc" | "2pc+2pc";
   artifactSet?: string; // for 4pc
-  halfSet1?: number; // for 2pc+2pc - ID of the first half set
-  halfSet2?: number; // for 2pc+2pc - ID of the second half set
+  halfSet1?: number | string; // for 2pc+2pc - ID (legacy number or new string)
+  halfSet2?: number | string; // for 2pc+2pc - ID (legacy number or new string)
   sands: MainStat[];
   goblet: MainStat[];
   circlet: MainStat[];
@@ -427,15 +483,8 @@ export interface CharacterFilters {
   ownedOnly: boolean;
 }
 
-export type StatWeightMap = Record<string, number>; // key: MainStat | SubStat (e.g. "atk%", "cr", "pyro%"), value: 0-100
-
 export type GlobalStatWeights = {
   flatAtk: number;
   flatHp: number;
   flatDef: number;
-};
-
-export type ArtifactScoreConfig = {
-  global: GlobalStatWeights;
-  characters: Record<string, StatWeightMap>;
 };

@@ -54,7 +54,7 @@ const defaultProps = {
     Pool: [mockItems[2]], // zhongli in Pool
   } as { [tier: string]: TestItem[] },
   tierCustomization: {},
-  groupKey: "element" as keyof TestItem,
+  getItemGroup: (item: TestItem) => item.element,
   groupConfig: testGroupConfig,
   getGroupName: (group: string) => group,
   getItemName: (item: TestItem) => item.id,

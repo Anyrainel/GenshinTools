@@ -7,6 +7,7 @@ import type {
   SlotConfig,
   SubStat,
 } from "@/data/types";
+import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import {
   DEFAULT_COMPUTE_OPTIONS,
   buildRawConfigs,
@@ -108,6 +109,10 @@ describe("Silken Moon's Serenade preset regression", () => {
       "../../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
     );
     const payload: BuildPayloadV5 = JSON.parse(readFileSync(filePath, "utf-8"));
+    // Run build-level migrations (test bypasses buildPresetRegistry which does this)
+    for (const build of Object.values(payload.builds)) {
+      migrateBuild(build);
+    }
     const groups = new Map<string, BuildGroup>();
     for (const build of Object.values(payload.builds)) {
       const charId = build.characterId;

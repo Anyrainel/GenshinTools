@@ -25,7 +25,7 @@ interface TierLayoutProps<T extends TierItemData, K extends string> {
   tierCustomization: {
     [tier: string]: { displayName?: string; hidden?: boolean };
   };
-  groupKey: keyof T;
+  getItemGroup: (item: T) => K;
   groupConfig: Record<K, TierGroupConfig>;
   getGroupName: (group: K) => string;
   getItemName: (item: T) => string;
@@ -48,7 +48,7 @@ export const TierLayout = forwardRef<
     groups,
     itemsPerTier,
     tierCustomization,
-    groupKey,
+    getItemGroup,
     groupConfig,
     getGroupName,
     getItemName,
@@ -75,7 +75,7 @@ export const TierLayout = forwardRef<
       .filter(([tier]) => tier !== "Pool")
       .reduce(
         (sum, [, items]) =>
-          sum + items.filter((item) => item[groupKey] === group).length,
+          sum + items.filter((item) => getItemGroup(item) === group).length,
         0
       );
   };
@@ -170,7 +170,7 @@ export const TierLayout = forwardRef<
                 tier={tier}
                 group={group}
                 items={items}
-                groupKey={groupKey}
+                getItemGroup={getItemGroup}
                 iconSize={iconSize}
                 variant="grid"
                 getItemName={getItemName}
@@ -290,7 +290,7 @@ export const TierLayout = forwardRef<
                       tier={tier}
                       group={group}
                       items={items}
-                      groupKey={groupKey}
+                      getItemGroup={getItemGroup}
                       iconSize={iconSize}
                       variant="grid"
                       getItemName={getItemName}
@@ -318,7 +318,7 @@ export const TierLayout = forwardRef<
                     tier={tier}
                     group={group}
                     items={items}
-                    groupKey={groupKey}
+                    getItemGroup={getItemGroup}
                     iconSize={iconSize}
                     variant={cellVariant}
                     displayName={displayName}

@@ -36,9 +36,10 @@ interface TierTableProps<T extends TierItemData, K extends string> {
   };
   onAssignmentsChange: (newAssignments: TierAssignment) => void;
 
-  // Grouping configuration
+  // Grouping configuration: either groupKey (item key) or getGroupKey (derived from item)
   groups: readonly K[];
-  groupKey: keyof T;
+  groupKey?: keyof T;
+  getGroupKey?: (item: T) => K;
   groupConfig: Record<K, TierGroupConfig>;
 
   // Translation
@@ -60,6 +61,7 @@ export function TierTable<T extends TierItemData, K extends string>({
   onAssignmentsChange,
   groups,
   groupKey,
+  getGroupKey,
   groupConfig,
   getGroupName,
   getItemName,
@@ -69,6 +71,11 @@ export function TierTable<T extends TierItemData, K extends string>({
   tableRef,
 }: TierTableProps<T, K>) {
   const { t } = useLanguage();
+
+  const getItemGroup = useMemo(
+    () => getGroupKey ?? ((item: T) => item[groupKey!] as K),
+    [getGroupKey, groupKey]
+  );
 
   // Responsive layout mode: desktop >= 1000px, tablet >= 560px, compact < 560px
   const isDesktop = useMediaQuery("(min-width: 1000px)");
@@ -150,11 +157,11 @@ export function TierTable<T extends TierItemData, K extends string>({
 
   const isValidDrop = (activeItem: T, overId: string): boolean => {
     if (itemsById[overId]) {
-      return itemsById[overId][groupKey] === activeItem[groupKey];
+      return getItemGroup(itemsById[overId]) === getItemGroup(activeItem);
     }
     if (overId.includes("-")) {
       const [, group] = overId.split("-");
-      return group === activeItem[groupKey];
+      return group === getItemGroup(activeItem);
     }
     return false;
   };
@@ -365,13 +372,13 @@ export function TierTable<T extends TierItemData, K extends string>({
     if (!item) return;
 
     if (oldAssignment) {
-      const itemGroup = item[groupKey];
+      const itemGroup = getItemGroup(item);
       const groupItems = Object.entries(tierAssignments)
         .filter(([id, assignment]) => {
           const otherItem = itemsById[id];
           return (
             otherItem &&
-            otherItem[groupKey] === itemGroup &&
+            getItemGroup(otherItem) === itemGroup &&
             assignment.tier === oldAssignment.tier
           );
         })
@@ -489,7 +496,7 @@ export function TierTable<T extends TierItemData, K extends string>({
                 groups={groups}
                 itemsPerTier={itemsPerTier}
                 tierCustomization={tierCustomization}
-                groupKey={groupKey}
+                getItemGroup={getItemGroup}
                 groupConfig={groupConfig}
                 getGroupName={getGroupName}
                 getItemName={getItemName}
@@ -507,7 +514,7 @@ export function TierTable<T extends TierItemData, K extends string>({
                 groups={groups}
                 itemsPerTier={itemsPerTier}
                 tierCustomization={tierCustomization}
-                groupKey={groupKey}
+                getItemGroup={getItemGroup}
                 groupConfig={groupConfig}
                 getGroupName={getGroupName}
                 getItemName={getItemName}

@@ -1,16 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { charInfo } from "@/data/charInfo";
-import { charStats } from "@/data/charStats";
 import { charactersById } from "@/data/constants";
+import { preloadGameStats } from "@/data/gameStatsLoader";
 import {
   CharacterBase,
   RegisterCharacter,
   ScalingBuff,
-  ScalingSkillBuff,
   StatBuff,
   StatSheet,
-  StaticSkillBuff,
   TeamMeta,
   createCharacter,
   createWeapon,
@@ -21,6 +19,10 @@ import type { OptionDef } from "@/lib/team-comp/types";
 
 // Side-effect barrel: register all characters, weapons, artifacts
 import "@/lib/team-comp/index";
+
+beforeAll(async () => {
+  await preloadGameStats();
+});
 
 describe("StatSheet", () => {
   it("get(atk) applies base × (1 + %) + flat formula", () => {
@@ -125,6 +127,24 @@ describe("StatSheet", () => {
     const sheet = new StatSheet([{ key: "em", value: 100 }]);
     const result = sheet.apply([]);
     expect(result.get("em")).toBe(100);
+  });
+
+  it("normalizes elemental DMG keys (pyro%, phys%, etc.) to dmg% with element filter", () => {
+    const sheet = new StatSheet([{ key: "pyro%", value: 0.288 }]);
+    const pyroTag = {
+      element: "Pyro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const hydroTag = {
+      element: "Hydro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+
+    expect(sheet.get("dmg%", pyroTag)).toBeCloseTo(0.288);
+    expect(sheet.get("dmg%", hydroTag)).toBe(0);
+    expect(sheet.getRaw("pyro%")).toBe(0);
   });
 });
 
@@ -360,7 +380,7 @@ describe("StatSheet.fromArtifacts", () => {
 });
 
 describe("validateStatFilter", () => {
-  it("throws when dmg% is paired with element filter", () => {
+  it("accepts dmg% with element filter (elemental bonus expressed as dmg%+filter)", () => {
     const sheet = new StatSheet([]);
     const buff = new StatBuff(
       { type: "weapon", id: "test", origin: "R1" },
@@ -368,8 +388,21 @@ describe("validateStatFilter", () => {
       [{ key: "dmg%", value: 0.2 }]
     );
 
-    // dmg% with element filter should throw — use pyro% instead
-    expect(() => sheet.apply([buff])).toThrow("dmg%");
+    const applied = sheet.apply([buff]);
+    expect(
+      applied.get("dmg%", {
+        element: "Pyro",
+        ability: "normal",
+        reaction: "none",
+      })
+    ).toBeCloseTo(0.2);
+    expect(
+      applied.get("dmg%", {
+        element: "Hydro",
+        ability: "normal",
+        reaction: "none",
+      })
+    ).toBe(0);
   });
 
   it("throws when defReduction% has element filter", () => {

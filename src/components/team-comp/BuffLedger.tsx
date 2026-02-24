@@ -55,9 +55,8 @@ function getSourceIcon(source: ResolvedBuff["source"]): string | undefined {
   if (source.type === "artifactSet")
     return artifactsById[source.id as string]?.imagePaths?.flower;
   if (source.type === "artifactHalfSet")
-    return artifactsById[
-      artifactHalfSetsById[Number(source.id)]?.setIds[0] ?? ""
-    ]?.imagePaths?.flower;
+    return artifactsById[artifactHalfSetsById[source.id]?.setIds[0] ?? ""]
+      ?.imagePaths?.flower;
   if (source.type === "teamResonance") {
     if (source.id !== "unique" && source.id !== "gleam") {
       const el = source.id.charAt(0).toUpperCase() + source.id.slice(1);
@@ -116,12 +115,8 @@ function BuffChip({
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="font-bold text-sm text-foreground/90 truncate">
                 {source.type === "teamResonance"
-                  ? t.ui(
-                      `teamBuilder.resonance_${source.id}` as Parameters<
-                        typeof t.ui
-                      >[0]
-                    ) || t.ui("teamBuilder.teamResonance")
-                  : source.origin || t.ui("teamBuilder.base")}
+                  ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
+                  : source.origin || t.ui("teamComp.base")}
               </span>
               {source.triggers?.map((trig) => (
                 <span
@@ -208,7 +203,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
     >
       <CollapsibleTrigger className="flex justify-between items-center w-full px-4 py-3 hover:bg-white/5 transition-colors">
         <div className="text-sm font-bold flex items-center gap-2">
-          {t.ui("teamBuilder.buffsLedger")}
+          {t.ui("teamComp.buffsLedger")}
           <span className="bg-black/20 font-mono px-2 py-0.5 rounded text-xs text-muted-foreground">
             {activeCount} / {buffs.length}
           </span>
@@ -230,7 +225,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-4 bg-primary/50 rounded-full" />
                   <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                    {t.ui("teamBuilder.teamResonance")}
+                    {t.ui("teamComp.teamResonance")}
                   </span>
                 </div>
               ) : (
@@ -243,8 +238,8 @@ export function BuffLedger({ buffs, team, t }: Props) {
                 className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
               >
                 {showAll
-                  ? t.ui("teamBuilder.hideTrivial")
-                  : t.ui("teamBuilder.showAllBuffs")}
+                  ? t.ui("teamComp.hideTrivial")
+                  : t.ui("teamComp.showAllBuffs")}
               </button>
             </div>
 
@@ -292,7 +287,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
                     ))}
                     {charBuffs.length === 0 && (
                       <div className="text-xs text-muted-foreground opacity-50 italic text-center py-6 rounded-lg border border-dashed border-border/10 flex items-center justify-center">
-                        {t.ui("teamBuilder.noBuffsOriginate")}
+                        {t.ui("teamComp.noBuffsOriginate")}
                       </div>
                     )}
                   </div>

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-type ExportVariant = "default" | "tier-list";
+type ExportVariant = "default" | "tier-list" | "team-comp";
 
 interface ExportControlProps {
   onExport: (author: string, description: string) => void;
@@ -88,35 +88,28 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
     const messages =
       variant === "tier-list"
         ? {
-            dialogTitle: t.ui("tierList.exportDialogTitle"),
-            dialogDescription: t.ui("tierList.exportDialogDescription"),
-            authorLabel: t.ui("tierList.exportAuthorLabel"),
-            authorPlaceholder: t.ui("tierList.exportAuthorPlaceholder"),
-            descriptionLabel: t.ui("tierList.exportDescriptionLabel"),
-            descriptionPlaceholder: t.ui(
-              "tierList.exportDescriptionPlaceholder"
-            ),
-            authorRequiredError: t.ui("tierList.exportAuthorRequired"),
-            descriptionRequiredError: t.ui(
-              "tierList.exportDescriptionRequired"
-            ),
-            confirmAction: t.ui("tierList.exportConfirmAction"),
+            dialogTitle: t.ui("export.titleTierList"),
+            dialogDescription: t.ui("export.descTierList"),
           }
-        : {
-            dialogTitle: t.ui("configure.exportDialogTitle"),
-            dialogDescription: t.ui("configure.exportDialogDescription"),
-            authorLabel: t.ui("configure.exportAuthorLabel"),
-            authorPlaceholder: t.ui("configure.exportAuthorPlaceholder"),
-            descriptionLabel: t.ui("configure.exportDescriptionLabel"),
-            descriptionPlaceholder: t.ui(
-              "configure.exportDescriptionPlaceholder"
-            ),
-            authorRequiredError: t.ui("configure.exportAuthorRequired"),
-            descriptionRequiredError: t.ui(
-              "configure.exportDescriptionRequired"
-            ),
-            confirmAction: t.ui("configure.exportConfirmAction"),
-          };
+        : variant === "team-comp"
+          ? {
+              dialogTitle: t.ui("export.titleTeamComp"),
+              dialogDescription: t.ui("export.descTeamComp"),
+            }
+          : {
+              dialogTitle: t.ui("export.titleBuilds"),
+              dialogDescription: t.ui("export.descBuilds"),
+            };
+
+    const shared = {
+      authorLabel: t.ui("export.authorLabel"),
+      authorPlaceholder: t.ui("export.authorPlaceholder"),
+      descriptionLabel: t.ui("export.descriptionLabel"),
+      descriptionPlaceholder: t.ui("export.descriptionPlaceholder"),
+      authorRequiredError: t.ui("export.authorRequired"),
+      descriptionRequiredError: t.ui("export.descriptionRequired"),
+      confirmAction: t.ui("export.action"),
+    };
 
     const handleClose = () => {
       setIsOpen(false);
@@ -127,10 +120,10 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
       // Validate
       const newErrors: { author?: string; description?: string } = {};
       if (!author.trim()) {
-        newErrors.author = messages.authorRequiredError;
+        newErrors.author = shared.authorRequiredError;
       }
       if (!description.trim()) {
-        newErrors.description = messages.descriptionRequiredError;
+        newErrors.description = shared.descriptionRequiredError;
       }
 
       if (Object.keys(newErrors).length > 0) {
@@ -166,10 +159,10 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
             )}
 
             <div className="grid gap-2">
-              <Label htmlFor="export-author">{messages.authorLabel}</Label>
+              <Label htmlFor="export-author">{shared.authorLabel}</Label>
               <Input
                 id="export-author"
-                placeholder={messages.authorPlaceholder}
+                placeholder={shared.authorPlaceholder}
                 value={author}
                 onChange={(e) => {
                   setAuthor(e.target.value);
@@ -185,11 +178,11 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
 
             <div className="grid gap-2">
               <Label htmlFor="export-description">
-                {messages.descriptionLabel}
+                {shared.descriptionLabel}
               </Label>
               <Input
                 id="export-description"
-                placeholder={messages.descriptionPlaceholder}
+                placeholder={shared.descriptionPlaceholder}
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value);
@@ -212,7 +205,7 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
             </Button>
             <Button onClick={handleExport} className="gap-2">
               <Download className="w-4 h-4" />
-              {messages.confirmAction}
+              {shared.confirmAction}
             </Button>
           </DialogFooter>
         </DialogContent>

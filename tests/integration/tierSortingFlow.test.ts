@@ -10,56 +10,62 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { Character, CharacterFilters, TierAssignment } from "@/data/types";
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import type {
+  CharacterFilters,
+  CharacterResource,
+  TierAssignment,
+} from "@/data/types";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
 } from "@/lib/characterFilters";
 import { useTierStore } from "@/stores/useTierStore";
 
-// Create test characters (using Character type which has id, not key)
-const testCharacters: Character[] = [
-  {
-    id: "hu_tao",
-    element: "Pyro",
+const testCharacters: CharacterResource[] = [
+  { id: "hu_tao", rarity: 5, imagePath: "" },
+  { id: "xingqiu", rarity: 4, imagePath: "" },
+  { id: "zhongli", rarity: 5, imagePath: "" },
+  { id: "bennett", rarity: 4, imagePath: "" },
+];
+
+const testCharacterStats: CharacterStatsMap = {
+  hu_tao: {
     rarity: 5,
+    element: "Pyro",
+    weaponType: "Polearm",
     region: "Liyue",
     releaseDate: "2021-03-02",
-    weaponType: "Polearm",
-    imageUrl: "",
-    imagePath: "",
+    levels: {},
   },
-  {
-    id: "xingqiu",
-    element: "Hydro",
+  xingqiu: {
     rarity: 4,
+    element: "Hydro",
+    weaponType: "Sword",
     region: "Liyue",
     releaseDate: "2020-09-28",
-    weaponType: "Sword",
-    imageUrl: "",
-    imagePath: "",
+    levels: {},
   },
-  {
-    id: "zhongli",
-    element: "Geo",
+  zhongli: {
     rarity: 5,
+    element: "Geo",
+    weaponType: "Polearm",
     region: "Liyue",
     releaseDate: "2020-12-01",
-    weaponType: "Polearm",
-    imageUrl: "",
-    imagePath: "",
+    levels: {},
   },
-  {
-    id: "bennett",
-    element: "Pyro",
+  bennett: {
     rarity: 4,
+    element: "Pyro",
+    weaponType: "Sword",
     region: "Mondstadt",
     releaseDate: "2020-09-28",
-    weaponType: "Sword",
-    imageUrl: "",
-    imagePath: "",
+    levels: {},
   },
-];
+};
+
+const options = { characterStatsMap: testCharacterStats };
 
 describe("Integration: Tier Assignment to Character Sorting Flow", () => {
   beforeEach(() => {
@@ -86,11 +92,10 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       tierSort: "desc", // S -> A -> Pool
     };
 
-    const sorted = filterAndSortCharacters(
-      testCharacters,
-      filters,
-      storedAssignments
-    );
+    const sorted = filterAndSortCharacters(testCharacters, filters, {
+      ...options,
+      tierAssignments: storedAssignments,
+    });
 
     // S tier characters should come first (hu_tao pos 0, xingqiu pos 1)
     // Then A tier (zhongli)
@@ -108,7 +113,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       releaseSort: "desc", // Newest first
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {});
+    const sorted = filterAndSortCharacters(testCharacters, filters, options);
 
     // hu_tao is newest (2021-03-02)
     expect(sorted[0].id).toBe("hu_tao");
@@ -120,11 +125,17 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       elements: ["Pyro"],
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {});
+    const sorted = filterAndSortCharacters(testCharacters, filters, options);
 
     // Only Pyro characters
     expect(sorted).toHaveLength(2);
-    expect(sorted.every((c) => c.element === "Pyro")).toBe(true);
+    expect(
+      sorted.every(
+        (c) =>
+          getCharacterDisplayMeta(c, testCharacterStats[c.id]).element ===
+          "Pyro"
+      )
+    ).toBe(true);
   });
 
   it("filters characters by weapon type", () => {
@@ -133,11 +144,17 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       weaponTypes: ["Sword"],
     };
 
-    const sorted = filterAndSortCharacters(testCharacters, filters, {});
+    const sorted = filterAndSortCharacters(testCharacters, filters, options);
 
     // Only Sword users
     expect(sorted).toHaveLength(2);
-    expect(sorted.every((c) => c.weaponType === "Sword")).toBe(true);
+    expect(
+      sorted.every(
+        (c) =>
+          getCharacterDisplayMeta(c, testCharacterStats[c.id]).weaponType ===
+          "Sword"
+      )
+    ).toBe(true);
   });
 
   it("combines element filter with tier sort", () => {
@@ -156,11 +173,10 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
       tierSort: "desc",
     };
 
-    const sorted = filterAndSortCharacters(
-      testCharacters,
-      filters,
-      useTierStore.getState().tierAssignments
-    );
+    const sorted = filterAndSortCharacters(testCharacters, filters, {
+      ...options,
+      tierAssignments: useTierStore.getState().tierAssignments,
+    });
 
     // Only Pyro, sorted by tier (hu_tao S, bennett A)
     expect(sorted).toHaveLength(2);
@@ -175,7 +191,7 @@ describe("Integration: Tier Assignment to Character Sorting Flow", () => {
     };
 
     // No tier assignments - falls back to release sort
-    const sorted = filterAndSortCharacters(testCharacters, filters, {});
+    const sorted = filterAndSortCharacters(testCharacters, filters, options);
 
     // All characters should still be returned
     expect(sorted).toHaveLength(4);

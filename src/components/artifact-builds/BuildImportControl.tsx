@@ -83,7 +83,7 @@ function BuildImportControlInner(
         setPickerOpen(false);
       } catch (err) {
         console.error("Failed to parse file", err);
-        setErrorMessage(t.ui("configure.importDialogLoadError"));
+        setErrorMessage(t.ui("import.fileLoadError"));
       } finally {
         setIsBusy(false);
       }
@@ -107,7 +107,7 @@ function BuildImportControlInner(
       setConfirmOpen(false);
     } catch (e) {
       console.error(e);
-      setErrorMessage(t.ui("configure.presetDialogLoadError"));
+      setErrorMessage(t.ui("import.presetLoadError"));
     } finally {
       setIsBusy(false);
     }
@@ -130,7 +130,7 @@ function BuildImportControlInner(
       setConfirmOpen(false);
     } catch (e) {
       console.error(e);
-      setErrorMessage(t.ui("configure.presetDialogLoadError"));
+      setErrorMessage(t.ui("import.presetLoadError"));
     } finally {
       setIsBusy(false);
     }
@@ -148,9 +148,9 @@ function BuildImportControlInner(
       >
         <DialogContent className="overflow-x-hidden">
           <DialogHeader>
-            <DialogTitle>{t.ui("configure.importDialogTitle")}</DialogTitle>
+            <DialogTitle>{t.ui("import.titleBuilds")}</DialogTitle>
             <DialogDescription>
-              {t.ui("configure.importDialogDescription")}
+              {t.ui("import.dialogDescription")}
             </DialogDescription>
           </DialogHeader>
 
@@ -173,7 +173,7 @@ function BuildImportControlInner(
             </div>
           ) : (
             <div className="py-4 text-sm text-muted-foreground">
-              {t.ui("configure.presetDialogEmpty")}
+              {t.ui("import.presetEmptyBuilds")}
             </div>
           )}
 
@@ -185,7 +185,7 @@ function BuildImportControlInner(
               disabled={isBusy}
             >
               <Upload className="w-4 h-4" />
-              {t.ui("configure.importFromFile")}
+              {t.ui("import.fromFile")}
               <input
                 type="file"
                 accept=".json"
@@ -208,14 +208,14 @@ function BuildImportControlInner(
           <AlertDialogHeader>
             <AlertDialogTitle>
               {selectedOption
-                ? t.ui("configure.presetConfirmTitle")
-                : t.ui("configure.importFileTitle") || "Import File"}
+                ? t.ui("import.presetConfirmTitle")
+                : t.ui("import.fileTitle") || "Import File"}
             </AlertDialogTitle>
             <AlertDialogDescription>
               <span className="block mb-4 font-semibold text-foreground">
                 {selectedOption?.label || selectedFile?.name}
               </span>
-              {t.ui("configure.importActionPrompt") ||
+              {t.ui("import.actionPrompt") ||
                 "Choose how you want to import these builds:"}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -236,11 +236,11 @@ function BuildImportControlInner(
                 <Layers className="h-5 w-5 mr-3 shrink-0" />
                 <div className="flex flex-col items-start gap-0.5">
                   <span className="font-semibold">
-                    {t.ui("configure.actionSubscribe") ||
+                    {t.ui("import.actionSubscribe") ||
                       "Use as Baseline (Subscribe)"}
                   </span>
                   <span className="text-xs opacity-80 text-left font-normal">
-                    {t.ui("configure.actionSubscribeDesc") ||
+                    {t.ui("import.actionSubscribeDesc") ||
                       "You will receive updates. Customizations are stored as deltas."}
                   </span>
                 </div>
@@ -262,10 +262,10 @@ function BuildImportControlInner(
                 )}
                 <div className="flex flex-col items-start gap-0.5">
                   <span className="font-semibold">
-                    {t.ui("configure.actionCopy") || "Copy to Local"}
+                    {t.ui("import.actionCopy") || "Copy to Local"}
                   </span>
                   <span className="text-xs text-muted-foreground text-left font-normal">
-                    {t.ui("configure.actionCopyDesc") ||
+                    {t.ui("import.actionCopyDesc") ||
                       "One-time import. No connection to the original source."}
                   </span>
                 </div>

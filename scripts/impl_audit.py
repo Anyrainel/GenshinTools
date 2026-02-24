@@ -7,7 +7,7 @@ import re
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 
 from ts_reader import load_ts_data
 
@@ -16,9 +16,10 @@ SRC = ROOT / "src"
 DATA = SRC / "data"
 IMPL_DIR = SRC / "lib/team-comp/impl"
 
-EN_JSON = DATA / "character_en.json"
-ZH_JSON = DATA / "character_zh.json"
-OUTPUT_FILE = ROOT / "scripts/.impl_audit_output.txt"
+GAME_DIR = DATA / "game"
+CHAR_EN_PATHS = [GAME_DIR / "character_4_en.json", GAME_DIR / "character_5_en.json"]
+CHAR_ZH_PATHS = [GAME_DIR / "character_4_zh.json", GAME_DIR / "character_5_zh.json"]
+DATA_DIR = ROOT / "scripts" / "data"
 
 
 Mode = Literal["C", "W", "A"]
@@ -68,6 +69,9 @@ def strip_html(html: str) -> str:
 
 
 _EXTRACTED_DATACache: dict[str, Any] | None = None
+_CHAR_STATS_CACHE: dict[str, Any] | None = None
+
+CHAR_STATS_PATH = DATA / "game" / "character_stats.json"
 
 
 def get_extracted_data() -> dict[str, Any]:
@@ -77,13 +81,33 @@ def get_extracted_data() -> dict[str, Any]:
     return _EXTRACTED_DATACache
 
 
+def get_char_stats() -> dict[str, Any]:
+    global _CHAR_STATS_CACHE
+    if _CHAR_STATS_CACHE is None:
+        if CHAR_STATS_PATH.exists():
+            _CHAR_STATS_CACHE = json.loads(CHAR_STATS_PATH.read_text("utf-8"))
+        else:
+            _CHAR_STATS_CACHE = {}
+    return _CHAR_STATS_CACHE
+
+
 def load_resources(mode: Mode) -> dict[str, EntityMeta]:
     data = get_extracted_data()
     result: dict[str, EntityMeta] = {}
 
     if mode == "C":
+        char_stats = get_char_stats()
         for c in data.get("characters", []):
-            result[c["id"]] = c
+            meta: EntityMeta = cast(EntityMeta, dict(c))
+            cid = c["id"]
+            stats = char_stats.get(cid, {})
+            if "element" in stats:
+                meta["element"] = stats["element"]
+            if "region" in stats:
+                meta["region"] = stats["region"]
+            if "weaponType" in stats:
+                meta["weaponType"] = stats["weaponType"]
+            result[cid] = meta
     elif mode == "W":
         for w in data.get("weapons", []):
             result[w["id"]] = w
@@ -93,7 +117,7 @@ def load_resources(mode: Mode) -> dict[str, EntityMeta]:
         for ah in data.get("artifactHalfSets", []):
             # Half sets use a numeric string ID
             h_id = str(ah["id"])
-            result[h_id] = {"id": h_id, "rarity": 5}  # Dummy rarity
+            result[h_id] = cast(EntityMeta, {"id": h_id, "rarity": 5})  # Dummy rarity
     return result
 
 
@@ -117,9 +141,20 @@ def load_i18n_names(mode: Mode) -> dict[str, Any]:
     return {}
 
 
+def _load_merged_char_kits() -> tuple[dict[str, Any], dict[str, Any]]:
+    en_all: dict[str, Any] = {}
+    zh_all: dict[str, Any] = {}
+    for p in CHAR_EN_PATHS:
+        if p.exists():
+            en_all.update(json.loads(p.read_text("utf-8")))
+    for p in CHAR_ZH_PATHS:
+        if p.exists():
+            zh_all.update(json.loads(p.read_text("utf-8")))
+    return en_all, zh_all
+
+
 def load_char_kits(char_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
-    en_all = json.loads(EN_JSON.read_text("utf-8")) if EN_JSON.exists() else {}
-    zh_all = json.loads(ZH_JSON.read_text("utf-8")) if ZH_JSON.exists() else {}
+    en_all, zh_all = _load_merged_char_kits()
     return en_all.get(char_id, {}), zh_all.get(char_id, {})
 
 
@@ -200,12 +235,13 @@ def scan_impls(mode: Mode) -> dict[str, ImplInfo]:
                     end = j
                     break
 
-            result[entity_id] = {
+            info: ImplInfo = {
                 "filename": ts_file.name,
                 "start_line": start + 1,
                 "end_line": end + 1,
                 "code": "\n".join(lines[start : end + 1]),
             }
+            result[entity_id] = info
 
     return result
 
@@ -214,10 +250,23 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
     en_skills = en_kit.get("skills", [])
     zh_skills = zh_kit.get("skills", [])
     tags = ["A", "E", "Q"]
+
+    # C3 boosts Q (skill index 2), C5 boosts E (skill index 1).
+    # Only show Lv13 column for the talents that are actually boosted.
+    constellations = en_kit.get("constellations", [])
+    show_lv13: dict[int, bool] = {
+        1: len(constellations) >= 5,  # E boosted by C5
+        2: len(constellations) >= 3,  # Q boosted by C3
+    }
+
+    # Detail rows: [label, Lv6, Lv7, …, Lv15] — 1 label + 10 level values.
+    LV10_IDX, LV13_IDX = 5, 8
+
     for i in range(len(en_skills)):
         en_s = en_skills[i]
         zh_s = zh_skills[i] if i < len(zh_skills) else None
         tag = tags[i] if i < len(tags) else f"S{i}"
+        include_lv13 = show_lv13.get(i, False)
 
         name_en = en_s.get("name", "")
         name_zh = zh_s["name"] if zh_s else ""
@@ -232,10 +281,23 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
             if not row:
                 continue
             en_name = row[0]
-            lv10 = row[2] if len(row) > 2 else "-"
-            lv13 = row[3] if len(row) > 3 else "-"
+            if len(row) >= 11:
+                lv10 = row[LV10_IDX] if len(row) > LV10_IDX else "-"
+                lv13 = row[LV13_IDX] if len(row) > LV13_IDX else "-"
+            else:
+                # Legacy: either (label, lv6, lv10, lv13) with 4 cols
+                # or (label, lv10, lv13) with 3 cols
+                if len(row) >= 4:
+                    lv10 = row[2]
+                    lv13 = row[3] if len(row) > 3 else "-"
+                else:
+                    lv10 = row[1] if len(row) > 1 else "-"
+                    lv13 = row[2] if len(row) > 2 else "-"
             zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
-            print(f"  {en_name} ({zh_name}): {lv10} / {lv13}")
+            if include_lv13:
+                print(f"  {en_name} ({zh_name}): {lv10} / {lv13}")
+            else:
+                print(f"  {en_name} ({zh_name}): {lv10}")
 
     en_passives = en_kit.get("passives", [])
     zh_passives = zh_kit.get("passives", [])
@@ -319,11 +381,36 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
         print(f"  {meta.get('rarity')}★ {meta.get('type')}")
         print("═" * 80)
 
-        effect_en = i18n_data.get("effect", {}).get("en", "")
-        effect_zh = i18n_data.get("effect", {}).get("zh", "")
+        # Read weapon effect from per-language game JSONs (new format: descHtmlTpl + refinements)
+        game_dir = DATA / "game"
+        effect_texts: dict[str, str] = {}
+        for lang in ("en", "zh"):
+            wp = game_dir / f"weapon_{lang}.json"
+            if not wp.exists():
+                effect_texts[lang] = ""
+                continue
+            game_weapons = json.loads(wp.read_text("utf-8"))
+            entry = game_weapons.get(entity_id, {})
+            tpl = entry.get("descHtmlTpl", "")
+            refinements: list[list[str]] = entry.get("refinements", [])
+            if tpl and refinements:
+                param_count = len(refinements[0]) if refinements else 0
+
+                def replace_ph(
+                    m: re.Match[str], _refs: list[list[str]] = refinements, _pc: int = param_count
+                ) -> str:
+                    idx = int(m.group(1))
+                    if idx >= _pc:
+                        return m.group(0)
+                    return "/".join(r[idx] for r in _refs)
+
+                effect_texts[lang] = re.sub(r"\{(\d+)\}", replace_ph, tpl)
+            else:
+                effect_texts[lang] = tpl
+
         print("[Effect]")
-        print(f"  EN: {strip_html(effect_en)}")
-        print(f"  ZH: {strip_html(effect_zh)}")
+        print(f"  EN: {strip_html(effect_texts.get('en', ''))}")
+        print(f"  ZH: {strip_html(effect_texts.get('zh', ''))}")
 
     elif mode == "A":
         if entity_id.isdigit():
@@ -440,7 +527,7 @@ Usage:
 
 Commands:
   show <C|W|A> <id>   Show full i18n description + TS implementation code.
-                        Always dumps output to scripts/.impl_audit_output.txt
+                        Dumps output to scripts/data/<id>.txt
   list <C|W|A>        List all registered IDs grouped by categories.
   check [C|W|A]       Find missing and misplaced implementations.
                         If no mode is provided, checks all modes.
@@ -472,9 +559,11 @@ def main() -> None:
                 print("Invalid mode. Use C, W, or A.")
                 sys.exit(1)
 
-            with FileWriter(OUTPUT_FILE):
+            DATA_DIR.mkdir(parents=True, exist_ok=True)
+            output_file = DATA_DIR / f"{eid}.txt"
+            with FileWriter(output_file):
                 cmd_show(mode, eid)
-            print(f"Output saved to {OUTPUT_FILE}")
+            print(f"Output saved to {output_file}")
 
         elif cmd == "list":
             if not args:

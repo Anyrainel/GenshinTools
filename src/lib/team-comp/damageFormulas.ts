@@ -147,13 +147,8 @@ export abstract class DamageFormula {
   }
 
   protected computeDmgBonusMult(stats: StatSheet): number {
-    // Element DMG% is inherently scoped by key name (e.g., `pyro%`)
-    const elementDmg = stats.get(
-      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey
-    );
-    // dmg% picks up generic, ability-scoped, and element-scoped entries via tag
-    const dmgBonus = stats.get("dmg%", this.tag);
-    return 1 + elementDmg + dmgBonus;
+    // dmg% includes generic, ability-scoped, and element-scoped entries (element keys normalized in StatSheet)
+    return 1 + stats.get("dmg%", this.tag);
   }
 
   /**
@@ -188,8 +183,6 @@ export class DirectFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const { keys, multi } = this.getScalingInfo();
-    const elementKey =
-      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey;
 
     const baseDmg = this.getBaseDmg(stats);
     const dmgBonusMult = this.computeDmgBonusMult(stats);
@@ -202,7 +195,6 @@ export class DirectFormula extends DamageFormula {
 
     const statValues: Partial<Record<StatKey, number>> = {
       [this.scalingKey]: stats.get(this.scalingKey),
-      [elementKey]: stats.get(elementKey),
       "dmg%": stats.get("dmg%", this.tag),
       cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
       cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
@@ -315,8 +307,6 @@ export class CatalyzeFormula extends DamageFormula {
 
   display(stats: StatSheet, charLevel: number, ctx: CalcContext): DisplayPart {
     const { keys, multi } = this.getScalingInfo();
-    const elementKey =
-      `${this.tag.element === "Physical" ? "phys" : this.tag.element.toLowerCase()}%` as StatKey;
 
     const em = stats.get("em");
     const emCoeff = 5;
@@ -345,7 +335,6 @@ export class CatalyzeFormula extends DamageFormula {
     const statValues: Partial<Record<StatKey, number>> = {
       [this.scalingKey]: stats.get(this.scalingKey),
       em,
-      [elementKey]: stats.get(elementKey),
       "dmg%": stats.get("dmg%", this.tag),
       "reactionDmg%": reactionDmgBonus,
       cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),

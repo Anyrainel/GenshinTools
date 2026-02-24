@@ -1,6 +1,7 @@
 import type { Build, BuildPayload, BuildPayloadV5 } from "@/data/types";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import type { Draft } from "immer";
+import { migrateBuild } from "./buildMigration";
 import { areBuildsEqual } from "./buildUtils";
 import { getBuildValidationErrors } from "./buildValidation";
 import { DEFAULT_COMPUTE_OPTIONS } from "./computeFilters";
@@ -77,6 +78,7 @@ export function executeImportBuilds(
 
     // Merge Builds
     for (const [id, build] of Object.entries(v5.builds)) {
+      migrateBuild(build);
       state.builds[id] = build;
       state.validationErrors[id] = getBuildValidationErrors(build);
     }
@@ -101,6 +103,7 @@ export function executeImportBuilds(
           ...build,
           characterId,
         };
+        migrateBuild(buildWithCharacterId);
 
         state.builds[build.id] = buildWithCharacterId;
         state.validationErrors[build.id] =

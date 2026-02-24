@@ -220,7 +220,7 @@ export function StatSheetPanel({
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      {t.ui("teamBuilder.idle")}
+                      {t.ui("teamComp.idle")}
                     </span>
                     <span
                       className={cn(
@@ -230,12 +230,12 @@ export function StatSheetPanel({
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      {t.ui("teamBuilder.combat")}
+                      {t.ui("teamComp.combat")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-sm font-semibold text-muted-foreground opacity-60 ml-2">
                     <span className="hidden sm:inline-block">
-                      {t.ui("teamBuilder.stats")}
+                      {t.ui("teamComp.stats")}
                     </span>
                     <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
                   </div>
@@ -276,7 +276,7 @@ export function StatSheetPanel({
                   ))}
                   {sortedKeys.length === 0 && (
                     <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
-                      {t.ui("teamBuilder.noStatsResolved")}
+                      {t.ui("teamComp.noStatsResolved")}
                     </span>
                   )}
                 </div>
@@ -285,7 +285,7 @@ export function StatSheetPanel({
                 {marginalKeys.length > 0 && (
                   <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
                     <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
-                      {t.ui("teamBuilder.marginalGains")}
+                      {t.ui("teamComp.marginalGains")}
                     </div>
                     {marginalKeys.map((k) => {
                       const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
@@ -320,7 +320,7 @@ export function StatSheetPanel({
                           </span>
                           <span className="text-xs whitespace-nowrap">
                             <span className="text-muted-foreground opacity-60">
-                              ({t.ui("teamBuilder.avgVal")}
+                              ({t.ui("teamComp.avgVal")}
                             </span>
                             <span className="font-bold text-foreground opacity-90">
                               +{fmtStat(k, rollVal)}
@@ -336,7 +336,7 @@ export function StatSheetPanel({
                             {fmtPercent(gain, true)}
                           </span>
                           <span className="text-foreground opacity-60">
-                            {t.ui("teamBuilder.gain")}
+                            {t.ui("teamComp.gain")}
                           </span>
                         </div>
                       );

@@ -184,6 +184,50 @@ describe("useTeamStore", () => {
     });
   });
 
+  describe("moveTeam", () => {
+    it("moves team up", async () => {
+      useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const id2 = useTeamStore.getState().addTeam({ name: "B" });
+
+      useTeamStore.getState().moveTeam(id2, "up");
+
+      const state = useTeamStore.getState();
+      expect(state.teams[0].name).toBe("B");
+      expect(state.teams[1].name).toBe("A");
+    });
+
+    it("moves team down", async () => {
+      const id1 = useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      useTeamStore.getState().addTeam({ name: "B" });
+
+      useTeamStore.getState().moveTeam(id1, "down");
+
+      const state = useTeamStore.getState();
+      expect(state.teams[0].name).toBe("B");
+      expect(state.teams[1].name).toBe("A");
+    });
+
+    it("does nothing when moving first team up", () => {
+      const id1 = useTeamStore.getState().addTeam({ name: "A" });
+
+      useTeamStore.getState().moveTeam(id1, "up");
+
+      expect(useTeamStore.getState().teams[0].name).toBe("A");
+    });
+
+    it("does nothing when moving last team down", async () => {
+      useTeamStore.getState().addTeam({ name: "A" });
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const id2 = useTeamStore.getState().addTeam({ name: "B" });
+
+      useTeamStore.getState().moveTeam(id2, "down");
+
+      expect(useTeamStore.getState().teams[1].name).toBe("B");
+    });
+  });
+
   describe("clearTeams", () => {
     it("removes all teams", async () => {
       useTeamStore.getState().addTeam();

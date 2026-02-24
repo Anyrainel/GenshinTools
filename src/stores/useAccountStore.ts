@@ -1,15 +1,15 @@
 import type { AccountData } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface AccountStore {
   accountData: AccountData | null;
-  scores: Record<string, BuildAwareScoreResult>;
+  scores: Record<string, ArtifactScoreResult>;
   isScoresStale: boolean;
   lastUid: string;
   setAccountData: (data: AccountData) => void;
-  setScores: (scores: Record<string, BuildAwareScoreResult>) => void;
+  setScores: (scores: Record<string, ArtifactScoreResult>) => void;
   invalidateScores: () => void;
   setLastUid: (uid: string) => void;
   clearAccountData: () => void;
@@ -30,6 +30,7 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
+      version: 1,
     }
   )
 );

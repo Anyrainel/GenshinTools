@@ -15,40 +15,26 @@ import {
   executeImportBuilds,
   executeSubscribePreset,
 } from "../lib/artifact-builds/buildImportExport";
+import { migrateBuild } from "../lib/artifact-builds/buildMigration";
 import {
   BUILD_DATA_VERSION,
   areBuildsEqual,
 } from "../lib/artifact-builds/buildUtils";
 import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
-import { useArtifactScoreStore } from "./useArtifactScoreStore";
 
-// Migrates old SubStat[] to WeightedSubStat[]
+// Migrates old SubStat[] to WeightedSubStat[]. Uses default weight 100 when no
+// build-based weights are available (e.g. during store migration).
 const migrateSubstats = (
   oldSubstats: string[],
-  characterId: string
+  _characterId: string
 ): WeightedSubStat[] => {
   const flatStats = ["hp", "atk", "def"];
-  const scoreConfig =
-    useArtifactScoreStore.getState().config.characters[characterId];
-
   const weighted = oldSubstats
     .filter((stat) => !flatStats.includes(stat))
-    .map((stat) => {
-      // Map flat stat key if needed
-      const weightKey = stat; // e.g. "atk%"
-
-      let weight = 100;
-      if (scoreConfig && typeof scoreConfig[weightKey] === "number") {
-        weight = scoreConfig[weightKey];
-      }
-
-      return {
-        stat: stat as SubStat,
-        weight,
-      };
-    });
-
-  // Sort by weight descending
+    .map((stat) => ({
+      stat: stat as SubStat,
+      weight: 100,
+    }));
   return weighted.sort((a, b) => b.weight - a.weight);
 };
 
@@ -522,6 +508,10 @@ export const useBuildsStore = create<BuildsState>()(
           // Ensure validationErrors are populated
           if (!state.validationErrors) {
             state.validationErrors = {};
+          }
+          // Normalize halfSet IDs (legacy number → new string)
+          for (const build of Object.values(state.builds)) {
+            migrateBuild(build);
           }
           // Re-validate all builds to be safe (cheap operation)
           for (const build of Object.values(state.builds)) {

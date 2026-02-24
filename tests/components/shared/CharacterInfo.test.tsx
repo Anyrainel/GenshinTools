@@ -1,15 +1,27 @@
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
-import type { Character } from "@/data/types";
+import type { CharacterResource } from "@/data/types";
 import { render, screen } from "../../utils/render";
 
-const mockCharacter: Character = {
+vi.mock("@/hooks/useGameStats", () => ({
+  useGameStats: () => ({
+    characterStats: {
+      hu_tao: {
+        rarity: 5,
+        element: "Pyro",
+        weaponType: "Polearm",
+        region: "Liyue",
+        releaseDate: "2021-03-02",
+        levels: {},
+      },
+    },
+    weaponStats: null,
+    ready: true,
+  }),
+}));
+
+const mockCharacter: CharacterResource = {
   id: "hu_tao",
-  element: "Pyro",
   rarity: 5,
-  weaponType: "Polearm",
-  region: "Liyue",
-  releaseDate: "2021-03-02",
-  imageUrl: "",
   imagePath: "characters/hu_tao.png",
 };
 

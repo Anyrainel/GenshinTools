@@ -3,12 +3,79 @@ import type { Team } from "@/stores/useTeamStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
+vi.mock("@/hooks/useGameStats", () => ({
+  useGameStats: () => ({
+    characterStats: {
+      hu_tao: {
+        rarity: 5,
+        element: "Pyro",
+        weaponType: "Polearm",
+        region: "Liyue",
+        releaseDate: "2021-03-02",
+        levels: {},
+      },
+      xingqiu: {
+        rarity: 4,
+        element: "Hydro",
+        weaponType: "Sword",
+        region: "Liyue",
+        releaseDate: "2020-09-28",
+        levels: {},
+      },
+      zhongli: {
+        rarity: 5,
+        element: "Geo",
+        weaponType: "Polearm",
+        region: "Liyue",
+        releaseDate: "2020-12-01",
+        levels: {},
+      },
+      bennett: {
+        rarity: 4,
+        element: "Pyro",
+        weaponType: "Sword",
+        region: "Mondstadt",
+        releaseDate: "2020-09-28",
+        levels: {},
+      },
+    },
+    weaponStats: {
+      staff_of_homa: {
+        rarity: 5,
+        type: "Polearm",
+        secondaryStat: "cd",
+        levels: { "90": { baseAtk: 608, secondaryStatValue: "66.2%" } },
+      },
+      sacrificial_sword: {
+        rarity: 4,
+        type: "Sword",
+        secondaryStat: "er",
+        levels: { "90": { baseAtk: 454, secondaryStatValue: "61.3%" } },
+      },
+      black_tassel: {
+        rarity: 3,
+        type: "Polearm",
+        secondaryStat: "hp%",
+        levels: { "90": { baseAtk: 354, secondaryStatValue: "46.9%" } },
+      },
+      skyward_blade: {
+        rarity: 5,
+        type: "Sword",
+        secondaryStat: "er",
+        levels: { "90": { baseAtk: 608, secondaryStatValue: "55.1%" } },
+      },
+    },
+    ready: true,
+  }),
+}));
+
 const mockTeam: Team = {
   id: "team-1",
   name: "Hu Tao Vape",
   characters: ["hu_tao", "xingqiu", "zhongli", null],
   weapons: [null, null, null, null],
   artifacts: [null, null, null, null],
+  reactions: [],
   opts: {},
   targetEr: {},
   selectedFormula: null,
@@ -64,7 +131,7 @@ describe("TeamCard", () => {
     expect(lastCall.name).toBeDefined();
   });
 
-  it("renders element icons only for non-null characters", () => {
+  it("renders element badges on character icons", () => {
     const { container } = render(
       <TeamCard
         team={mockTeam}
@@ -75,10 +142,11 @@ describe("TeamCard", () => {
       />
     );
 
-    // 3 characters with elements (hu_tao, xingqiu, zhongli), 1 is null
-    // Should have element images for the 3 existing characters
-    const elementImgs = container.querySelectorAll("img[alt]");
-    expect(elementImgs.length).toBeGreaterThanOrEqual(3);
+    // 3 characters with elements (hu_tao=Pyro, xingqiu=Hydro, zhongli=Geo)
+    // Element icons are rendered in Row 0 with alt set to the element name
+    expect(container.querySelector('img[alt="Pyro"]')).toBeInTheDocument();
+    expect(container.querySelector('img[alt="Hydro"]')).toBeInTheDocument();
+    expect(container.querySelector('img[alt="Geo"]')).toBeInTheDocument();
   });
 
   it("renders empty placeholder for null character slots", () => {
@@ -88,13 +156,14 @@ describe("TeamCard", () => {
       characters: [null, null, null, null],
       weapons: [null, null, null, null],
       artifacts: [null, null, null, null],
+      reactions: [],
       opts: {},
       targetEr: {},
       selectedFormula: null,
       optimizationResult: null,
     };
 
-    const { container } = render(
+    render(
       <TeamCard
         team={emptyTeam}
         index={0}
@@ -104,8 +173,50 @@ describe("TeamCard", () => {
       />
     );
 
-    // Empty character slots should still render placeholders (rounded divs)
-    const placeholders = container.querySelectorAll(".rounded-full");
-    expect(placeholders.length).toBeGreaterThan(0);
+    // The optimize button should be disabled when no characters are configured
+    const optimizeBtn = screen.getByRole("button", {
+      name: /Damage Optimization/i,
+    });
+    expect(optimizeBtn).toBeDisabled();
+  });
+
+  it("enables optimize button when all slots are filled", () => {
+    const fullTeam: Team = {
+      id: "team-3",
+      name: "Full Team",
+      characters: ["hu_tao", "xingqiu", "zhongli", "bennett"],
+      weapons: [
+        "staff_of_homa",
+        "sacrificial_sword",
+        "black_tassel",
+        "skyward_blade",
+      ],
+      artifacts: [
+        { type: "4pc", setId: "crimson_witch_of_flames" },
+        { type: "4pc", setId: "emblem_of_severed_fate" },
+        { type: "4pc", setId: "tenacity_of_the_millelith" },
+        { type: "4pc", setId: "noblesse_oblige" },
+      ],
+      reactions: ["vaporize"],
+      opts: {},
+      targetEr: {},
+      selectedFormula: null,
+      optimizationResult: null,
+    };
+
+    render(
+      <TeamCard
+        team={fullTeam}
+        index={0}
+        onUpdate={mockOnUpdate}
+        onDelete={mockOnDelete}
+        onCopy={mockOnCopy}
+      />
+    );
+
+    const optimizeBtn = screen.getByRole("button", {
+      name: /Damage Optimization/i,
+    });
+    expect(optimizeBtn).not.toBeDisabled();
   });
 });

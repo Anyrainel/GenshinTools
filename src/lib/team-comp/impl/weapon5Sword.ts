@@ -1,6 +1,7 @@
-import { ScalingBuff, ScalingMultiBuff, StatBuff } from "../damageBuffs";
+import { elements } from "@/data/types";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
-import { ELEMENT_DMG_KEYS, allElementalDmg, r, wbs } from "../helpers";
+import { allElementalDmg, r, wbs } from "../helpers";
 
 // ══════════════════════════
 // 5★ Swords
@@ -71,12 +72,12 @@ class PeakPatrolSong extends WeaponBase {
         value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
       },
     ]),
-    new ScalingMultiBuff(
+    new ScalingBuff(
       wbs(this, ["on-hit"]),
-      { receiver: "team" },
+      { receiver: "team", filter: { elements } },
       [],
       "def",
-      [...ELEMENT_DMG_KEYS],
+      "dmg%",
       r(this.refinement, [0.00008, 0.0001, 0.00012, 0.00014, 0.00016]),
       r(this.refinement, [0.25, 0.325, 0.4, 0.475, 0.55])
     ),
@@ -179,11 +180,17 @@ class UrakuMisugiri extends WeaponBase {
         key: "dmg%",
         value: 2 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
       },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["geo-ally"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -232,22 +239,38 @@ class FreedomSworn extends WeaponBase {
     ]),
     new StatBuff(
       wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
-      { receiver: "team" },
+      { receiver: "team", filter: { abilities: ["normal"] } },
       [
         {
           key: "dmg%",
           value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
         },
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-        },
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-        },
-        { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
       ]
+    ),
+    new StatBuff(
+      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
+      { receiver: "team", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
+      { receiver: "team", filter: { abilities: ["plunge"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["elemental-reaction"], "millennial-movement-atk"),
+      { receiver: "team" },
+      [{ key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
     ),
   ];
 }

@@ -30,6 +30,8 @@ class ProspectorsShovel extends WeaponBase {
           key: "reactionDmg%",
           value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
         },
+      ]),
+      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
         {
           key: "reactionDmg%",
           value:
@@ -170,18 +172,28 @@ class BlackcliffPole extends WeaponBase {
 
 @RegisterWeapon("prototype_starglitter")
 class PrototypeStarglitter extends WeaponBase {
-  // 2-stack after E
+  // 2-stack after E: Normal and Charged Attack DMG
   readonly buffs = [
-    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
+    ),
   ];
 }
 

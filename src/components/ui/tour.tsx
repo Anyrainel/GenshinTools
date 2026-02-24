@@ -38,15 +38,11 @@ function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["
                     switch (key) {
                         case "import":
                             icon = <Upload className="size-3.5 mr-1" />;
-                            label = t.ui("app.import");
+                            label = t.ui("import.action");
                             break;
                         case "customize":
                             icon = <Wrench className="size-3.5 mr-1" />;
                             label = t.ui("buttons.customize");
-                            break;
-                        case "weights":
-                            icon = <Settings className="size-3.5 mr-1" />;
-                            label = t.ui("accountData.statWeights");
                             break;
                         case "builds":
                             icon = <Settings className="size-3.5 mr-1" />;
@@ -213,7 +209,7 @@ function TourProvider({
                             </DrawerDescription>
                         </DrawerHeader>
                         <DrawerFooter>
-                            <Button onClick={() => setIsGuideOpen(false)}>{t.ui("tour.guide.gotIt")}</Button>
+                            <Button onClick={() => setIsGuideOpen(false)}>{t.ui("common.gotIt")}</Button>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>

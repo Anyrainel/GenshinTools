@@ -51,13 +51,6 @@ export const getNavigationConfig = (
         value: "inventory",
         icon: Box,
       },
-      {
-        label: t.ui("accountData.statWeights"),
-        href: "/account-data?tab=weights",
-        value: "weights",
-        icon: Settings,
-        tourStepId: "ad-weights",
-      },
     ],
   },
   {

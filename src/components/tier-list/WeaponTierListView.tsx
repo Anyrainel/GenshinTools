@@ -12,11 +12,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  sortedWeaponSecondaryStats,
+  getSortedWeaponSecondaryStats,
   sortedWeapons,
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
+import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   MainStat,
   PresetOption,
@@ -24,10 +25,11 @@ import type {
   TierAssignment,
   TierCustomization,
   TierListData,
-  Weapon,
+  WeaponResource,
   WeaponType,
 } from "@/data/types";
 import { weaponTypes } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
@@ -101,19 +103,32 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     1: false,
   });
   const [isCustomizeDialogOpen, setIsCustomizeDialogOpen] = useState(false);
+  const { weaponStats } = useGameStats();
+  const sortedWeaponSecondaryStats = useMemo(
+    () => getSortedWeaponSecondaryStats(weaponStats ?? null),
+    [weaponStats]
+  );
   const [selectedSecondaryStats, setSelectedSecondaryStats] = useState<
     MainStat[]
-  >(sortedWeaponSecondaryStats);
+  >([]);
   const [ownedOnly, setOwnedOnly] = useState(false);
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // Ownership check callback
   const isOwned = useOwnershipStore((s) => s.isOwned);
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
+
+  useEffect(() => {
+    if (
+      sortedWeaponSecondaryStats.length > 0 &&
+      selectedSecondaryStats.length === 0
+    ) {
+      setSelectedSecondaryStats(sortedWeaponSecondaryStats);
+    }
+  }, [sortedWeaponSecondaryStats, selectedSecondaryStats.length]);
 
   const loadPreset = useCallback(async (path: string) => {
     return loadPresetPayload(presetModules, path);
@@ -209,20 +224,20 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
       {
         key: "import",
         icon: Upload,
-        label: t.ui("app.import"),
+        label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
         icon: Download,
-        label: t.ui("app.export"),
+        label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
       },
       {
         key: "clear",
         icon: Trash2,
-        label: t.ui("app.clear"),
+        label: t.ui("common.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
       {
@@ -322,13 +337,19 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
               htmlFor="owned-only"
               className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
             >
-              {t.ui("buttons.ownedOnly")}
+              {t.ui("common.ownedOnly")}
             </Label>
           </div>
         ),
       },
     ],
-    [showRarity, selectedSecondaryStats, ownedOnly, t]
+    [
+      showRarity,
+      selectedSecondaryStats,
+      ownedOnly,
+      t,
+      sortedWeaponSecondaryStats,
+    ]
   );
 
   return (
@@ -372,21 +393,28 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
         }
         filters={filterGroups}
       >
-        <TierTable<Weapon, WeaponType>
+        <TierTable<WeaponResource, WeaponType>
           items={sortedWeapons}
           itemsById={weaponsById}
           tierAssignments={tierAssignments}
           tierCustomization={tierCustomization}
           onAssignmentsChange={handleAssignmentsChange}
           groups={weaponTypes}
-          groupKey="type"
+          getGroupKey={(weapon) =>
+            getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]).type ??
+            "Sword"
+          }
           groupConfig={weaponGroupConfig}
           getGroupName={(group) => t.weaponType(group)}
           getItemName={(item) => t.weaponName(item.id)}
           getTooltip={(weapon) => <WeaponTooltip weaponId={weapon.id} />}
           filterItem={(weapon) => {
-            if (!showRarity[weapon.rarity]) return false;
-            if (!selectedSecondaryStats.includes(weapon.secondaryStat))
+            const meta = getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]);
+            if (!showRarity[meta.rarity]) return false;
+            if (
+              meta.secondaryStat != null &&
+              !selectedSecondaryStats.includes(meta.secondaryStat)
+            )
               return false;
             if (ownedOnly && !isOwned("weapon", weapon.id)) return false;
             return true;

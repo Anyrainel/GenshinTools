@@ -1,16 +1,11 @@
 import { CharacterBuildCard } from "@/components/artifact-builds/CharacterBuildCard";
-import type { Character } from "@/data/types";
+import type { CharacterResource } from "@/data/types";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { render, screen } from "../../utils/render";
 
-const mockCharacter: Character = {
+const mockCharacter: CharacterResource = {
   id: "hu_tao",
-  element: "Pyro",
   rarity: 5,
-  weaponType: "Polearm",
-  region: "Liyue",
-  releaseDate: "2021-03-02",
-  imageUrl: "",
   imagePath: "characters/hu_tao.png",
 };
 

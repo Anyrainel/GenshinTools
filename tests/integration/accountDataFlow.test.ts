@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import type { CharacterFilters } from "@/data/types";
 import { tiers } from "@/data/types";
-import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
+import { scoreAllSlots } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
@@ -172,18 +172,24 @@ describe("Integration: Account Data Page Flow", () => {
   });
 
   describe("artifact scoring flow", () => {
+    const testWeights = {
+      cr: 100,
+      cd: 100,
+      "hp%": 80,
+      em: 60,
+      "atk%": 40,
+      er: 20,
+    };
+
     it("calculates scores for all characters", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
       const scoreConfig = useArtifactScoreStore.getState().config;
 
       const scores = data.characters.map((char) =>
-        calculateArtifactScore(char, scoreConfig)
+        scoreAllSlots(char, testWeights, scoreConfig.global)
       );
 
-      // All characters should have scores calculated
       expect(scores).toHaveLength(4);
-
-      // HuTao has artifact, should have non-zero sub score
       const huTaoIndex = data.characters.findIndex((c) => c.key === "hu_tao");
       expect(scores[huTaoIndex].subScore).toBeGreaterThan(0);
     });
@@ -191,20 +197,14 @@ describe("Integration: Account Data Page Flow", () => {
     it("adjusts scores when global weights change", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
       const huTao = data.characters.find((c) => c.key === "hu_tao")!;
-
-      // Initial score
       const initialConfig = useArtifactScoreStore.getState().config;
-      const initialScore = calculateArtifactScore(huTao, initialConfig);
+      scoreAllSlots(huTao, testWeights, initialConfig.global);
 
-      // Change flat ATK weight
       act(() => {
         useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 0);
       });
 
       const updatedConfig = useArtifactScoreStore.getState().config;
-      const updatedScore = calculateArtifactScore(huTao, updatedConfig);
-
-      // Scores should differ (flat ATK contributes less)
       expect(updatedConfig.global.flatAtk).toBe(0);
     });
   });
@@ -248,15 +248,12 @@ describe("Integration: Account Data Page Flow", () => {
       expect(config.global.flatAtk).toBe(30); // Default
     });
 
-    it("sets character-specific weights", () => {
+    it("updates global weight", () => {
       act(() => {
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 100);
+        useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 50);
       });
-
       const config = useArtifactScoreStore.getState().config;
-      expect(config.characters.hu_tao?.["hp%"]).toBe(100);
+      expect(config.global.flatAtk).toBe(50);
     });
   });
 

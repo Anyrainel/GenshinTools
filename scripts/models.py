@@ -74,7 +74,7 @@ class I18nArtifactData(BaseModel):
 
 
 class HalfSet(BaseModel):
-    id: int
+    id: str
     setIds: list[str]
 
 

@@ -1,3 +1,4 @@
+import type { CharacterStatsMap, WeaponStatsMap } from "./gameStatsLoader";
 import {
   artifactHalfSets,
   artifacts,
@@ -8,12 +9,12 @@ import {
 } from "./resources";
 import type {
   ArtifactHalfSet,
-  ArtifactSet,
-  Character,
+  ArtifactSetResource,
+  CharacterResource,
   Element,
   ElementResource,
   MainStat,
-  Weapon,
+  WeaponResource,
   WeaponTypeResource,
 } from "./types";
 
@@ -158,21 +159,24 @@ const freezeRecord = <MapType extends Record<PropertyKey, unknown>>(
 ) => Object.freeze(record) as Readonly<MapType>;
 
 export const charactersById = freezeRecord(
-  createRecord<Character, Character["id"]>(
+  createRecord<CharacterResource, CharacterResource["id"]>(
     characters,
     (character) => character.id
   )
 );
 
 export const artifactsById = freezeRecord(
-  createRecord<ArtifactSet, ArtifactSet["id"]>(
+  createRecord<ArtifactSetResource, ArtifactSetResource["id"]>(
     artifacts,
     (artifact) => artifact.id
   )
 );
 
 export const weaponsById = freezeRecord(
-  createRecord<Weapon, Weapon["id"]>(weapons, (weapon) => weapon.id)
+  createRecord<WeaponResource, WeaponResource["id"]>(
+    weapons,
+    (weapon) => weapon.id
+  )
 );
 
 export const artifactHalfSetsById = freezeRecord(
@@ -183,7 +187,7 @@ export const artifactHalfSetsById = freezeRecord(
 );
 
 export const artifactIdToHalfSetId = freezeRecord(
-  artifactHalfSets.reduce<Record<string, number>>((acc, halfSet) => {
+  artifactHalfSets.reduce<Record<string, string>>((acc, halfSet) => {
     for (const setId of halfSet.setIds) {
       acc[setId] = halfSet.id;
     }
@@ -217,16 +221,33 @@ function sortItemsByRarityDesc<T extends { rarity?: number }>(
   return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
 }
 
-// Sorted by release date descending (null = unreleased, sorted first)
-export const sortedCharacters = [...characters].sort((a, b) => {
-  if (!a.releaseDate && !b.releaseDate) return 0;
-  if (!a.releaseDate) return -1;
-  if (!b.releaseDate) return 1;
-  return b.releaseDate.localeCompare(a.releaseDate);
-});
+/** Characters sorted by release date descending (from character_stats when provided). */
+export function getSortedCharacters(
+  characterStats: CharacterStatsMap | null
+): CharacterResource[] {
+  const list = [...characters];
+  if (!characterStats) return list;
+  return list.sort((a, b) => {
+    const dateA = characterStats[a.id]?.releaseDate ?? "";
+    const dateB = characterStats[b.id]?.releaseDate ?? "";
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return -1;
+    if (!dateB) return 1;
+    return dateB.localeCompare(dateA);
+  });
+}
+
 export const sortedWeapons = sortItemsByRarityDesc(weapons);
 export const sortedArtifacts = sortItemsByRarityDesc(artifacts);
 
-export const sortedWeaponSecondaryStats = Array.from(
-  new Set(weapons.map((w) => w.secondaryStat))
-).sort();
+/** Unique weapon secondary stats from weapon_stats (L90), sorted. */
+export function getSortedWeaponSecondaryStats(
+  weaponStats: WeaponStatsMap | null
+): MainStat[] {
+  if (!weaponStats) return [];
+  const set = new Set<MainStat>();
+  for (const entry of Object.values(weaponStats)) {
+    if (entry.secondaryStat) set.add(entry.secondaryStat);
+  }
+  return Array.from(set).sort();
+}

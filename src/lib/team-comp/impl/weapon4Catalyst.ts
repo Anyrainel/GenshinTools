@@ -37,6 +37,8 @@ class BlackmarrowLantern extends WeaponBase {
           key: "reactionDmg%",
           value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
         },
+      ]),
+      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
         {
           key: "reactionDmg%",
           value:
@@ -84,16 +86,26 @@ class AshGravenDrinkingHorn extends WeaponBase {
 class BalladOfTheBoundlessBlue extends WeaponBase {
   // 3-stack NA/CA DMG
   readonly buffs = [
-    new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["on-hit"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["on-hit"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -349,16 +361,24 @@ class DodocoTales extends WeaponBase {
 
 @RegisterWeapon("solar_pearl")
 class SolarPearl extends WeaponBase {
-  // Both cross-buffs assumed active
+  // Both cross-buffs assumed active:
+  // NA hit → Skill+Burst DMG buff; Skill/Burst hit → NA DMG buff
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      { key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["normal"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
+    ),
+    new StatBuff(
+      wbs(this, ["normal"]),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
+    ),
+    new StatBuff(
+      wbs(this, ["E", "Q"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
+    ),
   ];
 }
 

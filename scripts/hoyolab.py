@@ -406,7 +406,9 @@ class HoyolabScraper:
             image_url=cleaned_image_url,
         )
 
-    def scrape_characters(self, language: str = "en") -> list[CharacterSource]:
+    def scrape_characters(
+        self, language: str = "en", fetch_entry_id: bool = True
+    ) -> list[CharacterSource]:
         page = self._ensure_page()
         character_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/2"
 
@@ -429,14 +431,15 @@ class HoyolabScraper:
         ):
             char_data = self._extract_character_from_card(card, i)
             if char_data:
-                try:
-                    with page.context.expect_page() as new_page_info:
-                        card.click()
-                    new_page = new_page_info.value
-                    char_data.entry_id = extract_id_from_url(new_page.url)
-                    new_page.close()
-                except Exception as e:
-                    tqdm.write(f"Error getting ID for {char_data.name}: {e}")
+                if fetch_entry_id:
+                    try:
+                        with page.context.expect_page() as new_page_info:
+                            card.click()
+                        new_page = new_page_info.value
+                        char_data.entry_id = extract_id_from_url(new_page.url)
+                        new_page.close()
+                    except Exception as e:
+                        tqdm.write(f"Error getting ID for {char_data.name}: {e}")
 
                 characters.append(char_data)
                 # Removed detailed print
@@ -512,7 +515,9 @@ class HoyolabScraper:
             tqdm.write(f"SKIP ({name}): Exception extracting details: {e}")
             return None
 
-    def scrape_artifacts(self, language: str = "en") -> list[ArtifactSource]:
+    def scrape_artifacts(
+        self, language: str = "en", fetch_entry_id: bool = True
+    ) -> list[ArtifactSource]:
         page = self._ensure_page()
         artifact_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/5"
 
@@ -535,14 +540,15 @@ class HoyolabScraper:
         ):
             art_data = self._extract_artifact_from_card(card, i)
             if art_data:
-                try:
-                    with page.context.expect_page() as new_page_info:
-                        card.click()
-                    new_page = new_page_info.value
-                    art_data.entry_id = extract_id_from_url(new_page.url)
-                    new_page.close()
-                except Exception as e:
-                    tqdm.write(f"Error getting ID for {art_data.name}: {e}")
+                if fetch_entry_id:
+                    try:
+                        with page.context.expect_page() as new_page_info:
+                            card.click()
+                        new_page = new_page_info.value
+                        art_data.entry_id = extract_id_from_url(new_page.url)
+                        new_page.close()
+                    except Exception as e:
+                        tqdm.write(f"Error getting ID for {art_data.name}: {e}")
 
                 artifacts.append(art_data)
                 # Removed detailed print
@@ -672,7 +678,9 @@ class HoyolabScraper:
 
         return data
 
-    def scrape_weapons(self, language: str = "en") -> list[WeaponSource]:
+    def scrape_weapons(
+        self, language: str = "en", fetch_details: bool = True
+    ) -> list[WeaponSource]:
         page = self._ensure_page()
         weapon_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/4"
 
@@ -697,28 +705,28 @@ class HoyolabScraper:
             if not weapon_data:
                 continue
 
-            # print(f"Scraping details for Weapon {i + 1}: {weapon_data.name}")
+            if fetch_details:
+                # print(f"Scraping details for Weapon {i + 1}: {weapon_data.name}")
+                try:
+                    # Click to open detail in new tab
+                    with page.context.expect_page() as new_page_info:
+                        card.click()
 
-            try:
-                # Click to open detail in new tab
-                with page.context.expect_page() as new_page_info:
-                    card.click()
+                    detail_page = new_page_info.value
+                    detail_page.wait_for_load_state()
 
-                detail_page = new_page_info.value
-                detail_page.wait_for_load_state()
+                    weapon_data.entry_id = extract_id_from_url(detail_page.url)
 
-                weapon_data.entry_id = extract_id_from_url(detail_page.url)
+                    detail_data = self._scrape_weapon_detail_page(detail_page)
 
-                detail_data = self._scrape_weapon_detail_page(detail_page)
+                    if detail_data:
+                        for k, v in detail_data.items():
+                            setattr(weapon_data, k, v)
 
-                if detail_data:
-                    for k, v in detail_data.items():
-                        setattr(weapon_data, k, v)
+                    detail_page.close()
 
-                detail_page.close()
-
-            except Exception as e:
-                tqdm.write(f"Error scraping details for {weapon_data.name}: {e}")
+                except Exception as e:
+                    tqdm.write(f"Error scraping details for {weapon_data.name}: {e}")
 
             weapons.append(weapon_data)
 

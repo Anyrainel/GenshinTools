@@ -11,7 +11,7 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { calculateArtifactScore } from "@/lib/account-data/artifactScore";
+import { scoreAllSlots } from "@/lib/account-data/artifactScore";
 import {
   type GOODData,
   convertGOODToAccountData,
@@ -65,12 +65,6 @@ describe("Integration: Stat Weight Configuration Flow", () => {
       expect(config.global.flatHp).toBe(30);
       expect(config.global.flatDef).toBe(30);
     });
-
-    it("starts with preset character weights from STAT_WEIGHTS", () => {
-      const config = useArtifactScoreStore.getState().config;
-      // Characters should have default preset weights
-      expect(Object.keys(config.characters).length).toBeGreaterThan(0);
-    });
   });
 
   describe("global weight modification", () => {
@@ -109,88 +103,22 @@ describe("Integration: Stat Weight Configuration Flow", () => {
     });
   });
 
-  describe("character-specific weights", () => {
-    it("sets character-specific weight", () => {
-      act(() => {
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 100);
-      });
-
-      const config = useArtifactScoreStore.getState().config;
-      expect(config.characters.hu_tao).toBeDefined();
-      expect(config.characters.hu_tao?.["hp%"]).toBe(100);
-    });
-
-    it("character weight affects score calculations", () => {
-      const { data } = convertGOODToAccountData(testGOODData);
-      const character = data.characters[0];
-
-      // Get initial score
-      const initialConfig = useArtifactScoreStore.getState().config;
-      const initialScore = calculateArtifactScore(character, initialConfig);
-
-      // Modify Hu Tao's HP% weight significantly
-      act(() => {
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 200);
-      });
-
-      const updatedConfig = useArtifactScoreStore.getState().config;
-      const updatedScore = calculateArtifactScore(character, updatedConfig);
-
-      // Score should change when weights change
-      expect(updatedScore.subScore).not.toBe(initialScore.subScore);
-    });
-
-    it("allows multiple character-specific weights", () => {
-      act(() => {
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 100);
-        useArtifactScoreStore.getState().setCharacterWeight("hu_tao", "em", 75);
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("xingqiu", "er", 80);
-      });
-
-      const config = useArtifactScoreStore.getState().config;
-      expect(config.characters.hu_tao?.["hp%"]).toBe(100);
-      expect(config.characters.hu_tao?.em).toBe(75);
-      expect(config.characters.xingqiu?.er).toBe(80);
-    });
-
-    it("resets all character weights to defaults", () => {
-      // Modify some weights
-      act(() => {
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 999);
-      });
-
-      expect(
-        useArtifactScoreStore.getState().config.characters.hu_tao?.["hp%"]
-      ).toBe(999);
-
-      // Reset character weights
-      act(() => {
-        useArtifactScoreStore.getState().resetCharacterWeights();
-      });
-
-      // Should be back to default values from STAT_WEIGHTS
-      const config = useArtifactScoreStore.getState().config;
-      expect(config.characters.hu_tao?.["hp%"]).not.toBe(999);
-    });
-  });
-
   describe("score calculation integration", () => {
+    const testWeights = {
+      cr: 100,
+      cd: 100,
+      "hp%": 80,
+      em: 60,
+      "atk%": 40,
+      er: 20,
+    };
+
     it("calculates score for imported character", () => {
       const { data } = convertGOODToAccountData(testGOODData);
       const character = data.characters[0];
       const config = useArtifactScoreStore.getState().config;
 
-      const score = calculateArtifactScore(character, config);
+      const score = scoreAllSlots(character, testWeights, config.global);
 
       expect(score).toBeDefined();
       expect(score.subScore).toBeGreaterThan(0); // Has crit substats
@@ -200,11 +128,10 @@ describe("Integration: Stat Weight Configuration Flow", () => {
     it("score changes when global flat weights change", () => {
       const { data } = convertGOODToAccountData(testGOODData);
       const character = data.characters[0];
+      const config = useArtifactScoreStore.getState().config;
 
-      const initialConfig = useArtifactScoreStore.getState().config;
-      const initialScore = calculateArtifactScore(character, initialConfig);
+      const initialScore = scoreAllSlots(character, testWeights, config.global);
 
-      // Zero out all flat stat weights
       act(() => {
         useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 0);
         useArtifactScoreStore.getState().setGlobalWeight("flatHp", 0);
@@ -212,33 +139,32 @@ describe("Integration: Stat Weight Configuration Flow", () => {
       });
 
       const updatedConfig = useArtifactScoreStore.getState().config;
-      const updatedScore = calculateArtifactScore(character, updatedConfig);
+      const updatedScore = scoreAllSlots(
+        character,
+        testWeights,
+        updatedConfig.global
+      );
 
-      // Scores should differ since flat stat weights changed
       expect(updatedConfig.global.flatAtk).toBe(0);
       expect(updatedConfig.global.flatHp).toBe(0);
+      expect(updatedScore.subScore).toBeDefined();
     });
   });
 
   describe("full reset", () => {
-    it("resets all config to defaults", () => {
-      // Modify global and character weights
+    it("resets global config to defaults", () => {
       act(() => {
         useArtifactScoreStore.getState().setGlobalWeight("flatAtk", 99);
-        useArtifactScoreStore
-          .getState()
-          .setCharacterWeight("hu_tao", "hp%", 999);
       });
 
       expect(useArtifactScoreStore.getState().config.global.flatAtk).toBe(99);
 
-      // Full reset
       act(() => {
         useArtifactScoreStore.getState().resetConfig();
       });
 
       const config = useArtifactScoreStore.getState().config;
-      expect(config.global.flatAtk).toBe(30); // Back to default
+      expect(config.global.flatAtk).toBe(30);
     });
   });
 });

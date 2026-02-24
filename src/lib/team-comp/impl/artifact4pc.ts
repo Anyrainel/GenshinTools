@@ -37,11 +37,8 @@ class FinaleOfTheDeepGalleries4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["0-energy"] },
-      { receiver: "self" },
-      [
-        { key: "dmg%", value: 0.6 },
-        { key: "dmg%", value: 0.6 },
-      ]
+      { receiver: "self", filter: { abilities: ["normal", "burst"] } },
+      [{ key: "dmg%", value: 0.6 }]
     ),
   ];
 }
@@ -69,11 +66,13 @@ class VourukashasGlow4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["take-dmg"] },
-      { receiver: "self" },
-      [
-        { key: "dmg%", value: 0.5 },
-        { key: "dmg%", value: 0.5 },
-      ]
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [{ key: "dmg%", value: 0.5 }]
+    ),
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["take-dmg"] },
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [{ key: "dmg%", value: 0.5 }]
     ),
   ];
 }
@@ -106,15 +105,30 @@ class ThunderingFury4pc extends ArtifactSetBase {
         id: this.artifactSetId,
         triggers: ["on-reaction"],
       },
-      { receiver: "self" },
-      [
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.2 },
-        { key: "reactionDmg%", value: 0.2 },
-      ]
+      {
+        receiver: "self",
+        filter: {
+          reactions: [
+            "overloaded",
+            "electroCharged",
+            "superconduct",
+            "hyperbloom",
+          ],
+        },
+      },
+      [{ key: "reactionDmg%", value: 0.4 }]
+    ),
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      {
+        receiver: "self",
+        filter: { reactions: ["aggravate", "lunarCharged"] },
+      },
+      [{ key: "reactionDmg%", value: 0.2 }]
     ),
   ];
 }
@@ -178,14 +192,23 @@ class CrimsonWitch4pc extends ArtifactSetBase {
         id: this.artifactSetId,
         triggers: ["on-reaction"],
       },
-      { receiver: "self" },
-      [
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.4 },
-        { key: "reactionDmg%", value: 0.15 },
-        { key: "reactionDmg%", value: 0.15 },
-      ]
+      {
+        receiver: "self",
+        filter: { reactions: ["overloaded", "burning"] },
+      },
+      [{ key: "reactionDmg%", value: 0.4 }]
+    ),
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["on-reaction"],
+      },
+      {
+        receiver: "self",
+        filter: { reactions: ["vaporize", "melt"] },
+      },
+      [{ key: "reactionDmg%", value: 0.15 }]
     ),
     // E stacks: max 3 × 50% of 15% = +22.5% Pyro DMG
     new StatBuff(
@@ -380,11 +403,8 @@ class HeartOfDepth4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["E"] },
-      { receiver: "self" },
-      [
-        { key: "dmg%", value: 0.3 },
-        { key: "dmg%", value: 0.3 },
-      ]
+      { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+      [{ key: "dmg%", value: 0.3 }]
     ),
   ];
 }
@@ -396,11 +416,8 @@ class RetracingBolide4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["shielded"] },
-      { receiver: "selfOnField" },
-      [
-        { key: "dmg%", value: 0.4 },
-        { key: "dmg%", value: 0.4 },
-      ]
+      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
+      [{ key: "dmg%", value: 0.4 }]
     ),
   ];
 }
@@ -419,12 +436,11 @@ class ShimenawasReminiscence4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["E"] },
-      { receiver: "self" },
-      [
-        { key: "dmg%", value: 0.5 },
-        { key: "dmg%", value: 0.5 },
-        { key: "dmg%", value: 0.5 },
-      ]
+      {
+        receiver: "self",
+        filter: { abilities: ["normal", "charge", "plunge"] },
+      },
+      [{ key: "dmg%", value: 0.5 }]
     ),
   ];
 }
@@ -450,12 +466,12 @@ class VermillionHereafter4pc extends ArtifactSetBase {
 @RegisterArtifactSet("echoes_of_an_offering")
 class EchoesOfAnOffering4pc extends ArtifactSetBase {
   // 4pc: Normal ATK has ~52% chance (ramping) → Normal ATK DMG +70% of ATK as flat base damage.
-  // Modeled as a ScalingBuff: normalBase scales from atk (via self stats) at 0.7 × ~0.5 avg = 0.35
+  // normalBase scales from atk (via self stats) at 0.7 × ~0.5 avg = 0.35
   readonly stats: StatEntry[] = [];
   readonly buffs = [
     new ScalingBuff(
       { type: "artifactSet", id: this.artifactSetId },
-      { receiver: "self" },
+      { receiver: "self", filter: { abilities: ["normal"] } },
       [],
       "atk",
       "baseDmg",
@@ -471,7 +487,7 @@ class DeepwoodMemories4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["E", "Q"] },
-      { receiver: "onField" },
+      { receiver: "team" },
       [{ key: "resReduction%", value: 0.3 }]
     ),
   ];
@@ -535,11 +551,7 @@ class FlowerOfParadiseLost4pc extends ArtifactSetBase {
         triggers: ["on-reaction"],
       },
       { receiver: "self" },
-      [
-        { key: "reactionDmg%", value: 1.4 },
-        { key: "reactionDmg%", value: 1.4 },
-        { key: "reactionDmg%", value: 1.4 },
-      ]
+      [{ key: "reactionDmg%", value: 1.4 }]
     ),
   ];
 }
@@ -551,12 +563,18 @@ class DesertPavilionChronicle4pc extends ArtifactSetBase {
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["charge-hit"] },
-      { receiver: "self" },
-      [
-        { key: "dmg%", value: 0.4 },
-        { key: "dmg%", value: 0.4 },
-        { key: "dmg%", value: 0.4 },
-      ]
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [{ key: "dmg%", value: 0.4 }]
+    ),
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["charge-hit"] },
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [{ key: "dmg%", value: 0.4 }]
+    ),
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["charge-hit"] },
+      { receiver: "self", filter: { abilities: ["plunge"] } },
+      [{ key: "dmg%", value: 0.4 }]
     ),
   ];
 }
@@ -717,6 +735,10 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
     const bonus = teamMeta.regions[charId] === "Natlan" ? 0.4 : 0.12;
 
     const wearerElement = teamMeta.elements[charId];
+    if (wearerElement === undefined) {
+      this.buffs = [];
+      return;
+    }
     const attachEls = getReactionAttachElements(wearerElement);
 
     // Find all possible reaction elements
@@ -910,11 +932,7 @@ class AubadeOfMorningstarAndMoon4pc extends ArtifactSetBase {
             reactions: ["lunarCharged", "lunarBloom", "lunarCrystallize"],
           },
         },
-        [
-          { key: "reactionDmg%", value: lunarBonus },
-          { key: "reactionDmg%", value: lunarBonus },
-          { key: "reactionDmg%", value: lunarBonus },
-        ]
+        [{ key: "reactionDmg%", value: lunarBonus }]
       ),
     ];
   }

@@ -1,11 +1,4 @@
-import { LUNAR_REACTIONS } from "../constants";
-import {
-  ScalingBuff,
-  ScalingMultiBuff,
-  ScalingSkillBuff,
-  StatBuff,
-  StaticSkillBuff,
-} from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -29,9 +22,7 @@ import type { OptionDef } from "../types";
 @RegisterCharacter("dehya")
 class Dehya extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof StaticSkillBuff | typeof ScalingBuff
-    >[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     // C1: HP +20%, E DMG +3.6% Max HP (baseDmg), Q DMG +6% Max HP (baseDmg)
     if (this.constellation >= 1) {
@@ -86,13 +77,10 @@ class Dehya extends CharacterBase {
     return buffs;
   })();
 
-  // Q Leonine Bite: Flame-Mane's Fist ×4 + Incineration Drive ×1 (dual ATK+HP scaling)
+  // Q Leonine Bite: Flame-Mane's Fist ×10 + Incineration Drive ×1 (dual ATK+HP scaling)
   // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
   // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
-    const eAtk = this.constellation >= 5 ? 1.279 : 1.084;
-    const eHp = this.constellation >= 5 ? 0.0219 : 0.0186;
-
     const fistAtk = this.constellation >= 3 ? 2.097 : 1.777;
     const fistHp = this.constellation >= 3 ? 0.036 : 0.0305;
     const driveAtk = this.constellation >= 3 ? 2.96 : 2.507;
@@ -103,19 +91,6 @@ class Dehya extends CharacterBase {
       reaction: "none" as const,
     };
     return {
-      "dehya-skill": {
-        label: { zh: "E 净焰剑狱协同攻击", en: "E Fiery Sanctum Field Hit" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              eAtk,
-              { element: "Pyro", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: eHp }
-            ),
-          },
-        ],
-      },
       "dehya-burst-combo": {
         label: {
           zh: "Q 炎啸狮子咬(10拳+1踢)",
@@ -144,10 +119,10 @@ class Dehya extends CharacterBase {
 @RegisterCharacter("alhaitham")
 class Alhaitham extends CharacterBase {
   readonly buffs = [
-    // P2: EM × 0.1% → Projection & Q DMG bonus (cap 100%)
+    // P2: EM × 0.1% → Projection (skill) & Q (burst) DMG bonus (cap 100%)
     new ScalingBuff(
       cbs(this, "P2", []),
-      { receiver: "selfOnField" },
+      { receiver: "selfOnField", filter: { abilities: ["skill", "burst"] } },
       [],
       "em",
       "dmg%",
@@ -155,11 +130,10 @@ class Alhaitham extends CharacterBase {
       1.0
     ),
     // C2: EM +50 per Mirror generated (max 4 stacks = 200)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       { receiver: "self" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "em", value: 200 }] : [])
+      this.constellation >= 2 ? [{ key: "em", value: 200 }] : []
     ),
     // C4: Per Mirror consumed (max 3), other party EM +30 (total 90)
     // Per Mirror generated (max 3), self Dendro% +10% (total 30%)
@@ -175,17 +149,15 @@ class Alhaitham extends CharacterBase {
       ];
     })(),
     // C6: CR +10%, CD +70% when mirrors are maxed (assume active)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.1 },
-              { key: "cd", value: 0.7 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.1 },
+            { key: "cd", value: 0.7 },
+          ]
+        : []
     ),
   ];
 
@@ -388,34 +360,30 @@ class Nahida extends CharacterBase {
       200
     ),
     // C2: Quicken → DEF -30% for 8s
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E", "quicken"]),
-      { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "defReduction%", value: 0.3 }] : [])
+      { receiver: "team" },
+      this.constellation >= 2 ? [{ key: "defReduction%", value: 0.3 }] : []
     ),
     // C2: Bloom/Hyperbloom/Burgeon can crit (CR 20%, CD 100%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["E"]),
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
       },
-      this.constellation,
-      (c) =>
-        c >= 2
-          ? [
-              { key: "reactionCr", value: 0.2 },
-              { key: "reactionCd", value: 1.0 },
-            ]
-          : []
+      this.constellation >= 2
+        ? [
+            { key: "reactionCr", value: 0.2 },
+            { key: "reactionCd", value: 1.0 },
+          ]
+        : []
     ),
     // C4: Self EM +140 (model 3 enemies average)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 140 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 140 }] : []
     ),
   ];
 
@@ -454,7 +422,7 @@ class Nahida extends CharacterBase {
         ? {
             "nahida-c6-karma": {
               label: {
-                zh: "【C6】灭净三业·业障除伤害",
+                zh: "C6 灭净三业·业障除伤害",
                 en: "C6 Karmic Oblivion DMG",
               },
               parts: [
@@ -511,11 +479,10 @@ class Cyno extends CharacterBase {
       [{ key: "dmg%", value: 0.35 }]
     ),
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C2", ["Q"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 2 ? [{ key: "electro%", value: 0.5 }] : [])
+      this.constellation >= 2 ? [{ key: "electro%", value: 0.5 }] : []
     ),
   ];
 
@@ -605,7 +572,7 @@ class Nilou extends CharacterBase {
         new ScalingBuff(
           cbs(this, "P2", []),
           {
-            receiver: "onField",
+            receiver: "team",
             filter: { reactions: ["bloom", "lunarBloom"] },
           },
           [],
@@ -622,7 +589,7 @@ class Nilou extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C2", ["bloom", "lunarBloom"]),
-          { receiver: "onField", filter: { elements: ["Hydro", "Dendro"] } },
+          { receiver: "team", filter: { elements: ["Hydro", "Dendro"] } },
           [{ key: "resReduction%", value: 0.35 }]
         )
       );
@@ -683,10 +650,9 @@ class Nilou extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              0,
+              qMult,
               { element: "Hydro", ability: "burst", reaction: "none" },
-              "atk",
-              { key: "hp", multiplier: qMult }
+              "hp"
             ),
           },
         ],
@@ -781,7 +747,8 @@ class Tighnari extends CharacterBase {
   // Q Lv10: 6 × 100.1% + 6 × 122.4% = 1335.0%
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 6 ? 5.85 : 4.35;
-    const qMult = this.constellation >= 5 ? 15.84 : 13.35; // approximate Q upgrade
+    // C3 boosts Q (Fashioner's Tanglevine Shaft); Lv13: 6×118.2% + 6×144.5% = 1576.2%
+    const qMult = this.constellation >= 3 ? 15.762 : 13.35;
     return {
       "tighnari-charge": {
         label: { zh: "A 花筥箭+藏蕴花矢", en: "A Wreath Arrow + Clusterbloom" },

@@ -79,7 +79,7 @@ export function ArtifactSlotGrid({
             </div>
           </TooltipTrigger>
           <TooltipContent side="top" className="text-xs max-w-[200px]">
-            {t.ui("teamBuilder.equippedSetDiffers")}
+            {t.ui("teamComp.equippedSetDiffers")}
           </TooltipContent>
         </Tooltip>
       )}

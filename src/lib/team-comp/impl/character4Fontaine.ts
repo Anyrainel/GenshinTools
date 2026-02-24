@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
@@ -15,9 +15,7 @@ class Chevreuse extends CharacterBase {
   ).every((el) => el === "Pyro" || el === "Electro");
 
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof StaticSkillBuff | typeof ScalingBuff
-    >[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     if (this.isPyroElectroTeam) {
       // P1: After Overloaded, enemies' Pyro+Electro RES -40% for 6s
@@ -25,7 +23,7 @@ class Chevreuse extends CharacterBase {
         new StatBuff(
           cbs(this, "P1", []),
           {
-            receiver: "onField",
+            receiver: "team",
             filter: { elements: ["Pyro", "Electro"] },
           },
           [{ key: "resReduction%", value: 0.4 }]
@@ -69,7 +67,7 @@ class Chevreuse extends CharacterBase {
 @RegisterCharacter("charlotte")
 class Charlotte extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
     // P2: Non-Fontaine teammates → Cryo DMG bonus (5%/10%/15%)
     const nonFontaine = this.teamMeta.characters.filter(
       (id) => id !== this.charId && this.teamMeta.regions[id] !== "Fontaine"
@@ -99,7 +97,7 @@ class Charlotte extends CharacterBase {
 @RegisterCharacter("freminet")
 class Freminet extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [];
+    const buffs: StatBuff[] = [];
 
     const canShatter = this.teamMeta.hasReaction("shatter");
     const canC4C6 =
@@ -120,32 +118,29 @@ class Freminet extends CharacterBase {
 
     // C1: E Shattering Pressure CR +15%
     buffs.push(
-      new StaticSkillBuff(
+      new StatBuff(
         cbs(this, "C1", []),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation,
-        (c) => (c >= 1 ? [{ key: "cr", value: 0.15 }] : [])
+        this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
       )
     );
 
     if (canC4C6) {
       // C4: After Frozen/Shatter/Superconduct, ATK +9% ×2 stacks
       buffs.push(
-        new StaticSkillBuff(
+        new StatBuff(
           cbs(this, "C4", ["frozen", "shatter", "superconduct"]),
           { receiver: "selfOnField" },
-          this.constellation,
-          (c) => (c >= 4 ? [{ key: "atk%", value: 0.18 }] : [])
+          this.constellation >= 4 ? [{ key: "atk%", value: 0.18 }] : []
         )
       );
 
       // C6: After Frozen/Shatter/Superconduct, CD +12% ×3 stacks
       buffs.push(
-        new StaticSkillBuff(
+        new StatBuff(
           cbs(this, "C6", ["frozen", "shatter", "superconduct"]),
           { receiver: "selfOnField" },
-          this.constellation,
-          (c) => (c >= 6 ? [{ key: "cd", value: 0.36 }] : [])
+          this.constellation >= 6 ? [{ key: "cd", value: 0.36 }] : []
         )
       );
     }
@@ -199,11 +194,10 @@ class Lynette extends CharacterBase {
       [{ key: "dmg%", value: 0.15 }]
     ),
     // C6: After E, self Anemo DMG +20%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "selfOnField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "anemo%", value: 0.2 }] : [])
+      this.constellation >= 6 ? [{ key: "anemo%", value: 0.2 }] : []
     ),
   ];
 

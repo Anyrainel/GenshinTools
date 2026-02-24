@@ -12,9 +12,10 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charInfo as charInfoData } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
-import type { CharacterData, MainStatSlot } from "@/data/types";
+import type { CharacterData, MainStatSlot, Slot, SubStat } from "@/data/types";
+import { allSlots } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { Sword } from "lucide-react";
 import { memo } from "react";
@@ -23,7 +24,7 @@ import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
   char: CharacterData;
-  score?: BuildAwareScoreResult;
+  score: ArtifactScoreResult;
 }
 
 function CharacterCardComponent({ char, score }: CharacterCardProps) {
@@ -31,11 +32,10 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
   const charInfo = charactersById[char.key];
-  if (!charInfo) return null; // Should not happen if conversion is correct
+  if (!charInfo) return null;
 
   const weapon = char.weapon;
   const weaponInfo = weapon ? weaponsById[weapon.key] : null;
-  const weaponName = weapon ? t.weaponName(weapon.key) : null;
 
   // Score must be pre-calculated
   const artifactScore = score;
@@ -224,7 +224,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
         </div>
 
         {/* Artifact Score */}
-        {artifactScore.isComplete && (
+        {artifactScore.substatScore.isComplete && (
           <div className="flex flex-col gap-0 items-end leading-none mr-2">
             <span
               className={cn(
@@ -250,7 +250,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
       {/* Artifacts Body */}
       <CardContent className="p-0 bg-black/10">
         <div className="grid grid-cols-5 divide-x divide-border/20 px-0.5">
-          {["flower", "plume", "sands", "goblet", "circlet"].map((slot) => {
+          {allSlots.map((slot) => {
             const art = char.artifacts?.[slot as keyof typeof char.artifacts];
 
             // Determine if main stat is "wrong" for this character
@@ -258,12 +258,13 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             const isMainStatWrong =
               art &&
               ["sands", "goblet", "circlet"].includes(slot) &&
-              (artifactScore.matchedBuild
-                ? artifactScore.matchedBuild.mainStatMismatches.some(
+              (artifactScore.buildMatch
+                ? artifactScore.buildMatch.mainStatMismatches.some(
                     (m) => m.slot === (slot as MainStatSlot)
                   )
-                : (artifactScore.statScores[art.mainStatKey]?.weight ?? 0) ===
-                  0);
+                : (artifactScore.substatScore.statScores[
+                    art.mainStatKey as SubStat
+                  ]?.weight ?? 0) === 0);
 
             const content = (
               <div
@@ -277,8 +278,12 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                   <StatDisplay
                     artifact={art}
                     scoreResult={artifactScore}
-                    slotSubScore={artifactScore.slotSubScores[slot]}
-                    slotMaxSubScore={artifactScore.slotMaxSubScores[slot]}
+                    slotSubScore={
+                      artifactScore.substatScore.slotSubScores[slot as Slot]
+                    }
+                    slotMaxSubScore={
+                      artifactScore.substatScore.slotMaxSubScores[slot as Slot]
+                    }
                     isMainStatWrong={isMainStatWrong}
                     compact={isVeryNarrow}
                   />

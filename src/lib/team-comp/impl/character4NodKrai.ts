@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
@@ -14,9 +14,7 @@ class Illuga extends CharacterBase {
 
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;
-    const buffs: InstanceType<
-      typeof StatBuff | typeof ScalingBuff | typeof StaticSkillBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1 (C6 enhanced): After E/Q, team Geo CR/CD + EM
       new StatBuff(
         cbs(this, "P1", ["E", "Q"]),
@@ -79,17 +77,15 @@ class Jahoda extends CharacterBase {
       { key: "em", value: 100 },
     ]),
     // C6: After E flask full, Moonsign characters CR +5%, CD +40%
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "team" },
-      this.constellation,
-      (c) =>
-        c >= 6
-          ? [
-              { key: "cr", value: 0.05 },
-              { key: "cd", value: 0.4 },
-            ]
-          : []
+      this.constellation >= 6
+        ? [
+            { key: "cr", value: 0.05 },
+            { key: "cd", value: 0.4 },
+          ]
+        : []
     ),
   ];
 

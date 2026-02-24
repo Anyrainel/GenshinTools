@@ -1,5 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import { useGameStats } from "@/hooks/useGameStats";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 interface CharacterTooltipProps {
@@ -8,14 +10,19 @@ interface CharacterTooltipProps {
 
 export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
   const { t } = useLanguage();
+  const { characterStats } = useGameStats();
   const character = charactersById[characterId];
 
   if (!character) return null;
 
+  const meta = getCharacterDisplayMeta(
+    character,
+    characterStats?.[characterId]
+  );
   const name = t.character(character.id);
-  const element = t.element(character.element);
-  const weapon = t.weaponType(character.weaponType);
-  const region = t.region(character.region);
+  const element = meta.element != null ? t.element(meta.element) : "";
+  const weapon = meta.weaponType != null ? t.weaponType(meta.weaponType) : "";
+  const region = meta.region != null ? t.region(meta.region) : "";
 
   return (
     <div className="w-60 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
@@ -23,7 +30,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
       <div
         className={cn(
           "p-3 flex items-start gap-3 relative overflow-hidden",
-          getRarityColor(character.rarity, "bg")
+          getRarityColor(meta.rarity, "bg")
         )}
       >
         {/* Background gradient overlay */}
@@ -33,33 +40,39 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
           <h3 className="font-bold text-lg leading-tight text-white mb-2 drop-shadow-md">
             {name}
             <span className="mx-2 text-yellow-400 text-sm">
-              {"★".repeat(character.rarity)}
+              {"★".repeat(meta.rarity)}
             </span>
           </h3>
           <div className="flex items-center gap-2 text-xs text-white/90 font-medium flex-wrap">
-            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-              <img
-                src={getAssetUrl(
-                  `/element/${character.element.toLowerCase()}.png`
-                )}
-                alt={character.element}
-                className="w-4 h-4 object-contain"
-              />
-              {element}
-            </span>
-            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
-              <img
-                src={getAssetUrl(
-                  `/weapontype/${character.weaponType.toLowerCase()}.png`
-                )}
-                alt={character.weaponType}
-                className="w-4 h-4 object-contain"
-              />
-              {weapon}
-            </span>
-            <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
-              {region}
-            </span>
+            {meta.element != null && (
+              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                <img
+                  src={getAssetUrl(
+                    `/element/${meta.element.toLowerCase()}.png`
+                  )}
+                  alt={meta.element}
+                  className="w-4 h-4 object-contain"
+                />
+                {element}
+              </span>
+            )}
+            {meta.weaponType != null && (
+              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+                <img
+                  src={getAssetUrl(
+                    `/weapontype/${meta.weaponType.toLowerCase()}.png`
+                  )}
+                  alt={meta.weaponType}
+                  className="w-4 h-4 object-contain"
+                />
+                {weapon}
+              </span>
+            )}
+            {region && (
+              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+                {region}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 /**
-/**
  * Integration Tests: Artifact Filter Character Build View Flow
  *
  * Tests the complete flow of CharacterBuildView:
@@ -8,9 +7,11 @@
  * 3. Tier-based sorting integration
  */
 
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { charactersById } from "@/data/constants";
+import type { CharacterStatsMap } from "@/data/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
 import type { CharacterFilters, Tier } from "@/data/types";
 import {
@@ -21,9 +22,18 @@ import {
 import { useTierStore } from "@/stores/useTierStore";
 
 describe("Integration: Character Build View Filter Flow", () => {
+  let characterStatsMap: CharacterStatsMap | null = null;
+
+  beforeAll(async () => {
+    characterStatsMap = (await import("@/data/game/character_stats.json"))
+      .default as CharacterStatsMap;
+  });
+
   beforeEach(() => {
     useTierStore.getState().resetTierList();
   });
+
+  const options = () => ({ characterStatsMap: characterStatsMap ?? undefined });
 
   describe("character filtering", () => {
     it("filters characters by single element", () => {
@@ -32,10 +42,16 @@ describe("Integration: Character Build View Filter Flow", () => {
         elements: ["Pyro"],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result.every((c) => c.element === "Pyro")).toBe(true);
+      expect(
+        result.every(
+          (c) =>
+            getCharacterDisplayMeta(c, characterStatsMap?.[c.id]).element ===
+            "Pyro"
+        )
+      ).toBe(true);
     });
 
     it("filters characters by multiple elements", () => {
@@ -44,11 +60,17 @@ describe("Integration: Character Build View Filter Flow", () => {
         elements: ["Pyro", "Hydro"],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       expect(result.length).toBeGreaterThan(0);
       expect(
-        result.every((c) => c.element === "Pyro" || c.element === "Hydro")
+        result.every((c) => {
+          const el = getCharacterDisplayMeta(
+            c,
+            characterStatsMap?.[c.id]
+          ).element;
+          return el === "Pyro" || el === "Hydro";
+        })
       ).toBe(true);
     });
 
@@ -58,10 +80,16 @@ describe("Integration: Character Build View Filter Flow", () => {
         weaponTypes: ["Polearm"],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result.every((c) => c.weaponType === "Polearm")).toBe(true);
+      expect(
+        result.every(
+          (c) =>
+            getCharacterDisplayMeta(c, characterStatsMap?.[c.id]).weaponType ===
+            "Polearm"
+        )
+      ).toBe(true);
     });
 
     it("filters characters by rarity", () => {
@@ -70,7 +98,7 @@ describe("Integration: Character Build View Filter Flow", () => {
         rarities: [5],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       expect(result.length).toBeGreaterThan(0);
       expect(result.every((c) => c.rarity === 5)).toBe(true);
@@ -82,10 +110,16 @@ describe("Integration: Character Build View Filter Flow", () => {
         regions: ["Liyue"],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result.every((c) => c.region === "Liyue")).toBe(true);
+      expect(
+        result.every(
+          (c) =>
+            getCharacterDisplayMeta(c, characterStatsMap?.[c.id]).region ===
+            "Liyue"
+        )
+      ).toBe(true);
     });
 
     it("combines multiple filter types (AND logic)", () => {
@@ -96,20 +130,22 @@ describe("Integration: Character Build View Filter Flow", () => {
         rarities: [5],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
-      // Should match characters like Hu Tao (Pyro, Polearm, 5-star)
       expect(result.length).toBeGreaterThan(0);
       expect(
-        result.every(
-          (c) =>
-            c.element === "Pyro" && c.weaponType === "Polearm" && c.rarity === 5
-        )
+        result.every((c) => {
+          const meta = getCharacterDisplayMeta(c, characterStatsMap?.[c.id]);
+          return (
+            meta.element === "Pyro" &&
+            meta.weaponType === "Polearm" &&
+            c.rarity === 5
+          );
+        })
       ).toBe(true);
     });
 
     it("returns empty when filter combination is impossible", () => {
-      // Looking for a very specific combination that doesn't exist
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
         elements: ["Dendro"],
@@ -118,7 +154,7 @@ describe("Integration: Character Build View Filter Flow", () => {
         rarities: [5],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       // No 5-star Dendro Catalyst from Mondstadt exists
       expect(result).toHaveLength(0);
@@ -129,39 +165,43 @@ describe("Integration: Character Build View Filter Flow", () => {
     it("creates filters that match target character properties", () => {
       const targetId = "hu_tao";
       const character = charactersById[targetId];
-
       expect(character).toBeDefined();
 
-      // Simulate what CharacterBuildView does when targetCharacterId is set
+      const meta = getCharacterDisplayMeta(
+        character!,
+        characterStatsMap?.[targetId]
+      );
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
-        elements: [character.element],
-        weaponTypes: [character.weaponType],
-        rarities: [character.rarity],
-        regions: [character.region],
+        elements: meta.element ? [meta.element] : [],
+        weaponTypes: meta.weaponType ? [meta.weaponType] : [],
+        rarities: [character!.rarity],
+        regions: meta.region ? [meta.region] : [],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
-      // Hu Tao should be in results
       expect(result.some((c) => c.id === "hu_tao")).toBe(true);
     });
 
     it("creates unique filter for characters with unique traits", () => {
       const targetId = "hu_tao";
       const character = charactersById[targetId];
+      const meta = getCharacterDisplayMeta(
+        character!,
+        characterStatsMap?.[targetId]
+      );
 
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
-        elements: [character.element],
-        weaponTypes: [character.weaponType],
-        rarities: [character.rarity],
-        regions: [character.region],
+        elements: meta.element ? [meta.element] : [],
+        weaponTypes: meta.weaponType ? [meta.weaponType] : [],
+        rarities: [character!.rarity],
+        regions: meta.region ? [meta.region] : [],
       };
 
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
-      // For Hu Tao: Pyro + Polearm + 5-star + Liyue - should be 1 or very few
       expect(result.length).toBeGreaterThanOrEqual(1);
       expect(result.length).toBeLessThanOrEqual(5);
     });
@@ -185,14 +225,13 @@ describe("Integration: Character Build View Filter Flow", () => {
 
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
-        tierSort: "desc", // S -> Pool order
+        tierSort: "desc",
       };
 
-      const result = filterAndSortCharacters(
-        characters,
-        filters,
-        tierAssignments
-      );
+      const result = filterAndSortCharacters(characters, filters, {
+        ...options(),
+        tierAssignments,
+      });
 
       // Find positions of characters with tier assignments
       const huTaoIndex = result.findIndex((c) => c.id === "hu_tao");
@@ -212,11 +251,10 @@ describe("Integration: Character Build View Filter Flow", () => {
       const filters: CharacterFilters = {
         ...defaultCharacterFilters,
         tierSort: "off",
-        releaseSort: "desc", // newest first
+        releaseSort: "desc",
       };
 
-      // Empty tier assignments
-      const result = filterAndSortCharacters(characters, filters, {});
+      const result = filterAndSortCharacters(characters, filters, options());
 
       // Should still return all characters, sorted by release date
       expect(result.length).toBe(characters.length);

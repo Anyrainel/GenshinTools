@@ -1,108 +1,93 @@
 import { SkillCard } from "@/components/archive/SkillCard";
-import type { CharacterEffect, CharacterSkill } from "@/data/types";
+import type { CharacterSkill } from "@/data/types";
 import { fireEvent, render, screen } from "../../utils/render";
 
-const makeConstellations = (...descs: string[]): CharacterEffect[] =>
-  descs.map((d, i) => ({
-    name: `C${i + 1}`,
-    descHtml: d,
-  }));
+// hu_tao: c3Talent "E", c5Talent "Q" — so index 0 (A) = 6 vs 10, index 1 (E) / 2 (Q) = 10 vs 13
+const CHAR_ID = "hu_tao";
 
-const mockSkill: CharacterSkill = {
+const mockSkillE: CharacterSkill = {
   name: "E. Guide to Afterlife",
   descHtml: "<b>Hu Tao</b> consumes HP to enter Paramita Papilio state.",
   details: [
-    { label: "ATK Increase", lv6: "80%", lv10: "100%", lv13: "115%" },
-    { label: "Blood Blossom DMG", lv6: "100%", lv10: "130%", lv13: "150%" },
+    { label: "ATK Increase", "6": "80%", "10": "100%", "13": "115%" },
+    { label: "Blood Blossom DMG", "6": "100%", "10": "130%", "13": "150%" },
   ],
 };
 
-const mockSkillNoLv6: CharacterSkill = {
+const mockSkillA: CharacterSkill = {
+  name: "Normal Attack",
+  descHtml: "Favonius Bladework.",
+  details: [
+    { label: "1-Hit DMG", "6": "50%", "10": "60%" },
+    { label: "2-Hit DMG", "6": "52%", "10": "62%" },
+  ],
+};
+
+const mockSkillQ: CharacterSkill = {
   name: "Q. Spirit Soother",
   descHtml: "Releases a spirit.",
   details: [
-    { label: "Skill DMG", lv6: "", lv10: "500%", lv13: "600%" },
-    { label: "Low HP Bonus", lv6: "", lv10: "700%", lv13: "800%" },
+    { label: "Skill DMG", "10": "500%", "13": "600%" },
+    { label: "Low HP Bonus", "10": "700%", "13": "800%" },
   ],
 };
 
 describe("SkillCard", () => {
   it("renders skill name", () => {
-    render(<SkillCard skill={mockSkill} constellations={null} />);
+    render(
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
+    );
     expect(screen.getByText("E. Guide to Afterlife")).toBeInTheDocument();
   });
 
   it("renders description by default (expanded)", () => {
     const { container } = render(
-      <SkillCard skill={mockSkill} constellations={null} />
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
     );
     const descDiv = container.querySelector(".skill-desc");
     expect(descDiv).toBeInTheDocument();
     expect(descDiv?.innerHTML).toContain("Paramita Papilio");
   });
 
-  it("renders detail table with Lv.6 and Lv.10 columns", () => {
-    render(<SkillCard skill={mockSkill} constellations={null} />);
+  it("shows two columns 6 vs 10 by default when skill is not buffed by C3/C5", () => {
+    render(
+      <SkillCard skill={mockSkillA} characterId={CHAR_ID} skillIndex={0} />
+    );
     expect(screen.getByText("Lv.6")).toBeInTheDocument();
     expect(screen.getByText("Lv.10")).toBeInTheDocument();
-    expect(screen.getByText("ATK Increase")).toBeInTheDocument();
-    expect(screen.getByText("80%")).toBeInTheDocument();
-    expect(screen.getByText("Blood Blossom DMG")).toBeInTheDocument();
-  });
-
-  it("hides Lv.13 column when no constellations boost this skill", () => {
-    render(<SkillCard skill={mockSkill} constellations={null} />);
     expect(screen.queryByText("Lv.13")).not.toBeInTheDocument();
+    expect(screen.getByText("50%")).toBeInTheDocument();
+    expect(screen.getByText("60%")).toBeInTheDocument();
   });
 
-  it("shows Lv.13 column when C3 boosts this skill", () => {
-    // C3 (index 2) references the skill name (without prefix)
-    const constellations = makeConstellations(
-      "C1 desc",
-      "C2 desc",
-      "Increases Guide to Afterlife by 3 levels",
-      "C4 desc",
-      "C5 desc",
-      "C6 desc"
+  it("shows two columns 10 vs 13 by default when skill is buffed by C3 or C5", () => {
+    render(
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
     );
-    render(<SkillCard skill={mockSkill} constellations={constellations} />);
+    expect(screen.getByText("Lv.10")).toBeInTheDocument();
     expect(screen.getByText("Lv.13")).toBeInTheDocument();
+    expect(screen.getByText("100%")).toBeInTheDocument();
     expect(screen.getByText("115%")).toBeInTheDocument();
   });
 
-  it("shows Lv.13 column when C5 boosts this skill", () => {
-    // C5 (index 4) references the skill name
-    const constellations = makeConstellations(
-      "C1 desc",
-      "C2 desc",
-      "C3 desc",
-      "C4 desc",
-      "Increases Guide to Afterlife by 3 levels",
-      "C6 desc"
+  it("shows 10 vs 13 for burst (Q) when C5 boosts it", () => {
+    render(
+      <SkillCard skill={mockSkillQ} characterId={CHAR_ID} skillIndex={2} />
     );
-    render(<SkillCard skill={mockSkill} constellations={constellations} />);
-    expect(screen.getByText("Lv.13")).toBeInTheDocument();
-  });
-
-  it("hides Lv.6 column when skill details have no lv6 data", () => {
-    render(<SkillCard skill={mockSkillNoLv6} constellations={null} />);
-    expect(screen.queryByText("Lv.6")).not.toBeInTheDocument();
     expect(screen.getByText("Lv.10")).toBeInTheDocument();
+    expect(screen.getByText("Lv.13")).toBeInTheDocument();
+    expect(screen.getByText("500%")).toBeInTheDocument();
+    expect(screen.getByText("600%")).toBeInTheDocument();
   });
 
   it("collapses and expands on click", () => {
     const { container } = render(
-      <SkillCard skill={mockSkill} constellations={null} />
+      <SkillCard skill={mockSkillE} characterId={CHAR_ID} skillIndex={1} />
     );
 
-    // Initially expanded
     expect(container.querySelector(".skill-desc")).toBeInTheDocument();
-
-    // Collapse
     fireEvent.click(screen.getByText("E. Guide to Afterlife"));
     expect(container.querySelector(".skill-desc")).not.toBeInTheDocument();
-
-    // Expand again
     fireEvent.click(screen.getByText("E. Guide to Afterlife"));
     expect(container.querySelector(".skill-desc")).toBeInTheDocument();
   });
@@ -113,7 +98,7 @@ describe("SkillCard", () => {
       descHtml: "Just attacks.",
       details: [],
     };
-    render(<SkillCard skill={skill} constellations={null} />);
+    render(<SkillCard skill={skill} characterId={CHAR_ID} skillIndex={0} />);
     expect(screen.queryByText("Lv.10")).not.toBeInTheDocument();
   });
 });

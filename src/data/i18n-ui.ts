@@ -1,8 +1,10 @@
 export const i18nUiData = {
   common: {
     search: { en: "Search...", zh: "搜索..." },
+    loading: { en: "Loading...", zh: "加载中..." },
     clear: { en: "Clear", zh: "清除" },
     cancel: { en: "Cancel", zh: "取消" },
+    reset: { en: "Reset", zh: "重置" },
     optimize: { en: "Optimize", zh: "优化" },
     noResults: { en: "No results found", zh: "未找到结果" },
     duplicate: { en: "Duplicate", zh: "复制" },
@@ -11,6 +13,9 @@ export const i18nUiData = {
     revert: { en: "Revert Changes", zh: "撤销更改" },
     delete: { en: "Delete", zh: "删除" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
+    gotIt: { en: "Got it", zh: "知道了" },
+    addBuild: { en: "Add Build", zh: "添加配装" },
+    ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
     deleteTitle: { en: "Delete Build?", zh: "删除配装？" },
     revertTitle: { en: "Revert Changes?", zh: "撤销更改？" },
     restoreTitle: { en: "Restore Preset Defaults?", zh: "恢复预设默认值？" },
@@ -27,12 +32,118 @@ export const i18nUiData = {
       zh: "这将删除此角色的所有自定义配装和武器设置。此操作无法撤销。",
     },
   },
+  import: {
+    action: { en: "Import", zh: "导入" },
+    dialogDescription: {
+      en: "Choose from built-in presets or import from a local file.",
+      zh: "从内置预设中选择，或从本地文件导入。",
+    },
+    fromFile: { en: "Import from File", zh: "从文件导入" },
+    presetConfirmTitle: { en: "Apply preset?", zh: "应用预设？" },
+    presetConfirmAction: { en: "Apply preset", zh: "应用预设" },
+    fileLoadError: { en: "Failed to import file", zh: "文件导入失败" },
+    clearBeforeImport: { en: "Clear existing data", zh: "清除现有数据" },
+    titleBuilds: { en: "Import builds", zh: "导入配装" },
+    titleTierList: { en: "Import Tier List", zh: "导入榜单" },
+    titleAccountData: { en: "Import Account Data", zh: "导入账号数据" },
+    confirmDescBuilds: {
+      en: "This will replace current builds with the selected preset.",
+      zh: "此操作会用所选预设替换当前配装。",
+    },
+    confirmDescTierList: {
+      en: "This will replace your current tier list with the selected preset.",
+      zh: "此操作会用所选预设替换当前榜单。",
+    },
+    presetLoadError: { en: "Failed to load preset", zh: "预设加载失败" },
+    loadErrorTierList: {
+      en: "Failed to load tier list",
+      zh: "榜单加载失败",
+    },
+    titleTeamComp: { en: "Import Team Comp", zh: "导入队伍配队" },
+    confirmDescTeamComp: {
+      en: "This will replace your current teams with the selected preset.",
+      zh: "此操作会用所选预设替换当前队伍。",
+    },
+    loadErrorTeamComp: {
+      en: "Failed to load team comp",
+      zh: "队伍配队加载失败",
+    },
+    presetEmptyTeamComp: { en: "No presets found", zh: "未找到预设" },
+    presetEmptyBuilds: {
+      en: "No presets found. Add preset JSON files to the presets folder.",
+      zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
+    },
+    presetEmptyTierList: { en: "No presets found", zh: "未找到预设" },
+    fileTitle: { en: "Import File", zh: "导入文件" },
+    actionPrompt: {
+      en: "Choose how you want to import these builds:",
+      zh: "请选择导入方式：",
+    },
+    actionSubscribe: { en: "Subscribe", zh: "订阅" },
+    actionSubscribeDesc: {
+      en: "You will receive updates automatically. Your customizations will be saved alongside the preset.",
+      zh: "您将接收自动预设更新。您的自定义修改将作为增量保存。",
+    },
+    actionCopy: { en: "Copy to Local", zh: "复制到本地" },
+    actionCopyDesc: {
+      en: "One-time import. No future updates unless manual re-import.",
+      zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
+    },
+    goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
+    goodTitle: { en: "Full Data Import", zh: "完整数据导入" },
+    badgeRecommended: { en: "Recommended", zh: "推荐" },
+    goodBenefit: {
+      en: "Full artifact inventory with swap, upgrade, and reroll recommendations.",
+      zh: "完整背包数据，获取替换、强化和洗练建议。",
+    },
+    goodRequiresPC: {
+      en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
+      zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
+    },
+    toolIrminsul: { en: "Irminsul (Packet Capture)", zh: "Irminsul (抓包)" },
+    toolKamera: { en: "Inventory Kamera (OCR)", zh: "Inventory Kamera (扫图)" },
+    uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
+    uidDescription: {
+      en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments.",
+      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。",
+    },
+    uidPlaceholder: {
+      en: "Enter UID (e.g. 800000000)",
+      zh: "输入 UID (如 100000000)",
+    },
+  },
+  export: {
+    action: { en: "Export", zh: "导出" },
+    authorLabel: { en: "Author", zh: "作者" },
+    authorPlaceholder: { en: "Enter your name...", zh: "输入您的名字..." },
+    descriptionLabel: { en: "Description", zh: "描述" },
+    descriptionPlaceholder: {
+      en: "Enter a description...",
+      zh: "输入描述...",
+    },
+    authorRequired: { en: "Author is required", zh: "需要填写作者" },
+    descriptionRequired: {
+      en: "Description is required",
+      zh: "需要填写描述",
+    },
+    titleBuilds: { en: "Export builds", zh: "导出配装" },
+    descBuilds: {
+      en: "Fill in the information below to export your builds.",
+      zh: "填写以下信息以导出您的配装。",
+    },
+    titleTierList: { en: "Export Tier List", zh: "导出榜单" },
+    descTierList: {
+      en: "Fill in the information below to export your tier list.",
+      zh: "填写以下信息以导出您的榜单。",
+    },
+    titleTeamComp: { en: "Export Team Comp", zh: "导出队伍配队" },
+    descTeamComp: {
+      en: "Fill in the information below to export your team compositions.",
+      zh: "填写以下信息以导出您的队伍配队。",
+    },
+  },
 
   accountData: {
-    importGOOD: {
-      en: "Import .json file (GOOD)",
-      zh: "导入 .json 文件 (GOOD)",
-    },
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
     recommendations: { en: "Recommendations", zh: "推荐" },
@@ -55,38 +166,6 @@ export const i18nUiData = {
     noCharactersMatchFiltersDescription: {
       en: "Try adjusting your filter settings or clear all filters to see your characters.",
       zh: "尝试调整过滤设置或清除所有过滤条件以查看角色。",
-    },
-    importHelpGood: {
-      en: "Full Data Import (Recommended)",
-      zh: "完整数据导入（推荐）",
-    },
-    importHelpGoodDesc: {
-      en: "Import a GOOD format JSON file exported from tools like",
-      zh: "导入由第三方工具生成的 GOOD 格式 JSON 文件，例如",
-    },
-    importHelpGoodBenefit: {
-      en: "Includes inventory data. You'll get swap, upgrade, and reroll recommendations for all your artifacts.",
-      zh: "包含背包数据。您将获得针对所有圣遗物的替换、强化和洗练建议。",
-    },
-    importHelpUid: {
-      en: "UID Import (Quick)",
-      zh: "UID 导入（快捷）",
-    },
-    importHelpUidDesc: {
-      en: "Fetch from Enka Network. Limited to 8 showcase characters and equipped artifacts only.",
-      zh: "从 Enka Network 获取。仅限 8 个展示角色及其已装备的圣遗物。",
-    },
-    importHelpUidLimitation: {
-      en: "Only displayed characters are available. Some recommendations require inventory data from tools above.",
-      zh: "仅包含展示角色数据。部分建议功能需要使用上方工具导入背包数据。",
-    },
-    importDialogTitle: {
-      en: "Import Account Data",
-      zh: "导入账号数据",
-    },
-    uidPlaceholder: {
-      en: "Enter UID (e.g. 800000000)",
-      zh: "输入 UID (如 100000000)",
     },
     failedToParseFile: {
       en: "Failed to parse file.",
@@ -135,8 +214,6 @@ export const i18nUiData = {
     statWeights: { en: "Stat Weights", zh: "词条权重" },
     punishmentFactor: { en: "Punishment Factor", zh: "惩罚系数" },
     resetDefaults: { en: "Reset Defaults", zh: "重置默认" },
-    resetGlobal: { en: "Reset", zh: "重置" },
-    resetCharacters: { en: "Reset", zh: "重置" },
     resetGlobalConfirm: {
       en: "Reset global settings to default?",
       zh: "重置全局设置到默认值？",
@@ -275,46 +352,59 @@ export const i18nUiData = {
       zh: "圣遗物自动锁定怎么设置？",
     },
     artifactFilterGuideline: {
-      en: "1. Use built-in presets for all characters or define your own. 2. Generate optimized filter configurations.",
-      zh: "1. 使用内置的全角色预设，或自定义理想配装。 2. 自动生成优化的过滤配置。",
+      en: "Never gonna let that bag blow up again.",
+      zh: "背包再也不会爆炸了。",
     },
     tierListProblem: {
       en: "Which character to build next?",
       zh: "哪个角色应该优先练？",
     },
     tierListGuideline: {
-      en: "Stack rank characters per element to define your own progression priority.",
-      zh: "按元素分组排名，规划属于你自己的培养优先级。",
+      en: "You decide who's best.",
+      zh: "谁强谁弱，你说了算。",
     },
     accountDataProblem: {
       en: "How good are my builds?",
       zh: "我的角色练度毕业了吗？",
     },
     accountDataGuideline: {
-      en: "1. Import via UID or tools like [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera). 2. Get automated artifact scoring.",
-      zh: "1. 通过 UID 或 [Irminsul](https://konkers.github.io/irminsul/02-quickstart.html) / [Inventory Kamera](https://github.com/taiwenlee/Inventory_Kamera) 导入数据。 2. 自动计算圣遗物评分。",
+      en: "Are you really giving him/her your best?",
+      zh: "你真的把最好的给TA了吗？",
     },
     archiveProblem: {
       en: "Looking up character or weapon details?",
       zh: "想查阅角色或武器详情？",
     },
     archiveGuideline: {
-      en: "Browse detailed character kits, base stats, and weapons. A comprehensive in-game reference.",
-      zh: "浏览角色天赋、基础属性和武器详情，全面的游戏资料库。",
+      en: "Everyone, everything, all together.",
+      zh: "整整齐齐，一个不落。",
     },
     teamCompProblem: {
-      en: "Need help theory-crafting new teams?",
-      zh: "正在科研新配队？",
+      en: "How can my team do more damage?",
+      zh: "我的队伍怎么打更多伤害？",
     },
     teamCompGuideline: {
-      en: "A visual workspace to build, experiment, and refine your team compositions.",
-      zh: "可视化构筑与实验，打磨你的最强阵容。",
+      en: "The numbers don't lie. Just sayin'.",
+      zh: "不算不知道，一算吓一跳。",
     },
+    navMoreToCome: { en: "More", zh: "更多" },
+    moreProblem: {
+      en: "Got ideas or feedback?",
+      zh: "有想法或建议？",
+    },
+    moreGuideline: {
+      en: "Join the Discord community!",
+      zh: "加入 Discord 社区！",
+    },
+    ctaScoreArtifacts: { en: "Score My Artifacts", zh: "评估圣遗物" },
+    ctaConfigureFilters: { en: "Compute Filters", zh: "计算过滤器" },
+    ctaRankCharacters: { en: "Rank Characters", zh: "排列角色" },
+    ctaBrowseDetails: { en: "Browse Archive", zh: "浏览图鉴" },
+    ctaCalculateDamage: { en: "Optimize Damage", zh: "优化伤害" },
+    ctaJoinCommunity: { en: "Join Community", zh: "加入社区" },
     tierListTitle: { en: "Character Priority", zh: "角色优先级" },
     weaponTierListTitle: { en: "Weapon Priority", zh: "武器优先级" },
-    export: { en: "Export", zh: "导出" },
-    import: { en: "Import", zh: "导入" },
-    clear: { en: "Clear", zh: "清除" },
+
     print: { en: "Download Image", zh: "下载图片" },
     generatingImage: { en: "Generating image...", zh: "正在生成图片..." },
     imageGenerated: {
@@ -358,7 +448,7 @@ export const i18nUiData = {
       en: "You can load presets anytime from the Import button on the Artifact Builds page.",
       zh: "随时可通过圣遗物配装页面的导入按钮加载预设。",
     },
-    presetPromptGotIt: { en: "Got it", zh: "知道了" },
+
     presetMigrateTitle: {
       en: "Existing Builds Found",
       zh: "检测到已有配装",
@@ -399,12 +489,8 @@ export const i18nUiData = {
       zh: "选择一个角色查看详情",
     },
     artifactBuilds: { en: "Artifact Builds", zh: "圣遗物配装" },
-    addBuild: { en: "Add Build", zh: "添加配装" },
     accountData: { en: "Account Data", zh: "账号数据" },
-    goToArtifactBuilds: {
-      en: "Configure builds in Artifact Builds",
-      zh: "前往圣遗物配装页面配置",
-    },
+
     goToAccountData: {
       en: "Import data in Account Data",
       zh: "前往账号数据页面导入",
@@ -414,16 +500,16 @@ export const i18nUiData = {
       zh: "没有角色匹配搜索",
     },
     weaponSearchPlaceholder: {
-      en: "Search weapons...",
-      zh: "搜索武器...",
+      en: "Search name, effects...",
+      zh: "搜索名称、特效...",
     },
     noWeaponResults: {
       en: "No weapons match your search",
       zh: "没有武器匹配搜索",
     },
     artifactSearchPlaceholder: {
-      en: "Search artifacts...",
-      zh: "搜索圣遗物...",
+      en: "Search name, effects...",
+      zh: "搜索名称、特效...",
     },
     noArtifactResults: {
       en: "No artifacts match your search",
@@ -445,25 +531,29 @@ export const i18nUiData = {
     snezhnaya: { en: "Snezhnaya", zh: "至冬" },
     nodkrai: { en: "Nod-Krai", zh: "挪德卡莱" },
   },
-  teamBuilder: {
+  teamComp: {
     teamName: { en: "Team Name", zh: "队伍名称" },
-    copy: { en: "Copy", zh: "复制" },
-    delete: { en: "Delete", zh: "删除" },
     character: { en: "Character", zh: "角色" },
     weapon: { en: "Weapon", zh: "武器" },
     artifact: { en: "Artifact", zh: "圣遗物" },
     teamLabel: { en: "Team", zh: "队伍" },
-    teamOptimization: { en: "Team Optimization", zh: "队伍优化" },
+    newTeamStart: { en: "New Team (Top)", zh: "新建队伍（顶部）" },
+    newTeamEnd: { en: "New Team (Bottom)", zh: "新建队伍（底部）" },
+    reactions: { en: "Reactions", zh: "元素反应" },
+    teamOptimization: { en: "Damage Optimization", zh: "伤害优化" },
     teamRoster: { en: "Team Roster", zh: "队伍成员" },
     minEr: { en: "Min. ER", zh: "最低充能" },
     renderError: { en: "Render Error", zh: "渲染错误" },
     clearTeamData: { en: "Clear Team Data", zh: "清空队伍数据" },
     setupError: { en: "Setup Error:", zh: "设置错误：" },
     currentEquipAndDamage: {
-      en: "Current Equipment & Damage",
-      zh: "当前配装与伤害期望",
+      en: "Current Artifacts & Damage",
+      zh: "当前圣遗物 & 伤害",
     },
-    optimizationResults: { en: "Optimization Results", zh: "配置优化结果" },
+    optimizationResults: {
+      en: "Optimized Artifacts & Damage",
+      zh: "优化后圣遗物 & 伤害",
+    },
     runOptimization: { en: "Run Optimization", zh: "开始优化" },
     optimizing: { en: "Optimizing…", zh: "正在优化…" },
     searchingCombinations: {
@@ -490,13 +580,6 @@ export const i18nUiData = {
     hideTrivial: { en: "Hide trivial/inactive", zh: "隐藏次要/未激活效果" },
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
     teamResonance: { en: "Team Resonance", zh: "队伍共鸣" },
-    resonance_pyro: { en: "Fervent Flames", zh: "热诚之火" },
-    resonance_hydro: { en: "Soothing Water", zh: "愈疗之水" },
-    resonance_cryo: { en: "Shattering Ice", zh: "粉碎之冰" },
-    resonance_geo: { en: "Enduring Rock", zh: "坚定之岩" },
-    resonance_dendro: { en: "Sprawling Canopy", zh: "蔓生之草" },
-    resonance_unique: { en: "Protective Canopy", zh: "交织之护" },
-    resonance_gleam: { en: "Moonsign", zh: "月兆" },
     noBuffsOriginate: { en: "No buffs originating", zh: "未提供 Buff 效果" },
     equippedSetDiffers: {
       en: "Equipped set differs from Team Roster goal",
@@ -512,7 +595,6 @@ export const i18nUiData = {
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },
-    clear: { en: "Clear", zh: "清除" },
     clearAll: { en: "Clear All", zh: "全部清除" },
     sort: { en: "Sort", zh: "排序" },
     sortByTier: { en: "Tier", zh: "评级" },
@@ -528,12 +610,6 @@ export const i18nUiData = {
     weaponTypes: { en: "Weapon Types", zh: "武器类型" },
     regions: { en: "Regions", zh: "地区" },
     rarity: { en: "Rarity", zh: "稀有度" },
-    secondaryStat: { en: "Substat", zh: "副属性" },
-    ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
-    noWeaponsFound: {
-      en: "No weapons match filters",
-      zh: "没有武器匹配当前筛选",
-    },
   },
   computeFilters: {
     title: { en: "Filters", zh: "过滤" },
@@ -615,14 +691,6 @@ export const i18nUiData = {
       zh: "正在重新计算配置…",
     },
     passChance: { en: "Pass chance", zh: "达标概率" },
-    moderatePassChance: {
-      en: "High pass chance – consider tightening this slot",
-      zh: "达标概率偏高——建议收紧该部位要求",
-    },
-    highPassChance: {
-      en: "Very high pass chance – this slot may be too permissive",
-      zh: "达标概率过高——该部位条件可能过于宽松",
-    },
   },
   configure: {
     noCharactersFound: { en: "No characters found", zh: "没有找到角色" },
@@ -640,79 +708,6 @@ export const i18nUiData = {
       zh: "此操作会移除所有配装和隐藏设置，且无法撤销。",
     },
     clearAllConfirmAction: { en: "Yes, clear everything", zh: "确认清除" },
-    presetDialogEmpty: {
-      en: "No presets found. Add preset JSON files to the presets folder.",
-      zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
-    },
-    presetDialogLoadError: {
-      en: "Failed to load preset",
-      zh: "预设加载失败",
-    },
-    presetConfirmTitle: { en: "Apply preset?", zh: "应用预设？" },
-    presetConfirmDescription: {
-      en: "This will replace current builds with the selected preset.",
-      zh: "此操作会用所选预设替换当前配装。",
-    },
-    presetConfirmAction: { en: "Apply preset", zh: "应用预设" },
-    importDialogTitle: { en: "Import builds", zh: "导入配装" },
-    importDialogDescription: {
-      en: "Choose from built-in presets or import from a local file.",
-      zh: "从内置预设中选择，或从本地文件导入。",
-    },
-    importFromFile: { en: "Import from File", zh: "从文件导入" },
-    importDialogLoadError: {
-      en: "Failed to import file",
-      zh: "文件导入失败",
-    },
-    clearBeforeImport: {
-      en: "Clear data before import",
-      zh: "导入前清除现有数据",
-    },
-    exportDialogTitle: { en: "Export builds", zh: "导出配装" },
-    exportDialogDescription: {
-      en: "Fill in the information below to export your builds.",
-      zh: "填写以下信息以导出您的配装。",
-    },
-    exportAuthorLabel: { en: "Author", zh: "作者" },
-    exportAuthorPlaceholder: {
-      en: "Enter your name...",
-      zh: "输入您的名字...",
-    },
-    exportDescriptionLabel: { en: "Description", zh: "描述" },
-    exportDescriptionPlaceholder: {
-      en: "Enter a description...",
-      zh: "输入描述...",
-    },
-    exportConfirmAction: { en: "Export", zh: "导出" },
-    exportAuthorRequired: { en: "Author is required", zh: "需要填写作者" },
-    exportDescriptionRequired: {
-      en: "Description is required",
-      zh: "需要填写描述",
-    },
-    importActionPrompt: {
-      en: "Choose how you want to import these builds:",
-      zh: "请选择导入方式：",
-    },
-    actionSubscribe: {
-      en: "Subscribe",
-      zh: "订阅",
-    },
-    actionSubscribeDesc: {
-      en: "You will receive updates automatically. Your customizations will be saved alongside the preset.",
-      zh: "您将接收自动预设更新。您的自定义修改将作为增量保存。",
-    },
-    actionCopy: {
-      en: "Copy to Local",
-      zh: "复制到本地",
-    },
-    actionCopyDesc: {
-      en: "One-time import. No future updates unless manual re-import.",
-      zh: "一次性导入。除非手动重新导入，否则不会有后续更新。",
-    },
-    importFileTitle: {
-      en: "Import File",
-      zh: "导入文件",
-    },
   },
   navigation: {
     configure: { en: "Character Builds", zh: "角色配装" },
@@ -723,7 +718,6 @@ export const i18nUiData = {
   },
   characterCard: {
     addFirstBuild: { en: "Add First Build", zh: "添加第一个配装" },
-    addBuild: { en: "Add Build", zh: "添加配装" },
     hideBuilds: { en: "Hide Builds", zh: "隐藏配装" },
     showBuilds: { en: "Show Builds", zh: "显示配装" },
     hiddenNotice: {
@@ -735,7 +729,7 @@ export const i18nUiData = {
     presetBuild: { en: "Preset Build", zh: "预设配装" },
     modifiedPreset: { en: "Modified Preset", zh: "修改后的预设" },
     customBuild: { en: "Custom Build", zh: "自定义配装" },
-    buildLabel: { en: "Build", zh: "配装" },
+
     substats: { en: "Substats", zh: "副词条" },
     deselect: { en: "Deselect", zh: "取消选择" },
     effect1: { en: "Effect 1", zh: "效果1" },
@@ -797,43 +791,7 @@ export const i18nUiData = {
     stylesLabel: { en: "Style", zh: "定位" },
     rolesLabel: { en: "Role", zh: "职能" },
   },
-  tierList: {
-    importDialogTitle: { en: "Import Tier List", zh: "导入榜单" },
-    importDialogDescription: {
-      en: "Choose from built-in presets or import from a local file.",
-      zh: "从内置预设中选择，或从本地文件导入。",
-    },
-    presetConfirmTitle: { en: "Apply preset?", zh: "应用预设？" },
-    presetConfirmDescription: {
-      en: "This will replace your current tier list with the selected preset.",
-      zh: "此操作会用所选预设替换当前榜单。",
-    },
-    presetConfirmAction: { en: "Apply preset", zh: "应用预设" },
-    loadError: { en: "Failed to load tier list", zh: "榜单加载失败" },
-    noPresets: { en: "No presets found", zh: "未找到预设" },
-    importFromFile: { en: "Import from File", zh: "从文件导入" },
-    exportDialogTitle: { en: "Export Tier List", zh: "导出榜单" },
-    exportDialogDescription: {
-      en: "Fill in the information below to export your tier list.",
-      zh: "填写以下信息以导出您的榜单。",
-    },
-    exportAuthorLabel: { en: "Author", zh: "作者" },
-    exportAuthorPlaceholder: {
-      en: "Enter your name...",
-      zh: "输入您的名字...",
-    },
-    exportDescriptionLabel: { en: "Description", zh: "Description" },
-    exportDescriptionPlaceholder: {
-      en: "Enter a description...",
-      zh: "输入描述...",
-    },
-    exportAuthorRequired: { en: "Author is required", zh: "需要填写作者" },
-    exportDescriptionRequired: {
-      en: "Description is required",
-      zh: "需要填写描述",
-    },
-    exportConfirmAction: { en: "Export", zh: "导出" },
-  },
+
   messages: {
     itemMoved: { en: "{0} moved to {1}", zh: "{0} 移动到了 {1}" },
     itemRemoved: {
@@ -862,7 +820,7 @@ export const i18nUiData = {
     includeRarity5: { en: "5★", zh: "5★" },
     includeRarity4: { en: "4★", zh: "4★" },
     includeRarity3: { en: "3★", zh: "3★" },
-    ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
+
     help: { en: "Help", zh: "帮助" },
   },
   resetConfirmDialog: {
@@ -871,7 +829,6 @@ export const i18nUiData = {
       en: "Are you sure you want to reset the tier list? This will clear all character assignments, custom tier names, and visibility settings. This action cannot be undone.",
       zh: "确定要重置榜单吗？这将清除所有角色分配、自定义梯度名称和显示设置。此操作无法撤销。",
     },
-    confirm: { en: "Reset", zh: "重置" },
   },
   customizeDialog: {
     title: { en: "Customize Tiers", zh: "自定义梯度" },
@@ -883,15 +840,14 @@ export const i18nUiData = {
     tierName: { en: "Tier Name", zh: "梯度名称" },
     defaultPrefix: { en: "Default: ", zh: "默认: " },
     hideTier: { en: "Hide Tier", zh: "隐藏梯度" },
-    reset: { en: "Reset", zh: "重置" },
-    cancel: { en: "Cancel", zh: "取消" },
+
     save: { en: "Save", zh: "保存" },
   },
 
   tour: {
     guide: {
       title: { en: "Guide", zh: "指南" },
-      gotIt: { en: "Got it", zh: "知道了" },
+
       artifactFilter: {
         en: "1. Click {import} to use presets, or configure builds in {builds} tab.\n2. In {filters} tab, tweak custom controls to generate your own lock rules.",
         zh: "1. 点击 {import} 使用预设，或在 {builds} 标签页中配置配装。\n2. 在 {filters} 标签页中调整自定义选项以生成属于你的锁定规则。",
@@ -901,8 +857,8 @@ export const i18nUiData = {
         zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。",
       },
       accountData: {
-        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Configure scoring weights in {weights} tab.",
-        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {weights} 标签页中配置评分权重。",
+        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.",
+        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。",
       },
     },
     artifactFilter: {
@@ -959,11 +915,6 @@ export const i18nUiData = {
       recommendationsContent: {
         en: "Get personalized recommendations for artifact upgrades, swaps, and farming priorities based on your collection.",
         zh: "根据你的圣遗物收藏，获取个性化的强化、替换和刷取建议。",
-      },
-      weightsTitle: { en: "Stat Weights", zh: "词条权重" },
-      weightsContent: {
-        en: "Customize how artifact substats are weighted for scoring. Adjust these to match your playstyle preferences.",
-        zh: "自定义圣遗物副词条的评分权重。根据你的玩法偏好进行调整。",
       },
     },
   },

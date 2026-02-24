@@ -42,9 +42,7 @@ describe("AccountImportControl", () => {
   it("renders dialog content when opened", async () => {
     render(<TestWrapper />);
     await waitFor(() => {
-      expect(
-        screen.getByText("accountData.importDialogTitle")
-      ).toBeInTheDocument();
+      expect(screen.getByText("import.titleAccountData")).toBeInTheDocument();
     });
   });
 
@@ -54,14 +52,14 @@ describe("AccountImportControl", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText("accountData.uidPlaceholder")
+        screen.getByPlaceholderText("import.uidPlaceholder")
       ).toBeInTheDocument();
     });
 
-    const input = screen.getByPlaceholderText("accountData.uidPlaceholder");
+    const input = screen.getByPlaceholderText("import.uidPlaceholder");
     await userEvent.type(input, "123456789");
 
-    const importBtn = screen.getByRole("button", { name: "app.import" });
+    const importBtn = screen.getByRole("button", { name: "import.action" });
     await userEvent.click(importBtn);
 
     expect(onUidImport).toHaveBeenCalledWith("123456789", false); // Default clearData is false
@@ -73,14 +71,14 @@ describe("AccountImportControl", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByPlaceholderText("accountData.uidPlaceholder")
+        screen.getByPlaceholderText("import.uidPlaceholder")
       ).toBeInTheDocument();
     });
 
-    const input = screen.getByPlaceholderText("accountData.uidPlaceholder");
+    const input = screen.getByPlaceholderText("import.uidPlaceholder");
     await userEvent.type(input, "123456789");
 
-    const importBtn = screen.getByRole("button", { name: "app.import" });
+    const importBtn = screen.getByRole("button", { name: "import.action" });
     await userEvent.click(importBtn);
 
     await waitFor(() => {

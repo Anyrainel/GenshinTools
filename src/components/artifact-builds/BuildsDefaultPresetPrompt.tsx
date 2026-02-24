@@ -190,7 +190,7 @@ export function BuildsDefaultPresetPrompt() {
               onClick={() => setDialog2Open(false)}
               className="sm:min-w-[7rem]"
             >
-              {t.ui("app.presetPromptGotIt")}
+              {t.ui("common.gotIt")}
             </Button>
           </div>
         </ResponsiveDialogContent>

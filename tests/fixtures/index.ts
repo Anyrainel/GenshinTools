@@ -7,9 +7,22 @@ import type {
   AccountData,
   ArtifactData,
   CharacterData,
+  Slot,
+  SubStat,
   WeaponData,
 } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import { allSlots } from "@/data/types";
+import type {
+  ArtifactScoreResult,
+  StatScoreBreakdown,
+  SubstatScoreResult,
+} from "@/lib/account-data/artifactScore";
+
+function emptySlotScores(): Record<Slot, number> {
+  const out = {} as Record<Slot, number>;
+  for (const s of allSlots) out[s] = 0;
+  return out;
+}
 
 // ============================================================================
 // Character Fixtures
@@ -173,29 +186,35 @@ export const MOCK_ACCOUNT_DATA = {
 // Artifact Score Fixtures
 // ============================================================================
 
+type ArtifactScoreResultOverrides = {
+  substatScore?: Partial<SubstatScoreResult>;
+  buildMatch?: ArtifactScoreResult["buildMatch"];
+};
+
 export const createArtifactScoreResult = (
-  overrides: Partial<BuildAwareScoreResult> = {}
-): BuildAwareScoreResult => ({
-  mainScore: 25,
-  subScore: 45,
-  slotMainScores: {},
-  slotSubScores: {},
-  slotMaxSubScores: {},
-  statScores: {},
-  isComplete: true,
-  matchedBuild: null,
-  ...overrides,
-});
+  overrides: ArtifactScoreResultOverrides = {}
+): ArtifactScoreResult => {
+  const substat: SubstatScoreResult = {
+    subScore: 45,
+    slotSubScores: emptySlotScores(),
+    slotMaxSubScores: emptySlotScores(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    statScores: {} as Record<SubStat, StatScoreBreakdown>,
+    isComplete: true,
+    ...overrides.substatScore,
+  };
+  return { substatScore: substat, buildMatch: overrides.buildMatch ?? null };
+};
 
 export const MOCK_SCORES = {
-  complete: createArtifactScoreResult({ isComplete: true }),
-  incomplete: createArtifactScoreResult({ isComplete: false }),
-  highScore: createArtifactScoreResult({ mainScore: 40, subScore: 80 }),
-  lowScore: createArtifactScoreResult({ mainScore: 10, subScore: 20 }),
+  complete: createArtifactScoreResult({ substatScore: { isComplete: true } }),
+  incomplete: createArtifactScoreResult({
+    substatScore: { isComplete: false },
+  }),
+  highScore: createArtifactScoreResult({ substatScore: { subScore: 80 } }),
+  lowScore: createArtifactScoreResult({ substatScore: { subScore: 20 } }),
   zero: createArtifactScoreResult({
-    mainScore: 0,
-    subScore: 0,
-    isComplete: false,
+    substatScore: { subScore: 0, isComplete: false },
   }),
 } as const;
 

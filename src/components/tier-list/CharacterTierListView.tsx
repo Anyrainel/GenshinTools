@@ -15,11 +15,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import {
   charactersById,
   elementResourcesByName,
-  sortedCharacters,
+  getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
+import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
-  Character,
+  CharacterResource,
   Element,
   PresetOption,
   TierAssignment,
@@ -27,6 +28,7 @@ import type {
   TierListData,
 } from "@/data/types";
 import { elements } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
@@ -79,6 +81,11 @@ export function CharacterTierListView({
   onActions,
 }: CharacterTierListViewProps) {
   const { t } = useLanguage();
+  const { characterStats } = useGameStats();
+  const sortedCharacters = useMemo(
+    () => getSortedCharacters(characterStats ?? null),
+    [characterStats]
+  );
   const tour = useTour();
 
   const tierAssignments = useTierStore((state) => state.tierAssignments);
@@ -239,21 +246,21 @@ export function CharacterTierListView({
       {
         key: "import",
         icon: Upload,
-        label: t.ui("app.import"),
+        label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
         icon: Download,
-        label: t.ui("app.export"),
+        label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
         tourStepId: "tl-export",
       },
       {
         key: "clear",
         icon: Trash2,
-        label: t.ui("app.clear"),
+        label: t.ui("common.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
       {
@@ -356,7 +363,7 @@ export function CharacterTierListView({
               htmlFor="owned-only"
               className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
             >
-              {t.ui("buttons.ownedOnly")}
+              {t.ui("common.ownedOnly")}
             </Label>
           </div>
         ),
@@ -416,14 +423,17 @@ export function CharacterTierListView({
         }
         filters={filterGroups}
       >
-        <TierTable<Character, Element>
+        <TierTable<CharacterResource, Element>
           items={sortedCharacters}
           itemsById={charactersById}
           tierAssignments={tierAssignments}
           tierCustomization={tierCustomization}
           onAssignmentsChange={handleAssignmentsChange}
           groups={elements}
-          groupKey="element"
+          getGroupKey={(character) =>
+            getCharacterDisplayMeta(character, characterStats?.[character.id])
+              .element ?? "Pyro"
+          }
           groupConfig={elementGroupConfig}
           getGroupName={(group) => t.element(group)}
           getItemName={(item) => t.character(item.id)}
@@ -431,8 +441,12 @@ export function CharacterTierListView({
             <CharacterTooltip characterId={character.id} />
           )}
           filterItem={(character) => {
-            if (character.rarity === 5 && !show5Star) return false;
-            if (character.rarity === 4 && !show4Star) return false;
+            const meta = getCharacterDisplayMeta(
+              character,
+              characterStats?.[character.id]
+            );
+            if (meta.rarity === 5 && !show5Star) return false;
+            if (meta.rarity === 4 && !show4Star) return false;
             if (character.id.startsWith("traveler") && !showTravelers) {
               return false;
             }
@@ -441,7 +455,13 @@ export function CharacterTierListView({
           }}
           getOverlayImage={(character) => {
             if (!showWeapons) return undefined;
-            return weaponResourcesByName[character.weaponType].imagePath;
+            const meta = getCharacterDisplayMeta(
+              character,
+              characterStats?.[character.id]
+            );
+            return meta.weaponType != null
+              ? weaponResourcesByName[meta.weaponType].imagePath
+              : undefined;
           }}
           tableRef={tableRef}
         />

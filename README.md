@@ -55,10 +55,12 @@ A modern, interactive tier list maker that:
 
 ### Team Builder
 
-**Theorycraft your dream teams.**
+**Theorycraft and optimize your teams with real damage numbers.**
 
-- **Visual Planning**: Select characters, weapons, and artifacts in a clear, card-based layout.
-- **Interactive**: Smart pickers with filtering (e.g., only show weapons usable by the character).
+- **Damage Calculator**: Calculate expected damage per character accounting for buffs, reactions, elemental resonance, and enemy stats.
+- **Buff Ledger**: Full transparency — see every buff source, its value, and whether it's active for each formula.
+- **Artifact Optimizer**: Automatically find the best artifact assignment across your team to maximize total damage.
+- **Visual Planning**: Select characters, weapons, and artifacts in a clear, card-based layout with smart filtering.
 - **Manage**: Create, copy, and organize multiple team compositions.
 
 ## 🖥️ Desktop App

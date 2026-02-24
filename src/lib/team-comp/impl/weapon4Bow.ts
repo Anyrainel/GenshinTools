@@ -264,16 +264,16 @@ class TheViridescentHunt extends WeaponBase {
 @RegisterWeapon("the_stringless")
 class TheStringless extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-      },
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill", "burst"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -286,16 +286,26 @@ class SacrificialBow extends WeaponBase {
 class Hamayumi extends WeaponBase {
   // Full energy → doubled effect
   readonly buffs = [
-    new StatBuff(wbs(this, ["full-energy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["full-energy"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
+    new StatBuff(
+      wbs(this, ["full-energy"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -361,24 +371,28 @@ class Predator extends WeaponBase {
 @RegisterWeapon("rust")
 class Rust extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) },
-      { key: "dmg%", value: -0.1 },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) }]
+    ),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [{ key: "dmg%", value: -0.1 }]
+    ),
   ];
 }
 
 @RegisterWeapon("mitternachts_waltz")
 class MitternachtsWaltz extends WeaponBase {
-  // Both cross-buffs assumed active
+  // Both cross-buffs (skill -> normal, normal -> skill) assumed active
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill", "normal"] } },
+      [{ key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) }]
+    ),
   ];
 }
 

@@ -1,5 +1,11 @@
-import { charStats } from "@/data/charStats";
-import { charactersById, weaponsById } from "@/data/constants";
+import { charactersById } from "@/data/constants";
+import {
+  getCharacterLevelStats,
+  getCharacterLevelTier,
+  getCharacterStatsSync,
+  getWeaponStatsAt90,
+  getWeaponStatsSync,
+} from "@/data/gameStatsLoader";
 import type {
   ArtifactData,
   BaseStat,
@@ -22,6 +28,7 @@ import type {
   DamageResult,
   DamageTag,
   DamageTagFilter,
+  ElementalOrPhysical,
   I18nLabel,
   InferOption,
   OptionDef,
@@ -41,12 +48,7 @@ export type FormulaEntry = {
 import { filterMatchesTag } from "./types";
 
 // Re-export buff and formula classes for convenient single-module imports
-export {
-  StatBuff,
-  StaticSkillBuff,
-  ScalingBuff,
-  ScalingSkillBuff,
-} from "./damageBuffs";
+export { StatBuff, ScalingBuff } from "./damageBuffs";
 export {
   DamageFormula,
   DirectFormula,
@@ -67,6 +69,40 @@ const SCALED_STAT_BASES = {
 const SCALED_PERCENT_KEYS = new Set<string>(
   Object.keys(SCALED_STAT_BASES).map((k) => `${k}%`)
 );
+
+/** Per-element/Physical DMG keys normalized to dmg% + element filter. */
+const ELEMENTAL_DMG_KEY_TO_ELEMENT: Partial<
+  Record<StatKey, ElementalOrPhysical>
+> = {
+  "pyro%": "Pyro",
+  "hydro%": "Hydro",
+  "electro%": "Electro",
+  "cryo%": "Cryo",
+  "dendro%": "Dendro",
+  "anemo%": "Anemo",
+  "geo%": "Geo",
+  "phys%": "Physical",
+};
+
+/**
+ * Convert an incoming stat entry to canonical form: per-element keys (pyro%, phys%, etc.)
+ * become dmg% with the corresponding element filter so the sheet stores one representation.
+ */
+function normalizeEntry(
+  key: StatKey,
+  value: number,
+  existingFilter: DamageTagFilter
+): { key: StatKey; value: number; filterKey: string } {
+  const element = ELEMENTAL_DMG_KEY_TO_ELEMENT[key];
+  if (element === undefined) {
+    return { key, value, filterKey: serializeFilter(existingFilter) };
+  }
+  const merged: DamageTagFilter = {
+    ...existingFilter,
+    elements: [element],
+  };
+  return { key: "dmg%", value, filterKey: serializeFilter(merged) };
+}
 
 // ─── DamageTagFilter serialization ───
 
@@ -119,12 +155,6 @@ function validateStatFilter(
 ): void {
   const label = `[${source.type}:${source.id}${source.origin ? `/${source.origin}` : ""}]`;
 
-  if (key === "dmg%" && filter.elements) {
-    throw new Error(
-      `${label} dmg% must not have an element filter — use the element-specific key (e.g. "pyro%") instead. Got elements: [${filter.elements}]`
-    );
-  }
-
   if (
     (key === "defReduction%" || key === "defIgnore%") &&
     (filter.elements || filter.reactions)
@@ -137,6 +167,22 @@ function validateStatFilter(
   if (key === "resReduction%" && filter.abilities) {
     throw new Error(
       `${label} resReduction% is not expected to have an ability filter. Ask for review for this case.`
+    );
+  }
+
+  if (key === "dmg%" && filter.reactions) {
+    throw new Error(
+      `${label} dmg% is not expected to have a reactions filter — reaction damage bonuses belong in reactionDmg%. Ask for review for this case.`
+    );
+  }
+
+  const lunarReactions = ["lunarCharged", "lunarCrystallize", "lunarBloom"];
+  if (
+    key === "elevated%" &&
+    filter.reactions?.some((r) => !lunarReactions.includes(r))
+  ) {
+    throw new Error(
+      `${label} elevated% is not expected to apply to non-lunar reactions — it is only consumed by LunarFormula/LunarDirectFormula. Ask for review for this case.`
     );
   }
 }
@@ -159,13 +205,19 @@ export class StatSheet {
 
   constructor(entries: StatEntry[], filterKey = EMPTY_FILTER_KEY) {
     this.data = new Map();
+    const baseFilter = deserializeFilter(filterKey);
     for (const { key, value } of entries) {
-      let bucket = this.data.get(key);
+      const {
+        key: storeKey,
+        value: storeValue,
+        filterKey: fk,
+      } = normalizeEntry(key, value, baseFilter);
+      let bucket = this.data.get(storeKey);
       if (!bucket) {
         bucket = new Map();
-        this.data.set(key, bucket);
+        this.data.set(storeKey, bucket);
       }
-      bucket.set(filterKey, (bucket.get(filterKey) ?? 0) + value);
+      bucket.set(fk, (bucket.get(fk) ?? 0) + storeValue);
     }
   }
 
@@ -302,15 +354,19 @@ export class StatSheet {
     }
     for (const buff of buffs) {
       const filter = extractFilter(buff.target);
-      const fk = serializeFilter(filter);
       for (const { key, value } of buff.staticBuffs) {
-        validateStatFilter(key, filter, buff.source);
-        let target = merged.get(key);
+        const {
+          key: storeKey,
+          value: storeValue,
+          filterKey: fk,
+        } = normalizeEntry(key, value, filter);
+        validateStatFilter(storeKey, deserializeFilter(fk), buff.source);
+        let target = merged.get(storeKey);
         if (!target) {
           target = new Map();
-          merged.set(key, target);
+          merged.set(storeKey, target);
         }
-        target.set(fk, (target.get(fk) ?? 0) + value);
+        target.set(fk, (target.get(fk) ?? 0) + storeValue);
       }
     }
     return StatSheet.fromData(merged);
@@ -399,11 +455,13 @@ import { charInfo } from "@/data/charInfo";
 export class TeamMeta {
   readonly characters: string[];
   readonly constellations: Record<string, number>;
-  readonly elements: Record<string, Element>;
-  readonly regions: Record<string, Region>;
+  /** From character_stats.json when loaded; undefined if character not in stats. */
+  readonly elements: Record<string, Element | undefined>;
+  readonly regions: Record<string, Region | undefined>;
+  /** Rarity from stats when present, else from CharacterResource. */
   readonly rarities: Record<string, Rarity>;
   readonly factions: Record<string, Faction>;
-  readonly weaponTypes: Record<string, WeaponType>;
+  readonly weaponTypes: Record<string, WeaponType | undefined>;
   readonly energies: Record<string, number>;
   readonly isHealer: Record<string, boolean>;
   readonly isShielder: Record<string, boolean>;
@@ -427,13 +485,15 @@ export class TeamMeta {
     this.isShielder = {};
     this.artifactSets = artifactSets;
 
+    const charStatsData = getCharacterStatsSync();
     for (const id of characterIds) {
       const resource = charactersById[id];
       if (!resource) throw new Error(`Unknown character ID: ${id}`);
-      this.elements[id] = resource.element;
-      this.regions[id] = resource.region;
-      this.rarities[id] = resource.rarity;
-      this.weaponTypes[id] = resource.weaponType;
+      const stats = charStatsData?.[id];
+      this.elements[id] = stats?.element;
+      this.regions[id] = stats?.region;
+      this.rarities[id] = (stats?.rarity ?? resource.rarity) as Rarity;
+      this.weaponTypes[id] = stats?.weaponType;
 
       const info = charInfo[id];
       const cons = constellations[id] ?? 0;
@@ -454,11 +514,14 @@ export class TeamMeta {
   }
 
   countByElement(element: Element): number {
-    return Object.values(this.elements).filter((e) => e === element).length;
+    return Object.values(this.elements).filter(
+      (e): e is Element => e === element
+    ).length;
   }
 
   countByRegion(region: Region): number {
-    return Object.values(this.regions).filter((r) => r === region).length;
+    return Object.values(this.regions).filter((r): r is Region => r === region)
+      .length;
   }
 
   countByFaction(faction: Faction): number {
@@ -473,7 +536,9 @@ export class TeamMeta {
     if (charId && !charEl) return false;
 
     // Check basic element requirements for the team and char participant
-    const teamElements = Object.values(this.elements);
+    const teamElements = Object.values(this.elements).filter(
+      (e): e is Element => e != null
+    );
     // Initialize to true if charId is undefined
     let charParticipates = !charId;
     const hasElements = req.requiredElements.every((group) => {
@@ -492,10 +557,10 @@ export class TeamMeta {
         const isNK5 =
           this.regions[id] === "Nod-Krai" && this.rarities[id] === 5;
         if (!isNK5) return false;
-
         const charEl = this.elements[id];
         return (
-          charEl && req.requiredElements.some((group) => group.includes(charEl))
+          charEl != null &&
+          req.requiredElements.some((group) => group.includes(charEl))
         );
       });
       if (!validNK5) return false;
@@ -526,25 +591,29 @@ function parseStatValue(raw: string): number {
 }
 
 /**
- * Build StatEntry[] from charStats.ts for a given character.
- * Uses Lv90 data when charLevel ≤ 90, Lv100 data otherwise.
- * Includes stat baselines (5% CR, 50% CD, 100% ER).
+ * Build StatEntry[] from character_stats.json for a given character.
+ * Level is mapped to tier (70/80/90/95/100). Includes stat baselines (5% CR, 50% CD, 100% ER).
+ * Requires game stats to be preloaded (e.g. via preloadGameStats() or useGameStats).
  */
 function resolveCharacterStats(charId: string, charLevel: number): StatEntry[] {
-  const data = charStats[charId];
-  if (!data) throw new Error(`No charStats entry for: ${charId}`);
+  const statsData = getCharacterStatsSync();
+  if (!statsData)
+    throw new Error(
+      "Character stats not loaded; call preloadGameStats() or use useGameStats() first."
+    );
+  const tier = getCharacterLevelTier(charLevel);
+  const levelStats = getCharacterLevelStats(statsData, charId, tier);
+  if (!levelStats)
+    throw new Error(`No character stats for: ${charId} at tier ${tier}`);
 
-  const tier = charLevel <= 90 ? data.Lv90 : data.Lv100;
   const entries: StatEntry[] = [];
-
-  for (const [key, raw] of Object.entries(tier)) {
+  for (const [key, raw] of Object.entries(levelStats)) {
     if (raw === undefined) continue;
     const value = parseStatValue(raw);
     if (value !== 0) {
       entries.push({ key: key as BaseStat, value });
     }
   }
-  // Stat baselines — included here so artifact-only StatSheets stay clean
   entries.push({ key: "cr", value: 0.05 });
   entries.push({ key: "cd", value: 0.5 });
   entries.push({ key: "er", value: 1.0 });
@@ -561,23 +630,28 @@ function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
   return Number.parseFloat(rawValue);
 }
 
-/** Build StatEntry[] from resources.ts for a given weapon */
+/** Build StatEntry[] from weapon_stats.json for a given weapon (L90). Requires game stats preloaded. */
 function resolveWeaponStats(weaponId: string): StatEntry[] {
-  const weapon = weaponsById[weaponId];
-  if (!weapon) throw new Error(`No weapon resource for: ${weaponId}`);
+  const statsData = getWeaponStatsSync();
+  if (!statsData)
+    throw new Error(
+      "Weapon stats not loaded; call preloadGameStats() or use useGameStats() first."
+    );
+  const entry = statsData[weaponId];
+  if (!entry) throw new Error(`No weapon stats for: ${weaponId}`);
+  const level90 = getWeaponStatsAt90(statsData, weaponId);
+  if (!level90) throw new Error(`No L90 weapon stats for: ${weaponId}`);
 
-  const entries: StatEntry[] = [{ key: "baseAtk", value: weapon.baseAtk }];
-
-  if (weapon.secondaryStat && weapon.secondaryStatValue) {
+  const entries: StatEntry[] = [{ key: "baseAtk", value: level90.baseAtk }];
+  if (entry.secondaryStat && level90.secondaryStatValue) {
     entries.push({
-      key: weapon.secondaryStat,
+      key: entry.secondaryStat,
       value: parseWeaponSecondary(
-        weapon.secondaryStat,
-        weapon.secondaryStatValue
+        entry.secondaryStat,
+        level90.secondaryStatValue
       ),
     });
   }
-
   return entries;
 }
 
@@ -587,7 +661,7 @@ function resolveWeaponStats(weaponId: string): StatEntry[] {
 
 /**
  * Base class for character extensions.
- * Stats are auto-resolved from charStats.ts including baselines.
+ * Stats are auto-resolved from character_stats.json including baselines.
  */
 export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Auto-resolved: base stats + baselines (5% CR, 50% CD, 100% ER) */

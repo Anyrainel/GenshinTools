@@ -17,7 +17,7 @@ import {
   charactersById,
 } from "@/data/constants";
 import type { CharacterData, Tier } from "@/data/types";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { Insight } from "@/lib/account-data/insightEngine";
 import { memo } from "react";
 import { InsightList } from "./InsightList";
@@ -26,7 +26,7 @@ interface RecommendationCardProps {
   char: CharacterData;
   tier?: Tier;
   insights?: Insight[];
-  score?: BuildAwareScoreResult;
+  score?: ArtifactScoreResult;
 }
 
 function RecommendationCardComponent({
@@ -180,7 +180,7 @@ function RecommendationCardComponent({
             })()}
 
           {/* Artifact Score - Bottom Right */}
-          {score?.isComplete && (
+          {score?.substatScore.isComplete && (
             <div className="flex flex-col gap-0 items-end justify-end leading-none shrink-0 self-end pb-2">
               <span className="text-muted-foreground font-bold text-xs leading-none">
                 {t.ui("accountData.score")}
@@ -199,7 +199,7 @@ function RecommendationCardComponent({
           <CardContent className="p-0 flex-1 bg-black/10 flex flex-col justify-end">
             <InsightList
               insights={insights ?? []}
-              isComplete={score?.isComplete}
+              isComplete={score?.substatScore.isComplete}
             />
           </CardContent>
         )}

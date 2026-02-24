@@ -1,18 +1,23 @@
 import { RecommendationView } from "@/components/account-data/RecommendationView";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { SubStat } from "@/data/types";
+import type {
+  ArtifactScoreResult,
+  StatScoreBreakdown,
+} from "@/lib/account-data/artifactScore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { render, screen } from "../../utils/render";
 
-const mockScoreResult: BuildAwareScoreResult = {
-  mainScore: 25,
-  subScore: 45,
-  slotMainScores: {},
-  slotSubScores: {},
-  slotMaxSubScores: {},
-  statScores: {},
-  isComplete: true,
-  matchedBuild: null,
+const mockScoreResult: ArtifactScoreResult = {
+  substatScore: {
+    subScore: 45,
+    slotSubScores: { flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0 },
+    slotMaxSubScores: { flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0 },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    statScores: {} as Record<SubStat, StatScoreBreakdown>,
+    isComplete: true,
+  },
+  buildMatch: null,
 };
 
 describe("RecommendationView", () => {

@@ -1,4 +1,4 @@
-import { ScalingBuff, StatBuff, StaticSkillBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
@@ -20,11 +20,10 @@ class Ifa extends CharacterBase {
       { key: "em", value: 80 },
     ]),
     // C4: After Q, self EM +100
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C4", ["Q"]),
       { receiver: "self" },
-      this.constellation,
-      (c) => (c >= 4 ? [{ key: "em", value: 100 }] : [])
+      this.constellation >= 4 ? [{ key: "em", value: 100 }] : []
     ),
   ];
 
@@ -35,9 +34,7 @@ class Ifa extends CharacterBase {
 @RegisterCharacter("iansan")
 class Iansan extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<
-      typeof StatBuff | typeof ScalingBuff | typeof StaticSkillBuff
-    >[] = [
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1: After Swift Stormflight hit, self ATK +20%
       new StatBuff(
         cbs(this, "P1", ["E", "charge"]),
@@ -111,11 +108,10 @@ class Iansan extends CharacterBase {
 class Ororon extends CharacterBase {
   readonly buffs = [
     // C6: After Hypersense, on-field ATK +30% (3 stacks × 10%)
-    new StaticSkillBuff(
+    new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "onField" },
-      this.constellation,
-      (c) => (c >= 6 ? [{ key: "atk%", value: 0.3 }] : [])
+      this.constellation >= 6 ? [{ key: "atk%", value: 0.3 }] : []
     ),
   ];
 
@@ -142,7 +138,7 @@ class Ororon extends CharacterBase {
 @RegisterCharacter("kachina")
 class Kachina extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: InstanceType<typeof StatBuff | typeof StaticSkillBuff>[] = [
+    const buffs: StatBuff[] = [
       // P1: After Nightsoul Burst, self Geo DMG +20%
       new StatBuff(cbs(this, "P1", ["nightsoul"]), { receiver: "self" }, [
         { key: "geo%", value: 0.2 },

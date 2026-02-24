@@ -71,7 +71,7 @@ export function DamageCardBody({
                 )}
               >
                 <div className="text-sm md:text-base text-primary/80 font-semibold tracking-wide">
-                  {t.ui("teamBuilder.totalExpectedDamage")}
+                  {t.ui("teamComp.totalExpectedDamage")}
                 </div>
                 <div className="text-foreground text-3xl md:text-4xl font-[math] font-black drop-shadow-sm">
                   {Math.round(damageValue).toLocaleString()}
@@ -79,7 +79,7 @@ export function DamageCardBody({
               </div>
             ) : (
               <div className="text-sm uppercase tracking-widest bg-primary/20 text-primary px-3 py-1 rounded font-mono font-bold">
-                {t.ui("teamBuilder.pending")}
+                {t.ui("teamComp.pending")}
               </div>
             )}
           </div>

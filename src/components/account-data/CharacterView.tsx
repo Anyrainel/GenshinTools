@@ -3,8 +3,9 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { CharacterFilters } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { BuildAwareScoreResult } from "@/lib/account-data/artifactScore";
+import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   defaultCharacterFilters,
   filterAndSortCharacterData,
@@ -17,11 +18,12 @@ import { useTierStore } from "@/stores/useTierStore";
 import { useCallback, useMemo, useState } from "react";
 
 interface CharacterViewProps {
-  scores: Record<string, BuildAwareScoreResult>;
+  scores: Record<string, ArtifactScoreResult>;
 }
 
 export function CharacterView({ scores }: CharacterViewProps) {
   const { t } = useLanguage();
+  const { characterStats } = useGameStats();
   const { accountData } = useAccountStore();
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
@@ -96,13 +98,12 @@ export function CharacterView({ scores }: CharacterViewProps) {
   // Filter and sort account characters using shared utility
   const filteredCharacters = useMemo(() => {
     if (!accountData) return [];
-    return filterAndSortCharacterData(
-      accountData.characters,
-      filters,
+    return filterAndSortCharacterData(accountData.characters, filters, {
       tierAssignments,
-      isCharacterOwned
-    );
-  }, [accountData, filters, tierAssignments, isCharacterOwned]);
+      isOwned: isCharacterOwned,
+      characterStatsMap: characterStats ?? undefined,
+    });
+  }, [accountData, filters, tierAssignments, isCharacterOwned, characterStats]);
 
   const activeFilters = hasActiveFilters(filters);
 

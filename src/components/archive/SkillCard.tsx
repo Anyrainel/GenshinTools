@@ -1,30 +1,51 @@
-import type { CharacterEffect, CharacterSkill } from "@/data/types";
+import { charInfo } from "@/data/charInfo";
+import type { CharacterSkill, SkillLevel } from "@/data/types";
+import { SKILL_LEVELS } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
-/** Strip the E./Q. prefix (and optional space) from a skill name for constellation matching */
-function stripSkillPrefix(name: string): string {
-  return name.replace(/^[EQ]\.\s*/, "");
+import {
+  LightweightSelect,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+
+const TALENT_SLOTS: ("A" | "E" | "Q")[] = ["A", "E", "Q"];
+
+function getDefaultLevels(
+  characterId: string,
+  skillIndex: number
+): [SkillLevel, SkillLevel] {
+  const info = charInfo[characterId];
+  const talent = TALENT_SLOTS[skillIndex] ?? "A";
+  const buffed = info && (info.c3Talent === talent || info.c5Talent === talent);
+  return buffed ? ["10", "13"] : ["6", "10"];
 }
 
 interface SkillCardProps {
   skill: CharacterSkill;
-  constellations: CharacterEffect[] | null;
+  characterId: string;
+  skillIndex: number;
 }
 
-export function SkillCard({ skill, constellations }: SkillCardProps) {
+export function SkillCard({ skill, characterId, skillIndex }: SkillCardProps) {
+  const defaultLevels = useMemo(
+    () => getDefaultLevels(characterId, skillIndex),
+    [characterId, skillIndex]
+  );
   const [expanded, setExpanded] = useState(true);
+  const [levels, setLevels] = useState<[SkillLevel, SkillLevel]>(defaultLevels);
 
-  // Lv.13 is only reachable when the 3rd or 5th constellation boosts this skill
-  const showLv13 = useMemo(() => {
-    if (!constellations) return false;
-    const bare = stripSkillPrefix(skill.name);
-    if (!bare) return false;
-    return [constellations[2], constellations[4]].some((c) =>
-      c?.descHtml.includes(bare)
-    );
-  }, [skill.name, constellations]);
+  const setLevelAt = (index: 0 | 1, value: SkillLevel) => {
+    setLevels((prev) => {
+      const next: [SkillLevel, SkillLevel] = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
 
   return (
     <div className="rounded-lg bg-card/50 border border-border/50 overflow-hidden">
@@ -45,35 +66,46 @@ export function SkillCard({ skill, constellations }: SkillCardProps) {
       </button>
       {expanded && (
         <div className="px-3 pb-3 border-t border-border/30">
-          {/* Side-by-side on wide screens: desc left, detail table right — equal halves */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             <div
               className="text-sm text-muted-foreground py-2 leading-relaxed skill-desc min-w-0"
               // biome-ignore lint/security/noDangerouslySetInnerHtml: Kit HTML from scraping pipeline
               dangerouslySetInnerHTML={{ __html: skill.descHtml }}
             />
-            {/* Detail table — fit content, centered, scrollable */}
             {skill.details.length > 0 && (
               <div className="overflow-x-auto">
-                <table className="text-sm w-auto mx-auto">
+                <table className="text-sm w-auto">
                   <thead>
                     <tr className="border-b border-border/30 text-muted-foreground">
                       <th className="text-left py-1 pr-4 font-medium whitespace-nowrap">
                         {/* label */}
                       </th>
-                      {skill.details[0]?.lv6 && (
-                        <th className="text-right py-1 px-2 font-medium whitespace-nowrap">
-                          Lv.6
+                      {[0, 1].map((colIndex) => (
+                        <th
+                          key={colIndex}
+                          className="py-1 px-2 font-medium whitespace-nowrap text-center"
+                        >
+                          <div className="flex justify-end">
+                            <LightweightSelect
+                              value={levels[colIndex]}
+                              onValueChange={(v) =>
+                                setLevelAt(colIndex as 0 | 1, v as SkillLevel)
+                              }
+                            >
+                              <LightweightSelectTrigger className="h-7 min-w-[4.5rem] w-12 font-medium bg-gradient-select">
+                                <LightweightSelectValue placeholder="Lv." />
+                              </LightweightSelectTrigger>
+                              <LightweightSelectContent>
+                                {SKILL_LEVELS.map((lv) => (
+                                  <LightweightSelectItem key={lv} value={lv}>
+                                    Lv.{lv}
+                                  </LightweightSelectItem>
+                                ))}
+                              </LightweightSelectContent>
+                            </LightweightSelect>
+                          </div>
                         </th>
-                      )}
-                      <th className="text-right py-1 px-2 font-medium whitespace-nowrap">
-                        Lv.10
-                      </th>
-                      {showLv13 && (
-                        <th className="text-right py-1 px-2 font-medium whitespace-nowrap">
-                          Lv.13
-                        </th>
-                      )}
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -85,19 +117,14 @@ export function SkillCard({ skill, constellations }: SkillCardProps) {
                         <td className="py-1 pr-4 text-muted-foreground whitespace-nowrap">
                           {detail.label}
                         </td>
-                        {detail.lv6 && (
-                          <td className="py-1 px-2 text-right tabular-nums whitespace-nowrap">
-                            {detail.lv6}
+                        {levels.map((lv) => (
+                          <td
+                            key={lv}
+                            className="py-1 px-2 text-right tabular-nums whitespace-nowrap"
+                          >
+                            {detail[lv] ?? ""}
                           </td>
-                        )}
-                        <td className="py-1 px-2 text-right tabular-nums whitespace-nowrap">
-                          {detail.lv10}
-                        </td>
-                        {showLv13 && (
-                          <td className="py-1 px-2 text-right tabular-nums font-medium text-foreground whitespace-nowrap">
-                            {detail.lv13}
-                          </td>
-                        )}
+                        ))}
                       </tr>
                     ))}
                   </tbody>

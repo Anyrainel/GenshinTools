@@ -83,12 +83,6 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
         content: t.ui("tour.accountData.recommendationsContent"),
         side: "bottom",
       },
-      {
-        id: "ad-weights",
-        title: t.ui("tour.accountData.weightsTitle"),
-        content: t.ui("tour.accountData.weightsContent"),
-        side: "bottom",
-      },
     ],
   },
 ];

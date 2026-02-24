@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData, SubStat } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn, getRarityColor } from "@/lib/utils";
 import { SlotProgressIndicator } from "./SlotProgressIndicator";
@@ -80,7 +80,8 @@ export function StatDisplay({
       {/* Substats */}
       <div className="space-y-0.5">
         {Object.entries(artifact.substats).map(([key, val]) => {
-          const weight = scoreResult?.statScores[key]?.weight || 0;
+          const weight =
+            scoreResult?.substatScore.statScores[key as SubStat]?.weight || 0;
           // If no scoreResult (inventory), treat as weight=1 (active/visible)
           return renderStatLine(key, val, scoreResult ? weight : 1);
         })}

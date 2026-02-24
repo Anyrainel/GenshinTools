@@ -1,0 +1,972 @@
+{
+  "teams": [
+    {
+      "id": "team-1771643514235",
+      "name": "",
+      "characters": ["nefer", "lauma", "columbina", "nilou"],
+      "weapons": [
+        "reliquary_of_truth",
+        "nightweavers_looking_glass",
+        "nocturnes_curtain_call",
+        "key_of_khajnisut"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "night_of_the_skys_unveiling"
+        },
+        {
+          "type": "4pc",
+          "setId": "deepwood_memories"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["lunarBloom"],
+      "opts": {
+        "columbina.overrideLevel": "100",
+        "nefer.overrideLevel": "100"
+      },
+      "targetEr": {},
+      "selectedFormula": {
+        "charId": "nefer",
+        "formulaId": "nefer-phantasm"
+      },
+      "optimizationResult": null,
+      "calcContext": {
+        "assumeCrit": false,
+        "enemyLevel": 110
+      }
+    },
+    {
+      "id": "team-1771643520266",
+      "name": "",
+      "characters": ["flins", "ineffa", "columbina", "sucrose"],
+      "weapons": [
+        "bloodsoaked_ruins",
+        "fractured_halo",
+        "nocturnes_curtain_call",
+        "thrilling_tales_of_dragon_slayers"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "night_of_the_skys_unveiling"
+        },
+        {
+          "type": "4pc",
+          "setId": "aubade_of_morningstar_and_moon"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "viridescent_venerer"
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771847983691",
+      "name": "",
+      "characters": ["zibai", "illuga", "columbina", "gorou"],
+      "weapons": [
+        "lightbearing_moonshard",
+        "favonius_lance",
+        "nocturnes_curtain_call",
+        "favonius_warbow"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "night_of_the_skys_unveiling"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "aubade_of_morningstar_and_moon"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["lunarCrystallize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848139764",
+      "name": "",
+      "characters": ["venti", "durin", "bennett", "faruzan"],
+      "weapons": [
+        "the_daybreak_chronicles",
+        "athame_artis",
+        "skyward_blade",
+        "favonius_warbow"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848306545",
+      "name": "",
+      "characters": ["skirk", "escoffier", "furina", "shenhe"],
+      "weapons": [
+        "azurelight",
+        "symphonist_of_scents",
+        "freedomsworn",
+        "calamity_queller"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "finale_of_the_deep_galleries"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["frozen"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848437768",
+      "name": "",
+      "characters": ["varesa", "iansan", "chevreuse", "bennett"],
+      "weapons": [
+        "vivid_notions",
+        "skyward_spine",
+        "dialogues_of_the_desert_sages",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "long_nights_oath"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "song_of_days_past"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["overloaded"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848608488",
+      "name": "",
+      "characters": ["varesa", "iansan", "furina", "xianyun"],
+      "weapons": [
+        "vivid_notions",
+        "skyward_spine",
+        "freedomsworn",
+        "cranes_echoing_call"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "long_nights_oath"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "2pc+2pc",
+          "id1": "atk%-18",
+          "id2": "atk%-18"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848711969",
+      "name": "",
+      "characters": ["mavuika", "citlali", "xilonen", "kaedehara_kazuha"],
+      "weapons": [
+        "a_thousand_blazing_suns",
+        "starcallers_watch",
+        "peak_patrol_song",
+        "freedomsworn"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        },
+        {
+          "type": "4pc",
+          "setId": "viridescent_venerer"
+        }
+      ],
+      "reactions": ["melt"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848794407",
+      "name": "",
+      "characters": ["mualani", "mavuika", "citlali", "xilonen"],
+      "weapons": [
+        "surfs_up",
+        "a_thousand_blazing_suns",
+        "starcallers_watch",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["melt", "vaporize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848861568",
+      "name": "",
+      "characters": ["chasca", "citlali", "xilonen", "bennett"],
+      "weapons": [
+        "astral_vultures_crimson_plumage",
+        "starcallers_watch",
+        "peak_patrol_song",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["melt"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771848905723",
+      "name": "",
+      "characters": ["chasca", "citlali", "furina", "bennett"],
+      "weapons": [
+        "astral_vultures_crimson_plumage",
+        "starcallers_watch",
+        "key_of_khajnisut",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["melt", "vaporize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771856864905",
+      "name": "",
+      "characters": ["kinich", "emilie", "durin", "bennett"],
+      "weapons": [
+        "fang_of_the_mountain_king",
+        "lumidouce_elegy",
+        "athame_artis",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "obsidian_codex"
+        },
+        {
+          "type": "4pc",
+          "setId": "unfinished_reverie"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "deepwood_memories"
+        }
+      ],
+      "reactions": ["burning"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771857020330",
+      "name": "",
+      "characters": ["clorinde", "chevreuse", "durin", "fischl"],
+      "weapons": [
+        "absolution",
+        "dialogues_of_the_desert_sages",
+        "athame_artis",
+        "elegy_for_the_end"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "fragment_of_harmonic_whimsy"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        }
+      ],
+      "reactions": ["overloaded"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771857546287",
+      "name": "",
+      "characters": ["clorinde", "columbina", "ineffa", "xilonen"],
+      "weapons": [
+        "absolution",
+        "nocturnes_curtain_call",
+        "fractured_halo",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "fragment_of_harmonic_whimsy"
+        },
+        {
+          "type": "4pc",
+          "setId": "aubade_of_morningstar_and_moon"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771857646622",
+      "name": "",
+      "characters": ["arlecchino", "citlali", "xilonen", "bennett"],
+      "weapons": [
+        "crimson_moons_semblance",
+        "starcallers_watch",
+        "peak_patrol_song",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "fragment_of_harmonic_whimsy"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["melt"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771857737489",
+      "name": "",
+      "characters": ["arlecchino", "furina", "yelan", "bennett"],
+      "weapons": [
+        "crimson_moons_semblance",
+        "key_of_khajnisut",
+        "aqua_simulacra",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "fragment_of_harmonic_whimsy"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "emblem_of_severed_fate"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["vaporize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771858045986",
+      "name": "",
+      "characters": ["chiori", "xilonen", "gorou", "furina"],
+      "weapons": [
+        "uraku_misugiri",
+        "peak_patrol_song",
+        "favonius_warbow",
+        "freedomsworn"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "husk_of_opulent_dreams"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "husk_of_opulent_dreams"
+        },
+        {
+          "type": "4pc",
+          "setId": "golden_troupe"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771858310163",
+      "name": "",
+      "characters": ["xianyun", "furina", "faruzan", "bennett"],
+      "weapons": [
+        "vivid_notions",
+        "freedomsworn",
+        "favonius_warbow",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "2pc+2pc",
+          "id1": "atk%-18",
+          "id2": "atk%-18"
+        },
+        {
+          "type": "4pc",
+          "setId": "golden_troupe"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771858488452",
+      "name": "",
+      "characters": ["furina", "xianyun", "durin", "citlali"],
+      "weapons": [
+        "splendor_of_tranquil_waters",
+        "cranes_echoing_call",
+        "athame_artis",
+        "starcallers_watch"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "long_nights_oath"
+        },
+        {
+          "type": "2pc+2pc",
+          "id1": "atk%-18",
+          "id2": "atk%-18"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        }
+      ],
+      "reactions": ["vaporize", "melt"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771858835978",
+      "name": "",
+      "characters": ["navia", "columbina", "furina", "xilonen"],
+      "weapons": [
+        "verdict",
+        "nocturnes_curtain_call",
+        "splendor_of_tranquil_waters",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "nighttime_whispers_in_the_echoing_woods"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        }
+      ],
+      "reactions": ["lunarCrystallize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771859270091",
+      "name": "",
+      "characters": ["neuvillette", "furina", "citlali", "xilonen"],
+      "weapons": [
+        "tome_of_the_eternal_flow",
+        "splendor_of_tranquil_waters",
+        "starcallers_watch",
+        "peak_patrol_song"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "marechaussee_hunter"
+        },
+        {
+          "type": "4pc",
+          "setId": "golden_troupe"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "husk_of_opulent_dreams"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771859420370",
+      "name": "",
+      "characters": ["wriothesley", "durin", "bennett", "shenhe"],
+      "weapons": [
+        "cashflow_supervision",
+        "athame_artis",
+        "skyward_blade",
+        "calamity_queller"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "marechaussee_hunter"
+        },
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["melt"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771859645251",
+      "name": "",
+      "characters": ["lyney", "durin", "chevreuse", "fischl"],
+      "weapons": [
+        "the_first_great_magic",
+        "athame_artis",
+        "symphonist_of_scents",
+        "elegy_for_the_end"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "marechaussee_hunter"
+        },
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        }
+      ],
+      "reactions": ["overloaded"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771859838575",
+      "name": "",
+      "characters": ["alhaitham", "nahida", "xingqiu", "kuki_shinobu"],
+      "weapons": [
+        "light_of_foliar_incision",
+        "a_thousand_floating_dreams",
+        "sacrificial_sword",
+        "xiphos_moonlight"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "gilded_dreams"
+        },
+        {
+          "type": "4pc",
+          "setId": "deepwood_memories"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        },
+        {
+          "type": "4pc",
+          "setId": "flower_of_paradise_lost"
+        }
+      ],
+      "reactions": ["hyperbloom"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771860215386",
+      "name": "",
+      "characters": ["wanderer", "faruzan", "durin", "bennett"],
+      "weapons": [
+        "tulaytullahs_remembrance",
+        "favonius_warbow",
+        "athame_artis",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "desert_pavilion_chronicle"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": [],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771859994709",
+      "name": "",
+      "characters": ["nilou", "nahida", "lauma", "sangonomiya_kokomi"],
+      "weapons": [
+        "key_of_khajnisut",
+        "a_thousand_floating_dreams",
+        "nightweavers_looking_glass",
+        "sacrificial_fragments"
+      ],
+      "artifacts": [
+        {
+          "type": "2pc+2pc",
+          "id1": "hp%-20",
+          "id2": "hp%-20"
+        },
+        {
+          "type": "4pc",
+          "setId": "gilded_dreams"
+        },
+        {
+          "type": "4pc",
+          "setId": "deepwood_memories"
+        },
+        {
+          "type": "4pc",
+          "setId": "flower_of_paradise_lost"
+        }
+      ],
+      "reactions": ["bloom"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771860334629",
+      "name": "",
+      "characters": ["kamisato_ayaka", "escoffier", "furina", "shenhe"],
+      "weapons": [
+        "mistsplitter_reforged",
+        "symphonist_of_scents",
+        "freedomsworn",
+        "calamity_queller"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "blizzard_strayer"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["frozen"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771860474139",
+      "name": "",
+      "characters": ["raiden_shogun", "furina", "xilonen", "columbina"],
+      "weapons": [
+        "staff_of_the_scarlet_sands",
+        "freedomsworn",
+        "peak_patrol_song",
+        "nocturnes_curtain_call"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "emblem_of_severed_fate"
+        },
+        {
+          "type": "4pc",
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "type": "4pc",
+          "setId": "scroll_of_the_hero_of_cinder_city"
+        },
+        {
+          "type": "4pc",
+          "setId": "aubade_of_morningstar_and_moon"
+        }
+      ],
+      "reactions": ["lunarCharged"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    }
+  ],
+  "author": "GGArtifact",
+  "description": "战舰队伍 Flagship Teams"
+}

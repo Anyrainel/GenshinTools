@@ -1,12 +1,16 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charStats } from "@/data/charStats";
 import type { BaseStat } from "@/data/types";
+import { useGameStats } from "@/hooks/useGameStats";
 
 const BASE_STAT_KEYS = ["baseHp", "baseAtk", "baseDef", "em"] as const;
 
 export function BaseStatsTable({ characterId }: { characterId: string }) {
   const { t } = useLanguage();
-  const stats = charStats[characterId];
+  const { characterStats, ready } = useGameStats();
+  const entry = ready && characterStats ? characterStats[characterId] : null;
+  const stats = entry
+    ? { Lv90: entry.levels["90"] ?? {}, Lv100: entry.levels["100"] ?? {} }
+    : null;
   if (!stats) return null;
 
   const ascensionStat = Object.keys(stats.Lv90).find(
