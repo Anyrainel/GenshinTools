@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamResonance, isBuffApplicable } from "@/lib/team-comp/damageCalc";
 import { StatBuff, TeamMeta } from "@/lib/team-comp/damageModels";
 
@@ -136,7 +136,7 @@ describe("isBuffApplicable — buff routing", () => {
     receiver: "self" | "selfOffField" | "selfOnField" | "onField" | "team"
   ) =>
     new StatBuff(
-      { type: "character", id: ownerId, origin: "test" },
+      { type: "character", id: ownerId, origin: "C1" },
       { receiver },
       [{ key: "atk%", value: 0.1 }]
     );

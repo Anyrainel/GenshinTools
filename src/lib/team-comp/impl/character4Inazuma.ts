@@ -1,7 +1,12 @@
-import { ScalingBuff, StatBuff } from "../damageBuffs";
+import { CrossScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula, TransformFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
+import {
+  CharacterBase,
+  RegisterCharacter,
+  resolveOption,
+} from "../damageModels";
 import { cbs } from "../helpers";
+import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Inazuma Characters
@@ -50,7 +55,7 @@ class ShikanoinHeizou extends CharacterBase {
     const qMult = this.constellation >= 5 ? 6.687 : 5.664;
     return {
       "heizou-skill": {
-        label: { zh: "勠心拳(正论)", en: "Heartstopper Strike (Conviction)" },
+        label: { zh: "E(正论)", en: "E (Full Conviction)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -62,7 +67,7 @@ class ShikanoinHeizou extends CharacterBase {
         ],
       },
       "heizou-burst": {
-        label: { zh: "聚风蹴(真空弹)", en: "Vacuum Slugger" },
+        label: { zh: "Q(真空弹)", en: "Q (Vacuum Slug)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -77,8 +82,20 @@ class ShikanoinHeizou extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("kuki_shinobu")
+const kukiOption = {
+  label: { zh: "HP状态", en: "HP State" },
+  choices: [
+    { value: "high", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
+    { value: "low", label: { zh: "HP ≤ 50%", en: "HP ≤ 50%" } },
+    { value: "critical", label: { zh: "HP < 25%", en: "HP < 25%" } },
+  ] as const,
+  default: "low",
+} satisfies OptionDef;
+
+@RegisterCharacter("kuki_shinobu", kukiOption)
 class KukiShinobu extends CharacterBase {
+  private readonly hpState = resolveOption(kukiOption, this.option);
+
   readonly buffs = [
     // P2: E ring DMG boosted by EM×25% (as flat baseDmg per hit)
     new ScalingBuff(
@@ -89,22 +106,26 @@ class KukiShinobu extends CharacterBase {
       "baseDmg",
       0.25
     ),
-    // C6: Self EM +150 when HP < 25%
+    // C6: Self EM +150 when HP < 25% (S6: conditional on CombatOpts)
     new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField" },
-      this.constellation >= 6 ? [{ key: "em", value: 150 }] : []
+      this.constellation >= 6 && this.hpState === "critical"
+        ? [{ key: "em", value: 150 }]
+        : []
     ),
   ];
 
-  // Q: Single hit 6.5%/7.7% HP, 7 hits normal duration (total ~45.4%/53.6% HP)
+  // Q: Single hit 6.5%/7.7% HP
+  // HP ≥ 50%: normal duration → 7 hits; HP ≤ 50%: extended duration → 12 hits
   // Lv13 (C5+) single hit 7.7% HP
   protected readonly formulaMap = (() => {
     const qHitMult = this.constellation >= 5 ? 0.077 : 0.065;
+    const qHits = this.hpState === "high" ? 7 : 12;
     const canHyperbloom = this.teamMeta.hasReaction("hyperbloom");
     return {
       "shinobu-burst": {
-        label: { zh: "刈山祭(×7)", en: "Kariyama Rite (×7)" },
+        label: { zh: `Q×${qHits}`, en: `Q (×${qHits})` },
         parts: [
           {
             formula: new DirectFormula(
@@ -116,7 +137,7 @@ class KukiShinobu extends CharacterBase {
               },
               "hp"
             ),
-            hits: 7,
+            hits: qHits,
           },
         ],
       },
@@ -142,9 +163,48 @@ class KukiShinobu extends CharacterBase {
 
 @RegisterCharacter("sayu")
 class Sayu extends CharacterBase {
-  // Pure healer/VV support — no damage-relevant buffs
-  readonly buffs: StatBuff[] = [];
-  protected readonly formulaMap = {};
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    // C6: EM → extra flat Daruma ATK-scaled damage
+    // Per EM point: +0.2% ATK bonus damage on Daruma, capped at 400% ATK total extra
+    // output = min(em × 0.002, 4.0) × atk → baseDmg
+    if (this.constellation >= 6) {
+      buffs.push(
+        new CrossScalingBuff(
+          cbs(this, "C6", ["Q"]),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [],
+          "em",
+          0.002,
+          4.0,
+          "atk",
+          "baseDmg"
+        )
+      );
+    }
+
+    return buffs;
+  })();
+
+  protected readonly formulaMap = (() => {
+    // Muji-Muji Daruma DMG: Lv10 = 94%, Lv13 (C3+) = 110%
+    const darumaScaling = this.constellation >= 3 ? 1.1 : 0.94;
+    return {
+      "sayu-daruma": {
+        label: { zh: "E貉貉", en: "E Daruma" },
+        parts: [
+          {
+            formula: new DirectFormula(darumaScaling, {
+              element: "Anemo",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("thoma")
@@ -168,7 +228,7 @@ class Thoma extends CharacterBase {
     const qMult = this.constellation >= 5 ? 1.23 : 1.04;
     return {
       "thoma-burst-collapse": {
-        label: { zh: "炽火崩破(持续)", en: "Fiery Collapse (DoT)" },
+        label: { zh: "Q持续", en: "Q Collapse" },
         parts: [
           {
             formula: new DirectFormula(
@@ -245,10 +305,10 @@ class KujouSara extends CharacterBase {
       "atk",
       this.constellation >= 5 ? 0.91 : 0.77
     ),
-    // C6: Buffed characters gain +60% Electro CD
+    // C6: Buffed characters gain +60% Electro CRIT DMG
     new StatBuff(
       cbs(this, "C6", ["E", "Q"]),
-      { receiver: "onField" },
+      { receiver: "onField", filter: { elements: ["Electro"] } },
       this.constellation >= 6 ? [{ key: "cd", value: 0.6 }] : []
     ),
   ];
@@ -261,8 +321,8 @@ class KujouSara extends CharacterBase {
     return {
       "sara-burst": {
         label: {
-          zh: `Q天狗咒雷·金刚坏+${clusterCount}次雷砾伤害`,
-          en: `Q Koukou Sendou (Titanbreaker+${clusterCount}×Cluster)`,
+          zh: `Q初始+雷砾×${clusterCount}`,
+          en: `Q Titanbreaker + ${clusterCount}×Cluster`,
         },
         parts: [
           {

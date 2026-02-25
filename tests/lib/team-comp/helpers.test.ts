@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   allElementalDmg,
-  getReactionAttachElements,
+  getReactionAuraElements,
   r,
 } from "@/lib/team-comp/helpers";
 
@@ -49,7 +49,7 @@ describe("allElementalDmg", () => {
 
 describe("getReactionAttachElements", () => {
   it("Pyro reacts with Hydro, Electro, Cryo, Dendro", () => {
-    const els = getReactionAttachElements("Pyro");
+    const els = getReactionAuraElements("Pyro");
     expect(els).toContain("Hydro");
     expect(els).toContain("Electro");
     expect(els).toContain("Cryo");
@@ -58,13 +58,13 @@ describe("getReactionAttachElements", () => {
   });
 
   it("Cryo does NOT react with Dendro", () => {
-    const els = getReactionAttachElements("Cryo");
+    const els = getReactionAuraElements("Cryo");
     expect(els).not.toContain("Dendro");
     expect(els).toHaveLength(3);
   });
 
   it("Anemo reacts with PHEC", () => {
-    const els = getReactionAttachElements("Anemo");
+    const els = getReactionAuraElements("Anemo");
     expect(els).toHaveLength(4);
     expect(els).toContain("Pyro");
     expect(els).toContain("Hydro");

@@ -51,7 +51,7 @@ export function allElementalDmg(value: number): StatEntry[] {
 
 // ─── Reaction Proc Table (for Scroll of the Hero of Cinder City) ───
 // Maps a proc element to the attach elements it reacts with.
-const REACTION_ATTACH_ELEMENTS: Record<Element, readonly Element[]> = {
+const REACTION_TO_AURA_ELEMENTS: Record<Element, readonly Element[]> = {
   Pyro: ["Hydro", "Electro", "Cryo", "Dendro"],
   Hydro: ["Pyro", "Electro", "Cryo", "Dendro"],
   Electro: ["Pyro", "Hydro", "Cryo", "Dendro"],
@@ -61,8 +61,8 @@ const REACTION_ATTACH_ELEMENTS: Record<Element, readonly Element[]> = {
   Geo: ["Pyro", "Hydro", "Electro", "Cryo"],
 };
 
-export function getReactionAttachElements(
-  procElement: Element
+export function getReactionAuraElements(
+  triggerElement: Element
 ): readonly Element[] {
-  return REACTION_ATTACH_ELEMENTS[procElement];
+  return REACTION_TO_AURA_ELEMENTS[triggerElement];
 }

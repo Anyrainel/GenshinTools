@@ -14,15 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/data/gameStatsLoader";
 import type { Build, CharacterResource } from "@/data/types";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Eye, EyeOff, Plus, RotateCcw } from "lucide-react";

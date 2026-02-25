@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { useGameStats } from "@/hooks/useGameStats";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 
 interface CharacterTooltipProps {

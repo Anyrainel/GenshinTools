@@ -11,10 +11,13 @@ import type { OptionDef, StatKey } from "../types";
 class SacrificersStaff extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      { key: "atk%", value: r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) },
+      {
+        key: "atk%",
+        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+      },
       {
         key: "er",
-        value: r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+        value: 3 * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
       },
     ]),
   ];
@@ -25,22 +28,30 @@ class ProspectorsShovel extends WeaponBase {
   get buffs() {
     const isAscendant = this.teamMeta.countByRegion("Nod-Krai") >= 2;
     return [
-      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
-        {
-          key: "reactionDmg%",
-          value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
-        },
-      ]),
-      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
-        {
-          key: "reactionDmg%",
-          value:
-            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
-            (isAscendant
-              ? r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
-              : 0),
-        },
-      ]),
+      new StatBuff(
+        wbs(this, ["moonsign"]),
+        { receiver: "self", filter: { reactions: ["electroCharged"] } },
+        [
+          {
+            key: "reactionDmg%",
+            value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
+          },
+        ]
+      ),
+      new StatBuff(
+        wbs(this, ["moonsign"]),
+        { receiver: "self", filter: { reactions: ["lunarCharged"] } },
+        [
+          {
+            key: "reactionDmg%",
+            value:
+              r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
+              (isAscendant
+                ? r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])
+                : 0),
+          },
+        ]
+      ),
     ];
   }
 }
@@ -215,16 +226,20 @@ class WavebreakersFin extends WeaponBase {
       totalEnergy += this.teamMeta.energies[id] ?? 0;
     }
     return [
-      new StatBuff(wbs(this), { receiver: "self" }, [
-        {
-          key: "dmg%",
-          value: Math.min(
-            totalEnergy *
-              r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
-            r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
-          ),
-        },
-      ]),
+      new StatBuff(
+        wbs(this),
+        { receiver: "self", filter: { abilities: ["burst"] } },
+        [
+          {
+            key: "dmg%",
+            value: Math.min(
+              totalEnergy *
+                r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
+              r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
+            ),
+          },
+        ]
+      ),
     ];
   }
 }
@@ -244,12 +259,16 @@ class RoyalSpear extends WeaponBase {
 @RegisterWeapon("kitain_cross_spear")
 class KitainCrossSpear extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+        },
+      ]
+    ),
   ];
 }
 

@@ -13,13 +13,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  getWeaponDisplayMeta,
-  getWeaponStatsAt90,
-} from "@/data/gameStatsLoader";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+  getWeaponDisplayMeta,
+  getWeaponStatsAt90,
+} from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Bookmark } from "lucide-react";

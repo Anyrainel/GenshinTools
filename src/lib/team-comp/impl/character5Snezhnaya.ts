@@ -301,7 +301,7 @@ class Arlecchino extends CharacterBase {
     return {
       "arlecchino-normal": {
         label: {
-          zh: "A 普攻连段(6段7击)",
+          zh: "普攻6段7击",
           en: "A Normal Combo (6-Hit 7-Strike)",
         },
         parts: comboParts,
@@ -389,7 +389,7 @@ class Tartaglia extends CharacterBase {
     const blastMult = this.constellation >= 5 ? 2.55 : 2.16;
     return {
       "tartaglia-melee-combo": {
-        label: { zh: "E 魔王武装 N3C 连击", en: "E Melee N3C Combo" },
+        label: { zh: "E普攻+重击", en: "E Melee N3C Combo" },
         parts: [
           {
             formula: new DirectFormula(eMult, {

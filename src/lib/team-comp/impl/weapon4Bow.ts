@@ -64,32 +64,34 @@ class FlowerWreathedFeathers extends WeaponBase {
 
 @RegisterWeapon("chain_breaker")
 class ChainBreaker extends WeaponBase {
-  // ATK% per Natlan teammate, EM per teammate with different element
+  // ATK% per member who is from Natlan OR has a different element from wielder
+  // EM bonus (flat) when qualifying count >= 3
   get buffs() {
-    const natlanCount = this.teamMeta.countByRegion("Natlan");
     const wielderElement = this.teamMeta.elements[this.charId];
-    let diffElementCount = 0;
-    for (const [id, el] of Object.entries(this.teamMeta.elements)) {
+    let qualifyingCount = 0;
+    for (const id of this.teamMeta.characters) {
       if (id === this.charId) continue;
-      if (el !== wielderElement) diffElementCount++;
+      const isNatlan = this.teamMeta.regions[id] === "Natlan";
+      const isDiffElement = this.teamMeta.elements[id] !== wielderElement;
+      if (isNatlan || isDiffElement) qualifyingCount++;
     }
-    return [
-      new StatBuff(wbs(this), { receiver: "self" }, [
-        {
-          key: "atk%",
-          value:
-            natlanCount *
-            r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]),
-        },
-        {
-          key: "em",
-          value: diffElementCount * r(this.refinement, [24, 30, 36, 42, 48]),
-        },
-      ]),
+    const stats: Array<{ key: StatKey; value: number }> = [
+      {
+        key: "atk%",
+        value:
+          qualifyingCount *
+          r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]),
+      },
     ];
+    if (qualifyingCount >= 3) {
+      stats.push({
+        key: "em",
+        value: r(this.refinement, [24, 30, 36, 42, 48]),
+      });
+    }
+    return [new StatBuff(wbs(this), { receiver: "self" }, stats)];
   }
 }
-
 @RegisterWeapon("cloudforged")
 class Cloudforged extends WeaponBase {
   // 2-stack EM after energy decrease
@@ -317,16 +319,20 @@ class MouunsMoon extends WeaponBase {
       totalEnergy += this.teamMeta.energies[id] ?? 0;
     }
     return [
-      new StatBuff(wbs(this), { receiver: "self" }, [
-        {
-          key: "dmg%",
-          value: Math.min(
-            totalEnergy *
-              r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
-            r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
-          ),
-        },
-      ]),
+      new StatBuff(
+        wbs(this),
+        { receiver: "self", filter: { abilities: ["burst"] } },
+        [
+          {
+            key: "dmg%",
+            value: Math.min(
+              totalEnergy *
+                r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
+              r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
+            ),
+          },
+        ]
+      ),
     ];
   }
 }

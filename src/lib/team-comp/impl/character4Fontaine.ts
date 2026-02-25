@@ -31,11 +31,12 @@ class Chevreuse extends CharacterBase {
       );
     }
 
-    // P2: Per 1000 Max HP → Pyro/Electro team ATK +1% (cap 40%)
+    // P2: Per 1000 Max HP → Pyro/Electro party members ATK +1% (cap 40%)
+    // Only benefits Pyro and Electro characters per game text
     buffs.push(
       new ScalingBuff(
         cbs(this, "P2", ["E"]),
-        { receiver: "team" },
+        { receiver: "team", filter: { elements: ["Pyro", "Electro"] } },
         [],
         "hp",
         "atk%",
@@ -44,37 +45,59 @@ class Chevreuse extends CharacterBase {
       )
     );
 
-    // C6: After E heal, Pyro/Electro DMG +20% per stack (max 3 = 60%)
+    // C6: After E heal, team Pyro DMG +60% and Electro DMG +60% (20% × 3 stacks)
+    // Game text: "20%火元素伤害加成与雷元素伤害加成" → element-specific keys
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(
-          cbs(this, "C6", ["E"]),
-          {
-            receiver: "team",
-            filter: { elements: ["Pyro", "Electro"] },
-          },
-          [{ key: "dmg%", value: 0.6 }]
-        )
+        new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
+          { key: "pyro%", value: 0.6 },
+          { key: "electro%", value: 0.6 },
+        ])
       );
     }
 
     return buffs;
   })();
 
-  protected readonly formulaMap = {};
+  // C2: Hold-E hit triggers 2 chain explosions, each 120% ATK Pyro Skill DMG (once/10s)
+  // Per-instance damage is fully known → add formula; "once/10s" frequency is irrelevant
+  // to per-hit optimization (Q1 of decision tree).
+  protected readonly formulaMap = (() => ({
+    ...(this.constellation >= 2
+      ? {
+          "chevreuse-c2-chain": {
+            label: {
+              zh: "C2 连锁殉爆伤害",
+              en: "C2 Chain Explosion DMG",
+            },
+            parts: [
+              {
+                formula: new DirectFormula(1.2, {
+                  element: "Pyro",
+                  ability: "skill",
+                  reaction: "none",
+                }),
+                hits: 2,
+              },
+            ],
+          },
+        }
+      : {}),
+  }))();
 }
 
 @RegisterCharacter("charlotte")
 class Charlotte extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
-    // P2: Non-Fontaine teammates → Cryo DMG bonus (5%/10%/15%)
+    // P2: Per non-Fontaine party member → Charlotte's own Cryo DMG +5% (max 15%)
+    // No on-field condition in game text — "夏洛蒂自己" is a generic personal buff
     const nonFontaine = this.teamMeta.characters.filter(
       (id) => id !== this.charId && this.teamMeta.regions[id] !== "Fontaine"
     ).length;
     if (nonFontaine > 0) {
       buffs.push(
-        new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
           { key: "cryo%", value: Math.min(nonFontaine, 3) * 0.05 },
         ])
       );
@@ -90,8 +113,31 @@ class Charlotte extends CharacterBase {
     return buffs;
   })();
 
-  // Healer — no significant damage formulas
-  protected readonly formulaMap = {};
+  // C6: Active character NA/CA hitting Focused Impression enemy triggers coordinated attack
+  // → 180% ATK Cryo DMG counted as Elemental Burst (once/6s).
+  // Per-instance damage is fully known → add formula; "once/6s" frequency is irrelevant
+  // to per-hit optimization (Q1 of decision tree).
+  protected readonly formulaMap = (() => ({
+    ...(this.constellation >= 6
+      ? {
+          "charlotte-c6-coord": {
+            label: {
+              zh: "C6 协同攻击伤害",
+              en: "C6 Coordinated Attack DMG",
+            },
+            parts: [
+              {
+                formula: new DirectFormula(1.8, {
+                  element: "Cryo",
+                  ability: "burst",
+                  reaction: "none",
+                }),
+              },
+            ],
+          },
+        }
+      : {}),
+  }))();
 }
 
 @RegisterCharacter("freminet")
@@ -153,7 +199,7 @@ class Freminet extends CharacterBase {
     const eLv4Mult = this.constellation >= 5 ? 5.173 : 4.382;
     return {
       "freminet-shatter-lv4": {
-        label: { zh: "四阶高压粉碎", en: "Lv4 Shattering Pressure" },
+        label: { zh: "E四阶", en: "E Stage 4" },
         parts: [
           {
             formula: new DirectFormula(eLv4Mult, {
@@ -165,7 +211,7 @@ class Freminet extends CharacterBase {
         ],
       },
       "freminet-burst": {
-        label: { zh: "猎影潜袭", en: "Shadowhunter's Ambush" },
+        label: { zh: "Q全套", en: "Q Combo" },
         parts: [
           {
             formula: new DirectFormula(5.731, {

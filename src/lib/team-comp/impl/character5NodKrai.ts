@@ -52,7 +52,8 @@ class Columbina extends CharacterBase {
         0.07
       ),
       // P1: Lunacy's Lure — on Gravity Interference, CR +5% × 3 = +15%
-      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
+      // Columbina gains the buff regardless of on-field status (Gravity Interference can trigger off-field)
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "self" }, [
         { key: "cr", value: 0.15 },
       ]),
       // Q: Lunar Reaction DMG Bonus +40% (Lv10) / +49% (C5+)
@@ -109,6 +110,7 @@ class Columbina extends CharacterBase {
     }
 
     // C6: +80% CD for the element matching the dominant Lunar reaction
+    // "使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%" → receiver: "team"
     if (this.constellation >= 6) {
       const c6Element = {
         lunarCharged: "Electro" as const,
@@ -118,7 +120,7 @@ class Columbina extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C6", ["Q"]),
-          { receiver: "onField", filter: { elements: [c6Element] } },
+          { receiver: "team", filter: { elements: [c6Element] } },
           [{ key: "cd", value: 0.8 }]
         )
       );
@@ -152,7 +154,7 @@ class Columbina extends CharacterBase {
 
     return {
       "columbina-charge": {
-        label: { zh: "A 月露涤荡", en: "A Moondew Cleanse" },
+        label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new LunarDirectFormula(
@@ -185,8 +187,41 @@ class Columbina extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("nefer")
+const neferOption = {
+  label: { zh: "伪秘之帷层数", en: "Veil of Falsehood Stacks" },
+  choices: [
+    { value: "0", label: { zh: "0 层", en: "0 stacks" } },
+    {
+      value: "1",
+      label: { zh: "1 层 (+6%) (C0上限)", en: "1 stack (+6%) (C0 max)" },
+    },
+    {
+      value: "3",
+      label: {
+        zh: "3 层 (+18%，精通+100/200)",
+        en: "3 stacks (+18%, EM +100/200)",
+      },
+    },
+    {
+      value: "5",
+      label: {
+        zh: "5 层 (+30%，精通+200) (C2上限)",
+        en: "5 stacks (+30%, EM +200) (C2 max)",
+      },
+    },
+  ] as const,
+  default: "5",
+} satisfies OptionDef;
+
+@RegisterCharacter("nefer", neferOption)
 class Nefer extends CharacterBase {
+  // Veil of Falsehood: only under Ascendant Gleam (≥2 Nod-Krai); cap 1 at C0-1, 5 at C2+
+  private readonly veilStacks = (() => {
+    if (this.teamMeta.countByRegion("Nod-Krai") < 2) return 0;
+    const requested = Number.parseInt(resolveOption(neferOption, this.option));
+    return Math.min(requested, this.constellation >= 2 ? 5 : 1);
+  })();
+
   readonly buffs = [
     // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom BaseDmg, cap 14%
     new ScalingBuff(
@@ -198,21 +233,49 @@ class Nefer extends CharacterBase {
       0.000175,
       0.14
     ),
-    // P1: EM +100 when Veil of Falsehood stacks hit threshold (C2: +200)
-    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
-      { key: "em", value: this.constellation >= 2 ? 200 : 100 },
+    // P1: EM +100/200 when Veil stacks ≥3 (C0-1 cap=1, so this never fires at C0-1)
+    new StatBuff(cbs(this, "P1", ["charge"]), { receiver: "selfOnField" }, [
+      {
+        key: "em",
+        value: this.veilStacks >= 3 ? (this.constellation >= 2 ? 200 : 100) : 0,
+      },
     ]),
+    // P1 (Ascendant Gleam): Veil stacks → +6% Phantasm dmg% per stack
+    // Ascendant Gleam condition captured in veilStacks (returns 0 if <2 Nod-Krai)
+    new StatBuff(
+      cbs(this, "P1", ["charge"]),
+      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+      this.veilStacks > 0
+        ? [{ key: "dmg%", value: this.veilStacks * 0.06 }]
+        : []
+    ),
+    // C1: Phantasm shades LunarBloom BaseDmg += 60% EM × Veil factor (1 + stacks×6%)
+    new ScalingBuff(
+      cbs(this, "C1", ["charge"]),
+      {
+        receiver: "selfOnField",
+        filter: { reactions: ["lunarBloom"], abilities: ["charge"] },
+      },
+      [],
+      "em",
+      "baseDmg",
+      this.constellation >= 1 ? 0.6 * (1 + this.veilStacks * 0.06) : 0
+    ),
     // C4: Dendro RES -20% during Shadow Dance
+    // "使附近敌人的草元素抗性降低20%" → element-filtered shred (Dendro only)
     new StatBuff(
       cbs(this, "C4", ["E"]),
-      { receiver: "team" },
+      { receiver: "team", filter: { elements: ["Dendro"] } },
       this.constellation >= 4 ? [{ key: "resReduction%", value: 0.2 }] : []
     ),
-    // C6: Nefer's Lunar-Bloom DMG elevated 15%
+    // C6 (Moonsign Ascendant Gleam): Nefer's Lunar-Bloom DMG elevated 15%
+    // "月兆·满辉 奈芙尔造成的月绽放反应伤害擢升15%" — requires ≥2 Nod-Krai
     new StatBuff(
       cbs(this, "C6", []),
       { receiver: "selfOnField", filter: { reactions: ["lunarBloom"] } },
-      this.constellation >= 6 ? [{ key: "elevated%", value: 0.15 }] : []
+      this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+        ? [{ key: "elevated%", value: 0.15 }]
+        : []
     ),
   ];
 
@@ -311,11 +374,15 @@ class Flins extends CharacterBase {
       this.constellation >= 4 ? 0.1 : 0.08,
       this.constellation >= 4 ? 220 : 160
     ),
-    // C2: Electro RES -25% (Moonsign Ascendant Gleam condition on field)
+    // C2: Electro RES -25% while Flins is on field (Moonsign Ascendant Gleam required)
+    // "月兆·满辉：菲林斯在场上时...该敌人的雷元素抗性降低25%"
+    // Requires both C2 and Ascendant Gleam (≥2 Nod-Krai characters)
     new StatBuff(
       cbs(this, "C2", ["E"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "resReduction%", value: 0.25 }] : []
+      { receiver: "team", filter: { elements: ["Electro"] } },
+      this.constellation >= 2 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+        ? [{ key: "resReduction%", value: 0.25 }]
+        : []
     ),
     // C4: ATK +20%
     new StatBuff(
@@ -329,10 +396,14 @@ class Flins extends CharacterBase {
       { receiver: "selfOnField", filter: { reactions: ["lunarCharged"] } },
       this.constellation >= 6 ? [{ key: "elevated%", value: 0.35 }] : []
     ),
+    // C6 team elevated% requires Moonsign Ascendant Gleam
+    // "月兆·满辉：队伍中附近的所有角色造成的月感电反应伤害擢升10%" — requires ≥2 Nod-Krai
     new StatBuff(
       cbs(this, "C6", []),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
-      this.constellation >= 6 ? [{ key: "elevated%", value: 0.1 }] : []
+      this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+        ? [{ key: "elevated%", value: 0.1 }]
+        : []
     ),
   ];
 
@@ -346,11 +417,11 @@ class Flins extends CharacterBase {
   protected readonly formulaMap = (() => {
     const spearstormMult = this.constellation >= 5 ? 3.791 : 3.211;
     const qInitMult = this.constellation >= 3 ? 5.522 : 4.677;
-    // LunarDirectFormula for lunarCharged applies ×3 coefficient; divide game% by 3
-    const qMidMult = this.constellation >= 3 ? 0.345 / 3 : 0.292 / 3;
-    const qFinalMult = this.constellation >= 3 ? 2.485 / 3 : 2.105 / 3;
-    const tsMainMult = this.constellation >= 3 ? 1.518 / 3 : 1.286 / 3;
-    const tsExtraMult = this.constellation >= 3 ? 2.209 / 3 : 1.871 / 3;
+    // LunarDirectFormula passes raw game% — directCoeff (×3 for lunarCharged) applied internally
+    const qMidMult = this.constellation >= 3 ? 0.345 : 0.292;
+    const qFinalMult = this.constellation >= 3 ? 2.485 : 2.105;
+    const tsMainMult = this.constellation >= 3 ? 1.518 : 1.286;
+    const tsExtraMult = this.constellation >= 3 ? 2.209 : 1.871;
     const isAscendantGleam = this.teamMeta.countByRegion("Nod-Krai") >= 2;
     // Moonsign Ascendant Gleam + thunderclouds (from prior lunarCharged) for extra Q/TS hits
     const hasExtraHits =
@@ -374,11 +445,32 @@ class Flins extends CharacterBase {
     const qMidHits = hasExtraHits ? 4 : 2;
     return {
       "flins-spearstorm": {
-        label: { zh: "E 北国枪阵", en: "E Northland Spearstorm" },
-        parts: [{ formula: new DirectFormula(spearstormMult, skillTag) }],
+        label: {
+          zh: this.constellation >= 2 ? "E 北国枪阵+C2" : "E 北国枪阵",
+          en:
+            this.constellation >= 2
+              ? "E Spearstorm + C2 Hit"
+              : "E Northland Spearstorm",
+        },
+        parts: [
+          { formula: new DirectFormula(spearstormMult, skillTag) },
+          // C2: After E, next Normal Attack deals bonus 50% ATK lunarCharged hit (once per E)
+          ...(this.constellation >= 2 &&
+          this.teamMeta.hasReaction("lunarCharged")
+            ? [
+                {
+                  formula: new LunarDirectFormula(0.5, {
+                    element: "Electro",
+                    ability: "skill",
+                    reaction: "lunarCharged",
+                  }),
+                },
+              ]
+            : []),
+        ],
       },
       "flins-burst-total": {
-        label: { zh: "Q 旧仪·夜客致访(总计)", en: "Q Ancient Ritual Total" },
+        label: { zh: "Q全套", en: "Q Ancient Ritual Total" },
         parts: [
           // Initial Electro DMG (regular, not lunar)
           { formula: new DirectFormula(qInitMult, burstTag) },
@@ -443,13 +535,27 @@ class Lauma extends CharacterBase {
           ]
         : []
     ),
-    // E: Dendro+Hydro RES decrease 25% (Lv10) / 34% (Lv13, C5+)
-    new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
-      { key: "resReduction%", value: this.constellation >= 5 ? 0.34 : 0.25 },
-    ]),
-    // Q Pale Hymn: Bloom/Hyperbloom/Burgeon DMG + EM×500%/590.2%
+    // P2: Per EM → Sanctuary (E skill) DMG +0.04%, cap 32%
     new ScalingBuff(
-      cbs(this, "Q", ["Q"]),
+      cbs(this, "P2", ["passive"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [],
+      "em",
+      "dmg%",
+      0.0004,
+      0.32
+    ),
+    // E: Dendro+Hydro RES decrease 25% (Lv10) / 34% (Lv13, C5+)
+    // "使该敌人的草元素抗性与水元素抗性降低" → scoped to Dendro and Hydro only
+    new StatBuff(
+      cbs(this, "E", ["E"]),
+      { receiver: "team", filter: { elements: ["Dendro", "Hydro"] } },
+      [{ key: "resReduction%", value: this.constellation >= 5 ? 0.34 : 0.25 }]
+    ),
+    // Q Pale Hymn: Bloom/Hyperbloom/Burgeon DMG + EM×500%/590.2%
+    // C2: +500% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
+    new ScalingBuff(
+      cbs(this, "Q/C2", ["Q"]),
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
@@ -457,22 +563,29 @@ class Lauma extends CharacterBase {
       [],
       "em",
       "baseDmg",
-      this.constellation >= 3 ? 5.902 : 5.0
+      (this.constellation >= 3 ? 5.902 : 5.0) +
+        (this.constellation >= 2 ? 5.0 : 0)
     ),
     // Q Pale Hymn: Lunar-Bloom DMG + EM×400%/472.3%
+    // C2: +400% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
     new ScalingBuff(
-      cbs(this, "Q", ["Q"]),
+      cbs(this, "Q/C2", ["Q"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
       "baseDmg",
-      this.constellation >= 3 ? 4.723 : 4.0
+      (this.constellation >= 3 ? 4.723 : 4.0) +
+        (this.constellation >= 2 ? 4.0 : 0)
     ),
     // C2 (Ascendant Gleam): Lunar-Bloom DMG +40%
+    // "月兆·满辉：队伍中附近的所有角色造成的月绽放反应伤害提升40%"
+    // Requires both C2 and Moonsign Ascendant Gleam (≥2 Nod-Krai characters)
     new StatBuff(
       cbs(this, "C2", []),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
-      this.constellation >= 2 ? [{ key: "reactionDmg%", value: 0.4 }] : []
+      this.constellation >= 2 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+        ? [{ key: "reactionDmg%", value: 0.4 }]
+        : []
     ),
     // C6: Lunar-Bloom elevated 25%
     new StatBuff(
@@ -592,10 +705,19 @@ class Ineffa extends CharacterBase {
       0.00007,
       0.14
     ),
-    // P2: After Q, team EM = 6% of Ineffa ATK
+    // P2: After Q, Ineffa's EM and the active on-field character's EM = 6% of Ineffa ATK
+    // "提升伊涅芙与队伍中自己当前场上角色的元素精通" → self + onField (not full team)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "team" },
+      { receiver: "self" },
+      [],
+      "atk",
+      "em",
+      0.06
+    ),
+    new ScalingBuff(
+      cbs(this, "P2", ["Q"]),
+      { receiver: "onField" },
       [],
       "atk",
       "em",
@@ -626,7 +748,7 @@ class Ineffa extends CharacterBase {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
       "ineffa-birgitta": {
-        label: { zh: "E 薇尔琪塔放电(×10)", en: "E Birgitta Discharge (×10)" },
+        label: { zh: "E放电×10", en: "E Birgitta Discharge (×10)" },
         parts: [
           {
             formula: new DirectFormula(dischargeMult, {
@@ -640,8 +762,8 @@ class Ineffa extends CharacterBase {
             ? [
                 {
                   // P1: Additional Lunar-Charged hit per discharge (65% ATK, viewed as lunarCharged DMG)
-                  // LunarDirectFormula for lunarCharged applies ×3 coefficient; divide by 3
-                  formula: new LunarDirectFormula(0.65 / 3, {
+                  // Raw game% passed; directCoeff (×3) applied internally
+                  formula: new LunarDirectFormula(0.65, {
                     element: "Electro",
                     ability: "skill",
                     reaction: "lunarCharged",
@@ -653,7 +775,13 @@ class Ineffa extends CharacterBase {
         ],
       },
       "ineffa-burst": {
-        label: { zh: "Q 至高律令", en: "Q Cyclonic Exterminator" },
+        label: {
+          zh: this.constellation >= 2 ? "Q 至高律令+C2" : "Q 至高律令",
+          en:
+            this.constellation >= 2
+              ? "Q Exterminator + C2 Edict"
+              : "Q Cyclonic Exterminator",
+        },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -662,6 +790,18 @@ class Ineffa extends CharacterBase {
               reaction: "none",
             }),
           },
+          // C2: Punishment Edict — 300% ATK lunarCharged AoE on delay/death (once per Q)
+          ...(this.constellation >= 2 && hasHydro
+            ? [
+                {
+                  formula: new LunarDirectFormula(3.0, {
+                    element: "Electro",
+                    ability: "burst",
+                    reaction: "lunarCharged",
+                  }),
+                },
+              ]
+            : []),
         ],
       },
     };

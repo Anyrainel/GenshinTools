@@ -12,7 +12,7 @@ import type {
   Region,
   WeaponResource,
   WeaponType,
-} from "./types";
+} from "@/data/types";
 
 // ─── JSON shapes (match character_stats.json / weapon_stats.json) ───
 
@@ -61,10 +61,12 @@ let weaponStatsPromise: Promise<WeaponStatsMap> | null = null;
 export function getCharacterStats(): Promise<CharacterStatsMap> {
   if (characterStatsCache) return Promise.resolve(characterStatsCache);
   if (!characterStatsPromise) {
-    characterStatsPromise = import("./game/character_stats.json").then((m) => {
-      characterStatsCache = m.default as CharacterStatsMap;
-      return characterStatsCache;
-    });
+    characterStatsPromise = import("@/data/game/character_stats.json").then(
+      (m) => {
+        characterStatsCache = m.default as CharacterStatsMap;
+        return characterStatsCache;
+      }
+    );
   }
   return characterStatsPromise;
 }
@@ -72,7 +74,7 @@ export function getCharacterStats(): Promise<CharacterStatsMap> {
 export function getWeaponStats(): Promise<WeaponStatsMap> {
   if (weaponStatsCache) return Promise.resolve(weaponStatsCache);
   if (!weaponStatsPromise) {
-    weaponStatsPromise = import("./game/weapon_stats.json").then((m) => {
+    weaponStatsPromise = import("@/data/game/weapon_stats.json").then((m) => {
       weaponStatsCache = m.default as WeaponStatsMap;
       return weaponStatsCache;
     });

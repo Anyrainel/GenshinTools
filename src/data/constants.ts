@@ -1,4 +1,4 @@
-import type { CharacterStatsMap, WeaponStatsMap } from "./gameStatsLoader";
+import type { CharacterStatsMap, WeaponStatsMap } from "@/lib/gameStatsLoader";
 import {
   artifactHalfSets,
   artifacts,

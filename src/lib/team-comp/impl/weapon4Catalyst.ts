@@ -9,11 +9,13 @@ import type { OptionDef, StatKey } from "../types";
 
 @RegisterWeapon("dawning_frost")
 class DawningFrost extends WeaponBase {
-  // EM after CA + E DMG% after E
+  // EM after CA hit; EM after E hit
   readonly buffs = [
-    new StatBuff(wbs(this, ["charge", "E"]), { receiver: "self" }, [
+    new StatBuff(wbs(this, ["charge"]), { receiver: "self" }, [
       { key: "em", value: r(this.refinement, [72, 90, 108, 126, 144]) },
-      { key: "dmg%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+    ]),
+    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      { key: "em", value: r(this.refinement, [48, 60, 72, 84, 96]) },
     ]),
   ];
 }
@@ -32,22 +34,30 @@ class BlackmarrowLantern extends WeaponBase {
   get buffs() {
     const isAscendant = this.teamMeta.countByRegion("Nod-Krai") >= 2;
     return [
-      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
-        {
-          key: "reactionDmg%",
-          value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
-        },
-      ]),
-      new StatBuff(wbs(this, ["moonsign"]), { receiver: "self" }, [
-        {
-          key: "reactionDmg%",
-          value:
-            r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
-            (isAscendant
-              ? r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
-              : 0),
-        },
-      ]),
+      new StatBuff(
+        wbs(this, ["moonsign"]),
+        { receiver: "self", filter: { reactions: ["bloom"] } },
+        [
+          {
+            key: "reactionDmg%",
+            value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
+          },
+        ]
+      ),
+      new StatBuff(
+        wbs(this, ["moonsign"]),
+        { receiver: "self", filter: { reactions: ["lunarBloom"] } },
+        [
+          {
+            key: "reactionDmg%",
+            value:
+              r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
+              (isAscendant
+                ? r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])
+                : 0),
+          },
+        ]
+      ),
     ];
   }
 }
@@ -70,7 +80,7 @@ class RingOfYaxche extends WeaponBase {
       { receiver: "self", filter: { abilities: ["normal"] } },
       [],
       "hp",
-      "atk",
+      "dmg%",
       r(this.refinement, [0.0006, 0.0007, 0.0008, 0.0009, 0.001]),
       r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32])
     ),
@@ -211,7 +221,7 @@ class WanderingEvenstar extends WeaponBase {
       r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
     ),
     new ScalingBuff(
-      wbs(this),
+      wbs(this, undefined, "wandering-evenstar"),
       { receiver: "team" },
       [],
       "em",
@@ -349,11 +359,17 @@ class RoyalGrimoire extends WeaponBase {
 class DodocoTales extends WeaponBase {
   // Both cross-buffs assumed active
   readonly buffs = [
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
     new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
       { key: "atk%", value: r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) },
     ]),
   ];

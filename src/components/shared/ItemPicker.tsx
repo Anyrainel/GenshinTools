@@ -42,10 +42,6 @@ import {
   weaponResourcesByName,
   weaponsById,
 } from "@/data/constants";
-import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/data/gameStatsLoader";
 import { artifactHalfSets } from "@/data/resources";
 import type {
   ArtifactHalfSet,
@@ -57,6 +53,10 @@ import type {
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Ban, Bookmark, Check, Search, X } from "lucide-react";

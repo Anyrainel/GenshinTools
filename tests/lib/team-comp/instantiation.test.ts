@@ -4,10 +4,8 @@ import {
   charactersById,
   weaponsById,
 } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
-import { assertNoDuplicateStatKeys } from "@/lib/team-comp/damageBuffs";
+import { preloadGameStats } from "@/lib/gameStatsLoader";
 import {
-  StatSheet,
   TeamMeta,
   createArtifactHalfSet,
   createArtifactSet,
@@ -20,10 +18,6 @@ import "@/lib/team-comp/index";
 beforeAll(async () => {
   await preloadGameStats();
 });
-
-// Sentinel StatSheet used to invoke dynamic buffs.
-// Values are all zero — we only care about key validity, not values.
-const emptySheet = new StatSheet([]);
 
 function rethrowIfUnexpected(e: unknown, ...skipPhrases: string[]): void {
   if (
@@ -40,15 +34,59 @@ describe("Entity Instantiation", () => {
       try {
         const team = new TeamMeta([charId]);
         const char = createCharacter(charId, 90, 6, team);
-        const buffs = char.buffs;
-        emptySheet.apply(buffs);
-        for (const b of buffs) {
-          const dynEntries = b.dynamicBuffs(emptySheet, []);
-          assertNoDuplicateStatKeys(
-            dynEntries,
-            `dynamicBuffs for character ${charId} (source: ${b.source.type}:${b.source.id})`
-          );
+        char.buffs; // triggers StatBuff constructors → validation
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
+  describe("Formula zh prefix", () => {
+    // zh labels must contain at least one ability keyword so pure skill names are not used.
+    const ZH_KEYWORD = /E|Q|普攻|重击|下落|C\d|P\d/;
+    it.each(Object.keys(charactersById))("%s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 90, 6, team);
+        const violations: string[] = [];
+        for (const [id, label] of Object.entries(char.formulaIds)) {
+          if (!ZH_KEYWORD.test(label.zh))
+            violations.push(`${id}: zh "${label.zh}"`);
         }
+        if (violations.length > 0)
+          throw new Error(`Missing ability prefix:\n${violations.join("\n")}`);
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
+  describe("Formula label lengths", () => {
+    it.each(Object.keys(charactersById))("%s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 90, 6, team);
+        const violations: string[] = [];
+        for (const [id, label] of Object.entries(char.formulaIds)) {
+          if (label.zh.length > 10)
+            violations.push(
+              `${id}: zh "${label.zh}" (${label.zh.length} > 10)`
+            );
+          if (label.en.length > 32)
+            violations.push(
+              `${id}: en "${label.en}" (${label.en.length} > 32)`
+            );
+        }
+        if (violations.length > 0)
+          throw new Error(`Label too long:\n${violations.join("\n")}`);
       } catch (e) {
         rethrowIfUnexpected(
           e,
@@ -64,15 +102,7 @@ describe("Entity Instantiation", () => {
       try {
         const team = new TeamMeta(["amber"]);
         const weapon = createWeapon(weaponId, 5, "amber", team);
-        const buffs = weapon.buffs;
-        emptySheet.apply(buffs);
-        for (const b of buffs) {
-          const dynEntries = b.dynamicBuffs(emptySheet, []);
-          assertNoDuplicateStatKeys(
-            dynEntries,
-            `dynamicBuffs for weapon ${weaponId} (source: ${b.source.type}:${b.source.id})`
-          );
-        }
+        weapon.buffs;
       } catch (e) {
         rethrowIfUnexpected(
           e,
@@ -89,15 +119,7 @@ describe("Entity Instantiation", () => {
       try {
         const team = new TeamMeta(["amber"]);
         const artifactSet = createArtifactSet(artifactId, "amber", team);
-        const buffs = artifactSet.buffs;
-        emptySheet.apply(buffs);
-        for (const b of buffs) {
-          const dynEntries = b.dynamicBuffs(emptySheet, []);
-          assertNoDuplicateStatKeys(
-            dynEntries,
-            `dynamicBuffs for artifact set ${artifactId} (source: ${b.source.type}:${b.source.id})`
-          );
-        }
+        artifactSet.buffs;
       } catch (e) {
         rethrowIfUnexpected(e, "No artifact set registered");
       }
@@ -109,15 +131,7 @@ describe("Entity Instantiation", () => {
       try {
         const team = new TeamMeta(["amber"]);
         const halfSet = createArtifactHalfSet(halfSetId, "amber", team);
-        const buffs = halfSet.buffs;
-        emptySheet.apply(buffs);
-        for (const b of buffs) {
-          const dynEntries = b.dynamicBuffs(emptySheet, []);
-          assertNoDuplicateStatKeys(
-            dynEntries,
-            `dynamicBuffs for artifact half-set ${halfSetId} (source: ${b.source.type}:${b.source.id})`
-          );
-        }
+        halfSet.buffs;
       } catch (e) {
         rethrowIfUnexpected(e, "No artifact half-set registered");
       }

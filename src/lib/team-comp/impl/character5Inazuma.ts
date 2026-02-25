@@ -39,6 +39,21 @@ class YumemizukiMizuki extends CharacterBase {
       ]),
     ];
 
+    // C1: 二十三夜待 mark — peak-damage model assumes mark always active;
+    // Swirl against marked enemy deals +1100% EM as additional DMG (EM × 11.0)
+    if (this.constellation >= 1) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C1", ["passive"]),
+          { receiver: "self", filter: { reactions: ["swirl"] } },
+          [],
+          "em",
+          "reactionDmg%",
+          11.0
+        )
+      );
+    }
+
     if (this.constellation >= 2) {
       // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to team
       buffs.push(
@@ -163,11 +178,44 @@ class Chiori extends CharacterBase {
           },
         ],
       },
+      // P1 Tapestry "Seize the Moment": Tamoto coordinated attack = 100% of upward sweep DMG.
+      // Fires up to 2× per Tapestry activation (once every 2s, 8s duration).
+      // Considered Elemental Skill DMG. The per-hit multiplier is identical to chiori-sweep.
+      "chiori-p1-coordinated": {
+        label: { zh: "P1 织锦协同攻击", en: "P1 Tapestry Coordinated Attack" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              sweepAtk,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "def", multiplier: sweepDef }
+            ),
+          },
+        ],
+      },
+      // Q Hiyoku: Twin Blades — Lv10 461% ATK + 577% DEF, Lv13 (C5+) 544% ATK + 681% DEF
+      "chiori-burst": {
+        label: { zh: "Q伤害", en: "Q Burst" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.constellation >= 5 ? 5.442 : 4.61,
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "atk",
+              {
+                key: "def",
+                multiplier: this.constellation >= 5 ? 6.801 : 5.763,
+              }
+            ),
+          },
+        ],
+      },
       ...(this.constellation >= 6
         ? {
             "chiori-na": {
               label: {
-                zh: "A 普通攻击一套(C6)",
+                zh: "C6普攻一套",
                 en: "A Normal ATK Combo (C6)",
               },
               parts: [
@@ -192,13 +240,14 @@ class RaidenShogun extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: Each 1% ER above 100% → 0.4% Electro DMG Bonus
+      // At 240% ER: (2.4 - 1.0) × 0.4 = 0.56 → 56% Electro DMG
       new ScalingBuff(
         cbs(this, "P2", []),
         { receiver: "selfOnField" },
         [],
         "er",
         "electro%",
-        0.004,
+        0.4,
         undefined,
         1.0
       ),
@@ -236,41 +285,46 @@ class RaidenShogun extends CharacterBase {
 
   // Q initial slash: Lv10 721% + 7.98%×60 = 1199.8%
   // Lv13 (C3+): 851% + 9.42%×60 = 1416.2%
+  // Q Charged ATK (Musou Isshin): two hits at different multipliers (S3 requires separate parts)
+  //   Lv10: 109.9% + 132.7% + 7.98%×60 each = (1.099 + 1.327 + Resolve) × 2 parts
+  //   Lv13 (C3+): 128.8% + 155.5% + 9.42%×60 each
   protected readonly formulaMap = (() => {
     const initialMult =
       this.constellation >= 3 ? 8.51 + 0.0942 * 60 : 7.21 + 0.0798 * 60;
-    const chargeMult =
-      this.constellation >= 3
-        ? 2.843 + 2 * 0.0154 * 60
-        : 2.426 + 2 * 0.0131 * 60;
+    const resolveMult = this.constellation >= 3 ? 0.0942 * 60 : 0.0798 * 60;
+    // Charged ATK: hit1 + resolve, hit2 + resolve
+    const chargeHit1 = this.constellation >= 3 ? 1.288 : 1.099;
+    const chargeHit2 = this.constellation >= 3 ? 1.555 : 1.327;
+    const electroBurst = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "raiden-initial": {
         label: {
-          zh: "满愿力Q梦想一刀伤害",
-          en: "Q Musou Shinsetsu (60 Resolve)",
+          zh: "Q初始斩",
+          en: "Q Initial Slash (60 Resolve)",
         },
         parts: [
           {
-            formula: new DirectFormula(initialMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(initialMult, electroBurst),
           },
         ],
       },
       "raiden-charge": {
         label: {
           zh: "Q后梦想一心重击伤害",
-          en: "Q Musou Isshin Charged ATK (60 Resolve)",
+          en: "Q CA (60 Resolve)",
         },
         parts: [
           {
-            formula: new DirectFormula(chargeMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
+            // Charged hit 1: base% + resolve bonus (Lv10: 109.9% + 479%@60stacks)
+            formula: new DirectFormula(chargeHit1 + resolveMult, electroBurst),
+          },
+          {
+            // Charged hit 2: base% + resolve bonus (Lv10: 132.7% + 479%@60stacks)
+            formula: new DirectFormula(chargeHit2 + resolveMult, electroBurst),
           },
         ],
       },
@@ -332,49 +386,26 @@ class AratakiItto extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Arataki Kesagiri: 4 combo slashes + 1 final slash
+    // Arataki Kesagiri: combo slashes + 1 final slash
+    // C6: Ushi assists each slash → doubles combo count from 4 to 8
     // Combo Lv10: 180.2%, Final Lv10: 377.4%
     const combo = 1.802;
     const final_ = 3.774;
+    const comboCount = this.constellation >= 6 ? 8 : 4;
+    const geoCharge = {
+      element: "Geo" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
     return {
       "itto-kesagiri": {
-        label: { zh: "A 特殊重击(4+终结)", en: "A Arataki Kesagiri (4+Final)" },
+        label: {
+          zh: `重击${comboCount}+终`,
+          en: `A Arataki Kesagiri (${comboCount}+Final)`,
+        },
         parts: [
-          {
-            formula: new DirectFormula(combo, {
-              element: "Geo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(combo, {
-              element: "Geo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(combo, {
-              element: "Geo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(combo, {
-              element: "Geo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(final_, {
-              element: "Geo",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(combo, geoCharge), hits: comboCount },
+          { formula: new DirectFormula(final_, geoCharge) },
         ],
       },
     };
@@ -384,16 +415,22 @@ class AratakiItto extends CharacterBase {
 @RegisterCharacter("kamisato_ayaka")
 class KamisatoAyaka extends CharacterBase {
   readonly buffs = [
-    // P2: After E, Normal/Charged DMG +30% for 6s
+    // P1: After E, Normal/Charged DMG +30% for 6s
     new StatBuff(
-      cbs(this, "P2", ["E"]),
+      cbs(this, "P1", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
       [{ key: "dmg%", value: 0.3 }]
     ),
-    // P3: After alternate sprint hit, Cryo DMG +18%
-    new StatBuff(cbs(this, "P3", ["dash"]), { receiver: "selfOnField" }, [
+    // P2: After alternate sprint hit, Cryo DMG +18%
+    new StatBuff(cbs(this, "P2", ["dash"]), { receiver: "selfOnField" }, [
       { key: "cryo%", value: 0.18 },
     ]),
+    // C2: 2 smaller Frostflake Seki no To → effectively +40% burst DMG (baseDmg%)
+    new StatBuff(
+      cbs(this, "C2", ["Q"]),
+      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+      this.constellation >= 2 ? [{ key: "baseDmg%", value: 0.4 }] : []
+    ),
     // C4: Enemies hit by Q: DEF -30% for 6s
     new StatBuff(
       cbs(this, "C4", ["Q"]),
@@ -410,11 +447,10 @@ class KamisatoAyaka extends CharacterBase {
 
   // Charged ATK: Lv10 109.0%×3 (Normal talent, no constellation boost)
   // Q cutting: Lv10 202%, Lv13 (C3+) 239%, ~19 cuts + bloom 303%/358%
-  // C2: +2 smaller storms at 20% → effectively +40%
+  // C2: +2 smaller storms → +40% burst baseDmg% (handled via StatBuff, not pre-multiplied)
   protected readonly formulaMap = (() => {
     const cutMult = this.constellation >= 3 ? 2.39 : 2.02;
     const bloomMult = this.constellation >= 3 ? 3.58 : 3.03;
-    const c2Bonus = this.constellation >= 2 ? 1.4 : 1.0;
     const cryoBurst = {
       element: "Cryo" as const,
       ability: "burst" as const,
@@ -422,27 +458,23 @@ class KamisatoAyaka extends CharacterBase {
     };
     return {
       "ayaka-charged": {
-        label: { zh: "A 重击(×3)", en: "A Charged ATK (×3)" },
+        label: { zh: "重击×3", en: "CA (×3)" },
         parts: [
           {
-            formula: new DirectFormula(1.09 * 3, {
+            formula: new DirectFormula(1.09, {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
             }),
+            hits: 3,
           },
         ],
       },
       "ayaka-burst": {
-        label: { zh: "霜灭(19切+绽)", en: "Soumetsu (19 cuts + bloom)" },
+        label: { zh: "Q(19切+绽)", en: "Q (19 slashes + Bloom)" },
         parts: [
-          {
-            formula: new DirectFormula(cutMult * c2Bonus, cryoBurst),
-            hits: 19,
-          },
-          {
-            formula: new DirectFormula(bloomMult * c2Bonus, cryoBurst),
-          },
+          { formula: new DirectFormula(cutMult, cryoBurst), hits: 19 },
+          { formula: new DirectFormula(bloomMult, cryoBurst) },
         ],
       },
     };
@@ -481,15 +513,19 @@ class KamisatoAyato extends CharacterBase {
     return ibuffs;
   })();
 
-  // Shunsuiken 3-hit combo: ATK + Namisen HP scaling
-  // ATK total Lv10: 349.5%, Lv13 (C3+): 423.3%
-  // Namisen per hit: 4 stacks × 1.11% HP (C2: 5 stacks), ×3 hits
+  // Shunsuiken 3-hit combo (S3: separate parts per different multiplier)
+  // N1: Lv10 104.6%, Lv13 (C3+) 126.7%
+  // N2: Lv10 116.5%, Lv13 (C3+) 141.1%
+  // N3: Lv10 128.4%, Lv13 (C3+) 155.5%
+  // Namisen per hit: 4 stacks × 1.11% HP (C2: 5 stacks)
   // Q Bloomwater: Lv10 119.6%, Lv13 (C5+) 141.2%, ~30 hits over 18s
-  readonly formulaMap = (() => {
-    const atkTotal = this.constellation >= 3 ? 4.233 : 3.495;
+  protected readonly formulaMap = (() => {
+    const n1Mult = this.constellation >= 3 ? 1.267 : 1.046;
+    const n2Mult = this.constellation >= 3 ? 1.411 : 1.165;
+    const n3Mult = this.constellation >= 3 ? 1.555 : 1.284;
     const stacks = this.constellation >= 2 ? 5 : 4;
     const namisenPerHit = this.constellation >= 3 ? 0.0134 : 0.0111;
-    const hpExtra = stacks * namisenPerHit * 3;
+    const hpPerHit = stacks * namisenPerHit;
     const qMult = this.constellation >= 5 ? 1.412 : 1.196;
     const hydroTag = {
       element: "Hydro" as const,
@@ -498,12 +534,24 @@ class KamisatoAyato extends CharacterBase {
     };
     return {
       "ayato-shunsuiken": {
-        label: { zh: "瞬水剑连击", en: "Shunsuiken Combo (×3)" },
+        label: { zh: "E普攻三段连击", en: "E NA Combo (N1+N2+N3)" },
         parts: [
           {
-            formula: new DirectFormula(atkTotal, hydroTag, "atk", {
+            formula: new DirectFormula(n1Mult, hydroTag, "atk", {
               key: "hp",
-              multiplier: hpExtra,
+              multiplier: hpPerHit,
+            }),
+          },
+          {
+            formula: new DirectFormula(n2Mult, hydroTag, "atk", {
+              key: "hp",
+              multiplier: hpPerHit,
+            }),
+          },
+          {
+            formula: new DirectFormula(n3Mult, hydroTag, "atk", {
+              key: "hp",
+              multiplier: hpPerHit,
             }),
           },
         ],
@@ -545,18 +593,31 @@ class SangonomiyaKokomi extends CharacterBase {
       "baseDmg%",
       0.15
     ),
-    // Q: Nereid's Ascension — HP → baseDmg for Normal/Charged
-    // Lv10: 10.63% HP, Lv13 (C3+): 12.55% HP
+    // Q: Nereid's Ascension — HP → baseDmg for Normal Attacks
+    // Lv10: 8.7% HP, Lv13 (C3+): 10.3% HP
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
       {
         receiver: "selfOnField",
-        filter: { abilities: ["normal", "charge"] },
+        filter: { abilities: ["normal"] },
       },
       [],
       "hp",
       "baseDmg",
-      this.constellation >= 3 ? 0.1255 : 0.1063
+      this.constellation >= 3 ? 0.103 : 0.087
+    ),
+    // Q: Nereid's Ascension — HP → baseDmg for Charged Attacks
+    // Lv10: 12.2% HP, Lv13 (C3+): 14.4% HP
+    new ScalingBuff(
+      cbs(this, "Q", ["Q"]),
+      {
+        receiver: "selfOnField",
+        filter: { abilities: ["charge"] },
+      },
+      [],
+      "hp",
+      "baseDmg",
+      this.constellation >= 3 ? 0.144 : 0.122
     ),
     // C6: Q heal on 80%+ HP → Hydro DMG +40%
     new StatBuff(
@@ -572,23 +633,59 @@ class SangonomiyaKokomi extends CharacterBase {
 
 @RegisterCharacter("kaedehara_kazuha")
 class KaedeharaKazuha extends CharacterBase {
-  readonly buffs = [
-    // P2: Poetics of Fuubutsu — after Swirl, grant 0.04% elemental DMG% per EM
-    new ScalingBuff(
-      cbs(this, "P2", ["swirl"]),
-      { receiver: "onField" },
-      [],
-      "em",
-      "dmg%",
-      0.0004
-    ),
+  readonly buffs = (() => {
+    // P2: Poetics of Fuubutsu — after Swirl, grant 0.04% elemental DMG% per EM per absorbed element
+    // Game text: "触发扩散反应后，每点元素精通，会为队伍中所有角色提供0.04%对应元素伤害加成"
+    // One ScalingBuff per element present in the team (Swirl can absorb Hydro/Pyro/Cryo/Electro).
+    const absorbable = ["Hydro", "Pyro", "Cryo", "Electro"] as const;
+    const teamElements = new Set(Object.values(this.teamMeta.elements));
+    const p2Buffs = absorbable
+      .filter((el) => teamElements.has(el))
+      .map(
+        (el) =>
+          new ScalingBuff(
+            cbs(this, "P2", ["swirl"]),
+            { receiver: "team", filter: { elements: [el] } },
+            [],
+            "em",
+            "dmg%",
+            0.0004
+          )
+      );
+
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      ...p2Buffs,
+    ];
+
     // C2: Q field grants 200 EM to the party
-    new StatBuff(
-      cbs(this, "C2", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "em", value: 200 }] : []
-    ),
-  ];
+    buffs.push(
+      new StatBuff(
+        cbs(this, "C2", ["Q"]),
+        { receiver: "team" },
+        this.constellation >= 2 ? [{ key: "em", value: 200 }] : []
+      )
+    );
+
+    // C6: Crimson Momiji — each point of EM increases NA/CA/Plunge DMG by 0.2%
+    // "每点元素精通，都会使他的普通攻击、重击、下落攻击造成的伤害提高0.2%"
+    if (this.constellation >= 6) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C6", ["E", "Q"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge", "plunge"] },
+          },
+          [],
+          "em",
+          "dmg%",
+          0.002
+        )
+      );
+    }
+
+    return buffs;
+  })();
 
   // E press: Lv10 346%, Lv13 (C3+) 408%
   // C6 High Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
@@ -613,7 +710,7 @@ class KaedeharaKazuha extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "kazuha-plunge-c6": {
-              label: { zh: "C6 高空下落攻击伤害", en: "C6 High Plunge" },
+              label: { zh: "C6高空下落", en: "C6 High Plunge" },
               parts: [
                 {
                   formula: new DirectFormula(4.04, {
@@ -700,7 +797,7 @@ class Yoimiya extends CharacterBase {
     return {
       "yoimiya-normal": {
         label: {
-          zh: "A 首轮普攻(E强化/无反应)",
+          zh: "E普攻(无反应)",
           en: "A N1-N5 Combo (E active)",
         },
         parts: [
@@ -715,7 +812,7 @@ class Yoimiya extends CharacterBase {
       },
       "yoimiya-vape": {
         label: {
-          zh: "A 首轮普攻(E强化/含蒸发)",
+          zh: "E普攻(蒸发)",
           en: "A N1-N5 Combo (Vape N1a, N3, N5)",
         },
         parts: [
@@ -744,9 +841,10 @@ class YaeMiko extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Each point of EM → Sesshou Sakura DMG +0.15%
+      // Sakura fires even when Yae is off-field → receiver: "self" (not selfOnField)
       new ScalingBuff(
         cbs(this, "P2", ["A4"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+        { receiver: "self", filter: { abilities: ["skill"] } },
         [],
         "em",
         "dmg%",
@@ -812,7 +910,7 @@ class YaeMiko extends CharacterBase {
         ],
       },
       "yae_miko-burst": {
-        label: { zh: "Q 天狐显真(总伤害)", en: "Q Tenko Kenshin (Complete)" },
+        label: { zh: "Q总伤害", en: "Q Tenko Kenshin (Complete)" },
         parts: [
           {
             formula: new DirectFormula(qInitialMult, {
@@ -833,7 +931,7 @@ class YaeMiko extends CharacterBase {
       },
       "yae_miko-burst-aggravate": {
         label: {
-          zh: "Q 天狐显真(一次超激化)",
+          zh: "Q(单次超激)",
           en: "Q Tenko Kenshin (1 Aggravate)",
         },
         parts: [

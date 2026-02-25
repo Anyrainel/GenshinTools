@@ -74,10 +74,16 @@ class CalamityOfEshu extends WeaponBase {
 
 @RegisterWeapon("sturdy_bone")
 class SturdyBone extends WeaponBase {
+  // Normal Attack DMG increased by X% of ATK (additive baseDmg scaling)
   readonly buffs = [
-    new StatBuff(wbs(this, ["sprint"]), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) },
-    ]),
+    new ScalingBuff(
+      wbs(this, ["sprint"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [],
+      "atk",
+      "baseDmg",
+      r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32])
+    ),
   ];
 }
 

@@ -1,6 +1,7 @@
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { ImportControl } from "@/components/shared/ImportControl";
 import type { PresetOption } from "@/data/types";
+import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { render, screen } from "../../utils/render";
@@ -33,7 +34,9 @@ describe("ImportControl", () => {
     // Dialog should not be visible initially
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
@@ -49,7 +52,9 @@ describe("ImportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     // Should show preset options sorted alphabetically
@@ -69,7 +74,9 @@ describe("ImportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     await user.click(screen.getByText("Preset A"));
@@ -90,7 +97,9 @@ describe("ImportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     await user.click(screen.getByText("Preset A"));
@@ -119,7 +128,9 @@ describe("ImportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     // Should show "Import from File" button area
@@ -142,7 +153,9 @@ describe("ImportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     // Should show empty list message
     const dialog = await screen.findByRole("dialog");

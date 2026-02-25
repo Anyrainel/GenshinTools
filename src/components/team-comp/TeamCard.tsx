@@ -16,15 +16,15 @@ import {
   weaponsById,
 } from "@/data/constants";
 import {
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-} from "@/data/gameStatsLoader";
-import {
   type ReactionType,
   TEAM_REACTION_OPTIONS,
   type WeaponResource,
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {

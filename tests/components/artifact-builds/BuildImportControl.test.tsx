@@ -1,6 +1,6 @@
 import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
 import type { PresetOption } from "@/data/types";
-import { fireEvent, render, screen, waitFor } from "../../utils/render";
+import { act, fireEvent, render, screen, waitFor } from "../../utils/render";
 
 describe("BuildImportControl", () => {
   const mockLoadPreset = vi.fn();
@@ -35,8 +35,10 @@ describe("BuildImportControl", () => {
     expect(screen.queryByText("Preset A")).not.toBeInTheDocument();
 
     // Open dialog
-    // @ts-ignore
-    mockRef.current?.open();
+    act(() => {
+      // @ts-expect-error ref type for test
+      mockRef.current?.open();
+    });
 
     await waitFor(() => {
       expect(screen.getByText("Preset A")).toBeInTheDocument();
@@ -55,8 +57,10 @@ describe("BuildImportControl", () => {
       />
     );
 
-    // @ts-ignore
-    mockRef.current?.open();
+    act(() => {
+      // @ts-expect-error ref type for test
+      mockRef.current?.open();
+    });
     await waitFor(() => screen.getByText("Preset A"));
 
     // Select Preset A
@@ -85,8 +89,10 @@ describe("BuildImportControl", () => {
       />
     );
 
-    // @ts-ignore
-    mockRef.current?.open();
+    act(() => {
+      // @ts-expect-error ref type for test
+      mockRef.current?.open();
+    });
     await waitFor(() => screen.getByText("Preset A"));
     fireEvent.click(screen.getByText("Preset A"));
 
@@ -115,8 +121,10 @@ describe("BuildImportControl", () => {
       />
     );
 
-    // @ts-ignore
-    mockRef.current?.open();
+    act(() => {
+      // @ts-expect-error ref type for test
+      mockRef.current?.open();
+    });
     await waitFor(() => screen.getByText("Preset A"));
     fireEvent.click(screen.getByText("Preset A"));
 

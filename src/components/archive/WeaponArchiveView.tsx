@@ -5,7 +5,6 @@ import {
   sortedWeapons,
   weaponResourcesByName,
 } from "@/data/constants";
-import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   MainStat,
   Rarity,
@@ -14,6 +13,7 @@ import type {
 } from "@/data/types";
 import { weaponTypes } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
+import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { fuzzyMatch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";

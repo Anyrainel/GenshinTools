@@ -3,6 +3,7 @@ import {
   AmplifyFormula,
   CatalyzeFormula,
   DirectFormula,
+  LunarDirectFormula,
   LunarFormula,
   TransformFormula,
 } from "../damageFormulas";
@@ -26,13 +27,14 @@ class Zibai extends CharacterBase {
     const hydroCount = this.teamMeta.countByElement("Hydro");
 
     const buffs: StatBuff[] = [
-      // P3: Per 100 DEF → +0.7% Lunar-Crystallize BaseDmg, cap 14%
+      // P3: Per 100 DEF → +0.7% Lunar-Crystallize Base DMG, cap 14%
+      // "月结晶反应的基础伤害" → baseDmg% (Lunar reaction base DMG scalar), not reactionDmg%
       new ScalingBuff(
         cbs(this, "P3", ["passive"]),
         { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
         [],
         "def",
-        "reactionDmg%",
+        "baseDmg%",
         0.00007,
         0.14
       ),
@@ -41,6 +43,19 @@ class Zibai extends CharacterBase {
         { key: "def%", value: geoCount * 0.15 },
         { key: "em", value: hydroCount * 60 },
       ]),
+      // P1: Steed 2nd hit baseDmg +60% DEF (via ScalingBuff, not baked into talent mult)
+      // Must not bake into LunarDirectFormula talent mult as DirectCoeff would scale it
+      new ScalingBuff(
+        cbs(this, "P1", ["E"]),
+        {
+          receiver: "selfOnField",
+          filter: { abilities: ["skill"], reactions: ["lunarCrystallize"] },
+        },
+        [],
+        "def",
+        "baseDmg",
+        0.6
+      ),
     ];
 
     if (this.constellation >= 2) {
@@ -52,14 +67,49 @@ class Zibai extends CharacterBase {
           [{ key: "reactionDmg%", value: 0.3 }]
         )
       );
+      // C2 Moonsign enhancement: Steed 2nd hit baseDmg +550% DEF
+      // Must not bake into LunarDirectFormula talent mult as DirectCoeff would scale it
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C2", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["skill"], reactions: ["lunarCrystallize"] },
+          },
+          [],
+          "def",
+          "baseDmg",
+          5.5
+        )
+      );
+    }
+
+    if (this.constellation >= 4) {
+      // C4 Scattermoon Splendor: N4 additional attack deals 250% of original Lunar-Crystallize DMG
+      // "造成相当于原本250%的月结晶反应伤害" → baseDmg% +1.5 (i.e. 1+1.5=2.5×)
+      // Scoped to normal+lunarCrystallize so it only hits the N4 Gleam part, not regular N1-N4 hits
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal"], reactions: ["lunarCrystallize"] },
+          },
+          [{ key: "baseDmg%", value: 1.5 }]
+        )
+      );
     }
 
     if (this.constellation >= 6) {
       // C6: Spirit Steed and Lunar-Crystallize DMG elevated by 48% (assuming 30 excess points consumed)
+      // Filter by reaction (not ability) so it also covers N4 Gleam (normal) and Q 2nd hit (burst)
       buffs.push(
         new StatBuff(
           cbs(this, "C6", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          {
+            receiver: "selfOnField",
+            filter: { reactions: ["lunarCrystallize"] },
+          },
           [{ key: "elevated%", value: 0.48 }]
         )
       );
@@ -72,25 +122,25 @@ class Zibai extends CharacterBase {
     const eLevel = this.constellation >= 3 ? 13 : 10;
     const qLevel = this.constellation >= 5 ? 13 : 10;
 
-    // Normal Attacks in Phase Shift (DEF Scaled)
+    // Normal Attacks in Phase Shift (DEF Scaled, plain DirectFormula)
     const n1 = 1.018;
     const n2 = 0.938;
     const n3 = 0.622; // x2
     const n4 = 1.569;
-    const n4Gleam = 0.53; // Reaction DMG — only with Moonsign: Ascendant Gleam (满辉)
+    // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
+    // Lv10: 53% DEF, Lv13: 62.6% DEF — directCoeff (×1.6 for lunarCrystallize) applied internally
+    const n4GleamTalent = eLevel === 13 ? 0.626 : 0.53;
 
     const steed1 = eLevel === 13 ? 3.666 : 3.106;
-    let steed2 = eLevel === 13 ? 2.996 : 2.537;
-
-    // P1: +60% DEF to Steed 2-hit
-    steed2 += 0.6;
-    // C2: +550% DEF to Steed 2-hit
-    if (this.constellation >= 2) {
-      steed2 += 5.5;
-    }
+    // Steed 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
+    // P1 (+60% DEF) and C2 (+550% DEF) are ScalingBuffs above, not baked in here
+    // Lv10: 253.7% DEF, Lv13: 299.6% DEF — directCoeff (×1.6) applied internally
+    const steed2Talent = eLevel === 13 ? 2.996 : 2.537;
 
     const q1 = qLevel === 13 ? 2.698 : 2.285;
-    const q2 = qLevel === 13 ? 3.777 : 3.199;
+    // Q 2nd: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
+    // Lv10: 319.9% DEF, Lv13: 377.7% DEF — directCoeff (×1.6) applied internally
+    const q2Talent = qLevel === 13 ? 3.777 : 3.199;
 
     // Moonsign: Ascendant Gleam (满辉) requires 2+ Nod-Krai characters
     const hasAscendantGleam = this.teamMeta.countByRegion("Nod-Krai") >= 2;
@@ -98,13 +148,37 @@ class Zibai extends CharacterBase {
     return {
       "zibai-e-combo": {
         label: {
-          zh: "A 月转时隙普攻(四段全中)",
-          en: "A Phase Shift Normal Combo (N1-N4)",
+          zh: "E普攻4段",
+          en: "E NA Combo (N1-N4)",
         },
+        // Each hit is a separate part so that baseDmg buffs apply correctly per hit.
+        // N3 has 2 equal-multiplier hits → hits: 2 with per-hit talent value.
         parts: [
           {
             formula: new DirectFormula(
-              n1 + n2 + n3 * 2 + n4,
+              n1,
+              { element: "Geo", ability: "normal", reaction: "none" },
+              "def"
+            ),
+          },
+          {
+            formula: new DirectFormula(
+              n2,
+              { element: "Geo", ability: "normal", reaction: "none" },
+              "def"
+            ),
+          },
+          {
+            formula: new DirectFormula(
+              n3,
+              { element: "Geo", ability: "normal", reaction: "none" },
+              "def"
+            ),
+            hits: 2,
+          },
+          {
+            formula: new DirectFormula(
+              n4,
               { element: "Geo", ability: "normal", reaction: "none" },
               "def"
             ),
@@ -112,8 +186,10 @@ class Zibai extends CharacterBase {
           ...(hasAscendantGleam
             ? [
                 {
-                  formula: new DirectFormula(
-                    n4Gleam,
+                  // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula
+                  // C4 Scattermoon Splendor (+150% baseDmg%) applied via StatBuff above
+                  formula: new LunarDirectFormula(
+                    n4GleamTalent,
                     {
                       element: "Geo",
                       ability: "normal",
@@ -127,7 +203,10 @@ class Zibai extends CharacterBase {
         ],
       },
       "zibai-steed": {
-        label: { zh: "E 灵驹飞踏", en: "E Spirit Steed's Stride" },
+        label: {
+          zh: "E(C6≥30灵)",
+          en: "E Stride (C6: +30 pts)",
+        },
         parts: [
           {
             formula: new DirectFormula(
@@ -137,8 +216,9 @@ class Zibai extends CharacterBase {
             ),
           },
           {
-            formula: new DirectFormula(
-              steed2,
+            // Steed 2nd is Lunar-Crystallize DMG → LunarDirectFormula
+            formula: new LunarDirectFormula(
+              steed2Talent,
               {
                 element: "Geo",
                 ability: "skill",
@@ -149,6 +229,37 @@ class Zibai extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 1
+        ? {
+            "zibai-steed-c1": {
+              label: {
+                zh: "E(C1首次)",
+                en: "E Stride (C1 first)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    steed1,
+                    { element: "Geo", ability: "skill", reaction: "none" },
+                    "def"
+                  ),
+                },
+                {
+                  // C1: first Steed's 2nd-hit LC DMG +220% → talent mult ×3.2
+                  formula: new LunarDirectFormula(
+                    steed2Talent * 3.2,
+                    {
+                      element: "Geo",
+                      ability: "skill",
+                      reaction: "lunarCrystallize",
+                    },
+                    "def"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
       "zibai-burst": {
         label: { zh: "Q 三垣威仪法", en: "Q Tri-Sphere Eminence" },
         parts: [
@@ -160,8 +271,9 @@ class Zibai extends CharacterBase {
             ),
           },
           {
-            formula: new DirectFormula(
-              q2,
+            // Q 2nd is Lunar-Crystallize DMG → LunarDirectFormula
+            formula: new LunarDirectFormula(
+              q2Talent,
               {
                 element: "Geo",
                 ability: "burst",
@@ -176,15 +288,44 @@ class Zibai extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("xianyun")
+const xianyunOption = {
+  label: { zh: "风翎层数", en: "Storm Pinion Stacks" },
+  choices: [
+    {
+      value: "1",
+      label: { zh: "1 层 (+4% 暴击率)", en: "1 stack (+4% Crit Rate)" },
+    },
+    {
+      value: "2",
+      label: { zh: "2 层 (+6% 暴击率)", en: "2 stacks (+6% Crit Rate)" },
+    },
+    {
+      value: "3",
+      label: { zh: "3 层 (+8% 暴击率)", en: "3 stacks (+8% Crit Rate)" },
+    },
+    {
+      value: "4",
+      label: { zh: "4 层 (+10% 暴击率)", en: "4 stacks (+10% Crit Rate)" },
+    },
+  ] as const,
+  default: "4",
+} satisfies OptionDef;
+
+@RegisterCharacter("xianyun", xianyunOption)
 class Xianyun extends CharacterBase {
+  private readonly stormPinionStacks = resolveOption(
+    xianyunOption,
+    this.option
+  );
+
   readonly buffs = (() => {
+    const crByStacks = { "1": 0.04, "2": 0.06, "3": 0.08, "4": 0.1 } as const;
     const buffs: StatBuff[] = [
-      // P1: E hit → Team Plunge CR +10% (max 4 stacks = 10% exactly per text)
+      // P1: E hit → Team Plunge CR (per stack count: 1→4%/2→6%/3→8%/4→10%)
       new StatBuff(
         cbs(this, "P1", ["E"]),
         { receiver: "team", filter: { abilities: ["plunge"] } },
-        [{ key: "cr", value: 0.1 }]
+        [{ key: "cr", value: crByStacks[this.stormPinionStacks] }]
       ),
       // P2: Q Starwicker → Plunge Base DMG +200% ATK (max 9000)
       // C2: Enhances to 400% ATK (max 18000)
@@ -202,7 +343,7 @@ class Xianyun extends CharacterBase {
     // C2: After E → Xianyun ATK +20%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2-ATK", ["E"]), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
           { key: "atk%", value: 0.2 },
         ])
       );
@@ -229,7 +370,7 @@ class Xianyun extends CharacterBase {
     return {
       "xianyun-driftcloud": {
         label: {
-          zh: "A 闲云冲击波(三段跳)",
+          zh: "E下落×3",
           en: "A Driftcloud Wave (3 Skyladders)",
         },
         parts: [
@@ -393,7 +534,7 @@ class Yelan extends CharacterBase {
       },
       "yelan-burst-throw": {
         label: {
-          zh: "Q 玄掷玲珑(单次3箭)",
+          zh: "Q单次×3",
           en: "Q Exquisite Throw (3 Arrows)",
         },
         parts: [
@@ -412,7 +553,7 @@ class Yelan extends CharacterBase {
     if (this.constellation >= 6) {
       formulas["yelan-c6-barb"] = {
         label: {
-          zh: "运筹帷幄破局矢(总5矢)",
+          zh: "C6破局矢",
           en: "Mastermind Barbs (Total 5)",
         },
         parts: [
@@ -462,7 +603,7 @@ class Xiao extends CharacterBase {
   protected readonly formulaMap = (() => {
     return {
       "xiao-plunge-high": {
-        label: { zh: "A 靖妖傩舞·高空坠地", en: "A High Plunge (Q)" },
+        label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
           {
             formula: new DirectFormula(4.04, {
@@ -477,8 +618,28 @@ class Xiao extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("zhongli")
+const zhongliOption = {
+  label: { zh: "C0：岩脊共鸣", en: "C0: Stele Resonance" },
+  choices: [
+    {
+      value: "yes",
+      label: { zh: "有附近的岩元素创造物", en: "Nearby Geo construct present" },
+    },
+    {
+      value: "no",
+      label: { zh: "无附近的岩元素创造物", en: "No nearby Geo construct" },
+    },
+  ] as const,
+  default: "yes",
+} satisfies OptionDef;
+
+@RegisterCharacter("zhongli", zhongliOption)
 class Zhongli extends CharacterBase {
+  // At C1+, two steles can coexist and resonate with each other (always active)
+  private readonly hasResonance =
+    this.constellation >= 1 ||
+    resolveOption(zhongliOption, this.option) === "yes";
+
   readonly buffs = [
     // E (Shield): Jade Shield — decreases all nearby enemies' Elemental RES
     // and Physical RES by 20% (universal shred, modeled as resReduction%)
@@ -488,22 +649,74 @@ class Zhongli extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    const eLevel = this.constellation >= 3 ? 13 : 10;
     const qLevel = this.constellation >= 5 ? 13 : 10;
+
+    // E levels: Hold DMG / Stele creation / Resonance (Lv10 / Lv13)
+    const eHoldMult = eLevel === 13 ? 1.7 : 1.44;
+    const eSteleMult = eLevel === 13 ? 0.34 : 0.288;
+    const eResonanceMult = eLevel === 13 ? 0.68 : 0.576;
     const qMult = qLevel === 13 ? 10.84 : 9.0;
 
-    // P2: Dominance of Earth — Q DMG extra term based on HP (33% Max HP)
-    const qExtra = { key: "hp" as const, multiplier: 0.33 };
+    // P2: Dominance of Earth — E-type (Hold/Stele/Resonance) extra HP term (1.9% Max HP)
+    const eHpExtra = { key: "hp" as const, multiplier: 0.019 };
+    // P2: Dominance of Earth — Q DMG extra HP term (33% Max HP)
+    const qHpExtra = { key: "hp" as const, multiplier: 0.33 };
+
+    const geoSkillTag = {
+      element: "Geo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
 
     return {
+      "zhongli-hold": {
+        label: { zh: "E长按+炊金馔玉", en: "E Hold (incl. P2)" },
+        parts: [
+          {
+            // Hold AoE Geo DMG
+            formula: new DirectFormula(eHoldMult, geoSkillTag, "atk", eHpExtra),
+          },
+          {
+            // Stone Stele creation AoE Geo DMG
+            formula: new DirectFormula(
+              eSteleMult,
+              geoSkillTag,
+              "atk",
+              eHpExtra
+            ),
+          },
+        ],
+      },
+      ...(this.hasResonance
+        ? {
+            "zhongli-resonance": {
+              label: {
+                zh: "E岩脊共鸣+炊金馔玉",
+                en: "E Stone Stele Resonance (P2)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    eResonanceMult,
+                    geoSkillTag,
+                    "atk",
+                    eHpExtra
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
       "zhongli-burst": {
-        label: { zh: "Q 天星(包含炊金馔玉)", en: "Q Planet Befall (incl. P2)" },
+        label: { zh: "Q+炊金馔玉", en: "Q Planet Befall (incl. P2)" },
         parts: [
           {
             formula: new DirectFormula(
               qMult,
               { element: "Geo", ability: "burst", reaction: "none" },
               "atk",
-              qExtra
+              qHpExtra
             ),
           },
         ],
@@ -575,10 +788,19 @@ class HuTao extends CharacterBase {
   })();
 
   // Charged ATK (Normal ATK talent, no constellation boost): Lv10 242.6%
+  // Blood Blossom (E Skill DMG): Lv10 115%, Lv13 (C3+) 136%; C2: +10% Max HP
   // Q (low HP): Lv10 617%, Lv13 (C5+) 706%
   // Q (high HP): Lv10 494%, Lv13 (C5+) 565%
   protected readonly formulaMap = (() => {
     const isLowHP = this.hpState === "low" || this.hpState === "1";
+    const eLevel = this.constellation >= 3 ? 13 : 10;
+
+    const bbMult = eLevel === 13 ? 1.36 : 1.15;
+    // C2: Blood Blossom DMG += 10% Max HP at time of application
+    const bbExtra =
+      this.constellation >= 2
+        ? { key: "hp" as const, multiplier: 0.1 }
+        : undefined;
 
     const qMultLv10 = isLowHP ? 6.17 : 4.94;
     const qMultLv13 = isLowHP ? 7.06 : 5.65;
@@ -587,6 +809,11 @@ class HuTao extends CharacterBase {
     const pyroTag = {
       element: "Pyro" as const,
       ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const pyroSkillTag = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
       reaction: "none" as const,
     };
     return {
@@ -602,6 +829,25 @@ class HuTao extends CharacterBase {
               ...pyroTag,
               reaction: "vaporize",
             }),
+          },
+        ],
+      },
+      "hutao-blood-blossom": {
+        label: { zh: "E 血梅香", en: "E Blood Blossom" },
+        parts: [
+          { formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra) },
+        ],
+      },
+      "hutao-blood-blossom-vape": {
+        label: { zh: "E 血梅香(蒸发)", en: "E Blood Blossom (Vape)" },
+        parts: [
+          {
+            formula: new AmplifyFormula(
+              bbMult,
+              { ...pyroSkillTag, reaction: "vaporize" },
+              "atk",
+              bbExtra
+            ),
           },
         ],
       },
@@ -646,11 +892,11 @@ class Shenhe extends CharacterBase {
       "baseDmg",
       this.constellation >= 3 ? 1.035 : 0.8764
     ),
-    // P1: Q field → on-field Cryo DMG +15%
+    // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(
       cbs(this, "P1", ["Q"]),
       { receiver: "onField", filter: { elements: ["Cryo"] } },
-      [{ key: "dmg%", value: 0.15 }]
+      [{ key: "cryo%", value: 0.15 }]
     ),
     // P2: Press E → team Skill/Burst DMG +15%
     new StatBuff(
@@ -671,7 +917,7 @@ class Shenhe extends CharacterBase {
     const eMult = this.constellation >= 3 ? 3.55 : 3.01;
     return {
       "shenhe-skill": {
-        label: { zh: "E 仰灵威召将役咒(点按)", en: "E Spring Spirit (Press)" },
+        label: { zh: "E点按", en: "E Spring Spirit (Press)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -716,32 +962,57 @@ class Ganyu extends CharacterBase {
 
   // Frostflake Arrow + Bloom (Normal ATK talent — no constellation level boost)
   // Arrow Lv10: 230%, Bloom Lv10: 392%, Total: 622%
-  protected readonly formulaMap = {
-    "ganyu-frostflake": {
-      label: { zh: "A 霜华矢+霜华绽发", en: "A Frostflake Arrow + Bloom" },
-      parts: [
-        {
-          formula: new DirectFormula(2.3 + 3.92, {
-            element: "Cryo",
-            ability: "charge",
-            reaction: "none",
-          }),
-        },
-      ],
-    },
-    "ganyu-frostflake-melt": {
-      label: { zh: "A 霜华矢+绽发(融化)", en: "A Frostflake + Bloom (Melt)" },
-      parts: [
-        {
-          formula: new AmplifyFormula(2.3 + 3.92, {
-            element: "Cryo",
-            ability: "charge",
-            reaction: "melt",
-          }),
-        },
-      ],
-    },
-  };
+  // Q Ice Shard (Q talent): Lv10 126%, Lv13 (C3+) 149%
+  protected readonly formulaMap = (() => {
+    const qLevel = this.constellation >= 3 ? 13 : 10;
+    const qShardMult = qLevel === 13 ? 1.49 : 1.26;
+    const cryoBurstTag = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    return {
+      "ganyu-frostflake": {
+        label: { zh: "重击+绽发", en: "CA + Bloom" },
+        parts: [
+          {
+            formula: new DirectFormula(2.3 + 3.92, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "ganyu-frostflake-melt": {
+        label: { zh: "重击+绽发(融)", en: "A Frostflake + Bloom (Melt)" },
+        parts: [
+          {
+            formula: new AmplifyFormula(2.3 + 3.92, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "melt",
+            }),
+          },
+        ],
+      },
+      "ganyu-q-shard": {
+        label: { zh: "Q 冰棱", en: "Q Ice Shard" },
+        parts: [{ formula: new DirectFormula(qShardMult, cryoBurstTag) }],
+      },
+      "ganyu-q-shard-melt": {
+        label: { zh: "Q 冰棱(融化)", en: "Q Ice Shard (Melt)" },
+        parts: [
+          {
+            formula: new AmplifyFormula(qShardMult, {
+              ...cryoBurstTag,
+              reaction: "melt",
+            }),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("keqing")
@@ -804,7 +1075,7 @@ class Keqing extends CharacterBase {
       this.constellation >= 3 ? 1.87 + 0.51 * 8 + 4.01 : 1.58 + 0.432 * 8 + 3.4;
     return {
       "keqing-charged": {
-        label: { zh: "A 重击", en: "A Charged ATK" },
+        label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new DirectFormula(3.22, {
@@ -816,10 +1087,11 @@ class Keqing extends CharacterBase {
         ],
       },
       "keqing-charged-aggravate": {
-        label: { zh: "A 重击(超激化)", en: "A Charged ATK (Aggravate)" },
+        label: { zh: "重击(超激化)", en: "CA (Aggravate)" },
         parts: [
           {
-            formula: new DirectFormula(3.22, {
+            // Aggravate is a Catalyze reaction → CatalyzeFormula
+            formula: new CatalyzeFormula(3.22, {
               element: "Electro",
               ability: "charge",
               reaction: "aggravate",
@@ -849,17 +1121,20 @@ class Qiqi extends CharacterBase {
   readonly buffs = [];
 
   protected readonly formulaMap = (() => {
-    // E Herald of Frost DMG Lv10: 64.96% × ~8 hits over duration
-    // Lv13 (C3+): 76.7% × 8
+    // E Herald of Frost DMG: Lv10 64.96%, Lv13 (C5+ upgrades E): 76.5%
+    // ~8 hits over 15s duration
+    // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
+    const eHeraldMult = this.constellation >= 5 ? 0.765 : 0.6496;
     return {
-      "skill-hit": {
+      "qiqi-skill-hit": {
         label: { zh: "E 寒病鬼差(×8)", en: "E Herald of Frost (×8)" },
         parts: [
           {
-            formula: new DirectFormula(
-              (this.constellation >= 3 ? 0.767 : 0.6496) * 8,
-              { element: "Cryo", ability: "skill", reaction: "none" }
-            ),
+            formula: new DirectFormula(eHeraldMult * 8, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
           },
         ],
       },

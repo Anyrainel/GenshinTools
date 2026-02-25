@@ -19,9 +19,16 @@ class AthameArtis extends WeaponBase {
     new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
     ]),
-    new StatBuff(wbs(this, ["Q"]), { receiver: "onField" }, [
-      { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-    ]),
+    new StatBuff(
+      wbs(this, ["Q"], "athame_artis-onfield-atk"),
+      { receiver: "onField" },
+      [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -38,7 +45,7 @@ class KeyOfKhajNisut extends WeaponBase {
       3 * r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024])
     ),
     new ScalingBuff(
-      wbs(this, ["E"]),
+      wbs(this, ["E"], "key_of_khajnisut-team-em"),
       { receiver: "team" },
       [],
       "hp",
@@ -64,22 +71,28 @@ class PrimordialJadeCutter extends WeaponBase {
 
 @RegisterWeapon("peak_patrol_song")
 class PeakPatrolSong extends WeaponBase {
-  // DEF% (2-stack) + team elemental DMG% from DEF scaling
+  // 2-stack: self DEF% + self all-elemental DMG; on 2nd stack: team all-elemental DMG from DEF scaling
   readonly buffs = [
     new StatBuff(wbs(this, ["on-hit"]), { receiver: "self" }, [
       {
         key: "def%",
         value: 2 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
       },
+      // 2-stack self all-elemental DMG: 2 x 10%/12.5%/15%/17.5%/20%
+      ...allElementalDmg(
+        2 * r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2])
+      ),
     ]),
+    // Team all-elemental DMG from DEF; cap: 25.6%/32%/38.4%/44.8%/51.2%
+    // noStackId required for team receiver on a weapon buff (U2)
     new ScalingBuff(
-      wbs(this, ["on-hit"]),
+      wbs(this, ["on-hit"], "peak_patrol_song-team-elemental-dmg"),
       { receiver: "team", filter: { elements } },
       [],
       "def",
       "dmg%",
       r(this.refinement, [0.00008, 0.0001, 0.00012, 0.00014, 0.00016]),
-      r(this.refinement, [0.25, 0.325, 0.4, 0.475, 0.55])
+      r(this.refinement, [0.256, 0.32, 0.384, 0.448, 0.512])
     ),
   ];
 }
@@ -127,15 +140,21 @@ class LightOfFoliarIncision extends WeaponBase {
 
 @RegisterWeapon("haran_geppaku_futsu")
 class HaranGeppakuFutsu extends WeaponBase {
-  // 2-stack Wavespike assumed
+  // All-elemental DMG + 2-stack Wavespike Normal Attack DMG% (filter: normal)
   readonly buffs = [
     new StatBuff(wbs(this), { receiver: "self" }, [
       ...allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])),
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -155,18 +174,24 @@ class Absolution extends WeaponBase {
 
 @RegisterWeapon("splendor_of_tranquil_waters")
 class SplendorOfTranquilWaters extends WeaponBase {
-  // 3-stack E DMG + 2-stack HP%
+  // 3-stack Elemental Skill DMG% + 2-stack HP%
   readonly buffs = [
     new StatBuff(wbs(this, ["hp-change"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
-      },
       {
         key: "hp%",
         value: 2 * r(this.refinement, [0.14, 0.175, 0.21, 0.245, 0.28]),
       },
     ]),
+    new StatBuff(
+      wbs(this, ["hp-change"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -283,13 +308,14 @@ class LightbearingMoonshard extends WeaponBase {
         { key: "def%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
       ]),
     ];
-    if (this.teamMeta.hasReaction("crystallize", this.charId)) {
+    if (this.teamMeta.hasReaction("lunarCrystallize", this.charId)) {
       buffs.push(
         new StatBuff(
-          wbs(this, ["E", "crystallize"]),
+          wbs(this, ["E", "lunarCrystallize"]),
           {
             receiver: "self",
-            filter: { reactions: ["crystallize", "lunarCrystallize"] },
+            // Game text: "月结晶反应伤害" = Lunar-Crystallize only (not plain Crystallize)
+            filter: { reactions: ["lunarCrystallize"] },
           },
           [
             {
@@ -306,14 +332,23 @@ class LightbearingMoonshard extends WeaponBase {
 
 @RegisterWeapon("azurelight")
 class Azurelight extends WeaponBase {
-  // ATK% after E + elemental DMG at 0 energy (best case)
+  // Base ATK% after E; at 0 energy: additional ATK% + CD
   readonly buffs = [
+    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      {
+        key: "atk%",
+        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+      },
+    ]),
     new StatBuff(wbs(this, ["E", "no-energy"]), { receiver: "self" }, [
       {
         key: "atk%",
         value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
       },
-      ...allElementalDmg(r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32])),
+      {
+        key: "cd",
+        value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+      },
     ]),
   ];
 }

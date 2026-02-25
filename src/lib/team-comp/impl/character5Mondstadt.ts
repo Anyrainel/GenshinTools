@@ -71,11 +71,13 @@ class Durin extends CharacterBase {
       }
     } else {
       // P1 (Dark Decay): Vaporize/Melt DMG +40% (×hexMult)
+      // Dragon of Dark Decay persists off-field; use "self" so Durin's burst benefits
+      // whether he is on-field or not
       buffs.push(
         new StatBuff(
           cbs(this, "P1", ["Q"]),
           {
-            receiver: "selfOnField",
+            receiver: "self",
             filter: { reactions: ["vaporize", "melt"] },
           },
           [{ key: "reactionDmg%", value: 0.4 * hexMult }]
@@ -200,7 +202,7 @@ class Durin extends CharacterBase {
     if (isWhite) {
       return {
         "durin-burst-white": {
-          label: { zh: "白焰之龙总伤", en: "White Flame Burst + Dragon" },
+          label: { zh: "Q总伤", en: "Q Total Damage" },
           parts: [
             { formula: new DirectFormula(qWhiteInitMult, burstTag) },
             { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 10 },
@@ -251,18 +253,20 @@ class Albedo extends CharacterBase {
     ] as const;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1: Transient Blossoms deal +25% DMG vs enemies HP <50% (assume active)
+      // Transient Blossoms proc off-field; receiver is "self" not "selfOnField"
       new StatBuff(
         cbs(this, "P1", ["enemy-low-hp"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+        { receiver: "self", filter: { abilities: ["skill"] } },
         [{ key: "dmg%", value: 0.25 }]
       ),
       // P4: Silver Isotoma — Transient Blossom DMG +240% DEF
       // Only when Silver Isotoma exists (Hexerei: Secret Rite)
+      // receiver: "self" — Silver Isotoma fires while Albedo is off-field
       ...(isHexerei
         ? [
             new ScalingBuff(
               cbs(this, "P4", ["E"]),
-              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+              { receiver: "self", filter: { abilities: ["skill"] } },
               [],
               "def",
               "baseDmg",
@@ -307,11 +311,15 @@ class Albedo extends CharacterBase {
         { receiver: "onField", filter: { abilities: ["plunge"] } },
         this.constellation >= 4 ? [{ key: "dmg%", value: 0.3 }] : []
       ),
-      // C6: In Solar Isotoma with Crystallize shield, DMG +17% (assume active)
+      // C6: In Solar Isotoma with Crystallize shield (or Moondrifts), DMG +17%
+      // Crystallize shield is produced by Geo reactions; gated on hasShielder() as proxy
+      // (Moondrifts branch requires Nod-Krai characters, modeled separately as TODO)
       new StatBuff(
         cbs(this, "C6", ["E"]),
         { receiver: "onField" },
-        this.constellation >= 6 ? [{ key: "dmg%", value: 0.17 }] : []
+        this.constellation >= 6 && this.teamMeta.hasShielder()
+          ? [{ key: "dmg%", value: 0.17 }]
+          : []
       ),
     ];
 
@@ -367,7 +375,7 @@ class Albedo extends CharacterBase {
         ],
       },
       "albedo-burst": {
-        label: { zh: "Q 元素爆发+生灭之花", en: "Q Burst + Fatal Blossoms" },
+        label: { zh: "Q+生灭之花", en: "Q Burst + Fatal Blossoms" },
         parts: [
           {
             formula: new DirectFormula(burstMult, {
@@ -468,7 +476,7 @@ class Diluc extends CharacterBase {
       },
       "diluc-skill-vape": {
         label: {
-          zh: "E 逆焰之刃三段(全蒸发)",
+          zh: "E3段(蒸发)",
           en: "E Searing Onslaught (All Vape)",
         },
         parts: [
@@ -482,7 +490,7 @@ class Diluc extends CharacterBase {
         ],
       },
       "diluc-burst": {
-        label: { zh: "Q 黎明(斩击+爆裂)", en: "Q Dawn (Slash + Explosion)" },
+        label: { zh: "Q斩击+爆裂", en: "Q Dawn (Slash + Explosion)" },
         parts: [
           {
             formula: new DirectFormula(qSlash, {
@@ -525,39 +533,74 @@ class Diluc extends CharacterBase {
 
 @RegisterCharacter("mona")
 class Mona extends CharacterBase {
-  readonly buffs = [
-    // P3 (combat): 20% of ER as Hydro DMG%
-    new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
-      { receiver: "selfOnField" },
-      [],
-      "er",
-      "hydro%",
-      0.2
-    ),
-    // Q: Stellaris Phantasm — Omen DMG Bonus +60%
-    new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
-      { key: "dmg%", value: 0.6 },
-    ]),
-    // C1: Hydro reaction effects +15%
-    new StatBuff(
-      cbs(this, "C1", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : []
-    ),
-    // C2: Charged ATK hit → team EM +80
-    new StatBuff(
-      cbs(this, "C2", ["charge"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "em", value: 80 }] : []
-    ),
-    // C4: Omen targets +15% CR
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 4 ? [{ key: "cr", value: 0.15 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P2 (combat): 20% of ER as Hydro DMG% (Waterborne Destiny)
+      new ScalingBuff(
+        cbs(this, "P2", ["passive"]),
+        { receiver: "selfOnField" },
+        [],
+        "er",
+        "hydro%",
+        0.2
+      ),
+      // Q: Stellaris Phantasm — Omen DMG Bonus +60%
+      new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
+        { key: "dmg%", value: 0.6 },
+      ]),
+      // C1: Hydro reaction effects +15% (EC, Lunar-Charged, Vaporize, Hydro Swirl, Lunar-Crystallize)
+      // "When any of your own party members hits an opponent affected by an Omen" → team-wide
+      new StatBuff(
+        cbs(this, "C1", ["Q"]),
+        {
+          receiver: "team",
+          filter: {
+            reactions: [
+              "electroCharged",
+              "lunarCharged",
+              "vaporize",
+              "swirl",
+              "lunarCrystallize",
+            ],
+          },
+        },
+        this.constellation >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : []
+      ),
+      // C2: Charged ATK hit → team EM +80
+      new StatBuff(
+        cbs(this, "C2", ["charge"]),
+        { receiver: "team" },
+        this.constellation >= 2 ? [{ key: "em", value: 80 }] : []
+      ),
+      // C4: Omen targets +15% CR
+      new StatBuff(
+        cbs(this, "C4", ["Q"]),
+        { receiver: "onField" },
+        this.constellation >= 4 ? [{ key: "cr", value: 0.15 }] : []
+      ),
+      // C6: After entering Illusory Torrent, next Charged Attack +60%/s up to +180% (3s)
+      // Modeled at max; ramp-up not tracked (insignificant accuracy difference)
+      new StatBuff(
+        cbs(this, "C6", ["E"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        this.constellation >= 6 ? [{ key: "dmg%", value: 1.8 }] : []
+      ),
+    ];
+    // P4 (Hexerei): Astral Glow of Mercury — when other party members trigger Vaporize,
+    // consumes stacks (max 3), each stack increases that Vaporize DMG by 5% → max +15%
+    // Assumed: max 3 stacks always available (maintained via Mona's NA/charge hits)
+    if (isHexerei && this.teamMeta.hasReaction("vaporize")) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["normal", "charge", "vaporize"]),
+          { receiver: "team", filter: { reactions: ["vaporize"] } },
+          [{ key: "reactionDmg%", value: 0.15 }]
+        )
+      );
+    }
+    return buffs;
+  })();
 
   // Q: Bubble explosion Lv10 796%, Lv13 (C3+) 940%
   protected readonly formulaMap = (() => {
@@ -633,15 +676,18 @@ class Jean extends CharacterBase {
 @RegisterCharacter("venti")
 class Venti extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: StatBuff[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // C2: E decreases Anemo/Phys RES by 24%
-    // Simplified as general resReduction
+    // C2: E decreases Anemo RES and Physical RES each by 12%;
+    // launched opponents take an additional 12% of each while airborne.
+    // Assumed: 12% base + 12% airborne = 24% total for both Anemo and Physical.
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
-          { key: "resReduction%", value: 0.24 },
-        ])
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "team", filter: { elements: ["Anemo", "Physical"] } },
+          [{ key: "resReduction%", value: 0.24 }]
+        )
       );
     }
     // C4: On pickup → Venti Anemo DMG +25%
@@ -652,15 +698,57 @@ class Venti extends CharacterBase {
         ])
       );
     }
-    // C6: Q targets take -20% Anemo/absorbed element RES; Venti gets +100% CD
+    // C6: Q targets take -20% Anemo RES; Venti gets +100% CD
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
-          { key: "resReduction%", value: 0.2 },
-        ]),
+        new StatBuff(
+          cbs(this, "C6", ["Q"]),
+          { receiver: "team", filter: { elements: ["Anemo"] } },
+          [{ key: "resReduction%", value: 0.2 }]
+        ),
         new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "selfOnField" }, [
           { key: "cd", value: 1.0 },
         ])
+      );
+      // C6: Absorbed element also gets -20% RES (S10 pattern)
+      const c6AbsorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+      const c6TeamEls = new Set(Object.values(this.teamMeta.elements));
+      for (const el of c6AbsorbElements) {
+        if (!c6TeamEls.has(el)) continue;
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            { receiver: "team", filter: { elements: [el] } },
+            [{ key: "resReduction%", value: 0.2 }]
+          )
+        );
+      }
+    }
+
+    // P4 (Hexerei): While Stormeye active, after on-field character triggers Swirl,
+    // that character's DMG +50% for 4s; Venti's Q deals 135% original DMG (baseDmg% +0.35).
+    // Model +50% per swirl-capable element present in team (Pyro/Hydro/Cryo/Electro).
+    if (
+      this.teamMeta.countByFaction("Hexerei") >= 2 &&
+      this.teamMeta.hasReaction("swirl")
+    ) {
+      const teamEls = Object.values(this.teamMeta.elements);
+      for (const el of ["Pyro", "Hydro", "Cryo", "Electro"] as const) {
+        if (!teamEls.includes(el)) continue;
+        buffs.push(
+          new StatBuff(
+            cbs(this, "P4", ["Q", "swirl"]),
+            { receiver: "onField", filter: { elements: [el] } },
+            [{ key: "dmg%", value: 0.5 }]
+          )
+        );
+      }
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["Q", "swirl"]),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [{ key: "baseDmg%", value: 0.35 }]
+        )
       );
     }
 
@@ -678,7 +766,7 @@ class Venti extends CharacterBase {
 
     return {
       "venti-windsunder": {
-        label: { zh: "飓风箭伤害", en: "Windsunder Arrows Combo" },
+        label: { zh: "E飓风箭", en: "E Wind Arrow" },
         parts: [
           {
             formula: new DirectFormula(naTotal * windsunderMult, {
@@ -691,7 +779,7 @@ class Venti extends CharacterBase {
       },
       "venti-burst-total": {
         label: {
-          zh: "Q 风神之诗(总风伤)",
+          zh: "Q总风伤",
           en: "Q Wind's Grand Ode (Total Anemo)",
         },
         parts: [
@@ -708,7 +796,7 @@ class Venti extends CharacterBase {
         ? {
             "venti-c2-skill": {
               label: {
-                zh: "C2 风起之时高天之歌伤害",
+                zh: "C2E",
                 en: "C2 Skyward Sonnet DMG",
               },
               parts: [
@@ -729,31 +817,47 @@ class Venti extends CharacterBase {
 
 @RegisterCharacter("klee")
 class Klee extends CharacterBase {
-  readonly buffs = [
-    // P1: Explosive Spark — next Charged ATK after E/Normal proc costs no stamina and deals +50% DMG (assume active)
-    new StatBuff(
-      cbs(this, "P1", ["E", "normal"]),
-      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      [{ key: "dmg%", value: 0.5 }]
-    ),
-    // C2: Enemies hit by mines: -23% DEF for 10s
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "defReduction%", value: 0.23 }] : []
-    ),
-    // C6: Q active → party +10% Pyro DMG
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 6 ? [{ key: "pyro%", value: 0.1 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P1: Explosive Spark — next Charged ATK after E/Normal proc costs no stamina and deals +50% DMG (assume active)
+      new StatBuff(
+        cbs(this, "P1", ["E", "normal"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        [{ key: "dmg%", value: 0.5 }]
+      ),
+      // C2: Enemies hit by mines: -23% DEF for 10s
+      new StatBuff(
+        cbs(this, "C2", ["E"]),
+        { receiver: "team" },
+        this.constellation >= 2 ? [{ key: "defReduction%", value: 0.23 }] : []
+      ),
+      // C6: Q active → party +10% Pyro DMG
+      new StatBuff(
+        cbs(this, "C6", ["Q"]),
+        { receiver: "team" },
+        this.constellation >= 6 ? [{ key: "pyro%", value: 0.1 }] : []
+      ),
+    ];
+    if (isHexerei) {
+      // P4 (Hexerei): Boom-Boom Strike with 3 Boom Badges → deals 150% original DMG
+      // Assumed: max 3 stacks maintained (1 from NA, 1 from E, 1 from Q)
+      // 150% original = baseDmg% +0.5 (i.e., 1 + 0.5 = 1.5× original)
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["normal", "E", "Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+          [{ key: "baseDmg%", value: 0.5 }]
+        )
+      );
+    }
+    return buffs;
+  })();
 
   // Charged ATK: Lv10 283% (no constellation boost, C3=E, C5=Q)
   protected readonly formulaMap = {
     "klee-charged": {
-      label: { zh: "A 重击", en: "A Charged ATK" },
+      label: { zh: "重击", en: "CA" },
       parts: [
         {
           formula: new DirectFormula(2.83, {
@@ -765,7 +869,7 @@ class Klee extends CharacterBase {
       ],
     },
     "klee-charged-vape": {
-      label: { zh: "A 重击(蒸发)", en: "A Charged ATK (Vape)" },
+      label: { zh: "重击(蒸发)", en: "CA (Vaporize)" },
       parts: [
         {
           formula: new AmplifyFormula(2.83, {
@@ -805,45 +909,62 @@ class Eula extends CharacterBase {
     ),
   ];
 
-  // Q: Lightfall Sword — base + per-stack DMG
+  // Q initial Cryo hit: Lv10 442%, Lv13 (C3+) 522%
+  // Q Lightfall Sword — base + per-stack DMG
   // Typical stacks: C0-C5 ~13, C6 ~20
   // Lv10: 725.6% + 148.2% × stacks, Lv13 (C3+): 922.3% + 188.4% × stacks
+  // P1 Shattered Lightfall: 50% of Lightfall base DMG (after consuming 2 Grimheart)
   protected readonly formulaMap = (() => {
+    const qInitialMult = this.constellation >= 3 ? 5.22 : 4.42;
     const baseMult = this.constellation >= 3 ? 9.223 : 7.256;
     const stackMult = this.constellation >= 3 ? 1.884 : 1.482;
     const stacks = this.constellation >= 6 ? 20 : 13;
     const totalMult = baseMult + stackMult * stacks;
     const maxMult = baseMult + stackMult * 30;
+    const physBurst = {
+      element: "Physical" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "eula-burst-lightfall": {
         label: {
-          zh: `光降之剑(${stacks}层)`,
-          en: `Lightfall Sword (${stacks} stacks)`,
+          zh: `Q初击+光降${stacks}层`,
+          en: `Q + Lightfall (${stacks} stacks)`,
         },
         parts: [
           {
-            formula: new DirectFormula(totalMult, {
-              element: "Physical",
+            formula: new DirectFormula(qInitialMult, {
+              element: "Cryo",
               ability: "burst",
               reaction: "none",
             }),
           },
+          { formula: new DirectFormula(totalMult, physBurst) },
         ],
       },
       "eula-burst-lightfall-max": {
         label: {
-          zh: "光降之剑(30层)",
-          en: "Lightfall Sword (30 stacks)",
+          zh: "Q初击+光降30层",
+          en: "Q + Lightfall (30 stacks)",
         },
         parts: [
           {
-            formula: new DirectFormula(maxMult, {
-              element: "Physical",
+            formula: new DirectFormula(qInitialMult, {
+              element: "Cryo",
               ability: "burst",
               reaction: "none",
             }),
           },
+          { formula: new DirectFormula(maxMult, physBurst) },
         ],
+      },
+      "eula-p1-shattered": {
+        label: {
+          zh: "P1碎裂光降之剑",
+          en: "P1 Shattered Lightfall",
+        },
+        parts: [{ formula: new DirectFormula(baseMult * 0.5, physBurst) }],
       },
     };
   })();

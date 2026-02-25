@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, weaponsById } from "@/data/constants";
-import { getWeaponDisplayMeta } from "@/data/gameStatsLoader";
 import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";

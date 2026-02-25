@@ -10,8 +10,6 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { CharacterStatsMap } from "@/data/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterFilters,
   CharacterResource,
@@ -21,6 +19,8 @@ import {
   defaultCharacterFilters,
   filterAndSortCharacters,
 } from "@/lib/characterFilters";
+import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useTierStore } from "@/stores/useTierStore";
 
 const testCharacters: CharacterResource[] = [

@@ -53,6 +53,11 @@ class Escoffier extends CharacterBase {
   // E: Skill cast Lv10: 90.7%, Lv13 (C3+): 107.1%
   // E: Frosty Parfait Lv10: 216.0%, Lv13 (C3+): 255.0%, 21 ticks over 20s
   // Q: Scoring Cuts Lv10: 1067.0%, Lv13 (C5+): 1259.7%
+  // C6: Special-Grade Frosty Parfait 500% ATK, triggered by active NA/CA/Plunge,
+  //     max 6× per Cold Storage mode duration. DmgTODO listed as "per-hit tracking
+  //     limitation" but this is wrong: the per-trigger damage is fixed (500% ATK,
+  //     Skill DMG) and the cap is 6 per duration — modeled identically to Q1/Q5
+  //     "per-rotation counter → add formula with hits:6".
   protected readonly formulaMap = (() => {
     const skillCastMult = this.constellation >= 3 ? 1.071 : 0.907;
     const parfaitMult = this.constellation >= 3 ? 2.55 : 2.16;
@@ -65,8 +70,8 @@ class Escoffier extends CharacterBase {
     return {
       "escoffier-skill-parfait": {
         label: {
-          zh: "E 技能释放+21次冻霜芭菲",
-          en: "E Skill Cast + Frosty Parfait (×21)",
+          zh: "E+芭菲×21",
+          en: "E Cast + Parfait (×21)",
         },
         parts: [
           {
@@ -90,6 +95,22 @@ class Escoffier extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "escoffier-c6-parfait": {
+              label: {
+                zh: "C6芭菲×6",
+                en: "C6 Special Parfait (×6)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(5.0, skillTag),
+                  hits: 6,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -209,7 +230,7 @@ class Emilie extends CharacterBase {
           }
         : {}),
       "emilie-burst-9hit": {
-        label: { zh: "Q 柔灯之匣·三阶9次", en: "Q Lv3 Case (9 Ticks)" },
+        label: { zh: "Q三阶×9", en: "Q Lv3 Case (9 Ticks)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -224,7 +245,7 @@ class Emilie extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "emilie-c6-normal": {
-              label: { zh: "A 一套普通攻击", en: "A Normal ATK Combo" },
+              label: { zh: "C6普攻一套", en: "C6 NA Combo" },
               parts: normalParts,
             },
           }
@@ -239,9 +260,11 @@ class Sigewinne extends CharacterBase {
     const isC1 = this.constellation >= 1;
     const buffs: StatBuff[] = [
       // P1: HP > 30k → E baseDmg +80 (C1: 100) per 1000 HP. Max 2800 (C1: 3500)
+      // Game text: off-field party members only, excluding Sigewinne.
+      // Approximated as otherOnField — see DmgTODO.
       new ScalingBuff(
         cbs(this, "P1", ["E"]),
-        { receiver: "team", filter: { abilities: ["skill"] } },
+        { receiver: "otherOnField", filter: { abilities: ["skill"] } },
         [],
         "hp",
         "baseDmg",
@@ -313,10 +336,10 @@ class Sigewinne extends CharacterBase {
 @RegisterCharacter("clorinde")
 class Clorinde extends CharacterBase {
   readonly buffs = [
-    // P1: After Electro reaction, +20% ATK (C2: 30%) × 3 stacks as baseDmg
-    // on Normal ATK and Q Electro DMG
+    // P1: After Electro-related reaction, +20% ATK (C2: 30%) × 3 stacks as baseDmg
+    // on Normal ATK and Q Electro DMG; max increase 1800 (C2: 2700)
     new ScalingBuff(
-      cbs(this, "P1", ["E"]),
+      cbs(this, "P1", ["elemental-reaction"]),
       {
         receiver: "selfOnField",
         filter: { abilities: ["normal", "burst"], elements: ["Electro"] },
@@ -324,7 +347,8 @@ class Clorinde extends CharacterBase {
       [],
       "atk",
       "baseDmg",
-      this.constellation >= 2 ? 0.9 : 0.6
+      this.constellation >= 2 ? 0.9 : 0.6,
+      this.constellation >= 2 ? 2700 : 1800
     ),
     // P2: BoL ≥100% + changes → CR +10% × 2 stacks = +20%
     new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
@@ -390,12 +414,12 @@ class Clorinde extends CharacterBase {
 
     return {
       "clorinde-normal": {
-        label: { zh: "E 夜巡连段(驰猎+贯夜)", en: "E Night Vigil Rotation" },
+        label: { zh: "E普攻连段", en: "E Night Vigil Rotation" },
         parts: normalParts,
       },
       "clorinde-normal-aggravate": {
         label: {
-          zh: "E 夜巡连段(超激化/默认全覆盖)",
+          zh: "E普攻(超激化)",
           en: "E Night Vigil (Aggravate)",
         },
         parts: aggParts,
@@ -473,20 +497,32 @@ class Navia extends CharacterBase {
         )
       );
     }
+    // E intrinsic modifiers (peak model: 6 shrapnel consumed, all 11 shots hit)
+    // "11枚玫瑰晶弹全命中时，造成原本200%的伤害" → baseDmg% +1.0 (baseDmg% zone, not talent zone)
+    // "超过3枚弹片每枚额外提升15%" (×3) → dmg% +0.45 (dmg% zone, separate from baseDmg% zone)
+    buffs.push(
+      new StatBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+        [
+          { key: "baseDmg%", value: 1.0 },
+          { key: "dmg%", value: 0.45 },
+        ]
+      )
+    );
     return buffs;
   })();
 
-  // E (6 shrapnel): Lv10 710.6% × 2.0 × 1.45 = 2060.7%
-  // Lv13 (C3+): 839.0% × 2.0 × 1.45 = 2433.1%
+  // E (6 shrapnel): Lv10 710.6%, Lv13 (C3+) 839.0%
+  // "200% of original" and "+45% per extra shard" modeled as baseDmg%/dmg% buffs above
   protected readonly formulaMap = (() => {
     const baseMult = this.constellation >= 3 ? 8.39 : 7.106;
-    const totalMult = baseMult * 2.0 * 1.45;
     return {
       "navia-crystalshot": {
-        label: { zh: "E 典仪式晶火(6弹片)", en: "E Crystalshot (6 shrapnel)" },
+        label: { zh: "E6枚弹片", en: "E Crystalshot (6 shrapnel)" },
         parts: [
           {
-            formula: new DirectFormula(totalMult, {
+            formula: new DirectFormula(baseMult, {
               element: "Geo",
               ability: "skill",
               reaction: "none",
@@ -500,58 +536,117 @@ class Navia extends CharacterBase {
 
 @RegisterCharacter("furina")
 class Furina extends CharacterBase {
-  readonly buffs = [
-    // P2: Per 1000 Max HP → salon members DMG +0.7% (cap 28%)
-    new ScalingBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [],
-      "hp",
-      "dmg%",
-      0.000007,
-      0.28
-    ),
-    // Q: Let the People Rejoice — team DMG% based on Fanfare stacks
-    // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
-    // Max stacks: 300 (C1: 400). Assume ~250 stacks in practice.
-    new StatBuff(
-      cbs(this, "Q", ["Q"]),
-      { receiver: "team" },
-      (() => {
-        const perStack = this.constellation >= 3 ? 0.0031 : 0.0025;
-        const maxStacks = this.constellation >= 1 ? 400 : 300;
-        const avgStacks = Math.min(250, maxStacks);
-        return [{ key: "dmg%", value: perStack * avgStacks }];
-      })()
-    ),
-    // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
-    new StatBuff(
-      cbs(this, "C2", []),
-      { receiver: "self" },
-      this.constellation >= 2 ? [{ key: "hp%", value: 1.4 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P2: Per 1000 Max HP → salon members DMG +0.7% (cap 28%)
+      new ScalingBuff(
+        cbs(this, "P2", ["E"]),
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [],
+        "hp",
+        "dmg%",
+        0.000007,
+        0.28
+      ),
+      // Q: Let the People Rejoice — team DMG% based on Fanfare stacks
+      // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
+      // Max stacks: 300 (C1: 400). Assume ~250 stacks in practice.
+      new StatBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "team" },
+        (() => {
+          const perStack = this.constellation >= 3 ? 0.0031 : 0.0025;
+          const maxStacks = this.constellation >= 1 ? 400 : 300;
+          const avgStacks = Math.min(250, maxStacks);
+          return [{ key: "dmg%", value: perStack * avgStacks }];
+        })()
+      ),
+      // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
+      new StatBuff(
+        cbs(this, "C2", []),
+        { receiver: "self" },
+        this.constellation >= 2 ? [{ key: "hp%", value: 1.4 }] : []
+      ),
+    ];
+
+    if (this.constellation >= 6) {
+      // C6: Center of Attention — all NA/CA/Plunge converted to Hydro DMG
+      // Universal part: +18% Max HP as flat baseDmg on each hit (both Arkhe alignments)
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge", "plunge"] },
+          },
+          [],
+          "hp",
+          "baseDmg",
+          0.18
+        )
+      );
+      // Pneuma-alignment extra: +25% Max HP additional baseDmg per hit.
+      // Ousia alignment provides team healing (no damage formula) instead.
+      // Peak-DPS model assumes Pneuma mode for all 6 Center of Attention triggers.
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge", "plunge"] },
+          },
+          [],
+          "hp",
+          "baseDmg",
+          0.25
+        )
+      );
+    }
+
+    // E: "4 healthy party members → Salon Members deal 140% of original"
+    // "造成原本140%的伤害" → baseDmg% +0.4 (baseDmg% zone, not talent zone)
+    // Peak model: always assume 4 healthy members (S7 conditional buff → always active)
+    buffs.push(
+      new StatBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [{ key: "baseDmg%", value: 0.4 }]
+      )
+    );
+
+    return buffs;
+  })();
 
   // E Salon Members: scale with HP
   // Gentilhomme Usher (乌瑟勋爵): 9 hits
   // Surintendante Chevalmarin (海薇玛夫人): 18 hits
   // Mademoiselle Crabaletta (谢贝蕾妲小姐): 5 hits
-  // ×1.4 power bonus with 4 healthy team members
+  // ×1.4 power bonus (4 healthy members) → baseDmg% +0.4 (in buffs above)
   protected readonly formulaMap = (() => {
     const isE13 = this.constellation >= 5;
-    const usherMult = (isE13 ? 0.1267 : 0.1073) * 1.4;
-    const chevalmarinMult = (isE13 ? 0.0687 : 0.0582) * 1.4;
-    const crabalettaMult = (isE13 ? 0.1761 : 0.1492) * 1.4;
+    const usherMult = isE13 ? 0.1267 : 0.1073;
+    const chevalmarinMult = isE13 ? 0.0687 : 0.0582;
+    const crabalettaMult = isE13 ? 0.1761 : 0.1492;
     const hydroTag = {
       element: "Hydro" as const,
       ability: "skill" as const,
       reaction: "none" as const,
     };
+    // C6: Center of Attention (Pneuma mode) — NA combo converted to Hydro DMG
+    // Furina NA Lv10: 95.6% / 86.4% / 109% / 144.9% (ATK-scaling)
+    // +18% HP (universal) + 25% HP (Pneuma) baseDmg applied via C6 buffs above.
+    // 6 triggers max per 10s Center of Attention window; 1 full 4-hit combo shown.
+    // Ousia alignment triggers team healing only — no additional damage formula.
+    const c6HydroTag = {
+      element: "Hydro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
     return {
       "furina-salon-total": {
         label: {
-          zh: "E 沙龙成员(一轮齐射)",
-          en: "E Salon Members Total (Full Rotation)",
+          zh: "E沙龙一轮",
+          en: "E Salon Members (Full Rotation)",
         },
         parts: [
           {
@@ -568,6 +663,30 @@ class Furina extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "furina-c6-normal": {
+              label: {
+                zh: "C6普攻4段",
+                en: "C6 Pneuma NA Combo (4 hits)",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(0.956, c6HydroTag),
+                },
+                {
+                  formula: new DirectFormula(0.864, c6HydroTag),
+                },
+                {
+                  formula: new DirectFormula(1.09, c6HydroTag),
+                },
+                {
+                  formula: new DirectFormula(1.449, c6HydroTag),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -581,21 +700,29 @@ class Neuvillette extends CharacterBase {
       this.teamMeta.hasReaction("vaporize") ||
       this.teamMeta.hasReaction("frozen") ||
       this.teamMeta.hasReaction("electroCharged") ||
+      this.teamMeta.hasReaction("lunarCharged") ||
       this.teamMeta.hasReaction("bloom") ||
+      this.teamMeta.hasReaction("lunarBloom") ||
       this.teamMeta.hasReaction("swirl") ||
-      this.teamMeta.hasReaction("crystallize");
+      this.teamMeta.hasReaction("crystallize") ||
+      this.teamMeta.hasReaction("lunarCrystallize");
 
     if (canP1React) {
       // P1: 3 stacks Past Draconic Glories → Charged deals 160% original DMG (+60%)
+      // Triggers on: Vaporize, Frozen, EC, Lunar-Charged, Bloom, Lunar-Bloom,
+      //   Hydro Swirl, Hydro Crystallize, Lunar-Crystallize
       buffs.push(
         new StatBuff(
           cbs(this, "P1", [
             "vaporize",
             "frozen",
             "electroCharged",
+            "lunarCharged",
             "bloom",
+            "lunarBloom",
             "swirl",
             "crystallize",
+            "lunarCrystallize",
           ]),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "baseDmg%", value: 0.6 }]
@@ -610,7 +737,7 @@ class Neuvillette extends CharacterBase {
       ])
     );
 
-    // C2: 3 stacks → Charged CD +42%
+    // C2: 3 stacks Past Draconic Glories → Charged CD +42% (14% × 3)
     if (canP1React && this.constellation >= 2) {
       buffs.push(
         new StatBuff(
@@ -626,22 +753,44 @@ class Neuvillette extends CharacterBase {
 
   // Equitable Judgment: Lv10 14.47% HP/tick × 10 ticks = 144.7% HP
   // Lv13 (C3+ via Normal): 17.53% HP/tick × 10 = 175.3% HP
+  // C6: 2 currents every 2s during Equitable Judgment, each 10% Max HP Hydro DMG,
+  //     counts as Equitable Judgment DMG (ability: "charge"). Base duration 3s;
+  //     absorbing 3 droplets from E extends to 6s → 3 firings × 2 currents = 6 hits.
   protected readonly formulaMap = (() => {
     const tickMult = this.constellation >= 3 ? 0.1753 : 0.1447;
+    const chargeTag = {
+      element: "Hydro" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
     return {
       "neuvillette-judgment": {
-        label: { zh: "A 衡平推裁(×10)", en: "A Equitable Judgment (×10)" },
+        label: { zh: "重击×10", en: "A Equitable Judgment (×10)" },
         parts: [
           {
-            formula: new DirectFormula(
-              tickMult,
-              { element: "Hydro", ability: "charge", reaction: "none" },
-              "hp"
-            ),
+            formula: new DirectFormula(tickMult, chargeTag, "hp"),
             hits: 10,
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "neuvillette-c6-currents": {
+              label: {
+                zh: "C6洪流×6",
+                en: "C6 Judgment Currents (×6)",
+              },
+              parts: [
+                {
+                  // 10% Max HP per current; 3 droplets from E extend duration to 6s
+                  // → 3 × 2-current firings = 6 currents total
+                  formula: new DirectFormula(0.1, chargeTag, "hp"),
+                  hits: 6,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -705,7 +854,7 @@ class Wriothesley extends CharacterBase {
     return {
       "wriothesley-normal": {
         label: {
-          zh: "A 寒烈的惩裁·斥逐拳全套",
+          zh: "普攻全套",
           en: "A Chilling Penalty N5 Combo",
         },
         parts: [
@@ -719,7 +868,7 @@ class Wriothesley extends CharacterBase {
         ],
       },
       "wriothesley-charge": {
-        label: { zh: "A 惩戒·凌跃拳", en: "A Rebuke: Vaulting Fist" },
+        label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new DirectFormula(cMult, {
@@ -731,7 +880,7 @@ class Wriothesley extends CharacterBase {
         ],
       },
       "wriothesley-burst": {
-        label: { zh: "Q 黑金狼噬(全命中)", en: "Q Darkgold Wolfbite" },
+        label: { zh: "Q(全命中)", en: "Q Darkgold Wolfbite" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -788,7 +937,7 @@ class Lyney extends CharacterBase {
 
     return {
       "lyney-prop": {
-        label: { zh: "隐具魔术箭伤害", en: "A Prop Arrow" },
+        label: { zh: "E魔术箭", en: "E Prop Arrow" },
         parts: [
           {
             formula: new DirectFormula(propMult, {
@@ -800,7 +949,7 @@ class Lyney extends CharacterBase {
         ],
       },
       "lyney-strike": {
-        label: { zh: "礼花术弹伤害", en: "A Pyrotechnic Strike" },
+        label: { zh: "E礼花弹", en: "E Strike" },
         parts: [
           {
             formula: new DirectFormula(strikeMult, {
@@ -812,7 +961,7 @@ class Lyney extends CharacterBase {
         ],
       },
       "lyney-skill-max": {
-        label: { zh: "满层E伤害", en: "E Bewildering Lights (Max Stacks)" },
+        label: { zh: "E(满层)", en: "E (Max Stacks)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {

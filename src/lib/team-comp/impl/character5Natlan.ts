@@ -41,13 +41,29 @@ class Varesa extends CharacterBase {
       ),
     ];
 
-    // C4: Burst in Fiery Passion → DMG +100%
+    // C4: Burst in Fiery Passion/Apex Drive → DMG +100%
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
           cbs(this, "C4", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 1.0 }]
+        )
+      );
+      // C4 Diligent Refinement branch — only active without Fiery Passion/Apex Drive;
+      // low-priority branch, model but gate via CombatOpts if needed.
+      // In normal Varesa DPS rotation (Fiery Passion/Apex Drive active), this branch
+      // does NOT apply. Included for completeness; the +100% burst branch above takes
+      // precedence in peak-damage scenarios.
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C4", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
+          [],
+          "atk",
+          "baseDmg",
+          5.0,
+          20000
         )
       );
     }
@@ -81,7 +97,7 @@ class Varesa extends CharacterBase {
     const qMult = this.constellation >= 3 ? 8.556 : 7.248;
     return {
       "varesa-plunge": {
-        label: { zh: "A 炽热激情高空坠地", en: "A Fiery Passion High Plunge" },
+        label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
           {
             formula: new DirectFormula(naMult, {
@@ -94,7 +110,7 @@ class Varesa extends CharacterBase {
       },
       "varesa-kablam": {
         label: {
-          zh: "Q 大火山崩落(下落伤害)",
+          zh: "Q下落",
           en: "Q Volcano Kablam (Plunge)",
         },
         parts: [
@@ -122,23 +138,40 @@ class Citlali extends CharacterBase {
       [{ key: "resReduction%", value: this.constellation >= 2 ? 0.4 : 0.2 }]
     ),
     // P2: EM → baseDmg for Frostfall Storm (skill, 90% EM)
+    // Itzpapa deals damage even when Citlali is off-field → receiver "self"
     new ScalingBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
       "baseDmg",
       0.9
     ),
     // P2: EM → baseDmg for Q Ice Storm (burst, 1200% EM)
+    // Ice Storm fires when Q is cast (Citlali is on-field at that moment),
+    // but we use "self" so this also covers off-field Skull explosions.
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+      { receiver: "self", filter: { abilities: ["burst"] } },
       [],
       "em",
       "baseDmg",
       12.0
     ),
+    // C1: Stellar Blade — on-field active character (not Citlali) gains +200% EM as baseDmg
+    // 10 base stacks (+3 per Frozen/Melt every 8s) — forgiving stacks, assume always active
+    ...(this.constellation >= 1
+      ? [
+          new ScalingBuff(
+            cbs(this, "C1", ["E"]),
+            { receiver: "otherOnField" },
+            [],
+            "em",
+            "baseDmg",
+            2.0
+          ),
+        ]
+      : []),
     // C2: Self EM +125, team (shielded/followed) EM +250
     new StatBuff(
       cbs(this, "C2", ["E"]),
@@ -150,7 +183,8 @@ class Citlali extends CharacterBase {
       { receiver: "onField" },
       this.constellation >= 2 ? [{ key: "em", value: 250 }] : []
     ),
-    // C6: 40 stacks → team Pyro/Hydro DMG +60%, self DMG +100%
+    // C6: 40 stacks → team Pyro/Hydro DMG +60%, self (Citlali) DMG +100%
+    // "all nearby party members" Pyro/Hydro DMG → team
     new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "team" },
@@ -161,9 +195,10 @@ class Citlali extends CharacterBase {
           ]
         : []
     ),
+    // Citlali's own DMG boost applies off-field too (Itzpapa) → receiver "self"
     new StatBuff(
       cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField" },
+      { receiver: "self" },
       this.constellation >= 6 ? [{ key: "dmg%", value: 1.0 }] : []
     ),
   ];
@@ -374,7 +409,7 @@ class Mavuika extends CharacterBase {
         ],
       },
       "mavuika-combo": {
-        label: { zh: "满战意Q后 A1+重击+冲刺", en: "Post-Q N1+CA+Sprint" },
+        label: { zh: "Q普攻+重击", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
             formula: new DirectFormula(n1Mult, {
@@ -473,7 +508,7 @@ class Chasca extends CharacterBase {
     return {
       "chasca-shining-volley": {
         label: {
-          zh: "E 一轮6枚追影弹直伤",
+          zh: "E一轮6枚",
           en: "E 6 Shadowhunt Shells Volley",
         },
         parts: [
@@ -491,8 +526,8 @@ class Chasca extends CharacterBase {
       },
       "chasca-burst": {
         label: {
-          zh: "Q 裂风+6枚索魂弹(爆发)",
-          en: "Q Galesplitting + 6 Soulseeker Shells",
+          zh: "Q+6弹",
+          en: "Q + 6 Soulseeker Shells",
         },
         parts: [
           { formula: new DirectFormula(qInitMult, qTag) },
@@ -514,67 +549,159 @@ class Chasca extends CharacterBase {
 
 @RegisterCharacter("xilonen")
 class Xilonen extends CharacterBase {
+  // Count distinct Pyro/Hydro/Cryo/Electro elements among teammates.
+  // Each qualifying element type converts one Geo Source Sample; same-element types do not stack.
+  private readonly convertedSamples = (() => {
+    const converted = new Set<string>();
+    for (const el of Object.values(this.teamMeta.elements)) {
+      if (el != null && ["Pyro", "Hydro", "Cryo", "Electro"].includes(el))
+        converted.add(el);
+    }
+    return converted.size;
+  })();
+
+  // Which PHEC elements are present in the team
+  private readonly teamPHEC = (() => {
+    const present = new Set<string>();
+    for (const el of Object.values(this.teamMeta.elements)) {
+      if (el != null && ["Pyro", "Hydro", "Cryo", "Electro"].includes(el))
+        present.add(el);
+    }
+    return present;
+  })();
+
   readonly buffs = (() => {
-    const buffs: StatBuff[] = [
-      // E: Source Samples — RES shred
-      // -36% RES at Lv10, -42.5% at Lv13 (C3+)
-      new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
-        { key: "resReduction%", value: this.constellation >= 3 ? 0.425 : 0.36 },
-      ]),
-      // P1: Fewer than 2 samples → Normal/Plunge DMG +30%
-      new StatBuff(
-        cbs(this, "P1", ["A1"]),
-        {
-          receiver: "selfOnField",
-          filter: { abilities: ["normal", "plunge"] },
-        },
-        [{ key: "dmg%", value: 0.3 }]
-      ),
-      // P2: Nightsoul Burst → DEF +20%
+    const resValue = this.constellation >= 3 ? 0.425 : 0.36;
+    const buffs: StatBuff[] = [];
+
+    // P2: Nightsoul Burst → DEF +20%
+    buffs.push(
       new StatBuff(
         cbs(this, "P2", ["nightsoul-burst"]),
         { receiver: "selfOnField" },
         [{ key: "def%", value: 0.2 }]
-      ),
-    ];
+      )
+    );
 
-    // C2: Element-dependent team buffs
-    if (this.constellation >= 2) {
-      if (Object.values(this.teamMeta.elements).includes("Pyro")) {
+    if (this.convertedSamples >= 2) {
+      // ≥2 PHEC elements: RES shred for each PHEC element present in the team
+      for (const el of this.teamPHEC) {
         buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          new StatBuff(
+            cbs(this, "E", ["E"]),
+            {
+              receiver: "team",
+              filter: {
+                elements: [el as "Pyro" | "Hydro" | "Cryo" | "Electro"],
+              },
+            },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      }
+      // Geo RES shred: depends on converted count and constellation
+      if (this.convertedSamples === 2) {
+        // Exactly 2 PHEC: 1 sample remains Geo → Geo RES shred is team-wide
+        buffs.push(
+          new StatBuff(
+            cbs(this, "E", ["E"]),
+            { receiver: "team", filter: { elements: ["Geo"] } },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      } else if (this.constellation >= 2) {
+        // 3 PHEC + C2: Geo RES becomes team-wide
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: ["Geo"] } },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      } else {
+        // 3 PHEC + below C2: Geo RES selfOnField only
+        buffs.push(
+          new StatBuff(
+            cbs(this, "E", ["E"]),
+            { receiver: "selfOnField", filter: { elements: ["Geo"] } },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      }
+    } else {
+      // 0-1 PHEC: no team-wide element RES shred, but Geo selfOnField (or team at C2)
+      if (this.constellation >= 2) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "team", filter: { elements: ["Geo"] } },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      } else {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "E", ["E"]),
+            { receiver: "selfOnField", filter: { elements: ["Geo"] } },
+            [{ key: "resReduction%", value: resValue }]
+          )
+        );
+      }
+    }
+
+    // P1: Fewer than 2 converted samples → Normal/Plunge DMG +30%
+    if (this.convertedSamples < 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P1", ["A1"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "plunge"] },
+          },
+          [{ key: "dmg%", value: 0.3 }]
+        )
+      );
+    }
+
+    // C2: Element-dependent onField buffs
+    if (this.constellation >= 2) {
+      if (this.teamPHEC.has("Pyro")) {
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
             { key: "atk%", value: 0.45 },
           ])
         );
       }
-      if (Object.values(this.teamMeta.elements).includes("Hydro")) {
+      if (this.teamPHEC.has("Hydro")) {
         buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
             { key: "hp%", value: 0.45 },
           ])
         );
       }
-      if (Object.values(this.teamMeta.elements).includes("Cryo")) {
+      if (this.teamPHEC.has("Cryo")) {
         buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
             { key: "cd", value: 0.6 },
           ])
         );
       }
+      // C2 Geo DMG always active (Electro → Geo DMG +50%)
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
           { key: "geo%", value: 0.5 },
         ])
-      ); // Geo is always active
+      );
     }
 
-    // C4: +65% Xilonen DEF as Base DMG for Normal/Charged/Plunging
+    // C4: Blooming Blessing — all party members gain +65% Xilonen DEF as Base DMG
+    // for Normal/Charged/Plunging Attacks. Buff applies to whoever is on field.
     if (this.constellation >= 4) {
       buffs.push(
         new ScalingBuff(
           cbs(this, "C4", ["E"]),
           {
-            receiver: "selfOnField",
+            receiver: "onField",
             filter: { abilities: ["normal", "charge", "plunge"] },
           },
           [],
@@ -588,24 +715,51 @@ class Xilonen extends CharacterBase {
     return buffs;
   })();
 
-  // E Blade Roller N4 (Lv10): 110.7 + 108.8 + 130.1 + 170.1 = 519.7% DEF
+  // E Blade Roller N4 (Lv10): 110.7% + 108.8% + 130.1% + 170.1% DEF (4 separate parts)
+  // Must be 4 parts (not 1 summed part) so that C4 baseDmg ScalingBuff applies once per hit.
+  // N4 multipliers don't scale with constellations up to C6.
   // C6 unlocks on-field DPS rotation; formula is only shown at C6+
+  // E Blade Roller N4: 110.7% + 108.8% + 130.1% + 170.1% DEF
+  // Q Ardent Rhythm extra beats: Lv10 506.3% DEF ×2, Lv13 (C5+) 597.7% DEF ×2
+  // Q extra beats only fire when ≤1 converted sample (mono-Geo / no-PHEC teams)
   protected readonly formulaMap = (() => {
+    const nTag = {
+      element: "Geo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const qTag = {
+      element: "Geo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const qBeatMult = this.constellation >= 5 ? 5.977 : 5.063;
     return {
       ...(this.constellation >= 6
         ? {
             "xilonen-normal": {
               label: {
-                zh: "A 刃轮巡猎·全套四闪",
+                zh: "E普攻4段",
                 en: "A Blade Roller N4 Combo",
               },
               parts: [
+                { formula: new DirectFormula(1.107, nTag, "def") },
+                { formula: new DirectFormula(1.088, nTag, "def") },
+                { formula: new DirectFormula(1.301, nTag, "def") },
+                { formula: new DirectFormula(1.701, nTag, "def") },
+              ],
+            },
+          }
+        : {}),
+      // Q extra beats: only when ≤1 converted sample
+      ...(this.convertedSamples <= 1
+        ? {
+            "xilonen-burst-beats": {
+              label: { zh: "Q 额外节拍(×2)", en: "Q Extra Beats (×2)" },
+              parts: [
                 {
-                  formula: new DirectFormula(
-                    5.197, // N4 doesn't scale with constellations up to C6
-                    { element: "Geo", ability: "normal", reaction: "none" },
-                    "def"
-                  ),
+                  formula: new DirectFormula(qBeatMult, qTag, "def"),
+                  hits: 2,
                 },
               ],
             },
@@ -617,14 +771,44 @@ class Xilonen extends CharacterBase {
 
 @RegisterCharacter("mualani")
 class Mualani extends CharacterBase {
-  readonly buffs = [
-    // C4: Q DMG +75%
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation >= 4 ? [{ key: "dmg%", value: 0.75 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P2: Wavechaser's Exploits — up to 3 stacks before Q, each +15% Max HP
+      // Assume max 3 stacks (easy to maintain with a Natlan team triggering Nightsoul Burst)
+      // → +45% Max HP added to Q base damage as a ScalingBuff
+      new ScalingBuff(
+        cbs(this, "P2", ["nightsoul-burst"]),
+        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        [],
+        "hp",
+        "baseDmg",
+        0.45
+      ),
+      // C4: Q DMG +75%
+      new StatBuff(
+        cbs(this, "C4", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        this.constellation >= 4 ? [{ key: "dmg%", value: 0.75 }] : []
+      ),
+    ];
+
+    // C1: First Surging Bite after entering Nightsoul's Blessing +66% Max HP
+    // We model the single Surging Bite (the peak hit) — C1 applies to that first bite
+    if (this.constellation >= 1) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C1", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+          [],
+          "hp",
+          "baseDmg",
+          0.66
+        )
+      );
+    }
+
+    return buffs;
+  })();
 
   // Surging Bite: base 15.62% + 3×7.81% + surging 39.06% = 78.11% HP (Lv10)
   // Lv13 (C3+): 18.45% + 3×9.22% + 46.11% = 92.22% HP
@@ -634,7 +818,7 @@ class Mualani extends CharacterBase {
     const burstMult = this.constellation >= 5 ? 1.242 : 1.052;
     return {
       "mualani-bite": {
-        label: { zh: "A 巨浪鲨鲨撕咬", en: "A Sharky's Surging Bite" },
+        label: { zh: "普攻", en: "NA" },
         parts: [
           {
             formula: new DirectFormula(
@@ -696,15 +880,50 @@ class Kinich extends CharacterBase {
         this.constellation >= 2 ? [{ key: "resReduction%", value: 0.3 }] : []
       ),
     ];
+
+    // C2: First Scalespiker Cannon after entering Nightsoul's Blessing +100% DMG
+    // We model this as always applying to the Scalespiker (peak damage)
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "dmg%", value: 1.0 }]
+        )
+      );
+    }
+
+    // C4: Hail to the Almighty Dragonlord Q DMG +70%
+    if (this.constellation >= 4) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          [{ key: "dmg%", value: 0.7 }]
+        )
+      );
+    }
+
     return buffs;
   })();
 
   // Scalespiker Cannon: Lv10 1237.4%, Lv13 (C3+) 1460.8%
   // Q initial: Lv10 241.2%, Lv13 (C5+) 284.8% + Dragon Breath 217.3%/256.6% ×5
+  // C6: bounce fires once per Scalespiker Cannon hit (not per active-character attack cadence);
+  //     700% ATK Dendro Skill DMG — inherits P2 baseDmg and C2 dmg% buffs automatically
+  //     because those buffs are scoped to ability:"skill" which the bounce also uses.
   protected readonly formulaMap = (() => {
     const cannonMult = this.constellation >= 3 ? 14.608 : 12.374;
     const qInit = this.constellation >= 5 ? 2.848 : 2.412;
     const qBreath = this.constellation >= 5 ? 2.566 : 2.173;
+    // C6 bounce: 700% ATK, Dendro Skill DMG — fires once per cannon shot
+    const c6BouncePart = {
+      formula: new DirectFormula(7.0, {
+        element: "Dendro",
+        ability: "skill",
+        reaction: "none",
+      }),
+    };
     return {
       "kinich-cannon": {
         label: { zh: "E 迴猎贯鳞炮", en: "E Scalespiker Cannon" },
@@ -716,21 +935,23 @@ class Kinich extends CharacterBase {
               reaction: "none",
             }),
           },
+          ...(this.constellation >= 6 ? [c6BouncePart] : []),
         ],
       },
       "kinich-cannon-spread": {
         label: {
-          zh: "E 迴猎贯鳞炮(蔓激化)",
+          zh: "E(蔓激化)",
           en: "E Scalespiker Cannon (Spread)",
         },
         parts: [
           {
-            formula: new DirectFormula(cannonMult, {
+            formula: new CatalyzeFormula(cannonMult, {
               element: "Dendro",
               ability: "skill",
               reaction: "spread",
             }),
           },
+          ...(this.constellation >= 6 ? [c6BouncePart] : []),
         ],
       },
       "kinich-burst": {

@@ -198,18 +198,3 @@ FinalDmg = [ (TalentScaledDmg × DirectCoeff × (1 + baseDmg%)) × (1 + LunarEmB
 - **Flat Additions**: `baseDmg` (Evaluated sum of `baseDmg` stats, e.g., Lauma Q. Note that for Lunar Direct, it is added natively post-bonus multiplication).
 - **Other Zones**: Standard application.
 
----
-
-## 4. Stat Key Scoping & Mapping
-
-Bonuses are automatically isolated to their compatible zones using the `DamageTagFilter`.
-
-| Multiplier Zone | Shared Components | `StatKey` | Scoped Via `DamageTagFilter` |
-|----------------|-------------------|----------|------------------------------|
-| **Damage Bonus Zone** | Elemental DMG%, General DMG% | `dmg%`, `pyro%`, etc. | `.elements`, `.abilities` |
-| **Damage Bonus Zone** *(Reactions)* | `reactionDmg%` | `reactionDmg%` | `.reactions` |
-| **Def Zone** | DEF shred sources | `defReduction%` | *(Global Scope)* |
-| **Base Damage Zone** | Flat Damage additions | `baseDmg` | `.abilities`, `.reactions` |
-| **Base Damage Zone** | Multiplicative base damage | `baseDmg%` | `.abilities`, `.reactions` |
-| **Elevate Zone** | Generic Elevation multipliers | `elevated%` | `.reactions` |
-| **Crit Zone** *(Reactions)* | Fixed CR/CD overlay | `reactionCr`, `reactionCd` | `.reactions` |

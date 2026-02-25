@@ -1,6 +1,4 @@
 import { charactersById } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
-import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import {
   type CharacterData,
   type CharacterFilters,
@@ -8,6 +6,8 @@ import {
   type TierAssignment,
   tiers,
 } from "@/data/types";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
+import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
 
 type OwnershipCheck = (id: string) => boolean;
 

@@ -26,7 +26,12 @@ class NocturnesCurtainCall extends WeaponBase {
       buffs.push(
         new StatBuff(
           wbs(this, ["lunarCharged", "lunarBloom", "lunarCrystallize"]),
-          { receiver: "self" },
+          {
+            receiver: "self",
+            filter: {
+              reactions: ["lunarCharged", "lunarBloom", "lunarCrystallize"],
+            },
+          },
           [
             {
               key: "hp%",
@@ -54,18 +59,22 @@ class ReliquaryOfTruth extends WeaponBase {
       ]),
     ];
 
-    if (this.teamMeta.hasReaction("bloom", this.charId)) {
+    if (this.teamMeta.hasReaction("lunarBloom", this.charId)) {
       buffs.push(
-        new StatBuff(wbs(this, ["lunarBloom"]), { receiver: "self" }, [
-          {
-            key: "em",
-            value: 0.5 * r(this.refinement, [80, 100, 120, 140, 160]),
-          },
-          {
-            key: "cd",
-            value: 1.5 * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-          },
-        ])
+        new StatBuff(
+          wbs(this, ["lunarBloom"]),
+          { receiver: "self", filter: { reactions: ["lunarBloom"] } },
+          [
+            {
+              key: "em",
+              value: 0.5 * r(this.refinement, [80, 100, 120, 140, 160]),
+            },
+            {
+              key: "reactionCd",
+              value: 1.5 * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+            },
+          ]
+        )
       );
     }
     return buffs;
@@ -85,19 +94,44 @@ class NightweaversLookingGlass extends WeaponBase {
       ]),
     ];
     if (isHydroDendro) {
-      // Team Bloom/Lunar-Bloom DMG if wielder is Hydro or Dendro
+      // Bloom DMG +120%/150%/180%/210%/240%
       buffs.push(
         new StatBuff(
-          wbs(this, ["E"], "nightweavers-looking-glass"),
-          { receiver: "team", filter: { reactions: ["bloom", "lunarBloom"] } },
+          wbs(this, ["E"], "nightweavers-looking-glass-bloom"),
+          { receiver: "team", filter: { reactions: ["bloom"] } },
           [
             {
               key: "reactionDmg%",
-              value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+              value: r(this.refinement, [1.2, 1.5, 1.8, 2.1, 2.4]),
             },
+          ]
+        )
+      );
+      // Hyperbloom + Burgeon DMG +80%/100%/120%/140%/160%
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E"], "nightweavers-looking-glass-hyper"),
+          {
+            receiver: "team",
+            filter: { reactions: ["hyperbloom", "burgeon"] },
+          },
+          [
             {
               key: "reactionDmg%",
-              value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+              value: r(this.refinement, [0.8, 1.0, 1.2, 1.4, 1.6]),
+            },
+          ]
+        )
+      );
+      // Lunar-Bloom DMG +40%/50%/60%/70%/80%
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E"], "nightweavers-looking-glass-lunar"),
+          { receiver: "team", filter: { reactions: ["lunarBloom"] } },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
             },
           ]
         )
@@ -112,7 +146,7 @@ class CranesEchoingCall extends WeaponBase {
   // Team plunge DMG buff
   readonly buffs = [
     new StatBuff(
-      wbs(this, ["plunge"]),
+      wbs(this, ["plunge"], "cranes-echoing-call"),
       { receiver: "team", filter: { abilities: ["plunge"] } },
       [
         {
@@ -130,11 +164,17 @@ class SurfsUp extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
       { key: "hp%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "dmg%",
-        value: 4 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: 4 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -192,12 +232,16 @@ class StarcallersWatch extends WeaponBase {
     ];
     if (this.teamMeta.hasShielder()) {
       buffs.push(
-        new StatBuff(wbs(this, ["shield"]), { receiver: "onField" }, [
-          {
-            key: "dmg%",
-            value: r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
-          },
-        ])
+        new StatBuff(
+          wbs(this, ["shield"], "starcallers-watch"),
+          { receiver: "onField" },
+          [
+            {
+              key: "dmg%",
+              value: r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
+            },
+          ]
+        )
       );
     }
     return buffs;
@@ -224,14 +268,18 @@ class SunnyMorningSleepIn extends WeaponBase {
 class TulaytullahsRemembrance extends WeaponBase {
   // NA DMG stacking (4.8%×4 + 9.6% at 6s)
   readonly buffs = [
-    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value:
-          4 * r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]) +
-          r(this.refinement, [0.096, 0.12, 0.144, 0.168, 0.192]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value:
+            4 * r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]) +
+            r(this.refinement, [0.096, 0.12, 0.144, 0.168, 0.192]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -239,11 +287,17 @@ class TulaytullahsRemembrance extends WeaponBase {
 class KagurasVerity extends WeaponBase {
   // 3-stack E DMG + elemental bonus at 3 stacks
   readonly buffs = [
+    new StatBuff(
+      wbs(this, ["E"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
     new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
       ...allElementalDmg(r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24])),
     ]),
   ];
@@ -259,7 +313,7 @@ class AThousandFloatingDreams extends WeaponBase {
       allElementalDmg(3 * r(this.refinement, [0.1, 0.14, 0.18, 0.22, 0.26]))
     ),
     new StatBuff(wbs(this), { receiver: "team" }, [
-      { key: "em", value: r(this.refinement, [40, 50, 60, 70, 80]) },
+      { key: "em", value: r(this.refinement, [40, 42, 44, 46, 48]) },
     ]),
   ];
 }
@@ -308,11 +362,17 @@ class TomeOfTheEternalFlow extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this, ["hp-change"]), { receiver: "self" }, [
       { key: "hp%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-      {
-        key: "dmg%",
-        value: 3 * r(this.refinement, [0.14, 0.18, 0.22, 0.26, 0.3]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["hp-change"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: 3 * r(this.refinement, [0.14, 0.18, 0.22, 0.26, 0.3]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -358,7 +418,7 @@ class EverlastingMoonglow extends WeaponBase {
     ]),
     new ScalingBuff(
       wbs(this),
-      { receiver: "self" },
+      { receiver: "self", filter: { abilities: ["normal"] } },
       [],
       "hp",
       "baseDmg",

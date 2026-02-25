@@ -18,7 +18,6 @@ import {
   getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterResource,
   Element,
@@ -30,6 +29,7 @@ import type {
 import { elements } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 

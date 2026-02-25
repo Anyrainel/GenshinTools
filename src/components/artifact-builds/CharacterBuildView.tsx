@@ -2,7 +2,6 @@ import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
 import type { CharacterFilters } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -12,6 +11,7 @@ import {
   filterAndSortCharacters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";

@@ -18,12 +18,16 @@ class HarbingerOfDawn extends WeaponBase {
 @RegisterWeapon("white_tassel")
 class WhiteTassel extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -47,9 +51,16 @@ class Slingshot extends WeaponBase {
 class ThrillingTalesOfDragonSlayers extends WeaponBase {
   // Team ATK buff on swap
   readonly buffs = [
-    new StatBuff(wbs(this, ["swap"]), { receiver: "onField" }, [
-      { key: "atk%", value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]) },
-    ]),
+    new StatBuff(
+      wbs(this, ["swap"], "thrilling-tales"),
+      { receiver: "onField" },
+      [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -221,12 +232,16 @@ class SharpshootersOath extends WeaponBase {
 @RegisterWeapon("ferrous_shadow")
 class FerrousShadow extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this, ["self-low-hp"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["self-low-hp"]),
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]),
+        },
+      ]
+    ),
   ];
 }
 

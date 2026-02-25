@@ -37,6 +37,16 @@ class Illuga extends CharacterBase {
         "baseDmg",
         this.constellation >= 3 ? 0.714 : 0.605
       ),
+      // Q: Nightingale's Song — LunarCrystallize tier EM → additional baseDmg
+      // Lv10: 406.7% EM, Lv13 (C3+): 480.1% EM (on top of base Geo bonus above)
+      new ScalingBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "onField", filter: { reactions: ["lunarCrystallize"] } },
+        [],
+        "em",
+        "baseDmg",
+        this.constellation >= 3 ? 4.801 : 4.067
+      ),
     ];
     // P2: Hydro/Geo count enhances Nightingale's Song
     // 1/2/3 → +7%/14%/24% EM as additional Geo baseDmg
@@ -51,6 +61,21 @@ class Illuga extends CharacterBase {
           "em",
           "baseDmg",
           p2Scale
+        )
+      );
+    }
+    // P2: LunarCrystallize tier — 48%/96%/160% EM total; model as delta over Geo (41%/82%/136%)
+    const p2LunarTiers = [0, 0.41, 0.82, 1.36] as const;
+    const p2LunarScale = p2LunarTiers[Math.min(this.hydroGeo, 3)];
+    if (p2LunarScale > 0) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P2", ["Q"]),
+          { receiver: "onField", filter: { reactions: ["lunarCrystallize"] } },
+          [],
+          "em",
+          "baseDmg",
+          p2LunarScale
         )
       );
     }
@@ -76,11 +101,12 @@ class Jahoda extends CharacterBase {
     new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
       { key: "em", value: 100 },
     ]),
-    // C6: After E flask full, Moonsign characters CR +5%, CD +40%
+    // C6 (Moonsign Ascendant Gleam): After E flask full, Moonsign characters CR +5%, CD +40%
+    // "月兆·满辉：...月兆角色的暴击率提升5%，暴击伤害提升40%" — requires ≥2 Nod-Krai
     new StatBuff(
       cbs(this, "C6", ["E"]),
       { receiver: "team" },
-      this.constellation >= 6
+      this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
         ? [
             { key: "cr", value: 0.05 },
             { key: "cd", value: 0.4 },
@@ -149,7 +175,7 @@ class Aino extends CharacterBase {
     const qMult = this.constellation >= 3 ? 0.427 : 0.362;
     return {
       "aino-skill": {
-        label: { zh: "元素战技", en: "Skill Total" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -161,7 +187,7 @@ class Aino extends CharacterBase {
         ],
       },
       "aino-burst-total": {
-        label: { zh: "水弹总伤", en: "Water Balls Total" },
+        label: { zh: "Q总伤", en: "Q Total Damage" },
         parts: [
           {
             formula: new DirectFormula(qMult, {

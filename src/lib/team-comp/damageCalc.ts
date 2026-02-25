@@ -202,9 +202,19 @@ export class CharBuild {
     this.artifactSetBase = config.artifactSetId
       ? createArtifactSet(config.artifactSetId, config.charId, teamMeta)
       : null;
-    this.artifactHalfSetBases = config.artifactHalfSetIds.map((id) =>
-      createArtifactHalfSet(id, config.charId, teamMeta)
-    );
+
+    // Auto-include the 2pc half-set when using a 4pc set (if the set declares one)
+    const auto2pcId = this.artifactSetBase?.halfSetId ?? null;
+    const auto2pc = auto2pcId
+      ? createArtifactHalfSet(auto2pcId, config.charId, teamMeta)
+      : null;
+
+    this.artifactHalfSetBases = [
+      ...(auto2pc ? [auto2pc] : []),
+      ...config.artifactHalfSetIds.map((id) =>
+        createArtifactHalfSet(id, config.charId, teamMeta)
+      ),
+    ];
 
     if (
       teamMeta.countByRegion("Nod-Krai") >= 2 &&
@@ -242,15 +252,33 @@ export class CharBuild {
       }
     }
 
-    // Phase 1: Assemble base stats from character + weapon
+    // Superconduct: if team has both Cryo and Electro, -40% Physical RES
+    const teamElements = Object.values(teamMeta.elements).filter(
+      (el): el is Element => el !== undefined
+    );
+    const hasCryo = teamElements.includes("Cryo");
+    const hasElectro = teamElements.includes("Electro");
+    if (hasCryo && hasElectro) {
+      this.resonanceBuffs.push(
+        new StatBuff(
+          { type: "teamResonance", id: "superconduct" },
+          { receiver: "team", filter: { elements: ["Physical" as const] } },
+          [{ key: "resReduction%", value: 0.4 }]
+        )
+      );
+    }
+
+    // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses
     const baseEntries: StatEntry[] = [
       ...this.charBase.stats,
       ...this.weaponBase.stats,
+      ...(this.artifactSetBase?.stats ?? []),
+      ...this.artifactHalfSetBases.flatMap((h) => h.stats),
     ];
     this.innerStatSheet = new StatSheet(baseEntries);
   }
 
-  /** Collect all buffs from this build's providers */
+  /** Collect all buffs from this build's providers, filtering out no-ops. */
   getAllBuffs(): StatBuff[] {
     return [
       ...this.resonanceBuffs,
@@ -258,7 +286,7 @@ export class CharBuild {
       ...this.weaponBase.buffs,
       ...(this.artifactSetBase?.buffs ?? []),
       ...this.artifactHalfSetBases.flatMap((h) => h.buffs),
-    ];
+    ].filter((b) => !b.isNoOp);
   }
 
   /**

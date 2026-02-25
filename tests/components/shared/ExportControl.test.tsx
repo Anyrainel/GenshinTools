@@ -1,5 +1,6 @@
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { ExportControl } from "@/components/shared/ExportControl";
+import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { render, screen } from "../../utils/render";
@@ -18,7 +19,9 @@ describe("ExportControl", () => {
     // Dialog should not be visible initially
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
@@ -27,7 +30,9 @@ describe("ExportControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     expect(screen.getByLabelText(/author/i)).toBeInTheDocument();
@@ -39,7 +44,9 @@ describe("ExportControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     // Fill description only
@@ -60,7 +67,9 @@ describe("ExportControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     // Fill author only
@@ -81,7 +90,9 @@ describe("ExportControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     await user.type(screen.getByLabelText(/author/i), "Test Author");
@@ -110,7 +121,9 @@ describe("ExportControl", () => {
       />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("dialog");
 
     expect(screen.getByLabelText(/author/i)).toHaveValue("Default Author");
@@ -124,7 +137,9 @@ describe("ExportControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ExportControl ref={ref} onExport={defaultOnExport} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /cancel/i }));

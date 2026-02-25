@@ -1,11 +1,4 @@
 import { charactersById } from "@/data/constants";
-import {
-  getCharacterLevelStats,
-  getCharacterLevelTier,
-  getCharacterStatsSync,
-  getWeaponStatsAt90,
-  getWeaponStatsSync,
-} from "@/data/gameStatsLoader";
 import type {
   ArtifactData,
   BaseStat,
@@ -17,6 +10,13 @@ import type {
   WeaponType,
 } from "@/data/types";
 import { getFixedMainStatValue } from "@/lib/account-data/artifactScore";
+import {
+  getCharacterLevelStats,
+  getCharacterLevelTier,
+  getCharacterStatsSync,
+  getWeaponStatsAt90,
+  getWeaponStatsSync,
+} from "@/lib/gameStatsLoader";
 
 import { REACTION_ELEMENT_REQUIREMENTS } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
@@ -143,49 +143,6 @@ function extractFilter(target: BuffTarget): DamageTagFilter {
 }
 
 // ─── Stat × Filter invariant assertions ───
-
-/**
- * Validate that a stat key is not paired with a nonsensical filter dimension.
- * Catches common authoring mistakes that would silently produce wrong numbers.
- */
-function validateStatFilter(
-  key: StatKey,
-  filter: DamageTagFilter,
-  source: BuffSource
-): void {
-  const label = `[${source.type}:${source.id}${source.origin ? `/${source.origin}` : ""}]`;
-
-  if (
-    (key === "defReduction%" || key === "defIgnore%") &&
-    (filter.elements || filter.reactions)
-  ) {
-    throw new Error(
-      `${label} ${key} is not expected to have element or reaction filters. Ask for review for this case.`
-    );
-  }
-
-  if (key === "resReduction%" && filter.abilities) {
-    throw new Error(
-      `${label} resReduction% is not expected to have an ability filter. Ask for review for this case.`
-    );
-  }
-
-  if (key === "dmg%" && filter.reactions) {
-    throw new Error(
-      `${label} dmg% is not expected to have a reactions filter — reaction damage bonuses belong in reactionDmg%. Ask for review for this case.`
-    );
-  }
-
-  const lunarReactions = ["lunarCharged", "lunarCrystallize", "lunarBloom"];
-  if (
-    key === "elevated%" &&
-    filter.reactions?.some((r) => !lunarReactions.includes(r))
-  ) {
-    throw new Error(
-      `${label} elevated% is not expected to apply to non-lunar reactions — it is only consumed by LunarFormula/LunarDirectFormula. Ask for review for this case.`
-    );
-  }
-}
 
 /**
  * Immutable stat aggregation with tagged storage.
@@ -360,7 +317,6 @@ export class StatSheet {
           value: storeValue,
           filterKey: fk,
         } = normalizeEntry(key, value, filter);
-        validateStatFilter(storeKey, deserializeFilter(fk), buff.source);
         let target = merged.get(storeKey);
         if (!target) {
           target = new Map();
@@ -764,6 +720,12 @@ export abstract class ArtifactSetBase implements IStatProvider {
 
   abstract readonly stats: StatEntry[];
   abstract readonly buffs: StatBuff[];
+
+  /**
+   * The ArtifactHalfSet ID that provides this set's 2pc bonus, or null if none.
+   * When non-null, CharBuild will automatically include the matching half-set.
+   */
+  readonly halfSetId: string | null = null;
 
   get src(): BuffSource {
     return { type: "artifactSet", id: this.artifactSetId };

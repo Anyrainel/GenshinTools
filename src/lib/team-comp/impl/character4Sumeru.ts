@@ -48,7 +48,7 @@ class Sethos extends CharacterBase {
     const emMult = this.constellation >= 3 ? 2.859 : 2.422;
     return {
       "sethos-shadowpiercer": {
-        label: { zh: "贯影箭伤害", en: "Shadowpiercing Shot" },
+        label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new DirectFormula(
@@ -61,10 +61,7 @@ class Sethos extends CharacterBase {
         ],
       },
       "sethos-shadowpiercer-aggravate": {
-        label: {
-          zh: "贯影箭伤害(超激化)",
-          en: "Shadowpiercing Shot (Aggravate)",
-        },
+        label: { zh: "重击(超激化)", en: "CA (Aggravate)" },
         parts: [
           {
             formula: new CatalyzeFormula(
@@ -115,7 +112,7 @@ class Kaveh extends CharacterBase {
   protected readonly formulaMap = (() => {
     return {
       "kaveh-core": {
-        label: { zh: "草原核伤害(含Q加成)", en: "Dendro Core DMG (w/ Q Buff)" },
+        label: { zh: "Q草原核", en: "Q Bloom Core" },
         parts: [
           {
             formula: new TransformFormula(0, {
@@ -145,12 +142,13 @@ class Faruzan extends CharacterBase {
       { receiver: "team", filter: { elements: ["Anemo"] } },
       [{ key: "anemo%", value: this.constellation >= 5 ? 0.383 : 0.324 }]
     ),
-    // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's base ATK
+    // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's BASE ATK (not total ATK)
+    // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       { receiver: "onField", filter: { elements: ["Anemo"] } },
       [],
-      "atk",
+      "baseAtk",
       "baseDmg",
       0.32
     ),
@@ -198,12 +196,18 @@ class Layla extends CharacterBase {
         )
       );
     }
-    // C6: Shooting Stars and Starlight Slugs DMG +40%
+    // C6: Shooting Stars (E skill) and Starlight Slugs (Q burst) DMG +40%
+    // Scoped to skill+burst only — does not apply to normal/charged attacks
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, "C6", []), { receiver: "selfOnField" }, [
-          { key: "dmg%", value: 0.4 },
-        ])
+        new StatBuff(
+          cbs(this, "C6", []),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["skill", "burst"] },
+          },
+          [{ key: "dmg%", value: 0.4 }]
+        )
       );
     }
     return buffs;
@@ -252,10 +256,13 @@ class Dori extends CharacterBase {
 @RegisterCharacter("collei")
 class Collei extends CharacterBase {
   readonly buffs = [
-    // C4: After Q, team EM +60 for 12s (not self)
+    // C4: After Q, all nearby characters (not Collei) EM +60 for 12s
+    // Game text: "队伍中附近的所有角色（不包括柯莱自己）的元素精通提升60点"
+    // Use "team" — closest receiver for "all nearby party members"; minor inaccuracy is
+    // that Collei herself receives it, but she is always off-field when relevant.
     new StatBuff(
       cbs(this, "C4", ["Q"]),
-      { receiver: "onField" },
+      { receiver: "team" },
       this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
     ),
   ];

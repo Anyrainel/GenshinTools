@@ -62,12 +62,16 @@ class FruitfulHook extends WeaponBase {
 @RegisterWeapon("earth_shaker")
 class EarthShaker extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this, ["pyro-reaction"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this, ["pyro-reaction"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -154,7 +158,7 @@ class MakhairaAquamarine extends WeaponBase {
       r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
     ),
     new ScalingBuff(
-      wbs(this),
+      wbs(this, undefined, "makhaira-aquamarine-team-atk"),
       { receiver: "team" },
       [],
       "em",
@@ -236,12 +240,16 @@ class FavoniusGreatsword extends WeaponBase {
 @RegisterWeapon("luxurious_sealord")
 class LuxuriousSealord extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["burst"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -283,12 +291,16 @@ class Whiteblind extends WeaponBase {
 @RegisterWeapon("katsuragikiri_nagamasa")
 class KatsuragikiriNagamasa extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
-      },
-    ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -300,16 +312,20 @@ class Akuoumaru extends WeaponBase {
       totalEnergy += this.teamMeta.energies[id] ?? 0;
     }
     return [
-      new StatBuff(wbs(this), { receiver: "self" }, [
-        {
-          key: "dmg%",
-          value: Math.min(
-            totalEnergy *
-              r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
-            r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
-          ),
-        },
-      ]),
+      new StatBuff(
+        wbs(this),
+        { receiver: "self", filter: { abilities: ["burst"] } },
+        [
+          {
+            key: "dmg%",
+            value: Math.min(
+              totalEnergy *
+                r(this.refinement, [0.0012, 0.0015, 0.0018, 0.0021, 0.0024]),
+              r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8])
+            ),
+          },
+        ]
+      ),
     ];
   }
 }

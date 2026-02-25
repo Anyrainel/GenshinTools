@@ -93,8 +93,8 @@ class Dehya extends CharacterBase {
     return {
       "dehya-burst-combo": {
         label: {
-          zh: "Q 炎啸狮子咬(10拳+1踢)",
-          en: "Q Leonine Bite (10 Fists + 1 Drive)",
+          zh: "Q连段10+1",
+          en: "Q Combo (10+1 hits)",
         },
         parts: [
           {
@@ -188,7 +188,7 @@ class Alhaitham extends CharacterBase {
         ],
       },
       "alhaitham-proj-spread": {
-        label: { zh: "E 光幕攻击(蔓激化)", en: "E Projection 3M (Spread)" },
+        label: { zh: "E光幕(蔓激化)", en: "E Projection 3M (Spread)" },
         parts: [
           {
             formula: new CatalyzeFormula(
@@ -282,7 +282,7 @@ class Wanderer extends CharacterBase {
 
     return {
       "wanderer-normal": {
-        label: { zh: "A 空居·不生断(全套)", en: "A Kuugo: Fushoudan (N3)" },
+        label: { zh: "普攻全套", en: "A Kuugo: Fushoudan (N3)" },
         parts: [
           {
             formula: new DirectFormula(eNMult, {
@@ -294,7 +294,7 @@ class Wanderer extends CharacterBase {
         ],
       },
       "wanderer-charge": {
-        label: { zh: "A 空居·刀风界", en: "A Kuugo: Toufukai" },
+        label: { zh: "重击", en: "CA" },
         parts: [
           {
             formula: new DirectFormula(eCMult, {
@@ -326,6 +326,18 @@ class Wanderer extends CharacterBase {
 
 @RegisterCharacter("nahida")
 class Nahida extends CharacterBase {
+  // Q Pyro bonus: DMG% on Tri-Karma based on Pyro char count (C1 adds +1 virtual Pyro)
+  // Lv10: 1 Pyro → +26.8%, 2 Pyro → +40.2%; Lv13 (C5): +31.6% / +47.4%
+  // "火元素：当纳西妲处于摩耶之殿当中时，提升元素战技「所闻遍计」的灭净三业造成的伤害"
+  private readonly pyroBonusDmg = (() => {
+    const pyroCount =
+      this.teamMeta.countByElement("Pyro") + (this.constellation >= 1 ? 1 : 0);
+    const isQ13 = this.constellation >= 5;
+    if (pyroCount >= 2) return isQ13 ? 0.474 : 0.402;
+    if (pyroCount >= 1) return isQ13 ? 0.316 : 0.268;
+    return 0;
+  })();
+
   readonly buffs = [
     // P1: Q field grants EM = highest party EM × 25% (cap 250)
     new ScalingBuff(
@@ -365,17 +377,32 @@ class Nahida extends CharacterBase {
       { receiver: "team" },
       this.constellation >= 2 ? [{ key: "defReduction%", value: 0.3 }] : []
     ),
-    // C2: Bloom/Hyperbloom/Burgeon can crit (CR 20%, CD 100%)
+    // C2: Burning/Bloom/Hyperbloom/Burgeon can crit (CR 20%, CD 100%)
     new StatBuff(
       cbs(this, "C2", ["E"]),
       {
         receiver: "team",
-        filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
+        filter: { reactions: ["bloom", "burgeon", "burning", "hyperbloom"] },
       },
       this.constellation >= 2
         ? [
             { key: "reactionCr", value: 0.2 },
             { key: "reactionCd", value: 1.0 },
+          ]
+        : []
+    ),
+    // C2: Lunar-Bloom DMG CRIT Rate +10%, CRIT DMG +20%
+    // "受到月绽放反应伤害的暴击率提升10%，暴击伤害提升20%"
+    new StatBuff(
+      cbs(this, "C2", ["E"]),
+      {
+        receiver: "team",
+        filter: { reactions: ["lunarBloom"] },
+      },
+      this.constellation >= 2
+        ? [
+            { key: "reactionCr", value: 0.1 },
+            { key: "reactionCd", value: 0.2 },
           ]
         : []
     ),
@@ -385,6 +412,17 @@ class Nahida extends CharacterBase {
       { receiver: "selfOnField" },
       this.constellation >= 4 ? [{ key: "em", value: 140 }] : []
     ),
+    // Q: Pyro element bonus → Tri-Karma DMG% (requires Q field active; assumed under peak model)
+    // C1 adds +1 virtual Pyro/Electro/Hydro to the count for Q effect tiers
+    ...(this.pyroBonusDmg > 0
+      ? [
+          new StatBuff(
+            cbs(this, "Q", ["Q"]),
+            { receiver: "self", filter: { abilities: ["skill"] } },
+            [{ key: "dmg%", value: this.pyroBonusDmg }]
+          ),
+        ]
+      : []),
   ];
 
   // Tri-Karma: Lv10 185.8% ATK + 371.5% EM, Lv13 (C3+) 219.3% ATK + 438.6% EM
@@ -406,10 +444,11 @@ class Nahida extends CharacterBase {
         ],
       },
       "nahida-karma-spread": {
-        label: { zh: "E 灭净三业(蔓激化)", en: "E Tri-Karma (Spread)" },
+        label: { zh: "E(蔓激化)", en: "E Tri-Karma (Spread)" },
         parts: [
           {
-            formula: new DirectFormula(
+            // Spread is a Catalyze reaction (additive flat bonus) — must use CatalyzeFormula
+            formula: new CatalyzeFormula(
               atkMult,
               { element: "Dendro", ability: "skill", reaction: "spread" },
               "atk",
@@ -422,7 +461,7 @@ class Nahida extends CharacterBase {
         ? {
             "nahida-c6-karma": {
               label: {
-                zh: "C6 灭净三业·业障除伤害",
+                zh: "C6业障除",
                 en: "C6 Karmic Oblivion DMG",
               },
               parts: [
@@ -487,9 +526,9 @@ class Cyno extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // Burst N1-N5 combo: Lv10 154.7+163+206.8+102.2×2+258.6 = 887.5%
+    // Burst N1-N5 combo: Lv10 154.7+163+206.8+102.2×2+258.6 = 987.5%
     // C3+ (Q level): Lv13 187.5+197.5+250.6+123.8×2+313.4 = 1196.6%
-    const nMult = this.constellation >= 3 ? 11.966 : 8.875;
+    const nMult = this.constellation >= 3 ? 11.966 : 9.875;
     // Mortuary Rite: Lv10 282.2%, C5+ 333.2%
     const eMult = this.constellation >= 5 ? 3.332 : 2.822;
 
@@ -720,10 +759,12 @@ class Tighnari extends CharacterBase {
       );
     }
     // C4: Q unleashed + reactions → Team EM +120
+    // C4 text: "若造生缠藤箭触发了燃烧、绽放、月绽放、原激化或蔓激化反应" (burning/bloom/lunarBloom/quicken/spread)
     if (this.constellation >= 4) {
       const canC4React =
         this.teamMeta.hasReaction("burning") ||
         this.teamMeta.hasReaction("bloom") ||
+        this.teamMeta.hasReaction("lunarBloom") ||
         this.teamMeta.hasReaction("quicken") ||
         this.teamMeta.hasReaction("spread");
 
@@ -732,7 +773,9 @@ class Tighnari extends CharacterBase {
           cbs(
             this,
             "C4",
-            canC4React ? ["Q", "burning", "bloom", "quicken", "spread"] : ["Q"]
+            canC4React
+              ? ["Q", "burning", "bloom", "lunarBloom", "quicken", "spread"]
+              : ["Q"]
           ),
           { receiver: "team" },
           [{ key: "em", value: canC4React ? 120 : 60 }]
@@ -751,7 +794,7 @@ class Tighnari extends CharacterBase {
     const qMult = this.constellation >= 3 ? 15.762 : 13.35;
     return {
       "tighnari-charge": {
-        label: { zh: "A 花筥箭+藏蕴花矢", en: "A Wreath Arrow + Clusterbloom" },
+        label: { zh: "重击+花矢", en: "CA + Clusterbloom" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -764,7 +807,7 @@ class Tighnari extends CharacterBase {
       },
       "tighnari-burst": {
         label: {
-          zh: "Q 造生缠藤箭(全中)",
+          zh: "Q(全中)",
           en: "Q Fashioner's Tanglevine Shaft",
         },
         parts: [

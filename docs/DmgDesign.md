@@ -166,9 +166,7 @@ Reusable helpers for common patterns. All live in `damageBuffs.ts`.
 
 | Class | Pattern | Example |
 |-------|---------|---------|
-| `StaticSkillBuff` | Static entries that vary by constellation level | Bennett C1 vs C0 ATK% scaling |
 | `ScalingBuff` | Single input → single output, with optional cap and threshold | Hu Tao E (HP → ATK), Kazuha passive (EM → DMG%) |
-| `ScalingSkillBuff` | `ScalingBuff` where scale/cap vary by constellation | Hu Tao E at Lv10 vs Lv13 |
 | `ErScalingBuff` | ER-over-base → ATK% | Engulfing Lightning passive |
 
 `ScalingBuff` constructor: `(source, target, staticBuffs, inputKey, outputKey, scale, cap?, threshold?)`. The `threshold` subtracts from input before scaling (e.g. "HP above 30,000" → `threshold = 30000`).

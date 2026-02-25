@@ -34,11 +34,17 @@ class TheFirstGreatMagic extends WeaponBase {
     // 1 base (self) + same-element teammates, max 3 Gimmick stacks
     const stacks = Math.min(1 + sameCount, 3);
     return [
+      new StatBuff(
+        wbs(this),
+        { receiver: "self", filter: { abilities: ["charge"] } },
+        [
+          {
+            key: "dmg%",
+            value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ]
+      ),
       new StatBuff(wbs(this), { receiver: "self" }, [
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-        },
         {
           key: "atk%",
           value: stacks * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
@@ -80,29 +86,53 @@ class AstralVulturesCrimsonPlumage extends WeaponBase {
     ];
     if (diffCount >= 2) {
       buffs.push(
-        new StatBuff(wbs(this), { receiver: "self" }, [
-          {
-            key: "dmg%",
-            value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
-          },
-          {
-            key: "dmg%",
-            value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-          },
-        ])
+        new StatBuff(
+          wbs(this),
+          { receiver: "self", filter: { abilities: ["charge"] } },
+          [
+            {
+              key: "dmg%",
+              value: r(this.refinement, [0.48, 0.6, 0.72, 0.84, 0.96]),
+            },
+          ]
+        )
+      );
+      buffs.push(
+        new StatBuff(
+          wbs(this),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [
+            {
+              key: "dmg%",
+              value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+            },
+          ]
+        )
       );
     } else if (diffCount >= 1) {
       buffs.push(
-        new StatBuff(wbs(this), { receiver: "self" }, [
-          {
-            key: "dmg%",
-            value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
-          },
-          {
-            key: "dmg%",
-            value: r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
-          },
-        ])
+        new StatBuff(
+          wbs(this),
+          { receiver: "self", filter: { abilities: ["charge"] } },
+          [
+            {
+              key: "dmg%",
+              value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+            },
+          ]
+        )
+      );
+      buffs.push(
+        new StatBuff(
+          wbs(this),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [
+            {
+              key: "dmg%",
+              value: r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
+            },
+          ]
+        )
       );
     }
     return buffs;
@@ -125,8 +155,17 @@ class ThunderingPulse extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      { key: "dmg%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) },
     ]),
+    new StatBuff(
+      wbs(this),
+      { receiver: "self", filter: { abilities: ["normal"] } },
+      [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+        },
+      ]
+    ),
   ];
 }
 

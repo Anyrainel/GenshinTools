@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 import { charInfo } from "@/data/charInfo";
 import { charactersById } from "@/data/constants";
-import { preloadGameStats } from "@/data/gameStatsLoader";
+import { preloadGameStats } from "@/lib/gameStatsLoader";
 import {
   CharacterBase,
   RegisterCharacter,
@@ -406,25 +406,25 @@ describe("validateStatFilter", () => {
   });
 
   it("throws when defReduction% has element filter", () => {
-    const sheet = new StatSheet([]);
-    const buff = new StatBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "team", filter: { elements: ["Pyro"] } },
-      [{ key: "defReduction%", value: 0.1 }]
-    );
-
-    expect(() => sheet.apply([buff])).toThrow("defReduction%");
+    expect(
+      () =>
+        new StatBuff(
+          { type: "character", id: "test", origin: "C1" },
+          { receiver: "team", filter: { elements: ["Pyro"] } },
+          [{ key: "defReduction%", value: 0.1 }]
+        )
+    ).toThrow("defReduction%");
   });
 
   it("throws when resReduction% has ability filter", () => {
-    const sheet = new StatSheet([]);
-    const buff = new StatBuff(
-      { type: "character", id: "test", origin: "test" },
-      { receiver: "team", filter: { abilities: ["burst"] } },
-      [{ key: "resReduction%", value: 0.1 }]
-    );
-
-    expect(() => sheet.apply([buff])).toThrow("resReduction%");
+    expect(
+      () =>
+        new StatBuff(
+          { type: "character", id: "test", origin: "C1" },
+          { receiver: "team", filter: { abilities: ["burst"] } },
+          [{ key: "resReduction%", value: 0.1 }]
+        )
+    ).toThrow("resReduction%");
   });
 
   it("does not throw for valid combinations", () => {

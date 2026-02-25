@@ -6,7 +6,7 @@ import { ScalingBuff, StatBuff, StatSheet } from "@/lib/team-comp/damageModels";
 describe("StatBuff", () => {
   it("base StatBuff has no dynamic buffs", () => {
     const buff = new StatBuff(
-      { type: "character", id: "test", origin: "test" },
+      { type: "character", id: "test", origin: "C1" },
       { receiver: "self" },
       [{ key: "atk%", value: 0.25 }]
     );
@@ -18,7 +18,7 @@ describe("StatBuff", () => {
 describe("ScalingBuff", () => {
   it("computes dynamic buff from input stat", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test", origin: "test" },
+      { type: "character", id: "test", origin: "C1" },
       { receiver: "onField" },
       [],
       "em",
@@ -36,7 +36,7 @@ describe("ScalingBuff", () => {
 
   it("respects cap", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test", origin: "test" },
+      { type: "character", id: "test", origin: "C1" },
       { receiver: "onField" },
       [],
       "em",
@@ -53,7 +53,7 @@ describe("ScalingBuff", () => {
 
   it("exposes inputKey, outputKey, cap as readonly", () => {
     const buff = new ScalingBuff(
-      { type: "character", id: "test", origin: "test" },
+      { type: "character", id: "test", origin: "C1" },
       { receiver: "onField" },
       [],
       "em",
@@ -70,7 +70,7 @@ describe("ScalingBuff", () => {
 describe("ScalingBuff with threshold", () => {
   // Pattern: "For every 1 HP above 30000, gain 0.007% ATK"
   const buff = new ScalingBuff(
-    { type: "character", id: "test", origin: "test" },
+    { type: "character", id: "test", origin: "C1" },
     { receiver: "self" },
     [],
     "hp",
@@ -114,6 +114,7 @@ describe("ErScalingBuff", () => {
     { type: "weapon", id: "engulfing_lightning", origin: "R1" },
     { receiver: "self" },
     [],
+    "atk%",
     0.28,
     0.8
   );

@@ -11,10 +11,15 @@ export default defineConfig({
     include: ["tests/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "html"],
-      include: ["src/lib/**", "src/stores/**", "src/components/**"],
+      reporter: ["text", "text-summary", "html"],
+      include: [
+        "src/lib/**",
+        "src/stores/**",
+        "src/components/**",
+        "src/hooks/**",
+      ],
       exclude: [
-        "src/components/ui/**", // shadcn primitives
+        "src/components/ui/**", // shadcn primitives — not unit tested
         "src/data/**", // static game data / constants
         "src/presets/**", // bundled preset JSONs
         "src/lib/team-comp/impl/**", // per-character/weapon data definitions
@@ -22,6 +27,12 @@ export default defineConfig({
         "src/lib/tourConfig.ts", // UI tour definitions
         "**/*.d.ts",
       ],
+      thresholds: {
+        lines: 58,
+        functions: 52,
+        branches: 43,
+        statements: 58,
+      },
     },
   },
   resolve: {

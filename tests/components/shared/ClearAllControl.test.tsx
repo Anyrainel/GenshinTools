@@ -1,5 +1,6 @@
 import type { ControlHandle } from "@/components/layout/AppBar";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { render, screen } from "../../utils/render";
@@ -13,7 +14,9 @@ describe("ClearAllControl", () => {
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
 
     // Open via ref
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     // Dialog should now be visible
     expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
@@ -23,7 +26,9 @@ describe("ClearAllControl", () => {
     const ref = createRef<ControlHandle>();
     render(<ClearAllControl ref={ref} onConfirm={() => {}} />);
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     // Should show dialog
     const dialog = await screen.findByRole("alertdialog");
@@ -39,7 +44,9 @@ describe("ClearAllControl", () => {
       <ClearAllControl ref={ref} onConfirm={() => {}} variant="tier-list" />
     );
 
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
 
     // Dialog should open with tier-list specific messages
     expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
@@ -52,7 +59,9 @@ describe("ClearAllControl", () => {
     render(<ClearAllControl ref={ref} onConfirm={mockOnConfirm} />);
 
     // Open dialog via ref
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("alertdialog");
 
     // Find and click the confirm action button (has destructive styling)
@@ -68,7 +77,9 @@ describe("ClearAllControl", () => {
     render(<ClearAllControl ref={ref} onConfirm={() => {}} />);
 
     // Open dialog
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
 
     // Cancel
@@ -85,7 +96,9 @@ describe("ClearAllControl", () => {
     render(<ClearAllControl ref={ref} onConfirm={mockOnConfirm} />);
 
     // Open dialog
-    ref.current?.open();
+    act(() => {
+      ref.current?.open();
+    });
     await screen.findByRole("alertdialog");
 
     // Cancel

@@ -32,7 +32,7 @@ class LumidouceElegy extends WeaponBase {
       },
       {
         key: "dmg%",
-        value: 2 * r(this.refinement, [0.14, 0.18, 0.22, 0.26, 0.3]),
+        value: 2 * r(this.refinement, [0.18, 0.23, 0.28, 0.33, 0.38]),
       },
     ]),
   ];
@@ -82,12 +82,19 @@ class FracturedHalo extends WeaponBase {
     ];
     if (this.teamMeta.hasShielder()) {
       buffs.push(
-        new StatBuff(wbs(this, ["E", "shield"]), { receiver: "team" }, [
+        new StatBuff(
+          wbs(this, ["E", "shield"], "fractured-halo-lunar-charged-dmg"),
           {
-            key: "reactionDmg%",
-            value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            receiver: "team",
+            filter: { reactions: ["lunarCharged"] },
           },
-        ])
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            },
+          ]
+        )
       );
     }
     return buffs;
@@ -163,6 +170,7 @@ class EngulfingLightning extends WeaponBase {
       wbs(this),
       { receiver: "self" },
       [],
+      "atk%",
       r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
       r(this.refinement, [0.8, 0.9, 1.0, 1.1, 1.2])
     ),

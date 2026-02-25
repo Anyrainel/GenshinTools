@@ -42,3 +42,7 @@ blob-report/
 coverage/
 temp/
 scripts/data/*.txt
+
+# QA test case data (agent-generated, not for version control)
+docs/DmgQA/
+memory/

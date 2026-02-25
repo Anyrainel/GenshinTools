@@ -19,6 +19,7 @@
     "test:e2e:ui": "playwright test --ui",
     "prepare": "husky",
     "tauri": "tauri",
+    "qa:dmg": "tsx --tsconfig tsconfig.scripts.json scripts/qa-dmg.ts",
     "// --- Safe / Piped Variants (Agent Helpers) ---": "",
     "type-check:filter": "node scripts/dev/run-filter.js type-check",
     "type-check:head": "node scripts/dev/run-head.js type-check",

@@ -49,15 +49,21 @@ class FangOfTheMountainKing extends WeaponBase {
 
 @RegisterWeapon("verdict")
 class Verdict extends WeaponBase {
-  // ATK% + 2-stack Seal after Crystallize/Lunar-Crystallize
+  // ATK% (passive) + 2-stack Seal → Elemental Skill DMG
   readonly buffs = [
-    new StatBuff(wbs(this, ["crystallize"]), { receiver: "self" }, [
+    new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.18, 0.225, 0.27, 0.315, 0.36]),
-      },
     ]),
+    new StatBuff(
+      wbs(this, ["crystallize"]),
+      { receiver: "self", filter: { abilities: ["skill"] } },
+      [
+        {
+          key: "dmg%",
+          value: 2 * r(this.refinement, [0.18, 0.225, 0.27, 0.315, 0.36]),
+        },
+      ]
+    ),
   ];
 }
 
@@ -67,9 +73,11 @@ class WolfsGravestone extends WeaponBase {
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
     ]),
-    new StatBuff(wbs(this, ["enemy-low-hp"]), { receiver: "team" }, [
-      { key: "atk%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) },
-    ]),
+    new StatBuff(
+      wbs(this, ["enemy-low-hp"], "wolfs-gravestone-team-atk"),
+      { receiver: "team" },
+      [{ key: "atk%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) }]
+    ),
   ];
 }
 

@@ -32,6 +32,7 @@ class EntityMeta(TypedDict, total=False):
     weaponType: str  # C
     region: str  # C
     type: str  # W
+    isHalfSet: bool  # A
 
 
 class ImplInfo(TypedDict):
@@ -70,8 +71,10 @@ def strip_html(html: str) -> str:
 
 _EXTRACTED_DATACache: dict[str, Any] | None = None
 _CHAR_STATS_CACHE: dict[str, Any] | None = None
+_WEAPON_STATS_CACHE: dict[str, Any] | None = None
 
 CHAR_STATS_PATH = DATA / "game" / "character_stats.json"
+WEAPON_STATS_PATH = DATA / "game" / "weapon_stats.json"
 
 
 def get_extracted_data() -> dict[str, Any]:
@@ -89,6 +92,16 @@ def get_char_stats() -> dict[str, Any]:
         else:
             _CHAR_STATS_CACHE = {}
     return _CHAR_STATS_CACHE
+
+
+def get_weapon_stats() -> dict[str, Any]:
+    global _WEAPON_STATS_CACHE
+    if _WEAPON_STATS_CACHE is None:
+        if WEAPON_STATS_PATH.exists():
+            _WEAPON_STATS_CACHE = json.loads(WEAPON_STATS_PATH.read_text("utf-8"))
+        else:
+            _WEAPON_STATS_CACHE = {}
+    return _WEAPON_STATS_CACHE
 
 
 def load_resources(mode: Mode) -> dict[str, EntityMeta]:
@@ -109,15 +122,22 @@ def load_resources(mode: Mode) -> dict[str, EntityMeta]:
                 meta["weaponType"] = stats["weaponType"]
             result[cid] = meta
     elif mode == "W":
+        weapon_stats = get_weapon_stats()
         for w in data.get("weapons", []):
-            result[w["id"]] = w
+            meta = cast(EntityMeta, dict(w))
+            wid = w["id"]
+            stats = weapon_stats.get(wid, {})
+            if "type" in stats:
+                meta["type"] = stats["type"]
+            if "rarity" in stats:
+                meta["rarity"] = stats["rarity"]
+            result[wid] = meta
     elif mode == "A":
         for a in data.get("artifacts", []):
             result[a["id"]] = a
         for ah in data.get("artifactHalfSets", []):
-            # Half sets use a numeric string ID
             h_id = str(ah["id"])
-            result[h_id] = cast(EntityMeta, {"id": h_id, "rarity": 5})  # Dummy rarity
+            result[h_id] = cast(EntityMeta, {"id": h_id, "rarity": 5, "isHalfSet": True})
     return result
 
 
@@ -184,8 +204,7 @@ def expected_filename(meta: EntityMeta, mode: Mode) -> str:
         w_type = meta.get("type", "Unknown")
         return f"weapon{rarity}{w_type}.ts"
     elif mode == "A":
-        eid = str(meta.get("id", ""))
-        if eid.isdigit():
+        if meta.get("isHalfSet"):
             return "artifact2pc.ts"
         else:
             return "artifact4pc.ts"
@@ -221,6 +240,17 @@ def scan_impls(mode: Mode) -> dict[str, ImplInfo]:
                     break
                 start = k
 
+            # Also include the option const definition if the decorator references one.
+            # Pattern: @RegisterXxx("id", optionVarName)
+            opt_var_match = re.search(r'@Register\w+\("[^"]+",\s*(\w+)\)', lines[i])
+            if opt_var_match:
+                opt_var = opt_var_match.group(1)
+                const_pat = re.compile(rf"\bconst\s+{re.escape(opt_var)}\b")
+                for k in range(i - 1, -1, -1):
+                    if const_pat.search(lines[k]):
+                        start = k
+                        break
+
             depth = 0
             found_open = False
             end = i
@@ -244,6 +274,53 @@ def scan_impls(mode: Mode) -> dict[str, ImplInfo]:
             result[entity_id] = info
 
     return result
+
+
+SKILL_SLOT = {"A": 0, "E": 1, "Q": 2}
+
+
+def cmd_detail(char_id: str, detail_spec: str) -> None:
+    """Print a single skill's detail table at a specific level to stdout."""
+    m = re.fullmatch(r"([AEQ])(\d+)", detail_spec.upper())
+    if not m:
+        print(
+            f"Invalid --detail format '{detail_spec}'. Expected e.g. E14, A11, Q13.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    skill_code, level = m.group(1), int(m.group(2))
+    if level < 6 or level > 15:
+        print(f"Level {level} out of range (6–15).", file=sys.stderr)
+        sys.exit(1)
+
+    skill_idx = SKILL_SLOT[skill_code]
+    en_kit, zh_kit = load_char_kits(char_id)
+    en_skills = en_kit.get("skills", [])
+    zh_skills = zh_kit.get("skills", [])
+
+    if skill_idx >= len(en_skills):
+        print(f"Skill '{skill_code}' not found for '{char_id}'.", file=sys.stderr)
+        sys.exit(1)
+
+    en_s = en_skills[skill_idx]
+    zh_s = zh_skills[skill_idx] if skill_idx < len(zh_skills) else None
+    name_en = en_s.get("name", "")
+    name_zh = zh_s["name"] if zh_s else ""
+    print(f"[{skill_code}] {name_en}  |  {name_zh}  —  Lv{level}")
+
+    # Detail rows: [label, lv6, lv7, ..., lv15]  (11 items; col index = level - 5)
+    col_idx = level - 5
+    en_details = en_s.get("details") or []
+    zh_details = (zh_s.get("details") or []) if zh_s else []
+
+    for j, row in enumerate(en_details):
+        if not row:
+            continue
+        en_name = row[0]
+        zh_name = zh_details[j][0] if j < len(zh_details) and zh_details[j] else ""
+        val = row[col_idx] if len(row) > col_idx else "N/A"
+        print(f"  {en_name} ({zh_name}): {val}")
 
 
 def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
@@ -413,27 +490,40 @@ def cmd_show(mode: Mode, entity_id: str) -> None:
         print(f"  ZH: {strip_html(effect_texts.get('zh', ''))}")
 
     elif mode == "A":
-        if entity_id.isdigit():
+        if meta.get("isHalfSet"):
             print(f"  [ARTI] {entity_id}  |  HalfSet 2pc")
             print("═" * 80)
             print("[2pc]")
             print(f"  EN: {strip_html(i18n_data.get('en', ''))}")
             print(f"  ZH: {strip_html(i18n_data.get('zh', ''))}")
         else:
-            name_en = i18n_data.get("name", {}).get("en", entity_id)
-            name_zh = i18n_data.get("name", {}).get("zh", entity_id)
+            name_en = i18n_data.get("en", entity_id)
+            name_zh = i18n_data.get("zh", entity_id)
             print(f"  [ARTI] {entity_id}  |  {name_en}  |  {name_zh}")
             print(f"  {meta.get('rarity')}★")
             print("═" * 80)
 
-            effs_en = i18n_data.get("effects", {}).get("en", [])
-            effs_zh = i18n_data.get("effects", {}).get("zh", [])
+            game_dir = DATA / "game"
+            art_effects: dict[str, dict[str, str]] = {"en": {}, "zh": {}}
+            for lang in ("en", "zh"):
+                ap = game_dir / f"artifact_{lang}.json"
+                if ap.exists():
+                    game_artifacts = json.loads(ap.read_text("utf-8"))
+                    entry = game_artifacts.get(entity_id, {})
+                    art_effects[lang] = {
+                        "effect2": entry.get("effect2", ""),
+                        "effect4": entry.get("effect4", ""),
+                    }
 
-            for i in range(len(effs_en)):
-                print(f"[{((i + 1) * 2)}pc]")
-                print(f"  EN: {strip_html(effs_en[i])}")
-                if i < len(effs_zh):
-                    print(f"  ZH: {strip_html(effs_zh[i])}")
+            for pc, key in [(2, "effect2"), (4, "effect4")]:
+                en_eff = art_effects["en"].get(key, "")
+                zh_eff = art_effects["zh"].get(key, "")
+                if en_eff or zh_eff:
+                    print(f"[{pc}pc]")
+                    if en_eff:
+                        print(f"  EN: {strip_html(en_eff)}")
+                    if zh_eff:
+                        print(f"  ZH: {strip_html(zh_eff)}")
 
     if impl:
         print(f"{'─' * 50}")
@@ -468,7 +558,7 @@ def cmd_list(mode: Mode) -> None:
     elif mode == "A":
         groups = defaultdict(list)
         for _, m in resources.items():
-            if str(m["id"]).isdigit():
+            if m.get("isHalfSet"):
                 groups["Half Sets (2pc only)"].append(m["id"])
             else:
                 groups["Full Sets (4pc)"].append(m["id"])
@@ -528,6 +618,8 @@ Usage:
 Commands:
   show <C|W|A> <id>   Show full i18n description + TS implementation code.
                         Dumps output to scripts/data/<id>.txt
+    --detail=<XN>       Instead of dumping, print skill X at level N to stdout.
+                        X = A/E/Q, N = 6–15. Example: --detail=E14, --detail=A11
   list <C|W|A>        List all registered IDs grouped by categories.
   check [C|W|A]       Find missing and misplaced implementations.
                         If no mode is provided, checks all modes.
@@ -550,20 +642,36 @@ def main() -> None:
 
     try:
         if cmd == "show":
+            detail_spec: str | None = None
+            filtered: list[str] = []
+            for a in args:
+                if a.startswith("--detail="):
+                    detail_spec = a[len("--detail=") :]
+                else:
+                    filtered.append(a)
+            args = filtered
+
             if len(args) < 2:
-                print("Usage: impl_audit.py show <C|W|A> <id>")
+                print("Usage: impl_audit.py show <C|W|A> <id> [--detail=<skill><level>]")
                 sys.exit(1)
-            mode = args[0].upper()
+            mode_str = args[0].upper()
             eid = args[1]
-            if mode not in ["C", "W", "A"]:
+            if mode_str not in ("C", "W", "A"):
                 print("Invalid mode. Use C, W, or A.")
                 sys.exit(1)
+            mode = cast(Mode, mode_str)
 
-            DATA_DIR.mkdir(parents=True, exist_ok=True)
-            output_file = DATA_DIR / f"{eid}.txt"
-            with FileWriter(output_file):
-                cmd_show(mode, eid)
-            print(f"Output saved to {output_file}")
+            if detail_spec:
+                if mode != "C":
+                    print("--detail is only supported for mode C.", file=sys.stderr)
+                    sys.exit(1)
+                cmd_detail(eid, detail_spec)
+            else:
+                DATA_DIR.mkdir(parents=True, exist_ok=True)
+                output_file = DATA_DIR / f"{eid}.txt"
+                with FileWriter(output_file):
+                    cmd_show(mode, eid)
+                print(f"Output saved to {output_file}")
 
         elif cmd == "list":
             if not args:

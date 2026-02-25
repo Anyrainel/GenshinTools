@@ -150,7 +150,3 @@ New fields for `IArtifact`:
 New field for `ISubstat`:
 
 - `initialValue`
-
-```
-
-```

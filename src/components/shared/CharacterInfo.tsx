@@ -4,10 +4,10 @@ import {
   elementResourcesByName,
   weaponResourcesByName,
 } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type { CharacterResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getElementColor, getRarityColor } from "@/lib/utils";
 import { memo, useMemo } from "react";
 

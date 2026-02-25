@@ -2,6 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { AmplifyFormula, DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Liyue Characters
@@ -9,32 +10,54 @@ import { cbs } from "../helpers";
 
 @RegisterCharacter("lan_yan")
 class LanYan extends CharacterBase {
-  readonly buffs = [
-    // C4: After Q, team EM +60 for 12s
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
-    ),
-    // P2: E DMG boosted by EM×309%
-    new ScalingBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "baseDmg",
-      3.09
-    ),
-    // P2: Q DMG boosted by EM×774%
-    new ScalingBuff(
-      cbs(this, "P2", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      [],
-      "em",
-      "baseDmg",
-      7.74
-    ),
-  ];
+  get buffs() {
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamElements = new Set(Object.values(this.teamMeta.elements));
+    const presentAbsorbElements = absorbElements.filter((el) =>
+      teamElements.has(el)
+    );
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // C4: After Q, team EM +60 for 12s
+      new StatBuff(
+        cbs(this, "C4", ["Q"]),
+        { receiver: "team" },
+        this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
+      ),
+      // P2: E DMG boosted by EM×309%
+      new ScalingBuff(
+        cbs(this, "P2", ["E"]),
+        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+        [],
+        "em",
+        "baseDmg",
+        3.09
+      ),
+      // P2: Q DMG boosted by EM×774%
+      new ScalingBuff(
+        cbs(this, "P2", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        [],
+        "em",
+        "baseDmg",
+        7.74
+      ),
+    ];
+    // P1: E Elemental Absorption → ring deals additional 50% DMG in that element (Skill DMG)
+    // Absorption can only be Pyro/Hydro/Cryo/Electro; model for each present in team
+    for (const el of presentAbsorbElements) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P1", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["skill"], elements: [el] },
+          },
+          [{ key: "baseDmg%", value: 0.5 }]
+        )
+      );
+    }
+    return buffs;
+  }
 
   // E ring: Lv10 173.3%×2 = 346.6%, Lv13 (C3+) 204.5%×2 = 409%
   // Q: Lv10 433.9%×3, Lv13 (C5+) 512.3%×3
@@ -43,7 +66,7 @@ class LanYan extends CharacterBase {
     const qMult = this.constellation >= 5 ? 5.123 * 3 : 4.339 * 3;
     return {
       "lanyan-skill": {
-        label: { zh: "凤缕随翦舞", en: "Swallow-Wisp (rings ×2)" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -55,7 +78,7 @@ class LanYan extends CharacterBase {
         ],
       },
       "lanyan-burst": {
-        label: { zh: "鹍弦踏月出(×3)", en: "Lustrous Moonrise (×3)" },
+        label: { zh: "Q踏月×3", en: "Q (×3)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -99,16 +122,30 @@ class Gaming extends CharacterBase {
   ];
 
   // E Charmed Cloudstrider: Lv10 414.7%, Lv13 (C3+) 489.6% (Pyro plunge)
+  // Q Man Chai Smash: Lv10 666.7%, Lv13 (C5+) 787.1% (Pyro burst)
   protected readonly formulaMap = (() => {
     const plungeMult = this.constellation >= 3 ? 4.896 : 4.147;
+    const manchaiMult = this.constellation >= 5 ? 7.871 : 6.667;
     return {
       "gaming-cloudstrider": {
-        label: { zh: "踏云献瑞", en: "Charmed Cloudstrider" },
+        label: { zh: "下落", en: "Plunge" },
         parts: [
           {
             formula: new DirectFormula(plungeMult, {
               element: "Pyro",
               ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "gaming-burst-manchai": {
+        label: { zh: "Q猊兽·文仔砸击", en: "Q Man Chai Smash" },
+        parts: [
+          {
+            formula: new DirectFormula(manchaiMult, {
+              element: "Pyro",
+              ability: "burst",
               reaction: "none",
             }),
           },
@@ -159,7 +196,7 @@ class Yaoyao extends CharacterBase {
 
     return {
       "yaoyao-skill": {
-        label: { zh: "白玉萝卜(单次)", en: "White Jade Radish" },
+        label: { zh: "E白玉萝卜", en: "E Jade Radish" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -171,7 +208,7 @@ class Yaoyao extends CharacterBase {
         ],
       },
       "yaoyao-burst": {
-        label: { zh: "技能伤害", en: "Moonjade Descent (Initial)" },
+        label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(qInitialMult, {
@@ -183,7 +220,7 @@ class Yaoyao extends CharacterBase {
         ],
       },
       "yaoyao-burst-radish": {
-        label: { zh: "桂子仙机白玉萝卜(单次)", en: "Adeptal Legacy Radish" },
+        label: { zh: "Q白玉萝卜", en: "Adeptal Legacy Radish" },
         parts: [
           {
             formula: new DirectFormula(qRadishMult, {
@@ -197,7 +234,7 @@ class Yaoyao extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "yaoyao-c6-radish": {
-              label: { zh: "超厉害·大萝卜", en: "Mega Radish (C6)" },
+              label: { zh: "C6大萝卜", en: "C6 Overgrown Radish" },
               parts: [
                 {
                   formula: new DirectFormula(0.75, {
@@ -251,13 +288,13 @@ class Xiangling extends CharacterBase {
   // C4+ Duration 14s: ~14 hits
   protected readonly formulaMap = (() => {
     const ticks = this.constellation >= 4 ? 14 : 10;
-    const baseMult = this.constellation >= 3 ? 573.0 : 485.0;
-    const tickMult = this.constellation >= 3 ? 238.0 : 202.0;
+    const baseMult = this.constellation >= 3 ? 5.73 : 4.85;
+    const tickMult = this.constellation >= 3 ? 2.38 : 2.02;
     const totalMult = baseMult + ticks * tickMult;
 
     return {
       "xiangling-pyronado": {
-        label: { zh: "旋火轮及挥舞(总伤)", en: "Pyronado Total" },
+        label: { zh: "Q总伤", en: "Q Total" },
         parts: [
           {
             formula: new DirectFormula(totalMult, {
@@ -269,7 +306,7 @@ class Xiangling extends CharacterBase {
         ],
       },
       "xiangling-pyronado-vape": {
-        label: { zh: "旋火轮及挥舞(全蒸发)", en: "Pyronado Total (Vape)" },
+        label: { zh: "Q(全蒸发)", en: "Pyronado Total (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(totalMult, {
@@ -308,12 +345,57 @@ class Chongyun extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
+    // E: Lv10 310%, Lv13 (C5+) 366%
+    const eMult = this.constellation >= 5 ? 3.66 : 3.1;
     // Q: 3 blades (C6: 4), Lv10 256% each, Lv13 (C3+) 303%
     const qMult = this.constellation >= 3 ? 3.03 : 2.56;
     const blades = this.constellation >= 6 ? 4 : 3;
     return {
+      "chongyun-skill": {
+        label: { zh: "E灵刃·重华叠霜", en: "Chonghua's Layered Frost" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "chongyun-skill-rimechaser": {
+        // P2: When E field disappears, a spirit blade strikes for 100% of E Skill DMG (Cryo)
+        label: { zh: "P2追冰剑诀", en: "P2 Rimechaser Blade" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      ...(this.constellation >= 1
+        ? {
+            "chongyun-c1-blades": {
+              // C1: Last hit of Normal combo releases 3 ice blades, each 50% ATK Cryo DMG
+              label: { zh: "C1冰刃×3", en: "C1 N4 Ice Blades (×3)" },
+              parts: [
+                {
+                  formula: new DirectFormula(0.5, {
+                    element: "Cryo",
+                    ability: "normal",
+                    reaction: "none",
+                  }),
+                  hits: 3,
+                },
+              ],
+            },
+          }
+        : {}),
       "chongyun-burst": {
-        label: { zh: "灵刃·云开星落", en: "Cloud-Parting Star" },
+        label: { zh: "Q冰刃×3", en: "Q (3 Ice Blades)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -383,7 +465,7 @@ class Xinyan extends CharacterBase {
 
     return {
       "xinyan-skill": {
-        label: { zh: "热情拂扫(挥舞伤害)", en: "Sweeping Fervor (Swing)" },
+        label: { zh: "E挥舞", en: "E Swing" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -408,7 +490,7 @@ class Xinyan extends CharacterBase {
         ],
       },
       "xinyan-burst": {
-        label: { zh: "叛逆刮弦(物理伤害)", en: "Riff Revolution (Physical)" },
+        label: { zh: "Q物理", en: "Q Physical" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -433,12 +515,25 @@ class Xingqiu extends CharacterBase {
       ]),
     ];
 
-    // C2: Rain Swords decrease Hydro RES by 15%
+    // C2: Rain Swords decrease enemies' Hydro RES by 15%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
-          { key: "resReduction%", value: 0.15 },
-        ])
+        new StatBuff(
+          cbs(this, "C2", ["Q"]),
+          { receiver: "team", filter: { elements: ["Hydro"] } },
+          [{ key: "resReduction%", value: 0.15 }]
+        )
+      );
+    }
+
+    if (this.constellation >= 4) {
+      // C4: During Q, E DMG +50% ("画雨笼山造成的伤害提升50%") → baseDmg% zone
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "baseDmg%", value: 0.5 }]
+        )
       );
     }
 
@@ -447,18 +542,16 @@ class Xingqiu extends CharacterBase {
 
   // E Skill (Lv10): 302% + 344% = 646.0%
   // E Skill (Lv13 C5+): 357% + 406% = 763.0%
-  // C4 multiplies E DMG by 1.5x during Q (applied directly to multiplier)
   // Raincutter Sword Rain DMG (Lv10): 97.7%
   // Raincutter Sword Rain DMG (Lv13 C3+): 115.0%
   protected readonly formulaMap = (() => {
-    let eMult = this.constellation >= 5 ? 7.63 : 6.46;
-    if (this.constellation >= 4) eMult *= 1.5;
+    const eMult = this.constellation >= 5 ? 7.63 : 6.46;
 
     const qMult = this.constellation >= 3 ? 1.15 : 0.977;
 
     return {
       "xingqiu-skill": {
-        label: { zh: "画雨笼山(双击总和)", en: "Fatal Rainscreen" },
+        label: { zh: "E双击", en: "E (2 hits)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -470,7 +563,7 @@ class Xingqiu extends CharacterBase {
         ],
       },
       "xingqiu-burst-tick": {
-        label: { zh: "裁雨留虹(单支)", en: "Raincutter (Per Sword)" },
+        label: { zh: "Q单次", en: "Q (per hit)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -530,7 +623,7 @@ class Yanfei extends CharacterBase {
     return {
       "yanfei-charge": {
         label: {
-          zh: "满印重击(含法兽灼眼)",
+          zh: "重击(+灼眼)",
           en: "Max Seals Charged ATK (incl. P2)",
         },
         parts: [
@@ -552,7 +645,7 @@ class Yanfei extends CharacterBase {
         ],
       },
       "yanfei-skill": {
-        label: { zh: "丹书立约", en: "Signed Edict" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -564,7 +657,7 @@ class Yanfei extends CharacterBase {
         ],
       },
       "yanfei-burst": {
-        label: { zh: "凭此结契", en: "Done Deal" },
+        label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -602,9 +695,25 @@ class Beidou extends CharacterBase {
   protected readonly formulaMap = (() => {
     // Q Lightning DMG: Lv10 173%, Lv13 (C5+) 204%
     const qMult = this.constellation >= 5 ? 2.04 : 1.73;
+    // E Max-Counter DMG: Base + 2×(DMG Bonus on Hit Taken)
+    // Lv10: 218.88% + 2×288% = 794.88% ≈ 795%; Lv13 (C3+): 258.4% + 2×340% = 938.4%
+    const eCounterMult =
+      this.constellation >= 3 ? 2.584 + 2 * 3.4 : 2.1888 + 2 * 2.88;
     return {
+      "beidou-skill-counter": {
+        label: { zh: "E(满格反击)", en: "E Max Counter (2 parries)" },
+        parts: [
+          {
+            formula: new DirectFormula(eCounterMult, {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "beidou-burst-lightning": {
-        label: { zh: "斫雷闪雷", en: "Stormbreaker Lightning" },
+        label: { zh: "Q闪雷", en: "Q Lightning" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -622,11 +731,11 @@ class Beidou extends CharacterBase {
 @RegisterCharacter("ningguang")
 class Ningguang extends CharacterBase {
   readonly buffs = [
-    // P2: Passing through Jade Screen → Geo DMG +12%
+    // P2: Passing through Jade Screen → Geo DMG +12% ("12%岩元素伤害加成")
     new StatBuff(
       cbs(this, "P2", ["E"]),
       { receiver: "team", filter: { elements: ["Geo"] } },
-      [{ key: "dmg%", value: 0.12 }]
+      [{ key: "geo%", value: 0.12 }]
     ),
   ];
 
@@ -637,7 +746,7 @@ class Ningguang extends CharacterBase {
     const qGemMult = this.constellation >= 3 ? 1.85 : 1.57;
     return {
       "ningguang-skill": {
-        label: { zh: "璇玑屏", en: "Jade Screen" },
+        label: { zh: "E璇玑屏", en: "E Jade Screen" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -649,7 +758,7 @@ class Ningguang extends CharacterBase {
         ],
       },
       "ningguang-burst": {
-        label: { zh: "天权崩玉(12宝石)", en: "Starshatter (12 gems)" },
+        label: { zh: "Q×12", en: "Q (×12 shards)" },
         parts: [
           {
             formula: new DirectFormula(qGemMult, {
@@ -737,7 +846,7 @@ class YunJin extends CharacterBase {
 
     return {
       "yun_jin-skill-press": {
-        label: { zh: "旋云开相(点按)", en: "Opening Flourish (Press)" },
+        label: { zh: "E点按", en: "E Tap" },
         parts: [
           {
             formula: new DirectFormula(
@@ -749,7 +858,7 @@ class YunJin extends CharacterBase {
         ],
       },
       "yun_jin-skill-charge1": {
-        label: { zh: "旋云开相(一段蓄力)", en: "Opening Flourish (Charge 1)" },
+        label: { zh: "E一蓄", en: "E Hold (Level 1)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -761,7 +870,7 @@ class YunJin extends CharacterBase {
         ],
       },
       "yun_jin-skill-charge2": {
-        label: { zh: "旋云开相(二段蓄力)", en: "Opening Flourish (Charge 2)" },
+        label: { zh: "E二蓄", en: "E Hold (Level 2)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -773,7 +882,7 @@ class YunJin extends CharacterBase {
         ],
       },
       "yun_jin-burst": {
-        label: { zh: "破嶂见旌仪", en: "Cliffbreaker's Banner" },
+        label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             // Q Initial hit is ATK scaled

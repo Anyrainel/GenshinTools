@@ -13,7 +13,6 @@ import {
   getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterResource,
   Element,
@@ -24,6 +23,7 @@ import { elements, weaponTypes } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";

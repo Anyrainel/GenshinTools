@@ -2,6 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Mondstadt Characters
@@ -9,7 +10,6 @@ import { cbs } from "../helpers";
 
 @RegisterCharacter("dahlia")
 class Dahlia extends CharacterBase {
-  // Pure shielder/utility support — ATK SPD buff not tracked in StatKey? (Wait, now it is!)
   readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
     // Q: Radiant Psalter → On-field active character ATK SPD +10%
     new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
@@ -25,6 +25,12 @@ class Dahlia extends CharacterBase {
       0.000005,
       0.2
     ),
+    // C6: Active character under Favonian Favor → additional ATK SPD +10%
+    new StatBuff(
+      cbs(this, "C6", ["Q"]),
+      { receiver: "onField" },
+      this.constellation >= 6 ? [{ key: "atkSpd%", value: 0.1 }] : []
+    ),
   ];
 
   // E: Sacramental Shower — Lv10 419%, Lv13 (C5+) 494.7%
@@ -34,7 +40,7 @@ class Dahlia extends CharacterBase {
     const qMult = this.constellation >= 3 ? 8.636 : 7.315;
     return {
       "dahlia-skill": {
-        label: { zh: "元素战技", en: "Sacramental Shower" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -46,7 +52,7 @@ class Dahlia extends CharacterBase {
         ],
       },
       "dahlia-burst": {
-        label: { zh: "元素爆发", en: "Radiant Psalter" },
+        label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -69,11 +75,11 @@ class Mika extends CharacterBase {
       { key: "atkSpd%", value: this.constellation >= 5 ? 0.25 : 0.22 },
     ]),
     // P1+P2: E Soulwind Detector → on-field Physical DMG +10% per stack
-    // Max 3 (P1) + 1 (P2) = 4 stacks = 40%
+    // Max 3 (P1) + 1 (P2) = 4 stacks; C6 adds 1 more → 5 stacks at C6
     new StatBuff(
       cbs(this, "P1", ["E"]),
       { receiver: "onField", filter: { elements: ["Physical"] } },
-      [{ key: "dmg%", value: 0.4 }]
+      [{ key: "dmg%", value: this.constellation >= 6 ? 0.5 : 0.4 }]
     ),
     // C6: Soulwind → Physical CD +60%
     new StatBuff(
@@ -89,26 +95,43 @@ class Mika extends CharacterBase {
 
 @RegisterCharacter("razor")
 class Razor extends CharacterBase {
-  readonly buffs = [
-    // Q: Normal ATK SPD +40% (Lv10/Lv13 is 40%)
-    new StatBuff(
-      cbs(this, "Q", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      [{ key: "atkSpd%", value: 0.4 }]
-    ),
-    // C1: On elemental particle pickup → self DMG +10%
-    new StatBuff(
-      cbs(this, "C1", []),
-      { receiver: "selfOnField" },
-      this.constellation >= 1 ? [{ key: "dmg%", value: 0.1 }] : []
-    ),
-    // C4: E tap hit → enemy DEF -15%
-    new StatBuff(
-      cbs(this, "C4", ["E"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "defReduction%", value: 0.15 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // Q: Normal ATK SPD +40% (Lv10/Lv13 is 40%)
+      new StatBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [{ key: "atkSpd%", value: 0.4 }]
+      ),
+      // C1: On elemental particle pickup → self DMG +10%
+      new StatBuff(
+        cbs(this, "C1", []),
+        { receiver: "selfOnField" },
+        this.constellation >= 1 ? [{ key: "dmg%", value: 0.1 }] : []
+      ),
+      // C4: E tap hit → enemy DEF -15%
+      new StatBuff(
+        cbs(this, "C4", ["E"]),
+        { receiver: "team" },
+        this.constellation >= 4 ? [{ key: "defReduction%", value: 0.15 }] : []
+      ),
+    ];
+    // P4 (Hexerei): Wolf Within DMG increased by 70% of Razor's ATK
+    // Always-on when Hexerei active (≥2 Hexerei in team)
+    if (this.teamMeta.countByFaction("Hexerei") >= 2) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P4", ["Q"]),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [],
+          "atk",
+          "baseDmg",
+          0.7
+        )
+      );
+    }
+    return buffs;
+  })();
 
   protected readonly formulaMap = (() => {
     // Normal attack string total at Lv10 without external buffs
@@ -136,6 +159,24 @@ class Razor extends CharacterBase {
           },
         ],
       },
+      // C6: Every 10s, charged sword releases lightning on next Normal Attack
+      // Deals 100% ATK Electro DMG — separate hit, not classified as Normal ATK
+      ...(this.constellation >= 6
+        ? {
+            "razor-c6-lightning": {
+              label: { zh: "C6落雷", en: "C6 Lightning" },
+              parts: [
+                {
+                  formula: new DirectFormula(1.0, {
+                    element: "Electro",
+                    ability: "special",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -144,9 +185,10 @@ class Razor extends CharacterBase {
 class Diona extends CharacterBase {
   readonly buffs = [
     // C2: Icy Paws DMG +15%
+    // Diona is typically off-field; "self" ensures the buff always applies to her skill
     new StatBuff(
       cbs(this, "C2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       this.constellation >= 2 ? [{ key: "dmg%", value: 0.15 }] : []
     ),
     // C6: In Q field, HP > 50% → EM +200 (assume active)
@@ -187,13 +229,14 @@ class Fischl extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
     if (this.isHexerei) {
-      const c6Mult = this.constellation >= 6 ? 2 : 1;
+      // P4: Hexerei: Secret Rite — buffs to on-field characters when Oz is present
+      // C6 does NOT double these; C6 adds a separate Oz coordinated attack (not modeled here)
       if (this.teamMeta.hasReaction("overloaded")) {
         buffs.push(
           new StatBuff(
             cbs(this, "P4", ["E", "overloaded"]),
             { receiver: "onField" },
-            [{ key: "atk%", value: 0.225 * c6Mult }]
+            [{ key: "atk%", value: 0.225 }]
           )
         );
       }
@@ -202,7 +245,7 @@ class Fischl extends CharacterBase {
           new StatBuff(
             cbs(this, "P4", ["E", "electroCharged"]),
             { receiver: "onField" },
-            [{ key: "em", value: 90 * c6Mult }]
+            [{ key: "em", value: 90 }]
           )
         );
       }
@@ -220,7 +263,7 @@ class Fischl extends CharacterBase {
     };
     return {
       "fischl-oz-total": {
-        label: { zh: "奥兹连击", en: "Oz Ticks (×10)" },
+        label: { zh: "E奥兹连击", en: "E Oz Combo" },
         parts: [{ formula: new DirectFormula(ozTickMult, tag), hits: 10 }],
       },
     };
@@ -245,6 +288,11 @@ class Barbara extends CharacterBase {
 @RegisterCharacter("rosaria")
 class Rosaria extends CharacterBase {
   readonly buffs = [
+    // P1: E back-stab → self CRIT Rate +12% for 5s (assume always active, peak model)
+    // ZH: 噬罪的告解从技能目标的背后攻击时，罗莎莉亚的暴击率提升12%，持续5秒。
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
+      { key: "cr", value: 0.12 },
+    ]),
     // P2: Q → team CR = 15% of Rosaria's CR (cap 15%)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
@@ -274,20 +322,28 @@ class Rosaria extends CharacterBase {
     ),
   ];
 
-  // Q: Lv10 199%, Lv13 (C5+) 235% per ice lance tick (×6)
+  // Q initial slashes: Lv10 461%, Lv13 (C5+) 544%
+  // Q ice lance tick: Lv10 238%, Lv13 (C5+) 280%; base 6 ticks, C2 extends +4s → 9 ticks
   protected readonly formulaMap = (() => {
-    const tickMult = this.constellation >= 5 ? 2.35 : 1.99;
+    const initialMult = this.constellation >= 5 ? 5.44 : 4.61;
+    const tickMult = this.constellation >= 5 ? 2.8 : 2.38;
+    const tickCount = this.constellation >= 2 ? 9 : 6;
+    const cryoBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "rosaria-burst": {
-        label: { zh: "终命的圣礼(×6)", en: "Rites of Termination (×6)" },
+        label: {
+          zh: `Q初击+×${tickCount}`,
+          en: `Q Initial + (×${tickCount})`,
+        },
         parts: [
+          { formula: new DirectFormula(initialMult, cryoBurst) },
           {
-            formula: new DirectFormula(tickMult, {
-              element: "Cryo",
-              ability: "burst",
-              reaction: "none",
-            }),
-            hits: 6,
+            formula: new DirectFormula(tickMult, cryoBurst),
+            hits: tickCount,
           },
         ],
       },
@@ -297,37 +353,74 @@ class Rosaria extends CharacterBase {
 
 @RegisterCharacter("sucrose")
 class Sucrose extends CharacterBase {
-  readonly buffs = [
-    // P1: Swirl element → Team EM +50
-    new StatBuff(cbs(this, "P1", []), { receiver: "team" }, [
-      { key: "em", value: 50 },
-    ]),
-    // P2: E or Q hit → Team EM +20% of Sucrose's EM
-    new ScalingBuff(
-      cbs(this, "P2", ["E", "Q"]),
-      { receiver: "team" },
-      [],
-      "em",
-      "em",
-      0.2
-    ),
-    // C6: Q Elemental Absorption → Team Elemental DMG +20%
-    // Represented generally as dmg%
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 6 ? [{ key: "dmg%", value: 0.2 }] : []
-    ),
-  ];
+  readonly buffs = (() => {
+    const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
+    const allAbilities = [
+      "normal",
+      "charge",
+      "plunge",
+      "skill",
+      "burst",
+    ] as const;
+    const absorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
+    const teamElements = new Set(Object.values(this.teamMeta.elements));
+    const presentAbsorbElements = absorbElements.filter((el) =>
+      teamElements.has(el)
+    );
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
+      // P1: Swirl element → Team EM +50
+      new StatBuff(cbs(this, "P1", []), { receiver: "team" }, [
+        { key: "em", value: 50 },
+      ]),
+      // P2: E or Q hit → Team EM +20% of Sucrose's EM
+      new ScalingBuff(
+        cbs(this, "P2", ["E", "Q"]),
+        { receiver: "team" },
+        [],
+        "em",
+        "em",
+        0.2
+      ),
+    ];
+    // C6: Q Elemental Absorption → Team +20% DMG Bonus for the absorbed element
+    // Absorption can only be Pyro/Hydro/Cryo/Electro; model for each present in team
+    if (this.constellation >= 6 && presentAbsorbElements.length > 0) {
+      for (const el of presentAbsorbElements) {
+        buffs.push(
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
+            { key: `${el.toLowerCase()}%` as StatKey, value: 0.2 },
+          ])
+        );
+      }
+    }
+    if (isHexerei) {
+      // P4 (Hexerei): E → team DMG +5.71428%; Q → Hexerei team DMG +7.14285%
+      // Both buffs are approximated as unfiltered dmg% (all ability types covered by text)
+      // The Q buff is scoped to Hexerei — approximated as "team" (faction filter not supported)
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P4", ["E"]),
+          { receiver: "team", filter: { abilities: [...allAbilities] } },
+          [{ key: "dmg%", value: 0.0571428 }]
+        ),
+        new StatBuff(
+          cbs(this, "P4", ["Q"]),
+          { receiver: "team", filter: { abilities: [...allAbilities] } },
+          [{ key: "dmg%", value: 0.0714285 }]
+        )
+      );
+    }
+    return buffs;
+  })();
 
   // E: Lv10 380%, Lv13 (C3+) 449%
-  // Q DoT: Lv10 266%, Lv13 (C5+) 315%
+  // Q DoT: Lv10 266%, Lv13 (C5+) 314%
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.49 : 3.8;
-    const qMult = this.constellation >= 5 ? 3.15 : 2.66;
+    const qMult = this.constellation >= 5 ? 3.14 : 2.66;
     return {
       "sucrose-skill": {
-        label: { zh: "风灵作成·陆叁零捌", en: "Astable Anemohypostasis" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -339,7 +432,7 @@ class Sucrose extends CharacterBase {
         ],
       },
       "sucrose-burst": {
-        label: { zh: "禁·风灵作成(持续)", en: "Forbidden Creation (DoT)" },
+        label: { zh: "Q持续", en: "Q DoT" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -383,7 +476,7 @@ class Bennett extends CharacterBase {
     const eMult = this.constellation >= 3 ? 2.92 : 2.48;
     return {
       "bennett-skill": {
-        label: { zh: "元素战技(点按)", en: "Skill (Tap)" },
+        label: { zh: "E点按", en: "E Skill (Tap)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -424,7 +517,7 @@ class Amber extends CharacterBase {
     const qMult = this.constellation >= 3 ? 10.74 : 9.1;
     return {
       "amber-burst": {
-        label: { zh: "元素爆发", en: "Fiery Rain Total" },
+        label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -441,7 +534,14 @@ class Amber extends CharacterBase {
 
 @RegisterCharacter("kaeya")
 class Kaeya extends CharacterBase {
-  readonly buffs: StatBuff[] = [];
+  readonly buffs = [
+    // C1: Normal/Charged CR +15% vs Cryo-affected enemies (Kaeya self-applies Cryo → always active)
+    new StatBuff(
+      cbs(this, "C1", []),
+      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
+      this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
+    ),
+  ];
 
   // E: Lv10 344%, Lv13 (C3+) 406%
   // Q icicle: Lv10 140%, Lv13 (C5+) 165%, 3 icicles ×~10 hits
@@ -451,7 +551,7 @@ class Kaeya extends CharacterBase {
     const icicleCount = this.constellation >= 6 ? 4 : 3;
     return {
       "kaeya-skill": {
-        label: { zh: "霜袭", en: "Frostgnaw" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -464,7 +564,7 @@ class Kaeya extends CharacterBase {
       },
       "kaeya-burst": {
         label: {
-          zh: `凛冽轮舞(${icicleCount}棱×10)`,
+          zh: `Q${icicleCount}棱×10`,
           en: `Glacial Waltz (${icicleCount}×10)`,
         },
         parts: [
@@ -493,12 +593,14 @@ class Lisa extends CharacterBase {
 
   // E hold (3 stacks): Lv10 877%, Lv13 (C5+) 1035%
   // Q discharge: Lv10 65.8%, Lv13 (C3+) 77.7%, ~30 discharges over 15s
+  // C4: each discharge fires 1-3 bolts (avg 2) → 60 hits
   protected readonly formulaMap = (() => {
     const eHoldMult = this.constellation >= 5 ? 10.35 : 8.77;
     const qDischargeMult = this.constellation >= 3 ? 0.777 : 0.658;
+    const qHitCount = this.constellation >= 4 ? 60 : 30;
     return {
       "lisa-hold": {
-        label: { zh: "苍雷长按(三层)", en: "Violet Arc Hold (3 stacks)" },
+        label: { zh: "E长按(三层)", en: "E Hold (3 stacks)" },
         parts: [
           {
             formula: new DirectFormula(eHoldMult, {
@@ -510,7 +612,10 @@ class Lisa extends CharacterBase {
         ],
       },
       "lisa-burst": {
-        label: { zh: "蔷薇的雷光(×30)", en: "Lightning Rose (×30)" },
+        label: {
+          zh: `Q×${qHitCount}`,
+          en: `Q (×${qHitCount})`,
+        },
         parts: [
           {
             formula: new DirectFormula(qDischargeMult, {
@@ -518,7 +623,7 @@ class Lisa extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            hits: 30,
+            hits: qHitCount,
           },
         ],
       },
