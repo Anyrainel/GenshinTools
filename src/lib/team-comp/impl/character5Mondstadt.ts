@@ -135,7 +135,12 @@ class Durin extends CharacterBase {
         buffs.push(
           new ScalingBuff(
             cbs(this, "C1", ["Q"]),
-            { receiver: "otherOnField" },
+            {
+              receiver: "otherOnField",
+              filter: {
+                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              },
+            },
             [],
             "atk",
             "baseDmg",

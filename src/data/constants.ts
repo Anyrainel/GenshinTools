@@ -14,9 +14,11 @@ import type {
   Element,
   ElementResource,
   MainStat,
+  TierAssignment,
   WeaponResource,
   WeaponTypeResource,
 } from "./types";
+import { tiers } from "./types";
 
 // Function to get goblet pool with character's elemental damage bonus
 export const getGobletPool = (element?: Element): readonly MainStat[] => {
@@ -221,22 +223,39 @@ function sortItemsByRarityDesc<T extends { rarity?: number }>(
   return [...items].sort((a, b) => (b.rarity ?? 0) - (a.rarity ?? 0));
 }
 
-/** Characters sorted by release date descending (from character_stats when provided). */
+/**
+ * Character class rank for sorting: regular 5★ > regular 4★ > traveler > manekin/manekina.
+ * Lower value = higher priority.
+ */
+function getCharacterClassRank(id: string, rarity: number): number {
+  if (id.startsWith("manekin")) return 3;
+  if (id.startsWith("traveler")) return 2;
+  return rarity >= 5 ? 0 : 1;
+}
+
+/** Characters sorted by optional tier, then character class rank, then release date descending. */
 export function getSortedCharacters(
-  characterStats: CharacterStatsMap | null
+  characterStats: CharacterStatsMap | null,
+  tierAssignments?: TierAssignment | null
 ): CharacterResource[] {
   const list = [...characters];
   if (!characterStats) return list;
   return list.sort((a, b) => {
-    // Manekin variants always sort last (after travelers)
-    const aIsManekin = a.id.startsWith("manekin");
-    const bIsManekin = b.id.startsWith("manekin");
-    if (aIsManekin !== bIsManekin) return aIsManekin ? 1 : -1;
-    // 5★ before 4★
+    // 1. Tier rank (S=0, A=1, …, Pool=5, unassigned=last)
+    if (tierAssignments) {
+      const tierA = tierAssignments[a.id]?.tier;
+      const tierB = tierAssignments[b.id]?.tier;
+      const rankA = tierA ? tiers.indexOf(tierA) : tiers.length;
+      const rankB = tierB ? tiers.indexOf(tierB) : tiers.length;
+      if (rankA !== rankB) return rankA - rankB;
+    }
+    // 2. Character class: 5★ > 4★ > traveler > manekin/manekina
     const rarityA = characterStats[a.id]?.rarity ?? a.rarity;
     const rarityB = characterStats[b.id]?.rarity ?? b.rarity;
-    if (rarityA !== rarityB) return rarityB - rarityA;
-    // Within same rarity, sort by release date descending
+    const classA = getCharacterClassRank(a.id, rarityA);
+    const classB = getCharacterClassRank(b.id, rarityB);
+    if (classA !== classB) return classA - classB;
+    // 3. Within same class, sort by release date descending
     const dateA = characterStats[a.id]?.releaseDate ?? "";
     const dateB = characterStats[b.id]?.releaseDate ?? "";
     if (!dateA && !dateB) return 0;

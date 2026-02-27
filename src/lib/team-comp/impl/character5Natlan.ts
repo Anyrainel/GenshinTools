@@ -167,7 +167,12 @@ class Citlali extends CharacterBase {
       ? [
           new ScalingBuff(
             cbs(this, "C1", ["E"]),
-            { receiver: "otherOnField" },
+            {
+              receiver: "otherOnField",
+              filter: {
+                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              },
+            },
             [],
             "em",
             "baseDmg",

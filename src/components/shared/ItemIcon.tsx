@@ -3,6 +3,17 @@ import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import { Lock } from "lucide-react";
 import { forwardRef } from "react";
 
+/** Character ID prefixes that share the same portrait but need an element overlay */
+const VARIANT_PREFIXES = ["traveler", "manekin"] as const;
+
+/** Extract element name from variant character IDs (traveler_*, manekin_*, manekina_*) */
+function getVariantElement(characterId?: string): string | null {
+  if (!characterId) return null;
+  if (!VARIANT_PREFIXES.some((p) => characterId.startsWith(p))) return null;
+  const idx = characterId.lastIndexOf("_");
+  return idx > 0 ? characterId.slice(idx + 1) : null;
+}
+
 interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   imagePath: string;
   rarity?: Rarity;
@@ -11,6 +22,8 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   elementBadge?: string; // Top Right - Element image path (mutually exclusive with lock)
   level?: string; // Bottom bar - e.g. "Lv. 90", "+20"
   size?: ItemIconSize; // Predefined sizes
+  /** When set, auto-adds a bottom-center element overlay for variant characters (traveler/manekin/manekina) */
+  characterId?: string;
   children?: React.ReactNode;
 }
 
@@ -106,6 +119,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       elementBadge,
       level,
       size = "lg",
+      characterId,
       children,
       className,
       style,
@@ -238,6 +252,25 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
             />
           </div>
         )}
+        {/* Variant element overlay - bottom center (traveler/manekin/manekina) */}
+        {(() => {
+          const el = getVariantElement(characterId);
+          if (!el) return null;
+          const badgeSize = Math.round(iconSize * 0.34);
+          return (
+            <div
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full"
+              style={{ width: badgeSize, height: badgeSize, padding: 1 }}
+            >
+              <img
+                src={getAssetUrl(`element/${el}.png`)}
+                className="w-full h-full object-contain"
+                alt={el}
+                draggable={false}
+              />
+            </div>
+          );
+        })()}
         {children}
       </div>
     );

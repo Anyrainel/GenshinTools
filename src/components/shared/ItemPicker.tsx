@@ -59,6 +59,7 @@ import {
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Check, Search, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
@@ -111,12 +112,13 @@ function ItemPickerComponent<T extends ItemPickerType>({
   onOpenChange: onOpenChangeProp,
 }: ItemPickerProps<T>) {
   const { characterStats, weaponStats } = useGameStats();
+  const tierAssignments = useTierStore((s) => s.tierAssignments);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const sortedCharacters = useMemo(
-    () => getSortedCharacters(characterStats ?? null),
-    [characterStats]
+    () => getSortedCharacters(characterStats ?? null, tierAssignments),
+    [characterStats, tierAssignments]
   );
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
@@ -399,6 +401,9 @@ function PickerTrigger({
       rarity={item?.rarity}
       size={size}
       elementBadge={elementPath}
+      characterId={
+        type === "character" ? (item as CharacterResource).id : undefined
+      }
     />
   );
 }
@@ -751,28 +756,10 @@ function PickerContent({
               imagePath={item.imagePath}
               rarity={item.rarity}
               size={menuSize}
-            >
-              {type === "character" &&
-                ((item.id as string).startsWith("traveler") ||
-                  (item.id as string).startsWith("manekin")) &&
-                (() => {
-                  const meta = getCharacterDisplayMeta(
-                    item.original as CharacterResource,
-                    characterStats?.[(item.original as CharacterResource).id]
-                  );
-                  return meta.element != null ? (
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-5 bg-black/50 backdrop-blur-sm rounded-full p-0.5">
-                      <img
-                        src={getAssetUrl(
-                          `element/${meta.element.toLowerCase()}.png`
-                        )}
-                        className="w-full h-full object-contain"
-                        alt={meta.element}
-                      />
-                    </div>
-                  ) : null;
-                })()}
-            </ItemIcon>
+              characterId={
+                type === "character" ? (item.id as string) : undefined
+              }
+            />
           </div>
         </TooltipTrigger>
         {tooltip && (

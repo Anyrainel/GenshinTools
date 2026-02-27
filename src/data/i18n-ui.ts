@@ -592,6 +592,19 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "必定暴击" },
+    emptyOptMessage: {
+      en: "Press Run Optimization to find the best artifact loadout.",
+      zh: "点击「开始优化」寻找最优圣遗物配装。",
+    },
+    noValidCombinations: {
+      en: "No valid combinations found for ER {0}%.",
+      zh: "未找到满足 {0}% 充能要求的配装组合。",
+    },
+    preparingOptimizer: {
+      en: "Preparing optimizer…",
+      zh: "正在准备优化器…",
+    },
+    optimizerError: { en: "Optimization Error:", zh: "优化错误：" },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

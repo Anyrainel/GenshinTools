@@ -112,6 +112,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const {
     result: optResult,
     isComputing,
+    error: optError,
     start: startOpt,
     stop: stopOpt,
   } = useAsyncOptimizer();
@@ -959,16 +960,28 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
             <CardContent className={CARD_BODY_CLS}>
               {/* Empty state */}
-              {!isComputing && !optResult && (
+              {!isComputing && !optResult && !optError && (
                 <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                   <Swords className="w-8 h-8 opacity-15" />
-                  <p>
-                    Press{" "}
-                    <strong className="text-foreground/70">
-                      Run Optimization
-                    </strong>{" "}
-                    to find the best artifact loadout.
-                  </p>
+                  <p>{t.ui("teamComp.emptyOptMessage")}</p>
+                </div>
+              )}
+
+              {/* Error state */}
+              {optError && (
+                <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
+                  <span className="font-bold">
+                    {t.ui("teamComp.optimizerError")}
+                  </span>{" "}
+                  {optError.message}
+                </div>
+              )}
+
+              {/* Waiting for first progress */}
+              {isComputing && !optResult && (
+                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <Loader2 className="w-8 h-8 opacity-30 animate-spin" />
+                  <p>{t.ui("teamComp.preparingOptimizer")}</p>
                 </div>
               )}
 
@@ -1011,8 +1024,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
               {/* No results found */}
               {optResult?.done && !optResult.bestDamageResult && (
                 <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                  No valid combinations found for ER{" "}
-                  {Math.round(targetErRaw * 100)}%.
+                  {t
+                    .ui("teamComp.noValidCombinations")
+                    .replace("{0}", String(Math.round(targetErRaw * 100)))}
                 </div>
               )}
             </CardContent>

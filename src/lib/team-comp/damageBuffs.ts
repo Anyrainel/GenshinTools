@@ -282,6 +282,7 @@ export class ScalingBuff extends StatBuff {
     private readonly threshold?: number
   ) {
     super(source, target, staticBuffs);
+    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
@@ -313,6 +314,7 @@ export class CrossScalingBuff extends StatBuff {
     readonly outputKey: StatKey
   ) {
     super(source, target, staticBuffs);
+    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
@@ -337,6 +339,7 @@ export class ErScalingBuff extends StatBuff {
     private readonly cap: number
   ) {
     super(source, target, staticBuffs);
+    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {

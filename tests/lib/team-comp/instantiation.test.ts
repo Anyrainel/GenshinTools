@@ -11,6 +11,7 @@ import {
   createArtifactSet,
   createCharacter,
   createWeapon,
+  getEntityOption,
 } from "@/lib/team-comp/damageModels";
 import { beforeAll, describe, it } from "vitest";
 import "@/lib/team-comp/index";
@@ -33,8 +34,32 @@ describe("Entity Instantiation", () => {
     it.each(Object.keys(charactersById))("%s", (charId) => {
       try {
         const team = new TeamMeta([charId]);
-        const char = createCharacter(charId, 90, 6, team);
+        const char = createCharacter(charId, 100, 6, team);
         char.buffs; // triggers StatBuff constructors → validation
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
+  describe("Characters with options", () => {
+    const cases = Object.keys(charactersById).flatMap((charId) => {
+      const opt = getEntityOption(charId);
+      if (!opt) return [];
+      return opt.choices.map((c) => [charId, c.value] as const);
+    });
+
+    it.each(cases)("%s option=%s", (charId, optionValue) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 100, 6, team, {
+          [charId]: optionValue,
+        });
+        char.buffs;
       } catch (e) {
         rethrowIfUnexpected(
           e,
@@ -49,7 +74,7 @@ describe("Entity Instantiation", () => {
     it.each(Object.keys(charactersById))("%s", (charId) => {
       try {
         const team = new TeamMeta([charId]);
-        const char = createCharacter(charId, 90, 6, team);
+        const char = createCharacter(charId, 100, 6, team);
         const violations: string[] = [];
         for (const [id, label] of Object.entries(char.formulaIds)) {
           if (label.zh.length > 10)
