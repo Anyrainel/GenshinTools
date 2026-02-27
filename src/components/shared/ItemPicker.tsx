@@ -753,7 +753,8 @@ function PickerContent({
               size={menuSize}
             >
               {type === "character" &&
-                (item.id as string).startsWith("traveler") &&
+                ((item.id as string).startsWith("traveler") ||
+                  (item.id as string).startsWith("manekin")) &&
                 (() => {
                   const meta = getCharacterDisplayMeta(
                     item.original as CharacterResource,

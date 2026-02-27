@@ -1,0 +1,31 @@
+# Fontaine Damage Tracker
+- id: sigewinne-p1-off-field
+  entity: sigewinne
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P1 off-field party members only (excluding Sigewinne) approximated as otherOnField.
+  detail: >
+    Known limitation. Off-field-only scope approximated as team.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: chevreuse-p1-overloaded-condition
+  entity: chevreuse
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P1 res shred requires triggering Overloaded, but the buff has no reaction trigger check
+    (teamMeta.hasReaction). Currently only gated by all-Pyro-Electro team check, which is
+    correct for the team-comp prerequisite but does not verify Overloaded can actually occur.
+    Since an all-Pyro-Electro team always has Overloaded available, this is technically fine
+    but the trigger label in cbs is empty instead of listing "overloaded".
+  detail: >
+    Approximation is within acceptable range. An all-Pyro-Electro team (the prerequisite
+    for P1) always has Overloaded available, so the missing hasReaction check is redundant.
+    The only cosmetic issue is the trigger label in cbs not listing "overloaded", which has
+    no functional impact on damage calculation.
+  created: "2026-02-26"
+  resolved: "2026-02-26"

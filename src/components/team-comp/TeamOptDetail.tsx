@@ -1,9 +1,4 @@
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { DoubleItemIcon } from "@/components/shared/DoubleItemIcon";
-import { ItemIcon } from "@/components/shared/ItemIcon";
-import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -20,32 +15,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
-import type { ArtifactData } from "@/data/types";
+import { charactersById, weaponsById } from "@/data/constants";
+import type { ArtifactData, WeaponResource } from "@/data/types";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
+import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type BuildMatchResult,
   matchBuild,
 } from "@/lib/account-data/artifactScore";
+import {
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+} from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet, getEntityOption } from "@/lib/team-comp/damageModels";
 import type { CalcContext, I18nLabel } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
-import { useTeamStore } from "@/stores/useTeamStore";
+import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import {
   ArrowLeft,
   Check,
@@ -73,6 +63,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const accountData = useAccountStore((state) => state.accountData);
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
+  const { characterStats, weaponStats } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
   const optimizerBuildMatchByChar = useMemo(() => {
@@ -97,6 +88,27 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const [optFormulaTab, setOptFormulaTab] = useState<string | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
 
+  const [localCharacters, setLocalCharacters] = useState(team.characters);
+  const [localWeapons, setLocalWeapons] = useState(team.weapons);
+  const [localArtifacts, setLocalArtifacts] = useState(team.artifacts);
+
+  // Reset when team.id changes (component also remounts on team switch)
+  useEffect(() => {
+    setLocalCharacters(team.characters);
+    setLocalWeapons(team.weapons);
+    setLocalArtifacts(team.artifacts);
+  }, [team.id]);
+
+  const effectiveTeam = useMemo(
+    (): Team => ({
+      ...team,
+      characters: localCharacters,
+      weapons: localWeapons,
+      artifacts: localArtifacts,
+    }),
+    [team, localCharacters, localWeapons, localArtifacts]
+  );
+
   const {
     result: optResult,
     isComputing,
@@ -109,8 +121,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }, [stopOpt]);
 
   const configs = useMemo(
-    () => buildTeamConfigs(team, accountData),
-    [team, accountData]
+    () => buildTeamConfigs(effectiveTeam, accountData),
+    [effectiveTeam, accountData]
   );
 
   const { teamBuild, buildError } = useMemo(() => {
@@ -135,7 +147,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const artifactSheets = useMemo(() => {
     if (!accountData) return {};
     const sheets: Record<string, StatSheet> = {};
-    for (const charId of team.characters) {
+    for (const charId of effectiveTeam.characters) {
       if (!charId) continue;
       const acctChar = accountData.characters.find((c) => c.key === charId);
       if (!acctChar) continue;
@@ -143,7 +155,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       sheets[charId] = StatSheet.fromArtifacts(artifacts);
     }
     return sheets;
-  }, [accountData, team.characters]);
+  }, [accountData, effectiveTeam.characters]);
 
   const handleOptionChange = (entityId: string, val: string) => {
     updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
@@ -324,8 +336,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!buildMatch) return;
 
     // Use GOAL sets as optimizer constraints (not equipped sets)
-    const charIdx = team.characters.indexOf(charId);
-    const goalArt = charIdx >= 0 ? team.artifacts[charIdx] : undefined;
+    const charIdx = effectiveTeam.characters.indexOf(charId);
+    const goalArt = charIdx >= 0 ? effectiveTeam.artifacts[charIdx] : undefined;
     let goalSetId: string | null = null;
     let goalHalfSetIds: string[] = [];
     if (goalArt?.type === "4pc") {
@@ -357,13 +369,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // Build artifact maps for Card 2 (current equipped) and Card 3 (optimized)
   const equippedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
-    for (const cid of team.characters) {
+    for (const cid of effectiveTeam.characters) {
       if (!cid) continue;
       const acctChar = accountData?.characters.find((c) => c.key === cid);
       map[cid] = (acctChar?.artifacts || {}) as Record<string, ArtifactData>;
     }
     return map;
-  }, [team.characters, accountData]);
+  }, [effectiveTeam.characters, accountData]);
 
   const optimizedArtifactsByChar = useMemo(() => {
     if (!optResult?.bestDamageResult) return equippedArtifactsByChar;
@@ -377,13 +389,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const optArtifactSheets = useMemo(() => {
     const sheets: Record<string, StatSheet> = {};
-    for (const charId of team.characters) {
+    for (const charId of effectiveTeam.characters) {
       if (!charId) continue;
       const artifacts = Object.values(optimizedArtifactsByChar[charId] || {});
       sheets[charId] = StatSheet.fromArtifacts(artifacts);
     }
     return sheets;
-  }, [optimizedArtifactsByChar, team.characters]);
+  }, [optimizedArtifactsByChar, effectiveTeam.characters]);
 
   const optimizedDisplayResult = useMemo(() => {
     if (!teamBuild || !resolvedOptFormula || !optResult?.bestDamageResult)
@@ -421,6 +433,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       selectedFormula: null,
       targetEr: {},
     });
+    setLocalCharacters([null, null, null, null]);
+    setLocalWeapons([null, null, null, null]);
+    setLocalArtifacts([null, null, null, null]);
     setRenderError(null);
   };
 
@@ -481,7 +496,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           </CardHeader>
           <CardContent className={cn(CARD_BODY_CLS, "py-3")}>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {team.characters.map((charId, i) => {
+              {effectiveTeam.characters.map((charId, i) => {
                 if (!charId)
                   return (
                     <div
@@ -493,7 +508,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   );
 
                 const char = charactersById[charId];
-                const weaponId = team.weapons[i];
+                const weaponId = localWeapons[i];
                 const weapon = weaponId ? weaponsById[weaponId] : null;
                 const charHasOption = getEntityOption(charId) != null;
                 const weaponHasOption =
@@ -533,104 +548,89 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     key={i}
                     className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
                   >
-                    {/* Row 1: All icons in same row, bottom-aligned */}
+                    {/* Row 1: Interactive icons */}
                     <div className="flex items-end gap-1.5">
-                      <Tooltip delayDuration={300}>
-                        <TooltipTrigger asChild>
-                          <div className="cursor-help shrink-0">
-                            <ItemIcon
-                              imagePath={char?.imagePath || ""}
-                              rarity={char?.rarity || 5}
-                              size="xl"
-                              badge={charConst}
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="bottom"
-                          className="p-0 border-0 shadow-xl pointer-events-none"
-                        >
-                          <CharacterTooltip characterId={charId} />
-                        </TooltipContent>
-                      </Tooltip>
-
-                      {weapon && (
-                        <Tooltip delayDuration={300}>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-help shrink-0">
-                              <ItemIcon
-                                imagePath={weapon.imagePath}
-                                rarity={weapon.rarity}
-                                size="lg"
-                                badge={weaponRefine}
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="bottom"
-                            className="p-0 border-0 shadow-xl pointer-events-none"
-                          >
-                            <WeaponTooltip weaponId={weaponId!} />
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      {team.artifacts[i]?.type === "4pc" && (
-                        <Tooltip delayDuration={300}>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-help shrink-0">
-                              <ItemIcon
-                                imagePath={
-                                  artifactsById[team.artifacts[i]!.setId]
-                                    ?.imagePaths?.flower || ""
-                                }
-                                rarity={
-                                  artifactsById[team.artifacts[i]!.setId]
-                                    ?.rarity || 5
-                                }
-                                size="lg"
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="bottom"
-                            className="p-0 border-0 shadow-xl pointer-events-none"
-                          >
-                            <ArtifactTooltip setId={team.artifacts[i]!.setId} />
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
-                      {team.artifacts[i]?.type === "2pc+2pc" && (
-                        <Tooltip delayDuration={300}>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-help shrink-0">
-                              <DoubleItemIcon
-                                imagePath1={
-                                  artifactsById[
-                                    artifactHalfSetsById[team.artifacts[i]!.id1]
-                                      ?.setIds[0]
-                                  ]?.imagePaths?.flower || ""
-                                }
-                                imagePath2={
-                                  artifactsById[
-                                    artifactHalfSetsById[team.artifacts[i]!.id2]
-                                      ?.setIds[0]
-                                  ]?.imagePaths?.flower || ""
-                                }
-                                size="lg"
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="bottom"
-                            className="p-0 border-0 shadow-xl pointer-events-none"
-                          >
-                            <MixedSetTooltip
-                              id1={team.artifacts[i]!.id1}
-                              id2={team.artifacts[i]!.id2}
-                            />
-                          </TooltipContent>
-                        </Tooltip>
-                      )}
+                      <ItemPicker
+                        type="character"
+                        value={charId}
+                        triggerSize="xl"
+                        onChange={(newCharId) => {
+                          setLocalCharacters((prev) => {
+                            const next = [...prev];
+                            next[i] = newCharId;
+                            return next;
+                          });
+                          // Clear weapon if incompatible type
+                          if (localWeapons[i]) {
+                            const newChar = charactersById[newCharId];
+                            const curWeapon = weaponsById[localWeapons[i]!];
+                            if (newChar && curWeapon) {
+                              const newMeta = getCharacterDisplayMeta(
+                                newChar,
+                                characterStats?.[newCharId]
+                              );
+                              const wMeta = getWeaponDisplayMeta(
+                                curWeapon,
+                                weaponStats?.[localWeapons[i]!]
+                              );
+                              if (
+                                newMeta.weaponType &&
+                                wMeta.type &&
+                                newMeta.weaponType !== wMeta.type
+                              ) {
+                                setLocalWeapons((prev) => {
+                                  const next = [...prev];
+                                  next[i] = null;
+                                  return next;
+                                });
+                              }
+                            }
+                          }
+                        }}
+                      />
+                      <ItemPicker
+                        type="weapon"
+                        value={localWeapons[i]}
+                        triggerSize="lg"
+                        disabled={!charId}
+                        filter={(() => {
+                          if (!char) return undefined;
+                          const meta = getCharacterDisplayMeta(
+                            char,
+                            characterStats?.[charId]
+                          );
+                          if (!meta.weaponType) return undefined;
+                          const wType = meta.weaponType;
+                          return (item: unknown) => {
+                            const w = item as WeaponResource;
+                            const wMeta = getWeaponDisplayMeta(
+                              w,
+                              weaponStats?.[w.id]
+                            );
+                            return wMeta.type === wType;
+                          };
+                        })()}
+                        onChange={(newWeaponId) => {
+                          setLocalWeapons((prev) => {
+                            const next = [...prev];
+                            next[i] = newWeaponId;
+                            return next;
+                          });
+                        }}
+                      />
+                      <ItemPicker
+                        type="artifact"
+                        value={localArtifacts[i]}
+                        triggerSize="lg"
+                        disabled={!charId}
+                        onChange={(newArtifact) => {
+                          setLocalArtifacts((prev) => {
+                            const next = [...prev];
+                            next[i] = newArtifact;
+                            return next;
+                          });
+                        }}
+                      />
                     </div>
 
                     {/* Row 2: Name + Min. ER */}

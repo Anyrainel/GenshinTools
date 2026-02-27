@@ -43,20 +43,10 @@ class ElectroDmg2pc extends ArtifactHalfSetBase {
 
 @RegisterArtifactHalfSet("electro-res-40")
 class ElectroRes2pc extends ArtifactHalfSetBase {
-  // Electro RES -40% on enemies (resReduction)
+  // Electro RES +40% (wearer's own elemental resistance, defensive stat — not modeled)
   // Sets: Thundersoother
   readonly stats: StatEntry[] = [];
-  readonly buffs: StatBuff[] = [
-    new StatBuff(
-      {
-        type: "artifactHalfSet",
-        id: this.artifactHalfSetId,
-        noStackId: "electro-res-40",
-      },
-      { receiver: "team", filter: { elements: ["Electro"] } },
-      [{ key: "resReduction%", value: 0.4 }]
-    ),
-  ];
+  readonly buffs: StatBuff[] = [];
 }
 
 @RegisterArtifactHalfSet("geo%-15")
@@ -126,20 +116,10 @@ class HealingBonus2pc extends ArtifactHalfSetBase {
 
 @RegisterArtifactHalfSet("pyro-res-40")
 class PyroRes2pc extends ArtifactHalfSetBase {
-  // Pyro RES -40% on enemies (resReduction)
+  // Pyro RES +40% (wearer's own elemental resistance, defensive stat — not modeled)
   // Sets: Lavawalker
   readonly stats: StatEntry[] = [];
-  readonly buffs: StatBuff[] = [
-    new StatBuff(
-      {
-        type: "artifactHalfSet",
-        id: this.artifactHalfSetId,
-        noStackId: "pyro-res-40",
-      },
-      { receiver: "team", filter: { elements: ["Pyro"] } },
-      [{ key: "resReduction%", value: 0.4 }]
-    ),
-  ];
+  readonly buffs: StatBuff[] = [];
 }
 
 @RegisterArtifactHalfSet("pyro%-15")
@@ -252,4 +232,12 @@ class PlungeDmg2pc extends ArtifactHalfSetBase {
       [{ key: "dmg%", value: 0.25 }]
     ),
   ];
+}
+
+@RegisterArtifactHalfSet("cr-12")
+class CritRate2pc extends ArtifactHalfSetBase {
+  // CRIT Rate +12%
+  // Sets: Berserker
+  readonly stats: StatEntry[] = [{ key: "cr", value: 0.12 }];
+  readonly buffs = [];
 }

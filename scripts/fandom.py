@@ -21,7 +21,7 @@ CHARACTERS_URL = f"{BASE_URL}/wiki/Character/List"
 MIN_NAME_LENGTH = 2
 MAX_NAME_LENGTH = 30
 VALID_RARITIES = [4, 5]
-CHARACTER_BLOCKLIST = {"Manekina", "Manekin"}
+CHARACTER_BLOCKLIST: set[str] = set()
 
 
 def clean_release_date(date_string: str) -> str:

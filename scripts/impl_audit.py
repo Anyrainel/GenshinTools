@@ -276,6 +276,20 @@ def scan_impls(mode: Mode) -> dict[str, ImplInfo]:
     return result
 
 
+_SKIP_PASSIVE_KEYWORDS = [
+    "小地图上显示",
+    "深境螺旋中无效",
+    "返还15%消耗的矿石",
+    "无法与效果完全相同的固有天赋叠加",
+    "探索派遣任务",
+    "完美烹饪",
+    "概率获得2倍产出",
+    "返还部分合成材料",
+    "夜魂传递",
+    "不会惊动它们",
+    "返还部分材料",
+]
+
 SKILL_SLOT = {"A": 0, "E": 1, "Q": 2}
 
 
@@ -381,10 +395,14 @@ def print_char_kit(en_kit: dict[str, Any], zh_kit: dict[str, Any]) -> None:
     for i in range(len(en_passives)):
         en_p = en_passives[i]
         zh_p = zh_passives[i] if i < len(zh_passives) else None
+        zh_desc = strip_html(zh_p.get("descHtml", "")) if zh_p else ""
+        if any(kw in zh_desc for kw in _SKIP_PASSIVE_KEYWORDS):
+            print(f"\n[P{i + 1}] (non-combat)")
+            continue
         print(f"\n[P{i + 1}] {en_p.get('name', '')}  |  {zh_p['name'] if zh_p else ''}")
         print(f"  EN: {strip_html(en_p.get('descHtml', ''))}")
         if zh_p:
-            print(f"  ZH: {strip_html(zh_p.get('descHtml', ''))}")
+            print(f"  ZH: {zh_desc}")
 
     en_cons = en_kit.get("constellations", [])
     zh_cons = zh_kit.get("constellations", [])
@@ -549,7 +567,11 @@ def cmd_list(mode: Mode) -> None:
     elif mode == "W":
         groups = defaultdict(list)
         for _, m in resources.items():
-            groups[f"{m.get('rarity')}★ {m.get('type')}"].append(m["id"])
+            rarity = m.get("rarity", 0)
+            if rarity <= 3:
+                groups[f"{rarity}★"].append(m["id"])
+            else:
+                groups[f"{rarity}★ {m.get('type')}"].append(m["id"])
 
         for k in sorted(groups.keys()):
             print(f"== {k} ==")
@@ -568,7 +590,9 @@ def cmd_list(mode: Mode) -> None:
             print(", ".join(sorted(groups[k])))
 
 
-def fetch_check_results(mode: Mode) -> tuple[list[str], list[str]]:
+def fetch_check_results(
+    mode: Mode,
+) -> tuple[list[str], list[str], dict[str, EntityMeta]]:
     resources = load_resources(mode)
     impls = scan_impls(mode)
 
@@ -584,27 +608,77 @@ def fetch_check_results(mode: Mode) -> tuple[list[str], list[str]]:
             if actual != expected:
                 misplaced.append(f"{eid}: found in {actual}, expected in {expected}")
 
-    return misplaced, missing
+    return misplaced, missing, resources
+
+
+def _resolve_name(mode: Mode, eid: str, i18n: dict[str, Any]) -> str:
+    entry = i18n.get(eid, {})
+    if mode == "C":
+        return entry.get("en", eid)
+    elif mode == "W":
+        return entry.get("name", {}).get("en", eid)
+    elif mode == "A":
+        if isinstance(entry, dict):
+            return entry.get("en", eid)
+        return str(entry) if entry else eid
+    return eid
+
+
+def _format_missing(mode: Mode, eid: str, meta: EntityMeta, i18n: dict[str, Any]) -> str:
+    name = _resolve_name(mode, eid, i18n)
+    rarity = meta.get("rarity", "?")
+    if mode == "C":
+        region = meta.get("region", "?")
+        return f"{eid} ({name}) — {rarity}★ {region}"
+    elif mode == "W":
+        w_type = meta.get("type", "?")
+        return f"{eid} ({name}) — {rarity}★ {w_type}"
+    elif mode == "A":
+        piece_type = "2pc" if meta.get("isHalfSet") else "4pc"
+        return f"{eid} ({name}) — {piece_type}"
+    return eid
 
 
 def cmd_check(modes_to_test: list[Mode]) -> None:
     for mode in modes_to_test:
-        print(f"=== [{mode}] Audit Check ===")
-        misplaced, missing = fetch_check_results(mode)
+        mode_name = {"C": "Character", "W": "Weapon", "A": "Artifact"}[mode]
+        print(f"=== [{mode}] {mode_name} Check ===")
+        misplaced, missing, resources = fetch_check_results(mode)
+        i18n = load_i18n_names(mode)
+
+        if not misplaced and not missing:
+            print("[OK]")
+            continue
 
         if misplaced:
             print(f"[!] Misplaced ({len(misplaced)}):")
             for m in sorted(misplaced):
                 print(f"  - {m}")
-        else:
-            print("[OK] No misplaced implementations.")
 
         if missing:
             print(f"[!] Missing ({len(missing)}):")
-            for m in sorted(missing):
-                print(f"  - {m}")
-        else:
-            print("[OK] No missing implementations.")
+
+            if mode == "A":
+                # Sort 2pc first, then 4pc; alphabetical within each group
+                def _sort_key(eid: str, _res: dict[str, EntityMeta] = resources) -> tuple[int, str]:
+                    meta = _res.get(eid, cast(EntityMeta, {"id": eid}))
+                    return (0 if meta.get("isHalfSet") else 1, eid)
+
+                for eid in sorted(missing, key=_sort_key):
+                    meta = resources.get(eid, cast(EntityMeta, {"id": eid}))
+                    print(f"    - {_format_missing(mode, eid, meta, i18n)}")
+            else:
+                # Group by rarity
+                by_rarity: dict[int, list[str]] = defaultdict(list)
+                for eid in missing:
+                    meta = resources.get(eid, cast(EntityMeta, {"id": eid}))
+                    rarity = meta.get("rarity", 0)
+                    by_rarity[rarity].append(_format_missing(mode, eid, meta, i18n))
+                for rarity in sorted(by_rarity.keys(), reverse=True):
+                    items = by_rarity[rarity]
+                    print(f"  [{rarity}★] ({len(items)})")
+                    for item in sorted(items):
+                        print(f"    - {item}")
 
 
 USAGE = """\\

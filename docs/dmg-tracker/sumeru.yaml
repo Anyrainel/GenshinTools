@@ -1,0 +1,188 @@
+# Sumeru Damage Tracker
+- id: faruzan-e-polyhedron
+  entity: faruzan
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E polyhedron hit (267.8%) not modeled (only Collapse Vortex in runbook).
+  detail: >
+    Not in DmgRunbook. Faruzan's runbook formula is "E风压坍陷风涡伤害" (Collapse
+    Vortex, 194.4%), which is already modeled. The polyhedron deployment hit
+    (267.8% ATK) is a one-time cast proc. Faruzan is an Anemo support whose value
+    is her team buffs (Anemo RES shred, DMG%, baseDmg, C6 CD). The one-time
+    deployment hit is <5% of team DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: sethos-q-dusk-bolt
+  entity: sethos
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q Dusk Bolt (353.1% EM) not modeled.
+  detail: >
+    Not in DmgRunbook. Sethos's runbook formula is "贯影箭伤害" (Shadowpiercing
+    Shot), which is already modeled with both direct and Aggravate variants. The Q
+    Dusk Bolt converts Normal Attacks to piercing Electro shots with 353.1% EM
+    bonus damage (considered Charged ATK DMG). This is a secondary combat mode;
+    Sethos's primary DPS loop is Shadowpiercing Shot with P2 Scorching Sandshade
+    (700% EM baseDmg), which far outscales Q Dusk Bolts. <5% DPS contribution
+    relative to main rotation.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: kaveh-c6-pairidaeza
+  entity: kaveh
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 Pairidaeza's Light (61.8% ATK Dendro) not modeled.
+  detail: >
+    Not in DmgRunbook. Kaveh's runbook formula is "草原核伤害" (Bloom/Dendro Core
+    DMG), already modeled as TransformFormula. C6 Pairidaeza's Light deals 61.8%
+    ATK Dendro DMG once every 3s during Q. Kaveh's main damage is Bloom reaction
+    (transformative, scales with EM/level, not ATK). A 61.8% ATK proc every 3s is
+    negligible compared to Bloom core damage. <5% DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: collei-p1-sprout
+  entity: collei
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with kaveh P1).
+  detail: >
+    Collei has no runbook formulas. She is a 4-star Dendro support whose value is
+    off-field Dendro application for reactions. P1 Sprout deals 40% ATK Dendro DMG
+    over 3s (skill DMG) -- a minor periodic proc. Estimated <5% DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: kaveh-p1-sprout
+  entity: kaveh
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with collei P1).
+  detail: >
+    Not in DmgRunbook. Kaveh's runbook formula is "草原核伤害" (Bloom core DMG).
+    P1 Sprout deals 40% ATK Dendro DMG over 3s. Kaveh builds EM for Bloom
+    reactions; ATK-scaling procs are negligible. <5% DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: dehya-e-molten-inferno
+  entity: dehya
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E Molten Inferno coordinated attack not modeled (only Q).
+  detail: >
+    Not in DmgRunbook. Dehya's runbook formula is "Q10次炽鬃拳+1次焚落踢伤害"
+    (Q combo), already modeled. The E Fiery Sanctum coordinated attack fires once
+    every 2.5s (108.4% ATK + 1.86% HP per hit, ~4-5 hits in 12s). This is
+    supplementary off-field damage. Dehya's primary DPS is her Q combo
+    (10x Flame-Mane's Fist + Incineration Drive). The E coordinated attack
+    contributes roughly 15-20% as much damage as the Q combo, but it is not
+    in the runbook and Dehya is typically evaluated on burst damage windows.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: nilou-e-dance-hits
+  entity: nilou
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E Dance of Haftkarsvar multi-step hits not modeled (only Q + Bountiful Core).
+  detail: >
+    Not in DmgRunbook. Nilou's runbook formulas are "丰穰之核伤害" (Bountiful Core)
+    and "Q伤害" (Burst), both already modeled. The E Dance steps (HP-scaling skill
+    hits) are setup for the Pirouette/Lunar Prayer state and Golden Chalice's
+    Bounty. Nilou's core DPS is Bloom/Bountiful Core reactions, not direct E hits.
+    The E dance hits are transition damage with low total multipliers. <5% DPS.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: candace-c6-overflow
+  entity: candace
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 The Overflow wave (15% HP Hydro, every 2.3s) not modeled.
+  detail: >
+    Candace has no runbook formulas. She is a 4-star Hydro support whose value is
+    her Q Normal ATK DMG% buff and Hydro infusion. C6 wave deals 15% Max HP Hydro
+    DMG every 2.3s (burst DMG). This is a C6-only coordinated attack for a niche
+    support character. Not in runbook, minor proc. <5% team DPS.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: nahida-p1-highest-em
+  entity: nahida
+  rule: U4
+  status: wont-do
+  category: approximation
+  summary: >
+    P1 ScalingBuff reads Nahida's own EM as the source, but game text says
+    "25% of the party member with the highest EM." When Nahida is not the
+    highest-EM character, the buff is under-estimated.
+  detail: >
+    Approximation is within acceptable range. In nearly all practical team
+    compositions, Nahida IS the highest-EM character (she builds full EM with
+    ~800-1000 EM). The discrepancy only arises in niche setups where another
+    character stacks more EM (very rare). Implementing the true behavior would
+    require cross-character stat reads that the engine's ScalingBuff does not
+    support (it reads the buff provider's own stats). The error is typically 0%
+    in standard builds, making this within the +/-10% tolerance.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: dehya-c1c2-e-receiver
+  entity: dehya
+  rule: U1
+  status: wont-do
+  category: approximation
+  summary: >
+    C1 E baseDmg and C2 E dmg% buffs use receiver "selfOnField", but Fiery
+    Sanctum coordinated attacks fire while Dehya is off-field. Should use
+    "self". Currently moot since E formula is not modeled.
+  detail: >
+    The E Molten Inferno coordinated attack formula is not modeled (see
+    dehya-e-molten-inferno, also wont-do). Since no E formula exists in the
+    formulaMap, the receiver mismatch has zero practical impact -- these buffs
+    never apply to any computed damage. If E formula is added in the future,
+    this should be revisited.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: cyno-p1-dmg-leak
+  entity: cyno
+  rule: U5
+  status: wont-do
+  category: engine-gap
+  summary: >
+    P1 Judication +35% DMG uses filter: { abilities: ["skill"] } which also
+    boosts C6 Duststalker Bolts and P1's own 3 bolts. Game text limits the
+    +35% to "this Secret Rite: Chasmic Soulfarer" (the Mortuary Rite hit only).
+  detail: >
+    DamageTagFilter only supports element/ability/reaction dimensions. Both
+    Mortuary Rite and Duststalker Bolts share ability:"skill", so there is no
+    way to scope the +35% dmg% to Mortuary Rite alone without adding sub-ability
+    granularity to the engine. Impact: at C0-C5 there is zero error (P1 bolts
+    have no formula entry, and the buff correctly applies to the Mortuary Rite
+    in the combo). At C6, the +35% leaks to 5 Duststalker Bolts (100% ATK each).
+    With ~96.6% existing Electro DMG bonus (ascension + C2 stacks), the bolt
+    over-estimation is ~17.8% relative, but bolts are ~25% of the C6 combo by
+    talent mult, yielding ~4.4% total combo error. Within acceptable range
+    (under 10%) for a C6-only scenario. Not worth engine complexity.
+  created: "2026-02-26"
+  resolved: "2026-02-26"

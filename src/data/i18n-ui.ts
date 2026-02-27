@@ -816,6 +816,7 @@ export const i18nUiData = {
   buttons: {
     showWeapons: { en: "Show Weapon Types", zh: "显示武器类型" },
     showTravelers: { en: "Show Travelers", zh: "显示旅行者" },
+    showManekin: { en: "Show Manekin(a)", zh: "显示奇偶" },
     customize: { en: "Customize", zh: "自定义" },
     includeRarity5: { en: "5★", zh: "5★" },
     includeRarity4: { en: "4★", zh: "4★" },

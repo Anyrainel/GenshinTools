@@ -1,6 +1,7 @@
 import { StatBuff } from "../damageBuffs";
-import { RegisterWeapon, WeaponBase } from "../damageModels";
+import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import { r, wbs } from "../helpers";
+import type { OptionDef } from "../types";
 
 @RegisterWeapon("harbinger_of_dawn")
 class HarbingerOfDawn extends WeaponBase {
@@ -90,14 +91,18 @@ class CoolSteel extends WeaponBase {
 
 @RegisterWeapon("magic_guide")
 class MagicGuide extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["hydro-electro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
-  ];
+  get buffs() {
+    const teamEls = Object.values(this.teamMeta.elements);
+    if (!teamEls.includes("Hydro") && !teamEls.includes("Electro")) return [];
+    return [
+      new StatBuff(wbs(this, ["hydro-electro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("raven_bow")
@@ -114,14 +119,19 @@ class RavenBow extends WeaponBase {
 
 @RegisterWeapon("bloodtainted_greatsword")
 class BloodtaintedGreatsword extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["pyro-electro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
-      },
-    ]),
-  ];
+  // Enemy affected by Pyro or Electro
+  get buffs() {
+    const els = Object.values(this.teamMeta.elements);
+    if (!els.includes("Pyro") && !els.includes("Electro")) return [];
+    return [
+      new StatBuff(wbs(this, ["pyro-electro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("dark_iron_sword")
@@ -131,6 +141,7 @@ class DarkIronSword extends WeaponBase {
       this.teamMeta.hasReaction("overloaded", this.charId) ||
       this.teamMeta.hasReaction("superconduct", this.charId) ||
       this.teamMeta.hasReaction("electroCharged", this.charId) ||
+      this.teamMeta.hasReaction("lunarCharged", this.charId) ||
       this.teamMeta.hasReaction("quicken", this.charId) ||
       this.teamMeta.hasReaction("aggravate", this.charId) ||
       this.teamMeta.hasReaction("hyperbloom", this.charId) ||
@@ -229,20 +240,37 @@ class SharpshootersOath extends WeaponBase {
   readonly buffs = [];
 }
 
-@RegisterWeapon("ferrous_shadow")
+const ferrousShadowOption = {
+  label: { zh: "生命值状态", en: "HP State" },
+  choices: [
+    { value: "low", label: { zh: "生命值低于阈值", en: "HP below threshold" } },
+    {
+      value: "high",
+      label: { zh: "生命值高于阈值", en: "HP above threshold" },
+    },
+  ] as const,
+  default: "low",
+} satisfies OptionDef;
+
+@RegisterWeapon("ferrous_shadow", ferrousShadowOption)
 class FerrousShadow extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(
-      wbs(this, ["self-low-hp"]),
-      { receiver: "self", filter: { abilities: ["charge"] } },
-      [
-        {
-          key: "dmg%",
-          value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]),
-        },
-      ]
-    ),
-  ];
+  private readonly o = resolveOption(ferrousShadowOption, this.option);
+
+  get buffs() {
+    if (this.o !== "low") return [];
+    return [
+      new StatBuff(
+        wbs(this, ["self-low-hp"]),
+        { receiver: "self", filter: { abilities: ["charge"] } },
+        [
+          {
+            key: "dmg%",
+            value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]),
+          },
+        ]
+      ),
+    ];
+  }
 }
 
 @RegisterWeapon("twin_nephrite")

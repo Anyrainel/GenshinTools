@@ -33,20 +33,23 @@ class Varesa extends CharacterBase {
         "baseDmg",
         1.8
       ),
-      // P2: Nightsoul Burst → ATK +35% (max 2 stacks = 70%)
-      new StatBuff(
-        cbs(this, "P2", ["nightsoul-burst"]),
-        { receiver: "selfOnField" },
-        [{ key: "atk%", value: 0.7 }]
-      ),
+      // P2: Nightsoul Burst → Varesa's ATK +35% (max 2 stacks = 70%)
+      new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+        { key: "atk%", value: 0.7 },
+      ]),
     ];
 
     // C4: Burst in Fiery Passion/Apex Drive → DMG +100%
+    // Volcano Kablam's damage is "considered Plunging Attack DMG", so include "plunge" too.
+    // Also includes "burst" for the Fiery Passion Flying Kick Q variant.
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
           cbs(this, "C4", ["Q"]),
-          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["burst", "plunge"] },
+          },
           [{ key: "dmg%", value: 1.0 }]
         )
       );
@@ -173,34 +176,30 @@ class Citlali extends CharacterBase {
         ]
       : []),
     // C2: Self EM +125, team (shielded/followed) EM +250
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "self" },
-      this.constellation >= 2 ? [{ key: "em", value: 125 }] : []
-    ),
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "onField" },
-      this.constellation >= 2 ? [{ key: "em", value: 250 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+            { key: "em", value: 125 },
+          ]),
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "otherOnField" }, [
+            { key: "em", value: 250 },
+          ]),
+        ]
+      : []),
     // C6: 40 stacks → team Pyro/Hydro DMG +60%, self (Citlali) DMG +100%
     // "all nearby party members" Pyro/Hydro DMG → team
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "team" },
-      this.constellation >= 6
-        ? [
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
             { key: "pyro%", value: 0.6 },
             { key: "hydro%", value: 0.6 },
-          ]
-        : []
-    ),
-    // Citlali's own DMG boost applies off-field too (Itzpapa) → receiver "self"
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "self" },
-      this.constellation >= 6 ? [{ key: "dmg%", value: 1.0 }] : []
-    ),
+          ]),
+          // Citlali's own DMG boost applies off-field too (Itzpapa) → receiver "self"
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+            { key: "dmg%", value: 1.0 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
@@ -214,7 +213,7 @@ class Citlali extends CharacterBase {
     const qSkullMult = this.constellation >= 5 ? 2.856 : 2.419;
     return {
       "citlali-skill": {
-        label: { zh: "E 黑曜星魔", en: "E Obsidian Tzitzimitl" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(eBaseMult, {
@@ -226,7 +225,7 @@ class Citlali extends CharacterBase {
         ],
       },
       "citlali-skill-storm": {
-        label: { zh: "E 霜陨风暴", en: "E Frostfall Storm" },
+        label: { zh: "E持续伤害", en: "E DoT" },
         parts: [
           {
             formula: new DirectFormula(eStormMult, {
@@ -238,7 +237,7 @@ class Citlali extends CharacterBase {
         ],
       },
       "citlali-burst": {
-        label: { zh: "Q 冰风暴", en: "Q Ice Storm" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -250,7 +249,7 @@ class Citlali extends CharacterBase {
         ],
       },
       "citlali-burst-skull": {
-        label: { zh: "Q 宿灵之髑", en: "Q Spiritvessel Skull" },
+        label: { zh: "Q追加伤害", en: "Q Extra" },
         parts: [
           {
             formula: new DirectFormula(qSkullMult, {
@@ -261,6 +260,26 @@ class Citlali extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 4
+        ? {
+            "citlali-c4-skull": {
+              label: { zh: "4命E追加伤害", en: "C4 E Extra" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    18.0,
+                    {
+                      element: "Cryo",
+                      ability: "skill",
+                      reaction: "none",
+                    },
+                    "em"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -270,12 +289,10 @@ class Mavuika extends CharacterBase {
   readonly buffs = (() => {
     const qLvl = this.constellation >= 3 ? 13 : 10;
     const buffs: StatBuff[] = [
-      // P1: After nearby party member triggers Nightsoul Burst, self ATK +30%
-      new StatBuff(
-        cbs(this, "P1", ["nightsoul-burst"]),
-        { receiver: "selfOnField" },
-        [{ key: "atk%", value: 0.3 }]
-      ),
+      // P1: After nearby party member triggers Nightsoul Burst, Mavuika's ATK +30%
+      new StatBuff(cbs(this, "P1", ["nightsoul-burst"]), { receiver: "self" }, [
+        { key: "atk%", value: 0.3 },
+      ]),
       // P2 "Kiongozi": After Q, on-field DMG +0.2% per Spirit (max 200 = 40%)
       // Assume full 200 Spirit → 40%. C4 adds +10% and removes decay.
       new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
@@ -313,12 +330,12 @@ class Mavuika extends CharacterBase {
       ),
     ];
 
-    // C1: ATK +40% after gaining Fighting Spirit
+    // C1: Mavuika's ATK +40% after gaining Fighting Spirit
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(
           cbs(this, "C1", ["fighting-spirit"]),
-          { receiver: "selfOnField" },
+          { receiver: "self" },
           [{ key: "atk%", value: 0.4 }]
         )
       );
@@ -329,7 +346,7 @@ class Mavuika extends CharacterBase {
     // Flamestrider form: N1/CA/Sunfell DMG += 60%/90%/120% ATK as baseDmg
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
           { key: "baseAtk", value: 200 },
         ])
       );
@@ -397,7 +414,7 @@ class Mavuika extends CharacterBase {
 
     return {
       "mavuika-sunfell": {
-        label: { zh: "Q 满战意坠日斩", en: "Q Sunfell Slice (Max Spirit)" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(sunfellMult, {
@@ -409,7 +426,7 @@ class Mavuika extends CharacterBase {
         ],
       },
       "mavuika-combo": {
-        label: { zh: "Q普攻+重击", en: "Post-Q N1+CA+Sprint" },
+        label: { zh: "Q普攻+重击+冲刺", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
             formula: new DirectFormula(n1Mult, {
@@ -420,13 +437,6 @@ class Mavuika extends CharacterBase {
           },
           {
             formula: new DirectFormula(caCyclicMult, {
-              element: "Pyro",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(caFinalMult, {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
@@ -470,11 +480,15 @@ class Chasca extends CharacterBase {
       [{ key: "dmg%", value: [0, 0.15, 0.35, 0.65][this.eligibleTypes] }]
     ),
     // C6: After Spiritbinding Conversion, Shining Shell CD +120%
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation >= 6 ? [{ key: "cd", value: 1.2 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [{ key: "cd", value: 1.2 }]
+          ),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
@@ -509,7 +523,7 @@ class Chasca extends CharacterBase {
       "chasca-shining-volley": {
         label: {
           zh: "E一轮6枚",
-          en: "E 6 Shadowhunt Shells Volley",
+          en: "E 6-Shell Volley",
         },
         parts: [
           ...Array(normalCount)
@@ -527,7 +541,7 @@ class Chasca extends CharacterBase {
       "chasca-burst": {
         label: {
           zh: "Q+6弹",
-          en: "Q + 6 Soulseeker Shells",
+          en: "Q + 6 Shells",
         },
         parts: [
           { formula: new DirectFormula(qInitMult, qTag) },
@@ -571,16 +585,14 @@ class Xilonen extends CharacterBase {
   })();
 
   readonly buffs = (() => {
-    const resValue = this.constellation >= 3 ? 0.425 : 0.36;
+    const resValue = this.constellation >= 3 ? 0.45 : 0.36;
     const buffs: StatBuff[] = [];
 
-    // P2: Nightsoul Burst → DEF +20%
+    // P2: Nightsoul Burst → Xilonen's DEF +20% (personal buff, works off-field)
     buffs.push(
-      new StatBuff(
-        cbs(this, "P2", ["nightsoul-burst"]),
-        { receiver: "selfOnField" },
-        [{ key: "def%", value: 0.2 }]
-      )
+      new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+        { key: "def%", value: 0.2 },
+      ])
     );
 
     if (this.convertedSamples >= 2) {
@@ -618,18 +630,12 @@ class Xilonen extends CharacterBase {
             [{ key: "resReduction%", value: resValue }]
           )
         );
-      } else {
-        // 3 PHEC + below C2: Geo RES selfOnField only
-        buffs.push(
-          new StatBuff(
-            cbs(this, "E", ["E"]),
-            { receiver: "selfOnField", filter: { elements: ["Geo"] } },
-            [{ key: "resReduction%", value: resValue }]
-          )
-        );
       }
+      // 3 PHEC + below C2: all 3 Source Samples are converted, no Geo sample remains.
+      // Geo RES shred is NOT active.
     } else {
-      // 0-1 PHEC: no team-wide element RES shred, but Geo selfOnField (or team at C2)
+      // 0-1 PHEC: Geo Source Sample is always active in Nightsoul's Blessing
+      // U6: resReduction% must use receiver "team"
       if (this.constellation >= 2) {
         buffs.push(
           new StatBuff(
@@ -642,7 +648,7 @@ class Xilonen extends CharacterBase {
         buffs.push(
           new StatBuff(
             cbs(this, "E", ["E"]),
-            { receiver: "selfOnField", filter: { elements: ["Geo"] } },
+            { receiver: "team", filter: { elements: ["Geo"] } },
             [{ key: "resReduction%", value: resValue }]
           )
         );
@@ -686,7 +692,8 @@ class Xilonen extends CharacterBase {
           ])
         );
       }
-      // C2 Geo DMG always active (Electro → Geo DMG +50%)
+      // C2 Geo Source Sample always active at C2: Geo characters → DMG dealt +50%
+      // Approximated as geo% since Geo characters primarily deal Geo DMG
       buffs.push(
         new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
           { key: "geo%", value: 0.5 },
@@ -708,6 +715,23 @@ class Xilonen extends CharacterBase {
           "def",
           "baseDmg",
           0.65
+        )
+      );
+    }
+
+    // C6: Imperishable Night's Blessing — Normal/Plunge DMG +300% DEF
+    if (this.constellation >= 6) {
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "plunge"] },
+          },
+          [],
+          "def",
+          "baseDmg",
+          3.0
         )
       );
     }
@@ -740,7 +764,7 @@ class Xilonen extends CharacterBase {
             "xilonen-normal": {
               label: {
                 zh: "E普攻4段",
-                en: "A Blade Roller N4 Combo",
+                en: "Normal N4 Combo (Blade Roller)",
               },
               parts: [
                 { formula: new DirectFormula(1.107, nTag, "def") },
@@ -755,7 +779,7 @@ class Xilonen extends CharacterBase {
       ...(this.convertedSamples <= 1
         ? {
             "xilonen-burst-beats": {
-              label: { zh: "Q 额外节拍(×2)", en: "Q Extra Beats (×2)" },
+              label: { zh: "Q额外节拍(×2)", en: "Q Extra Beats (×2)" },
               parts: [
                 {
                   formula: new DirectFormula(qBeatMult, qTag, "def"),
@@ -785,11 +809,15 @@ class Mualani extends CharacterBase {
         0.45
       ),
       // C4: Q DMG +75%
-      new StatBuff(
-        cbs(this, "C4", ["Q"]),
-        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-        this.constellation >= 4 ? [{ key: "dmg%", value: 0.75 }] : []
-      ),
+      ...(this.constellation >= 4
+        ? [
+            new StatBuff(
+              cbs(this, "C4", ["Q"]),
+              { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+              [{ key: "dmg%", value: 0.75 }]
+            ),
+          ]
+        : []),
     ];
 
     // C1: First Surging Bite after entering Nightsoul's Blessing +66% Max HP
@@ -834,7 +862,7 @@ class Mualani extends CharacterBase {
         ],
       },
       "mualani-burst": {
-        label: { zh: "Q 爆瀑飞弹", en: "Q Boomsharka-laka" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(
@@ -868,17 +896,25 @@ class Kinich extends CharacterBase {
         6.4 // 320% × 2 stacks = 640% of ATK
       ),
       // C1: Scalespiker Cannon CD +100%
-      new StatBuff(
-        cbs(this, "C1", ["E"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation >= 1 ? [{ key: "cd", value: 1.0 }] : []
-      ),
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(
+              cbs(this, "C1", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+              [{ key: "cd", value: 1.0 }]
+            ),
+          ]
+        : []),
       // C2: Dendro RES -30% on E hit
-      new StatBuff(
-        cbs(this, "C2", ["E"]),
-        { receiver: "team", filter: { elements: ["Dendro"] } },
-        this.constellation >= 2 ? [{ key: "resReduction%", value: 0.3 }] : []
-      ),
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(
+              cbs(this, "C2", ["E"]),
+              { receiver: "team", filter: { elements: ["Dendro"] } },
+              [{ key: "resReduction%", value: 0.3 }]
+            ),
+          ]
+        : []),
     ];
 
     // C2: First Scalespiker Cannon after entering Nightsoul's Blessing +100% DMG
@@ -926,7 +962,7 @@ class Kinich extends CharacterBase {
     };
     return {
       "kinich-cannon": {
-        label: { zh: "E 迴猎贯鳞炮", en: "E Scalespiker Cannon" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(cannonMult, {
@@ -941,7 +977,7 @@ class Kinich extends CharacterBase {
       "kinich-cannon-spread": {
         label: {
           zh: "E(蔓激化)",
-          en: "E Scalespiker Cannon (Spread)",
+          en: "E(Spread)",
         },
         parts: [
           {
@@ -955,7 +991,7 @@ class Kinich extends CharacterBase {
         ],
       },
       "kinich-burst": {
-        label: { zh: "Q 圣龙致意", en: "Q Dragonlord (init + breath ×5)" },
+        label: { zh: "Q 1斩+5龙息", en: "Q 1 Slash + 5 Breaths" },
         parts: [
           {
             formula: new DirectFormula(qInit, {

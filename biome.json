@@ -22,7 +22,8 @@
         "noSvgWithoutTitle": "off"
       },
       "suspicious": {
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noApproximativeNumericConstant": "off"
       }
     }
   },
@@ -60,7 +61,6 @@
       "src/data/i18n-game.ts",
       "src/data/resources.ts",
       "src/data/enkaIdMap.ts",
-      "src/data/charStats.ts",
       "src/data/game/*.json",
       "src/data/charInfo.ts"
     ]

@@ -261,7 +261,12 @@ export const useBuildsStore = create<BuildsState>()(
               // Ensure it's tracked in the character list (Union survival)
               const charId = targetBuild.characterId;
               if (!state.characterToBuildIds[charId]) {
-                state.characterToBuildIds[charId] = [];
+                // Initialize from preset ordering so other builds aren't lost
+                const preset = getCachedPreset(state.activePresetId);
+                const presetIds = preset?.characterBuilds?.[charId];
+                state.characterToBuildIds[charId] = presetIds
+                  ? [...presetIds]
+                  : [];
               }
               if (!state.characterToBuildIds[charId].includes(buildId)) {
                 state.characterToBuildIds[charId].push(buildId);

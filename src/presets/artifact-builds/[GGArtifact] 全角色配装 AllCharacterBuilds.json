@@ -1,11 +1,11 @@
 {
   "version": 5,
-  "id": "export-1771744774756",
+  "id": "export-1772100435795",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
-    "FeFe-le": {
-      "id": "FeFe-le",
+    "FeFi23e": {
+      "id": "FeFi23e",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -37,8 +37,8 @@
       "roles": ["dps", "sustain"],
       "source": "preset"
     },
-    "FeFecam": {
-      "id": "FeFecam",
+    "FeFhfum": {
+      "id": "FeFhfum",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -70,8 +70,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "FeFYVj8": {
-      "id": "FeFYVj8",
+    "FeFbZ18": {
+      "id": "FeFbZ18",
       "name": "",
       "visible": false,
       "composition": "4pc",
@@ -103,8 +103,8 @@
       "roles": ["dps", "sustain"],
       "source": "preset"
     },
-    "FeFPkRG": {
-      "id": "FeFPkRG",
+    "FeFQ6rm": {
+      "id": "FeFQ6rm",
       "name": "",
       "visible": false,
       "composition": "4pc",
@@ -136,8 +136,8 @@
       "roles": ["sustain", "support"],
       "source": "preset"
     },
-    "EB78-0G": {
-      "id": "EB78-0G",
+    "EB7C1KG": {
+      "id": "EB7C1KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -160,8 +160,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "EB6x_xG": {
-      "id": "EB6x_xG",
+    "EB6yOLm": {
+      "id": "EB6yOLm",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
@@ -175,16 +175,17 @@
         },
         {
           "stat": "er",
-          "weight": 70
+          "weight": 75
         }
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "citlali",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "source": "preset"
     },
-    "EB78-9e": {
-      "id": "EB78-9e",
+    "EB7C1Te": {
+      "id": "EB7C1Te",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -198,21 +199,22 @@
         },
         {
           "stat": "cd",
-          "weight": 50
+          "weight": 75
         },
         {
           "stat": "cr",
-          "weight": 50
+          "weight": 75
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "citlali",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "minCons": 6
+      "minCons": 6,
+      "source": "preset"
     },
-    "CRMaUWu": {
-      "id": "CRMaUWu",
+    "CRMdXqu": {
+      "id": "CRMdXqu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -244,8 +246,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "CagdSmu": {
-      "id": "CagdSmu",
+    "CaggW4u": {
+      "id": "CaggW4u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -272,8 +274,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "D0cmoNe": {
-      "id": "D0cmoNe",
+    "D0cprhe": {
+      "id": "D0cprhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -300,8 +302,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "D0cic3m": {
-      "id": "D0cic3m",
+    "D0clfNm": {
+      "id": "D0clfNm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -328,8 +330,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "DSYwRWO": {
-      "id": "DSYwRWO",
+    "DSYzUqO": {
+      "id": "DSYzUqO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -361,8 +363,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "D9wqV0O": {
-      "id": "D9wqV0O",
+    "D9wtYKO": {
+      "id": "D9wtYKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -389,8 +391,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "DuV3MGO": {
-      "id": "DuV3MGO",
+    "DuV6PaO": {
+      "id": "DuV6PaO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -417,8 +419,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "E1p6POu": {
-      "id": "E1p6POu",
+    "E1p9Siu": {
+      "id": "E1p9Siu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -450,8 +452,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "CtIb09u": {
-      "id": "CtIb09u",
+    "CtIdIeu": {
+      "id": "CtIdIeu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -483,8 +485,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "EKR4iOm": {
-      "id": "EKR4iOm",
+    "EKR6-tm": {
+      "id": "EKR6-tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -507,8 +509,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "EmNLaAu": {
-      "id": "EmNLaAu",
+    "EmNOdUu": {
+      "id": "EmNOdUu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -535,8 +537,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "F2_Ouiu": {
-      "id": "F2_Ouiu",
+    "F2_Ry0u": {
+      "id": "F2_Ry0u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -568,8 +570,8 @@
       "roles": ["dps", "support"],
       "source": "preset"
     },
-    "F2_QoXm": {
-      "id": "F2_QoXm",
+    "F2_Trrm": {
+      "id": "F2_Trrm",
       "characterId": "escoffier",
       "name": "",
       "visible": true,
@@ -600,8 +602,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "Ap3NaYO": {
-      "id": "Ap3NaYO",
+    "Apmx9Du": {
+      "id": "Apmx9Du",
       "name": "冰伤流",
       "visible": false,
       "composition": "2pc+2pc",
@@ -630,8 +632,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "Aqvzh8u": {
-      "id": "Aqvzh8u",
+    "Aqv_zdu": {
+      "id": "Aqv_zdu",
       "name": "物伤流",
       "visible": true,
       "composition": "4pc",
@@ -657,8 +659,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "Dbsz50G": {
-      "id": "Dbsz50G",
+    "Dbt08KG": {
+      "id": "Dbt08KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -681,8 +683,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "Dbso01G": {
-      "id": "Dbso01G",
+    "DbspXhG": {
+      "id": "DbspXhG",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
@@ -705,8 +707,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "BioKxKO": {
-      "id": "BioKxKO",
+    "BioN-eO": {
+      "id": "BioN-eO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -733,8 +735,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "Bs6OFoG": {
-      "id": "Bs6OFoG",
+    "Bs6RJ6G": {
+      "id": "Bs6RJ6G",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -757,8 +759,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "Bs6EjRm": {
-      "id": "Bs6EjRm",
+    "Bs6GF5m": {
+      "id": "Bs6GF5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -781,8 +783,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "BXiLODm": {
-      "id": "BXiLODm",
+    "BYQzdRG": {
+      "id": "BYQzdRG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -806,8 +808,8 @@
       "roles": ["sustain", "support"],
       "source": "preset"
     },
-    "AYHtOwG": {
-      "id": "AYHtOwG",
+    "AYHvhPG": {
+      "id": "AYHvhPG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -833,8 +835,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "AYHtOwH": {
-      "id": "AYHtOwH",
+    "AYHvhPH": {
+      "id": "AYHvhPH",
       "name": "超绽放（染雷）",
       "visible": true,
       "composition": "4pc",
@@ -857,8 +859,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "FnZb4pm": {
-      "id": "FnZb4pm",
+    "FnZe87m": {
+      "id": "FnZe87m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -880,8 +882,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "FnZhZsG": {
-      "id": "FnZhZsG",
+    "FnZkdAG": {
+      "id": "FnZkdAG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -903,8 +905,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "FnZh8vG": {
-      "id": "FnZh8vG",
+    "FnZkCDG": {
+      "id": "FnZkCDG",
       "characterId": "lauma",
       "name": "",
       "visible": true,
@@ -936,8 +938,8 @@
       "minCons": 6,
       "source": "preset"
     },
-    "FnZb4z8": {
-      "id": "FnZb4z8",
+    "FnZe8H8": {
+      "id": "FnZe8H8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -965,8 +967,8 @@
       "source": "preset",
       "minCons": 6
     },
-    "GfRzPMG": {
-      "id": "GfRzPMG",
+    "Ihqg4AG": {
+      "id": "Ihqg4AG",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -998,8 +1000,8 @@
       "styles": ["off-field"],
       "source": "preset"
     },
-    "GfRzo0O": {
-      "id": "GfRzo0O",
+    "IhqgSqO": {
+      "id": "IhqgSqO",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -1030,8 +1032,8 @@
       "styles": ["off-field"],
       "roles": ["dps", "support"]
     },
-    "Gy43LvO": {
-      "id": "Gy43LvO",
+    "I-Sm0jO": {
+      "id": "I-Sm0jO",
       "characterId": "illuga",
       "name": "",
       "visible": true,
@@ -1063,8 +1065,8 @@
       "styles": ["off-field"],
       "source": "preset"
     },
-    "GwGq0NG": {
-      "id": "GwGq0NG",
+    "IyzxbmG": {
+      "id": "IyzxbmG",
       "characterId": "illuga",
       "name": "",
       "visible": true,
@@ -1096,8 +1098,8 @@
       "halfSet1": "em-80",
       "halfSet2": "em-80"
     },
-    "GMpgtBm": {
-      "id": "GMpgtBm",
+    "GMpiOrm": {
+      "id": "GMpiOrm",
       "characterId": "durin",
       "name": "",
       "visible": true,
@@ -1129,8 +1131,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "GMpuDRe": {
-      "id": "GMpuDRe",
+    "GMpxGle": {
+      "id": "GMpxGle",
       "characterId": "durin",
       "name": "",
       "visible": true,
@@ -1161,8 +1163,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "G4Bn5Fu": {
-      "id": "G4Bn5Fu",
+    "G4Bq8Zu": {
+      "id": "G4Bq8Zu",
       "characterId": "flins",
       "name": "",
       "visible": true,
@@ -1194,8 +1196,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "Gol_yVu": {
-      "id": "Gol_yVu",
+    "Ir8idJu": {
+      "id": "Ir8idJu",
       "characterId": "zibai",
       "name": "",
       "visible": true,
@@ -1226,8 +1228,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "GW7wS4m": {
-      "id": "GW7wS4m",
+    "GW7zVOm": {
+      "id": "GW7zVOm",
       "characterId": "jahoda",
       "name": "",
       "visible": true,
@@ -1254,8 +1256,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "GW7nI8m": {
-      "id": "GW7nI8m",
+    "GW7padm": {
+      "id": "GW7padm",
       "characterId": "jahoda",
       "name": "",
       "visible": true,
@@ -1282,8 +1284,8 @@
       "roles": ["support", "sustain"],
       "source": "preset"
     },
-    "FwtkY6G": {
-      "id": "FwtkY6G",
+    "FwtnbQG": {
+      "id": "FwtnbQG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1310,8 +1312,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "FwtXa1G": {
-      "id": "FwtXa1G",
+    "FwtZ5hG": {
+      "id": "FwtZ5hG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1338,8 +1340,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "BQAEaSu": {
-      "id": "BQAEaSu",
+    "BQAHdmu": {
+      "id": "BQAHdmu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1370,8 +1372,8 @@
       "styles": ["off-field"],
       "roles": ["support", "dps"]
     },
-    "BQA3WCm": {
-      "id": "BQA3WCm",
+    "BQA3udG": {
+      "id": "BQA3udG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1398,8 +1400,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "BORtHRG": {
-      "id": "BORtHRG",
+    "BOfjRIm": {
+      "id": "BOfjRIm",
       "name": "",
       "visible": false,
       "composition": "2pc+2pc",
@@ -1424,8 +1426,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "GDVq3Vu": {
-      "id": "GDVq3Vu",
+    "GDVt6pu": {
+      "id": "GDVt6pu",
       "characterId": "nefer",
       "name": "",
       "visible": true,
@@ -1452,8 +1454,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "FUxP1hm": {
-      "id": "FUxP1hm",
+    "FUxQZLm": {
+      "id": "FUxQZLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1475,8 +1477,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "C8kNIIm": {
-      "id": "C8kNIIm",
+    "C8kPanm": {
+      "id": "C8kPanm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1508,8 +1510,8 @@
       "roles": ["dps"],
       "minCons": 6
     },
-    "CI2WPTe": {
-      "id": "CI2WPTe",
+    "CI2ZSne": {
+      "id": "CI2ZSne",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1535,8 +1537,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "CI2LmTG": {
-      "id": "CI2LmTG",
+    "CI2M8tm": {
+      "id": "CI2M8tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1563,8 +1565,8 @@
       "roles": ["dps"],
       "minCons": 6
     },
-    "BzeS0Um": {
-      "id": "BzeS0Um",
+    "B-NPETm": {
+      "id": "B-NPETm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -1587,8 +1589,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "Cj-g6Gm": {
-      "id": "Cj-g6Gm",
+    "Cj-j9am": {
+      "id": "Cj-j9am",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1610,8 +1612,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "Ci8TA_G": {
-      "id": "Ci8TA_G",
+    "Ci_roTG": {
+      "id": "Ci_roTG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -1635,8 +1637,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "DJEt7Xm": {
-      "id": "DJEt7Xm",
+    "DJEwArm": {
+      "id": "DJEwArm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1658,8 +1660,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "DlB02Hm": {
-      "id": "DlB02Hm",
+    "DlB35bm": {
+      "id": "DlB35bm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1686,8 +1688,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "EvhNqHm": {
-      "id": "EvhNqHm",
+    "EvhQtbm": {
+      "id": "EvhQtbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1709,8 +1711,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "FLdXrbO": {
-      "id": "FLdXrbO",
+    "FLdauvO": {
+      "id": "FLdauvO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1736,8 +1738,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "B7Y8Ccu": {
-      "id": "B7Y8Ccu",
+    "B7YBFwu": {
+      "id": "B7YBFwu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1764,8 +1766,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "BGsBAsu": {
-      "id": "BGsBAsu",
+    "BGsEEAu": {
+      "id": "BGsEEAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1791,8 +1793,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "Ahb_Hsu": {
-      "id": "Ahb_Hsu",
+    "Ahc2LAu": {
+      "id": "Ahc2LAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1818,8 +1820,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "48VnABm": {
-      "id": "48VnABm",
+    "48Vohrm": {
+      "id": "48Vohrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1841,8 +1843,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "46jxU0G": {
-      "id": "46jxU0G",
+    "47Suh_G": {
+      "id": "47Suh_G",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -1865,8 +1867,8 @@
       "halfSet1": "atk%-18",
       "halfSet2": "atk%-18"
     },
-    "AN7jcW0": {
-      "id": "AN7jcW0",
+    "AN_6D-0": {
+      "id": "AN_6D-0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -1890,8 +1892,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "AOzt6YG": {
-      "id": "AOzt6YG",
+    "AOzw9sG": {
+      "id": "AOzw9sG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1915,8 +1917,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "AFfq7p0": {
-      "id": "AFfq7p0",
+    "AFftB70": {
+      "id": "AFftB70",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1938,8 +1940,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "AFfq7Jm": {
-      "id": "AFfq7Jm",
+    "AFftAdm": {
+      "id": "AFftAdm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -1965,8 +1967,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "ADpgeG0": {
-      "id": "ADpgeG0",
+    "AEh3Fk0": {
+      "id": "AEh3Fk0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -1989,8 +1991,8 @@
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20"
     },
-    "4t42ffO": {
-      "id": "4t42ffO",
+    "4t44y8O": {
+      "id": "4t44y8O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2021,8 +2023,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "6cqXQxG": {
-      "id": "6cqXQxG",
+    "6cqXpLm": {
+      "id": "6cqXpLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2044,8 +2046,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "7UiubVO": {
-      "id": "7UiubVO",
+    "7Uiwt-O": {
+      "id": "7Uiwt-O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2076,8 +2078,8 @@
       "styles": ["off-field"],
       "roles": ["dps", "support"]
     },
-    "7SyCssm": {
-      "id": "7SyCssm",
+    "7TUW-dG": {
+      "id": "7TUW-dG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -2111,8 +2113,8 @@
       "roles": ["dps"],
       "minCons": 6
     },
-    "8fDJmIO": {
-      "id": "8fDJmIO",
+    "8fDMpcO": {
+      "id": "8fDMpcO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2143,8 +2145,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "9NnZONO": {
-      "id": "9NnZONO",
+    "9NncRhO": {
+      "id": "9NncRhO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2170,8 +2172,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "9NnSX3m": {
-      "id": "9NnSX3m",
+    "9NnU2jm": {
+      "id": "9NnU2jm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2198,8 +2200,8 @@
       "roles": ["dps"],
       "minCons": 6
     },
-    "9gPea2O": {
-      "id": "9gPea2O",
+    "9gPhdMO": {
+      "id": "9gPhdMO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2230,8 +2232,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "8xrPPle": {
-      "id": "8xrPPle",
+    "8xrST3e": {
+      "id": "8xrST3e",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2257,8 +2259,8 @@
       "styles": ["off-field", "on-field"],
       "roles": ["support", "dps"]
     },
-    "8xrPngu": {
-      "id": "8xrPngu",
+    "8xrSq-u": {
+      "id": "8xrSq-u",
       "name": "队友带深林",
       "visible": true,
       "composition": "4pc",
@@ -2284,8 +2286,8 @@
       "styles": ["off-field", "on-field"],
       "roles": ["dps"]
     },
-    "9z1h4w8": {
-      "id": "9z1h4w8",
+    "9z1jNP8": {
+      "id": "9z1jNP8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2317,8 +2319,8 @@
       "roles": ["dps"],
       "minCons": 4
     },
-    "9z1kxem": {
-      "id": "9z1kxem",
+    "9z1n-ym": {
+      "id": "9z1n-ym",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
@@ -2344,8 +2346,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "9z1bnim": {
-      "id": "9z1bnim",
+    "9z1cA7G": {
+      "id": "9z1cA7G",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2367,8 +2369,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "9X5bGZ0": {
-      "id": "9X5bGZ0",
+    "9X5eJt0": {
+      "id": "9X5eJt0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2390,8 +2392,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "9ETMwc8": {
-      "id": "9ETMwc8",
+    "9ETNJ0e": {
+      "id": "9ETNJ0e",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2423,8 +2425,8 @@
       "roles": ["support"],
       "minCons": 6
     },
-    "9pjb5xm": {
-      "id": "9pjb5xm",
+    "9pjcdbm": {
+      "id": "9pjcdbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2446,8 +2448,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "959Jyi0": {
-      "id": "959Jyi0",
+    "959KL6W": {
+      "id": "959KL6W",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2469,8 +2471,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "8U36ymm": {
-      "id": "8U36ymm",
+    "8UwVaEm": {
+      "id": "8UwVaEm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -2494,8 +2496,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "8Vv9zHG": {
-      "id": "8Vv9zHG",
+    "8VvBUxG": {
+      "id": "8VvBUxG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2514,8 +2516,8 @@
       "artifactSet": "instructor",
       "source": "preset"
     },
-    "A6LntCu": {
-      "id": "A6LntCu",
+    "A6LqwWu": {
+      "id": "A6LqwWu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2537,8 +2539,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "Ed3AbU0": {
-      "id": "Ed3AbU0",
+    "Ed3Ctz0": {
+      "id": "Ed3Ctz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2560,8 +2562,8 @@
       "styles": ["on-field"],
       "roles": ["support"]
     },
-    "FCJMUU0": {
-      "id": "FCJMUU0",
+    "FCJOmz0": {
+      "id": "FCJOmz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2583,8 +2585,8 @@
       "styles": ["on-field"],
       "roles": ["support"]
     },
-    "8oXGIBm": {
-      "id": "8oXGIBm",
+    "8oXHprm": {
+      "id": "8oXHprm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2606,8 +2608,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "8mhHsfG": {
-      "id": "8mhHsfG",
+    "8n1DH-m": {
+      "id": "8n1DH-m",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -2631,8 +2633,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "8DH4PBm": {
-      "id": "8DH4PBm",
+    "8DH5wrm": {
+      "id": "8DH5wrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2654,8 +2656,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "83z7XZm": {
-      "id": "83z7XZm",
+    "83zAatm": {
+      "id": "83zAatm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2681,8 +2683,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "7we_xfu": {
-      "id": "7we_xfu",
+    "7wf2E8u": {
+      "id": "7wf2E8u",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2708,8 +2710,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "7nK-tk0": {
-      "id": "7nK-tk0",
+    "7nL1AD0": {
+      "id": "7nL1AD0",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2735,8 +2737,8 @@
       "styles": ["on-field"],
       "roles": ["support"]
     },
-    "7e0_ONe": {
-      "id": "7e0_ONe",
+    "7e12Rhe": {
+      "id": "7e12Rhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2758,8 +2760,8 @@
       "styles": ["off-field"],
       "roles": ["dps", "sustain"]
     },
-    "4R7tSQO": {
-      "id": "4R7tSQO",
+    "4R7u-4O": {
+      "id": "4R7u-4O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2790,8 +2792,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "14wxWDe": {
-      "id": "14wxWDe",
+    "14w-ZXe": {
+      "id": "14w-ZXe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2817,8 +2819,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "2MvF3fG": {
-      "id": "2MvF3fG",
+    "2NFAU-m": {
+      "id": "2NFAU-m",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -2841,8 +2843,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "2OlKMP8": {
-      "id": "2OlKMP8",
+    "2OlNPj8": {
+      "id": "2OlNPj8",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
@@ -2864,8 +2866,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "oIguNG": {
-      "id": "oIguNG",
+    "oIhGnm": {
+      "id": "oIhGnm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2891,8 +2893,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "oIiQ1G": {
-      "id": "oIiQ1G",
+    "oIjxhG": {
+      "id": "oIjxhG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2918,8 +2920,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "59i41BO": {
-      "id": "59i41BO",
+    "59i4Pbu": {
+      "id": "59i4Pbu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2945,8 +2947,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "3ZFY_hG": {
-      "id": "3ZFY_hG",
+    "3ZFZO5m": {
+      "id": "3ZFZO5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -2968,8 +2970,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "3ZFi6xO": {
-      "id": "3ZFi6xO",
+    "3ZFlAFO": {
+      "id": "3ZFlAFO",
       "name": "原绽放",
       "visible": true,
       "composition": "4pc",
@@ -2995,8 +2997,8 @@
       "styles": ["on-field"],
       "roles": ["dps", "sustain"]
     },
-    "72mliiO": {
-      "id": "72mliiO",
+    "72mn_BO": {
+      "id": "72mn_BO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3027,8 +3029,8 @@
       "styles": ["on-field", "off-field"],
       "roles": ["dps"]
     },
-    "VgfvFm": {
-      "id": "VgfvFm",
+    "VgiBkm": {
+      "id": "VgiBkm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3059,8 +3061,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "2z_Squm": {
-      "id": "2z_Squm",
+    "2z_V7Nm": {
+      "id": "2z_V7Nm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3086,8 +3088,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "e-dw7G": {
-      "id": "e-dw7G",
+    "e-eIXm": {
+      "id": "e-eIXm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3109,8 +3111,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "d9HY3G": {
-      "id": "d9HY3G",
+    "dnM9om": {
+      "id": "dnM9om",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -3134,8 +3136,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "e-f3Mm": {
-      "id": "e-f3Mm",
+    "e-gCcG": {
+      "id": "e-gCcG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3157,8 +3159,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "2FRFq2u": {
-      "id": "2FRFq2u",
+    "2FRItMu": {
+      "id": "2FRItMu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3184,8 +3186,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "2FRAsgO": {
-      "id": "2FRAsgO",
+    "2FRCOKO": {
+      "id": "2FRCOKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3238,8 +3240,8 @@
       "styles": ["on-field"],
       "roles": ["support"]
     },
-    "4aRw4xm": {
-      "id": "4aRw4xm",
+    "4aRxcbm": {
+      "id": "4aRxcbm",
       "characterId": "kamisato_ayaka",
       "name": "",
       "visible": true,
@@ -3266,8 +3268,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "37JVoAG": {
-      "id": "37JVoAG",
+    "37JY4fG": {
+      "id": "37JY4fG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3289,8 +3291,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "xcpY8u": {
-      "id": "xcpY8u",
+    "xcrqdu": {
+      "id": "xcrqdu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3321,8 +3323,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "6KCTmwG": {
-      "id": "6KCTmwG",
+    "6KCVIaG": {
+      "id": "6KCVIaG",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3344,8 +3346,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "3Pxax9O": {
-      "id": "3Pxax9O",
+    "3PxdDeO": {
+      "id": "3PxdDeO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3371,8 +3373,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "4jlz3Bm": {
-      "id": "4jlz3Bm",
+    "4jl-arm": {
+      "id": "4jl-arm",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3399,8 +3401,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "4jm7knm": {
-      "id": "4jm7knm",
+    "4jmAo5m": {
+      "id": "4jmAo5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3427,8 +3429,8 @@
       "roles": ["support"],
       "source": "preset"
     },
-    "7LOtUOO": {
-      "id": "7LOtUOO",
+    "7LOwXiO": {
+      "id": "7LOwXiO",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3460,8 +3462,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "7LOww6u": {
-      "id": "7LOww6u",
+    "7LOzzQu": {
+      "id": "7LOzzQu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3493,8 +3495,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "3_Blgvu": {
-      "id": "3_Blgvu",
+    "3_BnzOu": {
+      "id": "3_BnzOu",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3520,8 +3522,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "3_BnF08": {
-      "id": "3_BnF08",
+    "3_BpXV8": {
+      "id": "3_BpXV8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3552,8 +3554,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "3zTVghG": {
-      "id": "3zTVghG",
+    "3zhLqYm": {
+      "id": "3zhLqYm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -3577,8 +3579,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "6m8amNe": {
-      "id": "6m8amNe",
+    "6m8b8o8": {
+      "id": "6m8b8o8",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3604,8 +3606,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "6m8lRze": {
-      "id": "6m8lRze",
+    "6m8oVHe": {
+      "id": "6m8oVHe",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -3631,8 +3633,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "5sQyZYW": {
-      "id": "5sQyZYW",
+    "5t31BI0": {
+      "id": "5t31BI0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
@@ -3655,8 +3657,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "61aVP1u": {
-      "id": "61aVP1u",
+    "61aYSLu": {
+      "id": "61aYSLu",
       "characterId": "tartaglia",
       "name": "",
       "visible": true,
@@ -3691,8 +3693,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "61aNpY0": {
-      "id": "61aNpY0",
+    "61aPLC0": {
+      "id": "61aPLC0",
       "characterId": "tartaglia",
       "name": "",
       "visible": true,
@@ -3720,8 +3722,8 @@
       "roles": ["support"],
       "minCons": 4
     },
-    "1pVEv_O": {
-      "id": "1pVEv_O",
+    "1pVHzJO": {
+      "id": "1pVHzJO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -3747,8 +3749,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "1pV1DqO": {
-      "id": "1pV1DqO",
+    "1pV2lUO": {
+      "id": "1pV2lUO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -3775,8 +3777,8 @@
       "roles": ["support"],
       "minCons": 2
     },
-    "1pU_Jlu": {
-      "id": "1pU_Jlu",
+    "1pU_iAO": {
+      "id": "1pU_iAO",
       "characterId": "klee",
       "name": "",
       "visible": true,
@@ -3803,8 +3805,8 @@
       "roles": ["support"],
       "minCons": 2
     },
-    "7C4oeW8": {
-      "id": "7C4oeW8",
+    "7C4qw_8": {
+      "id": "7C4qw_8",
       "characterId": "xiangling",
       "name": "",
       "visible": true,
@@ -3835,8 +3837,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "ETlEvXm": {
-      "id": "ETlEvXm",
+    "ETlHyrm": {
+      "id": "ETlHyrm",
       "characterId": "traveler_pyro",
       "name": "",
       "visible": true,
@@ -3862,8 +3864,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "8MbDU3m": {
-      "id": "8MbDU3m",
+    "8MbGXNm": {
+      "id": "8MbGXNm",
       "characterId": "traveler_dendro",
       "name": "",
       "visible": true,
@@ -3889,8 +3891,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "D2Yp_W": {
-      "id": "D2Yp_W",
+    "D2b6UW": {
+      "id": "D2b6UW",
       "characterId": "qiqi",
       "name": "",
       "visible": true,
@@ -3921,8 +3923,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "1EE-qRu": {
-      "id": "1EE-qRu",
+    "1EF1tlu": {
+      "id": "1EF1tlu",
       "characterId": "ningguang",
       "name": "",
       "visible": true,
@@ -3949,8 +3951,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "1EE-3cu": {
-      "id": "1EE-3cu",
+    "1EF16wu": {
+      "id": "1EF16wu",
       "characterId": "ningguang",
       "name": "带芙",
       "visible": true,
@@ -3977,8 +3979,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "1Wsw5Lu": {
-      "id": "1Wsw5Lu",
+    "1WswTmO": {
+      "id": "1WswTmO",
       "characterId": "keqing",
       "name": "",
       "visible": true,
@@ -4009,8 +4011,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "1NYxkW8": {
-      "id": "1NYxkW8",
+    "1NY-0_8": {
+      "id": "1NY-0_8",
       "characterId": "kaeya",
       "name": "",
       "visible": true,
@@ -4036,8 +4038,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "3GdieVO": {
-      "id": "3GdieVO",
+    "3GdlhpO": {
+      "id": "3GdlhpO",
       "characterId": "venti",
       "name": "",
       "visible": true,
@@ -4068,8 +4070,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "3GdYmQG": {
-      "id": "3GdYmQG",
+    "3Gdb2vG": {
+      "id": "3Gdb2vG",
       "characterId": "venti",
       "name": "",
       "visible": true,
@@ -4095,8 +4097,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "3iZeFRm": {
-      "id": "3iZeFRm",
+    "3iZfn5m": {
+      "id": "3iZfn5m",
       "characterId": "bennett",
       "name": "",
       "visible": true,
@@ -4118,8 +4120,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "3rtkgOm": {
-      "id": "3rtkgOm",
+    "3rtmytm": {
+      "id": "3rtmytm",
       "characterId": "jean",
       "name": "",
       "visible": true,
@@ -4141,8 +4143,8 @@
       "styles": ["off-field"],
       "roles": ["sustain", "support"]
     },
-    "4HptccW": {
-      "id": "4HptccW",
+    "4Hpvv5W": {
+      "id": "4Hpvv5W",
       "characterId": "sucrose",
       "name": "",
       "visible": true,
@@ -4164,8 +4166,8 @@
       "styles": ["off-field", "on-field"],
       "roles": ["support"]
     },
-    "5J08yBm": {
-      "id": "5J08yBm",
+    "5J0ATrm": {
+      "id": "5J0ATrm",
       "characterId": "mona",
       "name": "",
       "visible": true,
@@ -4196,8 +4198,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "5J06fim": {
-      "id": "5J06fim",
+    "5J0727G": {
+      "id": "5J0727G",
       "characterId": "mona",
       "name": "",
       "visible": true,
@@ -4228,8 +4230,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "50OCYXW": {
-      "id": "50OCYXW",
+    "50OFbrW": {
+      "id": "50OFbrW",
       "characterId": "barbara",
       "name": "",
       "visible": true,
@@ -4251,8 +4253,8 @@
       "styles": ["off-field"],
       "roles": ["sustain"]
     },
-    "5SKKhje": {
-      "id": "5SKKhje",
+    "5SKNl1e": {
+      "id": "5SKNl1e",
       "characterId": "fischl",
       "name": "",
       "visible": true,
@@ -4283,8 +4285,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "5SKPGhe": {
-      "id": "5SKPGhe",
+    "5SKSJ_e": {
+      "id": "5SKSJ_e",
       "characterId": "fischl",
       "name": "",
       "visible": true,
@@ -4315,8 +4317,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "1gB1iEG": {
-      "id": "1gB1iEG",
+    "1gB3-jG": {
+      "id": "1gB3-jG",
       "characterId": "beidou",
       "name": "",
       "visible": true,
@@ -4347,8 +4349,8 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"]
     },
-    "2677Yhm": {
-      "id": "2677Yhm",
+    "26794Lm": {
+      "id": "26794Lm",
       "characterId": "amber",
       "name": "",
       "visible": true,
@@ -4370,8 +4372,8 @@
       "styles": ["off-field"],
       "roles": ["support"]
     },
-    "5beHxm8": {
-      "id": "5beHxm8",
+    "5beKEF8": {
+      "id": "5beKEF8",
       "characterId": "xingqiu",
       "name": "",
       "visible": true,
@@ -4397,8 +4399,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "5kyFwBO": {
-      "id": "5kyFwBO",
+    "5kyGIbu": {
+      "id": "5kyGIbu",
       "characterId": "noelle",
       "name": "",
       "visible": true,
@@ -4424,8 +4426,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "5kyQDMu": {
-      "id": "5kyQDMu",
+    "5kyTGgu": {
+      "id": "5kyTGgu",
       "characterId": "noelle",
       "name": "带芙",
       "visible": true,
@@ -4451,8 +4453,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "MMcwm8": {
-      "id": "MMcwm8",
+    "MMfDF8": {
+      "id": "MMfDF8",
       "characterId": "lisa",
       "name": "",
       "visible": true,
@@ -4478,8 +4480,8 @@
       "styles": ["off-field"],
       "roles": ["dps"]
     },
-    "6AuTPvO": {
-      "id": "6AuTPvO",
+    "6AuViOO": {
+      "id": "6AuViOO",
       "characterId": "diluc",
       "name": "",
       "visible": true,
@@ -4510,8 +4512,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "6vSsylO": {
-      "id": "6vSsylO",
+    "6vSw03O": {
+      "id": "6vSw03O",
       "characterId": "razor",
       "name": "",
       "visible": true,
@@ -4537,8 +4539,8 @@
       "styles": ["on-field"],
       "roles": ["dps"]
     },
-    "6TWWkBm": {
-      "id": "6TWWkBm",
+    "6TWYFrm": {
+      "id": "6TWYFrm",
       "characterId": "chongyun",
       "name": "",
       "visible": true,
@@ -4564,120 +4566,148 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "source": "preset"
+    },
+    "J7mpj3O": {
+      "id": "J7mpj3O",
+      "characterId": "varka",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%"],
+      "circlet": ["cd"],
+      "substats": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "styles": ["on-field"],
+      "roles": ["dps"]
     }
   },
   "characterBuilds": {
-    "ineffa": ["FeFe-le", "FeFecam", "FeFYVj8", "FeFPkRG"],
-    "citlali": ["EB78-0G", "EB6x_xG", "EB78-9e"],
-    "arlecchino": ["CRMaUWu"],
-    "clorinde": ["CagdSmu"],
-    "emilie": ["D0cmoNe", "D0cic3m"],
-    "mualani": ["DSYwRWO"],
-    "kinich": ["D9wqV0O"],
-    "chasca": ["DuV3MGO"],
-    "mavuika": ["E1p6POu"],
-    "sethos": ["CtIb09u"],
-    "lan_yan": ["EKR4iOm"],
-    "varesa": ["EmNLaAu"],
-    "escoffier": ["F2_Ouiu", "F2_QoXm"],
-    "freminet": ["Ap3NaYO", "Aqvzh8u"],
-    "xilonen": ["Dbsz50G", "Dbso01G"],
-    "navia": ["BioKxKO"],
-    "chevreuse": ["Bs6OFoG", "Bs6EjRm"],
-    "charlotte": ["BXiLODm"],
-    "lynette": ["AYHtOwG", "AYHtOwH"],
-    "lauma": ["FnZb4pm", "FnZhZsG", "FnZh8vG", "FnZb4z8"],
-    "columbina": ["GfRzPMG", "GfRzo0O"],
-    "illuga": ["Gy43LvO", "GwGq0NG"],
-    "durin": ["GMpgtBm", "GMpuDRe"],
-    "flins": ["G4Bn5Fu"],
-    "zibai": ["Gol_yVu"],
-    "jahoda": ["GW7wS4m", "GW7nI8m"],
-    "aino": ["FwtkY6G", "FwtXa1G"],
-    "furina": ["BQAEaSu", "BQA3WCm", "BORtHRG"],
-    "nefer": ["GDVq3Vu"],
-    "dahlia": ["FUxP1hm"],
-    "gaming": ["C8kNIIm"],
-    "chiori": ["CI2WPTe", "CI2LmTG"],
-    "xianyun": ["BzeS0Um"],
-    "sigewinne": ["Cj-g6Gm", "Ci8TA_G"],
-    "kachina": ["DJEt7Xm"],
-    "ororon": ["DlB02Hm"],
-    "iansan": ["EvhNqHm"],
-    "skirk": ["FLdXrbO"],
-    "wriothesley": ["B7Y8Ccu"],
-    "neuvillette": ["BGsBAsu"],
-    "lyney": ["Ahb_Hsu"],
-    "shenhe": ["48VnABm", "46jxU0G"],
-    "kirara": ["AN7jcW0", "AOzt6YG"],
-    "baizhu": ["AFfq7p0", "AFfq7Jm", "ADpgeG0"],
-    "hu_tao": ["4t42ffO"],
-    "zhongli": ["6cqXQxG"],
-    "yelan": ["7UiubVO", "7SyCssm"],
-    "cyno": ["8fDJmIO"],
-    "wanderer": ["9NnZONO", "9NnSX3m"],
-    "alhaitham": ["9gPea2O"],
-    "nahida": ["8xrPPle", "8xrPngu"],
-    "dehya": ["9z1h4w8", "9z1kxem", "9z1bnim"],
-    "yaoyao": ["9X5bGZ0"],
-    "faruzan": ["9ETMwc8"],
-    "mika": ["9pjb5xm"],
-    "layla": ["959Jyi0"],
-    "nilou": ["8U36ymm", "8Vv9zHG"],
-    "kaveh": ["A6LntCu"],
-    "yumemizuki_mizuki": ["Ed3AbU0"],
-    "ifa": ["FCJMUU0"],
-    "candace": ["8oXGIBm", "8mhHsfG"],
-    "dori": ["8DH4PBm"],
-    "collei": ["83z7XZm"],
-    "tighnari": ["7we_xfu"],
-    "shikanoin_heizou": ["7nK-tk0"],
-    "kuki_shinobu": ["7e0_ONe"],
-    "kamisato_ayato": ["4R7tSQO"],
-    "yae_miko": ["14wxWDe"],
-    "thoma": ["2MvF3fG", "2OlKMP8"],
-    "gorou": ["oIguNG", "oIiQ1G"],
-    "arataki_itto": ["59i41BO"],
-    "sangonomiya_kokomi": ["3ZFY_hG", "3ZFi6xO"],
-    "raiden_shogun": ["72mliiO"],
-    "kujou_sara": ["VgfvFm"],
-    "sayu": ["2z_Squm"],
-    "yun_jin": ["e-dw7G", "d9HY3G", "e-f3Mm"],
-    "yoimiya": ["2FRFq2u", "2FRAsgO"],
-    "kamisato_ayaka": ["4aRtNc0", "4aRw4xm"],
-    "kaedehara_kazuha": ["37JVoAG"],
-    "eula": ["xcpY8u"],
-    "diona": ["6KCTmwG"],
-    "yanfei": ["3Pxax9O"],
-    "rosaria": ["4jlz3Bm", "4jm7knm"],
-    "xiao": ["7LOtUOO", "7LOww6u"],
-    "ganyu": ["3_Blgvu", "3_BnF08", "3zTVghG"],
-    "albedo": ["6m8amNe", "6m8lRze"],
-    "xinyan": ["5sQyZYW"],
-    "tartaglia": ["61aVP1u", "61aNpY0"],
-    "klee": ["1pVEv_O", "1pV1DqO", "1pU_Jlu"],
-    "xiangling": ["7C4oeW8"],
-    "traveler_pyro": ["ETlEvXm"],
-    "traveler_dendro": ["8MbDU3m"],
-    "qiqi": ["D2Yp_W"],
-    "ningguang": ["1EE-qRu", "1EE-3cu"],
-    "keqing": ["1Wsw5Lu"],
-    "kaeya": ["1NYxkW8"],
-    "venti": ["3GdieVO", "3GdYmQG"],
-    "bennett": ["3iZeFRm"],
-    "jean": ["3rtkgOm"],
-    "sucrose": ["4HptccW"],
-    "mona": ["5J08yBm", "5J06fim"],
-    "barbara": ["50OCYXW"],
-    "fischl": ["5SKKhje", "5SKPGhe"],
-    "beidou": ["1gB1iEG"],
-    "amber": ["2677Yhm"],
-    "xingqiu": ["5beHxm8"],
-    "noelle": ["5kyFwBO", "5kyQDMu"],
-    "lisa": ["MMcwm8"],
-    "diluc": ["6AuTPvO"],
-    "razor": ["6vSsylO"],
-    "chongyun": ["6TWWkBm"]
+    "ineffa": ["FeFi23e", "FeFhfum", "FeFbZ18", "FeFQ6rm"],
+    "citlali": ["EB7C1KG", "EB6yOLm", "EB7C1Te"],
+    "arlecchino": ["CRMdXqu"],
+    "clorinde": ["CaggW4u"],
+    "emilie": ["D0cprhe", "D0clfNm"],
+    "mualani": ["DSYzUqO"],
+    "kinich": ["D9wtYKO"],
+    "chasca": ["DuV6PaO"],
+    "mavuika": ["E1p9Siu"],
+    "sethos": ["CtIdIeu"],
+    "lan_yan": ["EKR6-tm"],
+    "varesa": ["EmNOdUu"],
+    "escoffier": ["F2_Ry0u", "F2_Trrm"],
+    "freminet": ["Apmx9Du", "Aqv_zdu"],
+    "xilonen": ["Dbt08KG", "DbspXhG"],
+    "navia": ["BioN-eO"],
+    "chevreuse": ["Bs6RJ6G", "Bs6GF5m"],
+    "charlotte": ["BYQzdRG"],
+    "lynette": ["AYHvhPG", "AYHvhPH"],
+    "lauma": ["FnZe87m", "FnZkdAG", "FnZkCDG", "FnZe8H8"],
+    "columbina": ["Ihqg4AG", "IhqgSqO"],
+    "illuga": ["I-Sm0jO", "IyzxbmG"],
+    "durin": ["GMpiOrm", "GMpxGle"],
+    "flins": ["G4Bq8Zu"],
+    "zibai": ["Ir8idJu"],
+    "jahoda": ["GW7zVOm", "GW7padm"],
+    "aino": ["FwtnbQG", "FwtZ5hG"],
+    "furina": ["BQAHdmu", "BQA3udG", "BOfjRIm"],
+    "nefer": ["GDVt6pu"],
+    "dahlia": ["FUxQZLm"],
+    "gaming": ["C8kPanm"],
+    "chiori": ["CI2ZSne", "CI2M8tm"],
+    "xianyun": ["B-NPETm"],
+    "sigewinne": ["Cj-j9am", "Ci_roTG"],
+    "kachina": ["DJEwArm"],
+    "ororon": ["DlB35bm"],
+    "iansan": ["EvhQtbm"],
+    "skirk": ["FLdauvO"],
+    "wriothesley": ["B7YBFwu"],
+    "neuvillette": ["BGsEEAu"],
+    "lyney": ["Ahc2LAu"],
+    "shenhe": ["48Vohrm", "47Suh_G"],
+    "kirara": ["AN_6D-0", "AOzw9sG"],
+    "baizhu": ["AFftB70", "AFftAdm", "AEh3Fk0"],
+    "hu_tao": ["4t44y8O"],
+    "zhongli": ["6cqXpLm"],
+    "yelan": ["7Uiwt-O", "7TUW-dG"],
+    "cyno": ["8fDMpcO"],
+    "wanderer": ["9NncRhO", "9NnU2jm"],
+    "alhaitham": ["9gPhdMO"],
+    "nahida": ["8xrST3e", "8xrSq-u"],
+    "dehya": ["9z1jNP8", "9z1n-ym", "9z1cA7G"],
+    "yaoyao": ["9X5eJt0"],
+    "faruzan": ["9ETNJ0e"],
+    "mika": ["9pjcdbm"],
+    "layla": ["959KL6W"],
+    "nilou": ["8UwVaEm", "8VvBUxG"],
+    "kaveh": ["A6LqwWu"],
+    "yumemizuki_mizuki": ["Ed3Ctz0"],
+    "ifa": ["FCJOmz0"],
+    "candace": ["8oXHprm", "8n1DH-m"],
+    "dori": ["8DH5wrm"],
+    "collei": ["83zAatm"],
+    "tighnari": ["7wf2E8u"],
+    "shikanoin_heizou": ["7nL1AD0"],
+    "kuki_shinobu": ["7e12Rhe"],
+    "kamisato_ayato": ["4R7u-4O"],
+    "yae_miko": ["14w-ZXe"],
+    "thoma": ["2NFAU-m", "2OlNPj8"],
+    "gorou": ["oIhGnm", "oIjxhG"],
+    "arataki_itto": ["59i4Pbu"],
+    "sangonomiya_kokomi": ["3ZFZO5m", "3ZFlAFO"],
+    "raiden_shogun": ["72mn_BO"],
+    "kujou_sara": ["VgiBkm"],
+    "sayu": ["2z_V7Nm"],
+    "yun_jin": ["e-eIXm", "dnM9om", "e-gCcG"],
+    "yoimiya": ["2FRItMu", "2FRCOKO"],
+    "kamisato_ayaka": ["4aRtNc0", "4aRxcbm"],
+    "kaedehara_kazuha": ["37JY4fG"],
+    "eula": ["xcrqdu"],
+    "diona": ["6KCVIaG"],
+    "yanfei": ["3PxdDeO"],
+    "rosaria": ["4jl-arm", "4jmAo5m"],
+    "xiao": ["7LOwXiO", "7LOzzQu"],
+    "ganyu": ["3_BnzOu", "3_BpXV8", "3zhLqYm"],
+    "albedo": ["6m8b8o8", "6m8oVHe"],
+    "xinyan": ["5t31BI0"],
+    "tartaglia": ["61aYSLu", "61aPLC0"],
+    "klee": ["1pVHzJO", "1pV2lUO", "1pU_iAO"],
+    "xiangling": ["7C4qw_8"],
+    "traveler_pyro": ["ETlHyrm"],
+    "traveler_dendro": ["8MbGXNm"],
+    "qiqi": ["D2b6UW"],
+    "ningguang": ["1EF1tlu", "1EF16wu"],
+    "keqing": ["1WswTmO"],
+    "kaeya": ["1NY-0_8"],
+    "venti": ["3GdlhpO", "3Gdb2vG"],
+    "bennett": ["3iZfn5m"],
+    "jean": ["3rtmytm"],
+    "sucrose": ["4Hpvv5W"],
+    "mona": ["5J0ATrm", "5J0727G"],
+    "barbara": ["50OFbrW"],
+    "fischl": ["5SKNl1e", "5SKSJ_e"],
+    "beidou": ["1gB3-jG"],
+    "amber": ["26794Lm"],
+    "xingqiu": ["5beKEF8"],
+    "noelle": ["5kyGIbu", "5kyTGgu"],
+    "lisa": ["MMfDF8"],
+    "diluc": ["6AuViOO"],
+    "razor": ["6vSw03O"],
+    "chongyun": ["6TWYFrm"],
+    "varka": ["J7mpj3O"]
   },
   "characterWeapons": {
     "ineffa": ["fractured_halo"],
@@ -4800,7 +4830,8 @@
     "noelle": ["serpent_spine"],
     "diluc": ["wolfs_gravestone", "beacon_of_the_reed_sea"],
     "razor": ["serpent_spine"],
-    "chongyun": ["favonius_greatsword"]
+    "chongyun": ["favonius_greatsword"],
+    "varka": ["gest_of_the_mighty_wolf"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,

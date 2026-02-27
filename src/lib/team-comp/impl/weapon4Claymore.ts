@@ -53,18 +53,12 @@ class FruitfulHook extends WeaponBase {
       { receiver: "self", filter: { abilities: ["plunge"] } },
       [{ key: "cr", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) }]
     ),
-    new StatBuff(wbs(this, ["plunge"]), { receiver: "self" }, [
-      { key: "dmg%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-    ]),
-  ];
-}
-
-@RegisterWeapon("earth_shaker")
-class EarthShaker extends WeaponBase {
-  readonly buffs = [
     new StatBuff(
-      wbs(this, ["pyro-reaction"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
+      wbs(this, ["plunge"]),
+      {
+        receiver: "self",
+        filter: { abilities: ["normal", "charge", "plunge"] },
+      },
       [
         {
           key: "dmg%",
@@ -73,6 +67,35 @@ class EarthShaker extends WeaponBase {
       ]
     ),
   ];
+}
+
+@RegisterWeapon("earth_shaker")
+class EarthShaker extends WeaponBase {
+  // Pyro-related reaction required from any party member
+  get buffs() {
+    const canTrigger =
+      this.teamMeta.hasReaction("vaporize") ||
+      this.teamMeta.hasReaction("melt") ||
+      this.teamMeta.hasReaction("overloaded") ||
+      this.teamMeta.hasReaction("burning") ||
+      this.teamMeta.hasReaction("burgeon") ||
+      (Object.values(this.teamMeta.elements).includes("Anemo") &&
+        Object.values(this.teamMeta.elements).includes("Pyro"));
+
+    if (!canTrigger) return [];
+    return [
+      new StatBuff(
+        wbs(this, ["pyro-reaction"]),
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [
+          {
+            key: "dmg%",
+            value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ]
+      ),
+    ];
+  }
 }
 
 @RegisterWeapon("ultimate_overlords_mega_magic_sword")
@@ -157,8 +180,9 @@ class MakhairaAquamarine extends WeaponBase {
       "atk",
       r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
     ),
+    // Game text: "多件同名武器产生的此效果可以叠加" — stacks from multiple copies, no noStackId
     new ScalingBuff(
-      wbs(this, undefined, "makhaira-aquamarine-team-atk"),
+      wbs(this),
       { receiver: "team" },
       [],
       "em",
@@ -202,14 +226,19 @@ class SnowTombedStarsilver extends WeaponBase {
 
 @RegisterWeapon("rainslasher")
 class Rainslasher extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["hydro-electro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
-      },
-    ]),
-  ];
+  // Enemy affected by Hydro or Electro
+  get buffs() {
+    const els = Object.values(this.teamMeta.elements);
+    if (!els.includes("Hydro") && !els.includes("Electro")) return [];
+    return [
+      new StatBuff(wbs(this, ["hydro-electro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("the_bell")

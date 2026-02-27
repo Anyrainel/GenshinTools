@@ -196,7 +196,7 @@ class IbisPiercer extends WeaponBase {
 @RegisterWeapon("kings_squire")
 class KingsSquire extends WeaponBase {
   readonly buffs = [
-    new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
+    new StatBuff(wbs(this, ["E", "Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: r(this.refinement, [60, 80, 100, 120, 140]) },
     ]),
   ];
@@ -236,6 +236,10 @@ class CompoundBow extends WeaponBase {
       {
         key: "atk%",
         value: 4 * r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
+      },
+      {
+        key: "atkSpd%",
+        value: 4 * r(this.refinement, [0.012, 0.015, 0.018, 0.021, 0.024]),
       },
     ]),
   ];

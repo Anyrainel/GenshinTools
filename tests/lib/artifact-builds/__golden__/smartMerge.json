@@ -92,6 +92,11 @@
             "has4pcBuild": true
           },
           {
+            "characterId": "varka",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
             "characterId": "venti",
             "hasPerfectMerge": true,
             "has4pcBuild": true
@@ -247,6 +252,54 @@
             "characterId": "kamisato_ayaka",
             "hasPerfectMerge": true,
             "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "brave_heart",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
           }
         ]
       }
@@ -434,6 +487,49 @@
             "characterId": "traveler_dendro",
             "hasPerfectMerge": true,
             "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "defenders_will",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["def%", "er"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["def%"],
+          "substats": ["def%", "er", "def"],
+          "mustPresent": ["def%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
           }
         ]
       }
@@ -2096,6 +2192,145 @@
     ]
   },
   {
+    "setId": "resolution_of_sojourner",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["atk%", "er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["atk%", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["atk%", "er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "shenhe",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xianyun",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "scholar",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%", "def%", "er"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      }
+    ]
+  },
+  {
     "setId": "scroll_of_the_hero_of_cinder_city",
     "configurations": [
       {
@@ -2149,27 +2384,27 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em"],
+          "substats": ["em", "cd", "cr"],
           "mustPresent": ["em"],
-          "minStatCount": 1
+          "minStatCount": 3
         },
         "sands": {
           "mainStats": ["em"],
-          "substats": ["em"],
+          "substats": ["em", "cd", "cr"],
           "mustPresent": ["em"],
-          "minStatCount": 1
+          "minStatCount": 3
         },
         "goblet": {
           "mainStats": ["em"],
-          "substats": ["em"],
+          "substats": ["em", "cd", "cr"],
           "mustPresent": ["em"],
-          "minStatCount": 1
+          "minStatCount": 3
         },
         "circlet": {
           "mainStats": ["em"],
-          "substats": ["em"],
+          "substats": ["em", "cd", "cr"],
           "mustPresent": ["em"],
-          "minStatCount": 1
+          "minStatCount": 3
         },
         "servedCharacters": [
           {
@@ -2834,6 +3069,97 @@
             "characterId": "mona",
             "hasPerfectMerge": true,
             "has4pcBuild": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "setId": "the_exile",
+    "configurations": [
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "sands": {
+          "mainStats": ["hp%", "def%", "er"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "goblet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "circlet": {
+          "mainStats": ["hp%", "def%"],
+          "substats": ["def%", "er", "hp%"],
+          "mustPresent": ["er"],
+          "minStatCount": 2
+        },
+        "servedCharacters": [
+          {
+            "characterId": "candace",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "thoma",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "xinyan",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "yun_jin",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          }
+        ]
+      },
+      {
+        "flowerPlume": {
+          "mainStats": [],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "sands": {
+          "mainStats": ["er"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "goblet": {
+          "mainStats": ["atk%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "circlet": {
+          "mainStats": ["cr", "heal%"],
+          "substats": ["atk%", "er", "atk"],
+          "mustPresent": ["er"],
+          "minStatCount": 3
+        },
+        "servedCharacters": [
+          {
+            "characterId": "charlotte",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
+          },
+          {
+            "characterId": "ganyu",
+            "hasPerfectMerge": true,
+            "has4pcBuild": false
           }
         ]
       }

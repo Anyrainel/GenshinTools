@@ -64,11 +64,19 @@ class BlackmarrowLantern extends WeaponBase {
 
 @RegisterWeapon("waveriding_whirl")
 class WaveridingWhirl extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
-      { key: "hp%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-    ]),
-  ];
+  get buffs() {
+    const hydroCount = this.teamMeta.countByElement("Hydro");
+    const perHydro = r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]);
+    const hydroBonus = Math.min(hydroCount * perHydro, 2 * perHydro);
+    return [
+      new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+        {
+          key: "hp%",
+          value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) + hydroBonus,
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("ring_of_yaxche")
@@ -220,8 +228,9 @@ class WanderingEvenstar extends WeaponBase {
       "atk",
       r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
     ),
+    // Game text: stacks from multiple copies
     new ScalingBuff(
-      wbs(this, undefined, "wandering-evenstar"),
+      wbs(this),
       { receiver: "team" },
       [],
       "em",

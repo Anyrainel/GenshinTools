@@ -25,7 +25,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 /** Max card width drives auto-fit column sizing */
-const CARD_MAX_WIDTH = 340;
+const CARD_MAX_WIDTH = 320;
 
 const presetModules = import.meta.glob<{ default: TeamCompData }>(
   "@/presets/team-comp/*.json",

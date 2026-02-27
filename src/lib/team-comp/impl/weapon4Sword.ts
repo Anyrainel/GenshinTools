@@ -11,7 +11,13 @@ import type { OptionDef, StatKey } from "../types";
 class MoonweaversDawn extends WeaponBase {
   get buffs() {
     const e = this.teamMeta.energies[this.charId] ?? 0;
-    const isLow = e > 0 && e <= 60;
+    // Two tiers: Energy Capacity <=40 gives higher bonus, <=60 gives lower bonus
+    const extraDmg =
+      e > 0 && e <= 40
+        ? r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56])
+        : e > 0 && e <= 60
+          ? r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32])
+          : 0;
     return [
       new StatBuff(
         wbs(this),
@@ -19,9 +25,7 @@ class MoonweaversDawn extends WeaponBase {
         [
           {
             key: "dmg%",
-            value:
-              r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) +
-              (isLow ? r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) : 0),
+            value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) + extraDmg,
           },
         ]
       ),
@@ -306,7 +310,7 @@ class CinnabarSpindle extends WeaponBase {
   readonly buffs = [
     new ScalingBuff(
       wbs(this),
-      { receiver: "self" },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "def",
       "baseDmg",

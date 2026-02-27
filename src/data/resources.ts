@@ -25,6 +25,76 @@ export const characters: CharacterResource[] = [
     "imagePath": "/character/columbina.png"
   },
   {
+    "id": "manekina_pyro",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_hydro",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_electro",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_cryo",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_anemo",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_dendro",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekina_geo",
+    "rarity": 5,
+    "imagePath": "/character/manekina.png"
+  },
+  {
+    "id": "manekin_pyro",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_hydro",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_electro",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_cryo",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_anemo",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_dendro",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
+    "id": "manekin_geo",
+    "rarity": 5,
+    "imagePath": "/character/manekin.png"
+  },
+  {
     "id": "jahoda",
     "rarity": 4,
     "imagePath": "/character/jahoda.png"
@@ -97,7 +167,7 @@ export const characters: CharacterResource[] = [
   {
     "id": "traveler_pyro",
     "rarity": 5,
-    "imagePath": "/character/traveler_pyro.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "lan_yan",
@@ -217,7 +287,7 @@ export const characters: CharacterResource[] = [
   {
     "id": "traveler_hydro",
     "rarity": 5,
-    "imagePath": "/character/traveler_hydro.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "freminet",
@@ -307,7 +377,7 @@ export const characters: CharacterResource[] = [
   {
     "id": "traveler_dendro",
     "rarity": 5,
-    "imagePath": "/character/traveler_dendro.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "dori",
@@ -497,17 +567,17 @@ export const characters: CharacterResource[] = [
   {
     "id": "traveler_anemo",
     "rarity": 5,
-    "imagePath": "/character/traveler_anemo.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "traveler_electro",
     "rarity": 5,
-    "imagePath": "/character/traveler_electro.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "traveler_geo",
     "rarity": 5,
-    "imagePath": "/character/traveler_geo.png"
+    "imagePath": "/character/traveler.png"
   },
   {
     "id": "thoma",
@@ -594,30 +664,37 @@ export const characters: CharacterResource[] = [
 export const elementResources: ElementResource[] = [
   {
     "name": "Pyro",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/ac3123b42bf631685287e76c8c834a6c_564491877314389852.png",
     "imagePath": "/element/pyro.png"
   },
   {
     "name": "Hydro",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/f54c8f0dae23fced358c28126f220a11_8997562060019157249.png",
     "imagePath": "/element/hydro.png"
   },
   {
     "name": "Dendro",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/bda7c6cf71ea059c6abc086405a7cdd5_1717146848708050949.png",
     "imagePath": "/element/dendro.png"
   },
   {
     "name": "Electro",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/16d344b6abbc369a2db9d46d6f31305b_7144738962629629573.png",
     "imagePath": "/element/electro.png"
   },
   {
     "name": "Anemo",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/6b5c0d861fd1b4791bd602d3e7296598_8700657350379813969.png",
     "imagePath": "/element/anemo.png"
   },
   {
     "name": "Cryo",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/157c22f5fd473d3c1684c6ee981540b6_1601711336893201442.png",
     "imagePath": "/element/cryo.png"
   },
   {
     "name": "Geo",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c4cd6e14b87fc262cca36e6d0e9bdb0_1526899214861833594.png",
     "imagePath": "/element/geo.png"
   }
 ];
@@ -625,22 +702,27 @@ export const elementResources: ElementResource[] = [
 export const weaponTypeResources: WeaponTypeResource[] = [
   {
     "name": "Sword",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/eb8602badf0ade7c03650a440d188ce1_4346782947893420142.png",
     "imagePath": "/weapontype/sword.png"
   },
   {
     "name": "Claymore",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/4b65ed8d8fd30705265fa10ee65c8b61_7363045695641018717.png",
     "imagePath": "/weapontype/claymore.png"
   },
   {
     "name": "Bow",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/e38debacfd0147020895322333ea9d2a_4867338674175003782.png",
     "imagePath": "/weapontype/bow.png"
   },
   {
     "name": "Catalyst",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/91c80bbf63e574fc6d6b1cb8563cf8e3_5665224225336557820.png",
     "imagePath": "/weapontype/catalyst.png"
   },
   {
     "name": "Polearm",
+    "imageUrl": "https://act-webstatic.hoyoverse.com/event-static-hoyowiki-admin/2024/03/27/9c0f0c167f2753035b78c0aed9f01b9f_3170160339356492715.png",
     "imagePath": "/weapontype/polearm.png"
   }
 ];
@@ -900,6 +982,17 @@ export const artifacts: ArtifactSetResource[] = [
     }
   },
   {
+    "id": "gambler",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/gambler.png",
+      "plume": "/artifact/gambler2.png",
+      "sands": "/artifact/gambler3.png",
+      "goblet": "/artifact/gambler4.png",
+      "circlet": "/artifact/gambler5.png"
+    }
+  },
+  {
     "id": "gladiators_finale",
     "rarity": 5,
     "imagePaths": {
@@ -919,6 +1012,17 @@ export const artifacts: ArtifactSetResource[] = [
       "sands": "/artifact/maiden_beloved3.png",
       "goblet": "/artifact/maiden_beloved4.png",
       "circlet": "/artifact/maiden_beloved5.png"
+    }
+  },
+  {
+    "id": "resolution_of_sojourner",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/resolution_of_sojourner.png",
+      "plume": "/artifact/resolution_of_sojourner2.png",
+      "sands": "/artifact/resolution_of_sojourner3.png",
+      "goblet": "/artifact/resolution_of_sojourner4.png",
+      "circlet": "/artifact/resolution_of_sojourner5.png"
     }
   },
   {
@@ -999,6 +1103,17 @@ export const artifacts: ArtifactSetResource[] = [
     }
   },
   {
+    "id": "the_exile",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/the_exile.png",
+      "plume": "/artifact/the_exile2.png",
+      "sands": "/artifact/the_exile3.png",
+      "goblet": "/artifact/the_exile4.png",
+      "circlet": "/artifact/the_exile5.png"
+    }
+  },
+  {
     "id": "heart_of_depth",
     "rarity": 5,
     "imagePaths": {
@@ -1007,6 +1122,17 @@ export const artifacts: ArtifactSetResource[] = [
       "sands": "/artifact/heart_of_depth3.png",
       "goblet": "/artifact/heart_of_depth4.png",
       "circlet": "/artifact/heart_of_depth5.png"
+    }
+  },
+  {
+    "id": "martial_artist",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/martial_artist.png",
+      "plume": "/artifact/martial_artist2.png",
+      "sands": "/artifact/martial_artist3.png",
+      "goblet": "/artifact/martial_artist4.png",
+      "circlet": "/artifact/martial_artist5.png"
     }
   },
   {
@@ -1054,6 +1180,17 @@ export const artifacts: ArtifactSetResource[] = [
     }
   },
   {
+    "id": "berserker",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/berserker.png",
+      "plume": "/artifact/berserker2.png",
+      "sands": "/artifact/berserker3.png",
+      "goblet": "/artifact/berserker4.png",
+      "circlet": "/artifact/berserker5.png"
+    }
+  },
+  {
     "id": "archaic_petra",
     "rarity": 5,
     "imagePaths": {
@@ -1073,6 +1210,28 @@ export const artifacts: ArtifactSetResource[] = [
       "sands": "/artifact/thundersoother3.png",
       "goblet": "/artifact/thundersoother4.png",
       "circlet": "/artifact/thundersoother5.png"
+    }
+  },
+  {
+    "id": "defenders_will",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/defenders_will.png",
+      "plume": "/artifact/defenders_will2.png",
+      "sands": "/artifact/defenders_will3.png",
+      "goblet": "/artifact/defenders_will4.png",
+      "circlet": "/artifact/defenders_will5.png"
+    }
+  },
+  {
+    "id": "scholar",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/scholar.png",
+      "plume": "/artifact/scholar2.png",
+      "sands": "/artifact/scholar3.png",
+      "goblet": "/artifact/scholar4.png",
+      "circlet": "/artifact/scholar5.png"
     }
   },
   {
@@ -1109,6 +1268,17 @@ export const artifacts: ArtifactSetResource[] = [
     }
   },
   {
+    "id": "brave_heart",
+    "rarity": 4,
+    "imagePaths": {
+      "flower": "/artifact/brave_heart.png",
+      "plume": "/artifact/brave_heart2.png",
+      "sands": "/artifact/brave_heart3.png",
+      "goblet": "/artifact/brave_heart4.png",
+      "circlet": "/artifact/brave_heart5.png"
+    }
+  },
+  {
     "id": "blizzard_strayer",
     "rarity": 5,
     "imagePaths": {
@@ -1125,25 +1295,52 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
   {
     "id": "atk%-18",
     "setIds": [
-      "echoes_of_an_offering",
-      "gladiators_finale",
       "vermillion_hereafter",
-      "shimenawas_reminiscence",
-      "nighttime_whispers_in_the_echoing_woods",
-      "fragment_of_harmonic_whimsy",
       "unfinished_reverie",
+      "shimenawas_reminiscence",
+      "resolution_of_sojourner",
+      "nighttime_whispers_in_the_echoing_woods",
+      "gladiators_finale",
+      "fragment_of_harmonic_whimsy",
+      "echoes_of_an_offering",
+      "brave_heart",
       "a_day_carved_from_rising_winds"
     ]
   },
   {
     "id": "em-80",
     "setIds": [
-      "instructor",
       "wanderers_troupe",
+      "night_of_the_skys_unveiling",
+      "instructor",
       "gilded_dreams",
       "flower_of_paradise_lost",
-      "night_of_the_skys_unveiling",
       "aubade_of_morningstar_and_moon"
+    ]
+  },
+  {
+    "id": "er-20",
+    "setIds": [
+      "the_exile",
+      "silken_moons_serenade",
+      "scholar",
+      "emblem_of_severed_fate"
+    ]
+  },
+  {
+    "id": "cryo%-15",
+    "setIds": [
+      "glacier_and_snowfield",
+      "finale_of_the_deep_galleries",
+      "blizzard_strayer"
+    ]
+  },
+  {
+    "id": "heal%-15",
+    "setIds": [
+      "song_of_days_past",
+      "oceanhued_clam",
+      "maiden_beloved"
     ]
   },
   {
@@ -1154,52 +1351,81 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
     ]
   },
   {
-    "id": "er-20",
+    "id": "def%-30",
     "setIds": [
-      "emblem_of_severed_fate",
-      "silken_moons_serenade"
-    ]
-  },
-  {
-    "id": "heal%-15",
-    "setIds": [
-      "oceanhued_clam",
-      "song_of_days_past",
-      "maiden_beloved"
-    ]
-  },
-  {
-    "id": "hydro%-15",
-    "setIds": [
-      "heart_of_depth",
-      "nymphs_dream"
-    ]
-  },
-  {
-    "id": "phys%-25",
-    "setIds": [
-      "bloodstained_chivalry",
-      "pale_flame"
+      "husk_of_opulent_dreams",
+      "defenders_will"
     ]
   },
   {
     "id": "hp%-20",
     "setIds": [
-      "tenacity_of_the_millelith",
-      "vourukashas_glow"
+      "vourukashas_glow",
+      "tenacity_of_the_millelith"
     ]
   },
   {
-    "id": "cryo%-15",
+    "id": "hydro%-15",
     "setIds": [
-      "blizzard_strayer",
-      "finale_of_the_deep_galleries"
+      "nymphs_dream",
+      "heart_of_depth"
     ]
   },
   {
-    "id": "plunge-dmg%-25",
+    "id": "na-ca-dmg%-15",
     "setIds": [
-      "long_nights_oath"
+      "martial_artist",
+      "marechaussee_hunter"
+    ]
+  },
+  {
+    "id": "phys%-25",
+    "setIds": [
+      "pale_flame",
+      "bloodstained_chivalry"
+    ]
+  },
+  {
+    "id": "skill-dmg%-20",
+    "setIds": [
+      "golden_troupe",
+      "gambler"
+    ]
+  },
+  {
+    "id": "burst-dmg%-20",
+    "setIds": [
+      "noblesse_oblige"
+    ]
+  },
+  {
+    "id": "cr-12",
+    "setIds": [
+      "berserker"
+    ]
+  },
+  {
+    "id": "dendro%-15",
+    "setIds": [
+      "deepwood_memories"
+    ]
+  },
+  {
+    "id": "electro%-15",
+    "setIds": [
+      "thundering_fury"
+    ]
+  },
+  {
+    "id": "electro-res-40",
+    "setIds": [
+      "thundersoother"
+    ]
+  },
+  {
+    "id": "geo%-15",
+    "setIds": [
+      "archaic_petra"
     ]
   },
   {
@@ -1215,27 +1441,9 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
     ]
   },
   {
-    "id": "skill-dmg%-20",
+    "id": "plunge-dmg%-25",
     "setIds": [
-      "golden_troupe"
-    ]
-  },
-  {
-    "id": "na-ca-dmg%-15",
-    "setIds": [
-      "marechaussee_hunter"
-    ]
-  },
-  {
-    "id": "dendro%-15",
-    "setIds": [
-      "deepwood_memories"
-    ]
-  },
-  {
-    "id": "shield-35",
-    "setIds": [
-      "retracing_bolide"
+      "long_nights_oath"
     ]
   },
   {
@@ -1251,39 +1459,19 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
     ]
   },
   {
-    "id": "burst-dmg%-20",
+    "id": "shield-35",
     "setIds": [
-      "noblesse_oblige"
-    ]
-  },
-  {
-    "id": "geo%-15",
-    "setIds": [
-      "archaic_petra"
-    ]
-  },
-  {
-    "id": "electro-res-40",
-    "setIds": [
-      "thundersoother"
-    ]
-  },
-  {
-    "id": "electro%-15",
-    "setIds": [
-      "thundering_fury"
-    ]
-  },
-  {
-    "id": "def%-30",
-    "setIds": [
-      "husk_of_opulent_dreams"
+      "retracing_bolide"
     ]
   }
 ];
 
-
 export const weapons: WeaponResource[] = [
+  {
+    "id": "gest_of_the_mighty_wolf",
+    "rarity": 5,
+    "imagePath": "/weapon/gest_of_the_mighty_wolf.png"
+  },
   {
     "id": "nocturnes_curtain_call",
     "rarity": 5,

@@ -25,7 +25,41 @@ from models import (
     WeaponSource,
 )
 
-RARITY_4_ARTIFACTS = ["Instructor"]
+RARITY_4_ARTIFACTS = [
+    "Instructor",
+    "Adventurer",
+    "Brave Heart",
+    "Lucky Dog",
+    "Traveling Doctor",
+    "Resolution of Sojourner",
+    "Tiny Miracle",
+    "Berserker",
+    "The Exile",
+    "Defender's Will",
+    "Martial Artist",
+    "Gambler",
+    "Scholar",
+]
+
+ALL_ELEMENTS = ["Pyro", "Hydro", "Electro", "Cryo", "Anemo", "Dendro", "Geo"]
+
+# Characters where 1 wiki entry expands to 7 element variant entries in resources.ts.
+MULTI_ELEMENT_CHARACTERS: set[str] = {"Manekin", "Manekina"}
+
+ELEMENT_ZH: dict[str, str] = {
+    "Pyro": "火",
+    "Hydro": "水",
+    "Electro": "雷",
+    "Cryo": "冰",
+    "Anemo": "风",
+    "Dendro": "草",
+    "Geo": "岩",
+}
+
+# Characters whose element variants share a single portrait image.
+# All variants use imagePath="/character/{base_id}.png".
+# Sorted longest-first so "Manekina" matches before "Manekin".
+SHARED_IMAGE_PREFIXES: tuple[str, ...] = ("Manekina", "Manekin", "Traveler")
 
 
 def match_items[T: BaseItemSource](
@@ -33,21 +67,8 @@ def match_items[T: BaseItemSource](
     items_zh: Sequence[T],
     item_type: Literal["character", "artifact", "weapon"] = "character",
     scraper: HoyolabScraper | None = None,
-    by_position: bool = False,
 ) -> list[MatchedItem[T]]:
-    """Match items across languages using entry ID and validate consistency.
-
-    When by_position=True, items are matched by index order instead of entry_id.
-    Use this when entry IDs were not fetched (lean/no-details mode).
-    """
-    if by_position:
-        if len(items_en) != len(items_zh):
-            print(
-                f"Warning: {item_type} EN ({len(items_en)}) and ZH ({len(items_zh)}) "
-                "counts differ; extra items in the longer list are skipped."
-            )
-        return [MatchedItem(en=en, zh=zh) for en, zh in zip(items_en, items_zh, strict=True)]
-
+    """Match items across languages using entry ID and validate consistency."""
     matched_items: list[MatchedItem[T]] = []
 
     # Build lookup maps
@@ -144,6 +165,8 @@ def enrich_character_data_with_fandom(
         key = (char.element, char.rarity, char.name)
         if char.name.startswith("Traveler"):
             key = ("None", 5, "Traveler")
+        elif char.name in MULTI_ELEMENT_CHARACTERS:
+            key = ("None", char.rarity, char.name)
         fandom_char = fandom_data.get(key)
 
         # Default fallback values
@@ -218,9 +241,7 @@ def process_characters(
             enriched_characters_en, characters_zh, "character", scraper
         )
     else:
-        matched_characters = match_items(
-            characters_en, characters_zh, "character", by_position=True
-        )
+        matched_characters = match_items(characters_en, characters_zh, "character", scraper)
 
     final_characters: list[CharacterOutput] = []
     i18n_chars: dict[str, dict[str, str]] = {}
@@ -262,23 +283,50 @@ def process_characters(
         region = getattr(en, "region", "None")
         release_date = getattr(en, "release_date", None)
 
-        character_id = generate_id(en.name)
-        output = CharacterOutput(
-            id=character_id,
-            element=en.element,
-            rarity=en.rarity,
-            weaponType=weapon,
-            region=region,
-            releaseDate=release_date,
-            imageUrl=en.image_url,
-            imagePath=f"/character/{character_id}.png",
-        )
-        final_characters.append(output)
+        base_id = generate_id(en.name)
 
-        i18n_chars[character_id] = {
-            "en": en.name,
-            "zh": zh.name,
-        }
+        # Determine shared image path for characters whose variants share one portrait
+        shared_base = next(
+            (p.lower() for p in SHARED_IMAGE_PREFIXES if en.name.startswith(p)),
+            None,
+        )
+        image_path = f"/character/{shared_base}.png" if shared_base else f"/character/{base_id}.png"
+
+        if en.name in MULTI_ELEMENT_CHARACTERS:
+            # Expand 1 wiki entry into 7 element variant entries
+            for element in ALL_ELEMENTS:
+                variant_id = f"{base_id}_{element.lower()}"
+                output = CharacterOutput(
+                    id=variant_id,
+                    element=element,
+                    rarity=en.rarity,
+                    weaponType=weapon,
+                    region=region,
+                    releaseDate=release_date,
+                    imageUrl=en.image_url,
+                    imagePath=image_path,
+                )
+                final_characters.append(output)
+                i18n_chars[variant_id] = {
+                    "en": f"{en.name} ({element})",
+                    "zh": f"{zh.name}（{ELEMENT_ZH[element]}）",
+                }
+        else:
+            output = CharacterOutput(
+                id=base_id,
+                element=en.element,
+                rarity=en.rarity,
+                weaponType=weapon,
+                region=region,
+                releaseDate=release_date,
+                imageUrl=en.image_url,
+                imagePath=image_path,
+            )
+            final_characters.append(output)
+            i18n_chars[base_id] = {
+                "en": en.name,
+                "zh": zh.name,
+            }
 
     return final_characters, i18n_chars, matched_characters
 
@@ -287,11 +335,8 @@ def process_artifacts(
     artifacts_en: list[ArtifactSource],
     artifacts_zh: list[ArtifactSource],
     scraper: HoyolabScraper | None = None,
-    details: bool = True,
 ) -> tuple[list[ArtifactOutput], dict[str, I18nArtifactData], list[MatchedItem[ArtifactSource]]]:
-    matched_artifacts = match_items(
-        artifacts_en, artifacts_zh, "artifact", scraper, by_position=not details
-    )
+    matched_artifacts = match_items(artifacts_en, artifacts_zh, "artifact", scraper)
 
     final_artifacts: list[ArtifactOutput] = []
     i18n_artifacts: dict[str, I18nArtifactData] = {}
@@ -337,11 +382,8 @@ def process_weapons(
     weapons_zh: list[WeaponSource],
     existing_weapons: dict[str, dict[str, Any]],
     scraper: HoyolabScraper | None = None,
-    details: bool = True,
 ) -> tuple[list[WeaponOutput], dict[str, dict[str, Any]], list[MatchedItem[WeaponSource]]]:
-    matched_weapons = match_items(
-        weapons_en, weapons_zh, "weapon", scraper, by_position=not details
-    )
+    matched_weapons = match_items(weapons_en, weapons_zh, "weapon", scraper)
 
     final_weapons: list[WeaponOutput] = []
     i18n_weapons: dict[str, dict[str, Any]] = {}

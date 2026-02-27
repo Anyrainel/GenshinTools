@@ -44,6 +44,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
     regions: defaultCharacterFilters.regions,
     rarities: defaultCharacterFilters.rarities,
     ownedOnly: false,
+    showManekin: defaultCharacterFilters.showManekin,
   });
 
   // Ownership check callback
@@ -73,6 +74,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
         regions: newFilters.regions,
         rarities: newFilters.rarities,
         ownedOnly: newFilters.ownedOnly,
+        showManekin: newFilters.showManekin,
       });
 
       // Update sort preferences (persisted state)
@@ -156,6 +158,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
                     regions: [],
                     rarities: [],
                     ownedOnly: false,
+                    showManekin: false,
                   })
                 }
                 className="text-primary hover:underline underline-offset-4 font-medium"

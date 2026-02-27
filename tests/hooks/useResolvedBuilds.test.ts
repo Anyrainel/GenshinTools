@@ -123,6 +123,134 @@ describe("useResolvedBuilds", () => {
     });
     expect(result.current).toEqual([]);
   });
+
+  it("marks local override of preset build as 'modified'", async () => {
+    const b1 = makeBuild("preset-1", "hu_tao", "Preset Original");
+    const preset = makePreset(
+      ["preset-1"],
+      { hu_tao: ["preset-1"] },
+      { "preset-1": b1 }
+    );
+    mockGetCachedPreset.mockReturnValue(preset);
+    mockLoadPreset.mockResolvedValue(preset);
+
+    // Set up store with preset and a local override
+    useBuildsStore.setState({
+      activePresetId: "test-preset",
+      characterToBuildIds: { hu_tao: ["preset-1"] },
+      builds: {
+        "preset-1": { ...b1, name: "User Modified" },
+      },
+    });
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+
+    await waitFor(() => {
+      expect(result.current.length).toBe(1);
+    });
+    expect(result.current[0]!.source).toBe("modified");
+    expect(result.current[0]!.name).toBe("User Modified");
+  });
+
+  it("falls back to preset version after revert (local override removed)", async () => {
+    const b1 = makeBuild("preset-1", "hu_tao", "Preset Original");
+    const preset = makePreset(
+      ["preset-1"],
+      { hu_tao: ["preset-1"] },
+      { "preset-1": b1 }
+    );
+    mockGetCachedPreset.mockReturnValue(preset);
+    mockLoadPreset.mockResolvedValue(preset);
+
+    // Start with a modified build
+    useBuildsStore.setState({
+      activePresetId: "test-preset",
+      characterToBuildIds: { hu_tao: ["preset-1"] },
+      builds: {
+        "preset-1": { ...b1, name: "User Modified" },
+      },
+    });
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+
+    await waitFor(() => {
+      expect(result.current.length).toBe(1);
+      expect(result.current[0]!.source).toBe("modified");
+    });
+
+    // Simulate revert: remove local override, keep ordering
+    act(() => {
+      useBuildsStore.getState().revertBuild("hu_tao", "preset-1");
+    });
+
+    await waitFor(() => {
+      expect(result.current[0]!.source).toBe("preset");
+    });
+    expect(result.current[0]!.name).toBe("Preset Original");
+    expect(result.current.length).toBe(1);
+  });
+
+  it("preserves sibling builds after editing one preset build", async () => {
+    const b1 = makeBuild("preset-1", "hu_tao", "Build 1");
+    const b2 = makeBuild("preset-2", "hu_tao", "Build 2");
+    const preset = makePreset(
+      ["preset-1", "preset-2"],
+      { hu_tao: ["preset-1", "preset-2"] },
+      { "preset-1": b1, "preset-2": b2 }
+    );
+    mockGetCachedPreset.mockReturnValue(preset);
+    mockLoadPreset.mockResolvedValue(preset);
+
+    useBuildsStore.setState({
+      activePresetId: "test-preset",
+      characterToBuildIds: { hu_tao: ["preset-1", "preset-2"] },
+    });
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+
+    await waitFor(() => {
+      expect(result.current.length).toBe(2);
+    });
+
+    // Edit only preset-1
+    act(() => {
+      useBuildsStore.getState().setBuild("preset-1", { name: "Modified" }, b1);
+    });
+
+    await waitFor(() => {
+      expect(result.current.length).toBe(2);
+    });
+    expect(result.current[0]!.source).toBe("modified");
+    expect(result.current[1]!.source).toBe("preset");
+    expect(result.current[1]!.name).toBe("Build 2");
+  });
+
+  it("shows custom builds with source 'custom'", async () => {
+    const b1 = makeBuild("preset-1", "hu_tao", "Preset");
+    const preset = makePreset(
+      ["preset-1"],
+      { hu_tao: ["preset-1"] },
+      { "preset-1": b1 }
+    );
+    mockGetCachedPreset.mockReturnValue(preset);
+    mockLoadPreset.mockResolvedValue(preset);
+
+    // Add a custom build alongside preset
+    const customBuild = makeBuild("custom-1", "hu_tao", "My Custom Build");
+    useBuildsStore.setState({
+      activePresetId: "test-preset",
+      characterToBuildIds: { hu_tao: ["preset-1", "custom-1"] },
+      builds: { "custom-1": customBuild },
+    });
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+
+    await waitFor(() => {
+      expect(result.current.length).toBe(2);
+    });
+    expect(result.current[0]!.source).toBe("preset");
+    expect(result.current[1]!.source).toBe("custom");
+  });
 });
 
 describe("useAllResolvedBuilds", () => {

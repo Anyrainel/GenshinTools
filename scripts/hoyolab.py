@@ -82,7 +82,10 @@ PLACEHOLDER_PATTERNS: list[str] = [
     "placeholder",
     "default-avatar",
 ]
-CHARACTER_BLOCKLIST: set[str] = {"Manekina", "Manekin", "Traveler", "旅行者"}
+CHARACTER_BLOCKLIST: set[str] = {"Traveler", "旅行者"}
+
+# Characters whose wiki card has no element icon (they support all 7 elements).
+ELEMENTLESS_CHARACTERS: set[str] = {"Manekin", "Manekina"}
 
 
 def generate_id(name: str) -> str:
@@ -112,9 +115,11 @@ class HoyolabAssetManager:
     """Helper class to manage asset downloading logic"""
 
     @staticmethod
-    def download_character_assets(character: CharacterSource, project_root: str) -> bool:
+    def download_character_assets(
+        character: CharacterSource, project_root: str, override_id: str | None = None
+    ) -> bool:
         """Download character image"""
-        id = generate_id(character.name)
+        id = override_id or generate_id(character.name)
         filename = os.path.join(project_root, "public", "character", f"{id}.png")
         return download_image(character.image_url, filename)
 
@@ -356,19 +361,22 @@ class HoyolabScraper:
             tqdm.write(f"SKIP (Char {index}): Exception extracting name: {e}")
             return None
 
-        try:
-            element_img = card.locator("img.character-card-element").first
-            element_src = element_img.get_attribute("src")
-            if not element_src:
-                tqdm.write(f"SKIP ({name}): No element image src")
+        if name in ELEMENTLESS_CHARACTERS:
+            element = ""
+        else:
+            try:
+                element_img = card.locator("img.character-card-element").first
+                element_src = element_img.get_attribute("src")
+                if not element_src:
+                    tqdm.write(f"SKIP ({name}): No element image src")
+                    return None
+                element = extract_element_from_src(element_src)
+                if element is None:
+                    tqdm.write(f"SKIP ({name}): Could not find element from src: {element_src}")
+                    return None
+            except Exception as e:
+                tqdm.write(f"SKIP ({name}): Exception extracting element: {e}")
                 return None
-            element = extract_element_from_src(element_src)
-            if element is None:
-                tqdm.write(f"SKIP ({name}): Could not find element from src: {element_src}")
-                return None
-        except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting element: {e}")
-            return None
 
         try:
             icon_div = card.locator("div.character-card-icon").first
@@ -406,9 +414,7 @@ class HoyolabScraper:
             image_url=cleaned_image_url,
         )
 
-    def scrape_characters(
-        self, language: str = "en", fetch_entry_id: bool = True
-    ) -> list[CharacterSource]:
+    def scrape_characters(self, language: str = "en") -> list[CharacterSource]:
         page = self._ensure_page()
         character_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/2"
 
@@ -419,7 +425,6 @@ class HoyolabScraper:
         self._wait_for_images_to_load("article.character-card img.d-img-show")
 
         character_cards = page.locator("article.character-card").all()
-        # print(f"Found {len(character_cards)} character cards")
 
         characters: list[CharacterSource] = []
         for i, card in tqdm(
@@ -431,18 +436,12 @@ class HoyolabScraper:
         ):
             char_data = self._extract_character_from_card(card, i)
             if char_data:
-                if fetch_entry_id:
-                    try:
-                        with page.context.expect_page() as new_page_info:
-                            card.click()
-                        new_page = new_page_info.value
-                        char_data.entry_id = extract_id_from_url(new_page.url)
-                        new_page.close()
-                    except Exception as e:
-                        tqdm.write(f"Error getting ID for {char_data.name}: {e}")
-
+                eid = self._get_entry_id_from_card(card)
+                if eid:
+                    char_data.entry_id = eid
+                else:
+                    tqdm.write(f"Warning: Could not get ID for {char_data.name}")
                 characters.append(char_data)
-                # Removed detailed print
 
         return characters
 
@@ -515,9 +514,7 @@ class HoyolabScraper:
             tqdm.write(f"SKIP ({name}): Exception extracting details: {e}")
             return None
 
-    def scrape_artifacts(
-        self, language: str = "en", fetch_entry_id: bool = True
-    ) -> list[ArtifactSource]:
+    def scrape_artifacts(self, language: str = "en") -> list[ArtifactSource]:
         page = self._ensure_page()
         artifact_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/5"
 
@@ -528,7 +525,6 @@ class HoyolabScraper:
         self._wait_for_images_to_load("div.artifact-card img.d-img-show")
 
         artifact_cards = page.locator("div.artifact-card").all()
-        # print(f"Found {len(artifact_cards)} artifact cards")
 
         artifacts: list[ArtifactSource] = []
         for i, card in tqdm(
@@ -540,18 +536,12 @@ class HoyolabScraper:
         ):
             art_data = self._extract_artifact_from_card(card, i)
             if art_data:
-                if fetch_entry_id:
-                    try:
-                        with page.context.expect_page() as new_page_info:
-                            card.click()
-                        new_page = new_page_info.value
-                        art_data.entry_id = extract_id_from_url(new_page.url)
-                        new_page.close()
-                    except Exception as e:
-                        tqdm.write(f"Error getting ID for {art_data.name}: {e}")
-
+                eid = self._get_entry_id_from_card(card)
+                if eid:
+                    art_data.entry_id = eid
+                else:
+                    tqdm.write(f"Warning: Could not get ID for {art_data.name}")
                 artifacts.append(art_data)
-                # Removed detailed print
 
         return artifacts
 
@@ -679,7 +669,7 @@ class HoyolabScraper:
         return data
 
     def scrape_weapons(
-        self, language: str = "en", fetch_details: bool = True
+        self, language: str = "en", fetch_details: bool = False
     ) -> list[WeaponSource]:
         page = self._ensure_page()
         weapon_url = "https://wiki.hoyolab.com/pc/genshin/aggregate/4"
@@ -691,7 +681,6 @@ class HoyolabScraper:
         self._wait_for_images_to_load(".genshin-show-weapon-item img.d-img-show")
 
         weapon_cards = page.locator(".genshin-show-weapon-item").all()
-        # print(f"Found {len(weapon_cards)} weapon cards")
 
         weapons: list[WeaponSource] = []
         for i, card in tqdm(
@@ -706,9 +695,8 @@ class HoyolabScraper:
                 continue
 
             if fetch_details:
-                # print(f"Scraping details for Weapon {i + 1}: {weapon_data.name}")
+                # Need full detail page for weapon type, stats, etc.
                 try:
-                    # Click to open detail in new tab
                     with page.context.expect_page() as new_page_info:
                         card.click()
 
@@ -718,7 +706,6 @@ class HoyolabScraper:
                     weapon_data.entry_id = extract_id_from_url(detail_page.url)
 
                     detail_data = self._scrape_weapon_detail_page(detail_page)
-
                     if detail_data:
                         for k, v in detail_data.items():
                             setattr(weapon_data, k, v)
@@ -727,6 +714,13 @@ class HoyolabScraper:
 
                 except Exception as e:
                     tqdm.write(f"Error scraping details for {weapon_data.name}: {e}")
+            else:
+                # Fast path: just grab the entry ID without loading the detail page
+                eid = self._get_entry_id_from_card(card)
+                if eid:
+                    weapon_data.entry_id = eid
+                else:
+                    tqdm.write(f"Warning: Could not get ID for {weapon_data.name}")
 
             weapons.append(weapon_data)
 
@@ -776,6 +770,41 @@ class HoyolabScraper:
             print(f"Error scraping elements/weapons: {e}")
 
         return elements, weapon_types
+
+    def _get_entry_id_from_card(self, card: Locator) -> str:
+        """Extract entry ID from a card element without waiting for page render.
+
+        Tries to read the href from an <a> tag in/around the card first.
+        Falls back to clicking the card, grabbing the URL, and closing immediately.
+        """
+        # 1. Try to find href via DOM traversal (no navigation)
+        try:
+            href = card.evaluate("""el => {
+                if (el.tagName === 'A') return el.href;
+                const child = el.querySelector('a');
+                if (child) return child.href;
+                const parent = el.closest('a');
+                if (parent) return parent.href;
+                return null;
+            }""")
+            if href:
+                eid = extract_id_from_url(href)
+                if eid:
+                    return eid
+        except Exception:
+            pass
+
+        # 2. Fallback: click → grab URL → close (no wait_for_load_state)
+        page = self._ensure_page()
+        try:
+            with page.context.expect_page() as new_page_info:
+                card.click()
+            new_page = new_page_info.value
+            eid = extract_id_from_url(new_page.url)
+            new_page.close()
+            return eid
+        except Exception:
+            return ""
 
     def fetch_entry_name(self, entry_id: str, language: str) -> str | None:
         """Fetch the name of an entry from its detail page in a specific language"""

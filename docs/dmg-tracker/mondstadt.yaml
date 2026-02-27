@@ -1,0 +1,64 @@
+# Mondstadt Damage Tracker
+- id: fischl-c6-coordinated
+  entity: fischl
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Oz coordinated attack (30% ATK Electro per active hit) not modeled.
+  detail: >
+    Periodic proc triggered by active character hits. Complex combat state interaction,
+    low DPS contribution relative to modeling effort.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: albedo-p1-enemy-hp-combatopt
+  entity: albedo
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P1 Transient Blossom +25% DMG vs enemies HP <50% is modeled as always-active.
+    Per rule S6, enemy HP conditions should use CombatOpts. Low priority since Albedo
+    is typically not the damage focus character.
+  detail: >
+    Approximation is within acceptable range. Albedo is a support character whose
+    Transient Blossom is not the team's primary damage source. The +25% dmg% only
+    applies to his E skill hits (already scoped with ability filter). In practice,
+    enemies spend a significant portion of the fight below 50% HP. The always-on
+    model overestimates by roughly 12.5pp in the dmg% zone, which is a small
+    fraction of total team DPS. Not worth adding a CombatOpt for a support's
+    off-field proc.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: razor-c2-enemy-hp-combatopt
+  entity: razor
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    C2 CRIT Rate +10% vs enemies <30% HP is not modeled. Per rule S6, enemy HP
+    conditions should use CombatOpts. Currently omitted entirely.
+  detail: >
+    Approximation is within acceptable range. The +10% CR only applies during the
+    execute phase (enemy below 30% HP), which is a small fraction of total fight
+    duration. Expected DPS contribution is well under 5%. Razor is a 4-star
+    physical carry whose optimization is not highly sensitive to this minor
+    conditional CR bonus. Omitting entirely (conservative, underestimates) is
+    preferable to always-on (overestimates) and not worth a CombatOpt.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: razor-p4-hexerei-lightning
+  entity: razor
+  rule: S8
+  status: open
+  category: missing-formula
+  summary: >
+    P4 Hexerei: Secret Rite lightning strike (150% ATK Electro AoE, once per 1s
+    when sigils overflow during Q) is not modeled. Potentially significant damage
+    source over 15s Q duration, especially at C6 where every E triggers overflow.
+  detail: ""
+  created: "2026-02-26"
+  resolved: null

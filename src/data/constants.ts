@@ -228,6 +228,15 @@ export function getSortedCharacters(
   const list = [...characters];
   if (!characterStats) return list;
   return list.sort((a, b) => {
+    // Manekin variants always sort last (after travelers)
+    const aIsManekin = a.id.startsWith("manekin");
+    const bIsManekin = b.id.startsWith("manekin");
+    if (aIsManekin !== bIsManekin) return aIsManekin ? 1 : -1;
+    // 5★ before 4★
+    const rarityA = characterStats[a.id]?.rarity ?? a.rarity;
+    const rarityB = characterStats[b.id]?.rarity ?? b.rarity;
+    if (rarityA !== rarityB) return rarityB - rarityA;
+    // Within same rarity, sort by release date descending
     const dateA = characterStats[a.id]?.releaseDate ?? "";
     const dateB = characterStats[b.id]?.releaseDate ?? "";
     if (!dateA && !dateB) return 0;

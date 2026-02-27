@@ -15,12 +15,29 @@ import type { OptionDef } from "../types";
 @RegisterCharacter("kirara")
 class Kirara extends CharacterBase {
   readonly buffs = [
-    // C6: After E/Q, team All Elemental DMG +12%
-    new StatBuff(
-      cbs(this, "C6", ["E", "Q"]),
-      { receiver: "team" },
-      this.constellation >= 6 ? [{ key: "dmg%", value: 0.12 }] : []
-    ),
+    // C6: After E/Q, team All Elemental DMG +12% (excludes Physical)
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E", "Q"]),
+            {
+              receiver: "team",
+              filter: {
+                elements: [
+                  "Pyro",
+                  "Hydro",
+                  "Cryo",
+                  "Electro",
+                  "Anemo",
+                  "Geo",
+                  "Dendro",
+                ],
+              },
+            },
+            [{ key: "dmg%", value: 0.12 }]
+          ),
+        ]
+      : []),
   ];
 
   // Pure shielder — no damage formulas modeled
@@ -34,17 +51,29 @@ class ShikanoinHeizou extends CharacterBase {
     new StatBuff(cbs(this, "P2", ["E"]), { receiver: "team" }, [
       { key: "em", value: 80 },
     ]),
+    // C1: After taking field, Normal ATK SPD +15% for 5s
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["swap-in"]),
+            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+            [{ key: "atkSpd%", value: 0.15 }]
+          ),
+        ]
+      : []),
     // C6: E (4 stacks) → CR +16%, CD +32%
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      this.constellation >= 6
-        ? [
-            { key: "cr", value: 0.16 },
-            { key: "cd", value: 0.32 },
-          ]
-        : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+            [
+              { key: "cr", value: 0.16 },
+              { key: "cd", value: 0.32 },
+            ]
+          ),
+        ]
+      : []),
   ];
 
   // E max stacks (Lv10): 409.5% + 4*102.4% + 204.8% = 1023.9%
@@ -67,7 +96,7 @@ class ShikanoinHeizou extends CharacterBase {
         ],
       },
       "heizou-burst": {
-        label: { zh: "Q(真空弹)", en: "Q (Vacuum Slug)" },
+        label: { zh: "Q", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -98,22 +127,24 @@ class KukiShinobu extends CharacterBase {
 
   readonly buffs = [
     // P2: E ring DMG boosted by EM×25% (as flat baseDmg per hit)
+    // Ring fires off-field → receiver: "self"; only E ring → filter skill
     new ScalingBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField" },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
       "baseDmg",
       0.25
     ),
     // C6: Self EM +150 when HP < 25% (S6: conditional on CombatOpts)
-    new StatBuff(
-      cbs(this, "C6", []),
-      { receiver: "selfOnField" },
-      this.constellation >= 6 && this.hpState === "critical"
-        ? [{ key: "em", value: 150 }]
-        : []
-    ),
+    // Works off-field → receiver: "self"
+    ...(this.constellation >= 6 && this.hpState === "critical"
+      ? [
+          new StatBuff(cbs(this, "C6", []), { receiver: "self" }, [
+            { key: "em", value: 150 },
+          ]),
+        ]
+      : []),
   ];
 
   // Q: Single hit 6.5%/7.7% HP
@@ -144,7 +175,7 @@ class KukiShinobu extends CharacterBase {
       ...(canHyperbloom
         ? {
             "shinobu-hyperbloom": {
-              label: { zh: "超绽放种子伤害", en: "Hyperbloom Seed" },
+              label: { zh: "E超绽放", en: "E Hyperbloom" },
               parts: [
                 {
                   formula: new TransformFormula(0, {
@@ -192,7 +223,7 @@ class Sayu extends CharacterBase {
     const darumaScaling = this.constellation >= 3 ? 1.1 : 0.94;
     return {
       "sayu-daruma": {
-        label: { zh: "E貉貉", en: "E Daruma" },
+        label: { zh: "Q达摩", en: "Q Daruma" },
         parts: [
           {
             formula: new DirectFormula(darumaScaling, {
@@ -212,14 +243,18 @@ class Thoma extends CharacterBase {
   readonly buffs = [
     // P1: Shield Strength +25% (5 stacks at 5%) - not modeled
     // C6: Shield proc → Team Normal, Charged, Plunge DMG +15%
-    new StatBuff(
-      cbs(this, "C6", ["E", "Q"]),
-      {
-        receiver: "team",
-        filter: { abilities: ["normal", "charge", "plunge"] },
-      },
-      this.constellation >= 6 ? [{ key: "dmg%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E", "Q"]),
+            {
+              receiver: "team",
+              filter: { abilities: ["normal", "charge", "plunge"] },
+            },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : []),
   ];
 
   // Q Fiery Collapse Lv10: 104% ATK + 2.2% HP (P2)
@@ -228,7 +263,7 @@ class Thoma extends CharacterBase {
     const qMult = this.constellation >= 5 ? 1.23 : 1.04;
     return {
       "thoma-burst-collapse": {
-        label: { zh: "Q持续", en: "Q Collapse" },
+        label: { zh: "Q崩破", en: "Q Collapse" },
         parts: [
           {
             formula: new DirectFormula(
@@ -306,11 +341,15 @@ class KujouSara extends CharacterBase {
       this.constellation >= 5 ? 0.91 : 0.77
     ),
     // C6: Buffed characters gain +60% Electro CRIT DMG
-    new StatBuff(
-      cbs(this, "C6", ["E", "Q"]),
-      { receiver: "onField", filter: { elements: ["Electro"] } },
-      this.constellation >= 6 ? [{ key: "cd", value: 0.6 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E", "Q"]),
+            { receiver: "onField", filter: { elements: ["Electro"] } },
+            [{ key: "cd", value: 0.6 }]
+          ),
+        ]
+      : []),
   ];
 
   // Q Titanbreaker: Lv10 737.3%, Lv13 (C3+) 870.4% + 4×61.4%/72.5% Stormcluster (C4: 6×)
@@ -322,7 +361,7 @@ class KujouSara extends CharacterBase {
       "sara-burst": {
         label: {
           zh: `Q初始+雷砾×${clusterCount}`,
-          en: `Q Titanbreaker + ${clusterCount}×Cluster`,
+          en: `Q Initial + ${clusterCount}×Cluster`,
         },
         parts: [
           {

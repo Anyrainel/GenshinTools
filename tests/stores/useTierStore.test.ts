@@ -23,6 +23,7 @@ describe("useTierStore", () => {
       const state = useTierStore.getState();
       expect(state.showWeapons).toBe(true);
       expect(state.showTravelers).toBe(false);
+      expect(state.showManekin).toBe(false);
     });
 
     it("has empty metadata", () => {
@@ -105,6 +106,14 @@ describe("useTierStore", () => {
 
       useTierStore.getState().setShowTravelers(false);
       expect(useTierStore.getState().showTravelers).toBe(false);
+    });
+
+    it("sets showManekin", () => {
+      useTierStore.getState().setShowManekin(true);
+      expect(useTierStore.getState().showManekin).toBe(true);
+
+      useTierStore.getState().setShowManekin(false);
+      expect(useTierStore.getState().showManekin).toBe(false);
     });
   });
 

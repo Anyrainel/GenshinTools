@@ -1,0 +1,123 @@
+# Other Damage Tracker
+- id: aloy-e-coil-stacks
+  entity: aloy
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    E Coil stack NA bonus + Rushing Ice NA bonus requires mid-combat stack counting.
+  detail: >
+    Known limitation. CombatOpts candidate but low priority. Mid-combat stack counting
+    not supported by current engine.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: skirk-p3-party-level
+  entity: skirk
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P3 +1 E level to all party members requires all-Hydro/Cryo team with at least
+    1 of each; team buff not implemented.
+  detail: >
+    Known limitation. Skirk's own talent level is handled but team-wide E level buff
+    requires team composition validation not currently supported. Shared limitation
+    with tartaglia P3.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: aloy-e-freeze-bomb
+  entity: aloy
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E Freeze Bomb / Chillwater Bomblet hits not modeled.
+  detail: >
+    Aloy is not in DmgRunbook. She is a collab-exclusive 5-star with no
+    constellations. E Freeze Bomb is 320% at Lv10 and Chillwater Bomblets are
+    72% each with variable hit count (random scatter). Aloy is an extremely
+    niche character with near-zero usage rate. Estimated <5% of any realistic
+    team DPS contribution. Not worth modeling.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: traveler-hydro-e-dewdrop
+  entity: traveler_hydro
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E hold mode Dewdrop hits (59% per hit, up to 6s) not modeled.
+  detail: >
+    Traveler Hydro is not in DmgRunbook. Dewdrop hits are 59%/69.7% per hit
+    (Lv10/Lv13) over up to 6s hold duration. Traveler Hydro is primarily a
+    utility/self-sustain character, not a DPS. The hold mode locks the
+    character in place and is rarely used for damage. The E Torrent Surge
+    (340.7%/402.2%) is already modeled. Estimated <5% of any team DPS
+    contribution from Dewdrops.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: skirk-c6-havoc-coordinated
+  entity: skirk
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 Havoc: Sever combo-state coordinated attacks not modeled.
+  detail: >
+    Complex combat state interaction with combo-state tracking.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: skirk-all-shall-wither
+  entity: skirk
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    All Shall Wither E-mode complex combat state interactions not modeled.
+  detail: >
+    Complex combat state interaction requiring E-mode state management.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: traveler-p3-charged-attack
+  entity: traveler_anemo
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Special Charged Attack variants (Whirlwind/Rockfell/Detonate/Verdessence/
+    Tidebound/Inferno) for all Traveler elements not modeled.
+  detail: >
+    Requires stack build-up from teammates. Applies to traveler_anemo, traveler_geo,
+    traveler_electro, traveler_dendro, traveler_hydro, and traveler_pyro P3.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: traveler-electro-c6-world-shaker
+  entity: traveler_electro
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 World-Shaker every 3rd Falling Thunder not modeled.
+  detail: >
+    Periodic proc requiring hit counting. Low DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: traveler-pyro-c6-nightsoul
+  entity: traveler_pyro
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 Nightsoul's Blessing NA/CA/Plunge conversion + CD not modeled.
+  detail: >
+    Complex combat state interaction with Nightsoul's Blessing mode conversion.
+  created: "2026-02-25"
+  resolved: "2026-02-25"

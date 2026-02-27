@@ -1,3 +1,5 @@
+import type { Element } from "@/data/types";
+
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
@@ -18,89 +20,6 @@ import type { OptionDef } from "../types";
 // ═══════════════════════════════════════════════════════════════
 // 5★ None Characters
 // ═══════════════════════════════════════════════════════════════
-
-@RegisterCharacter("varka")
-class Varka extends CharacterBase {
-  readonly buffs = [
-    // P1: Per 1000 ATK → +10% Anemo & Secondary Element (cap 25%)
-    // Simplified as general DMG% to cover both.
-    new ScalingBuff(
-      cbs(this, "P1", ["Q"]),
-      { receiver: "selfOnField" },
-      [],
-      "atk",
-      "dmg%",
-      0.0001,
-      0.25
-    ),
-    // P1: Dual-element team gives 220% multiplier (baseDmg% +1.2) for NA/CA/E
-    new StatBuff(
-      cbs(this, "P1", ["team-comp"]),
-      {
-        receiver: "selfOnField",
-        filter: { abilities: ["normal", "charge", "skill"] },
-      },
-      [{ key: "baseDmg%", value: 1.2 }]
-    ),
-    // P2: Swirl → +7.5% DMG per stack (max 4 = 30%)
-    new StatBuff(
-      cbs(this, "P2", ["swirl"]),
-      {
-        receiver: "selfOnField",
-        filter: { abilities: ["normal", "charge", "skill"] },
-      },
-      [{ key: "dmg%", value: 0.3 }]
-    ),
-    // C4: Swirl → team gets 20% Anemo & Secondary (simplified as general DMG%)
-    new StatBuff(
-      cbs(this, "C4", ["swirl"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "dmg%", value: 0.2 }] : []
-    ),
-    // C6: P2 stacks also give +20% CD each (max 4 = 80%)
-    new StatBuff(
-      cbs(this, "C6", ["swirl"]),
-      {
-        receiver: "selfOnField",
-        filter: { abilities: ["normal", "charge", "skill"] },
-      },
-      this.constellation >= 6 ? [{ key: "cd", value: 0.8 }] : []
-    ),
-  ];
-
-  // Sturm und Drang N5 (Lv10): 161.7+59.3+110.1+80.1+148.8+137.0+73.8+172.3+92.8 = 1035.9%
-  // Northwind Avatar (Lv10): 606.5% + 326.6% = 933.1%
-  // Northwind Avatar (Lv13 C5+): 716.0% + 385.6% = 1101.6%
-  protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 5 ? 11.016 : 9.331;
-    return {
-      "varka-e-normal": {
-        label: { zh: "A 狂飙突进全套连击", en: "A Sturm und Drang N5 Combo" },
-        parts: [
-          {
-            formula: new DirectFormula(10.359, {
-              element: "Anemo", // represents combined elements
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "varka-burst": {
-        label: { zh: "Q 我即朔风(双重斩击)", en: "Q Northwind Avatar" },
-        parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Anemo", // represents combined elements
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-    };
-  })();
-}
 
 @RegisterCharacter("skirk")
 class Skirk extends CharacterBase {
@@ -207,8 +126,8 @@ class Skirk extends CharacterBase {
       },
       "skirk-e-charge": {
         label: {
-          zh: "E七相一闪重击伤害",
-          en: "Seven-Phase Flash CA DMG",
+          zh: "E重击",
+          en: "E CA",
         },
         parts: [
           {
@@ -222,8 +141,8 @@ class Skirk extends CharacterBase {
       },
       "skirk-burst": {
         label: {
-          zh: "Q斩击全套",
-          en: "Havoc: Ruin (Max Subtlety)",
+          zh: "Q伤害",
+          en: "Q",
         },
         parts: [
           {
@@ -241,8 +160,8 @@ class Skirk extends CharacterBase {
         ? {
             "skirk-c1-blade": {
               label: {
-                zh: `C1 水晶刀(×${this.deathCrossingStacks})`,
-                en: `C1 Crystal Blade (×${this.deathCrossingStacks})`,
+                zh: `1命 水晶刀×${this.deathCrossingStacks}`,
+                en: `C1 Crystal Blade ×${this.deathCrossingStacks}`,
               },
               parts: [
                 {
@@ -266,8 +185,9 @@ class Aloy extends CharacterBase {
   // No constellations available — collab-exclusive character
   readonly buffs = [
     // P1: Self ATK +16% when gaining Coil, other party members ATK +8% (10s)
-    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
-      { key: "atk%", value: 0.16 },
+    // Team-wide +8%, then self gets additional +8% (delta) = 16% total for Aloy
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "self" }, [
+      { key: "atk%", value: 0.08 },
     ]),
     new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
       { key: "atk%", value: 0.08 },
@@ -280,7 +200,7 @@ class Aloy extends CharacterBase {
 
   protected readonly formulaMap = {
     "aloy-burst": {
-      label: { zh: "Q 元素爆发", en: "Q Prophecies of Dawn" },
+      label: { zh: "Q伤害", en: "Q" },
       parts: [
         {
           formula: new DirectFormula(6.47, {
@@ -294,6 +214,21 @@ class Aloy extends CharacterBase {
   };
 }
 
+// P3 cross-resonance: Traveler gains buffs for every element resonated with.
+// All damage-affecting stats; DEF (+20%) is skipped per U9 (defense stat).
+function travelerP3Buffs(self: CharacterBase): InstanceType<typeof StatBuff>[] {
+  const src = cbs(self, "P3", ["passive"]);
+  const tgt = { receiver: "self" as const };
+  return [
+    new StatBuff(src, tgt, [{ key: "cr", value: 0.1 }]), // Anemo
+    new StatBuff(src, tgt, [{ key: "er", value: 0.2 }]), // Electro
+    new StatBuff(src, tgt, [{ key: "em", value: 60 }]), // Dendro
+    new StatBuff(src, tgt, [{ key: "hp%", value: 0.2 }]), // Hydro
+    new StatBuff(src, tgt, [{ key: "atk%", value: 0.2 }]), // Pyro
+    new StatBuff(src, tgt, [{ key: "cd", value: 0.2 }]), // Cryo
+  ];
+}
+
 // Traveler (Anemo)
 // P3 cross-resonance: Anemo resonance -> self +10% CRIT Rate
 // C6: Enemies hit by Gust Surge have Anemo/absorbed element RES -20%
@@ -301,16 +236,18 @@ class Aloy extends CharacterBase {
 class TravelerAnemo extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P3 cross-resonance: Anemo resonance -> +10% CRIT Rate (self)
-      new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-        { key: "cr", value: 0.1 },
-      ]),
+      // P3 cross-resonance: all elements Traveler has resonated with
+      ...travelerP3Buffs(this),
       // C6: Enemies hit by Gust Surge have Anemo RES -20%
-      new StatBuff(
-        cbs(this, "C6", ["Q"]),
-        { receiver: "team", filter: { elements: ["Anemo"] } },
-        this.constellation >= 6 ? [{ key: "resReduction%", value: 0.2 }] : []
-      ),
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["Q"]),
+              { receiver: "team", filter: { elements: ["Anemo"] } },
+              [{ key: "resReduction%", value: 0.2 }]
+            ),
+          ]
+        : []),
     ];
     // C6: Absorbed element also gets -20% RES (S10 pattern)
     if (this.constellation >= 6) {
@@ -332,10 +269,10 @@ class TravelerAnemo extends CharacterBase {
 
   // Q Gust Surge: 8 ticks x 145% = 1160% Anemo DMG (Lv10)
   // Q Gust Surge (C3+, Lv13): 8 ticks x 172% = 1376%
-  // Q Absorbed element: 8 ticks x 33.84% (Lv10) / 40.17% (Lv13 C3+)
+  // Q Absorbed element: 8 ticks x 44.6% (Lv10) / 52.7% (Lv13 C3+)
   protected readonly formulaMap = (() => {
     const qMult = this.constellation >= 3 ? 13.76 : 11.6;
-    const absorbTickMult = this.constellation >= 3 ? 0.4017 : 0.3384;
+    const absorbTickMult = this.constellation >= 3 ? 0.527 : 0.446;
     const absorbTotal = absorbTickMult * 8;
     const anemoBurst = {
       element: "Anemo" as const,
@@ -345,7 +282,7 @@ class TravelerAnemo extends CharacterBase {
 
     const formulas: Record<string, FormulaEntry> = {
       "traveler-anemo-burst": {
-        label: { zh: "Q 风息激荡（8次）", en: "Q Gust Surge (8 hits)" },
+        label: { zh: "Q伤害×8", en: "Q (×8)" },
         parts: [{ formula: new DirectFormula(qMult, anemoBurst) }],
       },
     };
@@ -356,8 +293,8 @@ class TravelerAnemo extends CharacterBase {
       if (!teamEls.has(el)) continue;
       formulas[`traveler-anemo-burst-${el.toLowerCase()}`] = {
         label: {
-          zh: `Q风+吸收(${el})`,
-          en: `Q Gust + Absorbed (${el})`,
+          zh: `Q伤害×8+吸收(${el})`,
+          en: `Q (×8) + Absorbed (${el})`,
         },
         parts: [
           { formula: new DirectFormula(qMult, anemoBurst) },
@@ -380,17 +317,17 @@ class TravelerAnemo extends CharacterBase {
 // C1: Party within Wake of Earth gets +10% CRIT Rate
 @RegisterCharacter("traveler_geo")
 class TravelerGeo extends CharacterBase {
-  readonly buffs = [
-    // P3 cross-resonance: Geo resonance -> +20% DEF (self)
-    new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-      { key: "def%", value: 0.2 },
-    ]),
+  readonly buffs: InstanceType<typeof StatBuff>[] = [
+    // P3 cross-resonance: all elements Traveler has resonated with
+    ...travelerP3Buffs(this),
     // C1: Inside Wake of Earth, party CRIT Rate +10%
-    new StatBuff(
-      cbs(this, "C1", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 1 ? [{ key: "cr", value: 0.1 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "team" }, [
+            { key: "cr", value: 0.1 },
+          ]),
+        ]
+      : []),
   ];
 
   // E Starfell Sword: 446% Geo DMG (Lv10), 527% (Lv13 C5+)
@@ -400,7 +337,7 @@ class TravelerGeo extends CharacterBase {
     const qMult = this.constellation >= 3 ? 12.56 : 10.64;
     return {
       "traveler-geo-skill": {
-        label: { zh: "E 星陨剑", en: "E Starfell Sword" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -413,8 +350,8 @@ class TravelerGeo extends CharacterBase {
       },
       "traveler-geo-burst": {
         label: {
-          zh: "Q 岩潮叠嶂（4次）",
-          en: "Q Wake of Earth (4 shockwaves)",
+          zh: "Q伤害×4",
+          en: "Q (×4)",
         },
         parts: [
           {
@@ -432,25 +369,37 @@ class TravelerGeo extends CharacterBase {
 
 // Traveler (Electro)
 // E: Abundance Amulets grant ER +20% to absorbing party members
+// P2: Increases amulet ER bonus by 10% of Traveler's ER
 // P3 cross-resonance: Electro resonance -> self +20% ER
 // C2: Falling Thunder hits -> enemies Electro RES -15%
 @RegisterCharacter("traveler_electro")
 class TravelerElectro extends CharacterBase {
-  readonly buffs = [
+  readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
     // E: Abundance Amulets grant ER +20% to absorbing characters (team utility)
     new StatBuff(cbs(this, "E", ["E"]), { receiver: "team" }, [
       { key: "er", value: 0.2 },
     ]),
-    // P3 cross-resonance: Electro resonance -> +20% ER (self)
-    new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-      { key: "er", value: 0.2 },
-    ]),
-    // C2: Falling Thunder hits -> Electro RES -15% for 8s
-    new StatBuff(
-      cbs(this, "C2", ["Q"]),
-      { receiver: "team", filter: { elements: ["Electro"] } },
-      this.constellation >= 2 ? [{ key: "resReduction%", value: 0.15 }] : []
+    // P2: Increases amulet ER bonus by 10% of Traveler's ER
+    new ScalingBuff(
+      cbs(this, "P2", ["E"]),
+      { receiver: "team" },
+      [],
+      "er",
+      "er",
+      0.1
     ),
+    // P3 cross-resonance: all elements Traveler has resonated with
+    ...travelerP3Buffs(this),
+    // C2: Falling Thunder hits -> Electro RES -15% for 8s
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["Q"]),
+            { receiver: "team", filter: { elements: ["Electro"] } },
+            [{ key: "resReduction%", value: 0.15 }]
+          ),
+        ]
+      : []),
   ];
 
   // E Lightning Blade: 3 x 142% = 426% Electro DMG (Lv10), 3 x 167% = 501% (Lv13 C5+)
@@ -463,7 +412,7 @@ class TravelerElectro extends CharacterBase {
     const qMult = qInitial + 12 * qTick;
     return {
       "traveler-electro-skill": {
-        label: { zh: "E 雷影剑（3刀）", en: "E Lightning Blade (3 hits)" },
+        label: { zh: "E伤害×3", en: "E (×3)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -476,8 +425,8 @@ class TravelerElectro extends CharacterBase {
       },
       "traveler-electro-burst": {
         label: {
-          zh: "Q+落雷×12",
-          en: "Q + 12 Falling Thunder",
+          zh: "Q伤害×12",
+          en: "Q (×12)",
         },
         parts: [
           {
@@ -524,17 +473,19 @@ class TravelerDendro extends CharacterBase {
         "dmg%",
         0.001
       ),
-      // P3 cross-resonance: Dendro resonance -> +60 EM (self)
-      new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-        { key: "em", value: 60 },
-      ]),
+      // P3 cross-resonance: all elements Traveler has resonated with
+      ...travelerP3Buffs(this),
       // C6: Lotuslight Transfiguration → +12% DMG for corresponding element
       // Base Dendro (when no transfiguration occurs)
-      new StatBuff(
-        cbs(this, "C6", ["Q"]),
-        { receiver: "onField", filter: { elements: ["Dendro"] } },
-        this.constellation >= 6 ? [{ key: "dmg%", value: 0.12 }] : []
-      ),
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["Q"]),
+              { receiver: "onField", filter: { elements: ["Dendro"] } },
+              [{ key: "dmg%", value: 0.12 }]
+            ),
+          ]
+        : []),
     ];
     // C6: Transfigured element also gets +12% DMG (S10 pattern: Hydro/Electro/Pyro)
     if (this.constellation >= 6) {
@@ -558,12 +509,11 @@ class TravelerDendro extends CharacterBase {
   // Q Lea Lotus Lamp: 144.3% x 12 ticks = 1731.6% (Lv10), 170.3% x 12 = 2043.6% (Lv13 C5+)
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.9 : 4.15;
-    // biome-ignore lint/suspicious/noApproximativeNumericConstant: game talent multiplier, not Math.LOG2E
     const qTickMult = this.constellation >= 5 ? 1.703 : 1.443;
     const qMult = qTickMult * 12;
     return {
       "traveler-dendro-skill": {
-        label: { zh: "E 草缘剑", en: "E Razorgrass Blade" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -576,8 +526,8 @@ class TravelerDendro extends CharacterBase {
       },
       "traveler-dendro-burst": {
         label: {
-          zh: "Q+草灯×12",
-          en: "Q + Lamp (×12)",
+          zh: "Q伤害×12",
+          en: "Q (×12)",
         },
         parts: [
           {
@@ -598,11 +548,9 @@ class TravelerDendro extends CharacterBase {
 // Primarily a self-sustain / utility character - no notable team buff passives
 @RegisterCharacter("traveler_hydro")
 class TravelerHydro extends CharacterBase {
-  readonly buffs = [
-    // P3 cross-resonance: Hydro resonance -> +20% HP (self)
-    new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-      { key: "hp%", value: 0.2 },
-    ]),
+  readonly buffs: InstanceType<typeof StatBuff>[] = [
+    // P3 cross-resonance: all elements Traveler has resonated with
+    ...travelerP3Buffs(this),
   ];
 
   // E Aquacrest Saber (Torrent Surge): 340.7% Hydro (Lv10), 402.2% (Lv13 C3+)
@@ -614,8 +562,8 @@ class TravelerHydro extends CharacterBase {
     return {
       "traveler-hydro-skill": {
         label: {
-          zh: "E喷发激流",
-          en: "E Torrent Surge",
+          zh: "E伤害",
+          en: "E",
         },
         parts: [
           {
@@ -628,7 +576,7 @@ class TravelerHydro extends CharacterBase {
         ],
       },
       "traveler-hydro-burst": {
-        label: { zh: "Q 扬水制流（x4）", en: "Q Rising Waters (x4 ticks)" },
+        label: { zh: "Q伤害×4", en: "Q (×4)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -647,25 +595,52 @@ class TravelerHydro extends CharacterBase {
 // C1: While Blazing/Scorching Threshold active, on-field character deals +6% DMG
 // P3 cross-resonance: Pyro resonance -> self +20% ATK
 // C4: After Q Plains Scorcher, self +20% Pyro DMG% for 9s
+// C6: During Nightsoul's Blessing, NA/CA/Plunge → Pyro + CD +40%
 @RegisterCharacter("traveler_pyro")
 class TravelerPyro extends CharacterBase {
-  readonly buffs = [
-    // P3 cross-resonance: Pyro resonance -> +20% ATK (self)
-    new StatBuff(cbs(this, "P3", ["passive"]), { receiver: "self" }, [
-      { key: "atk%", value: 0.2 },
-    ]),
+  readonly buffs: InstanceType<typeof StatBuff>[] = [
+    // P3 cross-resonance: all elements Traveler has resonated with
+    ...travelerP3Buffs(this),
     // C1: While Threshold active, on-field character deals +6% DMG
-    new StatBuff(
-      cbs(this, "C1", ["E"]),
-      { receiver: "onField" },
-      this.constellation >= 1 ? [{ key: "dmg%", value: 0.06 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "onField" }, [
+            { key: "dmg%", value: 0.06 },
+          ]),
+        ]
+      : []),
+    // C1: If on-field character is in Nightsoul's Blessing, +9% more DMG
+    // Nightsoul's Blessing = Natlan characters
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["E"]),
+            { receiver: "onField", regions: ["Natlan"] },
+            [{ key: "dmg%", value: 0.09 }]
+          ),
+        ]
+      : []),
     // C4: After Q, self +20% Pyro DMG Bonus (火元素伤害加成)
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 4 ? [{ key: "pyro%", value: 0.2 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "selfOnField" }, [
+            { key: "pyro%", value: 0.2 },
+          ]),
+        ]
+      : []),
+    // C6: During Nightsoul's Blessing, NA/CA/Plunge CRIT DMG +40%
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["normal", "charge", "plunge"] },
+            },
+            [{ key: "cd", value: 0.4 }]
+          ),
+        ]
+      : []),
   ];
 
   // E Flowfire Blade (Blazing Threshold): 50.5% x 12 hits = 606% (Lv10), 59.7% x 12 = 716.4% (Lv13 C3+)
@@ -677,8 +652,8 @@ class TravelerPyro extends CharacterBase {
     return {
       "traveler-pyro-skill": {
         label: {
-          zh: "E+焰槛×12",
-          en: "E Blazing Threshold (×12)",
+          zh: "E伤害×12",
+          en: "E (×12)",
         },
         parts: [
           {
@@ -691,7 +666,7 @@ class TravelerPyro extends CharacterBase {
         ],
       },
       "traveler-pyro-burst": {
-        label: { zh: "Q 灼火燎原", en: "Q Plains Scorcher" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -704,4 +679,117 @@ class TravelerPyro extends CharacterBase {
       },
     };
   })();
+}
+
+function manekinFormulas(element: Element) {
+  // All 14 variants (7 elements × 2 genders) share an identical kit:
+  // - No constellations
+  // - P2: Off-field ER regen (utility, no damage)
+  // - P3: Random cosmetic change (no combat effect)
+  const tag = (ability: "skill" | "burst") =>
+    ({ element, ability, reaction: "none" as const }) as const;
+  return {
+    // - E: 241.9% single hit of own element (2 charges)
+    "manekin-skill": {
+      label: { zh: "E伤害", en: "E" },
+      parts: [{ formula: new DirectFormula(2.419, tag("skill")) }],
+    },
+    // - Q: 583.2% summon hit + 50.4% per trespass (0.5s ICD, 8s duration → 16 ticks)
+    "manekin-burst": {
+      label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass ×16" },
+      parts: [
+        { formula: new DirectFormula(5.832, tag("burst")) },
+        { formula: new DirectFormula(0.504, tag("burst")), hits: 16 },
+      ],
+    },
+    // - P1: When leaving field with Q active, Restricted Area explodes for 200% ATK
+    "manekin-p1-explosion": {
+      label: { zh: "P1 Q爆炸", en: "P1 Q Explosion" },
+      parts: [{ formula: new DirectFormula(2.0, tag("burst")) }],
+    },
+  };
+}
+
+@RegisterCharacter("manekin_anemo")
+class ManekinAnemo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Anemo");
+}
+
+@RegisterCharacter("manekin_cryo")
+class ManekinCryo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Cryo");
+}
+
+@RegisterCharacter("manekin_dendro")
+class ManekinDendro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Dendro");
+}
+
+@RegisterCharacter("manekin_electro")
+class ManekinElectro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Electro");
+}
+
+@RegisterCharacter("manekin_geo")
+class ManekinGeo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Geo");
+}
+
+@RegisterCharacter("manekin_hydro")
+class ManekinHydro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Hydro");
+}
+
+@RegisterCharacter("manekin_pyro")
+class ManekinPyro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Pyro");
+}
+
+@RegisterCharacter("manekina_anemo")
+class ManekinaAnemo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Anemo");
+}
+
+@RegisterCharacter("manekina_cryo")
+class ManekinaCryo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Cryo");
+}
+
+@RegisterCharacter("manekina_dendro")
+class ManekinaDendro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Dendro");
+}
+
+@RegisterCharacter("manekina_electro")
+class ManekinaElectro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Electro");
+}
+
+@RegisterCharacter("manekina_geo")
+class ManekinaGeo extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Geo");
+}
+
+@RegisterCharacter("manekina_hydro")
+class ManekinaHydro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Hydro");
+}
+
+@RegisterCharacter("manekina_pyro")
+class ManekinaPyro extends CharacterBase {
+  readonly buffs: StatBuff[] = [];
+  protected readonly formulaMap = manekinFormulas("Pyro");
 }

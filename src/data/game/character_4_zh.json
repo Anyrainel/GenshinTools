@@ -1,5 +1,6 @@
 {
   "aino": {
+    "id": "10000121",
     "name": "爱诺",
     "skills": [
       {
@@ -84,6 +85,7 @@
     "glossary": null
   },
   "amber": {
+    "id": "10000021",
     "name": "安柏",
     "skills": [
       {
@@ -165,6 +167,7 @@
     "glossary": null
   },
   "barbara": {
+    "id": "10000014",
     "name": "芭芭拉",
     "skills": [
       {
@@ -245,6 +248,7 @@
     "glossary": null
   },
   "beidou": {
+    "id": "10000024",
     "name": "北斗",
     "skills": [
       {
@@ -330,6 +334,7 @@
     "glossary": null
   },
   "bennett": {
+    "id": "10000032",
     "name": "班尼特",
     "skills": [
       {
@@ -414,6 +419,7 @@
     "glossary": null
   },
   "candace": {
+    "id": "10000072",
     "name": "坎蒂丝",
     "skills": [
       {
@@ -498,6 +504,7 @@
     "glossary": null
   },
   "charlotte": {
+    "id": "10000088",
     "name": "夏洛蒂",
     "skills": [
       {
@@ -588,6 +595,7 @@
     "glossary": null
   },
   "chevreuse": {
+    "id": "10000090",
     "name": "夏沃蕾",
     "skills": [
       {
@@ -672,6 +680,7 @@
     "glossary": null
   },
   "chongyun": {
+    "id": "10000036",
     "name": "重云",
     "skills": [
       {
@@ -753,6 +762,7 @@
     "glossary": null
   },
   "collei": {
+    "id": "10000067",
     "name": "柯莱",
     "skills": [
       {
@@ -832,6 +842,7 @@
     "glossary": null
   },
   "dahlia": {
+    "id": "10000115",
     "name": "塔利雅",
     "skills": [
       {
@@ -911,6 +922,7 @@
     "glossary": null
   },
   "diona": {
+    "id": "10000039",
     "name": "迪奥娜",
     "skills": [
       {
@@ -995,6 +1007,7 @@
     "glossary": null
   },
   "dori": {
+    "id": "10000068",
     "name": "多莉",
     "skills": [
       {
@@ -1077,6 +1090,7 @@
     "glossary": null
   },
   "faruzan": {
+    "id": "10000076",
     "name": "珐露珊",
     "skills": [
       {
@@ -1161,6 +1175,7 @@
     "glossary": null
   },
   "fischl": {
+    "id": "10000031",
     "name": "菲谢尔",
     "skills": [
       {
@@ -1239,12 +1254,13 @@
       },
       {
         "name": "6. 永夜之禽",
-        "descHtml": "奥兹的存在时间延长2秒。此外，奥兹会协同当前场上自己的角色一起攻击，造成菲谢尔30%攻击力的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。"
+        "descHtml": "奥兹的存在时间延长2秒。此外，奥兹会协同当前场上自己的角色一起攻击，造成菲谢尔30%攻击力的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>奥兹进行协同攻击后，<span style=\"color: #FFD780FF;\">魔女的前夜礼·宵世幻奏</span>中提升攻击力与元素精通的效果提高100%，持续10秒。"
       }
     ],
     "glossary": null
   },
   "freminet": {
+    "id": "10000085",
     "name": "菲米尼",
     "skills": [
       {
@@ -1333,6 +1349,7 @@
     "glossary": null
   },
   "gaming": {
+    "id": "10000092",
     "name": "嘉明",
     "skills": [
       {
@@ -1415,6 +1432,7 @@
     "glossary": null
   },
   "gorou": {
+    "id": "10000055",
     "name": "五郎",
     "skills": [
       {
@@ -1497,6 +1515,7 @@
     "glossary": null
   },
   "iansan": {
+    "id": "10000110",
     "name": "伊安珊",
     "skills": [
       {
@@ -1584,6 +1603,7 @@
     "glossary": null
   },
   "ifa": {
+    "id": "10000113",
     "name": "伊法",
     "skills": [
       {
@@ -1684,6 +1704,7 @@
     ]
   },
   "illuga": {
+    "id": "10000127",
     "name": "叶洛亚",
     "skills": [
       {
@@ -1776,6 +1797,7 @@
     ]
   },
   "jahoda": {
+    "id": "10000124",
     "name": "雅珂达",
     "skills": [
       {
@@ -1873,6 +1895,7 @@
     ]
   },
   "kachina": {
+    "id": "10000100",
     "name": "卡齐娜",
     "skills": [
       {
@@ -1957,6 +1980,7 @@
     "glossary": null
   },
   "kaeya": {
+    "id": "10000015",
     "name": "凯亚",
     "skills": [
       {
@@ -2036,6 +2060,7 @@
     "glossary": null
   },
   "kaveh": {
+    "id": "10000081",
     "name": "卡维",
     "skills": [
       {
@@ -2117,6 +2142,7 @@
     "glossary": null
   },
   "kirara": {
+    "id": "10000061",
     "name": "绮良良",
     "skills": [
       {
@@ -2202,6 +2228,7 @@
     "glossary": null
   },
   "kujou_sara": {
+    "id": "10000056",
     "name": "九条裟罗",
     "skills": [
       {
@@ -2283,6 +2310,7 @@
     "glossary": null
   },
   "kuki_shinobu": {
+    "id": "10000065",
     "name": "久岐忍",
     "skills": [
       {
@@ -2366,6 +2394,7 @@
     "glossary": null
   },
   "lan_yan": {
+    "id": "10000108",
     "name": "蓝砚",
     "skills": [
       {
@@ -2445,6 +2474,7 @@
     "glossary": null
   },
   "layla": {
+    "id": "10000074",
     "name": "莱依拉",
     "skills": [
       {
@@ -2525,6 +2555,7 @@
     "glossary": null
   },
   "lisa": {
+    "id": "10000006",
     "name": "丽莎",
     "skills": [
       {
@@ -2608,6 +2639,7 @@
     "glossary": null
   },
   "lynette": {
+    "id": "10000083",
     "name": "琳妮特",
     "skills": [
       {
@@ -2693,6 +2725,7 @@
     "glossary": null
   },
   "mika": {
+    "id": "10000080",
     "name": "米卡",
     "skills": [
       {
@@ -2778,6 +2811,7 @@
     "glossary": null
   },
   "ningguang": {
+    "id": "10000027",
     "name": "凝光",
     "skills": [
       {
@@ -2854,6 +2888,7 @@
     "glossary": null
   },
   "noelle": {
+    "id": "10000034",
     "name": "诺艾尔",
     "skills": [
       {
@@ -2940,6 +2975,7 @@
     "glossary": null
   },
   "ororon": {
+    "id": "10000105",
     "name": "欧洛伦",
     "skills": [
       {
@@ -3027,6 +3063,7 @@
     "glossary": null
   },
   "razor": {
+    "id": "10000020",
     "name": "雷泽",
     "skills": [
       {
@@ -3113,12 +3150,13 @@
       },
       {
         "name": "6. 天狼",
-        "descHtml": "每10秒，雷泽的大剑将自动充能，使下一次普通攻击引发落雷，造成100%攻击力的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>不处于<span style=\"color: #FFD780FF;\">雷牙</span>状态下时，若落雷击中敌人，会为雷泽积攒一个<span style=\"color: #FFD780FF;\">利爪与苍雷</span>的雷之印。"
+        "descHtml": "每10秒，雷泽的大剑将自动充能，使下一次普通攻击引发落雷，造成100%攻击力的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>不处于<span style=\"color: #FFD780FF;\">雷牙</span>状态下时，若落雷击中敌人，会为雷泽积攒三个元素战技<span style=\"color: #FFD780FF;\">利爪与苍雷</span>中的雷之印。<br>此外，雷泽通过元素战技<span style=\"color: #FFD780FF;\">利爪与苍雷</span>积攒雷之印时，会改为为雷泽积攒三个雷之印。<br>消耗雷之印后的15秒内，雷泽的暴击率提升10%，暴击伤害提升50%。"
       }
     ],
     "glossary": null
   },
   "rosaria": {
+    "id": "10000045",
     "name": "罗莎莉亚",
     "skills": [
       {
@@ -3199,6 +3237,7 @@
     "glossary": null
   },
   "sayu": {
+    "id": "10000053",
     "name": "早柚",
     "skills": [
       {
@@ -3287,6 +3326,7 @@
     "glossary": null
   },
   "sethos": {
+    "id": "10000097",
     "name": "赛索斯",
     "skills": [
       {
@@ -3366,6 +3406,7 @@
     "glossary": null
   },
   "shikanoin_heizou": {
+    "id": "10000059",
     "name": "鹿野院平藏",
     "skills": [
       {
@@ -3448,6 +3489,7 @@
     "glossary": null
   },
   "sucrose": {
+    "id": "10000043",
     "name": "砂糖",
     "skills": [
       {
@@ -3525,12 +3567,13 @@
       },
       {
         "name": "6. 混元熵增论",
-        "descHtml": "<span style=\"color: #FFD780FF;\">禁·风灵作成·柒伍同构贰型</span>如果发生了元素转化，则使队伍中所有角色在技能持续时间内获得20%的对应元素伤害加成。"
+        "descHtml": "<span style=\"color: #FFD780FF;\">禁·风灵作成·柒伍同构贰型</span>如果发生了元素转化，则使队伍中所有角色在技能持续时间内获得20%的对应元素伤害加成，并使队伍中附近的魔导角色额外获得8.57142%的对应元素伤害加成。"
       }
     ],
     "glossary": null
   },
   "thoma": {
+    "id": "10000050",
     "name": "托马",
     "skills": [
       {
@@ -3615,6 +3658,7 @@
     "glossary": null
   },
   "xiangling": {
+    "id": "10000023",
     "name": "香菱",
     "skills": [
       {
@@ -3697,6 +3741,7 @@
     "glossary": null
   },
   "xingqiu": {
+    "id": "10000025",
     "name": "行秋",
     "skills": [
       {
@@ -3778,6 +3823,7 @@
     "glossary": null
   },
   "xinyan": {
+    "id": "10000044",
     "name": "辛焱",
     "skills": [
       {
@@ -3864,6 +3910,7 @@
     "glossary": null
   },
   "yanfei": {
+    "id": "10000048",
     "name": "烟绯",
     "skills": [
       {
@@ -3945,6 +3992,7 @@
     "glossary": null
   },
   "yaoyao": {
+    "id": "10000077",
     "name": "瑶瑶",
     "skills": [
       {
@@ -4029,6 +4077,7 @@
     "glossary": null
   },
   "yun_jin": {
+    "id": "10000064",
     "name": "云堇",
     "skills": [
       {

@@ -32,11 +32,13 @@ class Ifa extends CharacterBase {
       { key: "em", value: 80 },
     ]),
     // C4: After Q, self EM +100
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "self" },
-      this.constellation >= 4 ? [{ key: "em", value: 100 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "self" }, [
+            { key: "em", value: 100 },
+          ]),
+        ]
+      : []),
   ];
 
   // Pure healer/support — no damage formulas modeled
@@ -67,12 +69,10 @@ class Iansan extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P1: After Swift Stormflight hit, self ATK +20%
-      new StatBuff(
-        cbs(this, "P1", ["E", "charge"]),
-        { receiver: "selfOnField" },
-        [{ key: "atk%", value: 0.2 }]
-      ),
+      // P1: After Swift Stormflight hit, Iansan's ATK +20% (personal buff, works off-field)
+      new StatBuff(cbs(this, "P1", ["E", "charge"]), { receiver: "self" }, [
+        { key: "atk%", value: 0.2 },
+      ]),
       // Q: Kinetic Energy Scale — 0.5% ATK per Nightsoul pt (max 27% at 54 pts)
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
@@ -90,10 +90,10 @@ class Iansan extends CharacterBase {
             : 345
       ),
     ];
-    // C2: While off-field with Precise Movement, on-field ATK +30%
+    // C2: While off-field with Precise Movement, on-field character (not Iansan) ATK +30%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "otherOnField" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
@@ -148,11 +148,13 @@ class Ororon extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // C6: After Hypersense, on-field ATK +30% (3 stacks × 10%)
-      new StatBuff(
-        cbs(this, "C6", ["E"]),
-        { receiver: "onField" },
-        this.constellation >= 6 ? [{ key: "atk%", value: 0.3 }] : []
-      ),
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "onField" }, [
+              { key: "atk%", value: 0.3 },
+            ]),
+          ]
+        : []),
     ];
 
     // C1: Nighttide enemies take 50% extra DMG from Hypersense — "伤害提升50%" → dmg%
@@ -223,7 +225,10 @@ class Ororon extends CharacterBase {
         ],
       },
       "ororon-burst": {
-        label: { zh: "Q回响", en: "Q Resonance" },
+        label: {
+          zh: `Q+音波${this.constellation >= 6 ? "+6命超感" : ""}`,
+          en: `Q + Soundwave${this.constellation >= 6 ? " + C6 Hypersense" : ""}`,
+        },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -255,19 +260,7 @@ class Ororon extends CharacterBase {
         ],
       },
       // P1 Hypersense: 160% ATK Electro DMG per trigger (≤ once per 1.8s)
-      // Per-hit damage is fixed — add formula; frequency is irrelevant to per-hit optimization
-      "ororon-hypersense": {
-        label: { zh: "E超感", en: "E Hypersense" },
-        parts: [
-          {
-            formula: new DirectFormula(hypersenseBase, {
-              element: "Electro",
-              ability: "special",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
+      // Per-hit damage is fixed. Ignored due to insignificance.
     };
   })();
 }
@@ -310,7 +303,7 @@ class Kachina extends CharacterBase {
     const qMult = this.constellation >= 5 ? 8.177 : 6.926;
     return {
       "kachina-twirly": {
-        label: { zh: "E转转", en: "E Twirly" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(

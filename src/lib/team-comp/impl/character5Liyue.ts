@@ -102,13 +102,33 @@ class Zibai extends CharacterBase {
 
     if (this.constellation >= 6) {
       // C6: Spirit Steed and Lunar-Crystallize DMG elevated by 48% (assuming 30 excess points consumed)
-      // Filter by reaction (not ability) so it also covers N4 Gleam (normal) and Q 2nd hit (burst)
+      // Split into non-overlapping filters to avoid double-counting on Steed 2nd hit
       buffs.push(
+        // Covers Steed 1st + 2nd hit (skill)
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "elevated%", value: 0.48 }]
+        )
+      );
+      buffs.push(
+        // Covers N4 Gleam (normal + lunarCrystallize)
         new StatBuff(
           cbs(this, "C6", ["E"]),
           {
             receiver: "selfOnField",
-            filter: { reactions: ["lunarCrystallize"] },
+            filter: { abilities: ["normal"], reactions: ["lunarCrystallize"] },
+          },
+          [{ key: "elevated%", value: 0.48 }]
+        )
+      );
+      buffs.push(
+        // Covers Q 2nd hit (burst + lunarCrystallize)
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["burst"], reactions: ["lunarCrystallize"] },
           },
           [{ key: "elevated%", value: 0.48 }]
         )
@@ -261,7 +281,7 @@ class Zibai extends CharacterBase {
           }
         : {}),
       "zibai-burst": {
-        label: { zh: "Q 三垣威仪法", en: "Q Tri-Sphere Eminence" },
+        label: { zh: "Q初段+月结晶", en: "Q Hit 1 + Lunar" },
         parts: [
           {
             formula: new DirectFormula(
@@ -371,7 +391,7 @@ class Xianyun extends CharacterBase {
       "xianyun-driftcloud": {
         label: {
           zh: "E下落×3",
-          en: "A Driftcloud Wave (3 Skyladders)",
+          en: "E Driftcloud Wave (3 Skyladders)",
         },
         parts: [
           {
@@ -438,11 +458,13 @@ class Baizhu extends CharacterBase {
       0.35
     ),
     // C4: After Q, team EM +80 for 15s
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "em", value: 80 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+            { key: "em", value: 80 },
+          ]),
+        ]
+      : []),
     // C6: Spiritvein DMG +8% Max HP
     new ScalingBuff(
       cbs(this, "C6", ["Q"]),
@@ -460,7 +482,7 @@ class Baizhu extends CharacterBase {
     const qMult = this.constellation >= 3 ? 2.063 : 1.747;
     return {
       "baizhu-burst": {
-        label: { zh: "Q 灵气脉总伤", en: "Q Spiritveins Total" },
+        label: { zh: "Q×6", en: "Q (×6)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -521,7 +543,7 @@ class Yelan extends CharacterBase {
 
     const formulas: Record<string, FormulaEntry> = {
       "yelan-skill": {
-        label: { zh: "E 萦络纵命索", en: "E Lingering Lifeline" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
@@ -553,8 +575,8 @@ class Yelan extends CharacterBase {
     if (this.constellation >= 6) {
       formulas["yelan-c6-barb"] = {
         label: {
-          zh: "C6破局矢",
-          en: "Mastermind Barbs (Total 5)",
+          zh: "6命 重击",
+          en: "C6 CA",
         },
         parts: [
           {
@@ -671,7 +693,7 @@ class Zhongli extends CharacterBase {
 
     return {
       "zhongli-hold": {
-        label: { zh: "E长按+炊金馔玉", en: "E Hold (incl. P2)" },
+        label: { zh: "E长按", en: "E Hold" },
         parts: [
           {
             // Hold AoE Geo DMG
@@ -692,8 +714,8 @@ class Zhongli extends CharacterBase {
         ? {
             "zhongli-resonance": {
               label: {
-                zh: "E岩脊共鸣+炊金馔玉",
-                en: "E Stone Stele Resonance (P2)",
+                zh: "E共鸣",
+                en: "E Resonance",
               },
               parts: [
                 {
@@ -709,7 +731,7 @@ class Zhongli extends CharacterBase {
           }
         : {}),
       "zhongli-burst": {
-        label: { zh: "Q+炊金馔玉", en: "Q Planet Befall (incl. P2)" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(
@@ -750,8 +772,8 @@ class HuTao extends CharacterBase {
     const isC6Trigger = this.hpState === "1" && this.constellation >= 6;
 
     const buffs: StatBuff[] = [
-      // P1: After E ends, team (excl. self) CR +12%
-      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
+      // P1: After E ends, all party members except Hu Tao get CR +12%
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "otherOnField" }, [
         { key: "cr", value: 0.12 },
       ]),
       // E: Guide to Afterlife — HP → ATK conversion
@@ -818,11 +840,11 @@ class HuTao extends CharacterBase {
     };
     return {
       "hutao-charged": {
-        label: { zh: "重击", en: "Charged ATK" },
+        label: { zh: "重击", en: "CA" },
         parts: [{ formula: new DirectFormula(2.426, pyroTag) }],
       },
       "hutao-charged-vape": {
-        label: { zh: "重击(蒸发)", en: "Charged ATK (Vape)" },
+        label: { zh: "重击(蒸发)", en: "CA (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(2.426, {
@@ -833,13 +855,13 @@ class HuTao extends CharacterBase {
         ],
       },
       "hutao-blood-blossom": {
-        label: { zh: "E 血梅香", en: "E Blood Blossom" },
+        label: { zh: "E血梅香", en: "E Blood Blossom" },
         parts: [
           { formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra) },
         ],
       },
       "hutao-blood-blossom-vape": {
-        label: { zh: "E 血梅香(蒸发)", en: "E Blood Blossom (Vape)" },
+        label: { zh: "E血梅香(蒸发)", en: "E Blood Blossom (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(
@@ -852,7 +874,7 @@ class HuTao extends CharacterBase {
         ],
       },
       "hutao-burst": {
-        label: { zh: "Q 安神秘法", en: "Q Burst" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -864,7 +886,7 @@ class HuTao extends CharacterBase {
         ],
       },
       "hutao-burst-vape": {
-        label: { zh: "Q 安神秘法(蒸发)", en: "Q Burst (Vape)" },
+        label: { zh: "Q(蒸发)", en: "Q (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(qMult, {
@@ -883,14 +905,14 @@ class HuTao extends CharacterBase {
 class Shenhe extends CharacterBase {
   readonly buffs = [
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
-    // Lv10: 87.64% ATK, Lv13 (C3+): 103.5% ATK
+    // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
     new ScalingBuff(
       cbs(this, "E", ["E"]),
       { receiver: "onField", filter: { elements: ["Cryo"] } },
       [],
       "atk",
       "baseDmg",
-      this.constellation >= 3 ? 1.035 : 0.8764
+      this.constellation >= 3 ? 0.97 : 0.822
     ),
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(
@@ -904,17 +926,27 @@ class Shenhe extends CharacterBase {
       { receiver: "team", filter: { abilities: ["skill", "burst"] } },
       [{ key: "dmg%", value: 0.15 }]
     ),
-    // C2: Q field → Cryo CD +15%
+    // Q: Enemies in field lose 15% Cryo RES and Physical RES
     new StatBuff(
-      cbs(this, "C2", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Cryo"] } },
-      this.constellation >= 2 ? [{ key: "cd", value: 0.15 }] : []
+      cbs(this, "Q", ["Q"]),
+      { receiver: "team", filter: { elements: ["Cryo", "Physical"] } },
+      [{ key: "resReduction%", value: 0.15 }]
     ),
+    // C2: Q field → Cryo CD +15%
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["Q"]),
+            { receiver: "onField", filter: { elements: ["Cryo"] } },
+            [{ key: "cd", value: 0.15 }]
+          ),
+        ]
+      : []),
   ];
 
-  // E Press: Lv10 301%, Lv13 (C3+) 355%
+  // E Press: Lv10 251%, Lv13 (C3+) 296%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 3.55 : 3.01;
+    const eMult = this.constellation >= 3 ? 2.96 : 2.51;
     return {
       "shenhe-skill": {
         label: { zh: "E点按", en: "E Spring Spirit (Press)" },
@@ -946,18 +978,24 @@ class Ganyu extends CharacterBase {
       { key: "cryo%", value: 0.2 },
     ]),
     // C1: Cryo RES -15% on Frostflake hit for 6s (enemy debuff — benefits whole team)
-    new StatBuff(
-      cbs(this, "C1", ["charge"]),
-      { receiver: "team", filter: { elements: ["Cryo"] } },
-      this.constellation >= 1 ? [{ key: "resReduction%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["charge"]),
+            { receiver: "team", filter: { elements: ["Cryo"] } },
+            [{ key: "resReduction%", value: 0.15 }]
+          ),
+        ]
+      : []),
     // C4: Opponents in Q field take increased DMG, ramps 5%→25%
     // Average ≈ 15% over Q duration
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 4 ? [{ key: "dmg%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
+            { key: "dmg%", value: 0.15 },
+          ]),
+        ]
+      : []),
   ];
 
   // Frostflake Arrow + Bloom (Normal ATK talent — no constellation level boost)
@@ -976,7 +1014,14 @@ class Ganyu extends CharacterBase {
         label: { zh: "重击+绽发", en: "CA + Bloom" },
         parts: [
           {
-            formula: new DirectFormula(2.3 + 3.92, {
+            formula: new DirectFormula(2.3, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(3.92, {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
@@ -985,10 +1030,17 @@ class Ganyu extends CharacterBase {
         ],
       },
       "ganyu-frostflake-melt": {
-        label: { zh: "重击+绽发(融)", en: "A Frostflake + Bloom (Melt)" },
+        label: { zh: "重击(融化)", en: "CA (Melt)" },
         parts: [
           {
-            formula: new AmplifyFormula(2.3 + 3.92, {
+            formula: new AmplifyFormula(2.3, {
+              element: "Cryo",
+              ability: "charge",
+              reaction: "melt",
+            }),
+          },
+          {
+            formula: new AmplifyFormula(3.92, {
               element: "Cryo",
               ability: "charge",
               reaction: "melt",
@@ -997,11 +1049,11 @@ class Ganyu extends CharacterBase {
         ],
       },
       "ganyu-q-shard": {
-        label: { zh: "Q 冰棱", en: "Q Ice Shard" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [{ formula: new DirectFormula(qShardMult, cryoBurstTag) }],
       },
       "ganyu-q-shard-melt": {
-        label: { zh: "Q 冰棱(融化)", en: "Q Ice Shard (Melt)" },
+        label: { zh: "Q(融化)", en: "Q (Melt)" },
         parts: [
           {
             formula: new AmplifyFormula(qShardMult, {
@@ -1069,16 +1121,30 @@ class Keqing extends CharacterBase {
   })();
 
   // Charged ATK: Lv10 152%+170% = 322% (no constellation boost)
-  // Q: Lv10 initial 158% + 8×43.2% + final 340% = 843.6%, Lv13 (C3+) 994.8%
+  // Q: Lv10 initial 158% + 8×43.2% + final 340%, Lv13 (C3+) 187% + 8×51% + 401%
   protected readonly formulaMap = (() => {
-    const qTotal =
-      this.constellation >= 3 ? 1.87 + 0.51 * 8 + 4.01 : 1.58 + 0.432 * 8 + 3.4;
+    const isC3 = this.constellation >= 3;
+    const qInitial = isC3 ? 1.87 : 1.58;
+    const qSlash = isC3 ? 0.51 : 0.432;
+    const qFinal = isC3 ? 4.01 : 3.4;
+    const electroBurstTag = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "keqing-charged": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(3.22, {
+            formula: new DirectFormula(1.52, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(1.7, {
               element: "Electro",
               ability: "charge",
               reaction: "none",
@@ -1091,7 +1157,14 @@ class Keqing extends CharacterBase {
         parts: [
           {
             // Aggravate is a Catalyze reaction → CatalyzeFormula
-            formula: new CatalyzeFormula(3.22, {
+            formula: new CatalyzeFormula(1.52, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "aggravate",
+            }),
+          },
+          {
+            formula: new CatalyzeFormula(1.7, {
               element: "Electro",
               ability: "charge",
               reaction: "aggravate",
@@ -1100,15 +1173,11 @@ class Keqing extends CharacterBase {
         ],
       },
       "keqing-burst": {
-        label: { zh: "Q 天街巡游", en: "Q Starward Sword" },
+        label: { zh: "Q 全10段", en: "Q 10 hits" },
         parts: [
-          {
-            formula: new DirectFormula(qTotal, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(qInitial, electroBurstTag) },
+          { formula: new DirectFormula(qSlash, electroBurstTag), hits: 8 },
+          { formula: new DirectFormula(qFinal, electroBurstTag) },
         ],
       },
     };
@@ -1117,24 +1186,39 @@ class Keqing extends CharacterBase {
 
 @RegisterCharacter("qiqi")
 class Qiqi extends CharacterBase {
-  // Primarily a healer; minimal damage-relevant buffs
-  readonly buffs = [];
+  readonly buffs = [
+    // C2: Normal/Charged ATK DMG +15% vs Cryo-affected enemies
+    // Qiqi is Cryo so enemies will always be Cryo-affected; always active
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["normal", "charge"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["normal", "charge"] },
+            },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : []),
+  ];
 
   protected readonly formulaMap = (() => {
-    // E Herald of Frost DMG: Lv10 64.96%, Lv13 (C5+ upgrades E): 76.5%
+    // E Herald of Frost DMG: Lv10 64.8%, Lv13 (C5+ upgrades E): 76.5%
     // ~8 hits over 15s duration
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
-    const eHeraldMult = this.constellation >= 5 ? 0.765 : 0.6496;
+    const eHeraldMult = this.constellation >= 5 ? 0.765 : 0.648;
     return {
       "qiqi-skill-hit": {
-        label: { zh: "E 寒病鬼差(×8)", en: "E Herald of Frost (×8)" },
+        label: { zh: "E伤害×8", en: "E (×8)" },
         parts: [
           {
-            formula: new DirectFormula(eHeraldMult * 8, {
+            formula: new DirectFormula(eHeraldMult, {
               element: "Cryo",
               ability: "skill",
               reaction: "none",
             }),
+            hits: 8,
           },
         ],
       },

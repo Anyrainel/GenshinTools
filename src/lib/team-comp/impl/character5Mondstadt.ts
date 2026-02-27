@@ -1,3 +1,4 @@
+import type { Element } from "@/data/types";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
@@ -41,7 +42,7 @@ class Durin extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
     if (isWhite) {
-      // P1 (White Flame): Pyro RES -20% (×hexMult) on Pyro/Burning reactions
+      // P1 (White Flame): Pyro RES -20% (×hexMult) + corresponding reaction element RES
       const canPyroReact =
         this.teamMeta.hasReaction("vaporize") ||
         this.teamMeta.hasReaction("melt") ||
@@ -52,22 +53,47 @@ class Durin extends CharacterBase {
         this.teamMeta.hasReaction("crystallize");
 
       if (canPyroReact) {
+        const p1Src = cbs(this, "P1", [
+          "Q",
+          "vaporize",
+          "melt",
+          "overloaded",
+          "burning",
+          "burgeon",
+          "swirl",
+          "crystallize",
+        ]);
+        const p1Val = 0.2 * hexMult;
+        // Always add Pyro RES reduction
         buffs.push(
           new StatBuff(
-            cbs(this, "P1", [
-              "Q",
-              "vaporize",
-              "melt",
-              "overloaded",
-              "burning",
-              "burgeon",
-              "swirl",
-              "crystallize",
-            ]),
-            { receiver: "team" },
-            [{ key: "resReduction%", value: 0.2 * hexMult }]
+            p1Src,
+            { receiver: "team", filter: { elements: ["Pyro"] } },
+            [{ key: "resReduction%", value: p1Val }]
           )
         );
+        // Add corresponding reaction element RES reduction per team element
+        const teamEls = Object.values(this.teamMeta.elements);
+        const pyroReactionEls: Array<[Element, ...Element[]]> = [
+          // Hydro for Vaporize, Cryo for Melt, Electro for Overloaded,
+          // Dendro for Burning, Anemo for Pyro Swirl, Geo for Pyro Crystallize
+          ["Hydro"],
+          ["Cryo"],
+          ["Electro"],
+          ["Dendro"],
+          ["Anemo"],
+          ["Geo"],
+        ];
+        for (const [el] of pyroReactionEls) {
+          if (!teamEls.includes(el)) continue;
+          buffs.push(
+            new StatBuff(
+              p1Src,
+              { receiver: "team", filter: { elements: [el] } },
+              [{ key: "resReduction%", value: p1Val }]
+            )
+          );
+        }
       }
     } else {
       // P1 (Dark Decay): Vaporize/Melt DMG +40% (×hexMult)
@@ -87,10 +113,11 @@ class Durin extends CharacterBase {
 
     // P2: After Q, per 100 ATK → burst tick DMG +3% (cap 75%) — modeled as baseDmg%
     // baseDmg% is the correct key for "deal X% of original damage"
+    // Dragon fires off-field; receiver is "self" not "selfOnField"
     buffs.push(
       new ScalingBuff(
         cbs(this, "P2", ["Q"]),
-        { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+        { receiver: "self", filter: { abilities: ["burst"] } },
         [],
         "atk",
         "baseDmg%",
@@ -104,10 +131,11 @@ class Durin extends CharacterBase {
     // Modeled as flat baseDmg scaling from ATK — 20 triggers for White, 10 for Dark
     if (this.constellation >= 1) {
       if (isWhite) {
+        // C1 White Flame: "all other nearby party members" → otherOnField
         buffs.push(
           new ScalingBuff(
             cbs(this, "C1", ["Q"]),
-            { receiver: "onField" },
+            { receiver: "otherOnField" },
             [],
             "atk",
             "baseDmg",
@@ -115,10 +143,11 @@ class Durin extends CharacterBase {
           )
         );
       } else {
+        // C1 Dark Decay: Durin gains stacks; dragon fires off-field → "self"
         buffs.push(
           new ScalingBuff(
             cbs(this, "C1", ["Q"]),
-            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            { receiver: "self", filter: { abilities: ["burst"] } },
             [],
             "atk",
             "baseDmg",
@@ -128,27 +157,51 @@ class Durin extends CharacterBase {
       }
     }
 
-    // C2: After burst, Pyro DMG +50% for team (+ reaction element)
+    // C2: After burst, Pyro DMG +50% for team + corresponding reaction element DMG +50%
     if (this.constellation >= 2) {
       buffs.push(
         new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
           { key: "pyro%", value: 0.5 },
         ])
       );
+      // Add corresponding reaction element DMG bonus (Varka C4 pattern)
+      const teamEls = Object.values(this.teamMeta.elements);
+      for (const el of [
+        "Hydro",
+        "Cryo",
+        "Electro",
+        "Dendro",
+        "Anemo",
+        "Geo",
+      ] as const) {
+        if (!teamEls.includes(el)) continue;
+        const elKey = `${el.toLowerCase()}%` as
+          | "hydro%"
+          | "cryo%"
+          | "electro%"
+          | "dendro%"
+          | "anemo%"
+          | "geo%";
+        buffs.push(
+          new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
+            { key: elKey, value: 0.5 },
+          ])
+        );
+      }
     }
 
-    // C4: Burst DMG +40%
+    // C4: Burst DMG +40% — dragon fires off-field, use "self"
     if (this.constellation >= 4) {
       buffs.push(
         new StatBuff(
           cbs(this, "C4", []),
-          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          { receiver: "self", filter: { abilities: ["burst"] } },
           [{ key: "dmg%", value: 0.4 }]
         )
       );
     }
 
-    // C6: Burst ignores 30% DEF (always)
+    // C6: Burst ignores 30% DEF (always) — dragon fires off-field, use "self"
     // White Flame: enemy DEF -30% (team debuff)
     // Dark Decay: ignores additional 40% DEF (total 70%)
     if (this.constellation >= 6) {
@@ -156,7 +209,7 @@ class Durin extends CharacterBase {
         buffs.push(
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            { receiver: "self", filter: { abilities: ["burst"] } },
             [{ key: "defIgnore%", value: 0.3 }]
           ),
           new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
@@ -167,7 +220,7 @@ class Durin extends CharacterBase {
         buffs.push(
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            { receiver: "self", filter: { abilities: ["burst"] } },
             [{ key: "defIgnore%", value: 0.7 }]
           )
         );
@@ -202,7 +255,7 @@ class Durin extends CharacterBase {
     if (isWhite) {
       return {
         "durin-burst-white": {
-          label: { zh: "Q总伤", en: "Q Total Damage" },
+          label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
           parts: [
             { formula: new DirectFormula(qWhiteInitMult, burstTag) },
             { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 10 },
@@ -212,14 +265,14 @@ class Durin extends CharacterBase {
     }
     return {
       "durin-burst-dark": {
-        label: { zh: "黑蚀之龙总伤", en: "Dark Decay Burst + Dragon" },
+        label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
         parts: [
           { formula: new DirectFormula(qDarkInitMult, burstTag) },
           { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 10 },
         ],
       },
       "durin-burst-dark-vape": {
-        label: { zh: "黑蚀之龙(蒸发)", en: "Dark Decay Burst (Vape)" },
+        label: { zh: "Q (蒸发)", en: "Q (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(qDarkInitMult, {
@@ -303,24 +356,35 @@ class Albedo extends CharacterBase {
             ),
           ]
         : []),
-      // C1: Transient Blossoms regenerate 1.2 Energy (no stat buff)
-      // (Energy is handled by the engine, no StatBuff needed here)
+      // C1: Transient Blossoms regenerate 1.2 Energy (skip per U9)
+      // C1: Also, after E, Albedo's DEF +50% for 20s
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(cbs(this, "C1", ["E"]), { receiver: "self" }, [
+              { key: "def%", value: 0.5 },
+            ]),
+          ]
+        : []),
       // C4: Active characters in Solar Isotoma field: Plunge DMG +30%
-      new StatBuff(
-        cbs(this, "C4", ["E"]),
-        { receiver: "onField", filter: { abilities: ["plunge"] } },
-        this.constellation >= 4 ? [{ key: "dmg%", value: 0.3 }] : []
-      ),
+      ...(this.constellation >= 4
+        ? [
+            new StatBuff(
+              cbs(this, "C4", ["E"]),
+              { receiver: "onField", filter: { abilities: ["plunge"] } },
+              [{ key: "dmg%", value: 0.3 }]
+            ),
+          ]
+        : []),
       // C6: In Solar Isotoma with Crystallize shield (or Moondrifts), DMG +17%
       // Crystallize shield is produced by Geo reactions; gated on hasShielder() as proxy
       // (Moondrifts branch requires Nod-Krai characters, modeled separately as TODO)
-      new StatBuff(
-        cbs(this, "C6", ["E"]),
-        { receiver: "onField" },
-        this.constellation >= 6 && this.teamMeta.hasShielder()
-          ? [{ key: "dmg%", value: 0.17 }]
-          : []
-      ),
+      ...(this.constellation >= 6 && this.teamMeta.hasShielder()
+        ? [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "onField" }, [
+              { key: "dmg%", value: 0.17 },
+            ]),
+          ]
+        : []),
     ];
 
     // C2: Fatal Reckoning — burst DMG +30% DEF × 4 stacks = +120% DEF as baseDmg
@@ -359,11 +423,11 @@ class Albedo extends CharacterBase {
     const blossomMult = this.constellation >= 3 ? 2.84 : 2.4;
     // Burst Lv10: 661%, Lv13 (C5+): 780%
     const burstMult = this.constellation >= 5 ? 7.8 : 6.61;
-    // Fatal Blossom Lv10: 129.6% × 7, Lv13 (C5+): 153% × 7
-    const fatalMult = (this.constellation >= 5 ? 1.53 : 1.296) * 7;
+    // Fatal Blossom Lv10: 129.6% per blossom, Lv13 (C5+): 153% per blossom, 7 blossoms
+    const fatalMult = this.constellation >= 5 ? 1.53 : 1.296;
     return {
       "albedo-blossom": {
-        label: { zh: "E 刹那之花", en: "E Transient Blossom" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
@@ -375,7 +439,7 @@ class Albedo extends CharacterBase {
         ],
       },
       "albedo-burst": {
-        label: { zh: "Q+生灭之花", en: "Q Burst + Fatal Blossoms" },
+        label: { zh: "Q爆发+生灭之花×7", en: "Q Burst + Fatal Blossom ×7" },
         parts: [
           {
             formula: new DirectFormula(burstMult, {
@@ -390,6 +454,7 @@ class Albedo extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            hits: 7,
           },
         ],
       },
@@ -397,8 +462,25 @@ class Albedo extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("diluc")
+const dilucOption = {
+  label: { zh: "敌人血量", en: "Enemy HP" },
+  choices: [
+    {
+      value: "above50",
+      label: { zh: ">50%（C1生效）", en: ">50% (C1 active)" },
+    },
+    {
+      value: "below50",
+      label: { zh: "<50%（C1不生效）", en: "<50% (C1 inactive)" },
+    },
+  ] as const,
+  default: "above50",
+} satisfies OptionDef;
+
+@RegisterCharacter("diluc", dilucOption)
 class Diluc extends CharacterBase {
+  private readonly hp = resolveOption(dilucOption, this.option);
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: After Q, Pyro DMG +20% during infusion
@@ -407,12 +489,14 @@ class Diluc extends CharacterBase {
       ]),
     ];
 
-    if (this.constellation >= 1) {
-      // C1: DMG +15% against enemies with HP > 50% (assume active)
+    if (this.constellation >= 1 && this.hp === "above50") {
+      // C1: DMG +15% against enemies with HP > 50%
       buffs.push(
-        new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
-          { key: "dmg%", value: 0.15 },
-        ])
+        new StatBuff(
+          cbs(this, "C1", ["enemy-high-hp"]),
+          { receiver: "selfOnField" },
+          [{ key: "dmg%", value: 0.15 }]
+        )
       );
     }
     if (this.constellation >= 2) {
@@ -463,7 +547,7 @@ class Diluc extends CharacterBase {
 
     return {
       "diluc-skill": {
-        label: { zh: "E 逆焰之刃三段", en: "E Searing Onslaught (3 hits)" },
+        label: { zh: "E三段", en: "E (3 hits)" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -476,8 +560,8 @@ class Diluc extends CharacterBase {
       },
       "diluc-skill-vape": {
         label: {
-          zh: "E3段(蒸发)",
-          en: "E Searing Onslaught (All Vape)",
+          zh: "E三段(蒸发)",
+          en: "E (3 hits, Vape)",
         },
         parts: [
           {
@@ -490,7 +574,7 @@ class Diluc extends CharacterBase {
         ],
       },
       "diluc-burst": {
-        label: { zh: "Q斩击+爆裂", en: "Q Dawn (Slash + Explosion)" },
+        label: { zh: "Q斩击+爆炸", en: "Q Slash + Explosion" },
         parts: [
           {
             formula: new DirectFormula(qSlash, {
@@ -512,8 +596,8 @@ class Diluc extends CharacterBase {
         ? {
             "diluc-plunge-xianyun": {
               label: {
-                zh: "A 高空下落攻击(附魔/蒸发)",
-                en: "A High Plunge (Infused/Vape)",
+                zh: "下落(蒸发)",
+                en: "Plunge (Vape)",
               },
               parts: [
                 {
@@ -537,64 +621,92 @@ class Mona extends CharacterBase {
     const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2 (combat): 20% of ER as Hydro DMG% (Waterborne Destiny)
+      // Personal passive, always active — use "self" (no on-field restriction)
       new ScalingBuff(
         cbs(this, "P2", ["passive"]),
-        { receiver: "selfOnField" },
+        { receiver: "self" },
         [],
         "er",
         "hydro%",
         0.2
       ),
-      // Q: Stellaris Phantasm — Omen DMG Bonus +60%
-      new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
+      // Q: Stellaris Phantasm — Omen: opponents take +60% DMG (enemy debuff, benefits all)
+      new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "team" }, [
         { key: "dmg%", value: 0.6 },
       ]),
       // C1: Hydro reaction effects +15% (EC, Lunar-Charged, Vaporize, Hydro Swirl, Lunar-Crystallize)
       // "When any of your own party members hits an opponent affected by an Omen" → team-wide
-      new StatBuff(
-        cbs(this, "C1", ["Q"]),
-        {
-          receiver: "team",
-          filter: {
-            reactions: [
-              "electroCharged",
-              "lunarCharged",
-              "vaporize",
-              "swirl",
-              "lunarCrystallize",
-            ],
-          },
-        },
-        this.constellation >= 1 ? [{ key: "reactionDmg%", value: 0.15 }] : []
-      ),
-      // C2: Charged ATK hit → team EM +80
-      new StatBuff(
-        cbs(this, "C2", ["charge"]),
-        { receiver: "team" },
-        this.constellation >= 2 ? [{ key: "em", value: 80 }] : []
-      ),
-      // C4: Omen targets +15% CR
-      new StatBuff(
-        cbs(this, "C4", ["Q"]),
-        { receiver: "onField" },
-        this.constellation >= 4 ? [{ key: "cr", value: 0.15 }] : []
-      ),
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(
+              cbs(this, "C1", ["Q"]),
+              {
+                receiver: "team",
+                filter: {
+                  reactions: [
+                    "electroCharged",
+                    "lunarCharged",
+                    "vaporize",
+                    "swirl",
+                    "lunarCrystallize",
+                  ],
+                },
+              },
+              [{ key: "reactionDmg%", value: 0.15 }]
+            ),
+          ]
+        : []),
+      // C2: Charged Attack hit → all nearby party members EM +80 for 12s
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", ["charge"]), { receiver: "team" }, [
+              { key: "em", value: 80 },
+            ]),
+          ]
+        : []),
+      // C4: Omen targets +15% CR (all party members attacking affected opponents)
+      // C4 also: Hexerei party members gain +15% CD (approximated as team since faction-scoped not supported)
+      ...(this.constellation >= 4
+        ? [
+            new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+              { key: "cr", value: 0.15 },
+            ]),
+            ...(isHexerei
+              ? [
+                  new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+                    { key: "cd", value: 0.15 },
+                  ]),
+                ]
+              : []),
+          ]
+        : []),
       // C6: After entering Illusory Torrent, next Charged Attack +60%/s up to +180% (3s)
       // Modeled at max; ramp-up not tracked (insignificant accuracy difference)
-      new StatBuff(
-        cbs(this, "C6", ["E"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        this.constellation >= 6 ? [{ key: "dmg%", value: 1.8 }] : []
-      ),
+      // C6 also: Charged Attacks against Omen enemies deal 200% original DMG (baseDmg% +1.0)
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              [{ key: "dmg%", value: 1.8 }]
+            ),
+            new StatBuff(
+              cbs(this, "C6", ["Q"]),
+              { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+              [{ key: "baseDmg%", value: 1.0 }]
+            ),
+          ]
+        : []),
     ];
     // P4 (Hexerei): Astral Glow of Mercury — when other party members trigger Vaporize,
     // consumes stacks (max 3), each stack increases that Vaporize DMG by 5% → max +15%
+    // "队伍中自己的其他角色" → otherOnField (benefits other characters, not Mona)
     // Assumed: max 3 stacks always available (maintained via Mona's NA/charge hits)
     if (isHexerei && this.teamMeta.hasReaction("vaporize")) {
       buffs.push(
         new StatBuff(
           cbs(this, "P4", ["normal", "charge", "vaporize"]),
-          { receiver: "team", filter: { reactions: ["vaporize"] } },
+          { receiver: "otherOnField", filter: { reactions: ["vaporize"] } },
           [{ key: "reactionDmg%", value: 0.15 }]
         )
       );
@@ -607,7 +719,7 @@ class Mona extends CharacterBase {
     const qMult = this.constellation >= 3 ? 9.4 : 7.96;
     return {
       "mona-burst": {
-        label: { zh: "Q 泡影破裂", en: "Q Illusory Bubble Explosion" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -626,27 +738,33 @@ class Mona extends CharacterBase {
 class Jean extends CharacterBase {
   readonly buffs = [
     // C2: Jean picks up particle -> Team ATK SPD +15%
-    new StatBuff(
-      cbs(this, "C2", ["orb"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "atkSpd%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["orb"]), { receiver: "team" }, [
+            { key: "atkSpd%", value: 0.15 },
+          ]),
+        ]
+      : []),
     // C4: Q field: Anemo RES -40%
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "team", filter: { elements: ["Anemo"] } },
-      this.constellation >= 4 ? [{ key: "resReduction%", value: 0.4 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(
+            cbs(this, "C4", ["Q"]),
+            { receiver: "team", filter: { elements: ["Anemo"] } },
+            [{ key: "resReduction%", value: 0.4 }]
+          ),
+        ]
+      : []),
   ];
 
-  // E: Lv10 526%, Lv13 (C5+) 621%
+  // E: Lv10 526%, Lv13 (C5+) 620%
   // Q: Lv10 765%, Lv13 (C3+) 903%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 6.21 : 5.26;
+    const eMult = this.constellation >= 5 ? 6.2 : 5.26;
     const qMult = this.constellation >= 3 ? 9.03 : 7.65;
     return {
       "jean-skill": {
-        label: { zh: "E 风压剑", en: "E Gale Blade" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -658,7 +776,7 @@ class Jean extends CharacterBase {
         ],
       },
       "jean-burst": {
-        label: { zh: "Q 蒲公英之风", en: "Q Dandelion Breeze" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -690,25 +808,23 @@ class Venti extends CharacterBase {
         )
       );
     }
-    // C4: On pickup → Venti Anemo DMG +25%
+    // C4: After E/Q → Venti and active party members gain 25% Anemo DMG
+    // "温迪与队伍中自己的当前场上其他角色" → onField (provider + active)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "self" }, [
+        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "onField" }, [
           { key: "anemo%", value: 0.25 },
         ])
       );
     }
-    // C6: Q targets take -20% Anemo RES; Venti gets +100% CD
+    // C6: Q targets take -20% Anemo RES
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
           cbs(this, "C6", ["Q"]),
           { receiver: "team", filter: { elements: ["Anemo"] } },
           [{ key: "resReduction%", value: 0.2 }]
-        ),
-        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "selfOnField" }, [
-          { key: "cd", value: 1.0 },
-        ])
+        )
       );
       // C6: Absorbed element also gets -20% RES (S10 pattern)
       const c6AbsorbElements = ["Pyro", "Hydro", "Cryo", "Electro"] as const;
@@ -723,26 +839,26 @@ class Venti extends CharacterBase {
           )
         );
       }
+      // C6: Venti gains +100% CRIT DMG against affected opponents
+      buffs.push(
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "self" }, [
+          { key: "cd", value: 1.0 },
+        ])
+      );
     }
 
     // P4 (Hexerei): While Stormeye active, after on-field character triggers Swirl,
     // that character's DMG +50% for 4s; Venti's Q deals 135% original DMG (baseDmg% +0.35).
-    // Model +50% per swirl-capable element present in team (Pyro/Hydro/Cryo/Electro).
+    // "该角色造成的伤害提升50%" → universal dmg% buff, not element-specific
     if (
       this.teamMeta.countByFaction("Hexerei") >= 2 &&
       this.teamMeta.hasReaction("swirl")
     ) {
-      const teamEls = Object.values(this.teamMeta.elements);
-      for (const el of ["Pyro", "Hydro", "Cryo", "Electro"] as const) {
-        if (!teamEls.includes(el)) continue;
-        buffs.push(
-          new StatBuff(
-            cbs(this, "P4", ["Q", "swirl"]),
-            { receiver: "onField", filter: { elements: [el] } },
-            [{ key: "dmg%", value: 0.5 }]
-          )
-        );
-      }
+      buffs.push(
+        new StatBuff(cbs(this, "P4", ["Q", "swirl"]), { receiver: "onField" }, [
+          { key: "dmg%", value: 0.5 },
+        ])
+      );
       buffs.push(
         new StatBuff(
           cbs(this, "P4", ["Q", "swirl"]),
@@ -755,18 +871,18 @@ class Venti extends CharacterBase {
     return buffs;
   })();
 
-  // DoT Lv10: 20 × 67.7% = 1354.0%
-  // DoT Lv13 (C3+): 20 × 79.9% = 1598.0%
+  // DoT Lv10: 67.7% per tick, 20 ticks
+  // DoT Lv13 (C3+): 79.9% per tick, 20 ticks
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 3 ? 15.98 : 13.54;
-    const ePressMult = this.constellation >= 5 ? 5.87 : 4.97;
+    const qTickMult = this.constellation >= 3 ? 0.799 : 0.677;
+    const ePressMult = this.constellation >= 5 ? 5.86 : 4.97;
     // NA talent maxes at Lv10 without external buffs.
     const naTotal = 6.153;
     const windsunderMult = 2.5;
 
     return {
       "venti-windsunder": {
-        label: { zh: "E飓风箭", en: "E Wind Arrow" },
+        label: { zh: "Q 普攻飓风箭", en: "Q Windsunder Arrow" },
         parts: [
           {
             formula: new DirectFormula(naTotal * windsunderMult, {
@@ -779,29 +895,31 @@ class Venti extends CharacterBase {
       },
       "venti-burst-total": {
         label: {
-          zh: "Q总风伤",
-          en: "Q Wind's Grand Ode (Total Anemo)",
+          zh: "Q×20",
+          en: "Q×20",
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qTickMult, {
               element: "Anemo",
               ability: "burst",
               reaction: "none",
             }),
+            hits: 20,
           },
         ],
       },
+      // C2: Wherever a Breeze Blows — press E deals 300% of original DMG
       ...(this.constellation >= 2
         ? {
             "venti-c2-skill": {
               label: {
-                zh: "C2E",
-                en: "C2 Skyward Sonnet DMG",
+                zh: "2命 E伤害",
+                en: "C2 E",
               },
               parts: [
                 {
-                  formula: new DirectFormula(ePressMult * 3.0, {
+                  formula: new DirectFormula(ePressMult * 3, {
                     element: "Anemo",
                     ability: "skill",
                     reaction: "none",
@@ -826,18 +944,33 @@ class Klee extends CharacterBase {
         { receiver: "selfOnField", filter: { abilities: ["charge"] } },
         [{ key: "dmg%", value: 0.5 }]
       ),
+      // C1: After Chained Reactions proc, Klee's ATK +60% for 12s (assume active)
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
+              { key: "atk%", value: 0.6 },
+            ]),
+          ]
+        : []),
       // C2: Enemies hit by mines: -23% DEF for 10s
-      new StatBuff(
-        cbs(this, "C2", ["E"]),
-        { receiver: "team" },
-        this.constellation >= 2 ? [{ key: "defReduction%", value: 0.23 }] : []
-      ),
-      // C6: Q active → party +10% Pyro DMG
-      new StatBuff(
-        cbs(this, "C6", ["Q"]),
-        { receiver: "team" },
-        this.constellation >= 6 ? [{ key: "pyro%", value: 0.1 }] : []
-      ),
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+              { key: "defReduction%", value: 0.23 },
+            ]),
+          ]
+        : []),
+      // C6: Q active → other party members +10% Pyro DMG, Klee +50% Pyro DMG
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
+              { key: "pyro%", value: 0.1 },
+            ]),
+            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "selfOnField" }, [
+              { key: "pyro%", value: 0.4 },
+            ]),
+          ]
+        : []),
     ];
     if (isHexerei) {
       // P4 (Hexerei): Boom-Boom Strike with 3 Boom Badges → deals 150% original DMG
@@ -883,8 +1016,25 @@ class Klee extends CharacterBase {
   };
 }
 
-@RegisterCharacter("eula")
+const eulaOption = {
+  label: { zh: "敌人血量", en: "Enemy HP" },
+  choices: [
+    {
+      value: "above50",
+      label: { zh: ">50%（C4不生效）", en: ">50% (C4 inactive)" },
+    },
+    {
+      value: "below50",
+      label: { zh: "<50%（C4生效）", en: "<50% (C4 active)" },
+    },
+  ] as const,
+  default: "below50",
+} satisfies OptionDef;
+
+@RegisterCharacter("eula", eulaOption)
 class Eula extends CharacterBase {
+  private readonly hp = resolveOption(eulaOption, this.option);
+
   readonly buffs = [
     // E (Hold, 2 stacks): Physical RES -25%, Cryo RES -25%
     new StatBuff(
@@ -896,37 +1046,73 @@ class Eula extends CharacterBase {
       [{ key: "resReduction%", value: 0.25 }]
     ),
     // C1: After consuming Grimheart, Physical DMG +30%
-    new StatBuff(
-      cbs(this, "C1", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 1 ? [{ key: "phys%", value: 0.3 }] : []
-    ),
-    // C4: Lightfall DMG +25% vs enemies HP < 50% (assume active)
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation >= 4 ? [{ key: "dmg%", value: 0.25 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "selfOnField" }, [
+            { key: "phys%", value: 0.3 },
+          ]),
+        ]
+      : []),
+    // C4: Lightfall DMG +25% vs enemies HP < 50%
+    ...(this.constellation >= 4 && this.hp === "below50"
+      ? [
+          new StatBuff(
+            cbs(this, "C4", ["Q", "enemy-low-hp"]),
+            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            [{ key: "dmg%", value: 0.25 }]
+          ),
+        ]
+      : []),
   ];
 
+  // E Tap: Lv10 264%, Lv13 (C5+) 311%
+  // E Hold: Lv10 442%, Lv13 (C5+) 522%; Icewhirl Brand: 173%/204% × 2
   // Q initial Cryo hit: Lv10 442%, Lv13 (C3+) 522%
   // Q Lightfall Sword — base + per-stack DMG
   // Typical stacks: C0-C5 ~13, C6 ~20
   // Lv10: 725.6% + 148.2% × stacks, Lv13 (C3+): 922.3% + 188.4% × stacks
-  // P1 Shattered Lightfall: 50% of Lightfall base DMG (after consuming 2 Grimheart)
+  // P1 Shattered Lightfall: 50% of Lightfall base DMG (on hold E consuming 2 Grimheart)
   protected readonly formulaMap = (() => {
-    const qInitialMult = this.constellation >= 3 ? 5.22 : 4.42;
-    const baseMult = this.constellation >= 3 ? 9.223 : 7.256;
-    const stackMult = this.constellation >= 3 ? 1.884 : 1.482;
+    const hasC5 = this.constellation >= 5;
+    const hasC3 = this.constellation >= 3;
+    const tapMult = hasC5 ? 3.11 : 2.64;
+    const holdMult = hasC5 ? 5.22 : 4.42;
+    const icewhirlMult = hasC5 ? 2.04 : 1.73;
+    const qInitialMult = hasC3 ? 5.22 : 4.42;
+    const baseMult = hasC3 ? 9.223 : 7.256;
+    const stackMult = hasC3 ? 1.884 : 1.482;
     const stacks = this.constellation >= 6 ? 20 : 13;
     const totalMult = baseMult + stackMult * stacks;
     const maxMult = baseMult + stackMult * 30;
+    const cryoSkill = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const physBurst = {
       element: "Physical" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
+      "eula-skill-tap": {
+        label: { zh: "E短按", en: "E Tap" },
+        parts: [{ formula: new DirectFormula(tapMult, cryoSkill) }],
+      },
+      "eula-skill-hold": {
+        label: {
+          zh: "E长按+P1碎裂",
+          en: "E Hold + P1 Shattered",
+        },
+        parts: [
+          { formula: new DirectFormula(holdMult, cryoSkill) },
+          {
+            formula: new DirectFormula(icewhirlMult, cryoSkill),
+            hits: 2,
+          },
+          { formula: new DirectFormula(baseMult * 0.5, physBurst) },
+        ],
+      },
       "eula-burst-lightfall": {
         label: {
           zh: `Q初击+光降${stacks}层`,
@@ -959,13 +1145,294 @@ class Eula extends CharacterBase {
           { formula: new DirectFormula(maxMult, physBurst) },
         ],
       },
-      "eula-p1-shattered": {
-        label: {
-          zh: "P1碎裂光降之剑",
-          en: "P1 Shattered Lightfall",
-        },
-        parts: [{ formula: new DirectFormula(baseMult * 0.5, physBurst) }],
-      },
     };
+  })();
+}
+
+// ─── Varka ───────────────────────────────────────────────────
+
+@RegisterCharacter("varka")
+class Varka extends CharacterBase {
+  /** Priority element from team: Pyro > Hydro > Electro > Cryo */
+  private readonly priorityElement: Element | null = (() => {
+    const teamEls = Object.values(this.teamMeta.elements);
+    const priority: Element[] = ["Pyro", "Hydro", "Electro", "Cryo"];
+    for (const el of priority) {
+      if (teamEls.includes(el)) return el;
+    }
+    return null;
+  })();
+
+  readonly buffs = (() => {
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+
+    // C1: Lyrical Libation — first Four Winds or Azure Devour deals 200% original DMG
+    // = baseDmg% +1.0 (doubles the damage), scoped to skill (Four Winds) and charge (Azure Devour)
+    if (this.constellation >= 1) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C1", ["E"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["skill", "charge"] },
+          },
+          [{ key: "baseDmg%", value: 1.0 }]
+        )
+      );
+    }
+
+    // P1: Dawn Wind's March — per 1000 ATK, +10% Anemo DMG + priority element DMG, cap 25%
+    // Only activates when PHEC characters are in the team (i.e., priorityElement exists)
+    const pe = this.priorityElement;
+    if (pe) {
+      const peKey = `${pe.toLowerCase()}%` as
+        | "pyro%"
+        | "hydro%"
+        | "electro%"
+        | "cryo%";
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P1", []),
+          { receiver: "selfOnField" },
+          [],
+          "atk",
+          "anemo%",
+          0.0001,
+          0.25
+        )
+      );
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "P1", []),
+          { receiver: "selfOnField" },
+          [],
+          "atk",
+          peKey,
+          0.0001,
+          0.25
+        )
+      );
+
+      // P1 pair bonus: baseDmg% for Sturm und Drang attacks (NA/CA/Skill)
+      // >=2 Anemo OR >=2 same PHEC → 140% (baseDmg% +0.4)
+      // >=2 Anemo AND >=2 same PHEC → 220% (baseDmg% +1.2)
+      const hasAnemo2 = this.teamMeta.countByElement("Anemo") >= 2;
+      const hasPhec2 = (["Pyro", "Hydro", "Electro", "Cryo"] as const).some(
+        (e) => this.teamMeta.countByElement(e) >= 2
+      );
+      const pairBonus =
+        hasAnemo2 && hasPhec2 ? 1.2 : hasAnemo2 || hasPhec2 ? 0.4 : 0;
+      if (pairBonus > 0) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "P1", []),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["normal", "charge", "skill"] },
+            },
+            [{ key: "baseDmg%", value: pairBonus }]
+          )
+        );
+      }
+    }
+
+    // P2: Wind's Vanguard — Azure Fang's Oath stacks, +7.5% DMG per stack, max 4
+    // Assume max stacks in sustained Swirl rotation (Varka is Anemo DPS)
+    if (this.teamMeta.hasReaction("swirl")) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P2", ["swirl"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge", "skill"] },
+          },
+          [{ key: "dmg%", value: 0.075 * 4 }]
+        )
+      );
+    }
+
+    // C4: Swirl triggers 20% Anemo DMG bonus + corresponding element DMG bonus for all nearby party members
+    // Swirl requires Anemo + one of {Pyro, Hydro, Electro, Cryo}; Varka is Anemo, so just needs a teammate
+    if (this.constellation >= 4 && this.teamMeta.hasReaction("swirl")) {
+      buffs.push(
+        new StatBuff(cbs(this, "C4", ["swirl"]), { receiver: "team" }, [
+          { key: "anemo%", value: 0.2 },
+        ])
+      );
+      // Add corresponding element DMG bonus for each element that can participate in Swirl
+      const teamEls = Object.values(this.teamMeta.elements);
+      for (const el of ["Pyro", "Hydro", "Electro", "Cryo"] as const) {
+        if (!teamEls.includes(el)) continue;
+        const elKey = `${el.toLowerCase()}%` as
+          | "pyro%"
+          | "hydro%"
+          | "electro%"
+          | "cryo%";
+        buffs.push(
+          new StatBuff(cbs(this, "C4", ["swirl"]), { receiver: "team" }, [
+            { key: elKey, value: 0.2 },
+          ])
+        );
+      }
+    }
+
+    // C6: Azure Fang's Oath stacks increase CRIT DMG by 20% per stack, max 4 = 80%
+    if (this.constellation >= 6 && this.teamMeta.hasReaction("swirl")) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["swirl"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge", "skill"] },
+          },
+          [{ key: "cd", value: 0.2 * 4 }]
+        )
+      );
+    }
+
+    return buffs;
+  })();
+
+  protected readonly formulaMap = (() => {
+    const el = this.priorityElement;
+    // Element-specific key for the right hand (or Anemo if no priority element)
+    const rightEl = el ?? ("Anemo" as const);
+
+    // Skill talent levels: C3 upgrades E (Lv10 → Lv13)
+    const eLv13 = this.constellation >= 3;
+    // Burst talent levels: C5 upgrades Q (Lv10 → Lv13)
+    const qLv13 = this.constellation >= 5;
+
+    // ── Sturm und Drang Normal Attack multipliers (E talent) ──
+    // Each stage has two values: right hand (priority element) + left hand (Anemo)
+    // Lv10 / Lv13 from game data
+    const sudN1Right = eLv13 ? 1.96 : 1.617;
+    // Stage 1 is single-hit (only right hand — game data lists one multiplier)
+    const sudN2Right = eLv13 ? 0.718 : 0.593;
+    const sudN2Left = eLv13 ? 1.334 : 1.101;
+    const sudN3Right = eLv13 ? 0.971 : 0.801;
+    const sudN3Left = eLv13 ? 1.804 : 1.488;
+    const sudN4Right = eLv13 ? 1.66 : 1.37;
+    const sudN4Left = eLv13 ? 0.894 : 0.738;
+    const sudN5Right = eLv13 ? 2.088 : 1.723;
+    const sudN5Left = eLv13 ? 1.125 : 0.928;
+
+    // ── Four Winds' Ascension multipliers (E talent) ──
+    const fwRight = eLv13 ? 3.735 : 3.164;
+    const fwLeft = eLv13 ? 2.011 : 1.704;
+
+    // ── Azure Devour multipliers (E talent) ──
+    const azRight = eLv13 ? 1.989 : 1.685;
+    const azLeft = eLv13 ? 1.071 : 0.907;
+
+    // ── Burst multipliers (Q talent) ──
+    const q1 = qLv13 ? 7.16 : 6.065;
+    const q2 = qLv13 ? 3.856 : 3.266;
+
+    // ── C2: extra 800% ATK Anemo AoE hit ──
+    const c2Mult = 8.0;
+
+    const normalTag = (element: Element | "Anemo") => ({
+      element: element as Element,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    });
+    const skillTag = (element: Element | "Anemo") => ({
+      element: element as Element,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    });
+    const chargeTag = (element: Element | "Anemo") => ({
+      element: element as Element,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    });
+    const burstTag = (element: Element | "Anemo") => ({
+      element: element as Element,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    });
+
+    const formulas: Record<string, FormulaEntry> = {};
+
+    // ── 1. Sturm und Drang Normal Attacks (5 stages combined) ──
+    // Each stage: right hand (priority element or Anemo) + left hand (Anemo)
+    // Stage 1 is single-hit (only right hand listed as one multiplier)
+    const naParts: { formula: DirectFormula; hits?: number }[] = [];
+
+    const rTag = normalTag(rightEl);
+    const aTag = normalTag("Anemo");
+
+    // N1: single hit (right hand only per game data — 161.7%/196%)
+    naParts.push({ formula: new DirectFormula(sudN1Right, rTag) });
+
+    // N2: right hand + left hand
+    naParts.push({ formula: new DirectFormula(sudN2Right, rTag) });
+    naParts.push({ formula: new DirectFormula(sudN2Left, aTag) });
+
+    // N3: right hand + left hand
+    naParts.push({ formula: new DirectFormula(sudN3Right, rTag) });
+    naParts.push({ formula: new DirectFormula(sudN3Left, aTag) });
+
+    // N4: right hand + left hand
+    naParts.push({ formula: new DirectFormula(sudN4Right, rTag) });
+    naParts.push({ formula: new DirectFormula(sudN4Left, aTag) });
+
+    // N5: right hand + left hand
+    naParts.push({ formula: new DirectFormula(sudN5Right, rTag) });
+    naParts.push({ formula: new DirectFormula(sudN5Left, aTag) });
+
+    formulas["varka-normal"] = {
+      label: { zh: "狂飙突进普攻5段", en: "Sturm und Drang NA (5 stages)" },
+      parts: naParts,
+    };
+
+    // ── 2. Four Winds' Ascension (only when priority element present) ──
+    if (el) {
+      const fwParts: { formula: DirectFormula; hits?: number }[] = [
+        { formula: new DirectFormula(fwRight, skillTag(el)) },
+        { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
+      ];
+      // C2: extra 800% ATK Anemo AoE hit
+      if (this.constellation >= 2) {
+        fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
+      }
+      formulas["varka-four-winds"] = {
+        label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
+        parts: fwParts,
+      };
+    }
+
+    // ── 3. Azure Devour (only when priority element present) ──
+    // "特殊重击" — still classified as charge per S4 rule (no "不被视为重击伤害")
+    if (el) {
+      const azParts: { formula: DirectFormula; hits?: number }[] = [
+        { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
+        { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
+      ];
+      // C2: extra 800% ATK Anemo AoE hit
+      if (this.constellation >= 2) {
+        azParts.push({
+          formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
+        });
+      }
+      formulas["varka-azure-devour"] = {
+        label: { zh: "苍噬", en: "Azure Devour" },
+        parts: azParts,
+      };
+    }
+
+    // ── 4. Q: Northwind Avatar (2 hits) ──
+    // First hit converts to team priority element if available, second is always Anemo
+    const q1El = el ?? ("Anemo" as const);
+    formulas["varka-burst"] = {
+      label: { zh: "Q我即朔风", en: "Q Northwind Avatar" },
+      parts: [
+        { formula: new DirectFormula(q1, burstTag(q1El)) },
+        { formula: new DirectFormula(q2, burstTag("Anemo")) },
+      ],
+    };
+
+    return formulas;
   })();
 }

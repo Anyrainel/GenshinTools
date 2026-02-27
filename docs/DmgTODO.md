@@ -18,27 +18,6 @@
 - **nefer C6**: formula restructure needed — complex interaction between elevated% buff and multi-formula self/shade split
 - **varesa C4**: mutual exclusivity between Fiery Passion (+100% burst dmg%) and Diligent Refinement (+5×ATK plunge baseDmg) — one-time buff for a single formula, cannot cleanly model both branches
 
-### Missing formula entries
-- **citlali C4**: Obsidian Skull 1800% EM Cryo formula not added
-- **shenhe Q**: field DoT ticks (59.6% / 70.4%) not modeled
-- **qiqi Q**: talisman DMG not modeled (pure healer)
-- **gorou P2**: DEF-based E/Q DMG scaling not modeled (pure support)
-- **faruzan E**: polyhedron hit (267.8%) not modeled (only Collapse Vortex in runbook)
-- **baizhu Q**: Spiritvein hit count depends on incoming damage; approximated as ×6
-- **sethos Q**: Dusk Bolt (353.1% EM) not modeled
-- **kaveh C6**: Pairidaeza's Light (61.8% ATK Dendro) not modeled
-- **collei / kaveh P1**: Sprout effect (40% ATK × 3s) not modeled
-- **xinyan E**: DoT (60.5%) and Q Pyro DoT (72%) not modeled
-- **candace C6**: The Overflow wave (15% HP Hydro, every 2.3s) not modeled
-- **nilou E**: Dance of Haftkarsvar multi-step hits not modeled (only Q + Bountiful Core)
-- **cyno C6**: Raiment extra Duststalker Bolt per Normal not modeled
-- **aloy E**: Freeze Bomb / Chillwater Bomblet hits not modeled
-- **dehya E**: Molten Inferno coordinated attack not modeled (only Q)
-- **traveler_hydro E**: Hold mode Dewdrop hits (59% per hit, up to 6s) not modeled
-- **kaedehara_kazuha Q**: Absorbed-element slash/DoT damage not modeled (low significance relative to swirl/team buff value)
-- **sayu E**: Hold mode absorption damage not modeled (no E hold formula exists as base)
-- **lauma C6**: Sanctuary extra Lunar-Bloom hit per tick not modeled (periodic, requires Ascendant Gleam)
-
 ### Important Approximations (documented in comments)
 - **xiangling Q**: Pyronado tick count approximated as ~10 (C0–C3) or ~14 (C4+)
 - **shenhe E**: Icy Quill trigger quota (5 press / 7 hold) not enforced — modeled as unlimited

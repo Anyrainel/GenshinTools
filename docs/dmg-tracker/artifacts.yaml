@@ -1,0 +1,66 @@
+# Artifacts Damage Tracker
+- id: ocean-hued-clam-4pc
+  entity: ocean_hued_clam
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    4pc healing bubble deals 90% of accumulated healing (up to 30,000 max) as fixed
+    damage. Modeled as empty buffs array.
+  detail: >
+    Separate damage source with fixed damage based on healing accumulation. No formula
+    created due to low utility from fixed (non-scalable) damage.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: defenders-will-4pc
+  entity: defenders_will
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    4pc: Elemental RES +30% per party element. Pure defense, non-damage.
+  detail: >
+    Added DefendersWill4pc class with halfSetId "def%-30" and empty buffs array.
+    Defensive RES bonus is not damage-relevant per rule U9.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: gambler-4pc
+  entity: gambler
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    4pc: Defeating opponent resets Elemental Skill CD. Utility, non-damage.
+  detail: >
+    Added Gambler4pc class with halfSetId "skill-dmg%-20" and empty buffs array.
+    CD reset is utility-only per rule U9.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: scholar-4pc
+  entity: scholar
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    4pc: Gaining particles/orbs gives 3 Energy to Bow/Catalyst users. Utility, non-damage.
+  detail: >
+    Added Scholar4pc class with halfSetId "er-20" and empty buffs array.
+    Energy grant is utility-only per rule U9.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: the-exile-4pc
+  entity: the_exile
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    4pc: Using Burst regenerates 2 Energy for party every 2s for 6s. Utility, non-damage.
+  detail: >
+    Added TheExile4pc class with halfSetId "er-20" and empty buffs array.
+    Energy regen is utility-only per rule U9.
+  created: "2026-02-26"
+  resolved: "2026-02-26"

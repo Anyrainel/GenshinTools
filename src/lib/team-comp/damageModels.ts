@@ -712,11 +712,17 @@ export abstract class WeaponBase implements IStatProvider {
 
 /** Base class for 4-piece artifact set extensions (4pc bonus only) */
 export abstract class ArtifactSetBase implements IStatProvider {
+  /** Raw option string from CombatOpts. Subclasses narrow via resolveOption(). */
+  protected readonly option: string;
+
   constructor(
     readonly artifactSetId: string,
     readonly charId: string,
-    readonly teamMeta: TeamMeta
-  ) {}
+    readonly teamMeta: TeamMeta,
+    combatOpts: CombatOpts = {}
+  ) {
+    this.option = combatOpts[artifactSetId] ?? "";
+  }
 
   abstract readonly stats: StatEntry[];
   abstract readonly buffs: StatBuff[];
@@ -769,7 +775,8 @@ type WeaponCtor = new (
 type ArtifactSetCtor = new (
   artifactSetId: string,
   charId: string,
-  teamMeta: TeamMeta
+  teamMeta: TeamMeta,
+  combatOpts?: CombatOpts
 ) => ArtifactSetBase;
 
 type ArtifactHalfSetCtor = new (
@@ -802,10 +809,11 @@ export function RegisterWeapon(weaponId: string, optionDef?: OptionDef) {
   };
 }
 
-/** @RegisterArtifactSet("crimson_witch_of_flames") — registers a 4pc ArtifactSetBase */
-export function RegisterArtifactSet(setId: string) {
+/** @RegisterArtifactSet("crimson_witch_of_flames") or @RegisterArtifactSet("berserker", berserkerOption) */
+export function RegisterArtifactSet(setId: string, optionDef?: OptionDef) {
   return (target: ArtifactSetCtor, _context: ClassDecoratorContext) => {
     artifactSetRegistry.set(setId, target);
+    if (optionDef) optionRegistry.set(setId, optionDef);
   };
 }
 
@@ -845,11 +853,12 @@ export function createWeapon(
 export function createArtifactSet(
   setId: string,
   charId: string,
-  teamMeta: TeamMeta
+  teamMeta: TeamMeta,
+  combatOpts: CombatOpts = {}
 ): ArtifactSetBase {
   const Ctor = artifactSetRegistry.get(setId);
   if (!Ctor) throw new Error(`No artifact set registered for: ${setId}`);
-  return new Ctor(setId, charId, teamMeta);
+  return new Ctor(setId, charId, teamMeta, combatOpts);
 }
 
 export function createArtifactHalfSet(
@@ -865,7 +874,7 @@ export function createArtifactHalfSet(
 
 // ─── Option Schema Helpers ───
 
-/** Query the declared option schema for an entity (character or weapon). Returns null if no options. */
+/** Query the declared option schema for an entity (character, weapon, or artifact set). Returns null if no options. */
 export function getEntityOption(entityId: string): OptionDef | null {
   return optionRegistry.get(entityId) ?? null;
 }

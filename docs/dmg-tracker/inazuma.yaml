@@ -1,0 +1,123 @@
+# Inazuma Damage Tracker
+- id: gorou-p2-def-scaling
+  entity: gorou
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    DEF-based E/Q DMG scaling not modeled (pure support).
+  detail: >
+    Gorou is a pure DEF-buffing support not listed in DmgRunbook. His personal
+    damage (E 193-228% DEF, Q 177-209% DEF, Crystal Collapse 110-130% DEF) is
+    negligible compared to his team buff value. Estimated <5% DPS contribution
+    in any team where he appears.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: raiden-e-coordinated
+  entity: raiden_shogun
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Eye of Stormy Judgment coordinated attack fires every 0.9s based on ally actions.
+  detail: >
+    Periodic proc triggered by ally damage events. Complex combat state interaction
+    requiring per-hit tracking across the team.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: ayato-c6-extra-strikes
+  entity: kamisato_ayato
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 grants 2 extra Shunsuiken strikes on first post-E hit.
+  detail: >
+    One-time bonus on first hit after E activation. Low overall DPS contribution
+    relative to modeling complexity.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: kokomi-c1-extra-fish
+  entity: sangonomiya_kokomi
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C1 extra fish on last Normal combo hit (doesn't count as Normal ATK).
+  detail: >
+    Periodic proc on specific combo finisher. Does not count as Normal ATK so it
+    bypasses standard formula routing.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: shinobu-c4-thundergrass
+  entity: kuki_shinobu
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C4 Thundergrass Mark on-field NA/CA/Plunge hit (every 5s, 9.7% HP).
+  detail: >
+    Periodic proc with 5s cooldown. Low DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: sayu-e-hold-absorption
+  entity: sayu
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E hold mode absorption damage not modeled (no E hold formula exists as base).
+  detail: >
+    Sayu is a healer/swirl support not listed in DmgRunbook. E hold absorption
+    ticks are 30.2-35.7% per hit (very low multiplier), and the kick elemental
+    DMG is 137.1-161.8%. Her field time is minimal in typical rotations.
+    Estimated <5% DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: kaedehara-kazuha-q-absorption
+  entity: kaedehara_kazuha
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q absorbed-element slash/DoT damage not modeled. Low significance relative to
+    swirl/team buff value.
+  detail: >
+    Not required by DmgRunbook (only C6 high plunge is required, already implemented).
+    Q absorbed-element DoT is 65-76% per tick (5 ticks = ~325-380% total in absorbed
+    element). Kazuha's primary value is P2 team elemental DMG% buff and swirl damage,
+    not personal talent damage. The absorbed element portion is <5% of total team DPS
+    in typical support rotations.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: chiori-c2-kinu-coordinated
+  entity: chiori
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C2 Kinu periodic coordinated attacks not modeled.
+  detail: >
+    Hard to combine with per-hit triggered damage. Periodic coordinated attack
+    with complex interaction model.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: kirara-c4-shield-coordinated
+  entity: kirara
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C4 shield-triggered coordinated attack (periodic, every ~5s) not modeled.
+  detail: >
+    Periodic proc with long cooldown. Low DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-25"

@@ -18,7 +18,7 @@ describe("WeaponCard", () => {
   it("renders without opacity when weapon is owned", () => {
     const { container } = render(<WeaponCard weapon={MOCK_WEAPON} />);
 
-    const cardDiv = container.querySelector(".w-\\[200px\\]");
+    const cardDiv = container.querySelector("button > div");
     expect(cardDiv?.className).not.toContain("opacity-40");
   });
 
@@ -27,7 +27,7 @@ describe("WeaponCard", () => {
 
     const { container } = render(<WeaponCard weapon={MOCK_WEAPON} />);
 
-    const cardDiv = container.querySelector(".w-\\[200px\\]");
+    const cardDiv = container.querySelector("button > div");
     expect(cardDiv?.className).toContain("opacity-40");
   });
 

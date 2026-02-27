@@ -67,8 +67,8 @@ class Chevreuse extends CharacterBase {
       ? {
           "chevreuse-c2-chain": {
             label: {
-              zh: "C2 连锁殉爆伤害",
-              en: "C2 Chain Explosion DMG",
+              zh: "2命 E伤害",
+              en: "C2 E",
             },
             parts: [
               {
@@ -110,6 +110,16 @@ class Charlotte extends CharacterBase {
         ])
       );
     }
+    // C4: Q hitting marked enemies → Q DMG +10%
+    if (this.constellation >= 4) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["Q"]),
+          { receiver: "self", filter: { abilities: ["burst"] } },
+          [{ key: "dmg%", value: 0.1 }]
+        )
+      );
+    }
     return buffs;
   })();
 
@@ -122,8 +132,8 @@ class Charlotte extends CharacterBase {
       ? {
           "charlotte-c6-coord": {
             label: {
-              zh: "C6 协同攻击伤害",
-              en: "C6 Coordinated Attack DMG",
+              zh: "6命 协同攻击",
+              en: "C6 Coordinated",
             },
             parts: [
               {
@@ -163,32 +173,38 @@ class Freminet extends CharacterBase {
     }
 
     // C1: E Shattering Pressure CR +15%
-    buffs.push(
-      new StatBuff(
-        cbs(this, "C1", []),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
-      )
-    );
+    if (this.constellation >= 1) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C1", []),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "cr", value: 0.15 }]
+        )
+      );
+    }
 
     if (canC4C6) {
       // C4: After Frozen/Shatter/Superconduct, ATK +9% ×2 stacks
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C4", ["frozen", "shatter", "superconduct"]),
-          { receiver: "selfOnField" },
-          this.constellation >= 4 ? [{ key: "atk%", value: 0.18 }] : []
-        )
-      );
+      if (this.constellation >= 4) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C4", ["frozen", "shatter", "superconduct"]),
+            { receiver: "selfOnField" },
+            [{ key: "atk%", value: 0.18 }]
+          )
+        );
+      }
 
       // C6: After Frozen/Shatter/Superconduct, CD +12% ×3 stacks
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C6", ["frozen", "shatter", "superconduct"]),
-          { receiver: "selfOnField" },
-          this.constellation >= 6 ? [{ key: "cd", value: 0.36 }] : []
-        )
-      );
+      if (this.constellation >= 6) {
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C6", ["frozen", "shatter", "superconduct"]),
+            { receiver: "selfOnField" },
+            [{ key: "cd", value: 0.36 }]
+          )
+        );
+      }
     }
     return buffs;
   })();
@@ -211,7 +227,7 @@ class Freminet extends CharacterBase {
         ],
       },
       "freminet-burst": {
-        label: { zh: "Q全套", en: "Q Combo" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(5.731, {
@@ -228,23 +244,45 @@ class Freminet extends CharacterBase {
 
 @RegisterCharacter("lynette")
 class Lynette extends CharacterBase {
+  // P2 requires Bogglecat Box to absorb an element (Hydro/Pyro/Cryo/Electro)
+  private readonly hasAbsorbableElement = Object.values(
+    this.teamMeta.elements
+  ).some(
+    (el) => el === "Hydro" || el === "Pyro" || el === "Cryo" || el === "Electro"
+  );
+
   readonly buffs = [
-    // P1: After Q, team ATK% based on # element types (assume 4 = 20%)
+    // P1: After Q, team ATK% based on # element types: 1→8%, 2→12%, 3→16%, 4→20%
     new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "team" }, [
-      { key: "atk%", value: 0.2 },
+      {
+        key: "atk%",
+        value:
+          [0, 0.08, 0.12, 0.16, 0.2][
+            new Set(Object.values(this.teamMeta.elements)).size
+          ] ?? 0.2,
+      },
     ]),
     // P2: After Q absorption, self Q DMG +15%
-    new StatBuff(
-      cbs(this, "P2", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      [{ key: "dmg%", value: 0.15 }]
-    ),
-    // C6: After E, self Anemo DMG +20%
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 6 ? [{ key: "anemo%", value: 0.2 }] : []
-    ),
+    // Game text: lasts until Bogglecat Box expires — includes off-field summon hits
+    // Only active when team has Hydro/Pyro/Cryo/Electro for absorption to occur
+    ...(this.hasAbsorbableElement
+      ? [
+          new StatBuff(
+            cbs(this, "P2", ["Q"]),
+            { receiver: "self", filter: { abilities: ["burst"] } },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : []),
+    // C6: After E, self Anemo DMG +20% for 6s
+    // Game text: no on-field qualifier — generic personal buff
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+            { key: "anemo%", value: 0.2 },
+          ]),
+        ]
+      : []),
   ];
 
   // Anemo support — no damage formulas modeled

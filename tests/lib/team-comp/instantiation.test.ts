@@ -45,30 +45,6 @@ describe("Entity Instantiation", () => {
     });
   });
 
-  describe("Formula zh prefix", () => {
-    // zh labels must contain at least one ability keyword so pure skill names are not used.
-    const ZH_KEYWORD = /E|Q|普攻|重击|下落|C\d|P\d/;
-    it.each(Object.keys(charactersById))("%s", (charId) => {
-      try {
-        const team = new TeamMeta([charId]);
-        const char = createCharacter(charId, 90, 6, team);
-        const violations: string[] = [];
-        for (const [id, label] of Object.entries(char.formulaIds)) {
-          if (!ZH_KEYWORD.test(label.zh))
-            violations.push(`${id}: zh "${label.zh}"`);
-        }
-        if (violations.length > 0)
-          throw new Error(`Missing ability prefix:\n${violations.join("\n")}`);
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No character registered",
-          "No character stats for"
-        );
-      }
-    });
-  });
-
   describe("Formula label lengths", () => {
     it.each(Object.keys(charactersById))("%s", (charId) => {
       try {

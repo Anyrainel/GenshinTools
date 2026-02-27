@@ -84,22 +84,13 @@ const normalize = (str: string) =>
   str.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 
 // Skip lists for intentionally ignored entities (mirrors Python logic)
-// These are normalized keys that should be silently skipped without warnings
-const CHARACTER_SKIP_SET = new Set(["manekina", "manekin"]);
+// These are normalized keys that should be silently skipped without warning
 
 const ARTIFACT_SKIP_SET = new Set([
   "adventurer",
-  "braveheart",
   "luckydog",
   "travelingdoctor",
-  "resolutionofsojourner",
   "tinymiracle",
-  "berserker",
-  "theexile",
-  "defenderswill",
-  "martialartist",
-  "gambler",
-  "scholar",
 ]);
 
 // Build Reverse Maps
@@ -170,11 +161,6 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
       }
 
       const normalizedKey = normalize(key);
-
-      // Skip intentionally ignored characters silently
-      if (CHARACTER_SKIP_SET.has(normalizedKey)) {
-        continue;
-      }
 
       const internalId = charMap.get(normalizedKey);
       if (internalId) {

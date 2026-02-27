@@ -128,6 +128,21 @@ function validateStatBuff(
     }
   }
 
+  if (target.regions) {
+    if (target.regions.length === 0) {
+      throw new Error(
+        `${label} BuffTarget.regions must not be an empty array — omit the key to mean "any"`
+      );
+    }
+    const seen = new Set<string>();
+    for (const val of target.regions) {
+      if (seen.has(val)) {
+        throw new Error(`${label} Duplicate "${val}" in BuffTarget.regions`);
+      }
+      seen.add(val);
+    }
+  }
+
   for (const { key } of entries) {
     const c = KEY_CONSTRAINTS[key];
     if (c) {

@@ -14,17 +14,15 @@ from models import HalfSet, I18nArtifactData
 
 ARTIFACT_SKIP_LIST: list[str] = [
     "adventurer",
-    "brave_heart",
     "lucky_dog",
     "traveling_doctor",
-    "resolution_of_sojourner",
     "tiny_miracle",
-    "berserker",
-    "the_exile",
-    "defenders_will",
-    "martial_artist",
-    "gambler",
-    "scholar",
+    # 1-piece prayer sets (no real 2pc effect)
+    "prayers_for_destiny",
+    "prayers_for_illumination",
+    "prayers_for_wisdom",
+    "prayers_to_springtime",
+    "prayers_to_the_firmament",
 ]
 
 # ── Canonical effect-to-ID mapping ──
@@ -52,13 +50,14 @@ EFFECT_TO_ID: dict[str, str] = {
     "Pyro RES +40%": "pyro-res-40",
     "Dendro DMG Bonus +15%": "dendro%-15",
     "Normal and Charged Attack DMG +15%": "na-ca-dmg%-15",
-    "Increases Elemental Skill DMG by 20%": "skill-dmg%-20",
-    "Increases Shield Strength by 35%": "shield-35",
+    "Elemental Skill DMG +20%": "skill-dmg%-20",
+    "Shield Strength +35%": "shield-35",
+    "CRIT Rate +12%": "cr-12",
     # Nightsoul-era effects (Natlan)
     "When a nearby party member triggers a Nightsoul Burst,"
     " the equipping character regenerates 6 Energy": "nightsoul-energy-6",
     "While the equipping character is in Nightsoul's Blessing"
-    " and is on the field, their DMG dealt is +15%": "nightsoul-dmg%-15",
+    " and is on the field, their DMG dealt +15%": "nightsoul-dmg%-15",
 }
 
 
@@ -68,7 +67,14 @@ def normalize_effect_text(text: str, language: str) -> str:
 
     if language == "en":
         normalized = re.sub(r"\.$", "", normalized)
-        normalized = re.sub(r"increase by ", "+", normalized, flags=re.IGNORECASE)
+        # "Increases X by Y" → "X +Y" (prefix form from game JSON)
+        normalized = re.sub(r"^Increases\s+(.+?)\s+by\s+", r"\1 +", normalized, flags=re.IGNORECASE)
+        # "X increase(d) by Y" → "X +Y" (inline form)
+        normalized = re.sub(r"increased? by ", "+", normalized, flags=re.IGNORECASE)
+        # "X is +Y" → "X +Y" (copula before stat value)
+        normalized = re.sub(r" is \+", " +", normalized)
+        # "Elemental Energy" → "Energy" (alternate nightsoul wording in game JSON)
+        normalized = normalized.replace("Elemental Energy", "Energy")
     elif language == "zh":
         normalized = re.sub(r"。$", "", normalized)
 

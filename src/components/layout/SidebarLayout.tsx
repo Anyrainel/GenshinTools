@@ -80,7 +80,7 @@ export function SidebarLayout({
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-sidebar shrink-0 overflow-y-auto">
+      <aside className="hidden lg:block w-sidebar-narrow xl:w-sidebar shrink-0 overflow-y-auto">
         {sidebar}
       </aside>
 

@@ -158,13 +158,13 @@ function WeaponTypeSection({
       </button>
 
       {isOpen && (
-        <div className="px-3 pb-3 pt-2 border-t border-border/30">
+        <div className="px-1.5 pb-3 pt-2 md:px-3 border-t border-border/30">
           {weapons.length === 0 ? (
             <div className="text-center text-muted-foreground text-sm py-4">
               {t.ui("archive.noWeaponResults")}
             </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
               {weapons.map((weapon) => (
                 <WeaponCard key={weapon.id} weapon={weapon} />
               ))}
@@ -292,7 +292,7 @@ export function WeaponArchiveView() {
     <HeaderScrollLayout
       className="h-full"
       headerClassName="py-4"
-      bodyClassName="space-y-4 pb-8"
+      bodyClassName="space-y-4 pb-8 max-md:!px-2"
       header={
         <ArchiveToolbar
           searchQuery={searchQuery}

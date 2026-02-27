@@ -1,5 +1,6 @@
 {
   "aino": {
+    "id": "10000121",
     "name": "Aino",
     "skills": [
       {
@@ -84,6 +85,7 @@
     "glossary": null
   },
   "amber": {
+    "id": "10000021",
     "name": "Amber",
     "skills": [
       {
@@ -165,6 +167,7 @@
     "glossary": null
   },
   "barbara": {
+    "id": "10000014",
     "name": "Barbara",
     "skills": [
       {
@@ -245,6 +248,7 @@
     "glossary": null
   },
   "beidou": {
+    "id": "10000024",
     "name": "Beidou",
     "skills": [
       {
@@ -330,6 +334,7 @@
     "glossary": null
   },
   "bennett": {
+    "id": "10000032",
     "name": "Bennett",
     "skills": [
       {
@@ -414,6 +419,7 @@
     "glossary": null
   },
   "candace": {
+    "id": "10000072",
     "name": "Candace",
     "skills": [
       {
@@ -498,6 +504,7 @@
     "glossary": null
   },
   "charlotte": {
+    "id": "10000088",
     "name": "Charlotte",
     "skills": [
       {
@@ -588,6 +595,7 @@
     "glossary": null
   },
   "chevreuse": {
+    "id": "10000090",
     "name": "Chevreuse",
     "skills": [
       {
@@ -672,6 +680,7 @@
     "glossary": null
   },
   "chongyun": {
+    "id": "10000036",
     "name": "Chongyun",
     "skills": [
       {
@@ -753,6 +762,7 @@
     "glossary": null
   },
   "collei": {
+    "id": "10000067",
     "name": "Collei",
     "skills": [
       {
@@ -832,6 +842,7 @@
     "glossary": null
   },
   "dahlia": {
+    "id": "10000115",
     "name": "Dahlia",
     "skills": [
       {
@@ -911,6 +922,7 @@
     "glossary": null
   },
   "diona": {
+    "id": "10000039",
     "name": "Diona",
     "skills": [
       {
@@ -995,6 +1007,7 @@
     "glossary": null
   },
   "dori": {
+    "id": "10000068",
     "name": "Dori",
     "skills": [
       {
@@ -1077,6 +1090,7 @@
     "glossary": null
   },
   "faruzan": {
+    "id": "10000076",
     "name": "Faruzan",
     "skills": [
       {
@@ -1161,6 +1175,7 @@
     "glossary": null
   },
   "fischl": {
+    "id": "10000031",
     "name": "Fischl",
     "skills": [
       {
@@ -1239,12 +1254,13 @@
       },
       {
         "name": "6. Evernight Raven",
-        "descHtml": "Extends the duration of Oz's presence on the field by 2s. Additionally, Oz performs coordinated attacks with your active character when present, dealing 30% of Fischl's ATK as <span style=\"color: #FFACFFFF;\">Electro DMG</span>."
+        "descHtml": "Extends the duration of Oz's presence on the field by 2s. Additionally, Oz performs coordinated attacks with your active character when present, dealing 30% of Fischl's ATK as <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>After Oz performs a coordinated attack, the increased ATK and Elemental Mastery effects of <span style=\"color: #FFD780FF;\">Witch's Eve Rite: Phantasmal Nocturne</span> are further increased by 100% for 10s."
       }
     ],
     "glossary": null
   },
   "freminet": {
+    "id": "10000085",
     "name": "Freminet",
     "skills": [
       {
@@ -1333,6 +1349,7 @@
     "glossary": null
   },
   "gaming": {
+    "id": "10000092",
     "name": "Gaming",
     "skills": [
       {
@@ -1415,6 +1432,7 @@
     "glossary": null
   },
   "gorou": {
+    "id": "10000055",
     "name": "Gorou",
     "skills": [
       {
@@ -1497,6 +1515,7 @@
     "glossary": null
   },
   "iansan": {
+    "id": "10000110",
     "name": "Iansan",
     "skills": [
       {
@@ -1584,6 +1603,7 @@
     "glossary": null
   },
   "ifa": {
+    "id": "10000113",
     "name": "Ifa",
     "skills": [
       {
@@ -1684,6 +1704,7 @@
     ]
   },
   "illuga": {
+    "id": "10000127",
     "name": "Illuga",
     "skills": [
       {
@@ -1776,6 +1797,7 @@
     ]
   },
   "jahoda": {
+    "id": "10000124",
     "name": "Jahoda",
     "skills": [
       {
@@ -1873,6 +1895,7 @@
     ]
   },
   "kachina": {
+    "id": "10000100",
     "name": "Kachina",
     "skills": [
       {
@@ -1957,6 +1980,7 @@
     "glossary": null
   },
   "kaeya": {
+    "id": "10000015",
     "name": "Kaeya",
     "skills": [
       {
@@ -2036,6 +2060,7 @@
     "glossary": null
   },
   "kaveh": {
+    "id": "10000081",
     "name": "Kaveh",
     "skills": [
       {
@@ -2117,6 +2142,7 @@
     "glossary": null
   },
   "kirara": {
+    "id": "10000061",
     "name": "Kirara",
     "skills": [
       {
@@ -2202,6 +2228,7 @@
     "glossary": null
   },
   "kujou_sara": {
+    "id": "10000056",
     "name": "Kujou Sara",
     "skills": [
       {
@@ -2283,6 +2310,7 @@
     "glossary": null
   },
   "kuki_shinobu": {
+    "id": "10000065",
     "name": "Kuki Shinobu",
     "skills": [
       {
@@ -2366,6 +2394,7 @@
     "glossary": null
   },
   "lan_yan": {
+    "id": "10000108",
     "name": "Lan Yan",
     "skills": [
       {
@@ -2445,6 +2474,7 @@
     "glossary": null
   },
   "layla": {
+    "id": "10000074",
     "name": "Layla",
     "skills": [
       {
@@ -2525,6 +2555,7 @@
     "glossary": null
   },
   "lisa": {
+    "id": "10000006",
     "name": "Lisa",
     "skills": [
       {
@@ -2608,6 +2639,7 @@
     "glossary": null
   },
   "lynette": {
+    "id": "10000083",
     "name": "Lynette",
     "skills": [
       {
@@ -2693,6 +2725,7 @@
     "glossary": null
   },
   "mika": {
+    "id": "10000080",
     "name": "Mika",
     "skills": [
       {
@@ -2778,6 +2811,7 @@
     "glossary": null
   },
   "ningguang": {
+    "id": "10000027",
     "name": "Ningguang",
     "skills": [
       {
@@ -2854,6 +2888,7 @@
     "glossary": null
   },
   "noelle": {
+    "id": "10000034",
     "name": "Noelle",
     "skills": [
       {
@@ -2940,6 +2975,7 @@
     "glossary": null
   },
   "ororon": {
+    "id": "10000105",
     "name": "Ororon",
     "skills": [
       {
@@ -3027,6 +3063,7 @@
     "glossary": null
   },
   "razor": {
+    "id": "10000020",
     "name": "Razor",
     "skills": [
       {
@@ -3113,12 +3150,13 @@
       },
       {
         "name": "6. Lupus Fulguris",
-        "descHtml": "Every 10s, Razor's sword charges up, causing the next Normal Attack to release lightning that deals 100% of Razor's ATK as <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>When Razor is not using <span style=\"color: #FFD780FF;\">Lightning Fang</span>, a lightning strike on an opponent will grant Razor an Electro Sigil for <span style=\"color: #FFD780FF;\">Claw and Thunder</span>."
+        "descHtml": "Every 10s, Razor's sword charges up, causing the next Normal Attack to release lightning that deals 100% of Razor's ATK as <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>When Razor is not using <span style=\"color: #FFD780FF;\">Lightning Fang</span>, lightning strikes on an opponent will grant 3 Electro Sigils for his Elemental Skill <span style=\"color: #FFD780FF;\">Claw and Thunder</span>.<br>Additionally, when Razor gains Electro Sigils through his Elemental Skill <span style=\"color: #FFD780FF;\">Claw and Thunder</span>, he will gain 3 Sigils instead.<br>For 15s after consuming Electro Sigils, Razor's CRIT Rate is increased by 10% and CRIT DMG by 50%."
       }
     ],
     "glossary": null
   },
   "rosaria": {
+    "id": "10000045",
     "name": "Rosaria",
     "skills": [
       {
@@ -3199,6 +3237,7 @@
     "glossary": null
   },
   "sayu": {
+    "id": "10000053",
     "name": "Sayu",
     "skills": [
       {
@@ -3287,6 +3326,7 @@
     "glossary": null
   },
   "sethos": {
+    "id": "10000097",
     "name": "Sethos",
     "skills": [
       {
@@ -3366,6 +3406,7 @@
     "glossary": null
   },
   "shikanoin_heizou": {
+    "id": "10000059",
     "name": "Shikanoin Heizou",
     "skills": [
       {
@@ -3448,6 +3489,7 @@
     "glossary": null
   },
   "sucrose": {
+    "id": "10000043",
     "name": "Sucrose",
     "skills": [
       {
@@ -3525,12 +3567,13 @@
       },
       {
         "name": "6. Chaotic Entropy",
-        "descHtml": "If <span style=\"color: #FFD780FF;\">Forbidden Creation - Isomer 75 / Type II</span> triggers an Elemental Absorption, all party members gain a 20% Elemental DMG Bonus for the corresponding absorbed element during its duration."
+        "descHtml": "If <span style=\"color: #FFD780FF;\">Forbidden Creation - Isomer 75 / Type II</span> triggers an Elemental Absorption, all party members gain a 20% Elemental DMG Bonus for the corresponding absorbed element during the skill's duration, while nearby Hexerei characters in the party gain an additional 8.57142% Elemental DMG Bonus for the corresponding absorbed element."
       }
     ],
     "glossary": null
   },
   "thoma": {
+    "id": "10000050",
     "name": "Thoma",
     "skills": [
       {
@@ -3615,6 +3658,7 @@
     "glossary": null
   },
   "xiangling": {
+    "id": "10000023",
     "name": "Xiangling",
     "skills": [
       {
@@ -3697,6 +3741,7 @@
     "glossary": null
   },
   "xingqiu": {
+    "id": "10000025",
     "name": "Xingqiu",
     "skills": [
       {
@@ -3778,6 +3823,7 @@
     "glossary": null
   },
   "xinyan": {
+    "id": "10000044",
     "name": "Xinyan",
     "skills": [
       {
@@ -3864,6 +3910,7 @@
     "glossary": null
   },
   "yanfei": {
+    "id": "10000048",
     "name": "Yanfei",
     "skills": [
       {
@@ -3945,6 +3992,7 @@
     "glossary": null
   },
   "yaoyao": {
+    "id": "10000077",
     "name": "Yaoyao",
     "skills": [
       {
@@ -4029,6 +4077,7 @@
     "glossary": null
   },
   "yun_jin": {
+    "id": "10000064",
     "name": "Yun Jin",
     "skills": [
       {

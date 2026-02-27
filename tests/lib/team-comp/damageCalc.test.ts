@@ -423,8 +423,8 @@ describe("TeamBuild lifecycle", () => {
       expect(stats.diluc!.get("er")).toBeGreaterThanOrEqual(1.0);
     });
 
-    it("onField buffs only apply to calc target", () => {
-      // Mona's Q: Omen +60% DMG to onField character
+    it("team buffs apply to all members including provider", () => {
+      // Mona's Q: Omen +60% DMG is receiver: "team" — applies to all party members
       const statsWithDiluc = tb.getTeamStats(emptySheets, "diluc");
       const statsWithJean = tb.getTeamStats(emptySheets, "jean");
 
@@ -437,9 +437,9 @@ describe("TeamBuild lifecycle", () => {
       expect(dilucDmg).toBeGreaterThanOrEqual(0.6);
       expect(jeanDmg).toBeGreaterThanOrEqual(0.6);
 
-      // But Mona herself shouldn't receive her own onField buff when she's not on-field
+      // Mona also receives her own team buff (receiver: "team" applies to all)
       const monaDmg = statsWithDiluc.mona!.get("dmg%");
-      expect(monaDmg).toBeLessThan(dilucDmg);
+      expect(monaDmg).toBeGreaterThanOrEqual(0.6);
     });
   });
 
@@ -562,7 +562,7 @@ describe("TeamBuild lifecycle", () => {
       }
     });
 
-    it("marks Mona onField buffs as active for calc target", () => {
+    it("marks Mona team buffs as active for calc target", () => {
       const display = tb.getDisplayResult(
         "diluc",
         "diluc-skill",
@@ -570,12 +570,12 @@ describe("TeamBuild lifecycle", () => {
         ctx
       );
 
-      // Mona's Q Omen is receiver: "onField" — should be active for diluc
-      const monaOnField = display.buffs.filter(
-        (b) => b.source.id === "mona" && b.target.receiver === "onField"
+      // Mona's Q Omen is receiver: "team" — should be active for diluc
+      const monaTeam = display.buffs.filter(
+        (b) => b.source.id === "mona" && b.target.receiver === "team"
       );
-      expect(monaOnField.length).toBeGreaterThanOrEqual(1);
-      expect(monaOnField[0]!.active).toBe(true);
+      expect(monaTeam.length).toBeGreaterThanOrEqual(1);
+      expect(monaTeam[0]!.active).toBe(true);
     });
 
     it("inactive buffs have empty dynamicEntries", () => {

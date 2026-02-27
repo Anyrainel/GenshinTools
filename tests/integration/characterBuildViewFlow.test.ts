@@ -256,8 +256,11 @@ describe("Integration: Character Build View Filter Flow", () => {
 
       const result = filterAndSortCharacters(characters, filters, options());
 
-      // Should still return all characters, sorted by release date
-      expect(result.length).toBe(characters.length);
+      // Should return all non-manekin characters (showManekin defaults to false)
+      const nonManekinCount = characters.filter(
+        (c) => !c.id.startsWith("manekin")
+      ).length;
+      expect(result.length).toBe(nonManekinCount);
     });
   });
 

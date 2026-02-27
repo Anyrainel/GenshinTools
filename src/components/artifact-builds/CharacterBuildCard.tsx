@@ -19,6 +19,7 @@ import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
@@ -130,9 +131,6 @@ interface CharacterBuildCardProps {
   tourStepId?: string;
 }
 
-// Empty array constant to avoid creating new arrays on each render
-const EMPTY_BUILD_IDS: string[] = [];
-
 function CharacterBuildCardComponent({
   character,
   tourStepId,
@@ -152,11 +150,23 @@ function CharacterBuildCardComponent({
     state.getCharacterWeapons(character.id)
   );
 
-  // Has customizations = any build for this character has a local override (modified or custom)
+  // Has customizations = any build for this character has a local override, or a preset build was deleted
   const hasCustomizations = useBuildsStore((state) => {
+    // Check 1: Any local build overrides (modified or custom)
     const ids = state.characterToBuildIds[character.id];
-    if (!ids) return false;
-    return ids.some((id) => id in state.builds);
+    if (ids?.some((id) => id in state.builds)) return true;
+
+    // Check 2: Any preset builds for this character were deleted
+    if (state.presetDeletedBuildIds.length > 0) {
+      const preset = getCachedPreset(state.activePresetId);
+      const presetBuildIds = preset?.characterBuilds?.[character.id];
+      if (
+        presetBuildIds?.some((id) => state.presetDeletedBuildIds.includes(id))
+      )
+        return true;
+    }
+
+    return false;
   });
 
   // Use useMemo with shallow comparison for array to prevent re-renders on reference changes
@@ -222,7 +232,7 @@ function CharacterBuildCardComponent({
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
   const maxWeapons = isMobile ? 1 : isDesktop ? 5 : 3;
   const visibleWeapons = characterWeapons.slice(0, maxWeapons);
-  const iconSize = isVeryNarrow ? "md" : isMobile ? "lg" : "xl";
+  const iconSize = isVeryNarrow ? "md" : "lg";
 
   // Full placeholder when no weapons — creates urgency to add at least one
   const showFullPlaceholder = isMobile

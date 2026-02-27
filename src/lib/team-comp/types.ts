@@ -4,6 +4,7 @@ import type {
   LunarReactionType,
   MainStat,
   ReactionType,
+  Region,
   SubStat,
 } from "@/data/types";
 
@@ -132,6 +133,8 @@ export type BuffTarget = {
   receiver: BuffReceiverType;
   /** If set, buff stat entries are only visible to formulas whose DamageTag matches this filter. */
   filter?: DamageTagFilter;
+  /** If set, buff only applies to characters from these regions. */
+  regions?: Region[];
 };
 
 // ─── Reactions (re-exported from @/data/types — canonical definitions live there) ───

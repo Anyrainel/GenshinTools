@@ -6,10 +6,11 @@ import {
   RegisterArtifactSet,
   ScalingBuff,
   StatBuff,
+  resolveOption,
 } from "../damageModels";
 import type { TeamMeta } from "../damageModels";
 import { getReactionAuraElements } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
+import type { OptionDef, StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // Artifact 4-Piece Set Bonuses
@@ -18,15 +19,21 @@ import type { StatEntry, StatKey } from "../types";
 @RegisterArtifactSet("blizzard_strayer")
 class BlizzardStrayer4pc extends ArtifactSetBase {
   // 2pc: Cryo DMG +15% (via halfSetId)
-  // 4pc: +20% CR vs Cryo-affected; +40% CR total vs Frozen
-  // Model: assume frozen target → +40% CR
+  // 4pc: +20% CR vs Cryo-affected; +20% more vs Frozen (requires Hydro teammate)
   readonly halfSetId = "cryo%-15";
   readonly stats: StatEntry[] = [];
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["vs-cryo"] },
       { receiver: "self" },
-      [{ key: "cr", value: 0.4 }]
+      [
+        {
+          key: "cr",
+          value: Object.values(this.teamMeta.elements).includes("Hydro")
+            ? 0.4
+            : 0.2,
+        },
+      ]
     ),
   ];
 }
@@ -152,17 +159,24 @@ class ThunderingFury4pc extends ArtifactSetBase {
 
 @RegisterArtifactSet("thundersoother")
 class Thundersoother4pc extends ArtifactSetBase {
-  // 2pc: Electro RES -40% on enemies (via halfSetId)
+  // 2pc: Electro RES +40% (via halfSetId — defensive, not modeled)
   // 4pc: +35% DMG against Electro-affected opponents
+  // Active if team can apply Electro to enemies (S10)
   readonly halfSetId = "electro-res-40";
   readonly stats: StatEntry[] = [];
-  readonly buffs = [
-    new StatBuff(
-      { type: "artifactSet", id: this.artifactSetId, triggers: ["vs-electro"] },
-      { receiver: "self" },
-      [{ key: "dmg%", value: 0.35 }]
-    ),
-  ];
+  readonly buffs = Object.values(this.teamMeta.elements).includes("Electro")
+    ? [
+        new StatBuff(
+          {
+            type: "artifactSet",
+            id: this.artifactSetId,
+            triggers: ["vs-electro"],
+          },
+          { receiver: "self" },
+          [{ key: "dmg%", value: 0.35 }]
+        ),
+      ]
+    : [];
 }
 
 @RegisterArtifactSet("archaic_petra")
@@ -245,17 +259,24 @@ class CrimsonWitch4pc extends ArtifactSetBase {
 
 @RegisterArtifactSet("lavawalker")
 class Lavawalker4pc extends ArtifactSetBase {
-  // 2pc: Pyro RES -40% on enemies (via halfSetId)
+  // 2pc: Pyro RES +40% (via halfSetId — defensive, not modeled)
   // 4pc: +35% DMG against Pyro-affected opponents
+  // Active if team can apply Pyro to enemies (S10)
   readonly halfSetId = "pyro-res-40";
   readonly stats: StatEntry[] = [];
-  readonly buffs = [
-    new StatBuff(
-      { type: "artifactSet", id: this.artifactSetId, triggers: ["vs-pyro"] },
-      { receiver: "self" },
-      [{ key: "dmg%", value: 0.35 }]
-    ),
-  ];
+  readonly buffs = Object.values(this.teamMeta.elements).includes("Pyro")
+    ? [
+        new StatBuff(
+          {
+            type: "artifactSet",
+            id: this.artifactSetId,
+            triggers: ["vs-pyro"],
+          },
+          { receiver: "self" },
+          [{ key: "dmg%", value: 0.35 }]
+        ),
+      ]
+    : [];
 }
 
 @RegisterArtifactSet("noblesse_oblige")
@@ -342,7 +363,7 @@ class EmblemOfSeveredFate4pc extends ArtifactSetBase {
   readonly buffs = [
     new ScalingBuff(
       { type: "artifactSet", id: this.artifactSetId },
-      { receiver: "self" },
+      { receiver: "self", filter: { abilities: ["burst"] } },
       [],
       "er",
       "dmg%",
@@ -467,13 +488,22 @@ class RetracingBolide4pc extends ArtifactSetBase {
   // 4pc: While shielded, Normal/Charged ATK DMG +40%
   readonly halfSetId = "shield-35";
   readonly stats: StatEntry[] = [];
-  readonly buffs = [
-    new StatBuff(
-      { type: "artifactSet", id: this.artifactSetId, triggers: ["shielded"] },
-      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
-      [{ key: "dmg%", value: 0.4 }]
-    ),
-  ];
+  readonly buffs = this.teamMeta.hasShielder()
+    ? [
+        new StatBuff(
+          {
+            type: "artifactSet",
+            id: this.artifactSetId,
+            triggers: ["shielded"],
+          },
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge"] },
+          },
+          [{ key: "dmg%", value: 0.4 }]
+        ),
+      ]
+    : [];
 }
 
 @RegisterArtifactSet("oceanhued_clam")
@@ -517,7 +547,7 @@ class VermillionHereafter4pc extends ArtifactSetBase {
         id: this.artifactSetId,
         triggers: ["after-burst", "low-hp"],
       },
-      { receiver: "self" },
+      { receiver: "selfOnField" },
       [{ key: "atk%", value: 0.48 }]
     ),
   ];
@@ -556,7 +586,7 @@ class DeepwoodMemories4pc extends ArtifactSetBase {
         triggers: ["E", "Q"],
         noStackId: this.artifactSetId,
       },
-      { receiver: "team" },
+      { receiver: "team", filter: { elements: ["Dendro"] } },
       [{ key: "resReduction%", value: 0.3 }]
     ),
   ];
@@ -664,6 +694,12 @@ class DesertPavilionChronicle4pc extends ArtifactSetBase {
       { type: "artifactSet", id: this.artifactSetId, triggers: ["charge-hit"] },
       { receiver: "self", filter: { abilities: ["plunge"] } },
       [{ key: "dmg%", value: 0.4 }]
+    ),
+    // Normal ATK SPD +10%
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["charge-hit"] },
+      { receiver: "self" },
+      [{ key: "atkSpd%", value: 0.1 }]
     ),
   ];
 }
@@ -1054,4 +1090,139 @@ class AubadeOfMorningstarAndMoon4pc extends ArtifactSetBase {
       ),
     ];
   }
+}
+
+const berserkerOption = {
+  label: { zh: "HP状态", en: "HP State" },
+  choices: [
+    { value: "low", label: { zh: "HP<70%", en: "HP <70%" } },
+    { value: "high", label: { zh: "HP≥70%", en: "HP ≥70%" } },
+  ] as const,
+  default: "low",
+} satisfies OptionDef;
+
+@RegisterArtifactSet("berserker", berserkerOption)
+class Berserker4pc extends ArtifactSetBase {
+  // 2pc: CRIT Rate +12% (via halfSetId)
+  // 4pc: When HP is below 70%, CRIT Rate increases by an additional 24%.
+  private readonly o = resolveOption(berserkerOption, this.option);
+  readonly halfSetId = "cr-12";
+  readonly stats: StatEntry[] = [];
+  readonly buffs =
+    this.o === "low"
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["low-hp"],
+            },
+            { receiver: "self" },
+            [{ key: "cr", value: 0.24 }]
+          ),
+        ]
+      : [];
+}
+
+const braveHeartOption = {
+  label: { zh: "敌人HP", en: "Enemy HP" },
+  choices: [
+    { value: "above50", label: { zh: ">50%", en: ">50%" } },
+    { value: "below50", label: { zh: "≤50%", en: "≤50%" } },
+  ] as const,
+  default: "above50",
+} satisfies OptionDef;
+
+@RegisterArtifactSet("brave_heart", braveHeartOption)
+class BraveHeart4pc extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId)
+  // 4pc: Increases DMG by 30% against opponents with more than 50% HP.
+  private readonly o = resolveOption(braveHeartOption, this.option);
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs =
+    this.o === "above50"
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: ["vs-high-hp"],
+            },
+            { receiver: "self" },
+            [{ key: "dmg%", value: 0.3 }]
+          ),
+        ]
+      : [];
+}
+
+@RegisterArtifactSet("defenders_will")
+class DefendersWill4pc extends ArtifactSetBase {
+  // 2pc: DEF +30% (via halfSetId)
+  // 4pc: For each different element present in your own party, the wearer's
+  // Elemental RES to that corresponding element is increased by 30%.
+  // Pure defense (U9 skip) — empty buffs.
+  readonly halfSetId = "def%-30";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [];
+}
+
+@RegisterArtifactSet("gambler")
+class Gambler4pc extends ArtifactSetBase {
+  // 2pc: Elemental Skill DMG +20% (via halfSetId)
+  // 4pc: Defeating an opponent has a 100% chance to remove Elemental Skill CD.
+  // Can only occur once every 15s. CD reset is utility (U9 skip) — empty buffs.
+  readonly halfSetId = "skill-dmg%-20";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [];
+}
+
+@RegisterArtifactSet("martial_artist")
+class MartialArtist4pc extends ArtifactSetBase {
+  // 2pc: Normal and Charged Attack DMG +15% (via halfSetId)
+  // 4pc: After using Elemental Skill, increases Normal Attack and Charged Attack DMG by 25% for 8s.
+  readonly halfSetId = "na-ca-dmg%-15";
+  readonly stats: StatEntry[] = [];
+  readonly buffs = [
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["E"] },
+      { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+      [{ key: "dmg%", value: 0.25 }]
+    ),
+  ];
+}
+
+@RegisterArtifactSet("resolution_of_sojourner")
+class ResolutionOfSojourner4pc extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId)
+  // 4pc: Increases Charged Attack CRIT Rate by 30%.
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs = [
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId },
+      { receiver: "self", filter: { abilities: ["charge"] } },
+      [{ key: "cr", value: 0.3 }]
+    ),
+  ];
+}
+
+@RegisterArtifactSet("scholar")
+class Scholar4pc extends ArtifactSetBase {
+  // 2pc: Energy Recharge +20% (via halfSetId)
+  // 4pc: Gaining Elemental Particles or Orbs gives 3 Energy to all party members
+  // who have a bow or a catalyst equipped. Energy grant is utility (U9 skip) — empty buffs.
+  readonly halfSetId = "er-20";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [];
+}
+
+@RegisterArtifactSet("the_exile")
+class TheExile4pc extends ArtifactSetBase {
+  // 2pc: Energy Recharge +20% (via halfSetId)
+  // 4pc: Using an Elemental Burst regenerates 2 Energy for all party members
+  // (excluding the wearer) every 2s for 6s. Energy regen is utility (U9 skip) — empty buffs.
+  readonly halfSetId = "er-20";
+  readonly stats: StatEntry[] = [];
+  readonly buffs: StatBuff[] = [];
 }

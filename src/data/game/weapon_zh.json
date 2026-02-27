@@ -1,5 +1,6 @@
 {
   "a_thousand_blazing_suns": {
+    "id": "12514",
     "name": "焚曜千阳",
     "descHtmlTpl": "施放元素战技或元素爆发时，获得「焚光」效果：暴击伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>，该效果持续6秒，每10秒至多触发一次。<br>持续期间内，普通攻击或重击造成元素伤害后，将使此次「焚光」效果的持续时间延长2秒，该效果每1秒至多触发一次，至多通过这种方式使持续时间延长6秒。<br>此外，处于夜魂加持状态下时，「焚光」效果提高75%，且「焚光」效果在装备者处于后台时不进行计时。",
     "refinements": [
@@ -11,6 +12,7 @@
     ]
   },
   "a_thousand_floating_dreams": {
+    "id": "14511",
     "name": "千夜浮梦",
     "descHtmlTpl": "队伍中每个其他角色，都会依据元素类型与装备者相同与否，为装备者提供提升效果。相同：元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点；不同：装备者元素类型的元素伤害加成提升<span style=\"color: #99FFFFFF;\">{1}</span>。上述提升效果每种至多叠加3层。此外，队伍中装备者以外的附近角色的元素精通提升<span style=\"color: #99FFFFFF;\">{2}</span>点，多件同名武器产生的此效果可以叠加。",
     "refinements": [
@@ -22,6 +24,7 @@
     ]
   },
   "absolution": {
+    "id": "11515",
     "name": "赦罪",
     "descHtmlTpl": "暴击伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；生命之契的数值增加时，装备者造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果持续6秒，至多叠加3次。",
     "refinements": [
@@ -33,6 +36,7 @@
     ]
   },
   "akuoumaru": {
+    "id": "12416",
     "name": "恶王丸",
     "descHtmlTpl": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，通过这种方式，元素爆发造成的伤害至多提高<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -44,6 +48,7 @@
     ]
   },
   "alley_hunter": {
+    "id": "15410",
     "name": "暗巷猎手",
     "descHtmlTpl": "装备该武器的角色处于队伍后台时，每1秒角色造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多通过这种方式获得<span style=\"color: #99FFFFFF;\">{1}</span>的伤害提升；在场上超过4秒后，上述伤害提升效果每1秒会流失<span style=\"color: #99FFFFFF;\">{2}</span>，直到降低至0%。",
     "refinements": [
@@ -55,6 +60,7 @@
     ]
   },
   "amber_bead": {
+    "id": "14306",
     "name": "琥珀玥",
     "descHtmlTpl": "普通攻击命中后，获得<span style=\"color: #99FFFFFF;\">{0}</span>元素伤害加成。该效果持续6秒，最多可以叠加2层。",
     "refinements": [
@@ -66,6 +72,7 @@
     ]
   },
   "amenoma_kageuchi": {
+    "id": "11414",
     "name": "天目影打刀",
     "descHtmlTpl": "施放元素战技后，获得1个胤种，该效果每5秒至多触发一次。胤种持续30秒，至多同时存在3个。施放元素爆发后，会清除持有的所有胤种，并在2秒之后，基于消耗的胤种数量，每个为该角色恢复<span style=\"color: #99FFFFFF;\">{0}</span>点元素能量。",
     "refinements": [
@@ -77,6 +84,7 @@
     ]
   },
   "amos_bow": {
+    "id": "15502",
     "name": "阿莫斯之弓",
     "descHtmlTpl": "普通攻击与重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击与重击的箭矢发射后每经过0.1秒，伤害还会提升<span style=\"color: #99FFFFFF;\">{1}</span>，至多提升5次。",
     "refinements": [
@@ -88,6 +96,7 @@
     ]
   },
   "aqua_simulacra": {
+    "id": "15508",
     "name": "若水",
     "descHtmlTpl": "生命值提升<span style=\"color: #99FFFFFF;\">{0}</span>。周围存在敌人时，装备该武器的角色造成的伤害都会提升<span style=\"color: #99FFFFFF;\">{1}</span>，不论该角色处于场上或是处于队伍后台。",
     "refinements": [
@@ -99,6 +108,7 @@
     ]
   },
   "aquila_favonia": {
+    "id": "11501",
     "name": "风鹰剑",
     "descHtmlTpl": "攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>；受到伤害时触发：高扬抗争旗号的西风鹰之魂苏醒，恢复等同于攻击力的<span style=\"color: #99FFFFFF;\">{1}</span>的生命值，并对周围的敌人造成<span style=\"color: #99FFFFFF;\">{2}</span>攻击力的伤害。该效果每15秒只能触发一次。",
     "refinements": [
@@ -110,6 +120,7 @@
     ]
   },
   "ashgraven_drinking_horn": {
+    "id": "14427",
     "name": "苍纹角杯",
     "descHtmlTpl": "攻击命中敌人时，在目标位置基于生命值上限的<span style=\"color: #99FFFFFF;\">{0}</span>，造成范围伤害。该效果每15秒至多触发一次。",
     "refinements": [
@@ -121,6 +132,7 @@
     ]
   },
   "astral_vultures_crimson_plumage": {
+    "id": "15514",
     "name": "星鹫赤羽",
     "descHtmlTpl": "触发扩散反应后的12秒内，攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>。此外，队伍中存在至少1/2名与装备者元素类型不同的角色时，装备者重击造成的伤害提高<span style=\"color: #99FFFFFF;\">{1}/{2}</span>，元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{3}/{4}</span>。",
     "refinements": [
@@ -132,6 +144,7 @@
     ]
   },
   "athame_artis": {
+    "id": "11518",
     "name": "黑蚀",
     "descHtmlTpl": "元素爆发造成的暴击伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；元素爆发命中敌人时，将获得「白昼之刃」效果：攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>，除装备者以外，队伍中附近的当前场上角色攻击力提升<span style=\"color: #99FFFFFF;\">{2}</span>，持续3秒。<br>此外，队伍拥有「魔导·秘仪」效果时，「白昼之刃」的效果额外提升75%。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -143,6 +156,7 @@
     ]
   },
   "azurelight": {
+    "id": "11517",
     "name": "苍耀",
     "descHtmlTpl": "施放元素战技后的12秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。持续期间，装备者的元素能量为0时，攻击力还会提升<span style=\"color: #99FFFFFF;\">{1}</span>，且暴击伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -154,6 +168,7 @@
     ]
   },
   "ballad_of_the_boundless_blue": {
+    "id": "14426",
     "name": "无垠蔚蓝之歌",
     "descHtmlTpl": "普通攻击或重击命中敌人后的6秒内，普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多叠加3次，每0.3秒至多触发一次。",
     "refinements": [
@@ -165,6 +180,7 @@
     ]
   },
   "ballad_of_the_fjords": {
+    "id": "13424",
     "name": "峡湾长歌",
     "descHtmlTpl": "队伍中存在至少三种不同元素类型的角色时，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。",
     "refinements": [
@@ -176,6 +192,7 @@
     ]
   },
   "beacon_of_the_reed_sea": {
+    "id": "12511",
     "name": "苇海信标",
     "descHtmlTpl": "元素战技命中敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续8秒；受到伤害后，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>，持续8秒。上述2种效果角色处于队伍后台时也能触发。此外，不处于护盾庇护下时，生命值上限提高<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -187,6 +204,7 @@
     ]
   },
   "black_tassel": {
+    "id": "13303",
     "name": "黑缨枪",
     "descHtmlTpl": "对史莱姆类敌人造成的伤害增加<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -198,6 +216,7 @@
     ]
   },
   "blackcliff_agate": {
+    "id": "14408",
     "name": "黑岩绯玉",
     "descHtmlTpl": "击败敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续30秒。该效果至多叠加3层，每层持续时间独立。",
     "refinements": [
@@ -209,6 +228,7 @@
     ]
   },
   "blackcliff_longsword": {
+    "id": "11408",
     "name": "黑岩长剑",
     "descHtmlTpl": "击败敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续30秒。该效果至多叠加3层，每层持续时间独立。",
     "refinements": [
@@ -220,6 +240,7 @@
     ]
   },
   "blackcliff_pole": {
+    "id": "13404",
     "name": "黑岩刺枪",
     "descHtmlTpl": "击败敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续30秒。该效果至多叠加3层，每层持续时间独立。",
     "refinements": [
@@ -231,6 +252,7 @@
     ]
   },
   "blackcliff_slasher": {
+    "id": "12408",
     "name": "黑岩斩刀",
     "descHtmlTpl": "击败敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续30秒。该效果至多叠加3层，每层持续时间独立。",
     "refinements": [
@@ -242,6 +264,7 @@
     ]
   },
   "blackcliff_warbow": {
+    "id": "15408",
     "name": "黑岩战弓",
     "descHtmlTpl": "击败敌人后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续30秒。该效果至多叠加3层，每层持续时间独立。",
     "refinements": [
@@ -253,6 +276,7 @@
     ]
   },
   "blackmarrow_lantern": {
+    "id": "14433",
     "name": "乌髓孑灯",
     "descHtmlTpl": "绽放反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，月绽放反应伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。月兆·满辉：月绽放反应伤害额外提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -264,6 +288,7 @@
     ]
   },
   "bloodsoaked_ruins": {
+    "id": "13516",
     "name": "血染荒城",
     "descHtmlTpl": "施放元素爆发后的3.5秒内，装备者对敌人造成的月感电反应伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。此外，装备者触发月感电反应后，将获得「荒落的挽歌」：暴击伤害提高<span style=\"color: #99FFFFFF;\">{1}</span>，持续6秒；并为装备者恢复<span style=\"color: #99FFFFFF;\">{2}</span>点元素能量，每14秒至多通过这种方式恢复一次元素能量。",
     "refinements": [
@@ -275,6 +300,7 @@
     ]
   },
   "bloodtainted_greatsword": {
+    "id": "12302",
     "name": "沐浴龙血的剑",
     "descHtmlTpl": "对处于火元素或雷元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -286,6 +312,7 @@
     ]
   },
   "calamity_of_eshu": {
+    "id": "11432",
     "name": "厄水之祸",
     "descHtmlTpl": "角色处于护盾庇护下时，普通攻击和重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，普通攻击和重击的暴击率提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -297,6 +324,7 @@
     ]
   },
   "calamity_queller": {
+    "id": "13507",
     "name": "息灾",
     "descHtmlTpl": "获得<span style=\"color: #99FFFFFF;\">{0}</span>所有元素伤害加成；施放元素战技后，获得持续20秒的「圆顿」，攻击力每1秒提升<span style=\"color: #99FFFFFF;\">{1}</span>，该攻击力提升效果至多叠加6次。当装备此武器的角色处于队伍后台时，「圆顿」的攻击力提升效果翻倍。",
     "refinements": [
@@ -308,6 +336,7 @@
     ]
   },
   "cashflow_supervision": {
+    "id": "14513",
     "name": "金流监督",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。当前生命值提升或降低时，普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>，重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>。该效果持续4秒，至多叠加3层，每0.3秒至多触发一次；处于叠加3层的状态下时，攻击速度提升<span style=\"color: #99FFFFFF;\">{3}</span>。",
     "refinements": [
@@ -319,6 +348,7 @@
     ]
   },
   "chain_breaker": {
+    "id": "15431",
     "name": "碎链",
     "descHtmlTpl": "队伍中每有一名纳塔角色或与装备者元素类型不同的角色，装备者获得<span style=\"color: #99FFFFFF;\">{0}</span>攻击力提升；上述角色不少于3名时，装备者的元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。",
     "refinements": [
@@ -330,6 +360,7 @@
     ]
   },
   "cinnabar_spindle": {
+    "id": "11415",
     "name": "辰砂之纺锤",
     "descHtmlTpl": "元素战技造成的伤害值提高，提高数值相当于防御力的<span style=\"color: #99FFFFFF;\">{0}</span>。该效果每1.5秒最多触发一次，并将在元素战技造成伤害后的0.1秒后清除效果。",
     "refinements": [
@@ -341,6 +372,7 @@
     ]
   },
   "cloudforged": {
+    "id": "15426",
     "name": "筑云",
     "descHtmlTpl": "元素能量减少后，装备者的元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。该效果持续18秒，至多叠加2层。",
     "refinements": [
@@ -352,6 +384,7 @@
     ]
   },
   "compound_bow": {
+    "id": "15407",
     "name": "钢轮弓",
     "descHtmlTpl": "普通攻击与重击命中时，提升<span style=\"color: #99FFFFFF;\">{0}</span>攻击力与<span style=\"color: #99FFFFFF;\">{1}</span>普通攻击速度。该效果持续6秒，最多可以叠加4层，每0.3秒只能触发一次。",
     "refinements": [
@@ -363,6 +396,7 @@
     ]
   },
   "cool_steel": {
+    "id": "11301",
     "name": "冷刃",
     "descHtmlTpl": "对处于水元素或冰元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -374,6 +408,7 @@
     ]
   },
   "cranes_echoing_call": {
+    "id": "14515",
     "name": "鹤鸣余音",
     "descHtmlTpl": "装备者下落攻击命中敌人后，队伍中附近的所有角色下落攻击造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，持续20秒；队伍中附近的角色的下落攻击命中敌人时，为装备者恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量，每0.7秒至多通过这种方式恢复一次元素能量，装备者处于队伍后台时依然能通过这种方式恢复元素能量。",
     "refinements": [
@@ -385,6 +420,7 @@
     ]
   },
   "crescent_pike": {
+    "id": "13403",
     "name": "流月针",
     "descHtmlTpl": "获得元素微粒或元素晶球后的5秒内，普通攻击和重击额外造成<span style=\"color: #99FFFFFF;\">{0}</span>%攻击力伤害。",
     "refinements": [
@@ -396,6 +432,7 @@
     ]
   },
   "crimson_moons_semblance": {
+    "id": "13512",
     "name": "赤月之形",
     "descHtmlTpl": "重击命中敌人时，赋予生命值上限25%的生命之契，该效果每14秒至多触发一次。此外，装备者具有生命之契时，造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；若生命之契的数值大于等于生命值上限的30%，造成的伤害将进一步提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -407,6 +444,7 @@
     ]
   },
   "dark_iron_sword": {
+    "id": "11304",
     "name": "暗铁剑",
     "descHtmlTpl": "触发超载、超导、感电、原激化、超激化、超绽放、月感电或雷元素扩散反应后的12秒内，攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -418,6 +456,7 @@
     ]
   },
   "dawning_frost": {
+    "id": "14434",
     "name": "霜辰",
     "descHtmlTpl": "重击命中敌人后的10秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点；元素战技命中敌人后的10秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。",
     "refinements": [
@@ -429,6 +468,7 @@
     ]
   },
   "deathmatch": {
+    "id": "13405",
     "name": "决斗之枪",
     "descHtmlTpl": "身边至少有2个敌人时，获得<span style=\"color: #99FFFFFF;\">{0}</span>攻击力提升与<span style=\"color: #99FFFFFF;\">{1}</span>防御力提升；身边的敌人少于2个时，获得<span style=\"color: #99FFFFFF;\">{2}</span>攻击力提升。",
     "refinements": [
@@ -440,6 +480,7 @@
     ]
   },
   "debate_club": {
+    "id": "12305",
     "name": "以理服人",
     "descHtmlTpl": "施放元素战技后，普通攻击和重击命中时会在小范围内额外造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的伤害。该效果持续15秒，伤害每3秒只能触发一次。",
     "refinements": [
@@ -451,6 +492,7 @@
     ]
   },
   "dialogues_of_the_desert_sages": {
+    "id": "13426",
     "name": "沙中伟贤的对答",
     "descHtmlTpl": "进行治疗时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。",
     "refinements": [
@@ -462,6 +504,7 @@
     ]
   },
   "dodoco_tales": {
+    "id": "14413",
     "name": "嘟嘟可故事集",
     "descHtmlTpl": "普通攻击命中敌人后的6秒内，重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；重击命中敌人后的6秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -473,6 +516,7 @@
     ]
   },
   "dragons_bane": {
+    "id": "13401",
     "name": "匣里灭辰",
     "descHtmlTpl": "对处于水元素或火元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -484,6 +528,7 @@
     ]
   },
   "dragonspine_spear": {
+    "id": "13409",
     "name": "龙脊长枪",
     "descHtmlTpl": "普通攻击与重击命中敌人时，有<span style=\"color: #99FFFFFF;\">{0}</span>概率在敌人上方生成恒冰晶核并坠落，造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的范围伤害。若敌人处于冰元素影响下，则造成<span style=\"color: #99FFFFFF;\">{2}</span>攻击力的伤害。该效果每10秒至多触发一次。",
     "refinements": [
@@ -495,6 +540,7 @@
     ]
   },
   "earth_shaker": {
+    "id": "12431",
     "name": "撼地者",
     "descHtmlTpl": "队伍中的角色触发火元素相关反应后，装备者元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续8秒。该效果队伍中的角色处于队伍后台时也能触发。",
     "refinements": [
@@ -506,6 +552,7 @@
     ]
   },
   "ebony_bow": {
+    "id": "15306",
     "name": "黑檀弓",
     "descHtmlTpl": "对遗迹机关类敌人：造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -517,6 +564,7 @@
     ]
   },
   "elegy_for_the_end": {
+    "id": "15503",
     "name": "终末嗟叹之诗",
     "descHtmlTpl": "飘游风中的「千年的大乐章」的一部分。元素精通提高<span style=\"color: #99FFFFFF;\">{0}</span>点；元素战技或元素爆发命中敌人时，角色获得一枚追思之符，每0.2秒内至多触发一次，角色处于队伍后台也能触发。拥有4枚追思之符时，将消耗所有追思之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·别离之歌」效果：元素精通提高<span style=\"color: #99FFFFFF;\">{1}</span>点，攻击力提升<span style=\"color: #99FFFFFF;\">{2}</span>。触发后20秒内，无法再次获得追思之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。",
     "refinements": [
@@ -528,6 +576,7 @@
     ]
   },
   "emerald_orb": {
+    "id": "14304",
     "name": "翡玉法球",
     "descHtmlTpl": "触发蒸发、感电、冰冻、绽放、月感电、月绽放或水元素扩散后的12秒内，攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -539,6 +588,7 @@
     ]
   },
   "end_of_the_line": {
+    "id": "15418",
     "name": "竭泽",
     "descHtmlTpl": "施放元素战技后，将触发「沿洄」效果，在攻击命中敌人时造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的范围伤害，该效果将在15秒或触发3次范围伤害后移除。每2秒至多通过这种方式造成一次范围伤害，每12秒至多触发一次沿洄。",
     "refinements": [
@@ -550,6 +600,7 @@
     ]
   },
   "engulfing_lightning": {
+    "id": "13509",
     "name": "薙草之稻光",
     "descHtmlTpl": "攻击力获得提升，提升程度相当于元素充能效率超出100%部分的<span style=\"color: #99FFFFFF;\">{0}</span>，至多通过这种方式提升<span style=\"color: #99FFFFFF;\">{1}</span>。施放元素爆发后的12秒内，元素充能效率提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -561,6 +612,7 @@
     ]
   },
   "etherlight_spindlelute": {
+    "id": "14432",
     "name": "天光的纺琴",
     "descHtmlTpl": "施放元素战技后的20秒内，装备者的元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。",
     "refinements": [
@@ -572,6 +624,7 @@
     ]
   },
   "everlasting_moonglow": {
+    "id": "14506",
     "name": "不灭月华",
     "descHtmlTpl": "治疗加成提升<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击造成的伤害增加，增加值为装备该武器的角色生命值上限的<span style=\"color: #99FFFFFF;\">{1}</span>。在施放元素爆发后的12秒内，普通攻击命中敌人时恢复0.6点元素能量，每0.1秒至多通过这种方式恢复一次元素能量。",
     "refinements": [
@@ -583,6 +636,7 @@
     ]
   },
   "eye_of_perception": {
+    "id": "14409",
     "name": "昭心",
     "descHtmlTpl": "普通攻击与重击命中时，有50%几率发射一枚昭心法球，造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力伤害，至多在敌人之间弹射4次。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒至多触发一次。",
     "refinements": [
@@ -594,6 +648,7 @@
     ]
   },
   "fading_twilight": {
+    "id": "15411",
     "name": "落霞",
     "descHtmlTpl": "具有夕暮、流霞、朝晖三种状态，分别能使造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}/{1}/{2}</span>。攻击命中敌人后，将转换为下一种状态，每7秒至多转换一次状态。装备该武器的角色处于队伍后台时该效果依旧能触发转换。",
     "refinements": [
@@ -605,6 +660,7 @@
     ]
   },
   "fang_of_the_mountain_king": {
+    "id": "12513",
     "name": "山王长牙",
     "descHtmlTpl": "元素战技命中敌人后，会获得1层「悬木祝赐」，该效果每0.5秒至多触发1次；队伍中附近的角色触发了燃烧或烈绽放反应后，装备者会获得3层悬木祝赐，该效果每2秒至多触发1次，队伍中的角色处于队伍后台时也能触发。悬木祝赐：元素战技伤害和元素爆发伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续6秒，至多叠加6层，每层持续时间独立计算。",
     "refinements": [
@@ -616,6 +672,7 @@
     ]
   },
   "favonius_codex": {
+    "id": "14401",
     "name": "西风秘典",
     "descHtmlTpl": "攻击造成暴击时，有<span style=\"color: #99FFFFFF;\">{0}</span>的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -627,6 +684,7 @@
     ]
   },
   "favonius_greatsword": {
+    "id": "12401",
     "name": "西风大剑",
     "descHtmlTpl": "攻击造成暴击时，有<span style=\"color: #99FFFFFF;\">{0}</span>的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -638,6 +696,7 @@
     ]
   },
   "favonius_lance": {
+    "id": "13407",
     "name": "西风长枪",
     "descHtmlTpl": "攻击造成暴击时，有<span style=\"color: #99FFFFFF;\">{0}</span>的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -649,6 +708,7 @@
     ]
   },
   "favonius_sword": {
+    "id": "11401",
     "name": "西风剑",
     "descHtmlTpl": "攻击造成暴击时，有<span style=\"color: #99FFFFFF;\">{0}</span>的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -660,6 +720,7 @@
     ]
   },
   "favonius_warbow": {
+    "id": "15401",
     "name": "西风猎弓",
     "descHtmlTpl": "攻击造成暴击时，有<span style=\"color: #99FFFFFF;\">{0}</span>的几率产生少量元素微粒，能为角色恢复6点元素能量。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -671,6 +732,7 @@
     ]
   },
   "ferrous_shadow": {
+    "id": "12301",
     "name": "铁影阔剑",
     "descHtmlTpl": "生命值低于<span style=\"color: #99FFFFFF;\">{0}</span>时，重击不会轻易被打断，并提高<span style=\"color: #99FFFFFF;\">{1}</span>重击伤害。",
     "refinements": [
@@ -682,6 +744,7 @@
     ]
   },
   "festering_desire": {
+    "id": "11413",
     "name": "腐殖之剑",
     "descHtmlTpl": "元素战技造成的伤害增加<span style=\"color: #99FFFFFF;\">{0}</span>，元素战技的暴击率提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -693,6 +756,7 @@
     ]
   },
   "fillet_blade": {
+    "id": "11305",
     "name": "吃虎鱼刀",
     "descHtmlTpl": "攻击命中时，有50%的概率对单个敌人造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的伤害。该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -704,6 +768,7 @@
     ]
   },
   "finale_of_the_deep": {
+    "id": "11425",
     "name": "海渊终曲",
     "descHtmlTpl": "施放元素战技时，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续15秒，并赋予生命值上限25%的生命之契，该效果每10秒至多触发一次。生命之契清除时，基于清除值的<span style=\"color: #99FFFFFF;\">{1}</span>提升至多<span style=\"color: #99FFFFFF;\">{2}</span>点攻击力，持续15秒。",
     "refinements": [
@@ -715,6 +780,7 @@
     ]
   },
   "flameforged_insight": {
+    "id": "12432",
     "name": "拾慧铸熔",
     "descHtmlTpl": "触发感电、月感电、绽放、月绽放、结晶或月结晶反应时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>点元素能量，并在接下来的15秒内使元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。该效果每15秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -726,6 +792,7 @@
     ]
   },
   "fleuve_cendre_ferryman": {
+    "id": "11426",
     "name": "灰河渡手",
     "descHtmlTpl": "元素战技暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>；此外，施放元素战技后的5秒内，元素充能效率提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -737,6 +804,7 @@
     ]
   },
   "flowerwreathed_feathers": {
+    "id": "15430",
     "name": "缀花之翎",
     "descHtmlTpl": "滑翔消耗的体力降低15%。进行瞄准射击时，每0.5秒提升重击造成的伤害<span style=\"color: #99FFFFFF;\">{0}</span>，该效果最多叠加6层，并将在不处于瞄准状态下10秒后移除。",
     "refinements": [
@@ -748,6 +816,7 @@
     ]
   },
   "flowing_purity": {
+    "id": "14425",
     "name": "纯水流华",
     "descHtmlTpl": "施放元素战技时，所有元素伤害加成提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续15秒，并赋予生命值上限24%的生命之契，该效果每10秒至多触发一次。生命之契清除时，每清除1000点将会提供<span style=\"color: #99FFFFFF;\">{1}</span>所有元素伤害加成，至多通过这种方式获得<span style=\"color: #99FFFFFF;\">{2}</span>所有元素伤害加成，持续15秒。",
     "refinements": [
@@ -759,6 +828,7 @@
     ]
   },
   "flute_of_ezpitzal": {
+    "id": "11431",
     "name": "息燧之笛",
     "descHtmlTpl": "施放元素战技时，防御力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续15秒。",
     "refinements": [
@@ -770,6 +840,7 @@
     ]
   },
   "footprint_of_the_rainbow": {
+    "id": "13431",
     "name": "虹的行迹",
     "descHtmlTpl": "施放元素战技时，防御力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续15秒。",
     "refinements": [
@@ -781,6 +852,7 @@
     ]
   },
   "forest_regalia": {
+    "id": "12417",
     "name": "森林王器",
     "descHtmlTpl": "触发燃烧、原激化、超激化、蔓激化、绽放、月绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。",
     "refinements": [
@@ -792,6 +864,7 @@
     ]
   },
   "fractured_halo": {
+    "id": "13515",
     "name": "支离轮光",
     "descHtmlTpl": "施放元素战技或元素爆发后的20秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。持续期间内，若装备者创造了护盾，则接下来的20秒内，还会获得「流电圣敕」效果：队伍中附近所有角色触发的月感电反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -803,6 +876,7 @@
     ]
   },
   "freedomsworn": {
+    "id": "11503",
     "name": "苍古自由之誓",
     "descHtmlTpl": "飘游风中的「千年的大乐章」的一部分。造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；触发元素反应时，角色获得一枚奋起之符，每0.5秒内至多触发一次，角色处于队伍后台也能触发。拥有2枚奋起之符时，将消耗所有奋起之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·抗争之歌」效果：普通攻击、重击、下落攻击造成的伤害提高<span style=\"color: #99FFFFFF;\">{1}</span>，攻击力提升<span style=\"color: #99FFFFFF;\">{2}</span>。触发后20秒内，无法再次获得奋起之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。",
     "refinements": [
@@ -814,6 +888,7 @@
     ]
   },
   "frostbearer": {
+    "id": "14412",
     "name": "忍冬之果",
     "descHtmlTpl": "普通攻击与重击命中敌人时，有<span style=\"color: #99FFFFFF;\">{0}</span>概率在敌人上方生成恒冰晶核并坠落，造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的范围伤害。若敌人处于冰元素影响下，则造成<span style=\"color: #99FFFFFF;\">{2}</span>攻击力的伤害。该效果每10秒至多触发一次。",
     "refinements": [
@@ -825,6 +900,7 @@
     ]
   },
   "fruit_of_fulfillment": {
+    "id": "14417",
     "name": "盈满之实",
     "descHtmlTpl": "触发元素反应后，获得「盈缺」效果：元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点，攻击力降低5%。每0.3秒至多获得一层盈缺效果，至多叠加5层。未触发元素反应时将每6秒失去一层。角色处于队伍后台时也能触发效果。",
     "refinements": [
@@ -836,6 +912,7 @@
     ]
   },
   "fruitful_hook": {
+    "id": "12430",
     "name": "硕果钩",
     "descHtmlTpl": "下落攻击的暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>；下落攻击命中敌人后，普通攻击、重击、下落攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>，持续10秒。",
     "refinements": [
@@ -846,7 +923,20 @@
       ["32%", "32%"]
     ]
   },
+  "gest_of_the_mighty_wolf": {
+    "id": "12515",
+    "name": "狼的武功歌",
+    "descHtmlTpl": "攻击速度提升10%。普通攻击命中敌人/施放元素战技/开始重击时，装备者将分别获得1/2/2层「四风诗系」：造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，该效果持续4秒，至多叠加4次，每0.01秒至多触发一次。<br>此外，队伍拥有「魔导·秘仪」效果时，每层「四风诗系」还会使装备者的暴击伤害提高<span style=\"color: #99FFFFFF;\">{1}</span>。",
+    "refinements": [
+      ["7.5%", "7.5%"],
+      ["9.5%", "9.5%"],
+      ["11.5%", "11.5%"],
+      ["13.5%", "13.5%"],
+      ["15.5%", "15.5%"]
+    ]
+  },
   "hakushin_ring": {
+    "id": "14414",
     "name": "白辰之环",
     "descHtmlTpl": "装备该武器的角色触发雷元素相关反应后，队伍中附近的与该元素反应相关的元素类型的角色，获得<span style=\"color: #99FFFFFF;\">{0}</span>对应元素的元素伤害加成，持续6秒。通过这种方式，角色获得的元素伤害加成无法叠加。",
     "refinements": [
@@ -858,6 +948,7 @@
     ]
   },
   "halberd": {
+    "id": "13302",
     "name": "钺矛",
     "descHtmlTpl": "对普通攻击命中的敌人造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的额外伤害。该效果每10秒只能触发一次。",
     "refinements": [
@@ -869,6 +960,7 @@
     ]
   },
   "hamayumi": {
+    "id": "15414",
     "name": "破魔之弓",
     "descHtmlTpl": "普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。当装备该武器的角色元素能量等于100%时，这个效果提升100%。",
     "refinements": [
@@ -880,6 +972,7 @@
     ]
   },
   "haran_geppaku_futsu": {
+    "id": "11510",
     "name": "波乱月白经津",
     "descHtmlTpl": "获得<span style=\"color: #99FFFFFF;\">{0}</span>所有元素伤害加成；队伍中附近的其他角色在施放元素战技时，会为装备该武器的角色产生1层「波穗」效果，至多叠加2层，每0.3秒最多触发1次。装备该武器的角色施放元素战技时，如果有积累的「波穗」效果，则将消耗已有的「波穗」，获得「波乱」：根据消耗的层数，每层提升<span style=\"color: #99FFFFFF;\">{1}</span>普通攻击伤害，持续8秒。",
     "refinements": [
@@ -891,6 +984,7 @@
     ]
   },
   "harbinger_of_dawn": {
+    "id": "11302",
     "name": "黎明神剑",
     "descHtmlTpl": "生命值高于90%时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -902,6 +996,7 @@
     ]
   },
   "hunters_path": {
+    "id": "15511",
     "name": "猎人之径",
     "descHtmlTpl": "获得<span style=\"color: #99FFFFFF;\">{0}</span>所有元素伤害加成。重击命中敌人后，将获得「无休止的狩猎」：重击造成的伤害值提高，提高值相当于元素精通数值的<span style=\"color: #99FFFFFF;\">{1}</span>。该效果将在生效12次或10秒后消失，每12秒至多获得一次无休止的狩猎。",
     "refinements": [
@@ -913,6 +1008,7 @@
     ]
   },
   "ibis_piercer": {
+    "id": "15419",
     "name": "鹮穿之喙",
     "descHtmlTpl": "重击命中敌人后的6秒内，角色元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。该效果至多叠加2层，每0.5秒至多触发一次。",
     "refinements": [
@@ -924,6 +1020,7 @@
     ]
   },
   "iron_sting": {
+    "id": "11407",
     "name": "铁蜂刺",
     "descHtmlTpl": "造成元素伤害后的6秒内，角色造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，该效果最多叠加2层。该效果每1秒可以触发一次。",
     "refinements": [
@@ -935,6 +1032,7 @@
     ]
   },
   "jadefalls_splendor": {
+    "id": "14505",
     "name": "碧落之珑",
     "descHtmlTpl": "施放元素爆发或创造护盾后的3秒内，将产生「定土玉圭」效果：每2.5秒恢复<span style=\"color: #99FFFFFF;\">{0}</span>点元素能量，并基于装备者的生命值上限，每1000点使其对应元素类型的元素伤害加成提高<span style=\"color: #99FFFFFF;\">{1}</span>，至多提高<span style=\"color: #99FFFFFF;\">{2}</span>。装备该武器的角色处于队伍后台时，依然能产生「定土玉圭」效果。",
     "refinements": [
@@ -946,6 +1044,7 @@
     ]
   },
   "kagotsurube_isshin": {
+    "id": "11416",
     "name": "笼钓瓶一心",
     "descHtmlTpl": "普通攻击、重击或下落攻击命中敌人时，将卷起切落风，造成180%攻击力的范围伤害，并且使攻击力提升15%，持续8秒。该效果每8秒至多触发一次。",
     "refinements": [
@@ -953,6 +1052,7 @@
     ]
   },
   "kaguras_verity": {
+    "id": "14509",
     "name": "神乐之真意",
     "descHtmlTpl": "施放元素战技时，将获得「神乐舞」的效果，使装备该武器的角色的元素战技造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，该效果持续16秒，至多叠加3层。持有3层时，该角色获得<span style=\"color: #99FFFFFF;\">{1}</span>所有元素伤害加成。",
     "refinements": [
@@ -964,6 +1064,7 @@
     ]
   },
   "katsuragikiri_nagamasa": {
+    "id": "12414",
     "name": "桂木斩长正",
     "descHtmlTpl": "元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。",
     "refinements": [
@@ -975,6 +1076,7 @@
     ]
   },
   "key_of_khajnisut": {
+    "id": "11511",
     "name": "圣显之钥",
     "descHtmlTpl": "生命值提升<span style=\"color: #99FFFFFF;\">{0}</span>。元素战技命中敌人时，将产生持续20秒的「宏大诗篇」效果：基于装备者生命值上限的<span style=\"color: #99FFFFFF;\">{1}</span>，获得元素精通提升，该效果每0.3秒至多触发一次，至多叠加3层。该效果叠加至3层或3层的持续时间刷新时，将基于装备者生命值上限的<span style=\"color: #99FFFFFF;\">{2}</span>，为队伍中附近所有角色提供元素精通提升，持续20秒。",
     "refinements": [
@@ -986,6 +1088,7 @@
     ]
   },
   "kings_squire": {
+    "id": "15417",
     "name": "王下近侍",
     "descHtmlTpl": "施放元素战技或元素爆发时，将获得「森林教诲」的效果，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点，持续12秒。该效果将在切换角色时移除。森林教诲的持续时间结束或被移除时，将对附近一名敌人造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的伤害。森林教诲每20秒至多触发一次。",
     "refinements": [
@@ -997,6 +1100,7 @@
     ]
   },
   "kitain_cross_spear": {
+    "id": "13414",
     "name": "喜多院十文字",
     "descHtmlTpl": "元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。元素战技命中后，角色流失3点元素能量，并在此后的6秒内，每2秒恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量。该效果每10秒至多触发一次，角色处于队伍后台也能触发。",
     "refinements": [
@@ -1008,6 +1112,7 @@
     ]
   },
   "light_of_foliar_incision": {
+    "id": "11512",
     "name": "裁叶萃光",
     "descHtmlTpl": "暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击造成元素伤害后，获得「裁叶」效果：普通攻击和元素战技造成的伤害提高，提高值相当于元素精通的<span style=\"color: #99FFFFFF;\">{1}</span>。该效果在生效28次或12秒后消失，每12秒至多获得一次「裁叶」效果。",
     "refinements": [
@@ -1019,6 +1124,7 @@
     ]
   },
   "lightbearing_moonshard": {
+    "id": "11519",
     "name": "朏魄含光",
     "descHtmlTpl": "防御力提高<span style=\"color: #99FFFFFF;\">{0}</span>。装备者施放元素战技后的5秒内，月结晶反应伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1030,6 +1136,7 @@
     ]
   },
   "lions_roar": {
+    "id": "11405",
     "name": "匣里龙吟",
     "descHtmlTpl": "对处于火元素或雷元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1041,6 +1148,7 @@
     ]
   },
   "lithic_blade": {
+    "id": "12410",
     "name": "千岩古剑",
     "descHtmlTpl": "队伍中每有一位璃月角色，装备该武器的角色便获得<span style=\"color: #99FFFFFF;\">{0}</span>攻击力提升与<span style=\"color: #99FFFFFF;\">{1}</span>暴击率提升。至多获得4层提升效果。",
     "refinements": [
@@ -1052,6 +1160,7 @@
     ]
   },
   "lithic_spear": {
+    "id": "13406",
     "name": "千岩长枪",
     "descHtmlTpl": "队伍中每有一位璃月角色，装备此武器的角色便获得<span style=\"color: #99FFFFFF;\">{0}</span>攻击力提升与<span style=\"color: #99FFFFFF;\">{1}</span>暴击率提升。至多获得4层提升效果。",
     "refinements": [
@@ -1063,6 +1172,7 @@
     ]
   },
   "lost_prayer_to_the_sacred_winds": {
+    "id": "14502",
     "name": "四风原典",
     "descHtmlTpl": "移动速度提高10%；在场上每4秒获得<span style=\"color: #99FFFFFF;\">{0}</span>元素伤害加成。该效果最多叠加4层，持续直到角色倒下或离场。",
     "refinements": [
@@ -1074,6 +1184,7 @@
     ]
   },
   "lumidouce_elegy": {
+    "id": "13513",
     "name": "柔灯挽歌",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>；装备者对敌人触发燃烧反应或对处于燃烧状态下的敌人造成草元素伤害后，造成的伤害提高<span style=\"color: #99FFFFFF;\">{1}</span>。该效果持续8秒，至多叠加2层；叠加至2层或2层的持续时间刷新时，恢复<span style=\"color: #99FFFFFF;\">{2}</span>点元素能量，每12秒至多通过这种方式恢复一次元素能量。上述2种效果角色处于队伍后台时也能触发。",
     "refinements": [
@@ -1085,6 +1196,7 @@
     ]
   },
   "luxurious_sealord": {
+    "id": "12412",
     "name": "衔珠海皇",
     "descHtmlTpl": "元素爆发造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。元素爆发命中敌人时，有100%概率召唤大鲔冲击，造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的范围伤害。该效果每15秒至多触发一次。",
     "refinements": [
@@ -1096,6 +1208,7 @@
     ]
   },
   "magic_guide": {
+    "id": "14301",
     "name": "魔导绪论",
     "descHtmlTpl": "对处于水元素或雷元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1107,6 +1220,7 @@
     ]
   },
   "mailed_flower": {
+    "id": "12418",
     "name": "饰铁之花",
     "descHtmlTpl": "元素战技命中敌人或触发元素反应后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。",
     "refinements": [
@@ -1118,6 +1232,7 @@
     ]
   },
   "makhaira_aquamarine": {
+    "id": "12415",
     "name": "玛海菈的水色",
     "descHtmlTpl": "每10秒，产生如下效果：基于装备者的元素精通的<span style=\"color: #99FFFFFF;\">{0}</span>，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。",
     "refinements": [
@@ -1129,6 +1244,7 @@
     ]
   },
   "mappa_mare": {
+    "id": "14407",
     "name": "万国诸海图谱",
     "descHtmlTpl": "触发元素反应后的10秒内，获得<span style=\"color: #99FFFFFF;\">{0}</span>元素伤害加成，该效果最多可以叠加2层。",
     "refinements": [
@@ -1140,6 +1256,7 @@
     ]
   },
   "master_key": {
+    "id": "12433",
     "name": "万能钥匙",
     "descHtmlTpl": "触发元素反应后的12秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。月兆·满辉：该效果中的元素精通额外提升<span style=\"color: #99FFFFFF;\">{1}</span>点。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1151,6 +1268,7 @@
     ]
   },
   "memory_of_dust": {
+    "id": "14504",
     "name": "尘世之锁",
     "descHtmlTpl": "护盾强效提升<span style=\"color: #99FFFFFF;\">{0}</span>。攻击命中后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。",
     "refinements": [
@@ -1162,6 +1280,7 @@
     ]
   },
   "messenger": {
+    "id": "15305",
     "name": "信使",
     "descHtmlTpl": "重击若命中要害，则额外造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的伤害，该伤害必定暴击。此效果每10秒只能触发一次。",
     "refinements": [
@@ -1173,6 +1292,7 @@
     ]
   },
   "missive_windspear": {
+    "id": "13419",
     "name": "风信之锋",
     "descHtmlTpl": "触发元素反应后的10秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。",
     "refinements": [
@@ -1184,6 +1304,7 @@
     ]
   },
   "mistsplitter_reforged": {
+    "id": "11509",
     "name": "雾切之回光",
     "descHtmlTpl": "获得<span style=\"color: #99FFFFFF;\">{0}</span>所有元素伤害加成，并能获得「雾切之巴印」的威势。雾切之巴印：持有1/2/3层雾切之巴印时，获得<span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span>自己的元素类型的元素伤害加成。在下列情况下，角色将各获得1层雾切之巴印：普通攻击造成元素伤害时，持续5秒；施放元素爆发时，持续10秒；此外，角色元素能量低于100%时，将获得1层雾切之巴印，此雾切之巴印会在角色的元素能量充满时消失。每层雾切之巴印的持续时间独立计算。",
     "refinements": [
@@ -1195,6 +1316,7 @@
     ]
   },
   "mitternachts_waltz": {
+    "id": "15412",
     "name": "幽夜华尔兹",
     "descHtmlTpl": "普通攻击命中敌人后的5秒内，元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；元素战技命中敌人后的5秒内，普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1206,6 +1328,7 @@
     ]
   },
   "moonpiercer": {
+    "id": "13417",
     "name": "贯月矢",
     "descHtmlTpl": "触发燃烧、原激化、超激化、蔓激化、绽放、月绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「苏生之叶」。拾取苏生之叶的角色攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续12秒。每20秒至多通过这种方式产生一枚苏生之叶。角色处于队伍后台时也能触发。",
     "refinements": [
@@ -1217,6 +1340,7 @@
     ]
   },
   "moonweavers_dawn": {
+    "id": "11434",
     "name": "织月者的曙色",
     "descHtmlTpl": "元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；装备者的元素能量上限不超过60/40点时，元素爆发造成的伤害额外提高<span style=\"color: #99FFFFFF;\">{1}/{2}</span>。",
     "refinements": [
@@ -1228,6 +1352,7 @@
     ]
   },
   "mountainbracing_bolt": {
+    "id": "13430",
     "name": "镇山之钉",
     "descHtmlTpl": "攀爬消耗的体力降低15%，元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；此外，队伍中附近的其他角色施放元素战技后，装备者的元素战技造成的伤害还会提升<span style=\"color: #99FFFFFF;\">{1}</span>，持续8秒。",
     "refinements": [
@@ -1239,6 +1364,7 @@
     ]
   },
   "mouuns_moon": {
+    "id": "15416",
     "name": "曚云之月",
     "descHtmlTpl": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，通过这种方式，元素爆发造成的伤害至多提高<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1250,6 +1376,7 @@
     ]
   },
   "nightweavers_looking_glass": {
+    "id": "14520",
     "name": "纺夜天镜",
     "descHtmlTpl": "元素战技造成水元素或草元素伤害时，装备者获得「终北圣言」效果：元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点，持续4.5秒；队伍中附近的角色触发月绽放反应时，装备者获得「朔月诗篇」效果：元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点，持续10秒；「终北圣言」效果与「朔月诗篇」效果同时存在时，队伍中附近的所有角色触发的绽放反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>，超绽放、烈绽放反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{3}</span>，月绽放反应伤害提升<span style=\"color: #99FFFFFF;\">{4}</span>，该效果无法叠加。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1261,6 +1388,7 @@
     ]
   },
   "nocturnes_curtain_call": {
+    "id": "14522",
     "name": "帷间夜曲",
     "descHtmlTpl": "生命值上限提高<span style=\"color: #99FFFFFF;\">{0}</span>。装备者触发月曜反应或对敌人造成月曜反应伤害时，将为装备者恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量，并获得持续12秒的「丰饶海的神酒」效果：生命值上限进一步提高<span style=\"color: #99FFFFFF;\">{2}</span>，月曜反应伤害的暴击伤害提升<span style=\"color: #99FFFFFF;\">{3}</span>。恢复元素能量效果每18秒至多触发一次，装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1272,6 +1400,7 @@
     ]
   },
   "oathsworn_eye": {
+    "id": "14415",
     "name": "证誓之明瞳",
     "descHtmlTpl": "施放元素战技后，元素充能效率提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续10秒。",
     "refinements": [
@@ -1283,6 +1412,7 @@
     ]
   },
   "otherworldly_story": {
+    "id": "14303",
     "name": "异世界行记",
     "descHtmlTpl": "获得元素微粒或元素晶球时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>生命值。",
     "refinements": [
@@ -1294,6 +1424,7 @@
     ]
   },
   "peak_patrol_song": {
+    "id": "11516",
     "name": "岩峰巡歌",
     "descHtmlTpl": "普通攻击或下落攻击命中敌人后，将获得「荣花之歌」：防御力提高<span style=\"color: #99FFFFFF;\">{0}</span>，并获得<span style=\"color: #99FFFFFF;\">{1}</span>所有元素伤害加成，该效果持续6秒，至多叠加2层，每0.1秒至多触发一次。该效果叠加至2层或2层的持续时间刷新时，基于装备者的防御力，每1000点使队伍中附近所有角色的所有元素伤害加成提高<span style=\"color: #99FFFFFF;\">{2}</span>，至多提高<span style=\"color: #99FFFFFF;\">{3}</span>，持续15秒。",
     "refinements": [
@@ -1305,6 +1436,7 @@
     ]
   },
   "polar_star": {
+    "id": "15507",
     "name": "冬极白星",
     "descHtmlTpl": "元素战技和元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击、重击、元素战技或元素爆发命中敌人后，将产生1层持续12秒的「白夜极星」效果。处于1/2/3/4层「白夜极星」效果下时，攻击力将提高<span style=\"color: #99FFFFFF;\">{1}/{2}/{3}/{4}</span>。由普通攻击、重击、元素战技或元素爆发产生的「白夜极星」将分别独立存在。",
     "refinements": [
@@ -1316,6 +1448,7 @@
     ]
   },
   "portable_power_saw": {
+    "id": "12427",
     "name": "便携动力锯",
     "descHtmlTpl": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高<span style=\"color: #99FFFFFF;\">{0}</span>点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。",
     "refinements": [
@@ -1327,6 +1460,7 @@
     ]
   },
   "predator": {
+    "id": "15415",
     "name": "掠食者",
     "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>对敌人造成冰元素伤害后，普通攻击与重击造成的伤害提高10%，该效果持续6秒，至多叠加2次；此外，埃洛伊装备掠食者时，攻击力提升66点。",
     "refinements": [
@@ -1334,6 +1468,7 @@
     ]
   },
   "primordial_jade_cutter": {
+    "id": "11505",
     "name": "磐岩结绿",
     "descHtmlTpl": "生命值提升<span style=\"color: #99FFFFFF;\">{0}</span>。此外，基于装备该武器的角色生命值上限的<span style=\"color: #99FFFFFF;\">{1}</span>，获得攻击力加成。",
     "refinements": [
@@ -1345,6 +1480,7 @@
     ]
   },
   "primordial_jade_wingedspear": {
+    "id": "13505",
     "name": "和璞鸢",
     "descHtmlTpl": "命中敌人时自身攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>，持续6秒，最高可以叠加7层。该效果每0.3秒最多触发一次。满层状态时伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1356,6 +1492,7 @@
     ]
   },
   "prized_isshin_blade": {
+    "id": "11419",
     "name": "「一心传」名刀",
     "descHtmlTpl": "普通攻击、重击或下落攻击命中敌人时，将释放祟灵，造成180%攻击力的范围伤害，并且恢复等同于攻击力100%的生命值。该效果每8秒至多触发一次；装备该武器的角色造成的伤害降低50%。",
     "refinements": [
@@ -1363,6 +1500,7 @@
     ]
   },
   "prized_isshin_blade_11420": {
+    "id": "11420",
     "name": "「一心传」名刀",
     "descHtmlTpl": "普通攻击、重击或下落攻击命中敌人时，将释放祟灵，造成180%攻击力的范围伤害。该效果每8秒最多触发一次；装备该武器的角色造成的伤害降低50%。",
     "refinements": [
@@ -1370,6 +1508,7 @@
     ]
   },
   "prized_isshin_blade_11421": {
+    "id": "11421",
     "name": "「一心传」名刀",
     "descHtmlTpl": "普通攻击、重击或下落攻击命中敌人时，将释放祟灵，造成180%攻击力的范围伤害，并且恢复等同于攻击力100%的生命值。该效果每8秒至多触发一次；装备该武器的角色造成的伤害降低50%。",
     "refinements": [
@@ -1377,6 +1516,7 @@
     ]
   },
   "prospectors_drill": {
+    "id": "13427",
     "name": "勘探钻机",
     "descHtmlTpl": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高<span style=\"color: #99FFFFFF;\">{0}</span>攻击力与<span style=\"color: #99FFFFFF;\">{1}</span>所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。",
     "refinements": [
@@ -1388,6 +1528,7 @@
     ]
   },
   "prospectors_shovel": {
+    "id": "13433",
     "name": "掘金之锹",
     "descHtmlTpl": "感电反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，月感电反应造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。月兆·满辉：月感电反应造成的伤害额外提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -1399,6 +1540,7 @@
     ]
   },
   "prototype_amber": {
+    "id": "14406",
     "name": "试作金珀",
     "descHtmlTpl": "施放元素爆发后6秒内，每2秒恢复<span style=\"color: #99FFFFFF;\">{0}</span>点元素能量，队伍中的所有角色每2秒恢复<span style=\"color: #99FFFFFF;\">{1}</span>生命值。",
     "refinements": [
@@ -1410,6 +1552,7 @@
     ]
   },
   "prototype_archaic": {
+    "id": "12406",
     "name": "试作古华",
     "descHtmlTpl": "普通攻击和重击命中时，有50%的概率对小范围内的敌人造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的额外伤害。该效果每15秒只能触发一次。",
     "refinements": [
@@ -1421,6 +1564,7 @@
     ]
   },
   "prototype_crescent": {
+    "id": "15406",
     "name": "试作澹月",
     "descHtmlTpl": "重击若命中要害，则提升10%移动速度与<span style=\"color: #99FFFFFF;\">{0}</span>攻击力，持续10秒。",
     "refinements": [
@@ -1432,6 +1576,7 @@
     ]
   },
   "prototype_rancour": {
+    "id": "11406",
     "name": "试作斩岩",
     "descHtmlTpl": "普通攻击或重击命中时，攻击力和防御力提高<span style=\"color: #99FFFFFF;\">{0}</span>，持续6秒，最多叠加4层。该效果每0.3秒只能触发一次。",
     "refinements": [
@@ -1443,6 +1588,7 @@
     ]
   },
   "prototype_starglitter": {
+    "id": "13402",
     "name": "试作星镰",
     "descHtmlTpl": "施放元素战技后，普通攻击和重击造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。该效果持续12秒，最多叠加2层。",
     "refinements": [
@@ -1454,6 +1600,7 @@
     ]
   },
   "quartz": {
+    "id": "12304",
     "name": "石英大剑",
     "descHtmlTpl": "触发超载、融化、燃烧、蒸发、烈绽放或火元素扩散反应后的12秒内，攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1465,6 +1612,7 @@
     ]
   },
   "rainbow_serpents_rain_bow": {
+    "id": "15434",
     "name": "虹蛇的雨弦",
     "descHtmlTpl": "装备者处于队伍后台时，装备者的攻击命中敌人后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1476,6 +1624,7 @@
     ]
   },
   "rainslasher": {
+    "id": "12405",
     "name": "雨裁",
     "descHtmlTpl": "对处于水元素或雷元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1487,6 +1636,7 @@
     ]
   },
   "range_gauge": {
+    "id": "15427",
     "name": "测距规",
     "descHtmlTpl": "受到治疗或进行治疗时，将赋予一枚团结标记，持续30秒，至多拥有三枚团结标记。施放元素战技或元素爆发时，将消耗所有的团结标记，产生持续10秒的「抗争」效果：每枚消耗的团结标记提高<span style=\"color: #99FFFFFF;\">{0}</span>攻击力与<span style=\"color: #99FFFFFF;\">{1}</span>所有元素伤害加成。每15秒至多触发一次抗争效果；角色处于队伍后台时也能获得团结标记。",
     "refinements": [
@@ -1498,6 +1648,7 @@
     ]
   },
   "raven_bow": {
+    "id": "15301",
     "name": "鸦羽弓",
     "descHtmlTpl": "对处于水元素或火元素影响下的敌人，造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1509,6 +1660,7 @@
     ]
   },
   "recurve_bow": {
+    "id": "15303",
     "name": "反曲弓",
     "descHtmlTpl": "击败敌人时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>生命值。",
     "refinements": [
@@ -1520,6 +1672,7 @@
     ]
   },
   "redhorn_stonethresher": {
+    "id": "12510",
     "name": "赤角石溃杵",
     "descHtmlTpl": "防御力提高<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击与重击造成的伤害值提高，提高数值相当于防御力的<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1531,6 +1684,7 @@
     ]
   },
   "reliquary_of_truth": {
+    "id": "14521",
     "name": "真语秘匣",
     "descHtmlTpl": "暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>。施放元素战技时，装备者获得「伪言之秘」效果：元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点，持续12秒。装备者对敌人造成月绽放反应伤害时，装备者获得「真识之月」效果：暴击伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>，持续4秒。「伪言之秘」效果与「真识之月」效果同时存在时，这些效果分别提升50%。",
     "refinements": [
@@ -1542,6 +1696,7 @@
     ]
   },
   "rightful_reward": {
+    "id": "13425",
     "name": "公义的酬报",
     "descHtmlTpl": "受到治疗时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>点能量，该效果每10秒至多触发一次，角色处于队伍后台时也能触发。",
     "refinements": [
@@ -1553,6 +1708,7 @@
     ]
   },
   "ring_of_yaxche": {
+    "id": "14431",
     "name": "木棉之环",
     "descHtmlTpl": "施放元素战技时，获得「玉锻之冕」效果：每1000点生命值上限都会使普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续10秒。通过这种方式至多使普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1564,6 +1720,7 @@
     ]
   },
   "royal_bow": {
+    "id": "15404",
     "name": "宗室长弓",
     "descHtmlTpl": "攻击造成伤害时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。",
     "refinements": [
@@ -1575,6 +1732,7 @@
     ]
   },
   "royal_greatsword": {
+    "id": "12404",
     "name": "宗室大剑",
     "descHtmlTpl": "攻击造成伤害时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。",
     "refinements": [
@@ -1586,6 +1744,7 @@
     ]
   },
   "royal_grimoire": {
+    "id": "14404",
     "name": "宗室秘法录",
     "descHtmlTpl": "攻击造成伤害时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。",
     "refinements": [
@@ -1597,6 +1756,7 @@
     ]
   },
   "royal_longsword": {
+    "id": "11404",
     "name": "宗室长剑",
     "descHtmlTpl": "攻击造成伤害时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。",
     "refinements": [
@@ -1608,6 +1768,7 @@
     ]
   },
   "royal_spear": {
+    "id": "13408",
     "name": "宗室猎枪",
     "descHtmlTpl": "攻击造成伤害时，暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，最多堆叠5次。攻击造成暴击后，移除已有的专注效果。",
     "refinements": [
@@ -1619,6 +1780,7 @@
     ]
   },
   "rust": {
+    "id": "15405",
     "name": "弓藏",
     "descHtmlTpl": "普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，重击造成的伤害下降10%。",
     "refinements": [
@@ -1630,6 +1792,7 @@
     ]
   },
   "sacrificers_staff": {
+    "id": "13434",
     "name": "圣祭者的辉杖",
     "descHtmlTpl": "元素战技命中敌人后的6秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素充能效率提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多叠加3层，装备者处于队伍后台时依然能触发。",
     "refinements": [
@@ -1641,6 +1804,7 @@
     ]
   },
   "sacrificial_bow": {
+    "id": "15403",
     "name": "祭礼弓",
     "descHtmlTpl": "元素战技造成伤害时，有<span style=\"color: #99FFFFFF;\">{0}</span>的概率重置该技能的冷却时间，该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -1652,6 +1816,7 @@
     ]
   },
   "sacrificial_fragments": {
+    "id": "14403",
     "name": "祭礼残章",
     "descHtmlTpl": "元素战技造成伤害时，有<span style=\"color: #99FFFFFF;\">{0}</span>的概率重置该技能的冷却时间，该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -1663,6 +1828,7 @@
     ]
   },
   "sacrificial_greatsword": {
+    "id": "12403",
     "name": "祭礼大剑",
     "descHtmlTpl": "元素战技造成伤害时，有<span style=\"color: #99FFFFFF;\">{0}</span>的概率重置该技能的冷却时间，该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -1674,6 +1840,7 @@
     ]
   },
   "sacrificial_jade": {
+    "id": "14424",
     "name": "遗祀玉珑",
     "descHtmlTpl": "处于队伍后台超过5秒后，生命值上限提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点。装备者登场并留在场上10秒后，该效果将失效。",
     "refinements": [
@@ -1685,6 +1852,7 @@
     ]
   },
   "sacrificial_sword": {
+    "id": "11403",
     "name": "祭礼剑",
     "descHtmlTpl": "元素战技造成伤害时，有<span style=\"color: #99FFFFFF;\">{0}</span>的概率重置该技能的冷却时间，该效果每<span style=\"color: #99FFFFFF;\">{1}</span>秒只能触发一次。",
     "refinements": [
@@ -1696,6 +1864,7 @@
     ]
   },
   "sapwood_blade": {
+    "id": "11417",
     "name": "原木刀",
     "descHtmlTpl": "触发燃烧、原激化、超激化、蔓激化、绽放、月绽放、超绽放或烈绽放后，将在角色周围产生至多存在10秒的「种识之叶」。拾取种识之叶的角色元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点，持续12秒。每20秒至多通过这种方式产生一枚种识之叶。角色处于队伍后台时也能触发。种识之叶的效果无法叠加。",
     "refinements": [
@@ -1707,6 +1876,7 @@
     ]
   },
   "scion_of_the_blazing_sun": {
+    "id": "15424",
     "name": "烈阳之嗣",
     "descHtmlTpl": "重击命中敌人后，会向命中的敌人降下阳炎矢，造成攻击力<span style=\"color: #99FFFFFF;\">{0}</span>的伤害，并为受到阳炎矢伤害的敌人施加持续10秒的灼心效果。装备者的重击对处于灼心状态下的敌人造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。阳炎矢每10秒至多触发一次。",
     "refinements": [
@@ -1718,6 +1888,7 @@
     ]
   },
   "sequence_of_solitude": {
+    "id": "15432",
     "name": "冷寂迸音",
     "descHtmlTpl": "攻击命中敌人时，在目标位置基于生命值上限的<span style=\"color: #99FFFFFF;\">{0}</span>，造成范围伤害。该效果每15秒至多触发一次。",
     "refinements": [
@@ -1729,6 +1900,7 @@
     ]
   },
   "serenitys_call": {
+    "id": "11433",
     "name": "谧音吹哨",
     "descHtmlTpl": "触发元素反应后的12秒内，生命值上限提高<span style=\"color: #99FFFFFF;\">{0}</span>。月兆·满辉：该效果中的生命值上限额外提高<span style=\"color: #99FFFFFF;\">{1}</span>。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1740,6 +1912,7 @@
     ]
   },
   "serpent_spine": {
+    "id": "12409",
     "name": "螭骨剑",
     "descHtmlTpl": "角色在场上时，每4秒提升<span style=\"color: #99FFFFFF;\">{0}</span>造成的伤害，<span style=\"color: #99FFFFFF;\">{1}</span>受到的伤害。该效果最多叠加5层，不随角色退场重置，受到伤害后会减少1层效果。",
     "refinements": [
@@ -1751,6 +1924,7 @@
     ]
   },
   "sharpshooters_oath": {
+    "id": "15302",
     "name": "神射手之誓",
     "descHtmlTpl": "针对要害造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -1762,6 +1936,7 @@
     ]
   },
   "silvershower_heartstrings": {
+    "id": "15513",
     "name": "白雨心弦",
     "descHtmlTpl": "装备者能获得「疗护」效果，持有1/2/3层疗护时，生命值上限提升<span style=\"color: #99FFFFFF;\">{0}/{1}/{2}</span>。在下列情况下，装备者将各获得1层疗护：施放元素战技时，持续25秒；生命之契的数值增加时，持续25秒；进行治疗时，持续20秒，装备者处于队伍后台时依然能触发。每层疗护的持续时间独立计算。此外，处于3层疗护状态下时，元素爆发的暴击率提升<span style=\"color: #99FFFFFF;\">{3}</span>，该效果将在疗护不足3层4秒后移除。",
     "refinements": [
@@ -1773,6 +1948,7 @@
     ]
   },
   "skyrider_greatsword": {
+    "id": "12306",
     "name": "飞天大御剑",
     "descHtmlTpl": "普通攻击和重击命中时，攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>，持续6秒，最多叠加4层。该效果每0.5秒只能触发一次。",
     "refinements": [
@@ -1784,6 +1960,7 @@
     ]
   },
   "skyrider_sword": {
+    "id": "11306",
     "name": "飞天御剑",
     "descHtmlTpl": "施放元素爆发后，提高<span style=\"color: #99FFFFFF;\">{0}</span>攻击力和移动速度，持续15秒。",
     "refinements": [
@@ -1795,6 +1972,7 @@
     ]
   },
   "skyward_atlas": {
+    "id": "14501",
     "name": "天空之卷",
     "descHtmlTpl": "元素伤害加成提升<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击命中时，有50%的概率获得高天流云的青睐，在15秒内主动攻击附近的敌人，造成等同于<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的伤害。该效果每30秒只能触发一次。",
     "refinements": [
@@ -1806,6 +1984,7 @@
     ]
   },
   "skyward_blade": {
+    "id": "11502",
     "name": "天空之刃",
     "descHtmlTpl": "暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>；施放元素爆发时，获得破空之势：移动速度提升<span style=\"color: #99FFFFFF;\">10%</span>，攻击速度提升<span style=\"color: #99FFFFFF;\">10%</span>，普通攻击与重击命中时，额外造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的伤害，持续12秒。",
     "refinements": [
@@ -1817,6 +1996,7 @@
     ]
   },
   "skyward_harp": {
+    "id": "15501",
     "name": "天空之翼",
     "descHtmlTpl": "暴击伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；攻击命中时有<span style=\"color: #99FFFFFF;\">{1}</span>概率造成125%攻击力的小范围物理伤害，该效果每<span style=\"color: #99FFFFFF;\">{2}</span>秒只能触发一次。",
     "refinements": [
@@ -1828,6 +2008,7 @@
     ]
   },
   "skyward_pride": {
+    "id": "12501",
     "name": "天空之傲",
     "descHtmlTpl": "造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；施放元素爆发后：普通攻击和重击命中时会发出真空刃，对路径上的敌人造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的伤害，持续20秒或直至发出8次真空刃。",
     "refinements": [
@@ -1839,6 +2020,7 @@
     ]
   },
   "skyward_spine": {
+    "id": "13502",
     "name": "天空之脊",
     "descHtmlTpl": "暴击率提升<span style=\"color: #99FFFFFF;\">{0}</span>，普通攻击速度提升<span style=\"color: #99FFFFFF;\">12%</span>。此外，普通攻击与重击命中敌人时，有<span style=\"color: #99FFFFFF;\">50%</span>概率触发真空刃，在小范围内造成额外<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的伤害。该效果每2秒至多触发一次。",
     "refinements": [
@@ -1850,6 +2032,7 @@
     ]
   },
   "slingshot": {
+    "id": "15304",
     "name": "弹弓",
     "descHtmlTpl": "普通攻击与重击的箭矢若在发射后的0.3秒内击中敌人，则造成的伤害增加<span style=\"color: #99FFFFFF;\">{0}</span>；否则，造成的伤害下降10%。",
     "refinements": [
@@ -1861,6 +2044,7 @@
     ]
   },
   "snare_hook": {
+    "id": "15433",
     "name": "罗网勾针",
     "descHtmlTpl": "触发元素反应后的12秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。月兆·满辉：该效果中的元素精通额外提升<span style=\"color: #99FFFFFF;\">{1}</span>点。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1872,6 +2056,7 @@
     ]
   },
   "snowtombed_starsilver": {
+    "id": "12411",
     "name": "雪葬的星银",
     "descHtmlTpl": "普通攻击与重击命中敌人时，有<span style=\"color: #99FFFFFF;\">{0}</span>概率在敌人上方生成恒冰晶核并坠落，造成<span style=\"color: #99FFFFFF;\">{1}</span>攻击力的范围伤害。若敌人处于冰元素影响下，则造成<span style=\"color: #99FFFFFF;\">{2}</span>攻击力的伤害。该效果每10秒至多触发一次。",
     "refinements": [
@@ -1883,6 +2068,7 @@
     ]
   },
   "solar_pearl": {
+    "id": "14405",
     "name": "匣里日月",
     "descHtmlTpl": "普通攻击命中后的6秒内，元素战技与元素爆发的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>；元素战技与元素爆发命中后的6秒内，普通攻击的伤害提高<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -1894,6 +2080,7 @@
     ]
   },
   "song_of_broken_pines": {
+    "id": "12503",
     "name": "松籁响起之时",
     "descHtmlTpl": "飘游风中的「千年的大乐章」的一部分。攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>；普通攻击或重击命中敌人时，角色获得一枚低语之符，每0.3秒内至多触发一次。拥有4枚低语之符时，将消耗所有低语之符，使附近的队伍中所有角色获得持续12秒的「千年的大乐章·揭旗之歌」效果：普通攻击速度提高<span style=\"color: #99FFFFFF;\">{1}</span>，攻击力提升<span style=\"color: #99FFFFFF;\">{2}</span>。触发后20秒内，无法再次获得低语之符。「千年的大乐章」触发的多种数值效果中，同类数值效果不可叠加。",
     "refinements": [
@@ -1905,6 +2092,7 @@
     ]
   },
   "song_of_stillness": {
+    "id": "15425",
     "name": "静谧之曲",
     "descHtmlTpl": "受到治疗后，造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续8秒。角色处于队伍后台也能触发。",
     "refinements": [
@@ -1916,6 +2104,7 @@
     ]
   },
   "splendor_of_tranquil_waters": {
+    "id": "11513",
     "name": "静水流涌之辉",
     "descHtmlTpl": "装备者的当前生命值提升或降低时，元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，该效果持续6秒，至多叠加3次，每0.2秒至多触发一次；队伍中其他角色的当前生命值提升或降低时，装备者的生命值上限提升<span style=\"color: #99FFFFFF;\">{1}</span>，该效果持续6秒，至多叠加2次，每0.2秒至多触发一次。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -1927,6 +2116,7 @@
     ]
   },
   "staff_of_homa": {
+    "id": "13501",
     "name": "护摩之杖",
     "descHtmlTpl": "生命值提升<span style=\"color: #99FFFFFF;\">{0}</span>。此外，基于装备该武器的角色生命值上限的<span style=\"color: #99FFFFFF;\">{1}</span>，获得攻击力加成。当装备该武器的角色生命值低于50%时，进一步获得<span style=\"color: #99FFFFFF;\">{2}</span>基于生命值上限的攻击力提升。",
     "refinements": [
@@ -1938,6 +2128,7 @@
     ]
   },
   "staff_of_the_scarlet_sands": {
+    "id": "13511",
     "name": "赤沙之杖",
     "descHtmlTpl": "基于装备者元素精通的<span style=\"color: #99FFFFFF;\">{0}</span>，获得攻击力加成。元素战技命中敌人时，将产生持续10秒的「赤沙之梦」效果：基于装备者元素精通的<span style=\"color: #99FFFFFF;\">{1}</span>，获得攻击力加成，该效果至多叠加3层。",
     "refinements": [
@@ -1949,6 +2140,7 @@
     ]
   },
   "starcallers_watch": {
+    "id": "14517",
     "name": "祭星者之望",
     "descHtmlTpl": "元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点。装备者创造护盾后的15秒内，获得「照夜之镜」效果：队伍中自己的当前场上角色对附近的敌人造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>，每14秒至多获得一次「照夜之镜」效果。",
     "refinements": [
@@ -1960,6 +2152,7 @@
     ]
   },
   "sturdy_bone": {
+    "id": "11430",
     "name": "弥坚骨",
     "descHtmlTpl": "冲刺或替代冲刺的能力消耗的体力降低15%；此外，使用冲刺或替代冲刺的能力后，普通攻击造成的伤害提高，提高数值相当于攻击力的<span style=\"color: #99FFFFFF;\">{0}</span>，该效果在生效18次或7秒后消失。",
     "refinements": [
@@ -1971,6 +2164,7 @@
     ]
   },
   "summit_shaper": {
+    "id": "11504",
     "name": "斫峰之刃",
     "descHtmlTpl": "护盾强效提升<span style=\"color: #99FFFFFF;\">{0}</span>。攻击命中后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。",
     "refinements": [
@@ -1982,6 +2176,7 @@
     ]
   },
   "sunny_morning_sleepin": {
+    "id": "14518",
     "name": "寝正月初晴",
     "descHtmlTpl": "触发扩散反应后的6秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{0}</span>点；元素战技命中敌人后的9秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点；元素爆发命中敌人后的30秒内，元素精通提升<span style=\"color: #99FFFFFF;\">{2}</span>点。",
     "refinements": [
@@ -1993,6 +2188,7 @@
     ]
   },
   "surfs_up": {
+    "id": "14516",
     "name": "冲浪时光",
     "descHtmlTpl": "生命值上限提高<span style=\"color: #99FFFFFF;\">{0}</span>。每15秒一次，施放元素战技后的14秒内，产生如下效果：获得4层「炽夏」，每层使普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。持续期间内，每1.5秒一次：普通攻击命中敌人后，移除1层；每1.5秒一次：对敌人触发蒸发反应后，增加1层。「炽夏」效果至多叠加4层。",
     "refinements": [
@@ -2004,6 +2200,7 @@
     ]
   },
   "sword_of_descension": {
+    "id": "11412",
     "name": "降临之剑",
     "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>普通攻击与重击命中敌人后有<span style=\"color: #99FFFFFF;\">50%</span>概率在小范围内造成<span style=\"color: #99FFFFFF;\">200%</span>攻击力的伤害。该效果每10秒只能触发一次；此外，旅行者装备降临之剑时，攻击力提升<span style=\"color: #99FFFFFF;\">66</span>点。",
     "refinements": [
@@ -2011,6 +2208,7 @@
     ]
   },
   "sword_of_narzissenkreuz": {
+    "id": "11428",
     "name": "水仙十字之剑",
     "descHtmlTpl": "装备者不具备「始基力」时：普通攻击、重击、下落攻击命中时，会释放芒性或荒性的能量冲击，造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的伤害。该效果每12秒至多触发一次，能量冲击的类型由水仙十字之剑当前的属性决定。",
     "refinements": [
@@ -2022,6 +2220,7 @@
     ]
   },
   "sword_of_narzissenkreuz_11429": {
+    "id": "11429",
     "name": "水仙十字之剑",
     "descHtmlTpl": "在数之不尽的故事中，能够配得上传奇勇者的武器，也是开启一切门扉迈过高潮前往命运终局的钥匙。",
     "refinements": [
@@ -2029,6 +2228,7 @@
     ]
   },
   "symphonist_of_scents": {
+    "id": "13514",
     "name": "香韵奏者",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>；当装备此武器的角色处于队伍后台时，攻击力额外提升<span style=\"color: #99FFFFFF;\">{1}</span>。进行治疗后，装备者与受到治疗的角色会获得「甘美回奏」的效果，攻击力提升<span style=\"color: #99FFFFFF;\">{2}</span>，持续3秒。装备者处于队伍后台时，依然能触发上述效果。",
     "refinements": [
@@ -2040,6 +2240,7 @@
     ]
   },
   "talking_stick": {
+    "id": "12424",
     "name": "聊聊棒",
     "descHtmlTpl": "承受火元素附着后的15秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，每12秒至多触发一次；承受水元素、冰元素、雷元素或草元素附着后的15秒内，所有元素伤害加成提升<span style=\"color: #99FFFFFF;\">{1}</span>，每12秒至多触发一次。",
     "refinements": [
@@ -2051,6 +2252,7 @@
     ]
   },
   "tamayuratei_no_ohanashi": {
+    "id": "13432",
     "name": "且住亭御咄",
     "descHtmlTpl": "施放元素战技时，提高<span style=\"color: #99FFFFFF;\">{0}</span>攻击力和10%移动速度，持续10秒。",
     "refinements": [
@@ -2062,6 +2264,7 @@
     ]
   },
   "the_alley_flash": {
+    "id": "11410",
     "name": "暗巷闪光",
     "descHtmlTpl": "角色造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。受到伤害后，该伤害提升效果会失效5秒。",
     "refinements": [
@@ -2073,6 +2276,7 @@
     ]
   },
   "the_bell": {
+    "id": "12402",
     "name": "钟剑",
     "descHtmlTpl": "受到伤害时，生成一个伤害吸收量等同于生命值上限<span style=\"color: #99FFFFFF;\">{0}</span>的护盾，持续10秒或直到护盾失效,每<span style=\"color: #99FFFFFF;\">45</span>秒只能触发一次。角色处于护盾庇护下时，造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -2084,6 +2288,7 @@
     ]
   },
   "the_black_sword": {
+    "id": "11409",
     "name": "黑剑",
     "descHtmlTpl": "普通攻击与重击的造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；此外，普通攻击与重击暴击时，回复等同于攻击力<span style=\"color: #99FFFFFF;\">{1}</span>的生命值。该效果每5秒至多发动一次。",
     "refinements": [
@@ -2095,6 +2300,7 @@
     ]
   },
   "the_catch": {
+    "id": "13415",
     "name": "「渔获」",
     "descHtmlTpl": "元素爆发造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素爆发的暴击率提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -2106,6 +2312,7 @@
     ]
   },
   "the_daybreak_chronicles": {
+    "id": "15515",
     "name": "黎明破晓之史",
     "descHtmlTpl": "装备者获得「渐起的晓风」：脱离战斗状态3秒后，普通攻击、元素战技和元素爆发造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。在战斗状态下，上述伤害提升效果每秒降低<span style=\"color: #99FFFFFF;\">{1}</span>，直到降低至0%；装备者的普通攻击、元素战技或元素爆发命中敌人时，对应类别的伤害提升效果提升<span style=\"color: #99FFFFFF;\">{2}</span>，直到提升至<span style=\"color: #99FFFFFF;\">{3}</span>，上述每种类别的攻击每0.1秒至多触发一次该效果。装备者处于队伍后台时，依然能触发上述效果。<br>此外，队伍拥有「魔导·秘仪」效果时，装备者的普通攻击、元素战技或元素爆发命中敌人时，改为使所有类别的伤害提升效果提升<span style=\"color: #99FFFFFF;\">{4}</span>。",
     "refinements": [
@@ -2117,6 +2324,7 @@
     ]
   },
   "the_dockhands_assistant": {
+    "id": "11427",
     "name": "船坞长剑",
     "descHtmlTpl": "受到治疗或进行治疗时，将赋予一枚坚忍标记，持续30秒，至多拥有三枚坚忍标记。施放元素战技或元素爆发时，将消耗所有的坚忍标记，产生持续10秒的「奋起」效果：每枚消耗的坚忍标记提高<span style=\"color: #99FFFFFF;\">{0}</span>点元素精通，并在效果产生2秒后，每枚消耗的坚忍标记为装备者恢复<span style=\"color: #99FFFFFF;\">{1}</span>点元素能量。每15秒至多触发一次奋起效果；角色处于队伍后台时也能获得坚忍标记。",
     "refinements": [
@@ -2128,6 +2336,7 @@
     ]
   },
   "the_first_great_magic": {
+    "id": "15512",
     "name": "最初的大魔术",
     "descHtmlTpl": "重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>；队伍中每存在一位与装备者元素类型相同的角色（包括装备者自身），将获得1层「手法」效果；每存在一位元素类型不同的角色，将获得1层「演技」效果。处于1/2/3层及以上「手法」效果下时，攻击力提升<span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span>；处于1/2/3层及以上「演技」效果下时，移动速度提升<span style=\"color: #99FFFFFF;\">{4}/{5}/{6}</span>。",
     "refinements": [
@@ -2139,6 +2348,7 @@
     ]
   },
   "the_flagstaff": {
+    "id": "13304",
     "name": "「旗杆」",
     "descHtmlTpl": "击败敌人时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>生命值。",
     "refinements": [
@@ -2150,6 +2360,7 @@
     ]
   },
   "the_flute": {
+    "id": "11402",
     "name": "笛剑",
     "descHtmlTpl": "普通攻击或重击命中时，会获得一个和音。积攒了5个和音后，释放音律的力量，对周围的敌人造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击力的伤害。和音最多存在30秒，每0.5秒至多获得1个和音。",
     "refinements": [
@@ -2161,6 +2372,7 @@
     ]
   },
   "the_stringless": {
+    "id": "15402",
     "name": "绝弦",
     "descHtmlTpl": "元素战技与元素爆发的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -2172,6 +2384,7 @@
     ]
   },
   "the_unforged": {
+    "id": "12504",
     "name": "无工之剑",
     "descHtmlTpl": "护盾强效提升<span style=\"color: #99FFFFFF;\">{0}</span>。攻击命中后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。",
     "refinements": [
@@ -2183,6 +2396,7 @@
     ]
   },
   "the_viridescent_hunt": {
+    "id": "15409",
     "name": "苍翠猎弓",
     "descHtmlTpl": "普通攻击与重击命中时，有50%几率生成一个风之眼，持续吸引周围敌人，并对其中的敌人每0.5秒造成<span style=\"color: #99FFFFFF;\">{0}</span>攻击的伤害。该效果持续4秒，每<span style=\"color: #99FFFFFF;\">{1}</span>秒至多触发一次。",
     "refinements": [
@@ -2194,6 +2408,7 @@
     ]
   },
   "the_widsith": {
+    "id": "14402",
     "name": "流浪乐章",
     "descHtmlTpl": "角色登场时，随机获得一个主题曲，持续10秒。每30秒只能触发一次。宣叙调：攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>；咏叹调：全元素伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>;间奏曲：元素精通提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -2205,6 +2420,7 @@
     ]
   },
   "thrilling_tales_of_dragon_slayers": {
+    "id": "14302",
     "name": "讨龙英杰谭",
     "descHtmlTpl": "主动切换角色时，新登场的角色攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续10秒。该效果每20秒只能触发一次。",
     "refinements": [
@@ -2216,6 +2432,7 @@
     ]
   },
   "thundering_pulse": {
+    "id": "15509",
     "name": "飞雷之弦振",
     "descHtmlTpl": "攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>，并能获得「飞雷之巴印」的威势。飞雷之巴印：持有1/2/3层飞雷之巴印时，普通攻击造成的伤害提高<span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span>。在下列情况下，角色将各获得1层飞雷之巴印：普通攻击造成伤害时，持续5秒；施放元素战技时，持续10秒；此外，角色元素能量低于100%时，将获得1层飞雷之巴印，此飞雷之巴印会在角色的元素能量充满时消失。每层飞雷之巴印的持续时间独立计算。",
     "refinements": [
@@ -2227,6 +2444,7 @@
     ]
   },
   "tidal_shadow": {
+    "id": "12425",
     "name": "浪影阔剑",
     "descHtmlTpl": "受到治疗后，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续8秒。角色处于队伍后台也能触发。",
     "refinements": [
@@ -2238,6 +2456,7 @@
     ]
   },
   "tome_of_the_eternal_flow": {
+    "id": "14514",
     "name": "万世流涌大典",
     "descHtmlTpl": "生命值提升<span style=\"color: #99FFFFFF;\">{0}</span>。当前生命值提升或降低时，重击造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果持续4秒，至多叠加3次，每0.3秒至多触发一次；叠加至3层或3层的持续时间刷新时，恢复<span style=\"color: #99FFFFFF;\">{2}</span>点元素能量，每12秒至多通过这种方式恢复一次元素能量。",
     "refinements": [
@@ -2249,6 +2468,7 @@
     ]
   },
   "toukabou_shigure": {
+    "id": "11422",
     "name": "东花坊时雨",
     "descHtmlTpl": "攻击命中敌人后，会为命中的一名敌人施加「纸伞作祟」状态，持续10秒。该效果每15秒至多触发一次；持续期间该敌人被击败时，将清除该效果的冷却时间。装备者对处于「纸伞作祟」状态下的敌人造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -2260,6 +2480,7 @@
     ]
   },
   "travelers_handy_sword": {
+    "id": "11303",
     "name": "旅行剑",
     "descHtmlTpl": "获得元素晶球或元素微粒时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>生命值。",
     "refinements": [
@@ -2271,6 +2492,7 @@
     ]
   },
   "tulaytullahs_remembrance": {
+    "id": "14512",
     "name": "图莱杜拉的回忆",
     "descHtmlTpl": "普通攻击速度提升<span style=\"color: #99FFFFFF;\">{0}</span>；施放元素战技后的14秒内：普通攻击造成的伤害每1秒提升<span style=\"color: #99FFFFFF;\">{1}</span>；普通攻击命中敌人后，普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>，该效果每0.3秒至多触发1次。持续期间内，普通攻击造成的伤害至多通过上述效果提升至<span style=\"color: #99FFFFFF;\">{3}</span>。角色退场时将移除效果，再次施放元素战技时会先移除原有的效果。",
     "refinements": [
@@ -2282,6 +2504,7 @@
     ]
   },
   "twin_nephrite": {
+    "id": "14305",
     "name": "甲级宝珏",
     "descHtmlTpl": "击败敌人后的15秒内，移动速度和攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -2293,6 +2516,7 @@
     ]
   },
   "ultimate_overlords_mega_magic_sword": {
+    "id": "12426",
     "name": "「究极霸王超级魔剑」",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>。不仅如此！海沫村中曾蒙你帮助的美露莘们的声援心意充满了力量，依照她们的数目，攻击力至多进一步提升<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -2304,6 +2528,7 @@
     ]
   },
   "uraku_misugiri": {
+    "id": "11514",
     "name": "有乐御簾切",
     "descHtmlTpl": "普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>，元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>；队伍中附近的角色在场上造成岩元素伤害后，上述效果进一步提升100%，持续15秒。此外，装备者的防御力提升<span style=\"color: #99FFFFFF;\">{2}</span>。",
     "refinements": [
@@ -2315,6 +2540,7 @@
     ]
   },
   "verdict": {
+    "id": "12512",
     "name": "裁断",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>；队伍中的角色获取结晶反应产生的晶片或触发月结晶反应时，会为装备者赋予1枚「约印」，使元素战技造成的伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>，约印持续15秒，至多同时持有2枚。所有约印将在装备者的元素战技造成伤害后的0.2秒后移除。每1秒至多通过月结晶反应获取1枚「约印」。",
     "refinements": [
@@ -2326,6 +2552,7 @@
     ]
   },
   "vivid_notions": {
+    "id": "14519",
     "name": "溢彩心念",
     "descHtmlTpl": "攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>；进行下落攻击时，获得「初霞之彩」效果：下落攻击造成的暴击伤害提升<span style=\"color: #99FFFFFF;\">{1}</span>；施放元素战技或元素爆发时，获得「苍暮之辉」效果：下落攻击造成的暴击伤害提升<span style=\"color: #99FFFFFF;\">{2}</span>；上述两种效果各自持续15秒，并将在坠地冲击命中后的0.1秒后解除。",
     "refinements": [
@@ -2337,6 +2564,7 @@
     ]
   },
   "vortex_vanquisher": {
+    "id": "13504",
     "name": "贯虹之槊",
     "descHtmlTpl": "护盾强效提升<span style=\"color: #99FFFFFF;\">{0}</span>。攻击命中后的8秒内，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>。该效果至多可叠加5层，每0.3秒只能触发一次。此外，处于护盾庇护下时，该效果的攻击力提升效果提高100%。",
     "refinements": [
@@ -2348,6 +2576,7 @@
     ]
   },
   "wandering_evenstar": {
+    "id": "14416",
     "name": "流浪的晚星",
     "descHtmlTpl": "每10秒，产生如下效果：基于装备者的元素精通的<span style=\"color: #99FFFFFF;\">{0}</span>，提升该角色的攻击力，并基于该提升的30%为队伍中附近的其他角色提升攻击力，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。",
     "refinements": [
@@ -2359,6 +2588,7 @@
     ]
   },
   "wavebreakers_fin": {
+    "id": "13416",
     "name": "断浪长鳍",
     "descHtmlTpl": "队伍中所有角色的元素能量上限的总和，每1点能使装备此武器的角色的元素爆发造成的伤害提高<span style=\"color: #99FFFFFF;\">{0}</span>，通过这种方式，元素爆发造成的伤害至多提高<span style=\"color: #99FFFFFF;\">{1}</span>。",
     "refinements": [
@@ -2370,6 +2600,7 @@
     ]
   },
   "waveriding_whirl": {
+    "id": "14430",
     "name": "乘浪的回旋",
     "descHtmlTpl": "游泳消耗的体力降低15%。此外，施放元素战技后的10秒内，生命值上限提升<span style=\"color: #99FFFFFF;\">{0}</span>，队伍中每存在一位水元素类型的角色，生命值上限将进一步提升<span style=\"color: #99FFFFFF;\">{1}</span>，至多通过这种方式提升<span style=\"color: #99FFFFFF;\">{2}</span>，该效果每15秒至多触发一次。",
     "refinements": [
@@ -2381,6 +2612,7 @@
     ]
   },
   "white_iron_greatsword": {
+    "id": "12303",
     "name": "白铁大剑",
     "descHtmlTpl": "击败敌人时，恢复<span style=\"color: #99FFFFFF;\">{0}</span>生命值。",
     "refinements": [
@@ -2392,6 +2624,7 @@
     ]
   },
   "white_tassel": {
+    "id": "13301",
     "name": "白缨枪",
     "descHtmlTpl": "普通攻击造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。",
     "refinements": [
@@ -2403,6 +2636,7 @@
     ]
   },
   "whiteblind": {
+    "id": "12407",
     "name": "白影剑",
     "descHtmlTpl": "普通攻击和重击命中后，攻击力和防御力提高<span style=\"color: #99FFFFFF;\">{0}</span>。该效果持续6秒，最多叠加4层，每0.5秒只能触发一次。",
     "refinements": [
@@ -2414,6 +2648,7 @@
     ]
   },
   "windblume_ode": {
+    "id": "15413",
     "name": "风花之颂",
     "descHtmlTpl": "施放元素战技时，获得风之花的悠古愿望加持，攻击力提升<span style=\"color: #99FFFFFF;\">{0}</span>，持续6秒。",
     "refinements": [
@@ -2425,6 +2660,7 @@
     ]
   },
   "wine_and_song": {
+    "id": "14410",
     "name": "暗巷的酒与诗",
     "descHtmlTpl": "普通攻击命中敌人后，冲刺或替代冲刺的能力消耗的体力降低<span style=\"color: #99FFFFFF;\">{0}</span>，持续5秒。此外，使用冲刺或替代冲刺的能力后，攻击力提升<span style=\"color: #99FFFFFF;\">{1}</span>，持续5秒。",
     "refinements": [
@@ -2436,6 +2672,7 @@
     ]
   },
   "wolffang": {
+    "id": "11424",
     "name": "狼牙",
     "descHtmlTpl": "元素战技与元素爆发造成的伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。元素战技命中敌人时，元素战技的暴击率提升<span style=\"color: #99FFFFFF;\">{1}</span>；元素爆发命中敌人时，元素爆发的暴击率提升<span style=\"color: #99FFFFFF;\">{2}</span>。上述两种效果各自持续10秒，至多叠加4次，每0.1秒至多触发一次。",
     "refinements": [
@@ -2447,6 +2684,7 @@
     ]
   },
   "wolfs_gravestone": {
+    "id": "12502",
     "name": "狼的末路",
     "descHtmlTpl": "攻击力提高<span style=\"color: #99FFFFFF;\">{0}</span>；攻击命中生命值低于30%的敌人时，队伍中所有成员的攻击力提高<span style=\"color: #99FFFFFF;\">{1}</span>，持续12秒。该效果30秒只能触发一次。",
     "refinements": [
@@ -2458,6 +2696,7 @@
     ]
   },
   "xiphos_moonlight": {
+    "id": "11418",
     "name": "西福斯的月光",
     "descHtmlTpl": "每10秒，产生如下效果：装备者的每点元素精通，都会为该角色提升<span style=\"color: #99FFFFFF;\">{0}</span>元素充能效率，并基于该提升的30%为队伍中附近的其他角色提升元素充能效率，持续12秒，多件同名武器产生的此效果可以叠加。角色处于队伍后台时也能触发效果。",
     "refinements": [

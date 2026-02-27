@@ -1,0 +1,89 @@
+# Natlan Damage Tracker
+- id: chasca-shell-reactions
+  entity: chasca
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    Shining Shell reactions modeled as reaction: "none"; real DPS higher with
+    Vaporize/Melt team.
+  detail: >
+    Reaction modeling for Shining Shells would require per-shell element tracking.
+    Modeled without reactions for simplicity.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: mualani-shark-missile-falloff
+  entity: mualani
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    Shark Missile multi-target falloff (72% at 3 targets) not modeled.
+  detail: >
+    Multi-target damage falloff is scenario-dependent. Single-target modeling is
+    the standard baseline.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: mavuika-p2-decaying-dmg
+  entity: mavuika
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P2 decaying DMG% (without C4) not captured; peak 40% used.
+  detail: >
+    Time-dependent decay modeled at peak value for simplicity.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: varesa-c4-mutual-exclusivity
+  entity: varesa
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    C4 mutual exclusivity between Fiery Passion (+100% burst dmg%) and Diligent
+    Refinement (+5xATK plunge baseDmg) cannot be cleanly modeled.
+  detail: >
+    Known limitation. One-time buff for a single formula; cannot cleanly model both
+    mutually exclusive branches.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: chasca-p2-burning-shadowhunt
+  entity: chasca
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    P2 Burning Shadowhunt Shot triggered per-Nightsoul-Burst not modeled.
+  detail: >
+    Periodic proc triggered by Nightsoul-Burst state. Complex combat state interaction.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: chasca-c2-c4-aoe-burst
+  entity: chasca
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C2/C4 AoE burst on Shining Shell / Radiant Soulseeker Shell hit not modeled.
+  detail: >
+    Per-hit triggered AoE. Complex interaction with shell-based damage model.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: mavuika-c6-scorching-ring
+  entity: mavuika
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    C6 Scorching Ring periodic damage not modeled.
+  detail: >
+    Low priority periodic damage. Minor DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-25"

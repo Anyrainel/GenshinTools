@@ -57,6 +57,7 @@ export function CharacterBuildView({
     regions: defaultCharacterFilters.regions,
     rarities: defaultCharacterFilters.rarities,
     ownedOnly: true,
+    showManekin: defaultCharacterFilters.showManekin,
   });
 
   // Ownership check callback
@@ -86,6 +87,7 @@ export function CharacterBuildView({
         regions: newFilters.regions,
         rarities: newFilters.rarities,
         ownedOnly: newFilters.ownedOnly,
+        showManekin: newFilters.showManekin,
       });
 
       // Update sort preferences (persisted state)
@@ -128,6 +130,7 @@ export function CharacterBuildView({
       rarities: [meta.rarity],
       regions: meta.region != null ? [meta.region] : [],
       ownedOnly: false,
+      showManekin: targetCharacterId.startsWith("manekin"),
     });
 
     onTargetProcessed?.();

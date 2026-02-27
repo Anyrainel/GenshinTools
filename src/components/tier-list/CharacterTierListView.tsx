@@ -102,6 +102,8 @@ export function CharacterTierListView({
   const setShowWeapons = useTierStore((state) => state.setShowWeapons);
   const showTravelers = useTierStore((state) => state.showTravelers);
   const setShowTravelers = useTierStore((state) => state.setShowTravelers);
+  const showManekin = useTierStore((state) => state.showManekin);
+  const setShowManekin = useTierStore((state) => state.setShowManekin);
   const author = useTierStore((state) => state.author);
   const description = useTierStore((state) => state.description);
 
@@ -314,6 +316,19 @@ export function CharacterTierListView({
                 {t.ui("buttons.showTravelers")}
               </Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-manekin"
+                checked={showManekin}
+                onCheckedChange={(checked) => setShowManekin(checked === true)}
+              />
+              <Label
+                htmlFor="show-manekin"
+                className="text-sm text-gray-200 cursor-pointer whitespace-nowrap"
+              >
+                {t.ui("buttons.showManekin")}
+              </Label>
+            </div>
           </>
         ),
       },
@@ -372,8 +387,10 @@ export function CharacterTierListView({
     [
       showWeapons,
       showTravelers,
+      showManekin,
       setShowWeapons,
       setShowTravelers,
+      setShowManekin,
       show5Star,
       show4Star,
       ownedOnly,
@@ -448,6 +465,9 @@ export function CharacterTierListView({
             if (meta.rarity === 5 && !show5Star) return false;
             if (meta.rarity === 4 && !show4Star) return false;
             if (character.id.startsWith("traveler") && !showTravelers) {
+              return false;
+            }
+            if (character.id.startsWith("manekin") && !showManekin) {
               return false;
             }
             if (ownedOnly && !isOwned("character", character.id)) return false;

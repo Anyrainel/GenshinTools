@@ -1567,6 +1567,20 @@
       "100": {"baseHp": "13602", "baseAtk": "437", "baseDef": "837", "em": "0", "cr": "19.2%"}
     }
   },
+  "varka": {
+    "rarity": 5,
+    "element": "Anemo",
+    "weaponType": "Claymore",
+    "region": "Mondstadt",
+    "releaseDate": "2026-02-24",
+    "levels": {
+      "70": {"baseHp": "10249", "baseAtk": "287", "baseDef": "646", "em": "0", "cd": "28.8%"},
+      "80": {"baseHp": "11727", "baseAtk": "328", "baseDef": "740", "em": "0", "cd": "38.4%"},
+      "90": {"baseHp": "12613", "baseAtk": "353", "baseDef": "795", "em": "0", "cd": "38.4%"},
+      "95": {"baseHp": "13061", "baseAtk": "392", "baseDef": "824", "em": "0", "cd": "38.4%"},
+      "100": {"baseHp": "13510", "baseAtk": "432", "baseDef": "852", "em": "0", "cd": "38.4%"}
+    }
+  },
   "venti": {
     "rarity": 5,
     "element": "Anemo",

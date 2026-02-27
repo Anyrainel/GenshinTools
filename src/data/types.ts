@@ -481,6 +481,7 @@ export interface CharacterFilters {
   tierSort: SortDirection;
   releaseSort: SortDirection;
   ownedOnly: boolean;
+  showManekin: boolean;
 }
 
 export type GlobalStatWeights = {

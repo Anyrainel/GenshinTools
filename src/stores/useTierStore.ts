@@ -12,6 +12,7 @@ interface TierListState {
   customTitle: string;
   showWeapons: boolean;
   showTravelers: boolean;
+  showManekin: boolean;
   author: string;
   description: string;
 
@@ -24,6 +25,7 @@ interface TierListState {
   setCustomTitle: (title: string) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
+  setShowManekin: (show: boolean) => void;
   resetTierList: () => void;
   loadTierListData: (data: {
     tierAssignments: TierAssignment;
@@ -44,6 +46,7 @@ export const useTierStore = create<TierListState>()(
       customTitle: "",
       showWeapons: true, // Default to true
       showTravelers: false, // Default to false
+      showManekin: false, // Default to false
       author: "",
       description: "",
 
@@ -78,6 +81,8 @@ export const useTierStore = create<TierListState>()(
 
       setShowTravelers: (show) => set({ showTravelers: show }),
 
+      setShowManekin: (show) => set({ showManekin: show }),
+
       resetTierList: () =>
         set({
           tierAssignments: {},
@@ -108,6 +113,7 @@ export const useTierStore = create<TierListState>()(
         customTitle: state.customTitle,
         showWeapons: state.showWeapons,
         showTravelers: state.showTravelers,
+        showManekin: state.showManekin,
         author: state.author,
         description: state.description,
       }),

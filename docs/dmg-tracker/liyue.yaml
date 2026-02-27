@@ -1,0 +1,166 @@
+# Liyue Damage Tracker
+- id: shenhe-q-dot
+  entity: shenhe
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q field DoT ticks (59.6% / 70.4%) not modeled.
+  detail: >
+    Shenhe is a Cryo support buffer (not in DmgRunbook). Her Q DoT ticks at 59.6%/70.4% ATK
+    over 12s are minor damage compared to her Icy Quill team buff value. Estimated <5% DPS
+    contribution in any team where she is used.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: qiqi-q-talisman
+  entity: qiqi
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q talisman DMG not modeled (pure healer).
+  detail: >
+    Qiqi is a pure healer not listed in DmgRunbook. Her Q (513%/605%) is primarily a healing
+    tool (Fortune-Preserving Talisman heals on-hit). The initial Cryo DMG is a one-time
+    instance with no follow-up DPS role. Estimated <5% DPS contribution.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: xinyan-e-q-dot
+  entity: xinyan
+  rule: S8
+  status: wont-do
+  category: missing-formula
+  summary: >
+    E DoT (60.5%) and Q Pyro DoT (72%) not modeled.
+  detail: >
+    Xinyan is not in DmgRunbook. E DoT (60.5%/71.4%) requires Level 3 shield (hitting 3+ enemies
+    or 2+ with P1), ticks intermittently over 12s — very low multiplier. Q Pyro DoT (72%/85%)
+    lasts only 2s, negligible vs the 613% Physical burst hit. Both are periodic/minor procs,
+    estimated <5% DPS contribution combined.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: xiangling-q-tick-count
+  entity: xiangling
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    Pyronado tick count approximated as ~10 (C0-C3) or ~14 (C4+).
+  detail: >
+    Acceptable approximation. Exact tick count depends on enemy hitbox and positioning.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: shenhe-e-quill-quota
+  entity: shenhe
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    Icy Quill trigger quota (5 press / 7 hold) not enforced; modeled as unlimited.
+  detail: >
+    Quota enforcement would require per-hit tracking across the team. Modeled as unlimited
+    for simplicity.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: xiao-p1-ramp
+  entity: xiao
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P1 ramp approximated as 15% average; true max 25% at 15s.
+  detail: >
+    Time-dependent ramp averaged for steady-state DPS calculation.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: yelan-p2-ramp
+  entity: yelan
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P2 ramp approximated as 25% average; true max 50% at 15s.
+  detail: >
+    Time-dependent ramp averaged for steady-state DPS calculation.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: baizhu-q-hit-count
+  entity: baizhu
+  rule: S6
+  status: wont-do
+  category: missing-formula
+  summary: >
+    Q Spiritvein hit count depends on incoming damage; approximated as x6.
+  detail: >
+    Baizhu is a Dendro healer/support not in DmgRunbook. Q Pulsing Clarity lasts 14s,
+    generating a new Seamless Shield every 2.5s (~5 refreshes). Spiritveins fire when a
+    new shield is generated while old one is active, or when a shield breaks/expires. The
+    x6 approximation is within acceptable range for typical combat scenarios. Shield breaks
+    from incoming damage may add 1-2 extra procs but this is highly variable and Baizhu's
+    personal DPS is not a primary concern.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: baizhu-c2-gossamer
+  entity: baizhu
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    C2 Gossamer Sprite: Splice (250% ATK, fires every 5s) not modeled.
+  detail: >
+    Periodic proc with long cooldown. Low DPS contribution relative to modeling complexity.
+  created: "2026-02-25"
+  resolved: "2026-02-25"
+
+- id: ganyu-c4-ramp
+  entity: ganyu
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    C4 Q field DMG ramp (5%->25% over 15s) approximated as 15% average.
+  detail: >
+    Time-dependent ramp averaged for steady-state DPS calculation. Same approach as Xiao P1
+    and Yelan P2.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: xiao-p2-stacks
+  entity: xiao
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    P2 E DMG stacks (max 3x15%=45%) approximated as 2 stacks (30%).
+  detail: >
+    In a typical rotation, 2 E casts before Q. Third stack would require a third E during Q
+    which is situational.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+
+- id: chongyun-c6-enemy-hp
+  entity: chongyun
+  rule: S6
+  status: wont-do
+  category: engine-gap
+  summary: >
+    C6 Q +15% DMG vs enemies with lower HP% than Chongyun is assumed always-active. Relative HP
+    comparison is hard to model with standard CombatOpts.
+  detail: >
+    Requires comparing enemy HP% to character HP%, which is a relative comparison not
+    supported by CombatOpts (which only models absolute thresholds like "below 50%"). Adding
+    this would require a new engine concept for relative HP state. The always-active assumption
+    is acceptable because Chongyun Q is typically used as a burst nuke on enemies already
+    damaged, where the condition is naturally satisfied. The 15% dmg% buff on a 4-star C6 Q
+    is not worth the engine complexity.
+  created: "2026-02-26"
+  resolved: "2026-02-26"
+

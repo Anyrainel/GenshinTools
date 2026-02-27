@@ -130,11 +130,13 @@ class Alhaitham extends CharacterBase {
       1.0
     ),
     // C2: EM +50 per Mirror generated (max 4 stacks = 200)
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "self" },
-      this.constellation >= 2 ? [{ key: "em", value: 200 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+            { key: "em", value: 200 },
+          ]),
+        ]
+      : []),
     // C4: Per Mirror consumed (max 3), other party EM +30 (total 90)
     // Per Mirror generated (max 3), self Dendro% +10% (total 30%)
     ...(() => {
@@ -149,27 +151,24 @@ class Alhaitham extends CharacterBase {
       ];
     })(),
     // C6: CR +10%, CD +70% when mirrors are maxed (assume active)
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 6
-        ? [
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "selfOnField" }, [
             { key: "cr", value: 0.1 },
             { key: "cd", value: 0.7 },
-          ]
-        : []
-    ),
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
     // 3-Mirror Projection per hit: Lv10 121.0% ATK + 241.9% EM, C3+: 142.8% ATK + 285.6% EM
-    // × 3 mirrors
-    const projAtk = (this.constellation >= 3 ? 1.428 : 1.21) * 3;
-    const projEm = (this.constellation >= 3 ? 2.856 : 2.419) * 3;
+    const projAtk = this.constellation >= 3 ? 1.428 : 1.21;
+    const projEm = this.constellation >= 3 ? 2.856 : 2.419;
     // Burst single-instance: Lv10 218.9% ATK + 175.1% EM, C5+: 258.4% ATK + 206.7% EM
     // With 3 mirrors consumed = 10 hits
-    const burstAtk = (this.constellation >= 5 ? 2.584 : 2.189) * 10;
-    const burstEm = (this.constellation >= 5 ? 2.067 : 1.751) * 10;
+    const burstAtk = this.constellation >= 5 ? 2.584 : 2.189;
+    const burstEm = this.constellation >= 5 ? 2.067 : 1.751;
     const projTag = {
       element: "Dendro" as const,
       ability: "skill" as const,
@@ -177,18 +176,19 @@ class Alhaitham extends CharacterBase {
     };
     return {
       "alhaitham-projection": {
-        label: { zh: "E 光幕攻击(3镜)", en: "E Projection (3 Mirrors)" },
+        label: { zh: "E伤害(3镜)", en: "E (3 Mirrors)" },
         parts: [
           {
             formula: new DirectFormula(projAtk, projTag, "atk", {
               key: "em",
               multiplier: projEm,
             }),
+            hits: 3,
           },
         ],
       },
       "alhaitham-proj-spread": {
-        label: { zh: "E光幕(蔓激化)", en: "E Projection 3M (Spread)" },
+        label: { zh: "E(蔓激化)", en: "E (Spread)" },
         parts: [
           {
             formula: new CatalyzeFormula(
@@ -197,11 +197,12 @@ class Alhaitham extends CharacterBase {
               "atk",
               { key: "em", multiplier: projEm }
             ),
+            hits: 3,
           },
         ],
       },
       "alhaitham-burst": {
-        label: { zh: "Q 元素爆发(3镜)", en: "Q Burst (3 Mirrors, 10 hits)" },
+        label: { zh: "Q×10 3镜", en: "Q ×10 (3 Mirrors)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -210,6 +211,7 @@ class Alhaitham extends CharacterBase {
               "atk",
               { key: "em", multiplier: burstEm }
             ),
+            hits: 10,
           },
         ],
       },
@@ -222,19 +224,29 @@ class Wanderer extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [];
 
-    // P1: On E, if Pyro absorbed → +30% ATK, Cryo → +20% CR
-    if (Object.values(this.teamMeta.elements).includes("Pyro")) {
+    // P1: On E, if Pyro absorbed → +30% ATK, Cryo → +20% CR (max 2 buffs)
+    // C4: Also obtain a random untriggered buff (max 3 buffs).
+    // Under peak-damage model, C4 gives the best untriggered offensive buff.
+    const hasPyro = Object.values(this.teamMeta.elements).includes("Pyro");
+    const hasCryo = Object.values(this.teamMeta.elements).includes("Cryo");
+    const p1Pyro = hasPyro || (this.constellation >= 4 && hasCryo);
+    const p1Cryo = hasCryo || (this.constellation >= 4 && hasPyro);
+    if (p1Pyro) {
       buffs.push(
-        new StatBuff(cbs(this, "P1", ["E-Pyro"]), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.3 },
-        ])
+        new StatBuff(
+          cbs(this, hasPyro ? "P1" : "P1/C4", ["E-Pyro"]),
+          { receiver: "selfOnField" },
+          [{ key: "atk%", value: 0.3 }]
+        )
       );
     }
-    if (Object.values(this.teamMeta.elements).includes("Cryo")) {
+    if (p1Cryo) {
       buffs.push(
-        new StatBuff(cbs(this, "P1", ["E-Cryo"]), { receiver: "selfOnField" }, [
-          { key: "cr", value: 0.2 },
-        ])
+        new StatBuff(
+          cbs(this, hasCryo ? "P1" : "P1/C4", ["E-Cryo"]),
+          { receiver: "selfOnField" },
+          [{ key: "cr", value: 0.2 }]
+        )
       );
     }
 
@@ -263,41 +275,53 @@ class Wanderer extends CharacterBase {
       );
     }
 
+    // C6: Each Kuugo: Fushoudan hit deals an additional instance at 40% of original DMG
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+          [{ key: "baseDmg%", value: 0.4 }]
+        )
+      );
+    }
+
     return buffs;
   })();
 
-  // E Hover N3 (Lv10 NA + Lv10 E): (135.8+128.5+188.4) * 1.537 = 695.8%
-  // E Hover N3 (Lv10 NA + Lv13 E C5+): 452.7 * 1.614 = 730.7%
-  // C6: +40% extra instance = 730.7 * 1.4 = 1023.0%
-  // E Hover CA (Lv10 NA + Lv10 E): 237.7 * 1.430 = 339.9%
-  // E Hover CA (Lv10 NA + Lv13 E C5+): 237.7 * 1.491 = 354.4%
-  // Q Burst (Lv10): 5 * 265.0% = 1325.0%
-  // Q Burst (Lv13 C3+): 5 * 312.8% = 1564.0%
+  // E Hover Normal: NA Lv10 multipliers × E multiplier (Kuugo: Fushoudan)
+  // N1=135.8%, N2=128.5%, N3=94.2%×2 (4 hits total)
+  // E Lv10: 153.7%, E Lv13 (C5+): 161.4%
+  // E Hover CA: CA Lv10 237.7% × E multiplier (Kuugo: Toufukai)
+  // E Lv10: 143.0%, E Lv13 (C5+): 149.1%
+  // Q Burst (Lv10): 265.0%×5, (Lv13 C3+): 312.8%×5
   protected readonly formulaMap = (() => {
-    let eNMult = this.constellation >= 5 ? 7.307 : 6.958;
-    if (this.constellation >= 6) eNMult *= 1.4;
-
-    const eCMult = this.constellation >= 5 ? 3.544 : 3.399;
-    const qMult = this.constellation >= 3 ? 15.64 : 13.25;
+    const eMult = this.constellation >= 5 ? 1.614 : 1.537;
+    const n1 = 1.358 * eMult;
+    const n2 = 1.285 * eMult;
+    const n3 = 0.942 * eMult;
+    const ca = 2.377 * (this.constellation >= 5 ? 1.491 : 1.43);
+    const qMult = this.constellation >= 3 ? 3.128 : 2.65;
+    const normalTag = {
+      element: "Anemo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "wanderer-normal": {
         label: { zh: "普攻全套", en: "A Kuugo: Fushoudan (N3)" },
         parts: [
-          {
-            formula: new DirectFormula(eNMult, {
-              element: "Anemo",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(n1, normalTag) },
+          { formula: new DirectFormula(n2, normalTag) },
+          { formula: new DirectFormula(n3, normalTag), hits: 2 },
         ],
       },
       "wanderer-charge": {
         label: { zh: "重击", en: "CA" },
         parts: [
           {
-            formula: new DirectFormula(eCMult, {
+            formula: new DirectFormula(ca, {
               element: "Anemo",
               ability: "charge",
               reaction: "none",
@@ -307,8 +331,8 @@ class Wanderer extends CharacterBase {
       },
       "wanderer-burst": {
         label: {
-          zh: "Q 狂言·式乐五番",
-          en: "Q Kyougen: Five Ceremonial Plays",
+          zh: "Q×5",
+          en: "Q ×5",
         },
         parts: [
           {
@@ -317,6 +341,7 @@ class Wanderer extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            hits: 5,
           },
         ],
       },
@@ -350,9 +375,10 @@ class Nahida extends CharacterBase {
       250
     ),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
+    // Tri-Karma fires off-field, so use "self" not "selfOnField"
     new ScalingBuff(
       cbs(this, "P2", []),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
       "dmg%",
@@ -363,7 +389,7 @@ class Nahida extends CharacterBase {
     // P2: EM above 200 → Tri-Karma CR +0.03%/EM (cap 24%)
     new ScalingBuff(
       cbs(this, "P2", []),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+      { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
       "cr",
@@ -372,46 +398,58 @@ class Nahida extends CharacterBase {
       200
     ),
     // C2: Quicken → DEF -30% for 8s
-    new StatBuff(
-      cbs(this, "C2", ["E", "quicken"]),
-      { receiver: "team" },
-      this.constellation >= 2 ? [{ key: "defReduction%", value: 0.3 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["E", "quicken"]),
+            { receiver: "team" },
+            [{ key: "defReduction%", value: 0.3 }]
+          ),
+        ]
+      : []),
     // C2: Burning/Bloom/Hyperbloom/Burgeon can crit (CR 20%, CD 100%)
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      {
-        receiver: "team",
-        filter: { reactions: ["bloom", "burgeon", "burning", "hyperbloom"] },
-      },
-      this.constellation >= 2
-        ? [
-            { key: "reactionCr", value: 0.2 },
-            { key: "reactionCd", value: 1.0 },
-          ]
-        : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            {
+              receiver: "team",
+              filter: {
+                reactions: ["bloom", "burgeon", "burning", "hyperbloom"],
+              },
+            },
+            [
+              { key: "reactionCr", value: 0.2 },
+              { key: "reactionCd", value: 1.0 },
+            ]
+          ),
+        ]
+      : []),
     // C2: Lunar-Bloom DMG CRIT Rate +10%, CRIT DMG +20%
     // "受到月绽放反应伤害的暴击率提升10%，暴击伤害提升20%"
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      {
-        receiver: "team",
-        filter: { reactions: ["lunarBloom"] },
-      },
-      this.constellation >= 2
-        ? [
-            { key: "reactionCr", value: 0.1 },
-            { key: "reactionCd", value: 0.2 },
-          ]
-        : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            {
+              receiver: "team",
+              filter: { reactions: ["lunarBloom"] },
+            },
+            [
+              { key: "reactionCr", value: 0.1 },
+              { key: "reactionCd", value: 0.2 },
+            ]
+          ),
+        ]
+      : []),
     // C4: Self EM +140 (model 3 enemies average)
-    new StatBuff(
-      cbs(this, "C4", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 4 ? [{ key: "em", value: 140 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["E"]), { receiver: "selfOnField" }, [
+            { key: "em", value: 140 },
+          ]),
+        ]
+      : []),
     // Q: Pyro element bonus → Tri-Karma DMG% (requires Q field active; assumed under peak model)
     // C1 adds +1 virtual Pyro/Electro/Hydro to the count for Q effect tiers
     ...(this.pyroBonusDmg > 0
@@ -431,7 +469,7 @@ class Nahida extends CharacterBase {
     const emMult = this.constellation >= 3 ? 4.386 : 3.715;
     return {
       "nahida-karma": {
-        label: { zh: "E 灭净三业", en: "E Tri-Karma Purification" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(
@@ -444,7 +482,7 @@ class Nahida extends CharacterBase {
         ],
       },
       "nahida-karma-spread": {
-        label: { zh: "E(蔓激化)", en: "E Tri-Karma (Spread)" },
+        label: { zh: "E(蔓激化)", en: "E (Spread)" },
         parts: [
           {
             // Spread is a Catalyze reaction (additive flat bonus) — must use CatalyzeFormula
@@ -461,8 +499,8 @@ class Nahida extends CharacterBase {
         ? {
             "nahida-c6-karma": {
               label: {
-                zh: "C6业障除",
-                en: "C6 Karmic Oblivion DMG",
+                zh: "6命 E伤害",
+                en: "C6 E",
               },
               parts: [
                 {
@@ -488,11 +526,15 @@ class Cyno extends CharacterBase {
     new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: 100 },
     ]),
-    new StatBuff(
-      cbs(this, "C1", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      [{ key: "atkSpd%", value: 0.2 }]
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["Q"]),
+            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+            [{ key: "atkSpd%", value: 0.2 }]
+          ),
+        ]
+      : []),
     // P2: Normal ATK DMG += 150% EM as baseDmg (during Q)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
@@ -518,17 +560,24 @@ class Cyno extends CharacterBase {
       [{ key: "dmg%", value: 0.35 }]
     ),
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
-    new StatBuff(
-      cbs(this, "C2", ["Q"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 2 ? [{ key: "electro%", value: 0.5 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
+            { key: "electro%", value: 0.5 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
-    // Burst N1-N5 combo: Lv10 154.7+163+206.8+102.2×2+258.6 = 987.5%
-    // C3+ (Q level): Lv13 187.5+197.5+250.6+123.8×2+313.4 = 1196.6%
-    const nMult = this.constellation >= 3 ? 11.966 : 9.875;
+    // Burst N1-N5 combo (5 distinct multipliers, N4 hits twice = 6 total hits)
+    // Lv10: N1=154.7%, N2=163.0%, N3=206.8%, N4=102.2%×2, N5=258.6%
+    // Lv13 (C3+): N1=187.5%, N2=197.5%, N3=250.6%, N4=123.8%×2, N5=313.4%
+    const n1 = this.constellation >= 3 ? 1.875 : 1.547;
+    const n2 = this.constellation >= 3 ? 1.975 : 1.63;
+    const n3 = this.constellation >= 3 ? 2.506 : 2.068;
+    const n4 = this.constellation >= 3 ? 1.238 : 1.022;
+    const n5 = this.constellation >= 3 ? 3.134 : 2.586;
     // Mortuary Rite: Lv10 282.2%, C5+ 333.2%
     const eMult = this.constellation >= 5 ? 3.332 : 2.822;
 
@@ -549,14 +598,22 @@ class Cyno extends CharacterBase {
     const eAggTag = { ...eBaseTag, reaction: "aggravate" as const };
 
     const comboParts = [
-      { formula: new DirectFormula(nMult / 6, normalBaseTag), hits: 6 },
-      { formula: new DirectFormula(eMult, eBaseTag), hits: 1 },
+      { formula: new DirectFormula(n1, normalBaseTag) },
+      { formula: new DirectFormula(n2, normalBaseTag) },
+      { formula: new DirectFormula(n3, normalBaseTag) },
+      { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
+      { formula: new DirectFormula(n5, normalBaseTag) },
+      { formula: new DirectFormula(eMult, eBaseTag) },
     ];
 
+    // Aggravate: N1/N3/N5 trigger Aggravate (3 hits), N2/N4 direct (3 hits)
     const comboAggParts = [
-      { formula: new CatalyzeFormula(nMult / 6, normalAggTag), hits: 3 },
-      { formula: new DirectFormula(nMult / 6, normalBaseTag), hits: 3 },
-      { formula: new CatalyzeFormula(eMult, eAggTag), hits: 1 },
+      { formula: new CatalyzeFormula(n1, normalAggTag) },
+      { formula: new DirectFormula(n2, normalBaseTag) },
+      { formula: new CatalyzeFormula(n3, normalAggTag) },
+      { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
+      { formula: new CatalyzeFormula(n5, normalAggTag) },
+      { formula: new CatalyzeFormula(eMult, eAggTag) },
     ];
 
     const hasDendro =
@@ -567,18 +624,42 @@ class Cyno extends CharacterBase {
 
     return {
       "cyno-combo": {
-        label: { zh: "Q 普攻一套+E冥祭", en: "Q NA Combo + E Mortuary Rite" },
+        label: { zh: "Q普攻+E", en: "Q Normal+E" },
         parts: comboParts,
       },
       ...(hasDendro
         ? {
             "cyno-combo-aggravate": {
               label: {
-                zh: "Q 普攻一套+E冥祭(激化)",
-                en: "Q NA Combo + E (Aggravate)",
+                zh: "Q普攻+E(超激化)",
+                en: "Q Normal+E (Aggravate)",
               },
               parts: comboAggParts,
             },
+          }
+        : {}),
+      // C6 "Day of the Jackal": Each Normal ATK fires an extra Duststalker Bolt
+      // (100% ATK, Electro skill DMG). ~5 bolts per combo. P2 EM->baseDmg applies automatically.
+      ...(this.constellation >= 6
+        ? {
+            "cyno-c6-bolts": {
+              label: { zh: "6命追影牙", en: "C6 Duststalker Bolts" },
+              parts: [{ formula: new DirectFormula(1.0, eBaseTag), hits: 5 }],
+            },
+            ...(hasDendro
+              ? {
+                  "cyno-c6-bolts-aggravate": {
+                    label: {
+                      zh: "6命追影牙(超激化)",
+                      en: "C6 Bolts (Aggravate)",
+                    },
+                    parts: [
+                      { formula: new CatalyzeFormula(1.0, eAggTag), hits: 3 },
+                      { formula: new DirectFormula(1.0, eBaseTag), hits: 2 },
+                    ],
+                  },
+                }
+              : {}),
           }
         : {}),
     };
@@ -685,7 +766,7 @@ class Nilou extends CharacterBase {
 
     return {
       "nilou-burst": {
-        label: { zh: "Q 浮莲舞步(全段)", en: "Q Dance of Abzendegi (Full)" },
+        label: { zh: "Q 2段", en: "Q 2-hit" },
         parts: [
           {
             formula: new DirectFormula(
@@ -704,7 +785,7 @@ class Nilou extends CharacterBase {
                 {
                   formula: new TransformFormula(0, {
                     element: "Dendro",
-                    ability: "skill",
+                    ability: "special",
                     reaction: "bloom",
                   }),
                 },
@@ -785,39 +866,57 @@ class Tighnari extends CharacterBase {
     return buffs;
   })();
 
-  // Lv10: 157.0% + 4 × 69.5% = 435.0%
-  // C6: + 150.0% = 585.0%
-  // Q Lv10: 6 × 100.1% + 6 × 122.4% = 1335.0%
+  // Charged Attack: Wreath Arrow Lv10 157.0% + 4× Clusterbloom 69.5%
+  // C6: +1 extra Clusterbloom at 150.0%
+  // Q: 6× Tanglevine Shaft Lv10 100.1% + 6× Secondary Shaft 122.4%
+  // C3 boosts Q: Lv13 118.2% + 144.5%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 6 ? 5.85 : 4.35;
-    // C3 boosts Q (Fashioner's Tanglevine Shaft); Lv13: 6×118.2% + 6×144.5% = 1576.2%
-    const qMult = this.constellation >= 3 ? 15.762 : 13.35;
+    const chargeTag = {
+      element: "Dendro" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
+    const chargeSpreadTag = { ...chargeTag, reaction: "spread" as const };
+    const burstTag = {
+      element: "Dendro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+
+    // Tanglevine: Lv10 100.1%, C3+ Lv13 118.2%
+    const tangleMult = this.constellation >= 3 ? 1.182 : 1.001;
+    // Secondary: Lv10 122.4%, C3+ Lv13 144.5%
+    const secondaryMult = this.constellation >= 3 ? 1.445 : 1.224;
+
     return {
       "tighnari-charge": {
-        label: { zh: "重击+花矢", en: "CA + Clusterbloom" },
+        label: { zh: "重击花筥箭", en: "CA Wreath + Clusterbloom" },
         parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Dendro",
-              ability: "charge",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(1.57, chargeTag) },
+          { formula: new DirectFormula(0.695, chargeTag), hits: 4 },
+          ...(this.constellation >= 6
+            ? [{ formula: new DirectFormula(1.5, chargeTag) }]
+            : []),
+        ],
+      },
+      "tighnari-charge-spread": {
+        label: { zh: "重击花筥箭(蔓激化)", en: "CA (Spread)" },
+        parts: [
+          { formula: new CatalyzeFormula(1.57, chargeSpreadTag) },
+          { formula: new CatalyzeFormula(0.695, chargeSpreadTag), hits: 4 },
+          ...(this.constellation >= 6
+            ? [{ formula: new CatalyzeFormula(1.5, chargeSpreadTag) }]
+            : []),
         ],
       },
       "tighnari-burst": {
         label: {
-          zh: "Q(全中)",
-          en: "Q Fashioner's Tanglevine Shaft",
+          zh: "Q缠藤箭×6",
+          en: "Q ×12",
         },
         parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Dendro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(tangleMult, burstTag), hits: 6 },
+          { formula: new DirectFormula(secondaryMult, burstTag), hits: 6 },
         ],
       },
     };

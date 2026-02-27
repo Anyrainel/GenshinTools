@@ -22,7 +22,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { LightweightMultiSelect } from "@/components/ui/lightweight-multiselect";
 import {
   LightweightSelect,
@@ -117,6 +116,7 @@ function BuildCardComponent({
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const setBuild = useBuildsStore((state) => state.setBuild);
   const deleteBuild = useBuildsStore((state) => state.deleteBuild);
+  const revertBuild = useBuildsStore((state) => state.revertBuild);
   // source is derived in useResolvedBuilds
   const [confirmAction, setConfirmAction] = useState<
     "delete" | "revert" | null
@@ -177,12 +177,9 @@ function BuildCardComponent({
 
   const handleConfirmAction = () => {
     if (confirmAction === "delete") {
-      // Hard Delete
       deleteBuild(build.characterId, buildId);
     } else if (confirmAction === "revert") {
-      // Revert (which corresponds to onDelete prop behavior from parent usually, i.e. removeBuild)
-      // Wait, onDelete prop calls removeBuild.
-      onDelete();
+      revertBuild(build.characterId, buildId);
     }
     setConfirmAction(null);
   };
@@ -459,55 +456,29 @@ function BuildCardComponent({
               >
                 <div className={cn("grid grid-cols-3 gap-1")}>
                   {mainStatSlots.map((slot) => (
-                    <div
+                    <StatSelect
                       key={slot}
-                      className={cn(isMobile ? "space-y-0.5" : "space-y-1")}
-                    >
-                      <Label
-                        className={cn(
-                          "font-medium text-muted-foreground select-none",
-                          isMobile ? "text-[10px]" : "text-xs"
-                        )}
-                      >
-                        {mainStatLabel(slot)}
-                      </Label>
-                      <StatSelect
-                        values={build[slot]}
-                        onValuesChange={(values) =>
-                          handleBuildChange({ [slot]: values as MainStat[] })
-                        }
-                        options={localStatPools[slot]}
-                        maxLength={3}
-                        compact={isMobile}
-                      />
-                    </div>
+                      label={mainStatLabel(slot)}
+                      values={build[slot]}
+                      onValuesChange={(values) =>
+                        handleBuildChange({ [slot]: values as MainStat[] })
+                      }
+                      options={localStatPools[slot]}
+                      maxLength={3}
+                      compact={isMobile}
+                    />
                   ))}
                 </div>
-                <div className={cn(isMobile ? "space-y-0.5" : "space-y-1")}>
-                  <div
-                    className={cn(
-                      "flex items-center",
-                      isMobile ? "gap-2" : "gap-4 lg:gap-12 2xl:gap-20"
-                    )}
-                  >
-                    <Label
-                      className={cn(
-                        "font-medium text-muted-foreground select-none whitespace-nowrap",
-                        isMobile ? "text-[10px]" : "text-xs"
-                      )}
-                    >
-                      {t.ui("buildCard.substats")}
-                    </Label>
-                  </div>
-                  <WeightedStatSelect
-                    values={build.substats}
-                    onValuesChange={(values) =>
-                      handleBuildChange({ substats: values })
-                    }
-                    options={statPools.substat}
-                    maxLength={5}
-                  />
-                </div>
+                <WeightedStatSelect
+                  label={t.ui("buildCard.substats")}
+                  values={build.substats}
+                  onValuesChange={(values) =>
+                    handleBuildChange({ substats: values })
+                  }
+                  options={statPools.substat}
+                  maxLength={5}
+                  compact={isMobile}
+                />
               </div>
             </div>
           </div>

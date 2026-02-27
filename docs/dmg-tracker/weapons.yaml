@@ -1,0 +1,37 @@
+# Weapons Damage Tracker
+- id: sharpshooters-oath-weak-spot
+  entity: sharpshooters_oath
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    "Increases DMG against weak spots" doesn't map to any existing stat key.
+    Needs a new weakSpot% key or similar to model.
+  detail: >
+    Requires engine feature: weak spot targeting system (new stat key weakSpot%
+    plus formula-level targeting filter). This is a 3-star weapon with a niche
+    mechanic that cannot be generalized — no other weapon or character buff uses
+    weak spot DMG as a stat. Not worth the engine complexity for a 3-star bow.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+
+- id: finale-deep-bond-of-life
+  entity: finale_of_the_deep
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Bond-cleared ATK bonus (2.4%-4.8% of total Bond of Life cleared, capped at
+    150-300 flat ATK) modeled as cap value due to no Bond of Life eligibility check.
+  detail: >
+    Requires engine feature: Bond of Life amount tracking. The weapon grants
+    25% max HP as Bond of Life on E, then converts a percentage of cleared Bond
+    to flat ATK (capped at 150-300). The current approximation uses the cap value
+    directly, which is a reasonable upper bound. For a typical character with ~20k HP,
+    the actual value would be 2.4% x 5000 = 120 ATK at R1 (vs 150 cap), an ~20%
+    overestimate at R1 for single-clear scenarios. However, this is a 4-star weapon
+    and the cap approximation is the standard approach absent a Bond of Life system.
+    Acceptable trade-off.
+  created: "2026-02-25"
+  resolved: "2026-02-26"
+

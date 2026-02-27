@@ -1,6 +1,7 @@
 import { ErScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
-import { RegisterWeapon, WeaponBase } from "../damageModels";
+import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
+import type { OptionDef } from "../types";
 
 // ══════════════════════════
 // 5★ Polearms
@@ -14,8 +15,8 @@ class CrimsonMoonsSemblance extends WeaponBase {
       {
         key: "dmg%",
         value:
-          r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]) +
-          r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+          r(this.refinement, [0.12, 0.16, 0.2, 0.24, 0.28]) +
+          r(this.refinement, [0.24, 0.32, 0.4, 0.48, 0.56]),
       },
     ]),
   ];
@@ -23,19 +24,28 @@ class CrimsonMoonsSemblance extends WeaponBase {
 
 @RegisterWeapon("lumidouce_elegy")
 class LumidouceElegy extends WeaponBase {
-  // ATK% + 2-stack Burning/Dendro interaction
-  readonly buffs = [
-    new StatBuff(wbs(this, ["burning"]), { receiver: "self" }, [
-      {
-        key: "atk%",
-        value: r(this.refinement, [0.15, 0.19, 0.23, 0.27, 0.31]),
-      },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.18, 0.23, 0.28, 0.33, 0.38]),
-      },
-    ]),
-  ];
+  // ATK% always active; 2-stack DMG% requires Burning interaction
+  get buffs() {
+    const buffs: StatBuff[] = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.15, 0.19, 0.23, 0.27, 0.31]),
+        },
+      ]),
+    ];
+    if (this.teamMeta.hasReaction("burning", this.charId)) {
+      buffs.push(
+        new StatBuff(wbs(this, ["burning"]), { receiver: "self" }, [
+          {
+            key: "dmg%",
+            value: 2 * r(this.refinement, [0.18, 0.23, 0.28, 0.33, 0.38]),
+          },
+        ])
+      );
+    }
+    return buffs;
+  }
 }
 
 @RegisterWeapon("bloodsoaked_ruins")
@@ -48,7 +58,7 @@ class BloodsoakedRuins extends WeaponBase {
           wbs(this, ["Q", "electroCharged"]),
           {
             receiver: "self",
-            filter: { reactions: ["electroCharged", "lunarCharged"] },
+            filter: { reactions: ["lunarCharged"] },
           },
           [
             {
@@ -73,7 +83,7 @@ class BloodsoakedRuins extends WeaponBase {
 class FracturedHalo extends WeaponBase {
   get buffs() {
     const buffs: import("../damageBuffs").StatBuff[] = [
-      new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
         {
           key: "atk%",
           value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
@@ -83,7 +93,7 @@ class FracturedHalo extends WeaponBase {
     if (this.teamMeta.hasShielder()) {
       buffs.push(
         new StatBuff(
-          wbs(this, ["E", "shield"], "fractured-halo-lunar-charged-dmg"),
+          wbs(this, ["E", "Q", "shield"], "fractured-halo-lunar-charged-dmg"),
           {
             receiver: "team",
             filter: { reactions: ["lunarCharged"] },
@@ -116,20 +126,35 @@ class SymphonistOfScents extends WeaponBase {
     ];
     if (this.teamMeta.hasHealer()) {
       buffs.push(
-        new StatBuff(wbs(this, ["heal"]), { receiver: "self" }, [
-          {
-            key: "atk%",
-            value: r(this.refinement, [0.32, 0.4, 0.48, 0.56, 0.64]),
-          },
-        ])
+        new StatBuff(
+          wbs(this, ["heal"], "symphonist-sweet-echoes"),
+          { receiver: "onField" },
+          [
+            {
+              key: "atk%",
+              value: r(this.refinement, [0.32, 0.4, 0.48, 0.56, 0.64]),
+            },
+          ]
+        )
       );
     }
     return buffs;
   }
 }
 
-@RegisterWeapon("staff_of_homa")
+const homaOption = {
+  label: { zh: "生命值状态", en: "HP State" },
+  choices: [
+    { value: "below50", label: { zh: "生命值低于50%", en: "HP below 50%" } },
+    { value: "above50", label: { zh: "生命值高于50%", en: "HP above 50%" } },
+  ] as const,
+  default: "below50",
+} satisfies OptionDef;
+
+@RegisterWeapon("staff_of_homa", homaOption)
 class StaffOfHoma extends WeaponBase {
+  private readonly o = resolveOption(homaOption, this.option);
+
   readonly buffs = [
     new ScalingBuff(
       wbs(this, ["self-low-hp"]),
@@ -138,7 +163,9 @@ class StaffOfHoma extends WeaponBase {
       "hp",
       "atk",
       r(this.refinement, [0.008, 0.01, 0.012, 0.014, 0.016]) +
-        r(this.refinement, [0.01, 0.012, 0.014, 0.016, 0.018])
+        (this.o === "below50"
+          ? r(this.refinement, [0.01, 0.012, 0.014, 0.016, 0.018])
+          : 0)
     ),
   ];
 }
@@ -228,6 +255,7 @@ class SkywardSpine extends WeaponBase {
   readonly buffs = [
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "cr", value: r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) },
+      { key: "atkSpd%", value: 0.12 },
     ]),
   ];
 }

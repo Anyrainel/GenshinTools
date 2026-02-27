@@ -119,11 +119,15 @@ class ProspectorsDrill extends WeaponBase {
 @RegisterWeapon("ballad_of_the_fjords")
 class BalladOfTheFjords extends WeaponBase {
   // ≥3 different element types in party → EM
-  readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "em", value: r(this.refinement, [120, 150, 180, 210, 240]) },
-    ]),
-  ];
+  get buffs() {
+    const elementCount = new Set(Object.values(this.teamMeta.elements)).size;
+    if (elementCount < 3) return [];
+    return [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "em", value: r(this.refinement, [120, 150, 180, 210, 240]) },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("rightful_reward")
@@ -295,25 +299,63 @@ class LithicSpear extends WeaponBase {
 
 @RegisterWeapon("dragons_bane")
 class DragonsBane extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this, ["hydro-pyro-enemy"]), { receiver: "self" }, [
-      {
-        key: "dmg%",
-        value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
-      },
-    ]),
-  ];
+  get buffs() {
+    const teamEls = Object.values(this.teamMeta.elements);
+    if (!teamEls.includes("Hydro") && !teamEls.includes("Pyro")) return [];
+    return [
+      new StatBuff(wbs(this, ["hydro-pyro-enemy"]), { receiver: "self" }, [
+        {
+          key: "dmg%",
+          value: r(this.refinement, [0.2, 0.24, 0.28, 0.32, 0.36]),
+        },
+      ]),
+    ];
+  }
 }
 
-@RegisterWeapon("deathmatch")
+const deathmatchOption = {
+  label: { zh: "敌人数量", en: "Enemy Count" },
+  choices: [
+    {
+      value: "gte2",
+      label: { zh: "至少2个敌人", en: "At least 2 enemies" },
+    },
+    {
+      value: "lt2",
+      label: { zh: "少于2个敌人", en: "Fewer than 2 enemies" },
+    },
+  ] as const,
+  default: "gte2",
+} satisfies OptionDef;
+
+@RegisterWeapon("deathmatch", deathmatchOption)
 class Deathmatch extends WeaponBase {
-  // ≥2 enemies assumed (more common scenario)
-  readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-      { key: "def%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
-    ]),
-  ];
+  private readonly o = resolveOption(deathmatchOption, this.option);
+
+  get buffs() {
+    if (this.o === "lt2") {
+      return [
+        new StatBuff(wbs(this), { receiver: "self" }, [
+          {
+            key: "atk%",
+            value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+          },
+        ]),
+      ];
+    }
+    return [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+        {
+          key: "def%",
+          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("the_catch")

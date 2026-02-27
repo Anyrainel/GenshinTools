@@ -1,23 +1,44 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { RegisterWeapon, WeaponBase } from "../damageModels";
+import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import { r, wbs } from "../helpers";
+import type { OptionDef } from "../types";
 
 // ══════════════════════════
 // 5★ Claymores
 // ══════════════════════════
 
-@RegisterWeapon("a_thousand_blazing_suns")
+const blazingSunsOption = {
+  label: { zh: "夜魂加持状态", en: "Nightsoul's Blessing State" },
+  choices: [
+    {
+      value: "nightsoul",
+      label: { zh: "夜魂加持", en: "Nightsoul's Blessing" },
+    },
+    { value: "normal", label: { zh: "无夜魂加持", en: "Without Nightsoul" } },
+  ] as const,
+  default: "nightsoul",
+} satisfies OptionDef;
+
+@RegisterWeapon("a_thousand_blazing_suns", blazingSunsOption)
 class AThousandBlazingSuns extends WeaponBase {
-  // 2-stack Scorching Brilliance (E/Q triggers)
-  readonly buffs = [
-    new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
-      { key: "cd", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "atk%",
-        value: r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
-      },
-    ]),
-  ];
+  private readonly o = resolveOption(blazingSunsOption, this.option);
+
+  // Scorching Brilliance (E/Q triggers), +75% in Nightsoul's Blessing
+  get buffs() {
+    const mult = this.o === "nightsoul" ? 1.75 : 1;
+    return [
+      new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
+        {
+          key: "cd",
+          value: mult * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+        },
+        {
+          key: "atk%",
+          value: mult * r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
+        },
+      ]),
+    ];
+  }
 }
 
 @RegisterWeapon("fang_of_the_mountain_king")
@@ -47,6 +68,42 @@ class FangOfTheMountainKing extends WeaponBase {
   ];
 }
 
+@RegisterWeapon("gest_of_the_mighty_wolf")
+class GestOfTheMightyWolf extends WeaponBase {
+  // ATK SPD +10% (passive)
+  // Four Winds' Hymn: max 4 stacks DMG% (normal/E/charge triggers)
+  // Hexerei: Secret Rite: max 4 stacks CD (requires 2+ Hexerei faction members)
+  readonly buffs = [
+    new StatBuff(wbs(this), { receiver: "self" }, [
+      { key: "atkSpd%", value: 0.1 },
+    ]),
+    new StatBuff(wbs(this, ["normal", "E", "charge"]), { receiver: "self" }, [
+      {
+        key: "dmg%",
+        value: 4 * r(this.refinement, [0.075, 0.095, 0.115, 0.135, 0.155]),
+      },
+    ]),
+    ...(() => {
+      const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
+      return isHexerei
+        ? [
+            new StatBuff(
+              wbs(this, ["normal", "E", "charge"]),
+              { receiver: "self" },
+              [
+                {
+                  key: "cd",
+                  value:
+                    4 * r(this.refinement, [0.075, 0.095, 0.115, 0.135, 0.155]),
+                },
+              ]
+            ),
+          ]
+        : [];
+    })(),
+  ];
+}
+
 @RegisterWeapon("verdict")
 class Verdict extends WeaponBase {
   // ATK% (passive) + 2-stack Seal → Elemental Skill DMG
@@ -67,18 +124,50 @@ class Verdict extends WeaponBase {
   ];
 }
 
-@RegisterWeapon("wolfs_gravestone")
+const wolfsGravestoneOption = {
+  label: { zh: "敌人生命值状态", en: "Enemy HP State" },
+  choices: [
+    {
+      value: "below30",
+      label: { zh: "敌人生命值低于30%", en: "Enemy HP below 30%" },
+    },
+    {
+      value: "above30",
+      label: { zh: "敌人生命值高于30%", en: "Enemy HP above 30%" },
+    },
+  ] as const,
+  default: "below30",
+} satisfies OptionDef;
+
+@RegisterWeapon("wolfs_gravestone", wolfsGravestoneOption)
 class WolfsGravestone extends WeaponBase {
-  readonly buffs = [
-    new StatBuff(wbs(this), { receiver: "self" }, [
-      { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-    ]),
-    new StatBuff(
-      wbs(this, ["enemy-low-hp"], "wolfs-gravestone-team-atk"),
-      { receiver: "team" },
-      [{ key: "atk%", value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]) }]
-    ),
-  ];
+  private readonly o = resolveOption(wolfsGravestoneOption, this.option);
+
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+        },
+      ]),
+    ];
+    if (this.o === "below30") {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["enemy-low-hp"], "wolfs-gravestone-team-atk"),
+          { receiver: "team" },
+          [
+            {
+              key: "atk%",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
+  }
 }
 
 @RegisterWeapon("redhorn_stonethresher")
@@ -108,6 +197,17 @@ class SongOfBrokenPines extends WeaponBase {
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "atk%", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) },
     ]),
+    // Banner-Hymn: ATK SPD + ATK% for team
+    new StatBuff(
+      wbs(this, ["on-hit"], "millennial-movement-atkSpd"),
+      { receiver: "team" },
+      [
+        {
+          key: "atkSpd%",
+          value: r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+        },
+      ]
+    ),
     new StatBuff(
       wbs(this, ["on-hit"], "millennial-movement-atk"),
       { receiver: "team" },
@@ -142,14 +242,26 @@ class SkywardPride extends WeaponBase {
 
 @RegisterWeapon("beacon_of_the_reed_sea")
 class BeaconOfTheReedSea extends WeaponBase {
-  // Both ATK buffs active + no shield → HP% active
-  readonly buffs = [
-    new StatBuff(wbs(this, ["E", "take-dmg"]), { receiver: "self" }, [
-      {
-        key: "atk%",
-        value: 2 * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
-      },
-      { key: "hp%", value: r(this.refinement, [0.32, 0.4, 0.48, 0.56, 0.64]) },
-    ]),
-  ];
+  // Both ATK buffs assumed active; HP% only when NOT shielded
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this, ["E", "take-dmg"]), { receiver: "self" }, [
+        {
+          key: "atk%",
+          value: 2 * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+        },
+      ]),
+    ];
+    if (!this.teamMeta.hasShielder()) {
+      buffs.push(
+        new StatBuff(wbs(this), { receiver: "self" }, [
+          {
+            key: "hp%",
+            value: r(this.refinement, [0.32, 0.4, 0.48, 0.56, 0.64]),
+          },
+        ])
+      );
+    }
+    return buffs;
+  }
 }

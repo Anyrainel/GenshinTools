@@ -4,10 +4,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 741,
-        "secondaryStatValue": "11.0%"
-      }
+      "90": {"baseAtk": 741, "secondaryStatValue": "11.0%"}
     }
   },
   "a_thousand_floating_dreams": {
@@ -15,10 +12,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "265"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "265"}
     }
   },
   "absolution": {
@@ -26,10 +20,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
     }
   },
   "akuoumaru": {
@@ -37,10 +28,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "alley_hunter": {
@@ -48,10 +36,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "amenoma_kageuchi": {
@@ -59,10 +44,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "amos_bow": {
@@ -70,10 +52,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "aqua_simulacra": {
@@ -81,10 +60,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "aquila_favonia": {
@@ -92,10 +68,7 @@
     "type": "Sword",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "41.3%"}
     }
   },
   "ashgraven_drinking_horn": {
@@ -103,10 +76,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "astral_vultures_crimson_plumage": {
@@ -114,10 +84,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "athame_artis": {
@@ -125,10 +92,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "azurelight": {
@@ -136,10 +100,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "ballad_of_the_boundless_blue": {
@@ -147,10 +108,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "ballad_of_the_fjords": {
@@ -158,10 +116,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "beacon_of_the_reed_sea": {
@@ -169,10 +124,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "black_tassel": {
@@ -180,10 +132,7 @@
     "type": "Polearm",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "46.9%"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "46.9%"}
     }
   },
   "blackcliff_agate": {
@@ -191,10 +140,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "blackcliff_longsword": {
@@ -202,10 +148,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "36.8%"}
     }
   },
   "blackcliff_pole": {
@@ -213,10 +156,7 @@
     "type": "Polearm",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "blackcliff_slasher": {
@@ -224,10 +164,7 @@
     "type": "Claymore",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "blackcliff_warbow": {
@@ -235,10 +172,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "36.8%"}
     }
   },
   "blackmarrow_lantern": {
@@ -246,10 +180,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "221"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "221"}
     }
   },
   "bloodsoaked_ruins": {
@@ -257,10 +188,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "bloodtainted_greatsword": {
@@ -268,10 +196,7 @@
     "type": "Claymore",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "187"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "187"}
     }
   },
   "calamity_of_eshu": {
@@ -279,10 +204,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "calamity_queller": {
@@ -290,10 +212,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 741,
-        "secondaryStatValue": "16.5%"
-      }
+      "90": {"baseAtk": 741, "secondaryStatValue": "16.5%"}
     }
   },
   "cashflow_supervision": {
@@ -301,10 +220,7 @@
     "type": "Catalyst",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "chain_breaker": {
@@ -312,10 +228,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "cinnabar_spindle": {
@@ -323,10 +236,7 @@
     "type": "Sword",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "69.0%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "69.0%"}
     }
   },
   "cloudforged": {
@@ -334,10 +244,7 @@
     "type": "Bow",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "compound_bow": {
@@ -345,10 +252,7 @@
     "type": "Bow",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "69.0%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "69.0%"}
     }
   },
   "cool_steel": {
@@ -356,10 +260,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
     }
   },
   "cranes_echoing_call": {
@@ -367,10 +268,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 741,
-        "secondaryStatValue": "16.5%"
-      }
+      "90": {"baseAtk": 741, "secondaryStatValue": "16.5%"}
     }
   },
   "crescent_pike": {
@@ -378,10 +276,7 @@
     "type": "Polearm",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "34.5%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "34.5%"}
     }
   },
   "crimson_moons_semblance": {
@@ -389,10 +284,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "dark_iron_sword": {
@@ -400,10 +292,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "141"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "141"}
     }
   },
   "dawning_frost": {
@@ -411,10 +300,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "deathmatch": {
@@ -422,10 +308,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "36.8%"}
     }
   },
   "debate_club": {
@@ -433,10 +316,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
     }
   },
   "dialogues_of_the_desert_sages": {
@@ -444,10 +324,7 @@
     "type": "Polearm",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "dodoco_tales": {
@@ -455,10 +332,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "dragons_bane": {
@@ -466,10 +340,7 @@
     "type": "Polearm",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "221"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "221"}
     }
   },
   "dragonspine_spear": {
@@ -477,10 +348,7 @@
     "type": "Polearm",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "69.0%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "69.0%"}
     }
   },
   "earth_shaker": {
@@ -488,10 +356,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "elegy_for_the_end": {
@@ -499,10 +364,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "55.1%"}
     }
   },
   "emerald_orb": {
@@ -510,10 +372,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "94"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "94"}
     }
   },
   "end_of_the_line": {
@@ -521,10 +380,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "engulfing_lightning": {
@@ -532,10 +388,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "55.1%"}
     }
   },
   "etherlight_spindlelute": {
@@ -543,10 +396,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "everlasting_moonglow": {
@@ -554,10 +404,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "eye_of_perception": {
@@ -565,10 +412,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "fading_twilight": {
@@ -576,10 +420,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "fang_of_the_mountain_king": {
@@ -587,10 +428,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 741,
-        "secondaryStatValue": "11.0%"
-      }
+      "90": {"baseAtk": 741, "secondaryStatValue": "11.0%"}
     }
   },
   "favonius_codex": {
@@ -598,10 +436,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "favonius_greatsword": {
@@ -609,10 +444,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "favonius_lance": {
@@ -620,10 +452,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "favonius_sword": {
@@ -631,10 +460,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "favonius_warbow": {
@@ -642,10 +468,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "ferrous_shadow": {
@@ -653,10 +476,7 @@
     "type": "Claymore",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
     }
   },
   "festering_desire": {
@@ -664,10 +484,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "fillet_blade": {
@@ -675,10 +492,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
     }
   },
   "finale_of_the_deep": {
@@ -686,10 +500,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "flameforged_insight": {
@@ -697,10 +508,7 @@
     "type": "Claymore",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "fleuve_cendre_ferryman": {
@@ -708,10 +516,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "flowerwreathed_feathers": {
@@ -719,10 +524,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "flowing_purity": {
@@ -730,10 +532,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "flute_of_ezpitzal": {
@@ -741,10 +540,7 @@
     "type": "Sword",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "69.0%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "69.0%"}
     }
   },
   "footprint_of_the_rainbow": {
@@ -752,10 +548,7 @@
     "type": "Polearm",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "51.7%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "51.7%"}
     }
   },
   "forest_regalia": {
@@ -763,10 +556,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "fractured_halo": {
@@ -774,10 +564,7 @@
     "type": "Polearm",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "freedomsworn": {
@@ -785,10 +572,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "198"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "198"}
     }
   },
   "frostbearer": {
@@ -796,10 +580,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "fruit_of_fulfillment": {
@@ -807,10 +588,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "fruitful_hook": {
@@ -818,10 +596,15 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
+    }
+  },
+  "gest_of_the_mighty_wolf": {
+    "rarity": 5,
+    "type": "Claymore",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "hakushin_ring": {
@@ -829,10 +612,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "halberd": {
@@ -840,10 +620,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "23.5%"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "23.5%"}
     }
   },
   "hamayumi": {
@@ -851,10 +628,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "haran_geppaku_futsu": {
@@ -862,10 +636,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "harbinger_of_dawn": {
@@ -873,10 +644,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "46.9%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "46.9%"}
     }
   },
   "hunters_path": {
@@ -884,10 +652,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "44.1%"}
     }
   },
   "ibis_piercer": {
@@ -895,10 +660,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "iron_sting": {
@@ -906,10 +668,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "jadefalls_splendor": {
@@ -917,10 +676,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "kagotsurube_isshin": {
@@ -928,10 +684,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "kaguras_verity": {
@@ -939,10 +692,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "katsuragikiri_nagamasa": {
@@ -950,10 +700,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "key_of_khajnisut": {
@@ -961,10 +708,7 @@
     "type": "Sword",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "66.2%"}
     }
   },
   "kings_squire": {
@@ -972,10 +716,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "kitain_cross_spear": {
@@ -983,10 +724,7 @@
     "type": "Polearm",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "110"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "110"}
     }
   },
   "light_of_foliar_incision": {
@@ -994,10 +732,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "lightbearing_moonshard": {
@@ -1005,10 +740,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "lions_roar": {
@@ -1016,10 +748,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "lithic_blade": {
@@ -1027,10 +756,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "lithic_spear": {
@@ -1038,10 +764,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "lost_prayer_to_the_sacred_winds": {
@@ -1049,10 +772,7 @@
     "type": "Catalyst",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "lumidouce_elegy": {
@@ -1060,10 +780,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "luxurious_sealord": {
@@ -1071,10 +788,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "magic_guide": {
@@ -1082,10 +796,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "187"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "187"}
     }
   },
   "mailed_flower": {
@@ -1093,10 +804,7 @@
     "type": "Claymore",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "110"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "110"}
     }
   },
   "makhaira_aquamarine": {
@@ -1104,10 +812,7 @@
     "type": "Claymore",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "mappa_mare": {
@@ -1115,10 +820,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "110"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "110"}
     }
   },
   "master_key": {
@@ -1126,10 +828,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "memory_of_dust": {
@@ -1137,10 +836,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "messenger": {
@@ -1148,10 +844,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "31.2%"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "31.2%"}
     }
   },
   "missive_windspear": {
@@ -1159,10 +852,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "mistsplitter_reforged": {
@@ -1170,10 +860,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
     }
   },
   "mitternachts_waltz": {
@@ -1181,10 +868,7 @@
     "type": "Bow",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "51.7%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "51.7%"}
     }
   },
   "moonpiercer": {
@@ -1192,10 +876,7 @@
     "type": "Polearm",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "110"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "110"}
     }
   },
   "moonweavers_dawn": {
@@ -1203,10 +884,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "mountainbracing_bolt": {
@@ -1214,10 +892,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "mouuns_moon": {
@@ -1225,10 +900,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "nightweavers_looking_glass": {
@@ -1236,10 +908,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "265"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "265"}
     }
   },
   "nocturnes_curtain_call": {
@@ -1247,10 +916,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "oathsworn_eye": {
@@ -1258,10 +924,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "otherworldly_story": {
@@ -1269,10 +932,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "39.0%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "39.0%"}
     }
   },
   "peak_patrol_song": {
@@ -1280,10 +940,7 @@
     "type": "Sword",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "82.7%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "82.7%"}
     }
   },
   "polar_star": {
@@ -1291,10 +948,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
   "portable_power_saw": {
@@ -1302,10 +956,7 @@
     "type": "Claymore",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "55.1%"}
     }
   },
   "predator": {
@@ -1313,10 +964,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "primordial_jade_cutter": {
@@ -1324,10 +972,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "44.1%"}
     }
   },
   "primordial_jade_wingedspear": {
@@ -1335,10 +980,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "prospectors_drill": {
@@ -1346,10 +988,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "prospectors_shovel": {
@@ -1357,10 +996,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "prototype_amber": {
@@ -1368,10 +1004,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "prototype_archaic": {
@@ -1379,10 +1012,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "prototype_crescent": {
@@ -1390,10 +1020,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "prototype_rancour": {
@@ -1401,10 +1028,7 @@
     "type": "Sword",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "34.5%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "34.5%"}
     }
   },
   "prototype_starglitter": {
@@ -1412,10 +1036,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "rainbow_serpents_rain_bow": {
@@ -1423,10 +1044,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "rainslasher": {
@@ -1434,10 +1052,7 @@
     "type": "Claymore",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "range_gauge": {
@@ -1445,10 +1060,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "raven_bow": {
@@ -1456,10 +1068,7 @@
     "type": "Bow",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "94"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "94"}
     }
   },
   "recurve_bow": {
@@ -1467,10 +1076,7 @@
     "type": "Bow",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "46.9%"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "46.9%"}
     }
   },
   "redhorn_stonethresher": {
@@ -1478,10 +1084,7 @@
     "type": "Claymore",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "reliquary_of_truth": {
@@ -1489,10 +1092,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "rightful_reward": {
@@ -1500,10 +1100,7 @@
     "type": "Polearm",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "ring_of_yaxche": {
@@ -1511,10 +1108,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "royal_bow": {
@@ -1522,10 +1116,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "royal_greatsword": {
@@ -1533,10 +1124,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "royal_grimoire": {
@@ -1544,10 +1132,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "royal_longsword": {
@@ -1555,10 +1140,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "royal_spear": {
@@ -1566,10 +1148,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "rust": {
@@ -1577,10 +1156,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "sacrificers_staff": {
@@ -1588,10 +1164,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 620,
-        "secondaryStatValue": "9.2%"
-      }
+      "90": {"baseAtk": 620, "secondaryStatValue": "9.2%"}
     }
   },
   "sacrificial_bow": {
@@ -1599,10 +1172,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "sacrificial_fragments": {
@@ -1610,10 +1180,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "221"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "221"}
     }
   },
   "sacrificial_greatsword": {
@@ -1621,10 +1188,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "sacrificial_jade": {
@@ -1632,10 +1196,7 @@
     "type": "Catalyst",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "36.8%"}
     }
   },
   "sacrificial_sword": {
@@ -1643,10 +1204,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "sapwood_blade": {
@@ -1654,10 +1212,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "scion_of_the_blazing_sun": {
@@ -1665,10 +1220,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "18.4%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "18.4%"}
     }
   },
   "sequence_of_solitude": {
@@ -1676,10 +1228,7 @@
     "type": "Bow",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "serenitys_call": {
@@ -1687,10 +1236,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "serpent_spine": {
@@ -1698,10 +1244,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "sharpshooters_oath": {
@@ -1709,10 +1252,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "46.9%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "46.9%"}
     }
   },
   "silvershower_heartstrings": {
@@ -1720,10 +1260,7 @@
     "type": "Bow",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "66.2%"}
     }
   },
   "skyrider_greatsword": {
@@ -1731,10 +1268,7 @@
     "type": "Claymore",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "43.9%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "43.9%"}
     }
   },
   "skyrider_sword": {
@@ -1742,10 +1276,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "52.1%"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "52.1%"}
     }
   },
   "skyward_atlas": {
@@ -1753,10 +1284,7 @@
     "type": "Catalyst",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "33.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "33.1%"}
     }
   },
   "skyward_blade": {
@@ -1764,10 +1292,7 @@
     "type": "Sword",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "55.1%"}
     }
   },
   "skyward_harp": {
@@ -1775,10 +1300,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "skyward_pride": {
@@ -1786,10 +1308,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "36.8%"}
     }
   },
   "skyward_spine": {
@@ -1797,10 +1316,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "36.8%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "36.8%"}
     }
   },
   "slingshot": {
@@ -1808,10 +1324,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 354,
-        "secondaryStatValue": "31.2%"
-      }
+      "90": {"baseAtk": 354, "secondaryStatValue": "31.2%"}
     }
   },
   "snare_hook": {
@@ -1819,10 +1332,7 @@
     "type": "Bow",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "snowtombed_starsilver": {
@@ -1830,10 +1340,7 @@
     "type": "Claymore",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "34.5%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "34.5%"}
     }
   },
   "solar_pearl": {
@@ -1841,10 +1348,7 @@
     "type": "Catalyst",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "song_of_broken_pines": {
@@ -1852,10 +1356,7 @@
     "type": "Claymore",
     "secondaryStat": "phys%",
     "levels": {
-      "90": {
-        "baseAtk": 741,
-        "secondaryStatValue": "20.7%"
-      }
+      "90": {"baseAtk": 741, "secondaryStatValue": "20.7%"}
     }
   },
   "song_of_stillness": {
@@ -1863,10 +1364,7 @@
     "type": "Bow",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "splendor_of_tranquil_waters": {
@@ -1874,10 +1372,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "staff_of_homa": {
@@ -1885,10 +1380,7 @@
     "type": "Polearm",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "staff_of_the_scarlet_sands": {
@@ -1896,10 +1388,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "44.1%"}
     }
   },
   "starcallers_watch": {
@@ -1907,10 +1396,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "265"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "265"}
     }
   },
   "sturdy_bone": {
@@ -1918,10 +1404,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
     }
   },
   "summit_shaper": {
@@ -1929,10 +1412,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "sunny_morning_sleepin": {
@@ -1940,10 +1420,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "265"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "265"}
     }
   },
   "surfs_up": {
@@ -1951,10 +1428,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "sword_of_descension": {
@@ -1962,10 +1436,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 440,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 440, "secondaryStatValue": "35.2%"}
     }
   },
   "sword_of_narzissenkreuz": {
@@ -1973,10 +1444,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "symphonist_of_scents": {
@@ -1984,10 +1452,7 @@
     "type": "Polearm",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "talking_stick": {
@@ -1995,10 +1460,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "18.4%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "18.4%"}
     }
   },
   "tamayuratei_no_ohanashi": {
@@ -2006,10 +1468,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "the_alley_flash": {
@@ -2017,10 +1476,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 620,
-        "secondaryStatValue": "55"
-      }
+      "90": {"baseAtk": 620, "secondaryStatValue": "55"}
     }
   },
   "the_bell": {
@@ -2028,10 +1484,7 @@
     "type": "Claymore",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "the_black_sword": {
@@ -2039,10 +1492,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "the_catch": {
@@ -2050,10 +1500,7 @@
     "type": "Polearm",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "45.9%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "45.9%"}
     }
   },
   "the_daybreak_chronicles": {
@@ -2061,10 +1508,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
     }
   },
   "the_dockhands_assistant": {
@@ -2072,10 +1516,7 @@
     "type": "Sword",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "the_first_great_magic": {
@@ -2083,10 +1524,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "the_flute": {
@@ -2094,10 +1532,7 @@
     "type": "Sword",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "the_stringless": {
@@ -2105,10 +1540,7 @@
     "type": "Bow",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "the_unforged": {
@@ -2116,10 +1548,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "the_viridescent_hunt": {
@@ -2127,10 +1556,7 @@
     "type": "Bow",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "the_widsith": {
@@ -2138,10 +1564,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "55.1%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "thrilling_tales_of_dragon_slayers": {
@@ -2149,10 +1572,7 @@
     "type": "Catalyst",
     "secondaryStat": "hp%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "35.2%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "35.2%"}
     }
   },
   "thundering_pulse": {
@@ -2160,10 +1580,7 @@
     "type": "Bow",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "66.2%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "66.2%"}
     }
   },
   "tidal_shadow": {
@@ -2171,10 +1588,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "41.3%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "tome_of_the_eternal_flow": {
@@ -2182,10 +1596,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "toukabou_shigure": {
@@ -2193,10 +1604,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "travelers_handy_sword": {
@@ -2204,10 +1612,7 @@
     "type": "Sword",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "29.3%"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "29.3%"}
     }
   },
   "tulaytullahs_remembrance": {
@@ -2215,10 +1620,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
     }
   },
   "twin_nephrite": {
@@ -2226,10 +1628,7 @@
     "type": "Catalyst",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 448,
-        "secondaryStatValue": "15.6%"
-      }
+      "90": {"baseAtk": 448, "secondaryStatValue": "15.6%"}
     }
   },
   "ultimate_overlords_mega_magic_sword": {
@@ -2237,10 +1636,7 @@
     "type": "Claymore",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "uraku_misugiri": {
@@ -2248,10 +1644,7 @@
     "type": "Sword",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 542,
-        "secondaryStatValue": "88.2%"
-      }
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
     }
   },
   "verdict": {
@@ -2259,10 +1652,7 @@
     "type": "Claymore",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "22.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "22.1%"}
     }
   },
   "vivid_notions": {
@@ -2270,10 +1660,7 @@
     "type": "Catalyst",
     "secondaryStat": "cd",
     "levels": {
-      "90": {
-        "baseAtk": 674,
-        "secondaryStatValue": "44.1%"
-      }
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
     }
   },
   "vortex_vanquisher": {
@@ -2281,10 +1668,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "wandering_evenstar": {
@@ -2292,10 +1676,7 @@
     "type": "Catalyst",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "wavebreakers_fin": {
@@ -2303,10 +1684,7 @@
     "type": "Polearm",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 620,
-        "secondaryStatValue": "13.8%"
-      }
+      "90": {"baseAtk": 620, "secondaryStatValue": "13.8%"}
     }
   },
   "waveriding_whirl": {
@@ -2314,10 +1692,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 454,
-        "secondaryStatValue": "61.3%"
-      }
+      "90": {"baseAtk": 454, "secondaryStatValue": "61.3%"}
     }
   },
   "white_iron_greatsword": {
@@ -2325,10 +1700,7 @@
     "type": "Claymore",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "43.9%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "43.9%"}
     }
   },
   "white_tassel": {
@@ -2336,10 +1708,7 @@
     "type": "Polearm",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 401,
-        "secondaryStatValue": "23.4%"
-      }
+      "90": {"baseAtk": 401, "secondaryStatValue": "23.4%"}
     }
   },
   "whiteblind": {
@@ -2347,10 +1716,7 @@
     "type": "Claymore",
     "secondaryStat": "def%",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "51.7%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "51.7%"}
     }
   },
   "windblume_ode": {
@@ -2358,10 +1724,7 @@
     "type": "Bow",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   },
   "wine_and_song": {
@@ -2369,10 +1732,7 @@
     "type": "Catalyst",
     "secondaryStat": "er",
     "levels": {
-      "90": {
-        "baseAtk": 565,
-        "secondaryStatValue": "30.6%"
-      }
+      "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
     }
   },
   "wolffang": {
@@ -2380,10 +1740,7 @@
     "type": "Sword",
     "secondaryStat": "cr",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "27.6%"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "wolfs_gravestone": {
@@ -2391,10 +1748,7 @@
     "type": "Claymore",
     "secondaryStat": "atk%",
     "levels": {
-      "90": {
-        "baseAtk": 608,
-        "secondaryStatValue": "49.6%"
-      }
+      "90": {"baseAtk": 608, "secondaryStatValue": "49.6%"}
     }
   },
   "xiphos_moonlight": {
@@ -2402,10 +1756,7 @@
     "type": "Sword",
     "secondaryStat": "em",
     "levels": {
-      "90": {
-        "baseAtk": 510,
-        "secondaryStatValue": "165"
-      }
+      "90": {"baseAtk": 510, "secondaryStatValue": "165"}
     }
   }
 }

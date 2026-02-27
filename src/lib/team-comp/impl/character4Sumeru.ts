@@ -24,23 +24,31 @@ class Sethos extends CharacterBase {
       7.0
     ),
     // C1: Shadowpiercing Shot CR +15%
-    new StatBuff(
-      cbs(this, "C1", ["charge"]),
-      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-      this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["charge"]),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [{ key: "cr", value: 0.15 }]
+          ),
+        ]
+      : []),
     // C2: Self Electro DMG +30% (2 stacks × 15%)
-    new StatBuff(
-      cbs(this, "C2", []),
-      { receiver: "selfOnField" },
-      this.constellation >= 2 ? [{ key: "electro%", value: 0.3 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
+            { key: "electro%", value: 0.3 },
+          ]),
+        ]
+      : []),
     // C4: Team EM +80 on multi-hit
-    new StatBuff(
-      cbs(this, "C4", ["charge"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "em", value: 80 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["charge"]), { receiver: "team" }, [
+            { key: "em", value: 80 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
@@ -84,12 +92,16 @@ class Kaveh extends CharacterBase {
     new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "selfOnField" }, [
       { key: "em", value: 100 },
     ]),
-    // Q: Normal ATK SPD +15%
-    new StatBuff(
-      cbs(this, "Q", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      [{ key: "atkSpd%", value: 0.15 }]
-    ),
+    // C2: Normal ATK SPD +15%
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["Q"]),
+            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+            [{ key: "atkSpd%", value: 0.15 }]
+          ),
+        ]
+      : []),
     // Q: Bloom burst DMG bonus (team Dendro Cores)
     new StatBuff(
       cbs(this, "Q", ["Q"]),
@@ -102,17 +114,24 @@ class Kaveh extends CharacterBase {
       ]
     ),
     // C4: Self-triggered Bloom DMG +60%
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "self", filter: { reactions: ["bloom", "lunarBloom"] } },
-      this.constellation >= 4 ? [{ key: "reactionDmg%", value: 0.6 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(
+            cbs(this, "C4", ["Q"]),
+            {
+              receiver: "self",
+              filter: { reactions: ["bloom", "lunarBloom"] },
+            },
+            [{ key: "reactionDmg%", value: 0.6 }]
+          ),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
     return {
       "kaveh-core": {
-        label: { zh: "Q草原核", en: "Q Bloom Core" },
+        label: { zh: "Q绽放", en: "Q Bloom" },
         parts: [
           {
             formula: new TransformFormula(0, {
@@ -140,7 +159,7 @@ class Faruzan extends CharacterBase {
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },
-      [{ key: "anemo%", value: this.constellation >= 5 ? 0.383 : 0.324 }]
+      [{ key: "anemo%", value: this.constellation >= 5 ? 0.382 : 0.324 }]
     ),
     // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's BASE ATK (not total ATK)
     // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
@@ -153,18 +172,22 @@ class Faruzan extends CharacterBase {
       0.32
     ),
     // C6: Under Q, Anemo CRIT DMG +40%
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Anemo"] } },
-      this.constellation >= 6 ? [{ key: "cd", value: 0.4 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            { receiver: "onField", filter: { elements: ["Anemo"] } },
+            [{ key: "cd", value: 0.4 }]
+          ),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
     const vortexMult = this.constellation >= 3 ? 2.295 : 1.944;
     return {
       "faruzan-vortex": {
-        label: { zh: "E 风压坍陷风涡", en: "E Pressurized Collapse Vortex" },
+        label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
             formula: new DirectFormula(vortexMult, {
@@ -198,12 +221,13 @@ class Layla extends CharacterBase {
     }
     // C6: Shooting Stars (E skill) and Starlight Slugs (Q burst) DMG +40%
     // Scoped to skill+burst only — does not apply to normal/charged attacks
+    // Both are off-field attacks, so use "self" not "selfOnField"
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
           cbs(this, "C6", []),
           {
-            receiver: "selfOnField",
+            receiver: "self",
             filter: { abilities: ["skill", "burst"] },
           },
           [{ key: "dmg%", value: 0.4 }]
@@ -236,11 +260,13 @@ class Candace extends CharacterBase {
       0.000005
     ),
     // C2: After E hit, self Max HP +20% for 15s
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "self" },
-      this.constellation >= 2 ? [{ key: "hp%", value: 0.2 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+            { key: "hp%", value: 0.2 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = {};
@@ -260,11 +286,13 @@ class Collei extends CharacterBase {
     // Game text: "队伍中附近的所有角色（不包括柯莱自己）的元素精通提升60点"
     // Use "team" — closest receiver for "all nearby party members"; minor inaccuracy is
     // that Collei herself receives it, but she is always off-field when relevant.
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 4 ? [{ key: "em", value: 60 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+            { key: "em", value: 60 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = {};

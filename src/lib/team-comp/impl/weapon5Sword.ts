@@ -10,26 +10,38 @@ import { allElementalDmg, r, wbs } from "../helpers";
 @RegisterWeapon("athame_artis")
 class AthameArtis extends WeaponBase {
   // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%
-  readonly buffs = [
-    new StatBuff(
-      wbs(this),
-      { receiver: "self", filter: { abilities: ["burst"] } },
-      [{ key: "cd", value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]) }]
-    ),
-    new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
-      { key: "atk%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-    ]),
-    new StatBuff(
-      wbs(this, ["Q"], "athame_artis-onfield-atk"),
-      { receiver: "onField" },
-      [
+  // Hexerei: Secret Rite (Columbina) increases Blade of the Daylight Hours by 75%
+  get buffs() {
+    const hexMult = this.teamMeta.characters.includes("columbina") ? 1.75 : 1;
+    return [
+      new StatBuff(
+        wbs(this),
+        { receiver: "self", filter: { abilities: ["burst"] } },
+        [
+          {
+            key: "cd",
+            value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ]
+      ),
+      new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
         {
           key: "atk%",
-          value: r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          value: hexMult * r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
         },
-      ]
-    ),
-  ];
+      ]),
+      new StatBuff(
+        wbs(this, ["Q"], "athame_artis-onfield-atk"),
+        { receiver: "otherOnField" },
+        [
+          {
+            key: "atk%",
+            value: hexMult * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ]
+      ),
+    ];
+  }
 }
 
 @RegisterWeapon("key_of_khajnisut")
@@ -197,39 +209,55 @@ class SplendorOfTranquilWaters extends WeaponBase {
 
 @RegisterWeapon("uraku_misugiri")
 class UrakuMisugiri extends WeaponBase {
-  // Geo DMG triggered → effects doubled
-  readonly buffs = [
-    new StatBuff(wbs(this, ["geo-ally"]), { receiver: "self" }, [
-      { key: "def%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
-      {
-        key: "dmg%",
-        value: 2 * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
-      },
-    ]),
-    new StatBuff(
-      wbs(this, ["geo-ally"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      [
-        {
-          key: "dmg%",
-          value: 2 * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
-        },
-      ]
-    ),
-  ];
+  // NA/Skill DMG% base, doubled after nearby active character deals Geo DMG
+  get buffs() {
+    const hasGeo = Object.values(this.teamMeta.elements).includes("Geo");
+    const mult = hasGeo ? 2 : 1;
+    return [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "def%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
+      ]),
+      new StatBuff(
+        wbs(this, hasGeo ? ["geo-ally"] : []),
+        { receiver: "self", filter: { abilities: ["normal"] } },
+        [
+          {
+            key: "dmg%",
+            value: mult * r(this.refinement, [0.16, 0.2, 0.24, 0.28, 0.32]),
+          },
+        ]
+      ),
+      new StatBuff(
+        wbs(this, hasGeo ? ["geo-ally"] : []),
+        { receiver: "self", filter: { abilities: ["skill"] } },
+        [
+          {
+            key: "dmg%",
+            value: mult * r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]),
+          },
+        ]
+      ),
+    ];
+  }
 }
 
 @RegisterWeapon("summit_shaper")
 class SummitShaper extends WeaponBase {
   get buffs() {
-    const mult = this.teamMeta.hasShielder() ? 2 : 1;
+    const shielded = this.teamMeta.hasShielder();
+    const mult = shielded ? 2 : 1;
     return [
-      new StatBuff(wbs(this, ["shield"]), { receiver: "self" }, [
-        {
-          key: "atk%",
-          value: 5 * mult * r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
-        },
-      ]),
+      new StatBuff(
+        wbs(this, shielded ? ["on-hit", "shield"] : ["on-hit"]),
+        { receiver: "self" },
+        [
+          {
+            key: "atk%",
+            value:
+              5 * mult * r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
+          },
+        ]
+      ),
     ];
   }
 }
@@ -249,6 +277,18 @@ class SkywardBlade extends WeaponBase {
     new StatBuff(wbs(this), { receiver: "self" }, [
       { key: "cr", value: r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]) },
     ]),
+    new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
+      { key: "atkSpd%", value: 0.1 },
+    ]),
+    // Skypiercing Might: NA/CA deal additional DMG equal to 20~40% ATK
+    new ScalingBuff(
+      wbs(this, ["Q"]),
+      { receiver: "self", filter: { abilities: ["normal", "charge"] } },
+      [],
+      "atk",
+      "baseDmg",
+      r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4])
+    ),
   ];
 }
 

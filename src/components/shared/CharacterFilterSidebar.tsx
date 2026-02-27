@@ -85,10 +85,10 @@ export function CharacterFilterSidebar({
   };
 
   const content = (
-    <div className="space-y-6">
+    <div className="space-y-4 xl:space-y-6">
       {/* Sort Section (Level 1) */}
-      <div className="flex flex-col space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">
+      <div className="flex flex-col space-y-2 xl:space-y-3">
+        <h2 className="text-base xl:text-lg font-semibold text-foreground">
           {t.ui("filters.sort")}
         </h2>
         <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 items-center">
@@ -130,9 +130,9 @@ export function CharacterFilterSidebar({
       </div>
 
       {/* Filter Section (Level 1) - wrapper for header + subsections */}
-      <div className="space-y-3">
+      <div className="space-y-2 xl:space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-base xl:text-lg font-semibold text-foreground">
             {t.ui("filters.title")}
           </h2>
           {hasAnyActiveFilters && (
@@ -160,9 +160,25 @@ export function CharacterFilterSidebar({
             />
             <Label
               htmlFor="owned-only"
-              className="text-base text-foreground cursor-pointer font-medium"
+              className="text-sm xl:text-base text-foreground cursor-pointer font-medium"
             >
               {t.ui("common.ownedOnly")}
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-manekin"
+              checked={filters.showManekin}
+              onCheckedChange={(checked) =>
+                onFiltersChange({ ...filters, showManekin: checked === true })
+              }
+              className="h-4 w-4"
+            />
+            <Label
+              htmlFor="show-manekin"
+              className="text-sm xl:text-base text-foreground cursor-pointer font-medium"
+            >
+              {t.ui("buttons.showManekin")}
             </Label>
           </div>
         </div>
@@ -170,7 +186,7 @@ export function CharacterFilterSidebar({
         {/* Elements (Level 2 under Filter) */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-foreground text-base font-medium">
+            <Label className="text-foreground text-sm xl:text-base font-medium">
               {t.ui("filters.elements")}
             </Label>
             {filters.elements.length > 0 && (
@@ -184,7 +200,7 @@ export function CharacterFilterSidebar({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
             {elements.map((element) => (
               <div key={element} className="flex items-center space-x-2">
                 <Checkbox
@@ -197,12 +213,12 @@ export function CharacterFilterSidebar({
                 />
                 <Label
                   htmlFor={`element-${element}`}
-                  className="text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
+                  className="text-sm xl:text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
                 >
                   <img
                     src={getElementImagePath(element)}
                     alt={element}
-                    className="w-5 h-5 flex-shrink-0"
+                    className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0"
                   />
                   <span className="truncate">{t.element(element)}</span>
                 </Label>
@@ -214,7 +230,7 @@ export function CharacterFilterSidebar({
         {/* Rarity */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-foreground text-base font-medium">
+            <Label className="text-foreground text-sm xl:text-base font-medium">
               {t.ui("filters.rarity")}
             </Label>
             {filters.rarities.length > 0 && (
@@ -228,7 +244,7 @@ export function CharacterFilterSidebar({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
             {[4, 5].map((rarity) => (
               <div key={rarity} className="flex items-center space-x-2">
                 <Checkbox
@@ -245,7 +261,7 @@ export function CharacterFilterSidebar({
                 />
                 <Label
                   htmlFor={`rarity-${rarity}`}
-                  className="text-base text-foreground cursor-pointer flex-1"
+                  className="text-sm xl:text-base text-foreground cursor-pointer flex-1"
                 >
                   ★ {rarity}
                 </Label>
@@ -257,7 +273,7 @@ export function CharacterFilterSidebar({
         {/* Weapon Types */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-foreground text-base font-medium">
+            <Label className="text-foreground text-sm xl:text-base font-medium">
               {t.ui("filters.weaponTypes")}
             </Label>
             {filters.weaponTypes.length > 0 && (
@@ -271,7 +287,7 @@ export function CharacterFilterSidebar({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
             {weaponTypes.map((weapon) => (
               <div key={weapon} className="flex items-center space-x-2">
                 <Checkbox
@@ -288,12 +304,12 @@ export function CharacterFilterSidebar({
                 />
                 <Label
                   htmlFor={`weapon-${weapon}`}
-                  className="text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
+                  className="text-sm xl:text-base text-foreground cursor-pointer flex items-center gap-1 flex-1"
                 >
                   <img
                     src={getWeaponImagePath(weapon)}
                     alt={weapon}
-                    className="w-5 h-5 flex-shrink-0"
+                    className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0"
                   />
                   <span className="truncate">{t.weaponType(weapon)}</span>
                 </Label>
@@ -305,7 +321,7 @@ export function CharacterFilterSidebar({
         {/* Regions */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-foreground text-base font-medium">
+            <Label className="text-foreground text-sm xl:text-base font-medium">
               {t.ui("filters.regions")}
             </Label>
             {filters.regions.length > 0 && (
@@ -319,7 +335,7 @@ export function CharacterFilterSidebar({
               </Button>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5 xl:gap-2">
             {regions.map((region) => (
               <div key={region} className="flex items-center space-x-2">
                 <Checkbox
@@ -332,7 +348,7 @@ export function CharacterFilterSidebar({
                 />
                 <Label
                   htmlFor={`region-${region}`}
-                  className="text-base text-foreground cursor-pointer flex-1 truncate capitalize"
+                  className="text-sm xl:text-base text-foreground cursor-pointer flex-1 truncate capitalize"
                 >
                   {t.region(region)}
                 </Label>
@@ -347,7 +363,7 @@ export function CharacterFilterSidebar({
   if (isInSidePanel) {
     return (
       <Card className="bg-card/50 border-border/50 h-full flex flex-col overflow-hidden">
-        <CardContent className="flex-1 overflow-y-auto py-6 pl-6 pr-4">
+        <CardContent className="flex-1 overflow-y-auto py-4 pl-4 pr-3 xl:py-6 xl:pl-6 xl:pr-4">
           {content}
         </CardContent>
       </Card>

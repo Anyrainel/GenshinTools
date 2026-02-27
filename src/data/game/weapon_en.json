@@ -1,5 +1,6 @@
 {
   "a_thousand_blazing_suns": {
+    "id": "12514",
     "name": "A Thousand Blazing Suns",
     "descHtmlTpl": "Gain the \"Scorching Brilliance\" effect when using an Elemental Skill or Burst: CRIT DMG increased by <span style=\"color: #99FFFFFF;\">{0}</span> and ATK increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s. This effect can trigger once every 10s.<br>While a \"Scorching Brilliance\" instance is active, its duration is increased by 2s after Normal or Charged attacks deal Elemental DMG. This effect can trigger once every second, and the max duration increase is 6s.<br>Additionally, when the equipping character is in the Nightsoul's Blessing state, \"Scorching Brilliance\" effects are increased by 75%, and its duration will not count down when the equipping character is off-field.",
     "refinements": [
@@ -11,6 +12,7 @@
     ]
   },
   "a_thousand_floating_dreams": {
+    "id": "14511",
     "name": "A Thousand Floating Dreams",
     "descHtmlTpl": "Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">{1}</span>. Each of the aforementioned effects can have up to 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">{2}</span>. Multiple such effects from multiple such weapons can stack.",
     "refinements": [
@@ -22,6 +24,7 @@
     ]
   },
   "absolution": {
+    "id": "11515",
     "name": "Absolution",
     "descHtmlTpl": "CRIT DMG increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Increasing the value of a Bond of Life increases the DMG the equipping character deals by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s. Max 3 stacks.",
     "refinements": [
@@ -33,6 +36,7 @@
     ]
   },
   "akuoumaru": {
+    "id": "12416",
     "name": "Akuoumaru",
     "descHtmlTpl": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. A maximum of <span style=\"color: #99FFFFFF;\">{1}</span> increased Elemental Burst DMG can be achieved this way.",
     "refinements": [
@@ -44,6 +48,7 @@
     ]
   },
   "alley_hunter": {
+    "id": "15410",
     "name": "Alley Hunter",
     "descHtmlTpl": "While the character equipped with this weapon is in the party but not on the field, their DMG increases by <span style=\"color: #99FFFFFF;\">{0}</span> every second up to a max of <span style=\"color: #99FFFFFF;\">{1}</span>. When the character is on the field for more than 4s, the aforementioned DMG buff decreases by <span style=\"color: #99FFFFFF;\">{2}</span> per second until it reaches 0%.",
     "refinements": [
@@ -55,6 +60,7 @@
     ]
   },
   "amber_bead": {
+    "id": "14306",
     "name": "Amber Bead",
     "descHtmlTpl": "Normal Attack hits increase all Elemental DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 2 stacks.",
     "refinements": [
@@ -66,6 +72,7 @@
     ]
   },
   "amenoma_kageuchi": {
+    "id": "11414",
     "name": "Amenoma Kageuchi",
     "descHtmlTpl": "After casting an Elemental Skill, gain 1 Succession Seed. This effect can be triggered once every 5s. The Succession Seed lasts for 30s. Up to 3 Succession Seeds may exist simultaneously. After using an Elemental Burst, all Succession Seeds are consumed and after 2s, the character regenerates <span style=\"color: #99FFFFFF;\">{0}</span> Energy for each seed consumed.",
     "refinements": [
@@ -77,6 +84,7 @@
     ]
   },
   "amos_bow": {
+    "id": "15502",
     "name": "Amos' Bow",
     "descHtmlTpl": "Increases Normal and Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. After a Normal or Charged Attack is fired, DMG dealt increases by a further <span style=\"color: #99FFFFFF;\">{1}</span> every 0.1s the arrow is in the air for up to 5 times.",
     "refinements": [
@@ -88,6 +96,7 @@
     ]
   },
   "aqua_simulacra": {
+    "id": "15508",
     "name": "Aqua Simulacra",
     "descHtmlTpl": "HP is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When there are opponents nearby, the DMG dealt by the wielder of this weapon is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. This will take effect whether the character is on-field or not.",
     "refinements": [
@@ -99,6 +108,7 @@
     ]
   },
   "aquila_favonia": {
+    "id": "11501",
     "name": "Aquila Favonia",
     "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Triggers on taking DMG: the soul of the Falcon of the West awakens, holding the banner of resistance aloft, regenerating HP equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK and dealing <span style=\"color: #99FFFFFF;\">{2}</span> of ATK as DMG to surrounding opponents. This effect can only occur once every 15s.",
     "refinements": [
@@ -110,6 +120,7 @@
     ]
   },
   "ashgraven_drinking_horn": {
+    "id": "14427",
     "name": "Ash-Graven Drinking Horn",
     "descHtmlTpl": "When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of Max HP at the target's location. This effect can be triggered once every 15s.",
     "refinements": [
@@ -121,6 +132,7 @@
     ]
   },
   "astral_vultures_crimson_plumage": {
+    "id": "15514",
     "name": "Astral Vulture's Crimson Plumage",
     "descHtmlTpl": "For 12s after triggering a Swirl reaction, ATK increases by <span style=\"color: #99FFFFFF;\">{0}</span>. In addition, when 1/2 or more characters in the party are of a different Elemental Type from the equipping character, the DMG dealt by the equipping character's Charged Attacks is increased by <span style=\"color: #99FFFFFF;\">{1}/{2}</span> and Elemental Burst DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{3}/{4}</span>.",
     "refinements": [
@@ -132,6 +144,7 @@
     ]
   },
   "athame_artis": {
+    "id": "11518",
     "name": "Athame Artis",
     "descHtmlTpl": "CRIT DMG from Elemental Bursts is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When an Elemental Burst hits an opponent, gain the Blade of the Daylight Hours effect: ATK is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Nearby active party members other than the equipping character have their ATK increased by <span style=\"color: #99FFFFFF;\">{2}</span> for 3s.<br>Additionally, when the party possesses Hexerei: Secret Rite effects, the effects of Blade of the Daylight Hours are increased by an additional 75%. This effect can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -143,6 +156,7 @@
     ]
   },
   "azurelight": {
+    "id": "11517",
     "name": "Azurelight",
     "descHtmlTpl": "Within 12s after an Elemental Skill is used, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. During this time, when the equipping character has 0 Energy, ATK will be further increased by <span style=\"color: #99FFFFFF;\">{1}</span>, and CRIT DMG will be increased by <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -154,6 +168,7 @@
     ]
   },
   "ballad_of_the_boundless_blue": {
+    "id": "14426",
     "name": "Ballad of the Boundless Blue",
     "descHtmlTpl": "Within 6s after Normal or Charged Attacks hit an opponent, Normal Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> and Charged Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Max 3 stacks. This effect can be triggered once every 0.3s.",
     "refinements": [
@@ -165,6 +180,7 @@
     ]
   },
   "ballad_of_the_fjords": {
+    "id": "13424",
     "name": "Ballad of the Fjords",
     "descHtmlTpl": "When there are at least 3 different Elemental Types in your party, Elemental Mastery will be increased by <span style=\"color: #99FFFFFF;\">{0}.</span>",
     "refinements": [
@@ -176,6 +192,7 @@
     ]
   },
   "beacon_of_the_reed_sea": {
+    "id": "12511",
     "name": "Beacon of the Reed Sea",
     "descHtmlTpl": "After the character's Elemental Skill hits an opponent, their ATK will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 8s. After the character takes DMG, their ATK will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s. The 2 aforementioned effects can be triggered even when the character is not on the field. Additionally, when not protected by a shield, the character's Max HP will be increased by <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -187,6 +204,7 @@
     ]
   },
   "black_tassel": {
+    "id": "13303",
     "name": "Black Tassel",
     "descHtmlTpl": "Increases DMG against slimes by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -198,6 +216,7 @@
     ]
   },
   "blackcliff_agate": {
+    "id": "14408",
     "name": "Blackcliff Agate",
     "descHtmlTpl": "After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
     "refinements": [
@@ -209,6 +228,7 @@
     ]
   },
   "blackcliff_longsword": {
+    "id": "11408",
     "name": "Blackcliff Longsword",
     "descHtmlTpl": "After defeating an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
     "refinements": [
@@ -220,6 +240,7 @@
     ]
   },
   "blackcliff_pole": {
+    "id": "13404",
     "name": "Blackcliff Pole",
     "descHtmlTpl": "After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
     "refinements": [
@@ -231,6 +252,7 @@
     ]
   },
   "blackcliff_slasher": {
+    "id": "12408",
     "name": "Blackcliff Slasher",
     "descHtmlTpl": "After defeating an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
     "refinements": [
@@ -242,6 +264,7 @@
     ]
   },
   "blackcliff_warbow": {
+    "id": "15408",
     "name": "Blackcliff Warbow",
     "descHtmlTpl": "After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
     "refinements": [
@@ -253,6 +276,7 @@
     ]
   },
   "blackmarrow_lantern": {
+    "id": "14433",
     "name": "Blackmarrow Lantern",
     "descHtmlTpl": "Bloom DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span>, and Lunar-Bloom DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Moonsign: Ascendant Gleam: Lunar-Bloom DMG is increased by an additional <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -264,6 +288,7 @@
     ]
   },
   "bloodsoaked_ruins": {
+    "id": "13516",
     "name": "Bloodsoaked Ruins",
     "descHtmlTpl": "For 3.5s after using an Elemental Burst, the equipping character's Lunar-Charged DMG dealt to opponents is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Additionally, after triggering a Lunar-Charged reaction, the equipping character will gain Requiem of Ruin: CRIT DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s. They will also regain <span style=\"color: #99FFFFFF;\">{2}</span> Elemental Energy. Elemental Energy can be restored this way once every 14s.",
     "refinements": [
@@ -275,6 +300,7 @@
     ]
   },
   "bloodtainted_greatsword": {
+    "id": "12302",
     "name": "Bloodtainted Greatsword",
     "descHtmlTpl": "Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -286,6 +312,7 @@
     ]
   },
   "calamity_of_eshu": {
+    "id": "11432",
     "name": "Calamity of Eshu",
     "descHtmlTpl": "While characters are protected by a Shield, DMG dealt by Normal and Charged Attacks is increased by <span style=\"color: #99FFFFFF;\">{0}</span>, and Normal and Charged Attack CRIT Rate is increased by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -297,6 +324,7 @@
     ]
   },
   "calamity_queller": {
+    "id": "13507",
     "name": "Calamity Queller",
     "descHtmlTpl": "Gain <span style=\"color: #99FFFFFF;\">{0}</span> All Elemental DMG Bonus. Obtain Consummation for 20s after using an Elemental Skill, causing ATK to increase by <span style=\"color: #99FFFFFF;\">{1}</span> per second. This ATK increase has a maximum of 6 stacks. When the character equipped with this weapon is not on the field, Consummation's ATK increase is doubled.",
     "refinements": [
@@ -308,6 +336,7 @@
     ]
   },
   "cashflow_supervision": {
+    "id": "14513",
     "name": "Cashflow Supervision",
     "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When current HP increases or decreases, Normal Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> and Charged Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{2}</span> for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the wielder has 3 stacks, ATK SPD will be increased by <span style=\"color: #99FFFFFF;\">{3}</span>.",
     "refinements": [
@@ -319,6 +348,7 @@
     ]
   },
   "chain_breaker": {
+    "id": "15431",
     "name": "Chain Breaker",
     "descHtmlTpl": "For every party member from Natlan or who has a different Elemental Type from the equipping character, the equipping character gains <span style=\"color: #99FFFFFF;\">{0}</span> increased ATK. When there are no less than 3 of the aforementioned characters, the equipping character gains <span style=\"color: #99FFFFFF;\">{1}</span> Elemental Mastery.",
     "refinements": [
@@ -330,6 +360,7 @@
     ]
   },
   "cinnabar_spindle": {
+    "id": "11415",
     "name": "Cinnabar Spindle",
     "descHtmlTpl": "Elemental Skill DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span> of DEF. The effect will be triggered no more than once every 1.5s and will be cleared 0.1s after the Elemental Skill deals DMG.",
     "refinements": [
@@ -341,6 +372,7 @@
     ]
   },
   "cloudforged": {
+    "id": "15426",
     "name": "Cloudforged",
     "descHtmlTpl": "After Elemental Energy is decreased, the equipping character's Elemental Mastery will increase by <span style=\"color: #99FFFFFF;\">{0}</span> for 18s. Max 2 stacks.",
     "refinements": [
@@ -352,6 +384,7 @@
     ]
   },
   "compound_bow": {
+    "id": "15407",
     "name": "Compound Bow",
     "descHtmlTpl": "Normal Attack and Charged Attack hits increase ATK by <span style=\"color: #99FFFFFF;\">{0}</span> and Normal ATK SPD by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s. Max 4 stacks. Can only occur once every 0.3s.",
     "refinements": [
@@ -363,6 +396,7 @@
     ]
   },
   "cool_steel": {
+    "id": "11301",
     "name": "Cool Steel",
     "descHtmlTpl": "Increases DMG against opponents affected by Hydro or Cryo by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -374,6 +408,7 @@
     ]
   },
   "cranes_echoing_call": {
+    "id": "14515",
     "name": "Crane's Echoing Call",
     "descHtmlTpl": "After the equipping character hits an opponent with a Plunging Attack, all nearby party members' Plunging Attacks will deal <span style=\"color: #99FFFFFF;\">{0}</span> increased DMG for 20s. When nearby party members hit opponents with Plunging Attacks, they will restore <span style=\"color: #99FFFFFF;\">{1}</span> Energy to the equipping character. Energy can be restored this way every 0.7s. This energy regain effect can be triggered even if the equipping character is not on the field.",
     "refinements": [
@@ -385,6 +420,7 @@
     ]
   },
   "crescent_pike": {
+    "id": "13403",
     "name": "Crescent Pike",
     "descHtmlTpl": "After picking up an Elemental Orb/Particle, Normal and Charged Attacks deal additional DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of ATK for 5s.",
     "refinements": [
@@ -396,6 +432,7 @@
     ]
   },
   "crimson_moons_semblance": {
+    "id": "13512",
     "name": "Crimson Moon's Semblance",
     "descHtmlTpl": "Grants a Bond of Life equal to 25% of Max HP when a Charged Attack hits an opponent. This effect can be triggered up to once every 14s. In addition, when the equipping character has a Bond of Life, they gain a <span style=\"color: #99FFFFFF;\">{0}</span> DMG Bonus; if the value of the Bond of Life is greater than or equal to 30% of Max HP, then gain an additional <span style=\"color: #99FFFFFF;\">{1}</span> DMG Bonus.",
     "refinements": [
@@ -407,6 +444,7 @@
     ]
   },
   "dark_iron_sword": {
+    "id": "11304",
     "name": "Dark Iron Sword",
     "descHtmlTpl": "Upon causing an Overloaded, Superconduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, or Electro-infused Swirl reaction, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s.",
     "refinements": [
@@ -418,6 +456,7 @@
     ]
   },
   "dawning_frost": {
+    "id": "14434",
     "name": "Dawning Frost",
     "descHtmlTpl": "For 10s after a Charged Attack hits an opponent, Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. For 10s after an Elemental Skill hits an opponent, Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -429,6 +468,7 @@
     ]
   },
   "deathmatch": {
+    "id": "13405",
     "name": "Deathmatch",
     "descHtmlTpl": "If there are at least 2 opponents nearby, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> and DEF is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. If there are fewer than 2 opponents nearby, ATK is increased by <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -440,6 +480,7 @@
     ]
   },
   "debate_club": {
+    "id": "12305",
     "name": "Debate Club",
     "descHtmlTpl": "After using an Elemental Skill, on hit, Normal and Charged Attacks deal additional DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of ATK in a small AoE. Effect lasts 15s. DMG can only occur once every 3s.",
     "refinements": [
@@ -451,6 +492,7 @@
     ]
   },
   "dialogues_of_the_desert_sages": {
+    "id": "13426",
     "name": "Dialogues of the Desert Sages",
     "descHtmlTpl": "When the wielder performs healing, restore <span style=\"color: #99FFFFFF;\">{0}</span> Energy. This effect can be triggered once every 10s and can occur even when the character is not on the field.",
     "refinements": [
@@ -462,6 +504,7 @@
     ]
   },
   "dodoco_tales": {
+    "id": "14413",
     "name": "Dodoco Tales",
     "descHtmlTpl": "Normal Attack hits on opponents increase Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Charged Attack hits on opponents increase ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s.",
     "refinements": [
@@ -473,6 +516,7 @@
     ]
   },
   "dragons_bane": {
+    "id": "13401",
     "name": "Dragon's Bane",
     "descHtmlTpl": "Increases DMG against opponents affected by Hydro or Pyro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -484,6 +528,7 @@
     ]
   },
   "dragonspine_spear": {
+    "id": "13409",
     "name": "Dragonspine Spear",
     "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
     "refinements": [
@@ -495,6 +540,7 @@
     ]
   },
   "earth_shaker": {
+    "id": "12431",
     "name": "Earth Shaker",
     "descHtmlTpl": "After a party member triggers a Pyro-related reaction, the equipping character's Elemental Skill DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 8s. This effect can be triggered even when the triggering party member is not on the field.",
     "refinements": [
@@ -506,6 +552,7 @@
     ]
   },
   "ebony_bow": {
+    "id": "15306",
     "name": "Ebony Bow",
     "descHtmlTpl": "Increases DMG against mechanoid Ruin opponents by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -517,6 +564,7 @@
     ]
   },
   "elegy_for_the_end": {
+    "id": "15503",
     "name": "Elegy for the End",
     "descHtmlTpl": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span>. When the Elemental Skills or Elemental Bursts of the character wielding this weapon hit opponents, that character gains a Sigil of Remembrance. This effect can be triggered once every 0.2s and can be triggered even if said character is not on the field. When you possess 4 Sigils of Remembrance, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Farewell Song\" effect for 12s. \"Millennial Movement: Farewell Song\" increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span> and increases ATK by <span style=\"color: #99FFFFFF;\">{2}</span>. Once this effect is triggered, you will not gain Sigils of Remembrance for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
     "refinements": [
@@ -528,6 +576,7 @@
     ]
   },
   "emerald_orb": {
+    "id": "14304",
     "name": "Emerald Orb",
     "descHtmlTpl": "Upon causing a Vaporize, Electro-Charged, Frozen, Bloom, Lunar-Charged, Lunar-Bloom, or a Hydro-infused Swirl reaction, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s.",
     "refinements": [
@@ -539,6 +588,7 @@
     ]
   },
   "end_of_the_line": {
+    "id": "15418",
     "name": "End of the Line",
     "descHtmlTpl": "Triggers the Flowrider effect after using an Elemental Skill, dealing <span style=\"color: #99FFFFFF;\">{0}</span> ATK as AoE DMG upon hitting an opponent with an attack. Flowrider will be removed after 15s or after causing 3 instances of AoE DMG. Only 1 instance of AoE DMG can be caused every 2s in this way. Flowrider can be triggered once every 12s.",
     "refinements": [
@@ -550,6 +600,7 @@
     ]
   },
   "engulfing_lightning": {
+    "id": "13509",
     "name": "Engulfing Lightning",
     "descHtmlTpl": "ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span> of Energy Recharge over the base 100%. You can gain a maximum bonus of <span style=\"color: #99FFFFFF;\">{1}</span> ATK. Gain <span style=\"color: #99FFFFFF;\">{2}</span> Energy Recharge for 12s after using an Elemental Burst.",
     "refinements": [
@@ -561,6 +612,7 @@
     ]
   },
   "etherlight_spindlelute": {
+    "id": "14432",
     "name": "Etherlight Spindlelute",
     "descHtmlTpl": "For 20s after using an Elemental Skill, the equipping character's Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -572,6 +624,7 @@
     ]
   },
   "everlasting_moonglow": {
+    "id": "14506",
     "name": "Everlasting Moonglow",
     "descHtmlTpl": "Healing Bonus increased by <span style=\"color: #99FFFFFF;\">{0}</span>, Normal Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> of the Max HP of the character equipping this weapon. For 12s after using an Elemental Burst, Normal Attacks that hit opponents will restore 0.6 Energy. Energy can be restored this way once every 0.1s.",
     "refinements": [
@@ -583,6 +636,7 @@
     ]
   },
   "eye_of_perception": {
+    "id": "14409",
     "name": "Eye of Perception",
     "descHtmlTpl": "Normal and Charged Attacks have a 50% chance to fire a Bolt of Perception, dealing <span style=\"color: #99FFFFFF;\">{0}</span> ATK as DMG. This bolt can bounce between opponents a maximum of 4 times. This effect can occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -594,6 +648,7 @@
     ]
   },
   "fading_twilight": {
+    "id": "15411",
     "name": "Fading Twilight",
     "descHtmlTpl": "Has three states, Evengleam, Afterglow, and Dawnblaze, which increase DMG dealt by <span style=\"color: #99FFFFFF;\">{0}/{1}/{2}</span> respectively. When attacks hit opponents, this weapon will switch to the next state. This weapon can change states once every 7s. The character equipping this weapon can still trigger the state switch while not on the field.",
     "refinements": [
@@ -605,6 +660,7 @@
     ]
   },
   "fang_of_the_mountain_king": {
+    "id": "12513",
     "name": "Fang of the Mountain King",
     "descHtmlTpl": "Gain 1 stack of Canopy's Favor after hitting an opponent with an Elemental Skill. This can be triggered once every 0.5s. After a nearby party member triggers a Burning or Burgeon reaction, the equipping character will gain 3 stacks. This effect can be triggered once every 2s and can be triggered even when the triggering party member is off-field. Canopy's Favor: Elemental Skill and Burst DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 6 stacks. Each stack is counted independently.",
     "refinements": [
@@ -616,6 +672,7 @@
     ]
   },
   "favonius_codex": {
+    "id": "14401",
     "name": "Favonius Codex",
     "descHtmlTpl": "CRIT Hits have a <span style=\"color: #99FFFFFF;\">{0}</span> chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -627,6 +684,7 @@
     ]
   },
   "favonius_greatsword": {
+    "id": "12401",
     "name": "Favonius Greatsword",
     "descHtmlTpl": "CRIT Hits have a <span style=\"color: #99FFFFFF;\">{0}</span> chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -638,6 +696,7 @@
     ]
   },
   "favonius_lance": {
+    "id": "13407",
     "name": "Favonius Lance",
     "descHtmlTpl": "CRIT Hits have a <span style=\"color: #99FFFFFF;\">{0}</span> chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -649,6 +708,7 @@
     ]
   },
   "favonius_sword": {
+    "id": "11401",
     "name": "Favonius Sword",
     "descHtmlTpl": "CRIT Hits have a <span style=\"color: #99FFFFFF;\">{0}</span> chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -660,6 +720,7 @@
     ]
   },
   "favonius_warbow": {
+    "id": "15401",
     "name": "Favonius Warbow",
     "descHtmlTpl": "CRIT Hits have a <span style=\"color: #99FFFFFF;\">{0}</span> chance to generate a small amount of Elemental Particles, which will regenerate 6 Energy for the character. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -671,6 +732,7 @@
     ]
   },
   "ferrous_shadow": {
+    "id": "12301",
     "name": "Ferrous Shadow",
     "descHtmlTpl": "When HP falls below <span style=\"color: #99FFFFFF;\">{0}</span>, increases Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> and Charged Attacks become harder to interrupt.",
     "refinements": [
@@ -682,6 +744,7 @@
     ]
   },
   "festering_desire": {
+    "id": "11413",
     "name": "Festering Desire",
     "descHtmlTpl": "Increases Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span> and Elemental Skill CRIT Rate by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -693,6 +756,7 @@
     ]
   },
   "fillet_blade": {
+    "id": "11305",
     "name": "Fillet Blade",
     "descHtmlTpl": "On hit, has a 50% chance to deal <span style=\"color: #99FFFFFF;\">{0}</span> ATK DMG to a single opponent. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -704,6 +768,7 @@
     ]
   },
   "finale_of_the_deep": {
+    "id": "11425",
     "name": "Finale of the Deep",
     "descHtmlTpl": "When using an Elemental Skill, ATK will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s, and a Bond of Life worth 25% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, a maximum of <span style=\"color: #99FFFFFF;\">{1}</span> ATK will be gained based on <span style=\"color: #99FFFFFF;\">{2}</span> of the total amount of the Life Bond cleared, lasting for 15s.",
     "refinements": [
@@ -715,6 +780,7 @@
     ]
   },
   "flameforged_insight": {
+    "id": "12432",
     "name": "Flame-Forged Insight",
     "descHtmlTpl": "When Electro-Charged, Lunar-Charged, Bloom, Lunar-Bloom, Crystallize or Lunar-Crystallize is triggered, restore <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Energy and increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span> for 15 seconds. This effect can be triggered at most once every 15s and can be triggered even when the equipping character is off-field.",
     "refinements": [
@@ -726,6 +792,7 @@
     ]
   },
   "fleuve_cendre_ferryman": {
+    "id": "11426",
     "name": "Fleuve Cendre Ferryman",
     "descHtmlTpl": "Increases Elemental Skill CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Additionally, increases Energy Recharge by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s after using an Elemental Skill.",
     "refinements": [
@@ -737,6 +804,7 @@
     ]
   },
   "flowerwreathed_feathers": {
+    "id": "15430",
     "name": "Flower-Wreathed Feathers",
     "descHtmlTpl": "Decreases Gliding Stamina consumption by 15%. When using Aimed Shots, the DMG dealt by Charged Attacks increases by <span style=\"color: #99FFFFFF;\">{0}</span> every 0.5s. This effect can stack up to 6 times and will be removed 10s after leaving Aiming Mode.",
     "refinements": [
@@ -748,6 +816,7 @@
     ]
   },
   "flowing_purity": {
+    "id": "14425",
     "name": "Flowing Purity",
     "descHtmlTpl": "When using an Elemental Skill, All Elemental DMG Bonus will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s, and a Bond of Life worth 24% of Max HP will be granted. This effect can be triggered once every 10s. When the Bond of Life is cleared, every 1,000 HP cleared in the process will provide <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus, up to a maximum of <span style=\"color: #99FFFFFF;\">{2}</span>. This effect lasts 15s.",
     "refinements": [
@@ -759,6 +828,7 @@
     ]
   },
   "flute_of_ezpitzal": {
+    "id": "11431",
     "name": "Flute of Ezpitzal",
     "descHtmlTpl": "Using an Elemental Skill increases DEF by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s.",
     "refinements": [
@@ -770,6 +840,7 @@
     ]
   },
   "footprint_of_the_rainbow": {
+    "id": "13431",
     "name": "Footprint of the Rainbow",
     "descHtmlTpl": "Using an Elemental Skill increases DEF by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s.",
     "refinements": [
@@ -781,6 +852,7 @@
     ]
   },
   "forest_regalia": {
+    "id": "12417",
     "name": "Forest Regalia",
     "descHtmlTpl": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Lunar-Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
     "refinements": [
@@ -792,6 +864,7 @@
     ]
   },
   "fractured_halo": {
+    "id": "13515",
     "name": "Fractured Halo",
     "descHtmlTpl": "After an Elemental Skill or Elemental Burst is used, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 20s. If the equipping character creates a Shield while this effect is active, they will gain the Electrifying Edict effect for 20s: All nearby party members deal <span style=\"color: #99FFFFFF;\">{1}</span> more Lunar-Charged DMG.",
     "refinements": [
@@ -803,6 +876,7 @@
     ]
   },
   "freedomsworn": {
+    "id": "11503",
     "name": "Freedom-Sworn",
     "descHtmlTpl": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. When the character wielding this weapon triggers Elemental Reactions, they gain a Sigil of Rebellion. This effect can be triggered once every 0.5s and can be triggered even if said character is not on the field. When you possess 2 Sigils of Rebellion, all of them will be consumed and all nearby party members will obtain \"Millennial Movement: Song of Resistance\" for 12s. \"Millennial Movement: Song of Resistance\" increases Normal, Charged and Plunging Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> and increases ATK by <span style=\"color: #99FFFFFF;\">{2}</span>. Once this effect is triggered, you will not gain Sigils of Rebellion for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
     "refinements": [
@@ -814,6 +888,7 @@
     ]
   },
   "frostbearer": {
+    "id": "14412",
     "name": "Frostbearer",
     "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
     "refinements": [
@@ -825,6 +900,7 @@
     ]
   },
   "fruit_of_fulfillment": {
+    "id": "14417",
     "name": "Fruit of Fulfillment",
     "descHtmlTpl": "Obtain the \"Wax and Wane\" effect after an Elemental Reaction is triggered, gaining <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Mastery while losing 5% ATK. For every 0.3s, 1 stack of Wax and Wane can be gained. Max 5 stacks. For every 6s that go by without an Elemental Reaction being triggered, 1 stack will be lost. This effect can be triggered even when the character is off-field.",
     "refinements": [
@@ -836,6 +912,7 @@
     ]
   },
   "fruitful_hook": {
+    "id": "12430",
     "name": "Fruitful Hook",
     "descHtmlTpl": "Increase Plunging Attack CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>; After a Plunging Attack hits an opponent, Normal, Charged, and Plunging Attack DMG increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 10s.",
     "refinements": [
@@ -846,7 +923,20 @@
       ["32%", "32%"]
     ]
   },
+  "gest_of_the_mighty_wolf": {
+    "id": "12515",
+    "name": "Gest of the Mighty Wolf",
+    "descHtmlTpl": "Increase ATK SPD by 10%. Every time the equipping character's Normal Attack(s) hit opponent(s), when they cast their Elemental Skill, or when they begin their Charged Attack(s), gain 1/2/2 stacks of Four Winds' Hymn respectively: DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 4s. Max 4 stacks. This effect can be triggered once every 0.01s.<br>Additionally, when the party has the \"Hexerei: Secret Rite\" effect, each stack of Four Winds' Hymn also increases the equipping character's CRIT DMG by <span style=\"color: #99FFFFFF;\">{1}</span>.",
+    "refinements": [
+      ["7.5%", "7.5%"],
+      ["9.5%", "9.5%"],
+      ["11.5%", "11.5%"],
+      ["13.5%", "13.5%"],
+      ["15.5%", "15.5%"]
+    ]
+  },
   "hakushin_ring": {
+    "id": "14414",
     "name": "Hakushin Ring",
     "descHtmlTpl": "After the character equipped with this weapon triggers an Electro elemental reaction, nearby party members of an Elemental Type involved in the elemental reaction receive a <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus for their element, lasting 6s. Elemental Bonuses gained in this way cannot be stacked.",
     "refinements": [
@@ -858,6 +948,7 @@
     ]
   },
   "halberd": {
+    "id": "13302",
     "name": "Halberd",
     "descHtmlTpl": "Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">{0}</span> ATK as DMG. This effect can only occur once every 10s.",
     "refinements": [
@@ -869,6 +960,7 @@
     ]
   },
   "hamayumi": {
+    "id": "15414",
     "name": "Hamayumi",
     "descHtmlTpl": "Increases Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span> and Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span>. When the equipping character's Energy reaches 100%, this effect is increased by 100%.",
     "refinements": [
@@ -880,6 +972,7 @@
     ]
   },
   "haran_geppaku_futsu": {
+    "id": "11510",
     "name": "Haran Geppaku Futsu",
     "descHtmlTpl": "Obtain <span style=\"color: #99FFFFFF;\">{0}</span> All Elemental DMG Bonus. When other nearby party members use Elemental Skills, the character equipping this weapon will gain 1 Wavespike stack. Max 2 stacks. This effect can be triggered once every 0.3s. When the character equipping this weapon uses an Elemental Skill, all stacks of Wavespike will be consumed to gain Rippling Upheaval: each stack of Wavespike consumed will increase Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s.",
     "refinements": [
@@ -891,6 +984,7 @@
     ]
   },
   "harbinger_of_dawn": {
+    "id": "11302",
     "name": "Harbinger of Dawn",
     "descHtmlTpl": "When HP is above 90%, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -902,6 +996,7 @@
     ]
   },
   "hunters_path": {
+    "id": "15511",
     "name": "Hunter's Path",
     "descHtmlTpl": "Gain <span style=\"color: #99FFFFFF;\">{0}</span> All Elemental DMG Bonus. Obtain the Tireless Hunt effect after hitting an opponent with a Charged Attack. This effect increases Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> of Elemental Mastery. This effect will be removed after 12 Charged Attacks or 10s. Only 1 instance of Tireless Hunt can be gained every 12s.",
     "refinements": [
@@ -913,6 +1008,7 @@
     ]
   },
   "ibis_piercer": {
+    "id": "15419",
     "name": "Ibis Piercer",
     "descHtmlTpl": "The character's Elemental Mastery will increase by <span style=\"color: #99FFFFFF;\">{0}</span> within 6s after Charged Attacks hit opponents. Max 2 stacks. This effect can be triggered once every 0.5s.",
     "refinements": [
@@ -924,6 +1020,7 @@
     ]
   },
   "iron_sting": {
+    "id": "11407",
     "name": "Iron Sting",
     "descHtmlTpl": "Dealing Elemental DMG increases all DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 2 stacks. Can occur once every 1s.",
     "refinements": [
@@ -935,6 +1032,7 @@
     ]
   },
   "jadefalls_splendor": {
+    "id": "14505",
     "name": "Jadefall's Splendor",
     "descHtmlTpl": "For 3s after using an Elemental Burst or creating a shield, the equipping character can gain the Primordial Jade Regalia effect: Restore <span style=\"color: #99FFFFFF;\">{0}</span> Energy every 2.5s, and gain <span style=\"color: #99FFFFFF;\">{1}</span> Elemental DMG Bonus for their corresponding Elemental Type for every 1,000 Max HP they possess, up to <span style=\"color: #99FFFFFF;\">{2}</span>. Primordial Jade Regalia will still take effect even if the equipping character is not on the field.",
     "refinements": [
@@ -946,6 +1044,7 @@
     ]
   },
   "kagotsurube_isshin": {
+    "id": "11416",
     "name": "Kagotsurube Isshin",
     "descHtmlTpl": "When a Normal, Charged, or Plunging Attack hits an opponent, it will whip up a Hewing Gale, dealing AoE DMG equal to 180% of ATK and increasing ATK by 15% for 8s. This effect can be triggered once every 8s.",
     "refinements": [
@@ -953,6 +1052,7 @@
     ]
   },
   "kaguras_verity": {
+    "id": "14509",
     "name": "Kagura's Verity",
     "descHtmlTpl": "Gains the Kagura Dance effect when using an Elemental Skill, causing the Elemental Skill DMG of the character wielding this weapon to increase by <span style=\"color: #99FFFFFF;\">{0}</span> for 16s. Max 3 stacks. This character will gain <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus when they possess 3 stacks.",
     "refinements": [
@@ -964,6 +1064,7 @@
     ]
   },
   "katsuragikiri_nagamasa": {
+    "id": "12414",
     "name": "Katsuragikiri Nagamasa",
     "descHtmlTpl": "Increases Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates <span style=\"color: #99FFFFFF;\">{1}</span> Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
     "refinements": [
@@ -975,6 +1076,7 @@
     ]
   },
   "key_of_khajnisut": {
+    "id": "11511",
     "name": "Key of Khaj-Nisut",
     "descHtmlTpl": "HP increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When an Elemental Skill hits opponents, you gain the Grand Hymn effect for 20s. This effect increases the equipping character's Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span> of their Max HP. This effect can trigger once every 0.3s. Max 3 stacks. When this effect gains 3 stacks, or when the third stack's duration is refreshed, the Elemental Mastery of all nearby party members will be increased by <span style=\"color: #99FFFFFF;\">{2}</span> of the equipping character's max HP for 20s.",
     "refinements": [
@@ -986,6 +1088,7 @@
     ]
   },
   "kings_squire": {
+    "id": "15417",
     "name": "King's Squire",
     "descHtmlTpl": "Obtain the Teachings of the Forest effect when unleashing Elemental Skills and Bursts, increasing Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. This effect will be removed when switching characters. When the Teachings of the Forest effect ends or is removed, it will deal <span style=\"color: #99FFFFFF;\">{1}</span> of ATK as DMG to 1 nearby opponent. The Teachings of the Forest effect can be triggered once every 20s.",
     "refinements": [
@@ -997,6 +1100,7 @@
     ]
   },
   "kitain_cross_spear": {
+    "id": "13414",
     "name": "Kitain Cross Spear",
     "descHtmlTpl": "Increases Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. After Elemental Skill hits an opponent, the character loses 3 Energy but regenerates <span style=\"color: #99FFFFFF;\">{1}</span> Energy every 2s for the next 6s. This effect can occur once every 10s. Can be triggered even when the character is not on the field.",
     "refinements": [
@@ -1008,6 +1112,7 @@
     ]
   },
   "light_of_foliar_incision": {
+    "id": "11512",
     "name": "Light of Foliar Incision",
     "descHtmlTpl": "CRIT Rate is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. After Normal Attacks deal Elemental DMG, the Foliar Incision effect will be obtained, increasing DMG dealt by Normal Attacks and Elemental Skills by <span style=\"color: #99FFFFFF;\">{1}</span> of Elemental Mastery. This effect will disappear after 28 DMG instances or 12s. You can obtain Foliar Incision once every 12s.",
     "refinements": [
@@ -1019,6 +1124,7 @@
     ]
   },
   "lightbearing_moonshard": {
+    "id": "11519",
     "name": "Lightbearing Moonshard",
     "descHtmlTpl": "Increases DEF by <span style=\"color: #99FFFFFF;\">{0}</span>. DMG inflicted by Lunar-Crystallize reactions increases by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s after the equipping character uses an Elemental Skill.",
     "refinements": [
@@ -1030,6 +1136,7 @@
     ]
   },
   "lions_roar": {
+    "id": "11405",
     "name": "Lion's Roar",
     "descHtmlTpl": "Increases DMG against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -1041,6 +1148,7 @@
     ]
   },
   "lithic_blade": {
+    "id": "12410",
     "name": "Lithic Blade",
     "descHtmlTpl": "For every character in the party who hails from Liyue, the character who equips this weapon gains a <span style=\"color: #99FFFFFF;\">{0}</span> ATK increase and a <span style=\"color: #99FFFFFF;\">{1}</span> CRIT Rate increase. This effect stacks up to 4 times.",
     "refinements": [
@@ -1052,6 +1160,7 @@
     ]
   },
   "lithic_spear": {
+    "id": "13406",
     "name": "Lithic Spear",
     "descHtmlTpl": "For every character in the party who hails from Liyue, the character who equips this weapon gains a <span style=\"color: #99FFFFFF;\">{0}</span> ATK increase and a <span style=\"color: #99FFFFFF;\">{1}</span> CRIT Rate increase. This effect stacks up to 4 times.",
     "refinements": [
@@ -1063,6 +1172,7 @@
     ]
   },
   "lost_prayer_to_the_sacred_winds": {
+    "id": "14502",
     "name": "Lost Prayer to the Sacred Winds",
     "descHtmlTpl": "Increases Movement SPD by 10%. When in battle, gain an <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat.",
     "refinements": [
@@ -1074,6 +1184,7 @@
     ]
   },
   "lumidouce_elegy": {
+    "id": "13513",
     "name": "Lumidouce Elegy",
     "descHtmlTpl": "ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span>. After the equipping character triggers Burning on an opponent or deals Dendro DMG to Burning opponents, the DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect lasts for 8s, max 2 stacks. When 2 stacks are reached or when the duration is refreshed at 2 stacks, restore <span style=\"color: #99FFFFFF;\">{2}</span> Energy. Energy can be restored this way once every 12s. The 2 aforementioned effects can be triggered even when the character is off-field.",
     "refinements": [
@@ -1085,6 +1196,7 @@
     ]
   },
   "luxurious_sealord": {
+    "id": "12412",
     "name": "Luxurious Sea-Lord",
     "descHtmlTpl": "Increases Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. When Elemental Burst hits opponents, there is a 100% chance of summoning a huge onrush of tuna that deals <span style=\"color: #99FFFFFF;\">{1}</span> ATK as AoE DMG. This effect can occur once every 15s.",
     "refinements": [
@@ -1096,6 +1208,7 @@
     ]
   },
   "magic_guide": {
+    "id": "14301",
     "name": "Magic Guide",
     "descHtmlTpl": "Increases DMG against opponents affected by Hydro or Electro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -1107,6 +1220,7 @@
     ]
   },
   "mailed_flower": {
+    "id": "12418",
     "name": "Mailed Flower",
     "descHtmlTpl": "Within 8s after the character's Elemental Skill hits an opponent or the character triggers an Elemental Reaction, their ATK and Elemental Mastery will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> and <span style=\"color: #99FFFFFF;\">{1}</span> respectively.",
     "refinements": [
@@ -1118,6 +1232,7 @@
     ]
   },
   "makhaira_aquamarine": {
+    "id": "12415",
     "name": "Makhaira Aquamarine",
     "descHtmlTpl": "The following effect will trigger every 10s: The equipping character will gain <span style=\"color: #99FFFFFF;\">{0}</span> of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
     "refinements": [
@@ -1129,6 +1244,7 @@
     ]
   },
   "mappa_mare": {
+    "id": "14407",
     "name": "Mappa Mare",
     "descHtmlTpl": "Triggering an Elemental reaction grants a <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus for 10s. Max 2 stacks.",
     "refinements": [
@@ -1140,6 +1256,7 @@
     ]
   },
   "master_key": {
+    "id": "12433",
     "name": "Master Key",
     "descHtmlTpl": "Upon causing an Elemental Reaction, increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -1151,6 +1268,7 @@
     ]
   },
   "memory_of_dust": {
+    "id": "14504",
     "name": "Memory of Dust",
     "descHtmlTpl": "Increases Shield Strength by <span style=\"color: #99FFFFFF;\">{0}</span>. Scoring hits on opponents increases ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
     "refinements": [
@@ -1162,6 +1280,7 @@
     ]
   },
   "messenger": {
+    "id": "15305",
     "name": "Messenger",
     "descHtmlTpl": "Charged Attack hits on weak points deal an additional <span style=\"color: #99FFFFFF;\">{0}</span> ATK DMG as CRIT DMG. Can only occur once every 10s.",
     "refinements": [
@@ -1173,6 +1292,7 @@
     ]
   },
   "missive_windspear": {
+    "id": "13419",
     "name": "Missive Windspear",
     "descHtmlTpl": "Within 10s after an Elemental Reaction is triggered, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> and Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -1184,6 +1304,7 @@
     ]
   },
   "mistsplitter_reforged": {
+    "id": "11509",
     "name": "Mistsplitter Reforged",
     "descHtmlTpl": "Gain a <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of the Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
     "refinements": [
@@ -1195,6 +1316,7 @@
     ]
   },
   "mitternachts_waltz": {
+    "id": "15412",
     "name": "Mitternachts Waltz",
     "descHtmlTpl": "Normal Attack hits on opponents increase Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 5s. Elemental Skill hits on opponents increase Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s.",
     "refinements": [
@@ -1206,6 +1328,7 @@
     ]
   },
   "moonpiercer": {
+    "id": "13417",
     "name": "Moonpiercer",
     "descHtmlTpl": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Lunar-Bloom, Hyperbloom, or Burgeon, a Leaf of Revival will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character <span style=\"color: #99FFFFFF;\">{0}</span> ATK for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field.",
     "refinements": [
@@ -1217,6 +1340,7 @@
     ]
   },
   "moonweavers_dawn": {
+    "id": "11434",
     "name": "Moonweaver's Dawn",
     "descHtmlTpl": "Increases Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. When the equipping character's Energy Capacity does not exceed 60/40, their Elemental Burst DMG is increased by an additional <span style=\"color: #99FFFFFF;\">{1}/{2}</span>.",
     "refinements": [
@@ -1228,6 +1352,7 @@
     ]
   },
   "mountainbracing_bolt": {
+    "id": "13430",
     "name": "Mountain-Bracing Bolt",
     "descHtmlTpl": "Decreases Climbing Stamina Consumption by 15% and increases Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. Also, after other nearby party members use Elemental Skills, the equipping character's Elemental Skill DMG will also increase by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s.",
     "refinements": [
@@ -1239,6 +1364,7 @@
     ]
   },
   "mouuns_moon": {
+    "id": "15416",
     "name": "Mouun's Moon",
     "descHtmlTpl": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. A maximum of <span style=\"color: #99FFFFFF;\">{1}</span> increased Elemental Burst DMG can be achieved this way.",
     "refinements": [
@@ -1250,6 +1376,7 @@
     ]
   },
   "nightweavers_looking_glass": {
+    "id": "14520",
     "name": "Nightweaver's Looking Glass",
     "descHtmlTpl": "When the equipping character's Elemental Skill deals Hydro or Dendro DMG, they will gain Prayer of the Far North: Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 4.5s. When nearby party members trigger Lunar-Bloom reactions, the equipping character gains New Moon Verse: Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 10s. When both Prayer of the Far North and New Moon Verse are in effect, all nearby party members' Bloom DMG is increased by <span style=\"color: #99FFFFFF;\">{2}</span>, their Hyperbloom and Burgeon DMG is increased by <span style=\"color: #99FFFFFF;\">{3}</span>, and their Lunar-Bloom DMG is increased by <span style=\"color: #99FFFFFF;\">{4}</span>. This effect cannot stack. The aforementioned effects can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -1261,6 +1388,7 @@
     ]
   },
   "nocturnes_curtain_call": {
+    "id": "14522",
     "name": "Nocturne's Curtain Call",
     "descHtmlTpl": "Max HP increases by <span style=\"color: #99FFFFFF;\">{0}</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG on opponents, the equipping character will recover <span style=\"color: #99FFFFFF;\">{1}</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">{2}</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">{3}</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field.",
     "refinements": [
@@ -1272,6 +1400,7 @@
     ]
   },
   "oathsworn_eye": {
+    "id": "14415",
     "name": "Oathsworn Eye",
     "descHtmlTpl": "Increases Energy Recharge by <span style=\"color: #99FFFFFF;\">{0}</span> for 10s after using an Elemental Skill.",
     "refinements": [
@@ -1283,6 +1412,7 @@
     ]
   },
   "otherworldly_story": {
+    "id": "14303",
     "name": "Otherworldly Story",
     "descHtmlTpl": "Picking up an Elemental Energy Orb/Particle recovers <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
     "refinements": [
@@ -1294,6 +1424,7 @@
     ]
   },
   "peak_patrol_song": {
+    "id": "11516",
     "name": "Peak Patrol Song",
     "descHtmlTpl": "Gain \"Ode to Flowers\" after Normal or Plunging Attacks hit an opponent: DEF increases by <span style=\"color: #99FFFFFF;\">{0}</span> and gain a <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus for 6s. Max 2 stacks. Can trigger once per 0.1s. When this effect reaches 2 stacks or the 2nd stack's duration is refreshed, increase all nearby party members' All Elemental DMG Bonus by <span style=\"color: #99FFFFFF;\">{2}</span> for every 1,000 DEF the equipping character has, up to a maximum of <span style=\"color: #99FFFFFF;\">{3}</span>, for 15s.",
     "refinements": [
@@ -1305,6 +1436,7 @@
     ]
   },
   "polar_star": {
+    "id": "15507",
     "name": "Polar Star",
     "descHtmlTpl": "Elemental Skill and Elemental Burst DMG increased by <span style=\"color: #99FFFFFF;\">{0}</span>. After a Normal Attack, Charged Attack, Elemental Skill or Elemental Burst hits an opponent, 1 stack of Ashen Nightstar will be gained for 12s. When 1/2/3/4 stacks of Ashen Nightstar are present, ATK is increased by <span style=\"color: #99FFFFFF;\">{1}/{2}/{3}/{4}</span>. The stack of Ashen Nightstar created by the Normal Attack, Charged Attack, Elemental Skill or Elemental Burst will be counted independently of the others.",
     "refinements": [
@@ -1316,6 +1448,7 @@
     ]
   },
   "portable_power_saw": {
+    "id": "12427",
     "name": "Portable Power Saw",
     "descHtmlTpl": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Mastery, and 2s after the effect occurs, <span style=\"color: #99FFFFFF;\">{1}</span> Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
     "refinements": [
@@ -1327,6 +1460,7 @@
     ]
   },
   "predator": {
+    "id": "15415",
     "name": "Predator",
     "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>Dealing Cryo DMG to opponents increases this character's Normal and Charged Attack DMG by 10% for 6s. This effect can have a maximum of 2 stacks. Additionally, when Aloy equips Predator, ATK is increased by 66.",
     "refinements": [
@@ -1334,6 +1468,7 @@
     ]
   },
   "primordial_jade_cutter": {
+    "id": "11505",
     "name": "Primordial Jade Cutter",
     "descHtmlTpl": "HP increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Additionally, provides an ATK Bonus based on <span style=\"color: #99FFFFFF;\">{1}</span> of the wielder's Max HP.",
     "refinements": [
@@ -1345,6 +1480,7 @@
     ]
   },
   "primordial_jade_wingedspear": {
+    "id": "13505",
     "name": "Primordial Jade Winged-Spear",
     "descHtmlTpl": "On hit, increases ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 7 stacks. This effect can only occur once every 0.3s. While in possession of the maximum possible stacks, DMG dealt is increased by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -1356,6 +1492,7 @@
     ]
   },
   "prized_isshin_blade": {
+    "id": "11419",
     "name": "Prized Isshin Blade",
     "descHtmlTpl": "When a Normal, Charged, or Plunging Attack hits an opponent, it will release an Accursed Spirit, dealing AoE DMG equal to 180% of ATK and restoring 100% of ATK as HP. This effect can be triggered once every 8s. The DMG done by this weapon's wielder is decreased by 50%.",
     "refinements": [
@@ -1363,6 +1500,7 @@
     ]
   },
   "prized_isshin_blade_11420": {
+    "id": "11420",
     "name": "Prized Isshin Blade",
     "descHtmlTpl": "When a Normal, Charged, or Plunging Attack hits an opponent, it will release an Accursed Spirit, dealing AoE DMG equal to 180% of ATK. This effect can be triggered once every 8s. The DMG done by this weapon's wielder is decreased by 50%.",
     "refinements": [
@@ -1370,6 +1508,7 @@
     ]
   },
   "prized_isshin_blade_11421": {
+    "id": "11421",
     "name": "Prized Isshin Blade",
     "descHtmlTpl": "When a Normal, Charged, or Plunging Attack hits an opponent, it will release an Accursed Spirit, dealing AoE DMG equal to 180% of ATK and restoring 100% of ATK as HP. This effect can be triggered once every 8s. The DMG done by this weapon's wielder is decreased by 50%.",
     "refinements": [
@@ -1377,6 +1516,7 @@
     ]
   },
   "prospectors_drill": {
+    "id": "13427",
     "name": "Prospector's Drill",
     "descHtmlTpl": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain <span style=\"color: #99FFFFFF;\">{0}</span> ATK and <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
     "refinements": [
@@ -1388,6 +1528,7 @@
     ]
   },
   "prospectors_shovel": {
+    "id": "13433",
     "name": "Prospector's Shovel",
     "descHtmlTpl": "Electro-Charged DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span>, and Lunar-Charged DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Moonsign: Ascendant Gleam: Lunar-Charged DMG is increased by an additional <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -1399,6 +1540,7 @@
     ]
   },
   "prototype_amber": {
+    "id": "14406",
     "name": "Prototype Amber",
     "descHtmlTpl": "Using an Elemental Burst regenerates <span style=\"color: #99FFFFFF;\">{0}</span> Energy every 2s for 6s. All party members will regenerate <span style=\"color: #99FFFFFF;\">{1}</span> HP every 2s for this duration.",
     "refinements": [
@@ -1410,6 +1552,7 @@
     ]
   },
   "prototype_archaic": {
+    "id": "12406",
     "name": "Prototype Archaic",
     "descHtmlTpl": "On hit, Normal or Charged Attacks have a 50% chance to deal an additional <span style=\"color: #99FFFFFF;\">{0}</span> ATK DMG to opponents within a small AoE. Can only occur once every 15s.",
     "refinements": [
@@ -1421,6 +1564,7 @@
     ]
   },
   "prototype_crescent": {
+    "id": "15406",
     "name": "Prototype Crescent",
     "descHtmlTpl": "Charged Attack hits on weak points increase Movement SPD by 10% and ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 10s.",
     "refinements": [
@@ -1432,6 +1576,7 @@
     ]
   },
   "prototype_rancour": {
+    "id": "11406",
     "name": "Prototype Rancour",
     "descHtmlTpl": "On hit, Normal or Charged Attacks increase ATK and DEF by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 4 stacks. This effect can only occur once every 0.3s.",
     "refinements": [
@@ -1443,6 +1588,7 @@
     ]
   },
   "prototype_starglitter": {
+    "id": "13402",
     "name": "Prototype Starglitter",
     "descHtmlTpl": "After using an Elemental Skill, increases Normal and Charged Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. Max 2 stacks.",
     "refinements": [
@@ -1454,6 +1600,7 @@
     ]
   },
   "quartz": {
+    "id": "12304",
     "name": "Quartz",
     "descHtmlTpl": "Upon causing an Overloaded, Melt, Burning, Vaporize, Burgeon, or a Pyro-infused Swirl reaction, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s.",
     "refinements": [
@@ -1465,6 +1612,7 @@
     ]
   },
   "rainbow_serpents_rain_bow": {
+    "id": "15434",
     "name": "Rainbow Serpent's Rain Bow",
     "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 8s after the equipping character's attacks hit an opponent while the equipping character is off-field.",
     "refinements": [
@@ -1476,6 +1624,7 @@
     ]
   },
   "rainslasher": {
+    "id": "12405",
     "name": "Rainslasher",
     "descHtmlTpl": "Increases DMG against opponents affected by Hydro or Electro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -1487,6 +1636,7 @@
     ]
   },
   "range_gauge": {
+    "id": "15427",
     "name": "Range Gauge",
     "descHtmlTpl": "When the wielder is healed or heals others, they will gain a Unity's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Struggle effect will be granted for 10s. For each Symbol consumed, gain <span style=\"color: #99FFFFFF;\">{0}</span> ATK and <span style=\"color: #99FFFFFF;\">{1}</span> All Elemental DMG Bonus. The Struggle effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
     "refinements": [
@@ -1498,6 +1648,7 @@
     ]
   },
   "raven_bow": {
+    "id": "15301",
     "name": "Raven Bow",
     "descHtmlTpl": "Increases DMG against opponents affected by Hydro or Pyro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -1509,6 +1660,7 @@
     ]
   },
   "recurve_bow": {
+    "id": "15303",
     "name": "Recurve Bow",
     "descHtmlTpl": "Defeating an opponent restores <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
     "refinements": [
@@ -1520,6 +1672,7 @@
     ]
   },
   "redhorn_stonethresher": {
+    "id": "12510",
     "name": "Redhorn Stonethresher",
     "descHtmlTpl": "DEF is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Normal and Charged Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span> of DEF.",
     "refinements": [
@@ -1531,6 +1684,7 @@
     ]
   },
   "reliquary_of_truth": {
+    "id": "14521",
     "name": "Reliquary of Truth",
     "descHtmlTpl": "CRIT Rate is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When the equipping character unleashes an Elemental Skill, they gain the Secret of Lies effect: Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. When the equipping character deals Lunar-Bloom DMG to an opponent, they gain the Moon of Truth effect: CRIT DMG is increased by <span style=\"color: #99FFFFFF;\">{2}</span> for 4s. When both the Secret of Lies and Moon of Truth effects are active at the same time, the results of both effects will be increased by 50%.",
     "refinements": [
@@ -1542,6 +1696,7 @@
     ]
   },
   "rightful_reward": {
+    "id": "13425",
     "name": "Rightful Reward",
     "descHtmlTpl": "When the wielder is healed, restore <span style=\"color: #99FFFFFF;\">{0}</span> Energy. This effect can be triggered once every 10s, and can occur even when the character is not on the field.",
     "refinements": [
@@ -1553,6 +1708,7 @@
     ]
   },
   "ring_of_yaxche": {
+    "id": "14431",
     "name": "Ring of Yaxche",
     "descHtmlTpl": "Using an Elemental Skill grants the Jade-Forged Crown effect: Every 1,000 Max HP will increase the Normal Attack DMG dealt by the equipping character by <span style=\"color: #99FFFFFF;\">{0}</span> for 10s. Normal Attack DMG can be increased this way by a maximum of <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -1564,6 +1720,7 @@
     ]
   },
   "royal_bow": {
+    "id": "15404",
     "name": "Royal Bow",
     "descHtmlTpl": "Upon damaging an opponent, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Max 5 stacks. A CRIT Hit removes all stacks.",
     "refinements": [
@@ -1575,6 +1732,7 @@
     ]
   },
   "royal_greatsword": {
+    "id": "12404",
     "name": "Royal Greatsword",
     "descHtmlTpl": "Upon damaging an opponent, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Max 5 stacks. A CRIT Hit removes all stacks.",
     "refinements": [
@@ -1586,6 +1744,7 @@
     ]
   },
   "royal_grimoire": {
+    "id": "14404",
     "name": "Royal Grimoire",
     "descHtmlTpl": "Upon damaging an opponent, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Max 5 stacks. A CRIT Hit removes all stacks.",
     "refinements": [
@@ -1597,6 +1756,7 @@
     ]
   },
   "royal_longsword": {
+    "id": "11404",
     "name": "Royal Longsword",
     "descHtmlTpl": "Upon damaging an opponent, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Max 5 stacks. A CRIT Hit removes all stacks.",
     "refinements": [
@@ -1608,6 +1768,7 @@
     ]
   },
   "royal_spear": {
+    "id": "13408",
     "name": "Royal Spear",
     "descHtmlTpl": "Upon damaging an opponent, increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span>. Max 5 stacks. A CRIT Hit removes all stacks.",
     "refinements": [
@@ -1619,6 +1780,7 @@
     ]
   },
   "rust": {
+    "id": "15405",
     "name": "Rust",
     "descHtmlTpl": "Increases Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span> but decreases Charged Attack DMG by 10%.",
     "refinements": [
@@ -1630,6 +1792,7 @@
     ]
   },
   "sacrificers_staff": {
+    "id": "13434",
     "name": "Sacrificer's Staff",
     "descHtmlTpl": "For 6s after an Elemental Skill hits an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> and Energy Recharge is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Max 3 stacks. This effect can be triggered even when the equipping character is off-field.",
     "refinements": [
@@ -1641,6 +1804,7 @@
     ]
   },
   "sacrificial_bow": {
+    "id": "15403",
     "name": "Sacrificial Bow",
     "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -1652,6 +1816,7 @@
     ]
   },
   "sacrificial_fragments": {
+    "id": "14403",
     "name": "Sacrificial Fragments",
     "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -1663,6 +1828,7 @@
     ]
   },
   "sacrificial_greatsword": {
+    "id": "12403",
     "name": "Sacrificial Greatsword",
     "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -1674,6 +1840,7 @@
     ]
   },
   "sacrificial_jade": {
+    "id": "14424",
     "name": "Sacrificial Jade",
     "descHtmlTpl": "When not on the field for more than 5s, Max HP will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> and Elemental Mastery will be increased by <span style=\"color: #99FFFFFF;\">{1}</span>. These effects will be canceled after the wielder has been on the field for 10s.",
     "refinements": [
@@ -1685,6 +1852,7 @@
     ]
   },
   "sacrificial_sword": {
+    "id": "11403",
     "name": "Sacrificial Sword",
     "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -1696,6 +1864,7 @@
     ]
   },
   "sapwood_blade": {
+    "id": "11417",
     "name": "Sapwood Blade",
     "descHtmlTpl": "After triggering Burning, Quicken, Aggravate, Spread, Bloom, Lunar-Bloom, Hyperbloom, or Burgeon, a Leaf of Consciousness will be created around the character for a maximum of 10s. When picked up, the Leaf will grant the character <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Mastery for 12s. Only 1 Leaf can be generated this way every 20s. This effect can still be triggered if the character is not on the field. The Leaf of Consciousness' effect cannot stack.",
     "refinements": [
@@ -1707,6 +1876,7 @@
     ]
   },
   "scion_of_the_blazing_sun": {
+    "id": "15424",
     "name": "Scion of the Blazing Sun",
     "descHtmlTpl": "After a Charged Attack hits an opponent, a Sunfire Arrow will descend upon the opponent hit, dealing <span style=\"color: #99FFFFFF;\">{0}</span> ATK as DMG, and applying the Heartsearer effect to the opponent damaged by said Arrow for 10s. Opponents affected by Heartsearer take <span style=\"color: #99FFFFFF;\">{1}</span> more Charged Attack DMG from the wielder. A Sunfire Arrow can be triggered once every 10s.",
     "refinements": [
@@ -1718,6 +1888,7 @@
     ]
   },
   "sequence_of_solitude": {
+    "id": "15432",
     "name": "Sequence of Solitude",
     "descHtmlTpl": "When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of Max HP at the target's location. This effect can be triggered once every 15s.",
     "refinements": [
@@ -1729,6 +1900,7 @@
     ]
   },
   "serenitys_call": {
+    "id": "11433",
     "name": "Serenity's Call",
     "descHtmlTpl": "Upon causing an Elemental Reaction, increases Max HP by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. Moonsign: Ascendant Gleam: Max HP from this effect is further increased by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -1740,6 +1912,7 @@
     ]
   },
   "serpent_spine": {
+    "id": "12409",
     "name": "Serpent Spine",
     "descHtmlTpl": "Every 4s a character is on the field, they will deal <span style=\"color: #99FFFFFF;\">{0}</span> more DMG and take <span style=\"color: #99FFFFFF;\">{1}</span> more DMG. This effect has a maximum of 5 stacks and will not be reset if the character leaves the field, but will be reduced by 1 stack when the character takes DMG.",
     "refinements": [
@@ -1751,6 +1924,7 @@
     ]
   },
   "sharpshooters_oath": {
+    "id": "15302",
     "name": "Sharpshooter's Oath",
     "descHtmlTpl": "Increases DMG against weak spots by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -1762,6 +1936,7 @@
     ]
   },
   "silvershower_heartstrings": {
+    "id": "15513",
     "name": "Silvershower Heartstrings",
     "descHtmlTpl": "The equipping character can gain the Remedy effect. When they possess 1/2/3 Remedy stacks, Max HP will increase by <span style=\"color: #99FFFFFF;\">{0}/{1}/{2}</span>. 1 stack may be gained when the following conditions are met: 1 stack for 25s when using an Elemental Skill; 1 stack for 25s when the value of a Bond of Life value increases; 1 stack for 20s for performing healing. Stacks can still be triggered when the equipping character is not on the field. Each stack's duration is counted independently. In addition, when 3 stacks are active, Elemental Burst CRIT Rate will be increased by <span style=\"color: #99FFFFFF;\">{3}</span>. This effect will be canceled 4s after falling under 3 stacks.",
     "refinements": [
@@ -1773,6 +1948,7 @@
     ]
   },
   "skyrider_greatsword": {
+    "id": "12306",
     "name": "Skyrider Greatsword",
     "descHtmlTpl": "On hit, Normal or Charged Attacks increase ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 4 stacks. Can occur once every 0.5s.",
     "refinements": [
@@ -1784,6 +1960,7 @@
     ]
   },
   "skyrider_sword": {
+    "id": "11306",
     "name": "Skyrider Sword",
     "descHtmlTpl": "Using an Elemental Burst grants a <span style=\"color: #99FFFFFF;\">{0}</span> increase in ATK and Movement SPD for 15s.",
     "refinements": [
@@ -1795,6 +1972,7 @@
     ]
   },
   "skyward_atlas": {
+    "id": "14501",
     "name": "Skyward Atlas",
     "descHtmlTpl": "Increases Elemental DMG Bonus by <span style=\"color: #99FFFFFF;\">{0}</span>. Normal Attack hits have a 50% chance to earn the favor of the clouds, which actively seek out nearby opponents to attack for 15s, dealing <span style=\"color: #99FFFFFF;\">{1}</span> ATK DMG. Can only occur once every 30s.",
     "refinements": [
@@ -1806,6 +1984,7 @@
     ]
   },
   "skyward_blade": {
+    "id": "11502",
     "name": "Skyward Blade",
     "descHtmlTpl": "CRIT Rate increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Skypiercing Might lasts for 12s.",
     "refinements": [
@@ -1817,6 +1996,7 @@
     ]
   },
   "skyward_harp": {
+    "id": "15501",
     "name": "Skyward Harp",
     "descHtmlTpl": "Increases CRIT DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. Hits have a <span style=\"color: #99FFFFFF;\">{1}</span> chance to inflict a small AoE attack, dealing 125% Physical ATK DMG. Can only occur once every <span style=\"color: #99FFFFFF;\">{2}</span>s.",
     "refinements": [
@@ -1828,6 +2008,7 @@
     ]
   },
   "skyward_pride": {
+    "id": "12501",
     "name": "Skyward Pride",
     "descHtmlTpl": "Increases all DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. After using an Elemental Burst, a vacuum blade that does <span style=\"color: #99FFFFFF;\">{1}</span> of ATK as DMG to opponents along its path will be created when Normal or Charged Attacks hit. Lasts for 20s or 8 vacuum blades.",
     "refinements": [
@@ -1839,6 +2020,7 @@
     ]
   },
   "skyward_spine": {
+    "id": "13502",
     "name": "Skyward Spine",
     "descHtmlTpl": "Increases CRIT Rate by <span style=\"color: #99FFFFFF;\">{0}</span> and increases Normal ATK SPD by <span style=\"color: #99FFFFFF;\">12%</span>. Additionally, Normal and Charged Attacks hits on opponents have a <span style=\"color: #99FFFFFF;\">50%</span> chance to trigger a vacuum blade that deals <span style=\"color: #99FFFFFF;\">{1}</span> of ATK as DMG in a small AoE. This effect can occur no more than once every 2s.",
     "refinements": [
@@ -1850,6 +2032,7 @@
     ]
   },
   "slingshot": {
+    "id": "15304",
     "name": "Slingshot",
     "descHtmlTpl": "If a Normal or Charged Attack hits a target within 0.3s of being fired, increases DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. Otherwise, decreases DMG by 10%.",
     "refinements": [
@@ -1861,6 +2044,7 @@
     ]
   },
   "snare_hook": {
+    "id": "15433",
     "name": "Snare Hook",
     "descHtmlTpl": "Upon causing an Elemental Reaction, increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s. Moonsign: Ascendant Gleam: Elemental Mastery from this effect is further increased by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -1872,6 +2056,7 @@
     ]
   },
   "snowtombed_starsilver": {
+    "id": "12411",
     "name": "Snow-Tombed Starsilver",
     "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
     "refinements": [
@@ -1883,6 +2068,7 @@
     ]
   },
   "solar_pearl": {
+    "id": "14405",
     "name": "Solar Pearl",
     "descHtmlTpl": "Normal Attack hits increase Elemental Skill and Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Likewise, Elemental Skill or Elemental Burst hits increase Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s.",
     "refinements": [
@@ -1894,6 +2080,7 @@
     ]
   },
   "song_of_broken_pines": {
+    "id": "12503",
     "name": "Song of Broken Pines",
     "descHtmlTpl": "A part of the \"Millennial Movement\" that wanders amidst the winds. Increases ATK by <span style=\"color: #99FFFFFF;\">{0}</span>, and when Normal or Charged Attacks hit opponents, the character gains a Sigil of Whispers. This effect can be triggered once every 0.3s. When you possess 4 Sigils of Whispers, all of them will be consumed and all nearby party members will obtain the \"Millennial Movement: Banner-Hymn\" effect for 12s. \"Millennial Movement: Banner-Hymn\" increases Normal ATK SPD by <span style=\"color: #99FFFFFF;\">{1}</span> and increases ATK by <span style=\"color: #99FFFFFF;\">{2}</span>. Once this effect is triggered, you will not gain Sigils of Whispers for 20s. Of the many effects of the \"Millennial Movement,\" buffs of the same type will not stack.",
     "refinements": [
@@ -1905,6 +2092,7 @@
     ]
   },
   "song_of_stillness": {
+    "id": "15425",
     "name": "Song of Stillness",
     "descHtmlTpl": "After the wielder is healed, they will deal <span style=\"color: #99FFFFFF;\">{0}</span> more DMG for 8s. This can be triggered even when the character is not on the field.",
     "refinements": [
@@ -1916,6 +2104,7 @@
     ]
   },
   "splendor_of_tranquil_waters": {
+    "id": "11513",
     "name": "Splendor of Tranquil Waters",
     "descHtmlTpl": "When the equipping character's current HP increases or decreases, Elemental Skill DMG dealt will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 3 stacks. This effect can be triggered once every 0.2s. When other party members' current HP increases or decreases, the equipping character's Max HP will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 6s. Max 2 stacks. This effect can be triggered once every 0.2s. The aforementioned effects can be triggered even if the wielder is off-field.",
     "refinements": [
@@ -1927,6 +2116,7 @@
     ]
   },
   "staff_of_homa": {
+    "id": "13501",
     "name": "Staff of Homa",
     "descHtmlTpl": "HP increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Additionally, provides an ATK Bonus based on <span style=\"color: #99FFFFFF;\">{1}</span> of the wielder's Max HP. When the wielder's HP is less than 50%, this ATK Bonus is increased by an additional <span style=\"color: #99FFFFFF;\">{2}</span> of Max HP.",
     "refinements": [
@@ -1938,6 +2128,7 @@
     ]
   },
   "staff_of_the_scarlet_sands": {
+    "id": "13511",
     "name": "Staff of the Scarlet Sands",
     "descHtmlTpl": "The equipping character gains <span style=\"color: #99FFFFFF;\">{0}</span> of their Elemental Mastery as bonus ATK. When an Elemental Skill hits opponents, the Dream of the Scarlet Sands effect will be gained for 10s: The equipping character will gain <span style=\"color: #99FFFFFF;\">{1}</span> of their Elemental Mastery as bonus ATK. Max 3 stacks.",
     "refinements": [
@@ -1949,6 +2140,7 @@
     ]
   },
   "starcallers_watch": {
+    "id": "14517",
     "name": "Starcaller's Watch",
     "descHtmlTpl": "Increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span>. Gain the \"Mirror of Night\" effect within 15s after the equipping character creates a shield: The current active party member deals <span style=\"color: #99FFFFFF;\">{1}</span> increased DMG to nearby opponents. You can gain the \"Mirror of Night\" effect once every 14s.",
     "refinements": [
@@ -1960,6 +2152,7 @@
     ]
   },
   "sturdy_bone": {
+    "id": "11430",
     "name": "Sturdy Bone",
     "descHtmlTpl": "Sprint or Alternate Sprint Stamina Consumption decreased by 15%. Additionally, after using Sprint or Alternate Sprint, Normal Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span> of ATK. This effect expires after triggering 18 times or 7s.",
     "refinements": [
@@ -1971,6 +2164,7 @@
     ]
   },
   "summit_shaper": {
+    "id": "11504",
     "name": "Summit Shaper",
     "descHtmlTpl": "Increases Shield Strength by <span style=\"color: #99FFFFFF;\">{0}</span>. Scoring hits on opponents increases ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
     "refinements": [
@@ -1982,6 +2176,7 @@
     ]
   },
   "sunny_morning_sleepin": {
+    "id": "14518",
     "name": "Sunny Morning Sleep-In",
     "descHtmlTpl": "Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s after triggering Swirl. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{1}</span> for 9s after the wielder's Elemental Skill hits an opponent. Elemental Mastery increases by <span style=\"color: #99FFFFFF;\">{2}</span> for 30s after the wielder's Elemental Burst hits an opponent.",
     "refinements": [
@@ -1993,6 +2188,7 @@
     ]
   },
   "surfs_up": {
+    "id": "14516",
     "name": "Surf's Up",
     "descHtmlTpl": "Max HP increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Once every 15s, for the 14s after using an Elemental Skill: Gain 4 Scorching Summer stacks. Each stack increases Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{1}</span>. For the duration of the effect, once every 1.5s, lose 1 stack after a Normal Attack hits an opponent; once every 1.5s, gain 1 stack after triggering a Vaporize reaction on an opponent. Max 4 Scorching Summer stacks.",
     "refinements": [
@@ -2004,6 +2200,7 @@
     ]
   },
   "sword_of_descension": {
+    "id": "11412",
     "name": "Sword of Descension",
     "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>Hitting opponents with Normal and Charged Attacks grants a <span style=\"color: #99FFFFFF;\">50%</span> chance to deal <span style=\"color: #99FFFFFF;\">200%</span> ATK as DMG in a small AoE. This effect can only occur once every 10s. Additionally, if the Traveler equips the Sword of Descension, their ATK is increased by <span style=\"color: #99FFFFFF;\">66</span>.",
     "refinements": [
@@ -2011,6 +2208,7 @@
     ]
   },
   "sword_of_narzissenkreuz": {
+    "id": "11428",
     "name": "Sword of Narzissenkreuz",
     "descHtmlTpl": "When the equipping character does not have an Arkhe: When Normal Attacks, Charged Attacks, or Plunging Attacks strike, a Pneuma or Ousia energy blast will be unleashed, dealing <span style=\"color: #99FFFFFF;\">{0}</span> of ATK as DMG. This effect can be triggered once every 12s. The energy blast type is determined by the current type of the Sword of Narzissenkreuz.",
     "refinements": [
@@ -2022,6 +2220,7 @@
     ]
   },
   "sword_of_narzissenkreuz_11429": {
+    "id": "11429",
     "name": "Sword of Narzissenkreuz",
     "descHtmlTpl": "In countless stories, the weapon that befits the legendary hero is also the key to opening all gates, required to surpass the climax and reach destiny's denouement.",
     "refinements": [
@@ -2029,6 +2228,7 @@
     ]
   },
   "symphonist_of_scents": {
+    "id": "13514",
     "name": "Symphonist of Scents",
     "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When the equipping character is off-field, ATK is increased by an additional <span style=\"color: #99FFFFFF;\">{1}</span>. After initiating healing, the equipping character and the character(s) they have healed will obtain the \"Sweet Echoes\" effect, increasing their ATK by <span style=\"color: #99FFFFFF;\">{2}</span> for 3s. This effect can be triggered even if the equipping character is off-field.",
     "refinements": [
@@ -2040,6 +2240,7 @@
     ]
   },
   "talking_stick": {
+    "id": "12424",
     "name": "Talking Stick",
     "descHtmlTpl": "ATK will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s after being affected by Pyro. This effect can be triggered once every 12s. All Elemental DMG Bonus will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 15s after being affected by Hydro, Cryo, Electro, or Dendro. This effect can be triggered once every 12s.",
     "refinements": [
@@ -2051,6 +2252,7 @@
     ]
   },
   "tamayuratei_no_ohanashi": {
+    "id": "13432",
     "name": "Tamayuratei no Ohanashi",
     "descHtmlTpl": "Increase ATK by <span style=\"color: #99FFFFFF;\">{0}</span> and Movement SPD by 10% for 10s when using an Elemental Skill.",
     "refinements": [
@@ -2062,6 +2264,7 @@
     ]
   },
   "the_alley_flash": {
+    "id": "11410",
     "name": "The Alley Flash",
     "descHtmlTpl": "Increases DMG dealt by the character equipping this weapon by <span style=\"color: #99FFFFFF;\">{0}</span>. Taking DMG disables this effect for 5s.",
     "refinements": [
@@ -2073,6 +2276,7 @@
     ]
   },
   "the_bell": {
+    "id": "12402",
     "name": "The Bell",
     "descHtmlTpl": "Taking DMG generates a shield which absorbs DMG up to <span style=\"color: #99FFFFFF;\">{0}</span> of Max HP. This shield lasts for 10s or until broken, and can only be triggered once every <span style=\"color: #99FFFFFF;\">45</span>s. While protected by a shield, the character gains <span style=\"color: #99FFFFFF;\">{1}</span> increased DMG.",
     "refinements": [
@@ -2084,6 +2288,7 @@
     ]
   },
   "the_black_sword": {
+    "id": "11409",
     "name": "The Black Sword",
     "descHtmlTpl": "Increases DMG dealt by Normal and Charged Attacks by <span style=\"color: #99FFFFFF;\">{0}</span>. Additionally, regenerates <span style=\"color: #99FFFFFF;\">{1}</span> of ATK as HP when Normal and Charged Attacks score a CRIT Hit. This effect can occur once every 5s.",
     "refinements": [
@@ -2095,6 +2300,7 @@
     ]
   },
   "the_catch": {
+    "id": "13415",
     "name": "\"The Catch\"",
     "descHtmlTpl": "Increases Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{0}</span> and Elemental Burst CRIT Rate by <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -2106,6 +2312,7 @@
     ]
   },
   "the_daybreak_chronicles": {
+    "id": "15515",
     "name": "The Daybreak Chronicles",
     "descHtmlTpl": "The equipping character gains Stirring Dawn Breeze: 3s after leaving combat, Normal Attack, Elemental Skill, and Elemental Burst DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. While in combat, this DMG Bonus will decrease by <span style=\"color: #99FFFFFF;\">{1}</span> per second until it reaches 0%. When the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for the corresponding DMG type is increased by <span style=\"color: #99FFFFFF;\">{2}</span> until it reaches <span style=\"color: #99FFFFFF;\">{3}</span>. This effect can be triggered once every 0.1s for each of the attack types mentioned above. This effect can be triggered even if the equipping character is off-field.<br>Additionally, when the party possesses Hexerei: Secret Rite effects, when the equipping character's Normal Attacks, Elemental Skills, or Elemental Bursts hit an opponent, the DMG Bonus for all these DMG types is increased by <span style=\"color: #99FFFFFF;\">{4}</span> instead.",
     "refinements": [
@@ -2117,6 +2324,7 @@
     ]
   },
   "the_dockhands_assistant": {
+    "id": "11427",
     "name": "The Dockhand's Assistant",
     "descHtmlTpl": "When the wielder is healed or heals others, they will gain a Stoic's Symbol that lasts 30s, up to a maximum of 3 Symbols. When using their Elemental Skill or Burst, all Symbols will be consumed and the Roused effect will be granted for 10s. For each Symbol consumed, gain <span style=\"color: #99FFFFFF;\">{0}</span> Elemental Mastery, and 2s after the effect occurs, <span style=\"color: #99FFFFFF;\">{1}</span> Energy per Symbol consumed will be restored for said character. The Roused effect can be triggered once every 15s, and Symbols can be gained even when the character is not on the field.",
     "refinements": [
@@ -2128,6 +2336,7 @@
     ]
   },
   "the_first_great_magic": {
+    "id": "15512",
     "name": "The First Great Magic",
     "descHtmlTpl": "DMG dealt by Charged Attacks increased by <span style=\"color: #99FFFFFF;\">{0}</span>. For every party member with the same Elemental Type as the wielder (including the wielder themselves), gain 1 Gimmick stack. For every party member with a different Elemental Type from the wielder, gain 1 Theatrics stack. When the wielder has 1/2/3 or more Gimmick stacks, ATK will be increased by <span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span>. When the wielder has 1/2/3 or more Theatrics stacks, Movement SPD will be increased by <span style=\"color: #99FFFFFF;\">{4}/{5}/{6}</span>.",
     "refinements": [
@@ -2139,6 +2348,7 @@
     ]
   },
   "the_flagstaff": {
+    "id": "13304",
     "name": "The Flagstaff",
     "descHtmlTpl": "Defeating an opponent restores <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
     "refinements": [
@@ -2150,6 +2360,7 @@
     ]
   },
   "the_flute": {
+    "id": "11402",
     "name": "The Flute",
     "descHtmlTpl": "Normal or Charged Attacks grant a Harmonic on hits. Gaining 5 Harmonics triggers the power of music and deals <span style=\"color: #99FFFFFF;\">{0}</span> ATK DMG to surrounding opponents. Harmonics last up to 30s, and a maximum of 1 can be gained every 0.5s.",
     "refinements": [
@@ -2161,6 +2372,7 @@
     ]
   },
   "the_stringless": {
+    "id": "15402",
     "name": "The Stringless",
     "descHtmlTpl": "Increases Elemental Skill and Elemental Burst DMG by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -2172,6 +2384,7 @@
     ]
   },
   "the_unforged": {
+    "id": "12504",
     "name": "The Unforged",
     "descHtmlTpl": "Increases Shield Strength by <span style=\"color: #99FFFFFF;\">{0}</span>. Scoring hits on opponents increases ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
     "refinements": [
@@ -2183,6 +2396,7 @@
     ]
   },
   "the_viridescent_hunt": {
+    "id": "15409",
     "name": "The Viridescent Hunt",
     "descHtmlTpl": "Upon hit, Normal and Charged Attacks have a 50% chance to generate a Cyclone, which will continuously attract surrounding opponents, dealing <span style=\"color: #99FFFFFF;\">{0}</span> of ATK as DMG to these opponents every 0.5s for 4s. This effect can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
     "refinements": [
@@ -2194,6 +2408,7 @@
     ]
   },
   "the_widsith": {
+    "id": "14402",
     "name": "The Widsith",
     "descHtmlTpl": "When the character takes the field, they will gain a random theme song for 10s. This can only occur once every 30s. Recitative: ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Aria: Increases all Elemental DMG by <span style=\"color: #99FFFFFF;\">{1}</span>. Interlude: Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -2205,6 +2420,7 @@
     ]
   },
   "thrilling_tales_of_dragon_slayers": {
+    "id": "14302",
     "name": "Thrilling Tales of Dragon Slayers",
     "descHtmlTpl": "When switching characters, the new character taking the field has their ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 10s. This effect can only occur once every 20s.",
     "refinements": [
@@ -2216,6 +2432,7 @@
     ]
   },
   "thundering_pulse": {
+    "id": "15509",
     "name": "Thundering Pulse",
     "descHtmlTpl": "Increases ATK by <span style=\"color: #99FFFFFF;\">{0}</span> and grants the might of the Thunder Emblem. At stack levels 1/2/3, the Thunder Emblem increases Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span>. The character will obtain 1 stack of Thunder Emblem in each of the following scenarios: Normal Attack deals DMG (stack lasts 5s), casting Elemental Skill (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
     "refinements": [
@@ -2227,6 +2444,7 @@
     ]
   },
   "tidal_shadow": {
+    "id": "12425",
     "name": "Tidal Shadow",
     "descHtmlTpl": "After the wielder is healed, ATK will be increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 8s. This can be triggered even when the character is not on the field.",
     "refinements": [
@@ -2238,6 +2456,7 @@
     ]
   },
   "tome_of_the_eternal_flow": {
+    "id": "14514",
     "name": "Tome of the Eternal Flow",
     "descHtmlTpl": "HP is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When current HP increases or decreases, Charged Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{1}</span> for 4s. Max 3 stacks. This effect can be triggered once every 0.3s. When the character has 3 stacks or a third stack's duration refreshes, <span style=\"color: #99FFFFFF;\">{2}</span> Energy will be restored. This Energy restoration effect can be triggered once every 12s.",
     "refinements": [
@@ -2249,6 +2468,7 @@
     ]
   },
   "toukabou_shigure": {
+    "id": "11422",
     "name": "Toukabou Shigure",
     "descHtmlTpl": "After an attack hits opponents, it will inflict an instance of Cursed Parasol upon one of them for 10s. This effect can be triggered once every 15s. If this opponent is defeated during Cursed Parasol's duration, Cursed Parasol's CD will be refreshed immediately. The character wielding this weapon will deal <span style=\"color: #99FFFFFF;\">{0}</span> more DMG to the opponent affected by Cursed Parasol.",
     "refinements": [
@@ -2260,6 +2480,7 @@
     ]
   },
   "travelers_handy_sword": {
+    "id": "11303",
     "name": "Traveler's Handy Sword",
     "descHtmlTpl": "Each Elemental Orb or Particle collected restores <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
     "refinements": [
@@ -2271,6 +2492,7 @@
     ]
   },
   "tulaytullahs_remembrance": {
+    "id": "14512",
     "name": "Tulaytullah's Remembrance",
     "descHtmlTpl": "Normal Attack SPD is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. After the wielder unleashes an Elemental Skill, Normal Attack DMG will increase by <span style=\"color: #99FFFFFF;\">{1}</span> every second for 14s. After hitting an opponent with a Normal Attack during this duration, Normal Attack DMG will be increased by <span style=\"color: #99FFFFFF;\">{2}</span>. This increase can be triggered once every 0.3s. The maximum Normal Attack DMG increase per single duration of the overall effect is <span style=\"color: #99FFFFFF;\">{3}</span>. The effect will be removed when the wielder leaves the field, and using the Elemental Skill again will reset all DMG buffs.",
     "refinements": [
@@ -2282,6 +2504,7 @@
     ]
   },
   "twin_nephrite": {
+    "id": "14305",
     "name": "Twin Nephrite",
     "descHtmlTpl": "Defeating an opponent increases Movement SPD and ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 15s.",
     "refinements": [
@@ -2293,6 +2516,7 @@
     ]
   },
   "ultimate_overlords_mega_magic_sword": {
+    "id": "12426",
     "name": "\"Ultimate Overlord's Mega Magic Sword\"",
     "descHtmlTpl": "ATK increased by <span style=\"color: #99FFFFFF;\">{0}</span>. That's not all! The support from all Melusines you've helped in Merusea Village fills you with strength! Based on the number of them you've helped, your ATK is increased by up to an additional <span style=\"color: #99FFFFFF;\">{1}</span>.",
     "refinements": [
@@ -2304,6 +2528,7 @@
     ]
   },
   "uraku_misugiri": {
+    "id": "11514",
     "name": "Uraku Misugiri",
     "descHtmlTpl": "Normal Attack DMG is increased by <span style=\"color: #99FFFFFF;\">{0}</span> and Elemental Skill DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. After a nearby active character deals Geo DMG, the aforementioned effects increase by 100% for 15s. Additionally, the wielder's DEF is increased by <span style=\"color: #99FFFFFF;\">{2}</span>.",
     "refinements": [
@@ -2315,6 +2540,7 @@
     ]
   },
   "verdict": {
+    "id": "12512",
     "name": "Verdict",
     "descHtmlTpl": "Increases ATK by <span style=\"color: #99FFFFFF;\">{0}</span>. When party members obtain Elemental Shards from Crystallize or trigger Lunar-Crystallize reactions, the equipping character will gain 1 Seal, increasing Elemental Skill DMG by <span style=\"color: #99FFFFFF;\">{1}</span>. The Seal lasts for 15s, and the equipper may have up to 2 Seals at once. All of the equipper's Seals will disappear 0.2s after their Elemental Skill deals DMG. Up to 1 Seal may be obtained every second through the Lunar-Crystallize reaction.",
     "refinements": [
@@ -2326,6 +2552,7 @@
     ]
   },
   "vivid_notions": {
+    "id": "14519",
     "name": "Vivid Notions",
     "descHtmlTpl": "ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When you use a Plunging Attack, you will gain the \"Dawn's First Hue\" effect: Plunging Attack CRIT DMG is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. When you use an Elemental Skill or Burst, you will gain the \"Twilight's Splendor\" effect: Plunging Attack CRIT DMG is increased by <span style=\"color: #99FFFFFF;\">{2}</span>. The two effects above each last for 15s, and will be canceled 0.1s after the ground impact hits a target.",
     "refinements": [
@@ -2337,6 +2564,7 @@
     ]
   },
   "vortex_vanquisher": {
+    "id": "13504",
     "name": "Vortex Vanquisher",
     "descHtmlTpl": "Increases Shield Strength by <span style=\"color: #99FFFFFF;\">{0}</span>. Scoring hits on opponents increases ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 8s. Max 5 stacks. Can only occur once every 0.3s. While protected by a shield, this ATK increase effect is increased by 100%.",
     "refinements": [
@@ -2348,6 +2576,7 @@
     ]
   },
   "wandering_evenstar": {
+    "id": "14416",
     "name": "Wandering Evenstar",
     "descHtmlTpl": "The following effect will trigger every 10s: The equipping character will gain <span style=\"color: #99FFFFFF;\">{0}</span> of their Elemental Mastery as bonus ATK for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
     "refinements": [
@@ -2359,6 +2588,7 @@
     ]
   },
   "wavebreakers_fin": {
+    "id": "13416",
     "name": "Wavebreaker's Fin",
     "descHtmlTpl": "For every point of the entire party's combined maximum Energy capacity, the Elemental Burst DMG of the character equipping this weapon is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. A maximum of <span style=\"color: #99FFFFFF;\">{1}</span> increased Elemental Burst DMG can be achieved this way.",
     "refinements": [
@@ -2370,6 +2600,7 @@
     ]
   },
   "waveriding_whirl": {
+    "id": "14430",
     "name": "Waveriding Whirl",
     "descHtmlTpl": "Decreases Swimming Stamina consumption by 15%. In addition, for 10s after using an Elemental Skill, Max HP is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. For every Hydro Elemental Type character in the party, Max HP is increased by another <span style=\"color: #99FFFFFF;\">{1}</span>, and the maximum increase that can be achieved in this way is <span style=\"color: #99FFFFFF;\">{2}</span>. Can be triggered once every 15s.",
     "refinements": [
@@ -2381,6 +2612,7 @@
     ]
   },
   "white_iron_greatsword": {
+    "id": "12303",
     "name": "White Iron Greatsword",
     "descHtmlTpl": "Defeating an opponent restores <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
     "refinements": [
@@ -2392,6 +2624,7 @@
     ]
   },
   "white_tassel": {
+    "id": "13301",
     "name": "White Tassel",
     "descHtmlTpl": "Increases Normal Attack DMG by <span style=\"color: #99FFFFFF;\">{0}</span>.",
     "refinements": [
@@ -2403,6 +2636,7 @@
     ]
   },
   "whiteblind": {
+    "id": "12407",
     "name": "Whiteblind",
     "descHtmlTpl": "On hit, Normal or Charged Attacks increase ATK and DEF by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s. Max 4 stacks. This effect can only occur once every 0.5s.",
     "refinements": [
@@ -2414,6 +2648,7 @@
     ]
   },
   "windblume_ode": {
+    "id": "15413",
     "name": "Windblume Ode",
     "descHtmlTpl": "After using an Elemental Skill, receive a boon from the ancient wish of the Windblume, increasing ATK by <span style=\"color: #99FFFFFF;\">{0}</span> for 6s.",
     "refinements": [
@@ -2425,6 +2660,7 @@
     ]
   },
   "wine_and_song": {
+    "id": "14410",
     "name": "Wine and Song",
     "descHtmlTpl": "Hitting an opponent with a Normal Attack decreases the Stamina consumption of Sprint or Alternate Sprint by <span style=\"color: #99FFFFFF;\">{0}</span> for 5s. Additionally, using a Sprint or Alternate Sprint ability increases ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 5s.",
     "refinements": [
@@ -2436,6 +2672,7 @@
     ]
   },
   "wolffang": {
+    "id": "11424",
     "name": "Wolf-Fang",
     "descHtmlTpl": "DMG dealt by Elemental Skill and Elemental Burst is increased by <span style=\"color: #99FFFFFF;\">{0}</span>. When an Elemental Skill hits an opponent, its CRIT Rate will be increased by <span style=\"color: #99FFFFFF;\">{1}</span>. When an Elemental Burst hits an opponent, its CRIT Rate will be increased by <span style=\"color: #99FFFFFF;\">{2}</span>. Both of these effects last 10s separately, have 4 max stacks, and can be triggered once every 0.1s.",
     "refinements": [
@@ -2447,6 +2684,7 @@
     ]
   },
   "wolfs_gravestone": {
+    "id": "12502",
     "name": "Wolf's Gravestone",
     "descHtmlTpl": "Increases ATK by <span style=\"color: #99FFFFFF;\">{0}</span>. On hit, attacks against opponents with less than 30% HP increase all party members' ATK by <span style=\"color: #99FFFFFF;\">{1}</span> for 12s. Can only occur once every 30s.",
     "refinements": [
@@ -2458,6 +2696,7 @@
     ]
   },
   "xiphos_moonlight": {
+    "id": "11418",
     "name": "Xiphos' Moonlight",
     "descHtmlTpl": "The following effect will trigger every 10s: The equipping character will gain <span style=\"color: #99FFFFFF;\">{0}</span> Energy Recharge for each point of Elemental Mastery they possess for 12s, with nearby party members gaining 30% of this buff for the same duration. Multiple instances of this weapon can allow this buff to stack. This effect will still trigger even if the character is not on the field.",
     "refinements": [

@@ -1,4 +1,4 @@
-import type { Element } from "@/data/types";
+import type { Element, Region } from "@/data/types";
 import {
   ScalingBuff,
   assertNoDuplicateStatKeys,
@@ -200,7 +200,12 @@ export class CharBuild {
       combatOpts
     );
     this.artifactSetBase = config.artifactSetId
-      ? createArtifactSet(config.artifactSetId, config.charId, teamMeta)
+      ? createArtifactSet(
+          config.artifactSetId,
+          config.charId,
+          teamMeta,
+          combatOpts
+        )
       : null;
 
     // Auto-include the 2pc half-set when using a 4pc set (if the set declares one)
@@ -296,11 +301,12 @@ export class CharBuild {
    */
   applyStaticBuffs(
     teamStaticBuffs: ProvidedStaticBuff[],
-    selfCharId: string
+    selfCharId: string,
+    selfRegion?: Region
   ): void {
     let applicable = teamStaticBuffs
       .filter((b) =>
-        isBuffApplicable(b.buff, b.providerCharId, selfCharId, null)
+        isBuffApplicable(b.buff, b.providerCharId, selfCharId, null, selfRegion)
       )
       .map((b) => b.buff);
     applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
@@ -357,10 +363,17 @@ export class CharBuild {
     selfPreStats: StatSheet,
     teamDynamicBuffs: EvaluatedDynamicBuff[],
     selfCharId: string,
-    calcTargetId: string
+    calcTargetId: string,
+    selfRegion?: Region
   ): StatSheet {
     let applicable = teamDynamicBuffs.filter((b) =>
-      isBuffApplicable(b.buff, b.providerCharId, selfCharId, calcTargetId)
+      isBuffApplicable(
+        b.buff,
+        b.providerCharId,
+        selfCharId,
+        calcTargetId,
+        selfRegion
+      )
     );
     applicable = deduplicateBuffs(applicable, (b) => b.entries);
 
@@ -416,13 +429,20 @@ export class CharBuild {
  * @param selfCharId  The character whose stat sheet we're building
  * @param calcTargetId The character being optimized (on-field).
  *                     null = target-independent filtering only (construction phase).
+ * @param selfRegion  Region of the target character (for region-scoped buffs).
  */
 export function isBuffApplicable(
   buff: StatBuff,
   providerCharId: string,
   selfCharId: string,
-  calcTargetId: string | null
+  calcTargetId: string | null,
+  selfRegion?: Region
 ): boolean {
+  // Region filter: if buff specifies regions, target must be from one of them
+  if (buff.target.regions && selfRegion !== undefined) {
+    if (!buff.target.regions.includes(selfRegion)) return false;
+  }
+
   const receiver = buff.target.receiver;
   const buffOwnerId = providerCharId;
 
@@ -508,7 +528,11 @@ export class TeamBuild {
     // Apply target-independent static buffs (self, selfOffField, team) at construction.
     // Target-dependent buffs (onField, selfOnField) are deferred to getTeamStats.
     for (const [charId, build] of Object.entries(this.charBuilds)) {
-      build.applyStaticBuffs(this.allStaticBuffs, charId);
+      build.applyStaticBuffs(
+        this.allStaticBuffs,
+        charId,
+        this.teamMeta.regions[charId]
+      );
     }
   }
 
@@ -534,7 +558,8 @@ export class TeamBuild {
             b.buff,
             b.providerCharId,
             charId,
-            calcTargetId
+            calcTargetId,
+            this.teamMeta.regions[charId]
           );
         })
         .map((b) => b.buff);
@@ -565,7 +590,8 @@ export class TeamBuild {
         preStats[id]!,
         allDynamicBuffs,
         id,
-        calcTargetId
+        calcTargetId,
+        this.teamMeta.regions[id]
       );
     }
 
@@ -619,7 +645,13 @@ export class TeamBuild {
         .filter((b) => {
           const r = b.buff.target.receiver;
           if (r !== "onField" && r !== "selfOnField") return false;
-          return isBuffApplicable(b.buff, b.providerCharId, cid, charId);
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            cid,
+            charId,
+            this.teamMeta.regions[cid]
+          );
         })
         .map((b) => b.buff);
     }
@@ -646,7 +678,8 @@ export class TeamBuild {
         preStats[id]!,
         allDynamicBuffs,
         id,
-        charId
+        charId,
+        this.teamMeta.regions[id]
       );
     }
 
@@ -715,9 +748,16 @@ export class TeamBuild {
     const result: ResolvedBuff[] = [];
 
     // Determine tie-breakers for calcTargetId
+    const calcTargetRegion = this.teamMeta.regions[calcTargetId];
     let applicableStatic = this.allStaticBuffs
       .filter((b) =>
-        isBuffApplicable(b.buff, b.providerCharId, calcTargetId, calcTargetId)
+        isBuffApplicable(
+          b.buff,
+          b.providerCharId,
+          calcTargetId,
+          calcTargetId,
+          calcTargetRegion
+        )
       )
       .map((b) => b.buff);
     applicableStatic = deduplicateBuffs(applicableStatic, (b) => b.staticBuffs);
@@ -730,7 +770,13 @@ export class TeamBuild {
       );
     }
     let applicableDynamic = allDynamic.filter((b) =>
-      isBuffApplicable(b.buff, b.providerCharId, calcTargetId, calcTargetId)
+      isBuffApplicable(
+        b.buff,
+        b.providerCharId,
+        calcTargetId,
+        calcTargetId,
+        calcTargetRegion
+      )
     );
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
     const activeDynamicSet = new Set<StatBuff>(
@@ -743,7 +789,8 @@ export class TeamBuild {
           buff,
           ownerId,
           calcTargetId,
-          calcTargetId
+          calcTargetId,
+          calcTargetRegion
         );
 
         // Resolve dynamic entries with per-entry caps
@@ -868,7 +915,16 @@ export class TeamBuild {
       if (cid === calcTargetId) continue;
       const relevantKeys = new Set<StatKey>();
       for (const buff of cb.getAllBuffs()) {
-        if (!isBuffApplicable(buff, cid, calcTargetId, calcTargetId)) continue;
+        if (
+          !isBuffApplicable(
+            buff,
+            cid,
+            calcTargetId,
+            calcTargetId,
+            this.teamMeta.regions[calcTargetId]
+          )
+        )
+          continue;
         if (buff instanceof ScalingBuff) {
           const inputKey = (buff as { inputKey: StatKey }).inputKey;
           relevantKeys.add(inputKey);

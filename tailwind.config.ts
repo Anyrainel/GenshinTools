@@ -30,6 +30,7 @@ export default {
     extend: {
       width: {
         sidebar: "17.5rem", // 280px
+        "sidebar-narrow": "15rem", // 240px
         "sidebar-wide": "20rem", // 320px
       },
       minWidth: {

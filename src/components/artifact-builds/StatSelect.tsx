@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -17,6 +18,7 @@ interface StatSelectProps {
   options: readonly string[];
   maxLength: number;
   compact?: boolean;
+  label?: string;
 }
 
 interface StatSelectItemProps {
@@ -83,6 +85,7 @@ function StatSelectComponent({
   options,
   maxLength,
   compact = false,
+  label,
 }: StatSelectProps) {
   const [isAdding, setIsAdding] = useState(false);
 
@@ -138,49 +141,73 @@ function StatSelectComponent({
   );
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-1 flex-wrap",
-        compact ? "text-xs min-h-5" : "text-sm min-h-7"
+    <div className={cn(label && (compact ? "space-y-0.5" : "space-y-1"))}>
+      {label && (
+        <div className="flex items-center gap-1">
+          <Label
+            className={cn(
+              "font-medium text-muted-foreground select-none",
+              compact ? "text-[10px]" : "text-xs"
+            )}
+          >
+            {label}
+          </Label>
+          {canAddMore && !isAdding && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePlusClick}
+              className={cn(
+                "p-0 text-primary/70 hover:text-primary bg-primary/5 hover:bg-primary/10 transition-transform hover:scale-[1.2]",
+                compact ? "h-4 w-4" : "h-5 w-5"
+              )}
+            >
+              <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
+            </Button>
+          )}
+        </div>
       )}
-    >
-      {/* Existing value selects */}
-      {values.map((value, index) => (
-        <div key={index} className="flex items-center gap-1">
+      <div
+        className={cn(
+          "flex items-center gap-1 flex-wrap",
+          compact ? "text-xs min-h-5" : "text-sm min-h-7"
+        )}
+      >
+        {values.map((value, index) => (
+          <div key={index} className="flex items-center gap-1">
+            <StatSelectItem
+              value={value}
+              onValueChange={(newValue) => handleUpdateValue(index, newValue)}
+              availableOptions={getAvailableOptionsForSelect(index)}
+              compact={compact}
+            />
+          </div>
+        ))}
+
+        {!label && canAddMore && !isAdding && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handlePlusClick}
+            className={cn(
+              "p-0 text-muted-foreground",
+              compact ? "h-5 w-5" : "h-6 w-6"
+            )}
+          >
+            <Plus className={compact ? "w-3 h-3" : "w-4 h-4"} />
+          </Button>
+        )}
+
+        {isAdding && (
           <StatSelectItem
-            value={value}
-            onValueChange={(newValue) => handleUpdateValue(index, newValue)}
-            availableOptions={getAvailableOptionsForSelect(index)}
+            value=""
+            onValueChange={handleAddValue}
+            availableOptions={availableOptions}
+            autoOpen={true}
             compact={compact}
           />
-        </div>
-      ))}
-
-      {/* Add button */}
-      {canAddMore && !isAdding && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handlePlusClick}
-          className={cn(
-            "p-0 text-muted-foreground",
-            compact ? "h-5 w-5" : "h-6 w-6"
-          )}
-        >
-          <Plus className={compact ? "w-3 h-3" : "w-4 h-4"} />
-        </Button>
-      )}
-
-      {/* Add select */}
-      {isAdding && (
-        <StatSelectItem
-          value=""
-          onValueChange={handleAddValue}
-          availableOptions={availableOptions}
-          autoOpen={true}
-          compact={compact}
-        />
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -192,6 +219,7 @@ export const StatSelect = memo(StatSelectComponent, (prev, next) => {
     prev.values.every((v, i) => v === next.values[i]) &&
     prev.options === next.options &&
     prev.maxLength === next.maxLength &&
-    prev.compact === next.compact
+    prev.compact === next.compact &&
+    prev.label === next.label
   );
 });

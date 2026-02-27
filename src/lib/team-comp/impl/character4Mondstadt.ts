@@ -11,10 +11,6 @@ import type { StatKey } from "../types";
 @RegisterCharacter("dahlia")
 class Dahlia extends CharacterBase {
   readonly buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-    // Q: Radiant Psalter → On-field active character ATK SPD +10%
-    new StatBuff(cbs(this, "Q", ["Q"]), { receiver: "onField" }, [
-      { key: "atkSpd%", value: 0.1 },
-    ]),
     // P2: Q active field ATK SPD based on max HP (up to 20%)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
@@ -26,11 +22,13 @@ class Dahlia extends CharacterBase {
       0.2
     ),
     // C6: Active character under Favonian Favor → additional ATK SPD +10%
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 6 ? [{ key: "atkSpd%", value: 0.1 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+            { key: "atkSpd%", value: 0.1 },
+          ]),
+        ]
+      : []),
   ];
 
   // E: Sacramental Shower — Lv10 419%, Lv13 (C5+) 494.7%
@@ -82,11 +80,15 @@ class Mika extends CharacterBase {
       [{ key: "dmg%", value: this.constellation >= 6 ? 0.5 : 0.4 }]
     ),
     // C6: Soulwind → Physical CD +60%
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "onField", filter: { elements: ["Physical"] } },
-      this.constellation >= 6 ? [{ key: "cd", value: 0.6 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["E"]),
+            { receiver: "onField", filter: { elements: ["Physical"] } },
+            [{ key: "cd", value: 0.6 }]
+          ),
+        ]
+      : []),
   ];
 
   // Pure healer/support — no damage formulas modeled
@@ -104,17 +106,31 @@ class Razor extends CharacterBase {
         [{ key: "atkSpd%", value: 0.4 }]
       ),
       // C1: On elemental particle pickup → self DMG +10%
-      new StatBuff(
-        cbs(this, "C1", []),
-        { receiver: "selfOnField" },
-        this.constellation >= 1 ? [{ key: "dmg%", value: 0.1 }] : []
-      ),
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
+              { key: "dmg%", value: 0.1 },
+            ]),
+          ]
+        : []),
       // C4: E tap hit → enemy DEF -15%
-      new StatBuff(
-        cbs(this, "C4", ["E"]),
-        { receiver: "team" },
-        this.constellation >= 4 ? [{ key: "defReduction%", value: 0.15 }] : []
-      ),
+      ...(this.constellation >= 4
+        ? [
+            new StatBuff(cbs(this, "C4", ["E"]), { receiver: "team" }, [
+              { key: "defReduction%", value: 0.15 },
+            ]),
+          ]
+        : []),
+      // C6: After consuming Electro Sigils → CR +10%, CD +50% for 15s
+      // Under peak-damage model, sigil consumption is routine (Q activation + E hold)
+      ...(this.constellation >= 6
+        ? [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "selfOnField" }, [
+              { key: "cr", value: 0.1 },
+              { key: "cd", value: 0.5 },
+            ]),
+          ]
+        : []),
     ];
     // P4 (Hexerei): Wolf Within DMG increased by 70% of Razor's ATK
     // Always-on when Hexerei active (≥2 Hexerei in team)
@@ -134,49 +150,35 @@ class Razor extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    // Normal attack string total at Lv10 without external buffs
-    const naTotal = 1.71 + 1.47 + 1.84 + 2.43; // = 7.45
-    // Soul companion scaling: Lv10 = 43.2%, Lv13 = 51.0%
+    // Normal attack hits at Lv10 (A is not upgraded by C3/C5)
+    const naHits = [1.71, 1.47, 1.84, 2.43];
+    // Soul companion scaling: Lv10 = 43.2%, Lv13 (C3+) = 51.0%
     const wolfScaling = this.constellation >= 3 ? 0.51 : 0.432;
 
     return {
       "razor-burst-na": {
-        label: { zh: "Q后普攻一套伤害", en: "Q + NA Combo" },
+        label: { zh: "Q普攻一套", en: "Q Normal Combo" },
         parts: [
-          {
-            formula: new DirectFormula(naTotal, {
-              element: "Physical",
-              ability: "normal",
-              reaction: "none",
+          // Physical normal attack hits (4 distinct multipliers)
+          ...naHits.map((mult) => ({
+            formula: new DirectFormula(mult, {
+              element: "Physical" as const,
+              ability: "normal" as const,
+              reaction: "none" as const,
             }),
-          },
-          {
-            formula: new DirectFormula(naTotal * wolfScaling, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
+          })),
+          // Wolf companion hits (scales off each normal hit's multiplier)
+          ...naHits.map((mult) => ({
+            formula: new DirectFormula(mult * wolfScaling, {
+              element: "Electro" as const,
+              ability: "burst" as const,
+              reaction: "none" as const,
             }),
-          },
+          })),
         ],
       },
       // C6: Every 10s, charged sword releases lightning on next Normal Attack
-      // Deals 100% ATK Electro DMG — separate hit, not classified as Normal ATK
-      ...(this.constellation >= 6
-        ? {
-            "razor-c6-lightning": {
-              label: { zh: "C6落雷", en: "C6 Lightning" },
-              parts: [
-                {
-                  formula: new DirectFormula(1.0, {
-                    element: "Electro",
-                    ability: "special",
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
+      // Deals 100% ATK Electro DMG — separate hit, insignificant
     };
   })();
 }
@@ -186,17 +188,23 @@ class Diona extends CharacterBase {
   readonly buffs = [
     // C2: Icy Paws DMG +15%
     // Diona is typically off-field; "self" ensures the buff always applies to her skill
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "self", filter: { abilities: ["skill"] } },
-      this.constellation >= 2 ? [{ key: "dmg%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            { receiver: "self", filter: { abilities: ["skill"] } },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : []),
     // C6: In Q field, HP > 50% → EM +200 (assume active)
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 6 ? [{ key: "em", value: 200 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+            { key: "em", value: 200 },
+          ]),
+        ]
+      : []),
   ];
 
   // Shielder/healer — no significant damage formulas
@@ -230,22 +238,34 @@ class Fischl extends CharacterBase {
     const buffs: StatBuff[] = [];
     if (this.isHexerei) {
       // P4: Hexerei: Secret Rite — buffs to on-field characters when Oz is present
-      // C6 does NOT double these; C6 adds a separate Oz coordinated attack (not modeled here)
+      // C6: After Oz coordinated attack, P4 ATK% and EM effects are increased by 100%
+      // Under peak-damage model, C6 coordinated attacks are always active → doubled values
+      const c6Mult = this.constellation >= 6 ? 2 : 1;
       if (this.teamMeta.hasReaction("overloaded")) {
         buffs.push(
           new StatBuff(
-            cbs(this, "P4", ["E", "overloaded"]),
+            cbs(this, this.constellation >= 6 ? "P4/C6" : "P4", [
+              "E",
+              "overloaded",
+            ]),
             { receiver: "onField" },
-            [{ key: "atk%", value: 0.225 }]
+            [{ key: "atk%", value: 0.225 * c6Mult }]
           )
         );
       }
-      if (this.teamMeta.hasReaction("electroCharged")) {
+      if (
+        this.teamMeta.hasReaction("electroCharged") ||
+        this.teamMeta.hasReaction("lunarCharged")
+      ) {
         buffs.push(
           new StatBuff(
-            cbs(this, "P4", ["E", "electroCharged"]),
+            cbs(this, this.constellation >= 6 ? "P4/C6" : "P4", [
+              "E",
+              "electroCharged",
+              "lunarCharged",
+            ]),
             { receiver: "onField" },
-            [{ key: "em", value: 90 }]
+            [{ key: "em", value: 90 * c6Mult }]
           )
         );
       }
@@ -274,11 +294,13 @@ class Fischl extends CharacterBase {
 class Barbara extends CharacterBase {
   readonly buffs = [
     // C2: During E, active character gains Hydro DMG +15%
-    new StatBuff(
-      cbs(this, "C2", ["E"]),
-      { receiver: "onField" },
-      this.constellation >= 2 ? [{ key: "hydro%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
+            { key: "hydro%", value: 0.15 },
+          ]),
+        ]
+      : []),
   ];
 
   // Healer — no significant damage formulas
@@ -303,23 +325,29 @@ class Rosaria extends CharacterBase {
       0.15,
       0.15
     ),
-    // C1: On CRIT hit → ATK SPD +10% and Normal Attack DMG +10%
-    new StatBuff(
-      cbs(this, "C1", []),
-      { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-      this.constellation >= 1
-        ? [
+    // C1: On CRIT hit → ATK SPD +10% (all attacks) and Normal Attack DMG +10%
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
             { key: "atkSpd%", value: 0.1 },
-            { key: "dmg%", value: 0.1 },
-          ]
-        : []
-    ),
+          ]),
+          new StatBuff(
+            cbs(this, "C1", []),
+            { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+            [{ key: "dmg%", value: 0.1 }]
+          ),
+        ]
+      : []),
     // C6: Q hit → Physical RES -20%
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "team", filter: { elements: ["Physical"] } },
-      this.constellation >= 6 ? [{ key: "resReduction%", value: 0.2 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            { receiver: "team", filter: { elements: ["Physical"] } },
+            [{ key: "resReduction%", value: 0.2 }]
+          ),
+        ]
+      : []),
   ];
 
   // Q initial slashes: Lv10 461%, Lv13 (C5+) 544%
@@ -336,8 +364,8 @@ class Rosaria extends CharacterBase {
     return {
       "rosaria-burst": {
         label: {
-          zh: `Q初击+×${tickCount}`,
-          en: `Q Initial + (×${tickCount})`,
+          zh: `Q初击+冰棱×${tickCount}`,
+          en: `Q Initial + Lance ×${tickCount}`,
         },
         parts: [
           { formula: new DirectFormula(initialMult, cryoBurst) },
@@ -368,10 +396,6 @@ class Sucrose extends CharacterBase {
       teamElements.has(el)
     );
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P1: Swirl element → Team EM +50
-      new StatBuff(cbs(this, "P1", []), { receiver: "team" }, [
-        { key: "em", value: 50 },
-      ]),
       // P2: E or Q hit → Team EM +20% of Sucrose's EM
       new ScalingBuff(
         cbs(this, "P2", ["E", "Q"]),
@@ -382,7 +406,17 @@ class Sucrose extends CharacterBase {
         0.2
       ),
     ];
+    // P1: Swirl element → matching-element party members EM +50
+    // Requires team to have a swirlable element (Pyro/Hydro/Cryo/Electro)
+    if (this.teamMeta.hasReaction("swirl")) {
+      buffs.push(
+        new StatBuff(cbs(this, "P1", ["swirl"]), { receiver: "team" }, [
+          { key: "em", value: 50 },
+        ])
+      );
+    }
     // C6: Q Elemental Absorption → Team +20% DMG Bonus for the absorbed element
+    // + Hexerei characters gain additional +8.57142% (approximated as "team", faction filter not supported)
     // Absorption can only be Pyro/Hydro/Cryo/Electro; model for each present in team
     if (this.constellation >= 6 && presentAbsorbElements.length > 0) {
       for (const el of presentAbsorbElements) {
@@ -391,6 +425,15 @@ class Sucrose extends CharacterBase {
             { key: `${el.toLowerCase()}%` as StatKey, value: 0.2 },
           ])
         );
+      }
+      if (isHexerei) {
+        for (const el of presentAbsorbElements) {
+          buffs.push(
+            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
+              { key: `${el.toLowerCase()}%` as StatKey, value: 0.0857142 },
+            ])
+          );
+        }
       }
     }
     if (isHexerei) {
@@ -464,11 +507,13 @@ class Bennett extends CharacterBase {
       })()
     ),
     // C6: Pyro DMG +15% within Q field (sword/claymore/polearm only — no filter)
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "onField" },
-      this.constellation >= 6 ? [{ key: "pyro%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+            { key: "pyro%", value: 0.15 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
@@ -505,26 +550,29 @@ class Amber extends CharacterBase {
       { key: "atk%", value: 0.15 },
     ]),
     // C6: Q → team ATK +15% for 10s
-    new StatBuff(
-      cbs(this, "C6", ["Q"]),
-      { receiver: "team" },
-      this.constellation >= 6 ? [{ key: "atk%", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
+            { key: "atk%", value: 0.15 },
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
-    // Q Fiery Rain total: Lv10 910%, Lv13 (C3+) 1074%
-    const qMult = this.constellation >= 3 ? 10.74 : 9.1;
+    // Q Fiery Rain per wave: Lv10 50.5%, Lv13 (C3+) 59.7%, 18 waves
+    const qWaveMult = this.constellation >= 3 ? 0.597 : 0.505;
     return {
       "amber-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qWaveMult, {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
             }),
+            hits: 18,
           },
         ],
       },
@@ -536,11 +584,18 @@ class Amber extends CharacterBase {
 class Kaeya extends CharacterBase {
   readonly buffs = [
     // C1: Normal/Charged CR +15% vs Cryo-affected enemies (Kaeya self-applies Cryo → always active)
-    new StatBuff(
-      cbs(this, "C1", []),
-      { receiver: "selfOnField", filter: { abilities: ["normal", "charge"] } },
-      this.constellation >= 1 ? [{ key: "cr", value: 0.15 }] : []
-    ),
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", []),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["normal", "charge"] },
+            },
+            [{ key: "cr", value: 0.15 }]
+          ),
+        ]
+      : []),
   ];
 
   // E: Lv10 344%, Lv13 (C3+) 406%
@@ -564,8 +619,8 @@ class Kaeya extends CharacterBase {
       },
       "kaeya-burst": {
         label: {
-          zh: `Q${icicleCount}棱×10`,
-          en: `Glacial Waltz (${icicleCount}×10)`,
+          zh: `Q冰棱×${icicleCount * 10}`,
+          en: `Q Icicles (${icicleCount}×10)`,
         },
         parts: [
           {

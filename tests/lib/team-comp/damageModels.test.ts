@@ -494,8 +494,8 @@ describe("createCharacter / createWeapon", () => {
 
 describe("getEntityOption", () => {
   it("returns null for entities without options", () => {
-    // Diluc has no option. It should return null.
-    expect(getEntityOption("diluc")).toBeNull();
+    // Jean has no option. It should return null.
+    expect(getEntityOption("jean")).toBeNull();
   });
 
   it("returns OptionDef for entities with options", () => {

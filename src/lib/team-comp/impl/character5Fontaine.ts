@@ -70,7 +70,7 @@ class Escoffier extends CharacterBase {
     return {
       "escoffier-skill-parfait": {
         label: {
-          zh: "E+芭菲×21",
+          zh: "E伤害+芭菲×21",
           en: "E Cast + Parfait (×21)",
         },
         parts: [
@@ -84,7 +84,7 @@ class Escoffier extends CharacterBase {
         ],
       },
       "escoffier-burst": {
-        label: { zh: "Q 花刀技法", en: "Q Scoring Cuts" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -99,8 +99,8 @@ class Escoffier extends CharacterBase {
         ? {
             "escoffier-c6-parfait": {
               label: {
-                zh: "C6芭菲×6",
-                en: "C6 Special Parfait (×6)",
+                zh: "6命 E芭菲×6",
+                en: "C6 E Parfait (×6)",
               },
               parts: [
                 {
@@ -118,29 +118,46 @@ class Escoffier extends CharacterBase {
 @RegisterCharacter("emilie")
 class Emilie extends CharacterBase {
   readonly buffs = (() => {
+    const hasPyro = this.teamMeta.countByElement("Pyro") > 0;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P2: vs Burning enemies, per 1000 ATK → DMG +15% (cap 36%)
-      new ScalingBuff(
-        cbs(this, "P2", []),
-        { receiver: "selfOnField" },
-        [],
-        "atk",
-        "dmg%",
-        0.00015,
-        0.36
-      ),
+      // Game text: "对处于燃烧状态下的敌人造成的伤害" — requires Burning (Pyro teammate)
+      ...(hasPyro
+        ? [
+            new ScalingBuff(
+              cbs(this, "P2", ["burning"]),
+              { receiver: "self" },
+              [],
+              "atk",
+              "dmg%",
+              0.00015,
+              0.36
+            ),
+          ]
+        : []),
       // C1: E and P1 Cleardew DMG +20%
-      new StatBuff(
-        cbs(this, "C1", ["E"]),
-        { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-        this.constellation >= 1 ? [{ key: "dmg%", value: 0.2 }] : []
-      ),
+      ...(this.constellation >= 1
+        ? [
+            new StatBuff(
+              cbs(this, "C1", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { abilities: ["skill", "special"] },
+              },
+              [{ key: "dmg%", value: 0.2 }]
+            ),
+          ]
+        : []),
       // C2: E/Q/Cleardew hit → enemies' Dendro RES -30%
-      new StatBuff(
-        cbs(this, "C2", ["E", "Q"]),
-        { receiver: "team", filter: { elements: ["Dendro"] } },
-        this.constellation >= 2 ? [{ key: "resReduction%", value: 0.3 }] : []
-      ),
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(
+              cbs(this, "C2", ["E", "Q"]),
+              { receiver: "team", filter: { elements: ["Dendro"] } },
+              [{ key: "resReduction%", value: 0.3 }]
+            ),
+          ]
+        : []),
       // C6: After E/Q, Normal/Charged become Dendro + flat baseDmg from ATK ×300%
       ...(this.constellation >= 6
         ? [
@@ -205,8 +222,8 @@ class Emilie extends CharacterBase {
         ? {
             "emilie-skill-burning": {
               label: {
-                zh: "E 二阶14击+5次清露",
-                en: "E Lv2 14 Ticks + 5 Cleardew",
+                zh: "E伤害×14+清露×5",
+                en: "E Lv2 (×14) + Cleardew (×5)",
               },
               parts: [
                 {
@@ -230,7 +247,7 @@ class Emilie extends CharacterBase {
           }
         : {}),
       "emilie-burst-9hit": {
-        label: { zh: "Q三阶×9", en: "Q Lv3 Case (9 Ticks)" },
+        label: { zh: "Q伤害×9", en: "Q (×9)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -245,7 +262,7 @@ class Emilie extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "emilie-c6-normal": {
-              label: { zh: "C6普攻一套", en: "C6 NA Combo" },
+              label: { zh: "6命 普攻一套", en: "C6 Normal Combo" },
               parts: normalParts,
             },
           }
@@ -272,6 +289,10 @@ class Sigewinne extends CharacterBase {
         isC1 ? 3500 : 2800,
         30000
       ),
+      // P1: Sigewinne herself gains +8% Hydro DMG Bonus
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "self" }, [
+        { key: "hydro%", value: 0.08 },
+      ]),
     ];
 
     // C2: E or Q hit → Hydro RES -35%
@@ -317,7 +338,7 @@ class Sigewinne extends CharacterBase {
     const qMult = this.constellation >= 5 ? 0.25 : 0.212;
     return {
       "sigewinne-burst": {
-        label: { zh: "Q伤害（命中6次）", en: "Q Super Saturated Syringing" },
+        label: { zh: "Q伤害×6", en: "Q (×6)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -351,26 +372,29 @@ class Clorinde extends CharacterBase {
       this.constellation >= 2 ? 2700 : 1800
     ),
     // P2: BoL ≥100% + changes → CR +10% × 2 stacks = +20%
-    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
+    // Game text: "克洛琳德的暴击率提升" — generic personal buff, lasts 15s
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [
       { key: "cr", value: 0.2 },
     ]),
     // C4: Q DMG +2% per 1% BoL (max 200%) — at full BoL ~120%+
-    new StatBuff(
-      cbs(this, "C4", ["Q"]),
-      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
-      this.constellation >= 4 ? [{ key: "dmg%", value: 2.0 }] : []
-    ),
+    ...(this.constellation >= 4
+      ? [
+          new StatBuff(
+            cbs(this, "C4", ["Q"]),
+            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            [{ key: "dmg%", value: 2.0 }]
+          ),
+        ]
+      : []),
     // C6: After E, +10% CR, +70% CD for 12s
-    new StatBuff(
-      cbs(this, "C6", ["E"]),
-      { receiver: "selfOnField" },
-      this.constellation >= 6
-        ? [
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6", ["E"]), { receiver: "selfOnField" }, [
             { key: "cr", value: 0.1 },
             { key: "cd", value: 0.7 },
-          ]
-        : []
-    ),
+          ]),
+        ]
+      : []),
   ];
 
   protected readonly formulaMap = (() => {
@@ -414,18 +438,22 @@ class Clorinde extends CharacterBase {
 
     return {
       "clorinde-normal": {
-        label: { zh: "E普攻连段", en: "E Night Vigil Rotation" },
+        label: { zh: "E普攻", en: "E Normal" },
         parts: normalParts,
       },
-      "clorinde-normal-aggravate": {
-        label: {
-          zh: "E普攻(超激化)",
-          en: "E Night Vigil (Aggravate)",
-        },
-        parts: aggParts,
-      },
+      ...(this.teamMeta.countByElement("Dendro") > 0
+        ? {
+            "clorinde-normal-aggravate": {
+              label: {
+                zh: "E普攻(超激化)",
+                en: "E Normal (Aggravate)",
+              },
+              parts: aggParts,
+            },
+          }
+        : {}),
       "clorinde-burst": {
-        label: { zh: "Q 残光将终", en: "Q Last Lightfall" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -457,13 +485,14 @@ class Navia extends CharacterBase {
       )
     );
     // P2: Per Pyro/Electro/Cryo/Hydro party member, ATK+20% (max 2 = 40%)
+    // Game text: "娜维娅的攻击力提升" — generic personal buff, no on-field qualifier
     const nonGeoCount =
       this.teamMeta.countByElement("Pyro") +
       this.teamMeta.countByElement("Electro") +
       this.teamMeta.countByElement("Cryo") +
       this.teamMeta.countByElement("Hydro");
     buffs.push(
-      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
         { key: "atk%", value: Math.min(nonGeoCount, 2) * 0.2 },
       ])
     );
@@ -519,7 +548,7 @@ class Navia extends CharacterBase {
     const baseMult = this.constellation >= 3 ? 8.39 : 7.106;
     return {
       "navia-crystalshot": {
-        label: { zh: "E6枚弹片", en: "E Crystalshot (6 shrapnel)" },
+        label: { zh: "E伤害", en: "E" },
         parts: [
           {
             formula: new DirectFormula(baseMult, {
@@ -562,11 +591,13 @@ class Furina extends CharacterBase {
         })()
       ),
       // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
-      new StatBuff(
-        cbs(this, "C2", []),
-        { receiver: "self" },
-        this.constellation >= 2 ? [{ key: "hp%", value: 1.4 }] : []
-      ),
+      ...(this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", []), { receiver: "self" }, [
+              { key: "hp%", value: 1.4 },
+            ]),
+          ]
+        : []),
     ];
 
     if (this.constellation >= 6) {
@@ -645,8 +676,8 @@ class Furina extends CharacterBase {
     return {
       "furina-salon-total": {
         label: {
-          zh: "E沙龙一轮",
-          en: "E Salon Members (Full Rotation)",
+          zh: "E×32",
+          en: "E (×32)",
         },
         parts: [
           {
@@ -667,8 +698,8 @@ class Furina extends CharacterBase {
         ? {
             "furina-c6-normal": {
               label: {
-                zh: "C6普攻4段",
-                en: "C6 Pneuma NA Combo (4 hits)",
+                zh: "6命 普攻一套",
+                en: "C6 Normal Combo",
               },
               parts: [
                 {
@@ -731,8 +762,9 @@ class Neuvillette extends CharacterBase {
     }
 
     // P2: HP above 30% → Hydro DMG% (cap 30%). Assume near full HP → 30%
+    // Game text: "使那维莱特获得…水元素伤害加成" — generic personal buff
     buffs.push(
-      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
         { key: "hydro%", value: 0.3 },
       ])
     );
@@ -765,7 +797,7 @@ class Neuvillette extends CharacterBase {
     };
     return {
       "neuvillette-judgment": {
-        label: { zh: "重击×10", en: "A Equitable Judgment (×10)" },
+        label: { zh: "重击×10", en: "CA (×10)" },
         parts: [
           {
             formula: new DirectFormula(tickMult, chargeTag, "hp"),
@@ -777,8 +809,8 @@ class Neuvillette extends CharacterBase {
         ? {
             "neuvillette-c6-currents": {
               label: {
-                zh: "C6洪流×6",
-                en: "C6 Judgment Currents (×6)",
+                zh: "6命 重击×6",
+                en: "C6 CA (×6)",
               },
               parts: [
                 {
@@ -821,6 +853,21 @@ class Wriothesley extends CharacterBase {
         )
       );
     }
+    // C4: Heal overflow → on-field ATK SPD +20%, off-field → active character ATK SPD +10%
+    if (this.constellation >= 4) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["heal-overflow"]),
+          { receiver: "selfOnField" },
+          [{ key: "atkSpd%", value: 0.2 }]
+        ),
+        new StatBuff(
+          cbs(this, "C4", ["heal-overflow"]),
+          { receiver: "otherOnField" },
+          [{ key: "atkSpd%", value: 0.1 }]
+        )
+      );
+    }
     // C6: Gracious Rebuke +10% CR, +80% CD
     if (this.constellation >= 6) {
       buffs.push(
@@ -838,33 +885,46 @@ class Wriothesley extends CharacterBase {
     return buffs;
   })();
 
-  // E Enhanced N5 (Lv10 NA * Lv10 E): 670.0% * 1.703 = 1141.0%
-  // E Enhanced N5 (Lv13 NA * Lv10 E): 811.9% * 1.703 = 1382.7%
+  // E Enhanced Normal combo: 5 distinct hits (N4 has 2 hits)
+  // E enhancement ratio: 1.703 (Lv10 E, not constellation-boosted)
+  // Lv10 NA (no C3): N1=1.055, N2=1.024, N3=1.329, N4=0.749(×2), N5=1.794
+  // Lv13 NA (C3+):   N1=1.278, N2=1.241, N3=1.610, N4=0.908(×2), N5=2.174
   // Rebuke CA (Lv10): 275.3%
   // Rebuke CA (Lv13 C3+): 325.0%
   // C6 Rebuke CA creates additional 100% Base DMG icicle
-  // Q Burst (Lv10): 5 * 228.96% + 76.32% = 1221.12%
-  // Q Burst (Lv13 C5+): 5 * 270.30% + 90.10% = 1441.6%
+  // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
+  // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
-    const eNMult = this.constellation >= 3 ? 13.827 : 11.41;
-    let cMult = this.constellation >= 3 ? 3.25 : 2.753;
+    const eMult = 1.703;
+    const isC3 = this.constellation >= 3;
+    const n1 = (isC3 ? 1.278 : 1.055) * eMult;
+    const n2 = (isC3 ? 1.241 : 1.024) * eMult;
+    const n3 = (isC3 ? 1.61 : 1.329) * eMult;
+    const n4 = (isC3 ? 0.908 : 0.749) * eMult;
+    const n5 = (isC3 ? 2.174 : 1.794) * eMult;
+    let cMult = isC3 ? 3.25 : 2.753;
     if (this.constellation >= 6) cMult *= 2; // +100% additional base DMG
-    const qMult = this.constellation >= 5 ? 14.416 : 12.211;
+    const qHitMult = this.constellation >= 5 ? 2.703 : 2.2896;
+    const qBladeMult = this.constellation >= 5 ? 0.901 : 0.7632;
+
+    const normalTag = {
+      element: "Cryo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "wriothesley-normal": {
         label: {
           zh: "普攻全套",
-          en: "A Chilling Penalty N5 Combo",
+          en: "Normal Combo",
         },
         parts: [
-          {
-            formula: new DirectFormula(eNMult, {
-              element: "Cryo",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(n1, normalTag) },
+          { formula: new DirectFormula(n2, normalTag) },
+          { formula: new DirectFormula(n3, normalTag) },
+          { formula: new DirectFormula(n4, normalTag), hits: 2 },
+          { formula: new DirectFormula(n5, normalTag) },
         ],
       },
       "wriothesley-charge": {
@@ -880,10 +940,18 @@ class Wriothesley extends CharacterBase {
         ],
       },
       "wriothesley-burst": {
-        label: { zh: "Q(全命中)", en: "Q Darkgold Wolfbite" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qHitMult, {
+              element: "Cryo",
+              ability: "burst",
+              reaction: "none",
+            }),
+            hits: 5,
+          },
+          {
+            formula: new DirectFormula(qBladeMult, {
               element: "Cryo",
               ability: "burst",
               reaction: "none",
@@ -898,7 +966,18 @@ class Wriothesley extends CharacterBase {
 @RegisterCharacter("lyney")
 class Lyney extends CharacterBase {
   readonly buffs = (() => {
-    const buffs: StatBuff[] = [];
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
+    // P1: Perilous Performance → Pyrotechnic Strike gains flat baseDmg = 80% ATK
+    buffs.push(
+      new ScalingBuff(
+        cbs(this, "P1", ["charge"]),
+        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+        [],
+        "atk",
+        "baseDmg",
+        0.8
+      )
+    );
     // P2: DMG to Pyro-affected enemies +60%, +20% per Pyro teammate (excl self), cap 100%
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
@@ -932,12 +1011,12 @@ class Lyney extends CharacterBase {
   protected readonly formulaMap = (() => {
     const propMult = this.constellation >= 3 ? 3.672 : 3.11;
     const strikeMult = this.constellation >= 3 ? 4.505 : 3.816;
-    const eMult =
-      this.constellation >= 5 ? 3.553 + 1.131 * 5 : 3.01 + 0.958 * 5;
+    // E has no constellation level boost (C3=Normal, C5=Q), always use Lv10
+    const eMult = 3.01 + 0.958 * 5;
 
     return {
       "lyney-prop": {
-        label: { zh: "E魔术箭", en: "E Prop Arrow" },
+        label: { zh: "重击伤害", en: "CA Prop Arrow" },
         parts: [
           {
             formula: new DirectFormula(propMult, {
@@ -949,7 +1028,7 @@ class Lyney extends CharacterBase {
         ],
       },
       "lyney-strike": {
-        label: { zh: "E礼花弹", en: "E Strike" },
+        label: { zh: "重击礼花弹", en: "CA Strike" },
         parts: [
           {
             formula: new DirectFormula(strikeMult, {

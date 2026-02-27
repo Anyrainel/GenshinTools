@@ -15,18 +15,24 @@ class Illuga extends CharacterBase {
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P1 (C6 enhanced): After E/Q, team Geo CR/CD + EM
+      // P1 (C6 enhanced): After E/Q, other party members Geo CR/CD + EM
+      // "队伍中附近的其他角色" → otherOnField (excludes Illuga himself)
       new StatBuff(
-        cbs(this, "P1", ["E", "Q"]),
-        { receiver: "team", filter: { elements: ["Geo"] } },
+        cbs(this, isC6 ? "P1/C6" : "P1", ["E", "Q"]),
+        { receiver: "otherOnField", filter: { elements: ["Geo"] } },
         [
           { key: "cr", value: isC6 ? 0.1 : 0.05 },
           { key: "cd", value: isC6 ? 0.3 : 0.1 },
         ]
       ),
-      new StatBuff(cbs(this, "P1", ["E", "Q"]), { receiver: "team" }, [
-        { key: "em", value: isC6 ? 80 : 50 },
-      ]),
+      // P1 EM only active at Moonsign Ascendant Gleam (≥2 Nod-Krai)
+      new StatBuff(
+        cbs(this, isC6 ? "P1/C6" : "P1", ["E", "Q"]),
+        { receiver: "otherOnField" },
+        this.teamMeta.countByRegion("Nod-Krai") >= 2
+          ? [{ key: "em", value: isC6 ? 80 : 50 }]
+          : []
+      ),
       // Q: Nightingale's Song — EM → Geo baseDmg
       // Lv10: 60.5% EM, Lv13 (C3+): 71.4% EM
       new ScalingBuff(
@@ -105,7 +111,7 @@ class Jahoda extends CharacterBase {
     // "月兆·满辉：...月兆角色的暴击率提升5%，暴击伤害提升40%" — requires ≥2 Nod-Krai
     new StatBuff(
       cbs(this, "C6", ["E"]),
-      { receiver: "team" },
+      { receiver: "team", regions: ["Nod-Krai"] },
       this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
         ? [
             { key: "cr", value: 0.05 },
@@ -138,9 +144,11 @@ class Aino extends CharacterBase {
         new StatBuff(cbs(this, "C1", ["E", "Q"]), { receiver: "self" }, [
           { key: "em", value: 80 },
         ]),
-        new StatBuff(cbs(this, "C1", ["E", "Q"]), { receiver: "onField" }, [
-          { key: "em", value: 80 },
-        ]),
+        new StatBuff(
+          cbs(this, "C1", ["E", "Q"]),
+          { receiver: "otherOnField" },
+          [{ key: "em", value: 80 }]
+        ),
       ];
     })(),
     // C6: After Q, electroCharged/bloom/lunarCharged/lunarBloom/lunarCrystallize DMG +15%
@@ -175,7 +183,7 @@ class Aino extends CharacterBase {
     const qMult = this.constellation >= 3 ? 0.427 : 0.362;
     return {
       "aino-skill": {
-        label: { zh: "E伤害", en: "E Skill" },
+        label: { zh: "E伤害", en: "E DMG" },
         parts: [
           {
             formula: new DirectFormula(eMult, {
@@ -187,7 +195,7 @@ class Aino extends CharacterBase {
         ],
       },
       "aino-burst-total": {
-        label: { zh: "Q总伤", en: "Q Total Damage" },
+        label: { zh: "Q×14", en: "Q ×14" },
         parts: [
           {
             formula: new DirectFormula(qMult, {

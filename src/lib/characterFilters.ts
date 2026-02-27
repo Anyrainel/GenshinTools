@@ -23,6 +23,9 @@ function matchesFilters(
   const stats = options?.characterStatsMap?.[character.id];
   const meta = getCharacterDisplayMeta(character, stats);
 
+  if (!filters.showManekin && character.id.startsWith("manekin")) {
+    return false;
+  }
   if (filters.ownedOnly) {
     if (!meta.releaseDate) return false;
     if (options?.isOwned && !options.isOwned(character.id)) return false;
@@ -175,6 +178,7 @@ export const defaultCharacterFilters: CharacterFilters = {
   tierSort: "off",
   releaseSort: "desc",
   ownedOnly: false,
+  showManekin: false,
 };
 
 /**

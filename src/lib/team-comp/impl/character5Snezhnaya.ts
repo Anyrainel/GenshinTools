@@ -189,7 +189,7 @@ class Arlecchino extends CharacterBase {
 
   readonly buffs = [
     // P3: In combat, unconditional Pyro DMG +40%
-    new StatBuff(cbs(this, "P3", []), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P3", []), { receiver: "self" }, [
       { key: "pyro%", value: 0.4 },
     ]),
     // C6: After E, Normal ATK and Q: CR +10%, CD +70% for 20s
@@ -302,7 +302,7 @@ class Arlecchino extends CharacterBase {
       "arlecchino-normal": {
         label: {
           zh: "普攻6段7击",
-          en: "A Normal Combo (6-Hit 7-Strike)",
+          en: "Normal Combo (6-Hit 7-Strike)",
         },
         parts: comboParts,
       },
@@ -310,13 +310,13 @@ class Arlecchino extends CharacterBase {
         ? {
             "arlecchino-normal-melt": {
               label: {
-                zh: "A 普攻连段(融化1/4段)",
-                en: "A Normal Combo (Melt)",
+                zh: "普攻连段(融化1/4段)",
+                en: "Normal Combo (Melt)",
               },
               parts: comboMeltParts,
             },
             "arlecchino-burst-melt": {
-              label: { zh: "Q 厄月将升(融化)", en: "Q Balemoon Rising (Melt)" },
+              label: { zh: "Q(融化)", en: "Q (Melt)" },
               parts: [
                 {
                   formula: new ArlecchinoBurstAmplifyFormula(
@@ -334,13 +334,13 @@ class Arlecchino extends CharacterBase {
         ? {
             "arlecchino-normal-vape": {
               label: {
-                zh: "A 普攻连段(蒸发1/4段)",
-                en: "A Normal Combo (Vape)",
+                zh: "普攻连段(蒸发1/4段)",
+                en: "Normal Combo (Vape)",
               },
               parts: comboVapeParts,
             },
             "arlecchino-burst-vape": {
-              label: { zh: "Q 厄月将升(蒸发)", en: "Q Balemoon Rising (Vape)" },
+              label: { zh: "Q(蒸发)", en: "Q (Vape)" },
               parts: [
                 {
                   formula: new ArlecchinoBurstAmplifyFormula(
@@ -355,7 +355,7 @@ class Arlecchino extends CharacterBase {
           }
         : {}),
       "arlecchino-burst": {
-        label: { zh: "Q 厄月将升", en: "Q Balemoon Rising" },
+        label: { zh: "Q伤害", en: "Q" },
         parts: [
           {
             formula: new ArlecchinoBurstFormula(
@@ -379,31 +379,39 @@ class Tartaglia extends CharacterBase {
     // C4: Riptide triggers every 4s (utility)
   ];
 
-  // Melee N3C (Lv10): 76.8 + 82.3 + 111.3 + 119.0 + 142.3 = 531.7%
-  // Melee N3C (Lv13 C3+): 93.1 + 99.7 + 134.9 + 144.2 + 172.4 = 644.3%
   // Burst Melee (Lv10): 835.0%
   // Burst Melee (Lv13 C5+): 986.0%
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 6.443 : 5.317;
+    const c3Plus = this.constellation >= 3;
+    const [n1, n2, n3] = c3Plus ? [0.931, 0.997, 1.349] : [0.768, 0.823, 1.113];
+    const [ca1, ca2] = c3Plus ? [1.442, 1.724] : [1.19, 1.423];
     const qMult = this.constellation >= 5 ? 9.86 : 8.35;
     const blastMult = this.constellation >= 5 ? 2.55 : 2.16;
+    const meleeNormalTag = {
+      element: "Hydro" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const meleeChargeTag = {
+      element: "Hydro" as const,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    };
     return {
       "tartaglia-melee-combo": {
         label: { zh: "E普攻+重击", en: "E Melee N3C Combo" },
         parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Hydro",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(n1, meleeNormalTag) },
+          { formula: new DirectFormula(n2, meleeNormalTag) },
+          { formula: new DirectFormula(n3, meleeNormalTag) },
+          { formula: new DirectFormula(ca1, meleeChargeTag) },
+          { formula: new DirectFormula(ca2, meleeChargeTag) },
         ],
       },
       "tartaglia-burst-melee": {
         label: {
-          zh: "Q近战+断流·爆伤害",
-          en: "Q Light of Obliteration (Melee)",
+          zh: "Q斩击+断流爆发",
+          en: "Q Slash + Riptide Blast",
         },
         parts: [
           {

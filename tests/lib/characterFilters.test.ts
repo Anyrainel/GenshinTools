@@ -19,6 +19,8 @@ const mockCharacters: CharacterResource[] = [
   { id: "nahida", rarity: 5, imagePath: "" },
   { id: "bennett", rarity: 4, imagePath: "" },
   { id: "unreleased", rarity: 5, imagePath: "" },
+  { id: "manekin_pyro", rarity: 5, imagePath: "" },
+  { id: "manekina_hydro", rarity: 5, imagePath: "" },
 ];
 
 const mockCharacterStats: CharacterStatsMap = {
@@ -62,6 +64,22 @@ const mockCharacterStats: CharacterStatsMap = {
     releaseDate: "",
     levels: {},
   },
+  manekin_pyro: {
+    rarity: 5,
+    element: "Pyro",
+    weaponType: "Sword",
+    region: "None",
+    releaseDate: "2026-01-01",
+    levels: {},
+  },
+  manekina_hydro: {
+    rarity: 5,
+    element: "Hydro",
+    weaponType: "Sword",
+    region: "None",
+    releaseDate: "2026-01-01",
+    levels: {},
+  },
 };
 
 const tierAssignments: TierAssignment = {
@@ -73,14 +91,19 @@ const tierAssignments: TierAssignment = {
 
 const options = { characterStatsMap: mockCharacterStats };
 
+// Non-manekin characters count (default filters hide manekin)
+const nonManekinCount = mockCharacters.filter(
+  (c) => !c.id.startsWith("manekin")
+).length;
+
 describe("filterAndSortCharacters", () => {
-  it("returns all characters when no filters active", () => {
+  it("returns all non-manekin characters with default filters", () => {
     const result = filterAndSortCharacters(
       mockCharacters,
       defaultCharacterFilters,
       options
     );
-    expect(result).toHaveLength(mockCharacters.length);
+    expect(result).toHaveLength(nonManekinCount);
   });
 
   it("does not mutate the input array", () => {
@@ -200,6 +223,50 @@ describe("filterAndSortCharacters", () => {
     expect(result.length).toBe(2);
   });
 
+  // ── showManekin filter ──
+
+  it("hides manekin characters by default (showManekin: false)", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      defaultCharacterFilters,
+      options
+    );
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeUndefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeUndefined();
+    expect(result).toHaveLength(nonManekinCount);
+  });
+
+  it("includes manekin characters when showManekin is true", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, showManekin: true },
+      options
+    );
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeDefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeDefined();
+    expect(result).toHaveLength(mockCharacters.length);
+  });
+
+  it("applies element filter together with showManekin", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, showManekin: true, elements: ["Pyro"] },
+      options
+    );
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeDefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeUndefined();
+  });
+
+  it("showManekin false takes priority over element filter", () => {
+    const result = filterAndSortCharacters(
+      mockCharacters,
+      { ...defaultCharacterFilters, showManekin: false, elements: ["Pyro"] },
+      options
+    );
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeUndefined();
+    expect(result.find((c) => c.id === "hu_tao")).toBeDefined();
+  });
+
   // ── Sorting ──
 
   it("sorts by release date ascending (oldest first)", () => {
@@ -246,7 +313,10 @@ describe("filterAndSortCharacters", () => {
       { ...defaultCharacterFilters, releaseSort: "off" },
       options
     );
-    expect(result.map((c) => c.id)).toEqual(mockCharacters.map((c) => c.id));
+    const expectedIds = mockCharacters
+      .filter((c) => !c.id.startsWith("manekin"))
+      .map((c) => c.id);
+    expect(result.map((c) => c.id)).toEqual(expectedIds);
   });
 
   it("sorts by tier descending (best tier first)", () => {
@@ -326,13 +396,17 @@ describe("defaultCharacterFilters", () => {
     expect(hasActiveFilters(defaultCharacterFilters)).toBe(false);
   });
 
-  it("returns all characters unfiltered", () => {
+  it("defaults showManekin to false", () => {
+    expect(defaultCharacterFilters.showManekin).toBe(false);
+  });
+
+  it("returns all non-manekin characters with defaults", () => {
     const result = filterAndSortCharacters(
       mockCharacters,
       defaultCharacterFilters,
       { characterStatsMap: mockCharacterStats }
     );
-    expect(result).toHaveLength(mockCharacters.length);
+    expect(result).toHaveLength(nonManekinCount);
   });
 });
 
@@ -350,5 +424,46 @@ describe("getDefaultCharacterFilters", () => {
   it("returns no active dimension filters regardless of tier data", () => {
     expect(hasActiveFilters(getDefaultCharacterFilters(true))).toBe(false);
     expect(hasActiveFilters(getDefaultCharacterFilters(false))).toBe(false);
+  });
+});
+
+describe("archive manekin visibility (search-gated)", () => {
+  // Mirrors the archive page logic: manekin characters are hidden when
+  // search is empty, but shown when the user is actively searching.
+  function archiveFilter(
+    characters: CharacterResource[],
+    searchQuery: string
+  ): CharacterResource[] {
+    const hasSearch = searchQuery.trim().length > 0;
+    return characters.filter((c) => {
+      if (!hasSearch && c.id.startsWith("manekin")) return false;
+      return true;
+    });
+  }
+
+  it("hides manekin characters when search is empty", () => {
+    const result = archiveFilter(mockCharacters, "");
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeUndefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeUndefined();
+    expect(result).toHaveLength(nonManekinCount);
+  });
+
+  it("hides manekin characters when search is only whitespace", () => {
+    const result = archiveFilter(mockCharacters, "   ");
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeUndefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeUndefined();
+  });
+
+  it("shows manekin characters when search is non-empty", () => {
+    const result = archiveFilter(mockCharacters, "manekin");
+    expect(result.find((c) => c.id === "manekin_pyro")).toBeDefined();
+    expect(result.find((c) => c.id === "manekina_hydro")).toBeDefined();
+  });
+
+  it("does not hide non-manekin characters regardless of search", () => {
+    const noSearch = archiveFilter(mockCharacters, "");
+    const withSearch = archiveFilter(mockCharacters, "hu");
+    expect(noSearch.find((c) => c.id === "hu_tao")).toBeDefined();
+    expect(withSearch.find((c) => c.id === "hu_tao")).toBeDefined();
   });
 });
