@@ -77,6 +77,8 @@ interface LanguageContextType {
     subStat: (key: string) => string;
     element: (key: string) => string;
     reaction: (key: string) => string;
+    ability: (key: string) => string;
+    faction: (key: string) => string;
     resonance: (key: string) => string;
     weaponType: (type: string) => string;
     weaponName: (id: string) => string;
@@ -345,6 +347,28 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getAbilityName = useCallback(
+    (abilityKey: string): string => {
+      const abs = i18nAppData.abilities as Record<
+        string,
+        Record<string, string>
+      >;
+      return abs[abilityKey]?.[language] || abilityKey;
+    },
+    [language]
+  );
+
+  const getFactionName = useCallback(
+    (factionKey: string): string => {
+      const facs = i18nAppData.factions as Record<
+        string,
+        Record<string, string>
+      >;
+      return facs[factionKey]?.[language] || factionKey;
+    },
+    [language]
+  );
+
   const getResonanceName = useCallback(
     (resonanceKey: string): string => {
       const res = i18nAppData.resonances as Record<
@@ -535,6 +559,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       subStat: getSubStatName,
       element: getElementName,
       reaction: getReactionName,
+      ability: getAbilityName,
+      faction: getFactionName,
       resonance: getResonanceName,
       weaponType: getWeaponTypeName,
       weaponName: getWeaponName,
@@ -570,6 +596,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getSubStatName,
       getElementName,
       getReactionName,
+      getAbilityName,
+      getFactionName,
       getResonanceName,
       getWeaponTypeName,
       getWeaponName,

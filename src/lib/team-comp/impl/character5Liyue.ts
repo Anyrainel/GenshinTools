@@ -224,8 +224,8 @@ class Zibai extends CharacterBase {
       },
       "zibai-steed": {
         label: {
-          zh: "E(C6≥30灵)",
-          en: "E Stride (C6: +30 pts)",
+          zh: this.constellation >= 6 ? "6命 E (满点)" : "E",
+          en: this.constellation >= 6 ? "C6 E (Full Points)" : "E",
         },
         parts: [
           {
@@ -253,8 +253,8 @@ class Zibai extends CharacterBase {
         ? {
             "zibai-steed-c1": {
               label: {
-                zh: "E(C1首次)",
-                en: "E Stride (C1 first)",
+                zh: "1命 E (首次)",
+                en: "C1 E (First)",
               },
               parts: [
                 {
@@ -281,7 +281,7 @@ class Zibai extends CharacterBase {
           }
         : {}),
       "zibai-burst": {
-        label: { zh: "Q初段+月结晶", en: "Q Hit 1 + Lunar" },
+        label: { zh: "Q", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(

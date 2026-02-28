@@ -3,7 +3,7 @@ import type {
   OptimizerOptions,
 } from "@/lib/team-comp/optimizer";
 import { runOptimization } from "@/lib/team-comp/optimizer";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface AsyncOptimizerState {
   result: OptimizationResult | null;
@@ -31,7 +31,7 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
     };
   }, []);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (activeGenerator.current) {
       activeGenerator.current.return(
         undefined as unknown as OptimizationResult
@@ -39,33 +39,36 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
       activeGenerator.current = null;
     }
     setIsComputing(false);
-  };
+  }, []);
 
-  const start = async (opts: OptimizerOptions) => {
-    stop();
-    setResult(null);
-    setError(null);
-    setIsComputing(true);
+  const start = useCallback(
+    async (opts: OptimizerOptions) => {
+      stop();
+      setResult(null);
+      setError(null);
+      setIsComputing(true);
 
-    try {
-      const gen = runOptimization(opts);
-      activeGenerator.current = gen;
+      try {
+        const gen = runOptimization(opts);
+        activeGenerator.current = gen;
 
-      for await (const res of gen) {
-        if (!isMounted.current) break;
-        setResult(res);
+        for await (const res of gen) {
+          if (!isMounted.current) break;
+          setResult(res);
+        }
+      } catch (err) {
+        if (isMounted.current) {
+          setError(err instanceof Error ? err : new Error(String(err)));
+        }
+      } finally {
+        if (isMounted.current) {
+          setIsComputing(false);
+          activeGenerator.current = null;
+        }
       }
-    } catch (err) {
-      if (isMounted.current) {
-        setError(err instanceof Error ? err : new Error(String(err)));
-      }
-    } finally {
-      if (isMounted.current) {
-        setIsComputing(false);
-        activeGenerator.current = null;
-      }
-    }
-  };
+    },
+    [stop]
+  );
 
   return { result, isComputing, error, start, stop };
 }

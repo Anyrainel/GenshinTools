@@ -1,11 +1,16 @@
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
 import type { DisplayResult, I18nLabel, StatKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
+import { ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
@@ -37,11 +42,12 @@ export function DamageCardBody({
     key: StatKey;
     charId: string;
   } | null>(null);
+  const [formulaExpanded, setFormulaExpanded] = useState(true);
 
   return (
     <div className="space-y-4">
       {!hasFormula && (
-        <div className="text-muted-foreground p-6 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10">
+        <div className="text-muted-foreground p-4 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10">
           {emptyMessage}
         </div>
       )}
@@ -61,40 +67,58 @@ export function DamageCardBody({
 
       {/* Formula equation */}
       {hasFormula && (
-        <div className="p-2 border border-dashed border-border/20 rounded-lg bg-black/5 text-sm">
-          <div className="flex flex-col items-center justify-center">
-            {damageValue != null ? (
-              <div
-                className={cn(
-                  "flex items-center justify-center gap-2.5 px-4 py-2 rounded-xl",
-                  "bg-primary/10 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]"
-                )}
-              >
-                <div className="text-sm md:text-base text-primary/80 font-semibold tracking-wide">
-                  {t.ui("teamComp.totalExpectedDamage")}
+        <Collapsible open={formulaExpanded} onOpenChange={setFormulaExpanded}>
+          <div className="p-2 border border-dashed border-border/20 rounded-lg bg-black/5 text-sm">
+            <div className="flex flex-col items-center justify-center">
+              {damageValue != null ? (
+                <CollapsibleTrigger asChild>
+                  <div
+                    className={cn(
+                      "flex items-center justify-center gap-2.5 px-4 py-2 rounded-xl transition-colors cursor-pointer select-none",
+                      "bg-primary/10 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
+                      "hover:bg-primary/15"
+                    )}
+                  >
+                    <div className="text-sm md:text-base text-primary/80 font-semibold tracking-wide">
+                      {t.ui("teamComp.totalExpectedDamage")}
+                    </div>
+                    <div className="text-foreground text-3xl md:text-4xl font-[math] font-black drop-shadow-sm">
+                      {Math.round(damageValue).toLocaleString()}
+                    </div>
+                    <span className="text-xs text-muted-foreground/70 ml-1.5">
+                      {formulaExpanded
+                        ? t.ui("teamComp.collapseFormula")
+                        : t.ui("teamComp.expandFormula")}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "w-4 h-4 text-muted-foreground/70 transition-transform shrink-0",
+                        formulaExpanded && "rotate-180"
+                      )}
+                    />
+                  </div>
+                </CollapsibleTrigger>
+              ) : (
+                <div className="text-sm uppercase tracking-widest bg-primary/20 text-primary px-3 py-1 rounded font-mono font-bold">
+                  {t.ui("teamComp.pending")}
                 </div>
-                <div className="text-foreground text-3xl md:text-4xl font-[math] font-black drop-shadow-sm">
-                  {Math.round(damageValue).toLocaleString()}
-                </div>
-              </div>
-            ) : (
-              <div className="text-sm uppercase tracking-widest bg-primary/20 text-primary px-3 py-1 rounded font-mono font-bold">
-                {t.ui("teamComp.pending")}
-              </div>
-            )}
+              )}
+            </div>
+            <CollapsibleContent>
+              {displayResult && targetCharId && (
+                <FormulaBreakdown
+                  parts={displayResult.parts}
+                  highlightedStat={
+                    highlightedStat?.charId === targetCharId
+                      ? highlightedStat?.key
+                      : null
+                  }
+                  t={t}
+                />
+              )}
+            </CollapsibleContent>
           </div>
-          {displayResult && targetCharId && (
-            <FormulaBreakdown
-              parts={displayResult.parts}
-              highlightedStat={
-                highlightedStat?.charId === targetCharId
-                  ? highlightedStat?.key
-                  : null
-              }
-              t={t}
-            />
-          )}
-        </div>
+        </Collapsible>
       )}
 
       {/* Buff Ledger */}

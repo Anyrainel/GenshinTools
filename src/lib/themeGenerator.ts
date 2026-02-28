@@ -60,9 +60,9 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   },
   natlan: {
     name: "Natlan",
-    base: { h: 5, s: 20, l: 7 },
-    glow1: { h: 4, s: 44, l: 19 }, // Pyro red
-    glow2: { h: 350, s: 38, l: 16 },
+    base: { h: 5, s: 20, l: 10 },
+    glow1: { h: 4, s: 48, l: 24 }, // Pyro red
+    glow2: { h: 350, s: 42, l: 20 },
   },
   snezhnaya: {
     name: "Snezhnaya",
@@ -119,15 +119,6 @@ function lerpHue(h1: number, h2: number, t: number): number {
   const result = hue1 + diff * t;
   return ((result % 360) + 360) % 360;
 }
-
-/**
- * Determine if a hue has high luminance (yellow/green/orange range).
- * These need darker foregrounds for contrast.
- */
-const isHighLuminanceHue = (h: number): boolean => {
-  // Yellow (30-90), Green (90-150), Orange (0-30)
-  return h < 150 || h > 330;
-};
 
 /**
  * Generate the radial page background gradient (3-layer star formula).
@@ -222,10 +213,9 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     ? clamp(glow1.l + 20, 30, 42) // Darker for Abyss
     : clamp(glow1.l + 25, 45, 65);
 
-  // Primary foreground: dark for high-lumen hues, light otherwise
-  const primaryFg = isHighLuminanceHue(glow1.h)
-    ? hslVar(base.h, 25, 8) // Dark foreground
-    : hslVar(0, 0, 98); // Light foreground
+  // Primary foreground: always light — all themes are dark-mode with
+  // medium-brightness primaries (45-65% L), so light text is needed.
+  const primaryFg = hslVar(0, 0, 98);
 
   return {
     // Core backgrounds
@@ -247,8 +237,14 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     "secondary-foreground": hslVar(0, 0, 95),
 
     // Muted - minimal differentiation
+    // Red hues (0-30, 330-360) get a lightness bump to compensate for the
+    // human eye's lower luminous efficiency in the red spectrum.
     muted: hslVar(base.h, base.s, base.l + 2),
-    "muted-foreground": hslVar(base.h, clamp(base.s - 10, 0, 20), base.l + 42),
+    "muted-foreground": hslVar(
+      base.h,
+      clamp(base.s - (base.h <= 30 || base.h >= 330 ? 15 : 10), 0, 20),
+      base.l + 42 + (base.h <= 30 || base.h >= 330 ? 12 : 0)
+    ),
 
     // Accent - interactive highlight
     accent: hslVar(

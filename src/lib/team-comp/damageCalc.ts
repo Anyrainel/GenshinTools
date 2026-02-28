@@ -1,4 +1,4 @@
-import type { Element, Region } from "@/data/types";
+import type { Element, Faction, Region } from "@/data/types";
 import {
   ScalingBuff,
   assertNoDuplicateStatKeys,
@@ -302,11 +302,19 @@ export class CharBuild {
   applyStaticBuffs(
     teamStaticBuffs: ProvidedStaticBuff[],
     selfCharId: string,
-    selfRegion?: Region
+    selfRegion?: Region,
+    selfFaction?: Faction
   ): void {
     let applicable = teamStaticBuffs
       .filter((b) =>
-        isBuffApplicable(b.buff, b.providerCharId, selfCharId, null, selfRegion)
+        isBuffApplicable(
+          b.buff,
+          b.providerCharId,
+          selfCharId,
+          null,
+          selfRegion,
+          selfFaction
+        )
       )
       .map((b) => b.buff);
     applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
@@ -364,7 +372,8 @@ export class CharBuild {
     teamDynamicBuffs: EvaluatedDynamicBuff[],
     selfCharId: string,
     calcTargetId: string,
-    selfRegion?: Region
+    selfRegion?: Region,
+    selfFaction?: Faction
   ): StatSheet {
     let applicable = teamDynamicBuffs.filter((b) =>
       isBuffApplicable(
@@ -372,7 +381,8 @@ export class CharBuild {
         b.providerCharId,
         selfCharId,
         calcTargetId,
-        selfRegion
+        selfRegion,
+        selfFaction
       )
     );
     applicable = deduplicateBuffs(applicable, (b) => b.entries);
@@ -430,17 +440,23 @@ export class CharBuild {
  * @param calcTargetId The character being optimized (on-field).
  *                     null = target-independent filtering only (construction phase).
  * @param selfRegion  Region of the target character (for region-scoped buffs).
+ * @param selfFaction Faction of the target character (for faction-scoped buffs).
  */
 export function isBuffApplicable(
   buff: StatBuff,
   providerCharId: string,
   selfCharId: string,
   calcTargetId: string | null,
-  selfRegion?: Region
+  selfRegion?: Region,
+  selfFaction?: Faction
 ): boolean {
   // Region filter: if buff specifies regions, target must be from one of them
   if (buff.target.regions && selfRegion !== undefined) {
     if (!buff.target.regions.includes(selfRegion)) return false;
+  }
+  // Faction filter: if buff specifies factions, target must be from one of them
+  if (buff.target.factions && selfFaction !== undefined) {
+    if (!buff.target.factions.includes(selfFaction)) return false;
   }
 
   const receiver = buff.target.receiver;
@@ -531,7 +547,8 @@ export class TeamBuild {
       build.applyStaticBuffs(
         this.allStaticBuffs,
         charId,
-        this.teamMeta.regions[charId]
+        this.teamMeta.regions[charId],
+        this.teamMeta.factions[charId]
       );
     }
   }
@@ -559,7 +576,8 @@ export class TeamBuild {
             b.providerCharId,
             charId,
             calcTargetId,
-            this.teamMeta.regions[charId]
+            this.teamMeta.regions[charId],
+            this.teamMeta.factions[charId]
           );
         })
         .map((b) => b.buff);
@@ -591,7 +609,8 @@ export class TeamBuild {
         allDynamicBuffs,
         id,
         calcTargetId,
-        this.teamMeta.regions[id]
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
       );
     }
 
@@ -650,7 +669,8 @@ export class TeamBuild {
             b.providerCharId,
             cid,
             charId,
-            this.teamMeta.regions[cid]
+            this.teamMeta.regions[cid],
+            this.teamMeta.factions[cid]
           );
         })
         .map((b) => b.buff);
@@ -679,7 +699,8 @@ export class TeamBuild {
         allDynamicBuffs,
         id,
         charId,
-        this.teamMeta.regions[id]
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
       );
     }
 
@@ -749,6 +770,7 @@ export class TeamBuild {
 
     // Determine tie-breakers for calcTargetId
     const calcTargetRegion = this.teamMeta.regions[calcTargetId];
+    const calcTargetFaction = this.teamMeta.factions[calcTargetId];
     let applicableStatic = this.allStaticBuffs
       .filter((b) =>
         isBuffApplicable(
@@ -756,7 +778,8 @@ export class TeamBuild {
           b.providerCharId,
           calcTargetId,
           calcTargetId,
-          calcTargetRegion
+          calcTargetRegion,
+          calcTargetFaction
         )
       )
       .map((b) => b.buff);
@@ -775,7 +798,8 @@ export class TeamBuild {
         b.providerCharId,
         calcTargetId,
         calcTargetId,
-        calcTargetRegion
+        calcTargetRegion,
+        calcTargetFaction
       )
     );
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
@@ -790,7 +814,8 @@ export class TeamBuild {
           ownerId,
           calcTargetId,
           calcTargetId,
-          calcTargetRegion
+          calcTargetRegion,
+          calcTargetFaction
         );
 
         // Resolve dynamic entries with per-entry caps
@@ -921,7 +946,8 @@ export class TeamBuild {
             cid,
             calcTargetId,
             calcTargetId,
-            this.teamMeta.regions[calcTargetId]
+            this.teamMeta.regions[calcTargetId],
+            this.teamMeta.factions[calcTargetId]
           )
         )
           continue;

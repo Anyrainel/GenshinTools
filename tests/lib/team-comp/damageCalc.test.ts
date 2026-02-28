@@ -311,6 +311,57 @@ describe("isBuffApplicable — buff routing", () => {
   });
 });
 
+describe("isBuffApplicable — faction scoping", () => {
+  const makeBuffWithFactions = (
+    ownerId: string,
+    receiver: "self" | "team",
+    factions: string[]
+  ) =>
+    new StatBuff(
+      { type: "character", id: ownerId, origin: "C1" },
+      { receiver, factions: factions as import("@/data/types").Faction[] },
+      [{ key: "atk%", value: 0.1 }]
+    );
+
+  it("faction-scoped team buff applies to matching faction member", () => {
+    // Clorinde is Hexerei faction
+    expect(
+      isBuffApplicable(
+        makeBuffWithFactions("clorinde", "team", ["Hexerei"]),
+        "clorinde",
+        "clorinde",
+        "clorinde",
+        undefined,
+        "Hexerei"
+      )
+    ).toBe(true);
+  });
+
+  it("faction-scoped team buff does NOT apply to non-matching faction member", () => {
+    expect(
+      isBuffApplicable(
+        makeBuffWithFactions("clorinde", "team", ["Hexerei"]),
+        "clorinde",
+        "hu_tao",
+        "hu_tao",
+        undefined,
+        "None"
+      )
+    ).toBe(false);
+  });
+
+  it("buff without factions applies regardless of target faction", () => {
+    const buff = new StatBuff(
+      { type: "character", id: "clorinde", origin: "C1" },
+      { receiver: "team" },
+      [{ key: "atk%", value: 0.1 }]
+    );
+    expect(
+      isBuffApplicable(buff, "clorinde", "hu_tao", "hu_tao", undefined, "None")
+    ).toBe(true);
+  });
+});
+
 // Import the side-effect barrel to register all characters, weapons, and artifacts
 import "@/lib/team-comp/index";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";

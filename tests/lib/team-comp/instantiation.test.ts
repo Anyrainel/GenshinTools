@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   artifactHalfSetsById,
   artifactsById,
@@ -29,13 +31,102 @@ function rethrowIfUnexpected(e: unknown, ...skipPhrases: string[]): void {
   }
 }
 
+// ─── Preset team data ───
+
+const presetPath = resolve(
+  __dirname,
+  "../../../src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json"
+);
+const presetData = JSON.parse(readFileSync(presetPath, "utf-8")) as {
+  teams: {
+    characters: string[];
+    artifacts: ({ type: "4pc"; setId: string } | { type: string })[];
+    opts: Record<string, string>;
+  }[];
+};
+
+// [teamLabel, testLabel, charId, characters, artifactSets, opts]
+type PresetCase = [
+  string,
+  string,
+  string,
+  string[],
+  Record<string, string>,
+  Record<string, string>,
+];
+const presetCases: PresetCase[] = [];
+const presetCharIds = new Set<string>();
+
+for (const team of presetData.teams) {
+  const characters = team.characters.filter(Boolean);
+  const artifactSets: Record<string, string> = {};
+  for (let i = 0; i < characters.length; i++) {
+    const art = team.artifacts[i];
+    if (art && art.type === "4pc" && "setId" in art) {
+      artifactSets[characters[i]] = art.setId;
+    }
+  }
+  const teamLabel = characters.join("+");
+  const baseOpts = team.opts ?? {};
+  for (const charId of characters) {
+    presetCharIds.add(charId);
+    const entityOpt = getEntityOption(charId);
+    if (entityOpt) {
+      for (const choice of entityOpt.choices) {
+        presetCases.push([
+          teamLabel,
+          `${charId} option=${choice.value}`,
+          charId,
+          characters,
+          artifactSets,
+          { ...baseOpts, [charId]: choice.value },
+        ]);
+      }
+    } else {
+      presetCases.push([
+        teamLabel,
+        charId,
+        charId,
+        characters,
+        artifactSets,
+        baseOpts,
+      ]);
+    }
+  }
+}
+
+const nonPresetCharIds = Object.keys(charactersById).filter(
+  (id) => !presetCharIds.has(id)
+);
+
+// ─── Tests ───
+
 describe("Entity Instantiation", () => {
-  describe("Characters", () => {
-    it.each(Object.keys(charactersById))("%s", (charId) => {
+  describe("Characters (preset teams)", () => {
+    it.each(presetCases)(
+      "%s > %s",
+      (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+        try {
+          const team = new TeamMeta(characters, {}, artifactSets);
+          const char = createCharacter(charId, 100, 6, team, opts);
+          char.buffs;
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
+      }
+    );
+  });
+
+  describe("Characters (no preset)", () => {
+    it.each(nonPresetCharIds)("%s", (charId) => {
       try {
         const team = new TeamMeta([charId]);
         const char = createCharacter(charId, 100, 6, team);
-        char.buffs; // triggers StatBuff constructors → validation
+        char.buffs;
       } catch (e) {
         rethrowIfUnexpected(
           e,

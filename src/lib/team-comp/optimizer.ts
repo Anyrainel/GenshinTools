@@ -3,6 +3,7 @@ import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
   type BuildMatchResult,
+  getFixedMainStatValue,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
@@ -22,10 +23,18 @@ export interface OptimizerOptions {
   baseSheets: Record<string, StatSheet>; // Sheets for other 3 chars
   calcContext: CalcContext;
 
-  topN?: number; // Heuristic prune count per slot (default 50)
+  topN?: number; // Per-slot prune count (default 20)
+  maxBuilds?: number; // Top builds to evaluate for damage (default 1000)
 
   artifactSetId?: string | null;
   artifactHalfSetIds?: string[];
+
+  // ── Multi-pass support (all default to targetCharId for backward compat) ──
+  swapCharId?: string; // Whose artifacts to enumerate
+  calcTargetId?: string; // Who is "on field" for buff routing
+  formulaCharId?: string; // Whose formula to evaluate
+  erCheckCharId?: string; // Whose ER to check (default: swapCharId)
+  excludedArtifactIds?: Set<string>; // Artifacts locked by prior passes
 }
 
 export interface OptimizationResult {
@@ -48,8 +57,6 @@ function scorePiece(
   let score = scoreSlot(art, buildMatch.statWeights, globalConfig);
 
   // Add main stat contribution when it matches the build recommendation.
-  // scoreMainStat uses w=1 (fully recommended); callers are responsible for
-  // only invoking this for recommended main stats.
   const recommended = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
   if (recommended.has(art.mainStatKey)) {
     score += scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
@@ -57,6 +64,69 @@ function scorePiece(
 
   return score;
 }
+
+// ── Set matching helpers ──
+
+function matchesSetRequirement(
+  pieces: readonly ArtifactData[],
+  artifactSetId: string | null | undefined,
+  artifactHalfSetIds: string[] | undefined
+): boolean {
+  if (artifactSetId) {
+    let count = 0;
+    for (const p of pieces) {
+      if (p.setKey === artifactSetId) count++;
+    }
+    if (count < 4) return false;
+  }
+
+  if (artifactHalfSetIds && artifactHalfSetIds.length === 2) {
+    const halfSetCounts = new Map<string, number>();
+    for (const p of pieces) {
+      const halfSetId = artifactIdToHalfSetId[p.setKey];
+      if (halfSetId != null) {
+        halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
+      }
+    }
+    const [h1, h2] = artifactHalfSetIds;
+    const c1 = halfSetCounts.get(h1) ?? 0;
+    const c2 = halfSetCounts.get(h2) ?? 0;
+    if (h1 === h2) {
+      if (c1 < 4) return false;
+    } else {
+      if (c1 < 2 || c2 < 2) return false;
+    }
+  }
+
+  return true;
+}
+
+// ── Two-phase optimizer ──
+
+/** Extract artifact ER contribution (decimal, e.g. 0.518 for 51.8% ER sands). */
+function getArtifactEr(art: ArtifactData): number {
+  let er = 0;
+  if (art.mainStatKey === "er") {
+    er += getFixedMainStatValue("er", art.rarity) / 100;
+  }
+  if (art.substats.er) {
+    er += art.substats.er / 100;
+  }
+  return er;
+}
+
+type ScoredArt = { art: ArtifactData; score: number; er: number };
+
+type Candidate = {
+  totalScore: number;
+  pieces: [
+    ArtifactData,
+    ArtifactData,
+    ArtifactData,
+    ArtifactData,
+    ArtifactData,
+  ];
+};
 
 export async function* runOptimization(
   opts: OptimizerOptions
@@ -73,13 +143,22 @@ export async function* runOptimization(
     calcContext,
     artifactSetId,
     artifactHalfSetIds,
+    excludedArtifactIds,
   } = opts;
 
-  const topN = opts.topN || 50;
+  // Resolve effective IDs (default to targetCharId for backward compat)
+  const swapCharId = opts.swapCharId ?? targetCharId;
+  const calcTargetId = opts.calcTargetId ?? targetCharId;
+  const formulaCharId = opts.formulaCharId ?? targetCharId;
+  const erCheckCharId = opts.erCheckCharId ?? swapCharId;
+
+  const topN = opts.topN || 20;
+  const maxBuilds = opts.maxBuilds ?? 1000;
   const startTime = Date.now();
 
-  // Prune & group artifacts by slot
-  const slotPools: Record<Slot, ArtifactData[]> = {
+  // ── Per-slot pruning: keep top N artifacts per slot by heuristic score ──
+
+  const scoredPools: Record<Slot, ScoredArt[]> = {
     flower: [],
     plume: [],
     sands: [],
@@ -87,16 +166,24 @@ export async function* runOptimization(
     circlet: [],
   };
 
-  for (const slot of allSlots) {
-    const slotArts = inventory.filter((a) => a.slotKey === slot);
+  const DUMMY_ART: ArtifactData = {
+    id: "dummy",
+    setKey: "empty",
+    slotKey: "flower",
+    rarity: 1,
+    mainStatKey: "hp%",
+    level: 0,
+    lock: false,
+    substats: {},
+  };
 
-    // Apply strict set filtering if 4pc is required
-    // If it's 2pc+2pc, we can't filter here as easily because any 2 sets are fine.
-    // However, if we know 4pc is required, we can just enforce it strictly *or* leave 1 off-piece slot.
-    // For simplicity, let's just use topN heuristics and check combinations later.
-    // But we MUST make sure pieces matching the set are prioritized if we only take topN!
-    // If we only take topN, we might discard the only 4pc piece! Let's score sets artificially higher?
-    // Actually, simple solution for now: sort unconditionally.
+  for (const slot of allSlots) {
+    const slotArts = inventory.filter(
+      (a) =>
+        a.slotKey === slot &&
+        (!excludedArtifactIds || !excludedArtifactIds.has(a.id))
+    );
+
     const withScore = slotArts.map((art) => {
       let score = scorePiece(art, buildMatch, globalConfig);
       // Boost score if it matches a required set to ensure it's not pruned
@@ -108,36 +195,87 @@ export async function* runOptimization(
       ) {
         score += 10000;
       }
-      return { art, score };
+      return { art, score, er: getArtifactEr(art) };
     });
 
     withScore.sort((a, b) => b.score - a.score);
-    slotPools[slot] = withScore.slice(0, Math.max(topN, 1)).map((x) => x.art);
+    scoredPools[slot] = withScore.slice(0, Math.max(topN, 1));
 
-    if (slotPools[slot].length === 0) {
-      // Dummy to prevent 0 combinations
-      slotPools[slot] = [
-        {
-          id: "dummy",
-          setKey: "empty",
-          slotKey: slot,
-          rarity: 1,
-          mainStatKey: "hp%",
-          level: 0,
-          lock: false,
-          substats: {},
-        },
+    if (scoredPools[slot].length === 0) {
+      scoredPools[slot] = [
+        { art: { ...DUMMY_ART, slotKey: slot }, score: 0, er: 0 },
       ];
     }
   }
 
-  const combinationsTotal =
-    slotPools.flower.length *
-    slotPools.plume.length *
-    slotPools.sands.length *
-    slotPools.goblet.length *
-    slotPools.circlet.length;
+  // ── Pre-compute baseline ER (without artifacts) for cheap ER pre-filter ──
+  // Run getTeamStats once with an empty artifact sheet for the swap character
+  // to get ER from base (1.0) + weapon + ascension + team buffs.
+  let erFloor = 0;
+  if (targetEr > 0) {
+    const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+    const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
+    erFloor = baselineStats[erCheckCharId]?.get("er") ?? 0;
+  }
+  // Minimum artifact ER needed to meet the target
+  const minArtifactEr = Math.max(0, targetEr - erFloor);
 
+  // ── Phase 1: Collect top-K builds by total heuristic score (cheap) ──
+  // Set-check + ER pre-filter + sum of 5 pre-computed scores per combination.
+
+  const candidates: Candidate[] = [];
+  let minCandidateScore = Number.NEGATIVE_INFINITY;
+  const CLEANUP_THRESHOLD = maxBuilds * 2;
+
+  for (const f of scoredPools.flower) {
+    for (const p of scoredPools.plume) {
+      for (const s of scoredPools.sands) {
+        for (const g of scoredPools.goblet) {
+          for (const c of scoredPools.circlet) {
+            const pieces = [f.art, p.art, s.art, g.art, c.art] as const;
+
+            if (
+              !matchesSetRequirement(pieces, artifactSetId, artifactHalfSetIds)
+            )
+              continue;
+
+            // Cheap ER pre-filter: skip builds that can't meet ER requirement
+            if (minArtifactEr > 0) {
+              const artifactEr = f.er + p.er + s.er + g.er + c.er;
+              if (artifactEr < minArtifactEr) continue;
+            }
+
+            const totalScore = f.score + p.score + s.score + g.score + c.score;
+            if (
+              candidates.length >= maxBuilds &&
+              totalScore <= minCandidateScore
+            )
+              continue;
+
+            candidates.push({
+              totalScore,
+              pieces: [f.art, p.art, s.art, g.art, c.art],
+            });
+
+            // Periodic trim to bound memory
+            if (candidates.length >= CLEANUP_THRESHOLD) {
+              candidates.sort((a, b) => b.totalScore - a.totalScore);
+              candidates.length = maxBuilds;
+              minCandidateScore = candidates[candidates.length - 1].totalScore;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Final sort & trim
+  candidates.sort((a, b) => b.totalScore - a.totalScore);
+  if (candidates.length > maxBuilds) candidates.length = maxBuilds;
+
+  // ── Phase 2: Evaluate damage on top candidates (expensive) ──
+
+  const combinationsTotal = candidates.length;
   let combinationsEvaluated = 0;
   let bestDamage = -1;
   let bestDamageResult: DamageResult | null = null;
@@ -153,7 +291,8 @@ export async function* runOptimization(
     bestDamage,
     bestDamageResult,
     bestArtifacts: { ...bestArtifacts },
-    progress: combinationsEvaluated / combinationsTotal,
+    progress:
+      combinationsTotal > 0 ? combinationsEvaluated / combinationsTotal : 1,
     combinationsEvaluated,
     combinationsTotal,
     startTime,
@@ -161,103 +300,48 @@ export async function* runOptimization(
     done,
   });
 
-  const CHUNK_SIZE = 5000;
+  const CHUNK_SIZE = 200;
   let chunkCount = 0;
 
-  for (const f of slotPools.flower) {
-    for (const p of slotPools.plume) {
-      for (const s of slotPools.sands) {
-        for (const g of slotPools.goblet) {
-          for (const c of slotPools.circlet) {
-            combinationsEvaluated++;
-            chunkCount++;
+  for (const cand of candidates) {
+    combinationsEvaluated++;
+    chunkCount++;
 
-            const piecesRec: Record<Slot, ArtifactData> = {
-              flower: f,
-              plume: p,
-              sands: s,
-              goblet: g,
-              circlet: c,
-            };
+    const charSheet = StatSheet.fromArtifacts(cand.pieces);
 
-            // 1. Check Set Requirements
-            let matchesSet = true;
-            if (artifactSetId) {
-              let count = 0;
-              for (const slot of allSlots) {
-                if (piecesRec[slot].setKey === artifactSetId) count++;
-              }
-              if (count < 4) matchesSet = false;
-            }
+    const updatedSheets = {
+      ...baseSheets,
+      [swapCharId]: charSheet,
+    };
+    const postStats = teamBuild.getTeamStats(updatedSheets, calcTargetId);
 
-            if (
-              matchesSet &&
-              artifactHalfSetIds &&
-              artifactHalfSetIds.length === 2
-            ) {
-              const halfSetCounts = new Map<string, number>();
-              for (const slot of allSlots) {
-                const setKey = piecesRec[slot].setKey;
-                const halfSetId = artifactIdToHalfSetId[setKey];
-                if (halfSetId != null) {
-                  halfSetCounts.set(
-                    halfSetId,
-                    (halfSetCounts.get(halfSetId) ?? 0) + 1
-                  );
-                }
-              }
-              const [h1, h2] = artifactHalfSetIds;
-              const c1 = halfSetCounts.get(h1) ?? 0;
-              const c2 = halfSetCounts.get(h2) ?? 0;
-              if (h1 === h2) {
-                if (c1 < 4) matchesSet = false;
-              } else {
-                if (c1 < 2 || c2 < 2) matchesSet = false;
-              }
-            }
+    const er = postStats[erCheckCharId]?.get("er") ?? 0;
+    if (er >= targetEr) {
+      const dmgRes = teamBuild.getDamageResult(
+        formulaCharId,
+        formulaId,
+        postStats,
+        calcContext
+      );
 
-            if (matchesSet) {
-              // 2. Compute Sheet & ER Constraint
-              const piecesArray = [f, p, s, g, c];
-              const charSheet = StatSheet.fromArtifacts(piecesArray);
-
-              const updatedSheets = {
-                ...baseSheets,
-                [targetCharId]: charSheet,
-              };
-              const postStats = teamBuild.getTeamStats(
-                updatedSheets,
-                targetCharId
-              );
-
-              // team metas stat sheet gives ER as a unified value (1.0 = 100%)
-              const er = postStats[targetCharId]?.get("er") ?? 0;
-              if (er >= targetEr) {
-                // 3. Evaluate Damage Formula
-                const dmgRes = teamBuild.getDamageResult(
-                  targetCharId,
-                  formulaId,
-                  postStats,
-                  calcContext
-                );
-
-                if (dmgRes && dmgRes.totalDamage > bestDamage) {
-                  bestDamage = dmgRes.totalDamage;
-                  bestDamageResult = dmgRes;
-                  bestArtifacts = { ...piecesRec };
-                }
-              }
-            }
-
-            // Yield control back to UI
-            if (chunkCount >= CHUNK_SIZE) {
-              chunkCount = 0;
-              yield getResult(false);
-              await new Promise((resolve) => setTimeout(resolve, 0));
-            }
-          }
-        }
+      if (dmgRes && dmgRes.totalDamage > bestDamage) {
+        bestDamage = dmgRes.totalDamage;
+        bestDamageResult = dmgRes;
+        bestArtifacts = {
+          flower: cand.pieces[0],
+          plume: cand.pieces[1],
+          sands: cand.pieces[2],
+          goblet: cand.pieces[3],
+          circlet: cand.pieces[4],
+        };
       }
+    }
+
+    // Yield control back to UI
+    if (chunkCount >= CHUNK_SIZE) {
+      chunkCount = 0;
+      yield getResult(false);
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
 

@@ -14,7 +14,7 @@ const LEVEL_MULTIPLIERS: Record<number, number> = {
 
 // ─── Reaction Coefficients (for transformative reactions) ───
 
-const REACTION_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
+const TRANSFORMATIVE_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
   burning: 0.25,
   superconduct: 0.5,
   swirl: 0.6,
@@ -87,7 +87,9 @@ export abstract class DamageFormula {
     readonly tag: DamageTag,
     readonly scalingKey: ScalingKey = "atk",
     readonly extraTerm?: ExtraScalingTerm
-  ) {}
+  ) {
+    this.validateReaction();
+  }
 
   abstract calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number;
 
@@ -96,6 +98,9 @@ export abstract class DamageFormula {
     charLevel: number,
     ctx: CalcContext
   ): DisplayPart;
+
+  /** Subclasses override to restrict which reaction types are valid. */
+  protected validateReaction(): void {}
 
   /** Build the scalingKeys/scalingMulti arrays from constructor fields. */
   protected getScalingInfo(): { keys: StatKey[]; multi: number[] } {
@@ -168,6 +173,14 @@ export abstract class DamageFormula {
 
 /** Direct damage: BaseDmg × DmgBonus × DEFMult × RESMult × CritMult */
 export class DirectFormula extends DamageFormula {
+  protected override validateReaction(): void {
+    if (this.tag.reaction !== "none") {
+      throw new Error(
+        `DirectFormula requires reaction "none", got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const baseDmg = this.getBaseDmg(stats);
     const dmgBonusMult = this.computeDmgBonusMult(stats);
@@ -231,6 +244,14 @@ export class DirectFormula extends DamageFormula {
 
 /** Amplifying reactions: Direct × ReactionBase × (1 + EMBonus + ReactionDmgBonus%) */
 export class AmplifyFormula extends DirectFormula {
+  protected override validateReaction(): void {
+    if (this.tag.reaction !== "melt" && this.tag.reaction !== "vaporize") {
+      throw new Error(
+        `AmplifyFormula requires reaction "melt" or "vaporize", got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   override calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const directDmg = super.calc(stats, charLevel, ctx);
     const reactionBase =
@@ -278,6 +299,14 @@ export class AmplifyFormula extends DirectFormula {
 
 /** Additive reactions (Spread/Aggravate): BaseDmg + FlatAdditive, then normal multipliers */
 export class CatalyzeFormula extends DamageFormula {
+  protected override validateReaction(): void {
+    if (this.tag.reaction !== "spread" && this.tag.reaction !== "aggravate") {
+      throw new Error(
+        `CatalyzeFormula requires reaction "spread" or "aggravate", got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
     if (this.extraTerm) {
@@ -371,11 +400,19 @@ export class CatalyzeFormula extends DamageFormula {
 
 /** Transformative reactions: LevelMult × ReactionCoeff × (1 + EMBonus + ReactionDmgBonus%) × RESMult. No DEF. Optional CRIT via reaction-specific CR/CD. */
 export class TransformFormula extends DamageFormula {
+  protected override validateReaction(): void {
+    if (!(this.tag.reaction in TRANSFORMATIVE_COEFFICIENTS)) {
+      throw new Error(
+        `TransformFormula requires a transformative reaction, got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em");
     const emBonus = (16 * em) / (2000 + em);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
-    const reactionCoeff = REACTION_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const reactionCoeff = TRANSFORMATIVE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const resMult = this.computeResMult(stats, ctx);
 
@@ -398,7 +435,7 @@ export class TransformFormula extends DamageFormula {
     const em = stats.get("em");
     const emCoeff = 16;
     const emBonus = (emCoeff * em) / (2000 + em);
-    const reactionCoeff = REACTION_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const reactionCoeff = TRANSFORMATIVE_COEFFICIENTS[this.tag.reaction] ?? 0;
     const levelCoeff = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const resMult = this.computeResMult(stats, ctx);
@@ -446,6 +483,14 @@ export class TransformFormula extends DamageFormula {
  * Has separate multiplicative layers: BaseDmgBonus (§8.7) and Elevation (§4).
  */
 export class LunarFormula extends DamageFormula {
+  protected override validateReaction(): void {
+    if (!(this.tag.reaction in LUNAR_REACTION_COEFFICIENTS)) {
+      throw new Error(
+        `LunarFormula requires a lunar reaction, got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em");
     const emBonus = (6 * em) / (2000 + em);
@@ -529,6 +574,14 @@ export class LunarFormula extends DamageFormula {
  *     × (1+elevated%) × CritMult × RESMult
  */
 export class LunarDirectFormula extends DamageFormula {
+  protected override validateReaction(): void {
+    if (!(this.tag.reaction in LUNAR_DIRECT_COEFFICIENTS)) {
+      throw new Error(
+        `LunarDirectFormula requires a lunar reaction, got "${this.tag.reaction}"`
+      );
+    }
+  }
+
   calc(stats: StatSheet, _charLevel: number, ctx: CalcContext): number {
     let scalingDmg = stats.get(this.scalingKey) * this.talentMultiplier;
     if (this.extraTerm) {

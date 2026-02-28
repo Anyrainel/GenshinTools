@@ -143,6 +143,21 @@ function validateStatBuff(
     }
   }
 
+  if (target.factions) {
+    if (target.factions.length === 0) {
+      throw new Error(
+        `${label} BuffTarget.factions must not be an empty array — omit the key to mean "any"`
+      );
+    }
+    const seen = new Set<string>();
+    for (const val of target.factions) {
+      if (seen.has(val)) {
+        throw new Error(`${label} Duplicate "${val}" in BuffTarget.factions`);
+      }
+      seen.add(val);
+    }
+  }
+
   for (const { key } of entries) {
     const c = KEY_CONSTRAINTS[key];
     if (c) {

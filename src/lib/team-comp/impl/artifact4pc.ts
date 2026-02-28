@@ -290,7 +290,7 @@ class NoblesseOblige4pc extends ArtifactSetBase {
       {
         type: "artifactSet",
         id: this.artifactSetId,
-        triggers: ["after-burst"],
+        triggers: ["Q"],
         noStackId: "noblesse-oblige-atk",
       },
       { receiver: "team" },
@@ -545,7 +545,7 @@ class VermillionHereafter4pc extends ArtifactSetBase {
       {
         type: "artifactSet",
         id: this.artifactSetId,
-        triggers: ["after-burst", "low-hp"],
+        triggers: ["Q", "low-hp"],
       },
       { receiver: "selfOnField" },
       [{ key: "atk%", value: 0.48 }]

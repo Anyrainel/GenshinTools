@@ -251,7 +251,7 @@ function VirtualizedCharacterList({
               transform: `translateY(${virtualItem.start}px)`,
             }}
           >
-            <div className="mb-4">
+            <div className="mb-3">
               <CharacterBuildCard
                 character={characters[virtualItem.index]}
                 tourStepId={

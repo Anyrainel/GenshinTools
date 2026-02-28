@@ -7,6 +7,7 @@ export const i18nAppData = {
     Hydro: { en: "Hydro", zh: "水" },
     Pyro: { en: "Pyro", zh: "火" },
     Cryo: { en: "Cryo", zh: "冰" },
+    Physical: { en: "Physical", zh: "物理" },
   },
   weapons: {
     Sword: { en: "Sword", zh: "单手剑" },
@@ -161,6 +162,18 @@ export const i18nAppData = {
     lunarCharged: { en: "Lunar Charged", zh: "月感电" },
     lunarBloom: { en: "Lunar Bloom", zh: "月绽放" },
     lunarCrystallize: { en: "Lunar Crystallize", zh: "月结晶" },
+  },
+  abilities: {
+    normal: { en: "Normal", zh: "普攻" },
+    charge: { en: "Charged", zh: "重击" },
+    plunge: { en: "Plunge", zh: "下落攻击" },
+    skill: { en: "Skill", zh: "元素战技" },
+    burst: { en: "Burst", zh: "元素爆发" },
+    special: { en: "Special", zh: "特殊" },
+  },
+  factions: {
+    Hexerei: { en: "Hexerei", zh: "六翮" },
+    None: { en: "None", zh: "无" },
   },
   slots: {
     flower: { en: "Flower", zh: "生之花" },

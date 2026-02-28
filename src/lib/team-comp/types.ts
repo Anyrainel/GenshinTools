@@ -1,6 +1,7 @@
 import type {
   BaseStat,
   Element,
+  Faction,
   LunarReactionType,
   MainStat,
   ReactionType,
@@ -135,6 +136,8 @@ export type BuffTarget = {
   filter?: DamageTagFilter;
   /** If set, buff only applies to characters from these regions. */
   regions?: Region[];
+  /** If set, buff only applies to characters from these factions. */
+  factions?: Faction[];
 };
 
 // ─── Reactions (re-exported from @/data/types — canonical definitions live there) ───

@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/collapsible";
 import type { ArtifactData } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
-import { ChevronDown } from "lucide-react";
+import { AlertTriangle, ChevronDown } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
+import { detectEquippedSets, setsMatch } from "./teamOptUtils";
 
 type Props = {
   result?: DisplayResult | null;
@@ -164,6 +165,9 @@ export function StatSheetPanel({
         );
 
         const artifactsObj = artifactsByChar[charId] || {};
+        const goalConfig = team.artifacts[i];
+        const equippedSets = detectEquippedSets(Object.values(artifactsObj));
+        const hasMismatch = goalConfig && !setsMatch(goalConfig, equippedSets);
 
         return (
           <Collapsible
@@ -194,7 +198,7 @@ export function StatSheetPanel({
               </span>
 
               {result && (
-                <div className="ml-auto flex items-center gap-2 group-hover:text-foreground transition-all">
+                <div className="flex items-center gap-2 group-hover:text-foreground transition-all">
                   {/* biome-ignore lint/a11y/useSemanticElements: cannot nest button inside button */}
                   <div
                     role="button"
@@ -233,7 +237,7 @@ export function StatSheetPanel({
                       {t.ui("teamComp.combat")}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-sm font-semibold text-muted-foreground opacity-60 ml-2">
+                  <div className="flex items-center gap-1 text-sm font-semibold text-foreground/70 ml-2">
                     <span className="hidden sm:inline-block">
                       {t.ui("teamComp.stats")}
                     </span>
@@ -248,8 +252,6 @@ export function StatSheetPanel({
               <ArtifactSlotGrid
                 charId={charId}
                 artifactsObj={artifactsObj}
-                isTarget={isTarget}
-                goalConfig={team.artifacts[i]}
                 t={t}
               />
             </div>
@@ -257,6 +259,13 @@ export function StatSheetPanel({
             {/* Collapsible Stats */}
             {result && (
               <CollapsibleContent>
+                {/* Set Mismatch Warning */}
+                {hasMismatch && (
+                  <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{t.ui("teamComp.equippedSetDiffers")}</span>
+                  </div>
+                )}
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
                   {sortedKeys.map((k) => (
                     <StatRow

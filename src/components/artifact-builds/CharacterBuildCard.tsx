@@ -279,12 +279,7 @@ function CharacterBuildCardComponent({
 
   return (
     <Card className="bg-gradient-card" data-tour-step-id={tourStepId}>
-      <CardHeader
-        className={cn(
-          "pb-3 pt-3 md:pt-4",
-          isVeryNarrow ? "px-3" : "px-3 md:px-4"
-        )}
-      >
+      <CardHeader className={cn("pb-3 pt-3", isVeryNarrow ? "px-2" : "px-3")}>
         {/* Title card content (formerly TitleCard) */}
         <div
           className={cn(

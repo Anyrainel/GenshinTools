@@ -14,6 +14,7 @@ import { elementResourcesByName } from "@/data/constants";
 import type { Element } from "@/data/types";
 import { isTrivialBuff } from "@/lib/team-comp/inspection";
 import type {
+  BuffTarget,
   DamageTagFilter,
   ResolvedBuff,
   ResolvedStatEntry,
@@ -32,21 +33,29 @@ type Props = {
 };
 
 function formatFilter(
-  filter: DamageTagFilter | undefined,
+  target: BuffTarget,
   t: ReturnType<typeof useLanguage>["t"]
 ): string | null {
-  if (!filter || Object.keys(filter).length === 0) return null;
+  const filter = target.filter;
   const parts: string[] = [];
-  if (filter.abilities?.length) {
-    parts.push(...filter.abilities);
+  if (filter) {
+    if (filter.abilities?.length) {
+      parts.push(...filter.abilities.map((a) => t.ability(a)));
+    }
+    if (filter.elements?.length) {
+      parts.push(...filter.elements.map((e) => t.element(e)));
+    }
+    if (filter.reactions?.length) {
+      parts.push(...filter.reactions.map((r) => t.reaction(r)));
+    }
   }
-  if (filter.elements?.length) {
-    parts.push(...filter.elements.map((e) => t.element(e as Element)));
+  if (target.regions?.length) {
+    parts.push(...target.regions.map((r) => t.region(r)));
   }
-  if (filter.reactions?.length) {
-    parts.push(...filter.reactions); // reactions usually don't have i18n in quick filter yet
+  if (target.factions?.length) {
+    parts.push(...target.factions.map((f) => t.faction(f)));
   }
-  return parts.join("/");
+  return parts.length > 0 ? parts.join("/") : null;
 }
 
 function getSourceIcon(source: ResolvedBuff["source"]): string | undefined {
@@ -66,6 +75,15 @@ function getSourceIcon(source: ResolvedBuff["source"]): string | undefined {
   return undefined;
 }
 
+const RECEIVER_I18N: Record<string, string> = {
+  self: "teamComp.receiverSelf",
+  selfOnField: "teamComp.receiverSelfOnField",
+  selfOffField: "teamComp.receiverSelfOffField",
+  otherOnField: "teamComp.receiverOtherOnField",
+  onField: "teamComp.receiverOnField",
+  team: "teamComp.receiverTeam",
+};
+
 function BuffChip({
   buff,
   t,
@@ -75,12 +93,12 @@ function BuffChip({
 }) {
   const { source, target, staticEntries, dynamicEntries, active } = buff;
   const icon = getSourceIcon(source);
-  const filterDesc = formatFilter(target.filter, t);
+  const filterDesc = formatFilter(target, t);
 
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 p-3 rounded-lg border shadow-sm transition-all bg-card/50",
+        "flex flex-col gap-1.5 p-3 rounded-lg border shadow-sm transition-all bg-card/50",
         active
           ? "border-border/40 hover:border-border/60"
           : "border-border/10 opacity-60 grayscale"
@@ -127,20 +145,20 @@ function BuffChip({
                 </span>
               ))}
             </div>
-            {filterDesc && (
-              <span className="text-xs text-muted-foreground/70 italic truncate">
-                [{filterDesc}]
-              </span>
-            )}
           </div>
         </div>
 
         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-black/10 px-1.5 py-0.5 rounded shrink-0">
-          {target.receiver}
+          {t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf")}
         </span>
       </div>
 
-      <div className="flex flex-col gap-1.5 pt-2 mt-0.5 border-t border-border/10">
+      <div className="flex flex-col gap-1 pt-1 mt-0.5 border-t border-border/10">
+        {filterDesc && (
+          <span className="text-xs text-foreground italic truncate">
+            [{filterDesc}]
+          </span>
+        )}
         {[...staticEntries, ...dynamicEntries].map((e, idx) => {
           const isDyn = "cap" in e || "inputKey" in e;
           const dynE = e as ResolvedStatEntry;
@@ -152,6 +170,12 @@ function BuffChip({
               <span className="font-semibold text-foreground/80">
                 {t.statShort(e.key as StatKey)}
               </span>
+              {isDyn && dynE.inputKey && (
+                <span className="flex items-center gap-0.5 text-muted-foreground text-[11px] font-medium">
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />
+                  {t.statShort(dynE.inputKey)}
+                </span>
+              )}
               <div className="flex items-baseline gap-1">
                 <span
                   className={cn(
@@ -169,13 +193,6 @@ function BuffChip({
                   </span>
                 )}
               </div>
-
-              {isDyn && dynE.inputKey && (
-                <span className="flex items-center gap-0.5 text-muted-foreground bg-black/10 px-1.5 py-0.5 rounded text-[11px] font-medium ml-auto">
-                  <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />
-                  {t.statShort(dynE.inputKey)}
-                </span>
-              )}
             </div>
           );
         })}

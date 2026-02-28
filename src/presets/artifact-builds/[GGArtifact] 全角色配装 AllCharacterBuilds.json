@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772100435795",
+  "id": "export-1772290033581",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -152,6 +152,14 @@
         {
           "stat": "er",
           "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
@@ -176,6 +184,14 @@
         {
           "stat": "er",
           "weight": 75
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "tenacity_of_the_millelith",
@@ -675,6 +691,14 @@
         {
           "stat": "er",
           "weight": 50
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
@@ -875,12 +899,21 @@
         {
           "stat": "er",
           "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "lauma",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "FnZkdAG": {
       "id": "FnZkdAG",
@@ -898,12 +931,21 @@
         {
           "stat": "er",
           "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "silken_moons_serenade",
       "characterId": "lauma",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "FnZkCDG": {
       "id": "FnZkCDG",
@@ -1392,13 +1434,18 @@
         {
           "stat": "cr",
           "weight": 50
+        },
+        {
+          "stat": "cd",
+          "weight": 50
         }
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "furina",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "BOfjRIm": {
       "id": "BOfjRIm",
@@ -1416,6 +1463,14 @@
         {
           "stat": "hp%",
           "weight": 75
+        },
+        {
+          "stat": "cr",
+          "weight": 30
+        },
+        {
+          "stat": "cd",
+          "weight": 30
         }
       ],
       "artifactSet": "golden_troupe",
@@ -1581,13 +1636,22 @@
         {
           "stat": "er",
           "weight": 70
+        },
+        {
+          "stat": "cr",
+          "weight": 30
+        },
+        {
+          "stat": "cd",
+          "weight": 30
         }
       ],
       "halfSet1": "atk%-18",
       "halfSet2": "atk%-18",
       "characterId": "xianyun",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "source": "preset"
     },
     "Cj-j9am": {
       "id": "Cj-j9am",
@@ -1605,12 +1669,21 @@
         {
           "stat": "er",
           "weight": 50
+        },
+        {
+          "stat": "cr",
+          "weight": 30
+        },
+        {
+          "stat": "cd",
+          "weight": 30
         }
       ],
       "artifactSet": "song_of_days_past",
       "characterId": "sigewinne",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "source": "preset"
     },
     "Ci_roTG": {
       "id": "Ci_roTG",
@@ -1628,6 +1701,14 @@
         {
           "stat": "er",
           "weight": 50
+        },
+        {
+          "stat": "cr",
+          "weight": 30
+        },
+        {
+          "stat": "cd",
+          "weight": 30
         }
       ],
       "artifactSet": "song_of_days_past",
@@ -1635,7 +1716,8 @@
       "halfSet2": "hp%-20",
       "characterId": "sigewinne",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "source": "preset"
     },
     "DJEwArm": {
       "id": "DJEwArm",
@@ -3289,7 +3371,8 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "kaedehara_kazuha",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "xcrqdu": {
       "id": "xcrqdu",

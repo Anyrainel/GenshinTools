@@ -14,7 +14,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { type Slot, allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
-import { Check, Info, TriangleAlert } from "lucide-react";
+import { Check, CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -90,6 +90,8 @@ export function ArtifactScoreHoverCard({
 
   const { t } = useLanguage();
 
+  const noBuild = score.buildMatch == null;
+
   // Show warning icon when scored using a non-matching artifact set
   const hasSetMismatch =
     score.buildMatch != null && score.buildMatch.setMatched === false;
@@ -99,7 +101,11 @@ export function ArtifactScoreHoverCard({
     compact ? "text-xs" : "text-sm"
   );
 
-  const TriggerContent = (
+  const TriggerContent = noBuild ? (
+    <CircleAlert
+      className={cn("text-amber-400/70", compact ? "w-5 h-5" : "w-6 h-6")}
+    />
+  ) : (
     <div className="flex flex-col items-end gap-0 relative">
       {hasSetMismatch && (
         <Info
@@ -134,6 +140,8 @@ export function ArtifactScoreHoverCard({
     </div>
   );
 
+  const ContentComponent = noBuild ? NoBuildContent : ArtifactScoreContent;
+
   if (compact) {
     return (
       <Drawer>
@@ -155,10 +163,7 @@ export function ArtifactScoreHoverCard({
             Artifact score breakdown by stat
           </DrawerDescription>
           <div className="p-4 pt-0 safe-area-bottom">
-            <ArtifactScoreContent
-              artifactScore={score}
-              characterId={characterId}
-            />
+            <ContentComponent artifactScore={score} characterId={characterId} />
           </div>
         </DrawerContent>
       </Drawer>
@@ -186,7 +191,7 @@ export function ArtifactScoreHoverCard({
         ref={contentRef}
         className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl"
       >
-        <ArtifactScoreContent artifactScore={score} characterId={characterId} />
+        <ContentComponent artifactScore={score} characterId={characterId} />
       </HoverCardContent>
     </HoverCard>
   );
@@ -214,6 +219,81 @@ function useBuildSetLabel(score: ArtifactScoreResult): string | null {
     return `${t.artifactHalfSet(build.halfSet1)} + ${t.artifactHalfSet(build.halfSet2)}`;
   }
   return build.name;
+}
+
+function NoBuildContent({
+  artifactScore,
+  characterId,
+}: ArtifactScoreContentProps) {
+  const { t } = useLanguage();
+
+  const crData = artifactScore.substatScore.statScores.cr;
+  const cdData = artifactScore.substatScore.statScores.cd;
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Warning banner */}
+      <div className="flex items-start gap-2 rounded-md border px-3 py-2 text-sm bg-amber-500/10 border-amber-500/20 text-amber-300">
+        <CircleAlert className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+        <span className="flex-1">{t.ui("accountData.noBuildConfigured")}</span>
+      </div>
+
+      {/* Link to builds page */}
+      <Link
+        to={`/artifact-filter?tab=configure&target=${characterId}`}
+        className="text-amber-400 hover:text-amber-300 underline text-sm"
+      >
+        {t.ui("accountData.viewBuilds")}
+      </Link>
+
+      {/* Fallback CR/CD values */}
+      {(crData.subValue > 0 || cdData.subValue > 0) && (
+        <table className="w-full text-base border-collapse">
+          <thead>
+            <tr className="text-sm text-slate-400 border-b border-white/5">
+              <th className="text-left font-normal pb-2">
+                {t.ui("accountData.breakdownByStat")}
+              </th>
+              <th className="text-right font-normal pb-2">
+                {t.ui("accountData.valOverScore")}
+              </th>
+              <th className="text-right font-normal pb-2">
+                {t.ui("accountData.score")}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { key: "cr", data: crData },
+              { key: "cd", data: cdData },
+            ]
+              .filter(({ data }) => data.subValue > 0)
+              .map(({ key, data }) => (
+                <tr key={key}>
+                  <td className="py-1 text-gray-300 whitespace-nowrap">
+                    {t.statShort(key)}
+                  </td>
+                  <td className="text-right py-1 font-mono text-gray-400 whitespace-nowrap">
+                    <span className="text-gray-300">
+                      {data.subValue.toFixed(1)}%
+                    </span>
+                    <span className="text-muted-foreground mx-1.5">/</span>
+                    <span className="text-sky-300">
+                      {data.subCount.toFixed(1)}
+                    </span>
+                  </td>
+                  <td className="text-right py-1 font-mono whitespace-nowrap">
+                    <span className="text-amber-200">
+                      {data.subScore.toFixed(1)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
 }
 
 function ArtifactScoreContent({

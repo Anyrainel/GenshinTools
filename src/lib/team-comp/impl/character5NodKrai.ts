@@ -179,7 +179,7 @@ class Columbina extends CharacterBase {
         ],
       },
       "columbina-skill-interference": {
-        label: { zh: "E伤害", en: "E" },
+        label: { zh: "E", en: "E" },
         parts: [
           {
             formula: new LunarDirectFormula(
@@ -399,8 +399,8 @@ class Nefer extends CharacterBase {
         ? {
             "nefer-phantasm": {
               label: {
-                zh: isC6 ? "6命 E伤害" : "E伤害",
-                en: isC6 ? "C6 E" : "E",
+                zh: isC6 ? "6命 E重击" : "E重击",
+                en: isC6 ? "C6 E CA" : "E CA",
               },
               parts: [
                 ...selfParts,
@@ -450,7 +450,7 @@ class Nefer extends CharacterBase {
           }
         : {}),
       "nefer-burst": {
-        label: { zh: "Q伤害", en: "Q" },
+        label: { zh: "Q", en: "Q" },
         parts: [
           {
             formula: new DirectFormula(
@@ -595,7 +595,7 @@ class Flins extends CharacterBase {
     return {
       "flins-spearstorm": {
         label: {
-          zh: this.constellation >= 2 ? "2命 E伤害" : "E伤害",
+          zh: this.constellation >= 2 ? "2命 E" : "E",
           en: this.constellation >= 2 ? "C2 E" : "E",
         },
         parts: [
@@ -616,7 +616,7 @@ class Flins extends CharacterBase {
         ],
       },
       "flins-burst-total": {
-        label: { zh: "Q伤害(3段)", en: "Q (3-seg)" },
+        label: { zh: "小Q", en: "Q Special" },
         parts: [
           // Initial Electro DMG (regular, not lunar)
           { formula: new DirectFormula(qInitMult, burstTag) },
@@ -754,7 +754,6 @@ class Lauma extends CharacterBase {
   // E press: Lv10 218.9%, Lv13 (C5+) 258.4%
   // Frostgrove Sanctuary: Lv10 172.8% ATK + 345.6% EM, Lv13 (C5+) 204.0% ATK + 408.0% EM
   protected readonly formulaMap = (() => {
-    const pressMult = this.constellation >= 5 ? 2.584 : 2.189;
     const sanctAtkMult = this.constellation >= 5 ? 2.04 : 1.728;
     const sanctEmMult = this.constellation >= 5 ? 4.08 : 3.456;
 
@@ -764,20 +763,9 @@ class Lauma extends CharacterBase {
     const hasNascentGleam = this.teamMeta.countByRegion("Nod-Krai") >= 1;
 
     return {
-      "lauma-press": {
-        label: { zh: "E伤害", en: "E" },
-        parts: [
-          {
-            formula: new DirectFormula(pressMult, {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
+      // E press damage is insignificant, players usually use long press E
       "lauma-sanctuary": {
-        label: { zh: "E持续伤害(单次)", en: "E DoT (×1)" },
+        label: { zh: "E持续(单次)", en: "E DoT (×1)" },
         parts: [
           {
             formula: new DirectFormula(
@@ -793,7 +781,7 @@ class Lauma extends CharacterBase {
         ? {
             "lauma-hold": {
               label: {
-                zh: "E长按伤害",
+                zh: "E长按",
                 en: "E Hold",
               },
               parts: [
@@ -824,7 +812,7 @@ class Lauma extends CharacterBase {
         ? {
             "lauma-c6-normal": {
               label: {
-                zh: "6命 普攻伤害",
+                zh: "6命 普攻",
                 en: "C6 Normal",
               },
               parts: [
@@ -895,7 +883,7 @@ class Ineffa extends CharacterBase {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
       "ineffa-birgitta": {
-        label: { zh: "E伤害×10", en: "E (×10)" },
+        label: { zh: "E×10", en: "E×10" },
         parts: [
           {
             formula: new DirectFormula(dischargeMult, {
@@ -923,7 +911,7 @@ class Ineffa extends CharacterBase {
       },
       "ineffa-burst": {
         label: {
-          zh: this.constellation >= 2 ? "2命 Q伤害" : "Q伤害",
+          zh: this.constellation >= 2 ? "2命 Q" : "Q",
           en: this.constellation >= 2 ? "C2 Q" : "Q",
         },
         parts: [
@@ -953,7 +941,7 @@ class Ineffa extends CharacterBase {
       ...(this.constellation >= 6 && hasHydro
         ? {
             "ineffa-c6-thundercloud": {
-              label: { zh: "6命 雷暴云伤害", en: "C6 Thundercloud" },
+              label: { zh: "6命 雷暴云", en: "C6 Thundercloud" },
               parts: [
                 {
                   formula: new LunarDirectFormula(1.35, {

@@ -236,6 +236,10 @@ export const i18nUiData = {
       zh: "基于配装评分: {0}",
     },
     viewBuilds: { en: "View Builds", zh: "查看配装" },
+    noBuildConfigured: {
+      en: "No build configured. Scores use Crit Rate and Crit DMG only.",
+      zh: "未配置配装，仅基于暴击率和暴击伤害评分。",
+    },
     weightWarning: {
       en: "Set a main stat (ATK%, HP%, DEF%, EM) to 100, or set at least two substats (CR, CD, ER, etc.) to 100.",
       zh: "需将一个主属性 (攻击%, 生命%, 防御%, 精通) 设为 100，或将至少两个副词条设为 100。",
@@ -584,6 +588,12 @@ export const i18nUiData = {
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
     teamResonance: { en: "Team Resonance", zh: "队伍共鸣" },
     noBuffsOriginate: { en: "No buffs originating", zh: "未提供 Buff 效果" },
+    receiverSelf: { en: "Self", zh: "自身" },
+    receiverSelfOnField: { en: "Self (On-Field)", zh: "自身（前台）" },
+    receiverSelfOffField: { en: "Self (Off-Field)", zh: "自身（后台）" },
+    receiverOtherOnField: { en: "Other (On-Field)", zh: "他人（前台）" },
+    receiverOnField: { en: "On-Field", zh: "前台角色" },
+    receiverTeam: { en: "Team", zh: "全队" },
     equippedSetDiffers: {
       en: "Equipped set differs from Team Roster goal",
       zh: "已装备的套装与队伍配置目标不一致",
@@ -608,6 +618,22 @@ export const i18nUiData = {
       zh: "正在准备优化器…",
     },
     optimizerError: { en: "Optimization Error:", zh: "优化错误：" },
+    expandFormula: { en: "Expand", zh: "展开" },
+    collapseFormula: { en: "Collapse", zh: "收起" },
+    inventoryWarning: {
+      en: "Only equipped artifacts detected. Import full inventory for accurate results.",
+      zh: "仅检测到已装备的圣遗物。导入完整背包数据以获得准确结果。",
+    },
+    inventoryWarningLink: {
+      en: "Import data",
+      zh: "导入数据",
+    },
+    singleCharOpt: { en: "Single", zh: "单人" },
+    teamOpt: { en: "Team", zh: "全队" },
+    passCarryInitial: { en: "Carry (Initial)", zh: "主C (初始)" },
+    passCarryRefine: { en: "Carry (Refine)", zh: "主C (精修)" },
+    passSupport: { en: "Support", zh: "辅助" },
+    passLabel: { en: "Pass {0}/{1}: {2}", zh: "阶段 {0}/{1}: {2}" },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },
