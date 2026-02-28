@@ -182,7 +182,7 @@ export function ArtifactDataContent({
 // When afterArtifact is undefined, shows a "?" placeholder
 // -----------------------------------------------------------------------------
 interface ArtifactComparisonContentProps {
-  beforeArtifact: ArtifactData;
+  beforeArtifact?: ArtifactData;
   afterArtifact?: ArtifactData;
   slot: Slot;
   showIcons?: boolean;
@@ -190,13 +190,18 @@ interface ArtifactComparisonContentProps {
   compact?: boolean;
 }
 
-/** Placeholder for unknown/missing artifact (e.g., FARM suggestions) */
+/** Placeholder for unknown/missing artifact (e.g., FARM suggestions or EQUIP empty slots) */
 function ArtifactPlaceholder({
+  label,
   showIcon = false,
   compact = false,
   fillWidth = false,
-}: { showIcon?: boolean; compact?: boolean; fillWidth?: boolean }) {
-  const { t } = useLanguage();
+}: {
+  label: string;
+  showIcon?: boolean;
+  compact?: boolean;
+  fillWidth?: boolean;
+}) {
   return (
     <div
       className={cn(
@@ -222,9 +227,7 @@ function ArtifactPlaceholder({
             compact ? "w-8 h-8" : "w-12 h-12"
           )}
         />
-        <span className="text-sm text-muted-foreground">
-          {t.ui("accountData.upgrade")}
-        </span>
+        <span className="text-sm text-muted-foreground">{label}</span>
       </div>
     </div>
   );
@@ -237,15 +240,25 @@ export function ArtifactComparisonContent({
   showIcons = false,
   compact = false,
 }: ArtifactComparisonContentProps) {
+  const { t } = useLanguage();
   return (
     <div className={cn("flex items-stretch gap-2", compact && "w-full")}>
-      <ArtifactDataContent
-        artifact={beforeArtifact}
-        slot={slot}
-        showIcon={showIcons}
-        compact={compact}
-        fillWidth={compact}
-      />
+      {beforeArtifact ? (
+        <ArtifactDataContent
+          artifact={beforeArtifact}
+          slot={slot}
+          showIcon={showIcons}
+          compact={compact}
+          fillWidth={compact}
+        />
+      ) : (
+        <ArtifactPlaceholder
+          label={t.ui("accountData.empty")}
+          showIcon={showIcons}
+          compact={compact}
+          fillWidth={compact}
+        />
+      )}
       <div className="flex items-center justify-center px-1 shrink-0">
         <ArrowRight className="w-5 h-5 text-muted-foreground" />
       </div>
@@ -259,6 +272,7 @@ export function ArtifactComparisonContent({
         />
       ) : (
         <ArtifactPlaceholder
+          label={t.ui("accountData.upgrade")}
           showIcon={showIcons}
           compact={compact}
           fillWidth={compact}
@@ -381,14 +395,14 @@ export function ArtifactDataHoverCard({
 }
 
 // -----------------------------------------------------------------------------
-// ArtifactComparisonHoverCard - Current→Upgrade hover card (used in InsightList)
-// When compareArtifact is undefined, shows just the single artifact
+// ArtifactComparisonHoverCard - Before→After hover card (used in InsightList)
+// Either side is optional: omit beforeArtifact for EQUIP (empty→artifact)
 // -----------------------------------------------------------------------------
 interface ArtifactComparisonHoverCardProps {
-  /** The current/equipped artifact (always present) */
-  artifact: ArtifactData;
-  /** The upgrade/new artifact (optional - when missing, shows only current artifact) */
-  compareArtifact?: ArtifactData;
+  /** The current/equipped artifact (optional - when missing, shows only the after artifact) */
+  beforeArtifact?: ArtifactData;
+  /** The upgrade/new artifact (optional - when missing, shows only the before artifact) */
+  afterArtifact?: ArtifactData;
   slot: Slot;
   children: ReactNode;
   /** Label for the current artifact (e.g., "Current") */
@@ -398,8 +412,8 @@ interface ArtifactComparisonHoverCardProps {
 }
 
 export function ArtifactComparisonHoverCard({
-  artifact,
-  compareArtifact,
+  beforeArtifact,
+  afterArtifact,
   slot,
   children,
   currentLabel,
@@ -480,8 +494,8 @@ export function ArtifactComparisonHoverCard({
             </div>
             {/* Comparison - full width */}
             <ArtifactComparisonContent
-              beforeArtifact={artifact}
-              afterArtifact={compareArtifact}
+              beforeArtifact={beforeArtifact}
+              afterArtifact={afterArtifact}
               slot={slot}
               showIcons
               compact
@@ -512,8 +526,8 @@ export function ArtifactComparisonHoverCard({
         className="w-auto max-w-none p-3 bg-slate-950/95 border border-slate-700 rounded-lg"
       >
         <ArtifactComparisonContent
-          beforeArtifact={artifact}
-          afterArtifact={compareArtifact}
+          beforeArtifact={beforeArtifact}
+          afterArtifact={afterArtifact}
           slot={slot}
           showIcons={false}
           compact={false}

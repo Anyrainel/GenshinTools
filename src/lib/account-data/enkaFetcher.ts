@@ -1,9 +1,4 @@
-import {
-  artifactIdMap,
-  characterIdMap,
-  statIdMap,
-  weaponIdMap,
-} from "@/data/enkaIdMap";
+import { statIdMap } from "@/data/enkaIdMap";
 import type {
   ConversionWarning,
   GOODData,
@@ -12,6 +7,54 @@ import type {
   IGOODSubstat,
   IGOODWeapon,
 } from "./goodConversion";
+
+// --- Reverse ID maps (built lazily from game JSON data) ---
+
+type IdEntry = { id: string };
+
+function buildReverseMap(
+  data: Record<string, IdEntry>
+): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const [key, entry] of Object.entries(data)) {
+    map[entry.id] = key;
+  }
+  return map;
+}
+
+let charIdToKey: Record<string, string> | null = null;
+let weaponIdToKey: Record<string, string> | null = null;
+let artifactIdToKey: Record<string, string> | null = null;
+
+async function ensureReverseMaps(): Promise<void> {
+  if (charIdToKey) return;
+
+  const [char4Mod, char5Mod, weaponMod, artifactMod] = await Promise.all([
+    import("@/data/game/character_4_en.json"),
+    import("@/data/game/character_5_en.json"),
+    import("@/data/game/weapon_en.json"),
+    import("@/data/game/artifact_en.json"),
+  ]);
+
+  charIdToKey = {
+    ...buildReverseMap(char4Mod.default as Record<string, IdEntry>),
+    ...buildReverseMap(char5Mod.default as Record<string, IdEntry>),
+  };
+
+  // Female Traveler (10000007) shares the same internal keys as male (10000005).
+  // Her depot IDs are offset by +200 (e.g. male 504 → female 704).
+  for (const [id, key] of Object.entries({ ...charIdToKey })) {
+    if (id.startsWith("10000005-")) {
+      const depotId = Number.parseInt(id.split("-")[1]);
+      charIdToKey[`10000007-${depotId + 200}`] = key;
+    }
+  }
+
+  weaponIdToKey = buildReverseMap(weaponMod.default as Record<string, IdEntry>);
+  artifactIdToKey = buildReverseMap(
+    artifactMod.default as Record<string, IdEntry>
+  );
+}
 
 export type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
 export type StatKey = string;
@@ -51,6 +94,7 @@ export interface ProfilePicture {
 
 export interface AvatarInfo {
   avatarId: number | string;
+  skillDepotId?: number;
   propMap?: Record<string, PropMapValue>;
   talentIdList?: number[];
   skillLevelMap?: Record<string, number>;
@@ -199,15 +243,6 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
   return data;
 }
 
-// Helper to normalize keys (PascalCase) from English Names
-// EnkaIdMap returns "English Name" (e.g. "Gladiator's Finale").
-// GOOD expects "GladiatorsFinale".
-function toPascalKey(name: string): string {
-  return name.replace(/[^a-zA-Z0-9]/g, "");
-}
-
-// Stat mapping is handled by statIdMap (ID -> StatKey)
-
 const SLOT_MAP: Record<string, SlotKey> = {
   EQUIP_BRACER: "flower",
   EQUIP_NECKLACE: "plume",
@@ -221,9 +256,35 @@ export interface EnkaConversionResult {
   warnings: ConversionWarning[];
 }
 
-export function convertEnkaToGOOD(
+/**
+ * Resolve an Enka avatar to an internal character key.
+ * Tries compound key (avatarId-skillDepotId) first for multi-element characters
+ * (Traveler, Manekin, Manekina), then falls back to bare avatarId.
+ */
+function resolveCharacterKey(avatar: AvatarInfo): string | undefined {
+  const avatarId = String(avatar.avatarId);
+
+  // If avatarId already contains a dash (compound key from Enka), try direct lookup
+  if (avatarId.includes("-")) {
+    return charIdToKey![avatarId];
+  }
+
+  // Try compound key with skillDepotId (for multi-element characters)
+  if (avatar.skillDepotId) {
+    const compoundKey = `${avatarId}-${avatar.skillDepotId}`;
+    const key = charIdToKey![compoundKey];
+    if (key) return key;
+  }
+
+  // Fall back to bare avatarId (works for regular single-element characters)
+  return charIdToKey![avatarId];
+}
+
+export async function convertEnkaToGOOD(
   enkaData: EnkaResponse
-): EnkaConversionResult {
+): Promise<EnkaConversionResult> {
+  await ensureReverseMaps();
+
   const characters: IGOODCharacter[] = [];
   const artifacts: IGOODArtifact[] = [];
   const weapons: IGOODWeapon[] = [];
@@ -232,10 +293,10 @@ export function convertEnkaToGOOD(
 
   if (enkaData.avatarInfoList) {
     for (const avatar of enkaData.avatarInfoList) {
-      const charId = String(avatar.avatarId);
-      const charName = characterIdMap[charId];
+      const charKey = resolveCharacterKey(avatar);
 
-      if (!charName) {
+      if (!charKey) {
+        const charId = String(avatar.avatarId);
         if (!seenIds.has(charId)) {
           console.warn(`Unknown character ID: ${charId}`);
           warnings.push({ type: "character", key: `ID:${charId}` });
@@ -244,22 +305,25 @@ export function convertEnkaToGOOD(
         continue;
       }
 
-      const charKey = toPascalKey(charName);
-
       // Character
       characters.push({
         key: charKey,
         level: Number(avatar.propMap?.["4001"]?.ival ?? 1),
         constellation: avatar.talentIdList?.length ?? 0,
         ascension: Number(avatar.propMap?.["1002"]?.ival ?? 0),
-        // Guess based on order
         talent: {
           auto:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[0]] ?? 1,
+            avatar.skillLevelMap?.[
+              Object.keys(avatar.skillLevelMap ?? {})[0]
+            ] ?? 1,
           skill:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[1]] ?? 1,
+            avatar.skillLevelMap?.[
+              Object.keys(avatar.skillLevelMap ?? {})[1]
+            ] ?? 1,
           burst:
-            avatar.skillLevelMap?.[Object.keys(avatar.skillLevelMap)[2]] ?? 1,
+            avatar.skillLevelMap?.[
+              Object.keys(avatar.skillLevelMap ?? {})[2]
+            ] ?? 1,
         },
       });
 
@@ -270,10 +334,10 @@ export function convertEnkaToGOOD(
 
           if (flat.itemType === "ITEM_WEAPON") {
             const weaponId = String(equip.itemId);
-            const weaponName = weaponIdMap[weaponId];
-            if (weaponName && equip.weapon) {
+            const weaponKey = weaponIdToKey![weaponId];
+            if (weaponKey && equip.weapon) {
               weapons.push({
-                key: toPascalKey(weaponName),
+                key: weaponKey,
                 level: equip.weapon.level ?? 1,
                 ascension: equip.weapon.promoteLevel ?? 0,
                 refinement:
@@ -283,7 +347,7 @@ export function convertEnkaToGOOD(
                 location: charKey,
                 lock: false,
               });
-            } else if (!weaponName) {
+            } else if (!weaponKey) {
               if (!seenIds.has(weaponId)) {
                 warnings.push({ type: "weapon", key: `ID:${weaponId}` });
                 seenIds.add(weaponId);
@@ -301,15 +365,14 @@ export function convertEnkaToGOOD(
               if (match) foundSetId = match[1];
             }
 
-            const setName = artifactIdMap[foundSetId];
-            if (setName) {
+            const setKey = artifactIdToKey![foundSetId];
+            if (setKey) {
               const slotKey = SLOT_MAP[flat.equipType || ""];
               const mainStatId = equip.reliquary.mainPropId;
               const mainStatKey = statIdMap[String(mainStatId)];
 
               const substats: IGOODSubstat[] = [];
 
-              // Use flat.reliquarySubstats
               if (flat.reliquarySubstats) {
                 for (const sub of flat.reliquarySubstats) {
                   const statKey = statIdMap[String(sub.appendPropId)];
@@ -323,11 +386,10 @@ export function convertEnkaToGOOD(
               }
 
               if (slotKey && mainStatKey) {
-                // Calculate totalRolls from appendPropIdList length if available
                 const totalRolls = equip.reliquary.appendPropIdList?.length;
 
                 artifacts.push({
-                  setKey: toPascalKey(setName),
+                  setKey,
                   slotKey,
                   level: (equip.reliquary.level ?? 1) - 1,
                   rarity: flat.rankLevel ?? 5,

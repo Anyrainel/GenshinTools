@@ -23,9 +23,21 @@ vi.mock("@/data/constants", () => ({
     SetC: 102,
   },
   artifactsById: {
-    SetA: { id: "SetA", imagePaths: { flower: "path/to/flowerA.png" } },
-    SetB: { id: "SetB", imagePaths: { flower: "path/to/flowerB.png" } },
-    SetC: { id: "SetC", imagePaths: { flower: "path/to/flowerC.png" } },
+    SetA: {
+      id: "SetA",
+      rarity: 5,
+      imagePaths: { flower: "path/to/flowerA.png" },
+    },
+    SetB: {
+      id: "SetB",
+      rarity: 5,
+      imagePaths: { flower: "path/to/flowerB.png" },
+    },
+    SetC: {
+      id: "SetC",
+      rarity: 5,
+      imagePaths: { flower: "path/to/flowerC.png" },
+    },
   },
 }));
 

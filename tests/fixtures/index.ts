@@ -196,6 +196,7 @@ export const createArtifactScoreResult = (
 ): ArtifactScoreResult => {
   const substat: SubstatScoreResult = {
     subScore: 45,
+    statCount: 0,
     slotSubScores: emptySlotScores(),
     slotMaxSubScores: emptySlotScores(),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

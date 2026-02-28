@@ -566,7 +566,15 @@ def main():
             )
         else:
             # Default: read artifact effect text from game JSON files
-            artifact_ids, model_i18n_artifacts = _load_artifact_data_from_json(game_dir)
+            # Use existing resources list order for artifact IDs (not JSON key order)
+            _, model_i18n_artifacts = _load_artifact_data_from_json(game_dir)
+            if artifact_data:
+                if isinstance(artifact_data[0], BaseModel):
+                    artifact_ids = [a.id for a in artifact_data]
+                else:
+                    artifact_ids = [a["id"] for a in artifact_data]  # type: ignore
+            else:
+                artifact_ids = list(model_i18n_artifacts.keys())
 
         if artifact_ids and model_i18n_artifacts:
             half_sets, half_sets_i18n = process_artifact_effects(

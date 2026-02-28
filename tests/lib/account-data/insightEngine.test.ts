@@ -32,6 +32,7 @@ function makeScoreResultFromWeights(
   return {
     substatScore: {
       subScore: 0,
+      statCount: 0,
       slotSubScores: emptySlotScores(),
       slotMaxSubScores: emptySlotScores(),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,6 +179,153 @@ describe("generateCharacterInsights", () => {
 
       // Should have at least one insight (SWAP) for the slots
       expect(result.insights.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("EQUIP strategy", () => {
+    it("suggests equipping an artifact from inventory when slot is empty", () => {
+      const candidate = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 10, cd: 20, "atk%": 10, er: 5 },
+        level: 20,
+      });
+
+      const char = makeCharacter({
+        key: "test_char",
+        artifacts: {}, // No artifacts equipped
+      });
+
+      const result = generateCharacterInsights(
+        char,
+        [candidate],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
+
+      const equip = result.insights.find((i) => i.type === "EQUIP");
+      expect(equip).toBeDefined();
+      expect(equip!.artifact?.id).toBe(candidate.id);
+      expect(equip!.compareArtifact).toBeUndefined();
+      expect(equip!.scoreDiff).toBeGreaterThan(0);
+    });
+
+    it("does not suggest equip when slot already has an artifact", () => {
+      const equipped = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 3, cd: 5, "atk%": 3, hp: 500 },
+        level: 20,
+      });
+      const candidate = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 14, cd: 28, "atk%": 14, er: 8 },
+        level: 20,
+      });
+
+      const char = makeCharacter({
+        key: "test_char",
+        artifacts: { flower: equipped },
+      });
+
+      const result = generateCharacterInsights(
+        char,
+        [candidate],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
+
+      const equip = result.insights.find((i) => i.type === "EQUIP");
+      expect(equip).toBeUndefined();
+    });
+
+    it("picks the best candidate when multiple are available", () => {
+      const ok = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 5, cd: 10, "atk%": 5, hp: 500 },
+        level: 20,
+      });
+      const great = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 14, cd: 28, "atk%": 14, er: 8 },
+        level: 20,
+      });
+
+      const char = makeCharacter({
+        key: "test_char",
+        artifacts: {}, // Empty
+      });
+
+      const result = generateCharacterInsights(
+        char,
+        [ok, great],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
+
+      const equip = result.insights.find((i) => i.type === "EQUIP");
+      expect(equip).toBeDefined();
+      expect(equip!.artifact?.id).toBe(great.id);
+    });
+
+    it("can steal from Pool-tier characters for empty slots", () => {
+      const poolArtifact = makeArtifact({
+        slotKey: "flower",
+        substats: { cr: 10, cd: 20, "atk%": 10, er: 5 },
+        level: 20,
+      });
+
+      const char = makeCharacter({ key: "test_char", artifacts: {} });
+
+      const tiers: TierAssignment = {
+        test_char: { tier: "S", position: 0 },
+        pool_donor: { tier: "Pool", position: 0 },
+      };
+
+      const result = generateCharacterInsights(
+        char,
+        [{ ...poolArtifact, location: "pool_donor" }],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        tiers
+      );
+
+      const equip = result.insights.find((i) => i.type === "EQUIP");
+      expect(equip).toBeDefined();
+      expect(equip!.isSteal).toBe(true);
+      expect(equip!.donorCharacterId).toBe("pool_donor");
+    });
+
+    it("returns no equip insight when no candidates match the slot", () => {
+      // Only plume candidates, but flower slot is empty
+      const candidate = makeArtifact({
+        slotKey: "plume",
+        mainStatKey: "atk",
+        substats: { cr: 10, cd: 20, "atk%": 10, er: 5 },
+        level: 20,
+      });
+
+      const char = makeCharacter({ key: "test_char", artifacts: {} });
+
+      const result = generateCharacterInsights(
+        char,
+        [candidate],
+        makeScoreResultFromWeights(CR_CD_WEIGHTS),
+        DEFAULT_GLOBAL,
+        DEFAULT_TIERS
+      );
+
+      // Should only get EQUIP for plume, not for flower (no matching candidate)
+      const flowerEquip = result.insights.find(
+        (i) => i.type === "EQUIP" && i.slot === "flower"
+      );
+      expect(flowerEquip).toBeUndefined();
+
+      const plumeEquip = result.insights.find(
+        (i) => i.type === "EQUIP" && i.slot === "plume"
+      );
+      expect(plumeEquip).toBeDefined();
     });
   });
 

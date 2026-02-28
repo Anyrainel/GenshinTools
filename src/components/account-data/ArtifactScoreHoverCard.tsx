@@ -88,24 +88,50 @@ export function ArtifactScoreHoverCard({
     setIsHovering(open);
   };
 
+  const { t } = useLanguage();
+
   // Show warning icon when scored using a non-matching artifact set
   const hasSetMismatch =
     score.buildMatch != null && score.buildMatch.setMatched === false;
 
+  const labelCn = cn(
+    "text-muted-foreground font-bold leading-none not-italic",
+    compact ? "text-xs" : "text-sm"
+  );
+
   const TriggerContent = (
-    <>
+    <div className="flex flex-col items-end gap-0 relative">
       {hasSetMismatch && (
         <Info
           className={cn(
-            "shrink-0 text-amber-400",
-            compact ? "w-3 h-3 mr-0.5" : "w-3.5 h-3.5 mr-1"
+            "shrink-0 text-amber-400 absolute -left-5 top-1/2 -translate-y-1/2",
+            compact ? "w-3 h-3" : "w-3.5 h-3.5"
           )}
         />
       )}
-      <span className="bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm pr-[2px]">
-        {score.substatScore.subScore.toFixed(0)}
-      </span>
-    </>
+      <div className="flex items-baseline gap-1">
+        <span className={labelCn}>{t.ui("accountData.statCount")}</span>
+        <span
+          className={cn(
+            "italic text-sky-300 drop-shadow-sm tracking-tighter leading-none font-extrabold pr-[2px]",
+            compact ? "text-lg" : "text-xl"
+          )}
+        >
+          {score.substatScore.statCount.toFixed(1)}
+        </span>
+      </div>
+      <div className="flex items-baseline gap-1">
+        <span className={labelCn}>{t.ui("accountData.score")}</span>
+        <span
+          className={cn(
+            "italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm tracking-tighter leading-none font-black pr-[2px]",
+            compact ? "text-2xl" : "text-3xl"
+          )}
+        >
+          {score.substatScore.subScore.toFixed(0)}
+        </span>
+      </div>
+    </div>
   );
 
   if (compact) {
@@ -224,7 +250,15 @@ function ArtifactScoreContent({
         <div className="flex gap-4 text-base text-slate-400 font-mono">
           <span className="flex gap-1">
             <span className="text-sm font-sans">
-              {t.ui("computeFilters.subStat")}:
+              {t.ui("accountData.statCount")}:
+            </span>
+            <span className="text-sky-300">
+              {artifactScore.substatScore.statCount.toFixed(1)}
+            </span>
+          </span>
+          <span className="flex gap-1">
+            <span className="text-sm font-sans">
+              {t.ui("accountData.score")}:
             </span>
             <span className="text-amber-200">
               {artifactScore.substatScore.subScore.toFixed(1)}
@@ -319,14 +353,14 @@ function ArtifactScoreContent({
       <table className="w-full text-base mt-1 border-collapse">
         <thead>
           <tr className="text-sm text-slate-400 border-b border-white/5">
-            <th className="text-left font-normal pb-2">
+            <th className="text-left font-normal pb-2 w-0">
               {t.ui("accountData.breakdownByStat")}
             </th>
-            <th className="text-right font-normal pb-2 pl-4">
-              {t.ui("computeFilters.subStat")}{" "}
-              <span className="text-xs opacity-70">
-                ({t.ui("accountData.valOverScore")})
-              </span>
+            <th className="text-right font-normal pb-2 w-1/2">
+              {t.ui("accountData.valOverScore")}
+            </th>
+            <th className="text-right font-normal pb-2 w-1/2">
+              {t.ui("accountData.score")}
             </th>
           </tr>
         </thead>
@@ -348,30 +382,41 @@ function ArtifactScoreContent({
 
               return (
                 <tr key={key}>
-                  <td className="py-1">
-                    <div className="flex items-center gap-2 whitespace-nowrap">
-                      <span className="text-gray-300">{t.statShort(key)}</span>
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground font-mono">
-                        {data.weight.toFixed(1)}
-                      </span>
-                    </div>
+                  <td className="py-1 text-gray-300 whitespace-nowrap">
+                    {t.statShort(key)}
                   </td>
 
-                  {/* Sub Stat Col */}
-                  <td className="text-right py-1 pl-4 font-mono text-gray-400 whitespace-nowrap">
+                  {/* Val / Count Col */}
+                  <td className="text-right py-1 font-mono text-gray-400 whitespace-nowrap">
                     {data.subValue > 0 ? (
                       <>
                         <span className="text-gray-300">
                           {formatValue(data.subValue)}
                         </span>
                         <span className="text-muted-foreground mx-1.5">/</span>
-                        <span className="text-amber-200">
-                          {data.subScore.toFixed(1)}
+                        <span className="text-sky-300">
+                          {data.subCount.toFixed(1)}
                         </span>
                       </>
                     ) : (
                       <span className="text-muted-foreground/30">-</span>
                     )}
+                  </td>
+
+                  {/* Score + Weight Col */}
+                  <td className="text-right py-1 font-mono whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground">
+                        {data.weight.toFixed(0)}
+                      </span>
+                      {data.subScore > 0 ? (
+                        <span className="text-amber-200">
+                          {data.subScore.toFixed(1)}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground/30">-</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

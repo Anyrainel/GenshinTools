@@ -11,6 +11,7 @@ import { render, screen } from "../../utils/render";
 const mockScoreResult: ArtifactScoreResult = {
   substatScore: {
     subScore: 45,
+    statCount: 0,
     slotSubScores: { flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0 },
     slotMaxSubScores: { flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0 },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

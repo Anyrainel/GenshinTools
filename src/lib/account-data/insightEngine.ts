@@ -26,6 +26,7 @@ import {
 } from "./artifactScore";
 
 export type InsightType =
+  | "EQUIP" // Empty slot: equip best available artifact
   | "SWAP" // Better artifact found (Inventory or Steal)
   | "UPGRADE" // Invest resources (Current or Inventory)
   | "REROLL" // Perfect base artifact (Reroll / Elixir candidate)
@@ -140,6 +141,43 @@ function filterCandidates(
 // ----------------------------------------------------------------------------
 // Strategy Evaluators
 // ----------------------------------------------------------------------------
+
+function evaluateEquip(
+  ctx: SlotContext,
+  candidates: CandidateArtifact[]
+): Insight | null {
+  const {
+    characterId,
+    slot,
+    equipped,
+    maxPotentialScore,
+    buildMatch,
+    globalConfig,
+  } = ctx;
+  if (equipped) return null; // Only for empty slots
+
+  let best: Insight | null = null;
+
+  for (const cand of candidates) {
+    const candScore = scoreSlot(cand, buildMatch.statWeights, globalConfig);
+    if (best && candScore <= (best.scoreDiff ?? 0)) continue;
+
+    best = {
+      type: "EQUIP",
+      characterId,
+      slot,
+      artifact: cand,
+      // No compareArtifact - slot is empty
+      scoreDiff: candScore,
+      maxPotentialScore,
+      efficiencyDiff: maxPotentialScore > 0 ? candScore / maxPotentialScore : 0,
+      isSteal: !!cand.location,
+      donorCharacterId: cand.location,
+    };
+  }
+
+  return best;
+}
 
 function evaluateFixMain(ctx: SlotContext): Insight | null {
   const { characterId, slot, equipped, buildMatch } = ctx;
@@ -443,18 +481,30 @@ export function generateCharacterInsights(
       tierAssignments
     );
 
-    const fixMain = evaluateFixMain(ctx);
-    const swap = evaluateSwap(ctx, candidates);
-    const upgrade = evaluateUpgrade(ctx, candidates);
-    const reroll = evaluateReroll(ctx);
-    const farm = evaluateFarm(ctx);
+    if (!equipped) {
+      // Empty slot: only EQUIP strategy applies
+      const equip = evaluateEquip(ctx, candidates);
+      if (equip) insights.push(equip);
+    } else {
+      const fixMain = evaluateFixMain(ctx);
+      const swap = evaluateSwap(ctx, candidates);
+      const upgrade = evaluateUpgrade(ctx, candidates);
+      const reroll = evaluateReroll(ctx);
+      const farm = evaluateFarm(ctx);
 
-    insights.push(...selectInsights(fixMain, swap, upgrade, reroll, farm));
+      insights.push(...selectInsights(fixMain, swap, upgrade, reroll, farm));
+    }
   }
 
   return {
     characterId: char.key,
-    insights: insights.sort((a, b) => (b.scoreDiff ?? 0) - (a.scoreDiff ?? 0)),
+    insights: insights.sort((a, b) => {
+      // EQUIP always floats to top (empty slots are highest priority)
+      const aEquip = a.type === "EQUIP" ? 1 : 0;
+      const bEquip = b.type === "EQUIP" ? 1 : 0;
+      if (aEquip !== bEquip) return bEquip - aEquip;
+      return (b.scoreDiff ?? 0) - (a.scoreDiff ?? 0);
+    }),
     totalPotentialGain: 0,
   };
 }

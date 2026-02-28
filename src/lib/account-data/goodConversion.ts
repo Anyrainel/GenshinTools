@@ -155,9 +155,14 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
   if (Array.isArray(data.characters)) {
     for (const char of data.characters) {
       let key = char.key;
-      // Special handling for Traveler
+      // Fallback for third-party GOOD imports that use bare names
+      // without element suffixes for multi-element characters
       if (key === "Traveler") {
         key = "Traveler (Anemo)";
+      } else if (key === "Manekin") {
+        key = "Manekin (Pyro)";
+      } else if (key === "Manekina") {
+        key = "Manekina (Pyro)";
       }
 
       const normalizedKey = normalize(key);
@@ -198,6 +203,8 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
         if (wp.location) {
           let charKey = wp.location;
           if (charKey === "Traveler") charKey = "Traveler (Anemo)";
+          else if (charKey === "Manekin") charKey = "Manekin (Pyro)";
+          else if (charKey === "Manekina") charKey = "Manekina (Pyro)";
           const locationId = charMap.get(normalize(charKey));
 
           if (locationId && charactersMap.has(locationId)) {
@@ -296,6 +303,8 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
           if (art.location) {
             let charKey = art.location;
             if (charKey === "Traveler") charKey = "Traveler (Anemo)";
+            else if (charKey === "Manekin") charKey = "Manekin (Pyro)";
+            else if (charKey === "Manekina") charKey = "Manekina (Pyro)";
             const locationId = charMap.get(normalize(charKey));
 
             if (locationId && charactersMap.has(locationId)) {

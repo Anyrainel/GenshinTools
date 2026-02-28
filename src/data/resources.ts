@@ -1295,52 +1295,44 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
   {
     "id": "atk%-18",
     "setIds": [
-      "vermillion_hereafter",
-      "unfinished_reverie",
-      "shimenawas_reminiscence",
-      "resolution_of_sojourner",
-      "nighttime_whispers_in_the_echoing_woods",
-      "gladiators_finale",
-      "fragment_of_harmonic_whimsy",
-      "echoes_of_an_offering",
       "brave_heart",
+      "echoes_of_an_offering",
+      "resolution_of_sojourner",
+      "gladiators_finale",
+      "vermillion_hereafter",
+      "shimenawas_reminiscence",
+      "nighttime_whispers_in_the_echoing_woods",
+      "fragment_of_harmonic_whimsy",
+      "unfinished_reverie",
       "a_day_carved_from_rising_winds"
     ]
   },
   {
     "id": "em-80",
     "setIds": [
-      "wanderers_troupe",
-      "night_of_the_skys_unveiling",
       "instructor",
+      "wanderers_troupe",
       "gilded_dreams",
       "flower_of_paradise_lost",
+      "night_of_the_skys_unveiling",
       "aubade_of_morningstar_and_moon"
     ]
   },
   {
     "id": "er-20",
     "setIds": [
-      "the_exile",
-      "silken_moons_serenade",
       "scholar",
-      "emblem_of_severed_fate"
-    ]
-  },
-  {
-    "id": "cryo%-15",
-    "setIds": [
-      "glacier_and_snowfield",
-      "finale_of_the_deep_galleries",
-      "blizzard_strayer"
+      "the_exile",
+      "emblem_of_severed_fate",
+      "silken_moons_serenade"
     ]
   },
   {
     "id": "heal%-15",
     "setIds": [
-      "song_of_days_past",
       "oceanhued_clam",
-      "maiden_beloved"
+      "maiden_beloved",
+      "song_of_days_past"
     ]
   },
   {
@@ -1348,6 +1340,13 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
     "setIds": [
       "viridescent_venerer",
       "desert_pavilion_chronicle"
+    ]
+  },
+  {
+    "id": "cryo%-15",
+    "setIds": [
+      "blizzard_strayer",
+      "finale_of_the_deep_galleries"
     ]
   },
   {
@@ -1360,15 +1359,15 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
   {
     "id": "hp%-20",
     "setIds": [
-      "vourukashas_glow",
-      "tenacity_of_the_millelith"
+      "tenacity_of_the_millelith",
+      "vourukashas_glow"
     ]
   },
   {
     "id": "hydro%-15",
     "setIds": [
-      "nymphs_dream",
-      "heart_of_depth"
+      "heart_of_depth",
+      "nymphs_dream"
     ]
   },
   {
@@ -1381,15 +1380,15 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
   {
     "id": "phys%-25",
     "setIds": [
-      "pale_flame",
-      "bloodstained_chivalry"
+      "bloodstained_chivalry",
+      "pale_flame"
     ]
   },
   {
     "id": "skill-dmg%-20",
     "setIds": [
-      "golden_troupe",
-      "gambler"
+      "gambler",
+      "golden_troupe"
     ]
   },
   {

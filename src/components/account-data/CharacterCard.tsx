@@ -225,25 +225,12 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
 
         {/* Artifact Score */}
         {artifactScore.substatScore.isComplete && (
-          <div className="flex flex-col gap-0 items-end leading-none mr-2">
-            <span
-              className={cn(
-                "text-muted-foreground font-bold leading-none",
-                isVeryNarrow ? "text-xs" : "text-sm"
-              )}
-            >
-              {t.ui("accountData.score")}
-            </span>
-            <ArtifactScoreHoverCard
-              score={artifactScore}
-              characterId={char.key}
-              className={cn(
-                "italic tracking-tighter leading-none",
-                isVeryNarrow ? "text-2xl font-extrabold" : "text-3xl font-black"
-              )}
-              compact={isVeryNarrow}
-            />
-          </div>
+          <ArtifactScoreHoverCard
+            score={artifactScore}
+            characterId={char.key}
+            className="leading-none mr-2"
+            compact={isVeryNarrow}
+          />
         )}
       </div>
 

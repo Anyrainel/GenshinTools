@@ -27,6 +27,7 @@ const mockArtifact: ArtifactData = {
 const mockScoreResult: ArtifactScoreResult = {
   substatScore: {
     subScore: 25.0,
+    statCount: 0,
     isComplete: true,
     slotSubScores: { flower: 0, plume: 0, sands: 25.0, goblet: 0, circlet: 0 },
     slotMaxSubScores: {
@@ -38,11 +39,11 @@ const mockScoreResult: ArtifactScoreResult = {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     statScores: {
-      er: { weight: 1.5, subValue: 0, subScore: 0 },
-      cr: { weight: 2.0, subValue: 7.8, subScore: 8.0 },
-      cd: { weight: 2.0, subValue: 14.8, subScore: 10.0 },
-      hp: { weight: 0, subValue: 508, subScore: 0 },
-      "hp%": { weight: 0.5, subValue: 9.3, subScore: 2.0 },
+      er: { weight: 1.5, subValue: 0, subScore: 0, subCount: 0 },
+      cr: { weight: 2.0, subValue: 7.8, subScore: 8.0, subCount: 0 },
+      cd: { weight: 2.0, subValue: 14.8, subScore: 10.0, subCount: 0 },
+      hp: { weight: 0, subValue: 508, subScore: 0, subCount: 0 },
+      "hp%": { weight: 0.5, subValue: 9.3, subScore: 2.0, subCount: 0 },
     } as Record<SubStat, StatScoreBreakdown>,
   },
   buildMatch: null,

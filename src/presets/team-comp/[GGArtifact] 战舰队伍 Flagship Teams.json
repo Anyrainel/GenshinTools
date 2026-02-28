@@ -1,6 +1,74 @@
 {
   "teams": [
     {
+      "id": "team-1772266753379",
+      "name": "",
+      "characters": ["varka", "durin", "venti", "bennett"],
+      "weapons": [
+        "gest_of_the_mighty_wolf",
+        "athame_artis",
+        "elegy_for_the_end",
+        "skyward_blade"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "a_day_carved_from_rising_winds"
+        },
+        {
+          "type": "4pc",
+          "setId": "viridescent_venerer"
+        },
+        {
+          "type": "4pc",
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["swirl"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
+      "id": "team-1771847983691",
+      "name": "",
+      "characters": ["zibai", "illuga", "columbina", "gorou"],
+      "weapons": [
+        "lightbearing_moonshard",
+        "favonius_lance",
+        "nocturnes_curtain_call",
+        "favonius_warbow"
+      ],
+      "artifacts": [
+        {
+          "type": "4pc",
+          "setId": "night_of_the_skys_unveiling"
+        },
+        {
+          "type": "4pc",
+          "setId": "silken_moons_serenade"
+        },
+        {
+          "type": "4pc",
+          "setId": "aubade_of_morningstar_and_moon"
+        },
+        {
+          "type": "4pc",
+          "setId": "instructor"
+        }
+      ],
+      "reactions": ["lunarCrystallize"],
+      "opts": {},
+      "targetEr": {},
+      "selectedFormula": null,
+      "optimizationResult": null
+    },
+    {
       "id": "team-1771643514235",
       "name": "",
       "characters": ["nefer", "lauma", "columbina", "nilou"],
@@ -79,40 +147,6 @@
       "optimizationResult": null
     },
     {
-      "id": "team-1771847983691",
-      "name": "",
-      "characters": ["zibai", "illuga", "columbina", "gorou"],
-      "weapons": [
-        "lightbearing_moonshard",
-        "favonius_lance",
-        "nocturnes_curtain_call",
-        "favonius_warbow"
-      ],
-      "artifacts": [
-        {
-          "type": "4pc",
-          "setId": "night_of_the_skys_unveiling"
-        },
-        {
-          "type": "4pc",
-          "setId": "silken_moons_serenade"
-        },
-        {
-          "type": "4pc",
-          "setId": "aubade_of_morningstar_and_moon"
-        },
-        {
-          "type": "4pc",
-          "setId": "instructor"
-        }
-      ],
-      "reactions": ["lunarCrystallize"],
-      "opts": {},
-      "targetEr": {},
-      "selectedFormula": null,
-      "optimizationResult": null
-    },
-    {
       "id": "team-1771848139764",
       "name": "",
       "characters": ["venti", "durin", "bennett", "faruzan"],
@@ -140,7 +174,7 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": [],
+      "reactions": ["swirl"],
       "opts": {},
       "targetEr": {},
       "selectedFormula": null,

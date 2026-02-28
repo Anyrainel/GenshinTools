@@ -152,6 +152,11 @@ def extract_unique_2pc_effects(
                 "zh": normalized_zh,
             }
 
+    # Sort setIds in reverse order of the main resources list
+    artifact_order = {aid: i for i, aid in enumerate(artifact_ids)}
+    for hs in half_sets:
+        hs.setIds.sort(key=lambda sid: artifact_order.get(sid, 0), reverse=True)
+
     half_sets.sort(key=lambda hs: (-len(hs.setIds), hs.id))
 
     return half_sets, half_sets_i18n

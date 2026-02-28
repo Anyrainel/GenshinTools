@@ -1,4 +1,8 @@
-import { artifactIdToHalfSetId, statPools } from "@/data/constants";
+import {
+  artifactIdToHalfSetId,
+  maxSubstatRolls,
+  statPools,
+} from "@/data/constants";
 import type {
   ArtifactData,
   Build,
@@ -86,12 +90,14 @@ export function getFixedMainStatValue(key: MainStat, rarity: number): number {
 export interface StatScoreBreakdown {
   subValue: number;
   subScore: number;
+  subCount: number;
   weight: number;
 }
 
 /** Result of substat scoring only. Slot maps use Record<Slot, number> with 0 for unequipped. */
 export interface SubstatScoreResult {
   subScore: number;
+  statCount: number;
   slotSubScores: Record<Slot, number>;
   slotMaxSubScores: Record<Slot, number>;
   statScores: Record<SubStat, StatScoreBreakdown>;
@@ -282,7 +288,10 @@ function matchMainStats(
   for (const slot of mainStatSlots) {
     const artifact = artifacts[slot];
     if (!artifact) continue;
-    if (build[slot].includes(artifact.mainStatKey)) {
+    if (
+      build[slot].length === 0 ||
+      build[slot].includes(artifact.mainStatKey)
+    ) {
       match++;
     } else {
       mismatches.push({
@@ -420,7 +429,7 @@ export function scoreAllSlots(
   const statScores = Object.fromEntries(
     SUB_STATS.map((key) => {
       const { weight } = calculateStatScore(key, 0, weights, globalConfig);
-      return [key, { subValue: 0, subScore: 0, weight }];
+      return [key, { subValue: 0, subScore: 0, subCount: 0, weight }];
     })
   ) as Record<SubStat, StatScoreBreakdown>;
 
@@ -431,6 +440,7 @@ export function scoreAllSlots(
     allSlots.map((s) => [s, 0])
   ) as Record<Slot, number>;
   let subScore = 0;
+  let statCount = 0;
   let equippedCount = 0;
 
   for (const slot of allSlots) {
@@ -439,18 +449,26 @@ export function scoreAllSlots(
 
     equippedCount++;
     let slotSub = 0;
+    const rarity = artifact.rarity === 4 ? 4 : 5;
 
     for (const [key, val] of Object.entries(artifact.substats ?? {})) {
-      const { score } = calculateStatScore(
-        key as SubStat,
-        val,
-        weights,
-        globalConfig
-      );
+      const stat = key as SubStat;
+      const { score } = calculateStatScore(stat, val, weights, globalConfig);
       slotSub += score;
       subScore += score;
-      statScores[key as SubStat].subValue += val;
-      statScores[key as SubStat].subScore += score;
+      statScores[stat].subValue += val;
+      statScores[stat].subScore += score;
+
+      // Compute roll count for stats with positive weight
+      if ((weights[stat] ?? 0) > 0) {
+        const maxRoll =
+          maxSubstatRolls[rarity as keyof typeof maxSubstatRolls]?.[stat];
+        if (maxRoll) {
+          const count = val / (0.85 * maxRoll);
+          statScores[stat].subCount += count;
+          statCount += count;
+        }
+      }
     }
 
     slotSubScores[slot] = slotSub;
@@ -466,6 +484,7 @@ export function scoreAllSlots(
 
   return {
     subScore,
+    statCount,
     slotSubScores,
     slotMaxSubScores,
     statScores,

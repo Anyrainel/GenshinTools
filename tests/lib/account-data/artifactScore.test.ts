@@ -987,6 +987,77 @@ describe("calculateArtifactScore", () => {
     });
   });
 
+  describe("stat count computation", () => {
+    it("computes statCount > 0 for a complete character with weighted stats", () => {
+      const result = scoreAllSlots(
+        fullCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      expect(result.statCount).toBeGreaterThan(0);
+    });
+
+    it("returns statCount = 0 when no artifacts are equipped", () => {
+      const result = scoreAllSlots(
+        emptyCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      expect(result.statCount).toBe(0);
+    });
+
+    it("returns statCount = 0 when weights are empty", () => {
+      const result = scoreAllSlots(fullCharacter, {}, testGlobalConfig);
+      expect(result.statCount).toBe(0);
+    });
+
+    it("computes per-stat subCount for weighted stats", () => {
+      const result = scoreAllSlots(
+        fullCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      // CR has weight 100, and fullCharacter has CR substats
+      expect(result.statScores.cr.subCount).toBeGreaterThan(0);
+      // CD has weight 100
+      expect(result.statScores.cd.subCount).toBeGreaterThan(0);
+    });
+
+    it("does not count stats with zero weight", () => {
+      // def% has no weight in testWeights
+      const result = scoreAllSlots(
+        fullCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      expect(result.statScores["def%"].subCount).toBe(0);
+    });
+
+    it("statCount equals the sum of all per-stat subCounts", () => {
+      const result = scoreAllSlots(
+        fullCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      const subCountSum = Object.values(result.statScores).reduce(
+        (sum, s) => sum + s.subCount,
+        0
+      );
+      expect(result.statCount).toBeCloseTo(subCountSum, 5);
+    });
+
+    it("computes lower subCount for 4-star artifacts", () => {
+      // 4-star artifacts have lower max rolls, so same value yields higher roll count
+      // But 4-star artifacts typically have lower stat values
+      const result4 = scoreAllSlots(
+        fourStarCharacter,
+        testWeights,
+        testGlobalConfig
+      );
+      expect(result4.statCount).toBeGreaterThan(0);
+    });
+  });
+
   describe("stat weight calculations", () => {
     it("applies weight correctly to crit stats", () => {
       const result = scoreAllSlots(

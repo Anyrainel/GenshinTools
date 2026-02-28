@@ -74,7 +74,7 @@
     },
     "aino": {
       "tier": "D",
-      "position": 16
+      "position": 17
     },
     "mona": {
       "tier": "D",
@@ -299,6 +299,22 @@
     "illuga": {
       "tier": "B",
       "position": 2
+    },
+    "varka": {
+      "tier": "S",
+      "position": 9
+    },
+    "tartaglia": {
+      "tier": "D",
+      "position": 16
+    },
+    "dahlia": {
+      "tier": "D",
+      "position": 18
+    },
+    "beidou": {
+      "tier": "D",
+      "position": 19
     }
   },
   "tierCustomization": {

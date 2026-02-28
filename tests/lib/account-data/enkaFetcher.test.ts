@@ -26,9 +26,6 @@ describe("enka", () => {
           "Invalid UID format"
         );
       });
-
-      // Note: Actual fetch tests would require mocking global.fetch
-      // which is complex and may be added later if needed
     });
   });
 
@@ -44,12 +41,12 @@ describe("enka", () => {
       ...overrides,
     });
 
-    it("returns valid GOOD structure for empty avatar list", () => {
+    it("returns valid GOOD structure for empty avatar list", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [],
       });
 
-      const { data: result } = convertEnkaToGOOD(enkaData);
+      const { data: result } = await convertEnkaToGOOD(enkaData);
 
       expect(result.format).toBe("GOOD");
       expect(result.version).toBe(3);
@@ -59,12 +56,12 @@ describe("enka", () => {
       expect(result.weapons).toEqual([]);
     });
 
-    it("returns valid GOOD structure when avatarInfoList is undefined", () => {
+    it("returns valid GOOD structure when avatarInfoList is undefined", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: undefined,
       });
 
-      const { data: result } = convertEnkaToGOOD(enkaData);
+      const { data: result } = await convertEnkaToGOOD(enkaData);
 
       expect(result.format).toBe("GOOD");
       expect(result.characters).toEqual([]);
@@ -72,9 +69,7 @@ describe("enka", () => {
       expect(result.weapons).toEqual([]);
     });
 
-    it("correctly converts character data", () => {
-      // This test uses a known character ID from enkaIdMap
-      // ID "10000078" is Alhaitham based on common Enka mappings
+    it("correctly converts character data", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [
           {
@@ -94,32 +89,35 @@ describe("enka", () => {
         ],
       });
 
-      const { data: result } = convertEnkaToGOOD(enkaData);
+      const { data: result } = await convertEnkaToGOOD(enkaData);
 
-      // If character ID is in the map, it should be converted
-      // If not, the character array would be empty (skipped with warning)
-      // We test the structure regardless
-      expect(Array.isArray(result.characters)).toBe(true);
+      expect(result.characters).toHaveLength(1);
+      expect(result.characters![0].key).toBe("alhaitham");
+      expect(result.characters![0].level).toBe(90);
+      expect(result.characters![0].constellation).toBe(3);
+      expect(result.characters![0].talent).toEqual({
+        auto: 10,
+        skill: 9,
+        burst: 8,
+      });
     });
 
-    it("handles missing propMap gracefully", () => {
+    it("handles missing propMap gracefully", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [
           {
             avatarId: 10000078,
-            // propMap is missing
             equipList: [],
           },
         ],
       });
 
-      const { data: result } = convertEnkaToGOOD(enkaData);
+      const { data: result } = await convertEnkaToGOOD(enkaData);
 
-      // Should not throw
       expect(result.format).toBe("GOOD");
     });
 
-    it("handles missing skillLevelMap gracefully", () => {
+    it("handles missing skillLevelMap gracefully", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [
           {
@@ -127,19 +125,17 @@ describe("enka", () => {
             propMap: {
               "4001": { ival: "90" },
             },
-            // skillLevelMap is missing
             equipList: [],
           },
         ],
       });
 
-      const { data: result } = convertEnkaToGOOD(enkaData);
+      const { data: result } = await convertEnkaToGOOD(enkaData);
 
-      // Should not throw
       expect(result.format).toBe("GOOD");
     });
 
-    it("skips unknown character IDs", () => {
+    it("skips unknown character IDs", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [
           {
@@ -150,19 +146,90 @@ describe("enka", () => {
         ],
       });
 
-      const { data: result, warnings } = convertEnkaToGOOD(enkaData);
+      const { data: result, warnings } = await convertEnkaToGOOD(enkaData);
 
-      // Unknown characters should be skipped
       expect(result.characters?.length ?? 0).toBe(0);
-
-      // Should report warning
       expect(warnings.length).toBeGreaterThan(0);
       expect(warnings[0].type).toBe("character");
       expect(warnings[0].key).toContain("ID:99999999");
     });
 
+    describe("multi-element character resolution", () => {
+      it("resolves Traveler element via skillDepotId", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000005, // Male Traveler
+              skillDepotId: 507, // Electro
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters).toHaveLength(1);
+        expect(result.characters![0].key).toBe("traveler_electro");
+      });
+
+      it("resolves female Traveler to same internal key", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000007, // Female Traveler
+              skillDepotId: 708, // Dendro (female depot = male 508 + 200)
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters).toHaveLength(1);
+        expect(result.characters![0].key).toBe("traveler_dendro");
+      });
+
+      it("resolves Manekin element via skillDepotId", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000117, // Manekin
+              skillDepotId: 11706, // Anemo
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters).toHaveLength(1);
+        expect(result.characters![0].key).toBe("manekin_anemo");
+      });
+
+      it("resolves Manekina element via skillDepotId", async () => {
+        const enkaData = createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000118, // Manekina
+              skillDepotId: 11803, // Hydro
+              propMap: { "4001": { ival: "90" } },
+              equipList: [],
+            },
+          ],
+        });
+
+        const { data: result } = await convertEnkaToGOOD(enkaData);
+
+        expect(result.characters).toHaveLength(1);
+        expect(result.characters![0].key).toBe("manekina_hydro");
+      });
+    });
+
     describe("weapon conversion", () => {
-      it("correctly converts equipped weapons", () => {
+      it("correctly converts equipped weapons", async () => {
         const enkaData = createMinimalEnkaResponse({
           avatarInfoList: [
             {
@@ -190,18 +257,18 @@ describe("enka", () => {
           ],
         });
 
-        const { data: result } = convertEnkaToGOOD(enkaData);
+        const { data: result } = await convertEnkaToGOOD(enkaData);
 
         expect(result.weapons!.length).toBe(1);
-        expect(result.weapons![0].key).toBe("StaffofHoma");
+        expect(result.weapons![0].key).toBe("staff_of_homa");
         expect(result.weapons![0].level).toBe(90);
         expect(result.weapons![0].refinement).toBe(1);
-        expect(result.weapons![0].location).toBe("HuTao");
+        expect(result.weapons![0].location).toBe("hu_tao");
       });
     });
 
     describe("artifact conversion", () => {
-      it("correctly converts equipped artifacts with substats", () => {
+      it("correctly converts equipped artifacts with substats", async () => {
         const enkaData = createMinimalEnkaResponse({
           avatarInfoList: [
             {
@@ -236,11 +303,11 @@ describe("enka", () => {
           ],
         });
 
-        const { data: result } = convertEnkaToGOOD(enkaData);
+        const { data: result } = await convertEnkaToGOOD(enkaData);
 
         expect(result.artifacts!.length).toBe(1);
         const artifact = result.artifacts![0];
-        expect(artifact.setKey).toBe("CrimsonWitchofFlames");
+        expect(artifact.setKey).toBe("crimson_witch_of_flames");
         expect(artifact.level).toBe(20);
         expect(artifact.rarity).toBe(5);
         expect(artifact.substats.length).toBe(4);
@@ -248,8 +315,7 @@ describe("enka", () => {
         expect(artifact.substats[0].value).toBe(10.5);
       });
 
-      it("correctly maps artifact slots", () => {
-        // Test all 5 slots
+      it("correctly maps artifact slots", async () => {
         const slots = [
           { equipType: "EQUIP_BRACER", expectedSlot: "flower" },
           { equipType: "EQUIP_NECKLACE", expectedSlot: "plume" },
@@ -285,13 +351,13 @@ describe("enka", () => {
             ],
           });
 
-          const { data: result } = convertEnkaToGOOD(enkaData);
+          const { data: result } = await convertEnkaToGOOD(enkaData);
           expect(result.artifacts!.length).toBe(1);
           expect(result.artifacts![0].slotKey).toBe(expectedSlot);
         }
       });
 
-      it("correctly maps main stats", () => {
+      it("correctly maps main stats", async () => {
         const mainStats = [
           { propId: 14001, expected: "hp" }, // Flower
           { propId: 15003, expected: "atk" }, // Plume
@@ -327,7 +393,7 @@ describe("enka", () => {
             ],
           });
 
-          const { data: result } = convertEnkaToGOOD(enkaData);
+          const { data: result } = await convertEnkaToGOOD(enkaData);
           expect(result.artifacts!.length).toBe(1);
           expect(result.artifacts![0].mainStatKey).toBe(expected);
         }

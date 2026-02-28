@@ -180,17 +180,12 @@ function RecommendationCardComponent({
             })()}
 
           {/* Artifact Score - Bottom Right */}
-          {score?.substatScore.isComplete && (
-            <div className="flex flex-col gap-0 items-end justify-end leading-none shrink-0 self-end pb-2">
-              <span className="text-muted-foreground font-bold text-xs leading-none">
-                {t.ui("accountData.score")}
-              </span>
-              <ArtifactScoreHoverCard
-                score={score}
-                characterId={char.key}
-                className="italic tracking-tighter leading-none text-2xl font-extrabold mt-1"
-              />
-            </div>
+          {score && (
+            <ArtifactScoreHoverCard
+              score={score}
+              characterId={char.key}
+              className="leading-none shrink-0 self-end pb-2"
+            />
           )}
         </div>
 

@@ -187,7 +187,6 @@ export default function AccountDataPage() {
     setLastUid,
     scores,
     setScores,
-    isScoresStale,
   } = useAccountStore();
 
   // Start tour on first visit (after a short delay for page to render)
@@ -222,10 +221,7 @@ export default function AccountDataPage() {
   }, [buildGroups]);
 
   useEffect(() => {
-    const hasData = accountData && accountData.characters.length > 0;
-    const missingScores = hasData && Object.keys(scores).length === 0;
-
-    if ((isScoresStale || missingScores) && accountData) {
+    if (accountData && accountData.characters.length > 0) {
       const timer = setTimeout(() => {
         const results: Record<string, ArtifactScoreResult> = {};
         for (const char of accountData.characters) {
@@ -236,14 +232,7 @@ export default function AccountDataPage() {
       }, 50); // Short delay to yield to main thread (click/nav animations)
       return () => clearTimeout(timer);
     }
-  }, [
-    isScoresStale,
-    scores,
-    accountData,
-    scoreConfig,
-    setScores,
-    resolvedBuildsMap,
-  ]);
+  }, [accountData, scoreConfig, setScores, resolvedBuildsMap]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -330,7 +319,7 @@ export default function AccountDataPage() {
     try {
       setLastUid(uid); // Save UID to store
       const rawData = await fetchEnkaData(uid);
-      const enkaResult = convertEnkaToGOOD(rawData);
+      const enkaResult = await convertEnkaToGOOD(rawData);
       const result = convertGOODToAccountData(enkaResult.data);
       const newData = result.data;
 

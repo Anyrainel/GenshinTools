@@ -74,7 +74,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
     for (const char of accountData.characters) {
       const scoreResult = scores[char.key];
-      if (!scoreResult || !scoreResult.substatScore.isComplete) continue;
+      if (!scoreResult) continue;
 
       const assignment = tierAssignments[char.key];
       const tier = assignment ? assignment.tier : "Pool";

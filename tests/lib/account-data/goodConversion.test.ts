@@ -139,6 +139,68 @@ describe("convertGOODToAccountData", () => {
       const result = convertGOODToAccountData(travelerData);
       expect(result.data.characters.length).toBeGreaterThanOrEqual(0);
     });
+
+    it("handles bare Manekin key (third-party GOOD import)", () => {
+      const data: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        characters: [
+          { key: "Manekin", level: 90, constellation: 0, ascension: 6 },
+        ],
+      };
+      const result = convertGOODToAccountData(data);
+      // Should default to Pyro variant
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("manekin_pyro");
+    });
+
+    it("handles bare Manekina key (third-party GOOD import)", () => {
+      const data: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "Test",
+        characters: [
+          { key: "Manekina", level: 90, constellation: 0, ascension: 6 },
+        ],
+      };
+      const result = convertGOODToAccountData(data);
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("manekina_pyro");
+    });
+
+    it("handles element-specific Manekin key from Enka conversion", () => {
+      const data: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "enka",
+        characters: [
+          { key: "manekin_anemo", level: 90, constellation: 0, ascension: 6 },
+        ],
+      };
+      const result = convertGOODToAccountData(data);
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("manekin_anemo");
+    });
+
+    it("handles element-specific Traveler key from Enka conversion", () => {
+      const data: GOODData = {
+        format: "GOOD",
+        version: 1,
+        source: "enka",
+        characters: [
+          {
+            key: "traveler_dendro",
+            level: 90,
+            constellation: 0,
+            ascension: 6,
+          },
+        ],
+      };
+      const result = convertGOODToAccountData(data);
+      expect(result.data.characters).toHaveLength(1);
+      expect(result.data.characters[0].key).toBe("traveler_dendro");
+    });
   });
 
   describe("conversion warnings", () => {

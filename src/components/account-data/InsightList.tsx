@@ -12,6 +12,7 @@ import {
   ArrowRight,
   ArrowRightLeft,
   CircleHelp,
+  CirclePlus,
   Dices,
   PartyPopper,
   Pickaxe,
@@ -49,25 +50,6 @@ function getScoreDiffBorderColor(
 export function InsightList({ insights, isComplete }: InsightListProps) {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
-
-  // Show warning for incomplete artifact sets
-  if (isComplete === false) {
-    return (
-      <div className="flex items-center justify-center gap-3 px-4 py-3 border-t border-amber-500/10">
-        <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-          <ShieldAlert className="w-4 h-4 text-amber-400" />
-        </div>
-        <div className="min-w-0">
-          <div className="text-sm font-medium text-foreground">
-            {t.ui("accountData.insights.incomplete")}
-          </div>
-          <div className="text-xs text-muted-foreground">
-            {t.ui("accountData.insights.incompleteDescription")}
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // Show celebration for no suggestions
   if (!insights.length) {
@@ -176,6 +158,20 @@ function InsightItem({ insight }: { insight: Insight }) {
     subtitle,
   } = useMemo(() => {
     switch (insight.type) {
+      case "EQUIP":
+        return {
+          icon: CirclePlus,
+          color: "text-teal-400",
+          iconBg: "bg-teal-800/30",
+          label: t.ui("accountData.insights.equip"),
+          subtitle:
+            insight.isSteal && insight.donorCharacterId
+              ? t.format(
+                  "accountData.insights.fromCharacter",
+                  t.character(insight.donorCharacterId)
+                )
+              : t.ui("accountData.insights.fromInventory"),
+        };
       case "UPGRADE":
         return {
           icon: ArrowBigUpDash,
@@ -267,7 +263,9 @@ function InsightItem({ insight }: { insight: Insight }) {
   const artInfo = artifactsById[insight.artifact.setKey];
 
   // Determine if this is a swap/replacement scenario (has both before and after artifacts)
+  const isEquipEmpty = insight.type === "EQUIP";
   const hasSwap =
+    isEquipEmpty ||
     insight.type === "SWAP" ||
     (insight.type === "UPGRADE" && !insight.isEquipped);
 
@@ -316,13 +314,14 @@ function InsightItem({ insight }: { insight: Insight }) {
 
       {/* Text Info - 3-Row Layout */}
       <div className="flex-1 min-w-0">
-        {/* Row 1: Score Display */}
-        {insight.scoreDiff !== undefined && insight.scoreDiff > 0 && (
-          <ScoreGainDisplay
-            scoreDiff={insight.scoreDiff}
-            efficiencyPercent={efficiencyPercent}
-          />
-        )}
+        {/* Row 1: Score Display (EQUIP always shows score since it's purely additive) */}
+        {insight.scoreDiff !== undefined &&
+          (isEquipEmpty ? insight.scoreDiff >= 0 : insight.scoreDiff > 0) && (
+            <ScoreGainDisplay
+              scoreDiff={insight.scoreDiff}
+              efficiencyPercent={efficiencyPercent}
+            />
+          )}
         {/* Row 2: Title */}
         <div className="text-base font-semibold text-foreground">
           {label} {t.slot(insight.slot)}
@@ -338,7 +337,11 @@ function InsightItem({ insight }: { insight: Insight }) {
       {/* Artifact Icons: always show before → after */}
       <div className="flex items-center gap-1 shrink-0">
         {/* Before Artifact (current equipped or the one being replaced) */}
-        {hasSwap && insight.compareArtifact && compareArtInfo ? (
+        {isEquipEmpty ? (
+          <div className="w-14 h-14 flex items-center justify-center rounded-md border-2 border-dashed border-white/10">
+            <CirclePlus className="w-6 h-6 text-muted-foreground/30" />
+          </div>
+        ) : hasSwap && insight.compareArtifact && compareArtInfo ? (
           <ArtifactIcon
             artifact={insight.compareArtifact}
             artInfo={compareArtInfo}
@@ -370,16 +373,28 @@ function InsightItem({ insight }: { insight: Insight }) {
   );
 
   // Always wrap with ArtifactComparisonHoverCard
-  // For swap: compareArtifact → artifact
-  // For others (FARM, UPGRADE-equipped, REROLL): artifact → placeholder
+  // For EQUIP: no before (empty slot), candidate is the "after"
+  // For swap: before = compareArtifact, after = artifact
+  // For others (FARM, UPGRADE-equipped, REROLL): before = artifact only
+  if (isEquipEmpty) {
+    return (
+      <ArtifactComparisonHoverCard
+        afterArtifact={insight.artifact}
+        slot={insight.slot}
+      >
+        {cardContent}
+      </ArtifactComparisonHoverCard>
+    );
+  }
+
   const hasComparisonTarget = !!insight.compareArtifact;
 
   return (
     <ArtifactComparisonHoverCard
-      artifact={
+      beforeArtifact={
         hasComparisonTarget ? insight.compareArtifact! : insight.artifact
       }
-      compareArtifact={hasComparisonTarget ? insight.artifact : undefined}
+      afterArtifact={hasComparisonTarget ? insight.artifact : undefined}
       slot={insight.slot}
     >
       {cardContent}

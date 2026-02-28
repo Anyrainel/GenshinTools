@@ -43,7 +43,7 @@ export function MixedSetTooltip(props: MixedSetTooltipProps) {
         <div className="flex gap-1.5 flex-wrap">
           {half.setIds.map((sid: string) => {
             const art = artifactsById[sid];
-            if (!art) return null;
+            if (!art || art.rarity !== 5) return null;
             return (
               <div
                 key={sid}
