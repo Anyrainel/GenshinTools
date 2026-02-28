@@ -155,7 +155,7 @@ class Faruzan extends CharacterBase {
       { receiver: "team", filter: { elements: ["Anemo"] } },
       [{ key: "resReduction%", value: 0.3 }]
     ),
-    // Q: Anemo DMG Bonus — Lv10 32.4%, Lv13 (C5+) 38.3%
+    // Q: Anemo DMG Bonus — Lv10 32.4%, Lv13 (C5+) 38.2%
     new StatBuff(
       cbs(this, "Q", ["Q"]),
       { receiver: "team", filter: { elements: ["Anemo"] } },

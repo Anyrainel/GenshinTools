@@ -350,10 +350,12 @@ class Rosaria extends CharacterBase {
       : []),
   ];
 
-  // Q initial slashes: Lv10 461%, Lv13 (C5+) 544%
+  // Q initial: 2 separate hits with different multipliers — must NOT be summed (S3)
+  // Lv10: 187%, 274%; Lv13 (C5+): 221%, 323%
   // Q ice lance tick: Lv10 238%, Lv13 (C5+) 280%; base 6 ticks, C2 extends +4s → 9 ticks
   protected readonly formulaMap = (() => {
-    const initialMult = this.constellation >= 5 ? 5.44 : 4.61;
+    const init1 = this.constellation >= 5 ? 2.21 : 1.87;
+    const init2 = this.constellation >= 5 ? 3.23 : 2.74;
     const tickMult = this.constellation >= 5 ? 2.8 : 2.38;
     const tickCount = this.constellation >= 2 ? 9 : 6;
     const cryoBurst = {
@@ -368,7 +370,8 @@ class Rosaria extends CharacterBase {
           en: `Q Initial + Lance ×${tickCount}`,
         },
         parts: [
-          { formula: new DirectFormula(initialMult, cryoBurst) },
+          { formula: new DirectFormula(init1, cryoBurst) },
+          { formula: new DirectFormula(init2, cryoBurst) },
           {
             formula: new DirectFormula(tickMult, cryoBurst),
             hits: tickCount,

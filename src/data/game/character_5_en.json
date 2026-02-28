@@ -1439,7 +1439,7 @@
           ["Cold Storage Mode Duration", "20s", "20s", "20s", "20s", "20s", "20s", "20s", "20s", "20s", "20s"],
           ["Surging Blade DMG", "47%", "50.4%", "53.8%", "57.1%", "60.5%", "63.8%", "67.2%", "71.4%", "75.6%", "79.8%"],
           ["Surging Blade CD Interval", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"],
+          ["Press CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"],
           ["Hold CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"]
         ]
       },
@@ -1530,7 +1530,7 @@
         "name": "E. Icetide Vortex",
         "descHtml": "#Sharp frost, swift blade.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Slashes swiftly, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span>.<br>When it hits an opponent, Eula gains a stack of Grimheart that stacks up to 2 times. These stacks can only be gained once every 0.3s.<br><br><span style=\"color: #FFD780FF;\">Grimheart</span><br>Increases Eula's resistance to interruption and DEF.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Wielding her sword, Eula consumes all the stacks of Grimheart and lashes forward, dealing <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span> to opponents in front of her.<br>If Grimheart stacks are consumed, surrounding opponents will have their Physical RES and <span style=\"color: #99FFFFFF;\">Cryo RES</span> decreased.<br>Each consumed stack of Grimheart will be converted into an Icewhirl Brand that deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> to nearby opponents.<br><br><i>\"So the waves roiled, swallowing the crown of the nobles. And ever after did each drop amidst the icy waves reflect a golden crown, each and every droplet of the spray shining with its light.\"</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "205%", "220%", "234%", "249%", "264%", "278%", "293%", "311%", "329%", "348%"],
+          ["Press DMG", "205%", "220%", "234%", "249%", "264%", "278%", "293%", "311%", "329%", "348%"],
           ["Hold DMG", "344%", "368%", "393%", "418%", "442%", "467%", "491%", "522%", "553%", "583%"],
           ["Icewhirl Brand DMG", "134%", "144%", "154%", "163%", "173%", "182%", "192%", "204%", "216%", "228%"],
           ["DEF Bonus", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack", "30% Per Stack"],
@@ -1538,7 +1538,7 @@
           ["Physical RES Decrease", "21%", "22%", "23%", "24%", "25%", "25%", "25%", "25%", "25%", "25%"],
           ["Cryo RES Decrease", "21%", "22%", "23%", "24%", "25%", "25%", "25%", "25%", "25%", "25%"],
           ["RES Decrease Duration", "7s", "7s", "7s", "7s", "7s", "7s", "7s", "7s", "7s", "7s"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s"],
+          ["Press CD", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s"],
           ["Hold CD", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s"]
         ]
       },
@@ -2164,8 +2164,8 @@
         "name": "E. Chihayaburu",
         "descHtml": "#Unleashes a secret technique as fierce as the rushing wind that pulls objects and opponents towards Kazuha's current position before launching opponents within the AoE, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span> and lifting Kazuha into the air on a rushing gust of wind.<br>Within 10s of remaining airborne after casting Chihayaburu, Kazuha can unleash a powerful Plunging Attack known as Midare Ranzan.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Can be used in mid-air.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Charges up before unleashing greater <span style=\"color: #80FFD7FF;\">Anemo DMG</span> over a larger AoE than {LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} Mode.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack: Midare Ranzan</span><br>When a Plunging Attack is performed using the effects of the Elemental Skill Chihayaburu, Plunging Attack DMG is converted to <span style=\"color: #80FFD7FF;\">Anemo DMG</span>. On landing, Kazuha creates a small wind tunnel via a secret blade technique that pulls in nearby objects and opponents.<br>Midare Ranzan's DMG is considered Plunging Attack DMG.<br><br><i>\"Wind in branches grieves<br>Bygone ages, gods of old<br>Withered autumn leaves\"</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} Skill DMG", "269%", "288%", "307%", "326%", "346%", "365%", "384%", "408%", "432%", "456%"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
+          ["Press Skill DMG", "269%", "288%", "307%", "326%", "346%", "365%", "384%", "408%", "432%", "456%"],
+          ["Press CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
           ["Hold Skill DMG", "365%", "391%", "417%", "443%", "469%", "496%", "522%", "554%", "587%", "619%"],
           ["Hold CD", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s"]
         ]
@@ -2680,7 +2680,7 @@
         "name": "E. Runo: Dawnless Rest of Karsikko",
         "descHtml": "Silently incants an ancient hymn, summoning a <span style=\"color: #FFD780FF;\">Frostgrove Sanctuary</span> with different effects depending on whether you Tap or Hold.<br><br><span style=\"color: #FFD780FF;\">Tap</span><br>Intone a Hymn of Hunting, dealing <span style=\"color: #99FF88FF;\">AoE Dendro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Can be unleashed when you have at least 1 <span style=\"color: #FFD780FF;\">Verdant Dew</span>. Lauma consumes all Verdant Dew and intones a Hymn of Eternal Rest, dealing one regular instance of <span style=\"color: #99FF88FF;\">AoE Dendro DMG</span> and another instance of <span style=\"color: #99FF88FF;\">AoE Dendro DMG</span> that is considered Lunar-Bloom DMG. Each Verdant Dew consumed will give Lauma one stack of <span style=\"color: #FFD780FF;\">Moon Song</span>. Each time you Hold to cast an Elemental Skill, a maximum of 3 Verdant Dew can be consumed in this way.<br><br>Additionally, when Lauma's Elemental Skill or attacks from Frostgrove Sanctuary hit an opponent, that opponent's <span style=\"color: #99FF88FF;\">Dendro RES</span> and <span style=\"color: #80C0FFFF;\">Hydro RES</span> will be decreased for 10s.",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "170.2%", "182.4%", "194.6%", "206.7%", "218.9%", "231%", "243.2%", "258.4%", "273.6%", "288.8%"],
+          ["Press DMG", "170.2%", "182.4%", "194.6%", "206.7%", "218.9%", "231%", "243.2%", "258.4%", "273.6%", "288.8%"],
           ["1-Hit Hold DMG", "221.3%", "237.1%", "252.9%", "268.7%", "284.5%", "300.4%", "316.2%", "335.9%", "355.7%", "375.4%"],
           ["2-Hit Hold DMG", "212.8% Elemental Mastery Per Verdant Dew", "228% Elemental Mastery Per Verdant Dew", "243.2% Elemental Mastery Per Verdant Dew", "258.4% Elemental Mastery Per Verdant Dew", "273.6% Elemental Mastery Per Verdant Dew", "288.8% Elemental Mastery Per Verdant Dew", "304% Elemental Mastery Per Verdant Dew", "323% Elemental Mastery Per Verdant Dew", "342% Elemental Mastery Per Verdant Dew", "361% Elemental Mastery Per Verdant Dew"],
           ["Frostgrove Sanctuary Attack DMG", "134.4% ATK+268.8% Elemental Mastery", "144% ATK+288% Elemental Mastery", "153.6% ATK+307.2% Elemental Mastery", "163.2% ATK+326.4% Elemental Mastery", "172.8% ATK+345.6% Elemental Mastery", "182.4% ATK+364.8% Elemental Mastery", "192% ATK+384% Elemental Mastery", "204% ATK+408% Elemental Mastery", "216% ATK+432% Elemental Mastery", "228% ATK+456% Elemental Mastery"],
@@ -3944,12 +3944,12 @@
         "name": "E. All Schemes to Know",
         "descHtml": "Sends forth karmic bonds of wood and tree from her side, dealing <span style=\"color: #99FF88FF;\">AoE Dendro DMG</span> and marking up to 8 opponents hit with the Seed of Skandha.<br>When held, this skill will trigger differently.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Enters Aiming Mode, which will allow you to select a limited number of opponents within a limited area. During this time, Nahida's resistance to interruption will be increased.<br>When released, this skill deals <span style=\"color: #99FF88FF;\">Dendro DMG</span> to these opponents and marks them with the Seed of Skandha.<br>Aiming Mode will last up to 5s and can select a maximum of 8 opponents.<br><br><span style=\"color: #FFD780FF;\">Seed of Skandha</span><br>Opponents who have been marked by the Seed of Skandha will be linked to one another up till a certain distance.<br>After you trigger Elemental Reactions on opponents who are affected by the Seeds of Skandha or when they take DMG from Dendro Cores (including Burgeon and Hyperbloom DMG), Nahida will unleash Tri-Karma Purification on the opponents and all connected opponents, dealing <span style=\"color: #99FF88FF;\">Dendro DMG</span> based on her ATK and Elemental Mastery.<br>You can trigger at most 1 Tri-Karma Purification within a short period of time.<br><br><i>Lo, the god of grass and trees shines her ultimate truth into the void, illuminating the origin and destruction of the three karmas.</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "137.8%", "147.6%", "157.4%", "167.3%", "177.1%", "187%", "196.8%", "209.1%", "221.4%", "233.7%"],
+          ["Press DMG", "137.8%", "147.6%", "157.4%", "167.3%", "177.1%", "187%", "196.8%", "209.1%", "221.4%", "233.7%"],
           ["Hold DMG", "182.6%", "195.6%", "208.6%", "221.7%", "234.7%", "247.8%", "260.8%", "277.1%", "293.4%", "309.7%"],
           ["Tri-Karma Purification DMG", "144.5% ATK+289% Elemental Mastery", "154.8% ATK+309.6% Elemental Mastery", "165.1% ATK+330.2% Elemental Mastery", "175.4% ATK+350.9% Elemental Mastery", "185.8% ATK+371.5% Elemental Mastery", "196.1% ATK+392.2% Elemental Mastery", "206.4% ATK+412.8% Elemental Mastery", "219.3% ATK+438.6% Elemental Mastery", "232.2% ATK+464.4% Elemental Mastery", "245.1% ATK+490.2% Elemental Mastery"],
           ["Tri-Karma Purification Trigger Interval", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s", "2.5s"],
           ["Seed of Skandha Duration", "25s", "25s", "25s", "25s", "25s", "25s", "25s", "25s", "25s", "25s"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s"],
+          ["Press CD", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s", "5s"],
           ["Hold CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"]
         ]
       },
@@ -4669,12 +4669,12 @@
         "name": "E. Spring Spirit Summoning",
         "descHtml": "#The frosted dew, silvery and dense, shall exorcise all demons.<br>Grants all nearby party members the Icy Quill effect and deals <span style=\"color: #99FFFFFF;\">Cryo DMG</span> in different ways based on whether it is {LAYOUT_MOBILE#tapped}{LAYOUT_PC#pressed}{LAYOUT_PS#pressed} or held.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Rushes forward together with a Talisman Spirit, dealing <span style=\"color: #99FFFFFF;\">Cryo DMG</span> to opponents along the path.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Commands the Talisman Spirit to deal <span style=\"color: #99FFFFFF;\">AoE Cryo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Icy Quill</span><br>When Normal, Charged, and Plunging Attacks, Elemental Skills, and Elemental Bursts deal <span style=\"color: #99FFFFFF;\">Cryo DMG</span> to opponents, the DMG dealt is increased based on Shenhe's current ATK.<br><br>The Icy Quill's effects will be cleared once its duration ends or after being triggered a certain number of times. When held rather than {LAYOUT_MOBILE#tapped}{LAYOUT_PC#pressed}{LAYOUT_PS#pressed}, the Icy Quill's effect lasts longer and can be triggered more times.<br>When one <span style=\"color: #99FFFFFF;\">Cryo DMG</span> instance strikes multiple opponents, the effect is triggered multiple times based on the number of opponents hit. The number of times the effect is triggered is calculated independently for each party member with the Icy Quill.<br><br><i>The power of the spirits is no falsehood. Burdened with her orders, the divine maiden hurries on!</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} Skill DMG", "195%", "209%", "223%", "237%", "251%", "264%", "278%", "296%", "313%", "331%"],
+          ["Press Skill DMG", "195%", "209%", "223%", "237%", "251%", "264%", "278%", "296%", "313%", "331%"],
           ["Hold Skill DMG", "264.3%", "283.2%", "302.1%", "321%", "339.8%", "358.7%", "377.6%", "401.2%", "424.8%", "448.4%"],
           ["DMG Bonus", "63.9% ATK", "68.5% ATK", "73% ATK", "77.6% ATK", "82.2% ATK", "86.7% ATK", "91.3% ATK", "97% ATK", "102.7% ATK", "108.4% ATK"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}/Hold Duration", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}/Hold Trigger Quota", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s"],
+          ["Press/Hold Duration", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s", "10s/15s"],
+          ["Press/Hold Trigger Quota", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7", "5/7"],
+          ["Press CD", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s"],
           ["Hold CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"]
         ]
       },
@@ -5753,7 +5753,7 @@
         "descHtml": "Manifest the true essence of Favonius Bladework with absolute power. Produces different effects depending on whether the skill is Tapped or Held.<br><br><span style=\"color: #FFD780FF;\">Tap</span><br>Leap forward and slash in one fluid motion, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> and switching to <span style=\"color: #FFD780FF;\">Sturm und Drang</span> mode.<br>While in <span style=\"color: #FFD780FF;\">Sturm und Drang</span>, Varka's Normal Attack and Charged Attack DMG is increased, and he cannot perform Plunging Attacks. Also, when performing Normal or Charged Attacks, Varka's dual-wielded claymores will deal corresponding Elemental DMG based on the Elemental Types of the characters in the party, respectively. This Elemental DMG cannot be overridden by infusions.<br>Additionally, when in <span style=\"color: #FFD780FF;\">Sturm und Drang</span>, if there are <span style=\"color: #FF9999FF;\">Pyro</span>, <span style=\"color: #80C0FFFF;\">Hydro</span>, <span style=\"color: #FFACFFFF;\">Electro</span> or <span style=\"color: #99FFFFFF;\">Cryo</span> characters in the party, Varka's Elemental Skill <span style=\"color: #FFD780FF;\">Windbound Execution</span> will be converted to the special Elemental Skill, <span style=\"color: #FFD780FF;\">Four Winds' Ascension</span>, dealing corresponding Elemental DMG and <span style=\"color: #80FFD7FF;\">Anemo DMG</span>. Additionally, Varka can also expend uses of the special Elemental Skill <span style=\"color: #FFD780FF;\">Four Winds' Ascension</span> to perform a special Charged Attack, <span style=\"color: #FFD780FF;\">Azure Devour</span>, that does not consume stamina to deal corresponding Elemental DMG and <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>After charging for a while, leap forward. The duration of the charge will increase the distance of the leap.",
         "details": [
           ["Skill DMG", "389.8%", "417.6%", "445.4%", "473.3%", "501.1%", "529%", "556.8%", "591.6%", "626.4%", "661.2%"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s"],
+          ["Press CD", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s", "16s"],
           ["Hold CD", "8s", "8s", "8s", "8s", "8s", "8s", "8s", "8s", "8s", "8s"],
           ["Sturm und Drang Duration", "12s", "12s", "12s", "12s", "12s", "12s", "12s", "12s", "12s", "12s"],
           ["Sturm und Drang 1-Hit DMG", "118.9%", "129.4%", "139.9%", "150.3%", "161.7%", "173.2%", "184.6%", "196%", "207.4%", "218.8%"],
@@ -5858,8 +5858,8 @@
         "name": "E. Skyward Sonnet",
         "descHtml": "#O wind upon which all hymns and songs fly, bear these earth-walkers up into the sky!<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Summons a Wind Domain at the opponent's location, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> and launching opponents into the air.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Summons an even larger Wind Domain with Venti as the epicenter, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> and launching affected opponents into the air.<br>After unleashing the Hold version of this ability, Venti rides the wind into the air.<br><br>Opponents hit by Skyward Sonnet will fall to the ground slowly.<br><br><i>In the days when gods and men walked the earth together, the heavens were filled with countless songs. This melody has long since been forgotten.</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "386%", "414%", "442%", "469%", "497%", "524%", "552%", "586%", "621%", "656%"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
+          ["Press DMG", "386%", "414%", "442%", "469%", "497%", "524%", "552%", "586%", "621%", "656%"],
+          ["Press CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
           ["Hold DMG", "532%", "570%", "608%", "646%", "684%", "722%", "760%", "807%", "855%", "902%"],
           ["Hold CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"]
         ]
@@ -6697,7 +6697,7 @@
         "descHtml": "#Every mountain, rock and inch of land is filled with the power of Geo, but those who can wield such powers freely are few and far between.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Commands the power of earth to create a Stone Stele.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Causes nearby Geo energy to explode, causing the following effects:<br>·If their maximum number hasn't been reached, creates a Stone Stele.<br>·Creates a shield of jade. The shield's DMG Absorption scales based on Zhongli's Max HP.<br>·Deals <span style=\"color: #FFE699FF;\">AoE Geo DMG</span>.<br>·If there are nearby targets with the <span style=\"color: #FFE699FF;\">Geo element</span>, it will drain a large amount of <span style=\"color: #FFE699FF;\">Geo element</span> from a maximum of 2 such targets. This effect does not cause DMG.<br><br><span style=\"color: #FFD780FF;\">Stone Stele</span><br>When created, deals <span style=\"color: #FFE699FF;\">AoE Geo DMG</span>.<br>Additionally, it will intermittently resonate with other nearby <span style=\"color: #FFE699FF;\">Geo constructs</span>, dealing <span style=\"color: #FFE699FF;\">Geo DMG</span> to nearby opponents.<br>The Stone Stele is considered a <span style=\"color: #FFE699FF;\">Geo construct</span> that can both be climbed and used to block attacks.<br>Only one Stele created by Zhongli himself may initially exist at any one time.<br><br><span style=\"color: #FFD780FF;\">Jade Shield</span><br>Possesses 150% DMG Absorption against all Elemental and Physical DMG.<br>Characters protected by the Jade Shield will decrease the Elemental RES and Physical RES of opponents in a small AoE by 20%. This effect cannot be stacked.<br><br><i>A true master of stone may carve jade and shape gold.</i>",
         "details": [
           ["Stone Stele/Resonance DMG", "22.4%/44.8%", "24%/48%", "25.6%/51.2%", "27.2%/54.4%", "28.8%/57.6%", "30.4%/60.8%", "32%/64%", "34%/68%", "36%/72%", "38%/76%"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s"],
+          ["Press CD", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s", "4s"],
           ["Hold DMG", "112%", "120%", "128%", "136%", "144%", "152%", "160%", "170%", "180%", "190%"],
           ["Shield Base Absorption", "1951", "2126", "2311", "2506", "2712", "2927", "3153", "3389", "3636", "3893"],
           ["Additional Shield Absorption", "17.9% Max HP", "19.2% Max HP", "20.5% Max HP", "21.8% Max HP", "23% Max HP", "24.3% Max HP", "25.6% Max HP", "27.2% Max HP", "28.8% Max HP", "30.4% Max HP"],

@@ -356,7 +356,7 @@
         "name": "E. Passion Overload",
         "descHtml": "#Bennett puts all his fire and passion for adventuring into his sword. Results may vary based on how fired up he is...<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>A single, swift flame strike that deals <span style=\"color: #FF9999FF;\">Pyro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Hold (Short)</span><br>Charges up, resulting in different effects when unleashed based on the Charge Level.<br>·Level 1: Strikes twice, dealing <span style=\"color: #FF9999FF;\">Pyro DMG</span> and launching opponents.<br>·Level 2: Unleashes 3 consecutive attacks that deal impressive <span style=\"color: #FF9999FF;\">Pyro DMG</span>, but the last attack triggers an explosion that launches both Bennett and the enemy.<br>Bennett takes no damage from being launched.<br><br><i>An attack that combines Bennett's dreams and passion with Pyro. But passion is sometimes overblown, and Pyro sometimes blows over.</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "193%", "206%", "220%", "234%", "248%", "261%", "275%", "292%", "310%", "327%"],
+          ["Press DMG", "193%", "206%", "220%", "234%", "248%", "261%", "275%", "292%", "310%", "327%"],
           ["Charge Level 1 DMG", "118%+129%", "126%+138%", "134%+147%", "143%+156%", "151%+166%", "160%+175%", "168%+184%", "178%+196%", "189%+207%", "200%+218%"],
           ["Charge Level 2 DMG", "123%+134%", "132%+144%", "141%+154%", "150%+163%", "158%+173%", "167%+182%", "176%+192%", "187%+204%", "198%+216%", "209%+228%"],
           ["Explosion DMG", "185%", "198%", "211%", "224%", "238%", "251%", "264%", "280%", "297%", "314%"],
@@ -443,7 +443,7 @@
           ["Shield DMG Absorption", "16.8% Max HP+1830", "18% Max HP+1993", "19.2% Max HP+2167", "20.4% Max HP+2350", "21.6% Max HP+2542", "22.8% Max HP+2745", "24% Max HP+2957", "25.5% Max HP+3178", "27% Max HP+3409", "28.5% Max HP+3650"],
           ["Basic DMG", "16.8% Max HP", "18% Max HP", "19.2% Max HP", "20.4% Max HP", "21.6% Max HP", "22.8% Max HP", "24% Max HP", "25.5% Max HP", "27% Max HP", "28.5% Max HP"],
           ["Charged Up DMG", "26.7% Max HP", "28.6% Max HP", "30.5% Max HP", "32.4% Max HP", "34.3% Max HP", "36.2% Max HP", "38.1% Max HP", "40.5% Max HP", "42.8% Max HP", "45.2% Max HP"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
+          ["Press CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
           ["Hold CD", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s", "9s"]
         ]
       },
@@ -616,7 +616,7 @@
         "name": "E. Short-Range Rapid Interdiction Fire",
         "descHtml": "Chevreuse quickly shoulders her musket and fires at her opponent(s), dealing <span style=\"color: #FF9999FF;\">AoE Pyro DMG</span>.<br>For a short duration after Chevreuse fires a shot, she will continuously restore HP to your active character on the field. The amount healed is based on her Max HP.<br>Hold to fire in a different fashion.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Enter Aiming Mode, locking a target in her sights to fire a precise interdiction shot. If Chevreuse has an Overcharged Ball, then she will fire the Overcharged Ball instead, dealing greater <span style=\"color: #FF9999FF;\">Pyro DMG</span> in a larger area.<br>Chevreuse gains 1 Overcharged Ball every time a nearby character in the party triggers an Overloaded reaction, and can have up to 1 Overcharged Ball at a time.<br><br><span style=\"color: #FFD780FF;\">Arkhe: Ousia</span><br>Periodically, after Chevreuse's Short-Range Rapid Interdiction Fire hits, a Surging Blade will be called forth that deals Ousia-aligned <span style=\"color: #FF9999FF;\">Pyro DMG</span>.<br><br><i>\"Actually, training regulations only had the phrase \"interdiction fire,\" but the protagonist of this novel believes that even how stylish your terminology is can affect how motivated your troops are, which can put your opponents on the back foot right from the get-go... I think that's a good point, so I changed the regulations!\"</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "161.3%", "172.8%", "184.3%", "195.8%", "207.4%", "218.9%", "230.4%", "244.8%", "259.2%", "273.6%"],
+          ["Press DMG", "161.3%", "172.8%", "184.3%", "195.8%", "207.4%", "218.9%", "230.4%", "244.8%", "259.2%", "273.6%"],
           ["Hold DMG", "241.9%", "259.2%", "276.5%", "293.8%", "311%", "328.3%", "345.6%", "367.2%", "388.8%", "410.4%"],
           ["Overcharged Ball DMG", "395.4%", "423.6%", "451.8%", "480.1%", "508.3%", "536.6%", "564.8%", "600.1%", "635.4%", "670.7%"],
           ["HP Regeneration Over Time", "3.73% Max HP+407", "4% Max HP+443", "4.27% Max HP+482", "4.53% Max HP+522", "4.8% Max HP+565", "5.07% Max HP+610", "5.33% Max HP+657", "5.67% Max HP+706", "6% Max HP+758", "6.33% Max HP+811"],
@@ -947,7 +947,7 @@
           ["Icy Paw DMG", "58.7% per Paw", "62.9% per Paw", "67.1% per Paw", "71.3% per Paw", "75.5% per Paw", "79.6% per Paw", "83.8% per Paw", "89.1% per Paw", "94.3% per Paw", "99.6% per Paw"],
           ["Base Shield DMG Absorption", "10.1% Max HP+1097", "10.8% Max HP+1195", "11.5% Max HP+1299", "12.2% Max HP+1409", "13% Max HP+1524", "13.7% Max HP+1646", "14.4% Max HP+1773", "15.3% Max HP+1905", "16.2% Max HP+2044", "17.1% Max HP+2188"],
           ["Duration", "2.3s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw", "2.4s per Paw"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
+          ["Press CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
           ["Hold CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"]
         ]
       },
@@ -1725,7 +1725,7 @@
         "name": "E. Dawnbearing Songbird",
         "descHtml": "Summons the trusty messenger bird, \"Aedon.\" Different effects are produced depending on whether the skill is Tapped or Held.<br><br><span style=\"color: #FFD780FF;\">Tap</span><br>Aedon dashes towards enemies in front, dealing <span style=\"color: #FFE699FF;\">Geo DMG</span> to enemies it comes into contact with.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Enter aiming mode, and command Aedon to dash towards opponents being aimed at, dealing <span style=\"color: #FFE699FF;\">Geo DMG</span> to opponents it comes into contact with.",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "676% Elemental Mastery+338% DEF", "724% Elemental Mastery+362% DEF", "772% Elemental Mastery+386% DEF", "820% Elemental Mastery+410% DEF", "869% Elemental Mastery+434% DEF", "917% Elemental Mastery+458% DEF", "965% Elemental Mastery+483% DEF", "1025% Elemental Mastery+513% DEF", "1086% Elemental Mastery+543% DEF", "1146% Elemental Mastery+573% DEF"],
+          ["Press DMG", "676% Elemental Mastery+338% DEF", "724% Elemental Mastery+362% DEF", "772% Elemental Mastery+386% DEF", "820% Elemental Mastery+410% DEF", "869% Elemental Mastery+434% DEF", "917% Elemental Mastery+458% DEF", "965% Elemental Mastery+483% DEF", "1025% Elemental Mastery+513% DEF", "1086% Elemental Mastery+543% DEF", "1146% Elemental Mastery+573% DEF"],
           ["Hold DMG", "844% Elemental Mastery+422% DEF", "905% Elemental Mastery+452% DEF", "965% Elemental Mastery+483% DEF", "1025% Elemental Mastery+513% DEF", "1086% Elemental Mastery+543% DEF", "1146% Elemental Mastery+573% DEF", "1206% Elemental Mastery+603% DEF", "1282% Elemental Mastery+641% DEF", "1357% Elemental Mastery+679% DEF", "1433% Elemental Mastery+716% DEF"],
           ["CD", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s", "15s"]
         ]
@@ -3086,12 +3086,12 @@
         "name": "E. Claw and Thunder",
         "descHtml": "#Hunts his prey using the techniques taught to him by his master and his lupical.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Swings the Thunder Wolf Claw, dealing <span style=\"color: #FFACFFFF;\">Electro DMG</span> to opponents in front of Razor.<br>Upon striking an opponent, Razor will gain an Electro Sigil, which increases his Energy Recharge rate.<br>Razor can have up to 3 Electro Sigils simultaneously, and gaining a new Electro Sigil refreshes their duration.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Gathers Electro energy to unleash a lightning storm over a small AoE, causing massive <span style=\"color: #FFACFFFF;\">Electro DMG</span>, and clears all of Razor's Electro Sigils.<br>Each Electro Sigil cleared in this manner will be converted into Energy for Razor.<br><br><i>In the moment when lightning strikes, you can sometimes glimpse the look of a predator sizing up his prey deep within Razor's eyes.</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} Skill DMG", "279%", "299%", "319%", "339%", "359%", "378%", "398%", "423%", "448%", "473%"],
+          ["Press Skill DMG", "279%", "299%", "319%", "339%", "359%", "378%", "398%", "423%", "448%", "473%"],
           ["Hold Skill DMG", "413%", "443%", "472%", "502%", "531%", "561%", "590%", "627%", "664%", "701%"],
           ["Energy Recharge Bonus", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil", "20% per Electro Sigil"],
           ["Energy Regenerated", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed", "5 per Electro Sigil Absorbed"],
           ["Electro Sigil duration", "18s", "18s", "18s", "18s", "18s", "18s", "18s", "18s", "18s", "18s"],
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
+          ["Press CD", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s", "6s"],
           ["Hold CD", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s", "10s"]
         ]
       },
@@ -4099,7 +4099,7 @@
         "name": "E. Opening Flourish",
         "descHtml": "#Ms. Yun may just be acting out fights on stage, but her skills with the spear are real enough to defend against her foes.<br><br><span style=\"color: #FFD780FF;\">{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press}</span><br>Flourishes her polearm in a cloud-grasping stance, dealing <span style=\"color: #FFE699FF;\">Geo DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Hold</span><br>Takes up the Opening Flourish stance and charges up, forming a shield. DMG Absorption is based on Yun Jin's Max HP and has 150% effectiveness against all Elemental DMG and Physical DMG. The shield lasts until she finishes unleashing her Elemental Skill.<br>When the skill is released, when its duration ends, or when the shield breaks, Yun Jin will unleash the charged energy as an attack, dealing <span style=\"color: #FFE699FF;\">Geo DMG</span>.<br>Based on the time spent charging, it will either unleash an attack at Charge Level 1 or Level 2.<br><br><i>One glorious moment on-stage, a decade of preparation behind it.</i>",
         "details": [
-          ["#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} DMG", "208.8% DEF", "223.7% DEF", "238.6% DEF", "253.5% DEF", "268.4% DEF", "283.3% DEF", "298.2% DEF", "316.9% DEF", "335.5% DEF", "354.2% DEF"],
+          ["Press DMG", "208.8% DEF", "223.7% DEF", "238.6% DEF", "253.5% DEF", "268.4% DEF", "283.3% DEF", "298.2% DEF", "316.9% DEF", "335.5% DEF", "354.2% DEF"],
           ["Charge Level 1 DMG", "365.3% DEF", "391.4% DEF", "417.5% DEF", "443.6% DEF", "469.7% DEF", "495.8% DEF", "521.9% DEF", "554.5% DEF", "587.2% DEF", "619.8% DEF"],
           ["Charge Level 2 DMG", "521.9% DEF", "559.2% DEF", "596.5% DEF", "633.8% DEF", "671% DEF", "708.3% DEF", "745.6% DEF", "792.2% DEF", "838.8% DEF", "885.4% DEF"],
           ["Shield DMG Absorption", "17% Max HP+1830", "18% Max HP+1993", "19% Max HP+2167", "20% Max HP+2350", "22% Max HP+2542", "23% Max HP+2744", "24% Max HP+2956", "26% Max HP+3178", "27% Max HP+3409", "28% Max HP+3650"],

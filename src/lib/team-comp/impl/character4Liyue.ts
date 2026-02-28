@@ -65,11 +65,11 @@ class LanYan extends CharacterBase {
     return buffs;
   }
 
-  // E ring: Lv10 173.3%×2 = 346.6%, Lv13 (C3+) 204.5%×2 = 409%
-  // Q: Lv10 433.9%×3, Lv13 (C5+) 512.3%×3
+  // E ring: Lv10 173.3% ×2 hits, Lv13 (C3+) 204.5% ×2 hits
+  // Q: Lv10 433.9% ×3 hits, Lv13 (C5+) 512.3% ×3 hits
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 3 ? 2.045 * 2 : 1.733 * 2;
-    const qMult = this.constellation >= 5 ? 5.123 * 3 : 4.339 * 3;
+    const eMult = this.constellation >= 3 ? 2.045 : 1.733;
+    const qMult = this.constellation >= 5 ? 5.123 : 4.339;
     return {
       "lanyan-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -80,6 +80,7 @@ class LanYan extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+            hits: 2,
           },
         ],
       },
@@ -92,6 +93,7 @@ class LanYan extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            hits: 3,
           },
         ],
       },

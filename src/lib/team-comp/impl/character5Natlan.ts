@@ -448,6 +448,13 @@ class Mavuika extends CharacterBase {
             }),
           },
           {
+            formula: new DirectFormula(caFinalMult, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+          {
             formula: new DirectFormula(sprintMult, {
               element: "Pyro",
               ability: "skill",

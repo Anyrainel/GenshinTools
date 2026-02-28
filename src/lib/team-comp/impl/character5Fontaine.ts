@@ -178,11 +178,11 @@ class Emilie extends CharacterBase {
     return buffs;
   })();
 
-  // E Lv2 Case: 151.2%×2 per tick (Lv10), 178.5%×2 (Lv13 C3+), ~7 ticks over 22s
+  // E Lv2 Case: 151.2%×2 shots per tick (Lv10), 178.5%×2 (Lv13 C3+), 14 ticks × 2 shots = 28 hits
   // P1 Cleardew Cologne: 600% ATK (not skill DMG), fires every 2 scent collections
   // Q Lv3 Case: 391.0% (Lv10), 461.6% (Lv13 C5+), ~4 drops over 2.8s
   protected readonly formulaMap = (() => {
-    const lv2TickMult = this.constellation >= 3 ? 1.785 * 2 : 1.512 * 2;
+    const lv2ShotMult = this.constellation >= 3 ? 1.785 : 1.512;
     const qMult = this.constellation >= 5 ? 4.616 : 3.91;
     const hasPyro = this.teamMeta.countByElement("Pyro") > 0;
 
@@ -222,17 +222,17 @@ class Emilie extends CharacterBase {
         ? {
             "emilie-skill-burning": {
               label: {
-                zh: "E伤害×14+清露×5",
-                en: "E Lv2 (×14) + Cleardew (×5)",
+                zh: "E伤害×28+清露×5",
+                en: "E Lv2 (×28) + Cleardew (×5)",
               },
               parts: [
                 {
-                  formula: new DirectFormula(lv2TickMult, {
+                  formula: new DirectFormula(lv2ShotMult, {
                     element: "Dendro",
                     ability: "skill",
                     reaction: "none",
                   }),
-                  hits: 14,
+                  hits: 28,
                 },
                 {
                   formula: new DirectFormula(6.0, {
@@ -891,7 +891,7 @@ class Wriothesley extends CharacterBase {
   // Lv13 NA (C3+):   N1=1.278, N2=1.241, N3=1.610, N4=0.908(×2), N5=2.174
   // Rebuke CA (Lv10): 275.3%
   // Rebuke CA (Lv13 C3+): 325.0%
-  // C6 Rebuke CA creates additional 100% Base DMG icicle
+  // C6 Rebuke CA creates additional icicle at 100% base DMG → hits: 2
   // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
   // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
@@ -902,8 +902,8 @@ class Wriothesley extends CharacterBase {
     const n3 = (isC3 ? 1.61 : 1.329) * eMult;
     const n4 = (isC3 ? 0.908 : 0.749) * eMult;
     const n5 = (isC3 ? 2.174 : 1.794) * eMult;
-    let cMult = isC3 ? 3.25 : 2.753;
-    if (this.constellation >= 6) cMult *= 2; // +100% additional base DMG
+    const cMult = isC3 ? 3.25 : 2.753;
+    const cHits = this.constellation >= 6 ? 2 : 1; // C6: additional icicle at 100% base DMG
     const qHitMult = this.constellation >= 5 ? 2.703 : 2.2896;
     const qBladeMult = this.constellation >= 5 ? 0.901 : 0.7632;
 
@@ -936,6 +936,7 @@ class Wriothesley extends CharacterBase {
               ability: "charge",
               reaction: "none",
             }),
+            hits: cHits,
           },
         ],
       },

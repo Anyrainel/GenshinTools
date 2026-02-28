@@ -87,27 +87,43 @@ class Skirk extends CharacterBase {
     return buffs;
   })();
 
-  // E Normal Combo: 5-hit sum (Lv10/11/13/14)
-  //   Lv10: 262.6+236.8+299.4+318.4+388.7 = 1505.9%
-  //   Lv11 (P3): 281.1+253.5+320.6+340.8+416.1 = 1612.1%
-  //   Lv13 (C5): 318.2+287.0+362.8+385.8+471.0 = 1824.8%
-  //   Lv14 (C5+P3): 336.7+303.7+383.8+408.4+498.4 = 1931.0%
-  // Q Burst w/ +12 Subtlety (Lv10): 5*221.0 + 368.3 + 12*34.78 = 1890.7%
-  // C2 adds 10 more subtlety points (cap 22): 5*221.0 + 368.3 + 22*34.78 = 2238.5%
-  // Q Burst w/ +12 Subtlety (Lv13 C3+): 5*260.9 + 434.8 + 12*41.06 = 2232.0%
-  // C2+C3: 5*260.9 + 434.8 + 22*41.06 = 2642.6%
+  // E Normal Combo: 5-hit (Lv10/11/13/14)
+  //   N1: 262.6/281.1/318.2/336.7, N2: 236.8/253.5/287.0/303.7
+  //   N3: 149.7×2/160.3×2/181.4×2/191.9×2, N4: 159.2×2/170.4×2/192.9×2/204.2×2
+  //   N5: 388.7/416.1/471.0/498.4
+  // E CA: 88.1×3/94.3×3/106.7×3/112.9×3
+  // Q Burst: 5×slash + final slash + subtlety bonus (12 pts, C2: 22 pts)
   protected readonly formulaMap = (() => {
     const hasC5 = this.constellation >= 5;
     const p3 = this.hasP3;
     // E level: base 10 (C5→13) + 1 if P3 active
-    const eMult = hasC5 ? (p3 ? 19.31 : 18.248) : p3 ? 16.121 : 15.059;
-    // CA: 88.1×3/94.3×3/106.7×3/112.9×3 at Lv10/11/13/14
-    const eChargeMult = hasC5 ? (p3 ? 3.387 : 3.201) : p3 ? 2.829 : 2.643;
+    // Per-hit multipliers for E Normal Attack sequence
+    const n1 = hasC5 ? (p3 ? 3.367 : 3.182) : p3 ? 2.811 : 2.626;
+    const n2 = hasC5 ? (p3 ? 3.037 : 2.87) : p3 ? 2.535 : 2.368;
+    const n3 = hasC5 ? (p3 ? 1.919 : 1.814) : p3 ? 1.603 : 1.497;
+    const n4 = hasC5 ? (p3 ? 2.042 : 1.929) : p3 ? 1.704 : 1.592;
+    const n5 = hasC5 ? (p3 ? 4.984 : 4.71) : p3 ? 4.161 : 3.887;
+    // CA: per-hit multiplier (×3 hits)
+    const caHit = hasC5 ? (p3 ? 1.129 : 1.067) : p3 ? 0.943 : 0.881;
     // C2 "Into the Abyss": +10 extra subtlety points counted for Q DMG bonus (cap 22 total)
-    // "施放元素爆发极恶技·灭时，提升本次元素爆发伤害的效果，至多额外计入10点蛇之狡谋"
     const hasC2 = this.constellation >= 2;
     const hasC3 = this.constellation >= 3; // C3 upgrades Q level
-    const qMult = hasC3 ? (hasC2 ? 26.426 : 22.32) : hasC2 ? 22.385 : 18.907;
+    // Q per-part multipliers
+    const qSlash = hasC3 ? 2.609 : 2.21;
+    const qFinal = hasC3 ? 4.348 : 3.683;
+    const subtletyPts = hasC2 ? 22 : 12;
+    const subtletyPerPt = hasC3 ? 0.4106 : 0.3478;
+    const subtletyBonus = subtletyPts * subtletyPerPt;
+    const cryoNormal = {
+      element: "Cryo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
+    const cryoBurst = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "skirk-e-normal": {
         label: {
@@ -115,13 +131,11 @@ class Skirk extends CharacterBase {
           en: "E NA Combo (5-hit)",
         },
         parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Cryo",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(n1, cryoNormal) },
+          { formula: new DirectFormula(n2, cryoNormal) },
+          { formula: new DirectFormula(n3, cryoNormal), hits: 2 },
+          { formula: new DirectFormula(n4, cryoNormal), hits: 2 },
+          { formula: new DirectFormula(n5, cryoNormal) },
         ],
       },
       "skirk-e-charge": {
@@ -131,11 +145,12 @@ class Skirk extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eChargeMult, {
+            formula: new DirectFormula(caHit, {
               element: "Cryo",
               ability: "charge",
               reaction: "none",
             }),
+            hits: 3,
           },
         ],
       },
@@ -145,13 +160,9 @@ class Skirk extends CharacterBase {
           en: "Q",
         },
         parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Cryo",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(qSlash, cryoBurst), hits: 5 },
+          { formula: new DirectFormula(qFinal, cryoBurst) },
+          { formula: new DirectFormula(subtletyBonus, cryoBurst) },
         ],
       },
       // C1: Each Void Rift absorbed summons a crystal blade (500% ATK Cryo, CA DMG)
@@ -267,13 +278,11 @@ class TravelerAnemo extends CharacterBase {
     return buffs;
   })();
 
-  // Q Gust Surge: 8 ticks x 145% = 1160% Anemo DMG (Lv10)
-  // Q Gust Surge (C3+, Lv13): 8 ticks x 172% = 1376%
+  // Q Gust Surge: 8 ticks x 145% Anemo DMG (Lv10), 172% (Lv13 C3+)
   // Q Absorbed element: 8 ticks x 44.6% (Lv10) / 52.7% (Lv13 C3+)
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 3 ? 13.76 : 11.6;
-    const absorbTickMult = this.constellation >= 3 ? 0.527 : 0.446;
-    const absorbTotal = absorbTickMult * 8;
+    const qTick = this.constellation >= 3 ? 1.72 : 1.45;
+    const absorbTick = this.constellation >= 3 ? 0.527 : 0.446;
     const anemoBurst = {
       element: "Anemo" as const,
       ability: "burst" as const,
@@ -283,7 +292,7 @@ class TravelerAnemo extends CharacterBase {
     const formulas: Record<string, FormulaEntry> = {
       "traveler-anemo-burst": {
         label: { zh: "Q伤害×8", en: "Q (×8)" },
-        parts: [{ formula: new DirectFormula(qMult, anemoBurst) }],
+        parts: [{ formula: new DirectFormula(qTick, anemoBurst), hits: 8 }],
       },
     };
     // Add absorbed-element variant formulas (S10 pattern)
@@ -297,13 +306,14 @@ class TravelerAnemo extends CharacterBase {
           en: `Q (×8) + Absorbed (${el})`,
         },
         parts: [
-          { formula: new DirectFormula(qMult, anemoBurst) },
+          { formula: new DirectFormula(qTick, anemoBurst), hits: 8 },
           {
-            formula: new DirectFormula(absorbTotal, {
+            formula: new DirectFormula(absorbTick, {
               element: el,
               ability: "burst",
               reaction: "none",
             }),
+            hits: 8,
           },
         ],
       };
@@ -331,10 +341,10 @@ class TravelerGeo extends CharacterBase {
   ];
 
   // E Starfell Sword: 446% Geo DMG (Lv10), 527% (Lv13 C5+)
-  // Q Wake of Earth: 266% x 4 shockwaves = 1064% (Lv10), 314% x 4 = 1256% (Lv13 C3+)
+  // Q Wake of Earth: 266% per shockwave x 4 (Lv10), 314% x 4 (Lv13 C3+)
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 5 ? 5.27 : 4.46;
-    const qMult = this.constellation >= 3 ? 12.56 : 10.64;
+    const qTick = this.constellation >= 3 ? 3.14 : 2.66;
     return {
       "traveler-geo-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -355,11 +365,12 @@ class TravelerGeo extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qTick, {
               element: "Geo",
               ability: "burst",
               reaction: "none",
             }),
+            hits: 4,
           },
         ],
       },
@@ -402,24 +413,29 @@ class TravelerElectro extends CharacterBase {
       : []),
   ];
 
-  // E Lightning Blade: 3 x 142% = 426% Electro DMG (Lv10), 3 x 167% = 501% (Lv13 C5+)
-  // Q Bellowing Thunder: 205.9% initial + 12 Falling Thunder x 59% = 914.9% (Lv10)
-  // Q (C3+, Lv13): 243.1% initial + 12 x 69.7% = 1079.5%
+  // E Lightning Blade: 142% per hit x 3 (Lv10), 167% x 3 (Lv13 C5+)
+  // Q Bellowing Thunder: 205.9% initial + 59% per Falling Thunder x 12 (Lv10)
+  // Q (C3+, Lv13): 243.1% initial + 69.7% x 12
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 5.01 : 4.26;
+    const eHit = this.constellation >= 5 ? 1.67 : 1.42;
     const qInitial = this.constellation >= 3 ? 2.431 : 2.059;
     const qTick = this.constellation >= 3 ? 0.697 : 0.59;
-    const qMult = qInitial + 12 * qTick;
+    const electroBurst = {
+      element: "Electro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "traveler-electro-skill": {
         label: { zh: "E伤害×3", en: "E (×3)" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(eHit, {
               element: "Electro",
               ability: "skill",
               reaction: "none",
             }),
+            hits: 3,
           },
         ],
       },
@@ -429,13 +445,8 @@ class TravelerElectro extends CharacterBase {
           en: "Q (×12)",
         },
         parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(qInitial, electroBurst) },
+          { formula: new DirectFormula(qTick, electroBurst), hits: 12 },
         ],
       },
     };
@@ -506,11 +517,10 @@ class TravelerDendro extends CharacterBase {
   })();
 
   // E Razorgrass Blade: 415% Dendro (Lv10), 490% (Lv13 C3+)
-  // Q Lea Lotus Lamp: 144.3% x 12 ticks = 1731.6% (Lv10), 170.3% x 12 = 2043.6% (Lv13 C5+)
+  // Q Lea Lotus Lamp: 144.3% per tick x 12 (Lv10), 170.3% x 12 (Lv13 C5+)
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.9 : 4.15;
-    const qTickMult = this.constellation >= 5 ? 1.703 : 1.443;
-    const qMult = qTickMult * 12;
+    const qTick = this.constellation >= 5 ? 1.703 : 1.443;
     return {
       "traveler-dendro-skill": {
         label: { zh: "E伤害", en: "E" },
@@ -531,11 +541,12 @@ class TravelerDendro extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qTick, {
               element: "Dendro",
               ability: "burst",
               reaction: "none",
             }),
+            hits: 12,
           },
         ],
       },
@@ -554,11 +565,10 @@ class TravelerHydro extends CharacterBase {
   ];
 
   // E Aquacrest Saber (Torrent Surge): 340.7% Hydro (Lv10), 402.2% (Lv13 C3+)
-  // Q Rising Waters: 183.4% x 4 ticks = 733.6% (Lv10), 216.5% x 4 = 866% (Lv13 C5+)
+  // Q Rising Waters: 183.4% per tick x 4 (Lv10), 216.5% x 4 (Lv13 C5+)
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.022 : 3.407;
-    const qTickMult = this.constellation >= 5 ? 2.165 : 1.834;
-    const qMult = qTickMult * 4;
+    const qTick = this.constellation >= 5 ? 2.165 : 1.834;
     return {
       "traveler-hydro-skill": {
         label: {
@@ -579,11 +589,12 @@ class TravelerHydro extends CharacterBase {
         label: { zh: "Q伤害×4", en: "Q (×4)" },
         parts: [
           {
-            formula: new DirectFormula(qMult, {
+            formula: new DirectFormula(qTick, {
               element: "Hydro",
               ability: "burst",
               reaction: "none",
             }),
+            hits: 4,
           },
         ],
       },
@@ -643,11 +654,10 @@ class TravelerPyro extends CharacterBase {
       : []),
   ];
 
-  // E Flowfire Blade (Blazing Threshold): 50.5% x 12 hits = 606% (Lv10), 59.7% x 12 = 716.4% (Lv13 C3+)
+  // E Flowfire Blade (Blazing Threshold): 50.5% per tick x 12 (Lv10), 59.7% x 12 (Lv13 C3+)
   // Q Plains Scorcher: 769% Nightsoul-Pyro (Lv10), 907.8% (Lv13 C5+)
   protected readonly formulaMap = (() => {
-    const eTickMult = this.constellation >= 3 ? 0.597 : 0.505;
-    const eMult = eTickMult * 12;
+    const eTick = this.constellation >= 3 ? 0.597 : 0.505;
     const qMult = this.constellation >= 5 ? 9.078 : 7.69;
     return {
       "traveler-pyro-skill": {
@@ -657,11 +667,12 @@ class TravelerPyro extends CharacterBase {
         },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(eTick, {
               element: "Pyro",
               ability: "skill",
               reaction: "none",
             }),
+            hits: 12,
           },
         ],
       },

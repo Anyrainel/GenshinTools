@@ -29,3 +29,16 @@
     no functional impact on damage calculation.
   created: "2026-02-26"
   resolved: "2026-02-26"
+
+- id: escoffier-c2-stack-consumption
+  entity: escoffier
+  rule: S8
+  status: open
+  category: engine-gap
+  summary: >
+    C2 Cold Dish grants 5 stacks, each consumed on a qualifying Cryo hit. The current
+    ScalingBuff applies baseDmg to all qualifying Cryo hits, not just the first 5. This
+    overestimates damage for characters with many Cryo hits per rotation.
+  detail: ""
+  created: "2026-02-28"
+  resolved: null

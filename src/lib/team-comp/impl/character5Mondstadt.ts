@@ -241,15 +241,21 @@ class Durin extends CharacterBase {
     FormulaEntry
   > => {
     const isWhite = this.form === "white";
-    // Q initial (White): Lv10 214.1%+173.5%+201.3%=588.9%, Lv13 (C3+) 252.8%+204.9%+237.7%=695.4%
-    // Q initial (Dark): Lv10 225.8%+183.2%+201.3%=610.3%, Lv13 (C3+) 266.6%+216.2%+237.7%=720.5%
-    const qWhiteInitMult = this.constellation >= 3 ? 6.954 : 5.889;
-    const qDarkInitMult = this.constellation >= 3 ? 7.205 : 6.103;
+    // Q initial — 3 separate hits with different multipliers, must NOT be summed (S3)
+    // White Lv10: 214.1%, 173.5%, 201.3%; Lv13 (C3+): 252.8%, 204.9%, 237.7%
+    // Dark  Lv10: 225.8%, 183.2%, 201.3%; Lv13 (C3+): 266.6%, 216.2%, 237.7%
+    const hasC3 = this.constellation >= 3;
+    const qW1 = hasC3 ? 2.528 : 2.141;
+    const qW2 = hasC3 ? 2.049 : 1.735;
+    const qW3 = hasC3 ? 2.377 : 2.013;
+    const qD1 = hasC3 ? 2.666 : 2.258;
+    const qD2 = hasC3 ? 2.162 : 1.832;
+    const qD3 = hasC3 ? 2.377 : 2.013;
 
     // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, 10 ticks over 20s
     // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, 10 ticks over 20s
-    const dragonWhiteMult = this.constellation >= 3 ? 2.011 : 1.704;
-    const dragonDarkMult = this.constellation >= 3 ? 2.759 : 2.337;
+    const dragonWhiteMult = hasC3 ? 2.011 : 1.704;
+    const dragonDarkMult = hasC3 ? 2.759 : 2.337;
 
     const burstTag = {
       element: "Pyro" as const,
@@ -262,7 +268,9 @@ class Durin extends CharacterBase {
         "durin-burst-white": {
           label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
           parts: [
-            { formula: new DirectFormula(qWhiteInitMult, burstTag) },
+            { formula: new DirectFormula(qW1, burstTag) },
+            { formula: new DirectFormula(qW2, burstTag) },
+            { formula: new DirectFormula(qW3, burstTag) },
             { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 10 },
           ],
         },
@@ -272,7 +280,9 @@ class Durin extends CharacterBase {
       "durin-burst-dark": {
         label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
         parts: [
-          { formula: new DirectFormula(qDarkInitMult, burstTag) },
+          { formula: new DirectFormula(qD1, burstTag) },
+          { formula: new DirectFormula(qD2, burstTag) },
+          { formula: new DirectFormula(qD3, burstTag) },
           { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 10 },
         ],
       },
@@ -280,7 +290,19 @@ class Durin extends CharacterBase {
         label: { zh: "Q (蒸发)", en: "Q (Vape)" },
         parts: [
           {
-            formula: new AmplifyFormula(qDarkInitMult, {
+            formula: new AmplifyFormula(qD1, {
+              ...burstTag,
+              reaction: "vaporize",
+            }),
+          },
+          {
+            formula: new AmplifyFormula(qD2, {
+              ...burstTag,
+              reaction: "vaporize",
+            }),
+          },
+          {
+            formula: new AmplifyFormula(qD3, {
               ...burstTag,
               reaction: "vaporize",
             }),
@@ -543,24 +565,29 @@ class Diluc extends CharacterBase {
     const eLevel = this.constellation >= 3 ? 13 : 10;
     const qLevel = this.constellation >= 5 ? 13 : 10;
 
-    const eMult = eLevel === 13 ? 6.82 : 5.78;
+    // E: 3 separate hits with different multipliers — must NOT be summed (S3)
+    // Lv10: 170%, 176%, 232%; Lv13 (C3+): 201%, 207%, 274%
+    const e1 = eLevel === 13 ? 2.01 : 1.7;
+    const e2 = eLevel === 13 ? 2.07 : 1.76;
+    const e3 = eLevel === 13 ? 2.74 : 2.32;
     const qSlash = qLevel === 13 ? 4.34 : 3.67;
     const qExplosion = qLevel === 13 ? 4.34 : 3.67;
     const highPlungeMult = 4.42; // Lv10 High Plunge DMG
 
     const hasXianyun = this.teamMeta.characters.includes("xianyun");
+    const pyroSkill = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "diluc-skill": {
         label: { zh: "E三段", en: "E (3 hits)" },
         parts: [
-          {
-            formula: new DirectFormula(eMult, {
-              element: "Pyro",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(e1, pyroSkill) },
+          { formula: new DirectFormula(e2, pyroSkill) },
+          { formula: new DirectFormula(e3, pyroSkill) },
         ],
       },
       "diluc-skill-vape": {
@@ -570,7 +597,21 @@ class Diluc extends CharacterBase {
         },
         parts: [
           {
-            formula: new AmplifyFormula(eMult, {
+            formula: new AmplifyFormula(e1, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "vaporize",
+            }),
+          },
+          {
+            formula: new AmplifyFormula(e2, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "vaporize",
+            }),
+          },
+          {
+            formula: new AmplifyFormula(e3, {
               element: "Pyro",
               ability: "skill",
               reaction: "vaporize",
@@ -881,21 +922,26 @@ class Venti extends CharacterBase {
   protected readonly formulaMap = (() => {
     const qTickMult = this.constellation >= 3 ? 0.799 : 0.677;
     const ePressMult = this.constellation >= 5 ? 5.86 : 4.97;
-    // NA talent maxes at Lv10 without external buffs.
-    const naTotal = 6.153;
-    const windsunderMult = 2.5;
+    // NA per-hit multipliers at Lv10, each ×2.5 for Windsunder Arrow
+    // Must NOT sum different multipliers into one part (S3)
+    // N1: 40.3%×2, N2: 87.7%, N3: 103.5%, N4: 51.5%×2, N5: 100.1%, N6: 140%
+    const ws = 2.5; // windsunder multiplier
+    const naTag = {
+      element: "Anemo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "venti-windsunder": {
         label: { zh: "Q 普攻飓风箭", en: "Q Windsunder Arrow" },
         parts: [
-          {
-            formula: new DirectFormula(naTotal * windsunderMult, {
-              element: "Anemo",
-              ability: "normal",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(0.403 * ws, naTag), hits: 2 }, // N1
+          { formula: new DirectFormula(0.877 * ws, naTag) }, // N2
+          { formula: new DirectFormula(1.035 * ws, naTag) }, // N3
+          { formula: new DirectFormula(0.515 * ws, naTag), hits: 2 }, // N4
+          { formula: new DirectFormula(1.001 * ws, naTag) }, // N5
+          { formula: new DirectFormula(1.4 * ws, naTag) }, // N6
         ],
       },
       "venti-burst-total": {

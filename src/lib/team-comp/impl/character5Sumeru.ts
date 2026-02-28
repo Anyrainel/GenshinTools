@@ -445,7 +445,7 @@ class Nahida extends CharacterBase {
     // C4: Self EM +140 (model 3 enemies average)
     ...(this.constellation >= 4
       ? [
-          new StatBuff(cbs(this, "C4", ["E"]), { receiver: "selfOnField" }, [
+          new StatBuff(cbs(this, "C4", ["E"]), { receiver: "self" }, [
             { key: "em", value: 140 },
           ]),
         ]
@@ -753,9 +753,10 @@ class Nilou extends CharacterBase {
     return buffs;
   })();
 
-  // Q total: Lv10 (33.2%+40.6%) HP = 73.8% HP, Lv13 (C3+) (39.2%+47.9%) = 87.1% HP
+  // Q: Lv10 Skill DMG 33.2% HP + Lingering Aeon 40.6% HP, Lv13 (C3+) 39.2% + 47.9%
   protected readonly formulaMap = (() => {
-    const qMult = this.constellation >= 3 ? 0.871 : 0.738;
+    const qHit1 = this.constellation >= 3 ? 0.392 : 0.332;
+    const qHit2 = this.constellation >= 3 ? 0.479 : 0.406;
     const elements = Object.values(this.teamMeta.elements);
     const allDendroHydro = elements.every(
       (e) => e === "Dendro" || e === "Hydro"
@@ -764,17 +765,17 @@ class Nilou extends CharacterBase {
     const hasHydro = elements.some((e) => e === "Hydro");
     const isBountiful = allDendroHydro && hasDendro && hasHydro;
 
+    const qTag = {
+      element: "Hydro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
       "nilou-burst": {
         label: { zh: "Q 2段", en: "Q 2-hit" },
         parts: [
-          {
-            formula: new DirectFormula(
-              qMult,
-              { element: "Hydro", ability: "burst", reaction: "none" },
-              "hp"
-            ),
-          },
+          { formula: new DirectFormula(qHit1, qTag, "hp") },
+          { formula: new DirectFormula(qHit2, qTag, "hp") },
         ],
       },
       ...(isBountiful

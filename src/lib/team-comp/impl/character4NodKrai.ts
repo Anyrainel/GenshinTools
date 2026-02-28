@@ -174,19 +174,28 @@ class Aino extends CharacterBase {
     })(),
   ];
 
-  // E: Musecatcher — Stage 1 + Stage 2
-  // Lv10: 118.1% + 339.8% = 457.9%, Lv13 (C5+): 139.4% + 401.2% = 540.6%
+  // E: Musecatcher — Stage 1 + Stage 2 (separate hits, different multipliers)
+  // Stage 1: Lv10 118.1%, Lv13 (C5+) 139.4%
+  // Stage 2: Lv10 339.8%, Lv13 (C5+) 401.2%
   // Q: Water Ball DMG Lv10: 36.2%, Lv13 (C3+): 42.7%
   // ~14 hits over 14s duration
   protected readonly formulaMap = (() => {
-    const eMult = this.constellation >= 5 ? 5.406 : 4.579;
+    const eStage1 = this.constellation >= 5 ? 1.394 : 1.181;
+    const eStage2 = this.constellation >= 5 ? 4.012 : 3.398;
     const qMult = this.constellation >= 3 ? 0.427 : 0.362;
     return {
       "aino-skill": {
         label: { zh: "E伤害", en: "E DMG" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
+            formula: new DirectFormula(eStage1, {
+              element: "Hydro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+          {
+            formula: new DirectFormula(eStage2, {
               element: "Hydro",
               ability: "skill",
               reaction: "none",

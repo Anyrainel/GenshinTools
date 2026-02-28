@@ -328,18 +328,21 @@ class Nefer extends CharacterBase {
       : []),
   ];
 
-  // Phantasm Performance self (2 hits): Lv10 44.4%+57.7% ATK + 88.7%+115.3% EM = 102.1% ATK + 204.0% EM
-  // Lv13 (C3+): 52.4%+68.1% ATK + 104.7%+136.1% EM = 120.5% ATK + 240.8% EM
+  // Phantasm Performance self (2 hits, different multipliers):
+  //   Hit 1: Lv10 44.4% ATK + 88.7% EM, Lv13 (C3+) 52.4% ATK + 104.7% EM
+  //   Hit 2: Lv10 57.7% ATK + 115.3% EM, Lv13 (C3+) 68.1% ATK + 136.1% EM
   // C6: Self Hit 2 → 85% EM LunarBloom; extra 120% EM LunarBloom at end
-  // Phantasm shades (3 hits, LunarBloom): Lv10 172.8%+172.8%+230.4% = 576.0% EM
-  // Lv13 (C3+): 204.0%+204.0%+272.0% = 680.0% EM
+  // Phantasm shades (3 hits, LunarBloom):
+  //   Hit 1+2: Lv10 172.8% EM ×2, Lv13 (C3+) 204.0% EM ×2
+  //   Hit 3: Lv10 230.4% EM, Lv13 (C3+) 272.0% EM
   // Q total: Lv10 (404.4%+606.5%) ATK + (808.7%+1213.1%) EM = 1010.9% ATK + 2021.8% EM
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
   protected readonly formulaMap = (() => {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     const isE13 = this.constellation >= 3;
     const isC6 = this.constellation >= 6;
-    const shadesEmMult = isE13 ? 6.8 : 5.76;
+    const shadeHit12Mult = isE13 ? 2.04 : 1.728;
+    const shadeHit3Mult = isE13 ? 2.72 : 2.304;
     // Q Hit 1: Lv10 404.4% ATK + 808.7% EM, Lv13 (C5+) 477.4% ATK + 954.7% EM
     // Q Hit 2: Lv10 606.5% ATK + 1213.1% EM, Lv13 (C5+) 716.0% ATK + 1432.1% EM
     const q1AtkMult = this.constellation >= 5 ? 4.774 : 4.044;
@@ -350,7 +353,7 @@ class Nefer extends CharacterBase {
     const selfParts: FormulaPart[] = isC6
       ? [
           {
-            // Self Hit 1 only: Lv10 44.4% ATK + 88.7% EM, Lv13 52.4% ATK + 104.7% EM
+            // Self Hit 1: Lv10 44.4% ATK + 88.7% EM, Lv13 52.4% ATK + 104.7% EM
             formula: new DirectFormula(
               isE13 ? 0.524 : 0.444,
               { element: "Dendro", ability: "charge", reaction: "none" },
@@ -373,12 +376,21 @@ class Nefer extends CharacterBase {
         ]
       : [
           {
-            // Self Hit 1+2 combined: Lv10 102.1% ATK + 204.0% EM, Lv13 120.5% ATK + 240.8% EM
+            // Self Hit 1: Lv10 44.4% ATK + 88.7% EM, Lv13 52.4% ATK + 104.7% EM
             formula: new DirectFormula(
-              isE13 ? 1.205 : 1.021,
+              isE13 ? 0.524 : 0.444,
               { element: "Dendro", ability: "charge", reaction: "none" },
               "atk",
-              { key: "em", multiplier: isE13 ? 2.408 : 2.04 }
+              { key: "em", multiplier: isE13 ? 1.047 : 0.887 }
+            ),
+          },
+          {
+            // Self Hit 2: Lv10 57.7% ATK + 115.3% EM, Lv13 68.1% ATK + 136.1% EM
+            formula: new DirectFormula(
+              isE13 ? 0.681 : 0.577,
+              { element: "Dendro", ability: "charge", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: isE13 ? 1.361 : 1.153 }
             ),
           },
         ];
@@ -393,8 +405,22 @@ class Nefer extends CharacterBase {
               parts: [
                 ...selfParts,
                 {
+                  // Shade Hits 1+2 (same multiplier)
                   formula: new LunarDirectFormula(
-                    shadesEmMult,
+                    shadeHit12Mult,
+                    {
+                      element: "Dendro",
+                      ability: "charge",
+                      reaction: "lunarBloom",
+                    },
+                    "em"
+                  ),
+                  hits: 2,
+                },
+                {
+                  // Shade Hit 3
+                  formula: new LunarDirectFormula(
+                    shadeHit3Mult,
                     {
                       element: "Dendro",
                       ability: "charge",
@@ -779,6 +805,7 @@ class Lauma extends CharacterBase {
                   }),
                 },
                 {
+                  // Per Verdant Dew (max 3 consumed) — multiplier-scaling single hit
                   formula: new LunarDirectFormula(
                     hold2Mult * 3,
                     {

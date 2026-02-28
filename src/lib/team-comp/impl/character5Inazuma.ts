@@ -148,8 +148,12 @@ class Chiori extends CharacterBase {
     // Upward Sweep: Lv10 269% ATK + 336% DEF, C3+: 317% ATK + 397% DEF
     const sweepAtk = this.constellation >= 3 ? 3.17 : 2.69;
     const sweepDef = this.constellation >= 3 ? 3.97 : 3.36;
-    // C6 Normal Attack: 5 hits total, 459% ATK total at Lv10. We average the mult per hit so 'hits: 5' applies baseDmg 5 times.
-    const naTotalArg = 4.59 / 5;
+    // C6 Normal Attack multipliers at Lv10: N1 97.7%, N2 92.6%, N3 60.1%×2, N4 148.5%
+    const geoNormal = {
+      element: "Geo" as const,
+      ability: "normal" as const,
+      reaction: "none" as const,
+    };
 
     return {
       "chiori-sweep": {
@@ -220,14 +224,10 @@ class Chiori extends CharacterBase {
                 en: "C6 Normal Combo",
               },
               parts: [
-                {
-                  formula: new DirectFormula(naTotalArg, {
-                    element: "Geo",
-                    ability: "normal",
-                    reaction: "none",
-                  }),
-                  hits: 5,
-                },
+                { formula: new DirectFormula(0.977, geoNormal) },
+                { formula: new DirectFormula(0.926, geoNormal) },
+                { formula: new DirectFormula(0.601, geoNormal), hits: 2 },
+                { formula: new DirectFormula(1.485, geoNormal) },
               ],
             },
           }
