@@ -974,6 +974,17 @@ export class TeamBuild {
         }
       }
 
+      // Same flat→percent substitution as for the carry.
+      for (const [flat, pct] of Object.entries(flatToPercent) as [
+        StatKey,
+        StatKey,
+      ][]) {
+        if (relevantKeys.has(flat)) {
+          relevantKeys.delete(flat);
+          relevantKeys.add(pct);
+        }
+      }
+
       const teamRollable = rollableKeys.filter((k) => relevantKeys.has(k));
       if (teamRollable.length === 0) continue;
 

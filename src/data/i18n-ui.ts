@@ -609,6 +609,8 @@ export const i18nUiData = {
     overrideLevel: { en: "Level", zh: "等级" },
     overrideConst: { en: "Const.", zh: "命座" },
     overrideRefine: { en: "Refine", zh: "精炼" },
+    constellationFormat: { en: "C{0}", zh: "{0}命" },
+    refinementFormat: { en: "R{0}", zh: "精{0}" },
     calcContextOptions: { en: "Context Settings", zh: "环境设置" },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },

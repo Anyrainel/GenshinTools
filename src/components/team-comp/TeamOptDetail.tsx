@@ -826,7 +826,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                           <SelectContent>
                             {[0, 1, 2, 3, 4, 5, 6].map((c) => (
                               <SelectItem key={c} value={String(c)}>
-                                C{c}
+                                {t.format("teamComp.constellationFormat", c)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -856,7 +856,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                             <SelectContent>
                               {[1, 2, 3, 4, 5].map((r) => (
                                 <SelectItem key={r} value={String(r)}>
-                                  R{r}
+                                  {t.format("teamComp.refinementFormat", r)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
