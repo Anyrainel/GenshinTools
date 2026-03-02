@@ -56,6 +56,7 @@ function makeScoreResultFromWeights(
       buildIndex: 0,
       statWeights: weights,
       setMatched: true,
+      setDifferent: false,
       mainStatMatches: 3,
       mainStatMismatches: [],
     },

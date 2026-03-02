@@ -142,64 +142,86 @@ class Chiori extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Tamoto: Lv10 148% ATK + 185% DEF, C3+: 174% ATK + 218% DEF
-    // ~5 hits over 17s (3.6s interval)
     const tAtk = this.constellation >= 3 ? 1.74 : 1.48;
     const tDef = this.constellation >= 3 ? 2.18 : 1.85;
-    // Upward Sweep: Lv10 269% ATK + 336% DEF, C3+: 317% ATK + 397% DEF
+    // Upward Sweep / P1 coordinated: Lv10 269% ATK + 336% DEF, C3+: 317% ATK + 397% DEF
     const sweepAtk = this.constellation >= 3 ? 3.17 : 2.69;
     const sweepDef = this.constellation >= 3 ? 3.97 : 3.36;
-    // C6 Normal Attack multipliers at Lv10: N1 97.7%, N2 92.6%, N3 60.1%×2, N4 148.5%
+    // C2/C4 Kinu: 170% of Tamoto DMG (baked into multiplier)
+    const kinuAtk = tAtk * 1.7;
+    const kinuDef = tDef * 1.7;
+
+    const geoSkill = {
+      element: "Geo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const geoNormal = {
       element: "Geo" as const,
       ability: "normal" as const,
       reaction: "none" as const,
     };
 
+    // Pet count: base 1 + 1 extra if teammate has geo construct (C0) or geo element (C1+)
+    const geoConstructChars = [
+      "arataki_itto",
+      "albedo",
+      "zhongli",
+      "kachina",
+      "ningguang",
+      "traveler_geo",
+      "columbina",
+    ];
+    const teammates = this.teamMeta.characters.filter(
+      (id) => id !== this.charId
+    );
+    const hasGeoConstruct = teammates.some((id) =>
+      geoConstructChars.includes(id)
+    );
+    const hasExtraPet =
+      this.constellation >= 1
+        ? hasGeoConstruct ||
+          teammates.some((id) => this.teamMeta.elements[id] === "Geo")
+        : hasGeoConstruct;
+    const numPets = 1 + (hasExtraPet ? 1 : 0);
+
     return {
-      "chiori-sweep": {
-        label: { zh: "E伤害", en: "E" },
+      // E sweep + P1 coordinated (sweep mult) + Tamoto hits + C4 Kinu (170% Tamoto)
+      "chiori-e-combo": {
+        label: {
+          zh: `E (${numPets}人偶)`,
+          en: `E (${numPets} pet${numPets > 1 ? "s" : ""})`,
+        },
         parts: [
           {
-            formula: new DirectFormula(
-              sweepAtk,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "def", multiplier: sweepDef }
-            ),
+            formula: new DirectFormula(sweepAtk, geoSkill, "atk", {
+              key: "def",
+              multiplier: sweepDef,
+            }),
+            hits: 3, // 1 sweep + 2 P1 coordinated
           },
-        ],
-      },
-      "chiori-tamoto": {
-        label: { zh: "E×5", en: "E (×5)" },
-        parts: [
           {
-            formula: new DirectFormula(
-              tAtk,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "def", multiplier: tDef }
-            ),
-            hits: 5,
+            formula: new DirectFormula(tAtk, geoSkill, "atk", {
+              key: "def",
+              multiplier: tDef,
+            }),
+            hits: 5 * numPets,
           },
-        ],
-      },
-      // P1 Tapestry "Seize the Moment": Tamoto coordinated attack = 100% of upward sweep DMG.
-      // Fires up to 2× per Tapestry activation (once every 2s, 8s duration).
-      // Considered Elemental Skill DMG. The per-hit multiplier is identical to chiori-sweep.
-      "chiori-p1-coordinated": {
-        label: { zh: "P1协同攻击", en: "P1 Coordinated" },
-        parts: [
-          {
-            formula: new DirectFormula(
-              sweepAtk,
-              { element: "Geo", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "def", multiplier: sweepDef }
-            ),
-          },
+          ...(this.constellation >= 4
+            ? [
+                {
+                  formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
+                    key: "def",
+                    multiplier: kinuDef,
+                  }),
+                  hits: 3,
+                },
+              ]
+            : []),
         ],
       },
       // Q Hiyoku: Twin Blades — Lv10 461% ATK + 577% DEF, Lv13 (C5+) 544% ATK + 681% DEF
+      // C2: triggers 4 Kinu attacks (170% of Tamoto DMG, skill DMG)
       "chiori-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
@@ -214,8 +236,20 @@ class Chiori extends CharacterBase {
               }
             ),
           },
+          ...(this.constellation >= 2
+            ? [
+                {
+                  formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
+                    key: "def",
+                    multiplier: kinuDef,
+                  }),
+                  hits: 4,
+                },
+              ]
+            : []),
         ],
       },
+      // C6: Geo-infused normal combo — N1 97.7%, N2 92.6%, N3 60.1%×2, N4 148.5%
       ...(this.constellation >= 6
         ? {
             "chiori-na": {

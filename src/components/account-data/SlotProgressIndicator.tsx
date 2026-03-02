@@ -4,6 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getBarColor } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
 import { TriangleAlert } from "lucide-react";
 
@@ -12,14 +13,6 @@ interface SlotProgressIndicatorProps {
   actualScore: number;
   maxScore: number;
   isMainStatWrong: boolean;
-}
-
-function getProgressColor(percent: number): string {
-  if (percent >= 95) return "bg-emerald-600";
-  if (percent >= 85) return "bg-green-500";
-  if (percent >= 70) return "bg-lime-400";
-  if (percent >= 50) return "bg-yellow-500";
-  return "bg-red-500";
 }
 
 export function SlotProgressIndicator({
@@ -31,9 +24,9 @@ export function SlotProgressIndicator({
   const { t } = useLanguage();
 
   // Calculate percentage (cap at 100%)
-  const percent =
-    maxScore > 0 ? Math.min(100, (actualScore / maxScore) * 100) : 0;
-  const colorClass = getProgressColor(percent);
+  const ratio = maxScore > 0 ? Math.min(1, actualScore / maxScore) : 0;
+  const percent = Math.round(ratio * 100);
+  const colorClass = getBarColor(ratio);
 
   return (
     <Tooltip>

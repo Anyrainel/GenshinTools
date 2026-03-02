@@ -89,6 +89,7 @@ interface LanguageContextType {
     role: (key: string) => string;
     constellation: (key: string | number) => string;
     tier: (key: string) => string;
+    halfSetShort: (halfSetId: string) => string;
     formatDate: (dateString: string | null) => string;
     ui: (path: string) => string;
     format: (key: string, ...args: (string | number)[]) => string;
@@ -476,6 +477,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getHalfSetShortName = useCallback(
+    (halfSetId: string): string => {
+      const labels = i18nAppData.halfSetShort as Record<
+        string,
+        Record<string, string>
+      >;
+      return labels[halfSetId]?.[language] || halfSetId;
+    },
+    [language]
+  );
+
   const formatReleaseDate = useCallback(
     (dateString: string | null): string => {
       if (!dateString) return "???";
@@ -571,6 +583,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       role: getRoleName,
       constellation: getConstellationName,
       tier: getTierName,
+      halfSetShort: getHalfSetShortName,
       formatDate: formatReleaseDate,
       ui: getUIMessage,
       format: formatString,

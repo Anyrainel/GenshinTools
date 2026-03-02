@@ -206,59 +206,41 @@ class Yaoyao extends CharacterBase {
     const qInitialMult = this.constellation >= 5 ? 2.434 : 2.062;
     const qRadishMult = this.constellation >= 5 ? 1.533 : 1.299;
 
+    const dendroSkill = {
+      element: "Dendro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const dendroBurst = {
+      element: "Dendro" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+
+    // E: Yuegui Throwing Mode — 10 throws over 10s (1/sec)
+    // C6: every 2 normal throws → 1 Mega Radish (max 2), replacing normal throw slots
+    // C6: 8 normal + 2 mega = 10 total throws
     return {
       "yaoyao-skill": {
         label: { zh: "E伤害", en: "E" },
         parts: [
           {
-            formula: new DirectFormula(eMult, {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(eMult, dendroSkill),
+            hits: this.constellation >= 6 ? 8 : 10,
           },
+          ...(this.constellation >= 6
+            ? [{ formula: new DirectFormula(0.75, dendroSkill), hits: 2 }]
+            : []),
         ],
       },
+      // Q: initial burst hit + ~5 radishes from Jumping Mode Yuegui (unaffected by C6)
       "yaoyao-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
-          {
-            formula: new DirectFormula(qInitialMult, {
-              element: "Dendro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
+          { formula: new DirectFormula(qInitialMult, dendroBurst) },
+          { formula: new DirectFormula(qRadishMult, dendroBurst), hits: 5 },
         ],
       },
-      "yaoyao-burst-radish": {
-        label: { zh: "Q追加伤害", en: "Q Extra" },
-        parts: [
-          {
-            formula: new DirectFormula(qRadishMult, {
-              element: "Dendro",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      ...(this.constellation >= 6
-        ? {
-            "yaoyao-c6-radish": {
-              label: { zh: "6命 E伤害", en: "E (C6)" },
-              parts: [
-                {
-                  formula: new DirectFormula(0.75, {
-                    element: "Dendro",
-                    ability: "skill", // Yuegui Throwing Mode throws it, so it's a skill
-                    reaction: "none",
-                  }),
-                },
-              ],
-            },
-          }
-        : {}),
     };
   })();
 }

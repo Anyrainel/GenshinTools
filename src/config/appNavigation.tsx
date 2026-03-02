@@ -1,6 +1,8 @@
+import type { TabConfig } from "@/components/layout/AppBar";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { LucideIcon } from "lucide-react";
 import {
+  BarChart3,
   Book,
   Box,
   Filter,
@@ -50,6 +52,12 @@ export const getNavigationConfig = (
         href: "/account-data?tab=inventory",
         value: "inventory",
         icon: Box,
+      },
+      {
+        label: t.ui("evaluation.tabLabel"),
+        href: "/account-data?tab=evaluation",
+        value: "evaluation",
+        icon: BarChart3,
       },
     ],
   },
@@ -119,3 +127,17 @@ export const getNavigationConfig = (
     href: "/team-comp",
   },
 ];
+
+export function getTabsForRoute(
+  t: ReturnType<typeof useLanguage>["t"],
+  route: string
+): TabConfig[] {
+  const nav = getNavigationConfig(t);
+  const item = nav.find((n) => n.href === route);
+  return (item?.children ?? []).map(({ value, label, icon, tourStepId }) => ({
+    value,
+    label,
+    icon,
+    tourStepId,
+  }));
+}

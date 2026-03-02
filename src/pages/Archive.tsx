@@ -1,10 +1,9 @@
 import { ArtifactArchiveView } from "@/components/archive/ArtifactArchiveView";
 import { CharacterArchiveView } from "@/components/archive/CharacterArchiveView";
 import { WeaponArchiveView } from "@/components/archive/WeaponArchiveView";
-import type { TabConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Book, Box, Sword } from "lucide-react";
 import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -24,26 +23,7 @@ export default function ArchivePage() {
     setSearchParams({ tab }, { replace: true });
   };
 
-  const tabs: TabConfig[] = useMemo(
-    () => [
-      {
-        value: "characters",
-        label: t.ui("archive.characters"),
-        icon: Book,
-      },
-      {
-        value: "weapons",
-        label: t.ui("archive.weapons"),
-        icon: Sword,
-      },
-      {
-        value: "artifacts",
-        label: t.ui("archive.artifacts"),
-        icon: Box,
-      },
-    ],
-    [t]
-  );
+  const tabs = useMemo(() => getTabsForRoute(t, "/archive"), [t]);
 
   return (
     <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>

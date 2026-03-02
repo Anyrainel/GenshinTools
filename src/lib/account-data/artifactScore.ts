@@ -116,6 +116,8 @@ export type BuildMatchResult = {
   buildIndex: number;
   statWeights: StatWeightMap;
   setMatched: boolean;
+  /** True when the build's artifact set is genuinely different from the equipped set (not just incomplete). */
+  setDifferent: boolean;
   mainStatMatches: number; // 0-3
   mainStatMismatches: MainStatMismatch[];
 };
@@ -363,6 +365,7 @@ export function matchBuild(
     buildIndex: winner.index,
     statWeights: buildToWeightMap(winner.build),
     setMatched: winner.setMatched,
+    setDifferent: isSetDifferent(artifacts, winner.build),
     mainStatMatches: winner.mainStatMatches,
     mainStatMismatches: winner.mainStatMismatches,
   };
@@ -550,6 +553,45 @@ function isSetMatched(
       (halfSetCounts.get(build.halfSet1) ?? 0) >= 2 &&
       (halfSetCounts.get(build.halfSet2) ?? 0) >= 2
     );
+  }
+
+  return false;
+}
+
+/**
+ * Check if the build's artifact set is genuinely different from the equipped set.
+ *
+ * Unlike isSetMatched (which checks if the set bonus is fully active), this checks
+ * whether the equipped artifacts belong to a fundamentally different set.
+ * For 4pc: the build's set must not be the primary (most common) equipped set.
+ * For 2pc+2pc: delegates to isSetMatched (same threshold applies).
+ */
+function isSetDifferent(
+  artifacts: Partial<Record<Slot, ArtifactData>>,
+  build: Build
+): boolean {
+  if (build.composition === "4pc" && build.artifactSet) {
+    const buildSetCount = countSetPieces(artifacts, build.artifactSet);
+    // Find the max count of any single set among equipped artifacts
+    const counts = new Map<string, number>();
+    for (const slot of allSlots) {
+      const setKey = artifacts[slot]?.setKey;
+      if (setKey) counts.set(setKey, (counts.get(setKey) ?? 0) + 1);
+    }
+    let maxCount = 0;
+    for (const count of counts.values()) {
+      if (count > maxCount) maxCount = count;
+    }
+    // The build's set is "different" only if another set has strictly more pieces
+    return buildSetCount < maxCount;
+  }
+
+  if (
+    build.composition === "2pc+2pc" &&
+    build.halfSet1 != null &&
+    build.halfSet2 != null
+  ) {
+    return !isSetMatched(artifacts, build);
   }
 
   return false;

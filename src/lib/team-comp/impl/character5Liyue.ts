@@ -840,11 +840,11 @@ class HuTao extends CharacterBase {
     };
     return {
       "hutao-charged": {
-        label: { zh: "重击", en: "CA" },
+        label: { zh: "E重击", en: "E CA" },
         parts: [{ formula: new DirectFormula(2.426, pyroTag) }],
       },
       "hutao-charged-vape": {
-        label: { zh: "重击(蒸发)", en: "CA (Vape)" },
+        label: { zh: "E重击(蒸发)", en: "E CA (Vape)" },
         parts: [
           {
             formula: new AmplifyFormula(2.426, {
@@ -855,24 +855,12 @@ class HuTao extends CharacterBase {
         ],
       },
       "hutao-blood-blossom": {
-        label: { zh: "E血梅香", en: "E Blood Blossom" },
+        label: { zh: "E血梅香(单次)", en: "E Blood Blossom (x1)" },
         parts: [
           { formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra) },
         ],
       },
-      "hutao-blood-blossom-vape": {
-        label: { zh: "E血梅香(蒸发)", en: "E Blood Blossom (Vape)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(
-              bbMult,
-              { ...pyroSkillTag, reaction: "vaporize" },
-              "atk",
-              bbExtra
-            ),
-          },
-        ],
-      },
+      // blood blossom is hard to predict timing, so omit the vape version
       "hutao-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [

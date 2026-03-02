@@ -8,16 +8,13 @@ import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildV
 // Skipping re-importing everything, just targeting the file content fix.
 // Actually replace_file_content replaces the block.
 // Let's use multi_replace to fix specific areas.
-import type {
-  ActionConfig,
-  ControlHandle,
-  TabConfig,
-} from "@/components/layout/AppBar";
+import type { ActionConfig, ControlHandle } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
+import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   Build,
@@ -37,15 +34,7 @@ import { loadPresetMetadata } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { toPng } from "html-to-image";
-import {
-  Download,
-  FileDown,
-  Filter,
-  HelpCircle,
-  Settings,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -76,6 +65,20 @@ export default function ArtifactBuildsPage() {
       return newParams;
     });
   };
+
+  // Support deep-linking to a character via ?char=<id> (e.g. from evaluation page)
+  useEffect(() => {
+    const charParam = searchParams.get("char");
+    if (charParam) {
+      setTargetCharacterId(charParam);
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.delete("char");
+        newParams.set("tab", "configure");
+        return newParams;
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {
@@ -202,22 +205,7 @@ export default function ArtifactBuildsPage() {
   }, [t]);
 
   // Tab configuration for AppBar
-  const tabs: TabConfig[] = useMemo(
-    () => [
-      {
-        value: "configure",
-        label: t.ui("navigation.configure"),
-        icon: Settings,
-      },
-      {
-        value: "filters",
-        label: t.ui("navigation.computeFilters"),
-        icon: Filter,
-        tourStepId: "af-compute-tab",
-      },
-    ],
-    [t]
-  );
+  const tabs = useMemo(() => getTabsForRoute(t, "/artifact-filter"), [t]);
 
   // Actions depend on active tab
   const actions: ActionConfig[] = useMemo(() => {

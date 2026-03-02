@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772290033581",
+  "id": "export-1772415839821",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -2682,13 +2682,14 @@
         },
         {
           "stat": "er",
-          "weight": 75
+          "weight": 100
         }
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "candace",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "8n1DH-m": {
       "id": "8n1DH-m",
@@ -2705,7 +2706,7 @@
         },
         {
           "stat": "er",
-          "weight": 75
+          "weight": 100
         }
       ],
       "artifactSet": "noblesse_oblige",
@@ -2713,7 +2714,8 @@
       "halfSet2": "hp%-20",
       "characterId": "candace",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "source": "preset"
     },
     "8DH5wrm": {
       "id": "8DH5wrm",
@@ -3044,13 +3046,14 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 50
         }
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "sangonomiya_kokomi",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "source": "preset"
     },
     "3ZFlAFO": {
       "id": "3ZFlAFO",
@@ -3067,17 +3070,18 @@
         },
         {
           "stat": "em",
-          "weight": 55
+          "weight": 100
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 50
         }
       ],
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "sangonomiya_kokomi",
       "styles": ["on-field"],
-      "roles": ["dps", "sustain"]
+      "roles": ["dps", "sustain"],
+      "source": "preset"
     },
     "72mn_BO": {
       "id": "72mn_BO",
@@ -3851,14 +3855,15 @@
           "weight": 100
         },
         {
-          "stat": "em",
+          "stat": "atk%",
           "weight": 75
         }
       ],
       "artifactSet": "instructor",
       "styles": ["off-field"],
       "roles": ["support"],
-      "minCons": 2
+      "minCons": 2,
+      "source": "preset"
     },
     "1pU_iAO": {
       "id": "1pU_iAO",
@@ -4321,7 +4326,7 @@
       "composition": "4pc",
       "sands": ["er", "hp%"],
       "goblet": ["hp%"],
-      "circlet": ["heal%"],
+      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -4329,12 +4334,13 @@
         },
         {
           "stat": "er",
-          "weight": 55
+          "weight": 100
         }
       ],
       "artifactSet": "song_of_days_past",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "source": "preset"
     },
     "5SKNl1e": {
       "id": "5SKNl1e",

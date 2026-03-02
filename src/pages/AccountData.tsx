@@ -1,5 +1,6 @@
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import { CharacterView } from "@/components/account-data/CharacterView";
+import { EvaluationView } from "@/components/account-data/EvaluationView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
 
@@ -8,7 +9,6 @@ import {
   type ActionConfig,
   AppBar,
   type ControlHandle,
-  type TabConfig,
 } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
@@ -16,6 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
+import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   AccountData,
@@ -46,13 +47,10 @@ import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import {
   AlertTriangle,
-  Box,
   Database,
   HelpCircle,
-  LayoutGrid,
   Trash2,
   Upload,
-  Users,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -399,24 +397,7 @@ export default function AccountDataPage() {
   };
 
   // Tab configuration for AppBar
-  const tabs: TabConfig[] = useMemo(
-    () => [
-      {
-        value: "characters",
-        label: t.ui("accountData.characters"),
-        icon: Users,
-        tourStepId: "ad-characters",
-      },
-      {
-        value: "recommendations",
-        label: t.ui("accountData.recommendations"),
-        icon: LayoutGrid,
-        tourStepId: "ad-recommendations",
-      },
-      { value: "inventory", label: t.ui("accountData.inventory"), icon: Box },
-    ],
-    [t]
-  );
+  const tabs = useMemo(() => getTabsForRoute(t, "/account-data"), [t]);
 
   // Actions configuration
   const actions: ActionConfig[] = useMemo(() => {
@@ -554,6 +535,17 @@ export default function AccountDataPage() {
         <TabsContent value="inventory" className="mt-0 h-full">
           {accountData ? (
             <InventoryView data={accountData} />
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="evaluation" className="mt-0 h-full">
+          {accountData ? (
+            <EvaluationView />
           ) : (
             <NoDataPlaceholder
               t={t}

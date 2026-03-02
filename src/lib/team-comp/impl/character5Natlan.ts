@@ -208,83 +208,49 @@ class Citlali extends CharacterBase {
   ];
 
   protected readonly formulaMap = (() => {
-    // E Obsidian Tzitzimitl: Lv10 131.3%, Lv13 (C3+) 155.0%
-    const eBaseMult = this.constellation >= 3 ? 1.55 : 1.313;
     // E Frostfall Storm: Lv10 30.6%, Lv13 (C3+) 36.2%
     const eStormMult = this.constellation >= 3 ? 0.362 : 0.306;
+    // Frostfall Storm ticks (1/s): C0-C3 ~12s, C4-C5 ~16s (C4 skull
+    // returns 16 Nightsoul pts every 8s), C6 20s (storm never stops)
+    const eHits =
+      this.constellation >= 6 ? 20 : this.constellation >= 4 ? 16 : 12;
     // Q Ice Storm: Lv10 967.7%, Lv13 (C5+) 1142.4%
     const qMult = this.constellation >= 5 ? 11.424 : 9.677;
-    // Q Spiritvessel Skull: Lv10 241.9%, Lv13 (C5+) 285.6%
+    // Q Spiritvessel Skull (guaranteed, 1 per target): Lv10 241.9%, Lv13 (C5+) 285.6%
     const qSkullMult = this.constellation >= 5 ? 2.856 : 2.419;
+    const skillTag = {
+      element: "Cryo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const burstTag = {
+      element: "Cryo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
     return {
-      "citlali-skill": {
-        label: { zh: "E伤害", en: "E" },
+      "citlali-e-total": {
+        label: { zh: "E总伤害", en: "E Total" },
         parts: [
-          {
-            formula: new DirectFormula(eBaseMult, {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "citlali-skill-storm": {
-        label: { zh: "E持续伤害", en: "E DoT" },
-        parts: [
-          {
-            formula: new DirectFormula(eStormMult, {
-              element: "Cryo",
-              ability: "skill",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "citlali-burst": {
-        label: { zh: "Q伤害", en: "Q" },
-        parts: [
-          {
-            formula: new DirectFormula(qMult, {
-              element: "Cryo",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      "citlali-burst-skull": {
-        label: { zh: "Q追加伤害", en: "Q Extra" },
-        parts: [
-          {
-            formula: new DirectFormula(qSkullMult, {
-              element: "Cryo",
-              ability: "burst",
-              reaction: "none",
-            }),
-          },
-        ],
-      },
-      ...(this.constellation >= 4
-        ? {
-            "citlali-c4-skull": {
-              label: { zh: "4命E追加伤害", en: "C4 E Extra" },
-              parts: [
+          { formula: new DirectFormula(eStormMult, skillTag), hits: eHits },
+          // C4: Obsidian Spiritvessel Skull (1800% EM, once per 8s)
+          ...(this.constellation >= 4
+            ? [
                 {
-                  formula: new DirectFormula(
-                    18.0,
-                    {
-                      element: "Cryo",
-                      ability: "skill",
-                      reaction: "none",
-                    },
-                    "em"
-                  ),
+                  formula: new DirectFormula(18.0, skillTag, "em"),
+                  hits: this.constellation >= 6 ? 3 : 2,
                 },
-              ],
-            },
-          }
-        : {}),
+              ]
+            : []),
+        ],
+      },
+      "citlali-burst-total": {
+        label: { zh: "Q总伤害", en: "Q Total" },
+        parts: [
+          { formula: new DirectFormula(qMult, burstTag) },
+          { formula: new DirectFormula(qSkullMult, burstTag) },
+        ],
+      },
     };
   })();
 }

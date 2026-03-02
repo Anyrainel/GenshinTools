@@ -961,4 +961,20 @@ export const i18nUiData = {
       },
     },
   },
+
+  evaluation: {
+    title: { en: "Artifact Evaluation", zh: "圣遗物评估" },
+    tabLabel: { en: "Evaluation", zh: "评估" },
+    subtitle: { en: "{0} builds · Avg {1}%", zh: "{0} 个配装 · 均值 {1}%" },
+    noBuilds: { en: "No builds to evaluate", zh: "无配装可评估" },
+    noBuildsDesc: {
+      en: "Import account data and configure artifact builds to see evaluations.",
+      zh: "导入账号数据并配置圣遗物配装方案后可查看评估。",
+    },
+    flex: { en: "Flex", zh: "散件" },
+    score: { en: "Score", zh: "评分" },
+    sortAsc: { en: "Weakest first", zh: "最弱优先" },
+    sortDesc: { en: "Strongest first", zh: "最强优先" },
+    all: { en: "All", zh: "全部" },
+  },
 };

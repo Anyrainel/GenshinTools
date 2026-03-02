@@ -1,9 +1,9 @@
-import type { ActionConfig, TabConfig } from "@/components/layout/AppBar";
+import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { CharacterTierListView } from "@/components/tier-list/CharacterTierListView";
 import { WeaponTierListView } from "@/components/tier-list/WeaponTierListView";
+import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Award, Sword } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -30,21 +30,7 @@ export default function TierListPage() {
     setActions(newActions);
   }, []);
 
-  const tabs: TabConfig[] = useMemo(
-    () => [
-      {
-        value: "characters",
-        label: t.ui("app.tierListTitle"),
-        icon: Award,
-      },
-      {
-        value: "weapons",
-        label: t.ui("app.weaponTierListTitle"),
-        icon: Sword,
-      },
-    ],
-    [t]
-  );
+  const tabs = useMemo(() => getTabsForRoute(t, "/tier-list"), [t]);
 
   return (
     <PageLayout

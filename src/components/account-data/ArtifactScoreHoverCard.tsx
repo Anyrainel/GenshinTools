@@ -92,9 +92,8 @@ export function ArtifactScoreHoverCard({
 
   const noBuild = score.buildMatch == null;
 
-  // Show warning icon when scored using a non-matching artifact set
-  const hasSetMismatch =
-    score.buildMatch != null && score.buildMatch.setMatched === false;
+  // Show warning icon when scored using a genuinely different artifact set
+  const hasSetMismatch = score.buildMatch?.setDifferent;
 
   const labelCn = cn(
     "text-muted-foreground font-bold leading-none not-italic",
@@ -302,8 +301,7 @@ function ArtifactScoreContent({
 }: ArtifactScoreContentProps) {
   const { t } = useLanguage();
   const buildSetLabel = useBuildSetLabel(artifactScore);
-  const hasSetMismatch =
-    artifactScore.buildMatch != null && !artifactScore.buildMatch.setMatched;
+  const hasSetMismatch = artifactScore.buildMatch?.setDifferent;
 
   return (
     <div className="flex flex-col gap-4">

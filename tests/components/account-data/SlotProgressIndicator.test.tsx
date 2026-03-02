@@ -59,7 +59,7 @@ describe("SlotProgressIndicator", () => {
       );
 
       const progressBar = container.querySelector("[style]");
-      expect(progressBar).toHaveClass("bg-emerald-600");
+      expect(progressBar).toHaveClass("bg-emerald-500");
     });
 
     it("applies red color for low scores", () => {
@@ -73,7 +73,7 @@ describe("SlotProgressIndicator", () => {
       );
 
       const progressBar = container.querySelector("[style]");
-      expect(progressBar).toHaveClass("bg-red-500");
+      expect(progressBar).toHaveClass("bg-red-400");
     });
   });
 
