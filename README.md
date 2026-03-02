@@ -31,7 +31,8 @@ Everyone plays Genshin differently. This tool allows you to:
 
 - **Data Import**: Import account data via **GOOD** files (from scanners) or directly via **Enka.Network** (UID).
 - **Artifact Scoring**: Automatically score your characters' artifacts based on custom stat weights.
-- **Personalized Recommendations**: Get actionable insights on which characters and artifacts to invest in.
+- **Personalized Recommendations**: Get actionable insights on which characters and artifacts to invest in — including equip, swap, upgrade, reroll, and farm suggestions.
+- **Build Evaluation**: See per-character build completion and efficiency at a glance with tier ratings (S/A/B/C).
 - **Inventory Overview**: View distribution of artifacts and weapons across your account.
 
 ### Tier List Maker
@@ -48,10 +49,11 @@ A modern, interactive tier list maker that:
 
 ### Archive
 
-**Browse the complete character and weapon encyclopedia.**
+**Browse the complete character, weapon, and artifact encyclopedia.**
 
 - **Character Details**: View base stats at multiple ascension levels, full skill/talent kits, passives, constellations, and glossary.
 - **Weapon Details**: Compare weapons by type, secondary stat, and rarity.
+- **Artifact Sets**: Browse all artifact sets with piece details and set bonuses.
 
 ### Team Builder
 
@@ -68,6 +70,11 @@ A modern, interactive tier list maker that:
 **Native performance and offline capability.**
 
 The application is wrapped with **Tauri**, allowing you to run it as a standalone desktop application on Windows.
+
+## 🌐 Localization & Theming
+
+- **Languages**: English and Simplified Chinese (EN/ZH)
+- **Themes**: 9 color palettes with per-element theming
 
 ## 💻 Tech Stack
 

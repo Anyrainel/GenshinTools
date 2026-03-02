@@ -456,6 +456,72 @@ function combinations(n: number, k: number): number[][] {
   return result;
 }
 
+/** Compute the SlotEvaluation for a single artifact slot. */
+function buildSlotEval(
+  slot: Slot,
+  candidate: { artifact: ArtifactData; score: number } | null,
+  evalBuild: EvalBuild,
+  globalConfig: GlobalStatWeights,
+  isFlex: boolean
+): SlotEvaluation {
+  const rarity = candidate?.artifact.rarity ?? 5;
+  const mainStat = candidate?.artifact.mainStatKey ?? "hp";
+  const subMax = calculateMaxSlotSubScore(mainStat, evalBuild.weights, rarity);
+
+  const isVariableMainStat =
+    slot === "sands" || slot === "goblet" || slot === "circlet";
+  const idealMainStat = getIdealMainStat(slot, evalBuild);
+  const mainStatMax = isVariableMainStat
+    ? scoreMainStat(idealMainStat, rarity, globalConfig)
+    : 0;
+  const mainStatActual =
+    isVariableMainStat && candidate
+      ? scoreMainStat(mainStat, rarity, globalConfig)
+      : 0;
+
+  return {
+    artifact: candidate?.artifact ?? null,
+    score: (candidate?.score ?? 0) + mainStatActual,
+    maxScore: subMax + mainStatMax,
+    isFlexSlot: isFlex,
+  };
+}
+
+/** Compute adjustedMaxScore, completeness, and return the final BuildEvaluation. */
+function buildEvalResult(
+  evalBuild: EvalBuild,
+  bestSlots: Record<Slot, SlotEvaluation>,
+  bestTotalScore: number,
+  globalConfig: GlobalStatWeights
+): BuildEvaluation {
+  let adjustedMaxScore = 0;
+  for (const slot of allSlots) {
+    if (bestSlots[slot].artifact) {
+      adjustedMaxScore += bestSlots[slot].maxScore;
+    } else {
+      const idealMainStat = getIdealMainStat(slot, evalBuild);
+      const isVariableMainStat =
+        slot === "sands" || slot === "goblet" || slot === "circlet";
+      adjustedMaxScore +=
+        calculateMaxSlotSubScore(idealMainStat, evalBuild.weights, 5) +
+        (isVariableMainStat
+          ? scoreMainStat(idealMainStat, 5, globalConfig)
+          : 0);
+    }
+  }
+
+  const completeness =
+    adjustedMaxScore > 0 ? bestTotalScore / adjustedMaxScore : 0;
+
+  return {
+    evalBuild,
+    slots: bestSlots,
+    totalScore: bestTotalScore,
+    totalMaxScore: adjustedMaxScore,
+    completeness,
+  };
+}
+
 function evaluateBuild(
   evalBuild: EvalBuild,
   allArtifacts: ArtifactData[],
@@ -503,42 +569,18 @@ function evaluateBuild(
     for (let i = 0; i < allSlots.length; i++) {
       const slot = allSlots[i];
       const isFlex = flexSet.has(i);
-
-      // Flex slots: use best from any set; on-set slots: use best on-set
-      // For flex: prefer any-set (which includes on-set), fall back to on-set
       const candidate = isFlex
         ? (anySet[slot] ?? onSet[slot])
         : (onSet[slot] ?? null);
 
-      const rarity = candidate?.artifact.rarity ?? 5;
-      const mainStat = candidate?.artifact.mainStatKey ?? "hp";
-      const subMax = calculateMaxSlotSubScore(
-        mainStat,
-        evalBuild.weights,
-        rarity
+      arrangement[slot] = buildSlotEval(
+        slot,
+        candidate,
+        evalBuild,
+        globalConfig,
+        isFlex
       );
-
-      // For sands/goblet/circlet, main stat participates in scoring via scoreMainStat.
-      // This ensures builds with few weighted substats still show meaningful progress
-      // when they have the correct main stat equipped.
-      const isVariableMainStat =
-        slot === "sands" || slot === "goblet" || slot === "circlet";
-      const idealMainStat = getIdealMainStat(slot, evalBuild);
-      const mainStatMax = isVariableMainStat
-        ? scoreMainStat(idealMainStat, rarity, globalConfig)
-        : 0;
-      const mainStatActual =
-        isVariableMainStat && candidate
-          ? scoreMainStat(mainStat, rarity, globalConfig)
-          : 0;
-
-      arrangement[slot] = {
-        artifact: candidate?.artifact ?? null,
-        score: (candidate?.score ?? 0) + mainStatActual,
-        maxScore: subMax + mainStatMax,
-        isFlexSlot: isFlex,
-      };
-      totalScore += (candidate?.score ?? 0) + mainStatActual;
+      totalScore += arrangement[slot].score;
     }
 
     if (totalScore > bestTotalScore) {
@@ -547,33 +589,7 @@ function evaluateBuild(
     }
   }
 
-  // Theoretical max: sum each slot's maxScore (already includes main stat bonus for variable slots)
-  let adjustedMaxScore = 0;
-  for (const slot of allSlots) {
-    if (bestSlots[slot].artifact) {
-      adjustedMaxScore += bestSlots[slot].maxScore;
-    } else {
-      const idealMainStat = getIdealMainStat(slot, evalBuild);
-      const isVariableMainStat =
-        slot === "sands" || slot === "goblet" || slot === "circlet";
-      adjustedMaxScore +=
-        calculateMaxSlotSubScore(idealMainStat, evalBuild.weights, 5) +
-        (isVariableMainStat
-          ? scoreMainStat(idealMainStat, 5, globalConfig)
-          : 0);
-    }
-  }
-
-  const completeness =
-    adjustedMaxScore > 0 ? bestTotalScore / adjustedMaxScore : 0;
-
-  return {
-    evalBuild,
-    slots: bestSlots,
-    totalScore: bestTotalScore,
-    totalMaxScore: adjustedMaxScore,
-    completeness,
-  };
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
 }
 
 /**
@@ -674,32 +690,14 @@ function evaluateBuild2p2(
               isFlex = true;
             }
 
-            const rarity = candidate?.artifact.rarity ?? 5;
-            const mainStat = candidate?.artifact.mainStatKey ?? "hp";
-            const subMax = calculateMaxSlotSubScore(
-              mainStat,
-              evalBuild.weights,
-              rarity
+            arrangement[slot] = buildSlotEval(
+              slot,
+              candidate,
+              evalBuild,
+              globalConfig,
+              isFlex
             );
-
-            const isVariableMainStat =
-              slot === "sands" || slot === "goblet" || slot === "circlet";
-            const idealMainStat = getIdealMainStat(slot, evalBuild);
-            const mainStatMax = isVariableMainStat
-              ? scoreMainStat(idealMainStat, rarity, globalConfig)
-              : 0;
-            const mainStatActual =
-              isVariableMainStat && candidate
-                ? scoreMainStat(mainStat, rarity, globalConfig)
-                : 0;
-
-            arrangement[slot] = {
-              artifact: candidate?.artifact ?? null,
-              score: (candidate?.score ?? 0) + mainStatActual,
-              maxScore: subMax + mainStatMax,
-              isFlexSlot: isFlex,
-            };
-            totalScore += (candidate?.score ?? 0) + mainStatActual;
+            totalScore += arrangement[slot].score;
           }
 
           if (totalScore > bestTotalScore) {
@@ -711,33 +709,7 @@ function evaluateBuild2p2(
     }
   }
 
-  // Theoretical max
-  let adjustedMaxScore = 0;
-  for (const slot of allSlots) {
-    if (bestSlots[slot].artifact) {
-      adjustedMaxScore += bestSlots[slot].maxScore;
-    } else {
-      const idealMainStat = getIdealMainStat(slot, evalBuild);
-      const isVariableMainStat =
-        slot === "sands" || slot === "goblet" || slot === "circlet";
-      adjustedMaxScore +=
-        calculateMaxSlotSubScore(idealMainStat, evalBuild.weights, 5) +
-        (isVariableMainStat
-          ? scoreMainStat(idealMainStat, 5, globalConfig)
-          : 0);
-    }
-  }
-
-  const completeness =
-    adjustedMaxScore > 0 ? bestTotalScore / adjustedMaxScore : 0;
-
-  return {
-    evalBuild,
-    slots: bestSlots,
-    totalScore: bestTotalScore,
-    totalMaxScore: adjustedMaxScore,
-    completeness,
-  };
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
 }
 
 function getIdealMainStat(slot: Slot, evalBuild: EvalBuild): MainStat {
@@ -861,23 +833,6 @@ export function getBarColor(completeness: number): string {
   return getTier(completeness).bg;
 }
 
-// Keep legacy exports for any remaining references
-export function getGrade(completeness: number): string {
-  return getTier(completeness).label;
-}
-export function getGradeColor(_grade: string): string {
-  // Not used anymore — kept for compatibility
-  return "text-muted-foreground";
-}
-
-/** Map ScalingStat to the stat key used by t.statShort(). */
-const scalingStatDisplayKey: Record<ScalingStat, string> = {
-  atk: "atk",
-  hp: "hp",
-  def: "def",
-  em: "em",
-};
-
 /**
  * Build a translated archetype label.
  * - 4pc:  "HP · Support" / "生命 · 辅助"
@@ -903,6 +858,6 @@ export function getArchetypeLabel(
     return `${hs1Label}+${hs2Label} · ${roleLabel}`;
   }
 
-  const statLabel = t.statShort(scalingStatDisplayKey[evalBuild.scalingStat]);
+  const statLabel = t.statShort(evalBuild.scalingStat);
   return `${statLabel} · ${roleLabel}`;
 }

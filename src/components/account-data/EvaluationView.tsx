@@ -67,42 +67,39 @@ export function EvaluationView() {
 
   // Filter evaluations by role and tier
   const filteredGroups = useMemo(() => {
-    let groups = setGroups;
-    if (roleFilter !== "all") {
-      groups = groups
-        .map((g) => ({
-          ...g,
-          evaluations: g.evaluations.filter(
-            (e) => e.evalBuild.archetypeRole === roleFilter
-          ),
-        }))
-        .filter((g) => g.evaluations.length > 0);
-    }
-    if (tierFilter !== "all") {
-      groups = groups
-        .map((g) => ({
-          ...g,
-          evaluations: g.evaluations.filter(
-            (e) => getTier(e.completeness).id === tierFilter
-          ),
-        }))
-        .filter((g) => g.evaluations.length > 0);
-    }
-    return groups;
+    if (roleFilter === "all" && tierFilter === "all") return setGroups;
+    return setGroups
+      .map((g) => ({
+        ...g,
+        evaluations: g.evaluations.filter(
+          (e) =>
+            (roleFilter === "all" ||
+              e.evalBuild.archetypeRole === roleFilter) &&
+            (tierFilter === "all" || getTier(e.completeness).id === tierFilter)
+        ),
+      }))
+      .filter((g) => g.evaluations.length > 0);
   }, [setGroups, roleFilter, tierFilter]);
 
   // Aggregate stats (from unfiltered data) — must be above early returns
-  const allEvals = setGroups.flatMap((g) => g.evaluations);
-  const tierCounts = useMemo(() => {
+  const { tierCounts, avgCompleteness, totalBuilds } = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const e of allEvals) {
-      const tier = getTier(e.completeness);
-      counts[tier.id] = (counts[tier.id] || 0) + 1;
+    let total = 0;
+    let sum = 0;
+    for (const g of setGroups) {
+      for (const e of g.evaluations) {
+        const tier = getTier(e.completeness);
+        counts[tier.id] = (counts[tier.id] || 0) + 1;
+        sum += e.completeness;
+        total++;
+      }
     }
-    return counts;
-  }, [allEvals]);
-  const avgCompleteness =
-    allEvals.reduce((s, e) => s + e.completeness, 0) / allEvals.length;
+    return {
+      tierCounts: counts,
+      avgCompleteness: total > 0 ? sum / total : 0,
+      totalBuilds: total,
+    };
+  }, [setGroups]);
 
   if (!accountData) return null;
 
@@ -135,7 +132,7 @@ export function EvaluationView() {
           <span className="text-xs text-muted-foreground">
             {t.format(
               "evaluation.subtitle",
-              allEvals.length,
+              totalBuilds,
               Math.round(avgCompleteness * 100)
             )}
           </span>

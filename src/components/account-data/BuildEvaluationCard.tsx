@@ -164,6 +164,10 @@ function BuildEvaluationCardComponent({
             slotEval.maxScore > 0 ? slotEval.score / slotEval.maxScore : 0;
           const slotPctRounded = Math.min(Math.round(slotPct * 100), 100);
           const hasArtifact = slotEval.artifact !== null;
+          const isOffSet =
+            hasArtifact &&
+            slotEval.isFlexSlot &&
+            isOffSetArtifact(slotEval, evalBuild);
 
           return (
             <div key={slot} className="flex flex-col items-center gap-0.5">
@@ -180,19 +184,16 @@ function BuildEvaluationCardComponent({
                         alt=""
                         className={cn(
                           "w-11 h-11 rounded object-cover",
-                          slotEval.isFlexSlot &&
-                            isOffSetArtifact(slotEval, evalBuild) &&
-                            "ring-1 ring-amber-500/60"
+                          isOffSet && "ring-1 ring-amber-500/60"
                         )}
                       />
-                      {slotEval.isFlexSlot &&
-                        isOffSetArtifact(slotEval, evalBuild) && (
-                          <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-amber-500 flex items-center justify-center">
-                            <span className="text-[7px] font-bold text-black">
-                              F
-                            </span>
-                          </div>
-                        )}
+                      {isOffSet && (
+                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-amber-500 flex items-center justify-center">
+                          <span className="text-[7px] font-bold text-black">
+                            F
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </TooltipTrigger>
                   <TooltipContent
@@ -201,9 +202,7 @@ function BuildEvaluationCardComponent({
                   >
                     <div>
                       {t.artifact(slotEval.artifact!.setKey)}
-                      {slotEval.isFlexSlot &&
-                        isOffSetArtifact(slotEval, evalBuild) &&
-                        ` (${t.ui("evaluation.flex")})`}
+                      {isOffSet && ` (${t.ui("evaluation.flex")})`}
                     </div>
                     <div className="text-muted-foreground">
                       {t.stat(slotEval.artifact!.mainStatKey)} | +
