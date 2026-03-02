@@ -14,6 +14,10 @@ export const i18nUiData = {
     delete: { en: "Delete", zh: "删除" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
+    previous: { en: "Previous", zh: "上一步" },
+    next: { en: "Next", zh: "下一步" },
+    finish: { en: "Finish", zh: "完成" },
+    stepOf: { en: "Step {0} of {1}", zh: "第 {0} / {1} 步" },
     addBuild: { en: "Add Build", zh: "添加配装" },
     ownedOnly: { en: "Owned Only", zh: "仅已拥有" },
     deleteTitle: { en: "Delete Build?", zh: "删除配装？" },
@@ -566,6 +570,10 @@ export const i18nUiData = {
     searchingCombinations: {
       en: "Searching combinations…",
       zh: "搜索配装组合中…",
+    },
+    pruningCandidates: {
+      en: "Pruning candidates…",
+      zh: "筛选候选配装中…",
     },
     totalExpectedDamage: { en: "Total Expected Damage:", zh: "总伤害期望：" },
     pending: { en: "Pending", zh: "等待计算" },

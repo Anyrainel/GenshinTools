@@ -233,6 +233,7 @@ function TourOverlay({
     onPrevious: () => void
     onClose: () => void
 }) {
+    const { t } = useLanguage()
     const [targets, setTargets] = React.useState<
         { rect: DOMRect; radius: number }[]
     >([])
@@ -426,7 +427,7 @@ function TourOverlay({
                                     {step.title}
                                 </div>
                                 <div className="mt-1 text-sm text-muted-foreground">
-                                    Step {currentStepIndex + 1} of {totalSteps}
+                                    {t.format("common.stepOf", currentStepIndex + 1, totalSteps)}
                                 </div>
                             </div>
 
@@ -446,7 +447,7 @@ function TourOverlay({
                                             asChild>
                                             <Link to={step.previousRoute}>
                                                 {step.previousLabel ??
-                                                    "Previous"}
+                                                    t.ui("common.previous")}
                                             </Link>
                                         </Button>
                                     ) : (
@@ -454,7 +455,7 @@ function TourOverlay({
                                             variant="outline"
                                             size="sm"
                                             onClick={onPrevious}>
-                                            {step.previousLabel ?? "Previous"}
+                                            {step.previousLabel ?? t.ui("common.previous")}
                                         </Button>
                                     )
                                 ) : (
@@ -469,16 +470,16 @@ function TourOverlay({
                                             {step.nextLabel ??
                                                 (currentStepIndex ===
                                                 totalSteps - 1
-                                                    ? "Finish"
-                                                    : "Next")}
+                                                    ? t.ui("common.finish")
+                                                    : t.ui("common.next"))}
                                         </Link>
                                     </Button>
                                 ) : (
                                     <Button size="sm" onClick={onNext}>
                                         {step.nextLabel ??
                                             (currentStepIndex === totalSteps - 1
-                                                ? "Finish"
-                                                : "Next")}
+                                                ? t.ui("common.finish")
+                                                : t.ui("common.next"))}
                                     </Button>
                                 )}
                             </div>

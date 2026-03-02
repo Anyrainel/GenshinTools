@@ -26,6 +26,7 @@ export interface TeamOptimizationProgress {
   currentPassCharId: string;
   passIndex: number;
   totalPasses: number;
+  passPhase: "pruning" | "evaluating";
   passProgress: number; // 0–1 within current pass
   overallProgress: number; // 0–1 across all passes
   passResults: TeamOptPassResult[];
@@ -96,7 +97,7 @@ export async function* runTeamOptimization(
     baseSheets,
     perChar,
   } = opts;
-  const topN = opts.topN ?? 50;
+  const topN = opts.topN ?? 30;
 
   // Build pass list: carry-1, supports, carry-2
   const supportCharIds = Object.keys(perChar).filter(
@@ -142,7 +143,7 @@ export async function* runTeamOptimization(
       globalConfig,
       baseSheets: currentSheets,
       calcContext,
-      topN: isCarry ? topN : Math.min(topN, 10),
+      topN: isCarry ? topN : Math.min(topN, 20),
       artifactSetId: charConfig.artifactSetId ?? null,
       artifactHalfSetIds: charConfig.artifactHalfSetIds,
       // Multi-pass fields
@@ -169,6 +170,7 @@ export async function* runTeamOptimization(
         currentPassCharId: charId,
         passIndex: passIdx,
         totalPasses,
+        passPhase: res.phase,
         passProgress: res.progress,
         overallProgress,
         passResults: [...passResults],
@@ -207,13 +209,15 @@ export async function* runTeamOptimization(
     }
   }
 
-  // If carry-2 result is worse than carry-1, use carry-1
+  // Sanity-check: carry-2 runs with full team buffs, so its damage should
+  // always be ≥ carry-1 (which ran with base sheets). If that's not the case
+  // something has gone wrong upstream.
   const carry2Result = passResults.find((r) => r.passId === "carry-2");
   if (carry1Result && carry2Result) {
-    if (carry1Result.bestDamage > carry2Result.bestDamage) {
-      // Replace carry-2 with carry-1
-      const idx = passResults.indexOf(carry2Result);
-      passResults[idx] = { ...carry1Result, passId: "carry-2" };
+    if (carry2Result.bestDamage < carry1Result.bestDamage) {
+      throw new Error(
+        `Team optimizer: carry-2 damage (${carry2Result.bestDamage}) is lower than carry-1 (${carry1Result.bestDamage}). This should not happen — carry-2 runs with full support buffs.`
+      );
     }
   }
 

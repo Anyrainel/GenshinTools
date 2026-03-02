@@ -41,6 +41,7 @@ export interface OptimizationResult {
   bestDamage: number;
   bestDamageResult: DamageResult | null;
   bestArtifacts: Record<Slot, ArtifactData | null>;
+  phase: "pruning" | "evaluating";
   progress: number; // 0 to 1
   combinationsEvaluated: number;
   combinationsTotal: number;
@@ -67,11 +68,12 @@ function scorePiece(
 
 // ── Set matching helpers ──
 
-function matchesSetRequirement(
+export function matchesSetRequirement(
   pieces: readonly ArtifactData[],
   artifactSetId: string | null | undefined,
   artifactHalfSetIds: string[] | undefined
 ): boolean {
+  // 4pc: need ≥4 pieces of the exact set key (1 flexible slot allowed)
   if (artifactSetId) {
     let count = 0;
     for (const p of pieces) {
@@ -80,21 +82,39 @@ function matchesSetRequirement(
     if (count < 4) return false;
   }
 
+  // 2+2: the 2pc bonus activates per individual set (need ≥2 of the SAME set
+  // key), not per halfSetId pool.  Count pieces per set key, then check that
+  // at least one set key mapping to each required halfSetId has ≥2 pieces.
+  if (
+    artifactHalfSetIds &&
+    artifactHalfSetIds.length !== 0 &&
+    artifactHalfSetIds.length !== 2
+  ) {
+    throw new Error(
+      `artifactHalfSetIds must have 0 or 2 entries, got ${artifactHalfSetIds.length}`
+    );
+  }
   if (artifactHalfSetIds && artifactHalfSetIds.length === 2) {
-    const halfSetCounts = new Map<string, number>();
+    const setKeyCounts = new Map<string, number>();
     for (const p of pieces) {
-      const halfSetId = artifactIdToHalfSetId[p.setKey];
-      if (halfSetId != null) {
-        halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
-      }
+      setKeyCounts.set(p.setKey, (setKeyCounts.get(p.setKey) ?? 0) + 1);
     }
+
+    // Set keys that satisfy a halfSetId (individually have ≥2 pieces)
+    const satisfying = (hId: string): string[] =>
+      [...setKeyCounts.entries()]
+        .filter(([k, n]) => artifactIdToHalfSetId[k] === hId && n >= 2)
+        .map(([k]) => k);
+
     const [h1, h2] = artifactHalfSetIds;
-    const c1 = halfSetCounts.get(h1) ?? 0;
-    const c2 = halfSetCounts.get(h2) ?? 0;
     if (h1 === h2) {
-      if (c1 < 4) return false;
+      // Need 2 DISTINCT set keys each mapping to h1, each with ≥2 pieces
+      // (e.g. 2×Gladiator's + 2×Shimenawa for double ATK% 2pc)
+      if (satisfying(h1).length < 2) return false;
     } else {
-      if (c1 < 2 || c2 < 2) return false;
+      // Need one set for h1 with ≥2 pieces AND one set for h2 with ≥2 pieces
+      if (satisfying(h1).length === 0 || satisfying(h2).length === 0)
+        return false;
     }
   }
 
@@ -184,22 +204,37 @@ export async function* runOptimization(
         (!excludedArtifactIds || !excludedArtifactIds.has(a.id))
     );
 
-    const withScore = slotArts.map((art) => {
-      let score = scorePiece(art, buildMatch, globalConfig);
-      // Boost score if it matches a required set to ensure it's not pruned
-      if (artifactSetId && art.setKey === artifactSetId) score += 10000;
-      if (
-        artifactHalfSetIds &&
-        artifactIdToHalfSetId[art.setKey] !== undefined &&
-        artifactHalfSetIds.includes(artifactIdToHalfSetId[art.setKey])
-      ) {
-        score += 10000;
-      }
-      return { art, score, er: getArtifactEr(art) };
-    });
+    const withScore = slotArts.map((art) => ({
+      art,
+      score: scorePiece(art, buildMatch, globalConfig),
+      er: getArtifactEr(art),
+    }));
 
     withScore.sort((a, b) => b.score - a.score);
-    scoredPools[slot] = withScore.slice(0, Math.max(topN, 1));
+
+    if (artifactSetId || artifactHalfSetIds?.length) {
+      // Split into set-piece and off-set-piece sub-pools so that the one
+      // flexible slot (4pc: 4+1; 2+2: 2+2+1) is always represented in every
+      // slot's pool regardless of how many set pieces exist.
+      // The score stored is the raw stat score (no artificial boost) so that
+      // flexible-slot combos compete on equal footing with all-set combos
+      // during phase-1 candidate ranking.
+      const isSetPiece = (art: ArtifactData) =>
+        (!!artifactSetId && art.setKey === artifactSetId) ||
+        (!!artifactHalfSetIds &&
+          artifactHalfSetIds.includes(artifactIdToHalfSetId[art.setKey]));
+      const setPieces = withScore
+        .filter((x) => isSetPiece(x.art))
+        .slice(0, topN);
+      const offSetPieces = withScore
+        .filter((x) => !isSetPiece(x.art))
+        .slice(0, topN);
+      scoredPools[slot] = [...setPieces, ...offSetPieces];
+      // Re-sort globally so the heap invariant holds: higher index ⟹ lower score.
+      scoredPools[slot].sort((a, b) => b.score - a.score);
+    } else {
+      scoredPools[slot] = withScore.slice(0, Math.max(topN, 1));
+    }
 
     if (scoredPools[slot].length === 0) {
       scoredPools[slot] = [
@@ -223,11 +258,37 @@ export async function* runOptimization(
   // ── Phase 1: Collect top-K builds by total heuristic score (cheap) ──
   // Set-check + ER pre-filter + sum of 5 pre-computed scores per combination.
 
+  // Yield immediately so the UI can display 0% progress before the blocking loop.
+  const pruningResult: OptimizationResult = {
+    bestDamage: -1,
+    bestDamageResult: null,
+    bestArtifacts: {
+      flower: null,
+      plume: null,
+      sands: null,
+      goblet: null,
+      circlet: null,
+    },
+    phase: "pruning",
+    progress: 0,
+    combinationsEvaluated: 0,
+    combinationsTotal: 0,
+    startTime,
+    endTime: null,
+    done: false,
+  };
+  yield pruningResult;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
+  // ── Phase 1: Collect top-K builds by total heuristic score ──
+  // Set-check + ER pre-filter + sum of 5 pre-computed scores per combination.
+
   const candidates: Candidate[] = [];
   let minCandidateScore = Number.NEGATIVE_INFINITY;
   const CLEANUP_THRESHOLD = maxBuilds * 2;
 
-  for (const f of scoredPools.flower) {
+  for (let fi = 0; fi < scoredPools.flower.length; fi++) {
+    const f = scoredPools.flower[fi];
     for (const p of scoredPools.plume) {
       for (const s of scoredPools.sands) {
         for (const g of scoredPools.goblet) {
@@ -267,11 +328,23 @@ export async function* runOptimization(
         }
       }
     }
+
+    // Yield after each flower slice to unblock the event loop.
+    yield pruningResult;
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   // Final sort & trim
   candidates.sort((a, b) => b.totalScore - a.totalScore);
   if (candidates.length > maxBuilds) candidates.length = maxBuilds;
+
+  // Score-relative cutoff: discard candidates scoring below 1/2 of the best.
+  // Only applied when the best score is positive to avoid mishandling edge cases.
+  if (candidates.length > 1 && candidates[0].totalScore > 0) {
+    const threshold = candidates[0].totalScore / 2;
+    const cutoffIdx = candidates.findIndex((c) => c.totalScore < threshold);
+    if (cutoffIdx > 0) candidates.length = cutoffIdx;
+  }
 
   // ── Phase 2: Evaluate damage on top candidates (expensive) ──
 
@@ -291,6 +364,7 @@ export async function* runOptimization(
     bestDamage,
     bestDamageResult,
     bestArtifacts: { ...bestArtifacts },
+    phase: "evaluating",
     progress:
       combinationsTotal > 0 ? combinationsEvaluated / combinationsTotal : 1,
     combinationsEvaluated,

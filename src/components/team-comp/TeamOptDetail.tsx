@@ -613,8 +613,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 let defaultRefine = 1;
                 if (weaponId && accountData) {
                   const refinements: number[] = [];
-                  if (acctChar?.weapon?.key === weaponId)
-                    refinements.push(acctChar.weapon.refinement);
+                  for (const c of accountData.characters) {
+                    if (c.weapon?.key === weaponId)
+                      refinements.push(c.weapon.refinement);
+                  }
                   for (const w of accountData.extraWeapons) {
                     if (w.key === weaponId) refinements.push(w.refinement);
                   }
@@ -1095,84 +1097,68 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 </div>
               )}
 
-              {/* Waiting for first progress */}
-              {isComputing && !optResult && !teamProgress && (
-                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                  <Loader2 className="w-8 h-8 opacity-30 animate-spin" />
-                  <p>{t.ui("teamComp.preparingOptimizer")}</p>
-                </div>
-              )}
-
               {/* Single mode progress bar */}
-              {singleIsComputing && optResult && (
+              {singleIsComputing && (
                 <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span className="font-semibold">
-                      {t.ui("teamComp.searchingCombinations")}
+                      {optResult?.phase === "evaluating"
+                        ? t.ui("teamComp.searchingCombinations")
+                        : t.ui("teamComp.pruningCandidates")}
                     </span>
                     <span className="font-mono font-bold">
-                      {Math.round(optResult.progress * 100)}%
+                      {Math.round((optResult?.progress ?? 0) * 100)}%
                     </span>
                   </div>
                   <Progress
-                    value={optResult.progress * 100}
+                    value={(optResult?.progress ?? 0) * 100}
                     className="h-1.5 bg-black/40"
                   />
-                  <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
-                    {optResult.combinationsEvaluated.toLocaleString()} /{" "}
-                    {optResult.combinationsTotal.toLocaleString()}
-                  </div>
+                  {optResult?.phase === "evaluating" && (
+                    <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
+                      {optResult.combinationsEvaluated.toLocaleString()} /{" "}
+                      {optResult.combinationsTotal.toLocaleString()}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Team mode progress */}
-              {teamIsComputing && teamProgress && (
+              {teamIsComputing && (
                 <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
                   {/* Pass info */}
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="font-semibold">
-                      {t
-                        .ui("teamComp.passLabel")
-                        .replace("{0}", String(teamProgress.passIndex + 1))
-                        .replace("{1}", String(teamProgress.totalPasses))
-                        .replace(
-                          "{2}",
-                          `${t.character(teamProgress.currentPassCharId)} — ${
-                            teamProgress.currentPass === "carry-1"
-                              ? t.ui("teamComp.passCarryInitial")
-                              : teamProgress.currentPass === "carry-2"
-                                ? t.ui("teamComp.passCarryRefine")
-                                : t.ui("teamComp.passSupport")
-                          }`
-                        )}
+                      {teamProgress
+                        ? t
+                            .ui("teamComp.passLabel")
+                            .replace("{0}", String(teamProgress.passIndex + 1))
+                            .replace("{1}", String(teamProgress.totalPasses))
+                            .replace(
+                              "{2}",
+                              `${t.character(teamProgress.currentPassCharId)} — ${
+                                teamProgress.currentPass === "carry-1"
+                                  ? t.ui("teamComp.passCarryInitial")
+                                  : teamProgress.currentPass === "carry-2"
+                                    ? t.ui("teamComp.passCarryRefine")
+                                    : t.ui("teamComp.passSupport")
+                              }`
+                            )
+                        : t.ui("teamComp.preparingOptimizer")}
                     </span>
                     <span className="font-mono font-bold">
-                      {Math.round(teamProgress.overallProgress * 100)}%
+                      {Math.round((teamProgress?.overallProgress ?? 0) * 100)}%
                     </span>
                   </div>
 
                   {/* Overall progress bar */}
                   <Progress
-                    value={teamProgress.overallProgress * 100}
+                    value={(teamProgress?.overallProgress ?? 0) * 100}
                     className="h-1.5 bg-black/40"
                   />
 
-                  {/* Per-pass progress bar */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-muted-foreground/60 shrink-0">
-                      {t.ui("teamComp.searchingCombinations")}
-                    </span>
-                    <Progress
-                      value={teamProgress.passProgress * 100}
-                      className="h-1 bg-black/30 flex-1"
-                    />
-                    <span className="text-[10px] font-mono text-muted-foreground/60">
-                      {Math.round(teamProgress.passProgress * 100)}%
-                    </span>
-                  </div>
-
                   {/* Completed pass chips */}
-                  {teamProgress.passResults.length > 0 && (
+                  {teamProgress && teamProgress.passResults.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {teamProgress.passResults.map((pr, idx) => (
                         <span

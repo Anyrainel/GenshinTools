@@ -30,6 +30,7 @@ function makeResult(
     bestDamage: 100,
     bestDamageResult: null,
     bestArtifacts: {} as OptimizationResult["bestArtifacts"],
+    phase: "evaluating",
     progress: 1,
     combinationsEvaluated: 1,
     combinationsTotal: 1,
