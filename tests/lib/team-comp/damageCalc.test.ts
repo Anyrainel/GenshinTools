@@ -696,8 +696,8 @@ describe("TeamBuild lifecycle", () => {
       // CR and CD are in statValues, so they should have a marginal gain
       expect(gains.cr).toBeGreaterThan(0);
       expect(gains.cd).toBeGreaterThan(0);
-      // Flat ATK is the scalingKey, so it should have a marginal gain
-      expect(gains.atk).toBeGreaterThan(0);
+      // ATK% replaces flat ATK for marginal gain (percent rolls are meaningful)
+      expect(gains["atk%"]).toBeGreaterThan(0);
     });
 
     it("vape formula includes EM marginal gain", () => {

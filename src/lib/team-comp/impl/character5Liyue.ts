@@ -102,33 +102,13 @@ class Zibai extends CharacterBase {
 
     if (this.constellation >= 6) {
       // C6: Spirit Steed and Lunar-Crystallize DMG elevated by 48% (assuming 30 excess points consumed)
-      // Split into non-overlapping filters to avoid double-counting on Steed 2nd hit
+      // Assume the 3s buff covers all lunar crystallize hits.
       buffs.push(
-        // Covers Steed 1st + 2nd hit (skill)
-        new StatBuff(
-          cbs(this, "C6", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-          [{ key: "elevated%", value: 0.48 }]
-        )
-      );
-      buffs.push(
-        // Covers N4 Gleam (normal + lunarCrystallize)
         new StatBuff(
           cbs(this, "C6", ["E"]),
           {
             receiver: "selfOnField",
-            filter: { abilities: ["normal"], reactions: ["lunarCrystallize"] },
-          },
-          [{ key: "elevated%", value: 0.48 }]
-        )
-      );
-      buffs.push(
-        // Covers Q 2nd hit (burst + lunarCrystallize)
-        new StatBuff(
-          cbs(this, "C6", ["E"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["burst"], reactions: ["lunarCrystallize"] },
+            filter: { reactions: ["lunarCrystallize"] },
           },
           [{ key: "elevated%", value: 0.48 }]
         )

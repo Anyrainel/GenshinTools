@@ -909,6 +909,23 @@ export class TeamBuild {
       }
     }
 
+    // Flat hp/atk/def appear in formulas but their substat rolls are negligible;
+    // replace with percent versions which are the meaningful substat rolls.
+    const flatToPercent: Partial<Record<StatKey, StatKey>> = {
+      hp: "hp%",
+      atk: "atk%",
+      def: "def%",
+    };
+    for (const [flat, pct] of Object.entries(flatToPercent) as [
+      StatKey,
+      StatKey,
+    ][]) {
+      if (usedKeys.has(flat)) {
+        usedKeys.delete(flat);
+        usedKeys.add(pct);
+      }
+    }
+
     // Filter to rollable stat keys only
     const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
     const targetRollable = rollableKeys.filter((k) => usedKeys.has(k));
