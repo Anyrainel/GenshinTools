@@ -230,7 +230,7 @@ export async function* runOptimization(
         .filter((x) => !isSetPiece(x.art))
         .slice(0, topN);
       scoredPools[slot] = [...setPieces, ...offSetPieces];
-      // Re-sort globally so the heap invariant holds: higher index ⟹ lower score.
+      // Re-sort globally: higher index ⟹ lower score (required for branch-and-bound).
       scoredPools[slot].sort((a, b) => b.score - a.score);
     } else {
       scoredPools[slot] = withScore.slice(0, Math.max(topN, 1));
@@ -281,18 +281,49 @@ export async function* runOptimization(
   await new Promise((resolve) => setTimeout(resolve, 0));
 
   // ── Phase 1: Collect top-K builds by total heuristic score ──
-  // Set-check + ER pre-filter + sum of 5 pre-computed scores per combination.
+  // Branch-and-bound: pools are sorted descending by score, so if the best
+  // possible total from a partial combination ≤ minCandidateScore, the entire
+  // remaining subtree can be skipped with a break.
+  //
+  // suffixMax[k] = sum of the highest score in each slot from k to 4.
+  // This is the upper bound on additional score from those remaining slots.
+  const orderedPools = [
+    scoredPools.flower,
+    scoredPools.plume,
+    scoredPools.sands,
+    scoredPools.goblet,
+    scoredPools.circlet,
+  ] as const;
+  const suffixMax = [0, 0, 0, 0, 0, 0]; // index 5 is sentinel (0)
+  for (let k = 4; k >= 0; k--) {
+    suffixMax[k] = (orderedPools[k][0]?.score ?? 0) + suffixMax[k + 1];
+  }
 
   const candidates: Candidate[] = [];
   let minCandidateScore = Number.NEGATIVE_INFINITY;
+  let bestValidScore = Number.NEGATIVE_INFINITY;
   const CLEANUP_THRESHOLD = maxBuilds * 2;
 
   for (let fi = 0; fi < scoredPools.flower.length; fi++) {
     const f = scoredPools.flower[fi];
+    if (f.score + suffixMax[1] <= minCandidateScore) break;
+
     for (const p of scoredPools.plume) {
+      const fp = f.score + p.score;
+      if (fp + suffixMax[2] <= minCandidateScore) break;
+
       for (const s of scoredPools.sands) {
+        const fps = fp + s.score;
+        if (fps + suffixMax[3] <= minCandidateScore) break;
+
         for (const g of scoredPools.goblet) {
+          const fpsg = fps + g.score;
+          if (fpsg + suffixMax[4] <= minCandidateScore) break;
+
           for (const c of scoredPools.circlet) {
+            const totalScore = fpsg + c.score;
+            if (totalScore <= minCandidateScore) break; // pool sorted desc
+
             const pieces = [f.art, p.art, s.art, g.art, c.art] as const;
 
             if (
@@ -306,23 +337,30 @@ export async function* runOptimization(
               if (artifactEr < minArtifactEr) continue;
             }
 
-            const totalScore = f.score + p.score + s.score + g.score + c.score;
-            if (
-              candidates.length >= maxBuilds &&
-              totalScore <= minCandidateScore
-            )
-              continue;
-
             candidates.push({
               totalScore,
               pieces: [f.art, p.art, s.art, g.art, c.art],
             });
 
+            // Dynamically tighten threshold when a new best valid score is found.
+            // The final 1/2 cutoff removes scores ≤ bestValidScore/2 anyway,
+            // so pruning those combinations early is always safe.
+            if (totalScore > bestValidScore) {
+              bestValidScore = totalScore;
+              minCandidateScore = Math.max(
+                minCandidateScore,
+                bestValidScore / 2
+              );
+            }
+
             // Periodic trim to bound memory
             if (candidates.length >= CLEANUP_THRESHOLD) {
               candidates.sort((a, b) => b.totalScore - a.totalScore);
               candidates.length = maxBuilds;
-              minCandidateScore = candidates[candidates.length - 1].totalScore;
+              minCandidateScore = Math.max(
+                minCandidateScore,
+                candidates[candidates.length - 1].totalScore
+              );
             }
           }
         }

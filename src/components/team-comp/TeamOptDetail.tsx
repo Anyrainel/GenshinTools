@@ -478,6 +478,31 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const hasOptResult =
     optResult?.bestDamageResult || teamResult?.bestDamageResult;
 
+  const optimizedDamage = useMemo(() => {
+    if (!teamBuild || !resolvedOptFormula || !hasOptResult) return null;
+    try {
+      const { charId, formulaId } = resolvedOptFormula;
+      const formulas = teamBuild.getFormulaIds()[charId];
+      if (!formulas || !formulas[formulaId]) return null;
+      const postStats = teamBuild.getTeamStats(optArtifactSheets, charId);
+      return teamBuild.getDamageResult(
+        charId,
+        formulaId,
+        postStats,
+        activeContext
+      );
+    } catch (e) {
+      console.error("Opt damage calc failed:", e);
+      return null;
+    }
+  }, [
+    teamBuild,
+    resolvedOptFormula,
+    optArtifactSheets,
+    hasOptResult,
+    activeContext,
+  ]);
+
   const optimizedDisplayResult = useMemo(() => {
     if (!teamBuild || !resolvedOptFormula || !hasOptResult) return null;
     try {
@@ -1189,9 +1214,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   emptyMessage=""
                   artifactsByChar={optimizedArtifactsByChar}
                   targetCharId={resolvedOptFormula?.charId}
-                  damageValue={
-                    teamResult?.bestDamage ?? optResult?.bestDamage ?? 0
-                  }
+                  damageValue={optimizedDamage?.totalDamage ?? 0}
                   displayResult={optimizedDisplayResult}
                   t={t}
                 />
