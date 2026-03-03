@@ -39,6 +39,7 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import type { ConversionWarning } from "@/lib/account-data/goodConversion";
+import { mergeEnkaImportWithInventory } from "@/lib/account-data/mergeEnkaImport";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
@@ -356,12 +357,18 @@ export default function AccountDataPage() {
           }
         }
 
-        // Keep existing extras, assume Enka import has no extras
+        // Merge inventory: move previously seen (equipped or inventory) artifacts
+        // that are not in this import's equipped set into inventory, without duplicating
+        const mergedExtraArtifacts = mergeEnkaImportWithInventory(
+          accountData,
+          newData
+        );
         const mergedData: AccountData = {
           characters: mergedCharacters,
-          extraArtifacts: accountData.extraArtifacts,
+          extraArtifacts: mergedExtraArtifacts,
           extraWeapons: accountData.extraWeapons,
         };
+        reassignIds(mergedData, 0, 0);
 
         setAccountData(mergedData);
 
