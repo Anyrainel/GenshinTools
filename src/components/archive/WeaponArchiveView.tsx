@@ -164,7 +164,7 @@ function WeaponTypeSection({
               {t.ui("archive.noWeaponResults")}
             </div>
           ) : (
-            <div className="flex flex-wrap gap-1.5 md:gap-2">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-1.5 md:gap-2">
               {weapons.map((weapon) => (
                 <WeaponCard key={weapon.id} weapon={weapon} />
               ))}

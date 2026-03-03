@@ -17,6 +17,7 @@ import {
   charactersById,
 } from "@/data/constants";
 import type { CharacterData, Tier } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { Insight } from "@/lib/account-data/insightEngine";
 import { memo } from "react";
@@ -36,6 +37,7 @@ function RecommendationCardComponent({
   score,
 }: RecommendationCardProps) {
   const { t } = useLanguage();
+  const isCompact = !useMediaQuery("(min-width: 768px)");
 
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
@@ -82,7 +84,7 @@ function RecommendationCardComponent({
     <div className="w-full min-w-[280px]">
       <Card className="flex flex-col bg-black/10 border-border/50 transition-colors overflow-hidden">
         {/* Header: Character & Sets */}
-        <div className="flex items-start p-3 gap-3 bg-gradient-select border-b border-border/40">
+        <div className="flex items-start p-3 pb-2 gap-2 md:p-4 md:pb-3 md:gap-3 bg-gradient-select border-b border-border/40">
           {/* Character Icon */}
           <Tooltip>
             <TooltipTrigger>
@@ -91,7 +93,7 @@ function RecommendationCardComponent({
                 rarity={charInfo.rarity}
                 badge={char.constellation}
                 level={`Lv. ${char.level}`}
-                size="lg"
+                size={isCompact ? "md" : "lg"}
               />
             </TooltipTrigger>
             <TooltipContent
@@ -102,89 +104,85 @@ function RecommendationCardComponent({
             </TooltipContent>
           </Tooltip>
 
-          {/* Character Name + Set Name */}
-          <div className="flex flex-col min-w-0 flex-1">
-            <div className="font-bold text-xl truncate text-white leading-tight">
+          {/* Character Name (row 1) + Set Name & Artifact Icon (row 2) */}
+          <div className="flex flex-col min-w-0 flex-1 gap-0.5 md:gap-1">
+            <div className="font-semibold text-base md:text-lg whitespace-nowrap text-white leading-none tracking-tight">
               {t.character(char.key)}
             </div>
-            {setTypeLabel && (
-              <div className="text-sm text-muted-foreground line-clamp-2 leading-tight mt-1">
-                {setTypeLabel}
-              </div>
-            )}
-          </div>
+            <div className="flex items-start gap-2">
+              {setTypeLabel && (
+                <div className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-tight flex-1 min-w-0">
+                  {setTypeLabel}
+                </div>
+              )}
+              {activeSets.length > 0 &&
+                (() => {
+                  const twoPcSets = activeSets.filter(
+                    ([, count]) => count >= 2
+                  );
+                  const is2pc2pc = twoPcSets.length >= 2;
 
-          {/* Primary Artifact Icon - Uses DoubleItemIcon for 2+2pc sets */}
-          {activeSets.length > 0 &&
-            (() => {
-              const twoPcSets = activeSets.filter(([, count]) => count >= 2);
-              const is2pc2pc = twoPcSets.length >= 2;
+                  if (is2pc2pc) {
+                    const halfSetId1 = artifactIdToHalfSetId[twoPcSets[0][0]];
+                    const halfSetId2 = artifactIdToHalfSetId[twoPcSets[1][0]];
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <DoubleItemIcon
+                            imagePath1={
+                              artifactsById[twoPcSets[0][0]]?.imagePaths
+                                .flower || ""
+                            }
+                            imagePath2={
+                              artifactsById[twoPcSets[1][0]]?.imagePaths
+                                .flower || ""
+                            }
+                            size={isCompact ? "sm" : "md"}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          className="p-0 border-none bg-transparent"
+                        >
+                          <MixedSetTooltip id1={halfSetId1} id2={halfSetId2} />
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
 
-              if (is2pc2pc) {
-                // 2+2pc: Show double icon with both sets
-                const halfSetId1 = artifactIdToHalfSetId[twoPcSets[0][0]];
-                const halfSetId2 = artifactIdToHalfSetId[twoPcSets[1][0]];
-                return (
-                  <div className="self-end">
+                  return (
                     <Tooltip>
                       <TooltipTrigger>
-                        <DoubleItemIcon
-                          imagePath1={
-                            artifactsById[twoPcSets[0][0]]?.imagePaths.flower ||
-                            ""
+                        <ItemIcon
+                          imagePath={
+                            artifactsById[activeSets[0][0]]?.imagePaths
+                              .flower || ""
                           }
-                          imagePath2={
-                            artifactsById[twoPcSets[1][0]]?.imagePaths.flower ||
-                            ""
-                          }
-                          size="md"
+                          rarity={artifactsById[activeSets[0][0]]?.rarity || 5}
+                          size={isCompact ? "sm" : "md"}
                         />
                       </TooltipTrigger>
                       <TooltipContent
                         side="top"
                         className="p-0 border-none bg-transparent"
                       >
-                        <MixedSetTooltip id1={halfSetId1} id2={halfSetId2} />
+                        <ArtifactTooltip
+                          setId={activeSets[0][0]}
+                          hideFourPieceEffect={activeSets[0][1] < 4}
+                        />
                       </TooltipContent>
                     </Tooltip>
-                  </div>
-                );
-              }
+                  );
+                })()}
+            </div>
+          </div>
 
-              // 4pc or single 2pc: Show single icon
-              return (
-                <div className="self-end">
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <ItemIcon
-                        imagePath={
-                          artifactsById[activeSets[0][0]]?.imagePaths.flower ||
-                          ""
-                        }
-                        rarity={artifactsById[activeSets[0][0]]?.rarity || 5}
-                        size="md"
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="top"
-                      className="p-0 border-none bg-transparent"
-                    >
-                      <ArtifactTooltip
-                        setId={activeSets[0][0]}
-                        hideFourPieceEffect={activeSets[0][1] < 4}
-                      />
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              );
-            })()}
-
-          {/* Artifact Score - Bottom Right */}
+          {/* Artifact Score */}
           {score && (
             <ArtifactScoreHoverCard
               score={score}
               characterId={char.key}
-              className="leading-none shrink-0 self-end pb-2"
+              className="shrink-0 self-end"
             />
           )}
         </div>
@@ -195,6 +193,7 @@ function RecommendationCardComponent({
             <InsightList
               insights={insights ?? []}
               isComplete={score?.substatScore.isComplete}
+              compact={isCompact}
             />
           </CardContent>
         )}

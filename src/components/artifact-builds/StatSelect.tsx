@@ -46,10 +46,8 @@ function StatSelectItem({
     >
       <LightweightSelectTrigger
         className={cn(
-          "w-auto hover:brightness-110 bg-gradient-select",
-          compact
-            ? "min-w-[3rem] h-5 text-xs [&>svg]:h-3 [&>svg]:w-3"
-            : "min-w-[4.5rem] h-7 text-sm"
+          "w-auto hover:brightness-110 bg-gradient-select h-7 text-sm",
+          compact ? "min-w-[3rem]" : "min-w-[4.5rem]"
         )}
       >
         {value && value !== "__DESELECT__" ? (
@@ -61,7 +59,7 @@ function StatSelectItem({
       <LightweightSelectContent>
         <LightweightSelectItem
           value="__DESELECT__"
-          className={cn("text-muted-foreground", compact && "text-xs")}
+          className="text-muted-foreground text-sm"
         >
           {t.ui("buildCard.deselect")}
         </LightweightSelectItem>
@@ -69,7 +67,7 @@ function StatSelectItem({
           <LightweightSelectItem
             key={option}
             value={option}
-            className={compact ? "text-xs" : "text-sm"}
+            className="text-sm"
           >
             {t.stat(option)}
           </LightweightSelectItem>
@@ -157,22 +155,14 @@ function StatSelectComponent({
               variant="ghost"
               size="sm"
               onClick={handlePlusClick}
-              className={cn(
-                "p-0 text-primary/70 hover:text-primary bg-primary/5 hover:bg-primary/10 transition-transform hover:scale-[1.2]",
-                compact ? "h-4 w-4" : "h-5 w-5"
-              )}
+              className="p-0 h-5 w-5 text-primary/70 hover:text-primary bg-primary/5 hover:bg-primary/10 transition-transform hover:scale-[1.2]"
             >
-              <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
+              <Plus className="w-3.5 h-3.5" />
             </Button>
           )}
         </div>
       )}
-      <div
-        className={cn(
-          "flex items-center gap-1 flex-wrap",
-          compact ? "text-xs min-h-5" : "text-sm min-h-7"
-        )}
-      >
+      <div className={cn("flex items-center gap-1 flex-wrap text-sm min-h-7")}>
         {values.map((value, index) => (
           <div key={index} className="flex items-center gap-1">
             <StatSelectItem
@@ -194,7 +184,7 @@ function StatSelectComponent({
               compact ? "h-5 w-5" : "h-6 w-6"
             )}
           >
-            <Plus className={compact ? "w-3 h-3" : "w-4 h-4"} />
+            <Plus className={compact ? "w-3.5 h-3.5" : "w-4 h-4"} />
           </Button>
         )}
 

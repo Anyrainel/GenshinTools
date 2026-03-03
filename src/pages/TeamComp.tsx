@@ -187,6 +187,7 @@ export default function TeamCompPage() {
           key: "import",
           icon: Upload,
           label: t.ui("import.action"),
+          alwaysShow: true,
           onTrigger: () => importRef.current?.open(),
         },
         {

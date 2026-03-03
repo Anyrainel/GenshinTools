@@ -13,7 +13,7 @@ import type { AccountState } from "@/stores/useAccountStore";
 // ─── Shared types ─────────────────────────────────────────────────────────────
 
 export type PendingImport = {
-  type: "json" | "uid";
+  type: "json" | "mona" | "uid";
   uid: string;
   data: AccountData;
   nickname: string;

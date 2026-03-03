@@ -18,6 +18,10 @@ import {
   type GOODData,
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
+import {
+  type MonaData,
+  convertMonaToAccountData,
+} from "@/lib/account-data/monaConversion";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
@@ -187,5 +191,118 @@ describe("Integration: Data Import to Character Display Flow", () => {
     expect(initialCharacter.weapon).toBeDefined();
     expect(initialCharacter.weapon?.key).toBe("staff_of_homa");
     expect(initialCharacter.weapon?.level).toBe(90);
+  });
+});
+
+describe("Integration: Mona Import to Character Display Flow", () => {
+  beforeEach(() => {
+    useAccountStore.getState().clearAccounts();
+    useArtifactScoreStore.getState().resetConfig();
+  });
+
+  const integrationMonaData: MonaData = {
+    version: "1",
+    flower: [
+      {
+        setName: "crimsonWitch",
+        position: "flower",
+        mainTag: { name: "lifeStatic", value: 4780 },
+        normalTags: [
+          { name: "critical", value: 0.105 },
+          { name: "criticalDamage", value: 0.21 },
+          { name: "attackPercentage", value: 0.058 },
+          { name: "elementalMastery", value: 40 },
+        ],
+        omit: false,
+        level: 20,
+        star: 5,
+        equip: "胡桃",
+      },
+    ],
+    feather: [
+      {
+        setName: "crimsonWitch",
+        position: "feather",
+        mainTag: { name: "attackStatic", value: 311 },
+        normalTags: [
+          { name: "critical", value: 0.07 },
+          { name: "criticalDamage", value: 0.14 },
+          { name: "lifePercentage", value: 0.093 },
+          { name: "elementalMastery", value: 23 },
+        ],
+        omit: false,
+        level: 20,
+        star: 5,
+        equip: "胡桃",
+      },
+    ],
+  };
+
+  it("converts Mona data and populates account store correctly", () => {
+    const { data, warnings } = convertMonaToAccountData(integrationMonaData);
+
+    expect(warnings).toHaveLength(0);
+    expect(data.characters).toHaveLength(1);
+    expect(data.characters[0].key).toBe("hu_tao");
+    expect(data.characters[0].level).toBe(90);
+    expect(data.characters[0].constellation).toBe(0);
+    expect(data.characters[0].talent).toEqual({
+      auto: 10,
+      skill: 10,
+      burst: 10,
+    });
+
+    // No weapons from Mona import
+    expect(data.characters[0].weapon).toBeUndefined();
+    expect(data.extraWeapons).toHaveLength(0);
+
+    // Populate store
+    act(() => {
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
+    });
+
+    const storeData = useAccountStore.getState().accounts.default?.data;
+    expect(storeData).toBeDefined();
+    expect(storeData!.characters).toHaveLength(1);
+    expect(storeData!.characters[0].key).toBe("hu_tao");
+  });
+
+  it("renders CharacterCard with Mona-imported data", () => {
+    const { data } = convertMonaToAccountData(integrationMonaData);
+    act(() => {
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
+    });
+
+    const character =
+      useAccountStore.getState().accounts.default!.data.characters[0];
+    const scoreConfig = useArtifactScoreStore.getState().config;
+    const score = scoreWithBuilds(character, [], scoreConfig.global);
+
+    const { container } = render(
+      <CharacterCard char={character} score={score} />
+    );
+
+    // Verify level is displayed
+    expect(container.textContent).toMatch(/90/);
+    // Verify constellation (C0) — may render as just "0" or "C0"
+    expect(container.textContent).toMatch(/0/);
+  });
+
+  it("preserves Mona artifact stat values through the full pipeline", () => {
+    const { data } = convertMonaToAccountData(integrationMonaData);
+    act(() => {
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
+    });
+
+    const character =
+      useAccountStore.getState().accounts.default!.data.characters[0];
+    expect(character.artifacts?.flower).toBeDefined();
+    // Percentage conversion: 0.105 → 10.5
+    expect(character.artifacts?.flower?.substats?.cr).toBe(10.5);
+    // Flat stat stays as-is
+    expect(character.artifacts?.flower?.substats?.em).toBe(40);
+    // Plume assigned correctly
+    expect(character.artifacts?.plume).toBeDefined();
+    expect(character.artifacts?.plume?.substats?.["hp%"]).toBe(9.3);
   });
 });

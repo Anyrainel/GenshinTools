@@ -621,6 +621,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getRoleName,
       getConstellationName,
       getTierName,
+      getHalfSetShortName,
       formatReleaseDate,
       getUIMessage,
       formatString,

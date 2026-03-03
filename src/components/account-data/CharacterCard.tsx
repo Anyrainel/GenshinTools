@@ -31,6 +31,11 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const { t } = useLanguage();
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
+  // At 2xl (1536–2047px), cards are in 2 columns and ~514px wide — use compact artifacts
+  const is2xlCompact = useMediaQuery(
+    "(min-width: 1536px) and (max-width: 2047px)"
+  );
+  const isArtifactCompact = isVeryNarrow || is2xlCompact;
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
 
@@ -71,7 +76,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
   const plusBurst = getTalentPlus("Q");
 
   return (
-    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl">
+    <Card className="flex flex-col bg-gradient-card border-border/50 transition-colors overflow-hidden max-w-3xl mx-auto">
       {/* Header */}
       <div
         className={cn(
@@ -257,7 +262,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
               <div
                 className={cn(
                   "flex flex-col relative transition-colors",
-                  isVeryNarrow ? "p-1" : "p-2",
+                  isArtifactCompact ? "p-1" : "p-2",
                   art ? "group hover:bg-white/5" : "opacity-30"
                 )}
               >
@@ -272,7 +277,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                       artifactScore.substatScore.slotMaxSubScores[slot as Slot]
                     }
                     isMainStatWrong={isMainStatWrong}
-                    compact={isVeryNarrow}
+                    compact={isArtifactCompact}
                   />
                 ) : (
                   <div className="flex-1 flex items-center justify-center py-4">

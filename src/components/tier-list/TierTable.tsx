@@ -10,6 +10,7 @@ import {
   type DragStartEvent,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   pointerWithin,
   useSensor,
   useSensors,
@@ -108,6 +109,12 @@ export function TierTable<T extends TierItemData, K extends string>({
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {

@@ -41,6 +41,11 @@ import {
   routeUidImport,
 } from "@/lib/account-data/importRouting";
 import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
+import {
+  type MonaData,
+  convertMonaToAccountData,
+  mergeMonaWithExisting,
+} from "@/lib/account-data/monaConversion";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
@@ -261,6 +266,44 @@ export default function AccountDataPage() {
     }
   };
 
+  const handleMonaImport = (data: MonaData, optionalUid: string) => {
+    try {
+      const result = convertMonaToAccountData(data);
+      const currentAccounts = useAccountStore.getState().accounts;
+      const routing = routeLocalImport(
+        currentAccounts,
+        result.data,
+        optionalUid,
+        t.ui("accountData.defaultAccount")
+      );
+
+      if (routing.kind === "direct") {
+        const existing = currentAccounts[routing.id]?.data;
+        const finalData = existing
+          ? mergeMonaWithExisting(existing, routing.data)
+          : routing.data;
+        addOrUpdateAccount(routing.id, {
+          data: finalData,
+          name: routing.name,
+        });
+        setActiveAccount(routing.activeId);
+        toast.success(t.ui("accountData.importSuccess"));
+      } else {
+        setPendingImport({
+          ...routing.pendingImport,
+          type: "mona",
+        });
+        setIsAccountManagerOpen(true);
+      }
+
+      showConversionWarnings(result);
+    } catch (error) {
+      console.error("Failed to convert Mona data", error);
+      toast.error(t.ui("accountData.failedToParseFile"));
+      throw error;
+    }
+  };
+
   const handleUidImport = async (uid: string, clearBeforeImport: boolean) => {
     try {
       const rawData = await fetchEnkaData(uid);
@@ -311,10 +354,27 @@ export default function AccountDataPage() {
 
     // Read fresh state to avoid stale closure
     const currentAccounts = useAccountStore.getState().accounts;
+
+    // For Mona imports targeting an existing profile, pre-merge to preserve
+    // character/weapon details regardless of overwrite vs merge action.
+    let effectivePending = pendingImport;
+    if (pendingImport.type === "mona" && action !== "create") {
+      const existingData = currentAccounts[targetId]?.data;
+      if (existingData) {
+        effectivePending = {
+          ...pendingImport,
+          data: mergeMonaWithExisting(existingData, pendingImport.data),
+        };
+      }
+    }
+
     const result = routeResolveImport(
       currentAccounts,
-      pendingImport,
-      action,
+      effectivePending,
+      // For Mona, data is already pre-merged, so use "overwrite" to avoid double-merging
+      pendingImport.type === "mona" && action === "merge"
+        ? "overwrite"
+        : action,
       targetId,
       renamedName,
       mergeAccountData
@@ -359,7 +419,6 @@ export default function AccountDataPage() {
         icon: Upload,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
-        alwaysShow: true,
         tourStepId: "ad-import",
       },
       {
@@ -388,6 +447,7 @@ export default function AccountDataPage() {
       <AccountImportControl
         ref={importRef}
         onLocalImport={handleLocalImport}
+        onMonaImport={handleMonaImport}
         onUidImport={handleUidImport}
         initialUid={lastUid}
       />

@@ -184,7 +184,7 @@ export function CharacterDetailPanel({
   return (
     <>
       <Card className="bg-gradient-card">
-        <CardContent className="py-6 space-y-6">
+        <CardContent className="py-4 md:py-6 px-3 md:px-6 space-y-4 md:space-y-6">
           {/* Character header + stats side-by-side on wide screens */}
           <div className="flex flex-col min-[1920px]:flex-row min-[1920px]:items-start min-[1920px]:justify-between gap-4">
             <div className="flex items-center gap-4">

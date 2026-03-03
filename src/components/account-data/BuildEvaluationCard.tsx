@@ -74,8 +74,8 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Header: composition + archetype + avatars + grade */}
-      <div className="flex items-center gap-1.5 px-2.5 pt-1.5 pb-0.5">
-        <span className="text-base font-bold text-foreground truncate">
+      <div className="flex items-center gap-1.5 2xl:gap-2 px-2.5 2xl:px-3 pt-1.5 2xl:pt-2 pb-0.5 2xl:pb-1">
+        <span className="text-base 2xl:text-lg font-bold text-foreground truncate">
           {archetypeLabel}
         </span>
 
@@ -93,7 +93,7 @@ function BuildEvaluationCardComponent({
                     <img
                       src={charInfo.imagePath}
                       alt={t.character(charId)}
-                      className="w-5 h-5 rounded-full bg-black/30 object-cover"
+                      className="w-5 h-5 2xl:w-6 2xl:h-6 rounded-full bg-black/30 object-cover"
                     />
                   </Link>
                 </TooltipTrigger>
@@ -110,7 +110,7 @@ function BuildEvaluationCardComponent({
 
         <span
           className={cn(
-            "text-lg font-black tabular-nums leading-none shrink-0 pl-1.5",
+            "text-lg 2xl:text-xl font-black tabular-nums leading-none shrink-0 pl-1.5",
             tier.text
           )}
         >
@@ -119,7 +119,7 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Main stats row — icons instead of text labels */}
-      <div className="px-2.5 flex items-center gap-2 text-xs text-foreground">
+      <div className="px-2.5 2xl:px-3 flex items-center gap-2 text-xs 2xl:text-sm text-foreground">
         {mainStatSlots.map((slot, i) => {
           const Icon = slotIcons[slot];
           return (
@@ -130,7 +130,7 @@ function BuildEvaluationCardComponent({
               {i > 0 && (
                 <span className="text-muted-foreground/20 mr-1.5">·</span>
               )}
-              <Icon className="w-3 h-3 text-foreground/35 shrink-0" />
+              <Icon className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-foreground/35 shrink-0" />
               {evalBuild.mainStats[slot].map((s) => t.statShort(s)).join("/")}
             </span>
           );
@@ -138,12 +138,12 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Substats row */}
-      <div className="px-2.5 pt-0.5 pb-1.5 flex flex-wrap gap-0.5">
+      <div className="px-2.5 2xl:px-3 pt-0.5 2xl:pt-1 pb-1.5 2xl:pb-2 flex flex-wrap gap-0.5 2xl:gap-1">
         {evalBuild.sortedSubstats.map(({ stat, weight }) => (
           <span
             key={stat}
             className={cn(
-              "inline-flex items-center px-1 py-0 rounded text-xs font-medium leading-relaxed",
+              "inline-flex items-center px-1 2xl:px-1.5 py-0 rounded text-xs 2xl:text-sm font-medium leading-relaxed",
               weight >= 100
                 ? "bg-amber-500/20 text-amber-300"
                 : weight >= 75
@@ -157,7 +157,7 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Per-slot breakdown — big icons, tight layout */}
-      <div className="flex items-end justify-evenly px-1 pb-1.5 mt-auto">
+      <div className="flex items-end justify-evenly px-1 2xl:px-2 pb-1.5 2xl:pb-2 mt-auto">
         {allSlots.map((slot) => {
           const slotEval = slots[slot];
           const slotPct =
@@ -183,13 +183,13 @@ function BuildEvaluationCardComponent({
                         }
                         alt=""
                         className={cn(
-                          "w-11 h-11 rounded object-cover",
+                          "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
                           isOffSet && "ring-1 ring-amber-500/60"
                         )}
                       />
                       {isOffSet && (
-                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-amber-500 flex items-center justify-center">
-                          <span className="text-[7px] font-bold text-black">
+                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full bg-amber-500 flex items-center justify-center">
+                          <span className="text-[7px] 2xl:text-[8px] font-bold text-black">
                             F
                           </span>
                         </div>
@@ -215,13 +215,13 @@ function BuildEvaluationCardComponent({
                   </TooltipContent>
                 </Tooltip>
               ) : (
-                <div className="w-11 h-11 rounded border border-dashed border-muted-foreground/15 flex items-center justify-center">
+                <div className="w-11 h-11 2xl:w-14 2xl:h-14 rounded border border-dashed border-muted-foreground/15 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground/20">--</span>
                 </div>
               )}
 
               {/* Mini bar */}
-              <div className="w-11 h-1 bg-black/40 rounded-full overflow-hidden">
+              <div className="w-11 h-1 2xl:w-14 2xl:h-1.5 bg-black/40 rounded-full overflow-hidden">
                 <div
                   className={cn(
                     "h-full rounded-full",
@@ -232,7 +232,7 @@ function BuildEvaluationCardComponent({
               </div>
               <span
                 className={cn(
-                  "text-xs font-mono font-semibold leading-none",
+                  "text-xs 2xl:text-sm font-mono font-semibold leading-none",
                   hasArtifact
                     ? getTier(slotPct).text
                     : "text-muted-foreground/20"

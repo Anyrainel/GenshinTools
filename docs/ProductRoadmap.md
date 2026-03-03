@@ -33,38 +33,6 @@ High-priority improvements that directly impact user value and retention.
 
 ---
 
-### 1.4 Artifact Filter Algorithm Redesign
-
-#### 1.4.1 Consolidate Substat Threshold to Global Setting
-
-**Problem:** Currently, each build card requires the user to specify "at least N of these substats" (e.g., "at least 2 of CR/CD/ER"). When configuring many characters, this becomes repetitive and adds cognitive load—most users want the same threshold across all builds.
-
-**Current Behavior:**
-- Each `BuildCard` has its own "at least N" input
-- User must configure this for every build individually
-- Silently treat CR/CD as must have substats
-- Creates visual clutter and decision fatigue
-
-**Proposed Behavior:**
-- Remove the per-build "at least N" input from `BuildCard`
-- Add a single global "minimum substat count" setting in the Compute stage
-- The filter algorithm uses this global threshold for all builds
-- Simplifies the per-build UI to just: artifact set + main stats + desired substats
-
-**Benefit:** Configure once, apply everywhere. The mental model becomes: "I want artifacts with at least 2 good substats" as a global policy rather than per-character decision.
-
-#### 1.4.2 Smarter Filter Quality Control
-
-**Problem:** Generated filters can be too permissive or too strict; the pass chance indicator is informational only.
-
-**Proposed Solutions:**
-- Add configurable threshold to auto-bump "at least N+1" when probability is too high
-- Introduce 4pc vs 2+2pc priority weighting during computation
-- Show quality score per artifact set (not just pass chance)
-- Consider iterative tightening: "Tighten this slot? (Currently 40% pass rate)"
-
----
-
 ## 2. P2: Feature Expansion
 
 Lower-priority enhancements that extend existing features. Naming changes require implementing feature changes first.
@@ -79,15 +47,6 @@ Lower-priority enhancements that extend existing features. Naming changes requir
 - Service worker for asset caching
 - Web app manifest with icons
 - Offline fallback UI
-
-#### 2.6.2 Tauri Auto-Update
-
-**Rationale:** Desktop users currently must manually download new versions.
-
-**Scope:**
-- Implement Tauri's updater plugin
-- Host update manifests on CDN
-- In-app update notifications
 
 ---
 
@@ -113,9 +72,3 @@ Strategic questions that need further exploration before committing to solutions
 | Question | Context |
 |----------|---------|
 | Should the app have user accounts? | Cloud backup can work without accounts (Google Drive auth), but accounts would enable cross-platform sync, preferences, and community features. |
-| How to balance feature richness vs. load time? | More game data = better experience but slower initial load. Lazy loading? Code splitting? |
-| How to handle game meta changes? | Character rankings shift with patches. Should tier lists be versioned or labeled by patch? |
-
----
-
-*This document captures ideas at various stages of exploration. Not all items will be implemented. Priorities may shift based on user feedback and resource availability.*

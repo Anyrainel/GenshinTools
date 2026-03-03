@@ -67,6 +67,7 @@ export default function ArtifactBuildsPage() {
   };
 
   // Support deep-linking to a character via ?char=<id> (e.g. from evaluation page)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally run only on mount
   useEffect(() => {
     const charParam = searchParams.get("char");
     if (charParam) {
@@ -78,7 +79,7 @@ export default function ArtifactBuildsPage() {
         return newParams;
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {

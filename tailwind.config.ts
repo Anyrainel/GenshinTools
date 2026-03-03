@@ -1,5 +1,36 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import plugin from "tailwindcss/plugin";
+
+const wideContainerPlugin = plugin(({ addComponents }) => {
+  addComponents({
+    ".wide-container": {
+      width: "100%",
+      marginLeft: "auto",
+      marginRight: "auto",
+      paddingLeft: "0.5rem",
+      paddingRight: "0.5rem",
+      "@media (min-width: 768px)": {
+        paddingLeft: "1rem",
+        paddingRight: "1rem",
+      },
+      "@media (min-width: 1024px)": {
+        maxWidth: "980px",
+        paddingLeft: "1.5rem",
+        paddingRight: "1.5rem",
+      },
+      "@media (min-width: 1280px)": {
+        maxWidth: "1152px",
+      },
+      "@media (min-width: 1536px)": {
+        maxWidth: "1340px",
+      },
+      "@media (min-width: 2048px)": {
+        maxWidth: "1536px",
+      },
+    },
+  });
+});
 
 export default {
   darkMode: ["class"],
@@ -28,6 +59,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        "3xl": "2048px",
+      },
       width: {
         sidebar: "17.5rem", // 280px
         "sidebar-narrow": "15rem", // 240px
@@ -156,5 +190,5 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, wideContainerPlugin],
 } satisfies Config;

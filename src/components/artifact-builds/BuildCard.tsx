@@ -208,6 +208,9 @@ function BuildCardComponent({
   );
 
   const mainStatLabel = (slot: MainStatSlot) => {
+    if (isMobile) {
+      return t.slot(slot);
+    }
     switch (slot) {
       case "sands":
         return t.ui("buildCard.sandsMainStat");

@@ -119,8 +119,35 @@ export const i18nUiData = {
       en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
     },
-    toolIrminsul: { en: "Irminsul (Packet Capture)", zh: "Irminsul (抓包)" },
-    toolKamera: { en: "Inventory Kamera (OCR)", zh: "Inventory Kamera (扫图)" },
+    toolIrminsul: {
+      en: "Irminsul (Packet Capture)",
+      zh: "Irminsul (抓包，非云原神)",
+    },
+    toolKamera: {
+      en: "Inventory Kamera (OCR)",
+      zh: "Inventory Kamera (扫图, 英文客户端)",
+    },
+    monaTitle: { en: "Artifact Only Import", zh: "仅圣遗物导入" },
+    monaDescription: {
+      en: "Artifacts only — no character details or weapon data. Characters are created as C0, Lv90, talent 10/10/10.",
+      zh: "仅导入圣遗物，不含角色详情和武器数据。角色将默认 0命，90级，天赋10/10/10。",
+    },
+    monaRequiresPC: {
+      en: "Use a PC scanner tool to export your artifact data as a Mona format .json file",
+      zh: "需要在电脑上运行扫描工具，将圣遗物数据导出为 Mona 格式 .json 文件",
+    },
+    toolYas: {
+      en: "yas (OCR, Chinese client)",
+      zh: "yas (扫图)",
+    },
+    wrongFormatMona: {
+      en: 'This looks like a Mona/yas file. Please use the "Artifact Only Import" section instead.',
+      zh: "该文件为 Mona/yas 格式，请使用「仅圣遗物导入」选项。",
+    },
+    wrongFormatGOOD: {
+      en: 'This looks like a GOOD format file. Please use the "Full Data Import" section instead.',
+      zh: "该文件为 GOOD 格式，请使用「完整数据导入」选项。",
+    },
     uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
     uidDescription: {
       en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments.",

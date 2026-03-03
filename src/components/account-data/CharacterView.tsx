@@ -170,11 +170,11 @@ export function CharacterView({ scores }: CharacterViewProps) {
           </div>
         ) : (
           <div
-            className="grid gap-4 pb-4"
+            className="grid gap-3 pb-4"
             style={{
               gridTemplateColumns: isSmallScreen
                 ? "1fr"
-                : "repeat(auto-fit, minmax(35rem, 1fr))",
+                : "repeat(auto-fit, minmax(32rem, 1fr))",
             }}
           >
             {filteredCharacters.map((char) => (

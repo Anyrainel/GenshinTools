@@ -47,22 +47,50 @@ function getScoreDiffBorderColor(
   return "border-l-tier-pool"; // Pool - lowest gain
 }
 
-export function InsightList({ insights, isComplete }: InsightListProps) {
+export function InsightList({
+  insights,
+  isComplete,
+  compact,
+}: InsightListProps) {
   const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
 
   // Show celebration for no suggestions
   if (!insights.length) {
     return (
-      <div className="flex items-center justify-center gap-3 px-4 py-3 border-t border-primary/10">
-        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-          <PartyPopper className="w-4 h-4 text-primary" />
+      <div
+        className={cn(
+          "flex items-center justify-center border-t border-primary/10",
+          compact ? "gap-2 px-3 py-2" : "gap-3 px-4 py-3"
+        )}
+      >
+        <div
+          className={cn(
+            "rounded-full bg-primary/20 flex items-center justify-center shrink-0",
+            compact ? "w-6 h-6" : "w-8 h-8"
+          )}
+        >
+          <PartyPopper
+            className={
+              compact ? "w-3 h-3 text-primary" : "w-4 h-4 text-primary"
+            }
+          />
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-medium text-foreground">
+          <div
+            className={cn(
+              "font-medium text-foreground",
+              compact ? "text-xs" : "text-sm"
+            )}
+          >
             {t.ui("accountData.insights.allGood")}
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div
+            className={cn(
+              "text-muted-foreground",
+              compact ? "text-[11px]" : "text-xs"
+            )}
+          >
             {t.ui("accountData.insights.allGoodDescription")}
           </div>
         </div>
@@ -83,7 +111,7 @@ export function InsightList({ insights, isComplete }: InsightListProps) {
       <div className="flex flex-col gap-2">
         {/* Cards + Button - unified gap */}
         {visibleInsights.map((insight, idx) => (
-          <InsightItem key={idx} insight={insight} />
+          <InsightItem key={idx} insight={insight} compact={compact} />
         ))}
         {showCollapseControls && (
           <button
@@ -127,17 +155,29 @@ function getCraftCost(slot: Slot): number {
 function ScoreGainDisplay({
   scoreDiff,
   efficiencyPercent,
+  compact,
 }: {
   scoreDiff: number;
   efficiencyPercent: number | null;
+  compact?: boolean;
 }) {
   return (
     <div className="flex items-baseline gap-1 italic font-extrabold tracking-tighter leading-none">
-      <span className="text-lg leading-none bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+      <span
+        className={cn(
+          "leading-none bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm",
+          compact ? "text-sm" : "text-lg"
+        )}
+      >
         +{scoreDiff.toFixed(1)}
       </span>
       {efficiencyPercent !== null && (
-        <span className="text-base leading-none bg-gradient-to-br from-amber-100/70 via-orange-300/70 to-amber-500/70 bg-clip-text text-transparent">
+        <span
+          className={cn(
+            "leading-none bg-gradient-to-br from-amber-100/70 via-orange-300/70 to-amber-500/70 bg-clip-text text-transparent",
+            compact ? "text-xs" : "text-base"
+          )}
+        >
           ({efficiencyPercent}%)
         </span>
       )}
@@ -145,7 +185,10 @@ function ScoreGainDisplay({
   );
 }
 
-function InsightItem({ insight }: { insight: Insight }) {
+function InsightItem({
+  insight,
+  compact,
+}: { insight: Insight; compact?: boolean }) {
   const { t } = useLanguage();
 
   // Get insight type styling (icon, color, iconBg, label, subtitle)
@@ -297,19 +340,21 @@ function InsightItem({ insight }: { insight: Insight }) {
   const cardContent = (
     <div
       className={cn(
-        "flex items-center gap-3 py-2 px-2 rounded-md border-l-[4px] border-y border-r border-white/5 transition-colors text-sm bg-gradient-card cursor-pointer hover:bg-white/5",
+        "flex items-center py-2 px-2 rounded-md border-l-[4px] border-y border-r border-white/5 transition-colors text-sm bg-gradient-card cursor-pointer hover:bg-white/5",
+        compact ? "gap-2" : "gap-3",
         borderClass
       )}
     >
       {/* Icon */}
       <div
         className={cn(
-          "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+          "rounded-full flex items-center justify-center shrink-0",
+          compact ? "w-6 h-6" : "w-8 h-8",
           iconBg,
           color
         )}
       >
-        <Icon className="w-4 h-4" />
+        <Icon className={compact ? "w-3 h-3" : "w-4 h-4"} />
       </div>
 
       {/* Text Info - 3-Row Layout */}
@@ -320,15 +365,26 @@ function InsightItem({ insight }: { insight: Insight }) {
             <ScoreGainDisplay
               scoreDiff={insight.scoreDiff}
               efficiencyPercent={efficiencyPercent}
+              compact={compact}
             />
           )}
         {/* Row 2: Title */}
-        <div className="text-base font-semibold text-foreground">
+        <div
+          className={cn(
+            "font-semibold text-foreground",
+            compact ? "text-sm" : "text-base"
+          )}
+        >
           {label} {t.slot(insight.slot)}
         </div>
         {/* Row 3: Subtitle */}
         {subtitle && (
-          <div className="text-xs text-muted-foreground truncate">
+          <div
+            className={cn(
+              "text-muted-foreground truncate",
+              compact ? "text-[11px]" : "text-xs"
+            )}
+          >
             {subtitle}
           </div>
         )}
@@ -338,34 +394,65 @@ function InsightItem({ insight }: { insight: Insight }) {
       <div className="flex items-center gap-1 shrink-0">
         {/* Before Artifact (current equipped or the one being replaced) */}
         {isEquipEmpty ? (
-          <div className="w-14 h-14 flex items-center justify-center rounded-md border-2 border-dashed border-white/10">
-            <CirclePlus className="w-6 h-6 text-muted-foreground/30" />
+          <div
+            className={cn(
+              "flex items-center justify-center rounded-md border-2 border-dashed border-white/10",
+              compact ? "w-10 h-10" : "w-14 h-14"
+            )}
+          >
+            <CirclePlus
+              className={
+                compact
+                  ? "w-4 h-4 text-muted-foreground/30"
+                  : "w-6 h-6 text-muted-foreground/30"
+              }
+            />
           </div>
         ) : hasSwap && insight.compareArtifact && compareArtInfo ? (
           <ArtifactIcon
             artifact={insight.compareArtifact}
             artInfo={compareArtInfo}
             slot={insight.slot}
+            size={compact ? "sm" : undefined}
           />
         ) : (
           <ArtifactIcon
             artifact={insight.artifact}
             artInfo={artInfo}
             slot={insight.slot}
+            size={compact ? "sm" : undefined}
           />
         )}
         {/* Arrow */}
-        <ArrowRight className="w-4 h-4 text-muted-foreground" />
+        <ArrowRight
+          className={
+            compact
+              ? "w-3 h-3 text-muted-foreground"
+              : "w-4 h-4 text-muted-foreground"
+          }
+        />
         {/* After: new artifact or placeholder icon */}
         {hasSwap ? (
           <ArtifactIcon
             artifact={insight.artifact}
             artInfo={artInfo}
             slot={insight.slot}
+            size={compact ? "sm" : undefined}
           />
         ) : (
-          <div className="w-14 h-14 flex items-center justify-center">
-            <PlaceholderIcon className="w-10 h-10 text-muted-foreground/50" />
+          <div
+            className={cn(
+              "flex items-center justify-center",
+              compact ? "w-10 h-10" : "w-14 h-14"
+            )}
+          >
+            <PlaceholderIcon
+              className={
+                compact
+                  ? "w-7 h-7 text-muted-foreground/50"
+                  : "w-10 h-10 text-muted-foreground/50"
+              }
+            />
           </div>
         )}
       </div>

@@ -176,12 +176,9 @@ function WeightedStatSelectComponent({
               variant="ghost"
               size="sm"
               onClick={() => setIsAdding(true)}
-              className={cn(
-                "p-0 text-primary/70 hover:text-primary bg-primary/5 hover:bg-primary/10 transition-transform hover:scale-[1.2]",
-                compact ? "h-4 w-4" : "h-5 w-5"
-              )}
+              className="p-0 h-5 w-5 text-primary/70 hover:text-primary bg-primary/5 hover:bg-primary/10 transition-transform hover:scale-[1.2]"
             >
-              <Plus className={compact ? "w-3 h-3" : "w-3.5 h-3.5"} />
+              <Plus className="w-3.5 h-3.5" />
             </Button>
           )}
         </div>

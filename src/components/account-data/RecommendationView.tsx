@@ -10,7 +10,6 @@ import {
   type LuckExpectation,
   tiers,
 } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Insight,
@@ -34,8 +33,6 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
   const { tierAssignments, tierCustomization, setTierLuckExpectation } =
     useTierStore();
   const { config: scoreConfig } = useArtifactScoreStore();
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
   // Generate insights from scores (weights + matchedBuild from same source as character view)
   const allInsights = useMemo(() => {
     if (!accountData) return {};
@@ -201,13 +198,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               </div>
             )}
 
-            <div
-              className={`grid gap-3 ${
-                isMobile
-                  ? "grid-cols-1"
-                  : "grid-cols-[repeat(auto-fill,minmax(360px,1fr))]"
-              }`}
-            >
+            <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(360px,1fr))]">
               {chars.map(({ char, scoreResult }) => (
                 <RecommendationCard
                   key={char.key}

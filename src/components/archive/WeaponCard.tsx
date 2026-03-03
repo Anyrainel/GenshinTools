@@ -45,7 +45,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const card = (
     <div
       className={cn(
-        "flex items-center gap-2 p-2 rounded-lg w-[calc(50%-3px)] md:w-[200px]",
+        "flex items-center gap-2 p-2 rounded-lg",
         "bg-card/50 hover:bg-card/80 hover:scale-[1.02]",
         "transition-all cursor-pointer",
         !owned && "opacity-40"

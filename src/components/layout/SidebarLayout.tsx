@@ -53,8 +53,7 @@ export function SidebarLayout({
     <div
       className={cn(
         "h-full overflow-hidden flex flex-col lg:flex-row gap-3",
-        "w-full max-w-full lg:max-w-[90%] xl:max-w-[80%] 2xl:max-w-[70%] mx-auto",
-        "px-2 md:px-4 lg:px-6",
+        "wide-container",
         className
       )}
     >
@@ -80,7 +79,7 @@ export function SidebarLayout({
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:block w-sidebar-narrow xl:w-sidebar shrink-0 overflow-y-auto">
+      <aside className="hidden lg:block w-sidebar-narrow xl:w-sidebar 2xl:w-sidebar-narrow 3xl:w-sidebar shrink-0 overflow-y-auto">
         {sidebar}
       </aside>
 
