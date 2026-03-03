@@ -346,31 +346,6 @@ export class CharBuild {
     return merged.apply(applicable);
   }
 
-  /** Collect this build's dynamic buffs, evaluated against pre-stats */
-  getDynamicBuffs(
-    selfCharId: string,
-    selfPreStats: StatSheet,
-    teamPreStats: StatSheet[]
-  ): EvaluatedDynamicBuff[] {
-    const results: EvaluatedDynamicBuff[] = [];
-    for (const b of this.getAllBuffs()) {
-      const entries = b.dynamicBuffs(selfPreStats, teamPreStats);
-      assertNoDuplicateStatKeys(
-        entries,
-        `dynamicBuffs (source: ${b.source.type}:${b.source.id})`
-      );
-      if (entries.length > 0) {
-        results.push({
-          buff: b,
-          source: b.source,
-          providerCharId: selfCharId,
-          entries,
-        });
-      }
-    }
-    return results;
-  }
-
   /**
    * Apply dynamic buffs to pre-stats → post-stats.
    * Evaluates all applicable dynamic buffs.
@@ -562,6 +537,30 @@ export class TeamBuild {
   }
 
   /**
+   * Collect dynamic buffs from allStaticBuffs, evaluated against pre-stats.
+   * Uses construction-time buff references for consistency with resolveBuffs.
+   */
+  private collectDynamicBuffs(
+    preStats: Record<string, StatSheet>,
+    teamPreStatsArr: StatSheet[]
+  ): EvaluatedDynamicBuff[] {
+    const results: EvaluatedDynamicBuff[] = [];
+    for (const { buff, providerCharId } of this.allStaticBuffs) {
+      if (providerCharId === "resonance") continue;
+      const ownerStats = preStats[providerCharId]!;
+      const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+      assertNoDuplicateStatKeys(
+        entries,
+        `dynamicBuffs (source: ${buff.source.type}:${buff.source.id})`
+      );
+      if (entries.length > 0) {
+        results.push({ buff, source: buff.source, providerCharId, entries });
+      }
+    }
+    return results;
+  }
+
+  /**
    * Compute final stat sheets for all team members.
    * This is the hot path during artifact optimization.
    *
@@ -602,12 +601,7 @@ export class TeamBuild {
 
     // Phase 3: Collect dynamic buffs from all members
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs: EvaluatedDynamicBuff[] = [];
-    for (const [id, build] of Object.entries(this.charBuilds)) {
-      allDynamicBuffs.push(
-        ...build.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
-      );
-    }
+    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
 
     // Phase 4: Apply dynamic buffs → post-stats
     const postStats: Record<string, StatSheet> = {};
@@ -693,12 +687,7 @@ export class TeamBuild {
     }
 
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs: EvaluatedDynamicBuff[] = [];
-    for (const [id, cb] of Object.entries(this.charBuilds)) {
-      allDynamicBuffs.push(
-        ...cb.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
-      );
-    }
+    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
 
     const postStats: Record<string, StatSheet> = {};
     for (const [id, cb] of Object.entries(this.charBuilds)) {
@@ -1008,10 +997,11 @@ export class TeamBuild {
     }
 
     // For teammates: check inputKeys of their scaling buffs that affect calc target
-    for (const [cid, cb] of Object.entries(this.charBuilds)) {
+    for (const cid of Object.keys(this.charBuilds)) {
       if (cid === calcTargetId) continue;
       const relevantKeys = new Set<StatKey>();
-      for (const buff of cb.getAllBuffs()) {
+      for (const { buff, providerCharId } of this.allStaticBuffs) {
+        if (providerCharId !== cid) continue;
         if (
           !isBuffApplicable(
             buff,

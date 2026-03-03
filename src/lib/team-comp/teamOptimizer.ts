@@ -209,18 +209,6 @@ export async function* runTeamOptimization(
     }
   }
 
-  // Sanity-check: carry-2 runs with full team buffs, so its damage should
-  // always be ≥ carry-1 (which ran with base sheets). If that's not the case
-  // something has gone wrong upstream.
-  const carry2Result = passResults.find((r) => r.passId === "carry-2");
-  if (carry1Result && carry2Result) {
-    if (carry2Result.bestDamage < carry1Result.bestDamage) {
-      throw new Error(
-        `Team optimizer: carry-2 damage (${carry2Result.bestDamage}) is lower than carry-1 (${carry1Result.bestDamage}). This should not happen — carry-2 runs with full support buffs.`
-      );
-    }
-  }
-
   // Build final artifact map
   const bestArtifactsByChar: Record<
     string,

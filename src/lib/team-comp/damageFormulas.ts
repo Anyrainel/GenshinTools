@@ -142,8 +142,12 @@ export abstract class DamageFormula {
   }
 
   protected computeCritMult(stats: StatSheet, ctx: CalcContext): number {
-    const cr = stats.get("cr", this.tag) + stats.get("reactionCr", this.tag);
+    let cr = stats.get("cr", this.tag) + stats.get("reactionCr", this.tag);
     const cd = stats.get("cd", this.tag) + stats.get("reactionCd", this.tag);
+
+    if (ctx.critRateTarget != null) {
+      cr += (100 - ctx.critRateTarget) / 100;
+    }
 
     if (ctx.assumeCrit) {
       return 1 + cd;

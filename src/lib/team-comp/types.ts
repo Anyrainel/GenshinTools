@@ -260,6 +260,7 @@ export type CalcContext = {
   enemyLevel: number;
   enemyRes: number;
   assumeCrit: boolean;
+  critRateTarget?: number; // 0–100 integer; undefined = disabled
 };
 
 // ─── Char Build Config ───

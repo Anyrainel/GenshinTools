@@ -16,7 +16,6 @@ export const i18nUiData = {
     },
     cancel: { en: "Cancel", zh: "取消" },
     reset: { en: "Reset", zh: "重置" },
-    optimize: { en: "Optimize", zh: "优化" },
     noResults: { en: "No results found", zh: "未找到结果" },
     duplicate: { en: "Duplicate", zh: "复制" },
     moveUp: { en: "Move Up", zh: "上移" },
@@ -288,22 +287,15 @@ export const i18nUiData = {
       skill: { en: "Skill", zh: "元素战技" },
       burst: { en: "Burst", zh: "元素爆发" },
     },
-    statWeights: { en: "Stat Weights", zh: "词条权重" },
     punishmentFactor: { en: "Punishment Factor", zh: "惩罚系数" },
     resetDefaults: { en: "Reset Defaults", zh: "重置默认" },
     resetGlobalConfirm: {
       en: "Reset global settings to default?",
       zh: "重置全局设置到默认值？",
     },
-    resetCharactersConfirm: {
-      en: "Reset all character weights to default?",
-      zh: "重置所有角色权重到默认值？",
-    },
-    characterWeights: { en: "Character Stat Weights", zh: "角色词条权重" },
     flatAtk: { en: "Flat ATK", zh: "小攻击" },
     flatHp: { en: "Flat HP", zh: "小生命" },
     flatDef: { en: "Flat DEF", zh: "小防御" },
-    searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
     wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
     subStatScore: { en: "Sub", zh: "副词条" },
     scoredUsing: {
@@ -314,10 +306,6 @@ export const i18nUiData = {
     noBuildConfigured: {
       en: "No build configured. Scores use Crit Rate and Crit DMG only.",
       zh: "未配置配装，仅基于暴击率和暴击伤害评分。",
-    },
-    weightWarning: {
-      en: "Set a main stat (ATK%, HP%, DEF%, EM) to 100, or set at least two substats (CR, CD, ER, etc.) to 100.",
-      zh: "需将一个主属性 (攻击%, 生命%, 防御%, 精通) 设为 100，或将至少两个副词条设为 100。",
     },
     insights: {
       title: { en: "Recommended Actions", zh: "推荐操作" },
@@ -342,11 +330,6 @@ export const i18nUiData = {
       allGoodDescription: {
         en: "No suggestions for this character.",
         zh: "这个角色没有优化建议。",
-      },
-      incomplete: { en: "Incomplete Set", zh: "圣遗物未齐" },
-      incompleteDescription: {
-        en: "Equip all 5 artifact slots to get recommendations.",
-        zh: "装备全部5个圣遗物槽后可获取建议。",
       },
       poolInfo: {
         en: "Characters in the Pool are not computed for recommendations. Their equipped artifacts may even be suggested for other characters to swap.",
@@ -497,7 +480,6 @@ export const i18nUiData = {
       en: "Failed to generate image",
       zh: "图片生成失败",
     },
-    explore: { en: "Explore", zh: "探索" },
     presetLoaded: { en: "Preset loaded", zh: "预设已加载" },
     imported: { en: "Builds imported", zh: "配装已导入" },
     disclaimer: {
@@ -615,17 +597,14 @@ export const i18nUiData = {
   },
   teamComp: {
     teamName: { en: "Team Name", zh: "队伍名称" },
-    character: { en: "Character", zh: "角色" },
     weapon: { en: "Weapon", zh: "武器" },
     artifact: { en: "Artifact", zh: "圣遗物" },
-    teamLabel: { en: "Team", zh: "队伍" },
     newTeamStart: { en: "New Team (Top)", zh: "新建队伍（顶部）" },
     newTeamEnd: { en: "New Team (Bottom)", zh: "新建队伍（底部）" },
     reactions: { en: "Reactions", zh: "元素反应" },
     teamOptimization: { en: "Damage Optimization", zh: "伤害优化" },
     teamRoster: { en: "Team Roster", zh: "队伍成员" },
     minEr: { en: "Min. ER", zh: "最低充能" },
-    renderError: { en: "Render Error", zh: "渲染错误" },
     clearTeamData: { en: "Clear Team Data", zh: "清空队伍数据" },
     setupError: { en: "Setup Error:", zh: "设置错误：" },
     currentEquipAndDamage: {
@@ -638,21 +617,12 @@ export const i18nUiData = {
     },
     runOptimization: { en: "Run Optimization", zh: "开始优化" },
     optimizing: { en: "Optimizing…", zh: "正在优化…" },
-    searchingCombinations: {
-      en: "Searching combinations…",
-      zh: "搜索配装组合中…",
-    },
-    pruningCandidates: {
-      en: "Pruning candidates…",
-      zh: "筛选候选配装中…",
-    },
     totalExpectedDamage: { en: "Total Expected Damage:", zh: "总伤害期望：" },
     pending: { en: "Pending", zh: "等待计算" },
     emptyDamageMessage: {
       en: "Configure characters and weapons to see damage metrics.",
       zh: "配置队伍成员以查看伤害期望。",
     },
-    targetTag: { en: "Target", zh: "核心目标" },
     idle: { en: "Idle", zh: "面板" },
     combat: { en: "Combat", zh: "实战" },
     stats: { en: "Stats", zh: "详细属性" },
@@ -661,7 +631,6 @@ export const i18nUiData = {
     avgVal: { en: "Avg. ", zh: "均值 " },
     gain: { en: "Gain", zh: "提升" },
     base: { en: "Base", zh: "基础" },
-    maxCap: { en: "Max {0}", zh: "最多 {0}" },
     buffsLedger: { en: "Buffs & Effects Ledger", zh: "Buff 效果明细表" },
     hideTrivial: { en: "Hide trivial/inactive", zh: "隐藏次要/未激活效果" },
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
@@ -686,6 +655,7 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "必定暴击" },
+    critRateTarget: { en: "CR Target", zh: "暴击目标" },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
@@ -709,7 +679,6 @@ export const i18nUiData = {
       en: "Import data",
       zh: "导入数据",
     },
-    singleCharOpt: { en: "Single", zh: "单人" },
     teamOpt: { en: "Team", zh: "全队" },
     passCarryInitial: { en: "Carry (Initial)", zh: "主C (初始)" },
     passCarryRefine: { en: "Carry (Refine)", zh: "主C (精修)" },

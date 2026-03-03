@@ -18,7 +18,6 @@ import type {
   Slot,
   WeaponResource,
 } from "@/data/types";
-import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -46,8 +45,6 @@ import {
   Loader2,
   Play,
   Swords,
-  User,
-  Users,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -113,33 +110,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [team, localCharacters, localWeapons, localArtifacts]
   );
 
-  const [optimizeMode, setOptimizeMode] = useState<"single" | "team">("team");
-
-  const {
-    result: optResult,
-    isComputing: singleIsComputing,
-    error: optError,
-    start: startOpt,
-    stop: stopOpt,
-  } = useAsyncOptimizer();
-
   const {
     progress: teamProgress,
     result: teamResult,
-    isComputing: teamIsComputing,
+    isComputing,
     error: teamError,
     start: startTeamOpt,
     stop: stopTeamOpt,
   } = useAsyncTeamOptimizer();
 
-  const isComputing = singleIsComputing || teamIsComputing;
-
   useEffect(() => {
     return () => {
-      stopOpt();
       stopTeamOpt();
     };
-  }, [stopOpt, stopTeamOpt]);
+  }, [stopTeamOpt]);
 
   const configs = useMemo(
     () => buildTeamConfigs(effectiveTeam, accountData),
@@ -281,8 +265,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       enemyLevel: team.calcContext?.enemyLevel ?? 110,
       enemyRes: team.calcContext?.enemyRes ?? 0.1,
       assumeCrit: team.calcContext?.assumeCrit ?? false,
+      critRateTarget: team.calcContext?.critRateTarget,
     };
   }, [team.calcContext]);
+
+  const displayContext = useMemo<CalcContext>(
+    () => ({ ...activeContext, critRateTarget: undefined }),
+    [activeContext]
+  );
 
   const currentDamage = useMemo(() => {
     if (!teamBuild || !resolvedFormula) return null;
@@ -298,13 +288,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         charId,
         formulaId,
         postStats,
-        activeContext
+        displayContext
       );
     } catch (e) {
       console.error("Damage calc failed:", e);
       return null;
     }
-  }, [teamBuild, resolvedFormula, artifactSheets, activeContext]);
+  }, [teamBuild, resolvedFormula, artifactSheets, displayContext]);
 
   const currentDisplayResult = useMemo(() => {
     if (!teamBuild || !resolvedFormula) return null;
@@ -318,13 +308,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         charId,
         formulaId,
         artifactSheets,
-        activeContext
+        displayContext
       );
     } catch (e) {
       console.error("Display calc failed:", e);
       return null;
     }
-  }, [teamBuild, resolvedFormula, artifactSheets, activeContext]);
+  }, [teamBuild, resolvedFormula, artifactSheets, displayContext]);
 
   const activeTab = resolvedFormula
     ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
@@ -372,31 +362,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     ];
   };
 
-  const handleSingleOptimize = () => {
-    if (!teamBuild || !accountData || !resolvedOptFormula) return;
-
-    const { charId, formulaId } = resolvedOptFormula;
-    const buildMatch = optimizerBuildMatchByChar[charId];
-    if (!buildMatch) return;
-
-    const { goalSetId, goalHalfSetIds } = getGoalSets(charId);
-
-    startOpt({
-      teamBuild,
-      targetCharId: charId,
-      formulaId,
-      targetEr: targetErRaw,
-      inventory: getInventory(),
-      buildMatch,
-      globalConfig: scoreConfig.global,
-      baseSheets: artifactSheets,
-      calcContext: activeContext,
-      artifactSetId: goalSetId,
-      artifactHalfSetIds: goalHalfSetIds,
-    });
-  };
-
-  const handleTeamOptimize = () => {
+  const handleOptimize = () => {
     if (!teamBuild || !accountData || !resolvedOptFormula) return;
 
     const { charId: carryCharId, formulaId } = resolvedOptFormula;
@@ -437,14 +403,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     });
   };
 
-  const handleOptimize = () => {
-    if (optimizeMode === "team") {
-      handleTeamOptimize();
-    } else {
-      handleSingleOptimize();
-    }
-  };
-
   // Build artifact maps for Card 2 (current equipped) and Card 3 (optimized)
   const equippedArtifactsByChar = useMemo(() => {
     const map: Record<string, Record<string, ArtifactData>> = {};
@@ -459,25 +417,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }, [effectiveTeam.characters, accountData]);
 
   const optimizedArtifactsByChar = useMemo(() => {
-    // Team mode: use bestArtifactsByChar from team result (updates ALL characters)
-    if (teamResult?.bestDamageResult) {
-      const map = { ...equippedArtifactsByChar };
-      for (const [charId, arts] of Object.entries(
-        teamResult.bestArtifactsByChar
-      )) {
-        map[charId] = arts as Record<string, ArtifactData>;
-      }
-      return map;
-    }
-    // Single mode: only update the carry
-    if (!optResult?.bestDamageResult) return equippedArtifactsByChar;
+    if (!teamResult?.bestDamageResult) return equippedArtifactsByChar;
     const map = { ...equippedArtifactsByChar };
-    const targetId = resolvedOptFormula?.charId;
-    if (targetId) {
-      map[targetId] = optResult.bestArtifacts as Record<string, ArtifactData>;
+    for (const [charId, arts] of Object.entries(
+      teamResult.bestArtifactsByChar
+    )) {
+      map[charId] = arts as Record<string, ArtifactData>;
     }
     return map;
-  }, [optResult, teamResult, equippedArtifactsByChar, resolvedOptFormula]);
+  }, [teamResult, equippedArtifactsByChar]);
 
   const optArtifactSheets = useMemo(() => {
     const sheets: Record<string, StatSheet> = {};
@@ -489,8 +437,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return sheets;
   }, [optimizedArtifactsByChar, effectiveTeam.characters]);
 
-  const hasOptResult =
-    optResult?.bestDamageResult || teamResult?.bestDamageResult;
+  const hasOptResult = teamResult?.bestDamageResult;
 
   const optimizedDamage = useMemo(() => {
     if (!teamBuild || !resolvedOptFormula || !hasOptResult) return null;
@@ -503,7 +450,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         charId,
         formulaId,
         postStats,
-        activeContext
+        displayContext
       );
     } catch (e) {
       console.error("Opt damage calc failed:", e);
@@ -514,7 +461,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     resolvedOptFormula,
     optArtifactSheets,
     hasOptResult,
-    activeContext,
+    displayContext,
   ]);
 
   const optimizedDisplayResult = useMemo(() => {
@@ -529,7 +476,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         charId,
         formulaId,
         optArtifactSheets,
-        activeContext
+        displayContext
       );
     } catch (e) {
       console.error("Opt display calc failed:", e);
@@ -540,7 +487,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     resolvedOptFormula,
     optArtifactSheets,
     hasOptResult,
-    activeContext,
+    displayContext,
   ]);
 
   return (
@@ -1145,36 +1092,43 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   isMobile && "w-full justify-between"
                 )}
               >
-                {/* Mode toggle */}
-                <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setOptimizeMode("single")}
-                    disabled={isComputing}
+                <div className="flex items-center gap-1 shrink-0">
+                  <span
                     className={cn(
-                      "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
-                      optimizeMode === "single"
-                        ? "bg-background shadow-sm text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                      "font-semibold text-foreground/80 select-none",
+                      isMobile ? "text-[10px]" : "text-xs"
                     )}
                   >
-                    <User className="w-3 h-3" />
-                    {t.ui("teamComp.singleCharOpt")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOptimizeMode("team")}
-                    disabled={isComputing}
+                    {t.ui("teamComp.critRateTarget")}
+                  </span>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={activeContext.critRateTarget ?? ""}
+                    placeholder="—"
+                    onChange={(e) => {
+                      const raw = e.target.value.trim();
+                      updateTeam(team.id, {
+                        calcContext: {
+                          ...team.calcContext,
+                          critRateTarget:
+                            raw === ""
+                              ? undefined
+                              : Math.max(
+                                  0,
+                                  Math.min(100, Math.round(Number(raw) || 0))
+                                ),
+                        },
+                      });
+                    }}
                     className={cn(
-                      "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
-                      optimizeMode === "team"
-                        ? "bg-background shadow-sm text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                      "text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                      isMobile ? "h-6 w-10" : "h-7 w-12"
                     )}
-                  >
-                    <Users className="w-3 h-3" />
-                    {t.ui("teamComp.teamOpt")}
-                  </button>
+                  />
+                  <span className="text-xs font-bold text-muted-foreground">
+                    %
+                  </span>
                 </div>
                 <Button
                   onClick={handleOptimize}
@@ -1213,55 +1167,25 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
           <CardContent className={CARD_BODY_CLS}>
             {/* Empty state */}
-            {!isComputing &&
-              !optResult &&
-              !teamResult &&
-              !optError &&
-              !teamError && (
-                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                  <Swords className="w-8 h-8 opacity-15" />
-                  <p>{t.ui("teamComp.emptyOptMessage")}</p>
-                </div>
-              )}
+            {!isComputing && !teamResult && !teamError && (
+              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                <Swords className="w-8 h-8 opacity-15" />
+                <p>{t.ui("teamComp.emptyOptMessage")}</p>
+              </div>
+            )}
 
             {/* Error state */}
-            {(optError || teamError) && (
+            {teamError && (
               <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
                 <span className="font-bold">
                   {t.ui("teamComp.optimizerError")}
                 </span>{" "}
-                {(optError || teamError)?.message}
+                {teamError.message}
               </div>
             )}
 
-            {/* Single mode progress bar */}
-            {singleIsComputing && (
-              <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-semibold">
-                    {optResult?.phase === "evaluating"
-                      ? t.ui("teamComp.searchingCombinations")
-                      : t.ui("teamComp.pruningCandidates")}
-                  </span>
-                  <span className="font-mono font-bold">
-                    {Math.round((optResult?.progress ?? 0) * 100)}%
-                  </span>
-                </div>
-                <Progress
-                  value={(optResult?.progress ?? 0) * 100}
-                  className="h-1.5 bg-black/40"
-                />
-                {optResult?.phase === "evaluating" && (
-                  <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
-                    {optResult.combinationsEvaluated.toLocaleString()} /{" "}
-                    {optResult.combinationsTotal.toLocaleString()}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Team mode progress */}
-            {teamIsComputing && (
+            {/* Progress */}
+            {isComputing && (
               <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
                 {/* Pass info */}
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -1318,7 +1242,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             )}
 
             {/* Results — identical layout to Card 2 */}
-            {(optResult?.bestDamageResult || teamResult?.bestDamageResult) && (
+            {teamResult?.bestDamageResult && (
               <DamageCardBody
                 team={team}
                 hasFormula
@@ -1332,13 +1256,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             )}
 
             {/* No results found */}
-            {optResult?.done && !optResult.bestDamageResult && !teamResult && (
-              <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                {t
-                  .ui("teamComp.noValidCombinations")
-                  .replace("{0}", String(Math.round(targetErRaw * 100)))}
-              </div>
-            )}
             {teamResult?.done && !teamResult.bestDamageResult && (
               <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
                 {t
