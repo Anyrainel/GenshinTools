@@ -62,7 +62,7 @@ export function ArtifactDataContent({
   const totalRolls = artifact.totalRolls;
 
   const renderStatLine = (statKey: SubStat, value: number | undefined) => {
-    if (value === undefined) return null;
+    if (value == null) return null;
 
     const isPercent =
       statKey.endsWith("%") ||
@@ -175,7 +175,7 @@ export function ArtifactDataContent({
 
         {/* Substats with roll counts */}
         <div className="space-y-0.5">
-          {Object.entries(artifact.substats).map(([key, val]) =>
+          {Object.entries(artifact.substats ?? {}).map(([key, val]) =>
             renderStatLine(key as SubStat, val)
           )}
         </div>

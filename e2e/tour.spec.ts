@@ -24,6 +24,7 @@ const TOURS: TourConfig[] = [
     initialTab: "configure",
   },
   { id: "tier-list", route: "/#/tier-list", stepCount: 4 },
+  { id: "team-comp", route: "/#/team-comp", stepCount: 3 },
   {
     id: "account-data",
     route: "/#/account-data",
@@ -63,7 +64,9 @@ async function startTour(page: Page, tour: TourConfig) {
         ? "af-presets"
         : tour.id === "tier-list"
           ? "tl-unassigned"
-          : "ad-import";
+          : tour.id === "team-comp"
+            ? "tc-team-card"
+            : "ad-import";
     const target = page
       .locator(`[data-tour-step-id*="${firstStepId}"]`)
       .first();

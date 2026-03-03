@@ -106,6 +106,7 @@ export function TeamCard({
 
   return (
     <div
+      data-tour-step-id="tc-team-card"
       className={cn(
         "bg-card/40 backdrop-blur-md rounded-xl border border-border/30",
         "hover:border-border/60 transition-all duration-200",
@@ -330,6 +331,7 @@ export function TeamCard({
       {/* Footer: Optimize button */}
       <div className="px-3 pb-3 pt-1">
         <Button
+          data-tour-step-id="tc-optimize"
           variant="outline"
           className="w-full font-semibold h-9 gap-2"
           onClick={onSelect}

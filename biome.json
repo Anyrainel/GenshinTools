@@ -62,7 +62,8 @@
       "src/data/resources.ts",
       "src/data/enkaIdMap.ts",
       "src/data/game/*.json",
-      "src/data/charInfo.ts"
+      "src/data/charInfo.ts",
+      "tests/**/__golden__/**"
     ]
   },
   "vcs": {

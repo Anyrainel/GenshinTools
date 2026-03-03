@@ -5,26 +5,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -48,26 +84,70 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "er", "em"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%", "er", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "atk%", "er", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "er", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -111,26 +191,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["def%", "er"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -149,26 +264,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -182,26 +333,71 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "hp%", "er"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%"],
-          "substats": ["cd", "cr", "atk%", "hp%", "er"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%"],
-          "substats": ["cd", "cr", "atk%", "hp%", "er"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "hp%", "er"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -225,26 +421,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -263,26 +494,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -311,26 +578,71 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "em", "atk%", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "em"],
-          "substats": ["cd", "cr", "em", "atk%", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "em", "atk%", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "em", "atk%", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -364,26 +676,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "em",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "em", "er"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%", "em"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "em"],
-          "substats": ["em", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -412,26 +758,56 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -445,26 +821,70 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "em", "er"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "em",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "em", "elemental%"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "em",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "atk%"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -498,26 +918,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["def%", "er"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "def"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "def"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -541,26 +996,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -579,26 +1069,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -622,26 +1148,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cr", "cd", "atk%"],
-          "mustPresent": ["cr", "cd"],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cr", "cd", "atk%"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cr", "cd", "atk%"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cr", "cd", "atk%"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -670,26 +1231,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "def%", "er"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -718,26 +1313,57 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -756,26 +1382,72 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "hp%", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "er"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -839,26 +1511,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -877,26 +1584,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -920,26 +1663,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "hp%", "hp"],
-          "mustPresent": ["em", "hp%"],
+          "substats": [
+            "em",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "em",
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["em", "hp%", "hp"],
-          "mustPresent": ["em", "hp%"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "em",
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "hp%", "hp"],
-          "mustPresent": ["em", "hp%"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "em",
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "hp%", "hp"],
-          "mustPresent": ["em", "hp%"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "em",
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -958,26 +1735,64 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "cr", "cd"],
-          "mustPresent": ["em", "cr", "cd"],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "em",
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["em", "cr", "cd"],
-          "mustPresent": ["em", "cr", "cd"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "em",
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cr", "cd"],
-          "mustPresent": ["em", "cr", "cd"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "em",
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cr", "cd"],
-          "mustPresent": ["em", "cr", "cd"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "em",
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -996,26 +1811,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1039,26 +1890,66 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1082,26 +1973,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1115,26 +2042,66 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["cd", "cr", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em", "elemental%"],
-          "substats": ["cd", "cr", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "em",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1163,26 +2130,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1211,26 +2214,82 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%",
+            "def%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "def%", "er"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%",
+            "def%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%", "elemental%"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%",
+            "def%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%", "def%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%",
+            "def%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1274,26 +2333,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["cd", "cr", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr"],
-          "substats": ["cd", "cr", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1312,26 +2405,63 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["def%", "er"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "def%"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -1355,26 +2485,66 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "def%"],
-          "mustPresent": ["cd", "cr", "def%"],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "def%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["def%", "er"],
-          "substats": ["cd", "cr", "def%"],
-          "mustPresent": ["cd", "cr", "def%"],
+          "mainStats": [
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "def%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "def%"],
-          "mustPresent": ["cd", "cr", "def%"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "def%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "def%"],
-          "mustPresent": ["cd", "cr", "def%"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "def%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1408,26 +2578,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -1446,26 +2652,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["er"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["def%", "er", "cr"],
-          "mustPresent": ["def%", "er"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "def%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1479,26 +2720,52 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -1512,26 +2779,52 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -1545,26 +2838,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "em"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1583,31 +2912,76 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
           {
             "characterId": "varesa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
+          {
+            "characterId": "xianyun",
             "hasPerfectMerge": true,
             "has4pcBuild": true
           }
@@ -1621,26 +2995,74 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "def%", "er"],
-          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["hp%", "def%", "elemental%"],
-          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "hp%",
+            "def%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "hp%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1684,26 +3106,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1717,26 +3175,77 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "def%", "em"],
-          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "def%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "def%", "em"],
-          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "def%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "em", "er", "atk%", "def%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%",
+            "def%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1770,26 +3279,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1813,26 +3358,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1856,26 +3436,67 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "er", "atk%", "cr"],
-          "mustPresent": ["er"],
+          "substats": [
+            "hp%",
+            "er",
+            "atk%",
+            "cr"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["hp%", "er", "atk%", "cr"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "atk%",
+            "cr"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%", "elemental%"],
-          "substats": ["hp%", "er", "atk%", "cr"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "elemental%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "atk%",
+            "cr"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "atk%", "hp%", "heal%"],
-          "substats": ["hp%", "er", "atk%", "cr"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "atk%",
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "atk%",
+            "cr"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -1939,26 +3560,57 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cr", "atk%", "atk"],
-          "mustPresent": ["cr"],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["er"],
-          "substats": ["cr", "atk%", "atk"],
-          "mustPresent": ["cr"],
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["cr", "atk%", "atk"],
-          "mustPresent": ["cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cr", "atk%", "atk"],
-          "mustPresent": ["cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "atk%",
+            "atk"
+          ],
+          "mustPresent": [
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -1972,26 +3624,68 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "cr", "cd"],
-          "mustPresent": ["cr", "cd"],
+          "substats": [
+            "atk%",
+            "er",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "cr", "cd"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["atk%", "er", "cr", "cd"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "atk%"],
-          "substats": ["atk%", "er", "cr", "cd"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "cr",
+            "cd"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2020,26 +3714,74 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "hp%", "er", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "er",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2063,26 +3805,73 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "hp%", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "em"],
-          "substats": ["cd", "cr", "hp%", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%", "elemental%"],
-          "substats": ["cd", "cr", "hp%", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "hp%", "em", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "hp%",
+            "em",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2116,26 +3905,64 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["heal%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "heal%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2154,26 +3981,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2197,26 +4060,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2245,26 +4144,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "def%", "er"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2293,26 +4226,57 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2336,26 +4300,71 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "atk%", "cr", "def%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "em",
+            "er",
+            "atk%",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["atk%", "def%", "em", "er"],
-          "substats": ["em", "er", "atk%", "cr", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "def%",
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "atk%",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["atk%", "def%", "em"],
-          "substats": ["em", "er", "atk%", "cr", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "def%",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "atk%",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["atk%", "def%", "em"],
-          "substats": ["em", "er", "atk%", "cr", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "def%",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "atk%",
+            "cr",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2384,26 +4393,56 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "cd", "cr"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "cd",
+            "cr"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2417,26 +4456,52 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["def%"],
-          "substats": ["def%", "def"],
-          "mustPresent": ["def%"],
+          "mainStats": [
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "def"
+          ],
+          "mustPresent": [
+            "def%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2450,26 +4515,67 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cr", "cd", "atk%", "er"],
-          "mustPresent": ["cr", "cd"],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["cr", "cd", "atk%", "er"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cr", "cd", "atk%", "er"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cr", "cd", "atk%", "er"],
-          "mustPresent": ["cr", "cd"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cr",
+            "cd",
+            "atk%",
+            "er"
+          ],
+          "mustPresent": [
+            "cr",
+            "cd"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2498,26 +4604,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2541,26 +4683,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2579,26 +4756,63 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2622,26 +4836,69 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "hp%", "def%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "atk%",
+            "er",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "def%", "er"],
-          "substats": ["atk%", "er", "hp%", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%", "def%"],
-          "substats": ["atk%", "er", "hp%", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "atk%", "hp%", "def%", "heal%"],
-          "substats": ["atk%", "er", "hp%", "def%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "atk%",
+            "hp%",
+            "def%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "hp%",
+            "def%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2685,26 +4942,74 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "er", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "hp%", "er"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "hp%"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "atk%", "hp%"],
-          "substats": ["cd", "cr", "atk%", "er", "hp%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "atk%",
+            "hp%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2728,26 +5033,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
+          "substats": [
+            "hp%",
+            "er",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
+          "mainStats": [
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["hp%", "heal%"],
-          "substats": ["hp%", "er", "hp"],
-          "mustPresent": ["hp%", "er"],
+          "mainStats": [
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "er",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2766,26 +5107,53 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "heal%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2804,26 +5172,59 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["er", "hp%", "hp"],
-          "mustPresent": ["er"],
+          "substats": [
+            "er",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["er", "hp%", "hp"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "er",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["er", "hp%", "hp"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "hp%"],
-          "substats": ["er", "hp%", "hp"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "hp%"
+          ],
+          "substats": [
+            "er",
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -2867,26 +5268,53 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er"],
-          "mustPresent": ["em"],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
-          "mustPresent": ["em"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "em"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2900,26 +5328,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "atk%", "atk", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "atk%",
+            "atk",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 4
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "atk%", "atk", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "atk%",
+            "atk",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 4
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "atk%", "atk", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "atk%",
+            "atk",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 4
         },
         "circlet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "atk%", "atk", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "atk%",
+            "atk",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 4
         },
         "servedCharacters": [
@@ -2933,26 +5395,53 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["heal%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2966,26 +5455,53 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "heal%"],
-          "substats": ["hp%", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -2999,26 +5515,56 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3032,26 +5578,67 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3080,26 +5667,60 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["hp%", "def%", "er"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%",
+            "er"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["hp%", "def%"],
-          "substats": ["def%", "er", "hp%"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "hp%",
+            "def%"
+          ],
+          "substats": [
+            "def%",
+            "er",
+            "hp%"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -3128,26 +5749,57 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3171,26 +5823,65 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%", "em"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%",
+            "em"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3209,26 +5900,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3252,26 +5979,66 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr", "atk%"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3290,26 +6057,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["atk%", "heal%"],
-          "substats": ["atk%", "er", "atk"],
-          "mustPresent": ["atk%", "er"],
+          "mainStats": [
+            "atk%",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "atk"
+          ],
+          "mustPresent": [
+            "atk%",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3333,26 +6136,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3371,26 +6209,55 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er"],
-          "mustPresent": ["er"],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["cr", "cd", "em"],
-          "substats": ["em", "er"],
-          "mustPresent": ["er"],
+          "mainStats": [
+            "cr",
+            "cd",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er"
+          ],
+          "mustPresent": [
+            "er"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -3429,26 +6296,61 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["atk%", "er", "em"],
-          "mustPresent": ["atk%"],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
           "minStatCount": 2
         },
         "sands": {
-          "mainStats": ["atk%", "em", "er"],
-          "substats": ["atk%", "er", "em"],
-          "mustPresent": ["atk%"],
+          "mainStats": [
+            "atk%",
+            "em",
+            "er"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
           "minStatCount": 2
         },
         "goblet": {
-          "mainStats": ["atk%", "em"],
-          "substats": ["atk%", "er", "em"],
-          "mustPresent": ["atk%"],
+          "mainStats": [
+            "atk%",
+            "em"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
           "minStatCount": 2
         },
         "circlet": {
-          "mainStats": ["atk%", "em", "heal%"],
-          "substats": ["atk%", "er", "em"],
-          "mustPresent": ["atk%"],
+          "mainStats": [
+            "atk%",
+            "em",
+            "heal%"
+          ],
+          "substats": [
+            "atk%",
+            "er",
+            "em"
+          ],
+          "mustPresent": [
+            "atk%"
+          ],
           "minStatCount": 2
         },
         "servedCharacters": [
@@ -3477,26 +6379,67 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "er"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "er"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["atk%", "elemental%"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3520,26 +6463,54 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "er"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 1
         },
         "sands": {
-          "mainStats": ["hp%", "er"],
-          "substats": ["hp%", "er"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%",
+            "er"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 1
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "er"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 1
         },
         "circlet": {
-          "mainStats": ["hp%", "heal%"],
-          "substats": ["hp%", "er"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%",
+            "heal%"
+          ],
+          "substats": [
+            "hp%",
+            "er"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 1
         },
         "servedCharacters": [
@@ -3573,26 +6544,56 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["hp%"],
-          "substats": ["hp%", "em", "hp"],
-          "mustPresent": ["hp%"],
+          "mainStats": [
+            "hp%"
+          ],
+          "substats": [
+            "hp%",
+            "em",
+            "hp"
+          ],
+          "mustPresent": [
+            "hp%"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3611,26 +6612,62 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["em", "er"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em",
+            "er"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "em"],
-          "substats": ["em", "er", "cr"],
-          "mustPresent": ["em", "er"],
+          "mainStats": [
+            "cr",
+            "em"
+          ],
+          "substats": [
+            "em",
+            "er",
+            "cr"
+          ],
+          "mustPresent": [
+            "em",
+            "er"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [
@@ -3644,26 +6681,70 @@
       {
         "flowerPlume": {
           "mainStats": [],
-          "substats": ["cd", "cr", "em", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "sands": {
-          "mainStats": ["atk%", "em"],
-          "substats": ["cd", "cr", "em", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "atk%",
+            "em"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "goblet": {
-          "mainStats": ["elemental%"],
-          "substats": ["cd", "cr", "em", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "elemental%"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "circlet": {
-          "mainStats": ["cr", "cd"],
-          "substats": ["cd", "cr", "em", "er", "atk%"],
-          "mustPresent": ["cd", "cr"],
+          "mainStats": [
+            "cr",
+            "cd"
+          ],
+          "substats": [
+            "cd",
+            "cr",
+            "em",
+            "er",
+            "atk%"
+          ],
+          "mustPresent": [
+            "cd",
+            "cr"
+          ],
           "minStatCount": 3
         },
         "servedCharacters": [

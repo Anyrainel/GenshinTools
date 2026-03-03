@@ -5,7 +5,7 @@ import type { AccountData, ArtifactData } from "@/data/types";
  * Used to dedupe identical artifacts when merging UID imports with existing inventory.
  */
 export function artifactFingerprint(art: ArtifactData): string {
-  const substatsStr = Object.keys(art.substats)
+  const substatsStr = Object.keys(art.substats ?? {})
     .sort()
     .map((k) => `${k}:${(art.substats as Record<string, number>)[k]}`)
     .join(",");

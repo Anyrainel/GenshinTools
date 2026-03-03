@@ -431,7 +431,7 @@ function BuildCardComponent({
             </div>
           )}
         </div>
-        <div className={cn("px-2 py-1.5 md:px-3 md:py-2")}>
+        <div className={cn("px-2 py-1.5 md:py-2")}>
           <div className="pt-1 border-t border-border/30">
             <div
               className={cn(

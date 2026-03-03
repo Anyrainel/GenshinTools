@@ -20,13 +20,13 @@ const wideContainerPlugin = plugin(({ addComponents }) => {
         paddingRight: "1.5rem",
       },
       "@media (min-width: 1280px)": {
-        maxWidth: "1152px",
+        maxWidth: "1160px",
       },
       "@media (min-width: 1536px)": {
-        maxWidth: "1340px",
+        maxWidth: "1350px",
       },
       "@media (min-width: 2048px)": {
-        maxWidth: "1536px",
+        maxWidth: "1680px",
       },
     },
   });
@@ -65,7 +65,6 @@ export default {
       width: {
         sidebar: "17.5rem", // 280px
         "sidebar-narrow": "15rem", // 240px
-        "sidebar-wide": "20rem", // 320px
       },
       minWidth: {
         card: "22rem", // 352px

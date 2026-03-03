@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772511887020",
+  "id": "export-1772547607436",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -325,7 +325,7 @@
       "composition": "4pc",
       "sands": ["atk%"],
       "goblet": ["atk%", "dendro%"],
-      "circlet": ["cd"],
+      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -531,7 +531,7 @@
       "visible": true,
       "composition": "4pc",
       "sands": ["atk%"],
-      "goblet": ["electro%"],
+      "goblet": ["electro%", "atk%"],
       "circlet": ["cr"],
       "substats": [
         {
@@ -730,6 +730,35 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "source": "preset"
+    },
+    "Dbt0TDm": {
+      "id": "Dbt0TDm",
+      "name": "",
+      "visible": false,
+      "composition": "4pc",
+      "sands": ["def%"],
+      "goblet": ["def%", "geo%"],
+      "circlet": ["cr", "cd"],
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "artifactSet": "obsidian_codex",
+      "characterId": "xilonen",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset",
+      "minCons": 6
     },
     "BioN-eO": {
       "id": "BioN-eO",
@@ -1180,7 +1209,7 @@
       "visible": true,
       "composition": "4pc",
       "sands": ["atk%"],
-      "goblet": ["pyro%"],
+      "goblet": ["pyro%", "atk%"],
       "circlet": ["cd"],
       "substats": [
         {
@@ -1203,7 +1232,8 @@
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "G4Bq8Zu": {
       "id": "G4Bq8Zu",
@@ -1229,6 +1259,10 @@
         },
         {
           "stat": "em",
+          "weight": 50
+        },
+        {
+          "stat": "er",
           "weight": 50
         }
       ],
@@ -1388,7 +1422,7 @@
       "visible": true,
       "composition": "4pc",
       "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
+      "goblet": ["hp%", "hydro%"],
       "circlet": ["cr"],
       "substats": [
         {
@@ -1405,14 +1439,15 @@
         },
         {
           "stat": "er",
-          "weight": 30
+          "weight": 50
         }
       ],
       "artifactSet": "golden_troupe",
       "characterId": "furina",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support", "dps"]
+      "roles": ["support", "dps"],
+      "source": "preset"
     },
     "BQA3udG": {
       "id": "BQA3udG",
@@ -1453,7 +1488,7 @@
       "visible": false,
       "composition": "2pc+2pc",
       "sands": ["er"],
-      "goblet": ["hp%"],
+      "goblet": ["hp%", "hydro%"],
       "circlet": ["cr", "hp%"],
       "substats": [
         {
@@ -1462,15 +1497,15 @@
         },
         {
           "stat": "hp%",
-          "weight": 75
+          "weight": 100
         },
         {
           "stat": "cr",
-          "weight": 30
+          "weight": 75
         },
         {
           "stat": "cd",
-          "weight": 30
+          "weight": 75
         }
       ],
       "artifactSet": "golden_troupe",
@@ -1635,7 +1670,7 @@
         },
         {
           "stat": "er",
-          "weight": 70
+          "weight": 75
         },
         {
           "stat": "cr",
@@ -1652,6 +1687,35 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
       "source": "preset"
+    },
+    "B_QW8uG": {
+      "id": "B_QW8uG",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "sands": ["atk%"],
+      "goblet": ["atk%", "anemo%"],
+      "circlet": ["cr", "cd"],
+      "substats": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "characterId": "xianyun",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset",
+      "artifactSet": "long_nights_oath",
+      "minCons": 6
     },
     "Cj-j9am": {
       "id": "Cj-j9am",
@@ -1839,14 +1903,15 @@
         },
         {
           "stat": "atk%",
-          "weight": 75
+          "weight": 90
         }
       ],
       "artifactSet": "marechaussee_hunter",
       "characterId": "wriothesley",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "BGsEEAu": {
       "id": "BGsEEAu",
@@ -1895,7 +1960,7 @@
         },
         {
           "stat": "atk%",
-          "weight": 75
+          "weight": 90
         }
       ],
       "artifactSet": "marechaussee_hunter",
@@ -4701,7 +4766,7 @@
     "varesa": ["EmNOdUu"],
     "escoffier": ["F2_Ry0u", "F2_Trrm"],
     "freminet": ["Apmx9Du", "Aqv_zdu"],
-    "xilonen": ["Dbt08KG", "DbspXhG"],
+    "xilonen": ["Dbt08KG", "DbspXhG", "Dbt0TDm"],
     "navia": ["BioN-eO"],
     "chevreuse": ["Bs6RJ6G", "Bs6GF5m"],
     "charlotte": ["BYQzdRG"],
@@ -4719,7 +4784,7 @@
     "dahlia": ["FUxQZLm"],
     "gaming": ["C8kPanm"],
     "chiori": ["CI2ZSne", "CI2M8tm"],
-    "xianyun": ["B-NPETm"],
+    "xianyun": ["B-NPETm", "B_QW8uG"],
     "sigewinne": ["Cj-j9am", "Ci_roTG"],
     "kachina": ["DJEwArm"],
     "ororon": ["DlB35bm"],

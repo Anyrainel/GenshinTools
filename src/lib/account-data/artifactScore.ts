@@ -282,6 +282,26 @@ export function calculateMaxSlotSubScore(
 // 3. Scoring Loop
 // ----------------------------------------------------------------------------
 
+/**
+ * For DPS builds whose circlet recommends only one of CR/CD,
+ * treat both CR and CD as correct main stats.
+ */
+function getEffectiveMainStats(slot: MainStatSlot, build: Build): MainStat[] {
+  const stats = build[slot];
+  if (
+    slot === "circlet" &&
+    build.roles?.includes("dps") &&
+    (stats.includes("cr") || stats.includes("cd")) &&
+    !(stats.includes("cr") && stats.includes("cd"))
+  ) {
+    const expanded = new Set(stats);
+    expanded.add("cr");
+    expanded.add("cd");
+    return [...expanded];
+  }
+  return stats;
+}
+
 function matchMainStats(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   build: Build
@@ -291,10 +311,8 @@ function matchMainStats(
   for (const slot of mainStatSlots) {
     const artifact = artifacts[slot];
     if (!artifact) continue;
-    if (
-      build[slot].length === 0 ||
-      build[slot].includes(artifact.mainStatKey)
-    ) {
+    const accepted = getEffectiveMainStats(slot, build);
+    if (accepted.length === 0 || accepted.includes(artifact.mainStatKey)) {
       match++;
     } else {
       mismatches.push({
@@ -389,7 +407,7 @@ export function getTargetMainStatsForSlot(
   if (slot === "plume") return new Set(["atk"]);
   const weights = buildToWeightMap(build);
   if (mainStatSlots.includes(slot as MainStatSlot)) {
-    const recommended = build[slot as MainStatSlot];
+    const recommended = getEffectiveMainStats(slot as MainStatSlot, build);
     if (recommended?.length > 0) return new Set(recommended);
   }
   if (
@@ -414,6 +432,7 @@ export function scoreSlot(
   let score = 0;
   if (artifact.substats) {
     for (const [key, val] of Object.entries(artifact.substats)) {
+      if (val == null) continue;
       score += calculateStatScore(
         key as SubStat,
         val,
@@ -455,7 +474,8 @@ export function scoreAllSlots(
     let slotSub = 0;
     const rarity = artifact.rarity === 4 ? 4 : 5;
 
-    for (const [key, val] of Object.entries(artifact.substats ?? {})) {
+    for (const [key, rawVal] of Object.entries(artifact.substats ?? {})) {
+      const val = rawVal ?? 0;
       const stat = key as SubStat;
       const { score } = calculateStatScore(stat, val, weights, globalConfig);
       slotSub += score;

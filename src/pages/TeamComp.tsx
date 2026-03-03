@@ -11,16 +11,18 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { Button } from "@/components/ui/button";
+import { useTour } from "@/components/ui/tour";
 import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, PresetOption, Region } from "@/data/types";
 import { elements, regions } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
+import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Download, Plus, Trash2, Upload } from "lucide-react";
+import { Download, HelpCircle, Plus, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -34,6 +36,7 @@ const presetModules = import.meta.glob<{ default: TeamCompData }>(
 
 export default function TeamCompPage() {
   const { t } = useLanguage();
+  const tour = useTour();
   const { ready: gameStatsReady, characterStats } = useGameStats();
   const teams = useTeamStore((state) => state.teams);
   const activeTeamId = useTeamStore((state) => state.activeTeamId);
@@ -59,6 +62,24 @@ export default function TeamCompPage() {
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);
   }, []);
+
+  // Ghost team: auto-create a blank card when empty so the tour has targets
+  useEffect(() => {
+    if (teams.length === 0) {
+      addTeam();
+    }
+  }, [teams.length, addTeam]);
+
+  // Start tour on first visit (after a short delay for page to render)
+  useEffect(() => {
+    if (!isTourCompleted("team-comp") && !activeTeamId) {
+      const timer = setTimeout(() => {
+        tour.start("team-comp");
+        markTourCompleted("team-comp");
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [tour, activeTeamId]);
 
   const loadPreset = useCallback(async (path: string) => {
     return loadPresetPayload(presetModules, path);
@@ -188,6 +209,7 @@ export default function TeamCompPage() {
           icon: Upload,
           label: t.ui("import.action"),
           alwaysShow: true,
+          tourStepId: "tc-import",
           onTrigger: () => importRef.current?.open(),
         },
         {
@@ -201,6 +223,12 @@ export default function TeamCompPage() {
           icon: Trash2,
           label: t.ui("common.clear"),
           onTrigger: () => clearRef.current?.open(),
+        },
+        {
+          key: "help",
+          icon: HelpCircle,
+          label: t.ui("buttons.help"),
+          onTrigger: () => tour.start("team-comp"),
         },
       ]}
     >
@@ -241,6 +269,7 @@ export default function TeamCompPage() {
                     alt={el}
                     className="w-4 h-4"
                   />
+                  <span className="text-xs">{t.element(el)}</span>
                 </FilterChip>
               );
             })}
@@ -269,7 +298,7 @@ export default function TeamCompPage() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 text-sm h-8"
+              className="gap-1.5 text-sm leading-none h-8"
               onClick={() => addTeam(undefined, "start")}
             >
               <Plus className="w-3 h-3" />
@@ -279,7 +308,7 @@ export default function TeamCompPage() {
             <Button
               variant="default"
               size="sm"
-              className="gap-1.5 text-sm h-8"
+              className="gap-1.5 text-sm leading-none h-8"
               onClick={() => addTeam(undefined, "end")}
             >
               <Plus className="w-3 h-3" />
@@ -320,24 +349,6 @@ export default function TeamCompPage() {
               );
             })}
           </div>
-
-          {/* Empty State */}
-          {teams.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-              <p className="text-muted-foreground text-sm">
-                {t.ui("teamComp.emptyDamageMessage")}
-              </p>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2"
-                onClick={() => addTeam()}
-              >
-                <Plus className="w-5 h-5" />
-                {t.ui("teamComp.newTeamEnd")}
-              </Button>
-            </div>
-          )}
         </div>
       </HeaderScrollLayout>
     </PageLayout>

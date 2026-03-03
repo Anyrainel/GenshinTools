@@ -22,7 +22,12 @@ export function StatDisplay({
 }: StatDisplayProps & { compact?: boolean }) {
   const { t } = useLanguage();
 
-  const renderStatLine = (statKey: string, value: number, weight = 0) => {
+  const renderStatLine = (
+    statKey: string,
+    value: number | undefined,
+    weight = 0
+  ) => {
+    if (value == null) return null;
     const isPercent =
       statKey.endsWith("%") ||
       statKey === "cr" ||
@@ -79,20 +84,20 @@ export function StatDisplay({
       </div>
       {/* Substats */}
       <div className="space-y-0.5">
-        {Object.entries(artifact.substats).map(([key, val]) => {
+        {Object.entries(artifact.substats ?? {}).map(([key, val]) => {
           const weight =
             scoreResult?.substatScore.statScores[key as SubStat]?.weight || 0;
           // If no scoreResult (inventory), treat as weight=1 (active/visible)
           return renderStatLine(key, val, scoreResult ? weight : 1);
         })}
         {/* Add empty rows to ensure consistent height (4 substat rows) */}
-        {Array.from({ length: 4 - Object.keys(artifact.substats).length }).map(
-          (_, i) => (
-            <div key={`empty-${i}`} className={compact ? "text-xs" : "text-sm"}>
-              &nbsp;
-            </div>
-          )
-        )}
+        {Array.from({
+          length: 4 - Object.keys(artifact.substats ?? {}).length,
+        }).map((_, i) => (
+          <div key={`empty-${i}`} className={compact ? "text-xs" : "text-sm"}>
+            &nbsp;
+          </div>
+        ))}
       </div>
       {/* Progress Indicator */}
       {scoreResult && slotMaxSubScore !== undefined && slotMaxSubScore > 0 && (

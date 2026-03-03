@@ -984,6 +984,10 @@ export const i18nUiData = {
         en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from Inventory Kamera) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.",
         zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 Inventory Kamera）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。",
       },
+      teamComp: {
+        en: "1. Pick {characters} , weapons, and artifact sets in each team card.\n2. Click {optimize} to find the best artifact loadout.\n3. Use {import} to load community presets.",
+        zh: "1. 在每个队伍卡片中选择 {characters}、武器和圣遗物套装。\n2. 点击 {optimize} 寻找最佳圣遗物搭配。\n3. 使用 {import} 加载社区预设。",
+      },
     },
     artifactFilter: {
       presetsTitle: { en: "Import Presets", zh: "导入预设" },
@@ -1022,6 +1026,23 @@ export const i18nUiData = {
       exportContent: {
         en: "Export your tier list as an image to share with friends or on social media.",
         zh: "将榜单导出为图片，分享给朋友或发布到社交媒体。",
+      },
+    },
+    teamComp: {
+      teamCardTitle: { en: "Build a Team", zh: "组建队伍" },
+      teamCardContent: {
+        en: "Pick 4 characters, their weapons, and artifact sets. Each column corresponds to one slot.",
+        zh: "选择4个角色、他们的武器和圣遗物套装。每一列对应一个位置。",
+      },
+      optimizeTitle: { en: "Optimize Damage", zh: "优化伤害" },
+      optimizeContent: {
+        en: "Once all slots are filled, click Optimize to find the best artifact loadout from your inventory.",
+        zh: "当所有位置填满后，点击优化从你的背包中找到最佳圣遗物搭配。",
+      },
+      importTitle: { en: "Import Presets", zh: "导入预设" },
+      importContent: {
+        en: "Load community team presets for a quick start, or import your own saved teams.",
+        zh: "加载社区队伍预设快速开始，或导入你保存的队伍。",
       },
     },
     accountData: {

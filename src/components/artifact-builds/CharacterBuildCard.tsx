@@ -370,9 +370,7 @@ function CharacterBuildCardComponent({
       </CardHeader>
 
       {!isHidden && (
-        <CardContent
-          className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3 md:px-4")}
-        >
+        <CardContent className={cn("pb-3", isVeryNarrow ? "px-2" : "px-3")}>
           <div className="grid gap-2 grid-cols-1 2xl:grid-cols-2">
             {builds.length === 0 ? (
               <div className="flex justify-center py-2 text-muted-foreground col-span-full">

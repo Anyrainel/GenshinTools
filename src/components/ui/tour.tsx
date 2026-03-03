@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/drawer"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
-import { Filter, Settings, Upload, Users, Wrench } from "lucide-react"
+import { Filter, Settings, Sparkles, Upload, Users, Wrench } from "lucide-react"
 
 function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["t"]) {
     const parts = content.split(/({[^}]+})/g);
@@ -55,6 +55,10 @@ function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["
                         case "characters":
                             icon = <Users className="size-3.5 mr-1" />;
                             label = t.ui("accountData.characters");
+                            break;
+                        case "optimize":
+                            icon = <Sparkles className="size-3.5 mr-1" />;
+                            label = t.ui("teamComp.teamOptimization");
                             break;
                         default:
                             return part;
