@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772547607436",
+  "id": "export-1772547805080",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -3445,6 +3445,39 @@
       "roles": ["support"],
       "source": "preset"
     },
+    "37JY26m": {
+      "id": "37JY26m",
+      "name": "",
+      "visible": false,
+      "composition": "4pc",
+      "sands": ["em"],
+      "goblet": ["em"],
+      "circlet": ["em", "cr"],
+      "substats": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "artifactSet": "viridescent_venerer",
+      "characterId": "kaedehara_kazuha",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset",
+      "minCons": 6
+    },
     "xcrqdu": {
       "id": "xcrqdu",
       "name": "",
@@ -4830,7 +4863,7 @@
     "yun_jin": ["e-eIXm", "dnM9om", "e-gCcG"],
     "yoimiya": ["2FRItMu", "2FRCOKO"],
     "kamisato_ayaka": ["4aRtNc0", "4aRxcbm"],
-    "kaedehara_kazuha": ["37JY4fG"],
+    "kaedehara_kazuha": ["37JY4fG", "37JY26m"],
     "eula": ["xcrqdu"],
     "diona": ["6KCVIaG"],
     "yanfei": ["3PxdDeO"],

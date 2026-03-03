@@ -252,28 +252,13 @@ export const useBuildsStore = create<BuildsState>()(
       setBuild: (buildId: string, patch: Partial<Build>, baseBuild?: Build) => {
         set((state) => {
           let targetBuild = state.builds[buildId];
+          let isNew = false;
 
           if (!targetBuild) {
             if (baseBuild) {
               // Copy-on-Write: Initialize with baseBuild + patch
               targetBuild = { ...baseBuild, ...patch };
-
-              // Ensure it's tracked in the character list (Union survival)
-              const charId = targetBuild.characterId;
-              if (!state.characterToBuildIds[charId]) {
-                // Initialize from preset ordering so other builds aren't lost
-                const preset = getCachedPreset(state.activePresetId);
-                const presetIds = preset?.characterBuilds?.[charId];
-                state.characterToBuildIds[charId] = presetIds
-                  ? [...presetIds]
-                  : [];
-              }
-              if (!state.characterToBuildIds[charId].includes(buildId)) {
-                state.characterToBuildIds[charId].push(buildId);
-              }
-
-              // Proceed to register it
-              state.builds[buildId] = targetBuild;
+              isNew = true;
             } else {
               console.warn(
                 `Build ${buildId} not found and no baseBuild provided`
@@ -297,6 +282,40 @@ export const useBuildsStore = create<BuildsState>()(
 
           // Ensure id and characterId cannot be changed
           targetBuild.id = buildId; // Enforce ID consistency
+
+          // Check if the result still matches the preset version (no-op guard).
+          // This prevents marking a build as "modified" when no actual data changed
+          // (e.g. clicking the name input without typing, or editing back to original).
+          const preset = getCachedPreset(state.activePresetId);
+          const presetBuild = preset?.builds[buildId];
+          if (presetBuild && areBuildsEqual(targetBuild, presetBuild)) {
+            if (isNew) {
+              // No actual change from preset — skip copy-on-write entirely
+              return;
+            }
+            // User reverted all changes — auto-revert by removing local override
+            delete state.builds[buildId];
+            delete state.validationErrors[buildId];
+            return;
+          }
+
+          if (isNew) {
+            // Ensure it's tracked in the character list (Union survival)
+            const charId = targetBuild.characterId;
+            if (!state.characterToBuildIds[charId]) {
+              // Initialize from preset ordering so other builds aren't lost
+              const presetIds = preset?.characterBuilds?.[charId];
+              state.characterToBuildIds[charId] = presetIds
+                ? [...presetIds]
+                : [];
+            }
+            if (!state.characterToBuildIds[charId].includes(buildId)) {
+              state.characterToBuildIds[charId].push(buildId);
+            }
+
+            // Register the new local override
+            state.builds[buildId] = targetBuild;
+          }
 
           // Re-validate
           state.validationErrors[buildId] =
