@@ -222,8 +222,8 @@ export class CharBuild {
     ];
 
     if (
-      teamMeta.countByRegion("Nod-Krai") >= 2 &&
-      teamMeta.regions[config.charId] !== "Nod-Krai"
+      teamMeta.countByFaction("Moonsign") >= 2 &&
+      teamMeta.factions[config.charId] !== "Moonsign"
     ) {
       const src: BuffSource = {
         type: "teamResonance",

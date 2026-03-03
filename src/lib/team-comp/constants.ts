@@ -26,8 +26,8 @@ export const PHEC_ELEMENTS: Element[] = [
 type ReactionRequirement = {
   /** Each inner array is an OR group of elements that must each have ≥1 member */
   readonly requiredElements: Element[][];
-  /** Additional constraint: at least one participant must be a 5★ from Nod-Krai */
-  readonly requiresNodKrai5StarParticipant?: boolean;
+  /** Additional constraint: at least one participant must be a 5★ Moonsign faction member */
+  readonly requiresMoonsign5StarParticipant?: boolean;
   /** Additional constraint: at least one team member (doesn't have to be the participants) must be a Geo or Claymore */
   readonly requiresGeoOrClaymore?: boolean;
 };
@@ -59,17 +59,17 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
   },
   lunarCharged: {
     requiredElements: [["Hydro"], ["Electro"]],
-    requiresNodKrai5StarParticipant: true,
+    requiresMoonsign5StarParticipant: true,
   },
   lunarBloom: {
     requiredElements: [["Hydro"], ["Dendro"]],
-    requiresNodKrai5StarParticipant: true,
+    requiresMoonsign5StarParticipant: true,
   },
   crystallize: {
     requiredElements: [["Geo"], PHEC_ELEMENTS],
   },
   lunarCrystallize: {
     requiredElements: [["Hydro"], ["Geo"]],
-    requiresNodKrai5StarParticipant: true,
+    requiresMoonsign5StarParticipant: true,
   },
 };

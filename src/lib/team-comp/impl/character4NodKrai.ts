@@ -29,7 +29,7 @@ class Illuga extends CharacterBase {
       new StatBuff(
         cbs(this, isC6 ? "P1/C6" : "P1", ["E", "Q"]),
         { receiver: "otherOnField" },
-        this.teamMeta.countByRegion("Nod-Krai") >= 2
+        this.teamMeta.countByFaction("Moonsign") >= 2
           ? [{ key: "em", value: isC6 ? 80 : 50 }]
           : []
       ),
@@ -108,11 +108,11 @@ class Jahoda extends CharacterBase {
       { key: "em", value: 100 },
     ]),
     // C6 (Moonsign Ascendant Gleam): After E flask full, Moonsign characters CR +5%, CD +40%
-    // "月兆·满辉：...月兆角色的暴击率提升5%，暴击伤害提升40%" — requires ≥2 Nod-Krai
+    // "月兆·满辉：...月兆角色的暴击率提升5%，暴击伤害提升40%" — requires ≥2 Moonsign
     new StatBuff(
       cbs(this, "C6", ["E"]),
-      { receiver: "team", regions: ["Nod-Krai"] },
-      this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+      { receiver: "team", factions: ["Moonsign"] },
+      this.constellation >= 6 && this.teamMeta.countByFaction("Moonsign") >= 2
         ? [
             { key: "cr", value: 0.05 },
             { key: "cd", value: 0.4 },
@@ -155,8 +155,8 @@ class Aino extends CharacterBase {
     // Ascendant Gleam (≥2 Nod-Krai): +20% more (total 35%)
     ...(() => {
       if (this.constellation < 6) return [];
-      const nodKrai = this.teamMeta.countByRegion("Nod-Krai");
-      const bonus = nodKrai >= 2 ? 0.35 : 0.15;
+      const moonsign = this.teamMeta.countByFaction("Moonsign");
+      const bonus = moonsign >= 2 ? 0.35 : 0.15;
       const reactions = [
         "electroCharged" as const,
         "bloom" as const,

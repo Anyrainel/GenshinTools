@@ -973,7 +973,7 @@ class SilkenMoonsSerenade4pc extends ArtifactSetBase {
 
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
-    const moonLevel = Math.min(teamMeta.countByRegion("Nod-Krai"), 2);
+    const moonLevel = Math.min(teamMeta.countByFaction("Moonsign"), 2);
     const otherGleaming = Object.values(teamMeta.artifactSets).includes(
       "night_of_the_skys_unveiling"
     );
@@ -1024,7 +1024,7 @@ class NightOfTheSkysUnveiling4pc extends ArtifactSetBase {
 
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
-    const moonLevel = Math.min(teamMeta.countByRegion("Nod-Krai"), 2);
+    const moonLevel = Math.min(teamMeta.countByFaction("Moonsign"), 2);
     const otherGleaming = Object.values(teamMeta.artifactSets).includes(
       "silken_moons_serenade"
     );
@@ -1072,7 +1072,7 @@ class AubadeOfMorningstarAndMoon4pc extends ArtifactSetBase {
 
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
-    const lunarBonus = teamMeta.countByRegion("Nod-Krai") >= 2 ? 0.6 : 0.2;
+    const lunarBonus = teamMeta.countByFaction("Moonsign") >= 2 ? 0.6 : 0.2;
     this.buffs = [
       new StatBuff(
         {

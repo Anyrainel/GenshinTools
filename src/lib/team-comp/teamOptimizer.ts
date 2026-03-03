@@ -97,7 +97,7 @@ export async function* runTeamOptimization(
     baseSheets,
     perChar,
   } = opts;
-  const topN = opts.topN ?? 30;
+  const topN = opts.topN ?? 40;
 
   // Build pass list: carry-1, supports, carry-2
   const supportCharIds = Object.keys(perChar).filter(

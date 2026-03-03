@@ -11,7 +11,7 @@ import type { OptionDef, StatKey } from "../types";
 class MasterKey extends WeaponBase {
   // Same as Snare Hook
   get buffs() {
-    const mult = this.teamMeta.countByRegion("Nod-Krai") >= 2 ? 2 : 1;
+    const mult = this.teamMeta.countByFaction("Moonsign") >= 2 ? 2 : 1;
     return [
       new StatBuff(
         wbs(this, ["elemental-reaction", "moonsign"]),

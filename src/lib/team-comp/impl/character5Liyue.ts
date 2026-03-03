@@ -67,21 +67,24 @@ class Zibai extends CharacterBase {
           [{ key: "reactionDmg%", value: 0.3 }]
         )
       );
-      // C2 Moonsign enhancement: Steed 2nd hit baseDmg +550% DEF
+      // C2 Moonsign Ascendant Gleam: Steed 2nd hit baseDmg +550% DEF
+      // "月兆·满辉：突破天赋月下素娥降仙的效果获得提升" — requires Ascendant Gleam
       // Must not bake into LunarDirectFormula talent mult as DirectCoeff would scale it
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C2", ["E"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["skill"], reactions: ["lunarCrystallize"] },
-          },
-          [],
-          "def",
-          "baseDmg",
-          5.5
-        )
-      );
+      if (this.teamMeta.countByFaction("Moonsign") >= 2) {
+        buffs.push(
+          new ScalingBuff(
+            cbs(this, "C2", ["E"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["skill"], reactions: ["lunarCrystallize"] },
+            },
+            [],
+            "def",
+            "baseDmg",
+            5.5
+          )
+        );
+      }
     }
 
     if (this.constellation >= 4) {
@@ -142,8 +145,8 @@ class Zibai extends CharacterBase {
     // Lv10: 319.9% DEF, Lv13: 377.7% DEF — directCoeff (×1.6) applied internally
     const q2Talent = qLevel === 13 ? 3.777 : 3.199;
 
-    // Moonsign: Ascendant Gleam (满辉) requires 2+ Nod-Krai characters
-    const hasAscendantGleam = this.teamMeta.countByRegion("Nod-Krai") >= 2;
+    // Moonsign: Ascendant Gleam (满辉) requires 2+ Moonsign faction members
+    const hasAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
 
     return {
       "zibai-e-combo": {

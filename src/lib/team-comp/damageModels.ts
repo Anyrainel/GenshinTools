@@ -507,19 +507,19 @@ export class TeamMeta {
 
     if (!hasElements || !charParticipates) return false;
 
-    // Check a Nod-Krai 5-star participates in lunar reactions
-    if (req.requiresNodKrai5StarParticipant) {
-      const validNK5 = this.characters.some((id) => {
-        const isNK5 =
-          this.regions[id] === "Nod-Krai" && this.rarities[id] === 5;
-        if (!isNK5) return false;
+    // Check a 5-star Moonsign faction member participates in lunar reactions
+    if (req.requiresMoonsign5StarParticipant) {
+      const validMoonsign5 = this.characters.some((id) => {
+        const isMoonsign5 =
+          this.factions[id] === "Moonsign" && this.rarities[id] === 5;
+        if (!isMoonsign5) return false;
         const charEl = this.elements[id];
         return (
           charEl != null &&
           req.requiredElements.some((group) => group.includes(charEl))
         );
       });
-      if (!validNK5) return false;
+      if (!validMoonsign5) return false;
     }
 
     if (req.requiresGeoOrClaymore) {

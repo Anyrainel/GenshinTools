@@ -311,4 +311,4 @@ For full annotated examples, see [DmgDesign.md §5.3](./DmgDesign.md#53-extensio
 | **反应条件 (Reaction conditions)** | 配队必须完整支持该反应 | 例如“触发扩散反应时” → 队伍必须有风元素及至少一种可被扩散的元素 |
 | **命座限制 (Constellation gates)** | 检查 `this.constellation >= N` | 只有在玩家所选命座大于或等于该数值时，才在代码中推入对应的天赋/命座增益 |
 | **精炼缩放 (Refinement scaling)** | 使用 `this.refinement` 助手函数 | 同一个增益效果中只有数值会随精炼提升而变化，其它属性保持一致即可 |
-| **月兆 (Moonsign)** | 检查 `teamMeta.countByRegion("Nod-Krai")` | 例如“月兆·初辉” → 检查数量 `>= 1`；“月兆·满辉” → 检查数量 `>= 2` |
+| **月兆 (Moonsign)** | 检查 `teamMeta.countByFaction(“Moonsign”)` | 例如”月兆·初辉” → 检查数量 `>= 1`；”月兆·满辉” → 检查数量 `>= 2`。Moonsign faction包含所有有月兆被动的角色（含非诺德凯角色如兹白） |

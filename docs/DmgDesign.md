@@ -313,7 +313,7 @@ Constructed once per team configuration. Provides metadata lookups (`characters`
 
 **Common patterns**:
 - **Element count**: `teamMeta.countByElement("Geo")` for "per Geo character" buffs.
-- **Moonsign levels**: Nascent Gleam = `countByRegion("Nod-Krai") === 1`, Ascendant Gleam = `countByRegion("Nod-Krai") >= 2`.
+- **Moonsign levels**: Nascent Gleam = `countByFaction("Moonsign") === 1`, Ascendant Gleam = `countByFaction("Moonsign") >= 2`. Moonsign faction includes Nod-Krai characters with the moonsign passive plus non-Nod-Krai characters like Zibai.
 - **Reaction eligibility**: `teamMeta.hasReaction("vaporize")` checks the team has both Pyro and Hydro.
 - **Lunar reactions**: `hasReaction("lunarCharged")` also requires a 5★ from Nod Krai.
 - **Hexerei**: `teamMeta.countByFaction("Hexerei")` checks the number of Hexerei characters in the team.

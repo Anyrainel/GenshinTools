@@ -32,7 +32,7 @@ class EtherlightSpindlelute extends WeaponBase {
 @RegisterWeapon("blackmarrow_lantern")
 class BlackmarrowLantern extends WeaponBase {
   get buffs() {
-    const isAscendant = this.teamMeta.countByRegion("Nod-Krai") >= 2;
+    const isAscendant = this.teamMeta.countByFaction("Moonsign") >= 2;
     return [
       new StatBuff(
         wbs(this, ["moonsign"]),

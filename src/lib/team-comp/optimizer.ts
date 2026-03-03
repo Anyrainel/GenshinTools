@@ -53,14 +53,27 @@ export interface OptimizationResult {
 function scorePiece(
   art: ArtifactData,
   buildMatch: BuildMatchResult,
-  globalConfig: GlobalStatWeights
+  globalConfig: GlobalStatWeights,
+  crDiscount = 1
 ): number {
-  let score = scoreSlot(art, buildMatch.statWeights, globalConfig);
+  const weights =
+    crDiscount < 1
+      ? {
+          ...buildMatch.statWeights,
+          cr: (buildMatch.statWeights.cr ?? 0) * crDiscount,
+        }
+      : buildMatch.statWeights;
+  let score = scoreSlot(art, weights, globalConfig);
 
   // Add main stat contribution when it matches the build recommendation.
   const recommended = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
   if (recommended.has(art.mainStatKey)) {
-    score += scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+    let mainScore = scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+    // Also discount CR main stat when CR is devalued
+    if (crDiscount < 1 && art.mainStatKey === "cr") {
+      mainScore *= crDiscount;
+    }
+    score += mainScore;
   }
 
   return score;
@@ -176,6 +189,26 @@ export async function* runOptimization(
   const maxBuilds = opts.maxBuilds ?? 1000;
   const startTime = Date.now();
 
+  // ── CR discount for heuristic scoring ──
+  // When assumeCrit or critRateTarget is active, artifact CR substats may be
+  // partially or completely wasted. Discount the CR weight so non-crit
+  // artifacts can compete fairly during per-slot pruning.
+  let crDiscount = 1; // 1 = full CR weight, 0 = CR worthless
+  if (swapCharId === formulaCharId) {
+    if (calcContext.assumeCrit) {
+      crDiscount = 0;
+    } else if (calcContext.critRateTarget != null) {
+      const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+      const baselineStats = teamBuild.getTeamStats(
+        baselineSheets,
+        calcTargetId
+      );
+      const baseCr = baselineStats[formulaCharId]?.get("cr") ?? 0;
+      const critBonus = (100 - calcContext.critRateTarget) / 100;
+      const effectiveCr = baseCr + critBonus;
+      crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
+    }
+  }
   // ── Per-slot pruning: keep top N artifacts per slot by heuristic score ──
 
   const scoredPools: Record<Slot, ScoredArt[]> = {
@@ -206,7 +239,7 @@ export async function* runOptimization(
 
     const withScore = slotArts.map((art) => ({
       art,
-      score: scorePiece(art, buildMatch, globalConfig),
+      score: scorePiece(art, buildMatch, globalConfig, crDiscount),
       er: getArtifactEr(art),
     }));
 
@@ -244,8 +277,6 @@ export async function* runOptimization(
   }
 
   // ── Pre-compute baseline ER (without artifacts) for cheap ER pre-filter ──
-  // Run getTeamStats once with an empty artifact sheet for the swap character
-  // to get ER from base (1.0) + weapon + ascension + team buffs.
   let erFloor = 0;
   if (targetEr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
@@ -369,9 +400,6 @@ export async function* runOptimization(
               pieces: [f.art, p.art, s.art, g.art, c.art],
             });
 
-            // Dynamically tighten threshold when a new best valid score is found.
-            // The final 1/3 cutoff removes scores ≤ bestValidScore/3 anyway,
-            // so pruning those combinations early is always safe.
             if (totalScore > bestValidScore) {
               bestValidScore = totalScore;
               minCandidateScore = Math.max(
@@ -403,8 +431,6 @@ export async function* runOptimization(
   candidates.sort((a, b) => b.totalScore - a.totalScore);
   if (candidates.length > maxBuilds) candidates.length = maxBuilds;
 
-  // Score-relative cutoff: discard candidates scoring below 1/3 of the best.
-  // Only applied when the best score is positive to avoid mishandling edge cases.
   if (candidates.length > 1 && candidates[0].totalScore > 0) {
     const threshold = candidates[0].totalScore / 3;
     const cutoffIdx = candidates.findIndex((c) => c.totalScore < threshold);

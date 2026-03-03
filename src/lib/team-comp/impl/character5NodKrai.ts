@@ -100,7 +100,7 @@ class Columbina extends CharacterBase {
       // C2 (Ascendant Gleam): On-field buff based on dominant Lunar reaction type
       // "月兆·满辉：皎辉效果持续期间..." — requires ≥2 Nod-Krai
       // Lunar-Charged → ATK +1% Max HP; Lunar-Bloom → EM +0.35% Max HP; Lunar-Crystallize → DEF +1% Max HP
-      if (this.teamMeta.countByRegion("Nod-Krai") >= 2) {
+      if (this.teamMeta.countByFaction("Moonsign") >= 2) {
         const c2Map = {
           lunarCharged: { stat: "atk" as const, scale: 0.01 },
           lunarBloom: { stat: "em" as const, scale: 0.0035 },
@@ -229,7 +229,7 @@ const neferOption = {
 class Nefer extends CharacterBase {
   // Veil of Falsehood: only under Ascendant Gleam (≥2 Nod-Krai); cap 1 at C0-1, 5 at C2+
   private readonly veilStacks = (() => {
-    if (this.teamMeta.countByRegion("Nod-Krai") < 2) return 0;
+    if (this.teamMeta.countByFaction("Moonsign") < 2) return 0;
     const requested = Number.parseInt(resolveOption(neferOption, this.option));
     return Math.min(requested, this.constellation >= 2 ? 5 : 1);
   })();
@@ -317,7 +317,7 @@ class Nefer extends CharacterBase {
       : []),
     // C6 (Moonsign Ascendant Gleam): Nefer's Lunar-Bloom DMG elevated 15%
     // "月兆·满辉 奈芙尔造成的月绽放反应伤害擢升15%" — requires ≥2 Nod-Krai
-    ...(this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.constellation >= 6 && this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "C6", []),
@@ -488,7 +488,7 @@ class Flins extends CharacterBase {
       0.14
     ),
     // P1 (Moonsign Ascendant Gleam): Flins's Lunar-Charged reactions +20% DMG
-    ...(this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "P1", ["passive"]),
@@ -513,7 +513,7 @@ class Flins extends CharacterBase {
     // C2: Electro RES -25% while Flins is on field (Moonsign Ascendant Gleam required)
     // "月兆·满辉：菲林斯在场上时...该敌人的雷元素抗性降低25%"
     // Requires both C2 and Ascendant Gleam (≥2 Nod-Krai characters)
-    ...(this.constellation >= 2 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.constellation >= 2 && this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "C2", ["E"]),
@@ -545,7 +545,7 @@ class Flins extends CharacterBase {
       : []),
     // C6 team elevated% requires Moonsign Ascendant Gleam
     // "月兆·满辉：队伍中附近的所有角色造成的月感电反应伤害擢升10%" — requires ≥2 Nod-Krai
-    ...(this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.constellation >= 6 && this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "C6", []),
@@ -571,7 +571,7 @@ class Flins extends CharacterBase {
     const qFinalMult = this.constellation >= 3 ? 2.485 : 2.105;
     const tsMainMult = this.constellation >= 3 ? 1.518 : 1.286;
     const tsExtraMult = this.constellation >= 3 ? 2.209 : 1.871;
-    const isAscendantGleam = this.teamMeta.countByRegion("Nod-Krai") >= 2;
+    const isAscendantGleam = this.teamMeta.countByFaction("Moonsign") >= 2;
     // Moonsign Ascendant Gleam + thunderclouds (from prior lunarCharged) for extra Q/TS hits
     const hasExtraHits =
       isAscendantGleam && this.teamMeta.hasReaction("lunarCharged");
@@ -658,7 +658,7 @@ class Lauma extends CharacterBase {
     // P1: Moonsign buffs are mutually exclusive (不同月兆等级提供的强化效果无法叠加)
     // Nascent Gleam: Bloom/Hyperbloom/Burgeon can crit, CR 15% CD 100%
     // Ascendant Gleam: Lunar-Bloom CR +10%, CD +20% (replaces Nascent Gleam)
-    ...(this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "P1", ["E"]),
@@ -730,7 +730,7 @@ class Lauma extends CharacterBase {
     // C2 (Ascendant Gleam): Lunar-Bloom DMG +40%
     // "月兆·满辉：队伍中附近的所有角色造成的月绽放反应伤害提升40%"
     // Requires both C2 and Moonsign Ascendant Gleam (≥2 Nod-Krai characters)
-    ...(this.constellation >= 2 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.constellation >= 2 && this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "C2", []),
@@ -740,7 +740,7 @@ class Lauma extends CharacterBase {
         ]
       : []),
     // C6: Lunar-Bloom elevated 25% (requires Moonsign Ascendant Gleam)
-    ...(this.constellation >= 6 && this.teamMeta.countByRegion("Nod-Krai") >= 2
+    ...(this.constellation >= 6 && this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
             cbs(this, "C6", []),
@@ -760,7 +760,7 @@ class Lauma extends CharacterBase {
     const hold1Mult = this.constellation >= 5 ? 3.359 : 2.845;
     const hold2Mult = this.constellation >= 5 ? 3.23 : 2.736;
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
-    const hasNascentGleam = this.teamMeta.countByRegion("Nod-Krai") >= 1;
+    const hasNascentGleam = this.teamMeta.countByFaction("Moonsign") >= 1;
 
     return {
       // E press damage is insignificant, players usually use long press E
