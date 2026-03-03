@@ -28,25 +28,26 @@ function MathZone({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center bg-card/40 border p-2 rounded-md min-w-[90px] shrink-0 gap-2",
+        "flex flex-col items-center justify-center bg-card/40 border rounded-md shrink-0",
+        "p-1 md:p-2 min-w-[60px] md:min-w-[90px] gap-1 md:gap-2",
         highlight
           ? "border-primary/60 bg-primary/10 shadow-[0_0_8px_rgba(var(--primary),0.3)] ring-1 ring-primary/40"
           : "border-border/40 hover:border-border/60"
       )}
     >
-      <div className="flex items-baseline gap-2">
-        <span className="text-base font-medium text-foreground/70 tracking-wide">
+      <div className="flex items-baseline gap-1 md:gap-2">
+        <span className="text-xs md:text-base font-medium text-foreground/70 tracking-wide">
           {label}
         </span>
         {value !== undefined && value !== null && (
-          <span className="font-[math] text-sm font-bold text-primary/70">
+          <span className="font-[math] text-[10px] md:text-sm font-bold text-primary/70">
             {value}
           </span>
         )}
       </div>
 
       {mathLine && (
-        <div className="font-[math] text-xs md:text-base font-semibold flex items-center justify-center whitespace-nowrap pb-1.5">
+        <div className="font-[math] text-[10px] md:text-base font-semibold flex items-center justify-center whitespace-nowrap pb-0.5 md:pb-1.5">
           {mathLine}
         </div>
       )}
@@ -67,12 +68,12 @@ function MathVar({
   return (
     <span
       className={cn(
-        "inline-flex flex-col items-center justify-end px-0.5 mx-0.5 relative top-[3px]",
+        "inline-flex flex-col items-center justify-end px-0 md:px-0.5 mx-0 md:mx-0.5 relative top-[3px]",
         highlight && "text-primary font-bold"
       )}
     >
-      <span className="text-sm leading-none">{val}</span>
-      <span className="text-xs text-muted-foreground opacity-80 mt-1 font-sans leading-none tracking-tight">
+      <span className="text-xs md:text-sm leading-none">{val}</span>
+      <span className="text-[9px] md:text-xs text-muted-foreground opacity-80 mt-0.5 md:mt-1 font-sans leading-none tracking-tight">
         {label}
       </span>
     </span>
@@ -81,18 +82,22 @@ function MathVar({
 
 function Op({ char = "×" }: { char?: string }) {
   return (
-    <div className="flex h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-lg px-1 shrink-0">
+    <div className="flex h-10 md:h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-sm md:text-lg px-0.5 md:px-1 shrink-0">
       {char}
     </div>
   );
 }
 
 function MathOp({ char = "×" }: { char?: string }) {
-  return <span className="font-[math] opacity-80 px-1">{char}</span>;
+  return <span className="font-[math] opacity-80 px-0.5 md:px-1">{char}</span>;
 }
 
 function Paren({ char }: { char: string }) {
-  return <span className="font-[math] opacity-60 px-0.5 text-lg">{char}</span>;
+  return (
+    <span className="font-[math] opacity-60 px-0 md:px-0.5 text-sm md:text-lg">
+      {char}
+    </span>
+  );
 }
 
 function ResMathLine({
@@ -368,7 +373,7 @@ function BaseGroup({
   if (!needsGrouping) return content;
 
   return (
-    <div className="flex h-[72px] items-center mx-1 bg-black/5 border border-border/20 px-1 rounded-md">
+    <div className="flex h-[48px] md:h-[72px] items-center mx-0.5 md:mx-1 bg-black/5 border border-border/20 px-0.5 md:px-1 rounded-md">
       <Paren char="(" />
       {content}
       <Paren char=")" />
@@ -824,7 +829,7 @@ function LunarDirectGroup({
   );
 
   return (
-    <div className="flex h-[72px] items-center mx-1 bg-black/5 border border-border/20 px-1 rounded-md">
+    <div className="flex h-[48px] md:h-[72px] items-center mx-0.5 md:mx-1 bg-black/5 border border-border/20 px-0.5 md:px-1 rounded-md">
       <Paren char="(" />
       {content}
       <Paren char=")" />
@@ -893,20 +898,20 @@ function getTemplateName(
 export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
   return (
     <div className="w-full overflow-x-auto pt-3 px-1">
-      <div className="w-max mx-auto flex flex-col items-center gap-4">
+      <div className="w-max mx-auto flex flex-col items-center gap-2 md:gap-4">
         {parts.map((p, idx) => {
           const Renderer = RENDERERS[p.template];
           return (
             <div key={idx} className="flex items-center pt-2">
               <Renderer p={p} hl={highlightedStat} t={t} />
-              <div className="flex px-2 shrink-0 h-16 items-center">
+              <div className="flex px-1 md:px-2 shrink-0 h-10 md:h-16 items-center">
                 <Op char="=" />
               </div>
-              <div className="flex flex-col items-center justify-between gap-2 bg-primary/5 border border-primary/20 px-4 py-2 rounded-lg">
-                <span className="text-sm text-primary/70 tracking-wide leading-none opacity-80 whitespace-nowrap">
+              <div className="flex flex-col items-center justify-between gap-1 md:gap-2 bg-primary/5 border border-primary/20 px-2 md:px-4 py-1.5 md:py-2 rounded-lg">
+                <span className="text-[10px] md:text-sm text-primary/70 tracking-wide leading-none opacity-80 whitespace-nowrap">
                   {getTemplateName(p, t)}
                 </span>
-                <span className="font-[math] text-lg md:text-xl font-black text-foreground flex flex-wrap items-baseline justify-center gap-x-1.5 h-full">
+                <span className="font-[math] text-base md:text-xl font-black text-foreground flex flex-wrap items-baseline justify-center gap-x-1.5 h-full">
                   {p.hits && p.hits !== 1 ? (
                     <>
                       <span>{fmtDamage(p.damage)}</span>

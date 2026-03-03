@@ -6,6 +6,7 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { DisplayResult, I18nLabel, StatKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
@@ -43,9 +44,10 @@ export function DamageCardBody({
     charId: string;
   } | null>(null);
   const [formulaExpanded, setFormulaExpanded] = useState(true);
+  const isMobile = useMediaQuery("(max-width: 767px)");
 
   return (
-    <div className="space-y-4">
+    <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
       {!hasFormula && (
         <div className="text-muted-foreground p-4 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10">
           {emptyMessage}
@@ -68,24 +70,45 @@ export function DamageCardBody({
       {/* Formula equation */}
       {hasFormula && (
         <Collapsible open={formulaExpanded} onOpenChange={setFormulaExpanded}>
-          <div className="p-2 border border-dashed border-border/20 rounded-lg bg-black/5 text-sm">
+          <div
+            className={cn(
+              "border border-dashed border-border/20 rounded-lg bg-black/5 text-sm",
+              isMobile ? "p-1.5" : "p-2"
+            )}
+          >
             <div className="flex flex-col items-center justify-center">
               {damageValue != null ? (
                 <CollapsibleTrigger asChild>
                   <div
                     className={cn(
-                      "flex items-center justify-center gap-2.5 px-4 py-2 rounded-xl transition-colors cursor-pointer select-none",
+                      "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
+                      isMobile ? "gap-1.5 px-2 py-1.5" : "gap-2.5 px-4 py-2",
                       "bg-primary/10 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                       "hover:bg-primary/15"
                     )}
                   >
-                    <div className="text-sm md:text-base text-primary/80 font-semibold tracking-wide">
+                    <div
+                      className={cn(
+                        "text-primary/80 font-semibold tracking-wide whitespace-nowrap",
+                        isMobile ? "text-xs" : "text-sm md:text-base"
+                      )}
+                    >
                       {t.ui("teamComp.totalExpectedDamage")}
                     </div>
-                    <div className="text-foreground text-3xl md:text-4xl font-[math] font-black drop-shadow-sm">
+                    <div
+                      className={cn(
+                        "text-foreground font-[math] font-black drop-shadow-sm",
+                        isMobile ? "text-2xl" : "text-3xl md:text-4xl"
+                      )}
+                    >
                       {Math.round(damageValue).toLocaleString()}
                     </div>
-                    <span className="text-xs text-muted-foreground/70 ml-1.5">
+                    <span
+                      className={cn(
+                        "text-muted-foreground/70 whitespace-nowrap",
+                        isMobile ? "text-[10px] ml-0.5" : "text-xs ml-1.5"
+                      )}
+                    >
                       {formulaExpanded
                         ? t.ui("teamComp.collapseFormula")
                         : t.ui("teamComp.expandFormula")}

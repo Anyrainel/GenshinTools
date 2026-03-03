@@ -137,7 +137,7 @@ export function StatSheetPanel({
   const [showIdle, setShowIdle] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-2 md:gap-3">
       {team.characters.map((charId, i) => {
         if (!charId) return <div key={i} />;
 

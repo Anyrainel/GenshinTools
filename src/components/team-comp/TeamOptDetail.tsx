@@ -21,6 +21,7 @@ import type {
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type BuildMatchResult,
@@ -56,13 +57,14 @@ import type { TeamOptDetailProps } from "./teamOptUtils";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
 const CARD_HEADER_CLS =
-  "bg-gradient-select border-b border-border/40 py-3 px-3 md:px-5";
+  "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
 const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-2 md:p-3 bg-black/10";
+const CARD_BODY_CLS = "p-1.5 md:p-3 bg-black/10";
 
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);
@@ -540,9 +542,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   ]);
 
   return (
-    <div className="flex flex-col gap-2 w-full animate-in fade-in duration-300 pb-12">
+    <div
+      className={cn(
+        "flex flex-col w-full animate-in fade-in duration-300 pb-12",
+        isMobile ? "gap-1.5" : "gap-2"
+      )}
+    >
       {/* ── Page Header ── */}
-      <div className="flex items-center gap-2 px-1">
+      <div
+        className={cn("flex items-center gap-2", isMobile ? "px-0.5" : "px-1")}
+      >
         <Button
           variant="ghost"
           size="icon"
@@ -567,7 +576,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           </h3>
         </CardHeader>
         <CardContent className={cn(CARD_BODY_CLS, "pt-1 2xl:pt-2")}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div
+            className={cn(
+              "grid",
+              isMobile
+                ? "grid-cols-2 gap-1.5"
+                : "grid-cols-2 lg:grid-cols-4 gap-3"
+            )}
+          >
             {effectiveTeam.characters.map((charId, i) => {
               if (!charId)
                 return (
@@ -623,14 +639,22 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
               return (
                 <div
                   key={i}
-                  className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
+                  className={cn(
+                    "flex flex-col rounded-lg bg-black/10 border border-border/10",
+                    isMobile ? "p-1.5 gap-1" : "p-3 gap-2"
+                  )}
                 >
                   {/* Row 1: Interactive icons */}
-                  <div className="flex items-end gap-1.5">
+                  <div
+                    className={cn(
+                      "flex items-end",
+                      isMobile ? "gap-0.5" : "gap-1.5"
+                    )}
+                  >
                     <ItemPicker
                       type="character"
                       value={charId}
-                      triggerSize="xl"
+                      triggerSize={isMobile ? "sm" : "xl"}
                       onChange={(newCharId) => {
                         setLocalCharacters((prev) => {
                           const next = [...prev];
@@ -668,7 +692,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     <ItemPicker
                       type="weapon"
                       value={localWeapons[i]}
-                      triggerSize="lg"
+                      triggerSize={isMobile ? "xs" : "lg"}
                       disabled={!charId}
                       filter={(() => {
                         if (!char) return undefined;
@@ -698,7 +722,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     <ItemPicker
                       type="artifact"
                       value={localArtifacts[i]}
-                      triggerSize="lg"
+                      triggerSize={isMobile ? "xs" : "lg"}
                       disabled={!charId}
                       onChange={(newArtifact) => {
                         setLocalArtifacts((prev) => {
@@ -711,12 +735,34 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   </div>
 
                   {/* Row 2: Name + Min. ER */}
-                  <div className="flex items-center justify-between gap-4">
-                    <span className="font-bold text-lg text-foreground/90 ml-2">
+                  <div
+                    className={cn(
+                      "flex items-center justify-between",
+                      isMobile ? "gap-1" : "gap-4"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "font-bold text-foreground/90",
+                        isMobile ? "text-xs ml-0.5 truncate" : "text-lg ml-2"
+                      )}
+                    >
                       {t.character(charId)}
                     </span>
-                    <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
-                      <span className="text-xs font-bold text-foreground/70">
+                    <div
+                      className={cn(
+                        "flex items-center bg-secondary/60 rounded-md border border-border/30 shrink-0",
+                        isMobile
+                          ? "gap-0.5 px-1 py-0.5"
+                          : "gap-1.5 px-2.5 py-1.5"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "font-bold text-foreground/70",
+                          isMobile ? "text-[10px]" : "text-xs"
+                        )}
+                      >
                         {t.ui("teamComp.minEr")}
                       </span>
                       <Input
@@ -736,19 +782,35 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                             });
                           }
                         }}
-                        className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className={cn(
+                          "text-center font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                          isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
+                        )}
                       />
-                      <span className="text-xs font-bold text-muted-foreground mr-2">
+                      <span
+                        className={cn(
+                          "font-bold text-muted-foreground",
+                          isMobile ? "text-[10px] mr-0.5" : "text-xs mr-2"
+                        )}
+                      >
                         %
                       </span>
                     </div>
                   </div>
 
                   {/* Row 3: Overrides */}
-                  <div className="flex items-start gap-1.5 justify-between bg-black/10 px-1.5 rounded-md border border-border/10">
+                  <div
+                    className={cn(
+                      "flex items-start justify-between bg-black/10 rounded-md border border-border/10",
+                      isMobile ? "gap-1 px-1" : "gap-1.5 px-1.5"
+                    )}
+                  >
                     <div className="flex flex-col gap-1 w-full shrink pr-0.5">
                       <span
-                        className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                        className={cn(
+                          "uppercase font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                          isMobile ? "text-[9px] px-0.5" : "text-xs px-1"
+                        )}
                         title={t.ui("teamComp.overrideLevel")}
                       >
                         {t.ui("teamComp.overrideLevel")}
@@ -759,7 +821,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                           handleOptionChange(`${charId}.overrideLevel`, v)
                         }
                       >
-                        <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
+                        <SelectTrigger
+                          className={cn(
+                            "w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full",
+                            isMobile
+                              ? "h-5 px-1 text-[10px]"
+                              : "h-6 px-1.5 text-xs"
+                          )}
+                        >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -771,7 +840,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
                     <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/10">
                       <span
-                        className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                        className={cn(
+                          "uppercase font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                          isMobile ? "text-[9px] px-0.5" : "text-xs px-1"
+                        )}
                         title={t.ui("teamComp.overrideConst")}
                       >
                         {t.ui("teamComp.overrideConst")}
@@ -785,7 +857,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                           )
                         }
                       >
-                        <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
+                        <SelectTrigger
+                          className={cn(
+                            "w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full",
+                            isMobile
+                              ? "h-5 px-1 text-[10px]"
+                              : "h-6 px-1.5 text-xs"
+                          )}
+                        >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -801,7 +880,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                     {weaponId && (
                       <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/10">
                         <span
-                          className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                          className={cn(
+                            "uppercase font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                            isMobile ? "text-[9px] px-0.5" : "text-xs px-1"
+                          )}
                           title={t.ui("teamComp.overrideRefine")}
                         >
                           {t.ui("teamComp.overrideRefine")}
@@ -815,7 +897,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                             )
                           }
                         >
-                          <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
+                          <SelectTrigger
+                            className={cn(
+                              "w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full",
+                              isMobile
+                                ? "h-5 px-1 text-[10px]"
+                                : "h-6 px-1.5 text-xs"
+                            )}
+                          >
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -844,33 +933,71 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             })}
           </div>
           {/* Global Context Setup */}
-          <div className="pt-3 border-t border-border/10 flex flex-wrap items-center gap-y-3">
-            <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
-              {t.ui("teamComp.calcContextOptions")}
-            </span>
-            <div className="flex flex-1 justify-center items-center gap-x-8 gap-y-3 flex-wrap">
-              <div className="flex items-center gap-2 group">
-                <span className="text-xs font-semibold text-foreground/80 select-none">
+          <div
+            className={cn(
+              "pt-3 border-t border-border/10 flex flex-wrap items-center",
+              isMobile ? "gap-y-1" : "gap-y-3"
+            )}
+          >
+            {!isMobile && (
+              <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
+                {t.ui("teamComp.calcContextOptions")}
+              </span>
+            )}
+            <div
+              className={cn(
+                "flex flex-1 items-center flex-wrap",
+                isMobile
+                  ? "justify-between gap-x-3 gap-y-1"
+                  : "justify-center gap-x-8 gap-y-3"
+              )}
+            >
+              <div
+                className={cn(
+                  "flex items-center group",
+                  isMobile ? "gap-1" : "gap-2"
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-semibold text-foreground/80 select-none",
+                    isMobile ? "text-[10px]" : "text-xs"
+                  )}
+                >
                   {t.ui("teamComp.enemyLevel")}
                 </span>
                 <Input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={activeContext.enemyLevel}
-                  onChange={(e) =>
-                    updateTeam(team.id, {
-                      calcContext: {
-                        ...team.calcContext,
-                        enemyLevel: Number(e.target.value) || 100,
-                      },
-                    })
-                  }
-                  className="h-7 w-20 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0"
-                  min={1}
-                  max={150}
+                  onChange={(e) => {
+                    const num = Number(e.target.value);
+                    if (e.target.value === "" || !Number.isNaN(num))
+                      updateTeam(team.id, {
+                        calcContext: {
+                          ...team.calcContext,
+                          enemyLevel: num || 100,
+                        },
+                      });
+                  }}
+                  className={cn(
+                    "text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0",
+                    isMobile ? "h-6 w-14" : "h-7 w-20"
+                  )}
                 />
               </div>
-              <div className="flex items-center gap-2 group">
-                <span className="text-xs font-semibold text-foreground/80 select-none">
+              <div
+                className={cn(
+                  "flex items-center group",
+                  isMobile ? "gap-1" : "gap-2"
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-semibold text-foreground/80 select-none",
+                    isMobile ? "text-[10px]" : "text-xs"
+                  )}
+                >
                   {t.ui("teamComp.enemyRes")}
                 </span>
                 <div className="flex items-center gap-1">
@@ -885,7 +1012,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                         },
                       })
                     }
-                    className="h-7 w-16 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className={cn(
+                      "text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                      isMobile ? "h-6 w-10" : "h-7 w-16"
+                    )}
                   />
                   <span className="text-xs font-bold text-muted-foreground">
                     %
@@ -893,7 +1023,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 </div>
               </div>
               <div
-                className="flex items-center gap-2 cursor-pointer group select-none"
+                className={cn(
+                  "flex items-center cursor-pointer group select-none",
+                  isMobile ? "gap-1" : "gap-2"
+                )}
                 onClick={() =>
                   updateTeam(team.id, {
                     calcContext: {
@@ -913,7 +1046,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 >
                   {activeContext.assumeCrit && <Check className="w-3 h-3" />}
                 </div>
-                <span className="text-xs font-semibold text-foreground/80">
+                <span
+                  className={cn(
+                    "font-semibold text-foreground/80",
+                    isMobile ? "text-[10px]" : "text-xs"
+                  )}
+                >
                   {t.ui("teamComp.assumeCrit")}
                 </span>
               </div>
@@ -984,7 +1122,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           className={cn(CARD_CLS, allFormulas.length > 0 && "rounded-tl-none")}
         >
           <CardHeader className={CARD_HEADER_CLS}>
-            <div className="flex items-center justify-between w-full">
+            <div
+              className={cn(
+                "flex w-full",
+                isMobile ? "flex-col gap-2" : "items-center justify-between"
+              )}
+            >
               <h3 className={CARD_TITLE_CLS}>
                 <Loader2
                   className={cn(
@@ -994,7 +1137,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                 />
                 {t.ui("teamComp.optimizationResults")}
               </h3>
-              <div className="flex items-center gap-2">
+              <div
+                className={cn(
+                  "flex items-center gap-2",
+                  isMobile && "w-full justify-between"
+                )}
+              >
                 {/* Mode toggle */}
                 <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0">
                   <button
