@@ -271,7 +271,7 @@ export const i18nUiData = {
       en: "By Stat",
       zh: "属性详情",
     },
-    statCount: { en: "Count", zh: "词条数" },
+    statCount: { en: "Count", zh: "词条" },
     valOverScore: {
       en: "Val / Count",
       zh: "数值 / 词条数",

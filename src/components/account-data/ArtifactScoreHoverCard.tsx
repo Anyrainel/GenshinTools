@@ -119,7 +119,7 @@ export function ArtifactScoreHoverCard({
         <span
           className={cn(
             "italic text-sky-300 drop-shadow-sm tracking-tighter leading-none font-extrabold pr-[2px]",
-            compact ? "text-lg" : "text-xl"
+            compact ? "text-xl" : "text-2xl"
           )}
         >
           {score.substatScore.statCount.toFixed(1)}
@@ -130,7 +130,7 @@ export function ArtifactScoreHoverCard({
         <span
           className={cn(
             "italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm tracking-tighter leading-none font-black pr-[2px]",
-            compact ? "text-2xl" : "text-3xl"
+            compact ? "text-xl" : "text-2xl"
           )}
         >
           {score.substatScore.subScore.toFixed(0)}
