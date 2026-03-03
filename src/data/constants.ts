@@ -143,6 +143,9 @@ export const maxSubstatRolls = {
   },
 } as const;
 
+/** Multiplier for average substat roll vs max roll (~0.85). Use for roll count: value / (AVERAGE_ROLL_MULTIPLIER * maxRoll). */
+export const AVERAGE_ROLL_MULTIPLIER = 0.85;
+
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],
   getKey: (item: Item) => Key

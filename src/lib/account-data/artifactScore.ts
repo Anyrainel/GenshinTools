@@ -1,4 +1,5 @@
 import {
+  AVERAGE_ROLL_MULTIPLIER,
   artifactIdToHalfSetId,
   maxSubstatRolls,
   statPools,
@@ -462,12 +463,12 @@ export function scoreAllSlots(
       statScores[stat].subValue += val;
       statScores[stat].subScore += score;
 
-      // Compute roll count for stats with positive weight
+      // Compute roll count for stats with positive weight (average roll = 0.85 × max)
       if ((weights[stat] ?? 0) > 0) {
         const maxRoll =
           maxSubstatRolls[rarity as keyof typeof maxSubstatRolls]?.[stat];
         if (maxRoll) {
-          const count = val / (0.85 * maxRoll);
+          const count = val / (AVERAGE_ROLL_MULTIPLIER * maxRoll);
           statScores[stat].subCount += count;
           statCount += count;
         }

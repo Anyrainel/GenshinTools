@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772415839821",
+  "id": "export-1772511887020",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -1855,7 +1855,7 @@
       "composition": "4pc",
       "sands": ["hp%"],
       "goblet": ["hp%", "hydro%"],
-      "circlet": ["cr"],
+      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1873,7 +1873,8 @@
       "artifactSet": "marechaussee_hunter",
       "characterId": "neuvillette",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "Ahc2LAu": {
       "id": "Ahc2LAu",
@@ -1882,7 +1883,7 @@
       "composition": "4pc",
       "sands": ["atk%"],
       "goblet": ["pyro%"],
-      "circlet": ["cr"],
+      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1900,7 +1901,8 @@
       "artifactSet": "marechaussee_hunter",
       "characterId": "lyney",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "48Vohrm": {
       "id": "48Vohrm",
