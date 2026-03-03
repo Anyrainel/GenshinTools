@@ -34,7 +34,7 @@ import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
+import { useIsOwned } from "@/hooks/useOwnership";
 import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { Download, FileDown, Settings, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -115,7 +115,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isOwned = useIsOwned();
 
   useEffect(() => {
     loadPresetMetadata(presetModules).then(setPresetOptions);

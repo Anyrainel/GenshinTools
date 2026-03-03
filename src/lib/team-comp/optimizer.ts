@@ -255,6 +255,33 @@ export async function* runOptimization(
   // Minimum artifact ER needed to meet the target
   const minArtifactEr = Math.max(0, targetEr - erFloor);
 
+  // Conservative adjustment: 2pc set bonuses can grant ER (e.g. Emblem +20%)
+  // but getArtifactEr only sums raw main/substat ER.  Reduce the pre-filter
+  // threshold by the max possible set-bonus ER so we never reject a build that
+  // would actually meet the target after set bonuses are applied.
+  let maxSetErBonus = 0;
+  if (minArtifactEr > 0) {
+    const erHalfSetSlots = new Map<string, number>();
+    for (const slot of allSlots) {
+      const seen = new Set<string>();
+      for (const { art } of scoredPools[slot]) {
+        if (art.id === "dummy") continue;
+        const hsId = artifactIdToHalfSetId[art.setKey];
+        if (!hsId || !hsId.startsWith("er-") || seen.has(hsId)) continue;
+        seen.add(hsId);
+        erHalfSetSlots.set(hsId, (erHalfSetSlots.get(hsId) ?? 0) + 1);
+      }
+    }
+    for (const [hsId, slotCount] of erHalfSetSlots) {
+      if (slotCount >= 2) {
+        const bonus = Number.parseFloat(hsId.slice(3)) / 100;
+        if (Number.isFinite(bonus) && bonus > maxSetErBonus)
+          maxSetErBonus = bonus;
+      }
+    }
+  }
+  const effectiveMinArtifactEr = Math.max(0, minArtifactEr - maxSetErBonus);
+
   // ── Phase 1: Collect top-K builds by total heuristic score (cheap) ──
   // Set-check + ER pre-filter + sum of 5 pre-computed scores per combination.
 
@@ -332,9 +359,9 @@ export async function* runOptimization(
               continue;
 
             // Cheap ER pre-filter: skip builds that can't meet ER requirement
-            if (minArtifactEr > 0) {
+            if (effectiveMinArtifactEr > 0) {
               const artifactEr = f.er + p.er + s.er + g.er + c.er;
-              if (artifactEr < minArtifactEr) continue;
+              if (artifactEr < effectiveMinArtifactEr) continue;
             }
 
             candidates.push({
@@ -343,13 +370,13 @@ export async function* runOptimization(
             });
 
             // Dynamically tighten threshold when a new best valid score is found.
-            // The final 1/2 cutoff removes scores ≤ bestValidScore/2 anyway,
+            // The final 1/3 cutoff removes scores ≤ bestValidScore/3 anyway,
             // so pruning those combinations early is always safe.
             if (totalScore > bestValidScore) {
               bestValidScore = totalScore;
               minCandidateScore = Math.max(
                 minCandidateScore,
-                bestValidScore / 2
+                bestValidScore / 3
               );
             }
 
@@ -376,10 +403,10 @@ export async function* runOptimization(
   candidates.sort((a, b) => b.totalScore - a.totalScore);
   if (candidates.length > maxBuilds) candidates.length = maxBuilds;
 
-  // Score-relative cutoff: discard candidates scoring below 1/2 of the best.
+  // Score-relative cutoff: discard candidates scoring below 1/3 of the best.
   // Only applied when the best score is positive to avoid mishandling edge cases.
   if (candidates.length > 1 && candidates[0].totalScore > 0) {
-    const threshold = candidates[0].totalScore / 2;
+    const threshold = candidates[0].totalScore / 3;
     const cutoffIdx = candidates.findIndex((c) => c.totalScore < threshold);
     if (cutoffIdx > 0) candidates.length = cutoffIdx;
   }

@@ -272,6 +272,68 @@ describe("buildTeamConfigs", () => {
     expect(configs[0].refinement).toBe(3);
   });
 
+  it("picks refinement from character's equipped weapon", () => {
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({
+          key: "hu_tao",
+          weapon: {
+            id: "w1",
+            key: "staff_of_homa",
+            level: 90,
+            refinement: 5,
+            lock: false,
+          },
+        }),
+      ],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    expect(configs[0].refinement).toBe(5);
+  });
+
+  it("picks refinement from weapon equipped on a different character", () => {
+    // staff_of_homa is assigned to hu_tao in the team, but in account data
+    // it's equipped on zhongli. The lookup should still find it.
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({ key: "hu_tao" }), // no weapon equipped
+        createCharacterData({
+          key: "zhongli",
+          weapon: {
+            id: "w1",
+            key: "staff_of_homa",
+            level: 90,
+            refinement: 4,
+            lock: false,
+          },
+        }),
+      ],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    expect(configs[0].refinement).toBe(4);
+  });
+
+  it("picks highest refinement across equipped and extra weapons", () => {
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({
+          key: "xingqiu",
+          weapon: {
+            id: "w1",
+            key: "staff_of_homa",
+            level: 90,
+            refinement: 3,
+            lock: false,
+          },
+        }),
+      ],
+      extraWeapons: [createWeaponData({ key: "staff_of_homa", refinement: 2 })],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    // Should pick 3 (equipped on xingqiu) over 2 (extra inventory)
+    expect(configs[0].refinement).toBe(3);
+  });
+
   it("defaults weapon to dull_blade for empty slot", () => {
     const team = {
       ...baseTeam,

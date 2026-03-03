@@ -150,8 +150,8 @@ export const i18nUiData = {
     },
     uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
     uidDescription: {
-      en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments.",
-      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。",
+      en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments. Make sure you allowed character details!",
+      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！",
     },
     uidPlaceholder: {
       en: "Enter UID (e.g. 800000000)",

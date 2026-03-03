@@ -283,7 +283,15 @@ export class CharBuild {
     this.innerStatSheet = new StatSheet(baseEntries);
   }
 
-  /** Collect all buffs from this build's providers, filtering out no-ops. */
+  /**
+   * Collect all buffs from this build's providers, filtering out no-ops.
+   *
+   * WARNING: Returns a fresh array with fresh object references on each call.
+   * Some providers use `get buffs()` getters that create new StatBuff
+   * instances per invocation. Do NOT compare objects from separate calls
+   * via Set.has() or ===. For stable references, use TeamBuild.allStaticBuffs
+   * which is populated once at construction time.
+   */
   getAllBuffs(): StatBuff[] {
     return [
       ...this.resonanceBuffs,
@@ -768,101 +776,148 @@ export class TeamBuild {
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
 
-    // Determine tie-breakers for calcTargetId
+    // Use allStaticBuffs (populated once at construction) as the single source
+    // of buff objects. This avoids reference-identity mismatches caused by
+    // weapon/artifact getters that create new StatBuff instances each call.
     const calcTargetRegion = this.teamMeta.regions[calcTargetId];
     const calcTargetFaction = this.teamMeta.factions[calcTargetId];
-    let applicableStatic = this.allStaticBuffs
-      .filter((b) =>
-        isBuffApplicable(
+
+    // Exclude resonance entries — they are handled separately below.
+    const charBuffEntries = this.allStaticBuffs.filter(
+      (b) => b.providerCharId !== "resonance"
+    );
+
+    // ── Active static set ──
+    // For each character, determine the correct selfCharId based on receiver.
+    let applicableStatic = charBuffEntries
+      .filter((b) => {
+        const receiver = b.buff.target.receiver;
+        const isSelfTargeting =
+          receiver === "self" || receiver === "selfOffField";
+        const selfId = isSelfTargeting ? b.providerCharId : calcTargetId;
+        const selfRegion = isSelfTargeting
+          ? this.teamMeta.regions[b.providerCharId]
+          : calcTargetRegion;
+        const selfFaction = isSelfTargeting
+          ? this.teamMeta.factions[b.providerCharId]
+          : calcTargetFaction;
+        return isBuffApplicable(
           b.buff,
           b.providerCharId,
+          selfId,
           calcTargetId,
-          calcTargetId,
-          calcTargetRegion,
-          calcTargetFaction
-        )
-      )
+          selfRegion,
+          selfFaction
+        );
+      })
       .map((b) => b.buff);
     applicableStatic = deduplicateBuffs(applicableStatic, (b) => b.staticBuffs);
     const activeStaticSet = new Set<StatBuff>(applicableStatic);
 
+    // ── Active dynamic set ──
+    // Evaluate dynamic buffs from the same allStaticBuffs objects.
     const allDynamic: EvaluatedDynamicBuff[] = [];
-    for (const [id, cb] of Object.entries(this.charBuilds)) {
-      allDynamic.push(
-        ...cb.getDynamicBuffs(id, preStats[id]!, teamPreStatsArr)
-      );
+    for (const { buff, providerCharId } of charBuffEntries) {
+      const ownerStats = preStats[providerCharId]!;
+      const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+      if (entries.length > 0) {
+        allDynamic.push({ buff, source: buff.source, providerCharId, entries });
+      }
     }
-    let applicableDynamic = allDynamic.filter((b) =>
-      isBuffApplicable(
+
+    let applicableDynamic = allDynamic.filter((b) => {
+      const receiver = b.buff.target.receiver;
+      const isSelfTargeting =
+        receiver === "self" || receiver === "selfOffField";
+      const selfId = isSelfTargeting ? b.providerCharId : calcTargetId;
+      const selfRegion = isSelfTargeting
+        ? this.teamMeta.regions[b.providerCharId]
+        : calcTargetRegion;
+      const selfFaction = isSelfTargeting
+        ? this.teamMeta.factions[b.providerCharId]
+        : calcTargetFaction;
+      return isBuffApplicable(
         b.buff,
         b.providerCharId,
+        selfId,
         calcTargetId,
-        calcTargetId,
-        calcTargetRegion,
-        calcTargetFaction
-      )
-    );
+        selfRegion,
+        selfFaction
+      );
+    });
     applicableDynamic = deduplicateBuffs(applicableDynamic, (b) => b.entries);
     const activeDynamicSet = new Set<StatBuff>(
       applicableDynamic.map((e) => e.buff)
     );
 
-    for (const [ownerId, cb] of Object.entries(this.charBuilds)) {
-      for (const buff of cb.getAllBuffs()) {
-        const applicable = isBuffApplicable(
-          buff,
-          ownerId,
-          calcTargetId,
-          calcTargetId,
-          calcTargetRegion,
-          calcTargetFaction
-        );
+    // ── Display loop ──
+    // Iterate charBuffEntries (not cb.getAllBuffs()) so Set.has() matches.
+    for (const { buff, providerCharId: ownerId } of charBuffEntries) {
+      const receiver = buff.target.receiver;
+      const isSelfTargeting =
+        receiver === "self" || receiver === "selfOffField";
+      const selfId = isSelfTargeting ? ownerId : calcTargetId;
+      const selfRegion = isSelfTargeting
+        ? this.teamMeta.regions[ownerId]
+        : calcTargetRegion;
+      const selfFaction = isSelfTargeting
+        ? this.teamMeta.factions[ownerId]
+        : calcTargetFaction;
+      const applicable = isBuffApplicable(
+        buff,
+        ownerId,
+        selfId,
+        calcTargetId,
+        selfRegion,
+        selfFaction
+      );
 
-        // Resolve dynamic entries with per-entry caps
-        let dynamicEntries: ResolvedStatEntry[] = [];
-        let active = false;
+      // Resolve dynamic entries with per-entry caps
+      let dynamicEntries: ResolvedStatEntry[] = [];
+      let active = false;
 
-        if (applicable) {
-          const ownerStats = preStats[ownerId]!;
-          const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-          if (raw.length > 0) {
-            active = activeDynamicSet.has(buff);
-            if (active && formulaTags.length > 0 && buff.target.filter) {
-              active = formulaTags.some((tag) =>
-                filterMatchesTag(buff.target.filter!, tag)
-              );
-            }
-            if (active) {
-              dynamicEntries = raw.map((entry) => {
-                const resolved: ResolvedStatEntry = { ...entry };
-                // Extract per-entry cap and input key from known scaling buff types
-                if (buff instanceof ScalingBuff) {
-                  const cap = (buff as { cap?: number }).cap;
-                  if (cap !== undefined) resolved.cap = cap;
-                  resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
-                }
-                return resolved;
-              });
-            }
-          } else {
-            active = activeStaticSet.has(buff);
-            if (active && formulaTags.length > 0 && buff.target.filter) {
-              active = formulaTags.some((tag) =>
-                filterMatchesTag(buff.target.filter!, tag)
-              );
-            }
+      const ownerStats = preStats[ownerId]!;
+      const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+
+      if (applicable) {
+        if (raw.length > 0) {
+          active = activeDynamicSet.has(buff);
+          if (active && formulaTags.length > 0 && buff.target.filter) {
+            active = formulaTags.some((tag) =>
+              filterMatchesTag(buff.target.filter!, tag)
+            );
+          }
+        } else {
+          active = activeStaticSet.has(buff);
+          if (active && formulaTags.length > 0 && buff.target.filter) {
+            active = formulaTags.some((tag) =>
+              filterMatchesTag(buff.target.filter!, tag)
+            );
           }
         }
+      }
 
-        result.push({
-          source: buff.source,
-          providerCharId: ownerId,
-          target: buff.target,
-          active,
-          staticEntries: buff.staticBuffs,
-          dynamicEntries,
+      // Always populate dynamic entries for display, even when inactive
+      if (raw.length > 0) {
+        dynamicEntries = raw.map((entry) => {
+          const resolved: ResolvedStatEntry = { ...entry };
+          if (buff instanceof ScalingBuff) {
+            const cap = (buff as { cap?: number }).cap;
+            if (cap !== undefined) resolved.cap = cap;
+            resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+          }
+          return resolved;
         });
       }
+
+      result.push({
+        source: buff.source,
+        providerCharId: ownerId,
+        target: buff.target,
+        active,
+        staticEntries: buff.staticBuffs,
+        dynamicEntries,
+      });
     }
 
     // Also include resonance buffs

@@ -11,6 +11,8 @@ interface HeaderScrollLayoutProps {
   headerClassName?: string;
   /** Optional className for the scrollable body */
   bodyClassName?: string;
+  /** Optional ref to the scrollable body container */
+  bodyRef?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -25,6 +27,7 @@ export function HeaderScrollLayout({
   className,
   headerClassName,
   bodyClassName,
+  bodyRef,
 }: HeaderScrollLayoutProps) {
   return (
     <div className={cn("h-full w-full flex flex-col", className)}>
@@ -38,7 +41,7 @@ export function HeaderScrollLayout({
         {header}
       </div>
       {/* Scrollable body */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto">
         <div className={cn("container min-h-full", bodyClassName)}>
           {children}
         </div>

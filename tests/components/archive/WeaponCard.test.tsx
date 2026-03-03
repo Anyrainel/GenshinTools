@@ -1,5 +1,6 @@
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import type { WeaponResource } from "@/data/types";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
@@ -10,8 +11,11 @@ const MOCK_WEAPON: WeaponResource = {
   imagePath: "/weapon/staff_of_homa.png",
 };
 
+const TEST_PROFILE = "test_profile";
+
 beforeEach(() => {
   useOwnershipStore.getState().clearAll();
+  useAccountStore.setState({ activeAccountId: TEST_PROFILE });
 });
 
 describe("WeaponCard", () => {
@@ -23,7 +27,9 @@ describe("WeaponCard", () => {
   });
 
   it("renders with opacity-40 when weapon is unowned", () => {
-    useOwnershipStore.getState().setOwned("weapon", "staff_of_homa", false);
+    useOwnershipStore
+      .getState()
+      .setOwned(TEST_PROFILE, "weapon", "staff_of_homa", false);
 
     const { container } = render(<WeaponCard weapon={MOCK_WEAPON} />);
 

@@ -364,8 +364,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!accountData) return [];
     return [
       ...accountData.extraArtifacts,
-      ...accountData.characters.flatMap(
-        (c: CharacterData) => Object.values(c.artifacts || {}) as ArtifactData[]
+      ...accountData.characters.flatMap((c: CharacterData) =>
+        (
+          Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
+        ).filter((a): a is ArtifactData => !!a)
       ),
     ];
   };

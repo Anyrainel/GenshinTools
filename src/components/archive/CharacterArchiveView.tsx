@@ -17,10 +17,10 @@ import type {
 import { elements, weaponTypes } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned } from "@/hooks/useOwnership";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { ArrowLeft, Book } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -49,9 +49,8 @@ const CharacterListItem = memo(
       characterStats?.[character.id]
     );
     const name = t.character(character.id);
-    const owned = useOwnershipStore((s) =>
-      s.isOwned("character", character.id)
-    );
+    const isOwned = useIsOwned();
+    const owned = isOwned("character", character.id);
     const unreleased = meta.releaseDate == null;
 
     return (
@@ -128,7 +127,7 @@ function CharacterGrid({
   onSelect: (id: string) => void;
 }) {
   const { t } = useLanguage();
-  const isOwnedFn = useOwnershipStore((s) => s.isOwned);
+  const isOwnedFn = useIsOwned();
 
   if (characters.length === 0) {
     return (

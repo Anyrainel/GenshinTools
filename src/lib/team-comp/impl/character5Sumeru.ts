@@ -688,12 +688,13 @@ class Nilou extends CharacterBase {
         ])
       );
       // P2: Per 1000 HP above 30000 → Bloom DMG +9% (max 400%)
+      // Note: lunarBloom is not bloom, so should not be included.
       buffs.push(
         new ScalingBuff(
           cbs(this, "P2", []),
           {
             receiver: "team",
-            filter: { reactions: ["bloom", "lunarBloom"] },
+            filter: { reactions: ["bloom"] },
           },
           [],
           "hp",

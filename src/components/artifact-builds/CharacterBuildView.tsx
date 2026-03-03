@@ -6,13 +6,13 @@ import { characters } from "@/data/resources";
 import type { CharacterFilters } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
+import { useIsOwned } from "@/hooks/useOwnership";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
   hasActiveFilters,
 } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -61,7 +61,7 @@ export function CharacterBuildView({
   });
 
   // Ownership check callback
-  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isOwned = useIsOwned();
   const isCharacterOwned = useCallback(
     (id: string) => isOwned("character", id),
     [isOwned]

@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { CharacterFilters } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   defaultCharacterFilters,
@@ -12,7 +13,6 @@ import {
   hasActiveFilters,
 } from "@/lib/characterFilters";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { useCallback, useMemo, useState } from "react";
@@ -49,7 +49,7 @@ export function CharacterView({ scores }: CharacterViewProps) {
   });
 
   // Ownership check callback
-  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isOwned = useIsOwned();
   const isCharacterOwned = useCallback(
     (id: string) => isOwned("character", id),
     [isOwned]

@@ -16,12 +16,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useIsOwned, useOwnershipActions } from "@/hooks/useOwnership";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Bookmark } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 
@@ -39,8 +39,9 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   );
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const owned = useOwnershipStore((s) => s.isOwned("weapon", weapon.id));
-  const toggleOwned = useOwnershipStore((s) => s.toggleOwned);
+  const isOwned = useIsOwned();
+  const owned = isOwned("weapon", weapon.id);
+  const { toggleOwned } = useOwnershipActions();
 
   const card = (
     <div

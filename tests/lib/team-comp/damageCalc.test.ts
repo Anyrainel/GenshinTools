@@ -629,18 +629,83 @@ describe("TeamBuild lifecycle", () => {
       expect(monaTeam[0]!.active).toBe(true);
     });
 
-    it("inactive buffs have empty dynamicEntries", () => {
+    it("inactive scaling buffs still have dynamicEntries for display", () => {
+      // Mona's Skyward Blade has a ScalingBuff (atk→baseDmg) with filter
+      // {abilities: ["normal","charge"]}. When targeting mona-burst (ability:
+      // "burst"), the ScalingBuff is applicable (self on calc target) but its
+      // tag filter doesn't match → inactive. The dynamicEntries should still
+      // be populated for the ledger display.
       const display = tb.getDisplayResult(
-        "jean",
-        "jean-skill",
+        "mona",
+        "mona-burst",
         emptySheets,
         ctx
       );
 
-      const inactiveBuffs = display.buffs.filter((b) => !b.active);
-      for (const buff of inactiveBuffs) {
-        expect(buff.dynamicEntries).toHaveLength(0);
-      }
+      const monaScaling = display.buffs.find(
+        (b) =>
+          b.source.type === "weapon" &&
+          b.source.id === "skyward_blade" &&
+          b.dynamicEntries.length > 0 &&
+          !b.active
+      );
+      // The ScalingBuff should exist, be inactive, but have dynamicEntries
+      expect(monaScaling).toBeDefined();
+      expect(monaScaling!.dynamicEntries.length).toBeGreaterThan(0);
+    });
+
+    it("teammate self weapon buffs are active", () => {
+      // When Diluc is calc target, Mona/Jean/Eula's receiver:"self" weapon
+      // buffs should still be marked active (they apply to their owner's
+      // stat sheet). Only selfOnField should be inactive for non-targets.
+      const display = tb.getDisplayResult(
+        "diluc",
+        "diluc-skill",
+        emptySheets,
+        ctx
+      );
+
+      // Jean's Aquila Favonia: self ATK% buff
+      const jeanWeaponSelf = display.buffs.find(
+        (b) =>
+          b.source.type === "weapon" &&
+          b.source.id === "aquila_favonia" &&
+          b.target.receiver === "self"
+      );
+      expect(jeanWeaponSelf).toBeDefined();
+      expect(jeanWeaponSelf!.active).toBe(true);
+
+      // Eula's Skyward Pride: self DMG% buff
+      const eulaWeaponSelf = display.buffs.find(
+        (b) =>
+          b.source.type === "weapon" &&
+          b.source.id === "skyward_pride" &&
+          b.target.receiver === "self"
+      );
+      expect(eulaWeaponSelf).toBeDefined();
+      expect(eulaWeaponSelf!.active).toBe(true);
+    });
+
+    it("getter-based weapon buffs are active (reference identity)", () => {
+      // Wolf's Gravestone uses `get buffs()` which creates new StatBuff
+      // objects on each call. The active set must still match via consistent
+      // object references from allStaticBuffs.
+      const display = tb.getDisplayResult(
+        "diluc",
+        "diluc-skill",
+        emptySheets,
+        ctx
+      );
+
+      const wgSelf = display.buffs.find(
+        (b) =>
+          b.source.type === "weapon" &&
+          b.source.id === "wolfs_gravestone" &&
+          b.target.receiver === "self"
+      );
+      expect(wgSelf).toBeDefined();
+      expect(wgSelf!.active).toBe(true);
+      expect(wgSelf!.staticEntries.length).toBeGreaterThan(0);
     });
 
     it("includes resonance buffs (always active)", () => {

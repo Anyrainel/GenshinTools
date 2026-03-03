@@ -55,6 +55,7 @@ export default function TeamCompPage() {
   const clearRef = useRef<ControlHandle>(null);
   const importRef = useRef<ControlHandle>(null);
   const exportRef = useRef<ControlHandle>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Preset options
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
@@ -133,6 +134,21 @@ export default function TeamCompPage() {
 
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
+
+  const handleAddTeam = (position: "start" | "end") => {
+    addTeam(undefined, position);
+    requestAnimationFrame(() => {
+      if (!scrollRef.current) return;
+      if (position === "start") {
+        scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    });
+  };
 
   const handleImport = (data: TeamCompData) => {
     importTeams(data);
@@ -251,6 +267,7 @@ export default function TeamCompPage() {
       <ClearAllControl ref={clearRef} onConfirm={clearTeams} />
 
       <HeaderScrollLayout
+        bodyRef={scrollRef}
         header={
           <div className="container flex items-center gap-1 2xl:gap-2 flex-wrap py-2">
             {/* Element chips */}
@@ -299,7 +316,7 @@ export default function TeamCompPage() {
               variant="outline"
               size="sm"
               className="gap-1.5 text-sm leading-none h-8"
-              onClick={() => addTeam(undefined, "start")}
+              onClick={() => handleAddTeam("start")}
             >
               <Plus className="w-3 h-3" />
               {t.ui("teamComp.newTeamStart")}
@@ -309,7 +326,7 @@ export default function TeamCompPage() {
               variant="default"
               size="sm"
               className="gap-1.5 text-sm leading-none h-8"
-              onClick={() => addTeam(undefined, "end")}
+              onClick={() => handleAddTeam("end")}
             >
               <Plus className="w-3 h-3" />
               {t.ui("teamComp.newTeamEnd")}

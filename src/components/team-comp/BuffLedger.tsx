@@ -149,7 +149,7 @@ function BuffChip({
           </div>
         </div>
 
-        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded shrink-0">
+        <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded shrink-0">
           {t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf")}
         </span>
       </div>

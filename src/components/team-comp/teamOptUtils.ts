@@ -14,9 +14,12 @@ export interface DetectedSets {
 }
 
 /** Detect what artifact set bonuses the equipped pieces actually form. */
-export function detectEquippedSets(artifacts: ArtifactData[]): DetectedSets {
+export function detectEquippedSets(
+  artifacts: (ArtifactData | null | undefined)[]
+): DetectedSets {
   const setCounts: Record<string, number> = {};
   for (const art of artifacts) {
+    if (!art) continue;
     setCounts[art.setKey] = (setCounts[art.setKey] || 0) + 1;
   }
 
@@ -101,12 +104,16 @@ export function buildTeamConfigs(
     let defaultRefine = 1;
     const weaponId = team.weapons[i] || "dull_blade";
     if (weaponId && accountData) {
-      const acctWeapons = accountData.extraWeapons.filter(
-        (w) => w.key === weaponId
-      );
-      if (acctWeapons.length > 0) {
-        defaultRefine = Math.max(...acctWeapons.map((w) => w.refinement));
+      // Search all characters' equipped weapons and unequipped inventory
+      // for the highest refinement. Mirrors the override select's logic.
+      const refinements: number[] = [];
+      for (const c of accountData.characters) {
+        if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
       }
+      for (const w of accountData.extraWeapons) {
+        if (w.key === weaponId) refinements.push(w.refinement);
+      }
+      if (refinements.length > 0) defaultRefine = Math.max(...refinements);
     }
 
     const refinement =

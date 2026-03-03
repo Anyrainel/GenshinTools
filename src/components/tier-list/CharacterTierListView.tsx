@@ -33,8 +33,8 @@ import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 
+import { useIsOwned } from "@/hooks/useOwnership";
 import { getElementColor } from "@/lib/utils";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useTierStore } from "@/stores/useTierStore";
 import {
   Download,
@@ -120,7 +120,7 @@ export function CharacterTierListView({
   const tableRef = useRef<HTMLDivElement>(null);
 
   // Ownership check callback
-  const isOwned = useOwnershipStore((s) => s.isOwned);
+  const isOwned = useIsOwned();
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {

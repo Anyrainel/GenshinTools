@@ -1,6 +1,7 @@
 import type { CharacterResource } from "@/data/types";
 import type { CharacterStatsMap } from "@/lib/gameStatsLoader";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -13,8 +14,12 @@ import { beforeEach, describe, expect, it } from "vitest";
  * the mobile character grid in CharacterArchiveView (using getCharacterDisplayMeta).
  */
 
+const TEST_PROFILE = "test_profile";
+
 beforeEach(() => {
   useOwnershipStore.getState().clearAll();
+  // Set up a test profile as the active account so useIsOwned/getIsOwned work
+  useAccountStore.setState({ activeAccountId: TEST_PROFILE });
 });
 
 function createCharacter(
@@ -42,7 +47,9 @@ function computeOwnershipDisplay(
     character,
     characterStatsMap?.[character.id]
   );
-  const owned = useOwnershipStore.getState().isOwned("character", character.id);
+  const owned = useOwnershipStore
+    .getState()
+    .isOwned(TEST_PROFILE, "character", character.id);
   const unreleased = !meta.releaseDate;
   const effectiveOwned = !unreleased && owned;
   const isDimmed = unreleased || !owned;
@@ -85,7 +92,9 @@ describe("unreleased character ownership logic", () => {
     });
 
     it("allows toggling ownership for released characters", () => {
-      useOwnershipStore.getState().setOwned("character", "hu_tao", false);
+      useOwnershipStore
+        .getState()
+        .setOwned(TEST_PROFILE, "character", "hu_tao", false);
       const result = computeOwnershipDisplay(released, statsReleased);
 
       expect(result.owned).toBe(false);
@@ -95,8 +104,12 @@ describe("unreleased character ownership logic", () => {
     });
 
     it("restores ownership when toggled back", () => {
-      useOwnershipStore.getState().setOwned("character", "hu_tao", false);
-      useOwnershipStore.getState().setOwned("character", "hu_tao", true);
+      useOwnershipStore
+        .getState()
+        .setOwned(TEST_PROFILE, "character", "hu_tao", false);
+      useOwnershipStore
+        .getState()
+        .setOwned(TEST_PROFILE, "character", "hu_tao", true);
       const result = computeOwnershipDisplay(released, statsReleased);
 
       expect(result.effectiveOwned).toBe(true);
@@ -118,7 +131,9 @@ describe("unreleased character ownership logic", () => {
     });
 
     it("stays unowned even if explicitly set owned in store", () => {
-      useOwnershipStore.getState().setOwned("character", "upcoming_char", true);
+      useOwnershipStore
+        .getState()
+        .setOwned(TEST_PROFILE, "character", "upcoming_char", true);
       const result = computeOwnershipDisplay(unreleased, statsUnreleased);
 
       expect(result.effectiveOwned).toBe(false);
@@ -156,7 +171,7 @@ describe("unreleased character ownership logic", () => {
 
       useOwnershipStore
         .getState()
-        .setOwned("character", "released_char", false);
+        .setOwned(TEST_PROFILE, "character", "released_char", false);
 
       const releasedResult = computeOwnershipDisplay(released, mixedStats);
       const upcomingResult = computeOwnershipDisplay(upcoming, mixedStats);

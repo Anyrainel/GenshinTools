@@ -53,12 +53,12 @@ import type {
 } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getIsOwned } from "@/hooks/useOwnership";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Check, Search, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
@@ -617,8 +617,7 @@ function PickerContent({
       (type === "character" || type === "weapon")
     ) {
       const itemType = type as "character" | "weapon";
-      const { isOwned } = useOwnershipStore.getState();
-      result = result.filter((item) => isOwned(itemType, item.id as string));
+      result = result.filter((item) => getIsOwned(itemType, item.id as string));
     }
 
     // 4. (Special) 2pc Duplicate Checking

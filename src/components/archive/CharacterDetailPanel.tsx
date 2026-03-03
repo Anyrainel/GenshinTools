@@ -9,12 +9,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { CharacterResource } from "@/data/types";
 import type { useGameStats } from "@/hooks/useGameStats";
+import { useIsOwned, useOwnershipActions } from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -173,9 +173,10 @@ export function CharacterDetailPanel({
   }, [rawGlossary]);
 
   const unreleased = meta?.releaseDate == null;
-  const owned = useOwnershipStore((s) => s.isOwned("character", characterId));
+  const isOwned = useIsOwned();
+  const owned = isOwned("character", characterId);
   const effectiveOwned = !unreleased && owned;
-  const toggleOwned = useOwnershipStore((s) => s.toggleOwned);
+  const { toggleOwned } = useOwnershipActions();
 
   const [unlockClicks, setUnlockClicks] = useState(0);
 

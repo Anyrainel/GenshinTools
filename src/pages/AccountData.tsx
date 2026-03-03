@@ -46,6 +46,10 @@ import {
   convertMonaToAccountData,
   mergeMonaWithExisting,
 } from "@/lib/account-data/monaConversion";
+import {
+  syncOwnershipAdditive,
+  syncOwnershipExhaustive,
+} from "@/lib/account-data/ownershipSync";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
@@ -252,6 +256,10 @@ export default function AccountDataPage() {
           name: routing.name,
         });
         setActiveAccount(routing.activeId);
+        syncOwnershipExhaustive(
+          routing.activeId,
+          routing.data.characters.map((c) => c.key)
+        );
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport(routing.pendingImport);
@@ -287,6 +295,10 @@ export default function AccountDataPage() {
           name: routing.name,
         });
         setActiveAccount(routing.activeId);
+        syncOwnershipAdditive(
+          routing.activeId,
+          routing.data.characters.map((c) => c.key)
+        );
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport({
@@ -394,8 +406,21 @@ export default function AccountDataPage() {
     });
     if (result.promoteToId) {
       promoteToUid(result.id, result.promoteToId);
+      useOwnershipStore
+        .getState()
+        .promoteProfile(result.id, result.promoteToId);
     }
     setActiveAccount(result.activeId);
+
+    // Sync ownership based on import type
+    const charKeys = result.data.characters.map((c) => c.key);
+    if (pendingImport.type === "json") {
+      syncOwnershipExhaustive(result.activeId, charKeys);
+    } else if (pendingImport.type === "mona") {
+      syncOwnershipAdditive(result.activeId, charKeys);
+    }
+    // "uid" imports: no ownership sync (showcase ≠ full roster)
+
     toast.success(t.ui("accountData.importSuccess"));
     setPendingImport(null);
     setIsAccountManagerOpen(false);
@@ -438,7 +463,10 @@ export default function AccountDataPage() {
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
-      onClearData={clearAccounts}
+      onClearData={() => {
+        clearAccounts();
+        useOwnershipStore.getState().clearAll();
+      }}
       clearLabel={t.ui("common.clearAccountData")}
     >
       <BuildsDefaultPresetPrompt />
