@@ -61,7 +61,9 @@ export function ArtifactDataContent({
   // Total rolls from artifact data (8 for 3-liner start, 9 for 4-liner start)
   const totalRolls = artifact.totalRolls;
 
-  const renderStatLine = (statKey: SubStat, value: number) => {
+  const renderStatLine = (statKey: SubStat, value: number | undefined) => {
+    if (value === undefined) return null;
+
     const isPercent =
       statKey.endsWith("%") ||
       statKey === "cr" ||

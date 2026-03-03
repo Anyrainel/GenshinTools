@@ -26,7 +26,7 @@ import type { GOODData } from "@/lib/account-data/goodConversion";
 import { cn } from "@/lib/utils";
 
 interface AccountImportControlProps {
-  onLocalImport: (data: GOODData) => void;
+  onLocalImport: (data: GOODData, optionalUid: string) => void;
   onUidImport: (uid: string, clearData: boolean) => Promise<void>;
   initialUid?: string;
 }
@@ -60,6 +60,9 @@ export const AccountImportControl = forwardRef<
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uidInput, setUidInput] = useState(initialUid || "");
+  const [localUidInput, setLocalUidInput] = useState(
+    () => localStorage.getItem("gg_last_local_uid") || ""
+  );
   const [clearData, setClearData] = useState(false);
 
   useEffect(() => {
@@ -90,7 +93,12 @@ export const AccountImportControl = forwardRef<
     reader.onload = async (e) => {
       try {
         const imported = JSON.parse(e.target?.result as string);
-        onLocalImport(imported);
+        if (localUidInput) {
+          localStorage.setItem("gg_last_local_uid", localUidInput);
+        } else {
+          localStorage.removeItem("gg_last_local_uid");
+        }
+        onLocalImport(imported, localUidInput.trim());
         setIsOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
@@ -207,21 +215,33 @@ export const AccountImportControl = forwardRef<
             </div>
 
             {/* Upload button */}
-            <Button
-              size="sm"
-              className="gap-2 w-full relative overflow-hidden mt-3"
-              disabled={isBusy}
-            >
-              <Upload className="w-4 h-4" />
-              {t.ui("import.goodFileButton")}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <input
-                type="file"
-                accept=".json"
-                onChange={handleLocalImport}
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                type="text"
+                placeholder={
+                  t.ui("import.optionalUidPlaceholder") || "Optional UID"
+                }
+                value={localUidInput}
+                onChange={(e) => setLocalUidInput(e.target.value)}
+                className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={isBusy}
               />
-            </Button>
+              <Button
+                size="sm"
+                className="gap-2 shrink-0 flex-grow sm:flex-1 relative overflow-hidden"
+                disabled={isBusy}
+              >
+                <Upload className="w-4 h-4" />
+                {t.ui("import.goodFileButton")}
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleLocalImport}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={isBusy}
+                />
+              </Button>
+            </div>
           </div>
 
           {/* ── Quick: UID Import Card ── */}

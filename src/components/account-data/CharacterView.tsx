@@ -11,7 +11,7 @@ import {
   filterAndSortCharacterData,
   hasActiveFilters,
 } from "@/lib/characterFilters";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -24,7 +24,8 @@ interface CharacterViewProps {
 export function CharacterView({ scores }: CharacterViewProps) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
-  const { accountData } = useAccountStore();
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
 

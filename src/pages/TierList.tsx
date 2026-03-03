@@ -1,9 +1,12 @@
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { CharacterTierListView } from "@/components/tier-list/CharacterTierListView";
 import { WeaponTierListView } from "@/components/tier-list/WeaponTierListView";
 import { getTabsForRoute } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTierStore } from "@/stores/useTierStore";
+import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -39,11 +42,20 @@ export default function TierListPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
     >
-      {activeTab === "characters" ? (
-        <CharacterTierListView onActions={handleActions} />
-      ) : (
-        <WeaponTierListView onActions={handleActions} />
-      )}
+      <PageErrorBoundary
+        key={activeTab}
+        onClearData={
+          activeTab === "characters"
+            ? useTierStore.getState().resetTierList
+            : useWeaponTierStore.getState().resetTierList
+        }
+      >
+        {activeTab === "characters" ? (
+          <CharacterTierListView onActions={handleActions} />
+        ) : (
+          <WeaponTierListView onActions={handleActions} />
+        )}
+      </PageErrorBoundary>
     </PageLayout>
   );
 }

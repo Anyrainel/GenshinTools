@@ -16,7 +16,7 @@ import {
   type Insight,
   generateAllInsights,
 } from "@/lib/account-data/insightEngine";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { Info } from "lucide-react";
@@ -29,7 +29,8 @@ interface RecommendationViewProps {
 
 export function RecommendationView({ scores }: RecommendationViewProps) {
   const { t } = useLanguage();
-  const { accountData } = useAccountStore();
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
   const { tierAssignments, tierCustomization, setTierLuckExpectation } =
     useTierStore();
   const { config: scoreConfig } = useArtifactScoreStore();

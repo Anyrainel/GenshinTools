@@ -12,7 +12,12 @@ import {
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
-import type { ArtifactData, Slot, WeaponResource } from "@/data/types";
+import type {
+  ArtifactData,
+  CharacterData,
+  Slot,
+  WeaponResource,
+} from "@/data/types";
 import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -29,7 +34,7 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet, getEntityOption } from "@/lib/team-comp/damageModels";
 import type { CalcContext, I18nLabel } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import {
@@ -59,7 +64,8 @@ const CARD_BODY_CLS = "p-2 md:p-3 bg-black/10";
 
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
-  const accountData = useAccountStore((state) => state.accountData);
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const { characterStats, weaponStats } = useGameStats();
@@ -70,7 +76,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     const map: Record<string, BuildMatchResult | null> = {};
     for (const group of buildGroups) {
       const char = accountData.characters.find(
-        (c) => c.key === group.characterId
+        (c: CharacterData) => c.key === group.characterId
       );
       if (!char) continue;
       map[group.characterId] = matchBuild(
@@ -164,9 +170,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     const sheets: Record<string, StatSheet> = {};
     for (const charId of effectiveTeam.characters) {
       if (!charId) continue;
-      const acctChar = accountData.characters.find((c) => c.key === charId);
+      const acctChar = accountData.characters.find(
+        (c: CharacterData) => c.key === charId
+      );
       if (!acctChar) continue;
-      const artifacts = Object.values(acctChar.artifacts || {});
+      const artifacts = Object.values(
+        acctChar.artifacts || {}
+      ) as ArtifactData[];
       sheets[charId] = StatSheet.fromArtifacts(artifacts);
     }
     return sheets;
@@ -354,8 +364,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!accountData) return [];
     return [
       ...accountData.extraArtifacts,
-      ...accountData.characters.flatMap((c) =>
-        Object.values(c.artifacts || {})
+      ...accountData.characters.flatMap(
+        (c: CharacterData) => Object.values(c.artifacts || {}) as ArtifactData[]
       ),
     ];
   };
@@ -438,7 +448,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     const map: Record<string, Record<string, ArtifactData>> = {};
     for (const cid of effectiveTeam.characters) {
       if (!cid) continue;
-      const acctChar = accountData?.characters.find((c) => c.key === cid);
+      const acctChar = accountData?.characters.find(
+        (c: CharacterData) => c.key === cid
+      );
       map[cid] = (acctChar?.artifacts || {}) as Record<string, ArtifactData>;
     }
     return map;
@@ -620,7 +632,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                   weaponId != null && getEntityOption(weaponId) != null;
 
                 const acctChar = accountData?.characters.find(
-                  (c) => c.key === charId
+                  (c: CharacterData) => c.key === charId
                 );
                 const charLevel =
                   team.opts?.[`${charId}.overrideLevel`] !== undefined

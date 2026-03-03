@@ -1,6 +1,7 @@
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
+import { SectionErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -105,8 +106,14 @@ function LinkedBuildSection({
 
 function LinkedAccountSection({ character }: { character: CharacterResource }) {
   const { t } = useLanguage();
-  const accountData = useAccountStore((state) => state.accountData);
-  const scores = useAccountStore((state) => state.scores);
+  const accountData = useAccountStore((state) => {
+    const activeId = state.activeAccountId;
+    return activeId ? state.accounts[activeId]?.data : undefined;
+  });
+  const scores = useAccountStore((state) => {
+    const activeId = state.activeAccountId;
+    return activeId ? state.accounts[activeId]?.scores : {};
+  });
 
   const charData = accountData?.characters.find((c) => c.key === character.id);
 
@@ -275,13 +282,17 @@ export function CharacterDetailPanel({
           )}
 
           {/* Linked: Artifact Builds */}
-          <LinkedBuildSection
-            character={character}
-            characterStats={characterStats}
-          />
+          <SectionErrorBoundary>
+            <LinkedBuildSection
+              character={character}
+              characterStats={characterStats}
+            />
+          </SectionErrorBoundary>
 
           {/* Linked: Account Data */}
-          <LinkedAccountSection character={character} />
+          <SectionErrorBoundary>
+            <LinkedAccountSection character={character} />
+          </SectionErrorBoundary>
         </CardContent>
       </Card>
     </>

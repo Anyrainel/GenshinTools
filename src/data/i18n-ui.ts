@@ -3,6 +3,13 @@ export const i18nUiData = {
     search: { en: "Search...", zh: "搜索..." },
     loading: { en: "Loading...", zh: "加载中..." },
     clear: { en: "Clear", zh: "清除" },
+    active: { en: "Active", zh: "使用中" },
+    home: { en: "Home", zh: "主页" },
+    error: { en: "Something went wrong", zh: "出错了" },
+    errorMsg: {
+      en: "An unexpected error occurred.",
+      zh: "发生了一个未知的错误。",
+    },
     cancel: { en: "Cancel", zh: "取消" },
     reset: { en: "Reset", zh: "重置" },
     optimize: { en: "Optimize", zh: "优化" },
@@ -34,6 +41,10 @@ export const i18nUiData = {
     restoreConfirm: {
       en: "This will remove all custom builds and weapon settings for this character. This action cannot be undone.",
       zh: "这将删除此角色的所有自定义配装和武器设置。此操作无法撤销。",
+    },
+    confirmDelete: {
+      en: "Are you sure you want to delete this profile?",
+      zh: "确定要删除此账号配置吗？",
     },
   },
   import: {
@@ -115,6 +126,11 @@ export const i18nUiData = {
       en: "Enter UID (e.g. 800000000)",
       zh: "输入 UID (如 100000000)",
     },
+    optionalUidPlaceholder: { en: "Optional UID", zh: "UID（选填）" },
+    uidRequiredForNewProfile: {
+      en: "UID required for new profile",
+      zh: "新建配置需要填写 UID",
+    },
   },
   export: {
     action: { en: "Export", zh: "导出" },
@@ -163,6 +179,26 @@ export const i18nUiData = {
       en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
       zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
     },
+    importProfileSelect: { en: "Select Profile", zh: "选择账号配置" },
+    manageProfiles: { en: "Manage Profiles", zh: "管理账号配置" },
+    importProfileDesc: {
+      en: "Choose a profile to import into, or create a new one.",
+      zh: "选择要导入的账号配置，或新建一个。",
+    },
+    manageProfilesDesc: {
+      en: "Switch, rename, or delete your profiles.",
+      zh: "切换、重命名或删除您的账号配置。",
+    },
+    createNewProfile: { en: "Create New Profile", zh: "创建新配置" },
+    addProfile: { en: "Add Profile", zh: "添加配置" },
+    willBeAssigned: {
+      en: "will be assigned to this profile",
+      zh: "将绑定到此配置",
+    },
+    createProfile: { en: "Create Profile", zh: "创建配置" },
+    defaultAccount: { en: "Default Account", zh: "默认账号" },
+    accounts: { en: "Switch Account", zh: "切换账号" },
+    account: { en: "Account", zh: "账号" },
     noCharactersMatchFilters: {
       en: "No characters match your filters",
       zh: "没有角色匹配当前过滤条件",

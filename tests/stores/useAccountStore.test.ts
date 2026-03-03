@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 // Reset store before each test
 beforeEach(() => {
-  useAccountStore.getState().clearAccountData();
+  useAccountStore.getState().clearAccounts();
 });
 
 // Helper to create sample account data
@@ -35,37 +35,41 @@ function createSampleCharacter(
 
 describe("useAccountStore", () => {
   describe("initial state", () => {
-    it("starts with null account data", () => {
+    it("starts with null activeAccountId", () => {
       const state = useAccountStore.getState();
-      expect(state.accountData).toBeNull();
+      expect(state.activeAccountId).toBeNull();
     });
 
-    it("starts with empty lastUid", () => {
+    it("starts with empty accounts object", () => {
       const state = useAccountStore.getState();
-      expect(state.lastUid).toBe("");
+      expect(state.accounts).toEqual({});
     });
   });
 
-  describe("setAccountData", () => {
-    it("sets account data", () => {
+  describe("addOrUpdateAccount", () => {
+    it("adds initial account data", () => {
       const data = createSampleAccountData({
         characters: [createSampleCharacter()],
       });
 
-      useAccountStore.getState().setAccountData(data);
+      useAccountStore
+        .getState()
+        .addOrUpdateAccount("default", { uid: "", data });
 
       const state = useAccountStore.getState();
-      expect(state.accountData).toEqual(data);
-      expect(state.accountData?.characters.length).toBe(1);
+      expect(state.accounts.default.data).toEqual(data);
+      expect(state.accounts.default.data.characters.length).toBe(1);
+      expect(state.activeAccountId).toBe("default");
     });
 
     it("replaces existing account data", () => {
       // Set initial data
-      useAccountStore.getState().setAccountData(
-        createSampleAccountData({
+      useAccountStore.getState().addOrUpdateAccount("default", {
+        uid: "",
+        data: createSampleAccountData({
           characters: [createSampleCharacter({ key: "venti" })],
-        })
-      );
+        }),
+      });
 
       // Replace with new data
       const newData = createSampleAccountData({
@@ -74,48 +78,46 @@ describe("useAccountStore", () => {
           createSampleCharacter({ key: "xingqiu" }),
         ],
       });
-      useAccountStore.getState().setAccountData(newData);
+      useAccountStore
+        .getState()
+        .addOrUpdateAccount("default", { uid: "", data: newData });
 
       const state = useAccountStore.getState();
-      expect(state.accountData?.characters.length).toBe(2);
-      expect(state.accountData?.characters[0].key).toBe("kaedehara_kazuha");
-    });
-  });
-
-  describe("setLastUid", () => {
-    it("sets the last used UID", () => {
-      useAccountStore.getState().setLastUid("123456789");
-
-      const state = useAccountStore.getState();
-      expect(state.lastUid).toBe("123456789");
-    });
-  });
-
-  describe("clearAccountData", () => {
-    it("clears account data to null", () => {
-      // Set up data first
-      useAccountStore.getState().setAccountData(
-        createSampleAccountData({
-          characters: [createSampleCharacter()],
-        })
+      expect(state.accounts.default.data.characters.length).toBe(2);
+      expect(state.accounts.default.data.characters[0].key).toBe(
+        "kaedehara_kazuha"
       );
+    });
+  });
+
+  describe("setActiveAccount", () => {
+    it("sets the active account ID", () => {
+      useAccountStore.getState().addOrUpdateAccount("acc-1", {
+        uid: "123",
+        data: createSampleAccountData(),
+      });
+      useAccountStore.getState().setActiveAccount("acc-1");
+
+      const state = useAccountStore.getState();
+      expect(state.activeAccountId).toBe("acc-1");
+    });
+  });
+
+  describe("clearAccounts", () => {
+    it("clears accounts dictionary", () => {
+      useAccountStore.getState().addOrUpdateAccount("default", {
+        uid: "",
+        data: createSampleAccountData({
+          characters: [createSampleCharacter()],
+        }),
+      });
 
       // Clear
-      useAccountStore.getState().clearAccountData();
+      useAccountStore.getState().clearAccounts();
 
       const state = useAccountStore.getState();
-      expect(state.accountData).toBeNull();
-    });
-
-    it("preserves lastUid when clearing account data", () => {
-      useAccountStore.getState().setLastUid("123456789");
-      useAccountStore.getState().setAccountData(createSampleAccountData());
-
-      useAccountStore.getState().clearAccountData();
-
-      const state = useAccountStore.getState();
-      expect(state.accountData).toBeNull();
-      expect(state.lastUid).toBe("123456789");
+      expect(state.accounts).toEqual({});
+      expect(state.activeAccountId).toBeNull();
     });
   });
 });

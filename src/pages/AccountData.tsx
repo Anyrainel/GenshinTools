@@ -4,6 +4,10 @@ import { EvaluationView } from "@/components/account-data/EvaluationView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
 
+import {
+  AccountManagerDialog,
+  type PendingImport,
+} from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import {
   type ActionConfig,
@@ -12,6 +16,7 @@ import {
 } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
+import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -43,6 +48,7 @@ import { mergeEnkaImportWithInventory } from "@/lib/account-data/mergeEnkaImport
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
@@ -52,6 +58,7 @@ import {
   HelpCircle,
   Trash2,
   Upload,
+  Users,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -160,6 +167,33 @@ const NoDataPlaceholder = ({
   </div>
 );
 
+function mergeAccountData(
+  oldData: AccountData,
+  newData: AccountData
+): AccountData {
+  const { maxA, maxW } = getMaxIds(oldData);
+  reassignIds(newData, maxA + 1, maxW + 1);
+
+  const mergedCharacters = [...oldData.characters];
+  for (const newChar of newData.characters) {
+    const index = mergedCharacters.findIndex((c) => c.key === newChar.key);
+    if (index >= 0) {
+      mergedCharacters[index] = newChar; // Overwrite
+    } else {
+      mergedCharacters.push(newChar); // Add
+    }
+  }
+
+  const mergedExtraArtifacts = mergeEnkaImportWithInventory(oldData, newData);
+  const mergedData: AccountData = {
+    characters: mergedCharacters,
+    extraArtifacts: mergedExtraArtifacts,
+    extraWeapons: oldData.extraWeapons,
+  };
+  reassignIds(mergedData, 0, 0);
+  return mergedData;
+}
+
 export default function AccountDataPage() {
   const { t } = useLanguage();
   const tour = useTour();
@@ -179,14 +213,23 @@ export default function AccountDataPage() {
   };
 
   const {
-    accountData,
-    setAccountData,
-    clearAccountData,
-    lastUid,
-    setLastUid,
-    scores,
+    accounts,
+    activeAccountId,
+    clearAccounts,
+    addOrUpdateAccount,
+    setActiveAccount,
     setScores,
+    isScoresStale,
   } = useAccountStore();
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
+  const scores = activeAccount?.scores || {};
+  const lastUid = activeAccount?.uid || "";
+
+  const [pendingImport, setPendingImport] = useState<PendingImport | null>(
+    null
+  );
+  const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
 
   // Start tour on first visit (after a short delay for page to render)
   useEffect(() => {
@@ -239,11 +282,11 @@ export default function AccountDataPage() {
       const isOldFormat =
         !accountData.extraWeapons ||
         accountData.characters.some((c) => !c.talent);
-      if (isOldFormat) {
-        clearAccountData();
+      if (isOldFormat && activeAccountId) {
+        clearAccounts();
       }
     }
-  }, [accountData, clearAccountData]);
+  }, [accountData, activeAccountId, clearAccounts]);
 
   const [conversionWarnings, setConversionWarnings] = useState<
     ConversionWarning[]
@@ -281,32 +324,40 @@ export default function AccountDataPage() {
     setConversionWarnings([]);
   };
 
-  const handleLocalImport = (data: GOODData) => {
+  const handleLocalImport = (data: GOODData, optionalUid: string) => {
     try {
       const result = convertGOODToAccountData(data);
-      setAccountData(result.data);
+      const newData = result.data;
 
-      // Pre-calculate scores for the new data
-      const newScores: Record<string, ArtifactScoreResult> = {};
-      for (const char of result.data.characters) {
-        const builds = resolvedBuildsMap[char.key] ?? [];
-        newScores[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
+      if (optionalUid) {
+        // UID provided: always overwrite that UID profile directly, no dialog
+        addOrUpdateAccount(optionalUid, {
+          data: newData,
+          uid: optionalUid,
+          name: accounts[optionalUid]?.name || optionalUid,
+        });
+        setActiveAccount(optionalUid);
+        toast.success(t.ui("accountData.importSuccess"));
+      } else if (Object.keys(accounts).length === 0) {
+        // First-ever import, no UID → create "default" (store auto-activates it)
+        addOrUpdateAccount("default", {
+          data: newData,
+          name: t.ui("accountData.defaultAccount"),
+          uid: "",
+        });
+        toast.success(t.ui("accountData.importSuccess"));
+      } else {
+        // Existing profiles + no UID → let user pick via dialog
+        setPendingImport({
+          type: "json",
+          uid: "",
+          data: newData,
+          nickname: "",
+        });
+        setIsAccountManagerOpen(true);
       }
-      setScores(newScores);
 
       showConversionWarnings(result);
-
-      // Mark imported characters and weapons as owned
-      const characterIds = result.data.characters.map((c) => c.key);
-      const weaponIds = result.data.characters
-        .filter((c) => c.weapon)
-        .map((c) => c.weapon!.key);
-      useOwnershipStore
-        .getState()
-        .bulkSetOwned("character", characterIds, true);
-      useOwnershipStore.getState().bulkSetOwned("weapon", weaponIds, true);
-
-      toast.success(t.ui("accountData.importSuccess"));
     } catch (error) {
       console.error("Failed to convert GOOD data", error);
       toast.error(t.ui("accountData.failedToParseFile"));
@@ -316,84 +367,60 @@ export default function AccountDataPage() {
 
   const handleUidImport = async (uid: string, clearBeforeImport: boolean) => {
     try {
-      setLastUid(uid); // Save UID to store
       const rawData = await fetchEnkaData(uid);
       const enkaResult = await convertEnkaToGOOD(rawData);
       const result = convertGOODToAccountData(enkaResult.data);
       const newData = result.data;
+      const nickname = rawData.playerInfo?.nickname || "";
 
       // Merge warnings from Enka conversion (missing IDs) and GOOD conversion
       const allWarnings = [...enkaResult.warnings, ...result.warnings];
       showConversionWarnings({ ...result, warnings: allWarnings });
 
-      if (clearBeforeImport || !accountData) {
-        setAccountData(newData);
-        // Pre-calculate scores (new data)
-        const newScores: Record<string, ArtifactScoreResult> = {};
-        for (const char of newData.characters) {
-          const builds = resolvedBuildsMap[char.key] ?? [];
-          newScores[char.key] = scoreWithBuilds(
-            char,
-            builds,
-            scoreConfig.global
-          );
-        }
-        setScores(newScores);
+      // Match by id first, then by uid field (covers manually-linked "default" profiles)
+      const matchById = accounts[uid];
+      const matchByUidField = !matchById
+        ? Object.values(accounts).find((acc) => acc.uid === uid)
+        : null;
+      const existingAccount = matchById ?? matchByUidField ?? null;
+      const existingAccountId = matchById ? uid : (matchByUidField?.id ?? uid);
+
+      if (existingAccount) {
+        // Profile found → import directly (merge or overwrite)
+        const profileData = clearBeforeImport
+          ? newData
+          : mergeAccountData({ ...existingAccount.data }, newData);
+        addOrUpdateAccount(existingAccountId, {
+          data: profileData,
+          // Always update name from Enka when a nickname is available
+          name:
+            nickname ||
+            existingAccount.name ||
+            `${t.ui("accountData.account")} ${uid}`,
+          uid,
+        });
+        setActiveAccount(existingAccountId);
+        toast.success(t.ui("accountData.importSuccess"));
+      } else if (accounts.default) {
+        // No profile with this UID → ask user: update default or create new
+        setPendingImport({
+          type: "uid",
+          uid,
+          data: newData,
+          nickname,
+          clearBeforeImport,
+        });
+        setIsAccountManagerOpen(true);
       } else {
-        // Merge logic
-        const { maxA, maxW } = getMaxIds(accountData);
-        reassignIds(newData, maxA + 1, maxW + 1);
-
-        const mergedCharacters = [...accountData.characters];
-
-        for (const newChar of newData.characters) {
-          const index = mergedCharacters.findIndex(
-            (c) => c.key === newChar.key
-          );
-          if (index >= 0) {
-            mergedCharacters[index] = newChar; // Overwrite
-          } else {
-            mergedCharacters.push(newChar); // Add
-          }
-        }
-
-        // Merge inventory: move previously seen (equipped or inventory) artifacts
-        // that are not in this import's equipped set into inventory, without duplicating
-        const mergedExtraArtifacts = mergeEnkaImportWithInventory(
-          accountData,
-          newData
-        );
-        const mergedData: AccountData = {
-          characters: mergedCharacters,
-          extraArtifacts: mergedExtraArtifacts,
-          extraWeapons: accountData.extraWeapons,
-        };
-        reassignIds(mergedData, 0, 0);
-
-        setAccountData(mergedData);
-
-        // Pre-calculate scores for the merged data
-        const newScores: Record<string, ArtifactScoreResult> = {};
-        for (const char of mergedData.characters) {
-          const builds = resolvedBuildsMap[char.key] ?? [];
-          newScores[char.key] = scoreWithBuilds(
-            char,
-            builds,
-            scoreConfig.global
-          );
-        }
-        setScores(newScores);
+        // No matching profile, no default → create UID profile directly
+        addOrUpdateAccount(uid, {
+          data: newData,
+          name: nickname || `${t.ui("accountData.account")} ${uid}`,
+          uid,
+        });
+        setActiveAccount(uid);
+        toast.success(t.ui("accountData.importSuccess"));
       }
-
-      // Mark imported characters and weapons as owned
-      const charIds = newData.characters.map((c) => c.key);
-      const weaponIds = newData.characters
-        .filter((c) => c.weapon)
-        .map((c) => c.weapon!.key);
-      useOwnershipStore.getState().bulkSetOwned("character", charIds, true);
-      useOwnershipStore.getState().bulkSetOwned("weapon", weaponIds, true);
-
-      toast.success(t.ui("accountData.importSuccess"));
     } catch (error: unknown) {
       console.error("UID Import failed", error);
       const message =
@@ -403,21 +430,63 @@ export default function AccountDataPage() {
     }
   };
 
+  const handleResolveImport = (
+    action: "overwrite" | "merge" | "create",
+    targetId: string,
+    renamedName?: string,
+    assignUid?: string
+  ) => {
+    if (!pendingImport) return;
+
+    const { data: newData, uid, nickname } = pendingImport;
+
+    if (action === "create") {
+      addOrUpdateAccount(targetId, {
+        data: newData,
+        name:
+          renamedName ||
+          nickname ||
+          `${t.ui("accountData.account")} ${targetId}`,
+        uid: assignUid || uid || targetId,
+      });
+    } else {
+      // Overwrite or Merge
+      const existingAccount = accounts[targetId];
+      if (!existingAccount) return;
+
+      let finalData = newData;
+      if (action === "merge") {
+        finalData = mergeAccountData({ ...existingAccount.data }, newData);
+      }
+
+      const updates: Partial<(typeof accounts)[string]> & {
+        data: AccountData;
+      } = { data: finalData };
+      if (renamedName) updates.name = renamedName;
+      if (assignUid) updates.uid = assignUid;
+
+      addOrUpdateAccount(targetId, updates);
+    }
+
+    setActiveAccount(targetId);
+    toast.success(t.ui("accountData.importSuccess"));
+    setPendingImport(null);
+    setIsAccountManagerOpen(false);
+  };
+
   // Tab configuration for AppBar
   const tabs = useMemo(() => getTabsForRoute(t, "/account-data"), [t]);
 
   // Actions configuration
   const actions: ActionConfig[] = useMemo(() => {
-    const baseActions = [
+    const defaultActions: ActionConfig[] = [
       {
-        key: "help",
-        icon: HelpCircle,
-        label: t.ui("buttons.help"),
-        onTrigger: () => tour.start("account-data"),
+        key: "accounts",
+        icon: Users,
+        label: t.ui("accountData.accounts"),
+        onTrigger: () => setIsAccountManagerOpen(true),
+        alwaysShow: true,
       },
-    ];
-
-    return [
       {
         key: "import",
         icon: Upload,
@@ -432,135 +501,157 @@ export default function AccountDataPage() {
         label: t.ui("common.clear"),
         onTrigger: () => clearRef.current?.open(),
       },
-      ...baseActions,
+      {
+        key: "help",
+        icon: HelpCircle,
+        label: t.ui("buttons.help"),
+        onTrigger: () => tour.start("account-data"),
+      },
     ];
+
+    return defaultActions;
   }, [t, tour]);
 
   return (
-    <PageLayout
-      actions={actions}
-      tabs={tabs}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    >
-      <BuildsDefaultPresetPrompt />
+    <PageErrorBoundary onClearData={clearAccounts}>
+      <PageLayout
+        actions={actions}
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      >
+        <BuildsDefaultPresetPrompt />
 
-      {/* Control dialogs - render without triggers, opened via ref */}
-      <AccountImportControl
-        ref={importRef}
-        onLocalImport={handleLocalImport}
-        onUidImport={handleUidImport}
-        initialUid={lastUid}
-      />
-      <ClearAllControl ref={clearRef} onConfirm={clearAccountData} />
+        {/* Control dialogs - render without triggers, opened via ref */}
+        <AccountImportControl
+          ref={importRef}
+          onLocalImport={handleLocalImport}
+          onUidImport={handleUidImport}
+          initialUid={lastUid}
+        />
+        <ClearAllControl ref={clearRef} onConfirm={clearAccounts} />
 
-      {/* Conversion Warnings - visible on all tabs */}
-      {conversionWarnings.length > 0 && (
-        <div className="container mx-auto px-4 pt-2">
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <AlertTitle>{t.ui("accountData.conversionWarning")}</AlertTitle>
-                <AlertDescription>
-                  <div className="mt-1">
-                    {conversionWarnings.filter((w) => w.type === "character")
-                      .length > 0 && (
-                      <div>
-                        <span className="font-medium">
-                          {t.ui("accountData.characters")}:
-                        </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "character")
-                          .map((w) => w.key)
-                          .join(", ")}
-                      </div>
-                    )}
-                    {conversionWarnings.filter((w) => w.type === "weapon")
-                      .length > 0 && (
-                      <div>
-                        <span className="font-medium">
-                          {t.ui("teamComp.weapon")}:
-                        </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "weapon")
-                          .map((w) => w.key)
-                          .join(", ")}
-                      </div>
-                    )}
-                    {conversionWarnings.filter((w) => w.type === "artifact")
-                      .length > 0 && (
-                      <div>
-                        <span className="font-medium">
-                          {t.ui("teamComp.artifact")}:
-                        </span>{" "}
-                        {conversionWarnings
-                          .filter((w) => w.type === "artifact")
-                          .map((w) => w.key)
-                          .join(", ")}
-                      </div>
-                    )}
-                  </div>
-                </AlertDescription>
+        <AccountManagerDialog
+          isOpen={isAccountManagerOpen}
+          onClose={() => {
+            setIsAccountManagerOpen(false);
+            setPendingImport(null);
+          }}
+          pendingImport={pendingImport}
+          onResolveImport={handleResolveImport}
+          onOpenImportControl={() => importRef.current?.open()}
+        />
+
+        {/* Conversion Warnings - visible on all tabs */}
+        {conversionWarnings.length > 0 && (
+          <div className="container mx-auto px-4 pt-2">
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <AlertTitle>
+                    {t.ui("accountData.conversionWarning")}
+                  </AlertTitle>
+                  <AlertDescription>
+                    <div className="mt-1">
+                      {conversionWarnings.filter((w) => w.type === "character")
+                        .length > 0 && (
+                        <div>
+                          <span className="font-medium">
+                            {t.ui("accountData.characters")}:
+                          </span>{" "}
+                          {conversionWarnings
+                            .filter((w) => w.type === "character")
+                            .map((w) => w.key)
+                            .join(", ")}
+                        </div>
+                      )}
+                      {conversionWarnings.filter((w) => w.type === "weapon")
+                        .length > 0 && (
+                        <div>
+                          <span className="font-medium">
+                            {t.ui("teamComp.weapon")}:
+                          </span>{" "}
+                          {conversionWarnings
+                            .filter((w) => w.type === "weapon")
+                            .map((w) => w.key)
+                            .join(", ")}
+                        </div>
+                      )}
+                      {conversionWarnings.filter((w) => w.type === "artifact")
+                        .length > 0 && (
+                        <div>
+                          <span className="font-medium">
+                            {t.ui("teamComp.artifact")}:
+                          </span>{" "}
+                          {conversionWarnings
+                            .filter((w) => w.type === "artifact")
+                            .map((w) => w.key)
+                            .join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  </AlertDescription>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 shrink-0 -mt-0.5 -mr-1 hover:bg-destructive/20"
+                  onClick={dismissWarnings}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 shrink-0 -mt-0.5 -mr-1 hover:bg-destructive/20"
-                onClick={dismissWarnings}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </Alert>
-        </div>
-      )}
+            </Alert>
+          </div>
+        )}
 
-      <Tabs value={activeTab} className="h-full overflow-hidden">
-        <TabsContent value="characters" className="mt-0 h-full">
-          {accountData ? (
-            <CharacterView scores={scores} />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
-        </TabsContent>
+        <Tabs value={activeTab} className="h-full overflow-hidden">
+          <TabsContent value="characters" className="mt-0 h-full">
+            {accountData ? (
+              <CharacterView scores={scores} />
+            ) : (
+              <NoDataPlaceholder
+                t={t}
+                onAction={() => importRef.current?.open()}
+              />
+            )}
+          </TabsContent>
 
-        <TabsContent value="recommendations" className="mt-0 h-full">
-          {accountData ? (
-            <RecommendationView scores={scores} />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
-        </TabsContent>
+          <TabsContent value="recommendations" className="mt-0 h-full">
+            {accountData ? (
+              <RecommendationView scores={scores} />
+            ) : (
+              <NoDataPlaceholder
+                t={t}
+                onAction={() => importRef.current?.open()}
+              />
+            )}
+          </TabsContent>
 
-        <TabsContent value="inventory" className="mt-0 h-full">
-          {accountData ? (
-            <InventoryView data={accountData} />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
-        </TabsContent>
+          <TabsContent value="inventory" className="mt-0 h-full">
+            {accountData ? (
+              <InventoryView data={accountData} />
+            ) : (
+              <NoDataPlaceholder
+                t={t}
+                onAction={() => importRef.current?.open()}
+              />
+            )}
+          </TabsContent>
 
-        <TabsContent value="evaluation" className="mt-0 h-full">
-          {accountData ? (
-            <EvaluationView />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
-        </TabsContent>
-      </Tabs>
-    </PageLayout>
+          <TabsContent value="evaluation" className="mt-0 h-full">
+            {accountData ? (
+              <EvaluationView />
+            ) : (
+              <NoDataPlaceholder
+                t={t}
+                onAction={() => importRef.current?.open()}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
+      </PageLayout>
+    </PageErrorBoundary>
   );
 }

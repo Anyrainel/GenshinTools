@@ -23,7 +23,7 @@ const mockScoreResult: ArtifactScoreResult = {
 
 describe("RecommendationView", () => {
   beforeEach(() => {
-    useAccountStore.getState().clearAccountData();
+    useAccountStore.getState().clearAccounts();
     useTierStore.getState().resetTierList();
   });
 
@@ -35,70 +35,72 @@ describe("RecommendationView", () => {
 
   it("renders tier headings when account data exists", () => {
     // Set up account data
-    useAccountStore.getState().setAccountData({
-      characters: [
-        {
-          key: "hu_tao",
-          level: 90,
-          constellation: 0,
-          talent: { auto: 10, skill: 10, burst: 10 },
-          weapon: undefined,
-          artifacts: {
-            flower: {
-              id: "1",
-              setKey: "crimson_witch_of_flames",
-              slotKey: "flower",
-              level: 20,
-              rarity: 5,
-              lock: false,
-              mainStatKey: "hp",
-              substats: {},
-            },
-            plume: {
-              id: "2",
-              setKey: "crimson_witch_of_flames",
-              slotKey: "plume",
-              level: 20,
-              rarity: 5,
-              lock: false,
-              mainStatKey: "atk",
-              substats: {},
-            },
-            sands: {
-              id: "3",
-              setKey: "crimson_witch_of_flames",
-              slotKey: "sands",
-              level: 20,
-              rarity: 5,
-              lock: false,
-              mainStatKey: "hp%",
-              substats: {},
-            },
-            goblet: {
-              id: "4",
-              setKey: "crimson_witch_of_flames",
-              slotKey: "goblet",
-              level: 20,
-              rarity: 5,
-              lock: false,
-              mainStatKey: "pyro%",
-              substats: {},
-            },
-            circlet: {
-              id: "5",
-              setKey: "crimson_witch_of_flames",
-              slotKey: "circlet",
-              level: 20,
-              rarity: 5,
-              lock: false,
-              mainStatKey: "cr",
-              substats: {},
+    useAccountStore.getState().addOrUpdateAccount("default", {
+      data: {
+        characters: [
+          {
+            key: "hu_tao",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 10, skill: 10, burst: 10 },
+            weapon: undefined,
+            artifacts: {
+              flower: {
+                id: "1",
+                setKey: "crimson_witch_of_flames",
+                slotKey: "flower",
+                level: 20,
+                rarity: 5,
+                lock: false,
+                mainStatKey: "hp",
+                substats: {},
+              },
+              plume: {
+                id: "2",
+                setKey: "crimson_witch_of_flames",
+                slotKey: "plume",
+                level: 20,
+                rarity: 5,
+                lock: false,
+                mainStatKey: "atk",
+                substats: {},
+              },
+              sands: {
+                id: "3",
+                setKey: "crimson_witch_of_flames",
+                slotKey: "sands",
+                level: 20,
+                rarity: 5,
+                lock: false,
+                mainStatKey: "hp%",
+                substats: {},
+              },
+              goblet: {
+                id: "4",
+                setKey: "crimson_witch_of_flames",
+                slotKey: "goblet",
+                level: 20,
+                rarity: 5,
+                lock: false,
+                mainStatKey: "pyro%",
+                substats: {},
+              },
+              circlet: {
+                id: "5",
+                setKey: "crimson_witch_of_flames",
+                slotKey: "circlet",
+                level: 20,
+                rarity: 5,
+                lock: false,
+                mainStatKey: "cr",
+                substats: {},
+              },
             },
           },
-        },
-      ],
-      extraArtifacts: [],
-      extraWeapons: [],
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      },
     });
 
     // Set up tier assignment

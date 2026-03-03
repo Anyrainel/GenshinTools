@@ -21,7 +21,7 @@ import {
   getTier,
 } from "@/lib/account-data/buildEvaluation";
 import { cn } from "@/lib/utils";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   ArrowDownWideNarrow,
@@ -37,7 +37,8 @@ type TierFilter = "all" | string; // tier id or "all"
 
 export function EvaluationView() {
   const { t } = useLanguage();
-  const { accountData } = useAccountStore();
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
   const buildGroups = useAllResolvedBuilds();
   const { config: scoreConfig } = useArtifactScoreStore();
   const isMobile = useMediaQuery("(max-width: 768px)");

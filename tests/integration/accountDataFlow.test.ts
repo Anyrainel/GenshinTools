@@ -123,7 +123,7 @@ const fullGOODData: GOODData = {
 
 describe("Integration: Account Data Page Flow", () => {
   beforeEach(() => {
-    useAccountStore.getState().clearAccountData();
+    useAccountStore.getState().clearAccounts();
     useArtifactScoreStore.getState().resetConfig();
     useTierStore.getState().resetTierList();
   });
@@ -154,20 +154,26 @@ describe("Integration: Account Data Page Flow", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
 
       act(() => {
-        useAccountStore.getState().setAccountData(data);
+        useAccountStore
+          .getState()
+          .addOrUpdateAccount("default", { uid: "", data });
       });
 
-      const stored = useAccountStore.getState().accountData;
+      const stored = useAccountStore.getState().accounts.default?.data;
       expect(stored).toBeDefined();
       expect(stored?.characters).toHaveLength(4);
     });
 
-    it("tracks last UID", () => {
+    it("tracks UID via account uid field", () => {
+      const data = convertGOODToAccountData(fullGOODData).data;
       act(() => {
-        useAccountStore.getState().setLastUid("123456789");
+        useAccountStore
+          .getState()
+          .addOrUpdateAccount("123456789", { uid: "123456789", data });
       });
 
-      expect(useAccountStore.getState().lastUid).toBe("123456789");
+      const acc = useAccountStore.getState().accounts["123456789"];
+      expect(acc?.uid).toBe("123456789");
     });
   });
 
@@ -262,16 +268,18 @@ describe("Integration: Account Data Page Flow", () => {
       const { data } = convertGOODToAccountData(fullGOODData);
 
       act(() => {
-        useAccountStore.getState().setAccountData(data);
+        useAccountStore
+          .getState()
+          .addOrUpdateAccount("default", { uid: "", data });
       });
 
-      expect(useAccountStore.getState().accountData).toBeDefined();
+      expect(useAccountStore.getState().accounts.default?.data).toBeDefined();
 
       act(() => {
-        useAccountStore.getState().clearAccountData();
+        useAccountStore.getState().clearAccounts();
       });
 
-      expect(useAccountStore.getState().accountData).toBeNull();
+      expect(useAccountStore.getState().accounts.default).toBeUndefined();
     });
   });
 });

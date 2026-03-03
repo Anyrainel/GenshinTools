@@ -5,7 +5,7 @@ import { render, screen } from "../../utils/render";
 
 describe("CharacterView", () => {
   beforeEach(() => {
-    useAccountStore.getState().clearAccountData();
+    useAccountStore.getState().clearAccounts();
     useTierStore.getState().resetTierList();
   });
 
@@ -16,25 +16,27 @@ describe("CharacterView", () => {
 
   it("renders character cards for account characters", () => {
     // Set up account data with one character
-    useAccountStore.getState().setAccountData({
-      characters: [
-        {
-          key: "hu_tao",
-          level: 90,
-          constellation: 0,
-          talent: { auto: 10, skill: 10, burst: 10 },
-          weapon: undefined,
-          artifacts: {
-            flower: undefined,
-            plume: undefined,
-            sands: undefined,
-            goblet: undefined,
-            circlet: undefined,
+    useAccountStore.getState().addOrUpdateAccount("default", {
+      data: {
+        characters: [
+          {
+            key: "hu_tao",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 10, skill: 10, burst: 10 },
+            weapon: undefined,
+            artifacts: {
+              flower: undefined,
+              plume: undefined,
+              sands: undefined,
+              goblet: undefined,
+              circlet: undefined,
+            },
           },
-        },
-      ],
-      extraArtifacts: [],
-      extraWeapons: [],
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      },
     });
 
     render(<CharacterView scores={{}} />);
@@ -47,39 +49,41 @@ describe("CharacterView", () => {
 
   it("respects tier sort when tier assignments exist", () => {
     // Set up account data
-    useAccountStore.getState().setAccountData({
-      characters: [
-        {
-          key: "hu_tao",
-          level: 90,
-          constellation: 0,
-          talent: { auto: 10, skill: 10, burst: 10 },
-          weapon: undefined,
-          artifacts: {
-            flower: undefined,
-            plume: undefined,
-            sands: undefined,
-            goblet: undefined,
-            circlet: undefined,
+    useAccountStore.getState().addOrUpdateAccount("default", {
+      data: {
+        characters: [
+          {
+            key: "hu_tao",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 10, skill: 10, burst: 10 },
+            weapon: undefined,
+            artifacts: {
+              flower: undefined,
+              plume: undefined,
+              sands: undefined,
+              goblet: undefined,
+              circlet: undefined,
+            },
           },
-        },
-        {
-          key: "xingqiu",
-          level: 80,
-          constellation: 6,
-          talent: { auto: 6, skill: 10, burst: 10 },
-          weapon: undefined,
-          artifacts: {
-            flower: undefined,
-            plume: undefined,
-            sands: undefined,
-            goblet: undefined,
-            circlet: undefined,
+          {
+            key: "xingqiu",
+            level: 80,
+            constellation: 6,
+            talent: { auto: 6, skill: 10, burst: 10 },
+            weapon: undefined,
+            artifacts: {
+              flower: undefined,
+              plume: undefined,
+              sands: undefined,
+              goblet: undefined,
+              circlet: undefined,
+            },
           },
-        },
-      ],
-      extraArtifacts: [],
-      extraWeapons: [],
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      },
     });
 
     // Set up tier assignments

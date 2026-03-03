@@ -1,8 +1,13 @@
+import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import { TourProvider } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getTours } from "@/lib/tourConfig";
 import { cn } from "@/lib/utils";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { useTeamStore } from "@/stores/useTeamStore";
+import { useTierStore } from "@/stores/useTierStore";
 import { useMemo } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import AccountDataPage from "./pages/AccountData";
@@ -30,12 +35,60 @@ function App() {
           )}
         >
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/account-data" element={<AccountDataPage />} />
-            <Route path="/artifact-filter" element={<ArtifactBuildsPage />} />
-            <Route path="/tier-list" element={<TierListPage />} />
-            <Route path="/archive" element={<ArchivePage />} />
-            <Route path="/team-comp" element={<TeamCompPage />} />
+            <Route
+              path="/"
+              element={
+                <PageErrorBoundary>
+                  <Home />
+                </PageErrorBoundary>
+              }
+            />
+            <Route
+              path="/account-data"
+              element={
+                <PageErrorBoundary
+                  onClearData={useAccountStore.getState().clearAccounts}
+                >
+                  <AccountDataPage />
+                </PageErrorBoundary>
+              }
+            />
+            <Route
+              path="/artifact-filter"
+              element={
+                <PageErrorBoundary
+                  onClearData={useBuildsStore.getState().clearAll}
+                >
+                  <ArtifactBuildsPage />
+                </PageErrorBoundary>
+              }
+            />
+            <Route
+              path="/tier-list"
+              element={
+                <PageErrorBoundary>
+                  <TierListPage />
+                </PageErrorBoundary>
+              }
+            />
+            <Route
+              path="/archive"
+              element={
+                <PageErrorBoundary>
+                  <ArchivePage />
+                </PageErrorBoundary>
+              }
+            />
+            <Route
+              path="/team-comp"
+              element={
+                <PageErrorBoundary
+                  onClearData={useTeamStore.getState().clearTeams}
+                >
+                  <TeamCompPage />
+                </PageErrorBoundary>
+              }
+            />
           </Routes>
         </main>
         <Toaster />
