@@ -49,6 +49,7 @@ export default function TierListPage() {
             ? useTierStore.getState().resetTierList
             : useWeaponTierStore.getState().resetTierList
         }
+        clearLabel={t.ui("common.clearTierList")}
       >
         {activeTab === "characters" ? (
           <CharacterTierListView onActions={handleActions} />

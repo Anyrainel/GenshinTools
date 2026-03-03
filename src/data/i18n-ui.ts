@@ -3,6 +3,10 @@ export const i18nUiData = {
     search: { en: "Search...", zh: "搜索..." },
     loading: { en: "Loading...", zh: "加载中..." },
     clear: { en: "Clear", zh: "清除" },
+    clearAccountData: { en: "Clear Account Data", zh: "清除账号数据" },
+    clearBuilds: { en: "Clear Builds", zh: "清除配装" },
+    clearTeams: { en: "Clear Teams", zh: "清除队伍" },
+    clearTierList: { en: "Clear Tier List", zh: "清除排行" },
     active: { en: "Active", zh: "使用中" },
     home: { en: "Home", zh: "主页" },
     error: { en: "Something went wrong", zh: "出错了" },
@@ -130,6 +134,10 @@ export const i18nUiData = {
     uidRequiredForNewProfile: {
       en: "UID required for new profile",
       zh: "新建配置需要填写 UID",
+    },
+    uidInvalid: {
+      en: "UID must be 9–10 digits",
+      zh: "UID 须为 9–10 位数字",
     },
   },
   export: {

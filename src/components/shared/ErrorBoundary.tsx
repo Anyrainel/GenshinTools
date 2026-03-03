@@ -122,15 +122,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
 export function PageErrorBoundary({
   children,
   onClearData,
+  clearLabel,
 }: {
   children: ReactNode;
   onClearData?: () => void;
+  clearLabel?: string;
 }) {
   const { t } = useLanguage();
   return (
     <ErrorBoundary
       onClearData={onClearData}
-      clearLabel={t.ui("common.clear")}
+      clearLabel={clearLabel || t.ui("common.clear")}
       homeLabel={t.ui("common.home") || "Home"}
       errorTitle={t.ui("common.error") || "Error"}
       errorDefaultMsg={

@@ -155,8 +155,22 @@ export default function TeamCompPage() {
         </PageLayout>
       );
     }
+    const clearActiveTeam = () => {
+      updateTeam(activeTeam.id, {
+        characters: [null, null, null, null],
+        weapons: [null, null, null, null],
+        artifacts: [null, null, null, null],
+        opts: {},
+        selectedFormula: null,
+        targetEr: {},
+      });
+    };
+
     return (
-      <PageLayout>
+      <PageLayout
+        onClearData={clearActiveTeam}
+        clearLabel={t.ui("teamComp.clearTeamData")}
+      >
         <ScrollLayout className="py-8 mt-2">
           <TeamOptDetail team={activeTeam} onBack={() => setActiveTeam(null)} />
         </ScrollLayout>
@@ -166,6 +180,8 @@ export default function TeamCompPage() {
 
   return (
     <PageLayout
+      onClearData={clearTeams}
+      clearLabel={t.ui("common.clearTeams")}
       actions={[
         {
           key: "import",

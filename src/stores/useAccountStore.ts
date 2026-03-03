@@ -4,9 +4,9 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type AccountState = {
-  id: string; // Account ID, usually UID or "default"
+  /** Storage key. Either a Genshin UID string (e.g. "800000000") or the sentinel "default". */
+  id: string;
   name: string;
-  uid: string;
   data: AccountData;
   scores: Record<string, ArtifactScoreResult>;
   lastUpdate: number;
@@ -20,11 +20,11 @@ interface AccountStore {
   setActiveAccount: (id: string) => void;
   addOrUpdateAccount: (
     id: string,
-    payload: Partial<AccountState> & { data: AccountData }
+    payload: Partial<Omit<AccountState, "id">> & { data: AccountData }
   ) => void;
+  /** Atomically rename a profile's storage key and id field. Used to promote "default" → UID. */
+  promoteToUid: (currentId: string, newId: string) => void;
   deleteAccount: (id: string) => void;
-  /** Rename the storage key and sync id/uid fields. Used when promoting "default" to a real UID. */
-  promoteToUid: (currentId: string, newUid: string) => void;
   clearAccounts: () => void;
 
   setScores: (scores: Record<string, ArtifactScoreResult>) => void;
@@ -33,6 +33,77 @@ interface AccountStore {
 
 export const getActiveAccount = (state: AccountStore) =>
   state.activeAccountId ? state.accounts[state.activeAccountId] : null;
+
+type PersistedAccountStore = Pick<
+  AccountStore,
+  "accounts" | "activeAccountId" | "isScoresStale"
+>;
+
+/**
+ * Zustand persist migration function.
+ * Exported for unit testing — do not call directly in application code.
+ */
+export function migrateAccountStore(
+  persistedState: unknown,
+  version: number
+): PersistedAccountStore {
+  // biome-ignore lint/suspicious/noExplicitAny: migration across legacy formats
+  const state = persistedState as any;
+
+  // v0 / v1: old single-account shape { accountData, scores, lastUid }
+  if (version === 0 || version === 1) {
+    const oldData = state.accountData;
+    const oldScores = state.scores || {};
+    const oldUid = state.lastUid || "";
+
+    if (!oldData) {
+      return { accounts: {}, activeAccountId: null, isScoresStale: false };
+    }
+
+    const id = oldUid || "default";
+    return {
+      accounts: {
+        [id]: {
+          id,
+          name: oldUid || "Default Account",
+          data: oldData,
+          scores: oldScores,
+          lastUpdate: Date.now(),
+        },
+      },
+      activeAccountId: id,
+      isScoresStale: state.isScoresStale || false,
+    };
+  }
+
+  // v2: multi-account WITH a separate `uid` field on AccountState
+  // Promote any "default" accounts that had uid set, then strip the uid field.
+  if (version === 2) {
+    // biome-ignore lint/suspicious/noExplicitAny: migration across legacy formats
+    const oldAccounts: Record<string, any> = state.accounts || {};
+    const newAccounts: Record<string, AccountState> = {};
+    let activeId: string | null = state.activeAccountId ?? null;
+
+    for (const [key, acc] of Object.entries(oldAccounts)) {
+      const uidVal: string = acc.uid || "";
+      // If uid differs from the storage key, the account was manually linked
+      // but never promoted — use the uid as the correct key.
+      const correctKey = uidVal && uidVal !== key ? uidVal : key;
+
+      const { uid: _dropped, ...rest } = acc;
+      newAccounts[correctKey] = { ...rest, id: correctKey };
+      if (activeId === key) activeId = correctKey;
+    }
+
+    return {
+      accounts: newAccounts,
+      activeAccountId: activeId,
+      isScoresStale: state.isScoresStale || false,
+    };
+  }
+
+  return persistedState as PersistedAccountStore;
+}
 
 export const useAccountStore = create<AccountStore>()(
   persist(
@@ -49,7 +120,6 @@ export const useAccountStore = create<AccountStore>()(
           const updated: AccountState = {
             id,
             name: payload.name ?? existing?.name ?? `Account ${id}`,
-            uid: payload.uid ?? existing?.uid ?? id,
             data: payload.data,
             scores: payload.scores ?? existing?.scores ?? {},
             lastUpdate: payload.lastUpdate ?? Date.now(),
@@ -58,6 +128,24 @@ export const useAccountStore = create<AccountStore>()(
           return {
             accounts: { ...state.accounts, [id]: updated },
             activeAccountId: state.activeAccountId || id, // auto-switch if none active
+          };
+        }),
+
+      promoteToUid: (currentId, newId) =>
+        set((state) => {
+          const acc = state.accounts[currentId];
+          if (!acc || !newId || newId === currentId) return state;
+
+          const promoted: AccountState = { ...acc, id: newId };
+          const newAccounts = { ...state.accounts, [newId]: promoted };
+          delete newAccounts[currentId];
+
+          return {
+            accounts: newAccounts,
+            activeAccountId:
+              state.activeAccountId === currentId
+                ? newId
+                : state.activeAccountId,
           };
         }),
 
@@ -73,24 +161,6 @@ export const useAccountStore = create<AccountStore>()(
           }
 
           return { accounts: newAccounts, activeAccountId: newActive };
-        }),
-
-      promoteToUid: (currentId, newUid) =>
-        set((state) => {
-          const acc = state.accounts[currentId];
-          if (!acc || !newUid || newUid === currentId) return state;
-
-          const promoted: AccountState = { ...acc, id: newUid, uid: newUid };
-          const newAccounts = { ...state.accounts, [newUid]: promoted };
-          delete newAccounts[currentId];
-
-          return {
-            accounts: newAccounts,
-            activeAccountId:
-              state.activeAccountId === currentId
-                ? newUid
-                : state.activeAccountId,
-          };
         }),
 
       clearAccounts: () => set({ accounts: {}, activeAccountId: null }),
@@ -113,43 +183,8 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
-      version: 2,
-      migrate: (persistedState: unknown, version: number) => {
-        // v0 and v1 had the same shape: { accountData, scores, lastUid, ... }
-        if (version === 0 || version === 1) {
-          // biome-ignore lint/suspicious/noExplicitAny: migration from legacy format
-          const state = persistedState as any;
-          const oldData = state.accountData;
-          const oldScores = state.scores || {};
-          const oldUid = state.lastUid || "";
-
-          if (!oldData) {
-            return {
-              accounts: {},
-              activeAccountId: null,
-              isScoresStale: false,
-            };
-          }
-
-          // Preserve UID as account id when available, else use "default"
-          const id = oldUid || "default";
-          const newAccount: AccountState = {
-            id,
-            name: oldUid ? oldUid : "Default Account",
-            uid: oldUid,
-            data: oldData,
-            scores: oldScores,
-            lastUpdate: Date.now(),
-          };
-
-          return {
-            accounts: { [id]: newAccount },
-            activeAccountId: id,
-            isScoresStale: state.isScoresStale || false,
-          };
-        }
-        return persistedState;
-      },
+      version: 3,
+      migrate: migrateAccountStore,
     }
   )
 );

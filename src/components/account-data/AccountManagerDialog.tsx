@@ -7,19 +7,13 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AccountData } from "@/data/types";
+import type { PendingImport } from "@/lib/account-data/importRouting";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { Check, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export type PendingImport = {
-  type: "json" | "uid";
-  uid: string;
-  data: AccountData;
-  nickname: string;
-  clearBeforeImport?: boolean; // Only for uid import
-};
+export type { PendingImport };
 
 interface AccountManagerDialogProps {
   isOpen: boolean;
@@ -28,8 +22,7 @@ interface AccountManagerDialogProps {
   onResolveImport: (
     action: "overwrite" | "merge" | "create",
     targetId: string,
-    renamedName?: string,
-    assignUid?: string
+    renamedName?: string
   ) => void;
   onOpenImportControl?: () => void;
 }
@@ -53,6 +46,8 @@ export function AccountManagerDialog({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editUid, setEditUid] = useState("");
 
+  const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
+
   // For "create new profile" in JSON import mode — UID is required
   const [newProfileUid, setNewProfileUid] = useState("");
 
@@ -74,7 +69,7 @@ export function AccountManagerDialog({
 
   const handleUidSave = (id: string) => {
     const trimmed = editUid.trim();
-    if (trimmed && id === "default") {
+    if (trimmed && isValidUid(trimmed) && id === "default") {
       // Rename the storage key from "default" to the UID, keeping id === uid
       promoteToUid("default", trimmed);
     }
@@ -90,25 +85,27 @@ export function AccountManagerDialog({
         onResolveImport(
           "create",
           pendingImport.uid,
-          pendingImport.nickname || pendingImport.uid,
-          pendingImport.uid
+          pendingImport.nickname || pendingImport.uid
         );
       } else {
         // JSON import — user must have provided a UID
         const finalUid = newProfileUid.trim();
         if (!finalUid) return; // blocked by disabled button
-        onResolveImport("create", finalUid, finalUid, finalUid);
+        onResolveImport("create", finalUid, finalUid);
       }
       return;
     }
 
     // Targeting an existing profile
     if (pendingImport.type === "uid") {
-      // UID import into an existing profile: update name & uid too
       const action = pendingImport.clearBeforeImport ? "overwrite" : "merge";
-      const assignUid = pendingImport.uid || undefined;
-      const renamedName = pendingImport.nickname || undefined;
-      onResolveImport(action, selectedTarget, renamedName, assignUid);
+      // Pass nickname so the profile name is updated; promotion of the key
+      // to the UID is handled automatically in handleResolveImport.
+      onResolveImport(
+        action,
+        selectedTarget,
+        pendingImport.nickname || undefined
+      );
     } else {
       // JSON import into an existing profile: overwrite data only
       onResolveImport("overwrite", selectedTarget);
@@ -118,9 +115,18 @@ export function AccountManagerDialog({
   const isImportMode = !!pendingImport;
   const isUidImport = pendingImport?.type === "uid";
 
-  // "create_new" in JSON import mode requires a UID
+  // For UID imports, only show the "default" profile as a merge target.
+  // Merging one UID's data into a different UID's profile is never meaningful.
+  const displayedAccounts =
+    isImportMode && isUidImport
+      ? Object.values(accounts).filter((acc) => acc.id === "default")
+      : Object.values(accounts);
+
+  // "create_new" in JSON import mode requires a valid UID
   const createNewNeedsUid =
-    selectedTarget === "create_new" && !isUidImport && !newProfileUid.trim();
+    selectedTarget === "create_new" &&
+    !isUidImport &&
+    !isValidUid(newProfileUid);
   const canSubmit = !!selectedTarget && !createNewNeedsUid;
 
   return (
@@ -140,7 +146,7 @@ export function AccountManagerDialog({
         </ResponsiveDialogHeader>
 
         <div className="flex flex-col gap-2 pt-2 max-h-[60vh] overflow-y-auto pr-1">
-          {Object.values(accounts).map((acc) => {
+          {displayedAccounts.map((acc) => {
             const isActive = acc.id === activeAccountId;
             const isEditing = editingId === acc.id;
             const isSelectedTarget = selectedTarget === acc.id;
@@ -159,7 +165,10 @@ export function AccountManagerDialog({
                 )}
                 onClick={() => {
                   if (isImportMode) setSelectedTarget(acc.id);
-                  else if (!isActive && !isEditing) setActiveAccount(acc.id);
+                  else if (!isActive && !isEditing) {
+                    setActiveAccount(acc.id);
+                    setTimeout(onClose, 150);
+                  }
                 }}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -177,27 +186,35 @@ export function AccountManagerDialog({
                     </div>
 
                     {isEditing ? (
-                      <div className="flex items-center gap-2">
-                        <input
-                          // biome-ignore lint/a11y/noAutofocus: edit mode starts here explicitly
-                          autoFocus
-                          value={editUid}
-                          onChange={(e) => setEditUid(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleUidSave(acc.id);
-                            if (e.key === "Escape") setEditingId(null);
-                          }}
-                          placeholder="UID"
-                          className="flex h-8 w-32 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
-                        />
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => handleUidSave(acc.id)}
-                        >
-                          <Check className="w-4 h-4 text-green-500" />
-                        </Button>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <input
+                            // biome-ignore lint/a11y/noAutofocus: edit mode starts here explicitly
+                            autoFocus
+                            value={editUid}
+                            onChange={(e) => setEditUid(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleUidSave(acc.id);
+                              if (e.key === "Escape") setEditingId(null);
+                            }}
+                            placeholder="UID"
+                            className="flex h-8 w-32 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
+                          />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            disabled={!!editUid.trim() && !isValidUid(editUid)}
+                            onClick={() => handleUidSave(acc.id)}
+                          >
+                            <Check className="w-4 h-4 text-green-500" />
+                          </Button>
+                        </div>
+                        {editUid.trim() && !isValidUid(editUid) && (
+                          <span className="text-xs text-destructive">
+                            {t.ui("import.uidInvalid")}
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="min-w-0 flex flex-col">
@@ -215,9 +232,7 @@ export function AccountManagerDialog({
                         </div>
                         <div className="text-xs text-muted-foreground flex gap-1 items-center">
                           <span>
-                            {acc.id === "default" && !acc.uid
-                              ? "No UID"
-                              : acc.uid || acc.id}
+                            {acc.id === "default" ? "No UID" : acc.id}
                           </span>
                           <span className="opacity-50">•</span>
                           <span>
@@ -251,28 +266,26 @@ export function AccountManagerDialog({
                           title={t.ui("import.optionalUidPlaceholder")}
                           onClick={(e) => {
                             e.stopPropagation();
-                            setEditUid(acc.uid || "");
+                            setEditUid("");
                             setEditingId(acc.id);
                           }}
                         >
                           <Edit2 className="w-4 h-4" />
                         </Button>
                       )}
-                      {Object.keys(accounts).length > 1 && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (confirm(t.ui("common.confirmDelete"))) {
-                              deleteAccount(acc.id);
-                            }
-                          }}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      )}
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(t.ui("common.confirmDelete"))) {
+                            deleteAccount(acc.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   )}
                   {isImportMode && isSelectedTarget && (
@@ -332,6 +345,11 @@ export function AccountManagerDialog({
                     onChange={(e) => setNewProfileUid(e.target.value)}
                     className="flex h-8 w-40 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
                   />
+                  {newProfileUid.trim() && !isValidUid(newProfileUid) && (
+                    <span className="text-xs text-destructive">
+                      {t.ui("import.uidInvalid")}
+                    </span>
+                  )}
                 </div>
               )}
             </div>

@@ -45,7 +45,6 @@ import {
   Loader2,
   Play,
   Swords,
-  Trash2,
   User,
   Users,
 } from "lucide-react";
@@ -90,7 +89,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // Independent formula selection for Card 3 (optimizer)
   const [optFormulaTab, setOptFormulaTab] = useState<string | null>(null);
-  const [renderError, setRenderError] = useState<string | null>(null);
 
   const [localCharacters, setLocalCharacters] = useState(team.characters);
   const [localWeapons, setLocalWeapons] = useState(team.weapons);
@@ -541,293 +539,278 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     activeContext,
   ]);
 
-  const handleClearTeam = () => {
-    updateTeam(team.id, {
-      characters: [null, null, null, null],
-      weapons: [null, null, null, null],
-      artifacts: [null, null, null, null],
-      opts: {},
-      selectedFormula: null,
-      targetEr: {},
-    });
-    setLocalCharacters([null, null, null, null]);
-    setLocalWeapons([null, null, null, null]);
-    setLocalArtifacts([null, null, null, null]);
-    setRenderError(null);
-  };
-
-  if (renderError) {
-    return (
-      <div className="flex flex-col gap-2 w-full animate-in fade-in duration-300 pb-12">
-        <div className="flex items-center gap-3 px-1">
-          <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="w-5 h-5 text-foreground/70" />
-          </Button>
-          <h2 className="text-xl font-black text-destructive">
-            {t.ui("teamComp.renderError")}
-          </h2>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={handleClearTeam}
-            className="ml-auto text-xs h-8"
-          >
-            <Trash2 className="w-4 h-4 mr-1.5" />
-            {t.ui("teamComp.clearTeamData")}
-          </Button>
-        </div>
-        <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-lg font-mono text-xs whitespace-pre-wrap overflow-auto">
-          {renderError}
-        </div>
+  return (
+    <div className="flex flex-col gap-2 w-full animate-in fade-in duration-300 pb-12">
+      {/* ── Page Header ── */}
+      <div className="flex items-center gap-2 px-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          className="shrink-0 h-9 w-9 hover:bg-white/10"
+        >
+          <ArrowLeft className="w-5 h-5 text-foreground/70" />
+        </Button>
+        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+          {team.name || t.ui("teamComp.teamOptimization")}
+        </h2>
       </div>
-    );
-  }
 
-  try {
-    return (
-      <div className="flex flex-col gap-2 w-full animate-in fade-in duration-300 pb-12">
-        {/* ── Page Header ── */}
-        <div className="flex items-center gap-2 px-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="shrink-0 h-9 w-9 hover:bg-white/10"
-          >
-            <ArrowLeft className="w-5 h-5 text-foreground/70" />
-          </Button>
-          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
-            {team.name || t.ui("teamComp.teamOptimization")}
-          </h2>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════════════════
           Card 1 — Team Roster + Combat Options (always expanded)
          ══════════════════════════════════════════════════════════ */}
-        <Card className={CARD_CLS}>
-          <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
-            <h3 className={CARD_TITLE_CLS}>
-              <Swords className="w-4 h-4 opacity-70" />
-              {t.ui("teamComp.teamRoster")}
-            </h3>
-          </CardHeader>
-          <CardContent className={cn(CARD_BODY_CLS, "pt-1 2xl:pt-2")}>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {effectiveTeam.characters.map((charId, i) => {
-                if (!charId)
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center justify-center opacity-20 py-4"
-                    >
-                      <div className="w-14 h-14 rounded-full border-2 border-dashed border-border/50" />
-                    </div>
-                  );
-
-                const char = charactersById[charId];
-                const weaponId = localWeapons[i];
-                const weapon = weaponId ? weaponsById[weaponId] : null;
-                const charHasOption = getEntityOption(charId) != null;
-                const weaponHasOption =
-                  weaponId != null && getEntityOption(weaponId) != null;
-
-                const acctChar = accountData?.characters.find(
-                  (c: CharacterData) => c.key === charId
-                );
-                const charLevel =
-                  team.opts?.[`${charId}.overrideLevel`] !== undefined
-                    ? Number(team.opts[`${charId}.overrideLevel`])
-                    : acctChar
-                      ? acctChar.level > 90
-                        ? 100
-                        : 90
-                      : 90;
-                const charConst =
-                  team.opts?.[`${charId}.overrideConstellation`] !== undefined
-                    ? Number(team.opts[`${charId}.overrideConstellation`])
-                    : (acctChar?.constellation ?? 0);
-
-                let defaultRefine = 1;
-                if (weaponId && accountData) {
-                  const refinements: number[] = [];
-                  for (const c of accountData.characters) {
-                    if (c.weapon?.key === weaponId)
-                      refinements.push(c.weapon.refinement);
-                  }
-                  for (const w of accountData.extraWeapons) {
-                    if (w.key === weaponId) refinements.push(w.refinement);
-                  }
-                  if (refinements.length > 0)
-                    defaultRefine = Math.max(...refinements);
-                }
-                const weaponRefine =
-                  team.opts?.[`${charId}.overrideRefinement`] !== undefined
-                    ? Number(team.opts[`${charId}.overrideRefinement`])
-                    : defaultRefine;
-
+      <Card className={CARD_CLS}>
+        <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
+          <h3 className={CARD_TITLE_CLS}>
+            <Swords className="w-4 h-4 opacity-70" />
+            {t.ui("teamComp.teamRoster")}
+          </h3>
+        </CardHeader>
+        <CardContent className={cn(CARD_BODY_CLS, "pt-1 2xl:pt-2")}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {effectiveTeam.characters.map((charId, i) => {
+              if (!charId)
                 return (
                   <div
                     key={i}
-                    className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
+                    className="flex items-center justify-center opacity-20 py-4"
                   >
-                    {/* Row 1: Interactive icons */}
-                    <div className="flex items-end gap-1.5">
-                      <ItemPicker
-                        type="character"
-                        value={charId}
-                        triggerSize="xl"
-                        onChange={(newCharId) => {
-                          setLocalCharacters((prev) => {
-                            const next = [...prev];
-                            next[i] = newCharId;
-                            return next;
-                          });
-                          // Clear weapon if incompatible type
-                          if (localWeapons[i]) {
-                            const newChar = charactersById[newCharId];
-                            const curWeapon = weaponsById[localWeapons[i]!];
-                            if (newChar && curWeapon) {
-                              const newMeta = getCharacterDisplayMeta(
-                                newChar,
-                                characterStats?.[newCharId]
-                              );
-                              const wMeta = getWeaponDisplayMeta(
-                                curWeapon,
-                                weaponStats?.[localWeapons[i]!]
-                              );
-                              if (
-                                newMeta.weaponType &&
-                                wMeta.type &&
-                                newMeta.weaponType !== wMeta.type
-                              ) {
-                                setLocalWeapons((prev) => {
-                                  const next = [...prev];
-                                  next[i] = null;
-                                  return next;
-                                });
-                              }
-                            }
-                          }
-                        }}
-                      />
-                      <ItemPicker
-                        type="weapon"
-                        value={localWeapons[i]}
-                        triggerSize="lg"
-                        disabled={!charId}
-                        filter={(() => {
-                          if (!char) return undefined;
-                          const meta = getCharacterDisplayMeta(
-                            char,
-                            characterStats?.[charId]
-                          );
-                          if (!meta.weaponType) return undefined;
-                          const wType = meta.weaponType;
-                          return (item: unknown) => {
-                            const w = item as WeaponResource;
-                            const wMeta = getWeaponDisplayMeta(
-                              w,
-                              weaponStats?.[w.id]
-                            );
-                            return wMeta.type === wType;
-                          };
-                        })()}
-                        onChange={(newWeaponId) => {
-                          setLocalWeapons((prev) => {
-                            const next = [...prev];
-                            next[i] = newWeaponId;
-                            return next;
-                          });
-                        }}
-                      />
-                      <ItemPicker
-                        type="artifact"
-                        value={localArtifacts[i]}
-                        triggerSize="lg"
-                        disabled={!charId}
-                        onChange={(newArtifact) => {
-                          setLocalArtifacts((prev) => {
-                            const next = [...prev];
-                            next[i] = newArtifact;
-                            return next;
-                          });
-                        }}
-                      />
-                    </div>
+                    <div className="w-14 h-14 rounded-full border-2 border-dashed border-border/50" />
+                  </div>
+                );
 
-                    {/* Row 2: Name + Min. ER */}
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="font-bold text-lg text-foreground/90 ml-2">
-                        {t.character(charId)}
-                      </span>
-                      <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
-                        <span className="text-xs font-bold text-foreground/70">
-                          {t.ui("teamComp.minEr")}
-                        </span>
-                        <Input
-                          type="number"
-                          min={100}
-                          max={400}
-                          step={5}
-                          value={Math.round(
-                            (team.targetEr[charId] ?? 1.0) * 100
-                          )}
-                          onChange={(e) => {
-                            const val = Number(e.target.value) / 100;
-                            if (!Number.isNaN(val)) {
-                              updateTeam(team.id, {
-                                targetEr: {
-                                  ...team.targetEr,
-                                  [charId]: val,
-                                },
+              const char = charactersById[charId];
+              const weaponId = localWeapons[i];
+              const weapon = weaponId ? weaponsById[weaponId] : null;
+              const charHasOption = getEntityOption(charId) != null;
+              const weaponHasOption =
+                weaponId != null && getEntityOption(weaponId) != null;
+
+              const acctChar = accountData?.characters.find(
+                (c: CharacterData) => c.key === charId
+              );
+              const charLevel =
+                team.opts?.[`${charId}.overrideLevel`] !== undefined
+                  ? Number(team.opts[`${charId}.overrideLevel`])
+                  : acctChar
+                    ? acctChar.level > 90
+                      ? 100
+                      : 90
+                    : 90;
+              const charConst =
+                team.opts?.[`${charId}.overrideConstellation`] !== undefined
+                  ? Number(team.opts[`${charId}.overrideConstellation`])
+                  : (acctChar?.constellation ?? 0);
+
+              let defaultRefine = 1;
+              if (weaponId && accountData) {
+                const refinements: number[] = [];
+                for (const c of accountData.characters) {
+                  if (c.weapon?.key === weaponId)
+                    refinements.push(c.weapon.refinement);
+                }
+                for (const w of accountData.extraWeapons) {
+                  if (w.key === weaponId) refinements.push(w.refinement);
+                }
+                if (refinements.length > 0)
+                  defaultRefine = Math.max(...refinements);
+              }
+              const weaponRefine =
+                team.opts?.[`${charId}.overrideRefinement`] !== undefined
+                  ? Number(team.opts[`${charId}.overrideRefinement`])
+                  : defaultRefine;
+
+              return (
+                <div
+                  key={i}
+                  className="flex flex-col gap-2 p-3 rounded-lg bg-black/10 border border-border/10"
+                >
+                  {/* Row 1: Interactive icons */}
+                  <div className="flex items-end gap-1.5">
+                    <ItemPicker
+                      type="character"
+                      value={charId}
+                      triggerSize="xl"
+                      onChange={(newCharId) => {
+                        setLocalCharacters((prev) => {
+                          const next = [...prev];
+                          next[i] = newCharId;
+                          return next;
+                        });
+                        // Clear weapon if incompatible type
+                        if (localWeapons[i]) {
+                          const newChar = charactersById[newCharId];
+                          const curWeapon = weaponsById[localWeapons[i]!];
+                          if (newChar && curWeapon) {
+                            const newMeta = getCharacterDisplayMeta(
+                              newChar,
+                              characterStats?.[newCharId]
+                            );
+                            const wMeta = getWeaponDisplayMeta(
+                              curWeapon,
+                              weaponStats?.[localWeapons[i]!]
+                            );
+                            if (
+                              newMeta.weaponType &&
+                              wMeta.type &&
+                              newMeta.weaponType !== wMeta.type
+                            ) {
+                              setLocalWeapons((prev) => {
+                                const next = [...prev];
+                                next[i] = null;
+                                return next;
                               });
                             }
-                          }}
-                          className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <span className="text-xs font-bold text-muted-foreground mr-2">
-                          %
-                        </span>
-                      </div>
+                          }
+                        }
+                      }}
+                    />
+                    <ItemPicker
+                      type="weapon"
+                      value={localWeapons[i]}
+                      triggerSize="lg"
+                      disabled={!charId}
+                      filter={(() => {
+                        if (!char) return undefined;
+                        const meta = getCharacterDisplayMeta(
+                          char,
+                          characterStats?.[charId]
+                        );
+                        if (!meta.weaponType) return undefined;
+                        const wType = meta.weaponType;
+                        return (item: unknown) => {
+                          const w = item as WeaponResource;
+                          const wMeta = getWeaponDisplayMeta(
+                            w,
+                            weaponStats?.[w.id]
+                          );
+                          return wMeta.type === wType;
+                        };
+                      })()}
+                      onChange={(newWeaponId) => {
+                        setLocalWeapons((prev) => {
+                          const next = [...prev];
+                          next[i] = newWeaponId;
+                          return next;
+                        });
+                      }}
+                    />
+                    <ItemPicker
+                      type="artifact"
+                      value={localArtifacts[i]}
+                      triggerSize="lg"
+                      disabled={!charId}
+                      onChange={(newArtifact) => {
+                        setLocalArtifacts((prev) => {
+                          const next = [...prev];
+                          next[i] = newArtifact;
+                          return next;
+                        });
+                      }}
+                    />
+                  </div>
+
+                  {/* Row 2: Name + Min. ER */}
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="font-bold text-lg text-foreground/90 ml-2">
+                      {t.character(charId)}
+                    </span>
+                    <div className="flex items-center gap-1.5 bg-secondary/60 rounded-md px-2.5 py-1.5 border border-border/30 shrink-0">
+                      <span className="text-xs font-bold text-foreground/70">
+                        {t.ui("teamComp.minEr")}
+                      </span>
+                      <Input
+                        type="number"
+                        min={100}
+                        max={400}
+                        step={5}
+                        value={Math.round((team.targetEr[charId] ?? 1.0) * 100)}
+                        onChange={(e) => {
+                          const val = Number(e.target.value) / 100;
+                          if (!Number.isNaN(val)) {
+                            updateTeam(team.id, {
+                              targetEr: {
+                                ...team.targetEr,
+                                [charId]: val,
+                              },
+                            });
+                          }
+                        }}
+                        className="w-12 h-6 text-center text-sm font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                      <span className="text-xs font-bold text-muted-foreground mr-2">
+                        %
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Overrides */}
+                  <div className="flex items-start gap-1.5 justify-between bg-black/10 px-1.5 rounded-md border border-border/10">
+                    <div className="flex flex-col gap-1 w-full shrink pr-0.5">
+                      <span
+                        className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                        title={t.ui("teamComp.overrideLevel")}
+                      >
+                        {t.ui("teamComp.overrideLevel")}
+                      </span>
+                      <Select
+                        value={String(charLevel)}
+                        onValueChange={(v) =>
+                          handleOptionChange(`${charId}.overrideLevel`, v)
+                        }
+                      >
+                        <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="90">Lv. 90</SelectItem>
+                          <SelectItem value="100">Lv. 100</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
-                    {/* Row 3: Overrides */}
-                    <div className="flex items-start gap-1.5 justify-between bg-black/10 px-1.5 rounded-md border border-border/10">
-                      <div className="flex flex-col gap-1 w-full shrink pr-0.5">
-                        <span
-                          className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                          title={t.ui("teamComp.overrideLevel")}
-                        >
-                          {t.ui("teamComp.overrideLevel")}
-                        </span>
-                        <Select
-                          value={String(charLevel)}
-                          onValueChange={(v) =>
-                            handleOptionChange(`${charId}.overrideLevel`, v)
-                          }
-                        >
-                          <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="90">Lv. 90</SelectItem>
-                            <SelectItem value="100">Lv. 100</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/10">
+                      <span
+                        className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
+                        title={t.ui("teamComp.overrideConst")}
+                      >
+                        {t.ui("teamComp.overrideConst")}
+                      </span>
+                      <Select
+                        value={String(charConst)}
+                        onValueChange={(v) =>
+                          handleOptionChange(
+                            `${charId}.overrideConstellation`,
+                            v
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[0, 1, 2, 3, 4, 5, 6].map((c) => (
+                            <SelectItem key={c} value={String(c)}>
+                              {t.format("teamComp.constellationFormat", c)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                      <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/10">
+                    {weaponId && (
+                      <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/10">
                         <span
                           className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                          title={t.ui("teamComp.overrideConst")}
+                          title={t.ui("teamComp.overrideRefine")}
                         >
-                          {t.ui("teamComp.overrideConst")}
+                          {t.ui("teamComp.overrideRefine")}
                         </span>
                         <Select
-                          value={String(charConst)}
+                          value={String(weaponRefine)}
                           onValueChange={(v) =>
                             handleOptionChange(
-                              `${charId}.overrideConstellation`,
+                              `${charId}.overrideRefinement`,
                               v
                             )
                           }
@@ -836,430 +819,386 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {[0, 1, 2, 3, 4, 5, 6].map((c) => (
-                              <SelectItem key={c} value={String(c)}>
-                                {t.format("teamComp.constellationFormat", c)}
+                            {[1, 2, 3, 4, 5].map((r) => (
+                              <SelectItem key={r} value={String(r)}>
+                                {t.format("teamComp.refinementFormat", r)}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
-
-                      {weaponId && (
-                        <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/10">
-                          <span
-                            className="text-xs uppercase font-bold text-muted-foreground/70 px-1 line-clamp-1 break-all"
-                            title={t.ui("teamComp.overrideRefine")}
-                          >
-                            {t.ui("teamComp.overrideRefine")}
-                          </span>
-                          <Select
-                            value={String(weaponRefine)}
-                            onValueChange={(v) =>
-                              handleOptionChange(
-                                `${charId}.overrideRefinement`,
-                                v
-                              )
-                            }
-                          >
-                            <SelectTrigger className="h-6 px-1.5 text-xs w-full bg-black/20 border-border/10 focus:ring-0 [&>span]:text-center [&>span]:w-full">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[1, 2, 3, 4, 5].map((r) => (
-                                <SelectItem key={r} value={String(r)}>
-                                  {t.format("teamComp.refinementFormat", r)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Per-character combat options */}
-                    {(charHasOption || weaponHasOption) && (
-                      <div className="w-full border-t border-border/15 space-y-0">
-                        {charHasOption && renderOption(charId, false)}
-                        {weaponHasOption &&
-                          weaponId &&
-                          renderOption(weaponId, true)}
-                      </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
-            {/* Global Context Setup */}
-            <div className="pt-3 border-t border-border/10 flex flex-wrap items-center gap-y-3">
-              <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
-                {t.ui("teamComp.calcContextOptions")}
-              </span>
-              <div className="flex flex-1 justify-center items-center gap-x-8 gap-y-3 flex-wrap">
-                <div className="flex items-center gap-2 group">
-                  <span className="text-xs font-semibold text-foreground/80 select-none">
-                    {t.ui("teamComp.enemyLevel")}
-                  </span>
+
+                  {/* Per-character combat options */}
+                  {(charHasOption || weaponHasOption) && (
+                    <div className="w-full border-t border-border/15 space-y-0">
+                      {charHasOption && renderOption(charId, false)}
+                      {weaponHasOption &&
+                        weaponId &&
+                        renderOption(weaponId, true)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {/* Global Context Setup */}
+          <div className="pt-3 border-t border-border/10 flex flex-wrap items-center gap-y-3">
+            <span className="text-sm font-semibold text-foreground/80 shrink-0 w-full sm:w-auto text-center sm:text-left">
+              {t.ui("teamComp.calcContextOptions")}
+            </span>
+            <div className="flex flex-1 justify-center items-center gap-x-8 gap-y-3 flex-wrap">
+              <div className="flex items-center gap-2 group">
+                <span className="text-xs font-semibold text-foreground/80 select-none">
+                  {t.ui("teamComp.enemyLevel")}
+                </span>
+                <Input
+                  type="number"
+                  value={activeContext.enemyLevel}
+                  onChange={(e) =>
+                    updateTeam(team.id, {
+                      calcContext: {
+                        ...team.calcContext,
+                        enemyLevel: Number(e.target.value) || 100,
+                      },
+                    })
+                  }
+                  className="h-7 w-20 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0"
+                  min={1}
+                  max={150}
+                />
+              </div>
+              <div className="flex items-center gap-2 group">
+                <span className="text-xs font-semibold text-foreground/80 select-none">
+                  {t.ui("teamComp.enemyRes")}
+                </span>
+                <div className="flex items-center gap-1">
                   <Input
                     type="number"
-                    value={activeContext.enemyLevel}
+                    value={Math.round(activeContext.enemyRes * 100)}
                     onChange={(e) =>
                       updateTeam(team.id, {
                         calcContext: {
                           ...team.calcContext,
-                          enemyLevel: Number(e.target.value) || 100,
+                          enemyRes: (Number(e.target.value) || 0) / 100,
                         },
                       })
                     }
-                    className="h-7 w-20 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0"
-                    min={1}
-                    max={150}
+                    className="h-7 w-16 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
-                </div>
-                <div className="flex items-center gap-2 group">
-                  <span className="text-xs font-semibold text-foreground/80 select-none">
-                    {t.ui("teamComp.enemyRes")}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    <Input
-                      type="number"
-                      value={Math.round(activeContext.enemyRes * 100)}
-                      onChange={(e) =>
-                        updateTeam(team.id, {
-                          calcContext: {
-                            ...team.calcContext,
-                            enemyRes: (Number(e.target.value) || 0) / 100,
-                          },
-                        })
-                      }
-                      className="h-7 w-16 text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <span className="text-xs font-bold text-muted-foreground">
-                      %
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className="flex items-center gap-2 cursor-pointer group select-none"
-                  onClick={() =>
-                    updateTeam(team.id, {
-                      calcContext: {
-                        ...team.calcContext,
-                        assumeCrit: !activeContext.assumeCrit,
-                      },
-                    })
-                  }
-                >
-                  <div
-                    className={cn(
-                      "w-4 h-4 rounded appearance-none border border-border/30 flex items-center justify-center transition-colors shadow-sm cursor-pointer",
-                      activeContext.assumeCrit
-                        ? "bg-primary border-primary text-primary-foreground"
-                        : "bg-background/50"
-                    )}
-                  >
-                    {activeContext.assumeCrit && <Check className="w-3 h-3" />}
-                  </div>
-                  <span className="text-xs font-semibold text-foreground/80">
-                    {t.ui("teamComp.assumeCrit")}
+                  <span className="text-xs font-bold text-muted-foreground">
+                    %
                   </span>
                 </div>
               </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer group select-none"
+                onClick={() =>
+                  updateTeam(team.id, {
+                    calcContext: {
+                      ...team.calcContext,
+                      assumeCrit: !activeContext.assumeCrit,
+                    },
+                  })
+                }
+              >
+                <div
+                  className={cn(
+                    "w-4 h-4 rounded appearance-none border border-border/30 flex items-center justify-center transition-colors shadow-sm cursor-pointer",
+                    activeContext.assumeCrit
+                      ? "bg-primary border-primary text-primary-foreground"
+                      : "bg-background/50"
+                  )}
+                >
+                  {activeContext.assumeCrit && <Check className="w-3 h-3" />}
+                </div>
+                <span className="text-xs font-semibold text-foreground/80">
+                  {t.ui("teamComp.assumeCrit")}
+                </span>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* ══════════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════════════════
           Tabs + Card 2 — Current Equipment & Damage (collapsible)
          ══════════════════════════════════════════════════════════ */}
 
-        <div>
-          {allFormulas.length > 0 ? (
-            <FormulaTabBar
-              formulas={allFormulas}
-              selectedTab={activeTab}
-              onSelect={(charId, formulaId) =>
-                updateTeam(team.id, {
-                  selectedFormula: { charId, formulaId },
-                })
-              }
+      <div>
+        {allFormulas.length > 0 ? (
+          <FormulaTabBar
+            formulas={allFormulas}
+            selectedTab={activeTab}
+            onSelect={(charId, formulaId) =>
+              updateTeam(team.id, {
+                selectedFormula: { charId, formulaId },
+              })
+            }
+            t={t}
+          />
+        ) : (
+          buildError && (
+            <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
+              <span className="font-bold">{t.ui("teamComp.setupError")}</span>{" "}
+              {buildError}
+            </div>
+          )
+        )}
+
+        <Card className={cn(CARD_CLS, "rounded-tl-none")}>
+          <CardHeader className={CARD_HEADER_CLS}>
+            <h3 className={CARD_TITLE_CLS}>
+              <Eye className="w-4 h-4 opacity-70" />
+              {t.ui("teamComp.currentEquipAndDamage")}
+            </h3>
+          </CardHeader>
+          <CardContent className={CARD_BODY_CLS}>
+            <DamageCardBody
+              team={team}
+              hasFormula={resolvedFormula != null}
+              emptyMessage={t.ui("teamComp.emptyDamageMessage")}
+              artifactsByChar={equippedArtifactsByChar}
+              targetCharId={resolvedFormula?.charId}
+              damageValue={currentDamage?.totalDamage ?? null}
+              displayResult={currentDisplayResult}
               t={t}
             />
-          ) : (
-            buildError && (
-              <div className="bg-destructive/10 border border-destructive/50 text-destructive p-3 rounded-lg text-sm mx-1">
-                <span className="font-bold">{t.ui("teamComp.setupError")}</span>{" "}
-                {buildError}
-              </div>
-            )
-          )}
+          </CardContent>
+        </Card>
+      </div>
+      <div>
+        {allFormulas.length > 0 && (
+          <FormulaTabBar
+            formulas={allFormulas}
+            selectedTab={activeOptTab}
+            onSelect={(_charId, _formulaId) =>
+              setOptFormulaTab(`${_charId}.${_formulaId}`)
+            }
+            t={t}
+          />
+        )}
 
-          <Card className={cn(CARD_CLS, "rounded-tl-none")}>
-            <CardHeader className={CARD_HEADER_CLS}>
+        <Card
+          className={cn(CARD_CLS, allFormulas.length > 0 && "rounded-tl-none")}
+        >
+          <CardHeader className={CARD_HEADER_CLS}>
+            <div className="flex items-center justify-between w-full">
               <h3 className={CARD_TITLE_CLS}>
-                <Eye className="w-4 h-4 opacity-70" />
-                {t.ui("teamComp.currentEquipAndDamage")}
+                <Loader2
+                  className={cn(
+                    "w-4 h-4 opacity-70",
+                    isComputing && "animate-spin"
+                  )}
+                />
+                {t.ui("teamComp.optimizationResults")}
               </h3>
-            </CardHeader>
-            <CardContent className={CARD_BODY_CLS}>
+              <div className="flex items-center gap-2">
+                {/* Mode toggle */}
+                <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setOptimizeMode("single")}
+                    disabled={isComputing}
+                    className={cn(
+                      "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
+                      optimizeMode === "single"
+                        ? "bg-background shadow-sm text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <User className="w-3 h-3" />
+                    {t.ui("teamComp.singleCharOpt")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOptimizeMode("team")}
+                    disabled={isComputing}
+                    className={cn(
+                      "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
+                      optimizeMode === "team"
+                        ? "bg-background shadow-sm text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Users className="w-3 h-3" />
+                    {t.ui("teamComp.teamOpt")}
+                  </button>
+                </div>
+                <Button
+                  onClick={handleOptimize}
+                  disabled={isComputing || !resolvedOptFormula}
+                  size="sm"
+                  className="gap-1.5 font-bold px-4 shadow-md text-xs"
+                >
+                  {isComputing ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Play className="w-3.5 h-3.5" />
+                  )}
+                  {isComputing
+                    ? t.ui("teamComp.optimizing")
+                    : t.ui("teamComp.runOptimization")}
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+
+          {/* Inventory warning */}
+          {accountData &&
+            accountData.extraArtifacts.length === 0 &&
+            accountData.characters.length > 0 && (
+              <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-xs">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>{t.ui("teamComp.inventoryWarning")}</span>
+                <Link
+                  to="/account-data"
+                  className="font-bold underline underline-offset-2 hover:text-amber-300 shrink-0"
+                >
+                  {t.ui("teamComp.inventoryWarningLink")}
+                </Link>
+              </div>
+            )}
+
+          <CardContent className={CARD_BODY_CLS}>
+            {/* Empty state */}
+            {!isComputing &&
+              !optResult &&
+              !teamResult &&
+              !optError &&
+              !teamError && (
+                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <Swords className="w-8 h-8 opacity-15" />
+                  <p>{t.ui("teamComp.emptyOptMessage")}</p>
+                </div>
+              )}
+
+            {/* Error state */}
+            {(optError || teamError) && (
+              <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
+                <span className="font-bold">
+                  {t.ui("teamComp.optimizerError")}
+                </span>{" "}
+                {(optError || teamError)?.message}
+              </div>
+            )}
+
+            {/* Single mode progress bar */}
+            {singleIsComputing && (
+              <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span className="font-semibold">
+                    {optResult?.phase === "evaluating"
+                      ? t.ui("teamComp.searchingCombinations")
+                      : t.ui("teamComp.pruningCandidates")}
+                  </span>
+                  <span className="font-mono font-bold">
+                    {Math.round((optResult?.progress ?? 0) * 100)}%
+                  </span>
+                </div>
+                <Progress
+                  value={(optResult?.progress ?? 0) * 100}
+                  className="h-1.5 bg-black/40"
+                />
+                {optResult?.phase === "evaluating" && (
+                  <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
+                    {optResult.combinationsEvaluated.toLocaleString()} /{" "}
+                    {optResult.combinationsTotal.toLocaleString()}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Team mode progress */}
+            {teamIsComputing && (
+              <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+                {/* Pass info */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="font-semibold">
+                    {teamProgress
+                      ? t
+                          .ui("teamComp.passLabel")
+                          .replace("{0}", String(teamProgress.passIndex + 1))
+                          .replace("{1}", String(teamProgress.totalPasses))
+                          .replace(
+                            "{2}",
+                            `${t.character(teamProgress.currentPassCharId)} — ${
+                              teamProgress.currentPass === "carry-1"
+                                ? t.ui("teamComp.passCarryInitial")
+                                : teamProgress.currentPass === "carry-2"
+                                  ? t.ui("teamComp.passCarryRefine")
+                                  : t.ui("teamComp.passSupport")
+                            }`
+                          )
+                      : t.ui("teamComp.preparingOptimizer")}
+                  </span>
+                  <span className="font-mono font-bold">
+                    {Math.round((teamProgress?.overallProgress ?? 0) * 100)}%
+                  </span>
+                </div>
+
+                {/* Overall progress bar */}
+                <Progress
+                  value={(teamProgress?.overallProgress ?? 0) * 100}
+                  className="h-1.5 bg-black/40"
+                />
+
+                {/* Completed pass chips */}
+                {teamProgress && teamProgress.passResults.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {teamProgress.passResults.map((pr, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-semibold"
+                      >
+                        <Check className="w-2.5 h-2.5" />
+                        {t.character(pr.charId)}
+                        {" — "}
+                        {pr.passId === "carry-1"
+                          ? t.ui("teamComp.passCarryInitial")
+                          : pr.passId === "carry-2"
+                            ? t.ui("teamComp.passCarryRefine")
+                            : t.ui("teamComp.passSupport")}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Results — identical layout to Card 2 */}
+            {(optResult?.bestDamageResult || teamResult?.bestDamageResult) && (
               <DamageCardBody
                 team={team}
-                hasFormula={resolvedFormula != null}
-                emptyMessage={t.ui("teamComp.emptyDamageMessage")}
-                artifactsByChar={equippedArtifactsByChar}
-                targetCharId={resolvedFormula?.charId}
-                damageValue={currentDamage?.totalDamage ?? null}
-                displayResult={currentDisplayResult}
+                hasFormula
+                emptyMessage=""
+                artifactsByChar={optimizedArtifactsByChar}
+                targetCharId={resolvedOptFormula?.charId}
+                damageValue={optimizedDamage?.totalDamage ?? 0}
+                displayResult={optimizedDisplayResult}
                 t={t}
               />
-            </CardContent>
-          </Card>
-        </div>
-        <div>
-          {allFormulas.length > 0 && (
-            <FormulaTabBar
-              formulas={allFormulas}
-              selectedTab={activeOptTab}
-              onSelect={(_charId, _formulaId) =>
-                setOptFormulaTab(`${_charId}.${_formulaId}`)
-              }
-              t={t}
-            />
-          )}
-
-          <Card
-            className={cn(
-              CARD_CLS,
-              allFormulas.length > 0 && "rounded-tl-none"
             )}
-          >
-            <CardHeader className={CARD_HEADER_CLS}>
-              <div className="flex items-center justify-between w-full">
-                <h3 className={CARD_TITLE_CLS}>
-                  <Loader2
-                    className={cn(
-                      "w-4 h-4 opacity-70",
-                      isComputing && "animate-spin"
-                    )}
-                  />
-                  {t.ui("teamComp.optimizationResults")}
-                </h3>
-                <div className="flex items-center gap-2">
-                  {/* Mode toggle */}
-                  <div className="flex bg-secondary/50 rounded-md p-0.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setOptimizeMode("single")}
-                      disabled={isComputing}
-                      className={cn(
-                        "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
-                        optimizeMode === "single"
-                          ? "bg-background shadow-sm text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <User className="w-3 h-3" />
-                      {t.ui("teamComp.singleCharOpt")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setOptimizeMode("team")}
-                      disabled={isComputing}
-                      className={cn(
-                        "px-2.5 py-1 text-xs font-semibold rounded transition-all flex items-center gap-1",
-                        optimizeMode === "team"
-                          ? "bg-background shadow-sm text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <Users className="w-3 h-3" />
-                      {t.ui("teamComp.teamOpt")}
-                    </button>
-                  </div>
-                  <Button
-                    onClick={handleOptimize}
-                    disabled={isComputing || !resolvedOptFormula}
-                    size="sm"
-                    className="gap-1.5 font-bold px-4 shadow-md text-xs"
-                  >
-                    {isComputing ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      <Play className="w-3.5 h-3.5" />
-                    )}
-                    {isComputing
-                      ? t.ui("teamComp.optimizing")
-                      : t.ui("teamComp.runOptimization")}
-                  </Button>
-                </div>
+
+            {/* No results found */}
+            {optResult?.done && !optResult.bestDamageResult && !teamResult && (
+              <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                {t
+                  .ui("teamComp.noValidCombinations")
+                  .replace("{0}", String(Math.round(targetErRaw * 100)))}
               </div>
-            </CardHeader>
-
-            {/* Inventory warning */}
-            {accountData &&
-              accountData.extraArtifacts.length === 0 &&
-              accountData.characters.length > 0 && (
-                <div className="flex items-center gap-2 px-4 md:px-6 py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-400 text-xs">
-                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                  <span>{t.ui("teamComp.inventoryWarning")}</span>
-                  <Link
-                    to="/account-data"
-                    className="font-bold underline underline-offset-2 hover:text-amber-300 shrink-0"
-                  >
-                    {t.ui("teamComp.inventoryWarningLink")}
-                  </Link>
-                </div>
-              )}
-
-            <CardContent className={CARD_BODY_CLS}>
-              {/* Empty state */}
-              {!isComputing &&
-                !optResult &&
-                !teamResult &&
-                !optError &&
-                !teamError && (
-                  <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                    <Swords className="w-8 h-8 opacity-15" />
-                    <p>{t.ui("teamComp.emptyOptMessage")}</p>
-                  </div>
-                )}
-
-              {/* Error state */}
-              {(optError || teamError) && (
-                <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
-                  <span className="font-bold">
-                    {t.ui("teamComp.optimizerError")}
-                  </span>{" "}
-                  {(optError || teamError)?.message}
-                </div>
-              )}
-
-              {/* Single mode progress bar */}
-              {singleIsComputing && (
-                <div className="space-y-2 bg-black/15 p-3 rounded-lg border border-border/20">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span className="font-semibold">
-                      {optResult?.phase === "evaluating"
-                        ? t.ui("teamComp.searchingCombinations")
-                        : t.ui("teamComp.pruningCandidates")}
-                    </span>
-                    <span className="font-mono font-bold">
-                      {Math.round((optResult?.progress ?? 0) * 100)}%
-                    </span>
-                  </div>
-                  <Progress
-                    value={(optResult?.progress ?? 0) * 100}
-                    className="h-1.5 bg-black/40"
-                  />
-                  {optResult?.phase === "evaluating" && (
-                    <div className="text-xs text-muted-foreground font-mono text-right opacity-60">
-                      {optResult.combinationsEvaluated.toLocaleString()} /{" "}
-                      {optResult.combinationsTotal.toLocaleString()}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Team mode progress */}
-              {teamIsComputing && (
-                <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
-                  {/* Pass info */}
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="font-semibold">
-                      {teamProgress
-                        ? t
-                            .ui("teamComp.passLabel")
-                            .replace("{0}", String(teamProgress.passIndex + 1))
-                            .replace("{1}", String(teamProgress.totalPasses))
-                            .replace(
-                              "{2}",
-                              `${t.character(teamProgress.currentPassCharId)} — ${
-                                teamProgress.currentPass === "carry-1"
-                                  ? t.ui("teamComp.passCarryInitial")
-                                  : teamProgress.currentPass === "carry-2"
-                                    ? t.ui("teamComp.passCarryRefine")
-                                    : t.ui("teamComp.passSupport")
-                              }`
-                            )
-                        : t.ui("teamComp.preparingOptimizer")}
-                    </span>
-                    <span className="font-mono font-bold">
-                      {Math.round((teamProgress?.overallProgress ?? 0) * 100)}%
-                    </span>
-                  </div>
-
-                  {/* Overall progress bar */}
-                  <Progress
-                    value={(teamProgress?.overallProgress ?? 0) * 100}
-                    className="h-1.5 bg-black/40"
-                  />
-
-                  {/* Completed pass chips */}
-                  {teamProgress && teamProgress.passResults.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {teamProgress.passResults.map((pr, idx) => (
-                        <span
-                          key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-semibold"
-                        >
-                          <Check className="w-2.5 h-2.5" />
-                          {t.character(pr.charId)}
-                          {" — "}
-                          {pr.passId === "carry-1"
-                            ? t.ui("teamComp.passCarryInitial")
-                            : pr.passId === "carry-2"
-                              ? t.ui("teamComp.passCarryRefine")
-                              : t.ui("teamComp.passSupport")}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Results — identical layout to Card 2 */}
-              {(optResult?.bestDamageResult ||
-                teamResult?.bestDamageResult) && (
-                <DamageCardBody
-                  team={team}
-                  hasFormula
-                  emptyMessage=""
-                  artifactsByChar={optimizedArtifactsByChar}
-                  targetCharId={resolvedOptFormula?.charId}
-                  damageValue={optimizedDamage?.totalDamage ?? 0}
-                  displayResult={optimizedDisplayResult}
-                  t={t}
-                />
-              )}
-
-              {/* No results found */}
-              {optResult?.done &&
-                !optResult.bestDamageResult &&
-                !teamResult && (
-                  <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                    {t
-                      .ui("teamComp.noValidCombinations")
-                      .replace("{0}", String(Math.round(targetErRaw * 100)))}
-                  </div>
-                )}
-              {teamResult?.done && !teamResult.bestDamageResult && (
-                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                  {t
-                    .ui("teamComp.noValidCombinations")
-                    .replace("{0}", String(Math.round(targetErRaw * 100)))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            )}
+            {teamResult?.done && !teamResult.bestDamageResult && (
+              <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                {t
+                  .ui("teamComp.noValidCombinations")
+                  .replace("{0}", String(Math.round(targetErRaw * 100)))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    );
-  } catch (e: unknown) {
-    // Try-catch block specifically to catch pure render-phase crashes
-    // Use queueMicrotask to avoid React "cannot update during render" warning
-    queueMicrotask(() => {
-      setRenderError(e instanceof Error ? e.stack || e.message : String(e));
-    });
-    return null;
-  }
+    </div>
+  );
 }

@@ -1,4 +1,4 @@
-import type { Element } from "@/data/types";
+import type { Element, ReactionType } from "@/data/types";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
@@ -43,57 +43,31 @@ class Durin extends CharacterBase {
 
     if (isWhite) {
       // P1 (White Flame): Pyro RES -20% (×hexMult) + corresponding reaction element RES
-      const canPyroReact =
-        this.teamMeta.hasReaction("vaporize") ||
-        this.teamMeta.hasReaction("melt") ||
-        this.teamMeta.hasReaction("overloaded") ||
-        this.teamMeta.hasReaction("burning") ||
-        this.teamMeta.hasReaction("burgeon") ||
-        this.teamMeta.hasReaction("swirl") ||
-        this.teamMeta.hasReaction("crystallize");
-
-      if (canPyroReact) {
-        const p1Src = cbs(this, "P1", [
-          "Q",
-          "vaporize",
-          "melt",
-          "overloaded",
-          "burning",
-          "burgeon",
-          "swirl",
-          "crystallize",
-        ]);
-        const p1Val = 0.2 * hexMult;
-        // Always add Pyro RES reduction
+      const p1Val = 0.2 * hexMult;
+      const reactionEls: [ReactionType, Element][] = [
+        ["vaporize", "Hydro"],
+        ["melt", "Cryo"],
+        ["overloaded", "Electro"],
+        ["burning", "Dendro"],
+        ["burgeon", "Dendro"],
+        ["swirl", "Anemo"],
+        ["crystallize", "Geo"],
+      ];
+      const triggers: string[] = ["Q"];
+      const elements: Element[] = ["Pyro"];
+      for (const [reaction, el] of reactionEls) {
+        if (!this.teamMeta.hasReaction(reaction)) continue;
+        if (!triggers.includes(reaction)) triggers.push(reaction);
+        if (!elements.includes(el)) elements.push(el);
+      }
+      if (triggers.length > 1) {
         buffs.push(
           new StatBuff(
-            p1Src,
-            { receiver: "team", filter: { elements: ["Pyro"] } },
+            cbs(this, "P1", triggers),
+            { receiver: "team", filter: { elements } },
             [{ key: "resReduction%", value: p1Val }]
           )
         );
-        // Add corresponding reaction element RES reduction per team element
-        const teamEls = Object.values(this.teamMeta.elements);
-        const pyroReactionEls: Array<[Element, ...Element[]]> = [
-          // Hydro for Vaporize, Cryo for Melt, Electro for Overloaded,
-          // Dendro for Burning, Anemo for Pyro Swirl, Geo for Pyro Crystallize
-          ["Hydro"],
-          ["Cryo"],
-          ["Electro"],
-          ["Dendro"],
-          ["Anemo"],
-          ["Geo"],
-        ];
-        for (const [el] of pyroReactionEls) {
-          if (!teamEls.includes(el)) continue;
-          buffs.push(
-            new StatBuff(
-              p1Src,
-              { receiver: "team", filter: { elements: [el] } },
-              [{ key: "resReduction%", value: p1Val }]
-            )
-          );
-        }
       }
     } else {
       // P1 (Dark Decay): Vaporize/Melt DMG +40% (×hexMult)

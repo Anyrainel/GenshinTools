@@ -263,6 +263,8 @@ export default function ArtifactBuildsPage() {
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
+      onClearData={useBuildsStore.getState().clearAll}
+      clearLabel={t.ui("common.clearBuilds")}
     >
       <BuildsDefaultPresetPrompt />
 

@@ -65,6 +65,8 @@ export const AccountImportControl = forwardRef<
   );
   const [clearData, setClearData] = useState(false);
 
+  const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
+
   useEffect(() => {
     if (initialUid) {
       setUidInput(initialUid);
@@ -112,7 +114,7 @@ export const AccountImportControl = forwardRef<
   };
 
   const handleUidImport = async () => {
-    if (!uidInput) return;
+    if (!uidInput || !isValidUid(uidInput)) return;
 
     setIsBusy(true);
     setErrorMessage(null);
@@ -215,32 +217,45 @@ export const AccountImportControl = forwardRef<
             </div>
 
             {/* Upload button */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <input
-                type="text"
-                placeholder={
-                  t.ui("import.optionalUidPlaceholder") || "Optional UID"
-                }
-                value={localUidInput}
-                onChange={(e) => setLocalUidInput(e.target.value)}
-                className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isBusy}
-              />
-              <Button
-                size="sm"
-                className="gap-2 shrink-0 flex-grow sm:flex-1 relative overflow-hidden"
-                disabled={isBusy}
-              >
-                <Upload className="w-4 h-4" />
-                {t.ui("import.goodFileButton")}
+            <div className="mt-3 flex flex-col gap-1.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleLocalImport}
-                  className="absolute inset-0 opacity-0 cursor-pointer"
+                  type="text"
+                  placeholder={
+                    t.ui("import.optionalUidPlaceholder") || "Optional UID"
+                  }
+                  value={localUidInput}
+                  onChange={(e) => setLocalUidInput(e.target.value)}
+                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isBusy}
                 />
-              </Button>
+                <Button
+                  size="sm"
+                  className="gap-2 shrink-0 flex-grow sm:flex-1 relative overflow-hidden"
+                  disabled={
+                    isBusy ||
+                    (!!localUidInput.trim() && !isValidUid(localUidInput))
+                  }
+                >
+                  <Upload className="w-4 h-4" />
+                  {t.ui("import.goodFileButton")}
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleLocalImport}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    disabled={
+                      isBusy ||
+                      (!!localUidInput.trim() && !isValidUid(localUidInput))
+                    }
+                  />
+                </Button>
+              </div>
+              {localUidInput.trim() && !isValidUid(localUidInput) && (
+                <p className="text-xs text-destructive">
+                  {t.ui("import.uidInvalid")}
+                </p>
+              )}
             </div>
           </div>
 
@@ -262,43 +277,50 @@ export const AccountImportControl = forwardRef<
             </div>
 
             {/* UID input row */}
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <input
-                type="text"
-                placeholder={t.ui("import.uidPlaceholder") || "UID"}
-                value={uidInput}
-                onChange={(e) => setUidInput(e.target.value)}
-                className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isBusy}
-                onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
-              />
-              <div className="flex items-center space-x-1.5 shrink-0">
-                <Checkbox
-                  id="clearData"
-                  checked={clearData}
-                  onCheckedChange={(c) => setClearData(c as boolean)}
+            <div className="flex flex-col gap-1.5 mt-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  placeholder={t.ui("import.uidPlaceholder") || "UID"}
+                  value={uidInput}
+                  onChange={(e) => setUidInput(e.target.value)}
+                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isBusy}
+                  onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
                 />
-                <Label
-                  htmlFor="clearData"
-                  className="text-[10px] sm:text-xs font-normal text-muted-foreground cursor-pointer whitespace-nowrap"
+                <div className="flex items-center space-x-1.5 shrink-0">
+                  <Checkbox
+                    id="clearData"
+                    checked={clearData}
+                    onCheckedChange={(c) => setClearData(c as boolean)}
+                    disabled={isBusy}
+                  />
+                  <Label
+                    htmlFor="clearData"
+                    className="text-[10px] sm:text-xs font-normal text-muted-foreground cursor-pointer whitespace-nowrap"
+                  >
+                    {t.ui("import.clearBeforeImport")}
+                  </Label>
+                </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={handleUidImport}
+                  disabled={!uidInput || !isValidUid(uidInput) || isBusy}
+                  className="flex-grow sm:flex-1 lg:ml-6"
                 >
-                  {t.ui("import.clearBeforeImport")}
-                </Label>
+                  {isBusy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    t.ui("import.action")
+                  )}
+                </Button>
               </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={handleUidImport}
-                disabled={!uidInput || isBusy}
-                className="flex-grow sm:flex-1 lg:ml-6"
-              >
-                {isBusy ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  t.ui("import.action")
-                )}
-              </Button>
+              {uidInput.trim() && !isValidUid(uidInput) && (
+                <p className="text-xs text-destructive">
+                  {t.ui("import.uidInvalid")}
+                </p>
+              )}
             </div>
           </div>
         </div>

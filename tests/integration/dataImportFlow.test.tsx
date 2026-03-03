@@ -97,9 +97,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
 
     // Step 2: Populate account store
     act(() => {
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("default", { uid: "", data });
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
     });
 
     // Verify store state
@@ -113,9 +111,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
     // Setup: Import data to store
     const { data } = convertGOODToAccountData(integrationGOODData);
     act(() => {
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("default", { uid: "", data });
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
     });
 
     const character =
@@ -135,9 +131,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
     // Setup: Full import flow
     const { data } = convertGOODToAccountData(integrationGOODData);
     act(() => {
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("default", { uid: "", data });
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
     });
 
     const character =
@@ -181,9 +175,7 @@ describe("Integration: Data Import to Character Display Flow", () => {
 
     // Initial import
     act(() => {
-      useAccountStore
-        .getState()
-        .addOrUpdateAccount("default", { uid: "", data });
+      useAccountStore.getState().addOrUpdateAccount("default", { data });
     });
 
     const initialCharacter =

@@ -69,6 +69,15 @@ The `src/lib/team-comp/` module implements a full damage calculation pipeline:
 4. **Optimizer** (`optimizer.ts`): Artifact assignment optimizer that maximizes total team damage.
 5. **Stat resolution**: Idle → Combat stat pipeline with weapon, artifact, ascension, and buff contributions.
 
+## Cloudflare Functions (CORS Proxy)
+
+The `functions/` directory contains Cloudflare Pages Functions that run on the edge. Currently used as a CORS proxy for the Enka.Network API:
+
+- **Route**: `functions/api/enka/[[path]].ts` — catch-all handler that proxies `/api/enka/*` → `https://enka.network/api/*`
+- **Purpose**: Bypass CORS restrictions when fetching player data from Enka.Network
+- **Frontend caller**: `src/lib/account-data/enkaFetcher.ts` — calls `fetch("/api/enka/uid/<uid>")` when running on Cloudflare Pages (ggartifact.com, *.pages.dev) or localhost:8788 (Wrangler). Falls back to `corsproxy.io` on other hosts (e.g. GitHub Pages).
+- **Dev**: `npm run dev` starts Vite + Wrangler together so Functions are available locally on port 8788. `npm run dev:vite` skips Wrangler (Functions unavailable, fallback proxy used).
+
 ## Commands
 
 - `npm run dev` — Vite + Wrangler dev server (Cloudflare Functions proxy)
