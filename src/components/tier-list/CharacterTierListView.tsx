@@ -247,14 +247,14 @@ export function CharacterTierListView({
     const actions: ActionConfig[] = [
       {
         key: "import",
-        icon: Upload,
+        icon: Download,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
-        icon: Download,
+        icon: Upload,
         label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
         tourStepId: "tl-export",

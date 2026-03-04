@@ -152,6 +152,7 @@ export function AppBar({
   const collapsibleActions = actions?.filter((a) => !a.alwaysShow) ?? [];
   const hasCollapsibleActions = collapsibleActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
+  const isHomePage = location.pathname === "/";
 
   // Explicit theme labels for static analysis
   const getThemeLabel = (themeId: ThemeId) => {
@@ -352,8 +353,8 @@ export function AppBar({
             {/* Legacy actions support */}
             {legacyActions}
 
-            {/* Mobile "More" Menu - contains collapsible actions + theme/language */}
-            <div className="md:hidden">
+            {/* "More" Menu - hidden on home page; on mobile for other pages; always on non-home desktop (theme/language folded) */}
+            {!isHomePage && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon">
@@ -363,17 +364,19 @@ export function AppBar({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {/* Collapsible actions in dropdown on mobile */}
-                  {collapsibleActions.map((action) => (
-                    <DropdownMenuItem
-                      key={action.key}
-                      onClick={action.onTrigger}
-                      className="gap-2"
-                    >
-                      <action.icon className="w-4 h-4" />
-                      {action.label}
-                    </DropdownMenuItem>
-                  ))}
-                  {hasCollapsibleActions && <DropdownMenuSeparator />}
+                  <div className="md:hidden">
+                    {collapsibleActions.map((action) => (
+                      <DropdownMenuItem
+                        key={action.key}
+                        onClick={action.onTrigger}
+                        className="gap-2"
+                      >
+                        <action.icon className="w-4 h-4" />
+                        {action.label}
+                      </DropdownMenuItem>
+                    ))}
+                    {hasCollapsibleActions && <DropdownMenuSeparator />}
+                  </div>
 
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="gap-2">
@@ -433,44 +436,47 @@ export function AppBar({
                   </DropdownMenuSub>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
+            )}
 
-            {/* Desktop Theme/Language Switchers */}
-            <div className="hidden md:flex items-center gap-2 2xl:pr-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-9 gap-2 pt-1.5 pb-2.5">
-                    <Palette className="w-4 h-4" />
-                    <span className="hidden sm:inline">
-                      {t.ui("theme.switcherButton")}
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-0">
-                  {THEME_IDS.map((themeId: ThemeId) => (
-                    <DropdownMenuItem
-                      key={themeId}
-                      onClick={() => setTheme(themeId)}
-                      className="gap-2"
+            {/* Theme/Language Switchers - always visible on home page */}
+            {isHomePage && (
+              <div className="flex items-center gap-2 2xl:pr-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-9 gap-2 pt-1.5 pb-2.5"
                     >
-                      {theme === themeId && <Check className="w-4 h-4" />}
-                      {theme !== themeId && <span className="w-4" />}
-                      {getThemeLabel(themeId)}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <Palette className="w-4 h-4" />
+                      <span>{t.ui("theme.switcherButton")}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="min-w-0">
+                    {THEME_IDS.map((themeId: ThemeId) => (
+                      <DropdownMenuItem
+                        key={themeId}
+                        onClick={() => setTheme(themeId)}
+                        className="gap-2"
+                      >
+                        {theme === themeId && <Check className="w-4 h-4" />}
+                        {theme !== themeId && <span className="w-4" />}
+                        {getThemeLabel(themeId)}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-              <Button
-                variant="outline"
-                className="h-9 gap-2 pt-1.5 pb-2.5"
-                type="button"
-                onClick={toggleLanguage}
-              >
-                <Languages className="w-4 h-4" />
-                {language === "en" ? "中文" : "EN"}
-              </Button>
-            </div>
+                <Button
+                  variant="outline"
+                  className="h-9 gap-2 pt-1.5 pb-2.5"
+                  type="button"
+                  onClick={toggleLanguage}
+                >
+                  <Languages className="w-4 h-4" />
+                  {language === "en" ? "中文" : "EN"}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </header>

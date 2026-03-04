@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/drawer"
 import { useLanguage } from "@/contexts/LanguageContext"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
-import { Filter, Settings, Sparkles, Upload, Users, Wrench } from "lucide-react"
+import { Download, Filter, Settings, Sparkles, Users, Wrench } from "lucide-react"
 
 function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["t"]) {
     const parts = content.split(/({[^}]+})/g);
@@ -37,7 +37,7 @@ function renderGuideContent(content: string, t: ReturnType<typeof useLanguage>["
 
                     switch (key) {
                         case "import":
-                            icon = <Upload className="size-3.5 mr-1" />;
+                            icon = <Download className="size-3.5 mr-1" />;
                             label = t.ui("import.action");
                             break;
                         case "customize":
@@ -267,9 +267,10 @@ function TourOverlay({
                     element: Element
                 }[] = []
 
-                Array.from(elements).forEach((element) => {
+                // Only highlight the first visible matching element
+                for (const element of Array.from(elements)) {
                     const rect = element.getBoundingClientRect()
-                    if (rect.width === 0 && rect.height === 0) return
+                    if (rect.width === 0 && rect.height === 0) continue
 
                     const style = window.getComputedStyle(element)
                     const radius = Number(style.borderRadius) || 4
@@ -289,7 +290,8 @@ function TourOverlay({
                         radius,
                         element,
                     })
-                })
+                    break
+                }
 
                 setTargets(
                     validElements.map(({ rect, radius }) => ({ rect, radius }))
@@ -339,7 +341,18 @@ function TourOverlay({
     }, [])
 
     if (!document) return null
-    if (targets.length === 0) return null
+
+    const defaultRect = {
+        top: window.innerHeight / 2,
+        left: window.innerWidth / 2,
+        width: 0,
+        height: 0,
+        bottom: window.innerHeight / 2,
+        right: window.innerWidth / 2,
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+        toJSON: () => {},
+    }
 
     return createPortal(
         <div className="fixed inset-0 z-[100]">
@@ -386,26 +399,15 @@ function TourOverlay({
                     )
                 })}
             </svg>
-            {targets.length > 0 && (
-                <Popover key={step.id} open={true}>
-                    <PopoverAnchor
-                        virtualRef={{
-                            current: {
-                                getBoundingClientRect: () =>
-                                    targets[0]?.rect || {
-                                        top: 0,
-                                        left: 0,
-                                        width: 0,
-                                        height: 0,
-                                        bottom: 0,
-                                        right: 0,
-                                        x: 0,
-                                        y: 0,
-                                        toJSON: () => {},
-                                    },
-                            },
-                        }}
-                    />
+            <Popover key={step.id} open={true}>
+                <PopoverAnchor
+                    virtualRef={{
+                        current: {
+                            getBoundingClientRect: () =>
+                                targets[0]?.rect || defaultRect,
+                        },
+                    }}
+                />
                     <PopoverContent
                         className={cn("p-0 z-[101]", step.className)}
                         side={step.side}
@@ -490,7 +492,6 @@ function TourOverlay({
                         </div>
                     </PopoverContent>
                 </Popover>
-            )}
         </div>,
         document.body
     )

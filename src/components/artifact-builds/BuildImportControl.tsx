@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { BuildPayloadV5, PresetOption } from "@/data/types";
-import { Copy, FileJson, Layers, Loader2, Upload } from "lucide-react";
+import { Copy, Download, FileJson, Layers, Loader2 } from "lucide-react";
 import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 
 interface BuildImportControlProps {
@@ -184,7 +184,7 @@ function BuildImportControlInner(
               className="gap-2 w-full relative overflow-hidden"
               disabled={isBusy}
             >
-              <Upload className="w-4 h-4" />
+              <Download className="w-4 h-4" />
               {t.ui("import.fromFile")}
               <input
                 type="file"

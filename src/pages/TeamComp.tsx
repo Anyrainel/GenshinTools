@@ -222,7 +222,7 @@ export default function TeamCompPage() {
       actions={[
         {
           key: "import",
-          icon: Upload,
+          icon: Download,
           label: t.ui("import.action"),
           alwaysShow: true,
           tourStepId: "tc-import",
@@ -230,7 +230,7 @@ export default function TeamCompPage() {
         },
         {
           key: "export",
-          icon: Download,
+          icon: Upload,
           label: t.ui("export.action"),
           onTrigger: () => exportRef.current?.open(),
         },

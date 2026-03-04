@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { Upload } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 
 import type { ControlHandle } from "@/components/layout/AppBar";
@@ -204,7 +204,7 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
               {t.ui("common.cancel")}
             </Button>
             <Button onClick={handleExport} className="gap-2">
-              <Download className="w-4 h-4" />
+              <Upload className="w-4 h-4" />
               {shared.confirmAction}
             </Button>
           </DialogFooter>

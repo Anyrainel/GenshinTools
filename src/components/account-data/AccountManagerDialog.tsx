@@ -11,7 +11,7 @@ import type { PendingImport } from "@/lib/account-data/importRouting";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
-import { Check, Edit2, Plus, Trash2, User } from "lucide-react";
+import { Check, Download, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export type { PendingImport };
@@ -367,7 +367,7 @@ export function AccountManagerDialog({
                 onOpenImportControl();
               }}
             >
-              <Plus className="w-4 h-4" />
+              <Download className="w-4 h-4" />
               {t.ui("accountData.addProfile")}
             </Button>
           )}

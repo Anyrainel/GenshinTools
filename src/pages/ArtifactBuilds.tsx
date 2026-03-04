@@ -231,7 +231,7 @@ export default function ArtifactBuildsPage() {
     return [
       {
         key: "import",
-        icon: Upload,
+        icon: Download,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
@@ -239,7 +239,7 @@ export default function ArtifactBuildsPage() {
       },
       {
         key: "export",
-        icon: Download,
+        icon: Upload,
         label: t.ui("export.action"),
         onTrigger: handleExportTrigger,
       },

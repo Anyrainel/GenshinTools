@@ -59,8 +59,8 @@ import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import {
   AlertTriangle,
   Database,
+  Download,
   HelpCircle,
-  Upload,
   Users,
   X,
 } from "lucide-react";
@@ -99,7 +99,7 @@ const NoDataPlaceholder = ({
           size="lg"
           className="w-full gap-2 text-base shadow-lg shadow-primary/10 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
-          <Upload className="w-5 h-5" />
+          <Download className="w-5 h-5" />
           {t.ui("import.action")}
         </Button>
       </div>
@@ -441,7 +441,7 @@ export default function AccountDataPage() {
       },
       {
         key: "import",
-        icon: Upload,
+        icon: Download,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         tourStepId: "ad-import",

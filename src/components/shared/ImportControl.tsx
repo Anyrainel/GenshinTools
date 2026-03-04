@@ -1,4 +1,4 @@
-import { Layers, Loader2, Upload } from "lucide-react";
+import { Download, Layers, Loader2 } from "lucide-react";
 import {
   forwardRef,
   useCallback,
@@ -234,7 +234,7 @@ function ImportControlInner<T>(
                 className="gap-2 w-full relative overflow-hidden"
                 disabled={isBusy}
               >
-                <Upload className="w-4 h-4" />
+                <Download className="w-4 h-4" />
                 {messages.importFromFile}
                 <input
                   type="file"

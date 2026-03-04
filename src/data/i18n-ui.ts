@@ -224,14 +224,14 @@ export const i18nUiData = {
       zh: "切换、重命名或删除您的账号配置。",
     },
     createNewProfile: { en: "Create New Profile", zh: "创建新配置" },
-    addProfile: { en: "Add Profile", zh: "添加配置" },
+    addProfile: { en: "Import Data", zh: "导入数据" },
     willBeAssigned: {
       en: "will be assigned to this profile",
       zh: "将绑定到此配置",
     },
     createProfile: { en: "Create Profile", zh: "创建配置" },
     defaultAccount: { en: "Default Account", zh: "默认账号" },
-    accounts: { en: "Switch Account", zh: "切换账号" },
+    accounts: { en: "Accounts", zh: "账号管理" },
     account: { en: "Account", zh: "账号" },
     noCharactersMatchFilters: {
       en: "No characters match your filters",
