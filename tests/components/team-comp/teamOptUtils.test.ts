@@ -100,6 +100,39 @@ describe("detectEquippedSets", () => {
     expect(result.artifactSetId).toBeNull();
     expect(result.artifactHalfSetIds).toEqual([]);
   });
+
+  it("detects single 2pc from partial artifacts (3 pieces)", () => {
+    const arts = [
+      makeArtifact(CW, "flower"),
+      makeArtifact(CW, "plume"),
+      makeArtifact(GL, "sands"),
+    ];
+    const result = detectEquippedSets(arts);
+    expect(result.artifactSetId).toBeNull();
+    // Single 2pc detected — length 1
+    expect(result.artifactHalfSetIds).toHaveLength(1);
+  });
+
+  it("handles null/undefined entries in array", () => {
+    const arts = [
+      makeArtifact(CW, "flower"),
+      null,
+      undefined,
+      makeArtifact(CW, "sands"),
+    ];
+    const result = detectEquippedSets(
+      arts as (ArtifactData | null | undefined)[]
+    );
+    expect(result.artifactSetId).toBeNull();
+    expect(result.artifactHalfSetIds).toHaveLength(1);
+  });
+
+  it("returns no bonuses when only 1 piece of each set", () => {
+    const arts = [makeArtifact(CW, "flower"), makeArtifact(GL, "plume")];
+    const result = detectEquippedSets(arts);
+    expect(result.artifactSetId).toBeNull();
+    expect(result.artifactHalfSetIds).toEqual([]);
+  });
 });
 
 // ── setsMatch ──────────────────────────────────────────────────────────────
@@ -342,5 +375,61 @@ describe("buildTeamConfigs", () => {
     };
     const configs = buildTeamConfigs(team, null);
     expect(configs[0].weaponId).toBe("dull_blade");
+  });
+
+  it("falls back to goal sets when only a single 2pc is equipped (partial artifacts)", () => {
+    // Character has only 3 artifacts, forming a single 2pc — should fall back
+    // to the 4pc CW goal rather than using the incomplete single-2pc detection.
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({
+          key: "hu_tao",
+          artifacts: {
+            flower: createArtifactData({ setKey: CW, slotKey: "flower" }),
+            plume: createArtifactData({ setKey: CW, slotKey: "plume" }),
+            sands: createArtifactData({ setKey: GL, slotKey: "sands" }),
+          },
+        }),
+      ],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    // Goal for hu_tao is 4pc CW — should fall back since single 2pc is incomplete
+    expect(configs[0].artifactSetId).toBe(CW);
+    expect(configs[0].artifactHalfSetIds).toEqual([]);
+  });
+
+  it("falls back to goal sets when character has 0 artifacts", () => {
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({
+          key: "hu_tao",
+          artifacts: {},
+        }),
+      ],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    expect(configs[0].artifactSetId).toBe(CW);
+    expect(configs[0].artifactHalfSetIds).toEqual([]);
+  });
+
+  it("uses detected 2+2pc when equipped artifacts form a complete 2+2", () => {
+    const acct = createAccountData({
+      characters: [
+        createCharacterData({
+          key: "hu_tao",
+          artifacts: {
+            flower: createArtifactData({ setKey: CW, slotKey: "flower" }),
+            plume: createArtifactData({ setKey: CW, slotKey: "plume" }),
+            sands: createArtifactData({ setKey: GL, slotKey: "sands" }),
+            goblet: createArtifactData({ setKey: GL, slotKey: "goblet" }),
+            circlet: createArtifactData({ setKey: WT, slotKey: "circlet" }),
+          },
+        }),
+      ],
+    });
+    const configs = buildTeamConfigs(baseTeam, acct);
+    // Should detect equipped 2+2pc, NOT fall back to goal 4pc CW
+    expect(configs[0].artifactSetId).toBeNull();
+    expect(configs[0].artifactHalfSetIds).toHaveLength(2);
   });
 });

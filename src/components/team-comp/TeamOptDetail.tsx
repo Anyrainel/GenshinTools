@@ -11,13 +11,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import {
+  artifactHalfSetsById,
+  charactersById,
+  weaponsById,
+} from "@/data/constants";
 import type {
   ArtifactData,
   CharacterData,
   Slot,
   WeaponResource,
 } from "@/data/types";
+import { useAsyncIdealGen } from "@/hooks/useAsyncIdealGen";
 import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -391,8 +396,32 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       };
     }
 
+    // Build optimizer-specific TeamBuild with goal sets instead of detected
+    // equipped sets. This ensures the optimizer evaluates damage with the
+    // correct set bonuses (e.g. 4pc goal) even when the user's currently
+    // equipped artifacts only form a partial set (e.g. single 2pc).
+    const optimizerConfigs = configs.map((c) => {
+      const { goalSetId, goalHalfSetIds } = getGoalSets(c.charId);
+      if (goalSetId || goalHalfSetIds.length > 0) {
+        return {
+          ...c,
+          artifactSetId: goalSetId,
+          artifactHalfSetIds: goalHalfSetIds,
+        };
+      }
+      return c;
+    });
+
+    let optTeamBuild: TeamBuild;
+    try {
+      optTeamBuild = new TeamBuild(optimizerConfigs, team.opts || {});
+    } catch {
+      // Fall back to shared teamBuild if goal-set construction fails
+      optTeamBuild = teamBuild;
+    }
+
     startTeamOpt({
-      teamBuild,
+      teamBuild: optTeamBuild,
       carryCharId,
       formulaId,
       inventory: getInventory(),
@@ -487,6 +516,158 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     resolvedOptFormula,
     optArtifactSheets,
     hasOptResult,
+    displayContext,
+  ]);
+
+  // ─── Ideal Artifact Generator (dev only) ───
+
+  const [idealFormulaTab, setIdealFormulaTab] = useState<string | null>(null);
+  const [idealCritTarget, setIdealCritTarget] = useState<number | undefined>(
+    undefined
+  );
+  const [idealRollMult, setIdealRollMult] = useState(0.85);
+
+  const {
+    result: idealResult,
+    isComputing: idealComputing,
+    error: idealError,
+    start: startIdealGen,
+    stop: stopIdealGen,
+  } = useAsyncIdealGen();
+
+  useEffect(() => {
+    return () => {
+      stopIdealGen();
+    };
+  }, [stopIdealGen]);
+
+  const resolvedIdealFormula = useMemo(() => {
+    if (!idealFormulaTab) return allFormulas[0] ?? null;
+    const match = allFormulas.find(
+      (f) => `${f.charId}.${f.formulaId}` === idealFormulaTab
+    );
+    return match ?? allFormulas[0] ?? null;
+  }, [idealFormulaTab, allFormulas]);
+
+  const activeIdealTab = resolvedIdealFormula
+    ? `${resolvedIdealFormula.charId}.${resolvedIdealFormula.formulaId}`
+    : "";
+
+  const handleGenerateIdeal = () => {
+    if (!teamBuild || !resolvedIdealFormula) return;
+    const idealContext: CalcContext = {
+      ...activeContext,
+      critRateTarget: idealCritTarget,
+    };
+
+    // Build per-char, per-slot set keys for proper artifact icon rendering
+    const setKeysByChar: Record<string, Record<Slot, string>> = {};
+    for (let i = 0; i < effectiveTeam.characters.length; i++) {
+      const cid = effectiveTeam.characters[i];
+      if (!cid) continue;
+      const artConfig = effectiveTeam.artifacts[i];
+      if (!artConfig) continue;
+
+      if (artConfig.type === "4pc") {
+        const sk = artConfig.setId;
+        setKeysByChar[cid] = {
+          flower: sk,
+          plume: sk,
+          sands: sk,
+          goblet: sk,
+          circlet: sk,
+        };
+      } else if (artConfig.type === "2pc+2pc") {
+        const hs1 = artifactHalfSetsById[String(artConfig.id1)];
+        const hs2 = artifactHalfSetsById[String(artConfig.id2)];
+        const sk1 = hs1?.setIds[0] ?? "ideal";
+        const sk2 = hs2?.setIds[0] ?? "ideal";
+        setKeysByChar[cid] = {
+          flower: sk1,
+          plume: sk1,
+          sands: sk1,
+          goblet: sk2,
+          circlet: sk2,
+        };
+      }
+    }
+
+    startIdealGen({
+      teamBuild,
+      carryCharId: resolvedIdealFormula.charId,
+      formulaId: resolvedIdealFormula.formulaId,
+      calcContext: idealContext,
+      setKeysByChar,
+      rollMultiplier: idealRollMult,
+    });
+  };
+
+  const idealArtifactsByChar = useMemo(() => {
+    if (!idealResult?.done || !idealResult.artifactsByChar)
+      return equippedArtifactsByChar;
+    const map = { ...equippedArtifactsByChar };
+    for (const [charId, arts] of Object.entries(idealResult.artifactsByChar)) {
+      map[charId] = arts as Record<string, ArtifactData>;
+    }
+    return map;
+  }, [idealResult, equippedArtifactsByChar]);
+
+  const idealArtifactSheets = useMemo(() => {
+    const sheets: Record<string, StatSheet> = {};
+    for (const charId of effectiveTeam.characters) {
+      if (!charId) continue;
+      const artifacts = Object.values(idealArtifactsByChar[charId] || {});
+      sheets[charId] = StatSheet.fromArtifacts(artifacts);
+    }
+    return sheets;
+  }, [idealArtifactsByChar, effectiveTeam.characters]);
+
+  const idealDisplayDamage = useMemo(() => {
+    if (!teamBuild || !resolvedIdealFormula || !idealResult?.done) return null;
+    try {
+      const { charId, formulaId } = resolvedIdealFormula;
+      const formulas = teamBuild.getFormulaIds()[charId];
+      if (!formulas || !formulas[formulaId]) return null;
+      const postStats = teamBuild.getTeamStats(idealArtifactSheets, charId);
+      return teamBuild.getDamageResult(
+        charId,
+        formulaId,
+        postStats,
+        displayContext
+      );
+    } catch (e) {
+      console.error("Ideal damage calc failed:", e);
+      return null;
+    }
+  }, [
+    teamBuild,
+    resolvedIdealFormula,
+    idealArtifactSheets,
+    idealResult?.done,
+    displayContext,
+  ]);
+
+  const idealDisplayResult = useMemo(() => {
+    if (!teamBuild || !resolvedIdealFormula || !idealResult?.done) return null;
+    try {
+      const { charId, formulaId } = resolvedIdealFormula;
+      const formulas = teamBuild.getFormulaIds()[charId];
+      if (!formulas || !formulas[formulaId]) return null;
+      return teamBuild.getDisplayResult(
+        charId,
+        formulaId,
+        idealArtifactSheets,
+        displayContext
+      );
+    } catch (e) {
+      console.error("Ideal display calc failed:", e);
+      return null;
+    }
+  }, [
+    teamBuild,
+    resolvedIdealFormula,
+    idealArtifactSheets,
+    idealResult?.done,
     displayContext,
   ]);
 
@@ -1043,7 +1224,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           </CardHeader>
           <CardContent className={CARD_BODY_CLS}>
             <DamageCardBody
-              team={team}
+              team={effectiveTeam}
               hasFormula={resolvedFormula != null}
               emptyMessage={t.ui("teamComp.emptyDamageMessage")}
               artifactsByChar={equippedArtifactsByChar}
@@ -1244,7 +1425,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             {/* Results — identical layout to Card 2 */}
             {teamResult?.bestDamageResult && (
               <DamageCardBody
-                team={team}
+                team={effectiveTeam}
                 hasFormula
                 emptyMessage=""
                 artifactsByChar={optimizedArtifactsByChar}
@@ -1266,6 +1447,179 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Card 4: Ideal Artifacts (dev only) */}
+      {import.meta.env.DEV && (
+        <div>
+          {allFormulas.length > 0 && (
+            <FormulaTabBar
+              formulas={allFormulas}
+              selectedTab={activeIdealTab}
+              onSelect={(_charId, _formulaId) =>
+                setIdealFormulaTab(`${_charId}.${_formulaId}`)
+              }
+              t={t}
+            />
+          )}
+
+          <Card
+            className={cn(
+              CARD_CLS,
+              allFormulas.length > 0 && "rounded-tl-none"
+            )}
+          >
+            <CardHeader className={CARD_HEADER_CLS}>
+              <div
+                className={cn(
+                  "flex w-full",
+                  isMobile ? "flex-col gap-2" : "items-center justify-between"
+                )}
+              >
+                <h3 className={CARD_TITLE_CLS}>
+                  <Swords className="w-4 h-4 opacity-70" />
+                  {t.ui("teamComp.idealArtifacts")}
+                </h3>
+                <div
+                  className={cn(
+                    "flex items-center gap-2",
+                    isMobile && "w-full justify-between"
+                  )}
+                >
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span
+                      className={cn(
+                        "font-semibold text-foreground/80 select-none",
+                        isMobile ? "text-[10px]" : "text-xs"
+                      )}
+                    >
+                      Roll
+                    </span>
+                    <Select
+                      value={String(idealRollMult)}
+                      onValueChange={(v) => setIdealRollMult(Number(v))}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "text-xs border-border/20 bg-background/50",
+                          isMobile ? "h-6 w-14" : "h-7 w-16"
+                        )}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[0.7, 0.8, 0.85, 0.9, 1.0].map((v) => (
+                          <SelectItem key={v} value={String(v)}>
+                            {v}x
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span
+                      className={cn(
+                        "font-semibold text-foreground/80 select-none",
+                        isMobile ? "text-[10px]" : "text-xs"
+                      )}
+                    >
+                      {t.ui("teamComp.critRateTarget")}
+                    </span>
+                    <Input
+                      type="text"
+                      inputMode="numeric"
+                      value={idealCritTarget ?? ""}
+                      placeholder="—"
+                      onChange={(e) => {
+                        const raw = e.target.value.trim();
+                        setIdealCritTarget(
+                          raw === ""
+                            ? undefined
+                            : Math.max(
+                                0,
+                                Math.min(100, Math.round(Number(raw) || 0))
+                              )
+                        );
+                      }}
+                      className={cn(
+                        "text-xs text-center border-border/20 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                        isMobile ? "h-6 w-10" : "h-7 w-12"
+                      )}
+                    />
+                    <span className="text-xs font-bold text-muted-foreground">
+                      %
+                    </span>
+                  </div>
+                  <Button
+                    onClick={handleGenerateIdeal}
+                    disabled={idealComputing || !resolvedIdealFormula}
+                    size="sm"
+                    className="gap-1.5 font-bold px-4 shadow-md text-xs"
+                  >
+                    {idealComputing ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Play className="w-3.5 h-3.5" />
+                    )}
+                    {idealComputing
+                      ? t.ui("teamComp.generatingIdeal")
+                      : t.ui("teamComp.generateIdeal")}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+
+            <CardContent className={CARD_BODY_CLS}>
+              {/* Empty state */}
+              {!idealComputing && !idealResult?.done && !idealError && (
+                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <Swords className="w-8 h-8 opacity-15" />
+                  <p>{t.ui("teamComp.idealEmptyMessage")}</p>
+                </div>
+              )}
+
+              {/* Error state */}
+              {idealError && (
+                <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
+                  <span className="font-bold">
+                    {t.ui("teamComp.optimizerError")}
+                  </span>{" "}
+                  {idealError.message}
+                </div>
+              )}
+
+              {/* Progress */}
+              {idealComputing && idealResult && (
+                <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="font-semibold">{idealResult.phase}</span>
+                    <span className="font-mono font-bold">
+                      {Math.round(idealResult.progress * 100)}%
+                    </span>
+                  </div>
+                  <Progress
+                    value={idealResult.progress * 100}
+                    className="h-1.5 bg-black/40"
+                  />
+                </div>
+              )}
+
+              {/* Results */}
+              {idealResult?.done && idealResult.damageResult && (
+                <DamageCardBody
+                  team={effectiveTeam}
+                  hasFormula
+                  emptyMessage=""
+                  artifactsByChar={idealArtifactsByChar}
+                  targetCharId={resolvedIdealFormula?.charId}
+                  damageValue={idealDisplayDamage?.totalDamage ?? 0}
+                  displayResult={idealDisplayResult}
+                  t={t}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

@@ -137,12 +137,15 @@ export function buildTeamConfigs(
       }
     }
 
-    // Fallback to goal sets if no equipped artifacts found
-    if (!artifactSetId && artifactHalfSetIds.length === 0) {
+    // Fallback to goal sets if no complete set detected.
+    // A single 2pc (length 1) is incomplete — fall back so the TeamBuild
+    // gets a valid set configuration (4pc or 2+2pc from goal).
+    if (!artifactSetId && artifactHalfSetIds.length !== 2) {
       const artConfig = team.artifacts[i];
       if (artConfig) {
         if (artConfig.type === "4pc") {
           artifactSetId = artConfig.setId;
+          artifactHalfSetIds = [];
         } else if (artConfig.type === "2pc+2pc") {
           artifactHalfSetIds = [String(artConfig.id1), String(artConfig.id2)];
         }

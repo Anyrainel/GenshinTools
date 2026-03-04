@@ -569,7 +569,8 @@ export class TeamBuild {
    */
   getTeamStats(
     artifactStats: Record<string, StatSheet>,
-    calcTargetId: string
+    calcTargetId: string,
+    ctx?: CalcContext
   ): Record<string, StatSheet> {
     // Collect target-dependent static buffs (onField, selfOnField) for each character
     const targetDependent: Record<string, StatBuff[]> = {};
@@ -614,6 +615,14 @@ export class TeamBuild {
         this.teamMeta.regions[id],
         this.teamMeta.factions[id]
       );
+    }
+
+    // Phase 5: Apply critRateTarget bonus to all team members
+    if (ctx?.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id].withDelta("cr", crDelta);
+      }
     }
 
     return postStats;
@@ -699,6 +708,14 @@ export class TeamBuild {
         this.teamMeta.regions[id],
         this.teamMeta.factions[id]
       );
+    }
+
+    // Apply critRateTarget bonus to all team members
+    if (ctx.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id].withDelta("cr", crDelta);
+      }
     }
 
     // ── Formula display ──
@@ -983,7 +1000,7 @@ export class TeamBuild {
         tweaked[calcTargetId] = (
           artifactStats[calcTargetId] ?? new StatSheet([])
         ).withDelta(key, delta);
-        const newStats = this.getTeamStats(tweaked, calcTargetId);
+        const newStats = this.getTeamStats(tweaked, calcTargetId, ctx);
         const build = this.charBuilds[calcTargetId]!;
         const newResult = build.getDamageResult(
           formulaId,
@@ -1042,7 +1059,7 @@ export class TeamBuild {
           key,
           delta
         );
-        const newStats = this.getTeamStats(tweaked, calcTargetId);
+        const newStats = this.getTeamStats(tweaked, calcTargetId, ctx);
         const build = this.charBuilds[calcTargetId]!;
         const newResult = build.getDamageResult(
           formulaId,

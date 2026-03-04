@@ -233,7 +233,11 @@ export async function* runTeamOptimization(
       .filter((a): a is ArtifactData => a != null);
     finalSheets[charId] = StatSheet.fromArtifacts(pieces);
   }
-  const finalPostStats = teamBuild.getTeamStats(finalSheets, carryCharId);
+  const finalPostStats = teamBuild.getTeamStats(
+    finalSheets,
+    carryCharId,
+    calcContext
+  );
   const finalDmg = teamBuild.getDamageResult(
     carryCharId,
     formulaId,

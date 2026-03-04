@@ -684,6 +684,13 @@ export const i18nUiData = {
     passCarryRefine: { en: "Carry (Refine)", zh: "主C (精修)" },
     passSupport: { en: "Support", zh: "辅助" },
     passLabel: { en: "Pass {0}/{1}: {2}", zh: "阶段 {0}/{1}: {2}" },
+    idealArtifacts: { en: "Ideal Artifacts", zh: "理想圣遗物" },
+    generateIdeal: { en: "Generate", zh: "生成" },
+    generatingIdeal: { en: "Generating…", zh: "正在生成…" },
+    idealEmptyMessage: {
+      en: "Press Generate to compute ideal artifact stats.",
+      zh: "点击「生成」计算理想圣遗物属性。",
+    },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

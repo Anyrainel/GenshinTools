@@ -196,6 +196,102 @@ def _write_resources_ts(
     print(f"Written resources to {path}")
 
 
+def _to_good_key(english_name: str) -> str:
+    """Convert an English display name to a GOOD key (PascalCase, no punctuation).
+
+    Examples:
+        Gladiator's Finale  -> GladiatorsFinale
+        Spirit Locket of Boreas -> SpiritLocketOfBoreas
+        "The Catch" -> TheCatch
+    """
+    name = english_name.replace('"', "").replace("'", "")
+    words = re.split(r"[^A-Za-z0-9]+", name)
+    return "".join(w.capitalize() for w in words if w)
+
+
+_DEDUPE_PREFIXES = ("traveler_", "manekin_", "manekina_")
+
+
+def generate_good_keys_json(project_root: str) -> None:
+    """Generate public/good/game-data.json with GOOD-format keys and Chinese names."""
+    game_dir = os.path.join(project_root, "src", "data", "game")
+    out_path = os.path.join(project_root, "public", "good", "game-data.json")
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+
+    # --- Characters ---
+    chars = []
+    seen_base: set[str] = set()
+    for rarity in (5, 4):
+        with open(os.path.join(game_dir, f"character_{rarity}_en.json"), encoding="utf-8") as f:
+            en = json.load(f)
+        with open(os.path.join(game_dir, f"character_{rarity}_zh.json"), encoding="utf-8") as f:
+            zh = json.load(f)
+        for key in en:
+            is_variant = any(key.startswith(p) and key != p.rstrip("_") for p in _DEDUPE_PREFIXES)
+            base = key.rsplit("_", 1)[0] if is_variant else key
+            if base in seen_base:
+                continue
+            seen_base.add(base)
+            chars.append(
+                {
+                    "id": _to_good_key(en[key]["name"]),
+                    "rarity": rarity,
+                    "names": {"zh": zh[key]["name"] if key in zh else en[key]["name"]},
+                }
+            )
+    chars.sort(key=lambda c: c["id"])
+
+    # --- Weapons ---
+    with open(os.path.join(game_dir, "weapon_en.json"), encoding="utf-8") as f:
+        w_en = json.load(f)
+    with open(os.path.join(game_dir, "weapon_zh.json"), encoding="utf-8") as f:
+        w_zh = json.load(f)
+    with open(os.path.join(game_dir, "weapon_stats.json"), encoding="utf-8") as f:
+        w_stats = json.load(f)
+
+    weapons = []
+    for key in w_en:
+        if key not in w_stats or w_stats[key]["rarity"] < 3:
+            continue
+        weapons.append(
+            {
+                "id": _to_good_key(w_en[key]["name"]),
+                "rarity": w_stats[key]["rarity"],
+                "type": w_stats[key]["type"].lower(),
+                "names": {"zh": w_zh[key]["name"] if key in w_zh else w_en[key]["name"]},
+            }
+        )
+    weapons.sort(key=lambda w: w["id"])
+
+    # --- Artifact Sets ---
+    with open(os.path.join(game_dir, "artifact_en.json"), encoding="utf-8") as f:
+        a_en = json.load(f)
+    with open(os.path.join(game_dir, "artifact_zh.json"), encoding="utf-8") as f:
+        a_zh = json.load(f)
+
+    artifact_sets = []
+    for key in a_en:
+        rarity = a_en[key].get("rarity")
+        if rarity is None or rarity < 4:
+            continue
+        artifact_sets.append(
+            {
+                "id": _to_good_key(a_en[key]["name"]),
+                "rarity": rarity,
+                "names": {"zh": a_zh[key]["name"] if key in a_zh else a_en[key]["name"]},
+            }
+        )
+    artifact_sets.sort(key=lambda s: s["id"])
+
+    # --- Write ---
+    result = {"characters": chars, "weapons": weapons, "artifactSets": artifact_sets}
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
+
+    print(f"Written {out_path}")
+    print(f"  {len(chars)} characters, {len(weapons)} weapons, {len(artifact_sets)} artifact sets")
+
+
 def _write_i18n_game_ts(data_dir: str, i18n_data: dict[str, dict[str, Any]]) -> None:
     """Write src/data/i18n-game.ts with names-only for weapons/artifacts."""
     path = os.path.join(data_dir, "i18n-game.ts")
@@ -427,6 +523,7 @@ def main():
     parser.add_argument("--artifact", action="store_true", help="Update artifact data")
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
+    parser.add_argument("--good-keys", action="store_true", help="Generate GOOD-format keys JSON")
     parser.add_argument(
         "--details",
         action="store_true",
@@ -440,7 +537,14 @@ def main():
     args = parser.parse_args()
 
     # Default to all if no flags provided
-    if not (args.character or args.weapon or args.artifact or args.half_set or args.enka):
+    if not (
+        args.character
+        or args.weapon
+        or args.artifact
+        or args.half_set
+        or args.enka
+        or args.good_keys
+    ):
         args.character = True
         args.weapon = True
         args.artifact = True
@@ -617,6 +721,11 @@ def main():
     if args.enka:
         print("=== [5/5] Enka Map Generation ===")
         enka.run()
+
+    # 6. GOOD Keys JSON
+    if args.good_keys:
+        print("=== GOOD Keys JSON ===")
+        generate_good_keys_json(project_root)
 
 
 if __name__ == "__main__":
