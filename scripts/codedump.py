@@ -215,7 +215,7 @@ _DEDUPE_PREFIXES = ("traveler_", "manekin_", "manekina_")
 def generate_good_keys_json(project_root: str) -> None:
     """Generate public/good/game-data.json with GOOD-format keys and Chinese names."""
     game_dir = os.path.join(project_root, "src", "data", "game")
-    out_path = os.path.join(project_root, "public", "good", "game-data.json")
+    out_path = os.path.join(project_root, "public", "good", "mappings.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
     # --- Characters ---
