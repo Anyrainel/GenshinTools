@@ -212,11 +212,34 @@ def _to_good_key(english_name: str) -> str:
 _DEDUPE_PREFIXES = ("traveler_", "manekin_", "manekina_")
 
 
+def _parse_char_info(path: str) -> dict[str, dict[str, str]]:
+    """Parse charInfo.ts to extract c3Talent/c5Talent per character key."""
+    result: dict[str, dict[str, str]] = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            m = re.match(r"\s+(\w+):\s*\{(.+)\}", line)
+            if not m:
+                continue
+            key = m.group(1)
+            body = m.group(2)
+            info: dict[str, str] = {}
+            for field in ("c3Talent", "c5Talent"):
+                fm = re.search(rf'{field}:\s*"([AEQ])"', body)
+                if fm:
+                    info[field] = fm.group(1)
+            if info:
+                result[key] = info
+    return result
+
+
 def generate_good_keys_json(project_root: str) -> None:
     """Generate public/good/game-data.json with GOOD-format keys and Chinese names."""
     game_dir = os.path.join(project_root, "src", "data", "game")
     out_path = os.path.join(project_root, "public", "good", "mappings.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
+
+    # --- Read charInfo.ts for c3/c5 talent data ---
+    char_info = _parse_char_info(os.path.join(project_root, "src", "data", "charInfo.ts"))
 
     # --- Characters ---
     chars = []
@@ -232,13 +255,17 @@ def generate_good_keys_json(project_root: str) -> None:
             if base in seen_base:
                 continue
             seen_base.add(base)
-            chars.append(
-                {
-                    "id": _to_good_key(en[key]["name"]),
-                    "rarity": rarity,
-                    "names": {"zh": zh[key]["name"] if key in zh else en[key]["name"]},
-                }
-            )
+            entry: dict[str, Any] = {
+                "id": _to_good_key(en[key]["name"]),
+                "rarity": rarity,
+                "names": {"zh": zh[key]["name"] if key in zh else en[key]["name"]},
+            }
+            if base in char_info:
+                if "c3Talent" in char_info[base]:
+                    entry["c3"] = char_info[base]["c3Talent"]
+                if "c5Talent" in char_info[base]:
+                    entry["c5"] = char_info[base]["c5Talent"]
+            chars.append(entry)
     chars.sort(key=lambda c: c["id"])
 
     # --- Weapons ---
