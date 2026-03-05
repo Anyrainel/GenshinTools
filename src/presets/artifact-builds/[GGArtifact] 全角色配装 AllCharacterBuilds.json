@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772565332272",
+  "id": "export-1772721909554",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -37,8 +37,8 @@
       "roles": ["dps", "sustain"],
       "source": "preset"
     },
-    "FeFhfum": {
-      "id": "FeFhfum",
+    "FeFhg8O": {
+      "id": "FeFhg8O",
       "name": "",
       "visible": true,
       "composition": "4pc",
@@ -67,7 +67,7 @@
       "kOverride": 3,
       "characterId": "ineffa",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"],
+      "roles": ["support", "sustain", "dps"],
       "source": "preset"
     },
     "FeFbZ18": {
@@ -1038,8 +1038,8 @@
       "source": "preset",
       "minCons": 6
     },
-    "Ihqg4AG": {
-      "id": "Ihqg4AG",
+    "Ihqg4Pu": {
+      "id": "Ihqg4Pu",
       "characterId": "columbina",
       "name": "",
       "visible": true,
@@ -1067,7 +1067,7 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "kOverride": 3,
-      "roles": ["support"],
+      "roles": ["support", "dps"],
       "styles": ["off-field"],
       "source": "preset"
     },
@@ -2401,12 +2401,17 @@
         {
           "stat": "em",
           "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
         }
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "nahida",
       "styles": ["off-field", "on-field"],
-      "roles": ["support", "dps"]
+      "roles": ["support", "dps"],
+      "source": "preset"
     },
     "8xrSq-u": {
       "id": "8xrSq-u",
@@ -2428,12 +2433,17 @@
         {
           "stat": "em",
           "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
         }
       ],
       "artifactSet": "gilded_dreams",
       "characterId": "nahida",
       "styles": ["off-field", "on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "9z1jNP8": {
       "id": "9z1jNP8",
@@ -2854,12 +2864,17 @@
         {
           "stat": "em",
           "weight": 90
+        },
+        {
+          "stat": "atk%",
+          "weight": 75
         }
       ],
       "artifactSet": "wanderers_troupe",
       "characterId": "tighnari",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "source": "preset"
     },
     "7nL1AD0": {
       "id": "7nL1AD0",
@@ -4785,7 +4800,7 @@
     }
   },
   "characterBuilds": {
-    "ineffa": ["FeFi23e", "FeFhfum", "FeFbZ18", "FeFQ6rm"],
+    "ineffa": ["FeFi23e", "FeFhg8O", "FeFbZ18", "FeFQ6rm"],
     "citlali": ["EB7C1KG", "EB6yOLm", "EB7C1Te"],
     "arlecchino": ["CRMdXqu"],
     "clorinde": ["CaggW4u"],
@@ -4805,7 +4820,7 @@
     "charlotte": ["BYQzdRG"],
     "lynette": ["AYHvhPG", "AYHvhPH"],
     "lauma": ["FnZe87m", "FnZkdAG", "FnZkCDG", "FnZe8H8"],
-    "columbina": ["Ihqg4AG", "IhqgSqO"],
+    "columbina": ["Ihqg4Pu", "IhqgSqO"],
     "illuga": ["I-Sm0jO", "IyzxbmG"],
     "durin": ["GMpiOrm", "GMpxGle"],
     "flins": ["G4Bq8Zu"],
