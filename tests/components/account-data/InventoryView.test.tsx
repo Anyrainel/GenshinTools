@@ -60,8 +60,8 @@ describe("InventoryView", () => {
 
     render(<InventoryView data={emptyData} />);
 
-    // Sections with 0 items are hidden
+    // Both sections render with (0) count when empty
     const zeroCounts = screen.queryAllByText(/\(0\)/);
-    expect(zeroCounts.length).toBe(0);
+    expect(zeroCounts.length).toBe(2);
   });
 });

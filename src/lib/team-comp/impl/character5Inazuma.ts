@@ -1,7 +1,5 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
-  AmplifyFormula,
-  CatalyzeFormula,
   DirectFormula,
   LunarFormula,
   TransformFormula,
@@ -892,11 +890,6 @@ class Yoimiya extends CharacterBase {
       ability: "normal" as const,
       reaction: "none" as const,
     };
-    const pyroNormalVape = {
-      element: "Pyro" as const,
-      ability: "normal" as const,
-      reaction: "vaporize" as const,
-    };
 
     // Helper: per-hit talentMult = baseNA × eMult × c6Avg
     const m = (base: number) => base * eMult * c6;
@@ -908,29 +901,20 @@ class Yoimiya extends CharacterBase {
           en: "Normal N1-N5 (E active)",
         },
         parts: [
-          { formula: new DirectFormula(m(n1a), pyroNormal) },
+          // N1a, N3, N5 can vaporize/melt (ICD allows every 3rd hit)
+          {
+            formula: new DirectFormula(m(n1a), pyroNormal),
+          },
           { formula: new DirectFormula(m(n1b), pyroNormal) },
           { formula: new DirectFormula(m(n2), pyroNormal) },
-          { formula: new DirectFormula(m(n3), pyroNormal) },
+          {
+            formula: new DirectFormula(m(n3), pyroNormal),
+          },
           { formula: new DirectFormula(m(n4a), pyroNormal) },
           { formula: new DirectFormula(m(n4b), pyroNormal) },
-          { formula: new DirectFormula(m(n5), pyroNormal) },
-        ],
-      },
-      "yoimiya-vape": {
-        label: {
-          zh: "E普攻一套(蒸发)",
-          en: "Normal N1-N5 (Vape)(E active)",
-        },
-        parts: [
-          // Vape hits: N1a, N3, N5
-          { formula: new AmplifyFormula(m(n1a), pyroNormalVape) },
-          { formula: new DirectFormula(m(n1b), pyroNormal) },
-          { formula: new DirectFormula(m(n2), pyroNormal) },
-          { formula: new AmplifyFormula(m(n3), pyroNormalVape) },
-          { formula: new DirectFormula(m(n4a), pyroNormal) },
-          { formula: new DirectFormula(m(n4b), pyroNormal) },
-          { formula: new AmplifyFormula(m(n5), pyroNormalVape) },
+          {
+            formula: new DirectFormula(m(n5), pyroNormal),
+          },
         ],
       },
     };
@@ -999,18 +983,6 @@ class YaeMiko extends CharacterBase {
           },
         ],
       },
-      "yae_miko-skill-aggravate": {
-        label: { zh: "E(超激化)", en: "E (Aggravate)" },
-        parts: [
-          {
-            formula: new CatalyzeFormula(eMult, {
-              element: "Electro",
-              ability: "skill",
-              reaction: "aggravate",
-            }),
-          },
-        ],
-      },
       "yae_miko-burst": {
         label: { zh: "Q 1段+3落雷", en: "Q (1 Hit + 3 Thunderbolts)" },
         parts: [
@@ -1019,29 +991,6 @@ class YaeMiko extends CharacterBase {
               element: "Electro",
               ability: "burst",
               reaction: "none",
-            }),
-          },
-          {
-            formula: new DirectFormula(qThunderboltMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "none",
-            }),
-            hits: 3,
-          },
-        ],
-      },
-      "yae_miko-burst-aggravate": {
-        label: {
-          zh: "Q(超激化)",
-          en: "Q (Aggravate)",
-        },
-        parts: [
-          {
-            formula: new CatalyzeFormula(qInitialMult, {
-              element: "Electro",
-              ability: "burst",
-              reaction: "aggravate",
             }),
           },
           {

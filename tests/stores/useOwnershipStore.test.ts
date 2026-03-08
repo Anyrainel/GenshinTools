@@ -201,6 +201,47 @@ describe("useOwnershipStore (profile-based)", () => {
     });
   });
 
+  describe("setProfileWeaponOwnership", () => {
+    it("atomically replaces the unowned weapon set", () => {
+      useOwnershipStore
+        .getState()
+        .setOwned(PROFILE, "weapon", "amos_bow", false);
+
+      useOwnershipStore
+        .getState()
+        .setProfileWeaponOwnership(PROFILE, [
+          "staff_of_homa",
+          "wolfs_gravestone",
+        ]);
+
+      expect(
+        useOwnershipStore.getState().isOwned(PROFILE, "weapon", "amos_bow")
+      ).toBe(true); // was unowned, now owned again
+      expect(
+        useOwnershipStore.getState().isOwned(PROFILE, "weapon", "staff_of_homa")
+      ).toBe(false);
+      expect(
+        useOwnershipStore
+          .getState()
+          .isOwned(PROFILE, "weapon", "wolfs_gravestone")
+      ).toBe(false);
+    });
+
+    it("does not affect character ownership", () => {
+      useOwnershipStore
+        .getState()
+        .setOwned(PROFILE, "character", "hu_tao", false);
+
+      useOwnershipStore
+        .getState()
+        .setProfileWeaponOwnership(PROFILE, ["amos_bow"]);
+
+      expect(
+        useOwnershipStore.getState().isOwned(PROFILE, "character", "hu_tao")
+      ).toBe(false);
+    });
+  });
+
   describe("promoteProfile", () => {
     it("renames profile key preserving data", () => {
       useOwnershipStore
@@ -321,6 +362,8 @@ describe("migrateOwnershipStore", () => {
     expect(migrated.profiles["900000001"]).toEqual({
       unownedCharacters: { hu_tao: true, xingqiu: true },
       unownedWeapons: { amos_bow: true },
+      characterConstellations: {},
+      weaponRefinements: {},
     });
 
     localStorage.removeItem("genshin-account-storage");
@@ -339,10 +382,12 @@ describe("migrateOwnershipStore", () => {
     expect(migrated.profiles.default).toEqual({
       unownedCharacters: { hu_tao: true },
       unownedWeapons: {},
+      characterConstellations: {},
+      weaponRefinements: {},
     });
   });
 
-  it("passes through v1 state unchanged", () => {
+  it("migrates v1 state by adding constellation and refinement fields", () => {
     const v1State = {
       profiles: {
         "800000001": {
@@ -353,6 +398,27 @@ describe("migrateOwnershipStore", () => {
     };
 
     const result = migrateOwnershipStore(v1State, 1);
-    expect(result).toBe(v1State);
+    expect(result.profiles["800000001"]).toEqual({
+      unownedCharacters: { hu_tao: true },
+      unownedWeapons: {},
+      characterConstellations: {},
+      weaponRefinements: {},
+    });
+  });
+
+  it("passes through v2 state unchanged", () => {
+    const v2State = {
+      profiles: {
+        "800000001": {
+          unownedCharacters: { hu_tao: true },
+          unownedWeapons: {},
+          characterConstellations: { raiden_shogun: 2 },
+          weaponRefinements: { engulfing_lightning: 1 },
+        },
+      },
+    };
+
+    const result = migrateOwnershipStore(v2State, 2);
+    expect(result).toBe(v2State);
   });
 });

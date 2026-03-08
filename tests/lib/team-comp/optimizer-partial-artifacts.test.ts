@@ -42,7 +42,8 @@ let artCounter = 0;
 function makeArt(
   slot: ArtifactData["slotKey"],
   setKey = "crimson_witch_of_flames",
-  mainStat: ArtifactData["mainStatKey"] = "hp"
+  mainStat: ArtifactData["mainStatKey"] = "hp",
+  substats: ArtifactData["substats"] = { cr: 7.0, cd: 14.0, atk: 20, em: 20 }
 ): ArtifactData {
   const mainStats: Record<string, ArtifactData["mainStatKey"]> = {
     flower: "hp",
@@ -59,7 +60,7 @@ function makeArt(
     level: 20,
     mainStatKey: mainStat === "hp" ? (mainStats[slot] ?? "hp") : mainStat,
     lock: false,
-    substats: { cr: 7.0, cd: 14.0, atk: 20, em: 20 },
+    substats,
   };
 }
 
@@ -73,6 +74,7 @@ function makeBuildMatch(): BuildMatchResult {
       name: "Test Build",
       composition: "4pc",
       artifactSet: "crimson_witch_of_flames",
+      roles: ["dps"],
       sands: ["hp%"],
       goblet: ["pyro%"],
       circlet: ["cr"],
@@ -277,6 +279,44 @@ describe("runOptimization — partial artifact inventory", () => {
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     expect(final.bestDamage).toBeGreaterThan(0);
+  });
+
+  it("can pick a better circlet even when topN is set to 1", async () => {
+    const tb = makeTeamBuild();
+    const formulaId = getFirstFormulaId(tb, "hu_tao");
+    const setKey = "crimson_witch_of_flames";
+    const highCrSubs = { cr: 25.0, cd: 7.0, atk: 20, em: 20 };
+    const inventory = [
+      makeArt("flower", setKey, "hp", highCrSubs),
+      makeArt("plume", setKey, "atk", highCrSubs),
+      makeArt("sands", setKey, "hp%", highCrSubs),
+      makeArt("goblet", setKey, "pyro%", highCrSubs),
+      makeArt("circlet", setKey, "cr", {}),
+      makeArt("circlet", setKey, "cd", {}),
+    ];
+
+    const opts: OptimizerOptions = {
+      teamBuild: tb,
+      targetCharId: "hu_tao",
+      formulaId,
+      targetEr: 1.0,
+      inventory,
+      buildMatch: makeBuildMatch(),
+      globalConfig: GLOBAL_CONFIG,
+      baseSheets: {
+        hu_tao: StatSheet.fromArtifacts(inventory.slice(0, 5)),
+        xingqiu: new StatSheet([]),
+        zhongli: new StatSheet([]),
+        kaedehara_kazuha: new StatSheet([]),
+      },
+      calcContext: CTX,
+      artifactSetId: setKey,
+    };
+
+    const results = await drain(runOptimization(opts));
+    const final = results[results.length - 1];
+    expect(final.done).toBe(true);
+    expect(final.bestArtifacts.circlet?.mainStatKey).toBe("cd");
   });
 
   it("completes when baseSheets is missing entries for some characters", async () => {

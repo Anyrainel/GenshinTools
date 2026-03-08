@@ -9,7 +9,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { CharacterResource } from "@/data/types";
 import type { useGameStats } from "@/hooks/useGameStats";
-import { useIsOwned, useOwnershipActions } from "@/hooks/useOwnership";
+import {
+  useConstellation,
+  useIsOwned,
+  useOwnershipActions,
+} from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
@@ -176,7 +180,8 @@ export function CharacterDetailPanel({
   const isOwned = useIsOwned();
   const owned = isOwned("character", characterId);
   const effectiveOwned = !unreleased && owned;
-  const { toggleOwned } = useOwnershipActions();
+  const constellation = useConstellation(characterId);
+  const { toggleOwned, setConstellation } = useOwnershipActions();
 
   const [unlockClicks, setUnlockClicks] = useState(0);
 
@@ -195,27 +200,51 @@ export function CharacterDetailPanel({
                 size="xl"
               />
               <CharacterInfo character={character} showDate>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleOwned("character", characterId)}
-                  disabled={unreleased}
-                  className={cn(
-                    "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
-                    effectiveOwned
-                      ? "text-amber-400 hover:text-amber-300"
-                      : "text-muted-foreground hover:text-foreground"
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleOwned("character", characterId)}
+                    disabled={unreleased}
+                    className={cn(
+                      "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
+                      effectiveOwned
+                        ? "text-amber-400 hover:text-amber-300"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Bookmark
+                      className={cn(
+                        "h-4 w-4",
+                        effectiveOwned && "fill-current"
+                      )}
+                    />
+                    <span className="text-xs font-medium">
+                      {effectiveOwned
+                        ? t.ui("archive.owned")
+                        : t.ui("archive.notOwned")}
+                    </span>
+                  </Button>
+                  {effectiveOwned && (
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 7 }, (_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setConstellation(characterId, i)}
+                          className={cn(
+                            "w-6 h-6 rounded-md text-xs font-semibold transition-colors",
+                            constellation === i
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                          )}
+                        >
+                          {t.format("teamComp.constellationFormat", i)}
+                        </button>
+                      ))}
+                    </div>
                   )}
-                >
-                  <Bookmark
-                    className={cn("h-4 w-4", effectiveOwned && "fill-current")}
-                  />
-                  <span className="text-xs font-medium">
-                    {effectiveOwned
-                      ? t.ui("archive.owned")
-                      : t.ui("archive.notOwned")}
-                  </span>
-                </Button>
+                </div>
               </CharacterInfo>
             </div>
             {/* Base Stats — top-right on wide screens */}

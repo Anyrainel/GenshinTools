@@ -1,5 +1,5 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { CatalyzeFormula, DirectFormula } from "../damageFormulas";
+import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
@@ -409,10 +409,6 @@ class Clorinde extends CharacterBase {
       ability: "normal" as const,
       reaction: "none" as const,
     };
-    const aggBaseTag = {
-      ...normalBaseTag,
-      reaction: "aggravate" as const,
-    };
 
     const normalParts = [
       { formula: new DirectFormula(swiftMult, normalBaseTag), hits: 3 },
@@ -425,33 +421,11 @@ class Clorinde extends CharacterBase {
         : []),
     ];
 
-    const aggParts = [
-      { formula: new CatalyzeFormula(swiftMult, aggBaseTag), hits: 3 },
-      { formula: new CatalyzeFormula(impaleMult, aggBaseTag), hits: 3 },
-      ...(this.constellation >= 1
-        ? [{ formula: new CatalyzeFormula(0.3, aggBaseTag), hits: 2 }]
-        : []),
-      ...(this.constellation >= 6
-        ? [{ formula: new CatalyzeFormula(2.0, aggBaseTag), hits: 1 }]
-        : []),
-    ];
-
     return {
       "clorinde-normal": {
         label: { zh: "E普攻", en: "E Normal" },
         parts: normalParts,
       },
-      ...(this.teamMeta.countByElement("Dendro") > 0
-        ? {
-            "clorinde-normal-aggravate": {
-              label: {
-                zh: "E普攻(超激化)",
-                en: "E Normal (Aggravate)",
-              },
-              parts: aggParts,
-            },
-          }
-        : {}),
       "clorinde-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [

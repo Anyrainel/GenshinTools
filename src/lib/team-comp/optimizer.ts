@@ -11,7 +11,12 @@ import {
 import type { TeamBuild } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import { AVG_SUBSTAT_ROLL } from "./inspection";
-import type { CalcContext, DamageResult, StatKey } from "./types";
+import type {
+  CalcContext,
+  DamageResult,
+  ReactionOverride,
+  StatKey,
+} from "./types";
 
 export interface OptimizerOptions {
   teamBuild: TeamBuild;
@@ -19,13 +24,10 @@ export interface OptimizerOptions {
   formulaId: string;
   targetEr: number; // e.g. 1.2 for 120%
   inventory: ArtifactData[];
-  buildMatch: BuildMatchResult;
+  buildMatch?: BuildMatchResult | null;
   globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>; // Sheets for other 3 chars
   calcContext: CalcContext;
-
-  topN?: number; // Per-slot prune count (default 20)
-  maxBuilds?: number; // Top builds to evaluate for damage (default 1000)
 
   artifactSetId?: string | null;
   artifactHalfSetIds?: string[];
@@ -36,6 +38,15 @@ export interface OptimizerOptions {
   formulaCharId?: string; // Whose formula to evaluate
   erCheckCharId?: string; // Whose ER to check (default: swapCharId)
   excludedArtifactIds?: Set<string>; // Artifacts locked by prior passes
+  reactionOverride?: ReactionOverride;
+  altCount?: number; // Alternatives per slot in hill-climbing (default 7, use 5 on mobile)
+  /**
+   * Custom scoring function. When provided, replaces the default
+   * `getDamageResult(formulaCharId, formulaId, ...).totalDamage` calls.
+   * Receives the full sheets map (with the candidate artifacts already applied)
+   * and calcTargetId for getTeamStats routing.
+   */
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
 }
 
 export interface OptimizationResult {
@@ -51,30 +62,39 @@ export interface OptimizationResult {
   done: boolean;
 }
 
+/** Fallback stat weights when no build recommendation exists. */
+const OPTIMIZER_FALLBACK_WEIGHTS: Record<string, number> = {
+  cr: 100,
+  cd: 100,
+};
+
 function scorePiece(
   art: ArtifactData,
-  buildMatch: BuildMatchResult,
+  buildMatch: BuildMatchResult | null | undefined,
   globalConfig: GlobalStatWeights,
   crDiscount = 1
 ): number {
+  const baseWeights = buildMatch?.statWeights ?? OPTIMIZER_FALLBACK_WEIGHTS;
   const weights =
     crDiscount < 1
-      ? {
-          ...buildMatch.statWeights,
-          cr: (buildMatch.statWeights.cr ?? 0) * crDiscount,
-        }
-      : buildMatch.statWeights;
+      ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
+      : baseWeights;
   let score = scoreSlot(art, weights, globalConfig);
 
   // Add main stat contribution when it matches the build recommendation.
-  const recommended = getTargetMainStatsForSlot(art.slotKey, buildMatch.build);
-  if (recommended.has(art.mainStatKey)) {
-    let mainScore = scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
-    // Also discount CR main stat when CR is devalued
-    if (crDiscount < 1 && art.mainStatKey === "cr") {
-      mainScore *= crDiscount;
+  if (buildMatch) {
+    const recommended = getTargetMainStatsForSlot(
+      art.slotKey,
+      buildMatch.build
+    );
+    if (recommended.has(art.mainStatKey)) {
+      let mainScore = scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      // Also discount CR main stat when CR is devalued
+      if (crDiscount < 1 && art.mainStatKey === "cr") {
+        mainScore *= crDiscount;
+      }
+      score += mainScore;
     }
-    score += mainScore;
   }
 
   return score;
@@ -83,14 +103,16 @@ function scorePiece(
 // ── Set matching helpers ──
 
 export function matchesSetRequirement(
-  pieces: readonly ArtifactData[],
+  pieces: readonly (ArtifactData | null)[],
   artifactSetId: string | null | undefined,
   artifactHalfSetIds: string[] | undefined
 ): boolean {
+  const nonNull = pieces.filter((p): p is ArtifactData => p != null);
+
   // 4pc: need ≥4 pieces of the exact set key (1 flexible slot allowed)
   if (artifactSetId) {
     let count = 0;
-    for (const p of pieces) {
+    for (const p of nonNull) {
       if (p.setKey === artifactSetId) count++;
     }
     if (count < 4) return false;
@@ -110,7 +132,7 @@ export function matchesSetRequirement(
   }
   if (artifactHalfSetIds && artifactHalfSetIds.length === 2) {
     const setKeyCounts = new Map<string, number>();
-    for (const p of pieces) {
+    for (const p of nonNull) {
       setKeyCounts.set(p.setKey, (setKeyCounts.get(p.setKey) ?? 0) + 1);
     }
 
@@ -137,7 +159,8 @@ export function matchesSetRequirement(
 // ── Helpers ──
 
 /** Extract artifact ER contribution (decimal, e.g. 0.518 for 51.8% ER sands). */
-function getArtifactEr(art: ArtifactData): number {
+function getArtifactEr(art: ArtifactData | null): number {
+  if (!art) return 0;
   let er = 0;
   if (art.mainStatKey === "er") {
     er += getFixedMainStatValue("er", art.rarity) / 100;
@@ -151,17 +174,41 @@ function getArtifactEr(art: ArtifactData): number {
 type ScoredArt = { art: ArtifactData; score: number; er: number };
 
 type ArtifactTuple = [
-  ArtifactData,
-  ArtifactData,
-  ArtifactData,
-  ArtifactData,
-  ArtifactData,
+  ArtifactData | null,
+  ArtifactData | null,
+  ArtifactData | null,
+  ArtifactData | null,
+  ArtifactData | null,
 ];
+
+function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
+  for (let i = 0; i < 5; i++) {
+    const ai = a[i];
+    const bi = b[i];
+    if (ai === null && bi === null) continue;
+    if (ai === null || bi === null) return false;
+    if (ai.id !== bi.id) return false;
+  }
+  return true;
+}
 
 // ── Marginal-gain scoring ──
 
 const isPct = (k: string) =>
   k.endsWith("%") || k === "cr" || k === "cd" || k === "er";
+
+const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
+  ...AVG_SUBSTAT_ROLL,
+  "pyro%": getFixedMainStatValue("pyro%", 5) / 100,
+  "hydro%": getFixedMainStatValue("hydro%", 5) / 100,
+  "anemo%": getFixedMainStatValue("anemo%", 5) / 100,
+  "electro%": getFixedMainStatValue("electro%", 5) / 100,
+  "dendro%": getFixedMainStatValue("dendro%", 5) / 100,
+  "cryo%": getFixedMainStatValue("cryo%", 5) / 100,
+  "geo%": getFixedMainStatValue("geo%", 5) / 100,
+  "phys%": getFixedMainStatValue("phys%", 5) / 100,
+  "heal%": getFixedMainStatValue("heal%", 5) / 100,
+};
 
 /** Score an artifact by its actual stat contributions weighted by marginal gains. */
 function scorePieceMarginal(
@@ -176,9 +223,8 @@ function scorePieceMarginal(
     if (isPct(art.mainStatKey)) mainVal /= 100;
     const gain = marginalGains[art.mainStatKey as StatKey];
     if (gain) {
-      // Normalize: how many avg substat rolls is this main stat worth?
-      const avgRoll = AVG_SUBSTAT_ROLL[art.mainStatKey as StatKey];
-      if (avgRoll) score += (mainVal / avgRoll) * gain;
+      const delta = MARGINAL_GAIN_DELTAS[art.mainStatKey as StatKey];
+      if (delta) score += (mainVal / delta) * gain;
     }
   }
 
@@ -189,8 +235,8 @@ function scorePieceMarginal(
     if (isPct(subKey)) v /= 100;
     const gain = marginalGains[subKey as StatKey];
     if (gain) {
-      const avgRoll = AVG_SUBSTAT_ROLL[subKey as StatKey];
-      if (avgRoll) score += (v / avgRoll) * gain;
+      const delta = MARGINAL_GAIN_DELTAS[subKey as StatKey];
+      if (delta) score += (v / delta) * gain;
     }
   }
 
@@ -206,40 +252,53 @@ function computeMarginalGainsForOptimizer(
   baseSheets: Record<string, StatSheet>,
   currentArtifacts: ArtifactTuple,
   calcTargetId: string,
-  calcContext: CalcContext
+  calcContext: CalcContext,
+  reactionOverride?: ReactionOverride,
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): Partial<Record<StatKey, number>> {
   const currentSheet = StatSheet.fromArtifacts(currentArtifacts);
   const sheets = { ...baseSheets, [swapCharId]: currentSheet };
-  const stats = teamBuild.getTeamStats(sheets, calcTargetId, calcContext);
-  const baseResult = teamBuild.getDamageResult(
-    formulaCharId,
-    formulaId,
-    stats,
-    calcContext
-  );
-  const baseDamage = baseResult.totalDamage;
+
+  const baseDamage = scoreFn
+    ? scoreFn(sheets, calcTargetId)
+    : (() => {
+        const stats = teamBuild.getTeamStats(sheets, calcTargetId, calcContext);
+        return teamBuild.getDamageResult(
+          formulaCharId,
+          formulaId,
+          stats,
+          calcContext,
+          reactionOverride
+        ).totalDamage;
+      })();
   if (baseDamage === 0) return {};
 
   const gains: Partial<Record<StatKey, number>> = {};
-  const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
+  const marginalKeys = Object.keys(MARGINAL_GAIN_DELTAS) as StatKey[];
 
-  for (const key of rollableKeys) {
-    const delta = AVG_SUBSTAT_ROLL[key];
+  for (const key of marginalKeys) {
+    const delta = MARGINAL_GAIN_DELTAS[key];
     if (!delta) continue;
     const tweakedSheet = currentSheet.withDelta(key, delta);
     const tweakedSheets = { ...baseSheets, [swapCharId]: tweakedSheet };
-    const newStats = teamBuild.getTeamStats(
-      tweakedSheets,
-      calcTargetId,
-      calcContext
-    );
-    const newResult = teamBuild.getDamageResult(
-      formulaCharId,
-      formulaId,
-      newStats,
-      calcContext
-    );
-    const gain = newResult.totalDamage - baseDamage;
+
+    const newDamage = scoreFn
+      ? scoreFn(tweakedSheets, calcTargetId)
+      : (() => {
+          const newStats = teamBuild.getTeamStats(
+            tweakedSheets,
+            calcTargetId,
+            calcContext
+          );
+          return teamBuild.getDamageResult(
+            formulaCharId,
+            formulaId,
+            newStats,
+            calcContext,
+            reactionOverride
+          ).totalDamage;
+        })();
+    const gain = newDamage - baseDamage;
     if (gain !== 0) gains[key] = gain;
   }
 
@@ -257,7 +316,9 @@ function evaluateBuild(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number
+  targetEr: number,
+  reactionOverride?: ReactionOverride,
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
   const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
@@ -272,11 +333,16 @@ function evaluateBuild(
     if (er < targetEr) return { damage: -1, result: null };
   }
 
+  if (scoreFn) {
+    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
+  }
+
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
     postStats,
-    calcContext
+    calcContext,
+    reactionOverride
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
 }
@@ -291,18 +357,19 @@ function buildSeedBuilds4pc(
   const seeds: ArtifactTuple[] = [];
 
   for (let flexIdx = 0; flexIdx < 5; flexIdx++) {
-    const pieces: ArtifactData[] = [];
+    const pieces: (ArtifactData | null)[] = [];
     for (let slotIdx = 0; slotIdx < 5; slotIdx++) {
       const slot = allSlots[slotIdx];
       const pool = scoredPools[slot];
+      const best = pool.length > 0 ? pool[0].art : null;
 
       if (slotIdx === flexIdx || !artifactSetId) {
         // Flex slot (or no-set): pick best overall piece
-        pieces.push(pool[0].art);
+        pieces.push(best);
       } else {
-        // Set-constrained slot: pick best set piece
+        // Set-constrained slot: pick best set piece, fallback to best overall
         const setPiece = pool.find((s) => s.art.setKey === artifactSetId);
-        pieces.push(setPiece?.art ?? pool[0].art);
+        pieces.push(setPiece?.art ?? best);
       }
     }
     seeds.push(pieces as ArtifactTuple);
@@ -323,7 +390,9 @@ function buildSeedBuilds2pc(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number
+  targetEr: number,
+  reactionOverride?: ReactionOverride,
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): ArtifactTuple[] {
   const [h1, h2] = artifactHalfSetIds;
   const isH1 = (art: ArtifactData) => artifactIdToHalfSetId[art.setKey] === h1;
@@ -345,7 +414,7 @@ function buildSeedBuilds2pc(
             (x) => x !== remaining[ri] && x !== remaining[rj]
           )[0];
 
-          const pieces: ArtifactData[] = new Array(5);
+          const pieces: (ArtifactData | null)[] = new Array(5).fill(null);
           let valid = true;
 
           // Fill h1 slots
@@ -376,7 +445,8 @@ function buildSeedBuilds2pc(
 
           // Fill flex slot with best overall piece
           const flexSlotKey = allSlots[flexSlot];
-          pieces[flexSlot] = scoredPools[flexSlotKey][0].art;
+          const flexPool = scoredPools[flexSlotKey];
+          pieces[flexSlot] = flexPool.length > 0 ? flexPool[0].art : null;
 
           const tuple = pieces as ArtifactTuple;
           if (!matchesSetRequirement(tuple, null, artifactHalfSetIds)) continue;
@@ -391,7 +461,9 @@ function buildSeedBuilds2pc(
             calcTargetId,
             calcContext,
             erCheckCharId,
-            targetEr
+            targetEr,
+            reactionOverride,
+            scoreFn
           );
           candidates.push({ pieces: tuple, damage });
         }
@@ -410,7 +482,7 @@ function buildSeedBuilds2pc(
               (x) => x !== remaining[ri] && x !== remaining[rj]
             )[0];
 
-            const pieces: ArtifactData[] = new Array(5);
+            const pieces: (ArtifactData | null)[] = new Array(5).fill(null);
             let valid = true;
 
             for (const slotIdx of [i, j]) {
@@ -438,7 +510,8 @@ function buildSeedBuilds2pc(
             if (!valid) continue;
 
             const flexSlotKey = allSlots[flexSlot];
-            pieces[flexSlot] = scoredPools[flexSlotKey][0].art;
+            const flexPool = scoredPools[flexSlotKey];
+            pieces[flexSlot] = flexPool.length > 0 ? flexPool[0].art : null;
 
             const tuple = pieces as ArtifactTuple;
             if (!matchesSetRequirement(tuple, null, artifactHalfSetIds))
@@ -454,7 +527,8 @@ function buildSeedBuilds2pc(
               calcTargetId,
               calcContext,
               erCheckCharId,
-              targetEr
+              targetEr,
+              reactionOverride
             );
             candidates.push({ pieces: tuple, damage });
           }
@@ -470,18 +544,23 @@ function buildSeedBuilds2pc(
 
 /** Enumerate all combinations from per-slot alternative lists, filtering for set + ER. */
 function enumerateCombinations(
-  alternatives: ArtifactData[][], // alternatives[slotIdx] = list of candidates for that slot
+  alternatives: (ArtifactData | null)[][], // alternatives[slotIdx] = list of candidates for that slot
   artifactSetId: string | null | undefined,
   artifactHalfSetIds: string[] | undefined,
   effectiveMinArtifactEr: number
 ): ArtifactTuple[] {
   const result: ArtifactTuple[] = [];
 
-  for (const a0 of alternatives[0]) {
-    for (const a1 of alternatives[1]) {
-      for (const a2 of alternatives[2]) {
-        for (const a3 of alternatives[3]) {
-          for (const a4 of alternatives[4]) {
+  // Normalize empty alternative lists to [null] so the slot stays null
+  const norm = alternatives.map((a) =>
+    a.length > 0 ? a : [null as ArtifactData | null]
+  );
+
+  for (const a0 of norm[0]) {
+    for (const a1 of norm[1]) {
+      for (const a2 of norm[2]) {
+        for (const a3 of norm[3]) {
+          for (const a4 of norm[4]) {
             const pieces: ArtifactTuple = [a0, a1, a2, a3, a4];
 
             if (
@@ -528,6 +607,8 @@ export async function* runOptimization(
     artifactSetId,
     artifactHalfSetIds,
     excludedArtifactIds,
+    reactionOverride,
+    scoreFn,
   } = opts;
 
   // Resolve effective IDs (default to targetCharId for backward compat)
@@ -536,7 +617,6 @@ export async function* runOptimization(
   const formulaCharId = opts.formulaCharId ?? targetCharId;
   const erCheckCharId = opts.erCheckCharId ?? swapCharId;
 
-  const topN = opts.topN || 20;
   const startTime = Date.now();
 
   // ── CR discount for heuristic scoring ──
@@ -557,7 +637,7 @@ export async function* runOptimization(
     }
   }
 
-  // ── Per-slot pruning: keep top N artifacts per slot by heuristic score ──
+  // ── Per-slot preparation: keep the full inventory, sorted only for seeding ──
 
   const scoredPools: Record<Slot, ScoredArt[]> = {
     flower: [],
@@ -565,17 +645,6 @@ export async function* runOptimization(
     sands: [],
     goblet: [],
     circlet: [],
-  };
-
-  const DUMMY_ART: ArtifactData = {
-    id: "dummy",
-    setKey: "empty",
-    slotKey: "flower",
-    rarity: 1,
-    mainStatKey: "hp%",
-    level: 0,
-    lock: false,
-    substats: {},
   };
 
   for (const slot of allSlots) {
@@ -593,28 +662,7 @@ export async function* runOptimization(
 
     withScore.sort((a, b) => b.score - a.score);
 
-    if (artifactSetId || artifactHalfSetIds?.length) {
-      const isSetPiece = (art: ArtifactData) =>
-        (!!artifactSetId && art.setKey === artifactSetId) ||
-        (!!artifactHalfSetIds &&
-          artifactHalfSetIds.includes(artifactIdToHalfSetId[art.setKey]));
-      const setPieces = withScore
-        .filter((x) => isSetPiece(x.art))
-        .slice(0, topN);
-      const offSetPieces = withScore
-        .filter((x) => !isSetPiece(x.art))
-        .slice(0, topN);
-      scoredPools[slot] = [...setPieces, ...offSetPieces];
-      scoredPools[slot].sort((a, b) => b.score - a.score);
-    } else {
-      scoredPools[slot] = withScore.slice(0, Math.max(topN, 1));
-    }
-
-    if (scoredPools[slot].length === 0) {
-      scoredPools[slot] = [
-        { art: { ...DUMMY_ART, slotKey: slot }, score: 0, er: 0 },
-      ];
-    }
+    scoredPools[slot] = withScore;
   }
 
   // ── Pre-compute baseline ER for cheap ER pre-filter ──
@@ -632,7 +680,6 @@ export async function* runOptimization(
     for (const slot of allSlots) {
       const seen = new Set<string>();
       for (const { art } of scoredPools[slot]) {
-        if (art.id === "dummy") continue;
         const hsId = artifactIdToHalfSetId[art.setKey];
         if (!hsId || !hsId.startsWith("er-") || seen.has(hsId)) continue;
         seen.add(hsId);
@@ -702,7 +749,9 @@ export async function* runOptimization(
       calcTargetId,
       calcContext,
       erCheckCharId,
-      targetEr
+      targetEr,
+      reactionOverride,
+      scoreFn
     );
   } else {
     // 4pc or no-set: 5 seed builds
@@ -713,7 +762,7 @@ export async function* runOptimization(
   {
     const seen = new Set<string>();
     seedBuilds = seedBuilds.filter((s) => {
-      const key = s.map((a) => a.id).join("|");
+      const key = s.map((a) => a?.id ?? "null").join("|");
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -726,12 +775,15 @@ export async function* runOptimization(
   }
 
   // Number of alternatives per slot depends on mode
-  const altCount = is2pc ? 1 : 3;
+  const altCount = is2pc ? 1 : (opts.altCount ?? 7);
+  const MAX_HILL_CLIMB_STEPS = 20;
+  const IMPROVEMENT_EPSILON = 0.001;
 
-  // Estimate total evaluations for progress reporting
-  const combosPerSeed = (1 + altCount) ** 5;
-  // 2 rounds
-  combinationsTotal = seedBuilds.length * combosPerSeed * 2;
+  // Estimate total evaluations for progress reporting. The search stops on
+  // convergence; this is just a conservative upper bound.
+  const combosPerStep = (1 + altCount) ** 5;
+  combinationsTotal =
+    seedBuilds.length * (1 + combosPerStep) * MAX_HILL_CLIMB_STEPS;
 
   yield getResult("pruning");
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -755,60 +807,55 @@ export async function* runOptimization(
     }
   }
 
-  // ── Round loop (2 rounds) ──
-  let bestBuildTuple: ArtifactTuple = seedBuilds[0];
   const CHUNK_SIZE = 200;
   let chunkCount = 0;
 
-  for (let round = 0; round < 2; round++) {
-    const roundStartDamage = bestDamage;
+  for (const seed of seedBuilds) {
+    let current = seed;
+    let currentEval = evaluateBuild(
+      current,
+      teamBuild,
+      swapCharId,
+      formulaCharId,
+      formulaId,
+      baseSheets,
+      calcTargetId,
+      calcContext,
+      erCheckCharId,
+      targetEr,
+      reactionOverride,
+      scoreFn
+    );
 
-    // In round 2, start from the single best build found so far
-    const roundSeeds = round === 0 ? seedBuilds : [bestBuildTuple];
+    if (currentEval.damage > 0) {
+      updateBest(current, currentEval.damage, currentEval.result);
+    }
+    combinationsEvaluated++;
+    chunkCount++;
 
-    for (const seed of roundSeeds) {
-      // Evaluate seed itself
-      const seedEval = evaluateBuild(
-        seed,
-        teamBuild,
-        swapCharId,
-        formulaCharId,
-        formulaId,
-        baseSheets,
-        calcTargetId,
-        calcContext,
-        erCheckCharId,
-        targetEr
-      );
-      if (seedEval.damage > 0) {
-        updateBest(seed, seedEval.damage, seedEval.result);
-      }
-      combinationsEvaluated++;
-      chunkCount++;
-
-      // Compute marginal gains from this seed
+    for (let step = 0; step < MAX_HILL_CLIMB_STEPS; step++) {
       const marginalGains = computeMarginalGainsForOptimizer(
         teamBuild,
         swapCharId,
         formulaCharId,
         formulaId,
         baseSheets,
-        seed,
+        current,
         calcTargetId,
-        calcContext
+        calcContext,
+        reactionOverride,
+        scoreFn
       );
 
-      // For each slot, score all pool artifacts by marginal gains, pick top K alternatives
-      const perSlotAlternatives: ArtifactData[][] = [];
-
+      const perSlotAlternatives: (ArtifactData | null)[][] = [];
       for (let slotIdx = 0; slotIdx < 5; slotIdx++) {
         const slot = allSlots[slotIdx];
         const pool = scoredPools[slot];
-        const currentArtId = seed[slotIdx].id;
+        const currentArt = current[slotIdx];
+        const currentArtId = currentArt?.id;
 
-        // Score all pool artifacts by marginal gain
         const scored = pool
-          .filter((s) => s.art.id !== currentArtId)
+          .filter((s) => currentArtId == null || s.art.id !== currentArtId)
           .map((s) => ({
             art: s.art,
             mgScore: scorePieceMarginal(s.art, marginalGains),
@@ -816,11 +863,16 @@ export async function* runOptimization(
           .sort((a, b) => b.mgScore - a.mgScore);
 
         const topAlts = scored.slice(0, altCount).map((s) => s.art);
-        // Include current piece + alternatives
-        perSlotAlternatives.push([seed[slotIdx], ...topAlts]);
+        if (currentArt) {
+          perSlotAlternatives.push([currentArt, ...topAlts]);
+        } else if (topAlts.length > 0) {
+          perSlotAlternatives.push(topAlts);
+        } else {
+          // Empty pool, null slot — stays null via enumerateCombinations normalization
+          perSlotAlternatives.push([]);
+        }
       }
 
-      // Enumerate all combinations
       const combos = enumerateCombinations(
         perSlotAlternatives,
         artifactSetId,
@@ -828,16 +880,12 @@ export async function* runOptimization(
         effectiveMinArtifactEr
       );
 
-      // Evaluate each combo
+      let bestLocalTuple = current;
+      let bestLocalDamage = currentEval.damage;
+      let bestLocalResult = currentEval.result;
+
       for (const combo of combos) {
-        // Skip if identical to seed (already evaluated)
-        if (
-          combo[0].id === seed[0].id &&
-          combo[1].id === seed[1].id &&
-          combo[2].id === seed[2].id &&
-          combo[3].id === seed[3].id &&
-          combo[4].id === seed[4].id
-        ) {
+        if (sameTuple(combo, current)) {
           combinationsEvaluated++;
           chunkCount++;
           continue;
@@ -853,15 +901,19 @@ export async function* runOptimization(
           calcTargetId,
           calcContext,
           erCheckCharId,
-          targetEr
+          targetEr,
+          reactionOverride,
+          scoreFn
         );
         if (damage > 0) {
           updateBest(combo, damage, result);
-          if (damage > bestDamage - 0.001) {
-            // Track best build tuple for next round
-            bestBuildTuple = combo;
-          }
         }
+        if (damage > bestLocalDamage + IMPROVEMENT_EPSILON) {
+          bestLocalTuple = combo;
+          bestLocalDamage = damage;
+          bestLocalResult = result;
+        }
+
         combinationsEvaluated++;
         chunkCount++;
 
@@ -871,24 +923,13 @@ export async function* runOptimization(
           await new Promise((resolve) => setTimeout(resolve, 0));
         }
       }
-    }
 
-    // Update bestBuildTuple to the actual best
-    if (bestDamage > 0) {
-      bestBuildTuple = [
-        bestArtifacts.flower!,
-        bestArtifacts.plume!,
-        bestArtifacts.sands!,
-        bestArtifacts.goblet!,
-        bestArtifacts.circlet!,
-      ];
-    }
+      if (bestLocalDamage <= currentEval.damage + IMPROVEMENT_EPSILON) {
+        break;
+      }
 
-    if (round === 1) {
-      const improved = bestDamage > roundStartDamage;
-      console.log(
-        `[Optimizer] Round 2 ${improved ? "improved" : "did not improve"} damage${improved ? ` (${roundStartDamage.toFixed(0)} → ${bestDamage.toFixed(0)})` : ` (${bestDamage.toFixed(0)})`}`
-      );
+      current = bestLocalTuple;
+      currentEval = { damage: bestLocalDamage, result: bestLocalResult };
     }
 
     yield getResult("evaluating");

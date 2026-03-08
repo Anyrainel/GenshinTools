@@ -769,7 +769,12 @@ class SongOfDaysPast4pc extends ArtifactSetBase {
             triggers: ["healing"],
             noStackId: this.artifactSetId,
           },
-          { receiver: "onField" },
+          {
+            receiver: "onField",
+            filter: {
+              abilities: ["normal", "charge", "plunge", "skill", "burst"],
+            },
+          },
           [{ key: "baseDmg", value: 1200 }]
         ),
       ]

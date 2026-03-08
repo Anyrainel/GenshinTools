@@ -80,6 +80,10 @@ const mockTeam: Team = {
   targetEr: {},
   selectedFormula: null,
   optimizationResult: null,
+  reactionOverrides: {},
+  formulaMode: "single",
+  combos: [],
+  selectedCombo: null,
 };
 
 describe("TeamCard", () => {
@@ -161,6 +165,10 @@ describe("TeamCard", () => {
       targetEr: {},
       selectedFormula: null,
       optimizationResult: null,
+      reactionOverrides: {},
+      formulaMode: "single",
+      combos: [],
+      selectedCombo: null,
     };
 
     render(
@@ -202,6 +210,10 @@ describe("TeamCard", () => {
       targetEr: {},
       selectedFormula: null,
       optimizationResult: null,
+      reactionOverrides: {},
+      formulaMode: "single",
+      combos: [],
+      selectedCombo: null,
     };
 
     render(

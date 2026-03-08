@@ -271,67 +271,73 @@ export default function TeamCompPage() {
         header={
           <div className="container flex items-center gap-1 2xl:gap-2 flex-wrap py-2">
             {/* Element chips */}
-            {elements.map((el) => {
-              const active =
-                elementFilter.length === 0 || elementFilter.includes(el);
-              const res = elementResourcesByName[el];
-              return (
-                <FilterChip
-                  key={el}
-                  active={active}
-                  onClick={() => toggleElement(el)}
-                >
-                  <img
-                    src={getAssetUrl(res.imagePath)}
-                    alt={el}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-xs">{t.element(el)}</span>
-                </FilterChip>
-              );
-            })}
+            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+              {elements.map((el) => {
+                const active =
+                  elementFilter.length === 0 || elementFilter.includes(el);
+                const res = elementResourcesByName[el];
+                return (
+                  <FilterChip
+                    key={el}
+                    active={active}
+                    onClick={() => toggleElement(el)}
+                  >
+                    <img
+                      src={getAssetUrl(res.imagePath)}
+                      alt={el}
+                      className="w-4 h-4"
+                    />
+                    <span className="text-xs">{t.element(el)}</span>
+                  </FilterChip>
+                );
+              })}
+            </div>
 
             <div className="h-5 w-px bg-border/50 mx-1" />
 
             {/* Region chips */}
-            {displayRegions.map((r) => {
-              const active =
-                regionFilter.length === 0 || regionFilter.includes(r);
-              return (
-                <FilterChip
-                  key={r}
-                  active={active}
-                  onClick={() => toggleRegion(r)}
-                >
-                  <span className="text-xs">{t.region(r)}</span>
-                </FilterChip>
-              );
-            })}
+            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+              {displayRegions.map((r) => {
+                const active =
+                  regionFilter.length === 0 || regionFilter.includes(r);
+                return (
+                  <FilterChip
+                    key={r}
+                    active={active}
+                    onClick={() => toggleRegion(r)}
+                  >
+                    <span className="text-xs">{t.region(r)}</span>
+                  </FilterChip>
+                );
+              })}
+            </div>
 
             {/* Spacer */}
             <div className="flex-1" />
 
             {/* Add team buttons */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-sm leading-none h-8"
-              onClick={() => handleAddTeam("start")}
-            >
-              <Plus className="w-3 h-3" />
-              {t.ui("teamComp.newTeamStart")}
-              <span className="text-muted-foreground">↑</span>
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              className="gap-1.5 text-sm leading-none h-8"
-              onClick={() => handleAddTeam("end")}
-            >
-              <Plus className="w-3 h-3" />
-              {t.ui("teamComp.newTeamEnd")}
-              <span className="opacity-60">↓</span>
-            </Button>
+            <div className="flex items-center gap-1 2xl:gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-sm leading-none h-8"
+                onClick={() => handleAddTeam("start")}
+              >
+                <Plus className="w-3 h-3" />
+                <span>{t.ui("teamComp.newTeamStart")}</span>
+                <span className="text-muted-foreground">↑</span>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                className="gap-1.5 text-sm leading-none h-8"
+                onClick={() => handleAddTeam("end")}
+              >
+                <Plus className="w-3 h-3" />
+                <span>{t.ui("teamComp.newTeamEnd")}</span>
+                <span className="opacity-60">↓</span>
+              </Button>
+            </div>
           </div>
         }
       >

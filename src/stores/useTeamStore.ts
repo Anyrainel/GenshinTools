@@ -3,7 +3,9 @@ import type { ArtifactData, ReactionType } from "@/data/types";
 import type {
   CalcContext,
   CombatOpts,
+  ComboFormula,
   DamageResult,
+  ReactionOverride,
 } from "@/lib/team-comp/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -27,6 +29,14 @@ export interface Team {
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
+  /** Per-formula reaction overrides. Key format: "{charId}.{formulaId}" */
+  reactionOverrides: Record<string, ReactionOverride>;
+  /** Formula mode: single formula or combo rotation */
+  formulaMode: "single" | "combo";
+  /** Combo formulas for rotation modeling */
+  combos: ComboFormula[];
+  /** Active combo ID, null = single formula mode */
+  selectedCombo: string | null;
 }
 
 /** Importable/exportable team composition envelope. Backwards-compatible with raw Team[]. */
@@ -76,6 +86,10 @@ export const useTeamStore = create<TeamState>()(
           targetEr: {},
           selectedFormula: null,
           optimizationResult: null,
+          reactionOverrides: {},
+          formulaMode: "single",
+          combos: [],
+          selectedCombo: null,
           ...initialData,
         };
         set((state) => {
@@ -168,6 +182,10 @@ export const useTeamStore = create<TeamState>()(
             selectedFormula: t.selectedFormula ?? null,
             optimizationResult: null,
             calcContext: t.calcContext,
+            reactionOverrides: t.reactionOverrides ?? {},
+            formulaMode: (t as Team).formulaMode ?? "single",
+            combos: t.combos ?? [],
+            selectedCombo: t.selectedCombo ?? null,
           }));
 
         set((state) => {
@@ -192,13 +210,27 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 1,
+      version: 3,
       migrate: (persisted, version) => {
-        if (version === 0) {
-          const state = persisted as TeamState;
+        const state = persisted as TeamState;
+        if (version < 1) {
           state.teams = state.teams.map((t) => ({
             ...t,
             reactions: (t as Team).reactions || [],
+          }));
+        }
+        if (version < 2) {
+          state.teams = state.teams.map((t) => ({
+            ...t,
+            reactionOverrides: (t as Team).reactionOverrides ?? {},
+            combos: (t as Team).combos ?? [],
+            selectedCombo: (t as Team).selectedCombo ?? null,
+          }));
+        }
+        if (version < 3) {
+          state.teams = state.teams.map((t) => ({
+            ...t,
+            formulaMode: (t as Team).formulaMode ?? "single",
           }));
         }
         return persisted as TeamState;

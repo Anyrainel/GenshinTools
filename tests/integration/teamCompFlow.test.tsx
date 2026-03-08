@@ -137,6 +137,10 @@ describe("Integration: Team Builder Flow", () => {
       targetEr: {},
       selectedFormula: null,
       optimizationResult: null,
+      reactionOverrides: {},
+      formulaMode: "single",
+      combos: [],
+      selectedCombo: null,
     };
 
     const mockUpdate = vi.fn();

@@ -1,7 +1,8 @@
-import { characters } from "@/data/resources";
+import { characters, weapons } from "@/data/resources";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
 
 const allCharacterIds = new Set(characters.map((c) => c.id));
+const allWeaponIds = new Set(weapons.map((w) => w.id));
 
 /**
  * GOOD import (exhaustive): the file contains the user's full roster.
@@ -21,6 +22,24 @@ export function syncOwnershipExhaustive(
   useOwnershipStore
     .getState()
     .setProfileCharacterOwnership(profileId, unownedIds);
+}
+
+/**
+ * GOOD import (exhaustive) for weapons: weapons NOT in the import are marked unowned.
+ * Only applies when the GOOD data contains a non-empty weapons array.
+ */
+export function syncWeaponOwnershipExhaustive(
+  profileId: string,
+  importedWeaponKeys: string[]
+) {
+  const imported = new Set(importedWeaponKeys);
+  const unownedIds: string[] = [];
+  for (const id of allWeaponIds) {
+    if (!imported.has(id)) {
+      unownedIds.push(id);
+    }
+  }
+  useOwnershipStore.getState().setProfileWeaponOwnership(profileId, unownedIds);
 }
 
 /**

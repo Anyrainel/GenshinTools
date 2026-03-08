@@ -42,13 +42,13 @@ class Columbina extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P3: Moonsign Benediction — per 1000 Max HP, lunar reaction baseDmg% +0.2%, cap 7%
+      // P3: Moonsign Benediction — per 1000 Max HP, lunar reaction reactionBaseDmg% +0.2%, cap 7%
       new ScalingBuff(
         cbs(this, "P3", []),
         { receiver: "team", filter: { reactions: [...LUNAR_REACTIONS] } },
         [],
         "hp",
-        "baseDmg%",
+        "reactionBaseDmg%",
         0.000002,
         0.07
       ),
@@ -203,23 +203,14 @@ const neferOption = {
   label: { zh: "伪秘之帷层数", en: "Veil of Falsehood Stacks" },
   choices: [
     { value: "0", label: { zh: "0 层", en: "0 stacks" } },
-    {
-      value: "1",
-      label: { zh: "1 层 (+6%) (C0上限)", en: "1 stack (+6%) (C0 max)" },
-    },
+    { value: "1", label: { zh: "1 层", en: "1 stack" } },
     {
       value: "3",
-      label: {
-        zh: "3 层 (+18/24%，精通+100/200)",
-        en: "3 stacks (+18/24%, EM +100/200)",
-      },
+      label: { zh: "3 层 (C0上限)", en: "3 stacks (C0 max)" },
     },
     {
       value: "5",
-      label: {
-        zh: "5 层 (+40%，精通+200) (C2上限)",
-        en: "5 stacks (+40%, EM +200) (C2 max)",
-      },
+      label: { zh: "5 层 (C2上限)", en: "5 stacks (C2 max)" },
     },
   ] as const,
   default: "5",
@@ -227,25 +218,25 @@ const neferOption = {
 
 @RegisterCharacter("nefer", neferOption)
 class Nefer extends CharacterBase {
-  // Veil of Falsehood: only under Ascendant Gleam (≥2 Nod-Krai); cap 1 at C0-1, 5 at C2+
+  // Veil of Falsehood: only under Ascendant Gleam (≥2 Nod-Krai); cap 3 at C0-1, 5 at C2+
   private readonly veilStacks = (() => {
     if (this.teamMeta.countByFaction("Moonsign") < 2) return 0;
     const requested = Number.parseInt(resolveOption(neferOption, this.option));
-    return Math.min(requested, this.constellation >= 2 ? 5 : 1);
+    return Math.min(requested, this.constellation >= 2 ? 5 : 3);
   })();
 
   readonly buffs = [
-    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom BaseDmg, cap 14%
+    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
     new ScalingBuff(
       cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
-      "baseDmg%",
+      "reactionBaseDmg%",
       0.000175,
       0.14
     ),
-    // P1: EM +100/200 when Veil stacks ≥3 (C0-1 cap=1, so this never fires at C0-1)
+    // P1: EM +100/200 when Veil stacks ≥3 (C0-1 cap=3, C2+ cap=5)
     new StatBuff(
       cbs(this, this.constellation >= 2 ? "P1/C2" : "P1", ["charge"]),
       { receiver: "selfOnField" },
@@ -257,8 +248,8 @@ class Nefer extends CharacterBase {
         },
       ]
     ),
-    // P1 (Ascendant Gleam): Veil stacks → dmg% per stack
-    // Base: 6% per stack (cap 1). C2: 8% per stack (cap 5, max 140% of original = +40%)
+    // P1 (Ascendant Gleam): Veil stacks → baseDmg% per stack
+    // 8% per stack; cap 3 at C0-1, cap 5 at C2+
     // Ascendant Gleam condition captured in veilStacks (returns 0 if <2 Nod-Krai)
     ...(this.veilStacks > 0
       ? [
@@ -267,16 +258,16 @@ class Nefer extends CharacterBase {
             { receiver: "selfOnField", filter: { abilities: ["charge"] } },
             [
               {
-                key: "dmg%",
-                value:
-                  this.veilStacks * (this.constellation >= 2 ? 0.08 : 0.06),
+                key: "baseDmg%",
+                value: this.veilStacks * 0.08,
               },
             ]
           ),
         ]
       : []),
     // C1: Phantasm shades LunarBloom BaseDmg += 60% EM
-    // "该效果同样会受到「伪秘之帷」的加成" — Veil's dmg% buff already applies multiplicatively
+    // "该效果同样会受到「伪秘之帷」的加成" — pre-multiply by Veil baseDmg% since
+    // flatBaseDmg sits outside the (1+baseDmg%) zone in LunarDirectFormula
     new ScalingBuff(
       cbs(this, "C1", ["charge"]),
       {
@@ -286,7 +277,7 @@ class Nefer extends CharacterBase {
       [],
       "em",
       "baseDmg",
-      this.constellation >= 1 ? 0.6 : 0
+      this.constellation >= 1 ? 0.6 * (1 + this.veilStacks * 0.08) : 0
     ),
     // Q Veil consumption: Burst DMG +40%/49% per Veil of Falsehood stack
     // "施放时，奈芙尔还会消耗所有的「伪秘之帷」，提升本次元素爆发造成的伤害"
@@ -477,13 +468,13 @@ class Nefer extends CharacterBase {
 @RegisterCharacter("flins")
 class Flins extends CharacterBase {
   readonly buffs = [
-    // P3: Per 100 ATK → +0.7% Lunar-Charged BaseDmg, cap 14%
+    // P3: Per 100 ATK → +0.7% Lunar-Charged reactionBaseDmg%, cap 14%
     new ScalingBuff(
       cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
-      "baseDmg%",
+      "reactionBaseDmg%",
       0.00007,
       0.14
     ),
@@ -645,13 +636,13 @@ class Flins extends CharacterBase {
 @RegisterCharacter("lauma")
 class Lauma extends CharacterBase {
   readonly buffs = [
-    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom BaseDmg, cap 14%
+    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
     new ScalingBuff(
       cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
-      "baseDmg%",
+      "reactionBaseDmg%",
       0.000175,
       0.14
     ),
@@ -838,13 +829,13 @@ class Lauma extends CharacterBase {
 @RegisterCharacter("ineffa")
 class Ineffa extends CharacterBase {
   readonly buffs = [
-    // P3: Per 100 ATK → +0.7% Lunar-Charged BaseDmg, cap 14%
+    // P3: Per 100 ATK → +0.7% Lunar-Charged reactionBaseDmg%, cap 14%
     new ScalingBuff(
       cbs(this, "P3", ["passive"]),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
-      "baseDmg%",
+      "reactionBaseDmg%",
       0.00007,
       0.14
     ),

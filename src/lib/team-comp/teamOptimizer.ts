@@ -2,13 +2,20 @@ import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "../account-data/artifactScore";
 import type { TeamBuild } from "./damageCalc";
+import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
   type OptimizationResult,
   type OptimizerOptions,
   runOptimization,
 } from "./optimizer";
-import type { CalcContext, DamageResult } from "./types";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboResult,
+  DamageResult,
+  ReactionOverride,
+} from "./types";
 
 // ─── Types ───
 
@@ -33,19 +40,30 @@ export interface TeamOptimizationProgress {
   done: false;
 }
 
-export interface TeamOptimizationResult {
+interface TeamOptResultBase {
   bestDamage: number;
-  bestDamageResult: DamageResult | null;
   bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
   passResults: TeamOptPassResult[];
   done: true;
 }
 
+export interface TeamOptSingleResult extends TeamOptResultBase {
+  mode: "single";
+  bestDamageResult: DamageResult;
+}
+
+export interface TeamOptComboResult extends TeamOptResultBase {
+  mode: "combo";
+  bestComboResult: ComboResult;
+}
+
+export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
+
 export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 
 export interface PerCharConfig {
   targetEr: number;
-  buildMatch: BuildMatchResult;
+  buildMatch?: BuildMatchResult | null;
   artifactSetId?: string | null;
   artifactHalfSetIds?: string[];
 }
@@ -58,9 +76,14 @@ export interface TeamOptimizerOptions {
   calcContext: CalcContext;
   globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>;
-  topN?: number;
   /** Per-character optimizer config (keyed by charId) */
   perChar: Record<string, PerCharConfig>;
+  reactionOverride?: ReactionOverride;
+  altCount?: number; // Alternatives per slot in hill-climbing (default 7, use 5 on mobile)
+  /** Combo mode: optimize for total combo damage instead of single formula. */
+  combo?: ComboFormula;
+  /** Per-formula reaction overrides (keyed by "charId.formulaId"), used by combo evaluation. */
+  reactionOverrides?: Record<string, ReactionOverride>;
 }
 
 // ─── Helpers ───
@@ -69,7 +92,7 @@ function collectArtifactIds(arts: Record<Slot, ArtifactData | null>): string[] {
   const ids: string[] = [];
   for (const slot of allSlots) {
     const a = arts[slot];
-    if (a && a.id !== "dummy") ids.push(a.id);
+    if (a) ids.push(a.id);
   }
   return ids;
 }
@@ -96,42 +119,94 @@ export async function* runTeamOptimization(
     globalConfig,
     baseSheets,
     perChar,
+    reactionOverride,
+    combo,
+    reactionOverrides,
   } = opts;
-  const topN = opts.topN ?? 40;
 
-  // Build pass list: carry-1, supports, carry-2
-  const supportCharIds = Object.keys(perChar).filter(
-    (id) => id !== carryCharId
-  );
+  const isComboMode =
+    combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
 
+  // Build combo scoreFn if in combo mode
+  const comboScoreFn = isComboMode
+    ? (sheets: Record<string, StatSheet>, _calcTargetId: string): number => {
+        try {
+          return evaluateCombo(
+            teamBuild,
+            combo,
+            sheets,
+            calcContext,
+            reactionOverrides
+          ).totalDamage;
+        } catch {
+          return 0;
+        }
+      }
+    : undefined;
+
+  // Build pass list
+  // Combo mode: all characters with combo lines are carries → supports → carries again
+  // Single mode: carry-1 → supports → carry-2
   type PassDef = { passId: TeamOptPassId; charId: string };
-  const passes: PassDef[] = [{ passId: "carry-1", charId: carryCharId }];
-  for (const sid of supportCharIds) {
-    // Skip supports with no buildMatch (can't optimize)
-    if (!perChar[sid]?.buildMatch) continue;
-    passes.push({ passId: "support", charId: sid });
+  const passes: PassDef[] = [];
+
+  if (isComboMode) {
+    const comboCharIds = new Set(
+      combo.lines.filter((l) => l.count > 0).map((l) => l.charId)
+    );
+    const carryCharIds = Object.keys(perChar).filter((id) =>
+      comboCharIds.has(id)
+    );
+    const supportCharIds = Object.keys(perChar).filter(
+      (id) => !comboCharIds.has(id)
+    );
+
+    // All carries first pass
+    for (const cid of carryCharIds) {
+      passes.push({ passId: "carry-1", charId: cid });
+    }
+    // Supports
+    for (const sid of supportCharIds) {
+      passes.push({ passId: "support", charId: sid });
+    }
+    // All carries second pass
+    for (const cid of carryCharIds) {
+      passes.push({ passId: "carry-2", charId: cid });
+    }
+  } else {
+    const supportCharIds = Object.keys(perChar).filter(
+      (id) => id !== carryCharId
+    );
+    passes.push({ passId: "carry-1", charId: carryCharId });
+    for (const sid of supportCharIds) {
+      passes.push({ passId: "support", charId: sid });
+    }
+    passes.push({ passId: "carry-2", charId: carryCharId });
   }
-  passes.push({ passId: "carry-2", charId: carryCharId });
 
   const totalPasses = passes.length;
   const passResults: TeamOptPassResult[] = [];
   const excludedArtifactIds = new Set<string>();
   let currentSheets = { ...baseSheets };
-  let carry1Result: TeamOptPassResult | null = null;
+  // Track carry-1 results for unlocking before carry-2
+  const carry1Results = new Map<string, TeamOptPassResult>();
 
   for (let passIdx = 0; passIdx < totalPasses; passIdx++) {
     const { passId, charId } = passes[passIdx];
     const charConfig = perChar[charId];
     if (!charConfig) continue;
 
-    // Before carry-2: unlock carry's pass-1 artifacts
-    if (passId === "carry-2" && carry1Result) {
-      for (const id of collectArtifactIds(carry1Result.bestArtifacts)) {
-        excludedArtifactIds.delete(id);
+    // Before carry-2: unlock this character's carry-1 artifacts
+    if (passId === "carry-2") {
+      const prev = carry1Results.get(charId);
+      if (prev) {
+        for (const id of collectArtifactIds(prev.bestArtifacts)) {
+          excludedArtifactIds.delete(id);
+        }
       }
     }
 
-    const isCarry = charId === carryCharId;
+    const isCarry = passId !== "support";
 
     const passOpts: OptimizerOptions = {
       teamBuild,
@@ -143,16 +218,18 @@ export async function* runTeamOptimization(
       globalConfig,
       baseSheets: currentSheets,
       calcContext,
-      topN: isCarry ? topN : Math.min(topN, 20),
       artifactSetId: charConfig.artifactSetId ?? null,
       artifactHalfSetIds: charConfig.artifactHalfSetIds,
       // Multi-pass fields
       swapCharId: charId,
       calcTargetId: carryCharId,
       formulaCharId: carryCharId,
-      erCheckCharId: isCarry ? carryCharId : charId,
+      erCheckCharId: isCarry ? charId : charId,
       excludedArtifactIds:
         excludedArtifactIds.size > 0 ? new Set(excludedArtifactIds) : undefined,
+      reactionOverride,
+      altCount: opts.altCount,
+      scoreFn: comboScoreFn,
     };
 
     const gen = runOptimization(passOpts);
@@ -188,7 +265,7 @@ export async function* runTeamOptimization(
       };
 
       if (passId === "carry-1") {
-        carry1Result = passResult;
+        carry1Results.set(charId, passResult);
       }
 
       passResults.push(passResult);
@@ -225,7 +302,7 @@ export async function* runTeamOptimization(
     bestArtifactsByChar[pr.charId] = pr.bestArtifacts;
   }
 
-  // Compute final carry damage with the finalized artifacts
+  // Compute final damage with the finalized artifacts
   const finalSheets: Record<string, StatSheet> = { ...baseSheets };
   for (const [charId, arts] of Object.entries(bestArtifactsByChar)) {
     const pieces = allSlots
@@ -233,23 +310,41 @@ export async function* runTeamOptimization(
       .filter((a): a is ArtifactData => a != null);
     finalSheets[charId] = StatSheet.fromArtifacts(pieces);
   }
-  const finalPostStats = teamBuild.getTeamStats(
-    finalSheets,
-    carryCharId,
-    calcContext
-  );
-  const finalDmg = teamBuild.getDamageResult(
-    carryCharId,
-    formulaId,
-    finalPostStats,
-    calcContext
-  );
 
-  yield {
-    bestDamage: finalDmg.totalDamage,
-    bestDamageResult: finalDmg,
-    bestArtifactsByChar,
-    passResults,
-    done: true,
-  } satisfies TeamOptimizationResult;
+  const resultBase = { bestArtifactsByChar, passResults, done: true as const };
+
+  if (isComboMode) {
+    const comboRes = evaluateCombo(
+      teamBuild,
+      combo,
+      finalSheets,
+      calcContext,
+      reactionOverrides
+    );
+    yield {
+      ...resultBase,
+      mode: "combo",
+      bestDamage: comboRes.totalDamage,
+      bestComboResult: comboRes,
+    } satisfies TeamOptComboResult;
+  } else {
+    const finalPostStats = teamBuild.getTeamStats(
+      finalSheets,
+      carryCharId,
+      calcContext
+    );
+    const finalDmg = teamBuild.getDamageResult(
+      carryCharId,
+      formulaId,
+      finalPostStats,
+      calcContext,
+      reactionOverride
+    );
+    yield {
+      ...resultBase,
+      mode: "single",
+      bestDamage: finalDmg.totalDamage,
+      bestDamageResult: finalDmg,
+    } satisfies TeamOptSingleResult;
+  }
 }

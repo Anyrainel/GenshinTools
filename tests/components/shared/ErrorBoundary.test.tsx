@@ -102,10 +102,11 @@ describe("ErrorBoundary", () => {
       </ErrorBoundary>
     );
 
-    // Only the home button should exist
+    // Refresh + Home buttons should exist (no clear button)
     const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(1);
-    expect(buttons[0]).toHaveTextContent(/Home/i);
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toHaveTextContent(/Refresh/i);
+    expect(buttons[1]).toHaveTextContent(/Home/i);
   });
 
   it("calls onClearData when clear button is clicked", async () => {
@@ -173,10 +174,11 @@ describe("ErrorBoundary section mode", () => {
       </ErrorBoundary>
     );
 
-    // Only clear button, no home button
+    // Clear + Refresh buttons, no home button
     const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(1);
+    expect(buttons).toHaveLength(2);
     expect(buttons[0]).toHaveTextContent(/Clear/i);
+    expect(buttons[1]).toHaveTextContent(/Refresh/i);
   });
 });
 

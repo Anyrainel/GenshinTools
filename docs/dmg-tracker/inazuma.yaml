@@ -97,19 +97,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: chiori-c2-kinu-coordinated
-  entity: chiori
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    C2 Kinu periodic coordinated attacks not modeled.
-  detail: >
-    Hard to combine with per-hit triggered damage. Periodic coordinated attack
-    with complex interaction model.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 - id: kirara-c4-shield-coordinated
   entity: kirara
   rule: S8

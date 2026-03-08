@@ -242,8 +242,11 @@ function TourOverlay({
         { rect: DOMRect; radius: number }[]
     >([])
 
+    const overlayRef = React.useRef<HTMLDivElement>(null)
+
     React.useEffect(() => {
         let needsScroll = true
+        let rafId: number | null = null
 
         function updatePosition() {
             const elements = document.querySelectorAll(
@@ -309,25 +312,41 @@ function TourOverlay({
             }
         }
 
+        function scheduleUpdate() {
+            if (rafId != null) return
+            rafId = requestAnimationFrame(() => {
+                rafId = null
+                updatePosition()
+            })
+        }
+
         updatePosition()
-        const handleResizeOrScroll = () => updatePosition()
 
-        window.addEventListener("resize", handleResizeOrScroll)
-        window.addEventListener("scroll", handleResizeOrScroll, true)
+        window.addEventListener("resize", scheduleUpdate)
+        window.addEventListener("scroll", scheduleUpdate, true)
 
-        const observer = new MutationObserver(() => updatePosition())
+        const observer = new MutationObserver((mutations) => {
+            const overlayEl = overlayRef.current
+            if (overlayEl) {
+                const allFromOverlay = mutations.every(
+                    (m) => overlayEl.contains(m.target)
+                )
+                if (allFromOverlay) return
+            }
+            scheduleUpdate()
+        })
         observer.observe(document.body, {
-            attributes: true,
             childList: true,
             subtree: true,
         })
 
-        const resizeObserver = new ResizeObserver(() => updatePosition())
+        const resizeObserver = new ResizeObserver(scheduleUpdate)
         resizeObserver.observe(document.body)
 
         return () => {
-            window.removeEventListener("resize", handleResizeOrScroll)
-            window.removeEventListener("scroll", handleResizeOrScroll, true)
+            if (rafId != null) cancelAnimationFrame(rafId)
+            window.removeEventListener("resize", scheduleUpdate)
+            window.removeEventListener("scroll", scheduleUpdate, true)
             observer.disconnect()
             resizeObserver.disconnect()
         }
@@ -355,7 +374,7 @@ function TourOverlay({
     }
 
     return createPortal(
-        <div className="fixed inset-0 z-[100]">
+        <div ref={overlayRef} className="fixed inset-0 z-[100]">
             <svg className="absolute inset-0 size-full">
                 <defs>
                     <mask id="tour-mask">

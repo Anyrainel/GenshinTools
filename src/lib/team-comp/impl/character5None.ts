@@ -621,9 +621,12 @@ class TravelerPyro extends CharacterBase {
         ]
       : []),
     // C1: If on-field character is in Nightsoul's Blessing, +9% more DMG
-    // Nightsoul's Blessing = Natlan characters
+    // Traveler Pyro enters Nightsoul's Blessing via own E, so self qualifies too
     ...(this.constellation >= 1
       ? [
+          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "selfOnField" }, [
+            { key: "dmg%", value: 0.09 },
+          ]),
           new StatBuff(
             cbs(this, "C1", ["E"]),
             { receiver: "onField", regions: ["Natlan"] },

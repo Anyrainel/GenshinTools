@@ -4206,7 +4206,7 @@
       },
       {
         "name": "「伪秘之帷」",
-        "descHtml": "奈芙尔通过突破天赋「月下的豪赌」吸收诳言之核后获得的效果，可以提升幻戏造成的伤害。<br>每层「伪秘之帷」都会使奈芙尔施放的幻戏造成比原本高6%的伤害，初始至多叠加1层，持续2秒，每层独立计算持续时间。"
+        "descHtml": "奈芙尔通过突破天赋「月下的豪赌」吸收诳言之核后获得的效果，可以提升幻戏造成的伤害。<br>每层「伪秘之帷」都会使奈芙尔施放的幻戏造成比原本高8%的伤害，初始至多叠加3层，持续9秒，每层独立计算持续时间。"
       }
     ]
   },
@@ -6858,7 +6858,7 @@
       },
       {
         "name": "「月转时隙」 | 灵驹飞踏 | 「时隙浮光」",
-        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">天地忽然身</span>后，兹白将切换至该模式。该模式至多持续4秒，并具有以下特性：<br>·进行普通攻击与重击时，将转为造成无法被附魔覆盖的<span style=\"color: #FFE699FF;\">岩元素伤害</span>；<br>·元素战技<span style=\"color: #FFD780FF;\">天地忽然身</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">灵驹飞踏</span>：当兹白拥有至少70点<span style=\"color: #FFD780FF;\">「时隙浮光」</span>时，兹白可以消耗70点「时隙浮光」，施放灵驹飞踏，造成两次<span style=\"color: #FFE699FF;\">岩元素伤害</span>，其中的第二段伤害视为月结晶反应伤害。<br><br><span style=\"color: #FFD780FF;\">「时隙浮光」</span>上限为100点，兹白可以通过以下方式积攒「时隙浮光」：<br>·处于<span style=\"color: #FFD780FF;\">「月转时隙」</span>模式下时，每秒积攒10点「时隙浮光」；<br>·普通攻击命中敌人时，会积攒5点「时隙浮光」，每0.5秒至多通过这种方式为兹白积攒一次「时隙浮光」。<br><br><span style=\"color: #FFD780FF;\">月兆·满辉</span> <br>队伍中附近的角色触发月结晶反应时，也会为兹白积攒35点<span style=\"color: #FFD780FF;\">「时隙浮光」</span>，每4秒至多通过这种方式为兹白积攒一次「时隙浮光」，施放特殊元素战技<span style=\"color: #FFD780FF;\">灵驹飞踏</span>将会重置通过这种方式积攒<span style=\"color: #FFD780FF;\">「时隙浮光」</span>的冷却时间。<br><br>施放4次<span style=\"color: #FFD780FF;\">灵驹飞踏</span>后，或持续时间结束时，兹白将退出该模式。"
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">天地忽然身</span>后，兹白将切换至该模式。该模式至多持续15秒，并具有以下特性：<br>·进行普通攻击与重击时，将转为造成无法被附魔覆盖的<span style=\"color: #FFE699FF;\">岩元素伤害</span>；<br>·元素战技<span style=\"color: #FFD780FF;\">天地忽然身</span>将会被替换为特殊的元素战技<span style=\"color: #FFD780FF;\">灵驹飞踏</span>：当兹白拥有至少70点<span style=\"color: #FFD780FF;\">「时隙浮光」</span>时，兹白可以消耗70点「时隙浮光」，施放灵驹飞踏，造成两次<span style=\"color: #FFE699FF;\">岩元素伤害</span>，其中的第二段伤害视为月结晶反应伤害。<br><br><span style=\"color: #FFD780FF;\">「时隙浮光」</span>上限为100点，兹白可以通过以下方式积攒「时隙浮光」：<br>·处于<span style=\"color: #FFD780FF;\">「月转时隙」</span>模式下时，每秒积攒10点「时隙浮光」；<br>·普通攻击命中敌人时，会积攒5点「时隙浮光」，每0.5秒至多通过这种方式为兹白积攒一次「时隙浮光」。<br><br><span style=\"color: #FFD780FF;\">月兆·满辉</span> <br>队伍中附近的角色触发月结晶反应时，也会为兹白积攒35点<span style=\"color: #FFD780FF;\">「时隙浮光」</span>，每4秒至多通过这种方式为兹白积攒一次「时隙浮光」，施放特殊元素战技<span style=\"color: #FFD780FF;\">灵驹飞踏</span>将会重置通过这种方式积攒<span style=\"color: #FFD780FF;\">「时隙浮光」</span>的冷却时间。<br><br>施放4次<span style=\"color: #FFD780FF;\">灵驹飞踏</span>后，或持续时间结束时，兹白将退出该模式。"
       }
     ]
   }

@@ -1,5 +1,5 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import { AmplifyFormula, DirectFormula } from "../damageFormulas";
+import { DirectFormula } from "../damageFormulas";
 import {
   CharacterBase,
   RegisterCharacter,
@@ -65,7 +65,8 @@ class LanYan extends CharacterBase {
     return buffs;
   }
 
-  // E ring: Lv10 173.3% ×2 hits, Lv13 (C3+) 204.5% ×2 hits
+  // E ring: Lv10 173.3%, Lv13 (C3+) 204.5%; hits 2 per use
+  // C1 grants an extra charge (use count), not extra hits per use
   // Q: Lv10 433.9% ×3 hits, Lv13 (C5+) 512.3% ×3 hits
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 2.045 : 1.733;
@@ -293,11 +294,6 @@ class Xiangling extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    const pyroVapeTag = {
-      element: "Pyro" as const,
-      ability: "burst" as const,
-      reaction: "vaporize" as const,
-    };
 
     return {
       "xiangling-pyronado": {
@@ -307,15 +303,6 @@ class Xiangling extends CharacterBase {
           { formula: new DirectFormula(swing2, pyroTag) },
           { formula: new DirectFormula(swing3, pyroTag) },
           { formula: new DirectFormula(tickMult, pyroTag), hits: ticks },
-        ],
-      },
-      "xiangling-pyronado-vape": {
-        label: { zh: `Q ${ticks}跳(蒸发)`, en: `Q ${ticks} ticks (Vape)` },
-        parts: [
-          { formula: new AmplifyFormula(swing1, pyroVapeTag) },
-          { formula: new AmplifyFormula(swing2, pyroVapeTag) },
-          { formula: new AmplifyFormula(swing3, pyroVapeTag) },
-          { formula: new AmplifyFormula(tickMult, pyroVapeTag), hits: ticks },
         ],
       },
     };

@@ -768,9 +768,10 @@ describe("TeamBuild lifecycle", () => {
     it("vape formula includes EM marginal gain", () => {
       const display = tb.getDisplayResult(
         "diluc",
-        "diluc-skill-vape",
+        "diluc-skill",
         emptySheets,
-        ctx
+        ctx,
+        { reaction: "vaporize" }
       );
 
       // Vape formula uses EM in the amplifying multiplier

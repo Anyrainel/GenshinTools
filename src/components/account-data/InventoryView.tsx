@@ -1,4 +1,5 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
@@ -9,18 +10,37 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById, weaponsById } from "@/data/constants";
-import type { AccountData, ArtifactData, WeaponData } from "@/data/types";
+import {
+  artifactIdToHalfSetId,
+  artifactsById,
+  weaponsById,
+} from "@/data/constants";
+import { artifactHalfSets } from "@/data/resources";
+import type {
+  AccountData,
+  ArtifactData,
+  Rarity,
+  WeaponData,
+} from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
-import { cn, getAssetUrl } from "@/lib/utils";
-import { ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { Check, Minus } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface InventoryViewProps {
   data: AccountData;
 }
+
+type TaggedWeapon = WeaponData & { equipped: boolean };
+type TaggedArtifact = ArtifactData & { equipped: boolean };
+
+const ALL_HALF_SET_IDS = artifactHalfSets.map((hs) => hs.id);
+
+const isMaxWeapon = (w: WeaponData) => w.level === 90;
+const isMaxArtifact = (a: ArtifactData) =>
+  (a.rarity === 5 && a.level === 20) || (a.rarity === 4 && a.level === 16);
 
 export function InventoryView({ data }: InventoryViewProps) {
   const { t } = useLanguage();
@@ -28,129 +48,348 @@ export function InventoryView({ data }: InventoryViewProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const iconSize = isMobile ? "lg" : "xl";
 
-  // WEAPONS - sorted by rarity desc > weapon type (from stats when available)
-  const allWeapons = (data.extraWeapons || []).slice().sort((a, b) => {
-    const infoA = weaponsById[a.key];
-    const infoB = weaponsById[b.key];
-    const metaA = infoA
-      ? getWeaponDisplayMeta(infoA, weaponStats?.[a.key])
-      : null;
-    const metaB = infoB
-      ? getWeaponDisplayMeta(infoB, weaponStats?.[b.key])
-      : null;
-    if (metaA && metaB && metaA.rarity !== metaB.rarity) {
-      return metaB.rarity - metaA.rarity;
-    }
-    if (
-      metaA?.type != null &&
-      metaB?.type != null &&
-      metaA.type !== metaB.type
-    ) {
-      return metaA.type.localeCompare(metaB.type);
-    }
-    return a.key.localeCompare(b.key);
-  });
+  // ── Category toggles (default: unequipped + maxLevel) ──
+  const [showEquipped, setShowEquipped] = useState(false);
+  const [showUnequipped, setShowUnequipped] = useState(true);
+  const [showMaxLevel, setShowMaxLevel] = useState(true);
+  const [showOther, setShowOther] = useState(false);
 
-  // Helper to group weapons
-  const groupWeapons = (list: WeaponData[]) => {
-    const grouped: Record<string, WeaponData & { count: number }> = {};
-    for (const w of list) {
-      const groupKey = `${w.key}-L${w.level}-R${w.refinement}`;
-      if (!grouped[groupKey]) {
-        grouped[groupKey] = { ...w, count: 0 };
+  // ── Weapon filters ──
+  const allSecondaryStats = useMemo(() => {
+    if (!weaponStats) return [];
+    return [
+      ...new Set(
+        Object.values(weaponStats)
+          .map((s) => s.secondaryStat)
+          .filter(Boolean)
+      ),
+    ];
+  }, [weaponStats]);
+
+  const [weaponRarities, setWeaponRarities] = useState<Set<Rarity>>(
+    () => new Set([5, 4, 3])
+  );
+  const [weaponSubstats, setWeaponSubstats] = useState<Set<string>>(
+    () => new Set()
+  );
+  // Initialize weapon substats lazily when allSecondaryStats resolves
+  const effectiveWeaponSubstats =
+    weaponSubstats.size > 0 || allSecondaryStats.length === 0
+      ? weaponSubstats
+      : new Set(allSecondaryStats);
+
+  // ── Artifact filters ──
+  const [artifactRarities, setArtifactRarities] = useState<Set<Rarity>>(
+    () => new Set([5, 4])
+  );
+  const [artifactHalfSetFilter, setArtifactHalfSetFilter] = useState<
+    Set<string>
+  >(() => new Set(ALL_HALF_SET_IDS));
+
+  // ── Build combined arrays ──
+  const equippedWeapons: TaggedWeapon[] = useMemo(
+    () =>
+      data.characters
+        .filter((c) => c.weapon)
+        .map((c) => ({ ...c.weapon!, equipped: true })),
+    [data.characters]
+  );
+
+  const unequippedWeapons: TaggedWeapon[] = useMemo(
+    () => (data.extraWeapons || []).map((w) => ({ ...w, equipped: false })),
+    [data.extraWeapons]
+  );
+
+  const equippedArtifacts: TaggedArtifact[] = useMemo(
+    () =>
+      data.characters.flatMap((c) =>
+        Object.values(c.artifacts).map((a) => ({ ...a, equipped: true }))
+      ),
+    [data.characters]
+  );
+
+  const unequippedArtifacts: TaggedArtifact[] = useMemo(
+    () => (data.extraArtifacts || []).map((a) => ({ ...a, equipped: false })),
+    [data.extraArtifacts]
+  );
+
+  // ── Filter weapons ──
+  const filteredWeapons = useMemo(() => {
+    const combined = [...equippedWeapons, ...unequippedWeapons];
+
+    return combined.filter((w) => {
+      // Category filter
+      const eqMatch = w.equipped ? showEquipped : showUnequipped;
+      const lvlMatch = isMaxWeapon(w) ? showMaxLevel : showOther;
+      if (!eqMatch || !lvlMatch) return false;
+
+      // Rarity filter
+      const info = weaponsById[w.key];
+      const meta = info
+        ? getWeaponDisplayMeta(info, weaponStats?.[w.key])
+        : null;
+      const rarity = meta?.rarity ?? info?.rarity ?? 1;
+      if (!weaponRarities.has(rarity as Rarity)) return false;
+
+      // Substat filter
+      if (effectiveWeaponSubstats.size > 0 && meta?.secondaryStat) {
+        if (!effectiveWeaponSubstats.has(meta.secondaryStat)) return false;
       }
-      grouped[groupKey].count += 1;
-    }
-    // Convert back to array and preserve sort order (roughly).
-    // Since we iterate in sort order, Object.values might lose it but usually insertion order is kept in JS.
-    // Better to map keys.
-    // Actually, let's just use a Map to update counts or rebuild array.
-    // Rebuilding array:
-    const result: (WeaponData & { count: number })[] = [];
-    const seen = new Set<string>();
 
-    for (const w of list) {
-      const groupKey = `${w.key}-L${w.level}-R${w.refinement}`;
-      if (seen.has(groupKey)) continue;
+      return true;
+    });
+  }, [
+    equippedWeapons,
+    unequippedWeapons,
+    showEquipped,
+    showUnequipped,
+    showMaxLevel,
+    showOther,
+    weaponRarities,
+    effectiveWeaponSubstats,
+    weaponStats,
+  ]);
 
-      // Calculate total count for this key
-      const count = list.filter(
-        (item) =>
-          item.key === w.key &&
-          item.level === w.level &&
-          item.refinement === w.refinement
-      ).length;
+  // ── Sort & group weapons ──
+  const groupedWeapons = useMemo(() => {
+    const sorted = filteredWeapons.slice().sort((a, b) => {
+      const infoA = weaponsById[a.key];
+      const infoB = weaponsById[b.key];
+      const metaA = infoA
+        ? getWeaponDisplayMeta(infoA, weaponStats?.[a.key])
+        : null;
+      const metaB = infoB
+        ? getWeaponDisplayMeta(infoB, weaponStats?.[b.key])
+        : null;
+      if (metaA && metaB && metaA.rarity !== metaB.rarity)
+        return metaB.rarity - metaA.rarity;
+      if (
+        metaA?.type != null &&
+        metaB?.type != null &&
+        metaA.type !== metaB.type
+      )
+        return metaA.type.localeCompare(metaB.type);
+      return a.key.localeCompare(b.key);
+    });
+    return groupWeapons(sorted);
+  }, [filteredWeapons, weaponStats]);
 
-      result.push({ ...w, count });
-      seen.add(groupKey);
-    }
-    return result;
+  // ── Filter artifacts ──
+  const filteredArtifacts = useMemo(() => {
+    const combined = [...equippedArtifacts, ...unequippedArtifacts];
+
+    return combined
+      .filter((a) => {
+        // Category filter
+        const eqMatch = a.equipped ? showEquipped : showUnequipped;
+        const lvlMatch = isMaxArtifact(a) ? showMaxLevel : showOther;
+        if (!eqMatch || !lvlMatch) return false;
+
+        // Rarity filter
+        if (!artifactRarities.has(a.rarity)) return false;
+
+        // Half-set filter
+        const halfSetId = artifactIdToHalfSetId[a.setKey];
+        if (halfSetId && !artifactHalfSetFilter.has(halfSetId)) return false;
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (a.setKey !== b.setKey) return a.setKey.localeCompare(b.setKey);
+        const slotOrder: Record<string, number> = {
+          flower: 0,
+          plume: 1,
+          sands: 2,
+          goblet: 3,
+          circlet: 4,
+        };
+        return (slotOrder[a.slotKey] ?? 5) - (slotOrder[b.slotKey] ?? 5);
+      });
+  }, [
+    equippedArtifacts,
+    unequippedArtifacts,
+    showEquipped,
+    showUnequipped,
+    showMaxLevel,
+    showOther,
+    artifactRarities,
+    artifactHalfSetFilter,
+  ]);
+
+  // ── Sorted filter lists (by display name) ──
+  const sortedWeaponSubstats = useMemo(
+    () =>
+      [...allSecondaryStats].sort((a, b) => t.stat(a).localeCompare(t.stat(b))),
+    [allSecondaryStats, t]
+  );
+
+  const sortedHalfSetIds = useMemo(
+    () =>
+      [...ALL_HALF_SET_IDS].sort((a, b) =>
+        t.halfSetShort(a).localeCompare(t.halfSetShort(b))
+      ),
+    [t]
+  );
+
+  // ── Toggle helpers ──
+  const toggleSet = <T,>(
+    set: Set<T>,
+    setter: React.Dispatch<React.SetStateAction<Set<T>>>,
+    value: T
+  ) => {
+    setter((prev) => {
+      const next = new Set(prev);
+      if (next.has(value)) next.delete(value);
+      else next.add(value);
+      return next;
+    });
   };
-
-  const maxLvlWeapons = groupWeapons(allWeapons.filter((w) => w.level === 90));
-  const otherWeapons = groupWeapons(allWeapons.filter((w) => w.level < 90));
-
-  // ARTIFACTS - sorted by set key > slot order
-  const slotOrder: Record<string, number> = {
-    flower: 0,
-    plume: 1,
-    sands: 2,
-    goblet: 3,
-    circlet: 4,
-  };
-
-  const sortedArtifacts = (data.extraArtifacts || []).slice().sort((a, b) => {
-    // Sort by set key first
-    if (a.setKey !== b.setKey) {
-      return a.setKey.localeCompare(b.setKey);
-    }
-    // Then by slot order
-    return (slotOrder[a.slotKey] ?? 5) - (slotOrder[b.slotKey] ?? 5);
-  });
-
-  // Helper to determine "Max Level" for artifacts
-  const isMaxArtifact = (a: ArtifactData) => {
-    return (
-      (a.rarity === 5 && a.level === 20) || (a.rarity === 4 && a.level === 16)
-    );
-  };
-
-  const maxLvlArtifacts = sortedArtifacts.filter(isMaxArtifact);
-  const otherArtifacts = sortedArtifacts.filter((a) => !isMaxArtifact(a));
 
   return (
-    <ScrollLayout className="space-y-4 pb-12 mt-2">
-      <Section
-        title={t.ui("accountData.maxLvlWeapons")}
-        count={maxLvlWeapons.length}
-        defaultOpen={true}
-      >
-        <WeaponGrid weapons={maxLvlWeapons} iconSize={iconSize} t={t} />
-      </Section>
+    <ScrollLayout className="space-y-6 pb-12 mt-2">
+      {/* ══════ WEAPONS ══════ */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground/90 px-2">
+          {t.ui("accountData.weapons")}{" "}
+          <span className="text-muted-foreground ml-1 text-base font-normal">
+            ({groupedWeapons.length})
+          </span>
+        </h3>
 
-      <Section
-        title={t.ui("accountData.otherWeapons")}
-        count={otherWeapons.length}
-        defaultOpen={false}
-      >
-        <WeaponGrid weapons={otherWeapons} iconSize={iconSize} t={t} />
-      </Section>
+        <div className="flex flex-wrap items-center gap-1.5 px-2">
+          <CategoryChip
+            color="teal"
+            active={showUnequipped}
+            onClick={() => setShowUnequipped((p) => !p)}
+          >
+            {t.ui("accountData.unequipped")}
+          </CategoryChip>
+          <CategoryChip
+            color="teal"
+            active={showEquipped}
+            onClick={() => setShowEquipped((p) => !p)}
+          >
+            {t.ui("accountData.equipped")}
+          </CategoryChip>
+          <CategoryChip
+            color="orange"
+            active={showMaxLevel}
+            onClick={() => setShowMaxLevel((p) => !p)}
+          >
+            {t.ui("accountData.maxLevel")}
+          </CategoryChip>
+          <CategoryChip
+            color="orange"
+            active={showOther}
+            onClick={() => setShowOther((p) => !p)}
+          >
+            {t.ui("accountData.other")}
+          </CategoryChip>
+          <span className="mx-0.5" />
+          {([5, 4, 3] as Rarity[]).map((r) => (
+            <CategoryChip
+              key={r}
+              color={rarityColor[r] ?? "sky"}
+              active={weaponRarities.has(r)}
+              onClick={() => toggleSet(weaponRarities, setWeaponRarities, r)}
+            >
+              {r}★
+            </CategoryChip>
+          ))}
+        </div>
+        {allSecondaryStats.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1 px-2">
+            {sortedWeaponSubstats.map((stat) => (
+              <FilterChip
+                key={stat}
+                active={effectiveWeaponSubstats.has(stat)}
+                onClick={() => {
+                  if (weaponSubstats.size === 0) {
+                    const init = new Set(allSecondaryStats);
+                    init.delete(stat);
+                    setWeaponSubstats(init);
+                  } else {
+                    toggleSet(weaponSubstats, setWeaponSubstats, stat);
+                  }
+                }}
+              >
+                {t.stat(stat)}
+              </FilterChip>
+            ))}
+          </div>
+        )}
 
-      <Section
-        title={t.ui("accountData.maxLvlArtifacts")}
-        count={maxLvlArtifacts.length}
-        defaultOpen={true}
-      >
-        <ArtifactGrid artifacts={maxLvlArtifacts} iconSize={iconSize} />
-      </Section>
+        <WeaponGrid weapons={groupedWeapons} iconSize={iconSize} t={t} />
+      </div>
 
-      <Section
-        title={t.ui("accountData.otherArtifacts")}
-        count={otherArtifacts.length}
-        defaultOpen={false}
-      >
-        <ArtifactGrid artifacts={otherArtifacts} iconSize={iconSize} />
-      </Section>
+      {/* ══════ ARTIFACTS ══════ */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-foreground/90 px-2">
+          {t.ui("accountData.artifacts")}{" "}
+          <span className="text-muted-foreground ml-1 text-base font-normal">
+            ({filteredArtifacts.length})
+          </span>
+        </h3>
+
+        <div className="flex flex-wrap items-center gap-1.5 px-2">
+          <CategoryChip
+            color="teal"
+            active={showUnequipped}
+            onClick={() => setShowUnequipped((p) => !p)}
+          >
+            {t.ui("accountData.unequipped")}
+          </CategoryChip>
+          <CategoryChip
+            color="teal"
+            active={showEquipped}
+            onClick={() => setShowEquipped((p) => !p)}
+          >
+            {t.ui("accountData.equipped")}
+          </CategoryChip>
+          <CategoryChip
+            color="orange"
+            active={showMaxLevel}
+            onClick={() => setShowMaxLevel((p) => !p)}
+          >
+            {t.ui("accountData.maxLevel")}
+          </CategoryChip>
+          <CategoryChip
+            color="orange"
+            active={showOther}
+            onClick={() => setShowOther((p) => !p)}
+          >
+            {t.ui("accountData.other")}
+          </CategoryChip>
+          <span className="mx-0.5" />
+          {([5, 4] as Rarity[]).map((r) => (
+            <CategoryChip
+              key={r}
+              color={rarityColor[r] ?? "sky"}
+              active={artifactRarities.has(r)}
+              onClick={() =>
+                toggleSet(artifactRarities, setArtifactRarities, r)
+              }
+            >
+              {r}★
+            </CategoryChip>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-1 px-2">
+          {sortedHalfSetIds.map((hsId) => (
+            <FilterChip
+              key={hsId}
+              active={artifactHalfSetFilter.has(hsId)}
+              onClick={() =>
+                toggleSet(artifactHalfSetFilter, setArtifactHalfSetFilter, hsId)
+              }
+            >
+              {t.halfSetShort(hsId)}
+            </FilterChip>
+          ))}
+        </div>
+
+        <ArtifactGrid artifacts={filteredArtifacts} iconSize={iconSize} />
+      </div>
     </ScrollLayout>
   );
 }
@@ -159,48 +398,90 @@ export function InventoryView({ data }: InventoryViewProps) {
 // SUB-COMPONENTS
 // ---------------------------------------------------------------------------
 
-function Section({
-  title,
-  count,
+const categoryColors = {
+  teal: {
+    active: "bg-teal-500/15 border-teal-500/40 text-teal-300",
+    icon: "text-teal-400",
+  },
+  orange: {
+    active: "bg-orange-500/15 border-orange-500/40 text-orange-300",
+    icon: "text-orange-400",
+  },
+  "rarity-5": {
+    active: "bg-rarity-5/15 border-rarity-5/40 text-rarity-5",
+    icon: "text-rarity-5",
+  },
+  "rarity-4": {
+    active: "bg-rarity-4/15 border-rarity-4/40 text-rarity-4",
+    icon: "text-rarity-4",
+  },
+  "rarity-3": {
+    active: "bg-rarity-3/15 border-rarity-3/40 text-rarity-3",
+    icon: "text-rarity-3",
+  },
+} as const;
+
+type CategoryColor = keyof typeof categoryColors;
+
+const rarityColor: Record<number, CategoryColor> = {
+  5: "rarity-5",
+  4: "rarity-4",
+  3: "rarity-3",
+};
+
+function CategoryChip({
+  active,
+  onClick,
+  color,
   children,
-  defaultOpen = true,
 }: {
-  title: string;
-  count: number;
+  active: boolean;
+  onClick: () => void;
+  color: CategoryColor;
   children: React.ReactNode;
-  defaultOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  if (count === 0) return null;
-
+  const scheme = categoryColors[color];
   return (
-    <div className="space-y-2">
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center w-full text-left gap-2 p-2 hover:bg-white/5 rounded-md transition-colors group select-none"
-      >
-        {isOpen ? (
-          <ChevronDown className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-        ) : (
-          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-        )}
-        <h3 className="text-lg font-semibold text-foreground/90 group-hover:text-foreground">
-          {title}{" "}
-          <span className="text-muted-foreground ml-1 text-base font-normal">
-            ({count})
-          </span>
-        </h3>
-      </button>
-
-      {isOpen && (
-        <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-          {children}
-        </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm leading-none font-medium transition-all border",
+        active
+          ? scheme.active
+          : "border-transparent text-foreground opacity-50 hover:opacity-75"
       )}
-    </div>
+    >
+      {active ? (
+        <Check className={cn("w-3.5 h-3.5", scheme.icon)} />
+      ) : (
+        <Minus className="w-3.5 h-3.5" />
+      )}
+      {children}
+    </button>
   );
+}
+
+function groupWeapons(list: (WeaponData & { equipped: boolean })[]) {
+  const result: (WeaponData & { equipped: boolean; count: number })[] = [];
+  const seen = new Set<string>();
+
+  for (const w of list) {
+    const groupKey = `${w.key}-L${w.level}-R${w.refinement}-E${w.equipped}`;
+    if (seen.has(groupKey)) continue;
+
+    const count = list.filter(
+      (item) =>
+        item.key === w.key &&
+        item.level === w.level &&
+        item.refinement === w.refinement &&
+        item.equipped === w.equipped
+    ).length;
+
+    result.push({ ...w, count });
+    seen.add(groupKey);
+  }
+  return result;
 }
 
 function WeaponGrid({
@@ -208,7 +489,7 @@ function WeaponGrid({
   iconSize,
   t,
 }: {
-  weapons: (WeaponData & { count: number })[];
+  weapons: (WeaponData & { equipped: boolean; count: number })[];
   iconSize: "lg" | "xl";
   t: ReturnType<typeof useLanguage>["t"];
 }) {
@@ -237,6 +518,9 @@ function WeaponGrid({
                       </div>
                     </div>
                   )}
+                  {w.equipped && (
+                    <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
+                  )}
                 </div>
                 <div className="pt-1 text-xs text-center font-medium opacity-90 group-hover:opacity-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
                   {name}
@@ -260,7 +544,7 @@ function ArtifactGrid({
   artifacts,
   iconSize,
 }: {
-  artifacts: ArtifactData[];
+  artifacts: (ArtifactData & { equipped: boolean })[];
   iconSize: "lg" | "xl";
 }) {
   return (
@@ -285,6 +569,9 @@ function ArtifactGrid({
                 level={`+${a.level}`}
                 size={iconSize}
               />
+              {a.equipped && (
+                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
+              )}
             </div>
           </ArtifactDataHoverCard>
         );

@@ -26,7 +26,8 @@ export type StatKey =
   // Damage modifiers — scoped by DamageTagFilter on BuffTarget
   | "dmg%" // generic + ability + element DMG bonus (§3 zone, replaces ${AbilityType}%)
   | "baseDmg" // flat base DMG add (replaces ${AbilityType}Base: Yun Jin, Zhongli A4, Shenhe)
-  | "baseDmg%" // base DMG multiplier (§8.7, "deal X% original DMG", Nod-Krai passives)
+  | "baseDmg%" // 倍率乘区: "deal X% original DMG" multiplier (Yoimiya E, Neuvillette A1, Veil of Falsehood, etc.)
+  | "reactionBaseDmg%" // 反应基础提升: lunar reaction base DMG bonus (Nod-Krai P3 passives)
   | "elevated%" // elevation multiplier §4 (replaces ${LunarReactionType}Elevated%)
   | "reactionDmg%" // reaction DMG bonus §8.4 (replaces ${ReactionType}%, separate zone from dmg%)
   | "reactionCr" // reaction CRIT rate §8.8 (replaces ${ReactionType}Cr, separate from cr)
@@ -80,6 +81,7 @@ export type AbilityType =
   | "plunge"
   | "skill"
   | "burst"
+  | "sprint"
   | "special";
 
 // ─── Damage Tags ───
@@ -261,6 +263,75 @@ export type CalcContext = {
   enemyRes: number;
   assumeCrit: boolean;
   critRateTarget?: number; // 0–100 integer; undefined = disabled
+  rollMultiplier?: number; // ideal-gen only; 0.7–1.0, default 0.85
+};
+
+// ─── Reaction Override (Formula v2) ───
+
+/** Which reactions a formula part can participate in. */
+export type AmplifyReaction = "vaporize" | "melt";
+export type CatalyzeReaction = "spread" | "aggravate";
+
+/** Per-formula reaction override (gate + per-part).
+ *  Default: all parts inherit the gate reaction.
+ *  partReactions stores explicit overrides (typically "none" to disable a part).
+ *  partHits stores how many hits of a multi-hit part should react (rest use "none").
+ */
+export type ReactionOverride = {
+  reaction?: ReactionType; // gate reaction
+  partReactions?: Record<number, ReactionType>; // per-part overrides (sparse: only non-default)
+  partHits?: Record<number, number>; // per-part reacting hit count (for multi-hit parts)
+};
+
+export function isAmplifying(r: ReactionType): r is AmplifyReaction {
+  return r === "vaporize" || r === "melt";
+}
+
+export function isCatalyze(r: ReactionType): r is CatalyzeReaction {
+  return r === "spread" || r === "aggravate";
+}
+
+/** Resolve the effective reaction for a formula part given overrides.
+ *  Default behavior: ALL parts inherit the gate reaction (if element-eligible).
+ *  Parts can be explicitly turned off via partReactions[idx] = "none".
+ */
+export function resolvePartReaction(
+  override: ReactionOverride | undefined,
+  partIndex: number,
+  eligibleReactions: ReactionType[] | undefined
+): ReactionType {
+  // No override → no reaction
+  if (!override?.reaction || override.reaction === "none") return "none";
+
+  // Per-part override takes priority (used to disable specific parts)
+  if (override.partReactions?.[partIndex] != null)
+    return override.partReactions[partIndex];
+
+  // Default: all parts inherit the gate if element-eligible
+  if (eligibleReactions?.includes(override.reaction)) return override.reaction;
+
+  // Element can't use this reaction at all
+  return "none";
+}
+
+// ─── Combo Formulas (Rotation Modeling) ───
+
+export type ComboLine = {
+  charId: string; // whose formula (also the on-field character)
+  formulaId: string; // which formula from that character
+  count: number; // repetitions (e.g., 9)
+  reaction?: ReactionOverride; // per-line reaction override
+};
+
+export type ComboFormula = {
+  id: string; // unique ID
+  label: I18nLabel; // user-given name
+  lines: ComboLine[];
+};
+
+export type ComboResult = {
+  lineDamages: { perHit: number; total: number }[];
+  totalDamage: number;
 };
 
 // ─── Char Build Config ───

@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Home, Trash2 } from "lucide-react";
+import { AlertTriangle, Home, RefreshCw, Trash2 } from "lucide-react";
 import React, { type ErrorInfo, type ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
   onClearData?: () => void;
   clearLabel?: string;
+  refreshLabel?: string;
   homeLabel?: string;
   errorTitle?: string;
   errorDefaultMsg?: string;
@@ -37,6 +38,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
       this.props.onClearData();
       window.location.reload();
     }
+  };
+
+  private handleRefresh = () => {
+    window.location.reload();
   };
 
   private handleHome = () => {
@@ -98,6 +103,15 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   {this.props.clearLabel || "Clear Page Data"}
                 </Button>
               )}
+              <Button
+                onClick={this.handleRefresh}
+                variant="secondary"
+                size={isSection ? "sm" : "default"}
+                className="w-full gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                {this.props.refreshLabel || "Refresh Page"}
+              </Button>
               {(!isSection || !this.props.onClearData) && (
                 <Button
                   onClick={this.handleHome}
@@ -133,6 +147,7 @@ export function PageErrorBoundary({
     <ErrorBoundary
       onClearData={onClearData}
       clearLabel={clearLabel || t.ui("common.clear")}
+      refreshLabel={t.ui("common.refresh") || "Refresh Page"}
       homeLabel={t.ui("common.home") || "Home"}
       errorTitle={t.ui("common.error") || "Error"}
       errorDefaultMsg={
@@ -158,6 +173,7 @@ export function SectionErrorBoundary({
     <ErrorBoundary
       onClearData={onClearData}
       clearLabel={t.ui("common.clear")}
+      refreshLabel={t.ui("common.refresh") || "Refresh Page"}
       homeLabel={t.ui("common.home") || "Home"}
       errorTitle={t.ui("common.error") || "Error"}
       errorDefaultMsg={

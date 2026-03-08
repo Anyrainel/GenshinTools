@@ -1,4 +1,5 @@
 import type { Element, Faction, Region } from "@/data/types";
+import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import {
   ScalingBuff,
   assertNoDuplicateStatKeys,
@@ -15,6 +16,7 @@ import {
   createArtifactHalfSet,
   createArtifactSet,
   createCharacter,
+  createReactionVariant,
   createWeapon,
 } from "./damageModels";
 import { AVG_SUBSTAT_ROLL } from "./inspection";
@@ -24,17 +26,20 @@ import type {
   CalcContext,
   CharCompConfig,
   CombatOpts,
+  ComboFormula,
+  ComboResult,
   DamageResult,
   DamageTag,
   DisplayPart,
   DisplayResult,
   I18nLabel,
+  ReactionOverride,
   ResolvedBuff,
   ResolvedStatEntry,
   StatEntry,
   StatKey,
 } from "./types";
-import { filterMatchesTag } from "./types";
+import { filterMatchesTag, resolvePartReaction } from "./types";
 
 export { TeamMeta };
 
@@ -384,13 +389,15 @@ export class CharBuild {
     formulaId: string,
     selfPostStats: StatSheet,
     teamPostStats: StatSheet[],
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
       selfPostStats,
       teamPostStats,
-      ctx
+      ctx,
+      reactionOverride
     );
   }
 
@@ -398,22 +405,92 @@ export class CharBuild {
   getDisplayParts(
     formulaId: string,
     selfPostStats: StatSheet,
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): { parts: DisplayPart[]; totalDamage: number } {
     const entry = this.charBase.getFormulaEntry(formulaId);
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const displayParts: DisplayPart[] = [];
     let totalDamage = 0;
-    for (const { formula, hits } of entry.parts) {
-      const dp = formula.display(selfPostStats, this.charBase.charLevel, ctx);
-      const h = hits ?? 1;
-      totalDamage += dp.damage * h;
-      dp.hits = h;
-      displayParts.push(dp);
+    for (let i = 0; i < entry.parts.length; i++) {
+      const { formula, hits: totalHits } = entry.parts[i];
+      const h = totalHits ?? 1;
+      const hasReaction =
+        reactionOverride?.reaction && reactionOverride.reaction !== "none";
+
+      if (!hasReaction) {
+        const dp = formula.display(selfPostStats, this.charBase.charLevel, ctx);
+        dp.hits = h;
+        totalDamage += dp.damage * h;
+        displayParts.push(dp);
+        continue;
+      }
+
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      const targetReaction = resolvePartReaction(
+        reactionOverride,
+        i,
+        partEligible
+      );
+
+      const reactingHits =
+        targetReaction !== "none"
+          ? Math.min(reactionOverride.partHits?.[i] ?? h, h)
+          : 0;
+      const nonReactingHits = h - reactingHits;
+
+      if (reactingHits > 0) {
+        const effectiveFormula =
+          targetReaction !== formula.tag.reaction
+            ? createReactionVariant(formula, targetReaction)
+            : formula;
+        const dp = effectiveFormula.display(
+          selfPostStats,
+          this.charBase.charLevel,
+          ctx
+        );
+        dp.hits = reactingHits;
+        totalDamage += dp.damage * reactingHits;
+        displayParts.push(dp);
+      }
+      if (nonReactingHits > 0) {
+        const directFormula =
+          formula.tag.reaction !== "none"
+            ? createReactionVariant(formula, "none")
+            : formula;
+        const dp = directFormula.display(
+          selfPostStats,
+          this.charBase.charLevel,
+          ctx
+        );
+        dp.hits = nonReactingHits;
+        totalDamage += dp.damage * nonReactingHits;
+        displayParts.push(dp);
+      }
     }
     return { parts: displayParts, totalDamage };
   }
 }
+
+type ReceiverRule = (
+  providerCharId: string,
+  selfCharId: string,
+  calcTargetId: string | null
+) => boolean;
+
+const RECEIVER_RULES: Record<string, ReceiverRule> = {
+  self: (owner, self) => owner === self,
+  selfOffField: (owner, self) => owner === self,
+  selfOnField: (owner, self, target) =>
+    target !== null && owner === self && self === target,
+  onField: (_, self, target) => target !== null && self === target,
+  otherOnField: (owner, self, target) =>
+    target !== null && self !== owner && self === target,
+  team: () => true,
+};
 
 /**
  * Determine whether a buff applies to a given character's stat sheet.
@@ -442,37 +519,8 @@ export function isBuffApplicable(
     if (!buff.target.factions.includes(selfFaction)) return false;
   }
 
-  const receiver = buff.target.receiver;
-  const buffOwnerId = providerCharId;
-
-  switch (receiver) {
-    case "self":
-    case "selfOffField":
-      // Always applies to the provider's own stat sheet.
-      // selfOffField is equivalent to self in single-target optimization
-      // (supports are inherently off-field).
-      return buffOwnerId === selfCharId;
-
-    case "selfOnField":
-      // Applies to the provider ONLY when provider IS the calc target.
-      // During construction (calcTargetId=null), skip — deferred to getTeamStats.
-      if (calcTargetId === null) return false;
-      return buffOwnerId === selfCharId && selfCharId === calcTargetId;
-
-    case "onField":
-      // Applies to whoever is the calc target.
-      // During construction (calcTargetId=null), skip — deferred to getTeamStats.
-      if (calcTargetId === null) return false;
-      return selfCharId === calcTargetId;
-
-    case "otherOnField":
-      // Applies if calc target is not provider
-      if (calcTargetId === null) return false;
-      return selfCharId !== buffOwnerId && selfCharId === calcTargetId;
-
-    case "team":
-      return true;
-  }
+  const rule = RECEIVER_RULES[buff.target.receiver];
+  return rule ? rule(providerCharId, selfCharId, calcTargetId) : false;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -490,7 +538,7 @@ export class TeamBuild {
   readonly charBuilds: Record<string, CharBuild>;
   readonly teamMeta: TeamMeta;
   readonly teamResonance: TeamResonance;
-  private readonly allStaticBuffs: ProvidedStaticBuff[];
+  readonly allStaticBuffs: ProvidedStaticBuff[];
 
   constructor(configs: CharCompConfig[], combatOpts: CombatOpts = {}) {
     const charIds = configs.map((c) => c.charId);
@@ -642,7 +690,8 @@ export class TeamBuild {
     charId: string,
     formulaId: string,
     teamStats: Record<string, StatSheet>,
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): DamageResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -651,7 +700,8 @@ export class TeamBuild {
       formulaId,
       teamStats[charId]!,
       teamStatsArr,
-      ctx
+      ctx,
+      reactionOverride
     );
   }
 
@@ -663,7 +713,8 @@ export class TeamBuild {
     charId: string,
     formulaId: string,
     artifactStats: Record<string, StatSheet>,
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): DisplayResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -732,7 +783,8 @@ export class TeamBuild {
     const { parts, totalDamage } = build.getDisplayParts(
       formulaId,
       postStats[charId]!,
-      ctx
+      ctx,
+      reactionOverride
     );
 
     // ── Buff resolution ──
@@ -760,7 +812,8 @@ export class TeamBuild {
       artifactStats,
       ctx,
       totalDamage,
-      parts
+      parts,
+      reactionOverride
     );
 
     return {
@@ -953,7 +1006,8 @@ export class TeamBuild {
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
     baseDamage: number,
-    displayParts: DisplayPart[]
+    displayParts: DisplayPart[],
+    reactionOverride?: ReactionOverride
   ): Record<string, Partial<Record<StatKey, number>>> {
     if (baseDamage === 0) return {};
 
@@ -1006,7 +1060,8 @@ export class TeamBuild {
           formulaId,
           newStats[calcTargetId]!,
           Object.values(newStats),
-          ctx
+          ctx,
+          reactionOverride
         );
         charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
       }
@@ -1065,7 +1120,8 @@ export class TeamBuild {
           formulaId,
           newStats[calcTargetId]!,
           Object.values(newStats),
-          ctx
+          ctx,
+          reactionOverride
         );
         charGains[key] = (newResult.totalDamage - baseDamage) / baseDamage;
       }
@@ -1076,4 +1132,279 @@ export class TeamBuild {
 
     return gains;
   }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Combo Evaluation
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Evaluate a combo formula: weighted sum of multiple formula lines,
+ * potentially from different characters with different reaction overrides.
+ *
+ * Groups lines by on-field character and caches getTeamStats() per unique
+ * calcTargetId for efficiency (typically 1-2 unique on-field characters).
+ */
+export function evaluateCombo(
+  teamBuild: TeamBuild,
+  combo: ComboFormula,
+  artifactStats: Record<string, StatSheet>,
+  ctx: CalcContext,
+  /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
+  singleModeOverrides?: Record<string, ReactionOverride>
+): ComboResult {
+  // Cache stat resolution per unique on-field character
+  const statsCache = new Map<string, Record<string, StatSheet>>();
+  const getStats = (onFieldCharId: string) => {
+    if (!statsCache.has(onFieldCharId)) {
+      statsCache.set(
+        onFieldCharId,
+        teamBuild.getTeamStats(artifactStats, onFieldCharId, ctx)
+      );
+    }
+    return statsCache.get(onFieldCharId)!;
+  };
+
+  const lineDamages = combo.lines.map((line) => {
+    const teamStats = getStats(line.charId);
+
+    // Merge: single-mode per-part config as defaults, combo line overrides on top
+    let effectiveReaction = line.reaction;
+    if (singleModeOverrides) {
+      const key = `${line.charId}.${line.formulaId}`;
+      const singleOverride = singleModeOverrides[key];
+      if (singleOverride && effectiveReaction) {
+        effectiveReaction = {
+          ...effectiveReaction,
+          // Use single-mode partReactions/partHits as defaults,
+          // combo line's own values override
+          partReactions: {
+            ...singleOverride.partReactions,
+            ...effectiveReaction.partReactions,
+          },
+          partHits: {
+            ...singleOverride.partHits,
+            ...effectiveReaction.partHits,
+          },
+        };
+        // Clean up empty objects
+        if (
+          effectiveReaction.partReactions &&
+          Object.keys(effectiveReaction.partReactions).length === 0
+        )
+          effectiveReaction.partReactions = undefined;
+        if (
+          effectiveReaction.partHits &&
+          Object.keys(effectiveReaction.partHits).length === 0
+        )
+          effectiveReaction.partHits = undefined;
+      } else if (singleOverride && !effectiveReaction) {
+        // Combo line has no reaction override — inherit single-mode fully
+        effectiveReaction = singleOverride;
+      }
+    }
+
+    const result = teamBuild.getDamageResult(
+      line.charId,
+      line.formulaId,
+      teamStats,
+      ctx,
+      effectiveReaction
+    );
+    return {
+      perHit: result.totalDamage,
+      total: result.totalDamage * line.count,
+    };
+  });
+
+  return {
+    lineDamages,
+    totalDamage: lineDamages.reduce((sum, l) => sum + l.total, 0),
+  };
+}
+
+/**
+ * Produce a DisplayResult for combo mode — stats, marginal gains, and buffs
+ * aggregated across all on-field characters in the combo.
+ */
+export function getComboDisplayResult(
+  teamBuild: TeamBuild,
+  combo: ComboFormula,
+  artifactStats: Record<string, StatSheet>,
+  ctx: CalcContext,
+  singleModeOverrides?: Record<string, ReactionOverride>
+): DisplayResult {
+  const activeLines = combo.lines.filter((l) => l.count > 0);
+
+  // Determine unique on-field characters and which chars have active lines
+  const activeCharIds = new Set(activeLines.map((l) => l.charId));
+  const allCharIds = Object.keys(teamBuild.charBuilds);
+
+  // Pick a fallback on-field context for chars with no active lines
+  const fallbackOnField = activeLines[0]?.charId ?? allCharIds[0];
+
+  // ── Stats: compute per unique on-field context ──
+  const statsCache = new Map<string, Record<string, StatSheet>>();
+  const getStats = (onFieldCharId: string) => {
+    if (!statsCache.has(onFieldCharId)) {
+      statsCache.set(
+        onFieldCharId,
+        teamBuild.getTeamStats(artifactStats, onFieldCharId, ctx)
+      );
+    }
+    return statsCache.get(onFieldCharId)!;
+  };
+
+  // For idle/combat stats, use each char's own on-field context if active, else fallback
+  const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
+  const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
+
+  for (const cid of allCharIds) {
+    const onField = activeCharIds.has(cid) ? cid : fallbackOnField;
+    // getTeamStats returns post-stats (StatSheet) per character
+    // For idle stats we need pre-stats — but getDisplayResult uses getTeamStats too.
+    // We'll use getTeamStats for combat stats (consistent with single mode).
+    const teamStats = getStats(onField);
+    combatStats[cid] = teamStats[cid]!.getAll();
+    // For idle stats, use a simpler approach: stats without on-field-dependent buffs
+    // Use the same teamStats — idle vs combat distinction in single mode uses
+    // preStats vs postStats. Here we approximate with postStats (combat) since
+    // preStats aren't exposed. The StatSheetPanel already handles this gracefully.
+    idleStats[cid] = teamStats[cid]!.getAll();
+  }
+
+  // ── Base combo damage ──
+  const baseResult = evaluateCombo(
+    teamBuild,
+    { ...combo, lines: activeLines },
+    artifactStats,
+    ctx,
+    singleModeOverrides
+  );
+  const baseDamage = baseResult.totalDamage;
+
+  // ── Marginal gains ──
+  const marginalGains: Record<string, Partial<Record<StatKey, number>>> = {};
+
+  if (baseDamage > 0) {
+    const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
+
+    for (const cid of allCharIds) {
+      // Determine relevant stat keys for this character
+      const relevantKeys = new Set<StatKey>();
+
+      if (activeCharIds.has(cid)) {
+        // Carry char: include common scaling stats
+        // We test all rollable keys since combo may use multiple formulas
+        for (const key of rollableKeys) {
+          relevantKeys.add(key);
+        }
+      } else {
+        // Support char: check inputKeys of scaling buffs that affect any active char
+        const { allStaticBuffs, teamMeta } = teamBuild;
+        for (const { buff, providerCharId } of allStaticBuffs) {
+          if (providerCharId !== cid) continue;
+          if (buff instanceof ScalingBuff) {
+            const inputKey = (buff as { inputKey: StatKey }).inputKey;
+            relevantKeys.add(inputKey);
+          }
+        }
+      }
+
+      // Flat→percent substitution
+      const flatToPercent: Partial<Record<StatKey, StatKey>> = {
+        hp: "hp%",
+        atk: "atk%",
+        def: "def%",
+      };
+      for (const [flat, pct] of Object.entries(flatToPercent) as [
+        StatKey,
+        StatKey,
+      ][]) {
+        if (relevantKeys.has(flat)) {
+          relevantKeys.delete(flat);
+          relevantKeys.add(pct);
+        }
+      }
+
+      const charRollable = rollableKeys.filter((k) => relevantKeys.has(k));
+      if (charRollable.length === 0) continue;
+
+      const charGains: Partial<Record<StatKey, number>> = {};
+      for (const key of charRollable) {
+        const delta = AVG_SUBSTAT_ROLL[key];
+        if (!delta) continue;
+        const tweaked = { ...artifactStats };
+        tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(
+          key,
+          delta
+        );
+        const newResult = evaluateCombo(
+          teamBuild,
+          { ...combo, lines: activeLines },
+          tweaked,
+          ctx,
+          singleModeOverrides
+        );
+        const gain = (newResult.totalDamage - baseDamage) / baseDamage;
+        if (gain !== 0) {
+          charGains[key] = gain;
+        }
+      }
+      if (Object.keys(charGains).length > 0) {
+        marginalGains[cid] = charGains;
+      }
+    }
+  }
+
+  // ── Buffs: union across all on-field contexts ──
+  // resolveBuffs is private, so we call getDisplayResult for each unique on-field
+  // character and merge buffs. A buff is active if it's active in ANY context.
+  const buffMap = new Map<string, ResolvedBuff>();
+
+  for (const onFieldCharId of activeCharIds) {
+    // Find any formula for this char to get a valid DisplayResult
+    const formulaIds = teamBuild.getFormulaIds()[onFieldCharId];
+    if (!formulaIds) continue;
+    const firstFormulaId = Object.keys(formulaIds)[0];
+    if (!firstFormulaId) continue;
+
+    // Find the reaction override for this char+formula from single-mode overrides
+    const key = `${onFieldCharId}.${firstFormulaId}`;
+    const rxnOverride = singleModeOverrides?.[key];
+
+    try {
+      const dr = teamBuild.getDisplayResult(
+        onFieldCharId,
+        firstFormulaId,
+        artifactStats,
+        ctx,
+        rxnOverride
+      );
+
+      for (const buff of dr.buffs) {
+        const buffKey = `${buff.source.type}:${buff.source.id}:${buff.source.origin ?? ""}:${buff.providerCharId ?? ""}:${buff.target.receiver}`;
+        const existing = buffMap.get(buffKey);
+        if (!existing) {
+          buffMap.set(buffKey, buff);
+        } else if (buff.active && !existing.active) {
+          // Upgrade to active
+          buffMap.set(buffKey, buff);
+        }
+      }
+    } catch {
+      // Skip if formula evaluation fails
+    }
+  }
+
+  const buffs = Array.from(buffMap.values());
+
+  return {
+    parts: [],
+    totalDamage: baseDamage,
+    buffs,
+    idleStats,
+    combatStats,
+    marginalGains,
+  };
 }

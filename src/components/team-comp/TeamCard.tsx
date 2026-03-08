@@ -338,7 +338,7 @@ export function TeamCard({
           disabled={!isFullyConfigured}
         >
           <Sparkles className="w-4 h-4" />
-          {t.ui("teamComp.teamOptimization")}
+          <span>{t.ui("teamComp.teamOptimization")}</span>
         </Button>
       </div>
     </div>

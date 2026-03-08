@@ -18,8 +18,12 @@ import {
   getWeaponStatsSync,
 } from "@/lib/gameStatsLoader";
 
-import { REACTION_ELEMENT_REQUIREMENTS } from "./constants";
+import {
+  ELEMENT_ELIGIBLE_REACTIONS,
+  REACTION_ELEMENT_REQUIREMENTS,
+} from "./constants";
 import type { DamageFormula } from "./damageFormulas";
+import { createReactionVariant } from "./damageFormulas";
 import type {
   BuffSource,
   BuffTarget,
@@ -32,20 +36,24 @@ import type {
   I18nLabel,
   InferOption,
   OptionDef,
+  ReactionOverride,
   ReactionType,
   StatEntry,
   StatKey,
 } from "./types";
 
 /** A single formula with an optional hit count (defaults to 1). */
-export type FormulaPart = { formula: DamageFormula; hits?: number };
+export type FormulaPart = {
+  formula: DamageFormula;
+  hits?: number;
+};
 
 /** Declarative entry in a character's formulaMap. */
 export type FormulaEntry = {
   label: I18nLabel;
   parts: FormulaPart[];
 };
-import { filterMatchesTag } from "./types";
+import { filterMatchesTag, resolvePartReaction } from "./types";
 
 // Re-export buff and formula classes for convenient single-module imports
 export { StatBuff, ScalingBuff } from "./damageBuffs";
@@ -56,6 +64,7 @@ export {
   CatalyzeFormula,
   TransformFormula,
   LunarFormula,
+  createReactionVariant,
 } from "./damageFormulas";
 
 import type { StatBuff } from "./damageBuffs";
@@ -197,7 +206,7 @@ export class StatSheet {
 
   /** Convert an array of ArtifactData (e.g., from GOOD format) into a StatSheet */
   static fromArtifacts(
-    artifacts: Iterable<ArtifactData | undefined>
+    artifacts: Iterable<ArtifactData | undefined | null>
   ): StatSheet {
     const entries: StatEntry[] = [];
 
@@ -393,7 +402,8 @@ export abstract class IDamageProvider {
     formulaId: string,
     selfStats: StatSheet,
     teamStats: StatSheet[],
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): DamageResult;
 }
 
@@ -665,14 +675,64 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     formulaId: string,
     selfStats: StatSheet,
     _teamStats: StatSheet[],
-    ctx: CalcContext
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
-    const parts = entry.parts.map(({ formula, hits }) => ({
-      damage: formula.calc(selfStats, this.charLevel, ctx),
-      hits: hits ?? 1,
-    }));
+    const parts: { damage: number; hits: number }[] = [];
+    for (let idx = 0; idx < entry.parts.length; idx++) {
+      const { formula, hits: totalHits } = entry.parts[idx];
+      const h = totalHits ?? 1;
+      const hasReaction =
+        reactionOverride?.reaction && reactionOverride.reaction !== "none";
+
+      if (!hasReaction) {
+        parts.push({
+          damage: formula.calc(selfStats, this.charLevel, ctx),
+          hits: h,
+        });
+        continue;
+      }
+
+      const partEligible =
+        ELEMENT_ELIGIBLE_REACTIONS[
+          formula.tag.element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+        ];
+      const targetReaction = resolvePartReaction(
+        reactionOverride,
+        idx,
+        partEligible
+      );
+
+      // Determine how many hits react (partHits override, default = all)
+      const reactingHits =
+        targetReaction !== "none"
+          ? Math.min(reactionOverride.partHits?.[idx] ?? h, h)
+          : 0;
+      const nonReactingHits = h - reactingHits;
+
+      if (reactingHits > 0) {
+        const effectiveFormula =
+          targetReaction !== formula.tag.reaction
+            ? createReactionVariant(formula, targetReaction)
+            : formula;
+        parts.push({
+          damage: effectiveFormula.calc(selfStats, this.charLevel, ctx),
+          hits: reactingHits,
+        });
+      }
+      if (nonReactingHits > 0) {
+        const directFormula =
+          formula.tag.reaction !== "none"
+            ? createReactionVariant(formula, "none")
+            : formula;
+        parts.push({
+          damage: directFormula.calc(selfStats, this.charLevel, ctx),
+          hits: nonReactingHits,
+        });
+      }
+    }
     const totalDamage = parts.reduce(
       (sum, { damage, hits }) => sum + damage * hits,
       0

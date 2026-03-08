@@ -1,9 +1,5 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import {
-  CatalyzeFormula,
-  DirectFormula,
-  TransformFormula,
-} from "../damageFormulas";
+import { DirectFormula, TransformFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
 
@@ -62,19 +58,6 @@ class Sethos extends CharacterBase {
             formula: new DirectFormula(
               atkMult,
               { element: "Electro", ability: "charge", reaction: "none" },
-              "atk",
-              { key: "em", multiplier: emMult }
-            ),
-          },
-        ],
-      },
-      "sethos-shadowpiercer-aggravate": {
-        label: { zh: "重击(超激化)", en: "CA (Aggravate)" },
-        parts: [
-          {
-            formula: new CatalyzeFormula(
-              atkMult,
-              { element: "Electro", ability: "charge", reaction: "aggravate" },
               "atk",
               { key: "em", multiplier: emMult }
             ),

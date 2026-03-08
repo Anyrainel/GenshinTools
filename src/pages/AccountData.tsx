@@ -49,6 +49,7 @@ import {
 import {
   syncOwnershipAdditive,
   syncOwnershipExhaustive,
+  syncWeaponOwnershipExhaustive,
 } from "@/lib/account-data/ownershipSync";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
@@ -260,6 +261,15 @@ export default function AccountDataPage() {
           routing.activeId,
           routing.data.characters.map((c) => c.key)
         );
+        const weaponKeys = [
+          ...routing.data.characters
+            .filter((c) => c.weapon)
+            .map((c) => c.weapon!.key),
+          ...routing.data.extraWeapons.map((w) => w.key),
+        ];
+        if (weaponKeys.length > 0) {
+          syncWeaponOwnershipExhaustive(routing.activeId, weaponKeys);
+        }
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport(routing.pendingImport);
@@ -416,6 +426,15 @@ export default function AccountDataPage() {
     const charKeys = result.data.characters.map((c) => c.key);
     if (pendingImport.type === "json") {
       syncOwnershipExhaustive(result.activeId, charKeys);
+      const weaponKeys = [
+        ...result.data.characters
+          .filter((c) => c.weapon)
+          .map((c) => c.weapon!.key),
+        ...result.data.extraWeapons.map((w) => w.key),
+      ];
+      if (weaponKeys.length > 0) {
+        syncWeaponOwnershipExhaustive(result.activeId, weaponKeys);
+      }
     } else if (pendingImport.type === "mona") {
       syncOwnershipAdditive(result.activeId, charKeys);
     }

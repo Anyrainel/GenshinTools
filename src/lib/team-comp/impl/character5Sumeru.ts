@@ -1,17 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import {
-  AmplifyFormula,
-  CatalyzeFormula,
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../damageFormulas";
-import {
-  CharacterBase,
-  type FormulaEntry,
-  RegisterCharacter,
-  resolveOption,
-} from "../damageModels";
+import { DirectFormula, TransformFormula } from "../damageFormulas";
+import { CharacterBase, RegisterCharacter } from "../damageModels";
+import { resolveOption } from "../damageModels";
 import { cbs } from "../helpers";
 import type { OptionDef } from "../types";
 
@@ -187,20 +177,6 @@ class Alhaitham extends CharacterBase {
           },
         ],
       },
-      "alhaitham-proj-spread": {
-        label: { zh: "E(蔓激化)", en: "E (Spread)" },
-        parts: [
-          {
-            formula: new CatalyzeFormula(
-              projAtk,
-              { element: "Dendro", ability: "skill", reaction: "spread" },
-              "atk",
-              { key: "em", multiplier: projEm }
-            ),
-            hits: 3,
-          },
-        ],
-      },
       "alhaitham-burst": {
         label: { zh: "Q×10 3镜", en: "Q ×10 (3 Mirrors)" },
         parts: [
@@ -349,8 +325,22 @@ class Wanderer extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("nahida")
+const nahidaOption = {
+  label: { zh: "蕴种印敌人数量", en: "Enemies Marked" },
+  choices: [
+    { value: "1", label: { zh: "1个敌人", en: "1 enemy" } },
+    { value: "2", label: { zh: "2个敌人", en: "2 enemies" } },
+    { value: "3", label: { zh: "3个敌人", en: "3 enemies" } },
+    { value: "4", label: { zh: "4个或以上", en: "4+ enemies" } },
+  ] as const,
+  default: "1",
+} satisfies OptionDef;
+
+@RegisterCharacter("nahida", nahidaOption)
 class Nahida extends CharacterBase {
+  private readonly enemyCount = Number.parseInt(
+    resolveOption(nahidaOption, this.option)
+  );
   // Q Pyro bonus: DMG% on Tri-Karma based on Pyro char count (C1 adds +1 virtual Pyro)
   // Lv10: 1 Pyro → +26.8%, 2 Pyro → +40.2%; Lv13 (C5): +31.6% / +47.4%
   // "火元素：当纳西妲处于摩耶之殿当中时，提升元素战技「所闻遍计」的灭净三业造成的伤害"
@@ -442,11 +432,15 @@ class Nahida extends CharacterBase {
           ),
         ]
       : []),
-    // C4: Self EM +140 (model 3 enemies average)
+    // C4: Self EM +100/120/140/160 based on enemies marked (1/2/3/4+)
     ...(this.constellation >= 4
       ? [
           new StatBuff(cbs(this, "C4", ["E"]), { receiver: "self" }, [
-            { key: "em", value: 140 },
+            {
+              key: "em",
+              value:
+                [100, 120, 140, 160][Math.min(this.enemyCount, 4) - 1] ?? 100,
+            },
           ]),
         ]
       : []),
@@ -475,20 +469,6 @@ class Nahida extends CharacterBase {
             formula: new DirectFormula(
               atkMult,
               { element: "Dendro", ability: "skill", reaction: "none" },
-              "atk",
-              { key: "em", multiplier: emMult }
-            ),
-          },
-        ],
-      },
-      "nahida-karma-spread": {
-        label: { zh: "E(蔓激化)", en: "E (Spread)" },
-        parts: [
-          {
-            // Spread is a Catalyze reaction (additive flat bonus) — must use CatalyzeFormula
-            formula: new CatalyzeFormula(
-              atkMult,
-              { element: "Dendro", ability: "skill", reaction: "spread" },
               "atk",
               { key: "em", multiplier: emMult }
             ),
@@ -586,80 +566,46 @@ class Cyno extends CharacterBase {
       ability: "normal" as const,
       reaction: "none" as const,
     };
-    const normalAggTag = {
-      ...normalBaseTag,
-      reaction: "aggravate" as const,
-    };
     const eBaseTag = {
       element: "Electro" as const,
       ability: "skill" as const,
       reaction: "none" as const,
     };
-    const eAggTag = { ...eBaseTag, reaction: "aggravate" as const };
-
-    const comboParts = [
-      { formula: new DirectFormula(n1, normalBaseTag) },
-      { formula: new DirectFormula(n2, normalBaseTag) },
-      { formula: new DirectFormula(n3, normalBaseTag) },
-      { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
-      { formula: new DirectFormula(n5, normalBaseTag) },
-      { formula: new DirectFormula(eMult, eBaseTag) },
-    ];
-
-    // Aggravate: N1/N3/N5 trigger Aggravate (3 hits), N2/N4 direct (3 hits)
-    const comboAggParts = [
-      { formula: new CatalyzeFormula(n1, normalAggTag) },
-      { formula: new DirectFormula(n2, normalBaseTag) },
-      { formula: new CatalyzeFormula(n3, normalAggTag) },
-      { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
-      { formula: new CatalyzeFormula(n5, normalAggTag) },
-      { formula: new CatalyzeFormula(eMult, eAggTag) },
-    ];
-
-    const hasDendro =
-      this.teamMeta.elements[this.charId] === "Dendro" ||
-      Object.keys(this.teamMeta.elements).some(
-        (k) => k !== this.charId && this.teamMeta.elements[k] === "Dendro"
-      );
 
     return {
       "cyno-combo": {
         label: { zh: "Q普攻+E", en: "Q Normal+E" },
-        parts: comboParts,
+        parts: [
+          {
+            formula: new DirectFormula(n1, normalBaseTag),
+          },
+          { formula: new DirectFormula(n2, normalBaseTag) },
+          {
+            formula: new DirectFormula(n3, normalBaseTag),
+          },
+          { formula: new DirectFormula(n4, normalBaseTag), hits: 2 },
+          {
+            formula: new DirectFormula(n5, normalBaseTag),
+          },
+          {
+            formula: new DirectFormula(eMult, eBaseTag),
+          },
+        ],
       },
-      ...(hasDendro
-        ? {
-            "cyno-combo-aggravate": {
-              label: {
-                zh: "Q普攻+E(超激化)",
-                en: "Q Normal+E (Aggravate)",
-              },
-              parts: comboAggParts,
-            },
-          }
-        : {}),
       // C6 "Day of the Jackal": Each Normal ATK fires an extra Duststalker Bolt
       // (100% ATK, Electro skill DMG). ~5 bolts per combo. P2 EM->baseDmg applies automatically.
       ...(this.constellation >= 6
         ? {
             "cyno-c6-bolts": {
               label: { zh: "6命追影牙", en: "C6 Duststalker Bolts" },
-              parts: [{ formula: new DirectFormula(1.0, eBaseTag), hits: 5 }],
+              parts: [
+                {
+                  formula: new DirectFormula(1.0, eBaseTag),
+                  hits: 3,
+                },
+                { formula: new DirectFormula(1.0, eBaseTag), hits: 2 },
+              ],
             },
-            ...(hasDendro
-              ? {
-                  "cyno-c6-bolts-aggravate": {
-                    label: {
-                      zh: "6命追影牙(超激化)",
-                      en: "C6 Bolts (Aggravate)",
-                    },
-                    parts: [
-                      { formula: new CatalyzeFormula(1.0, eAggTag), hits: 3 },
-                      { formula: new DirectFormula(1.0, eBaseTag), hits: 2 },
-                    ],
-                  },
-                }
-              : {}),
           }
         : {}),
     };
@@ -803,12 +749,10 @@ class Nilou extends CharacterBase {
 class Tighnari extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
-      // P1: After Wreath Arrow, EM +50
-      new StatBuff(
-        cbs(this, "P1", ["charge"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [{ key: "em", value: 50 }]
-      ),
+      // P1: After Wreath Arrow, EM +50 (no ability restriction)
+      new StatBuff(cbs(this, "P1", ["charge"]), { receiver: "selfOnField" }, [
+        { key: "em", value: 50 },
+      ]),
       // P2: Each point of EM → Charged ATK +0.06% & Q DMG +0.06% (Max 60%)
       new ScalingBuff(
         cbs(this, "P2", []),
@@ -878,7 +822,6 @@ class Tighnari extends CharacterBase {
       ability: "charge" as const,
       reaction: "none" as const,
     };
-    const chargeSpreadTag = { ...chargeTag, reaction: "spread" as const };
     const burstTag = {
       element: "Dendro" as const,
       ability: "burst" as const,
@@ -898,16 +841,6 @@ class Tighnari extends CharacterBase {
           { formula: new DirectFormula(0.695, chargeTag), hits: 4 },
           ...(this.constellation >= 6
             ? [{ formula: new DirectFormula(1.5, chargeTag) }]
-            : []),
-        ],
-      },
-      "tighnari-charge-spread": {
-        label: { zh: "重击花筥箭(蔓激化)", en: "CA (Spread)" },
-        parts: [
-          { formula: new CatalyzeFormula(1.57, chargeSpreadTag) },
-          { formula: new CatalyzeFormula(0.695, chargeSpreadTag), hits: 4 },
-          ...(this.constellation >= 6
-            ? [{ formula: new CatalyzeFormula(1.5, chargeSpreadTag) }]
             : []),
         ],
       },

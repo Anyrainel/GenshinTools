@@ -1,12 +1,6 @@
 import type { Element, ReactionType } from "@/data/types";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
-import {
-  AmplifyFormula,
-  CatalyzeFormula,
-  DirectFormula,
-  LunarFormula,
-  TransformFormula,
-} from "../damageFormulas";
+import { DirectFormula } from "../damageFormulas";
 import {
   CharacterBase,
   type FormulaEntry,
@@ -260,36 +254,6 @@ class Durin extends CharacterBase {
           { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 10 },
         ],
       },
-      "durin-burst-dark-vape": {
-        label: { zh: "Q (蒸发)", en: "Q (Vape)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(qD1, {
-              ...burstTag,
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(qD2, {
-              ...burstTag,
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(qD3, {
-              ...burstTag,
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(dragonDarkMult, {
-              ...burstTag,
-              reaction: "vaporize",
-            }),
-            hits: 10,
-          },
-        ],
-      },
     };
   })();
 }
@@ -313,7 +277,7 @@ class Albedo extends CharacterBase {
         { receiver: "self", filter: { abilities: ["skill"] } },
         [{ key: "dmg%", value: 0.25 }]
       ),
-      // P4: Silver Isotoma — Transient Blossom DMG +240% DEF
+      // P4: Silver Isotoma — Transient Blossom DMG +240% DEF (fixed passive, not talent-dependent)
       // Only when Silver Isotoma exists (Hexerei: Secret Rite)
       // receiver: "self" — Silver Isotoma fires while Albedo is off-field
       ...(isHexerei
@@ -324,7 +288,7 @@ class Albedo extends CharacterBase {
               [],
               "def",
               "baseDmg",
-              this.constellation >= 3 ? 2.84 : 2.4
+              2.4
             ),
           ]
         : []),
@@ -564,35 +528,6 @@ class Diluc extends CharacterBase {
           { formula: new DirectFormula(e3, pyroSkill) },
         ],
       },
-      "diluc-skill-vape": {
-        label: {
-          zh: "E三段(蒸发)",
-          en: "E (3 hits, Vape)",
-        },
-        parts: [
-          {
-            formula: new AmplifyFormula(e1, {
-              element: "Pyro",
-              ability: "skill",
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(e2, {
-              element: "Pyro",
-              ability: "skill",
-              reaction: "vaporize",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(e3, {
-              element: "Pyro",
-              ability: "skill",
-              reaction: "vaporize",
-            }),
-          },
-        ],
-      },
       "diluc-burst": {
         label: { zh: "Q斩击+爆炸", en: "Q Slash + Explosion" },
         parts: [
@@ -616,15 +551,15 @@ class Diluc extends CharacterBase {
         ? {
             "diluc-plunge-xianyun": {
               label: {
-                zh: "下落(蒸发)",
-                en: "Plunge (Vape)",
+                zh: "下落攻击",
+                en: "Plunge",
               },
               parts: [
                 {
-                  formula: new AmplifyFormula(highPlungeMult, {
+                  formula: new DirectFormula(highPlungeMult, {
                     element: "Pyro",
                     ability: "plunge",
-                    reaction: "vaporize",
+                    reaction: "none",
                   }),
                 },
               ],
@@ -827,6 +762,14 @@ class Venti extends CharacterBase {
           [{ key: "resReduction%", value: 0.24 }]
         )
       );
+      // C2: Wherever a Breeze Blows — press E deals 300% of original DMG
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          [{ key: "baseDmg%", value: 2.0 }]
+        )
+      );
     }
     // C4: After E/Q → Venti and active party members gain 25% Anemo DMG
     // "温迪与队伍中自己的当前场上其他角色" → onField (provider + active)
@@ -944,7 +887,7 @@ class Venti extends CharacterBase {
               },
               parts: [
                 {
-                  formula: new DirectFormula(ePressMult * 3, {
+                  formula: new DirectFormula(ePressMult, {
                     element: "Anemo",
                     ability: "skill",
                     reaction: "none",
@@ -1022,18 +965,6 @@ class Klee extends CharacterBase {
             element: "Pyro",
             ability: "charge",
             reaction: "none",
-          }),
-        },
-      ],
-    },
-    "klee-charged-vape": {
-      label: { zh: "重击(蒸发)", en: "CA (Vaporize)" },
-      parts: [
-        {
-          formula: new AmplifyFormula(2.83, {
-            element: "Pyro",
-            ability: "charge",
-            reaction: "vaporize",
           }),
         },
       ],

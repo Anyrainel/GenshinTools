@@ -28,10 +28,10 @@ function MathZone({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center bg-card/40 border rounded-md shrink-0",
-        "p-1 md:p-2 min-w-[60px] md:min-w-[90px] gap-1 md:gap-2",
+        "flex flex-col items-center justify-center bg-card border rounded-md shrink-0",
+        "p-1 gap-1 md:gap-2",
         highlight
-          ? "border-primary/60 bg-primary/10 shadow-[0_0_8px_rgba(var(--primary),0.3)] ring-1 ring-primary/40"
+          ? "border-primary/60 bg-primary/10 ring-1 ring-primary/40"
           : "border-border/40 hover:border-border/60"
       )}
     >
@@ -68,7 +68,7 @@ function MathVar({
   return (
     <span
       className={cn(
-        "inline-flex flex-col items-center justify-end px-0 md:px-0.5 mx-0 md:mx-0.5 relative top-[3px]",
+        "inline-flex flex-col items-center justify-end px-0 md:px-0.5 mx-0 md:mx-0.5",
         highlight && "text-primary font-bold"
       )}
     >
@@ -82,7 +82,7 @@ function MathVar({
 
 function Op({ char = "×" }: { char?: string }) {
   return (
-    <div className="flex h-10 md:h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-sm md:text-lg px-0.5 md:px-1 shrink-0">
+    <div className="flex h-10 md:h-16 items-center justify-center font-[math] text-muted-foreground opacity-60 text-sm md:text-lg px-0.5 md:px-1 mt-6 shrink-0">
       {char}
     </div>
   );
@@ -239,23 +239,49 @@ function BaseBonusZone({
   const bp = p.statValues["baseDmg%"] || 0;
   if (!bp) return null;
   return (
-    <>
-      <Op />
-      <MathZone
-        label={t.formula("BaseBonus")}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={1} label="" />
-            <MathOp char="+" />
-            <MathVar
-              val={fmtPercent(bp)}
-              label={t.formula("BaseDmgPercent")}
-              highlight={hl === "baseDmg%"}
-            />
-          </span>
-        }
-      />
-    </>
+    <MathZone
+      label={t.formula("BaseBonus")}
+      mathLine={
+        <span className="flex items-center">
+          <MathVar val={1} label="" />
+          <MathOp char="+" />
+          <MathVar
+            val={fmtPercent(bp)}
+            label={t.formula("BaseDmgPercent")}
+            highlight={hl === "baseDmg%"}
+          />
+        </span>
+      }
+    />
+  );
+}
+
+function ReactionBaseDmgZone({
+  p,
+  hl,
+  t,
+}: {
+  p: DisplayPart;
+  hl: StatKey | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const rbp = p.statValues["reactionBaseDmg%"] || 0;
+  if (!rbp) return null;
+  return (
+    <MathZone
+      label={t.formula("RxnBaseDmgZone")}
+      mathLine={
+        <span className="flex items-center">
+          <MathVar val={1} label="" />
+          <MathOp char="+" />
+          <MathVar
+            val={fmtPercent(rbp)}
+            label={t.formula("RxnBaseDmgPercent")}
+            highlight={hl === "reactionBaseDmg%"}
+          />
+        </span>
+      }
+    />
   );
 }
 
@@ -341,6 +367,27 @@ function CatalyzeAdditiveZone({
   );
 }
 
+function ParenGroup({
+  children,
+  enabled = true,
+}: {
+  children: React.ReactNode;
+  enabled?: boolean;
+}) {
+  if (!enabled) return children;
+  return (
+    <div className="flex h-[48px] md:h-[72px] items-center bg-card/5 border border-border/20 rounded-md">
+      <span className="mt-6">
+        <Paren char="(" />
+      </span>
+      {children}
+      <span className="mt-6">
+        <Paren char=")" />
+      </span>
+    </div>
+  );
+}
+
 function BaseGroup({
   p,
   hl,
@@ -356,9 +403,10 @@ function BaseGroup({
   const hasFlatBonus = !!p.statValues.baseDmg;
   const needsGrouping = hasBaseBonus || hasFlatBonus || isCatalyze;
 
-  const content = (
-    <>
+  return (
+    <ParenGroup enabled={needsGrouping}>
       <ScalingZone p={p} hl={hl} t={t} />
+      <Op />
       {hasBaseBonus && <BaseBonusZone p={p} hl={hl} t={t} />}
       {isCatalyze && (
         <>
@@ -367,17 +415,29 @@ function BaseGroup({
         </>
       )}
       {hasFlatBonus && <FlatBonusZone p={p} hl={hl} t={t} />}
-    </>
+    </ParenGroup>
   );
+}
 
-  if (!needsGrouping) return content;
-
+function CoeffZone({
+  coeff,
+  label,
+  t,
+}: {
+  coeff: number;
+  label?: string;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  if (!label && coeff === 1) return null;
   return (
-    <div className="flex h-[48px] md:h-[72px] items-center mx-0.5 md:mx-1 bg-black/5 border border-border/20 px-0.5 md:px-1 rounded-md">
-      <Paren char="(" />
-      {content}
-      <Paren char=")" />
-    </div>
+    <MathZone
+      label={t.formula("Coeff")}
+      mathLine={
+        <span className="flex items-center">
+          <MathVar val={coeff} label={label || t.formula("Coeff")} />
+        </span>
+      }
+    />
   );
 }
 
@@ -385,7 +445,7 @@ function ReactionBonusZone({
   p,
   hl,
   t,
-  labelKey = "EmOrRxn",
+  labelKey = "rxnZone",
 }: {
   p: DisplayPart;
   hl: StatKey | null;
@@ -634,46 +694,22 @@ function AmplifyEq({
   hl: StatKey | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const reactBase = p.params.reactionCoeff || 1;
   return (
     <>
+      <CoeffZone
+        coeff={reactBase}
+        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
+        t={t}
+      />
+      <Op />
       <BaseGroup p={p} hl={hl} t={t} />
+      <Op />
+      <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
       <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
       <CommonMultipliers p={p} hl={hl} t={t} />
-      <Op />
-      <MathZone
-        label={t.formula("Amp")}
-        value={fmtPercent(
-          (p.params.reactionCoeff || 1) *
-            (1 +
-              getEmBonus(p.statValues.em || 0, p.params.emCoeff || 2.78) +
-              (p.statValues["reactionDmg%"] || 0))
-        )}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar val={p.params.reactionCoeff} label={t.formula("Base")} />
-            <MathOp />
-            <Paren char="(" />
-            <MathVar val={1} label="" />
-            <MathOp char="+" />
-            <MathVar
-              val={fmtPercent(
-                getEmBonus(p.statValues.em || 0, p.params.emCoeff || 2.78)
-              )}
-              label={t.formula("EMBonus")}
-              highlight={hl === "em"}
-            />
-            <MathOp char="+" />
-            <MathVar
-              val={fmtPercent(p.statValues["reactionDmg%"] || 0)}
-              label={t.formula("RxnPercent")}
-              highlight={hl === "reactionDmg%"}
-            />
-            <Paren char=")" />
-          </span>
-        }
-      />
     </>
   );
 }
@@ -709,22 +745,18 @@ function TransformEq({
 }) {
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
-  const baseDmg = levelMult * reactBase;
 
   return (
     <>
-      <MathZone
-        label={t.formula("BaseRxn")}
-        value={Math.round(baseDmg).toLocaleString()}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={Math.round(levelMult).toLocaleString()}
-              label={t.formula("LvMult")}
-            />{" "}
-            <MathOp /> <MathVar val={reactBase} label={t.formula("RxnBase")} />
-          </span>
-        }
+      <CoeffZone
+        coeff={reactBase}
+        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
+        t={t}
+      />
+      <Op />
+      <MathVar
+        val={Math.round(levelMult).toLocaleString()}
+        label={t.formula("LvMult")}
       />
       <Op />
       <ReactionBonusZone p={p} hl={hl} t={t} />
@@ -746,26 +778,21 @@ function LunarEq({
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
   const baseDmg = levelMult * reactBase;
+  const rbdp = p.statValues["reactionBaseDmg%"] || 0;
   const bdp = p.statValues["baseDmg%"] || 0;
 
   return (
     <>
-      <MathZone
-        label={t.formula("BaseRxn")}
-        value={Math.round(baseDmg).toLocaleString()}
-        mathLine={
-          <span className="flex items-center">
-            <MathVar
-              val={Math.round(levelMult).toLocaleString()}
-              label={t.formula("LvMult")}
-            />
-            <MathOp />
-            <MathVar val={reactBase} label={t.formula("RxnBase")} />
-          </span>
-        }
+      <CoeffZone
+        coeff={reactBase}
+        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
+        t={t}
       />
       <Op />
-      <ReactionBonusZone p={p} hl={hl} t={t} />
+      <MathVar
+        val={Math.round(levelMult).toLocaleString()}
+        label={t.formula("LvMult")}
+      />
       {bdp ? (
         <>
           <Op />
@@ -785,6 +812,14 @@ function LunarEq({
           />
         </>
       ) : null}
+      {rbdp ? (
+        <>
+          <Op />
+          <ReactionBaseDmgZone p={p} hl={hl} t={t} />
+        </>
+      ) : null}
+      <Op />
+      <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
       <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
     </>
@@ -800,40 +835,37 @@ function LunarDirectGroup({
   hl: StatKey | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const hasReactionBaseBonus = !!p.statValues["reactionBaseDmg%"];
   const hasBaseBonus = !!p.statValues["baseDmg%"];
   const hasFlatBonus = !!p.statValues.baseDmg;
 
   const directCoeff = p.params.directCoeff ?? 1;
 
-  const content = (
-    <>
+  return (
+    <ParenGroup>
+      <CoeffZone
+        coeff={directCoeff}
+        label={p.tag?.reaction ? t.reaction(p.tag.reaction) : undefined}
+        t={t}
+      />
+      <Op />
       <ScalingZone p={p} hl={hl} t={t} />
-      {directCoeff !== 1 && (
+      {hasBaseBonus && (
         <>
           <Op />
-          <MathZone
-            label={t.formula("DirectCoeff")}
-            mathLine={
-              <span className="flex items-center">
-                <MathVar val={directCoeff} label={t.formula("DirectCoeff")} />
-              </span>
-            }
-          />
+          <BaseBonusZone p={p} hl={hl} t={t} />
         </>
       )}
-      {hasBaseBonus && <BaseBonusZone p={p} hl={hl} t={t} />}
+      {hasReactionBaseBonus && (
+        <>
+          <Op />
+          <ReactionBaseDmgZone p={p} hl={hl} t={t} />
+        </>
+      )}
       <Op />
-      <ReactionBonusZone p={p} hl={hl} t={t} labelKey="Lunar DMG%" />
+      <ReactionBonusZone p={p} hl={hl} t={t} labelKey="lunarRxn" />
       {hasFlatBonus && <FlatBonusZone p={p} hl={hl} t={t} />}
-    </>
-  );
-
-  return (
-    <div className="flex h-[48px] md:h-[72px] items-center mx-0.5 md:mx-1 bg-black/5 border border-border/20 px-0.5 md:px-1 rounded-md">
-      <Paren char="(" />
-      {content}
-      <Paren char=")" />
-    </div>
+    </ParenGroup>
   );
 }
 
@@ -886,16 +918,25 @@ function getTemplateName(
   p: DisplayPart,
   t: ReturnType<typeof useLanguage>["t"]
 ) {
-  if (p.template === "direct") return t.formula("DirectDamage");
+  const abilityPrefix = p.tag?.ability ? `${t.ability(p.tag.ability)}: ` : "";
+  if (p.template === "direct") return abilityPrefix + t.formula("DirectDamage");
   if (p.tag?.reaction && p.tag.reaction !== "none") {
     const rxn = t.reaction(p.tag.reaction);
-    if (p.template === "lunarDirect") return rxn + t.formula("DirectSuffix");
-    return rxn + t.formula("ReactionSuffix");
+    if (p.template === "lunarDirect")
+      return abilityPrefix + rxn + t.formula("DirectSuffix");
+    return abilityPrefix + rxn + t.formula("ReactionSuffix");
   }
-  return t.formula(TEMPLATE_KEYS[p.template]);
+  return abilityPrefix + t.formula(TEMPLATE_KEYS[p.template]);
+}
+
+/** Circled number for part indices (①②③…). Falls back to (N) for > 20. */
+function circledIndex(i: number): string {
+  if (i >= 0 && i < 20) return String.fromCodePoint(0x2460 + i);
+  return `(${i + 1})`;
 }
 
 export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
+  const showIndex = parts.length > 1;
   return (
     <div className="w-full overflow-x-auto pt-3 px-1">
       <div className="w-max mx-auto flex flex-col items-center gap-2 md:gap-4">
@@ -903,19 +944,24 @@ export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
           const Renderer = RENDERERS[p.template];
           return (
             <div key={idx} className="flex items-center pt-2">
+              {showIndex && (
+                <span className="text-xs md:text-sm text-foreground/70 font-medium mr-1.5 md:mr-2.5 mt-6 shrink-0">
+                  {circledIndex(idx)}
+                </span>
+              )}
               <Renderer p={p} hl={highlightedStat} t={t} />
               <div className="flex px-1 md:px-2 shrink-0 h-10 md:h-16 items-center">
                 <Op char="=" />
               </div>
               <div className="flex flex-col items-center justify-between gap-1 md:gap-2 bg-primary/5 border border-primary/20 px-2 md:px-4 py-1.5 md:py-2 rounded-lg">
-                <span className="text-[10px] md:text-sm text-primary/70 tracking-wide leading-none opacity-80 whitespace-nowrap">
+                <span className="text-[10px] md:text-sm text-primary tracking-wide leading-none whitespace-nowrap">
                   {getTemplateName(p, t)}
                 </span>
-                <span className="font-[math] text-base md:text-xl font-black text-foreground flex flex-wrap items-baseline justify-center gap-x-1.5 h-full">
+                <span className="font-[math] text-base md:text-xl font-black text-foreground flex items-center justify-center gap-x-1">
                   {p.hits && p.hits !== 1 ? (
                     <>
                       <span>{fmtDamage(p.damage)}</span>
-                      <span className="text-primary bg-primary/10 rounded-full px-2 py-0.5 text-xs font-semibold ml-1 tracking-wider">
+                      <span className="text-primary bg-primary/10 rounded-full px-2 text-xs font-semibold ml-1 tracking-wider">
                         × {p.hits}
                       </span>
                     </>

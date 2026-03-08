@@ -218,6 +218,10 @@ describe("buildTeamConfigs", () => {
     targetEr: {},
     selectedFormula: null,
     optimizationResult: null,
+    reactionOverrides: {},
+    formulaMode: "single" as const,
+    combos: [],
+    selectedCombo: null,
   };
 
   it("builds configs for non-null characters", () => {

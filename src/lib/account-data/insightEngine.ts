@@ -65,9 +65,9 @@ export interface CharacterInsights {
 }
 
 const SWAP_THRESHOLD = 1.0;
-const UPGRADE_THRESHOLD = 3.0;
-const REROLL_THRESHOLD = 5.0;
-const FARM_THRESHOLD = 5.0;
+const UPGRADE_THRESHOLD = 5.0;
+const REROLL_THRESHOLD = 10.0;
+const FARM_THRESHOLD = 10.0;
 
 // ----------------------------------------------------------------------------
 // Internal Types

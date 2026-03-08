@@ -1,7 +1,5 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
-  AmplifyFormula,
-  CatalyzeFormula,
   DirectFormula,
   LunarDirectFormula,
   LunarFormula,
@@ -28,13 +26,13 @@ class Zibai extends CharacterBase {
 
     const buffs: StatBuff[] = [
       // P3: Per 100 DEF → +0.7% Lunar-Crystallize Base DMG, cap 14%
-      // "月结晶反应的基础伤害" → baseDmg% (Lunar reaction base DMG scalar), not reactionDmg%
+      // "月结晶反应的基础伤害" → reactionBaseDmg% (separate zone from baseDmg%/倍率乘区)
       new ScalingBuff(
         cbs(this, "P3", ["passive"]),
         { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
         [],
         "def",
-        "baseDmg%",
+        "reactionBaseDmg%",
         0.00007,
         0.14
       ),
@@ -826,17 +824,6 @@ class HuTao extends CharacterBase {
         label: { zh: "E重击", en: "E CA" },
         parts: [{ formula: new DirectFormula(2.426, pyroTag) }],
       },
-      "hutao-charged-vape": {
-        label: { zh: "E重击(蒸发)", en: "E CA (Vape)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(2.426, {
-              ...pyroTag,
-              reaction: "vaporize",
-            }),
-          },
-        ],
-      },
       "hutao-blood-blossom": {
         label: { zh: "E血梅香(单次)", en: "E Blood Blossom (x1)" },
         parts: [
@@ -852,18 +839,6 @@ class HuTao extends CharacterBase {
               element: "Pyro",
               ability: "burst",
               reaction: "none",
-            }),
-          },
-        ],
-      },
-      "hutao-burst-vape": {
-        label: { zh: "Q(蒸发)", en: "Q (Vape)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(qMult, {
-              element: "Pyro",
-              ability: "burst",
-              reaction: "vaporize",
             }),
           },
         ],
@@ -959,10 +934,10 @@ class Ganyu extends CharacterBase {
         ]
       : []),
     // C4: Opponents in Q field take increased DMG, ramps 5%→25%
-    // Average ≈ 15% over Q duration
+    // Average ≈ 15% over Q duration (enemy debuff, benefits whole team)
     ...(this.constellation >= 4
       ? [
-          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
             { key: "dmg%", value: 0.15 },
           ]),
         ]
@@ -1000,39 +975,9 @@ class Ganyu extends CharacterBase {
           },
         ],
       },
-      "ganyu-frostflake-melt": {
-        label: { zh: "重击(融化)", en: "CA (Melt)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(2.3, {
-              element: "Cryo",
-              ability: "charge",
-              reaction: "melt",
-            }),
-          },
-          {
-            formula: new AmplifyFormula(3.92, {
-              element: "Cryo",
-              ability: "charge",
-              reaction: "melt",
-            }),
-          },
-        ],
-      },
       "ganyu-q-shard": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [{ formula: new DirectFormula(qShardMult, cryoBurstTag) }],
-      },
-      "ganyu-q-shard-melt": {
-        label: { zh: "Q(融化)", en: "Q (Melt)" },
-        parts: [
-          {
-            formula: new AmplifyFormula(qShardMult, {
-              ...cryoBurstTag,
-              reaction: "melt",
-            }),
-          },
-        ],
       },
     };
   })();
@@ -1119,26 +1064,6 @@ class Keqing extends CharacterBase {
               element: "Electro",
               ability: "charge",
               reaction: "none",
-            }),
-          },
-        ],
-      },
-      "keqing-charged-aggravate": {
-        label: { zh: "重击(超激化)", en: "CA (Aggravate)" },
-        parts: [
-          {
-            // Aggravate is a Catalyze reaction → CatalyzeFormula
-            formula: new CatalyzeFormula(1.52, {
-              element: "Electro",
-              ability: "charge",
-              reaction: "aggravate",
-            }),
-          },
-          {
-            formula: new CatalyzeFormula(1.7, {
-              element: "Electro",
-              ability: "charge",
-              reaction: "aggravate",
             }),
           },
         ],

@@ -2,6 +2,7 @@ import { StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
   CatalyzeFormula,
+  type DamageFormula,
   DirectFormula,
   LunarFormula,
   TransformFormula,
@@ -37,6 +38,16 @@ class ArlecchinoNormalFormula extends DirectFormula {
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
+  }
+
+  override createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
+    return new ArlecchinoNormalAmplifyFormula(
+      this.talentMultiplier,
+      { ...this.tag, reaction },
+      this.hitIndex,
+      this.initialBol,
+      this.masqueScale
+    );
   }
 
   override display(
@@ -113,6 +124,15 @@ class ArlecchinoBurstFormula extends DirectFormula {
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
+  }
+
+  override createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
+    return new ArlecchinoBurstAmplifyFormula(
+      this.talentMultiplier,
+      { ...this.tag, reaction },
+      this.initialBol,
+      this.hasC6
+    );
   }
 
   override display(
@@ -226,18 +246,6 @@ class Arlecchino extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
-    const normalMeltTag = { ...normalBaseTag, reaction: "melt" as const };
-    const normalVapeTag = { ...normalBaseTag, reaction: "vaporize" as const };
-    const qMeltTag = {
-      element: "Pyro" as const,
-      ability: "burst" as const,
-      reaction: "melt" as const,
-    };
-    const qVapeTag = {
-      element: "Pyro" as const,
-      ability: "burst" as const,
-      reaction: "vaporize" as const,
-    };
 
     const comboParts = nMults.map((mult, i) => ({
       formula: new ArlecchinoNormalFormula(
@@ -249,55 +257,6 @@ class Arlecchino extends CharacterBase {
       ),
     }));
 
-    const comboMeltParts = nMults.map((mult, i) => ({
-      formula:
-        i === 0 || i === 3
-          ? new ArlecchinoNormalAmplifyFormula(
-              mult,
-              normalMeltTag,
-              i,
-              initialBol,
-              masqueScale
-            )
-          : new ArlecchinoNormalFormula(
-              mult,
-              normalBaseTag,
-              i,
-              initialBol,
-              masqueScale
-            ),
-    }));
-
-    const comboVapeParts = nMults.map((mult, i) => ({
-      formula:
-        i === 0 || i === 3
-          ? new ArlecchinoNormalAmplifyFormula(
-              mult,
-              normalVapeTag,
-              i,
-              initialBol,
-              masqueScale
-            )
-          : new ArlecchinoNormalFormula(
-              mult,
-              normalBaseTag,
-              i,
-              initialBol,
-              masqueScale
-            ),
-    }));
-
-    const hasCryo =
-      this.teamMeta.elements[this.charId] === "Cryo" ||
-      Object.keys(this.teamMeta.elements).some(
-        (k) => k !== this.charId && this.teamMeta.elements[k] === "Cryo"
-      );
-    const hasHydro =
-      this.teamMeta.elements[this.charId] === "Hydro" ||
-      Object.keys(this.teamMeta.elements).some(
-        (k) => k !== this.charId && this.teamMeta.elements[k] === "Hydro"
-      );
-
     return {
       "arlecchino-normal": {
         label: {
@@ -306,54 +265,6 @@ class Arlecchino extends CharacterBase {
         },
         parts: comboParts,
       },
-      ...(hasCryo
-        ? {
-            "arlecchino-normal-melt": {
-              label: {
-                zh: "普攻连段(融化1/4段)",
-                en: "Normal Combo (Melt)",
-              },
-              parts: comboMeltParts,
-            },
-            "arlecchino-burst-melt": {
-              label: { zh: "Q(融化)", en: "Q (Melt)" },
-              parts: [
-                {
-                  formula: new ArlecchinoBurstAmplifyFormula(
-                    qMult,
-                    qMeltTag,
-                    initialBol,
-                    this.constellation >= 6
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
-      ...(hasHydro
-        ? {
-            "arlecchino-normal-vape": {
-              label: {
-                zh: "普攻连段(蒸发1/4段)",
-                en: "Normal Combo (Vape)",
-              },
-              parts: comboVapeParts,
-            },
-            "arlecchino-burst-vape": {
-              label: { zh: "Q(蒸发)", en: "Q (Vape)" },
-              parts: [
-                {
-                  formula: new ArlecchinoBurstAmplifyFormula(
-                    qMult,
-                    qVapeTag,
-                    initialBol,
-                    this.constellation >= 6
-                  ),
-                },
-              ],
-            },
-          }
-        : {}),
       "arlecchino-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [

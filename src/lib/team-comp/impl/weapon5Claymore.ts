@@ -7,25 +7,12 @@ import type { OptionDef } from "../types";
 // 5★ Claymores
 // ══════════════════════════
 
-const blazingSunsOption = {
-  label: { zh: "夜魂加持状态", en: "Nightsoul's Blessing State" },
-  choices: [
-    {
-      value: "nightsoul",
-      label: { zh: "夜魂加持", en: "Nightsoul's Blessing" },
-    },
-    { value: "normal", label: { zh: "无夜魂加持", en: "Without Nightsoul" } },
-  ] as const,
-  default: "nightsoul",
-} satisfies OptionDef;
-
-@RegisterWeapon("a_thousand_blazing_suns", blazingSunsOption)
+@RegisterWeapon("a_thousand_blazing_suns")
 class AThousandBlazingSuns extends WeaponBase {
-  private readonly o = resolveOption(blazingSunsOption, this.option);
-
-  // Scorching Brilliance (E/Q triggers), +75% in Nightsoul's Blessing
+  // Scorching Brilliance (E/Q triggers), +75% if wielder is a Natlan character
   get buffs() {
-    const mult = this.o === "nightsoul" ? 1.75 : 1;
+    const isNatlan = this.teamMeta.regions[this.charId] === "Natlan";
+    const mult = isNatlan ? 1.75 : 1;
     return [
       new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
         {

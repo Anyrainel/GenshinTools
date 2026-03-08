@@ -14,18 +14,23 @@ import type { OptionDef } from "../types";
 
 @RegisterCharacter("ifa")
 class Ifa extends CharacterBase {
+  // P1 Rescue Essentials: ~80 team Nightsoul pts baseline.
+  // C0: 80 pts → 80 Rescue Essentials (cap 150)
+  // C2: 80 base + (80−60)×4 = 160 Rescue Essentials (cap 200)
+  private readonly rescueEssentials = this.constellation >= 2 ? 160 : 80;
+
   readonly buffs = [
-    // P1: Rescue Essentials — ~80 pts × 1.5% = Swirl/EC +120% reactionDmg
+    // P1: Rescue Essentials — Swirl/EC reactionDmg% = pts × 1.5%
     new StatBuff(
       cbs(this, "P1", ["E"]),
       { receiver: "team", filter: { reactions: ["swirl", "electroCharged"] } },
-      [{ key: "reactionDmg%", value: 1.2 }]
+      [{ key: "reactionDmg%", value: this.rescueEssentials * 0.015 }]
     ),
-    // P1: Rescue Essentials — ~80 pts × 0.2% = Lunar-Charged +16% reactionDmg
+    // P1: Rescue Essentials — Lunar-Charged reactionDmg% = pts × 0.2%
     new StatBuff(
       cbs(this, "P1", ["E"]),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
-      [{ key: "reactionDmg%", value: 0.16 }]
+      [{ key: "reactionDmg%", value: this.rescueEssentials * 0.002 }]
     ),
     // P2: When nearby party members trigger Nightsoul Bursts, Ifa's EM +80
     new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [

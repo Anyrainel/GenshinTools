@@ -7,6 +7,10 @@ interface ProfileOwnership {
   unownedCharacters: Record<string, true>;
   /** IDs of weapons NOT owned */
   unownedWeapons: Record<string, true>;
+  /** Character constellation levels (0-6). Absent = default 0 for 5★, 6 for 4★) */
+  characterConstellations: Record<string, number>;
+  /** Weapon refinement levels (1-5). Absent = default 1) */
+  weaponRefinements: Record<string, number>;
 }
 
 interface OwnershipState {
@@ -34,10 +38,23 @@ interface OwnershipState {
     ids: string[],
     owned: boolean
   ) => void;
+  getConstellation: (profileId: string, characterId: string) => number;
+  setConstellation: (
+    profileId: string,
+    characterId: string,
+    level: number
+  ) => void;
+  getRefinement: (profileId: string, weaponId: string) => number;
+  setRefinement: (profileId: string, weaponId: string, level: number) => void;
   /** Atomic replace of the unowned character set for a profile (for GOOD import exhaustive sync) */
   setProfileCharacterOwnership: (
     profileId: string,
     unownedCharacterIds: string[]
+  ) => void;
+  /** Atomic replace of the unowned weapon set for a profile (for GOOD import exhaustive sync) */
+  setProfileWeaponOwnership: (
+    profileId: string,
+    unownedWeaponIds: string[]
   ) => void;
   /** Rename a profile key (mirrors promoteToUid) */
   promoteProfile: (oldId: string, newId: string) => void;
@@ -55,6 +72,8 @@ const getField = (type: "character" | "weapon") =>
 const emptyProfile = (): ProfileOwnership => ({
   unownedCharacters: {},
   unownedWeapons: {},
+  characterConstellations: {},
+  weaponRefinements: {},
 });
 
 type PersistedOwnershipState = Pick<OwnershipState, "profiles">;
@@ -93,9 +112,26 @@ export function migrateOwnershipStore(
 
     return {
       profiles: {
-        [activeId]: { unownedCharacters, unownedWeapons },
+        [activeId]: {
+          unownedCharacters,
+          unownedWeapons,
+          characterConstellations: {},
+          weaponRefinements: {},
+        },
       },
     };
+  }
+
+  // v1 → v2: add characterConstellations & weaponRefinements to existing profiles
+  if (version === 1) {
+    const profiles = state.profiles || {};
+    for (const key of Object.keys(profiles)) {
+      if (!profiles[key].characterConstellations)
+        profiles[key].characterConstellations = {};
+      if (!profiles[key].weaponRefinements)
+        profiles[key].weaponRefinements = {};
+    }
+    return { profiles };
   }
 
   return persistedState as PersistedOwnershipState;
@@ -140,6 +176,51 @@ export const useOwnershipStore = create<OwnershipState>()(
         });
       },
 
+      getConstellation(profileId, characterId) {
+        const profile = get().profiles[profileId];
+        return profile?.characterConstellations[characterId] ?? 0;
+      },
+
+      setConstellation(profileId, characterId, level) {
+        set((state) => {
+          if (!state.profiles[profileId]) {
+            state.profiles[profileId] = emptyProfile();
+          }
+          if (!state.profiles[profileId].characterConstellations) {
+            state.profiles[profileId].characterConstellations = {};
+          }
+          if (level === 0) {
+            delete state.profiles[profileId].characterConstellations[
+              characterId
+            ];
+          } else {
+            state.profiles[profileId].characterConstellations[characterId] =
+              level;
+          }
+        });
+      },
+
+      getRefinement(profileId, weaponId) {
+        const profile = get().profiles[profileId];
+        return profile?.weaponRefinements[weaponId] ?? 1;
+      },
+
+      setRefinement(profileId, weaponId, level) {
+        set((state) => {
+          if (!state.profiles[profileId]) {
+            state.profiles[profileId] = emptyProfile();
+          }
+          if (!state.profiles[profileId].weaponRefinements) {
+            state.profiles[profileId].weaponRefinements = {};
+          }
+          if (level === 1) {
+            delete state.profiles[profileId].weaponRefinements[weaponId];
+          } else {
+            state.profiles[profileId].weaponRefinements[weaponId] = level;
+          }
+        });
+      },
+
       bulkSetOwned(profileId, type, ids, owned) {
         set((state) => {
           if (!state.profiles[profileId]) {
@@ -169,6 +250,19 @@ export const useOwnershipStore = create<OwnershipState>()(
         });
       },
 
+      setProfileWeaponOwnership(profileId, unownedWeaponIds) {
+        set((state) => {
+          if (!state.profiles[profileId]) {
+            state.profiles[profileId] = emptyProfile();
+          }
+          const record: Record<string, true> = {};
+          for (const id of unownedWeaponIds) {
+            record[id] = true;
+          }
+          state.profiles[profileId].unownedWeapons = record;
+        });
+      },
+
       promoteProfile(oldId, newId) {
         set((state) => {
           const profile = state.profiles[oldId];
@@ -192,7 +286,7 @@ export const useOwnershipStore = create<OwnershipState>()(
     })),
     {
       name: "genshin-ownership",
-      version: 1,
+      version: 2,
       migrate: migrateOwnershipStore,
     }
   )

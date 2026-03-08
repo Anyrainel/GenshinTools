@@ -1,15 +1,24 @@
 import {
   AVERAGE_ROLL_MULTIPLIER,
+  artifactsById,
   maxSubstatRolls,
   statPools,
 } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { MAIN_STAT_5STAR } from "@/lib/buildArtifactStats";
+import { getFixedMainStatValue } from "@/lib/account-data/artifactScore";
 
 import type { TeamBuild } from "./damageCalc";
+import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
-import type { CalcContext, DamageResult, StatKey } from "./types";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboResult,
+  DamageResult,
+  ReactionOverride,
+  StatKey,
+} from "./types";
 
 // ─── Types ───
 
@@ -22,6 +31,12 @@ export interface IdealGenOptions {
   setKeysByChar?: Record<string, Record<Slot, string>>;
   /** Substat roll magnitude multiplier (0.7–1.0, default 0.85) */
   rollMultiplier?: number;
+  /** Override reaction types for the damage formula */
+  reactionOverride?: ReactionOverride;
+  /** Combo formula for combo mode */
+  combo?: ComboFormula;
+  /** Per-formula reaction overrides for combo mode */
+  reactionOverrides?: Record<string, ReactionOverride>;
 }
 
 export interface IdealGenResult {
@@ -29,6 +44,7 @@ export interface IdealGenResult {
   sheetsByChar: Record<string, StatSheet>;
   damage: number;
   damageResult: DamageResult | null;
+  comboResult?: ComboResult;
   phase: string;
   progress: number;
   done: boolean;
@@ -36,10 +52,13 @@ export interface IdealGenResult {
 
 // ─── Constants ───
 
-/** Compute per-stat roll values for a given multiplier */
-function getRollValues(multiplier: number): Record<SubStat, number> {
+/** Compute per-stat roll values for a given multiplier and rarity */
+function getRollValues(
+  multiplier: number,
+  rarity: 4 | 5 = 5
+): Record<SubStat, number> {
   const rv = {} as Record<SubStat, number>;
-  for (const [stat, maxVal] of Object.entries(maxSubstatRolls[5])) {
+  for (const [stat, maxVal] of Object.entries(maxSubstatRolls[rarity])) {
     rv[stat as SubStat] = maxVal * multiplier;
   }
   return rv;
@@ -59,8 +78,14 @@ function isPctStat(k: string): boolean {
   return k.endsWith("%") || k === "cr" || k === "cd" || k === "er";
 }
 
-const ROLLS_PER_ARTIFACT = 9;
-const TOTAL_ROLLS = ROLLS_PER_ARTIFACT * 5; // 45
+// 5★: 4 initial + 5 upgrades = 9; 4★: 3 initial + 1 unlock + 3 upgrades = 7
+function rollsPerArtifact(rarity: 4 | 5): number {
+  return rarity === 5 ? 9 : 7;
+}
+// 5★: 1 initial + up to 5 upgrades = 6; 4★: 1 initial + up to 3 upgrades = 4
+function maxRollsPerStat(rarity: 4 | 5): number {
+  return rarity === 5 ? 6 : 4;
+}
 const MAX_SUBSTATS_PER_SLOT = 4;
 
 // Valid main stat pools per slot
@@ -74,6 +99,20 @@ const mainStatPools: Record<Slot, readonly MainStat[]> = {
 
 const allSubstats: readonly SubStat[] = statPools.substat;
 
+/** Determine artifact rarity for a character from their set keys */
+function getCharRarity(
+  charId: string,
+  setKeysByChar?: Record<string, Record<Slot, string>>
+): 4 | 5 {
+  const slotKeys = setKeysByChar?.[charId];
+  if (!slotKeys) return 5;
+  for (const slot of allSlots) {
+    const setKey = slotKeys[slot];
+    if (setKey && artifactsById[setKey]?.rarity === 4) return 4;
+  }
+  return 5;
+}
+
 // ─── Helpers ───
 
 function getValidSubstats(slotMainStat: MainStat): SubStat[] {
@@ -85,15 +124,23 @@ function evaluateDamage(
   sheets: Record<string, StatSheet>,
   carryCharId: string,
   formulaId: string,
-  ctx: CalcContext
+  ctx: CalcContext,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
 ): number {
   try {
+    if (combo) {
+      return evaluateCombo(teamBuild, combo, sheets, ctx, reactionOverrides)
+        .totalDamage;
+    }
     const teamStats = teamBuild.getTeamStats(sheets, carryCharId, ctx);
     const result = teamBuild.getDamageResult(
       carryCharId,
       formulaId,
       teamStats,
-      ctx
+      ctx,
+      reactionOverride
     );
     return result.totalDamage;
   } catch {
@@ -104,15 +151,17 @@ function evaluateDamage(
 function buildSheetFromMainAndSubs(
   mainStats: Record<Slot, MainStat>,
   subRolls: Record<Slot, Partial<Record<SubStat, number>>>,
-  rv: Record<SubStat, number>
+  rv: Record<SubStat, number>,
+  rarity: 4 | 5 = 5
 ): StatSheet {
   const combined: Partial<Record<StatKey, number>> = {};
 
   for (const slot of allSlots) {
-    // Main stat
+    // Main stat (getFixedMainStatValue returns display %, convert to fraction)
     const ms = mainStats[slot];
-    const mainVal = MAIN_STAT_5STAR[ms as StatKey];
-    if (mainVal !== undefined) {
+    const rawVal = getFixedMainStatValue(ms, rarity);
+    if (rawVal) {
+      const mainVal = isPctStat(ms) ? rawVal / 100 : rawVal;
       combined[ms as StatKey] = (combined[ms as StatKey] ?? 0) + mainVal;
     }
 
@@ -145,13 +194,14 @@ function synthesizeArtifacts(
       subs[stat as SubStat] = +(rv[stat as SubStat] * rolls).toFixed(2);
     }
 
+    const setKey = slotSetKeys?.[slot] ?? "ideal";
     result[slot] = {
       id: `ideal-${charId}-${slot}`,
-      setKey: slotSetKeys?.[slot] ?? "ideal",
+      setKey,
       slotKey: slot,
-      rarity: 5,
+      rarity: artifactsById[setKey]?.rarity ?? 5,
       mainStatKey: mainStats[slot],
-      level: 20,
+      level: (artifactsById[setKey]?.rarity ?? 5) === 4 ? 16 : 20,
       lock: false,
       substats: subs,
     };
@@ -176,7 +226,11 @@ function findBestMainStats(
   formulaId: string,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  rv: Record<SubStat, number>
+  rv: Record<SubStat, number>,
+  rarity: 4 | 5 = 5,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
 ): Record<Slot, MainStat> {
   let bestDamage = -1;
   let bestMainStats: Record<Slot, MainStat> = {
@@ -199,14 +253,22 @@ function findBestMainStats(
           circlet,
         };
 
-        const sheet = buildSheetFromMainAndSubs(mainStats, emptySubRolls(), rv);
+        const sheet = buildSheetFromMainAndSubs(
+          mainStats,
+          emptySubRolls(),
+          rv,
+          rarity
+        );
         const sheets = { ...currentSheets, [charId]: sheet };
         const dmg = evaluateDamage(
           teamBuild,
           sheets,
           carryCharId,
           formulaId,
-          ctx
+          ctx,
+          reactionOverride,
+          combo,
+          reactionOverrides
         );
 
         if (dmg > bestDamage) {
@@ -238,9 +300,15 @@ function fillSubstats(
   mainStats: Record<Slot, MainStat>,
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
-  rv: Record<SubStat, number>
+  rv: Record<SubStat, number>,
+  rarity: 4 | 5 = 5,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
 ): Record<Slot, Partial<Record<SubStat, number>>> {
   const subRolls = emptySubRolls();
+  const maxRolls = rollsPerArtifact(rarity);
+  const totalRolls = maxRolls * 5;
 
   // Per-slot tracking
   const slotTotalRolls: Record<Slot, number> = {
@@ -258,14 +326,22 @@ function fillSubstats(
     circlet: new Set(),
   };
 
-  const getSheet = () => buildSheetFromMainAndSubs(mainStats, subRolls, rv);
+  const getSheet = () =>
+    buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
   const getSheets = () => ({ ...currentSheets, [charId]: getSheet() });
+
+  const statCap = maxRollsPerStat(rarity);
 
   /** Can this slot accept one more roll of `stat`? */
   const canPlace = (slot: Slot, stat: SubStat): boolean => {
     if (stat === (mainStats[slot] as string)) return false;
-    if (slotTotalRolls[slot] >= ROLLS_PER_ARTIFACT) return false;
-    if (chosenPerSlot[slot].has(stat)) return true; // already one of the 4
+    if (slotTotalRolls[slot] >= maxRolls) return false;
+    if ((subRolls[slot][stat] ?? 0) >= statCap) return false;
+    if (chosenPerSlot[slot].has(stat)) {
+      // Reserve remaining rolls for unchosen substats (1 each)
+      const unchosenNeeded = MAX_SUBSTATS_PER_SLOT - chosenPerSlot[slot].size;
+      return maxRolls - slotTotalRolls[slot] > unchosenNeeded;
+    }
     return chosenPerSlot[slot].size < MAX_SUBSTATS_PER_SLOT; // room for a new substat
   };
 
@@ -282,13 +358,16 @@ function fillSubstats(
     return best;
   };
 
-  for (let roll = 0; roll < TOTAL_ROLLS; roll++) {
+  for (let roll = 0; roll < totalRolls; roll++) {
     const baseDmg = evaluateDamage(
       teamBuild,
       getSheets(),
       carryCharId,
       formulaId,
-      ctx
+      ctx,
+      reactionOverride,
+      combo,
+      reactionOverrides
     );
 
     // Evaluate marginal gain for every substat and rank them
@@ -305,7 +384,10 @@ function fillSubstats(
         getSheets(),
         carryCharId,
         formulaId,
-        ctx
+        ctx,
+        reactionOverride,
+        combo,
+        reactionOverrides
       );
       subRolls[testSlot][stat]! -= 1;
       if (subRolls[testSlot][stat] === 0) delete subRolls[testSlot][stat];
@@ -347,7 +429,11 @@ function findBestMainStatsWithSubs(
   currentSheets: Record<string, StatSheet>,
   existingSubRolls: Record<Slot, Partial<Record<SubStat, number>>>,
   ctx: CalcContext,
-  rv: Record<SubStat, number>
+  rv: Record<SubStat, number>,
+  rarity: 4 | 5 = 5,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
 ): Record<Slot, MainStat> {
   let bestDamage = -1;
   let bestMainStats: Record<Slot, MainStat> = {
@@ -373,7 +459,8 @@ function findBestMainStatsWithSubs(
         const sheet = buildSheetFromMainAndSubs(
           mainStats,
           existingSubRolls,
-          rv
+          rv,
+          rarity
         );
         const sheets = { ...currentSheets, [charId]: sheet };
         const dmg = evaluateDamage(
@@ -381,7 +468,10 @@ function findBestMainStatsWithSubs(
           sheets,
           carryCharId,
           formulaId,
-          ctx
+          ctx,
+          reactionOverride,
+          combo,
+          reactionOverrides
         );
 
         if (dmg > bestDamage) {
@@ -408,11 +498,29 @@ function findBestMainStatsWithSubs(
 export async function* runIdealArtifactGen(
   opts: IdealGenOptions
 ): AsyncGenerator<IdealGenResult> {
-  const { teamBuild, carryCharId, formulaId, calcContext, setKeysByChar } =
-    opts;
-  const rv = getRollValues(opts.rollMultiplier ?? AVERAGE_ROLL_MULTIPLIER);
+  const {
+    teamBuild,
+    carryCharId,
+    formulaId,
+    calcContext,
+    setKeysByChar,
+    reactionOverride,
+    combo,
+    reactionOverrides,
+  } = opts;
+  const rollMult = opts.rollMultiplier ?? AVERAGE_ROLL_MULTIPLIER;
 
+  // Per-character rarity and roll values
+  const charRarity: Record<string, 4 | 5> = {};
+  const charRv: Record<string, Record<SubStat, number>> = {};
   const allCharIds = Object.keys(teamBuild.getFormulaIds());
+  for (const cid of allCharIds) {
+    const r = getCharRarity(cid, setKeysByChar);
+    charRarity[cid] = r;
+    charRv[cid] = getRollValues(rollMult, r);
+  }
+  // Default rv for makeResult (uses 5★ for progress display)
+  const rv = getRollValues(rollMult);
   const supportCharIds = allCharIds.filter((id) => id !== carryCharId);
 
   // Total steps: main(1+N) + sub(1+N) + reroll(1) + resub(1) = 2N+4
@@ -442,11 +550,16 @@ export async function* runIdealArtifactGen(
       carryCharId,
       formulaId,
       calcContext,
-      rv,
-      setKeysByChar
+      charRv,
+      setKeysByChar,
+      reactionOverride,
+      combo,
+      reactionOverrides
     );
 
   // ── Step 1: Main stats for carry ──
+  const carryR = charRarity[carryCharId] ?? 5;
+  const carryRv = charRv[carryCharId] ?? rv;
   yield yieldProgress("carry: main stats");
   await yieldFrame();
   allMainStats[carryCharId] = findBestMainStats(
@@ -456,17 +569,24 @@ export async function* runIdealArtifactGen(
     formulaId,
     currentSheets,
     calcContext,
-    rv
+    carryRv,
+    carryR,
+    reactionOverride,
+    combo,
+    reactionOverrides
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     emptySubRolls(),
-    rv
+    carryRv,
+    carryR
   );
   step++;
 
   // ── Step 2: Main stats for each support ──
   for (const sid of supportCharIds) {
+    const sR = charRarity[sid] ?? 5;
+    const sRv = charRv[sid] ?? rv;
     yield yieldProgress(`${sid}: main stats`);
     await yieldFrame();
     allMainStats[sid] = findBestMainStats(
@@ -476,12 +596,17 @@ export async function* runIdealArtifactGen(
       formulaId,
       currentSheets,
       calcContext,
-      rv
+      sRv,
+      sR,
+      reactionOverride,
+      combo,
+      reactionOverrides
     );
     currentSheets[sid] = buildSheetFromMainAndSubs(
       allMainStats[sid],
       emptySubRolls(),
-      rv
+      sRv,
+      sR
     );
     step++;
   }
@@ -497,17 +622,24 @@ export async function* runIdealArtifactGen(
     allMainStats[carryCharId],
     currentSheets,
     calcContext,
-    rv
+    carryRv,
+    carryR,
+    reactionOverride,
+    combo,
+    reactionOverrides
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
-    rv
+    carryRv,
+    carryR
   );
   step++;
 
   // ── Step 4: Substats for each support ──
   for (const sid of supportCharIds) {
+    const sR = charRarity[sid] ?? 5;
+    const sRv = charRv[sid] ?? rv;
     yield yieldProgress(`${sid}: substats`);
     await yieldFrame();
     allSubRolls[sid] = fillSubstats(
@@ -518,12 +650,17 @@ export async function* runIdealArtifactGen(
       allMainStats[sid],
       currentSheets,
       calcContext,
-      rv
+      sRv,
+      sR,
+      reactionOverride,
+      combo,
+      reactionOverrides
     );
     currentSheets[sid] = buildSheetFromMainAndSubs(
       allMainStats[sid],
       allSubRolls[sid],
-      rv
+      sRv,
+      sR
     );
     step++;
   }
@@ -539,12 +676,17 @@ export async function* runIdealArtifactGen(
     currentSheets,
     allSubRolls[carryCharId],
     calcContext,
-    rv
+    carryRv,
+    carryR,
+    reactionOverride,
+    combo,
+    reactionOverrides
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
-    rv
+    carryRv,
+    carryR
   );
   step++;
 
@@ -559,12 +701,17 @@ export async function* runIdealArtifactGen(
     allMainStats[carryCharId],
     currentSheets,
     calcContext,
-    rv
+    carryRv,
+    carryR,
+    reactionOverride,
+    combo,
+    reactionOverrides
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
-    rv
+    carryRv,
+    carryR
   );
   step++;
 
@@ -585,7 +732,7 @@ export async function* runIdealArtifactGen(
       charId,
       ms,
       sr,
-      rv,
+      charRv[charId] ?? rv,
       setKeysByChar?.[charId]
     );
     sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
@@ -593,19 +740,32 @@ export async function* runIdealArtifactGen(
 
   let damage = 0;
   let damageResult: DamageResult | null = null;
+  let finalComboResult: ComboResult | undefined;
   try {
-    const teamStats = teamBuild.getTeamStats(
-      currentSheets,
-      carryCharId,
-      calcContext
-    );
-    damageResult = teamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      teamStats,
-      calcContext
-    );
-    damage = damageResult.totalDamage;
+    if (combo) {
+      finalComboResult = evaluateCombo(
+        teamBuild,
+        combo,
+        currentSheets,
+        calcContext,
+        reactionOverrides
+      );
+      damage = finalComboResult.totalDamage;
+    } else {
+      const teamStats = teamBuild.getTeamStats(
+        currentSheets,
+        carryCharId,
+        calcContext
+      );
+      damageResult = teamBuild.getDamageResult(
+        carryCharId,
+        formulaId,
+        teamStats,
+        calcContext,
+        reactionOverride
+      );
+      damage = damageResult.totalDamage;
+    }
   } catch {
     // keep defaults
   }
@@ -615,6 +775,7 @@ export async function* runIdealArtifactGen(
     sheetsByChar,
     damage,
     damageResult,
+    comboResult: finalComboResult,
     phase: "done",
     progress: 1,
     done: true,
@@ -634,8 +795,11 @@ function makeResult(
   carryCharId: string,
   formulaId: string,
   ctx: CalcContext,
-  rv: Record<SubStat, number>,
-  setKeysByChar?: Record<string, Record<Slot, string>>
+  charRvMap: Record<string, Record<SubStat, number>>,
+  setKeysByChar?: Record<string, Record<Slot, string>>,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
 ): IdealGenResult {
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
@@ -648,7 +812,7 @@ function makeResult(
         charId,
         ms,
         sr,
-        rv,
+        charRvMap[charId],
         setKeysByChar?.[charId]
       );
       sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
@@ -657,15 +821,28 @@ function makeResult(
 
   let damage = 0;
   let damageResult: DamageResult | null = null;
+  let comboResult: ComboResult | undefined;
   try {
-    const teamStats = teamBuild.getTeamStats(currentSheets, carryCharId, ctx);
-    damageResult = teamBuild.getDamageResult(
-      carryCharId,
-      formulaId,
-      teamStats,
-      ctx
-    );
-    damage = damageResult.totalDamage;
+    if (combo) {
+      comboResult = evaluateCombo(
+        teamBuild,
+        combo,
+        currentSheets,
+        ctx,
+        reactionOverrides
+      );
+      damage = comboResult.totalDamage;
+    } else {
+      const teamStats = teamBuild.getTeamStats(currentSheets, carryCharId, ctx);
+      damageResult = teamBuild.getDamageResult(
+        carryCharId,
+        formulaId,
+        teamStats,
+        ctx,
+        reactionOverride
+      );
+      damage = damageResult.totalDamage;
+    }
   } catch {
     // keep defaults
   }
@@ -675,6 +852,7 @@ function makeResult(
     sheetsByChar,
     damage,
     damageResult,
+    comboResult,
     phase,
     progress,
     done: false,

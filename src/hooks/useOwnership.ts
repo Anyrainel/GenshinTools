@@ -24,6 +24,8 @@ export function useOwnershipActions() {
   const profileId = useAccountStore((s) => s.activeAccountId) ?? "default";
   const setOwnedFn = useOwnershipStore((s) => s.setOwned);
   const toggleOwnedFn = useOwnershipStore((s) => s.toggleOwned);
+  const setConstellationFn = useOwnershipStore((s) => s.setConstellation);
+  const setRefinementFn = useOwnershipStore((s) => s.setRefinement);
 
   const setOwned = useCallback(
     (type: "character" | "weapon", id: string, owned: boolean) =>
@@ -37,7 +39,35 @@ export function useOwnershipActions() {
     [profileId, toggleOwnedFn]
   );
 
-  return { setOwned, toggleOwned };
+  const setConstellation = useCallback(
+    (characterId: string, level: number) =>
+      setConstellationFn(profileId, characterId, level),
+    [profileId, setConstellationFn]
+  );
+
+  const setRefinement = useCallback(
+    (weaponId: string, level: number) =>
+      setRefinementFn(profileId, weaponId, level),
+    [profileId, setRefinementFn]
+  );
+
+  return { setOwned, toggleOwned, setConstellation, setRefinement };
+}
+
+/**
+ * Returns the constellation level for a character in the active profile.
+ */
+export function useConstellation(characterId: string): number {
+  const profileId = useAccountStore((s) => s.activeAccountId) ?? "default";
+  return useOwnershipStore((s) => s.getConstellation(profileId, characterId));
+}
+
+/**
+ * Returns the refinement level for a weapon in the active profile.
+ */
+export function useRefinement(weaponId: string): number {
+  const profileId = useAccountStore((s) => s.activeAccountId) ?? "default";
+  return useOwnershipStore((s) => s.getRefinement(profileId, weaponId));
 }
 
 /**

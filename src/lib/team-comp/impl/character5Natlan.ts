@@ -2,7 +2,6 @@ import { LUNAR_REACTIONS } from "../constants";
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import {
   AmplifyFormula,
-  CatalyzeFormula,
   DirectFormula,
   LunarFormula,
   TransformFormula,
@@ -133,13 +132,26 @@ class Varesa extends CharacterBase {
 
 @RegisterCharacter("citlali")
 class Citlali extends CharacterBase {
+  // P1 requires Frozen or Melt — team needs Hydro or Pyro alongside Citlali's Cryo
+  private readonly canTriggerP1 =
+    this.teamMeta.hasReaction("frozen") || this.teamMeta.hasReaction("melt");
+
   readonly buffs = [
     // P1: After Frozen/Melt, enemies' Pyro/Hydro RES -20% (C2: -40%)
-    new StatBuff(
-      cbs(this, "P1", ["E"]),
-      { receiver: "team", filter: { elements: ["Pyro", "Hydro"] } },
-      [{ key: "resReduction%", value: this.constellation >= 2 ? 0.4 : 0.2 }]
-    ),
+    ...(this.canTriggerP1
+      ? [
+          new StatBuff(
+            cbs(this, "P1", ["E"]),
+            { receiver: "team", filter: { elements: ["Pyro", "Hydro"] } },
+            [
+              {
+                key: "resReduction%",
+                value: this.constellation >= 2 ? 0.4 : 0.2,
+              },
+            ]
+          ),
+        ]
+      : []),
     // P2: EM → baseDmg for Frostfall Storm (skill, 90% EM)
     // Itzpapa deals damage even when Citlali is off-field → receiver "self"
     new ScalingBuff(
@@ -397,7 +409,7 @@ class Mavuika extends CharacterBase {
         ],
       },
       "mavuika-combo": {
-        label: { zh: "Q普攻+重击+冲刺", en: "Post-Q N1+CA+Sprint" },
+        label: { zh: "Q后 AZS", en: "Post-Q N1+CA+Sprint" },
         parts: [
           {
             formula: new DirectFormula(n1Mult, {
@@ -414,16 +426,37 @@ class Mavuika extends CharacterBase {
             }),
           },
           {
-            formula: new DirectFormula(caFinalMult, {
+            formula: new DirectFormula(sprintMult, {
+              element: "Pyro",
+              ability: "sprint",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "mavuika-szszzp": {
+        label: { zh: "Q后 SZSZZP", en: "Post-Q SCSCC2" },
+        parts: [
+          {
+            formula: new DirectFormula(sprintMult, {
+              element: "Pyro",
+              ability: "sprint",
+              reaction: "none",
+            }),
+            hits: 2,
+          },
+          {
+            formula: new DirectFormula(caCyclicMult, {
               element: "Pyro",
               ability: "charge",
               reaction: "none",
             }),
+            hits: 3,
           },
           {
-            formula: new DirectFormula(sprintMult, {
+            formula: new DirectFormula(caFinalMult, {
               element: "Pyro",
-              ability: "skill",
+              ability: "charge",
               reaction: "none",
             }),
           },
@@ -947,22 +980,6 @@ class Kinich extends CharacterBase {
               element: "Dendro",
               ability: "skill",
               reaction: "none",
-            }),
-          },
-          ...(this.constellation >= 6 ? [c6BouncePart] : []),
-        ],
-      },
-      "kinich-cannon-spread": {
-        label: {
-          zh: "E(蔓激化)",
-          en: "E(Spread)",
-        },
-        parts: [
-          {
-            formula: new CatalyzeFormula(cannonMult, {
-              element: "Dendro",
-              ability: "skill",
-              reaction: "spread",
             }),
           },
           ...(this.constellation >= 6 ? [c6BouncePart] : []),

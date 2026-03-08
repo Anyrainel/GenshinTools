@@ -9,6 +9,7 @@ export const i18nUiData = {
     clearTierList: { en: "Clear Tier List", zh: "清除排行" },
     active: { en: "Active", zh: "使用中" },
     home: { en: "Home", zh: "主页" },
+    refresh: { en: "Refresh Page", zh: "刷新页面" },
     error: { en: "Something went wrong", zh: "出错了" },
     errorMsg: {
       en: "An unexpected error occurred.",
@@ -205,6 +206,12 @@ export const i18nUiData = {
     otherWeapons: { en: "Other Weapons", zh: "其他武器" },
     maxLvlArtifacts: { en: "Max Level Artifacts", zh: "满级圣遗物" },
     otherArtifacts: { en: "Other Artifacts", zh: "其他圣遗物" },
+    weapons: { en: "Weapons", zh: "武器" },
+    artifacts: { en: "Artifacts", zh: "圣遗物" },
+    equipped: { en: "Equipped", zh: "已装备" },
+    unequipped: { en: "Unequipped", zh: "未装备" },
+    maxLevel: { en: "Max Level", zh: "满级" },
+    other: { en: "Other Level", zh: "其他" },
     noAccountDataLoaded: {
       en: "No account data loaded.",
       zh: "未加载账号数据。",
@@ -607,21 +614,22 @@ export const i18nUiData = {
     minEr: { en: "Min. ER", zh: "最低充能" },
     clearTeamData: { en: "Clear Team Data", zh: "清空队伍数据" },
     setupError: { en: "Setup Error:", zh: "设置错误：" },
-    currentEquipAndDamage: {
-      en: "Current Artifacts & Damage",
-      zh: "当前圣遗物 & 伤害",
-    },
-    optimizationResults: {
-      en: "Optimized Artifacts & Damage",
-      zh: "优化后圣遗物 & 伤害",
-    },
-    runOptimization: { en: "Run Optimization", zh: "开始优化" },
+    equipAndDamage: { en: "Artifacts & Damage", zh: "圣遗物 & 伤害" },
+    runOptimization: { en: "Optimize", zh: "优化" },
     optimizing: { en: "Optimizing…", zh: "正在优化…" },
     totalExpectedDamage: { en: "Total Expected Damage:", zh: "总伤害期望：" },
     pending: { en: "Pending", zh: "等待计算" },
     emptyDamageMessage: {
       en: "Configure characters and weapons to see damage metrics.",
       zh: "配置队伍成员以查看伤害期望。",
+    },
+    emptyComboMessage: {
+      en: "Add formula counts in the combo tab to see total rotation damage.",
+      zh: "在循环公式面板中添加公式次数以查看循环总伤害。",
+    },
+    partialReactionNote: {
+      en: "Not all hits in this formula are using reactions — partial reaction settings from single mode are applied.",
+      zh: "此公式并非所有命中均使用元素反应——已应用单公式模式的部分反应设置。",
     },
     idle: { en: "Idle", zh: "面板" },
     combat: { en: "Combat", zh: "实战" },
@@ -654,8 +662,9 @@ export const i18nUiData = {
     calcContextOptions: { en: "Context Settings", zh: "环境设置" },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
-    assumeCrit: { en: "Assume CRIT", zh: "必定暴击" },
+    assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
     critRateTarget: { en: "CR Target", zh: "暴击目标" },
+    rollMultiplier: { en: "Roll", zh: "词条值" },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
@@ -690,6 +699,70 @@ export const i18nUiData = {
     idealEmptyMessage: {
       en: "Press Generate to compute ideal artifact stats.",
       zh: "点击「生成」计算理想圣遗物属性。",
+    },
+    // Formula v2: Reaction Selector + Combo
+    reaction: { en: "Reaction", zh: "元素反应" },
+    reactionNone: { en: "None", zh: "无反应" },
+    perHit: { en: "Per-Hit", zh: "逐段" },
+    combo: { en: "Combo", zh: "连招" },
+    comboName: { en: "Combo Name", zh: "连招名称" },
+    newCombo: { en: "New Combo", zh: "新建连招" },
+    addLine: { en: "Add Line", zh: "添加条目" },
+    totalRotation: { en: "Total Rotation Damage", zh: "循环总伤害" },
+    selectCharacter: { en: "Select Character", zh: "选择角色" },
+    selectFormula: { en: "Select Formula", zh: "选择公式" },
+    createFromCurrent: {
+      en: "Create from current formula",
+      zh: "从当前公式创建",
+    },
+    teamMissing: {
+      en: "Missing element partner",
+      zh: "缺少元素搭档",
+    },
+    orphanedLine: {
+      en: "Character removed from team",
+      zh: "角色已从队伍中移除",
+    },
+    formulaSelection: {
+      en: "Formula Selection",
+      zh: "公式选择",
+    },
+    tabCurrentEquipped: {
+      en: "Current",
+      zh: "当前",
+    },
+    tabCurrentEquippedDesc: {
+      en: "Equipped in account",
+      zh: "账号已装备的",
+    },
+    tabOptimize: {
+      en: "Optimize",
+      zh: "优化",
+    },
+    tabOptimizeDesc: {
+      en: "Best from inventory",
+      zh: "背包中最佳",
+    },
+    tabGenerateIdeal: {
+      en: "Generate",
+      zh: "生成",
+    },
+    tabGenerateIdealDesc: {
+      en: "Theoretical best stats",
+      zh: "理论最佳词条",
+    },
+    singleFormula: { en: "Single Formula", zh: "单公式" },
+    comboFormula: {
+      en: "Combo Formula",
+      zh: "组合公式",
+    },
+    singleFormulaDesc: {
+      en: "Evaluate one formula at a time",
+      zh: "每次评估单个公式",
+    },
+    comboFormulaDesc: {
+      en: "Combine formulas into a rotation",
+      zh: "将公式组合为循环",
     },
   },
   filters: {

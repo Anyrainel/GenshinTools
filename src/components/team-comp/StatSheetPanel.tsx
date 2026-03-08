@@ -51,6 +51,7 @@ const STAT_ORDER: StatKey[] = [
   "dmg%",
   "baseDmg",
   "baseDmg%",
+  "reactionBaseDmg%",
   "elevated%",
   "reactionDmg%",
   "reactionCr",
@@ -178,7 +179,7 @@ export function StatSheetPanel({
               "flex flex-col bg-black/15 border rounded-lg overflow-hidden group/card",
               isTarget
                 ? "border-primary/40 shadow-inner"
-                : "border-border/10 opacity-80"
+                : "border-border/10 text-foreground/80"
             )}
           >
             {/* Context Header */}

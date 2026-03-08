@@ -1,3 +1,4 @@
+import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
 import {
   Tooltip,
   TooltipContent,
@@ -172,48 +173,33 @@ function BuildEvaluationCardComponent({
           return (
             <div key={slot} className="flex flex-col items-center gap-0.5">
               {hasArtifact ? (
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className="relative">
-                      <img
-                        src={
-                          artifactsById[slotEval.artifact!.setKey]?.imagePaths[
-                            slot
-                          ] || ""
-                        }
-                        alt=""
-                        className={cn(
-                          "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
-                          isOffSet && "ring-1 ring-amber-500/60"
-                        )}
-                      />
-                      {isOffSet && (
-                        <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full bg-amber-500 flex items-center justify-center">
-                          <span className="text-[7px] 2xl:text-[8px] font-bold text-black">
-                            F
-                          </span>
-                        </div>
+                <ArtifactDataHoverCard
+                  artifact={slotEval.artifact!}
+                  slot={slot}
+                  side="top"
+                >
+                  <div className="relative">
+                    <img
+                      src={
+                        artifactsById[slotEval.artifact!.setKey]?.imagePaths[
+                          slot
+                        ] || ""
+                      }
+                      alt=""
+                      className={cn(
+                        "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
+                        isOffSet && "ring-1 ring-amber-500/60"
                       )}
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="text-xs max-w-[200px] bg-card/90 backdrop-blur-sm"
-                  >
-                    <div>
-                      {t.artifact(slotEval.artifact!.setKey)}
-                      {isOffSet && ` (${t.ui("evaluation.flex")})`}
-                    </div>
-                    <div className="text-muted-foreground">
-                      {t.stat(slotEval.artifact!.mainStatKey)} | +
-                      {slotEval.artifact!.level}
-                    </div>
-                    <div className="text-muted-foreground">
-                      {t.ui("evaluation.score")}: {slotEval.score.toFixed(1)} /{" "}
-                      {slotEval.maxScore.toFixed(1)}
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
+                    />
+                    {isOffSet && (
+                      <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full bg-amber-500 flex items-center justify-center">
+                        <span className="text-[7px] 2xl:text-[8px] font-bold text-black">
+                          F
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </ArtifactDataHoverCard>
               ) : (
                 <div className="w-11 h-11 2xl:w-14 2xl:h-14 rounded border border-dashed border-muted-foreground/15 flex items-center justify-center">
                   <span className="text-xs text-muted-foreground/20">--</span>

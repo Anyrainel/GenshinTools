@@ -126,6 +126,14 @@ class KukiShinobu extends CharacterBase {
   private readonly hpState = resolveOption(kukiOption, this.option);
 
   readonly buffs = [
+    // P1: HP ≤ 50% → Healing Bonus +15%
+    ...(this.hpState !== "high"
+      ? [
+          new StatBuff(cbs(this, "P1", ["low-hp"]), { receiver: "self" }, [
+            { key: "heal%", value: 0.15 },
+          ]),
+        ]
+      : []),
     // P2: E ring DMG boosted by EM×25% (as flat baseDmg per hit)
     // Ring fires off-field → receiver: "self"; only E ring → filter skill
     new ScalingBuff(

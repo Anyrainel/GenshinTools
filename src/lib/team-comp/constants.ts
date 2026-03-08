@@ -73,3 +73,18 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
     requiresMoonsign5StarParticipant: true,
   },
 };
+
+/** Eligible amplifying/catalyze reactions per element for the reaction selector UI. */
+export const ELEMENT_ELIGIBLE_REACTIONS: Record<
+  Element | "Physical",
+  ReactionType[]
+> = {
+  Pyro: ["none", "vaporize", "melt"],
+  Hydro: ["none", "vaporize"],
+  Cryo: ["none", "melt"],
+  Electro: ["none", "aggravate"],
+  Dendro: ["none", "spread"],
+  Anemo: ["none"],
+  Geo: ["none"],
+  Physical: ["none"],
+};

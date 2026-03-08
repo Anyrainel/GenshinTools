@@ -172,6 +172,36 @@ export abstract class DamageFormula {
     const flatBaseDmg = stats.get("baseDmg", this.tag);
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
+
+  /** Create an amplified variant (vaporize/melt) with the same params. */
+  createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
+    return new AmplifyFormula(
+      this.talentMultiplier,
+      { ...this.tag, reaction },
+      this.scalingKey,
+      this.extraTerm
+    );
+  }
+
+  /** Create a catalyzed variant (spread/aggravate) with the same params. */
+  createCatalyzed(reaction: "spread" | "aggravate"): DamageFormula {
+    return new CatalyzeFormula(
+      this.talentMultiplier,
+      { ...this.tag, reaction },
+      this.scalingKey,
+      this.extraTerm
+    );
+  }
+
+  /** Create a direct (no reaction) variant with the same params. */
+  createDirect(): DamageFormula {
+    return new DirectFormula(
+      this.talentMultiplier,
+      { ...this.tag, reaction: "none" },
+      this.scalingKey,
+      this.extraTerm
+    );
+  }
 }
 
 /** Direct damage: BaseDmg × DmgBonus × DEFMult × RESMult × CritMult */
@@ -505,12 +535,14 @@ export class LunarFormula extends DamageFormula {
 
     // Separate multiplicative layers for Lunar reactions
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelMult * reactionCoeff;
     return (
       baseDmg *
       (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
       (1 + emBonus + reactionDmgBonus) *
       (1 + elevated) *
       resMult *
@@ -528,12 +560,14 @@ export class LunarFormula extends DamageFormula {
     const resMult = this.computeResMult(stats, ctx);
     const critMult = this.computeCritMult(stats, ctx);
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
     const elevated = stats.get("elevated%", this.tag);
 
     const baseDmg = levelCoeff * reactionCoeff;
     const damage =
       baseDmg *
       (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
       (1 + emBonus + reactionDmgBonus) *
       (1 + elevated) *
       resMult *
@@ -545,6 +579,7 @@ export class LunarFormula extends DamageFormula {
         em,
         "reactionDmg%": reactionDmgBonus,
         "baseDmg%": baseDmgBonus,
+        "reactionBaseDmg%": reactionBaseDmg,
         "elevated%": elevated,
         cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
         cd: stats.get("cd", this.tag) + stats.get("reactionCd", this.tag),
@@ -573,7 +608,7 @@ export class LunarFormula extends DamageFormula {
  * own talent multiplier × DirectCoeff, with no DEF multiplier.
  *
  * Formula:
- *   (Stat × TalentMult × DirectCoeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) + baseDmg)
+ *   (Stat × TalentMult × DirectCoeff × (1+baseDmg%) × (1+reactionBaseDmg%) × (1+EMBonus+reactionDmg%) + baseDmg)
  *     × (1+elevated%) × CritMult × RESMult
  */
 export class LunarDirectFormula extends DamageFormula {
@@ -596,6 +631,7 @@ export class LunarDirectFormula extends DamageFormula {
     const emBonus = (6 * em) / (2000 + em);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag);
     const elevated = stats.get("elevated%", this.tag);
     const resMult = this.computeResMult(stats, ctx);
@@ -605,6 +641,7 @@ export class LunarDirectFormula extends DamageFormula {
       scalingDmg *
       directCoeff *
       (1 + baseDmgBonus) *
+      (1 + reactionBaseDmg) *
       (1 + emBonus + reactionDmgBonus);
     const baseDmg = talentDmg + flatBaseDmg;
     return baseDmg * (1 + elevated) * critMult * resMult;
@@ -618,6 +655,7 @@ export class LunarDirectFormula extends DamageFormula {
     const emCoeff = 6;
     const emBonus = (emCoeff * em) / (2000 + em);
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
     const baseDmgBonus = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag);
     const elevated = stats.get("elevated%", this.tag);
@@ -631,6 +669,7 @@ export class LunarDirectFormula extends DamageFormula {
     const talentDmg =
       scalingDmg *
       directCoeff *
+      (1 + reactionBaseDmg) *
       (1 + baseDmgBonus) *
       (1 + emBonus + reactionDmgBonus);
     const baseDmg = talentDmg + flatBaseDmg;
@@ -640,6 +679,7 @@ export class LunarDirectFormula extends DamageFormula {
       [this.scalingKey]: stats.get(this.scalingKey),
       em,
       "reactionDmg%": reactionDmgBonus,
+      "reactionBaseDmg%": reactionBaseDmg,
       "baseDmg%": baseDmgBonus,
       "elevated%": elevated,
       cr: stats.get("cr", this.tag) + stats.get("reactionCr", this.tag),
@@ -668,4 +708,32 @@ export class LunarDirectFormula extends DamageFormula {
       tag: this.tag,
     };
   }
+}
+
+// ─── Reaction Variant Factory ───
+
+/**
+ * Create a reaction variant of a formula. Returns the formula itself if it
+ * already has the target reaction, or creates a new variant via factory methods.
+ */
+export function createReactionVariant(
+  formula: DamageFormula,
+  targetReaction: ReactionType
+): DamageFormula {
+  // Already has the target reaction
+  if (targetReaction === formula.tag.reaction) return formula;
+
+  // No reaction requested → create direct variant
+  if (targetReaction === "none") return formula.createDirect();
+
+  // Amplifying reaction
+  if (targetReaction === "vaporize" || targetReaction === "melt")
+    return formula.createAmplified(targetReaction);
+
+  // Catalyze reaction
+  if (targetReaction === "spread" || targetReaction === "aggravate")
+    return formula.createCatalyzed(targetReaction);
+
+  // For other reaction types (transformative, lunar), return as-is
+  return formula;
 }

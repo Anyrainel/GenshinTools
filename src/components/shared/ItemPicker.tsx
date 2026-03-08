@@ -1,3 +1,4 @@
+import { ArtifactMixedBuilder } from "@/components/shared/ArtifactMixedBuilder";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { DoubleItemIcon } from "@/components/shared/DoubleItemIcon";
@@ -413,7 +414,9 @@ interface PickerItem {
   id: string | number;
   imagePath: string;
   rarity: Rarity;
-  name?: string; // Can be lazily loaded in render but good to have for mapping
+  name: string; // Precomputed name for search
+  // biome-ignore lint/suspicious/noExplicitAny: Meta is dependent on standard resource.
+  meta?: any; // Precomputed meta for filtering
   // We keep original just in case we need extra properties
   original:
     | CharacterResource
@@ -506,6 +509,8 @@ function PickerContent({
           id: c.id,
           imagePath: c.imagePath,
           rarity: meta.rarity,
+          name: t.character(c.id).toLowerCase(),
+          meta,
           original: c,
         };
       });
@@ -517,6 +522,8 @@ function PickerContent({
           id: w.id,
           imagePath: w.imagePath,
           rarity: meta.rarity,
+          name: t.weaponName(w.id).toLowerCase(),
+          meta,
           original: w,
         };
       });
@@ -527,6 +534,7 @@ function PickerContent({
           id: a.id,
           imagePath: a.imagePaths.flower,
           rarity: a.rarity,
+          name: t.artifact(a.id).toLowerCase(),
           original: a,
         }));
       }
@@ -540,11 +548,12 @@ function PickerContent({
           // Use the flower of the first set as the icon rep
           imagePath: artifactsById[half.setIds[0]]?.imagePaths.flower || "",
           rarity: 5,
+          name: t.artifactHalfSet(half.id).toLowerCase(),
           original: half,
         }));
     }
     return [];
-  }, [type, artifactTab, sortedCharacters, characterStats, weaponStats]);
+  }, [type, artifactTab, sortedCharacters, characterStats, weaponStats, t]);
 
   // Filtering Logic
   const filteredItems = useMemo(() => {
@@ -561,38 +570,20 @@ function PickerContent({
     // 2. Search
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter((item) => {
-        let name = "";
-        if (type === "character") name = t.character(item.id as string);
-        else if (type === "weapon") name = t.weaponName(item.id as string);
-        else if (type === "artifact" && artifactTab === "4pc")
-          name = t.artifact(item.id as string);
-        else if (type === "artifact" && artifactTab === "2pc")
-          name = t.artifactHalfSet(item.id);
-
-        return name?.toLowerCase().includes(q);
-      });
+      result = result.filter((item) => item.name.includes(q));
     }
 
     // 3. Quick Filters (use stats-based meta when available)
     if (type === "character") {
       if (activeFilters.element) {
-        result = result.filter((item) => {
-          const meta = getCharacterDisplayMeta(
-            item.original as CharacterResource,
-            characterStats?.[(item.original as CharacterResource).id]
-          );
-          return meta.element === activeFilters.element;
-        });
+        result = result.filter(
+          (item) => item.meta?.element === activeFilters.element
+        );
       }
       if (activeFilters.weapon) {
-        result = result.filter((item) => {
-          const meta = getCharacterDisplayMeta(
-            item.original as CharacterResource,
-            characterStats?.[(item.original as CharacterResource).id]
-          );
-          return meta.weaponType === activeFilters.weapon;
-        });
+        result = result.filter(
+          (item) => item.meta?.weaponType === activeFilters.weapon
+        );
       }
       if (activeFilters.rarity) {
         result = result.filter((item) => item.rarity === activeFilters.rarity);
@@ -602,13 +593,9 @@ function PickerContent({
         result = result.filter((item) => item.rarity === activeFilters.rarity);
       }
       if (activeFilters.substat) {
-        result = result.filter((item) => {
-          const meta = getWeaponDisplayMeta(
-            item.original as WeaponResource,
-            weaponStats?.[(item.original as WeaponResource).id]
-          );
-          return meta.secondaryStat === activeFilters.substat;
-        });
+        result = result.filter(
+          (item) => item.meta?.secondaryStat === activeFilters.substat
+        );
       }
     }
 
@@ -640,12 +627,9 @@ function PickerContent({
     activeFilters,
     type,
     artifactTab,
-    t,
     pickingSlot,
     mixedSlot1,
     mixedSlot2,
-    characterStats,
-    weaponStats,
   ]);
 
   // Handler for artifact 2pc selection
@@ -837,62 +821,14 @@ function PickerContent({
 
       {/* 2pc Builder Area */}
       {type === "artifact" && artifactTab === "2pc" && (
-        <div className="px-3 pb-3 shrink-0 flex gap-2 items-center border-b bg-muted/20 pt-2">
-          <Button
-            type="button"
-            variant={pickingSlot === 1 ? "default" : "outline"}
-            className={cn(
-              "flex-1 h-12 relative",
-              !pickingSlot && mixedSlot1 && "border-primary/50"
-            )}
-            onClick={() => setPickingSlot(pickingSlot === 1 ? null : 1)}
-          >
-            {mixedSlot1 ? (
-              <span className="text-xs line-clamp-2 leading-tight">
-                {t.artifactHalfSet(mixedSlot1)}
-              </span>
-            ) : (
-              <span className="text-muted-foreground">
-                {t.ui("buildCard.effect1")}
-              </span>
-            )}
-          </Button>
-
-          <span className="text-muted-foreground font-bold">+</span>
-
-          <Button
-            type="button"
-            variant={pickingSlot === 2 ? "default" : "outline"}
-            className={cn(
-              "flex-1 h-12 relative",
-              !pickingSlot && mixedSlot2 && "border-primary/50"
-            )}
-            onClick={() => setPickingSlot(pickingSlot === 2 ? null : 2)}
-          >
-            {mixedSlot2 ? (
-              <span className="text-xs line-clamp-2 leading-tight">
-                {t.artifactHalfSet(mixedSlot2)}
-              </span>
-            ) : (
-              <span className="text-muted-foreground">
-                {t.ui("buildCard.effect2")}
-              </span>
-            )}
-          </Button>
-
-          <Button
-            type="button"
-            size="icon"
-            disabled={!isMixedComplete}
-            onClick={confirmMixedSet}
-            className={cn(
-              "shrink-0",
-              isMixedComplete ? "animate-pulse" : "opacity-50"
-            )}
-          >
-            <Check className="h-4 w-4" />
-          </Button>
-        </div>
+        <ArtifactMixedBuilder
+          mixedSlot1={mixedSlot1}
+          mixedSlot2={mixedSlot2}
+          pickingSlot={pickingSlot}
+          setPickingSlot={setPickingSlot}
+          isMixedComplete={isMixedComplete}
+          confirmMixedSet={confirmMixedSet}
+        />
       )}
 
       {/* Grid Content */}

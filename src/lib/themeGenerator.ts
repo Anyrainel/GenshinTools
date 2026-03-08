@@ -30,9 +30,9 @@ interface ThemeSeed {
 export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   mondstadt: {
     name: "Mondstadt",
-    base: { h: 155, s: 15, l: 10 },
-    glow1: { h: 149, s: 40, l: 25 }, // Anemo green
-    glow2: { h: 140, s: 34, l: 22 },
+    base: { h: 175, s: 14, l: 10 },
+    glow1: { h: 170, s: 38, l: 25 }, // Anemo sky teal
+    glow2: { h: 185, s: 32, l: 22 },
   },
   liyue: {
     name: "Liyue",
@@ -54,9 +54,9 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   },
   fontaine: {
     name: "Fontaine",
-    base: { h: 198, s: 18, l: 8 },
-    glow1: { h: 196, s: 44, l: 24 }, // Hydro blue
-    glow2: { h: 210, s: 38, l: 21 },
+    base: { h: 210, s: 22, l: 8 },
+    glow1: { h: 205, s: 52, l: 25 }, // Hydro ocean blue
+    glow2: { h: 218, s: 44, l: 21 },
   },
   natlan: {
     name: "Natlan",
@@ -66,9 +66,9 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   },
   snezhnaya: {
     name: "Snezhnaya",
-    base: { h: 198, s: 12, l: 11 }, // Brightest base
-    glow1: { h: 195, s: 34, l: 27 }, // Cryo ice blue
-    glow2: { h: 210, s: 28, l: 24 },
+    base: { h: 215, s: 18, l: 12 }, // Frosty base
+    glow1: { h: 210, s: 45, l: 30 }, // Cryo ice blue
+    glow2: { h: 225, s: 36, l: 25 },
   },
   nodkrai: {
     name: "Nod-Krai",
@@ -78,9 +78,9 @@ export const THEME_SEEDS: Record<ThemeId, ThemeSeed> = {
   },
   abyss: {
     name: "Abyss",
-    base: { h: 270, s: 20, l: 4 }, // Near-black void
-    glow1: { h: 280, s: 40, l: 15 }, // Corruption purple
-    glow2: { h: 320, s: 34, l: 11 }, // Crimson hints
+    base: { h: 270, s: 22, l: 3 }, // Near-black void
+    glow1: { h: 278, s: 38, l: 13 }, // Corruption purple
+    glow2: { h: 315, s: 32, l: 9 }, // Crimson hints
   },
 };
 

@@ -393,7 +393,7 @@ export function ArtifactDataHoverCard({
       <HoverCardContent
         ref={contentRef}
         side={side}
-        className="w-auto p-0 border-none bg-transparent"
+        className="w-auto p-0 border-none bg-slate-900 shadow-xl"
       >
         <ArtifactDataContent artifact={artifact} slot={slot} />
       </HoverCardContent>
