@@ -793,15 +793,11 @@ export function DamageCard({
               label: "teamComp.tabOptimize" as const,
               desc: "teamComp.tabOptimizeDesc" as const,
             },
-            ...(import.meta.env.DEV
-              ? [
-                  {
-                    key: "generate" as const,
-                    label: "teamComp.tabGenerateIdeal" as const,
-                    desc: "teamComp.tabGenerateIdealDesc" as const,
-                  },
-                ]
-              : []),
+            {
+              key: "generate" as const,
+              label: "teamComp.tabGenerateIdeal" as const,
+              desc: "teamComp.tabGenerateIdealDesc" as const,
+            },
           ] as const
         ).map(({ key, label, desc }) => {
           const selected = resultsTab === key;
@@ -1075,7 +1071,7 @@ export function DamageCard({
       )}
 
       {/* ── Content: Generate Ideal (dev only) ── */}
-      {resultsTab === "generate" && import.meta.env.DEV && (
+      {resultsTab === "generate" && (
         <CardContent className={CARD_BODY_CLS}>
           <div className={CONTROLS_CLS(isMobile)}>
             <EnemyLevelInput {...ctxProps} />

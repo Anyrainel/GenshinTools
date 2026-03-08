@@ -211,7 +211,7 @@ export const i18nUiData = {
     equipped: { en: "Equipped", zh: "已装备" },
     unequipped: { en: "Unequipped", zh: "未装备" },
     maxLevel: { en: "Max Level", zh: "满级" },
-    other: { en: "Other Level", zh: "其他" },
+    other: { en: "Other Level", zh: "未满级" },
     noAccountDataLoaded: {
       en: "No account data loaded.",
       zh: "未加载账号数据。",
