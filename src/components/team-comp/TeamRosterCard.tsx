@@ -1,5 +1,5 @@
-import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,7 +20,7 @@ import {
 import { getEntityOption } from "@/lib/team-comp/damageModels";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { Users } from "lucide-react";
+import { Flame, Snowflake, Users } from "lucide-react";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
 const CARD_HEADER_CLS =
@@ -31,38 +31,26 @@ const CARD_BODY_CLS = "p-1.5 md:p-3 bg-black/10";
 
 interface TeamRosterCardProps {
   team: Team;
-  effectiveTeam: Team;
   updateTeam: (id: string, patch: Partial<Team>) => void;
-  localCharacters: (string | null)[];
-  localWeapons: (string | null)[];
-  localArtifacts: (ArtifactConfig | null)[];
-  setLocalCharacters: React.Dispatch<React.SetStateAction<(string | null)[]>>;
-  setLocalWeapons: React.Dispatch<React.SetStateAction<(string | null)[]>>;
-  setLocalArtifacts: React.Dispatch<
-    React.SetStateAction<(ArtifactConfig | null)[]>
-  >;
   accountData: AccountData | null;
   characterStats: Record<string, CharacterStats> | null;
   weaponStats: Record<string, WeaponStats> | null;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
+  isFrozen?: boolean;
+  onUnfreeze?: () => void;
 }
 
 export function TeamRosterCard({
   team,
-  effectiveTeam,
   updateTeam,
-  localCharacters,
-  localWeapons,
-  localArtifacts,
-  setLocalCharacters,
-  setLocalWeapons,
-  setLocalArtifacts,
   accountData,
   characterStats,
   weaponStats,
   isMobile,
   t,
+  isFrozen,
+  onUnfreeze,
 }: TeamRosterCardProps) {
   const handleOptionChange = (entityId: string, val: string) => {
     updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
@@ -135,11 +123,23 @@ export function TeamRosterCard({
   };
 
   return (
-    <Card className={CARD_CLS}>
+    <Card
+      className={cn(
+        CARD_CLS,
+        isFrozen &&
+          "ring-1 ring-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.08)]"
+      )}
+    >
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
           <Users className="w-4 h-4 opacity-70" />
           <span>{t.ui("teamComp.teamRoster")}</span>
+          {isFrozen && (
+            <span className="ml-auto flex items-center gap-1 text-xs font-semibold text-cyan-300/80">
+              <Snowflake className="w-3.5 h-3.5" />
+              {t.ui("teamComp.frozenBadge")}
+            </span>
+          )}
         </h3>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
@@ -151,7 +151,7 @@ export function TeamRosterCard({
               : "grid-cols-2 lg:grid-cols-4 gap-3"
           )}
         >
-          {effectiveTeam.characters.map((charId, i) => {
+          {team.characters.map((charId, i) => {
             if (!charId)
               return (
                 <div
@@ -163,7 +163,7 @@ export function TeamRosterCard({
               );
 
             const char = charactersById[charId];
-            const weaponId = localWeapons[i];
+            const weaponId = team.weapons[i];
             const weapon = weaponId ? weaponsById[weaponId] : null;
             const charHasOption = getEntityOption(charId) != null;
             const weaponHasOption =
@@ -208,7 +208,8 @@ export function TeamRosterCard({
                 key={i}
                 className={cn(
                   "flex flex-col rounded-lg bg-black/10 border border-border/10",
-                  isMobile ? "p-1 gap-1" : "p-2 gap-2"
+                  isMobile ? "p-1 gap-1" : "p-2 gap-2",
+                  isFrozen && "frozen-card pointer-events-none"
                 )}
               >
                 {/* Row 1: Interactive icons */}
@@ -222,16 +223,21 @@ export function TeamRosterCard({
                     type="character"
                     value={charId}
                     triggerSize={isMobile ? "sm" : "xl"}
+                    filter={(item) => {
+                      const c = item as { id: string };
+                      return !team.characters.some(
+                        (otherId, j) => j !== i && otherId === c.id
+                      );
+                    }}
                     onChange={(newCharId) => {
-                      setLocalCharacters((prev) => {
-                        const next = [...prev];
-                        next[i] = newCharId;
-                        return next;
-                      });
+                      const newChars = [...team.characters];
+                      newChars[i] = newCharId;
+                      const newWeapons = [...team.weapons];
                       // Clear weapon if incompatible type
-                      if (localWeapons[i]) {
+                      const weaponId = newWeapons[i];
+                      if (weaponId) {
                         const newChar = charactersById[newCharId];
-                        const curWeapon = weaponsById[localWeapons[i]!];
+                        const curWeapon = weaponsById[weaponId];
                         if (newChar && curWeapon) {
                           const newMeta = getCharacterDisplayMeta(
                             newChar,
@@ -239,26 +245,26 @@ export function TeamRosterCard({
                           );
                           const wMeta = getWeaponDisplayMeta(
                             curWeapon,
-                            weaponStats?.[localWeapons[i]!]
+                            weaponStats?.[weaponId]
                           );
                           if (
                             newMeta.weaponType &&
                             wMeta.type &&
                             newMeta.weaponType !== wMeta.type
                           ) {
-                            setLocalWeapons((prev) => {
-                              const next = [...prev];
-                              next[i] = null;
-                              return next;
-                            });
+                            newWeapons[i] = null;
                           }
                         }
                       }
+                      updateTeam(team.id, {
+                        characters: newChars,
+                        weapons: newWeapons,
+                      });
                     }}
                   />
                   <ItemPicker
                     type="weapon"
-                    value={localWeapons[i]}
+                    value={team.weapons[i]}
                     triggerSize={isMobile ? "xs" : "lg"}
                     disabled={!charId}
                     filter={(() => {
@@ -279,33 +285,29 @@ export function TeamRosterCard({
                       };
                     })()}
                     onChange={(newWeaponId) => {
-                      setLocalWeapons((prev) => {
-                        const next = [...prev];
-                        next[i] = newWeaponId;
-                        return next;
-                      });
+                      const newWeapons = [...team.weapons];
+                      newWeapons[i] = newWeaponId;
+                      updateTeam(team.id, { weapons: newWeapons });
                     }}
                   />
                   <ItemPicker
                     type="artifact"
-                    value={localArtifacts[i]}
+                    value={team.artifacts[i]}
                     triggerSize={isMobile ? "xs" : "lg"}
                     disabled={!charId}
                     onChange={(newArtifact) => {
-                      setLocalArtifacts((prev) => {
-                        const next = [...prev];
-                        next[i] = newArtifact;
-                        return next;
-                      });
+                      const newArts = [...team.artifacts];
+                      newArts[i] = newArtifact;
+                      updateTeam(team.id, { artifacts: newArts });
                     }}
                   />
                 </div>
 
-                {/* Row 2: Name + Min. ER */}
+                {/* Row 2: Name + Min. CR / Min. ER */}
                 <div
                   className={cn(
-                    "flex items-center justify-between",
-                    isMobile ? "gap-1" : "gap-4"
+                    "flex items-center flex-wrap",
+                    isMobile ? "gap-1" : "gap-1"
                   )}
                 >
                   <span
@@ -316,10 +318,62 @@ export function TeamRosterCard({
                   >
                     {t.character(charId)}
                   </span>
+                  <div className="flex-1" />
+                  {team.weapons[i]?.startsWith("favonius_") && (
+                    <div
+                      className={cn(
+                        "flex items-center bg-secondary/60 rounded-md border border-border/30",
+                        isMobile
+                          ? "gap-0.5 px-1 py-0.5"
+                          : "gap-0.5 px-1.5 py-1.5"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "font-bold text-foreground/70",
+                          isMobile ? "text-[10px]" : "text-xs"
+                        )}
+                      >
+                        {t.ui("teamComp.minCr")}
+                      </span>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={100}
+                        step={5}
+                        value={Math.round(
+                          (team.targetCr?.[charId] ?? 0.05) * 100
+                        )}
+                        onChange={(e) => {
+                          const val = Number(e.target.value) / 100;
+                          if (!Number.isNaN(val)) {
+                            updateTeam(team.id, {
+                              targetCr: {
+                                ...(team.targetCr ?? {}),
+                                [charId]: val,
+                              },
+                            });
+                          }
+                        }}
+                        className={cn(
+                          "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                          isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "font-bold text-muted-foreground",
+                          isMobile ? "text-[10px]" : "text-xs"
+                        )}
+                      >
+                        %
+                      </span>
+                    </div>
+                  )}
                   <div
                     className={cn(
-                      "flex items-center bg-secondary/60 rounded-md border border-border/30 shrink-0",
-                      isMobile ? "gap-0.5 px-1 py-0.5" : "gap-1.5 px-2.5 py-1.5"
+                      "flex items-center bg-secondary/60 rounded-md border border-border/30",
+                      isMobile ? "gap-0.5 px-1 py-0.5" : "gap-0.5 px-1.5 py-1.5"
                     )}
                   >
                     <span
@@ -348,14 +402,14 @@ export function TeamRosterCard({
                         }
                       }}
                       className={cn(
-                        "text-center font-bold bg-transparent border-0 p-0 focus-visible:ring-0 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                        "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
                         isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
                       )}
                     />
                     <span
                       className={cn(
                         "font-bold text-muted-foreground",
-                        isMobile ? "text-[10px] mr-0.5" : "text-xs mr-2"
+                        isMobile ? "text-[10px]" : "text-xs"
                       )}
                     >
                       %
@@ -486,6 +540,18 @@ export function TeamRosterCard({
           })}
         </div>
       </CardContent>
+      {isFrozen && onUnfreeze && (
+        <div className="px-1.5 pb-1.5 md:px-3 md:pb-3 bg-black/10">
+          <Button
+            variant="outline"
+            onClick={onUnfreeze}
+            className="w-full gap-2 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40 animate-[fire-pulse_2s_ease-in-out_infinite]"
+          >
+            <Flame className="w-4 h-4" />
+            {t.ui("teamComp.unfreezeTeam")}
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }

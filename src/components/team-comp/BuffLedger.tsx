@@ -149,7 +149,24 @@ function BuffChip({
           </div>
         </div>
 
-        <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded shrink-0">
+        <span
+          className={cn(
+            "text-xs md:text-sm font-bold uppercase tracking-widest px-1 md:px-1.5 py-0.5 rounded shrink-0",
+            target.receiver === "team"
+              ? "text-rose-300 bg-rose-500/15"
+              : target.receiver === "onField"
+                ? "text-orange-300 bg-orange-500/15"
+                : target.receiver === "otherOnField"
+                  ? "text-yellow-300 bg-yellow-500/15"
+                  : target.receiver === "self"
+                    ? "text-zinc-400 bg-zinc-500/15"
+                    : target.receiver === "selfOnField"
+                      ? "text-slate-400 bg-slate-500/10"
+                      : target.receiver === "selfOffField"
+                        ? "text-stone-400 bg-stone-500/10"
+                        : "text-muted-foreground bg-black/10"
+          )}
+        >
           {t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf")}
         </span>
       </div>

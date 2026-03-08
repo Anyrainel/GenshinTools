@@ -176,6 +176,7 @@ describe("runOptimization — partial artifact inventory", () => {
       targetCharId: "hu_tao",
       formulaId,
       targetEr: 1.0,
+      targetCr: 0,
       inventory: [],
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
@@ -205,6 +206,7 @@ describe("runOptimization — partial artifact inventory", () => {
       formulaId,
       targetEr: 1.0,
       inventory,
+      targetCr: 0,
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
@@ -237,6 +239,7 @@ describe("runOptimization — partial artifact inventory", () => {
       formulaId,
       targetEr: 1.0,
       inventory,
+      targetCr: 0,
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
@@ -264,6 +267,7 @@ describe("runOptimization — partial artifact inventory", () => {
       formulaId,
       targetEr: 1.0,
       inventory,
+      targetCr: 0,
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
@@ -301,6 +305,7 @@ describe("runOptimization — partial artifact inventory", () => {
       formulaId,
       targetEr: 1.0,
       inventory,
+      targetCr: 0,
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
@@ -331,6 +336,7 @@ describe("runOptimization — partial artifact inventory", () => {
       formulaId,
       targetEr: 1.0,
       inventory,
+      targetCr: 0,
       buildMatch: makeBuildMatch(),
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
@@ -353,10 +359,14 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "hu_tao");
     const perChar: Record<string, PerCharConfig> = {
-      hu_tao: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-      xingqiu: { targetEr: 1.4, buildMatch: makeBuildMatch() },
-      zhongli: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-      kaedehara_kazuha: { targetEr: 1.6, buildMatch: makeBuildMatch() },
+      hu_tao: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+      xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
+      zhongli: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+      kaedehara_kazuha: {
+        targetEr: 1.6,
+        targetCr: 0,
+        buildMatch: makeBuildMatch(),
+      },
     };
 
     const opts: TeamOptimizerOptions = {
@@ -392,8 +402,8 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const inventory = [...carryArtifacts, ...supportArtifacts];
 
     const perChar: Record<string, PerCharConfig> = {
-      hu_tao: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-      xingqiu: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+      hu_tao: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+      xingqiu: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
     };
 
     const opts: TeamOptimizerOptions = {
@@ -424,8 +434,8 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const carryArtifacts = makeFullInventory();
 
     const perChar: Record<string, PerCharConfig> = {
-      hu_tao: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-      xingqiu: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+      hu_tao: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+      xingqiu: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
     };
 
     const opts: TeamOptimizerOptions = {
@@ -456,7 +466,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const inventory = makeFullInventory();
 
     const perChar: Record<string, PerCharConfig> = {
-      hu_tao: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+      hu_tao: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
     };
 
     const opts: TeamOptimizerOptions = {

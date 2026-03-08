@@ -371,14 +371,14 @@ describe("buildTeamConfigs", () => {
     expect(configs[0].refinement).toBe(3);
   });
 
-  it("defaults weapon to dull_blade for empty slot", () => {
+  it("skips character when weapon slot is empty", () => {
     const team = {
       ...baseTeam,
       characters: ["hu_tao", null, null, null] as (string | null)[],
       weapons: [null, null, null, null] as (string | null)[],
     };
     const configs = buildTeamConfigs(team, null);
-    expect(configs[0].weaponId).toBe("dull_blade");
+    expect(configs).toHaveLength(0);
   });
 
   it("falls back to goal sets when only a single 2pc is equipped (partial artifacts)", () => {

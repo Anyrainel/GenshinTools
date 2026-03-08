@@ -26,6 +26,7 @@ export interface Team {
   reactions: ReactionType[];
   opts: CombatOpts;
   targetEr: Record<string, number>;
+  targetCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
@@ -84,6 +85,7 @@ export const useTeamStore = create<TeamState>()(
           reactions: [],
           opts: {},
           targetEr: {},
+          targetCr: {},
           selectedFormula: null,
           optimizationResult: null,
           reactionOverrides: {},
@@ -179,6 +181,7 @@ export const useTeamStore = create<TeamState>()(
             reactions: t.reactions ?? [],
             opts: t.opts ?? {},
             targetEr: t.targetEr ?? {},
+            targetCr: (t as Team).targetCr ?? {},
             selectedFormula: t.selectedFormula ?? null,
             optimizationResult: null,
             calcContext: t.calcContext,

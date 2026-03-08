@@ -20,9 +20,17 @@ import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Download, HelpCircle, Plus, Trash2, Upload } from "lucide-react";
+import {
+  Download,
+  Flame,
+  HelpCircle,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -48,9 +56,14 @@ export default function TeamCompPage() {
   const setActiveTeam = useTeamStore((state) => state.setActiveTeam);
   const importTeams = useTeamStore((state) => state.importTeams);
   const exportTeams = useTeamStore((state) => state.exportTeams);
-  const clearTeams = useTeamStore((state) => state.clearTeams);
+  const clearTeamsRaw = useTeamStore((state) => state.clearTeams);
   const author = useTeamStore((state) => state.author);
   const description = useTeamStore((state) => state.description);
+  const freezeStore = useFreezeStore();
+  const clearTeams = useCallback(() => {
+    freezeStore.clearAll();
+    clearTeamsRaw();
+  }, [freezeStore, clearTeamsRaw]);
 
   const clearRef = useRef<ControlHandle>(null);
   const importRef = useRef<ControlHandle>(null);
@@ -102,40 +115,55 @@ export default function TeamCompPage() {
 
   // Filter teams based on element/region of their characters
   const filteredTeams = useMemo(() => {
-    if (elementFilter.length === 0 && regionFilter.length === 0) return teams;
+    let result = teams;
 
-    return teams.filter((team) => {
-      const chars = team.characters
-        .filter(Boolean)
-        .map((id) => charactersById[id!])
-        .filter(Boolean);
+    if (elementFilter.length > 0 || regionFilter.length > 0) {
+      result = result.filter((team) => {
+        const chars = team.characters
+          .filter(Boolean)
+          .map((id) => charactersById[id!])
+          .filter(Boolean);
 
-      if (chars.length === 0) return true; // Show unconfigured teams always
+        if (chars.length === 0) return true; // Show unconfigured teams always
 
-      if (elementFilter.length > 0) {
-        const hasMatchingElement = chars.some((c) => {
-          const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-          return meta.element != null && elementFilter.includes(meta.element);
-        });
-        if (!hasMatchingElement) return false;
-      }
+        if (elementFilter.length > 0) {
+          const hasMatchingElement = chars.some((c) => {
+            const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+            return meta.element != null && elementFilter.includes(meta.element);
+          });
+          if (!hasMatchingElement) return false;
+        }
 
-      if (regionFilter.length > 0) {
-        const hasMatchingRegion = chars.some((c) => {
-          const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-          return meta.region != null && regionFilter.includes(meta.region);
-        });
-        if (!hasMatchingRegion) return false;
-      }
+        if (regionFilter.length > 0) {
+          const hasMatchingRegion = chars.some((c) => {
+            const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+            return meta.region != null && regionFilter.includes(meta.region);
+          });
+          if (!hasMatchingRegion) return false;
+        }
 
-      return true;
-    });
-  }, [teams, elementFilter, regionFilter, characterStats]);
+        return true;
+      });
+    }
+
+    // Sort frozen teams to the top while preserving relative order
+    const frozen = result.filter((t) => freezeStore.isFrozen(t.id));
+    const unfrozen = result.filter((t) => !freezeStore.isFrozen(t.id));
+    return [...frozen, ...unfrozen];
+  }, [teams, elementFilter, regionFilter, characterStats, freezeStore]);
 
   // Displayable regions (exclude "None")
   const displayRegions = useMemo(() => regions.filter((r) => r !== "None"), []);
 
+  const isTeamEmpty = (t: { characters: (string | null)[] }) =>
+    t.characters.every((c) => c == null);
+
   const handleAddTeam = (position: "start" | "end") => {
+    // Don't create a new empty team if one already exists at that edge
+    if (teams.length > 0) {
+      if (position === "start" && isTeamEmpty(teams[0])) return;
+      if (position === "end" && isTeamEmpty(teams[teams.length - 1])) return;
+    }
     addTeam(undefined, position);
     requestAnimationFrame(() => {
       if (!scrollRef.current) return;
@@ -151,6 +179,7 @@ export default function TeamCompPage() {
   };
 
   const handleImport = (data: TeamCompData) => {
+    freezeStore.clearAll();
     importTeams(data);
     toast.success(t.ui("import.action"));
   };
@@ -315,8 +344,19 @@ export default function TeamCompPage() {
             {/* Spacer */}
             <div className="flex-1" />
 
-            {/* Add team buttons */}
+            {/* Add team / unfreeze buttons */}
             <div className="flex items-center gap-1 2xl:gap-2">
+              {Object.keys(freezeStore.frozenTeams).length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                  onClick={() => freezeStore.clearAll()}
+                >
+                  <Flame className="w-3 h-3" />
+                  <span>{t.ui("teamComp.unfreezeAll")}</span>
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -357,7 +397,10 @@ export default function TeamCompPage() {
                   team={team}
                   index={realIndex}
                   onUpdate={(patch) => updateTeam(team.id, patch)}
-                  onDelete={() => deleteTeam(team.id)}
+                  onDelete={() => {
+                    freezeStore.unfreezeTeam(team.id);
+                    deleteTeam(team.id);
+                  }}
                   onCopy={() => copyTeam(team.id)}
                   onSelect={() => setActiveTeam(team.id)}
                   onMoveUp={
@@ -368,6 +411,8 @@ export default function TeamCompPage() {
                       ? () => moveTeam(team.id, "down")
                       : undefined
                   }
+                  isFrozen={freezeStore.isFrozen(team.id)}
+                  onUnfreeze={() => freezeStore.unfreezeTeam(team.id)}
                 />
               );
             })}

@@ -16,24 +16,30 @@ import type { OptionDef, StatEntry, StatKey } from "../types";
 // Artifact 4-Piece Set Bonuses
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterArtifactSet("blizzard_strayer")
+const blizzardStrayerOption = {
+  label: { zh: "冰风4件套", en: "Blizzard 4pc" },
+  choices: [
+    {
+      value: "20",
+      label: { zh: "+20%暴击 (挂冰)", en: "+20% CR (Cryo-aff.)" },
+    },
+    { value: "40", label: { zh: "+40%暴击 (冻结)", en: "+40% CR (Frozen)" } },
+  ] as const,
+  default: "40",
+} satisfies OptionDef;
+
+@RegisterArtifactSet("blizzard_strayer", blizzardStrayerOption)
 class BlizzardStrayer4pc extends ArtifactSetBase {
   // 2pc: Cryo DMG +15% (via halfSetId)
-  // 4pc: +20% CR vs Cryo-affected; +20% more vs Frozen (requires Hydro teammate)
+  // 4pc: +20% CR vs Cryo-affected; +20% more vs Frozen
+  private readonly o = resolveOption(blizzardStrayerOption, this.option);
   readonly halfSetId = "cryo%-15";
   readonly stats: StatEntry[] = [];
   readonly buffs = [
     new StatBuff(
       { type: "artifactSet", id: this.artifactSetId, triggers: ["vs-cryo"] },
       { receiver: "self" },
-      [
-        {
-          key: "cr",
-          value: Object.values(this.teamMeta.elements).includes("Hydro")
-            ? 0.4
-            : 0.2,
-        },
-      ]
+      [{ key: "cr", value: this.o === "40" ? 0.4 : 0.2 }]
     ),
   ];
 }

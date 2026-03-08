@@ -612,6 +612,7 @@ export const i18nUiData = {
     teamOptimization: { en: "Damage Optimization", zh: "伤害优化" },
     teamRoster: { en: "Team Roster", zh: "队伍成员" },
     minEr: { en: "Min. ER", zh: "最低充能" },
+    minCr: { en: "Min. CR", zh: "最低暴击" },
     clearTeamData: { en: "Clear Team Data", zh: "清空队伍数据" },
     setupError: { en: "Setup Error:", zh: "设置错误：" },
     equipAndDamage: { en: "Artifacts & Damage", zh: "圣遗物 & 伤害" },
@@ -663,7 +664,7 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
-    critRateTarget: { en: "CR Target", zh: "暴击目标" },
+    critRateTarget: { en: "DPS CR Target", zh: "主C暴击目标" },
     rollMultiplier: { en: "Roll", zh: "词条值" },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
@@ -672,6 +673,30 @@ export const i18nUiData = {
     noValidCombinations: {
       en: "No valid combinations found for ER {0}%.",
       zh: "未找到满足 {0}% 充能要求的配装组合。",
+    },
+    failEmptyPool: {
+      en: "No artifacts for: {0}",
+      zh: "以下部位无圣遗物：{0}",
+    },
+    failNoSeeds: {
+      en: "No valid artifact combinations found",
+      zh: "未找到可用的圣遗物组合",
+    },
+    failErUnmet: {
+      en: "ER too low: need {0}%, best {1}%",
+      zh: "充能不足：需要 {0}%，最高 {1}%",
+    },
+    failCrUnmet: {
+      en: "CR too low: need {0}%, best {1}%",
+      zh: "暴击不足：需要 {0}%，最高 {1}%",
+    },
+    failSetImpossible: {
+      en: "Not enough pieces for: {0}",
+      zh: "套装件数不足：{0}",
+    },
+    failAllFiltered: {
+      en: "All {0} combos failed constraints",
+      zh: "全部 {0} 个组合均不满足约束",
     },
     preparingOptimizer: {
       en: "Preparing optimizer…",
@@ -751,6 +776,14 @@ export const i18nUiData = {
       en: "Theoretical best stats",
       zh: "理论最佳词条",
     },
+    freezeTeam: { en: "Freeze", zh: "冻结" },
+    unfreezeTeam: { en: "Thaw", zh: "解冻" },
+    unfreezeAll: { en: "Thaw All", zh: "全部解冻" },
+    frozenTooltip: {
+      en: "This team is frozen — thaw to re-optimize.",
+      zh: "此队伍已冻结——解冻后可重新优化。",
+    },
+    frozenBadge: { en: "Frozen", zh: "已冻结" },
     singleFormula: { en: "Single Formula", zh: "单公式" },
     comboFormula: {
       en: "Combo Formula",

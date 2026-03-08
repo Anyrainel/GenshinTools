@@ -52,6 +52,7 @@ import type {
   Rarity,
   WeaponResource,
 } from "@/data/types";
+import type { TierAssignment } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getIsOwned } from "@/hooks/useOwnership";
@@ -61,7 +62,7 @@ import {
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useTierStore } from "@/stores/useTierStore";
-import { Ban, Bookmark, Check, Search, X } from "lucide-react";
+import { Ban, Bookmark, Check, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
 export type ItemPickerType = "character" | "weapon" | "artifact";
@@ -117,9 +118,9 @@ function ItemPickerComponent<T extends ItemPickerType>({
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const sortedCharacters = useMemo(
-    () => getSortedCharacters(characterStats ?? null, tierAssignments),
-    [characterStats, tierAssignments]
+  const hasTierData = useMemo(
+    () => Object.keys(tierAssignments).length > 0,
+    [tierAssignments]
   );
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
@@ -182,7 +183,8 @@ function ItemPickerComponent<T extends ItemPickerType>({
       isDesktop={isDesktop}
       characterStats={characterStats}
       weaponStats={weaponStats}
-      sortedCharacters={sortedCharacters}
+      tierAssignments={tierAssignments}
+      hasTierData={hasTierData}
       sortedWeaponSecondaryStats={sortedWeaponSecondaryStats}
     />
   );
@@ -442,7 +444,8 @@ interface PickerContentProps {
   isDesktop: boolean;
   characterStats: ReturnType<typeof useGameStats>["characterStats"];
   weaponStats: ReturnType<typeof useGameStats>["weaponStats"];
-  sortedCharacters: CharacterResource[];
+  tierAssignments: TierAssignment;
+  hasTierData: boolean;
   sortedWeaponSecondaryStats: MainStat[];
 }
 
@@ -457,7 +460,8 @@ function PickerContent({
   tooltipSide,
   characterStats,
   weaponStats,
-  sortedCharacters,
+  tierAssignments,
+  hasTierData,
   sortedWeaponSecondaryStats,
 }: PickerContentProps) {
   const { t } = useLanguage();
@@ -465,6 +469,16 @@ function PickerContent({
   const [activeFilters, setActiveFilters] = useState<
     Record<string, string | number>
   >({});
+  const [sortByTier, setSortByTier] = useState(false);
+
+  const sortedCharacters = useMemo(
+    () =>
+      getSortedCharacters(
+        characterStats ?? null,
+        sortByTier ? tierAssignments : null
+      ),
+    [characterStats, tierAssignments, sortByTier]
+  );
 
   // Artifact Specific State
   const initialTab =
@@ -815,6 +829,9 @@ function PickerContent({
             sortedWeaponSecondaryStats={
               type === "weapon" ? sortedWeaponSecondaryStats : undefined
             }
+            sortByTier={sortByTier}
+            onSortByTierChange={setSortByTier}
+            hasTierData={hasTierData}
           />
         )}
       </div>
@@ -874,11 +891,17 @@ function FilterBar({
   activeFilters,
   onChange,
   sortedWeaponSecondaryStats = [],
+  sortByTier,
+  onSortByTierChange,
+  hasTierData,
 }: {
   type: ItemPickerType;
   activeFilters: Record<string, string | number>;
   onChange: (f: Record<string, string | number>) => void;
   sortedWeaponSecondaryStats?: MainStat[];
+  sortByTier: boolean;
+  onSortByTierChange: (v: boolean) => void;
+  hasTierData: boolean;
 }) {
   const toggle = (key: string, val: string | number) => {
     const next = { ...activeFilters };
@@ -921,6 +944,24 @@ function FilterBar({
               )}
             />
             <span className="text-xs">{t.ui("common.ownedOnly")}</span>
+          </FilterChip>
+        )}
+        {type === "character" && (
+          <FilterChip
+            isActive={sortByTier}
+            onClick={() => hasTierData && onSortByTierChange(!sortByTier)}
+            className={cn(
+              "w-auto px-2 gap-1",
+              !hasTierData && "opacity-40 cursor-not-allowed"
+            )}
+            title={
+              hasTierData
+                ? t.ui("filters.sortByTier")
+                : t.ui("filters.tierSortDisabled")
+            }
+          >
+            <Trophy className="h-3 w-3" />
+            <span className="text-xs">{t.ui("filters.sortByTier")}</span>
           </FilterChip>
         )}
       </div>

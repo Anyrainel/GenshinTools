@@ -72,11 +72,6 @@ export function InventoryView({ data }: InventoryViewProps) {
   const [weaponSubstats, setWeaponSubstats] = useState<Set<string>>(
     () => new Set()
   );
-  // Initialize weapon substats lazily when allSecondaryStats resolves
-  const effectiveWeaponSubstats =
-    weaponSubstats.size > 0 || allSecondaryStats.length === 0
-      ? weaponSubstats
-      : new Set(allSecondaryStats);
 
   // ── Artifact filters ──
   const [artifactRarities, setArtifactRarities] = useState<Set<Rarity>>(
@@ -84,7 +79,7 @@ export function InventoryView({ data }: InventoryViewProps) {
   );
   const [artifactHalfSetFilter, setArtifactHalfSetFilter] = useState<
     Set<string>
-  >(() => new Set(ALL_HALF_SET_IDS));
+  >(() => new Set());
 
   // ── Build combined arrays ──
   const equippedWeapons: TaggedWeapon[] = useMemo(
@@ -132,8 +127,8 @@ export function InventoryView({ data }: InventoryViewProps) {
       if (!weaponRarities.has(rarity as Rarity)) return false;
 
       // Substat filter
-      if (effectiveWeaponSubstats.size > 0 && meta?.secondaryStat) {
-        if (!effectiveWeaponSubstats.has(meta.secondaryStat)) return false;
+      if (weaponSubstats.size > 0 && meta?.secondaryStat) {
+        if (!weaponSubstats.has(meta.secondaryStat)) return false;
       }
 
       return true;
@@ -146,7 +141,7 @@ export function InventoryView({ data }: InventoryViewProps) {
     showMaxLevel,
     showOther,
     weaponRarities,
-    effectiveWeaponSubstats,
+    weaponSubstats,
     weaponStats,
   ]);
 
@@ -189,8 +184,10 @@ export function InventoryView({ data }: InventoryViewProps) {
         if (!artifactRarities.has(a.rarity)) return false;
 
         // Half-set filter
-        const halfSetId = artifactIdToHalfSetId[a.setKey];
-        if (halfSetId && !artifactHalfSetFilter.has(halfSetId)) return false;
+        if (artifactHalfSetFilter.size > 0) {
+          const halfSetId = artifactIdToHalfSetId[a.setKey];
+          if (halfSetId && !artifactHalfSetFilter.has(halfSetId)) return false;
+        }
 
         return true;
       })
@@ -302,16 +299,10 @@ export function InventoryView({ data }: InventoryViewProps) {
             {sortedWeaponSubstats.map((stat) => (
               <FilterChip
                 key={stat}
-                active={effectiveWeaponSubstats.has(stat)}
-                onClick={() => {
-                  if (weaponSubstats.size === 0) {
-                    const init = new Set(allSecondaryStats);
-                    init.delete(stat);
-                    setWeaponSubstats(init);
-                  } else {
-                    toggleSet(weaponSubstats, setWeaponSubstats, stat);
-                  }
-                }}
+                active={weaponSubstats.size === 0 || weaponSubstats.has(stat)}
+                onClick={() =>
+                  toggleSet(weaponSubstats, setWeaponSubstats, stat)
+                }
               >
                 {t.stat(stat)}
               </FilterChip>
@@ -378,7 +369,10 @@ export function InventoryView({ data }: InventoryViewProps) {
           {sortedHalfSetIds.map((hsId) => (
             <FilterChip
               key={hsId}
-              active={artifactHalfSetFilter.has(hsId)}
+              active={
+                artifactHalfSetFilter.size === 0 ||
+                artifactHalfSetFilter.has(hsId)
+              }
               onClick={() =>
                 toggleSet(artifactHalfSetFilter, setArtifactHalfSetFilter, hsId)
               }
@@ -449,7 +443,7 @@ function CategoryChip({
         "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm leading-none font-medium transition-all border",
         active
           ? scheme.active
-          : "border-transparent text-foreground opacity-50 hover:opacity-75"
+          : "border-transparent text-foreground/70 hover:text-foreground/90"
       )}
     >
       {active ? (

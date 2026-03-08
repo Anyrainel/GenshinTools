@@ -157,3 +157,84 @@
 .animate-card-enter {
   animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* ── Frozen card effects ── */
+
+.frozen-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Frost edge vignette — icy gradient creeping from edges */
+.frozen-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* corners — heavier frost */
+  background: radial-gradient(
+      ellipse at 0% 0%,
+      rgba(186, 230, 253, 0.18) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 100% 0%,
+      rgba(186, 230, 253, 0.14) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 0% 100%,
+      rgba(186, 230, 253, 0.12) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 100% 100%,
+      rgba(186, 230, 253, 0.16) 0%,
+      transparent 50%
+    ), /* edges — thinner frost strip */
+    linear-gradient(to bottom, rgba(186, 230, 253, 0.08) 0%, transparent 15%),
+    linear-gradient(to top, rgba(186, 230, 253, 0.06) 0%, transparent 10%);
+}
+
+/* Diagonal shimmer — light catching on ice (GPU-composited via transform) */
+.frozen-card::after {
+  content: "";
+  position: absolute;
+  inset: -100% 0;
+  z-index: 2;
+  pointer-events: none;
+  width: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(186, 230, 253, 0.07) 45%,
+    rgba(224, 242, 254, 0.12) 50%,
+    rgba(186, 230, 253, 0.07) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  will-change: transform;
+  animation: ice-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes ice-shimmer {
+  0%,
+  100% {
+    transform: translateX(60%);
+  }
+  50% {
+    transform: translateX(-60%);
+  }
+}
+
+@keyframes fire-pulse {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}

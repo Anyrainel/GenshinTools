@@ -448,8 +448,8 @@ describe("getComboDisplayResult", () => {
 
 describe("runTeamOptimization — combo mode", () => {
   const perChar: Record<string, PerCharConfig> = {
-    diluc: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-    xingqiu: { targetEr: 1.4, buildMatch: makeBuildMatch() },
+    diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+    xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
   };
 
   it("combo mode yields result with mode='combo' and bestComboResult", async () => {
@@ -536,8 +536,8 @@ describe("runTeamOptimization — combo mode", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: emptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-        xingqiu: { targetEr: 1.4, buildMatch: makeBuildMatch() },
+        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+        xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -585,7 +585,7 @@ describe("runTeamOptimization — combo mode", () => {
         diluc: StatSheet.fromArtifacts(inventory),
       },
       perChar: {
-        diluc: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -617,7 +617,7 @@ describe("runTeamOptimization — combo mode", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: emptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -773,9 +773,9 @@ describe("combo edge cases", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: emptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, buildMatch: makeBuildMatch() },
-        xingqiu: { targetEr: 1.4, buildMatch: makeBuildMatch() },
-        bennett: { targetEr: 1.0, buildMatch: makeBuildMatch() },
+        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+        xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
+        bennett: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };

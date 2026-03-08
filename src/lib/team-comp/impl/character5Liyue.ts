@@ -6,6 +6,7 @@ import {
   TransformFormula,
 } from "../damageFormulas";
 import {
+  type BespokeBuffDef,
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
@@ -124,10 +125,11 @@ class Zibai extends CharacterBase {
     const qLevel = this.constellation >= 5 ? 13 : 10;
 
     // Normal Attacks in Phase Shift (DEF Scaled, plain DirectFormula)
-    const n1 = 1.018;
-    const n2 = 0.938;
-    const n3 = 0.622; // x2
-    const n4 = 1.569;
+    // Lv10: 101.8%/93.8%/62.2%×2/156.9%, Lv13 (C3+): 120.2%/110.7%/73.5%×2/185.3%
+    const n1 = eLevel === 13 ? 1.202 : 1.018;
+    const n2 = eLevel === 13 ? 1.107 : 0.938;
+    const n3 = eLevel === 13 ? 0.735 : 0.622; // x2
+    const n4 = eLevel === 13 ? 1.853 : 1.569;
     // N4 Gleam: "视为月结晶反应伤害" → LunarDirectFormula with raw game%
     // Lv10: 53% DEF, Lv13: 62.6% DEF — directCoeff (×1.6 for lunarCrystallize) applied internally
     const n4GleamTalent = eLevel === 13 ? 0.626 : 0.53;
@@ -246,9 +248,9 @@ class Zibai extends CharacterBase {
                   ),
                 },
                 {
-                  // C1: first Steed's 2nd-hit LC DMG +220% → talent mult ×3.2
+                  // C1: first Steed's 2nd-hit LC reactionDmg% +220%
                   formula: new LunarDirectFormula(
-                    steed2Talent * 3.2,
+                    steed2Talent,
                     {
                       element: "Geo",
                       ability: "skill",
@@ -256,6 +258,11 @@ class Zibai extends CharacterBase {
                     },
                     "def"
                   ),
+                  bespokeBuff: {
+                    source: cbs(this, "C1", ["E"]),
+                    entries: [{ key: "reactionDmg%", value: 2.2 }],
+                    filter: { reactions: ["lunarCrystallize"] },
+                  } satisfies BespokeBuffDef,
                 },
               ],
             },

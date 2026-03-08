@@ -87,6 +87,7 @@ export function buildTeamConfigs(
   for (let i = 0; i < 4; i++) {
     const charId = team.characters[i];
     if (!charId) continue;
+    if (!team.weapons[i]) continue; // wait for weapon to be selected
 
     const acctChar = accountData?.characters.find((c) => c.key === charId);
     const defaultLevel = acctChar ? (acctChar.level > 90 ? 100 : 90) : 90;
@@ -102,7 +103,7 @@ export function buildTeamConfigs(
         : defaultConst;
 
     let defaultRefine = 1;
-    const weaponId = team.weapons[i] || "dull_blade";
+    const weaponId = team.weapons[i]!;
     if (weaponId && accountData) {
       // Search all characters' equipped weapons and unequipped inventory
       // for the highest refinement. Mirrors the override select's logic.

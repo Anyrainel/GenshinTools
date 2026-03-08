@@ -365,6 +365,24 @@ export class ErScalingBuff extends StatBuff {
 }
 
 /**
+ * Validates a BespokeBuffDef's entries against selfOnField receiver semantics.
+ * Reuses the same KEY_CONSTRAINTS validation as normal buffs.
+ */
+export function validateBespokeBuff(
+  entries: StatEntry[],
+  filter:
+    | { elements?: string[]; abilities?: string[]; reactions?: string[] }
+    | undefined,
+  source: BuffSource
+): void {
+  validateStatBuff(
+    entries,
+    { receiver: "selfOnField", filter: filter as BuffTarget["filter"] },
+    source
+  );
+}
+
+/**
  * Filter a list of buffs such that only one buff per noStackId is kept.
  * Ties are broken by the maximum sum of the returned StatEntry values.
  */

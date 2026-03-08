@@ -1,4 +1,4 @@
-import { artifactIdToHalfSetId } from "@/data/constants";
+import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
@@ -23,6 +23,7 @@ export interface OptimizerOptions {
   targetCharId: string;
   formulaId: string;
   targetEr: number; // e.g. 1.2 for 120%
+  targetCr: number; // e.g. 0.05 for 5% (for Favonius weapons)
   inventory: ArtifactData[];
   buildMatch?: BuildMatchResult | null;
   globalConfig: GlobalStatWeights;
@@ -49,6 +50,20 @@ export interface OptimizerOptions {
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
 }
 
+/** Why the optimizer failed to find a valid build. */
+export type OptFailReason =
+  | { kind: "empty-pool"; emptySlots: Slot[] }
+  | { kind: "no-seeds"; setId?: string | null; halfSetIds?: string[] }
+  | { kind: "er-unmet"; targetEr: number; bestEr: number }
+  | { kind: "cr-unmet"; targetCr: number; bestCr: number }
+  | {
+      kind: "set-impossible";
+      setId?: string | null;
+      halfSetIds?: string[];
+      slotCounts: Record<string, number>;
+    }
+  | { kind: "all-filtered"; combinationsTotal: number };
+
 export interface OptimizationResult {
   bestDamage: number;
   bestDamageResult: DamageResult | null;
@@ -60,6 +75,7 @@ export interface OptimizationResult {
   startTime: number;
   endTime: number | null;
   done: boolean;
+  failReason?: OptFailReason;
 }
 
 /** Fallback stat weights when no build recommendation exists. */
@@ -169,6 +185,19 @@ function getArtifactEr(art: ArtifactData | null): number {
     er += art.substats.er / 100;
   }
   return er;
+}
+
+/** Extract artifact CR contribution (decimal, e.g. 0.311 for 31.1% CR circlet). */
+function getArtifactCr(art: ArtifactData | null): number {
+  if (!art) return 0;
+  let cr = 0;
+  if (art.mainStatKey === "cr") {
+    cr += getFixedMainStatValue("cr", art.rarity) / 100;
+  }
+  if (art.substats.cr) {
+    cr += art.substats.cr / 100;
+  }
+  return cr;
 }
 
 type ScoredArt = { art: ArtifactData; score: number; er: number };
@@ -317,6 +346,7 @@ function evaluateBuild(
   calcContext: CalcContext,
   erCheckCharId: string,
   targetEr: number,
+  targetCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
@@ -331,6 +361,11 @@ function evaluateBuild(
   if (targetEr > 0) {
     const er = postStats[erCheckCharId]?.get("er") ?? 0;
     if (er < targetEr) return { damage: -1, result: null };
+  }
+
+  if (targetCr > 0) {
+    const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
+    if (cr < targetCr) return { damage: -1, result: null };
   }
 
   if (scoreFn) {
@@ -391,146 +426,93 @@ function buildSeedBuilds2pc(
   calcContext: CalcContext,
   erCheckCharId: string,
   targetEr: number,
+  targetCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): ArtifactTuple[] {
   const [h1, h2] = artifactHalfSetIds;
-  const isH1 = (art: ArtifactData) => artifactIdToHalfSetId[art.setKey] === h1;
-  const isH2 = (art: ArtifactData) => artifactIdToHalfSetId[art.setKey] === h2;
+  // Concrete setKeys for each halfSetId
+  const h1SetKeys = artifactHalfSetsById[h1]?.setIds ?? [];
+  const h2SetKeys = artifactHalfSetsById[h2]?.setIds ?? [];
 
   type SeedCandidate = { pieces: ArtifactTuple; damage: number };
   const candidates: SeedCandidate[] = [];
 
-  // C(5,2) ways to pick 2 slots for h1, then C(3,2) ways to pick 2 slots for h2
-  // from remaining 3 slots (1 flex slot left over)
+  /** Try to fill a slot layout with a specific setKey pair and evaluate. */
+  function tryLayout(
+    set1Slots: number[],
+    set2Slots: number[],
+    flexSlot: number,
+    sk1: string,
+    sk2: string
+  ) {
+    const pieces: (ArtifactData | null)[] = new Array(5).fill(null);
+
+    for (const slotIdx of set1Slots) {
+      const pool = scoredPools[allSlots[slotIdx]];
+      const match = pool.find((s) => s.art.setKey === sk1);
+      if (!match) return;
+      pieces[slotIdx] = match.art;
+    }
+
+    for (const slotIdx of set2Slots) {
+      const pool = scoredPools[allSlots[slotIdx]];
+      const match = pool.find((s) => s.art.setKey === sk2);
+      if (!match) return;
+      pieces[slotIdx] = match.art;
+    }
+
+    const flexPool = scoredPools[allSlots[flexSlot]];
+    pieces[flexSlot] = flexPool.length > 0 ? flexPool[0].art : null;
+
+    const tuple = pieces as ArtifactTuple;
+    if (!matchesSetRequirement(tuple, null, artifactHalfSetIds)) return;
+
+    const { damage } = evaluateBuild(
+      tuple,
+      teamBuild,
+      swapCharId,
+      formulaCharId,
+      formulaId,
+      baseSheets,
+      calcTargetId,
+      calcContext,
+      erCheckCharId,
+      targetEr,
+      targetCr,
+      reactionOverride,
+      scoreFn
+    );
+    candidates.push({ pieces: tuple, damage });
+  }
+
+  // C(5,2) ways to pick 2 slots for set1, then C(3,2) from remaining for set2
   for (let i = 0; i < 5; i++) {
     for (let j = i + 1; j < 5; j++) {
-      // Slots i,j carry h1
       const remaining = [0, 1, 2, 3, 4].filter((x) => x !== i && x !== j);
       for (let ri = 0; ri < remaining.length; ri++) {
         for (let rj = ri + 1; rj < remaining.length; rj++) {
-          // Slots remaining[ri], remaining[rj] carry h2
           const flexSlot = remaining.filter(
             (x) => x !== remaining[ri] && x !== remaining[rj]
           )[0];
+          const firstSlots = [i, j];
+          const secondSlots = [remaining[ri], remaining[rj]];
 
-          const pieces: (ArtifactData | null)[] = new Array(5).fill(null);
-          let valid = true;
-
-          // Fill h1 slots
-          for (const slotIdx of [i, j]) {
-            const slot = allSlots[slotIdx];
-            const pool = scoredPools[slot];
-            const match = pool.find((s) => isH1(s.art));
-            if (!match) {
-              valid = false;
-              break;
+          // Try each concrete setKey for h1 × each concrete setKey for h2
+          for (const sk1 of h1SetKeys) {
+            for (const sk2 of h2SetKeys) {
+              if (h1 === h2 && sk1 === sk2) continue;
+              tryLayout(firstSlots, secondSlots, flexSlot, sk1, sk2);
             }
-            pieces[slotIdx] = match.art;
           }
-          if (!valid) continue;
 
-          // Fill h2 slots
-          for (const slotIdx of [remaining[ri], remaining[rj]]) {
-            const slot = allSlots[slotIdx];
-            const pool = scoredPools[slot];
-            const match = pool.find((s) => isH2(s.art));
-            if (!match) {
-              valid = false;
-              break;
-            }
-            pieces[slotIdx] = match.art;
-          }
-          if (!valid) continue;
-
-          // Fill flex slot with best overall piece
-          const flexSlotKey = allSlots[flexSlot];
-          const flexPool = scoredPools[flexSlotKey];
-          pieces[flexSlot] = flexPool.length > 0 ? flexPool[0].art : null;
-
-          const tuple = pieces as ArtifactTuple;
-          if (!matchesSetRequirement(tuple, null, artifactHalfSetIds)) continue;
-
-          const { damage } = evaluateBuild(
-            tuple,
-            teamBuild,
-            swapCharId,
-            formulaCharId,
-            formulaId,
-            baseSheets,
-            calcTargetId,
-            calcContext,
-            erCheckCharId,
-            targetEr,
-            reactionOverride,
-            scoreFn
-          );
-          candidates.push({ pieces: tuple, damage });
-        }
-      }
-    }
-  }
-
-  // Also try h2 in (i,j) and h1 in remaining if h1 !== h2
-  if (h1 !== h2) {
-    for (let i = 0; i < 5; i++) {
-      for (let j = i + 1; j < 5; j++) {
-        const remaining = [0, 1, 2, 3, 4].filter((x) => x !== i && x !== j);
-        for (let ri = 0; ri < remaining.length; ri++) {
-          for (let rj = ri + 1; rj < remaining.length; rj++) {
-            const flexSlot = remaining.filter(
-              (x) => x !== remaining[ri] && x !== remaining[rj]
-            )[0];
-
-            const pieces: (ArtifactData | null)[] = new Array(5).fill(null);
-            let valid = true;
-
-            for (const slotIdx of [i, j]) {
-              const slot = allSlots[slotIdx];
-              const pool = scoredPools[slot];
-              const match = pool.find((s) => isH2(s.art));
-              if (!match) {
-                valid = false;
-                break;
+          // Also try swapped slot assignment if h1 !== h2
+          if (h1 !== h2) {
+            for (const sk1 of h1SetKeys) {
+              for (const sk2 of h2SetKeys) {
+                tryLayout(secondSlots, firstSlots, flexSlot, sk2, sk1);
               }
-              pieces[slotIdx] = match.art;
             }
-            if (!valid) continue;
-
-            for (const slotIdx of [remaining[ri], remaining[rj]]) {
-              const slot = allSlots[slotIdx];
-              const pool = scoredPools[slot];
-              const match = pool.find((s) => isH1(s.art));
-              if (!match) {
-                valid = false;
-                break;
-              }
-              pieces[slotIdx] = match.art;
-            }
-            if (!valid) continue;
-
-            const flexSlotKey = allSlots[flexSlot];
-            const flexPool = scoredPools[flexSlotKey];
-            pieces[flexSlot] = flexPool.length > 0 ? flexPool[0].art : null;
-
-            const tuple = pieces as ArtifactTuple;
-            if (!matchesSetRequirement(tuple, null, artifactHalfSetIds))
-              continue;
-
-            const { damage } = evaluateBuild(
-              tuple,
-              teamBuild,
-              swapCharId,
-              formulaCharId,
-              formulaId,
-              baseSheets,
-              calcTargetId,
-              calcContext,
-              erCheckCharId,
-              targetEr,
-              reactionOverride
-            );
-            candidates.push({ pieces: tuple, damage });
           }
         }
       }
@@ -542,12 +524,13 @@ function buildSeedBuilds2pc(
   return candidates.slice(0, 20).map((c) => c.pieces);
 }
 
-/** Enumerate all combinations from per-slot alternative lists, filtering for set + ER. */
+/** Enumerate all combinations from per-slot alternative lists, with prefix-sum pruning for ER/CR. */
 function enumerateCombinations(
   alternatives: (ArtifactData | null)[][], // alternatives[slotIdx] = list of candidates for that slot
   artifactSetId: string | null | undefined,
   artifactHalfSetIds: string[] | undefined,
-  effectiveMinArtifactEr: number
+  effectiveMinArtifactEr: number,
+  effectiveMinArtifactCr = 0
 ): ArtifactTuple[] {
   const result: ArtifactTuple[] = [];
 
@@ -556,10 +539,55 @@ function enumerateCombinations(
     a.length > 0 ? a : [null as ArtifactData | null]
   );
 
+  const needEr = effectiveMinArtifactEr > 0;
+  const needCr = effectiveMinArtifactCr > 0;
+
+  // Precompute max ER/CR achievable per slot for prefix-sum pruning.
+  // maxErFromSlot[i] = max ER any single candidate in slot i can contribute.
+  // suffixMaxEr[i] = sum of maxErFromSlot[j] for j = i..4  (max ER achievable from slots i onward).
+  // This lets us prune: if cumEr + suffixMaxEr[nextSlot] < threshold, skip the entire subtree.
+  const suffixMaxEr = new Float64Array(6); // index 5 = 0 (sentinel)
+  const suffixMaxCr = new Float64Array(6);
+  if (needEr) {
+    for (let i = 4; i >= 0; i--) {
+      let maxEr = 0;
+      for (const a of norm[i]) maxEr = Math.max(maxEr, getArtifactEr(a));
+      suffixMaxEr[i] = suffixMaxEr[i + 1] + maxEr;
+    }
+  }
+  if (needCr) {
+    for (let i = 4; i >= 0; i--) {
+      let maxCr = 0;
+      for (const a of norm[i]) maxCr = Math.max(maxCr, getArtifactCr(a));
+      suffixMaxCr[i] = suffixMaxCr[i + 1] + maxCr;
+    }
+  }
+
   for (const a0 of norm[0]) {
+    const er0 = needEr ? getArtifactEr(a0) : 0;
+    const cr0 = needCr ? getArtifactCr(a0) : 0;
+    // Prune: even with best possible pieces in slots 1-4, can't reach threshold
+    if (needEr && er0 + suffixMaxEr[1] < effectiveMinArtifactEr) continue;
+    if (needCr && cr0 + suffixMaxCr[1] < effectiveMinArtifactCr) continue;
+
     for (const a1 of norm[1]) {
+      const er1 = er0 + (needEr ? getArtifactEr(a1) : 0);
+      const cr1 = cr0 + (needCr ? getArtifactCr(a1) : 0);
+      if (needEr && er1 + suffixMaxEr[2] < effectiveMinArtifactEr) continue;
+      if (needCr && cr1 + suffixMaxCr[2] < effectiveMinArtifactCr) continue;
+
       for (const a2 of norm[2]) {
+        const er2 = er1 + (needEr ? getArtifactEr(a2) : 0);
+        const cr2 = cr1 + (needCr ? getArtifactCr(a2) : 0);
+        if (needEr && er2 + suffixMaxEr[3] < effectiveMinArtifactEr) continue;
+        if (needCr && cr2 + suffixMaxCr[3] < effectiveMinArtifactCr) continue;
+
         for (const a3 of norm[3]) {
+          const er3 = er2 + (needEr ? getArtifactEr(a3) : 0);
+          const cr3 = cr2 + (needCr ? getArtifactCr(a3) : 0);
+          if (needEr && er3 + suffixMaxEr[4] < effectiveMinArtifactEr) continue;
+          if (needCr && cr3 + suffixMaxCr[4] < effectiveMinArtifactCr) continue;
+
           for (const a4 of norm[4]) {
             const pieces: ArtifactTuple = [a0, a1, a2, a3, a4];
 
@@ -568,15 +596,14 @@ function enumerateCombinations(
             )
               continue;
 
-            // Cheap ER pre-filter
-            if (effectiveMinArtifactEr > 0) {
-              const artifactEr =
-                getArtifactEr(a0) +
-                getArtifactEr(a1) +
-                getArtifactEr(a2) +
-                getArtifactEr(a3) +
-                getArtifactEr(a4);
-              if (artifactEr < effectiveMinArtifactEr) continue;
+            if (needEr) {
+              const totalEr = er3 + getArtifactEr(a4);
+              if (totalEr < effectiveMinArtifactEr) continue;
+            }
+
+            if (needCr) {
+              const totalCr = cr3 + getArtifactCr(a4);
+              if (totalCr < effectiveMinArtifactCr) continue;
             }
 
             result.push(pieces);
@@ -599,6 +626,7 @@ export async function* runOptimization(
     targetCharId,
     formulaId,
     targetEr,
+    targetCr,
     inventory,
     buildMatch,
     globalConfig,
@@ -665,6 +693,9 @@ export async function* runOptimization(
     scoredPools[slot] = withScore;
   }
 
+  // ── Check for empty pools ──
+  const emptySlots = allSlots.filter((s) => scoredPools[s].length === 0);
+
   // ── Pre-compute baseline ER for cheap ER pre-filter ──
   let erFloor = 0;
   if (targetEr > 0) {
@@ -696,6 +727,16 @@ export async function* runOptimization(
   }
   const effectiveMinArtifactEr = Math.max(0, minArtifactEr - maxSetErBonus);
 
+  // ── Pre-compute baseline CR for cheap CR pre-filter ──
+  let crFloor = 0;
+  if (targetCr > 0) {
+    const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+    const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
+    crFloor = baselineStats[erCheckCharId]?.get("cr") ?? 0;
+  }
+  const minArtifactCr = Math.max(0, targetCr - crFloor);
+  const effectiveMinArtifactCr = Math.max(0, minArtifactCr);
+
   // ── Yield initial progress ──
   let bestDamage = -1;
   let bestDamageResult: DamageResult | null = null;
@@ -708,6 +749,7 @@ export async function* runOptimization(
   };
   let combinationsEvaluated = 0;
   let combinationsTotal = 0;
+  let failReason: OptFailReason | undefined;
 
   const getResult = (
     phase: "pruning" | "evaluating",
@@ -724,6 +766,7 @@ export async function* runOptimization(
     startTime,
     endTime: done ? Date.now() : null,
     done,
+    ...(done && failReason ? { failReason } : {}),
   });
 
   yield getResult("pruning");
@@ -750,6 +793,7 @@ export async function* runOptimization(
       calcContext,
       erCheckCharId,
       targetEr,
+      targetCr,
       reactionOverride,
       scoreFn
     );
@@ -770,23 +814,49 @@ export async function* runOptimization(
   }
 
   if (seedBuilds.length === 0) {
+    if (emptySlots.length > 0) {
+      failReason = { kind: "empty-pool", emptySlots };
+    } else if (is4pc) {
+      // Count how many slots have a piece from the required set
+      const slotCounts: Record<string, number> = {};
+      for (const slot of allSlots) {
+        const count = scoredPools[slot].filter(
+          (s) => s.art.setKey === artifactSetId
+        ).length;
+        slotCounts[slot] = count;
+      }
+      failReason = {
+        kind: "set-impossible",
+        setId: artifactSetId,
+        slotCounts,
+      };
+    } else if (is2pc) {
+      const slotCounts: Record<string, number> = {};
+      for (const slot of allSlots) {
+        slotCounts[slot] = scoredPools[slot].length;
+      }
+      failReason = {
+        kind: "set-impossible",
+        halfSetIds: artifactHalfSetIds,
+        slotCounts,
+      };
+    } else {
+      failReason = {
+        kind: "no-seeds",
+        setId: artifactSetId,
+        halfSetIds: artifactHalfSetIds,
+      };
+    }
     yield getResult("evaluating", true);
     return;
   }
 
   // Number of alternatives per slot depends on mode
-  const altCount = is2pc ? 1 : (opts.altCount ?? 7);
+  const baseAltCount = is2pc ? 1 : (opts.altCount ?? 7);
+  const ALT_COUNT_STEP = 5;
   const MAX_HILL_CLIMB_STEPS = 20;
   const IMPROVEMENT_EPSILON = 0.001;
-
-  // Estimate total evaluations for progress reporting. The search stops on
-  // convergence; this is just a conservative upper bound.
-  const combosPerStep = (1 + altCount) ** 5;
-  combinationsTotal =
-    seedBuilds.length * (1 + combosPerStep) * MAX_HILL_CLIMB_STEPS;
-
-  yield getResult("pruning");
-  await new Promise((resolve) => setTimeout(resolve, 0));
+  const CHUNK_SIZE = 200;
 
   // ── Helper: update best if improved ──
   function updateBest(
@@ -807,133 +877,240 @@ export async function* runOptimization(
     }
   }
 
-  const CHUNK_SIZE = 200;
-  let chunkCount = 0;
+  const maxPoolSize = Math.max(...allSlots.map((s) => scoredPools[s].length));
 
-  for (const seed of seedBuilds) {
-    let current = seed;
-    let currentEval = evaluateBuild(
-      current,
-      teamBuild,
-      swapCharId,
-      formulaCharId,
-      formulaId,
-      baseSheets,
-      calcTargetId,
-      calcContext,
-      erCheckCharId,
-      targetEr,
-      reactionOverride,
-      scoreFn
-    );
+  // Retry with increasing altCount when ER requirement can't be met
+  let altCount = baseAltCount;
 
-    if (currentEval.damage > 0) {
-      updateBest(current, currentEval.damage, currentEval.result);
-    }
-    combinationsEvaluated++;
-    chunkCount++;
+  for (;;) {
+    // Estimate total evaluations for progress reporting
+    const combosPerStep = (1 + altCount) ** 5;
+    combinationsTotal =
+      seedBuilds.length * (1 + combosPerStep) * MAX_HILL_CLIMB_STEPS;
 
-    for (let step = 0; step < MAX_HILL_CLIMB_STEPS; step++) {
-      const marginalGains = computeMarginalGainsForOptimizer(
+    yield getResult("pruning");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    let chunkCount = 0;
+
+    for (const seed of seedBuilds) {
+      let current = seed;
+      let currentEval = evaluateBuild(
+        current,
         teamBuild,
         swapCharId,
         formulaCharId,
         formulaId,
         baseSheets,
-        current,
         calcTargetId,
         calcContext,
+        erCheckCharId,
+        targetEr,
+        targetCr,
         reactionOverride,
         scoreFn
       );
 
-      const perSlotAlternatives: (ArtifactData | null)[][] = [];
-      for (let slotIdx = 0; slotIdx < 5; slotIdx++) {
-        const slot = allSlots[slotIdx];
-        const pool = scoredPools[slot];
-        const currentArt = current[slotIdx];
-        const currentArtId = currentArt?.id;
-
-        const scored = pool
-          .filter((s) => currentArtId == null || s.art.id !== currentArtId)
-          .map((s) => ({
-            art: s.art,
-            mgScore: scorePieceMarginal(s.art, marginalGains),
-          }))
-          .sort((a, b) => b.mgScore - a.mgScore);
-
-        const topAlts = scored.slice(0, altCount).map((s) => s.art);
-        if (currentArt) {
-          perSlotAlternatives.push([currentArt, ...topAlts]);
-        } else if (topAlts.length > 0) {
-          perSlotAlternatives.push(topAlts);
-        } else {
-          // Empty pool, null slot — stays null via enumerateCombinations normalization
-          perSlotAlternatives.push([]);
-        }
+      if (currentEval.damage > 0) {
+        updateBest(current, currentEval.damage, currentEval.result);
       }
+      combinationsEvaluated++;
+      chunkCount++;
 
-      const combos = enumerateCombinations(
-        perSlotAlternatives,
-        artifactSetId,
-        artifactHalfSetIds,
-        effectiveMinArtifactEr
-      );
-
-      let bestLocalTuple = current;
-      let bestLocalDamage = currentEval.damage;
-      let bestLocalResult = currentEval.result;
-
-      for (const combo of combos) {
-        if (sameTuple(combo, current)) {
-          combinationsEvaluated++;
-          chunkCount++;
-          continue;
-        }
-
-        const { damage, result } = evaluateBuild(
-          combo,
+      for (let step = 0; step < MAX_HILL_CLIMB_STEPS; step++) {
+        const marginalGains = computeMarginalGainsForOptimizer(
           teamBuild,
           swapCharId,
           formulaCharId,
           formulaId,
           baseSheets,
+          current,
           calcTargetId,
           calcContext,
-          erCheckCharId,
-          targetEr,
           reactionOverride,
           scoreFn
         );
-        if (damage > 0) {
-          updateBest(combo, damage, result);
-        }
-        if (damage > bestLocalDamage + IMPROVEMENT_EPSILON) {
-          bestLocalTuple = combo;
-          bestLocalDamage = damage;
-          bestLocalResult = result;
+
+        // Inject synthetic ER/CR marginal gains when below threshold.
+        // When the constraint is unmet, builds are invalid (damage=-1), so
+        // ER/CR pieces need to rank higher in alternatives. The multiplier
+        // ramps up with each step: 0.5, 1.0, 1.5, 2.0, ... so early steps
+        // balance damage + constraint, and later steps push harder if still unmet.
+        if (targetEr > 0 || targetCr > 0) {
+          const currentSheet = StatSheet.fromArtifacts(current);
+          const sheets = { ...baseSheets, [swapCharId]: currentSheet };
+          const postStats = teamBuild.getTeamStats(
+            sheets,
+            calcTargetId,
+            calcContext
+          );
+          const maxGain = Math.max(
+            0,
+            ...Object.values(marginalGains).map((v) => Math.abs(v ?? 0))
+          );
+          const rampMultiplier = step + 1;
+          if (targetEr > 0) {
+            const currentEr = postStats[erCheckCharId]?.get("er") ?? 0;
+            if (currentEr < targetEr) {
+              marginalGains.er = Math.max(
+                marginalGains.er ?? 0,
+                maxGain * rampMultiplier
+              );
+            }
+          }
+          if (targetCr > 0) {
+            const currentCr = postStats[erCheckCharId]?.get("cr") ?? 0;
+            if (currentCr < targetCr) {
+              marginalGains.cr = Math.max(
+                marginalGains.cr ?? 0,
+                maxGain * rampMultiplier
+              );
+            }
+          }
         }
 
-        combinationsEvaluated++;
-        chunkCount++;
+        const perSlotAlternatives: (ArtifactData | null)[][] = [];
+        for (let slotIdx = 0; slotIdx < 5; slotIdx++) {
+          const slot = allSlots[slotIdx];
+          const pool = scoredPools[slot];
+          const currentArt = current[slotIdx];
+          const currentArtId = currentArt?.id;
 
-        if (chunkCount >= CHUNK_SIZE) {
-          chunkCount = 0;
-          yield getResult("evaluating");
-          await new Promise((resolve) => setTimeout(resolve, 0));
+          const scored = pool
+            .filter((s) => currentArtId == null || s.art.id !== currentArtId)
+            .map((s) => ({
+              art: s.art,
+              mgScore: scorePieceMarginal(s.art, marginalGains),
+            }))
+            .sort((a, b) => b.mgScore - a.mgScore);
+
+          const topAlts = scored.slice(0, altCount).map((s) => s.art);
+          if (currentArt) {
+            perSlotAlternatives.push([currentArt, ...topAlts]);
+          } else if (topAlts.length > 0) {
+            perSlotAlternatives.push(topAlts);
+          } else {
+            perSlotAlternatives.push([]);
+          }
         }
+
+        const combos = enumerateCombinations(
+          perSlotAlternatives,
+          artifactSetId,
+          artifactHalfSetIds,
+          effectiveMinArtifactEr,
+          effectiveMinArtifactCr
+        );
+
+        let bestLocalTuple = current;
+        let bestLocalDamage = currentEval.damage;
+        let bestLocalResult = currentEval.result;
+
+        for (const combo of combos) {
+          if (sameTuple(combo, current)) {
+            combinationsEvaluated++;
+            chunkCount++;
+            continue;
+          }
+
+          const { damage, result } = evaluateBuild(
+            combo,
+            teamBuild,
+            swapCharId,
+            formulaCharId,
+            formulaId,
+            baseSheets,
+            calcTargetId,
+            calcContext,
+            erCheckCharId,
+            targetEr,
+            targetCr,
+            reactionOverride,
+            scoreFn
+          );
+          if (damage > 0) {
+            updateBest(combo, damage, result);
+          }
+          if (damage > bestLocalDamage + IMPROVEMENT_EPSILON) {
+            bestLocalTuple = combo;
+            bestLocalDamage = damage;
+            bestLocalResult = result;
+          }
+
+          combinationsEvaluated++;
+          chunkCount++;
+
+          if (chunkCount >= CHUNK_SIZE) {
+            chunkCount = 0;
+            yield getResult("evaluating");
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
+        }
+
+        if (bestLocalDamage <= currentEval.damage + IMPROVEMENT_EPSILON) {
+          break;
+        }
+
+        current = bestLocalTuple;
+        currentEval = { damage: bestLocalDamage, result: bestLocalResult };
       }
 
-      if (bestLocalDamage <= currentEval.damage + IMPROVEMENT_EPSILON) {
-        break;
-      }
-
-      current = bestLocalTuple;
-      currentEval = { damage: bestLocalDamage, result: bestLocalResult };
+      yield getResult("evaluating");
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
-    yield getResult("evaluating");
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    // If we found a valid build, or there's no ER/CR requirement, or we've
+    // already widened altCount to cover all available pieces, stop retrying.
+    if (
+      bestDamage > 0 ||
+      (targetEr <= 0 && targetCr <= 0) ||
+      altCount >= maxPoolSize
+    )
+      break;
+
+    // Only widen if at least one slot would gain new candidates
+    const nextAltCount = Math.min(altCount + ALT_COUNT_STEP, maxPoolSize);
+    if (nextAltCount <= altCount) break;
+    altCount = nextAltCount;
+  }
+
+  // Diagnose failure when no valid build was found
+  if (bestDamage <= 0 && !failReason) {
+    if (emptySlots.length > 0) {
+      failReason = { kind: "empty-pool", emptySlots };
+    } else if (targetEr > 0 || targetCr > 0) {
+      // Find the best ER/CR we could achieve across seeds to report the gap
+      let bestErSeen = 0;
+      let bestCrSeen = 0;
+      for (const seed of seedBuilds) {
+        const charSheet = StatSheet.fromArtifacts(seed);
+        const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
+        const postStats = teamBuild.getTeamStats(
+          updatedSheets,
+          calcTargetId,
+          calcContext
+        );
+        const er = postStats[erCheckCharId]?.get("er") ?? 0;
+        if (er > bestErSeen) bestErSeen = er;
+        const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
+        if (cr > bestCrSeen) bestCrSeen = cr;
+      }
+      if (targetEr > 0 && bestErSeen < targetEr) {
+        failReason = { kind: "er-unmet", targetEr, bestEr: bestErSeen };
+      } else if (targetCr > 0 && bestCrSeen < targetCr) {
+        failReason = { kind: "cr-unmet", targetCr, bestCr: bestCrSeen };
+      } else {
+        failReason = {
+          kind: "all-filtered",
+          combinationsTotal: combinationsEvaluated,
+        };
+      }
+    } else {
+      failReason = {
+        kind: "all-filtered",
+        combinationsTotal: combinationsEvaluated,
+      };
+    }
   }
 
   // Update total to match actual evaluations for final progress = 1

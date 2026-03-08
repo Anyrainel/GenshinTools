@@ -19,6 +19,7 @@ import {
   createReactionVariant,
   createWeapon,
 } from "./damageModels";
+
 import { AVG_SUBSTAT_ROLL } from "./inspection";
 import type {
   BuffSource,
@@ -413,13 +414,21 @@ export class CharBuild {
     const displayParts: DisplayPart[] = [];
     let totalDamage = 0;
     for (let i = 0; i < entry.parts.length; i++) {
-      const { formula, hits: totalHits } = entry.parts[i];
+      const { formula, hits: totalHits, bespokeBuff } = entry.parts[i];
       const h = totalHits ?? 1;
+
+      // Apply per-part stat overlay if present
+      const stats = bespokeBuff
+        ? selfPostStats.merge(
+            StatSheet.fromEntries(bespokeBuff.entries, bespokeBuff.filter)
+          )
+        : selfPostStats;
+
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
       if (!hasReaction) {
-        const dp = formula.display(selfPostStats, this.charBase.charLevel, ctx);
+        const dp = formula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = h;
         totalDamage += dp.damage * h;
         displayParts.push(dp);
@@ -448,7 +457,7 @@ export class CharBuild {
             ? createReactionVariant(formula, targetReaction)
             : formula;
         const dp = effectiveFormula.display(
-          selfPostStats,
+          stats,
           this.charBase.charLevel,
           ctx
         );
@@ -461,11 +470,7 @@ export class CharBuild {
           formula.tag.reaction !== "none"
             ? createReactionVariant(formula, "none")
             : formula;
-        const dp = directFormula.display(
-          selfPostStats,
-          this.charBase.charLevel,
-          ctx
-        );
+        const dp = directFormula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = nonReactingHits;
         totalDamage += dp.damage * nonReactingHits;
         displayParts.push(dp);

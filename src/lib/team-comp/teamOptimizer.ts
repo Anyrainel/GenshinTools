@@ -5,6 +5,7 @@ import type { TeamBuild } from "./damageCalc";
 import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
+  type OptFailReason,
   type OptimizationResult,
   type OptimizerOptions,
   runOptimization,
@@ -26,6 +27,7 @@ export interface TeamOptPassResult {
   charId: string;
   bestDamage: number;
   bestArtifacts: Record<Slot, ArtifactData | null>;
+  failReason?: OptFailReason;
 }
 
 export interface TeamOptimizationProgress {
@@ -44,6 +46,8 @@ interface TeamOptResultBase {
   bestDamage: number;
   bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
   passResults: TeamOptPassResult[];
+  /** Per-character failure reasons (only for characters that failed to find a build). */
+  failReasons: Record<string, OptFailReason>;
   done: true;
 }
 
@@ -63,6 +67,7 @@ export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 
 export interface PerCharConfig {
   targetEr: number;
+  targetCr: number;
   buildMatch?: BuildMatchResult | null;
   artifactSetId?: string | null;
   artifactHalfSetIds?: string[];
@@ -97,6 +102,12 @@ function collectArtifactIds(arts: Record<Slot, ArtifactData | null>): string[] {
   return ids;
 }
 
+function collectArtifactIdSet(
+  arts: Record<Slot, ArtifactData | null>
+): Set<string> {
+  return new Set(collectArtifactIds(arts));
+}
+
 const emptyArtifacts: Record<Slot, ArtifactData | null> = {
   flower: null,
   plume: null,
@@ -104,6 +115,80 @@ const emptyArtifacts: Record<Slot, ArtifactData | null> = {
   goblet: null,
   circlet: null,
 };
+
+/** Fisher-Yates in-place shuffle. */
+function shuffle<T>(arr: T[]): T[] {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/** Generate all permutations of an array. */
+function permutations<T>(arr: T[]): T[][] {
+  if (arr.length <= 1) return [arr.slice()];
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i++) {
+    const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+    for (const perm of permutations(rest)) {
+      result.push([arr[i], ...perm]);
+    }
+  }
+  return result;
+}
+
+/** Build StatSheet map from artifact assignments. */
+function buildSheetsFromArtifacts(
+  baseSheets: Record<string, StatSheet>,
+  artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>
+): Record<string, StatSheet> {
+  const sheets = { ...baseSheets };
+  for (const [charId, arts] of Object.entries(artifactsByChar)) {
+    const pieces = allSlots
+      .map((s) => arts[s])
+      .filter((a): a is ArtifactData => a != null);
+    sheets[charId] = StatSheet.fromArtifacts(pieces);
+  }
+  return sheets;
+}
+
+/** Compute final score for an artifact assignment. */
+function computeFinalScore(
+  teamBuild: TeamBuild,
+  artifactsByChar: Record<string, Record<Slot, ArtifactData | null>>,
+  baseSheets: Record<string, StatSheet>,
+  carryCharId: string,
+  formulaId: string,
+  calcContext: CalcContext,
+  reactionOverride: ReactionOverride | undefined,
+  isComboMode: boolean,
+  combo: ComboFormula | undefined,
+  reactionOverrides: Record<string, ReactionOverride> | undefined
+): number {
+  const sheets = buildSheetsFromArtifacts(baseSheets, artifactsByChar);
+  if (isComboMode && combo) {
+    try {
+      return evaluateCombo(
+        teamBuild,
+        combo,
+        sheets,
+        calcContext,
+        reactionOverrides
+      ).totalDamage;
+    } catch {
+      return 0;
+    }
+  }
+  const postStats = teamBuild.getTeamStats(sheets, carryCharId, calcContext);
+  return teamBuild.getDamageResult(
+    carryCharId,
+    formulaId,
+    postStats,
+    calcContext,
+    reactionOverride
+  ).totalDamage;
+}
 
 // ─── Multi-Pass Generator ───
 
@@ -144,75 +229,48 @@ export async function* runTeamOptimization(
       }
     : undefined;
 
-  // Build pass list
-  // Combo mode: all characters with combo lines are carries → supports → carries again
-  // Single mode: carry-1 → supports → carry-2
-  type PassDef = { passId: TeamOptPassId; charId: string };
-  const passes: PassDef[] = [];
+  // Classify characters into carries and supports (randomized within groups)
+  const allCharIds = Object.keys(perChar);
+  let carryCharIds: string[];
+  let supportCharIds: string[];
 
   if (isComboMode) {
     const comboCharIds = new Set(
       combo.lines.filter((l) => l.count > 0).map((l) => l.charId)
     );
-    const carryCharIds = Object.keys(perChar).filter((id) =>
-      comboCharIds.has(id)
-    );
-    const supportCharIds = Object.keys(perChar).filter(
-      (id) => !comboCharIds.has(id)
-    );
-
-    // All carries first pass
-    for (const cid of carryCharIds) {
-      passes.push({ passId: "carry-1", charId: cid });
-    }
-    // Supports
-    for (const sid of supportCharIds) {
-      passes.push({ passId: "support", charId: sid });
-    }
-    // All carries second pass
-    for (const cid of carryCharIds) {
-      passes.push({ passId: "carry-2", charId: cid });
-    }
+    carryCharIds = shuffle(allCharIds.filter((id) => comboCharIds.has(id)));
+    supportCharIds = shuffle(allCharIds.filter((id) => !comboCharIds.has(id)));
   } else {
-    const supportCharIds = Object.keys(perChar).filter(
-      (id) => id !== carryCharId
-    );
-    passes.push({ passId: "carry-1", charId: carryCharId });
-    for (const sid of supportCharIds) {
-      passes.push({ passId: "support", charId: sid });
-    }
-    passes.push({ passId: "carry-2", charId: carryCharId });
+    carryCharIds = [carryCharId];
+    supportCharIds = shuffle(allCharIds.filter((id) => id !== carryCharId));
   }
 
-  const totalPasses = passes.length;
-  const passResults: TeamOptPassResult[] = [];
-  const excludedArtifactIds = new Set<string>();
-  let currentSheets = { ...baseSheets };
-  // Track carry-1 results for unlocking before carry-2
-  const carry1Results = new Map<string, TeamOptPassResult>();
+  // The round-1 order: carries first, then supports
+  const round1Order = [...carryCharIds, ...supportCharIds];
 
-  for (let passIdx = 0; passIdx < totalPasses; passIdx++) {
-    const { passId, charId } = passes[passIdx];
+  // Helper: run a single character's optimizer pass and yield progress
+  async function* runCharPass(
+    charId: string,
+    passId: TeamOptPassId,
+    currentSheets: Record<string, StatSheet>,
+    excludedIds: Set<string> | undefined,
+    passIdx: number,
+    totalPasses: number,
+    passResults: TeamOptPassResult[]
+  ): AsyncGenerator<
+    TeamOptimizationProgress,
+    OptimizationResult | null,
+    undefined
+  > {
     const charConfig = perChar[charId];
-    if (!charConfig) continue;
-
-    // Before carry-2: unlock this character's carry-1 artifacts
-    if (passId === "carry-2") {
-      const prev = carry1Results.get(charId);
-      if (prev) {
-        for (const id of collectArtifactIds(prev.bestArtifacts)) {
-          excludedArtifactIds.delete(id);
-        }
-      }
-    }
-
-    const isCarry = passId !== "support";
+    if (!charConfig) return null;
 
     const passOpts: OptimizerOptions = {
       teamBuild,
       targetCharId: carryCharId,
       formulaId,
       targetEr: charConfig.targetEr,
+      targetCr: charConfig.targetCr,
       inventory,
       buildMatch: charConfig.buildMatch,
       globalConfig,
@@ -220,28 +278,23 @@ export async function* runTeamOptimization(
       calcContext,
       artifactSetId: charConfig.artifactSetId ?? null,
       artifactHalfSetIds: charConfig.artifactHalfSetIds,
-      // Multi-pass fields
       swapCharId: charId,
       calcTargetId: carryCharId,
       formulaCharId: carryCharId,
-      erCheckCharId: isCarry ? charId : charId,
-      excludedArtifactIds:
-        excludedArtifactIds.size > 0 ? new Set(excludedArtifactIds) : undefined,
+      erCheckCharId: charId,
+      excludedArtifactIds: excludedIds,
       reactionOverride,
       altCount: opts.altCount,
       scoreFn: comboScoreFn,
     };
 
     const gen = runOptimization(passOpts);
-
     let lastResult: OptimizationResult | null = null;
+
     for await (const res of gen) {
       lastResult = res;
-
-      // Yield progress
       const passWeight = 1 / totalPasses;
       const overallProgress = passIdx * passWeight + res.progress * passWeight;
-
       yield {
         currentPass: passId,
         currentPassCharId: charId,
@@ -255,63 +308,522 @@ export async function* runTeamOptimization(
       } satisfies TeamOptimizationProgress;
     }
 
-    // Pass completed — lock artifacts and update sheets
+    return lastResult;
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // Phase 1: Unlocked pass — optimize all characters without locking
+  // ════════════════════════════════════════════════════════════════════════
+
+  // Estimate total passes for progress: round1 + worst-case permutations + carry-2
+  // We'll update totalPasses as we learn more about conflicts
+  const carry2Count = carryCharIds.length;
+  let estimatedTotal = round1Order.length + carry2Count; // will grow if conflicts found
+  const allPassResults: TeamOptPassResult[] = [];
+
+  const unlockedResults: Record<
+    string,
+    {
+      arts: Record<Slot, ArtifactData | null>;
+      damage: number;
+      failReason?: OptFailReason;
+    }
+  > = {};
+  const unlockedPassResults: TeamOptPassResult[] = [];
+  let unlockedSheets = { ...baseSheets };
+
+  for (let i = 0; i < round1Order.length; i++) {
+    const charId = round1Order[i];
+    const passId: TeamOptPassId = carryCharIds.includes(charId)
+      ? "carry-1"
+      : "support";
+
+    const gen = runCharPass(
+      charId,
+      passId,
+      unlockedSheets,
+      undefined, // no exclusions
+      i,
+      estimatedTotal,
+      allPassResults
+    );
+
+    let lastResult: OptimizationResult | null = null;
+    for (;;) {
+      const { value, done } = await gen.next();
+      if (done) {
+        lastResult = value;
+        break;
+      }
+      yield value;
+    }
+
     if (lastResult) {
-      const passResult: TeamOptPassResult = {
+      unlockedResults[charId] = {
+        arts: lastResult.bestArtifacts,
+        damage: lastResult.bestDamage,
+        failReason: lastResult.failReason,
+      };
+      unlockedPassResults.push({
         passId,
         charId,
         bestDamage: lastResult.bestDamage,
         bestArtifacts: lastResult.bestArtifacts,
-      };
-
-      if (passId === "carry-1") {
-        carry1Results.set(charId, passResult);
-      }
-
-      passResults.push(passResult);
-
-      // Lock assigned artifacts
-      for (const id of collectArtifactIds(lastResult.bestArtifacts)) {
-        excludedArtifactIds.add(id);
-      }
-
-      // Update sheets with the pass result
-      const piecesArray = allSlots
+        failReason: lastResult.failReason,
+      });
+      // Update sheets so subsequent characters see this character's artifacts
+      const pieces = allSlots
         .map((s) => lastResult!.bestArtifacts[s])
         .filter((a): a is ArtifactData => a != null);
-      currentSheets = {
-        ...currentSheets,
-        [charId]: StatSheet.fromArtifacts(piecesArray),
+      unlockedSheets = {
+        ...unlockedSheets,
+        [charId]: StatSheet.fromArtifacts(pieces),
       };
     }
   }
 
-  // Build final artifact map
-  const bestArtifactsByChar: Record<
+  // ════════════════════════════════════════════════════════════════════════
+  // Phase 2: Detect conflicts — find artifacts claimed by 2+ characters
+  // ════════════════════════════════════════════════════════════════════════
+
+  function findCompetitorSet(
+    results: Record<
+      string,
+      { arts: Record<Slot, ArtifactData | null>; damage: number }
+    >
+  ): Set<string> {
+    const artifactOwners = new Map<string, Set<string>>();
+    for (const [charId, { arts }] of Object.entries(results)) {
+      for (const artId of collectArtifactIds(arts)) {
+        if (!artifactOwners.has(artId)) artifactOwners.set(artId, new Set());
+        artifactOwners.get(artId)!.add(charId);
+      }
+    }
+    const competitors = new Set<string>();
+    for (const owners of artifactOwners.values()) {
+      if (owners.size >= 2) {
+        for (const cid of owners) competitors.add(cid);
+      }
+    }
+    return competitors;
+  }
+
+  const competitorSet = findCompetitorSet(unlockedResults);
+
+  // ════════════════════════════════════════════════════════════════════════
+  // Phase 3: Permutation loop — try all orderings of competitors
+  // ════════════════════════════════════════════════════════════════════════
+
+  // Best round-1 result (artifacts + score) across all permutations
+  let bestR1ArtifactsByChar: Record<
     string,
     Record<Slot, ArtifactData | null>
   > = {};
+  for (const charId of allCharIds) {
+    bestR1ArtifactsByChar[charId] = unlockedResults[charId]?.arts ?? {
+      ...emptyArtifacts,
+    };
+  }
+  let bestR1PassResults: TeamOptPassResult[] = [...unlockedPassResults];
+  let bestR1Score = computeFinalScore(
+    teamBuild,
+    bestR1ArtifactsByChar,
+    baseSheets,
+    carryCharId,
+    formulaId,
+    calcContext,
+    reactionOverride,
+    isComboMode,
+    combo,
+    reactionOverrides
+  );
 
-  // Start with empty artifacts for all characters in perChar
-  for (const charId of Object.keys(perChar)) {
-    bestArtifactsByChar[charId] = { ...emptyArtifacts };
+  if (competitorSet.size >= 2) {
+    const competitorArr = [...competitorSet];
+    const nonCompetitors = allCharIds.filter((id) => !competitorSet.has(id));
+    const perms = permutations(competitorArr);
+
+    // Update estimated total for progress reporting
+    estimatedTotal =
+      round1Order.length + perms.length * competitorArr.length + carry2Count;
+
+    let globalPassIdx = round1Order.length;
+    let cascadeExpanded = false;
+
+    for (let permIdx = 0; permIdx < perms.length; permIdx++) {
+      const perm = perms[permIdx];
+      const permExcluded = new Set<string>();
+      let permSheets = { ...baseSheets };
+      const permArtifactsByChar: Record<
+        string,
+        Record<Slot, ArtifactData | null>
+      > = {};
+      const permPassResults: TeamOptPassResult[] = [];
+
+      // Non-competitors keep their unlocked results (artifacts NOT locked)
+      for (const cid of nonCompetitors) {
+        const ur = unlockedResults[cid];
+        if (ur) {
+          permArtifactsByChar[cid] = ur.arts;
+          const pieces = allSlots
+            .map((s) => ur.arts[s])
+            .filter((a): a is ArtifactData => a != null);
+          permSheets = {
+            ...permSheets,
+            [cid]: StatSheet.fromArtifacts(pieces),
+          };
+        }
+      }
+
+      // Run competitors in permutation order, WITH locking among themselves
+      for (let ci = 0; ci < perm.length; ci++) {
+        const charId = perm[ci];
+        const passId: TeamOptPassId = carryCharIds.includes(charId)
+          ? "carry-1"
+          : "support";
+
+        const gen = runCharPass(
+          charId,
+          passId,
+          permSheets,
+          permExcluded.size > 0 ? new Set(permExcluded) : undefined,
+          globalPassIdx,
+          estimatedTotal,
+          [...allPassResults, ...permPassResults]
+        );
+
+        let lastResult: OptimizationResult | null = null;
+        for (;;) {
+          const { value, done } = await gen.next();
+          if (done) {
+            lastResult = value;
+            break;
+          }
+          yield value;
+        }
+
+        if (lastResult) {
+          permArtifactsByChar[charId] = lastResult.bestArtifacts;
+          permPassResults.push({
+            passId,
+            charId,
+            bestDamage: lastResult.bestDamage,
+            bestArtifacts: lastResult.bestArtifacts,
+            failReason: lastResult.failReason,
+          });
+
+          // Lock this character's artifacts for subsequent competitors
+          for (const id of collectArtifactIds(lastResult.bestArtifacts)) {
+            permExcluded.add(id);
+          }
+
+          const pieces = allSlots
+            .map((s) => lastResult!.bestArtifacts[s])
+            .filter((a): a is ArtifactData => a != null);
+          permSheets = {
+            ...permSheets,
+            [charId]: StatSheet.fromArtifacts(pieces),
+          };
+        }
+
+        globalPassIdx++;
+      }
+
+      // Cascade check on first permutation: did any competitor take a
+      // non-competitor's artifact?
+      if (permIdx === 0 && !cascadeExpanded) {
+        const competitorArtIds = new Set<string>();
+        for (const cid of perm) {
+          const arts = permArtifactsByChar[cid];
+          if (arts) {
+            for (const id of collectArtifactIds(arts)) {
+              competitorArtIds.add(id);
+            }
+          }
+        }
+
+        let expanded = false;
+        for (const cid of nonCompetitors) {
+          const ur = unlockedResults[cid];
+          if (!ur) continue;
+          for (const artId of collectArtifactIds(ur.arts)) {
+            if (competitorArtIds.has(artId)) {
+              competitorSet.add(cid);
+              expanded = true;
+              break;
+            }
+          }
+        }
+
+        if (expanded) {
+          // Restart phase 3 with expanded competitor set
+          cascadeExpanded = true;
+          const newCompetitorArr = [...competitorSet];
+          const newNonCompetitors = allCharIds.filter(
+            (id) => !competitorSet.has(id)
+          );
+          const newPerms = permutations(newCompetitorArr);
+
+          estimatedTotal =
+            round1Order.length +
+            newPerms.length * newCompetitorArr.length +
+            carry2Count;
+
+          globalPassIdx = round1Order.length;
+
+          // Re-run with expanded set — restart the outer for loop
+          // by replacing perms and nonCompetitors
+          // We use a recursive-style restart via a labeled restart
+          // Instead, we'll just run the expanded permutations inline
+
+          bestR1Score = -1; // reset so any permutation can win
+
+          for (let newPermIdx = 0; newPermIdx < newPerms.length; newPermIdx++) {
+            const newPerm = newPerms[newPermIdx];
+            const newPermExcluded = new Set<string>();
+            let newPermSheets = { ...baseSheets };
+            const newPermArtifacts: Record<
+              string,
+              Record<Slot, ArtifactData | null>
+            > = {};
+            const newPermPassResults: TeamOptPassResult[] = [];
+
+            for (const ncid of newNonCompetitors) {
+              const ur = unlockedResults[ncid];
+              if (ur) {
+                newPermArtifacts[ncid] = ur.arts;
+                const pieces = allSlots
+                  .map((s) => ur.arts[s])
+                  .filter((a): a is ArtifactData => a != null);
+                newPermSheets = {
+                  ...newPermSheets,
+                  [ncid]: StatSheet.fromArtifacts(pieces),
+                };
+              }
+            }
+
+            for (let ci = 0; ci < newPerm.length; ci++) {
+              const charId = newPerm[ci];
+              const passId: TeamOptPassId = carryCharIds.includes(charId)
+                ? "carry-1"
+                : "support";
+
+              const gen = runCharPass(
+                charId,
+                passId,
+                newPermSheets,
+                newPermExcluded.size > 0 ? new Set(newPermExcluded) : undefined,
+                globalPassIdx,
+                estimatedTotal,
+                [...allPassResults, ...newPermPassResults]
+              );
+
+              let lastResult: OptimizationResult | null = null;
+              for (;;) {
+                const { value, done } = await gen.next();
+                if (done) {
+                  lastResult = value;
+                  break;
+                }
+                yield value;
+              }
+
+              if (lastResult) {
+                newPermArtifacts[charId] = lastResult.bestArtifacts;
+                newPermPassResults.push({
+                  passId,
+                  charId,
+                  bestDamage: lastResult.bestDamage,
+                  bestArtifacts: lastResult.bestArtifacts,
+                  failReason: lastResult.failReason,
+                });
+
+                for (const id of collectArtifactIds(lastResult.bestArtifacts)) {
+                  newPermExcluded.add(id);
+                }
+
+                const pieces = allSlots
+                  .map((s) => lastResult!.bestArtifacts[s])
+                  .filter((a): a is ArtifactData => a != null);
+                newPermSheets = {
+                  ...newPermSheets,
+                  [charId]: StatSheet.fromArtifacts(pieces),
+                };
+              }
+
+              globalPassIdx++;
+            }
+
+            // Fill in non-competitors
+            for (const cid of allCharIds) {
+              if (!newPermArtifacts[cid]) {
+                newPermArtifacts[cid] = unlockedResults[cid]?.arts ?? {
+                  ...emptyArtifacts,
+                };
+              }
+            }
+
+            const permScore = computeFinalScore(
+              teamBuild,
+              newPermArtifacts,
+              baseSheets,
+              carryCharId,
+              formulaId,
+              calcContext,
+              reactionOverride,
+              isComboMode,
+              combo,
+              reactionOverrides
+            );
+
+            if (permScore > bestR1Score) {
+              bestR1Score = permScore;
+              bestR1ArtifactsByChar = newPermArtifacts;
+              bestR1PassResults = newPermPassResults;
+            }
+          }
+
+          // Skip remaining original permutations since we did expanded set
+          break;
+        }
+      }
+
+      if (cascadeExpanded) break; // already handled above
+
+      // Fill in non-competitors
+      for (const cid of allCharIds) {
+        if (!permArtifactsByChar[cid]) {
+          permArtifactsByChar[cid] = unlockedResults[cid]?.arts ?? {
+            ...emptyArtifacts,
+          };
+        }
+      }
+
+      const permScore = computeFinalScore(
+        teamBuild,
+        permArtifactsByChar,
+        baseSheets,
+        carryCharId,
+        formulaId,
+        calcContext,
+        reactionOverride,
+        isComboMode,
+        combo,
+        reactionOverrides
+      );
+
+      if (permScore > bestR1Score) {
+        bestR1Score = permScore;
+        bestR1ArtifactsByChar = permArtifactsByChar;
+        bestR1PassResults = permPassResults;
+      }
+    }
   }
 
-  // Apply results from each pass (last pass per character wins)
+  // ════════════════════════════════════════════════════════════════════════
+  // Phase 4: Carry round-2 — re-optimize carries with support artifacts locked
+  // ════════════════════════════════════════════════════════════════════════
+
+  // Start from the best round-1 result
+  let currentSheets = buildSheetsFromArtifacts(
+    baseSheets,
+    bestR1ArtifactsByChar
+  );
+  const passResults = [...bestR1PassResults];
+
+  // Lock all non-carry artifacts
+  const carry2Excluded = new Set<string>();
+  for (const [charId, arts] of Object.entries(bestR1ArtifactsByChar)) {
+    if (!carryCharIds.includes(charId)) {
+      for (const id of collectArtifactIds(arts)) {
+        carry2Excluded.add(id);
+      }
+    }
+  }
+
+  const carry2StartIdx = estimatedTotal - carry2Count;
+
+  for (let ci = 0; ci < carryCharIds.length; ci++) {
+    const charId = carryCharIds[ci];
+
+    // Unlock this carry's round-1 artifacts before re-optimizing
+    const prevArts = bestR1ArtifactsByChar[charId];
+    if (prevArts) {
+      for (const id of collectArtifactIds(prevArts)) {
+        carry2Excluded.delete(id);
+      }
+    }
+
+    const gen = runCharPass(
+      charId,
+      "carry-2",
+      currentSheets,
+      carry2Excluded.size > 0 ? new Set(carry2Excluded) : undefined,
+      carry2StartIdx + ci,
+      estimatedTotal,
+      passResults
+    );
+
+    let lastResult: OptimizationResult | null = null;
+    for (;;) {
+      const { value, done } = await gen.next();
+      if (done) {
+        lastResult = value;
+        break;
+      }
+      yield value;
+    }
+
+    if (lastResult) {
+      bestR1ArtifactsByChar[charId] = lastResult.bestArtifacts;
+      passResults.push({
+        passId: "carry-2",
+        charId,
+        bestDamage: lastResult.bestDamage,
+        bestArtifacts: lastResult.bestArtifacts,
+        failReason: lastResult.failReason,
+      });
+
+      // Lock this carry's new artifacts for subsequent carries
+      for (const id of collectArtifactIds(lastResult.bestArtifacts)) {
+        carry2Excluded.add(id);
+      }
+
+      const pieces = allSlots
+        .map((s) => lastResult!.bestArtifacts[s])
+        .filter((a): a is ArtifactData => a != null);
+      currentSheets = {
+        ...currentSheets,
+        [charId]: StatSheet.fromArtifacts(pieces),
+      };
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  // Final result
+  // ════════════════════════════════════════════════════════════════════════
+
+  const bestArtifactsByChar = bestR1ArtifactsByChar;
+  const finalSheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
+
+  // Collect per-character failure reasons from the last pass result per char
+  const failReasons: Record<string, OptFailReason> = {};
+  const lastPassByChar = new Map<string, TeamOptPassResult>();
   for (const pr of passResults) {
-    bestArtifactsByChar[pr.charId] = pr.bestArtifacts;
+    lastPassByChar.set(pr.charId, pr);
+  }
+  for (const [charId, pr] of lastPassByChar) {
+    if (pr.failReason) {
+      failReasons[charId] = pr.failReason;
+    }
   }
 
-  // Compute final damage with the finalized artifacts
-  const finalSheets: Record<string, StatSheet> = { ...baseSheets };
-  for (const [charId, arts] of Object.entries(bestArtifactsByChar)) {
-    const pieces = allSlots
-      .map((s) => arts[s])
-      .filter((a): a is ArtifactData => a != null);
-    finalSheets[charId] = StatSheet.fromArtifacts(pieces);
-  }
-
-  const resultBase = { bestArtifactsByChar, passResults, done: true as const };
+  const resultBase = {
+    bestArtifactsByChar,
+    passResults,
+    failReasons,
+    done: true as const,
+  };
 
   if (isComboMode) {
     const comboRes = evaluateCombo(

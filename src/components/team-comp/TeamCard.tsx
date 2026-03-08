@@ -32,7 +32,9 @@ import {
   ArrowUp,
   Copy,
   Diamond,
+  Flame,
   MoreVertical,
+  Snowflake,
   Sparkles,
   Swords,
   Trash2,
@@ -69,6 +71,8 @@ interface TeamCardProps {
   onSelect?: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  isFrozen?: boolean;
+  onUnfreeze?: () => void;
 }
 
 export function TeamCard({
@@ -80,6 +84,8 @@ export function TeamCard({
   onSelect,
   onMoveUp,
   onMoveDown,
+  isFrozen,
+  onUnfreeze,
 }: TeamCardProps) {
   const { t } = useLanguage();
   const { characterStats, weaponStats } = useGameStats();
@@ -110,7 +116,9 @@ export function TeamCard({
       className={cn(
         "bg-card/40 backdrop-blur-md rounded-xl border border-border/30",
         "hover:border-border/60 transition-all duration-200",
-        "group w-fit mx-auto"
+        "group w-fit mx-auto",
+        isFrozen &&
+          "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]"
       )}
     >
       {/* Header: Index + Reaction tags + Name + Context menu */}
@@ -133,6 +141,7 @@ export function TeamCard({
           onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder={t.ui("teamComp.teamName")}
           className="font-semibold text-sm bg-transparent border-none px-2 h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground/40 flex-1 min-w-0"
+          disabled={isFrozen}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -170,7 +179,12 @@ export function TeamCard({
       </div>
 
       {/* Body: 5-column grid — element row + row-label + 4 pickers */}
-      <div className="px-3 py-2">
+      <div
+        className={cn(
+          "px-3 py-2",
+          isFrozen && "frozen-card pointer-events-none"
+        )}
+      >
         <div className="grid grid-cols-[auto_repeat(4,auto)] gap-3 w-fit mx-auto pr-2 justify-items-center items-center">
           {/* Row 0: Element icons — dim by default, bright on resonance (2+ same element) */}
           <div />
@@ -223,6 +237,12 @@ export function TeamCard({
               type="character"
               value={charId}
               triggerSize="md"
+              filter={(item) => {
+                const c = item as { id: string };
+                return !team.characters.some(
+                  (otherId, j) => j !== idx && otherId === c.id
+                );
+              }}
               onChange={(val) => {
                 const newChars = [...team.characters];
                 newChars[idx] = val;
@@ -328,12 +348,25 @@ export function TeamCard({
         </div>
       </div>
 
-      {/* Footer: Optimize button */}
-      <div className="px-3 pb-3 pt-1">
+      {/* Footer: Optimize / Unfreeze buttons */}
+      <div className={cn("px-3 pb-3 pt-2", isFrozen ? "flex gap-2" : "")}>
+        {isFrozen && onUnfreeze && (
+          <Button
+            variant="outline"
+            className="flex-1 font-semibold h-9 gap-2 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+            onClick={onUnfreeze}
+          >
+            <Flame className="w-4 h-4" />
+            <span>{t.ui("teamComp.unfreezeTeam")}</span>
+          </Button>
+        )}
         <Button
           data-tour-step-id="tc-optimize"
           variant="outline"
-          className="w-full font-semibold h-9 gap-2"
+          className={cn(
+            "font-semibold h-9 gap-2",
+            isFrozen ? "flex-1" : "w-full"
+          )}
           onClick={onSelect}
           disabled={!isFullyConfigured}
         >

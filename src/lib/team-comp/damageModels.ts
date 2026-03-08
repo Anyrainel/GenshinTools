@@ -42,10 +42,22 @@ import type {
   StatKey,
 } from "./types";
 
+/**
+ * Per-part stat overlay: entries added to the StatSheet only when computing
+ * this specific formula part. Enforced to use selfOnField semantics.
+ */
+export type BespokeBuffDef = {
+  source: BuffSource;
+  entries: StatEntry[];
+  filter?: DamageTagFilter;
+};
+
 /** A single formula with an optional hit count (defaults to 1). */
 export type FormulaPart = {
   formula: DamageFormula;
   hits?: number;
+  /** Stat entries applied only when computing this part (selfOnField scope). */
+  bespokeBuff?: BespokeBuffDef;
 };
 
 /** Declarative entry in a character's formulaMap. */
@@ -68,6 +80,7 @@ export {
 } from "./damageFormulas";
 
 import type { StatBuff } from "./damageBuffs";
+import { validateBespokeBuff } from "./damageBuffs";
 
 /** Stats that use the base × (1 + %) + flat formula */
 const SCALED_STAT_BASES = {
@@ -194,6 +207,17 @@ export class StatSheet {
       sheet.data.set(key, new Map(bucket));
     }
     return sheet;
+  }
+
+  /** Create a StatSheet from entries scoped to a DamageTagFilter. */
+  static fromEntries(
+    entries: StatEntry[],
+    filter?: DamageTagFilter
+  ): StatSheet {
+    return new StatSheet(
+      entries,
+      filter ? serializeFilter(filter) : EMPTY_FILTER_KEY
+    );
   }
 
   static fromRaw(stats: Partial<Record<StatKey, number>>): StatSheet {
@@ -656,8 +680,24 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Subclasses declare all formulas here — labels + formula instances in one place. */
   protected abstract readonly formulaMap: Record<string, FormulaEntry>;
 
+  private _bespokeValidated = false;
+
   /** Derived from formulaMap — public API for consumers. */
   get formulaIds(): Record<string, I18nLabel> {
+    if (!this._bespokeValidated) {
+      this._bespokeValidated = true;
+      for (const entry of Object.values(this.formulaMap)) {
+        for (const part of entry.parts) {
+          if (part.bespokeBuff) {
+            validateBespokeBuff(
+              part.bespokeBuff.entries,
+              part.bespokeBuff.filter,
+              part.bespokeBuff.source
+            );
+          }
+        }
+      }
+    }
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {
       result[id] = entry.label;
@@ -682,14 +722,22 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const parts: { damage: number; hits: number }[] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
-      const { formula, hits: totalHits } = entry.parts[idx];
+      const { formula, hits: totalHits, bespokeBuff } = entry.parts[idx];
       const h = totalHits ?? 1;
+
+      // Apply per-part stat overlay if present
+      const stats = bespokeBuff
+        ? selfStats.merge(
+            StatSheet.fromEntries(bespokeBuff.entries, bespokeBuff.filter)
+          )
+        : selfStats;
+
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
       if (!hasReaction) {
         parts.push({
-          damage: formula.calc(selfStats, this.charLevel, ctx),
+          damage: formula.calc(stats, this.charLevel, ctx),
           hits: h,
         });
         continue;
@@ -718,7 +766,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             ? createReactionVariant(formula, targetReaction)
             : formula;
         parts.push({
-          damage: effectiveFormula.calc(selfStats, this.charLevel, ctx),
+          damage: effectiveFormula.calc(stats, this.charLevel, ctx),
           hits: reactingHits,
         });
       }
@@ -728,7 +776,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             ? createReactionVariant(formula, "none")
             : formula;
         parts.push({
-          damage: directFormula.calc(selfStats, this.charLevel, ctx),
+          damage: directFormula.calc(stats, this.charLevel, ctx),
           hits: nonReactingHits,
         });
       }

@@ -39,16 +39,45 @@ import {
   Check,
   ChevronDown,
   Eye,
+  Flame,
   Loader2,
   Play,
+  Snowflake,
   Swords,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { fmtDamage } from "./displayFormatters";
+
+const SESSION_PREFIX = "dmgCard.";
+
+/** useState that persists to sessionStorage (survives HMR and page refresh). */
+function useSessionState<T>(key: string, defaultValue: T): [T, (v: T) => void] {
+  const fullKey = SESSION_PREFIX + key;
+  const [value, _setValue] = useState<T>(() => {
+    try {
+      const stored = sessionStorage.getItem(fullKey);
+      return stored !== null ? (JSON.parse(stored) as T) : defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  });
+  const setValue = useCallback(
+    (v: T) => {
+      try {
+        sessionStorage.setItem(fullKey, JSON.stringify(v));
+      } catch {
+        /* quota exceeded — ignore */
+      }
+      _setValue(v);
+    },
+    [fullKey]
+  );
+  return [value, setValue];
+}
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
 const CARD_HEADER_CLS =
@@ -68,6 +97,8 @@ function DamageBody({
   displayResult,
   isMobile,
   t,
+  failReasons,
+  isFrozen,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -78,12 +109,20 @@ function DamageBody({
   displayResult?: DisplayResult | null;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
+  failReasons?: Record<
+    string,
+    import("@/lib/team-comp/optimizer").OptFailReason
+  >;
+  isFrozen?: boolean;
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey;
     charId: string;
   } | null>(null);
-  const [formulaExpanded, setFormulaExpanded] = useState(true);
+  const [formulaExpanded, setFormulaExpanded] = useSessionState(
+    "formulaExpanded",
+    true
+  );
 
   return (
     <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
@@ -102,6 +141,8 @@ function DamageBody({
           highlightedStat={highlightedStat}
           onStatHover={setHighlightedStat}
           t={t}
+          failReasons={failReasons}
+          isFrozen={isFrozen}
         />
       )}
 
@@ -279,7 +320,7 @@ function ComboBreakdown({
   // Maintain team character order
   const teamCharIds = team.characters.filter((id): id is string => id != null);
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useSessionState("comboExpanded", true);
 
   return (
     <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
@@ -489,6 +530,10 @@ interface DamageCardProps {
   formulaMode?: "single" | "combo";
   optimizedComboResult?: ComboResult | null;
   idealComboResult?: ComboResult | null;
+  // Freeze
+  isFrozen?: boolean;
+  onFreeze?: () => void;
+  onUnfreeze?: () => void;
 }
 
 // ─── Shared inline control helpers ───
@@ -763,15 +808,29 @@ export function DamageCard({
   formulaMode = "single",
   optimizedComboResult,
   idealComboResult,
+  isFrozen,
+  onFreeze,
+  onUnfreeze,
 }: DamageCardProps) {
-  const [resultsTab, setResultsTab] = useState<
+  const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
-  >("current");
+  >("resultsTab", "current");
 
   const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
 
+  const hasActiveFormula =
+    formulaMode === "combo"
+      ? comboLines?.some((l) => l.count > 0)
+      : resolvedFormula != null;
+
   return (
-    <Card className={CARD_CLS}>
+    <Card
+      className={cn(
+        CARD_CLS,
+        isFrozen &&
+          "ring-1 ring-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.08)]"
+      )}
+    >
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
           <Eye className="w-4 h-4 opacity-70" />
@@ -888,8 +947,9 @@ export function DamageCard({
               )}
             </div>
           ) : comboLines && !comboResult ? (
-            <div className="text-muted-foreground p-4 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10">
-              {t.ui("teamComp.emptyComboMessage")}
+            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+              <Swords className="w-8 h-8 opacity-15" />
+              <p>{t.ui("teamComp.emptyComboMessage")}</p>
             </div>
           ) : (
             <DamageBody
@@ -931,19 +991,52 @@ export function DamageCard({
               <EnemyLevelInput {...ctxProps} />
               <EnemyResInput {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
-              <ActionButton
-                onClick={handleOptimize}
-                disabled={
-                  isComputing || (!resolvedFormula && formulaMode !== "combo")
-                }
-                computing={isComputing}
-                labelIdle={t.ui("teamComp.runOptimization")}
-                labelBusy={t.ui("teamComp.optimizing")}
-              />
+              <span
+                title={isFrozen ? t.ui("teamComp.frozenTooltip") : undefined}
+              >
+                <ActionButton
+                  onClick={handleOptimize}
+                  disabled={isFrozen || isComputing || !hasActiveFormula}
+                  computing={isComputing}
+                  labelIdle={
+                    isFrozen
+                      ? t.ui("teamComp.frozenBadge")
+                      : t.ui("teamComp.runOptimization")
+                  }
+                  labelBusy={t.ui("teamComp.optimizing")}
+                />
+              </span>
+              {onFreeze && !isFrozen && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onFreeze}
+                  disabled={
+                    !teamResult?.done ||
+                    teamResult.bestDamage <= 0 ||
+                    !hasActiveFormula
+                  }
+                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
+                >
+                  <Snowflake className="w-3.5 h-3.5" />
+                  {t.ui("teamComp.freezeTeam")}
+                </Button>
+              )}
+              {isFrozen && onUnfreeze && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onUnfreeze}
+                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  {t.ui("teamComp.unfreezeTeam")}
+                </Button>
+              )}
             </div>
 
             {/* Empty state */}
-            {!isComputing && !teamResult && !teamError && (
+            {!isComputing && !teamResult && !teamError && !isFrozen && (
               <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                 <Swords className="w-8 h-8 opacity-15" />
                 <p>{t.ui("teamComp.emptyOptMessage")}</p>
@@ -1013,7 +1106,17 @@ export function DamageCard({
             )}
 
             {/* Results */}
-            {optimizedComboResult && comboLines && teamBuild ? (
+            {/* Combo mode with no active lines — show hint */}
+            {comboLines && !optimizedComboResult && isFrozen && !teamResult && (
+              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                <Swords className="w-8 h-8 opacity-15" />
+                <p>{t.ui("teamComp.emptyComboMessage")}</p>
+              </div>
+            )}
+
+            {!hasActiveFormula ? null : optimizedComboResult &&
+              comboLines &&
+              teamBuild ? (
               <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
                 {optimizedDisplayResult && (
                   <StatSheetPanel
@@ -1024,6 +1127,10 @@ export function DamageCard({
                     highlightedStat={null}
                     onStatHover={() => {}}
                     t={t}
+                    failReasons={
+                      teamResult?.done ? teamResult.failReasons : undefined
+                    }
+                    isFrozen={isFrozen}
                   />
                 )}
                 <ComboBreakdown
@@ -1044,7 +1151,8 @@ export function DamageCard({
                   />
                 )}
               </div>
-            ) : teamResult?.mode === "single" ? (
+            ) : teamResult?.mode === "single" ||
+              (isFrozen && optimizedDisplayResult) ? (
               <DamageBody
                 team={effectiveTeam}
                 hasFormula
@@ -1055,17 +1163,23 @@ export function DamageCard({
                 displayResult={optimizedDisplayResult}
                 isMobile={isMobile}
                 t={t}
+                failReasons={
+                  teamResult?.done ? teamResult.failReasons : undefined
+                }
+                isFrozen={isFrozen}
               />
             ) : null}
 
             {/* No results found */}
-            {teamResult?.done && teamResult.bestDamage === 0 && (
-              <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
-                {t
-                  .ui("teamComp.noValidCombinations")
-                  .replace("{0}", String(Math.round(targetErRaw * 100)))}
-              </div>
-            )}
+            {hasActiveFormula &&
+              teamResult?.done &&
+              teamResult.bestDamage === 0 && (
+                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                  {t
+                    .ui("teamComp.noValidCombinations")
+                    .replace("{0}", String(Math.round(targetErRaw * 100)))}
+                </div>
+              )}
           </CardContent>
         </>
       )}
@@ -1080,9 +1194,7 @@ export function DamageCard({
             <RollMultSelect {...ctxProps} />
             <ActionButton
               onClick={handleGenerateIdeal}
-              disabled={
-                idealComputing || (!resolvedFormula && formulaMode !== "combo")
-              }
+              disabled={idealComputing || !hasActiveFormula}
               computing={idealComputing}
               labelIdle={t.ui("teamComp.generateIdeal")}
               labelBusy={t.ui("teamComp.generatingIdeal")}

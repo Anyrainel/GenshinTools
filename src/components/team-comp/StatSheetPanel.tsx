@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/collapsible";
 import type { ArtifactData } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
+import type { OptFailReason } from "@/lib/team-comp/optimizer";
 import { AlertTriangle, ChevronDown } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 import { detectEquippedSets, setsMatch } from "./teamOptUtils";
@@ -25,6 +26,8 @@ type Props = {
   highlightedStat: { key: StatKey; charId: string } | null;
   onStatHover: (stat: { key: StatKey; charId: string } | null) => void;
   t: ReturnType<typeof useLanguage>["t"];
+  failReasons?: Record<string, OptFailReason>;
+  isFrozen?: boolean;
 };
 
 export const REQUIRED_STATS: StatKey[] = [
@@ -125,6 +128,43 @@ function StatRow({
   );
 }
 
+/** Format an OptFailReason into a short user-facing string. */
+function formatFailReason(
+  reason: OptFailReason,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  switch (reason.kind) {
+    case "empty-pool":
+      return t
+        .ui("teamComp.failEmptyPool")
+        .replace("{0}", reason.emptySlots.map((s) => t.slot(s)).join(", "));
+    case "no-seeds":
+      return t.ui("teamComp.failNoSeeds");
+    case "er-unmet":
+      return t
+        .ui("teamComp.failErUnmet")
+        .replace("{0}", String(Math.round(reason.targetEr * 100)))
+        .replace("{1}", String(Math.round(reason.bestEr * 100)));
+    case "cr-unmet":
+      return t
+        .ui("teamComp.failCrUnmet")
+        .replace("{0}", String(Math.round(reason.targetCr * 100)))
+        .replace("{1}", String(Math.round(reason.bestCr * 100)));
+    case "set-impossible": {
+      const name = reason.setId
+        ? t.artifact(reason.setId) || reason.setId
+        : (reason.halfSetIds
+            ?.map((id) => t.halfSetShort(id) || id)
+            .join(" + ") ?? "?");
+      return t.ui("teamComp.failSetImpossible").replace("{0}", name);
+    }
+    case "all-filtered":
+      return t
+        .ui("teamComp.failAllFiltered")
+        .replace("{0}", String(reason.combinationsTotal));
+  }
+}
+
 export function StatSheetPanel({
   result,
   team,
@@ -133,6 +173,8 @@ export function StatSheetPanel({
   highlightedStat,
   onStatHover,
   t,
+  failReasons,
+  isFrozen,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showIdle, setShowIdle] = useState(false);
@@ -166,9 +208,11 @@ export function StatSheetPanel({
         );
 
         const artifactsObj = artifactsByChar[charId] || {};
+        const hasArtifacts = Object.values(artifactsObj).some(Boolean);
         const goalConfig = team.artifacts[i];
         const equippedSets = detectEquippedSets(Object.values(artifactsObj));
-        const hasMismatch = goalConfig && !setsMatch(goalConfig, equippedSets);
+        const hasMismatch =
+          hasArtifacts && goalConfig && !setsMatch(goalConfig, equippedSets);
 
         return (
           <Collapsible
@@ -248,113 +292,123 @@ export function StatSheetPanel({
               )}
             </CollapsibleTrigger>
 
-            {/* Artifacts Grid */}
-            <div className="p-2 border-b border-border/10">
-              <ArtifactSlotGrid
-                charId={charId}
-                artifactsObj={artifactsObj}
-                t={t}
-              />
-            </div>
-
-            {/* Collapsible Stats */}
-            {result && (
-              <CollapsibleContent>
-                {/* Set Mismatch Warning */}
-                {hasMismatch && (
-                  <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+            {/* Content area — frozen overlay applied here */}
+            <div className={cn(isFrozen && "frozen-card")}>
+              {/* Artifacts Grid or Fail Reason */}
+              <div className="p-2 border-b border-border/10">
+                {failReasons?.[charId] ? (
+                  <div className="flex items-center gap-2 px-2 py-2 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
                     <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{t.ui("teamComp.equippedSetDiffers")}</span>
+                    <span>{formatFailReason(failReasons[charId], t)}</span>
                   </div>
+                ) : (
+                  <ArtifactSlotGrid
+                    charId={charId}
+                    artifactsObj={artifactsObj}
+                    t={t}
+                  />
                 )}
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
-                  {sortedKeys.map((k) => (
-                    <StatRow
-                      key={k}
-                      statKey={k}
-                      idleValue={idle[k] as number}
-                      combatValue={combat[k] as number}
-                      isHl={
-                        highlightedStat?.charId === charId &&
-                        highlightedStat?.key === k
-                      }
-                      showIdle={showIdle}
-                      onEnter={() => onStatHover({ key: k, charId })}
-                      onLeave={() => onStatHover(null)}
-                      t={t}
-                    />
-                  ))}
-                  {sortedKeys.length === 0 && (
-                    <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
-                      {t.ui("teamComp.noStatsResolved")}
-                    </span>
-                  )}
-                </div>
+              </div>
 
-                {/* Marginal Gains Section */}
-                {marginalKeys.length > 0 && (
-                  <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
-                    <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
-                      {t.ui("teamComp.marginalGains")}
+              {/* Collapsible Stats */}
+              {result && (
+                <CollapsibleContent>
+                  {/* Set Mismatch Warning */}
+                  {hasMismatch && (
+                    <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{t.ui("teamComp.equippedSetDiffers")}</span>
                     </div>
-                    {marginalKeys.map((k) => {
-                      const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
-                      const gain = marginal[k] as number;
-                      const isHl =
-                        highlightedStat?.charId === charId &&
-                        highlightedStat?.key === k;
-                      return (
-                        <div
-                          key={k}
-                          onMouseEnter={() => onStatHover({ key: k, charId })}
-                          onMouseLeave={() => onStatHover(null)}
-                          className={cn(
-                            "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
-                            isHl
-                              ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
-                              : ""
-                          )}
-                        >
-                          <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
-                            +1
-                          </span>
-                          <span
+                  )}
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
+                    {sortedKeys.map((k) => (
+                      <StatRow
+                        key={k}
+                        statKey={k}
+                        idleValue={idle[k] as number}
+                        combatValue={combat[k] as number}
+                        isHl={
+                          highlightedStat?.charId === charId &&
+                          highlightedStat?.key === k
+                        }
+                        showIdle={showIdle}
+                        onEnter={() => onStatHover({ key: k, charId })}
+                        onLeave={() => onStatHover(null)}
+                        t={t}
+                      />
+                    ))}
+                    {sortedKeys.length === 0 && (
+                      <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
+                        {t.ui("teamComp.noStatsResolved")}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Marginal Gains Section */}
+                  {marginalKeys.length > 0 && (
+                    <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
+                      <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
+                        {t.ui("teamComp.marginalGains")}
+                      </div>
+                      {marginalKeys.map((k) => {
+                        const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
+                        const gain = marginal[k] as number;
+                        const isHl =
+                          highlightedStat?.charId === charId &&
+                          highlightedStat?.key === k;
+                        return (
+                          <div
+                            key={k}
+                            onMouseEnter={() => onStatHover({ key: k, charId })}
+                            onMouseLeave={() => onStatHover(null)}
                             className={cn(
-                              "font-bold text-base",
+                              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
                               isHl
-                                ? "text-[color:hsl(var(--primary))] opacity-100"
-                                : "text-primary/80"
+                                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                                : ""
                             )}
                           >
-                            {t.statShort(k)}
-                          </span>
-                          <span className="text-xs whitespace-nowrap">
-                            <span className="text-muted-foreground opacity-60">
-                              ({t.ui("teamComp.avgVal")}
+                            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+                              +1
                             </span>
-                            <span className="font-bold text-foreground opacity-90">
-                              +{fmtStat(k, rollVal)}
+                            <span
+                              className={cn(
+                                "font-bold text-base",
+                                isHl
+                                  ? "text-[color:hsl(var(--primary))] opacity-100"
+                                  : "text-primary/80"
+                              )}
+                            >
+                              {t.statShort(k)}
                             </span>
-                            <span className="text-muted-foreground opacity-60">
-                              )
+                            <span className="text-xs whitespace-nowrap">
+                              <span className="text-muted-foreground opacity-60">
+                                ({t.ui("teamComp.avgVal")}
+                              </span>
+                              <span className="font-bold text-foreground opacity-90">
+                                +{fmtStat(k, rollVal)}
+                              </span>
+                              <span className="text-muted-foreground opacity-60">
+                                )
+                              </span>
                             </span>
-                          </span>
-                          <span className="text-xs text-muted-foreground opacity-50 px-0.5">
-                            ➔
-                          </span>
-                          <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
-                            {fmtPercent(gain, true)}
-                          </span>
-                          <span className="text-foreground opacity-60">
-                            {t.ui("teamComp.gain")}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CollapsibleContent>
-            )}
+                            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+                              ➔
+                            </span>
+                            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+                              {fmtPercent(gain, true)}
+                            </span>
+                            <span className="text-foreground opacity-60">
+                              {t.ui("teamComp.gain")}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </CollapsibleContent>
+              )}
+            </div>
           </Collapsible>
         );
       })}

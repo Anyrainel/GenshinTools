@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactHalfSetsById,
+  artifactsById,
   charactersById,
   weaponsById,
 } from "@/data/constants";
@@ -36,9 +37,10 @@ import type {
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
@@ -56,6 +58,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);
   const scoreConfig = useArtifactScoreStore((state) => state.config);
+  const freezeStore = useFreezeStore();
+  const isFrozen = freezeStore.isFrozen(team.id);
   const { characterStats, weaponStats } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
@@ -76,25 +80,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return map;
   }, [accountData, buildGroups]);
 
-  const [localCharacters, setLocalCharacters] = useState(team.characters);
-  const [localWeapons, setLocalWeapons] = useState(team.weapons);
-  const [localArtifacts, setLocalArtifacts] = useState(team.artifacts);
-
-  useEffect(() => {
-    setLocalCharacters(team.characters);
-    setLocalWeapons(team.weapons);
-    setLocalArtifacts(team.artifacts);
-  }, [team.characters, team.weapons, team.artifacts]);
-
-  const effectiveTeam = useMemo(
-    (): Team => ({
-      ...team,
-      characters: localCharacters,
-      weapons: localWeapons,
-      artifacts: localArtifacts,
-    }),
-    [team, localCharacters, localWeapons, localArtifacts]
-  );
+  const effectiveTeam = team;
 
   const {
     progress: teamProgress,
@@ -407,6 +393,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const getInventory = () => {
     if (!accountData) return [];
+    const frozenIds = freezeStore.getFrozenArtifactIds(team.id);
     return [
       ...accountData.extraArtifacts,
       ...accountData.characters.flatMap((c: CharacterData) =>
@@ -414,7 +401,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
         ).filter((a): a is ArtifactData => !!a)
       ),
-    ];
+    ].filter((a) => !frozenIds.has(a.id));
   };
 
   const handleOptimize = () => {
@@ -432,6 +419,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       string,
       {
         targetEr: number;
+        targetCr: number;
         buildMatch?:
           | import("@/lib/account-data/artifactScore").BuildMatchResult
           | null;
@@ -440,12 +428,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
     > = {};
 
-    for (const cid of effectiveTeam.characters) {
+    for (let ci = 0; ci < effectiveTeam.characters.length; ci++) {
+      const cid = effectiveTeam.characters[ci];
       if (!cid) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
+      const hasFavonius = team.weapons[ci]?.startsWith("favonius_") ?? false;
       perChar[cid] = {
         targetEr: team.targetEr?.[cid] ?? 1.0,
+        targetCr: hasFavonius ? (team.targetCr?.[cid] ?? 0.05) : 0,
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
@@ -504,15 +495,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }, [effectiveTeam.characters, accountData]);
 
   const optimizedArtifactsByChar = useMemo(() => {
-    if (!teamResult?.done) return equippedArtifactsByChar;
+    // Use live optimizer result if available
+    const source = teamResult?.done
+      ? teamResult.bestArtifactsByChar
+      : // Restore from freeze store when re-entering a frozen team
+        isFrozen
+        ? freezeStore.getFrozenTeam(team.id)?.artifactsByChar
+        : null;
+    if (!source) return equippedArtifactsByChar;
     const map = { ...equippedArtifactsByChar };
-    for (const [charId, arts] of Object.entries(
-      teamResult.bestArtifactsByChar
-    )) {
+    for (const [charId, arts] of Object.entries(source)) {
       map[charId] = arts as Record<string, ArtifactData>;
     }
     return map;
-  }, [teamResult, equippedArtifactsByChar]);
+  }, [teamResult, equippedArtifactsByChar, isFrozen, freezeStore, team.id]);
 
   const optArtifactSheets = useMemo(() => {
     const sheets: Record<string, StatSheet> = {};
@@ -524,7 +520,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return sheets;
   }, [optimizedArtifactsByChar, effectiveTeam.characters]);
 
-  const hasOptResult = teamResult?.done;
+  const hasFrozenResult =
+    isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
+  const hasOptResult = teamResult?.done || hasFrozenResult;
 
   const optimizedDamage = useMemo(() => {
     if (!teamBuild || !resolvedFormula || !hasOptResult) return null;
@@ -644,8 +642,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       } else if (artConfig.type === "2pc+2pc") {
         const hs1 = artifactHalfSetsById[String(artConfig.id1)];
         const hs2 = artifactHalfSetsById[String(artConfig.id2)];
-        const sk1 = hs1?.setIds[0] ?? "ideal";
-        const sk2 = hs2?.setIds[0] ?? "ideal";
+        // Pick a 5-star set from each half-set (4-star sets have fewer stats)
+        const sk1 =
+          hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
+          hs1?.setIds[0] ??
+          "ideal";
+        const sk2 =
+          hs2?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
+          hs2?.setIds[0] ??
+          "ideal";
         setKeysByChar[cid] = {
           flower: sk1,
           plume: sk1,
@@ -798,7 +803,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         >
           <ArrowLeft className="w-5 h-5 text-foreground/70" />
         </Button>
-        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate">
           {team.name || t.ui("teamComp.teamOptimization")}
         </h2>
       </div>
@@ -806,19 +811,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       {/* Card 1 — Team Roster */}
       <TeamRosterCard
         team={team}
-        effectiveTeam={effectiveTeam}
         updateTeam={updateTeam}
-        localCharacters={localCharacters}
-        localWeapons={localWeapons}
-        localArtifacts={localArtifacts}
-        setLocalCharacters={setLocalCharacters}
-        setLocalWeapons={setLocalWeapons}
-        setLocalArtifacts={setLocalArtifacts}
         accountData={accountData}
         characterStats={characterStats}
         weaponStats={weaponStats}
         isMobile={isMobile}
         t={t}
+        isFrozen={isFrozen}
+        onUnfreeze={
+          isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
+        }
       />
 
       {/* Card 2 — Formula Selection */}
@@ -846,6 +848,24 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         effectiveTeam={effectiveTeam}
         updateTeam={updateTeam}
         resolvedFormula={resolvedFormula}
+        isFrozen={isFrozen}
+        onFreeze={() => {
+          if (!teamResult?.done) return;
+          const allIds: string[] = [];
+          for (const arts of Object.values(teamResult.bestArtifactsByChar)) {
+            for (const art of Object.values(arts)) {
+              if (art) allIds.push(art.id);
+            }
+          }
+          freezeStore.freezeTeam(
+            team.id,
+            allIds,
+            teamResult.bestArtifactsByChar
+          );
+        }}
+        onUnfreeze={
+          isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
+        }
         isMobile={isMobile}
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}
