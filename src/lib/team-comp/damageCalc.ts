@@ -1,4 +1,5 @@
 import type { Element, Faction, Region } from "@/data/types";
+import { getNextLevelTier } from "@/lib/gameStatsLoader";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import {
   ScalingBuff,
@@ -544,8 +545,21 @@ export class TeamBuild {
   readonly teamMeta: TeamMeta;
   readonly teamResonance: TeamResonance;
   readonly allStaticBuffs: ProvidedStaticBuff[];
+  /** Original configs used to construct this TeamBuild (for reconstruction). */
+  readonly configs: CharCompConfig[];
+  /** Original combat opts used to construct this TeamBuild (for reconstruction). */
+  readonly combatOpts: CombatOpts;
+  /** Enemy persistent element aura (for reconstruction). */
+  readonly enemyElementAura?: Element;
 
-  constructor(configs: CharCompConfig[], combatOpts: CombatOpts = {}) {
+  constructor(
+    configs: CharCompConfig[],
+    combatOpts: CombatOpts = {},
+    enemyElementAura?: Element
+  ) {
+    this.configs = configs;
+    this.combatOpts = combatOpts;
+    this.enemyElementAura = enemyElementAura;
     const charIds = configs.map((c) => c.charId);
     const constellations: Record<string, number> = {};
     const artifactSets: Record<string, string> = {};
@@ -553,7 +567,12 @@ export class TeamBuild {
       if (c.artifactSetId) artifactSets[c.charId] = c.artifactSetId;
       constellations[c.charId] = c.constellation;
     }
-    this.teamMeta = new TeamMeta(charIds, constellations, artifactSets);
+    this.teamMeta = new TeamMeta(
+      charIds,
+      constellations,
+      artifactSets,
+      enemyElementAura
+    );
     this.teamResonance = new TeamResonance(this.teamMeta);
 
     // Create CharBuilds
@@ -631,7 +650,8 @@ export class TeamBuild {
       targetDependent[charId] = this.allStaticBuffs
         .filter((b) => {
           const r = b.buff.target.receiver;
-          if (r !== "onField" && r !== "selfOnField") return false;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
           return isBuffApplicable(
             b.buff,
             b.providerCharId,
@@ -730,7 +750,8 @@ export class TeamBuild {
       targetDependent[cid] = this.allStaticBuffs
         .filter((b) => {
           const r = b.buff.target.receiver;
-          if (r !== "onField" && r !== "selfOnField") return false;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
           return isBuffApplicable(
             b.buff,
             b.providerCharId,
@@ -800,7 +821,7 @@ export class TeamBuild {
       formulaTags
     );
 
-    // ── Stats (full team) ──
+    // ── Stats (full team) — deprecated flat projections ──
     const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
     const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
     for (const cid of Object.keys(this.charBuilds)) {
@@ -808,6 +829,54 @@ export class TeamBuild {
       combatStats[cid] = postStats[cid]!.getAll(
         cid === charId ? formulaTags[0] : undefined
       );
+    }
+
+    // ── Collect all formula tags per character ──
+    const charFormulaTags: Record<string, DamageTag[]> = {};
+    for (const [cid, cb] of Object.entries(this.charBuilds)) {
+      const tags: DamageTag[] = [];
+      const seen = new Set<string>();
+      for (const fid of Object.keys(cb.getFormulaIds())) {
+        const fEntry = cb.charBase.getFormulaEntry(fid);
+        if (!fEntry) continue;
+        for (const part of fEntry.parts) {
+          const t = part.formula.tag;
+          const key = `${t.element}|${t.ability}|${t.reaction}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            tags.push(t);
+          }
+        }
+      }
+      charFormulaTags[cid] = tags;
+    }
+
+    // ── Raw StatSheets with on/off field contexts ──
+    const statsCache = new Map<string, Record<string, StatSheet>>();
+    statsCache.set(charId, postStats); // reuse existing computation
+
+    const statSheets: Record<
+      string,
+      { onField: StatSheet; offField: StatSheet }
+    > = {};
+    for (const cid of Object.keys(this.charBuilds)) {
+      // On-field: stats when cid is on-field
+      if (!statsCache.has(cid)) {
+        statsCache.set(cid, this.getTeamStats(artifactStats, cid, ctx));
+      }
+      const onField = statsCache.get(cid)![cid]!;
+
+      // Off-field: stats when someone else is on-field
+      const offCtx =
+        cid !== charId
+          ? charId // reuse existing calcTarget context
+          : Object.keys(this.charBuilds).find((x) => x !== cid)!;
+      if (offCtx && !statsCache.has(offCtx)) {
+        statsCache.set(offCtx, this.getTeamStats(artifactStats, offCtx, ctx));
+      }
+      const offField = offCtx ? statsCache.get(offCtx)![cid]! : onField;
+
+      statSheets[cid] = { onField, offField };
     }
 
     // ── Marginal gains ──
@@ -821,13 +890,26 @@ export class TeamBuild {
       reactionOverride
     );
 
+    // ── Level-up gains (Lv90 → Lv100) ──
+    const levelUpGains = this.computeLevelUpGains(
+      charId,
+      formulaId,
+      artifactStats,
+      ctx,
+      totalDamage,
+      reactionOverride
+    );
+
     return {
       parts,
       totalDamage,
       buffs,
+      statSheets,
+      charFormulaTags,
+      marginalGains,
+      levelUpGains,
       idleStats,
       combatStats,
-      marginalGains,
     };
   }
 
@@ -966,9 +1048,8 @@ export class TeamBuild {
         dynamicEntries = raw.map((entry) => {
           const resolved: ResolvedStatEntry = { ...entry };
           if (buff instanceof ScalingBuff) {
-            const cap = (buff as { cap?: number }).cap;
-            if (cap !== undefined) resolved.cap = cap;
-            resolved.inputKey = (buff as { inputKey: StatKey }).inputKey;
+            if (buff.cap !== undefined) resolved.cap = buff.cap;
+            resolved.inputKey = buff.inputKey;
           }
           return resolved;
         });
@@ -1046,6 +1127,17 @@ export class TeamBuild {
       }
     }
 
+    // Also check the calc target's own scaling buffs (self-targeting) whose
+    // Also check the calc target's own scaling buffs whose output feeds into the
+    // formula indirectly (e.g. Engulfing Lightning: ER → ATK%).
+    // Must run after flatToPercent so that e.g. "atk%" is in usedKeys.
+    for (const { buff, providerCharId } of this.allStaticBuffs) {
+      if (providerCharId !== calcTargetId) continue;
+      if (buff instanceof ScalingBuff) {
+        if (usedKeys.has(buff.outputKey)) usedKeys.add(buff.inputKey);
+      }
+    }
+
     // Filter to rollable stat keys only
     const rollableKeys = Object.keys(AVG_SUBSTAT_ROLL) as StatKey[];
     const targetRollable = rollableKeys.filter((k) => usedKeys.has(k));
@@ -1091,8 +1183,7 @@ export class TeamBuild {
         )
           continue;
         if (buff instanceof ScalingBuff) {
-          const inputKey = (buff as { inputKey: StatKey }).inputKey;
-          relevantKeys.add(inputKey);
+          relevantKeys.add(buff.inputKey);
         }
       }
 
@@ -1132,6 +1223,55 @@ export class TeamBuild {
       }
       if (Object.keys(charGains).length > 0) {
         gains[cid] = charGains;
+      }
+    }
+
+    return gains;
+  }
+
+  /**
+   * Compute the relative damage gain from leveling each Lv90 character to Lv100.
+   * Rebuilds the team with the character at Lv100 and compares damage.
+   */
+  private computeLevelUpGains(
+    calcTargetId: string,
+    formulaId: string,
+    artifactStats: Record<string, StatSheet>,
+    ctx: CalcContext,
+    baseDamage: number,
+    reactionOverride?: ReactionOverride
+  ): Record<string, { gain: number; from: number; to: number }> {
+    if (baseDamage === 0) return {};
+
+    const gains: Record<string, { gain: number; from: number; to: number }> =
+      {};
+    for (const config of this.configs) {
+      const nextLevel = getNextLevelTier(config.charLevel);
+      if (!nextLevel) continue;
+
+      const tweakedConfigs = this.configs.map((c) =>
+        c.charId === config.charId ? { ...c, charLevel: nextLevel } : c
+      );
+      const tweakedTeam = new TeamBuild(
+        tweakedConfigs,
+        this.combatOpts,
+        this.enemyElementAura
+      );
+      const tweakedStats = tweakedTeam.getTeamStats(
+        artifactStats,
+        calcTargetId,
+        ctx
+      );
+      const tweakedResult = tweakedTeam.getDamageResult(
+        calcTargetId,
+        formulaId,
+        tweakedStats,
+        ctx,
+        reactionOverride
+      );
+      const gain = (tweakedResult.totalDamage - baseDamage) / baseDamage;
+      if (gain > 0) {
+        gains[config.charId] = { gain, from: config.charLevel, to: nextLevel };
       }
     }
 
@@ -1264,18 +1404,70 @@ export function getComboDisplayResult(
   const idleStats: Record<string, Partial<Record<StatKey, number>>> = {};
   const combatStats: Record<string, Partial<Record<StatKey, number>>> = {};
 
+  // Build a representative formula tag per active character (for element-filtered stats)
+  const charFormulaTag: Record<string, DamageTag | undefined> = {};
+  for (const cid of allCharIds) {
+    if (activeCharIds.has(cid)) {
+      const formulaIds = teamBuild.getFormulaIds()[cid];
+      const firstFormulaId = formulaIds
+        ? Object.keys(formulaIds)[0]
+        : undefined;
+      if (firstFormulaId) {
+        const entry =
+          teamBuild.charBuilds[cid]?.charBase.getFormulaEntry(firstFormulaId);
+        charFormulaTag[cid] = entry?.parts[0]?.formula.tag;
+      }
+    }
+  }
+
   for (const cid of allCharIds) {
     const onField = activeCharIds.has(cid) ? cid : fallbackOnField;
-    // getTeamStats returns post-stats (StatSheet) per character
-    // For idle stats we need pre-stats — but getDisplayResult uses getTeamStats too.
-    // We'll use getTeamStats for combat stats (consistent with single mode).
     const teamStats = getStats(onField);
-    combatStats[cid] = teamStats[cid]!.getAll();
-    // For idle stats, use a simpler approach: stats without on-field-dependent buffs
-    // Use the same teamStats — idle vs combat distinction in single mode uses
-    // preStats vs postStats. Here we approximate with postStats (combat) since
-    // preStats aren't exposed. The StatSheetPanel already handles this gracefully.
+    combatStats[cid] = teamStats[cid]!.getAll(charFormulaTag[cid]);
     idleStats[cid] = teamStats[cid]!.getAll();
+  }
+
+  // ── Collect all formula tags per character ──
+  const charFormulaTags: Record<string, DamageTag[]> = {};
+  for (const cid of allCharIds) {
+    const tags: DamageTag[] = [];
+    const seen = new Set<string>();
+    const formulaIds = teamBuild.getFormulaIds()[cid];
+    if (formulaIds) {
+      for (const fid of Object.keys(formulaIds)) {
+        const fEntry = teamBuild.charBuilds[cid]?.charBase.getFormulaEntry(fid);
+        if (!fEntry) continue;
+        for (const part of fEntry.parts) {
+          const t = part.formula.tag;
+          const key = `${t.element}|${t.ability}|${t.reaction}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            tags.push(t);
+          }
+        }
+      }
+    }
+    charFormulaTags[cid] = tags;
+  }
+
+  // ── Raw StatSheets with on/off field contexts ──
+  const statSheets: Record<
+    string,
+    { onField: StatSheet; offField: StatSheet }
+  > = {};
+  for (const cid of allCharIds) {
+    // On-field: stats when cid is on-field
+    const onFieldStats = getStats(cid);
+    const onField = onFieldStats[cid]!;
+
+    // Off-field: stats when someone else is on-field
+    const offCtx = activeCharIds.has(cid)
+      ? (allCharIds.find((x) => x !== cid) ?? cid)
+      : fallbackOnField;
+    const offFieldStats = getStats(offCtx);
+    const offField = offFieldStats[cid]!;
+
+    statSheets[cid] = { onField, offField };
   }
 
   // ── Base combo damage ──
@@ -1310,8 +1502,7 @@ export function getComboDisplayResult(
         for (const { buff, providerCharId } of allStaticBuffs) {
           if (providerCharId !== cid) continue;
           if (buff instanceof ScalingBuff) {
-            const inputKey = (buff as { inputKey: StatKey }).inputKey;
-            relevantKeys.add(inputKey);
+            relevantKeys.add(buff.inputKey);
           }
         }
       }
@@ -1404,12 +1595,50 @@ export function getComboDisplayResult(
 
   const buffs = Array.from(buffMap.values());
 
+  // ── Level-up gains (current tier → next tier) ──
+  const levelUpGains: Record<
+    string,
+    { gain: number; from: number; to: number }
+  > = {};
+  if (baseDamage > 0) {
+    for (const config of teamBuild.configs) {
+      const nextLevel = getNextLevelTier(config.charLevel);
+      if (!nextLevel) continue;
+      const tweakedConfigs = teamBuild.configs.map((c) =>
+        c.charId === config.charId ? { ...c, charLevel: nextLevel } : c
+      );
+      const tweakedTeam = new TeamBuild(
+        tweakedConfigs,
+        teamBuild.combatOpts,
+        teamBuild.enemyElementAura
+      );
+      const newResult = evaluateCombo(
+        tweakedTeam,
+        { ...combo, lines: activeLines },
+        artifactStats,
+        ctx,
+        singleModeOverrides
+      );
+      const gain = (newResult.totalDamage - baseDamage) / baseDamage;
+      if (gain > 0) {
+        levelUpGains[config.charId] = {
+          gain,
+          from: config.charLevel,
+          to: nextLevel,
+        };
+      }
+    }
+  }
+
   return {
     parts: [],
     totalDamage: baseDamage,
     buffs,
+    statSheets,
+    charFormulaTags,
+    marginalGains,
+    levelUpGains,
     idleStats,
     combatStats,
-    marginalGains,
   };
 }

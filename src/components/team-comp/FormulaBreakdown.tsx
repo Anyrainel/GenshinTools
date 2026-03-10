@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils";
 import type React from "react";
 import { fmtDamage, fmtPercent, fmtStat } from "./displayFormatters";
 
+type HlKey = StatKey | "charLevel" | null;
+
 type Props = {
   parts: DisplayPart[];
-  highlightedStat: StatKey | null;
+  highlightedStat: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
@@ -187,17 +189,22 @@ function ScalingZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   if (p.scalingKeys.length === 0) return null;
   const val = computeScalingDmg(p);
-  const isHl = p.scalingKeys.some((k) => hl === k);
+  const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
+  const isHl =
+    p.scalingKeys.some((k) => hl === k) ||
+    (hl === "charLevel" &&
+      p.scalingKeys.some((k) => LEVEL_AFFECTED_STATS.includes(k)));
 
   const mathLine = (
     <span className="flex items-center gap-0.5">
       {p.scalingKeys.map((k, i) => {
-        const kHl = hl === k;
+        const kHl =
+          hl === k || (hl === "charLevel" && LEVEL_AFFECTED_STATS.includes(k));
         return (
           <span key={k} className="flex gap-0.5 items-center">
             <MathVar
@@ -233,7 +240,7 @@ function BaseBonusZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const bp = p.statValues["baseDmg%"] || 0;
@@ -241,6 +248,7 @@ function BaseBonusZone({
   return (
     <MathZone
       label={t.formula("BaseBonus")}
+      highlight={hl === "baseDmg%"}
       mathLine={
         <span className="flex items-center">
           <MathVar val={1} label="" />
@@ -262,7 +270,7 @@ function ReactionBaseDmgZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const rbp = p.statValues["reactionBaseDmg%"] || 0;
@@ -270,6 +278,7 @@ function ReactionBaseDmgZone({
   return (
     <MathZone
       label={t.formula("RxnBaseDmgZone")}
+      highlight={hl === "reactionBaseDmg%"}
       mathLine={
         <span className="flex items-center">
           <MathVar val={1} label="" />
@@ -291,7 +300,7 @@ function FlatBonusZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const fb = p.statValues.baseDmg || 0;
@@ -301,6 +310,7 @@ function FlatBonusZone({
       <Op char="+" />
       <MathZone
         label={t.formula("Flat")}
+        highlight={hl === "baseDmg"}
         mathLine={
           <span className="flex items-center">
             <MathVar
@@ -321,7 +331,7 @@ function CatalyzeAdditiveZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const em = p.statValues.em || 0;
@@ -336,12 +346,14 @@ function CatalyzeAdditiveZone({
   return (
     <MathZone
       label={t.formula("Additive")}
+      highlight={hl === "em" || hl === "reactionDmg%" || hl === "charLevel"}
       value={Math.round(val).toLocaleString()}
       mathLine={
         <span className="flex items-center">
           <MathVar
             val={Math.round(levelMult).toLocaleString()}
             label={t.formula("LvMult")}
+            highlight={hl === "charLevel"}
           />
           <MathOp />
           <MathVar val={reactBase} label={t.formula("RxnBase")} />
@@ -395,7 +407,7 @@ function BaseGroup({
   isCatalyze = false,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
   isCatalyze?: boolean;
 }) {
@@ -448,7 +460,7 @@ function ReactionBonusZone({
   labelKey = "rxnZone",
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
   labelKey?: string;
 }) {
@@ -460,6 +472,7 @@ function ReactionBonusZone({
   return (
     <MathZone
       label={t.formula(labelKey)}
+      highlight={hl === "em" || hl === "reactionDmg%"}
       value={fmtPercent(1 + emBonus + reactDmg)}
       mathLine={
         <span className="flex items-center">
@@ -488,7 +501,7 @@ function DmgBonusZone({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   let elementDmg = 0;
@@ -500,9 +513,12 @@ function DmgBonusZone({
   const dmgBonus = p.statValues["dmg%"] || 0;
   const total = 1 + elementDmg + dmgBonus;
 
+  const isHl =
+    hl === "dmg%" || (hl != null && ELEMENTAL_KEYS.includes(hl as string));
   return (
     <MathZone
       label={t.formula("DmgBonus")}
+      highlight={isHl}
       value={total === 1 ? undefined : fmtPercent(total)}
       mathLine={
         <span className="flex items-center">
@@ -511,7 +527,9 @@ function DmgBonusZone({
           <MathVar
             val={fmtPercent(elementDmg + dmgBonus)}
             label={t.formula("DmgPercent")}
-            highlight={hl === "dmg%" || hl?.includes("%")}
+            highlight={
+              hl === "dmg%" || (typeof hl === "string" && hl.includes("%"))
+            }
           />
         </span>
       }
@@ -526,7 +544,7 @@ function CommonMultipliers({
   showDef = true,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
   showDef?: boolean;
 }) {
@@ -575,6 +593,12 @@ function CommonMultipliers({
         <>
           <MathZone
             label={t.formula("Crit")}
+            highlight={
+              hl === "cr" ||
+              hl === "cd" ||
+              hl === "reactionCr" ||
+              hl === "reactionCd"
+            }
             value={fmtPercent(critMult)}
             mathLine={
               <span className="flex items-center">
@@ -606,6 +630,7 @@ function CommonMultipliers({
       <MathZone
         label={t.formula("Res")}
         value={fmtPercent(resMult)}
+        highlight={hl === "resReduction%"}
         mathLine={
           <ResMathLine effRes={effRes} hl={hl === "resReduction%"} t={t} />
         }
@@ -616,12 +641,25 @@ function CommonMultipliers({
           <MathZone
             label={t.formula("Def")}
             value={fmtPercent(defMult)}
+            highlight={
+              hl === "defReduction%" ||
+              hl === "defIgnore%" ||
+              hl === "charLevel"
+            }
             mathLine={
               <span className="flex items-center">
-                <MathVar val={charLevel + 100} label={t.formula("Char")} />
+                <MathVar
+                  val={charLevel + 100}
+                  label={t.formula("Char")}
+                  highlight={hl === "charLevel"}
+                />
                 <MathOp char="/" />
                 <Paren char="(" />
-                <MathVar val={charLevel + 100} label={t.formula("Char")} />
+                <MathVar
+                  val={charLevel + 100}
+                  label={t.formula("Char")}
+                  highlight={hl === "charLevel"}
+                />
                 <MathOp char="+" />
                 <MathVar val={enemyLevel + 100} label={t.formula("Enemy")} />
                 {defReduc === 0 && defIgnore === 0 ? null : (
@@ -645,6 +683,7 @@ function CommonMultipliers({
           <Op />
           <MathZone
             label={t.statShort("elevated%")}
+            highlight={hl === "elevated%"}
             mathLine={
               <span className="flex items-center">
                 <MathVar val={1} label="" />
@@ -671,7 +710,7 @@ function DirectEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
@@ -691,7 +730,7 @@ function AmplifyEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const reactBase = p.params.reactionCoeff || 1;
@@ -720,7 +759,7 @@ function CatalyzeEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
@@ -740,7 +779,7 @@ function TransformEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const levelMult = p.params.levelCoeff || 0;
@@ -772,7 +811,7 @@ function LunarEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const levelMult = p.params.levelCoeff || 0;
@@ -798,6 +837,7 @@ function LunarEq({
           <Op />
           <MathZone
             label={t.formula("BaseDmgPercent")}
+            highlight={hl === "baseDmg%"}
             mathLine={
               <span className="flex items-center">
                 <MathVar val={1} label="" />
@@ -832,7 +872,7 @@ function LunarDirectGroup({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const hasReactionBaseBonus = !!p.statValues["reactionBaseDmg%"];
@@ -875,7 +915,7 @@ function LunarDirectEq({
   t,
 }: {
   p: DisplayPart;
-  hl: StatKey | null;
+  hl: HlKey;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
@@ -891,7 +931,7 @@ const RENDERERS: Record<
   FormulaTemplate,
   React.FC<{
     p: DisplayPart;
-    hl: StatKey | null;
+    hl: HlKey;
     t: ReturnType<typeof useLanguage>["t"];
   }>
 > = {

@@ -161,6 +161,23 @@ export type WeaponTypeResource = {
   imagePath: string; // Local serving path
 };
 
+export type EnemyType =
+  | "human"
+  | "automaton"
+  | "fatui"
+  | "boss"
+  | "hilichurl"
+  | "elemental"
+  | "abyss"
+  | "beast"
+  | "legend";
+
+export type EnemyResource = {
+  id: string;
+  type: EnemyType;
+  imagePath: string; // Local serving path
+};
+
 export type BuildStyle = "on-field" | "off-field";
 export const buildStyles: BuildStyle[] = ["on-field", "off-field"];
 

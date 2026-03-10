@@ -291,10 +291,10 @@ export class ScalingBuff extends StatBuff {
     staticBuffs: StatEntry[],
     readonly inputKey: StatKey,
     readonly outputKey: StatKey,
-    private readonly scale: number,
+    readonly scale: number,
     readonly cap?: number,
     /** Subtract this from input before scaling (e.g. "HP above 30000") */
-    private readonly threshold?: number
+    readonly threshold?: number
   ) {
     super(source, target, staticBuffs);
     validateStatBuff([{ key: outputKey, value: 0 }], target, source);
@@ -322,10 +322,10 @@ export class CrossScalingBuff extends StatBuff {
     source: BuffSource,
     target: BuffTarget,
     staticBuffs: StatEntry[],
-    private readonly statA: StatKey,
-    private readonly scaleA: number,
-    private readonly capA: number | undefined,
-    private readonly statB: StatKey,
+    readonly statA: StatKey,
+    readonly scaleA: number,
+    readonly capA: number | undefined,
+    readonly statB: StatKey,
     readonly outputKey: StatKey
   ) {
     super(source, target, staticBuffs);
@@ -336,31 +336,6 @@ export class CrossScalingBuff extends StatBuff {
     const a = selfStats.get(this.statA) * this.scaleA;
     const capped = this.capA !== undefined ? Math.min(a, this.capA) : a;
     return [{ key: this.outputKey, value: capped * selfStats.get(this.statB) }];
-  }
-}
-
-/**
- * ER-over-base scaling: output = min((ER - 1.0) × scale, cap) → outputKey.
- * The input is always ER%; "over base" means the 100% baseline is subtracted first.
- * Engulfing Lightning: (ER - 1.0) × scale → atk%, capped.
- */
-export class ErScalingBuff extends StatBuff {
-  constructor(
-    source: BuffSource,
-    target: BuffTarget,
-    staticBuffs: StatEntry[],
-    readonly outputKey: StatKey,
-    private readonly scale: number,
-    private readonly cap: number
-  ) {
-    super(source, target, staticBuffs);
-    validateStatBuff([{ key: outputKey, value: 0 }], target, source);
-  }
-
-  override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-    const erOver = Math.max(0, selfStats.getRaw("er") - 1.0);
-    const value = Math.min(erOver * this.scale, this.cap);
-    return [{ key: this.outputKey, value }];
   }
 }
 

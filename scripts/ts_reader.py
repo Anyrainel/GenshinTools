@@ -14,6 +14,7 @@ _RESOURCE_VARS = (
     "characters",
     "artifacts",
     "weapons",
+    "enemies",
     "artifactHalfSets",
     "elementResources",
     "weaponTypeResources",

@@ -1,6 +1,7 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,14 +11,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
 import type { CharacterStats, WeaponStats } from "@/lib/gameStatsLoader";
 import {
+  CHARACTER_LEVEL_TIERS,
   getCharacterDisplayMeta,
+  getCharacterLevelTier,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
-import { getEntityOption } from "@/lib/team-comp/damageModels";
+import {
+  TeamMeta,
+  getEntityOption,
+  isChoiceEnabled,
+} from "@/lib/team-comp/damageModels";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Flame, Snowflake, Users } from "lucide-react";
@@ -39,6 +46,8 @@ interface TeamRosterCardProps {
   t: ReturnType<typeof useLanguage>["t"];
   isFrozen?: boolean;
   onUnfreeze?: () => void;
+  ignoreArtifactSets?: Record<string, boolean>;
+  onIgnoreArtifactSetsChange?: (v: Record<string, boolean>) => void;
 }
 
 export function TeamRosterCard({
@@ -51,21 +60,39 @@ export function TeamRosterCard({
   t,
   isFrozen,
   onUnfreeze,
+  ignoreArtifactSets,
+  onIgnoreArtifactSetsChange,
 }: TeamRosterCardProps) {
   const handleOptionChange = (entityId: string, val: string) => {
     updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
   };
 
   /** Render a single combat option dropdown. */
-  const renderOption = (entityId: string, isWeapon: boolean) => {
+  const renderOption = (
+    entityId: string,
+    type: "character" | "weapon" | "artifact"
+  ) => {
     const schema = getEntityOption(entityId);
     if (!schema) return null;
 
-    const value = team.opts?.[entityId] || schema.default;
-    const resource = isWeapon
-      ? weaponsById[entityId]
-      : charactersById[entityId];
-    if (!resource) return null;
+    const enabledChoices = schema.choices.filter((c) =>
+      isChoiceEnabled(c, teamMeta)
+    );
+    // If selected value is disabled, fall back to first enabled choice
+    const raw = team.opts?.[entityId] || schema.default;
+    const allDisabled = enabledChoices.length === 0;
+    const value = allDisabled
+      ? ""
+      : enabledChoices.some((c) => c.value === raw)
+        ? raw
+        : enabledChoices[0].value;
+    const imagePath =
+      type === "weapon"
+        ? weaponsById[entityId]?.imagePath
+        : type === "artifact"
+          ? artifactsById[entityId]?.imagePaths?.flower
+          : charactersById[entityId]?.imagePath;
+    if (!imagePath) return null;
 
     return (
       <div
@@ -82,7 +109,7 @@ export function TeamRosterCard({
           )}
         >
           <img
-            src={getAssetUrl(resource.imagePath)}
+            src={getAssetUrl(imagePath)}
             alt={entityId}
             className="w-full h-full object-contain"
           />
@@ -97,30 +124,75 @@ export function TeamRosterCard({
         </span>
 
         <div className={cn(isMobile ? "shrink-0" : "ml-auto shrink-0")}>
-          <Select
-            value={value}
-            onValueChange={(v) => handleOptionChange(entityId, v)}
-          >
-            <SelectTrigger
+          {allDisabled ? (
+            <span
               className={cn(
-                "font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30",
-                isMobile ? "w-[100px] h-7 text-xs" : "w-[150px] h-8 text-sm"
+                "font-bold text-foreground/40",
+                isMobile ? "text-xs" : "text-sm"
               )}
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {schema.choices.map((c) => (
-                <SelectItem key={c.value} value={c.value}>
-                  {t.resolveLabel(c.label)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              --
+            </span>
+          ) : (
+            <Select
+              value={value}
+              onValueChange={(v) => handleOptionChange(entityId, v)}
+            >
+              <SelectTrigger
+                className={cn(
+                  "font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30",
+                  isMobile
+                    ? "w-[90px] h-6 text-[10px] !px-1 py-0 [&>svg]:w-3 [&>svg]:h-3 [&>svg]:ml-0"
+                    : "w-[150px] h-8 text-sm"
+                )}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {schema.choices.map((c) => {
+                  const disabled = !isChoiceEnabled(c, teamMeta);
+                  return (
+                    <SelectItem
+                      key={c.value}
+                      value={c.value}
+                      disabled={disabled}
+                    >
+                      {t.resolveLabel(c.label)}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          )}
         </div>
       </div>
     );
   };
+
+  // Build TeamMeta once for option context (cheap — just lookups)
+  const charIds = team.characters.filter((id): id is string => id != null);
+  const constellations: Record<string, number> = {};
+  for (const cid of charIds) {
+    const acct = accountData?.characters.find(
+      (c: CharacterData) => c.key === cid
+    );
+    constellations[cid] =
+      team.opts?.[`${cid}.overrideConstellation`] !== undefined
+        ? Number(team.opts[`${cid}.overrideConstellation`])
+        : (acct?.constellation ?? 0);
+  }
+  const artSets: Record<string, string> = {};
+  for (let i = 0; i < team.characters.length; i++) {
+    const cid = team.characters[i];
+    const art = team.artifacts[i];
+    if (cid && art?.type === "4pc") artSets[cid] = art.setId;
+  }
+  const teamMeta = new TeamMeta(
+    charIds,
+    constellations,
+    artSets,
+    team.enemyElementAura
+  );
 
   return (
     <Card
@@ -132,8 +204,13 @@ export function TeamRosterCard({
     >
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
-          <Users className="w-4 h-4 opacity-70" />
-          <span>{t.ui("teamComp.teamRoster")}</span>
+          <span
+            data-tour-step-id="tod-roster"
+            className="inline-flex items-center gap-2"
+          >
+            <Users className="w-4 h-4 opacity-70" />
+            <span>{t.ui("teamComp.teamRoster")}</span>
+          </span>
           {isFrozen && (
             <span className="ml-auto flex items-center gap-1 text-xs font-semibold text-cyan-300/80">
               <Snowflake className="w-3.5 h-3.5" />
@@ -168,6 +245,10 @@ export function TeamRosterCard({
             const charHasOption = getEntityOption(charId) != null;
             const weaponHasOption =
               weaponId != null && getEntityOption(weaponId) != null;
+            const artConfig = team.artifacts[i];
+            const artSetId = artConfig?.type === "4pc" ? artConfig.setId : null;
+            const artifactHasOption =
+              artSetId != null && getEntityOption(artSetId) != null;
 
             const acctChar = accountData?.characters.find(
               (c: CharacterData) => c.key === charId
@@ -176,9 +257,7 @@ export function TeamRosterCard({
               team.opts?.[`${charId}.overrideLevel`] !== undefined
                 ? Number(team.opts[`${charId}.overrideLevel`])
                 : acctChar
-                  ? acctChar.level > 90
-                    ? 100
-                    : 90
+                  ? Number(getCharacterLevelTier(acctChar.level))
                   : 90;
             const charConst =
               team.opts?.[`${charId}.overrideConstellation`] !== undefined
@@ -449,8 +528,11 @@ export function TeamRosterCard({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="90">Lv. 90</SelectItem>
-                        <SelectItem value="100">Lv. 100</SelectItem>
+                        {CHARACTER_LEVEL_TIERS.map((tier) => (
+                          <SelectItem key={tier} value={tier}>
+                            Lv. {tier}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -527,14 +609,63 @@ export function TeamRosterCard({
                 </div>
 
                 {/* Per-character combat options */}
-                {(charHasOption || weaponHasOption) && (
+                {(charHasOption || weaponHasOption || artifactHasOption) && (
                   <div className="w-full space-y-1.5 pt-1">
-                    {charHasOption && renderOption(charId, false)}
+                    {charHasOption && renderOption(charId, "character")}
                     {weaponHasOption &&
                       weaponId &&
-                      renderOption(weaponId, true)}
+                      renderOption(weaponId, "weapon")}
+                    {artifactHasOption &&
+                      artSetId &&
+                      renderOption(artSetId, "artifact")}
                   </div>
                 )}
+
+                {/* Ignore artifact sets checkbox */}
+                {(() => {
+                  const hasSet =
+                    artConfig?.type === "4pc" || artConfig?.type === "2pc+2pc";
+                  const erPct = Math.round(
+                    (team.targetEr?.[charId] ?? 1.0) * 100
+                  );
+                  const crPct = Math.round(
+                    (team.targetCr?.[charId] ?? 0.05) * 100
+                  );
+                  const hasFavonius =
+                    team.weapons[i]?.startsWith("favonius_") ?? false;
+                  const showCheckbox =
+                    hasSet &&
+                    onIgnoreArtifactSetsChange &&
+                    (erPct > 160 || (hasFavonius && crPct > 40));
+                  if (!showCheckbox) return null;
+                  const cbId = `ignore-sets-${charId}`;
+                  return (
+                    <label
+                      htmlFor={cbId}
+                      className="flex items-center gap-1.5 pt-0.5 cursor-pointer select-none"
+                    >
+                      <Checkbox
+                        id={cbId}
+                        checked={ignoreArtifactSets?.[charId] ?? false}
+                        onCheckedChange={(v) =>
+                          onIgnoreArtifactSetsChange({
+                            ...ignoreArtifactSets,
+                            [charId]: v === true,
+                          })
+                        }
+                        className="h-3.5 w-3.5"
+                      />
+                      <span
+                        className={cn(
+                          "font-medium text-foreground/50",
+                          isMobile ? "text-[10px]" : "text-xs"
+                        )}
+                      >
+                        {t.ui("teamComp.ignoreArtifactSets")}
+                      </span>
+                    </label>
+                  );
+                })()}
               </div>
             );
           })}

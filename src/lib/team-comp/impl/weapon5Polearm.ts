@@ -1,4 +1,4 @@
-import { ErScalingBuff, ScalingBuff, StatBuff } from "../damageBuffs";
+import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
 import type { OptionDef } from "../types";
@@ -193,13 +193,15 @@ class EngulfingLightning extends WeaponBase {
     new StatBuff(wbs(this, ["Q"]), { receiver: "self" }, [
       { key: "er", value: r(this.refinement, [0.3, 0.35, 0.4, 0.45, 0.5]) },
     ]),
-    new ErScalingBuff(
+    new ScalingBuff(
       wbs(this),
       { receiver: "self" },
       [],
+      "er",
       "atk%",
       r(this.refinement, [0.28, 0.35, 0.42, 0.49, 0.56]),
-      r(this.refinement, [0.8, 0.9, 1.0, 1.1, 1.2])
+      r(this.refinement, [0.8, 0.9, 1.0, 1.1, 1.2]),
+      1.0
     ),
   ];
 }

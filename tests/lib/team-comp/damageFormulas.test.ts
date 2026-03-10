@@ -200,11 +200,11 @@ describe("TransformFormula", () => {
   it("calc() computes transformative reaction damage (no DEF, no crit)", () => {
     const result = formula.calc(stats, 90, CTX);
 
-    // Level mult at 90 = 1446.85
-    // Coefficient for overloaded = 2.0
+    // Level mult at 90 = 1446.853458
+    // Coefficient for overloaded = 2.75 (post-5.2)
     // EM bonus = (16 × 300) / (2000 + 300) ≈ 2.0870
     // RES = 1 - 0.10 = 0.90
-    const baseDmg = 1446.85 * 2.0;
+    const baseDmg = 1446.853458 * 2.75;
     const emBonus = (16 * 300) / 2300;
     const expected = baseDmg * (1 + emBonus) * 0.9;
 
@@ -223,8 +223,8 @@ describe("TransformFormula", () => {
     expect(dp.template).toBe("transform");
     expect(dp.scalingKeys).toEqual([]);
     expect(dp.scalingMulti).toEqual([]);
-    expect(dp.params.reactionCoeff).toBeCloseTo(2.0);
-    expect(dp.params.levelCoeff).toBeCloseTo(1446.85);
+    expect(dp.params.reactionCoeff).toBeCloseTo(2.75);
+    expect(dp.params.levelCoeff).toBeCloseTo(1446.853458);
     expect(dp.statValues.em).toBe(300);
   });
 });

@@ -35,6 +35,13 @@ class ArtifactSource(BaseItemSource):
     effects: list[str] = Field(default_factory=list)
 
 
+class EnemySource(BaseItemSource):
+    """Source data for an enemy/monster"""
+
+    image_url: str
+    enemy_type: str = ""  # internal short type id (e.g. "boss", "beast")
+
+
 class WeaponSource(BaseItemSource):
     """Source data for a weapon"""
 
@@ -95,6 +102,12 @@ class ArtifactOutput(BaseModel):
     rarity: int
     imageUrl: str
     imagePaths: dict[str, str]
+
+
+class EnemyOutput(BaseModel):
+    id: str
+    type: str  # internal short type id
+    imagePath: str
 
 
 class WeaponOutput(BaseModel):

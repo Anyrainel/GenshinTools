@@ -8,19 +8,22 @@ import type {
 } from "./types";
 
 const LEVEL_MULTIPLIERS: Record<number, number> = {
-  90: 1446.85,
-  100: 1674.81,
+  70: 765.640231,
+  80: 1077.443668,
+  90: 1446.853458,
+  95: 1561.468,
+  100: 1674.8092,
 };
 
 // ─── Reaction Coefficients (for transformative reactions) ───
 
 const TRANSFORMATIVE_COEFFICIENTS: Partial<Record<ReactionType, number>> = {
   burning: 0.25,
-  superconduct: 0.5,
+  superconduct: 1.5, // buffed in 5.2 (was 0.5)
   swirl: 0.6,
-  electroCharged: 1.2,
-  shatter: 1.5,
-  overloaded: 2.0,
+  electroCharged: 2.0, // buffed in 5.2 (was 1.2)
+  shatter: 3.0, // buffed in 5.2 (was 1.5)
+  overloaded: 2.75, // buffed in 5.2 (was 2.0)
   bloom: 2.0,
   burgeon: 3.0,
   hyperbloom: 3.0,

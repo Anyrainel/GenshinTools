@@ -9,6 +9,8 @@ import type {
   SubStat,
 } from "@/data/types";
 
+import type { StatSheet } from "./damageModels";
+
 /**
  * All stat keys the engine tracks.
  *
@@ -232,18 +234,24 @@ export type DisplayResult = {
 
   // ── Stats (all keyed by charId, full team) ──
 
-  /** Out-of-combat stats: base + static buffs + artifacts, BEFORE dynamic buffs.
-   *  Comparable to in-game character screen. */
-  idleStats: Record<string, Partial<Record<StatKey, number>>>;
+  /** Raw StatSheets for both on/off field contexts per character. */
+  statSheets: Record<string, { onField: StatSheet; offField: StatSheet }>;
 
-  /** In-combat stats: after ALL buffs applied.
-   *  These are the actual values consumed by formulas. */
-  combatStats: Record<string, Partial<Record<StatKey, number>>>;
+  /** All unique formula tags per character (across all formulas, not just selected). */
+  charFormulaTags: Record<string, DamageTag[]>;
 
   /** Relative damage gain (fractional, e.g. 0.023 = 2.3%) for +1 avg 5★ substat roll.
    *  Calc target: filtered by stat keys used in formula parts.
    *  Teammates: filtered by inputKeys of their scaling buffs that affect calc target. */
   marginalGains: Record<string, Partial<Record<StatKey, number>>>;
+
+  /** Relative damage gain from leveling to the next tier.
+   *  Only populated for characters below max level. Keyed by charId. */
+  levelUpGains: Record<string, { gain: number; from: number; to: number }>;
+
+  // DEPRECATED — kept during migration, remove after UI rewrite verified
+  idleStats: Record<string, Partial<Record<StatKey, number>>>;
+  combatStats: Record<string, Partial<Record<StatKey, number>>>;
 };
 
 // ─── Team ───
@@ -348,14 +356,29 @@ export type CharCompConfig = {
 
 // ─── Combat Options (Schema-Driven) ───
 
+/**
+ * Structural interface for TeamMeta, used by option predicates.
+ * Avoids circular imports between types.ts and damageModels.ts.
+ */
+export interface ITeamMeta {
+  characters: string[];
+  constellations: Record<string, number>;
+  elements: Record<string, Element | undefined>;
+  enemyElementAura?: Element;
+  hasReaction(reaction: ReactionType, charId?: string): boolean;
+  countByElement(element: Element): number;
+}
+
 /** A single selectable value in an OptionDef. */
 export type OptionChoice = {
   value: string;
   label: I18nLabel;
+  /** If provided, this choice is disabled when the predicate returns false. */
+  when?: (teamMeta: ITeamMeta) => boolean;
 };
 
 /**
- * Declarative option schema for a provider (character or weapon).
+ * Declarative option schema for a provider (character, weapon, or artifact set).
  * Defines a single select control with labeled choices.
  * UI renders as a toggle (2 choices) or dropdown (3+).
  */

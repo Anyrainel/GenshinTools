@@ -18,6 +18,8 @@ from models import (
     CharacterOutput,
     CharacterSource,
     EffectData,
+    EnemyOutput,
+    EnemySource,
     EnrichedCharacterSource,
     I18nArtifactData,
     MatchedItem,
@@ -65,7 +67,7 @@ SHARED_IMAGE_PREFIXES: tuple[str, ...] = ("Manekina", "Manekin", "Traveler")
 def match_items[T: BaseItemSource](
     items_en: Sequence[T],
     items_zh: Sequence[T],
-    item_type: Literal["character", "artifact", "weapon"] = "character",
+    item_type: Literal["character", "artifact", "weapon", "enemy"] = "character",
     scraper: HoyolabScraper | None = None,
 ) -> list[MatchedItem[T]]:
     """Match items across languages using entry ID and validate consistency."""
@@ -449,3 +451,38 @@ def process_weapons(
         }
 
     return final_weapons, i18n_weapons, matched_weapons
+
+
+def process_enemies(
+    enemies_en: list[EnemySource],
+    enemies_zh: list[EnemySource],
+    scraper: HoyolabScraper | None = None,
+) -> tuple[list[EnemyOutput], dict[str, dict[str, str]], list[MatchedItem[EnemySource]]]:
+    matched_enemies = match_items(enemies_en, enemies_zh, "enemy", scraper)
+
+    final_enemies: list[EnemyOutput] = []
+    i18n_enemies: dict[str, dict[str, str]] = {}
+
+    for m in tqdm(
+        matched_enemies,
+        desc="Processing Enemies",
+        unit="item",
+        bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+    ):
+        en = m["en"]
+        zh = m["zh"]
+        enemy_id = en.entry_id  # use wiki entry ID as the stable identifier
+
+        output = EnemyOutput(
+            id=enemy_id,
+            type=en.enemy_type,
+            imagePath=f"/enemy/{enemy_id}.png",
+        )
+        final_enemies.append(output)
+
+        i18n_enemies[enemy_id] = {
+            "en": en.name,
+            "zh": zh.name,
+        }
+
+    return final_enemies, i18n_enemies, matched_enemies

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import {
+  getCharacterLevelTier,
+  getNextLevelTier,
+  preloadGameStats,
+} from "@/lib/gameStatsLoader";
 import { TeamResonance, isBuffApplicable } from "@/lib/team-comp/damageCalc";
 import { StatBuff, TeamMeta } from "@/lib/team-comp/damageModels";
 
@@ -126,6 +130,23 @@ describe("TeamResonance", () => {
       b.staticBuffs.some((e) => e.key === "em")
     );
     expect(emBuff).toBeUndefined();
+  });
+});
+
+describe("TeamMeta — enemyElementAura", () => {
+  const meta = new TeamMeta(["hu_tao"], {}, {}, "Hydro");
+
+  it("hasReaction sees aura element for vaporize", () => {
+    expect(meta.hasReaction("vaporize")).toBe(true);
+  });
+
+  it("countByElement does NOT count the aura element", () => {
+    expect(meta.countByElement("Hydro")).toBe(0);
+  });
+
+  it("hasReaction still works without aura", () => {
+    const noAura = new TeamMeta(["hu_tao"], {}, {});
+    expect(noAura.hasReaction("vaporize")).toBe(false);
   });
 });
 
@@ -364,9 +385,13 @@ describe("isBuffApplicable — faction scoping", () => {
 
 // Import the side-effect barrel to register all characters, weapons, and artifacts
 import "@/lib/team-comp/index";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { TeamBuild, getComboDisplayResult } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type {
+  CalcContext,
+  CharCompConfig,
+  ComboFormula,
+} from "@/lib/team-comp/types";
 
 describe("TeamBuild lifecycle", () => {
   // Diluc (Pyro, Claymore), Mona (Hydro, Catalyst), Jean (Anemo, Sword), Eula (Cryo, Claymore)
@@ -795,5 +820,409 @@ describe("TeamBuild lifecycle", () => {
         1
       );
     });
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// otherOnField buff routing — regression test for Illuga P1
+// ═══════════════════════════════════════════════════════════════
+
+describe("otherOnField buffs apply to calc target stats and display", () => {
+  // Team: Zibai (Geo, calc target), Illuga (Geo, provides otherOnField CR/CD),
+  //        Xingqiu (Hydro), Gorou (Geo)
+  const configs: CharCompConfig[] = [
+    {
+      charId: "zibai",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "verdict",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "illuga",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "kitain_cross_spear",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "xingqiu",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "gorou",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "favonius_warbow",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    assumeCrit: false,
+  };
+
+  const emptySheets: Record<string, StatSheet> = {
+    zibai: new StatSheet([]),
+    illuga: new StatSheet([]),
+    xingqiu: new StatSheet([]),
+    gorou: new StatSheet([]),
+  };
+
+  it("Illuga P1 otherOnField CR/CD is applied to Zibai's stat sheet", () => {
+    const tb = new TeamBuild(configs);
+
+    // Without Illuga, Zibai would have baseline 5% CR
+    // Illuga P1 adds +5% CR (Geo-filtered, otherOnField)
+    const statsWithIlluga = tb.getTeamStats(emptySheets, "zibai");
+    const zibaiCr = statsWithIlluga.zibai!.get("cr", {
+      element: "Geo",
+      ability: "skill",
+      reaction: "none",
+    });
+
+    // Zibai baseline CR = 5%, Illuga P1 adds 5% for Geo → 10%
+    // (Zibai may also have CR from ascension stat or other sources)
+    expect(zibaiCr).toBeGreaterThanOrEqual(0.1);
+
+    // Verify the buff does NOT apply to Illuga's own sheet (otherOnField excludes owner)
+    const illugaCr = statsWithIlluga.illuga!.get("cr", {
+      element: "Geo",
+      ability: "skill",
+      reaction: "none",
+    });
+    // Illuga should only have baseline 5% CR (no self-buff from otherOnField)
+    expect(illugaCr).toBeLessThan(zibaiCr);
+  });
+
+  it("Illuga P1 buff is marked active in display when Zibai is calc target", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "zibai",
+      "zibai-steed",
+      emptySheets,
+      ctx
+    );
+
+    const illugaP1 = display.buffs.find(
+      (b) =>
+        b.source.id === "illuga" &&
+        b.target.receiver === "otherOnField" &&
+        b.staticEntries.some((e) => e.key === "cr")
+    );
+    expect(illugaP1).toBeDefined();
+    expect(illugaP1!.active).toBe(true);
+  });
+
+  it("combatStats for calc target include otherOnField Geo-filtered CR", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "zibai",
+      "zibai-steed",
+      emptySheets,
+      ctx
+    );
+
+    const zibaiCombatCr = display.combatStats.zibai!.cr!;
+    // Must include Illuga P1 CR (+5%), so > baseline 5%
+    expect(zibaiCombatCr).toBeGreaterThanOrEqual(0.1);
+  });
+
+  it("combo mode combatStats include otherOnField Geo-filtered CR", () => {
+    const tb = new TeamBuild(configs);
+    const combo: ComboFormula = {
+      id: "test-combo",
+      label: { zh: "测试", en: "Test" },
+      lines: [
+        {
+          charId: "zibai",
+          formulaId: "zibai-steed",
+          count: 1,
+        },
+      ],
+    };
+
+    const comboDisplay = getComboDisplayResult(tb, combo, emptySheets, ctx);
+
+    const zibaiComboCr = comboDisplay.combatStats.zibai!.cr!;
+    // Must include Illuga P1 CR in combo mode too
+    expect(zibaiComboCr).toBeGreaterThanOrEqual(0.1);
+  });
+
+  it("Illuga P1 buff does NOT activate for non-Geo formulas", () => {
+    const tb = new TeamBuild(configs);
+    // Xingqiu is Hydro — Illuga's Geo-filtered CR should not apply
+    const display = tb.getDisplayResult(
+      "xingqiu",
+      "xingqiu-skill",
+      emptySheets,
+      ctx
+    );
+
+    const illugaP1 = display.buffs.find(
+      (b) =>
+        b.source.id === "illuga" &&
+        b.target.receiver === "otherOnField" &&
+        b.staticEntries.some((e) => e.key === "cr")
+    );
+    // The buff exists but should be inactive for Hydro formulas
+    if (illugaP1) {
+      expect(illugaP1.active).toBe(false);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Level tier helpers
+// ═══════════════════════════════════════════════════════════════
+
+describe("getCharacterLevelTier", () => {
+  it("maps levels to the closest tier at or above", () => {
+    expect(getCharacterLevelTier(1)).toBe("70");
+    expect(getCharacterLevelTier(70)).toBe("70");
+    expect(getCharacterLevelTier(71)).toBe("80");
+    expect(getCharacterLevelTier(80)).toBe("80");
+    expect(getCharacterLevelTier(85)).toBe("90");
+    expect(getCharacterLevelTier(90)).toBe("90");
+    expect(getCharacterLevelTier(91)).toBe("95");
+    expect(getCharacterLevelTier(95)).toBe("95");
+    expect(getCharacterLevelTier(96)).toBe("100");
+    expect(getCharacterLevelTier(100)).toBe("100");
+  });
+});
+
+describe("getNextLevelTier", () => {
+  it("returns the next tier for non-max levels", () => {
+    expect(getNextLevelTier(70)).toBe(80);
+    expect(getNextLevelTier(80)).toBe(90);
+    expect(getNextLevelTier(90)).toBe(100); // skip 95
+    expect(getNextLevelTier(95)).toBe(100);
+  });
+
+  it("returns null for max level", () => {
+    expect(getNextLevelTier(100)).toBeNull();
+  });
+
+  it("returns the next tier for in-between levels", () => {
+    // Level 75 maps to tier 80, so next is 90
+    expect(getNextLevelTier(75)).toBe(90);
+    // Level 92 maps to tier 95, so next is 100
+    expect(getNextLevelTier(92)).toBe(100);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Level-up gains
+// ═══════════════════════════════════════════════════════════════
+
+describe("levelUpGains", () => {
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    assumeCrit: false,
+  };
+
+  it("computes level-up gain for Lv90 calc target", () => {
+    const configs: CharCompConfig[] = [
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const emptySheets = { diluc: new StatSheet([]) };
+    const display = tb.getDisplayResult(
+      "diluc",
+      "diluc-skill",
+      emptySheets,
+      ctx
+    );
+
+    expect(display.levelUpGains.diluc).toBeDefined();
+    expect(display.levelUpGains.diluc.gain).toBeGreaterThan(0);
+    expect(display.levelUpGains.diluc.from).toBe(90);
+    expect(display.levelUpGains.diluc.to).toBe(100);
+  });
+
+  it("computes level-up gain for Lv80 calc target (80→90)", () => {
+    const configs: CharCompConfig[] = [
+      {
+        charId: "diluc",
+        charLevel: 80,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const emptySheets = { diluc: new StatSheet([]) };
+    const display = tb.getDisplayResult(
+      "diluc",
+      "diluc-skill",
+      emptySheets,
+      ctx
+    );
+
+    expect(display.levelUpGains.diluc).toBeDefined();
+    expect(display.levelUpGains.diluc.from).toBe(80);
+    expect(display.levelUpGains.diluc.to).toBe(90);
+    expect(display.levelUpGains.diluc.gain).toBeGreaterThan(0);
+  });
+
+  it("Lv80→90 gain is larger than Lv95→100 gain", () => {
+    const makeTeam = (level: number) => {
+      const configs: CharCompConfig[] = [
+        {
+          charId: "diluc",
+          charLevel: level,
+          constellation: 0,
+          weaponId: "wolfs_gravestone",
+          refinement: 1,
+          artifactSetId: null,
+          artifactHalfSetIds: [],
+        },
+      ];
+      const tb = new TeamBuild(configs);
+      const emptySheets = { diluc: new StatSheet([]) };
+      return tb.getDisplayResult("diluc", "diluc-skill", emptySheets, ctx);
+    };
+
+    const lv80 = makeTeam(80).levelUpGains.diluc;
+    const lv95 = makeTeam(95).levelUpGains.diluc;
+    expect(lv80).toBeDefined();
+    expect(lv95).toBeDefined();
+    // 80→90 spans a larger stat range than 95→100
+    expect(lv80.gain).toBeGreaterThan(lv95.gain);
+  });
+
+  it("no level-up gain for Lv100 (already max)", () => {
+    const configs: CharCompConfig[] = [
+      {
+        charId: "diluc",
+        charLevel: 100,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const emptySheets = { diluc: new StatSheet([]) };
+    const display = tb.getDisplayResult(
+      "diluc",
+      "diluc-skill",
+      emptySheets,
+      ctx
+    );
+
+    expect(display.levelUpGains.diluc).toBeUndefined();
+  });
+
+  it("computes level-up gains for teammates too", () => {
+    const configs: CharCompConfig[] = [
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "mona",
+        charLevel: 80,
+        constellation: 0,
+        weaponId: "skyward_blade",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const emptySheets = {
+      diluc: new StatSheet([]),
+      mona: new StatSheet([]),
+    };
+    const display = tb.getDisplayResult(
+      "diluc",
+      "diluc-skill",
+      emptySheets,
+      ctx
+    );
+
+    // Calc target (Diluc at Lv90) should have a gain
+    expect(display.levelUpGains.diluc).toBeDefined();
+    expect(display.levelUpGains.diluc.from).toBe(90);
+    // Teammate (Mona at Lv80) — may or may not have a gain depending on
+    // whether her buffs affect Diluc's damage. If present, verify shape.
+    if (display.levelUpGains.mona) {
+      expect(display.levelUpGains.mona.from).toBe(80);
+      expect(display.levelUpGains.mona.to).toBe(90);
+      expect(display.levelUpGains.mona.gain).toBeGreaterThan(0);
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// ER marginal gain with ER-scaling weapon (Engulfing Lightning)
+// ═══════════════════════════════════════════════════════════════
+
+describe("marginalGains — ER with ER-scaling weapon", () => {
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    assumeCrit: false,
+  };
+
+  it("includes ER marginal gain for a character with Engulfing Lightning", () => {
+    const configs: CharCompConfig[] = [
+      {
+        charId: "raiden_shogun",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "engulfing_lightning",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+    const tb = new TeamBuild(configs);
+    const emptySheets = { raiden_shogun: new StatSheet([]) };
+    const formulas = tb.getFormulaIds();
+    const formulaId = Object.keys(formulas.raiden_shogun!)[0]!;
+
+    const display = tb.getDisplayResult(
+      "raiden_shogun",
+      formulaId,
+      emptySheets,
+      ctx
+    );
+
+    // ER should appear in marginal gains because Engulfing Lightning
+    // converts ER over 100% into ATK%, which is used in the formula
+    expect(display.marginalGains.raiden_shogun).toBeDefined();
+    expect(display.marginalGains.raiden_shogun!.er).toBeGreaterThan(0);
   });
 });

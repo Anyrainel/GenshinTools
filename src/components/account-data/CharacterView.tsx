@@ -1,8 +1,13 @@
 import { CharacterCard } from "@/components/account-data/CharacterCard";
+import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { CharacterFilters } from "@/data/types";
+import type {
+  AccountData,
+  CharacterData,
+  CharacterFilters,
+} from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
@@ -12,25 +17,36 @@ import {
   filterAndSortCharacterData,
   hasActiveFilters,
 } from "@/lib/characterFilters";
+import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
+import { Pencil } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
-interface CharacterViewProps {
+export interface CharacterViewProps {
   scores: Record<string, ArtifactScoreResult>;
+  isEditMode?: boolean;
 }
 
-export function CharacterView({ scores }: CharacterViewProps) {
+export function CharacterView({
+  scores,
+  isEditMode = false,
+}: CharacterViewProps) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
+  const activeAccountId = useAccountStore((s) => s.activeAccountId);
+  const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
   const tierAssignments = useTierStore((state) => state.tierAssignments);
   const hasTierData = Object.keys(tierAssignments).length > 0;
 
   // 640px is a safe breakpoint where 35rem (560px) fits comfortably with margins
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
+
+  // Edit mode
+  const [editingChar, setEditingChar] = useState<CharacterData | null>(null);
 
   // Get persisted sort preferences
   const characterSort = usePreferencesStore((state) => state.characterSort);
@@ -125,6 +141,14 @@ export function CharacterView({ scores }: CharacterViewProps) {
       ? `${t.ui("filters.title")} (${activeFilterCount})`
       : t.ui("filters.title");
 
+  const handleSaveEdit = useCallback(
+    (newData: AccountData) => {
+      if (!activeAccountId) return;
+      addOrUpdateAccount(activeAccountId, { data: newData });
+    },
+    [activeAccountId, addOrUpdateAccount]
+  );
+
   if (!accountData) return null;
 
   return (
@@ -137,7 +161,6 @@ export function CharacterView({ scores }: CharacterViewProps) {
         />
       }
       triggerLabel={triggerLabel}
-      className="pt-4"
     >
       <div className="h-full overflow-y-auto">
         {filteredCharacters.length === 0 ? (
@@ -179,12 +202,29 @@ export function CharacterView({ scores }: CharacterViewProps) {
           >
             {filteredCharacters.map((char) => (
               <div key={char.key}>
-                <CharacterCard char={char} score={scores[char.key]} />
+                <CharacterCard
+                  char={char}
+                  score={scores[char.key]}
+                  onEdit={isEditMode ? () => setEditingChar(char) : undefined}
+                />
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Edit dialog */}
+      {editingChar && accountData && (
+        <CharacterEditDialog
+          open={!!editingChar}
+          onOpenChange={(open) => {
+            if (!open) setEditingChar(null);
+          }}
+          char={editingChar}
+          accountData={accountData}
+          onSave={handleSaveEdit}
+        />
+      )}
     </SidebarLayout>
   );
 }

@@ -1,6 +1,8 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { StatSheet } from "@/lib/team-comp/damageModels";
 import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
+import { filterMatchesTag } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
@@ -18,27 +20,37 @@ import { AlertTriangle, ChevronDown } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 import { detectEquippedSets, setsMatch } from "./teamOptUtils";
 
+type HlKey = StatKey | "charLevel";
+type HighlightedStat = { key: HlKey; charId: string } | null;
+
 type Props = {
   result?: DisplayResult | null;
   team: Team;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId: string;
-  highlightedStat: { key: StatKey; charId: string } | null;
-  onStatHover: (stat: { key: StatKey; charId: string } | null) => void;
+  /** Character IDs with active combo lines (combo mode only). */
+  comboActiveCharIds?: Set<string>;
+  highlightedStat: HighlightedStat;
+  onStatHover: (stat: HighlightedStat) => void;
   t: ReturnType<typeof useLanguage>["t"];
   failReasons?: Record<string, OptFailReason>;
   isFrozen?: boolean;
 };
 
-export const REQUIRED_STATS: StatKey[] = [
-  "atk",
-  "hp",
-  "def",
-  "em",
-  "cr",
-  "cd",
-  "er",
-];
+const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
+
+/** Check if a stat key is highlighted, including charLevel → atk/hp/def expansion. */
+function isKeyHighlighted(
+  hl: HighlightedStat,
+  charId: string,
+  key: StatKey
+): boolean {
+  if (!hl || hl.charId !== charId) return false;
+  if (hl.key === "charLevel") return LEVEL_AFFECTED_STATS.includes(key);
+  return hl.key === key;
+}
+
+const REQUIRED_STATS: StatKey[] = ["atk", "hp", "def", "em", "cr", "cd", "er"];
 
 const STAT_ORDER: StatKey[] = [
   ...REQUIRED_STATS,
@@ -77,54 +89,62 @@ function getSortedKeys(keys: Set<StatKey>): StatKey[] {
   return arr;
 }
 
-function StatRow({
-  statKey,
-  idleValue,
-  combatValue,
-  isHl,
-  showIdle,
-  onEnter,
-  onLeave,
-  t,
-}: {
-  statKey: StatKey;
-  idleValue: number;
-  combatValue: number;
-  isHl: boolean;
-  showIdle: boolean;
-  onEnter: () => void;
-  onLeave: () => void;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  const iVal = idleValue || 0;
-  const cVal = combatValue || 0;
+/**
+ * Determine which column is "primary" (highlighted) vs "secondary" (muted).
+ * - isTarget (calc target): on-field is primary
+ * - teammate: off-field is primary (they're usually off-field)
+ * - no target (combo overview, targetCharId=""): both equal, no muting
+ * Returns: "on" | "off" | "both" — which column(s) to highlight.
+ */
+function getPrimaryColumn(
+  charId: string,
+  targetCharId: string,
+  comboActiveCharIds?: Set<string>
+): "on" | "off" | "both" {
+  // Combo mode: on-field for chars with active lines, off-field for others
+  if (comboActiveCharIds) {
+    return comboActiveCharIds.has(charId) ? "on" : "off";
+  }
+  // Single mode
+  if (targetCharId === "") return "both";
+  return charId === targetCharId ? "on" : "off";
+}
 
-  // Do not render row if everything is zero, unless it is a required stat
-  if (iVal === 0 && cVal === 0 && !REQUIRED_STATS.includes(statKey))
-    return null;
+// ─── Conditional View Helpers ───
 
-  return (
-    <div
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      className={cn(
-        "flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-white/5 transition-colors cursor-default text-xs",
-        isHl ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20" : ""
-      )}
-    >
-      <span
-        className={cn(
-          "flex-1 min-w-0 truncate pr-2 opacity-80",
-          isHl && "text-[color:hsl(var(--primary))] font-bold opacity-100"
-        )}
-      >
-        {t.statShort(statKey)}
-      </span>
+function formatFilter(
+  filterKey: string,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  if (filterKey === "") return t.ui("teamComp.universal");
+  const parts: string[] = [];
+  for (const segment of filterKey.split("|")) {
+    const [dim, vals] = segment.split(":") as [string, string];
+    if (!vals) continue;
+    const items = vals.split(",");
+    if (dim === "a") parts.push(items.map((v) => t.ability(v)).join(" / "));
+    if (dim === "e") parts.push(items.map((v) => t.element(v)).join(" / "));
+    if (dim === "r") parts.push(items.map((v) => t.reaction(v)).join(" / "));
+  }
+  return parts.join(", ");
+}
 
-      <div className="shrink-0 text-right font-mono font-medium">
-        {fmtStat(statKey, showIdle ? iVal : cVal)}
-      </div>
-    </div>
+type ConditionalRow = {
+  key: StatKey;
+  condition: string;
+  offValue: number;
+  onValue: number;
+};
+
+/** Styling helper for off/on field value cells. */
+function valueCls(primary: "on" | "off" | "both", which: "off" | "on"): string {
+  return cn(
+    "text-right font-mono font-medium whitespace-nowrap",
+    primary === "both" && "text-foreground",
+    primary === which && "text-foreground",
+    primary !== which &&
+      primary !== "both" &&
+      "text-muted-foreground opacity-60"
   );
 }
 
@@ -165,11 +185,146 @@ function formatFailReason(
   }
 }
 
+// ─── Max View Data Hook ───
+
+function useMaxViewData(
+  charId: string,
+  result: DisplayResult | null | undefined
+) {
+  return useMemo(() => {
+    if (!result?.statSheets?.[charId]) return null;
+
+    const allTags = result.charFormulaTags?.[charId] ?? [];
+    const { onField, offField } = result.statSheets[charId];
+
+    const allKeys = new Set<StatKey>(REQUIRED_STATS);
+
+    // Collect keys from both sheets
+    for (const { key } of onField.dump()) allKeys.add(key);
+    for (const { key } of offField.dump()) allKeys.add(key);
+
+    const rows: { key: StatKey; offValue: number; onValue: number }[] = [];
+    for (const key of getSortedKeys(allKeys)) {
+      // Skip intermediate % keys for scaled stats
+      if (key === "atk%" || key === "hp%" || key === "def%") continue;
+      if (key === "baseAtk" || key === "baseHp" || key === "baseDef") continue;
+
+      let maxOn: number;
+      let maxOff: number;
+
+      try {
+        maxOn = onField.get(key);
+        maxOff = offField.get(key);
+      } catch {
+        continue;
+      }
+
+      for (const tag of allTags) {
+        try {
+          maxOn = Math.max(maxOn, onField.get(key, tag));
+          maxOff = Math.max(maxOff, offField.get(key, tag));
+        } catch {
+          // ignore keys that can't be queried with tag
+        }
+      }
+
+      if (key === "atk" || key === "hp" || key === "def" || key === "em") {
+        maxOn = Math.round(maxOn);
+        maxOff = Math.round(maxOff);
+      }
+
+      if (maxOn !== 0 || maxOff !== 0 || REQUIRED_STATS.includes(key)) {
+        rows.push({ key, offValue: maxOff, onValue: maxOn });
+      }
+    }
+
+    return rows;
+  }, [charId, result]);
+}
+
+// ─── Conditional View Data Hook ───
+
+function useConditionalViewData(
+  charId: string,
+  result: DisplayResult | null | undefined
+) {
+  return useMemo(() => {
+    if (!result?.statSheets?.[charId]) return null;
+
+    const { onField, offField } = result.statSheets[charId];
+    const allTags = result.charFormulaTags?.[charId] ?? [];
+
+    // Collect all (key, filterKey) pairs from both sheets
+    const pairMap = new Map<
+      string,
+      { key: StatKey; filterKey: string; offValue: number; onValue: number }
+    >();
+
+    const addFromSheet = (
+      sheet: typeof onField,
+      field: "offValue" | "onValue"
+    ) => {
+      for (const { key, filterKey, value } of sheet.dump()) {
+        if (key === "atk%" || key === "hp%" || key === "def%") continue;
+        if (key === "baseAtk" || key === "baseHp" || key === "baseDef")
+          continue;
+
+        if (filterKey !== "") {
+          const filter = StatSheet.parseFilterKey(filterKey);
+          if (
+            allTags.length > 0 &&
+            !allTags.some((tag) => filterMatchesTag(filter, tag))
+          )
+            continue;
+        }
+
+        const pairKey = `${key}\0${filterKey}`;
+        let entry = pairMap.get(pairKey);
+        if (!entry) {
+          entry = { key, filterKey, offValue: 0, onValue: 0 };
+          pairMap.set(pairKey, entry);
+        }
+        entry[field] = value;
+      }
+    };
+
+    addFromSheet(offField, "offValue");
+    addFromSheet(onField, "onValue");
+
+    const rows: ConditionalRow[] = [];
+    for (const entry of pairMap.values()) {
+      rows.push({
+        key: entry.key,
+        condition: entry.filterKey,
+        offValue: entry.offValue,
+        onValue: entry.onValue,
+      });
+    }
+
+    // Sort by stat order, then universal first, then by condition
+    rows.sort((a, b) => {
+      let ia = STAT_ORDER.indexOf(a.key);
+      let ib = STAT_ORDER.indexOf(b.key);
+      if (ia === -1) ia = 999;
+      if (ib === -1) ib = 999;
+      if (ia !== ib) return ia - ib;
+      if (a.condition === "" && b.condition !== "") return -1;
+      if (a.condition !== "" && b.condition === "") return 1;
+      return a.condition.localeCompare(b.condition);
+    });
+
+    return rows;
+  }, [charId, result]);
+}
+
+// ─── Main Component ───
+
 export function StatSheetPanel({
   result,
   team,
   artifactsByChar,
   targetCharId,
+  comboActiveCharIds,
   highlightedStat,
   onStatHover,
   t,
@@ -177,7 +332,10 @@ export function StatSheetPanel({
   isFrozen,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showIdle, setShowIdle] = useState(false);
+  const [viewMode, setViewMode] = useState<"max" | "conditional">("max");
+
+  // Check if new stat sheets are available (migration: fall back to old view)
+  const hasStatSheets = result?.statSheets != null;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-2 md:gap-3">
@@ -186,19 +344,12 @@ export function StatSheetPanel({
 
         const isTarget = charId === targetCharId;
         const char = charactersById[charId];
-
-        // Stats
-        const idle = result?.idleStats[charId] || {};
-        const combat = result?.combatStats[charId] || {};
         const marginal = result?.marginalGains[charId] || {};
-
-        const allKeys = new Set([
-          ...REQUIRED_STATS,
-          ...(Object.keys(idle) as StatKey[]),
-          ...(Object.keys(combat) as StatKey[]),
-        ]);
-
-        const sortedKeys = getSortedKeys(allKeys);
+        const primary = getPrimaryColumn(
+          charId,
+          targetCharId,
+          comboActiveCharIds
+        );
 
         const marginalKeys = (Object.keys(marginal) as StatKey[]).filter(
           (k) => (marginal[k] as number) > 0
@@ -206,6 +357,7 @@ export function StatSheetPanel({
         marginalKeys.sort(
           (a, b) => (marginal[b] as number) - (marginal[a] as number)
         );
+        const levelUpGain = result?.levelUpGains[charId];
 
         const artifactsObj = artifactsByChar[charId] || {};
         const hasArtifacts = Object.values(artifactsObj).some(Boolean);
@@ -244,19 +396,22 @@ export function StatSheetPanel({
 
               {result && (
                 <div className="flex items-center gap-2 group-hover:text-foreground transition-all">
+                  {/* View mode toggle */}
                   {/* biome-ignore lint/a11y/useSemanticElements: cannot nest button inside button */}
                   <div
                     role="button"
                     tabIndex={0}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setShowIdle((s) => !s);
+                      setViewMode((m) => (m === "max" ? "conditional" : "max"));
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.stopPropagation();
                         e.preventDefault();
-                        setShowIdle((s) => !s);
+                        setViewMode((m) =>
+                          m === "max" ? "conditional" : "max"
+                        );
                       }
                     }}
                     className="flex items-center gap-0.5 bg-black/40 border border-border/10 rounded-full p-1 cursor-pointer"
@@ -264,22 +419,22 @@ export function StatSheetPanel({
                     <span
                       className={cn(
                         "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
-                        showIdle
+                        viewMode === "conditional"
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      {t.ui("teamComp.idle")}
+                      {t.ui("teamComp.conditional")}
                     </span>
                     <span
                       className={cn(
                         "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
-                        !showIdle
+                        viewMode === "max"
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : "text-muted-foreground opacity-60 hover:opacity-100"
                       )}
                     >
-                      {t.ui("teamComp.combat")}
+                      {t.ui("teamComp.max")}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-sm font-semibold text-foreground/70 ml-2">
@@ -320,32 +475,37 @@ export function StatSheetPanel({
                       <span>{t.ui("teamComp.equippedSetDiffers")}</span>
                     </div>
                   )}
-                  <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
-                    {sortedKeys.map((k) => (
-                      <StatRow
-                        key={k}
-                        statKey={k}
-                        idleValue={idle[k] as number}
-                        combatValue={combat[k] as number}
-                        isHl={
-                          highlightedStat?.charId === charId &&
-                          highlightedStat?.key === k
-                        }
-                        showIdle={showIdle}
-                        onEnter={() => onStatHover({ key: k, charId })}
-                        onLeave={() => onStatHover(null)}
-                        t={t}
-                      />
-                    ))}
-                    {sortedKeys.length === 0 && (
-                      <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
-                        {t.ui("teamComp.noStatsResolved")}
-                      </span>
-                    )}
-                  </div>
+
+                  {hasStatSheets && viewMode === "max" ? (
+                    <MaxView
+                      charId={charId}
+                      result={result}
+                      primary={primary}
+                      highlightedStat={highlightedStat}
+                      onStatHover={onStatHover}
+                      t={t}
+                    />
+                  ) : hasStatSheets && viewMode === "conditional" ? (
+                    <ConditionalView
+                      charId={charId}
+                      result={result}
+                      primary={primary}
+                      highlightedStat={highlightedStat}
+                      onStatHover={onStatHover}
+                      t={t}
+                    />
+                  ) : (
+                    <LegacyStatView
+                      charId={charId}
+                      result={result}
+                      highlightedStat={highlightedStat}
+                      onStatHover={onStatHover}
+                      t={t}
+                    />
+                  )}
 
                   {/* Marginal Gains Section */}
-                  {marginalKeys.length > 0 && (
+                  {(marginalKeys.length > 0 || levelUpGain != null) && (
                     <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
                       <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
                         {t.ui("teamComp.marginalGains")}
@@ -353,14 +513,29 @@ export function StatSheetPanel({
                       {marginalKeys.map((k) => {
                         const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
                         const gain = marginal[k] as number;
+                        // Map percent keys to their base stat for cross-highlighting
+                        // with the stats table (e.g. "atk%" → "atk")
+                        const hlKey: StatKey =
+                          k === "atk%"
+                            ? "atk"
+                            : k === "hp%"
+                              ? "hp"
+                              : k === "def%"
+                                ? "def"
+                                : k;
                         const isHl =
                           highlightedStat?.charId === charId &&
-                          highlightedStat?.key === k;
+                          highlightedStat?.key === hlKey;
                         return (
                           <div
                             key={k}
-                            onMouseEnter={() => onStatHover({ key: k, charId })}
+                            onMouseEnter={() =>
+                              onStatHover({ key: hlKey, charId })
+                            }
                             onMouseLeave={() => onStatHover(null)}
+                            onClick={() =>
+                              onStatHover(isHl ? null : { key: hlKey, charId })
+                            }
                             className={cn(
                               "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
                               isHl
@@ -376,7 +551,7 @@ export function StatSheetPanel({
                                 "font-bold text-base",
                                 isHl
                                   ? "text-[color:hsl(var(--primary))] opacity-100"
-                                  : "text-primary/80"
+                                  : "text-primary"
                               )}
                             >
                               {t.statShort(k)}
@@ -404,6 +579,58 @@ export function StatSheetPanel({
                           </div>
                         );
                       })}
+                      {levelUpGain != null &&
+                        (() => {
+                          const lvHl =
+                            highlightedStat?.charId === charId &&
+                            highlightedStat?.key === "charLevel";
+                          return (
+                            <div
+                              onMouseEnter={() =>
+                                onStatHover({ key: "charLevel", charId })
+                              }
+                              onMouseLeave={() => onStatHover(null)}
+                              onClick={() =>
+                                onStatHover(
+                                  lvHl ? null : { key: "charLevel", charId }
+                                )
+                              }
+                              className={cn(
+                                "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
+                                lvHl
+                                  ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                                  : ""
+                              )}
+                            >
+                              <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+                                Lv
+                              </span>
+                              <span
+                                className={cn(
+                                  "font-bold text-base",
+                                  lvHl
+                                    ? "text-[color:hsl(var(--primary))] opacity-100"
+                                    : "text-primary"
+                                )}
+                              >
+                                {t.format(
+                                  "teamComp.levelUpGain",
+                                  levelUpGain.from,
+                                  levelUpGain.to
+                                )}
+                              </span>
+                              <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+                                ➔
+                              </span>
+                              <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+                                {fmtPercent(levelUpGain.gain, true)}
+                              </span>
+                              <span className="text-foreground opacity-60">
+                                {t.ui("teamComp.gain")}
+                              </span>
+                            </div>
+                          );
+                        })()}
                     </div>
                   )}
                 </CollapsibleContent>
@@ -412,6 +639,255 @@ export function StatSheetPanel({
           </Collapsible>
         );
       })}
+    </div>
+  );
+}
+
+// ─── Max View ───
+
+function MaxView({
+  charId,
+  result,
+  primary,
+  highlightedStat,
+  onStatHover,
+  t,
+}: {
+  charId: string;
+  result: DisplayResult;
+  primary: "on" | "off" | "both";
+  highlightedStat: HighlightedStat;
+  onStatHover: (stat: { key: StatKey; charId: string } | null) => void;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const rows = useMaxViewData(charId, result);
+
+  return (
+    <div className="bg-black/20 pt-1 px-2 pb-2">
+      <table className="w-full border-collapse text-xs xl:text-sm">
+        <thead>
+          <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
+            <th className="text-left font-bold py-1 pr-2">
+              {t.ui("teamComp.stats")}
+            </th>
+            <th className="text-right font-bold py-1 px-1">
+              {t.ui("teamComp.offField")}
+            </th>
+            <th className="text-right font-bold py-1 pl-1">
+              {t.ui("teamComp.onField")}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows && rows.length > 0 ? (
+            rows.map((row) => {
+              const off = row.offValue || 0;
+              const on = row.onValue || 0;
+              if (off === 0 && on === 0 && !REQUIRED_STATS.includes(row.key))
+                return null;
+              const isHl = isKeyHighlighted(highlightedStat, charId, row.key);
+              return (
+                <tr
+                  key={row.key}
+                  onMouseEnter={() => onStatHover({ key: row.key, charId })}
+                  onMouseLeave={() => onStatHover(null)}
+                  onClick={() =>
+                    onStatHover(isHl ? null : { key: row.key, charId })
+                  }
+                  className={cn(
+                    "cursor-default hover:bg-white/5 transition-colors",
+                    isHl && "bg-primary/10 ring-1 ring-primary/20"
+                  )}
+                >
+                  <td
+                    className={cn(
+                      "py-1 pr-2 opacity-80",
+                      isHl && "text-[color:hsl(var(--primary))] opacity-100"
+                    )}
+                  >
+                    {t.statShort(row.key)}
+                  </td>
+                  <td className={cn("py-1 px-1", valueCls(primary, "off"))}>
+                    {fmtStat(row.key, off)}
+                  </td>
+                  <td className={cn("py-1 pl-1", valueCls(primary, "on"))}>
+                    {fmtStat(row.key, on)}
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td
+                colSpan={3}
+                className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center"
+              >
+                {t.ui("teamComp.noStatsResolved")}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ─── Conditional View ───
+
+function ConditionalView({
+  charId,
+  result,
+  primary,
+  highlightedStat,
+  onStatHover,
+  t,
+}: {
+  charId: string;
+  result: DisplayResult;
+  primary: "on" | "off" | "both";
+  highlightedStat: HighlightedStat;
+  onStatHover: (stat: { key: StatKey; charId: string } | null) => void;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const rows = useConditionalViewData(charId, result);
+
+  return (
+    <div className="bg-black/20 pt-1 px-2 pb-2">
+      <table className="w-full border-collapse text-xs xl:text-sm">
+        <thead>
+          <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
+            <th className="text-left font-bold py-1 pr-2">
+              {t.ui("teamComp.stats")}
+            </th>
+            <th className="text-left font-bold py-1 px-1 tracking-tight">
+              {t.ui("teamComp.conditional")}
+            </th>
+            <th className="text-right font-bold py-1 px-1">
+              {t.ui("teamComp.offField")}
+            </th>
+            <th className="text-right font-bold py-1 pl-1">
+              {t.ui("teamComp.onField")}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows && rows.length > 0 ? (
+            rows.map((row, idx) => {
+              const showKey = idx === 0 || rows[idx - 1].key !== row.key;
+              const isHl = isKeyHighlighted(highlightedStat, charId, row.key);
+              return (
+                <tr
+                  key={`${row.key}-${row.condition}`}
+                  onMouseEnter={() => onStatHover({ key: row.key, charId })}
+                  onMouseLeave={() => onStatHover(null)}
+                  onClick={() =>
+                    onStatHover(isHl ? null : { key: row.key, charId })
+                  }
+                  className={cn(
+                    "cursor-default transition-colors",
+                    isHl && "bg-primary/10"
+                  )}
+                >
+                  <td
+                    className={cn(
+                      "py-1 pr-2 opacity-80",
+                      !showKey && "opacity-0",
+                      isHl && "text-[color:hsl(var(--primary))] opacity-100"
+                    )}
+                  >
+                    {showKey ? t.statShort(row.key) : "\u00A0"}
+                  </td>
+                  <td className="py-1 px-1 text-muted-foreground text-[10px] xl:text-xs tracking-tight">
+                    {formatFilter(row.condition, t)}
+                  </td>
+                  <td className={cn("py-1 px-1", valueCls(primary, "off"))}>
+                    {fmtStat(row.key, row.offValue)}
+                  </td>
+                  <td className={cn("py-1 pl-1", valueCls(primary, "on"))}>
+                    {fmtStat(row.key, row.onValue)}
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td
+                colSpan={4}
+                className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center"
+              >
+                {t.ui("teamComp.noStatsResolved")}
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ─── Legacy View (fallback during migration) ───
+
+function LegacyStatView({
+  charId,
+  result,
+  highlightedStat,
+  onStatHover,
+  t,
+}: {
+  charId: string;
+  result: DisplayResult;
+  highlightedStat: HighlightedStat;
+  onStatHover: (stat: HighlightedStat) => void;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const idle = result.idleStats[charId] || {};
+  const combat = result.combatStats[charId] || {};
+
+  const allKeys = new Set([
+    ...REQUIRED_STATS,
+    ...(Object.keys(idle) as StatKey[]),
+    ...(Object.keys(combat) as StatKey[]),
+  ]);
+  const sortedKeys = getSortedKeys(allKeys);
+
+  return (
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-x-2 gap-y-[1px] p-2 bg-black/20 pt-1">
+      {sortedKeys.map((k) => {
+        const cVal = (combat[k] as number) || 0;
+        if (cVal === 0 && !REQUIRED_STATS.includes(k)) return null;
+        return (
+          <div
+            key={k}
+            onMouseEnter={() => onStatHover({ key: k, charId })}
+            onMouseLeave={() => onStatHover(null)}
+            onClick={() =>
+              onStatHover(
+                isKeyHighlighted(highlightedStat, charId, k)
+                  ? null
+                  : { key: k, charId }
+              )
+            }
+            className={cn(
+              "flex items-center justify-between px-1.5 py-1 rounded-sm hover:bg-white/5 transition-colors cursor-default text-xs",
+              isKeyHighlighted(highlightedStat, charId, k)
+                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                : ""
+            )}
+          >
+            <span className="flex-1 min-w-0 truncate pr-2 opacity-80">
+              {t.statShort(k)}
+            </span>
+            <div className="shrink-0 text-right font-mono font-medium">
+              {fmtStat(k, cVal)}
+            </div>
+          </div>
+        );
+      })}
+      {sortedKeys.length === 0 && (
+        <span className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center col-span-2">
+          {t.ui("teamComp.noStatsResolved")}
+        </span>
+      )}
     </div>
   );
 }

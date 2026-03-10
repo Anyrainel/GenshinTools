@@ -1,5 +1,6 @@
 import { artifactIdToHalfSetId } from "@/data/constants";
 import type { AccountData, ArtifactData } from "@/data/types";
+import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
 import type { CharCompConfig } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 
@@ -90,7 +91,9 @@ export function buildTeamConfigs(
     if (!team.weapons[i]) continue; // wait for weapon to be selected
 
     const acctChar = accountData?.characters.find((c) => c.key === charId);
-    const defaultLevel = acctChar ? (acctChar.level > 90 ? 100 : 90) : 90;
+    const defaultLevel = acctChar
+      ? Number(getCharacterLevelTier(acctChar.level))
+      : 90;
     const defaultConst = acctChar ? acctChar.constellation : 0;
 
     const charLevel =

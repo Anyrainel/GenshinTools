@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ErScalingBuff, deduplicateBuffs } from "@/lib/team-comp/damageBuffs";
+import { deduplicateBuffs } from "@/lib/team-comp/damageBuffs";
 import { ScalingBuff, StatBuff, StatSheet } from "@/lib/team-comp/damageModels";
 
 describe("StatBuff", () => {
@@ -108,15 +108,17 @@ describe("ScalingBuff with threshold", () => {
   });
 });
 
-describe("ErScalingBuff", () => {
+describe("ScalingBuff with threshold (ER scaling)", () => {
   // Pattern: Engulfing Lightning — (ER - 100%) × 28% → ATK%, cap 80%
-  const buff = new ErScalingBuff(
+  const buff = new ScalingBuff(
     { type: "weapon", id: "engulfing_lightning", origin: "R1" },
     { receiver: "self" },
     [],
+    "er",
     "atk%",
     0.28,
-    0.8
+    0.8,
+    1.0
   );
 
   it("scales ATK% from ER above 100%", () => {

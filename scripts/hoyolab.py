@@ -10,6 +10,7 @@ from tqdm import tqdm
 from models import (
     ArtifactSource,
     CharacterSource,
+    EnemySource,
     ResourceOutput,
     WeaponSource,
 )
@@ -82,6 +83,17 @@ PLACEHOLDER_PATTERNS: list[str] = [
     "placeholder",
     "default-avatar",
 ]
+ENEMY_TYPE_MAP: dict[str, str] = {
+    "Other Human Factions": "human",
+    "Automatons": "automaton",
+    "Fatui": "fatui",
+    "Enemies of Note": "boss",
+    "Hilichurls": "hilichurl",
+    "Elemental Lifeforms": "elemental",
+    "The Abyss": "abyss",
+    "Mystical Beasts": "beast",
+    "Local Legend": "legend",
+}
 CHARACTER_BLOCKLIST: set[str] = {"Traveler", "旅行者"}
 
 # Characters whose wiki card has no element icon (they support all 7 elements).
@@ -139,6 +151,12 @@ class HoyolabAssetManager:
         id = generate_id(weapon.name)
         filename = os.path.join(project_root, "public", "weapon", f"{id}.png")
         return download_image(weapon.image_url, filename)
+
+    @staticmethod
+    def download_enemy_assets(enemy: EnemySource, project_root: str) -> bool:
+        """Download enemy image, named by wiki entry ID"""
+        filename = os.path.join(project_root, "public", "enemy", f"{enemy.entry_id}.png")
+        return download_image(enemy.image_url, filename)
 
     @staticmethod
     def download_element_asset(element: ResourceOutput, project_root: str) -> bool:
@@ -805,6 +823,81 @@ class HoyolabScraper:
             return eid
         except Exception:
             return ""
+
+    def scrape_enemies(self, language: str = "en") -> list[EnemySource]:
+        """Scrape enemies via the Hoyolab wiki API (no browser rendering needed)."""
+        lang_map = {"en": "en-us", "zh": "zh-cn"}
+        api_lang = lang_map.get(language, language)
+
+        enemies: list[EnemySource] = []
+        page_num = 1
+        page_size = 50
+
+        with tqdm(
+            desc=f"Fetching enemies ({language.upper()})",
+            unit="page",
+            bar_format="{l_bar}{bar}| page {n_fmt} [{elapsed}]",
+        ) as pbar:
+            while True:
+                resp = requests.post(
+                    "https://sg-wiki-api.hoyolab.com/hoyowiki/wapi/get_entry_page_list",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Referer": "https://wiki.hoyolab.com/",
+                        "Origin": "https://wiki.hoyolab.com",
+                    },
+                    json={
+                        "filters": [],
+                        "menu_id": "7",
+                        "page_num": page_num,
+                        "page_size": page_size,
+                        "use_es": True,
+                    },
+                    params={"lang": api_lang},
+                    timeout=30,
+                )
+                resp.raise_for_status()
+                data = resp.json().get("data", {})
+                entries = data.get("list", [])
+
+                if not entries:
+                    break
+
+                for entry in entries:
+                    icon_url = entry.get("icon_url", "")
+                    name = entry.get("name", "").strip()
+                    entry_id = str(entry.get("entry_page_id", ""))
+
+                    if not name or not icon_url:
+                        continue
+
+                    # Extract enemy type from filter_values
+                    enemy_type = ""
+                    filter_vals = entry.get("filter_values", {})
+                    type_info = filter_vals.get("enemy_and_monster_type", {})
+                    type_values = type_info.get("values", [])
+                    if type_values:
+                        raw_type = type_values[0]
+                        enemy_type = ENEMY_TYPE_MAP.get(raw_type, raw_type)
+
+                    enemies.append(
+                        EnemySource(
+                            entry_id=entry_id,
+                            name=name,
+                            image_url=clean_image_url(icon_url),
+                            enemy_type=enemy_type,
+                        )
+                    )
+
+                pbar.update(1)
+
+                total = int(data.get("total", 0))
+                if page_num * page_size >= total:
+                    break
+                page_num += 1
+
+        tqdm.write(f"Fetched {len(enemies)} enemies ({language.upper()})")
+        return enemies
 
     def fetch_entry_name(self, entry_id: str, language: str) -> str | None:
         """Fetch the name of an entry from its detail page in a specific language"""

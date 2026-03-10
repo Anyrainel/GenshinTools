@@ -116,7 +116,7 @@ function DamageBody({
   isFrozen?: boolean;
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
-    key: StatKey;
+    key: StatKey | "charLevel";
     charId: string;
   } | null>(null);
   const [formulaExpanded, setFormulaExpanded] = useSessionState(
@@ -444,25 +444,19 @@ function ComboBreakdown({
                                 )}
                               </div>
                               <div className="flex items-baseline gap-1 text-lg font-mono tabular-nums">
+                                <span className="text-foreground font-bold">
+                                  {fmtDamage(perHit)}
+                                </span>
                                 {line.count > 1 && (
                                   <>
-                                    <span className="text-muted-foreground">
-                                      {fmtDamage(perHit)}
-                                    </span>
                                     <span className="text-muted-foreground/40">
                                       ×
                                     </span>
                                     <span className="text-muted-foreground">
                                       {line.count}
                                     </span>
-                                    <span className="text-muted-foreground/40">
-                                      =
-                                    </span>
                                   </>
                                 )}
-                                <span className="text-foreground font-bold">
-                                  {fmtDamage(total)}
-                                </span>
                               </div>
                             </div>
                           );
@@ -833,8 +827,13 @@ export function DamageCard({
     >
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
-          <Eye className="w-4 h-4 opacity-70" />
-          <span>{t.ui("teamComp.equipAndDamage")}</span>
+          <span
+            data-tour-step-id="tod-damage"
+            className="inline-flex items-center gap-2"
+          >
+            <Eye className="w-4 h-4 opacity-70" />
+            <span>{t.ui("teamComp.equipAndDamage")}</span>
+          </span>
         </h3>
       </CardHeader>
 
@@ -915,7 +914,7 @@ export function DamageCard({
             <EnemyResInput {...ctxProps} />
             <AssumeCritToggle {...ctxProps} />
           </div>
-          {comboResult && comboLines && teamBuild ? (
+          {formulaMode === "combo" && comboResult && comboLines && teamBuild ? (
             <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
               {currentDisplayResult && (
                 <StatSheetPanel
@@ -923,6 +922,11 @@ export function DamageCard({
                   team={effectiveTeam}
                   artifactsByChar={equippedArtifactsByChar}
                   targetCharId={""}
+                  comboActiveCharIds={
+                    new Set(
+                      comboLines.filter((l) => l.count > 0).map((l) => l.charId)
+                    )
+                  }
                   highlightedStat={null}
                   onStatHover={() => {}}
                   t={t}
@@ -946,7 +950,7 @@ export function DamageCard({
                 />
               )}
             </div>
-          ) : comboLines && !comboResult ? (
+          ) : formulaMode === "combo" && comboLines && !comboResult ? (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>{t.ui("teamComp.emptyComboMessage")}</p>
@@ -1107,14 +1111,19 @@ export function DamageCard({
 
             {/* Results */}
             {/* Combo mode with no active lines — show hint */}
-            {comboLines && !optimizedComboResult && isFrozen && !teamResult && (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
-                <Swords className="w-8 h-8 opacity-15" />
-                <p>{t.ui("teamComp.emptyComboMessage")}</p>
-              </div>
-            )}
+            {formulaMode === "combo" &&
+              comboLines &&
+              !optimizedComboResult &&
+              isFrozen &&
+              !teamResult && (
+                <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <Swords className="w-8 h-8 opacity-15" />
+                  <p>{t.ui("teamComp.emptyComboMessage")}</p>
+                </div>
+              )}
 
-            {!hasActiveFormula ? null : optimizedComboResult &&
+            {!hasActiveFormula ? null : formulaMode === "combo" &&
+              optimizedComboResult &&
               comboLines &&
               teamBuild ? (
               <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
@@ -1124,6 +1133,13 @@ export function DamageCard({
                     team={effectiveTeam}
                     artifactsByChar={optimizedArtifactsByChar}
                     targetCharId={""}
+                    comboActiveCharIds={
+                      new Set(
+                        comboLines
+                          .filter((l) => l.count > 0)
+                          .map((l) => l.charId)
+                      )
+                    }
                     highlightedStat={null}
                     onStatHover={() => {}}
                     t={t}
@@ -1236,7 +1252,10 @@ export function DamageCard({
           )}
 
           {/* Results */}
-          {idealComboResult && comboLines && teamBuild ? (
+          {formulaMode === "combo" &&
+          idealComboResult &&
+          comboLines &&
+          teamBuild ? (
             <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
               {idealDisplayResult && (
                 <StatSheetPanel
@@ -1244,6 +1263,11 @@ export function DamageCard({
                   team={effectiveTeam}
                   artifactsByChar={idealArtifactsByChar}
                   targetCharId={""}
+                  comboActiveCharIds={
+                    new Set(
+                      comboLines.filter((l) => l.count > 0).map((l) => l.charId)
+                    )
+                  }
                   highlightedStat={null}
                   onStatHover={() => {}}
                   t={t}
