@@ -2,8 +2,10 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula, TransformFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { resolveOption } from "../damageModels";
+import type { OptionDef } from "../damageModels";
+import type { StatSheet } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
+import type { StatEntry } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Sumeru Characters
@@ -355,15 +357,16 @@ class Nahida extends CharacterBase {
 
   readonly buffs = [
     // P1: Q field grants EM = highest party EM × 25% (cap 250)
-    new ScalingBuff(
-      cbs(this, "P1", ["Q"]),
-      { receiver: "onField" },
-      [],
-      "em",
-      "em",
-      0.25,
-      250
-    ),
+    // "依据队伍中元素精通最高的角色的元素精通数值的25%，提高领域内当前场上角色的元素精通"
+    new (class extends StatBuff {
+      override dynamicBuffs(
+        _selfStats: StatSheet,
+        teamStats: StatSheet[]
+      ): StatEntry[] {
+        const maxEm = Math.max(...teamStats.map((s) => s.get("em")));
+        return [{ key: "em", value: Math.min(maxEm * 0.25, 250) }];
+      }
+    })(cbs(this, "P1", ["Q"]), { receiver: "onField" }, []),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
     // Tri-Karma fires off-field, so use "self" not "selfOnField"
     new ScalingBuff(

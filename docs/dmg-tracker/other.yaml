@@ -60,18 +60,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: skirk-c6-havoc-coordinated
-  entity: skirk
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    C6 Havoc: Sever combo-state coordinated attacks not modeled.
-  detail: >
-    Complex combat state interaction with combo-state tracking.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 - id: skirk-all-shall-wither
   entity: skirk
   rule: S8

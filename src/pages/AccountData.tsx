@@ -62,6 +62,7 @@ import {
   Database,
   Download,
   HelpCircle,
+  Pencil,
   Users,
   X,
 } from "lucide-react";
@@ -113,6 +114,7 @@ export default function AccountDataPage() {
   const tour = useTour();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "characters";
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Control refs for ref-based dialog pattern
   const importRef = useRef<ControlHandle>(null);
@@ -465,6 +467,18 @@ export default function AccountDataPage() {
         onTrigger: () => importRef.current?.open(),
         tourStepId: "ad-import",
       },
+      ...(activeTab === "characters"
+        ? [
+            {
+              key: "edit",
+              icon: Pencil,
+              label: isEditMode
+                ? t.ui("common.cancel")
+                : t.ui("charEdit.editMode"),
+              onTrigger: () => setIsEditMode((prev) => !prev),
+            },
+          ]
+        : []),
       {
         key: "help",
         icon: HelpCircle,
@@ -474,7 +488,7 @@ export default function AccountDataPage() {
     ];
 
     return defaultActions;
-  }, [t, tour]);
+  }, [t, tour, activeTab, isEditMode]);
 
   return (
     <PageLayout
@@ -574,7 +588,7 @@ export default function AccountDataPage() {
       <Tabs value={activeTab} className="h-full overflow-hidden">
         <TabsContent value="characters" className="mt-0 h-full">
           {accountData ? (
-            <CharacterView scores={scores} />
+            <CharacterView scores={scores} isEditMode={isEditMode} />
           ) : (
             <NoDataPlaceholder
               t={t}

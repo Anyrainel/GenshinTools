@@ -14,16 +14,53 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef, TeamMeta } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ None Characters
 // ═══════════════════════════════════════════════════════════════
 
-@RegisterCharacter("skirk")
+// Eligible elements for P1 虚境裂隙: Frozen(Hydro), Superconduct(Electro),
+// Cryo Swirl(Anemo), Cryo Crystallize(Geo), plus other Cryo teammates
+const skirkRiftEligible = (tm: TeamMeta): number =>
+  tm.countByElement("Hydro") +
+  Math.max(0, tm.countByElement("Cryo") - 1) + // exclude Skirk
+  tm.countByElement("Electro") +
+  tm.countByElement("Anemo") +
+  tm.countByElement("Geo");
+
+const skirkOption = {
+  label: { zh: "虚境裂隙", en: "Void Rifts" },
+  choices: [
+    {
+      value: "3",
+      label: { zh: "3枚", en: "3 Rifts" },
+      when: (tm) => skirkRiftEligible(tm) >= 3,
+    },
+    {
+      value: "2",
+      label: { zh: "2枚", en: "2 Rifts" },
+      when: (tm) => skirkRiftEligible(tm) >= 2,
+    },
+    {
+      value: "1",
+      label: { zh: "1枚", en: "1 Rift" },
+      when: (tm) => skirkRiftEligible(tm) >= 1,
+    },
+    { value: "0", label: { zh: "0枚", en: "0 Rifts" } },
+  ] as const,
+  default: "3",
+} satisfies OptionDef;
+
+@RegisterCharacter("skirk", skirkOption)
 class Skirk extends CharacterBase {
-  // Death's Crossing stacks: 1 per Hydro teammate + 1 per non-Skirk Cryo teammate (max 3)
+  private readonly riftCount = Number.parseInt(
+    resolveOption(skirkOption, this.option)
+  );
+
+  // P2 死河渡断: 1 per Hydro teammate + 1 per non-Skirk Cryo teammate (max 3)
+  // Always active (20s duration covers rotation)
   private readonly deathCrossingStacks = Math.min(
     this.teamMeta.countByElement("Hydro") +
       Math.max(0, this.teamMeta.countByElement("Cryo") - 1),
@@ -44,10 +81,11 @@ class Skirk extends CharacterBase {
 
   readonly buffs = (() => {
     const stacks = this.deathCrossingStacks;
-    const buffs: InstanceType<typeof StatBuff>[] = [];
+    const riftCount = this.riftCount;
+    const hasC3 = this.constellation >= 3;
+    const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    // P2: Normal ATK in E-mode: 110%/120%/170% of original → +10%/+20%/+70%
-    // P2: Burst: 105%/115%/160% of original → +5%/+15%/+60%
+    // P2 死河渡断: Normal ATK baseDmg% (110%/120%/170% → +10%/+20%/+70%)
     if (stacks > 0) {
       const normalPct = [0, 0.1, 0.2, 0.7][stacks];
       const burstPct = [0, 0.05, 0.15, 0.6][stacks];
@@ -65,16 +103,57 @@ class Skirk extends CharacterBase {
       );
     }
 
-    // C2: After Havoc: Extinction (E-mode Q), ATK +70% for 12.5s
-    if (this.constellation >= 2) {
+    // Q 凋尽 "All Shall Wither": per-NA-hit baseDmg% from Extinction rift absorption
+    // 0/1/2/3 rifts at Lv10: 8%/12%/16%/20%, Lv13 (C3+): 9.5%/13.8%/18.4%/23%
+    const witherPct = hasC3
+      ? [0.095, 0.138, 0.184, 0.23][riftCount]
+      : [0.08, 0.12, 0.16, 0.2][riftCount];
+    buffs.push(
+      new StatBuff(
+        cbs(this, "Q", ["Q"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [{ key: "baseDmg%", value: witherPct }]
+      )
+    );
+
+    // Q 蛇之狡谋 bonus: ATK per point over 50 → baseDmg for burst hits
+    // Subtlety: 45 base + C2(10) + 8 per rift; bonus capped at 12 (C2: 22)
+    const subtletyTotal =
+      45 + (this.constellation >= 2 ? 10 : 0) + 8 * riftCount;
+    const subtletyCap = this.constellation >= 2 ? 22 : 12;
+    const subtletyBonusPts = Math.min(
+      Math.max(subtletyTotal - 50, 0),
+      subtletyCap
+    );
+    if (subtletyBonusPts > 0) {
+      const subtletyPerPt = hasC3 ? 0.4106 : 0.3478;
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.7 },
-        ])
+        new ScalingBuff(
+          cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          [],
+          "atk",
+          "baseDmg",
+          subtletyBonusPts * subtletyPerPt
+        )
       );
     }
 
-    // C4: Death's Crossing also grants ATK +10%/20%/40% (total at 1/2/3 stacks)
+    // C2: After 极恶技·尽 (Extinction), ATK +70% — only NA/CA mode
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["Q"]),
+          {
+            receiver: "selfOnField",
+            filter: { abilities: ["normal", "charge"] },
+          },
+          [{ key: "atk%", value: 0.7 }]
+        )
+      );
+    }
+
+    // C4: Death's Crossing also grants ATK +10%/20%/40%
     if (this.constellation >= 4 && stacks > 0) {
       const c4Pct = [0, 0.1, 0.2, 0.4][stacks];
       buffs.push(
@@ -92,28 +171,21 @@ class Skirk extends CharacterBase {
   //   N3: 149.7×2/160.3×2/181.4×2/191.9×2, N4: 159.2×2/170.4×2/192.9×2/204.2×2
   //   N5: 388.7/416.1/471.0/498.4
   // E CA: 88.1×3/94.3×3/106.7×3/112.9×3
-  // Q Burst: 5×slash + final slash + subtlety bonus (12 pts, C2: 22 pts)
+  // Q Burst: 5×slash + final slash
   protected readonly formulaMap = (() => {
     const hasC5 = this.constellation >= 5;
+    const hasC3 = this.constellation >= 3;
     const p3 = this.hasP3;
+    const riftCount = this.riftCount;
     // E level: base 10 (C5→13) + 1 if P3 active
-    // Per-hit multipliers for E Normal Attack sequence
     const n1 = hasC5 ? (p3 ? 3.367 : 3.182) : p3 ? 2.811 : 2.626;
     const n2 = hasC5 ? (p3 ? 3.037 : 2.87) : p3 ? 2.535 : 2.368;
     const n3 = hasC5 ? (p3 ? 1.919 : 1.814) : p3 ? 1.603 : 1.497;
     const n4 = hasC5 ? (p3 ? 2.042 : 1.929) : p3 ? 1.704 : 1.592;
     const n5 = hasC5 ? (p3 ? 4.984 : 4.71) : p3 ? 4.161 : 3.887;
-    // CA: per-hit multiplier (×3 hits)
     const caHit = hasC5 ? (p3 ? 1.129 : 1.067) : p3 ? 0.943 : 0.881;
-    // C2 "Into the Abyss": +10 extra subtlety points counted for Q DMG bonus (cap 22 total)
-    const hasC2 = this.constellation >= 2;
-    const hasC3 = this.constellation >= 3; // C3 upgrades Q level
-    // Q per-part multipliers
     const qSlash = hasC3 ? 2.609 : 2.21;
     const qFinal = hasC3 ? 4.348 : 3.683;
-    const subtletyPts = hasC2 ? 22 : 12;
-    const subtletyPerPt = hasC3 ? 0.4106 : 0.3478;
-    const subtletyBonus = subtletyPts * subtletyPerPt;
     const cryoNormal = {
       element: "Cryo" as const,
       ability: "normal" as const,
@@ -126,10 +198,7 @@ class Skirk extends CharacterBase {
     };
     return {
       "skirk-e-normal": {
-        label: {
-          zh: "E普攻5段",
-          en: "E NA Combo (5-hit)",
-        },
+        label: { zh: "E+Q 普攻5段", en: "E+Q NA Combo (5-hit)" },
         parts: [
           { formula: new DirectFormula(n1, cryoNormal) },
           { formula: new DirectFormula(n2, cryoNormal) },
@@ -139,10 +208,7 @@ class Skirk extends CharacterBase {
         ],
       },
       "skirk-e-charge": {
-        label: {
-          zh: "E重击",
-          en: "E CA",
-        },
+        label: { zh: "E+Q 重击", en: "E+Q CA" },
         parts: [
           {
             formula: new DirectFormula(caHit, {
@@ -155,24 +221,19 @@ class Skirk extends CharacterBase {
         ],
       },
       "skirk-burst": {
-        label: {
-          zh: "Q伤害",
-          en: "Q",
-        },
+        label: { zh: "满蛇谋 Q", en: "Full Subtlety Q" },
         parts: [
           { formula: new DirectFormula(qSlash, cryoBurst), hits: 5 },
           { formula: new DirectFormula(qFinal, cryoBurst) },
-          { formula: new DirectFormula(subtletyBonus, cryoBurst) },
         ],
       },
-      // C1: Each Void Rift absorbed summons a crystal blade (500% ATK Cryo, CA DMG)
-      // Number of blades = deathCrossingStacks (Hydro/Cryo teammates, max 3)
-      ...(this.constellation >= 1 && this.deathCrossingStacks > 0
+      // C1: Each 虚境裂隙 absorbed → 晶刃 (500% ATK, Cryo, CA DMG)
+      ...(this.constellation >= 1 && riftCount > 0
         ? {
             "skirk-c1-blade": {
               label: {
-                zh: `1命 水晶刀×${this.deathCrossingStacks}`,
-                en: `C1 Crystal Blade ×${this.deathCrossingStacks}`,
+                zh: `1命 晶刃×${riftCount}`,
+                en: `C1 Crystal Blade ×${riftCount}`,
               },
               parts: [
                 {
@@ -181,7 +242,37 @@ class Skirk extends CharacterBase {
                     ability: "charge",
                     reaction: "none",
                   }),
-                  hits: this.deathCrossingStacks,
+                  hits: riftCount,
+                },
+              ],
+            },
+          }
+        : {}),
+      // C6 极恶技·斩: burst coordinated (750% ATK per stack)
+      ...(this.constellation >= 6 && riftCount > 0
+        ? {
+            "skirk-c6-burst-coord": {
+              label: {
+                zh: `6命Q协同×${riftCount}`,
+                en: `C6 Q Coord ×${riftCount}`,
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(7.5, cryoBurst),
+                  hits: riftCount,
+                },
+              ],
+            },
+            // C6: N3/N5 trigger → 3 coordinated attacks each, max 2 triggers per combo
+            "skirk-c6-normal-coord": {
+              label: {
+                zh: `6命普攻协同×${Math.min(riftCount, 2) * 3}`,
+                en: `C6 NA Coord ×${Math.min(riftCount, 2) * 3}`,
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(1.8, cryoNormal),
+                  hits: Math.min(riftCount, 2) * 3,
                 },
               ],
             },

@@ -131,6 +131,23 @@ class Durin extends CharacterBase {
 getEntityOption("durin")  // → durinOption (OptionDef) or null
 ```
 
+**Ordering rule**: Choices must be ordered by preference — **the first choice is the most preferred default**. The `default` field must match the first choice's value. When a higher-preference choice is disabled by `when`, `resolveOption` naturally falls back to the next enabled choice.
+
+**Conditional availability (`when`)**: Each `OptionChoice` may have an optional `when?: (teamMeta: ITeamMeta) => boolean` predicate. When provided, the choice is disabled in the UI if the predicate returns false. `resolveOption()` skips disabled choices when falling back. Common patterns:
+
+```typescript
+// Constellation-gated choice:
+{ value: "c6", label: ..., when: (tm) => (tm.constellations["hu_tao"] ?? 0) >= 6 }
+
+// Reaction-gated choice:
+{ value: "frozen", label: ..., when: (tm) => tm.hasReaction("freeze") }
+
+// Element-gated choice:
+{ value: "electro", label: ..., when: (tm) => tm.countByElement("Electro") >= 1 }
+```
+
+The UI renders **all** choices but disables those where `when` returns false. If **all** choices are disabled, the dropdown is replaced with `--`. `isChoiceEnabled(choice, teamMeta?)` is the helper for checking availability.
+
 **Diff detection**: When `CombatOpts` changes in the store, compare `oldOpts[providerId] !== newOpts[providerId]` → reconstruct only affected providers.
 
 **UI rendering**: `getEntityOption(id)` returns the `OptionDef`. Render as toggle (2 choices) or dropdown (3+). All labels are bilingual via `I18nLabel`.

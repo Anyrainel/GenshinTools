@@ -112,6 +112,18 @@ export type MainStatMismatch = {
 
 export type StatWeightMap = Partial<Record<SubStat, number>>;
 
+/** Scale flat stat weights (hp, atk, def) by their globalConfig effectiveness. */
+export function scaleFlatWeights(
+  weights: StatWeightMap,
+  globalConfig: GlobalStatWeights
+): StatWeightMap {
+  const out = { ...weights };
+  if (out.hp != null) out.hp = out.hp * (globalConfig.flatHp / 100);
+  if (out.atk != null) out.atk = out.atk * (globalConfig.flatAtk / 100);
+  if (out.def != null) out.def = out.def * (globalConfig.flatDef / 100);
+  return out;
+}
+
 export type BuildMatchResult = {
   build: Build;
   buildIndex: number;
@@ -146,7 +158,7 @@ export function calculateStatScore(
   // Weight is 0-100, so we divide by 100
   const rawWeight = weights[stat] ?? 0;
   const w = rawWeight / 100;
-  let effectiveWeight = rawWeight;
+  const effectiveWeight = rawWeight;
 
   // stats that can appear on sub stat are converted based on sub stat scaling.
   // main-only stats are converted based on main stat scaling.
@@ -174,17 +186,14 @@ export function calculateStatScore(
       score = value * 1.0658 * w;
       break;
     case "atk":
-      // Global flat effectiveness * specific weight
-      score = value * 0.3995 * (globalConfig.flatAtk / 100) * w;
-      effectiveWeight = rawWeight * (globalConfig.flatAtk / 100);
+      // Flat stat weight is pre-scaled by globalConfig in buildToWeightMap
+      score = value * 0.3995 * w;
       break;
     case "hp":
-      score = value * 0.026 * (globalConfig.flatHp / 100) * w;
-      effectiveWeight = rawWeight * (globalConfig.flatHp / 100);
+      score = value * 0.026 * w;
       break;
     case "def":
-      score = value * 0.3356 * (globalConfig.flatDef / 100) * w;
-      effectiveWeight = rawWeight * (globalConfig.flatDef / 100);
+      score = value * 0.3356 * w;
       break;
     default:
       score = 0;
@@ -339,7 +348,8 @@ function matchMainStats(
 export function matchBuild(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   builds: Build[],
-  constellation: number
+  constellation: number,
+  globalConfig?: GlobalStatWeights
 ): BuildMatchResult | null {
   const scored = builds.map((build, index) => {
     const setMatched = isSetMatched(artifacts, build);
@@ -382,7 +392,7 @@ export function matchBuild(
   return {
     build: winner.build,
     buildIndex: winner.index,
-    statWeights: buildToWeightMap(winner.build),
+    statWeights: buildToWeightMap(winner.build, globalConfig),
     setMatched: winner.setMatched,
     setDifferent: isSetDifferent(artifacts, winner.build),
     mainStatMatches: winner.mainStatMatches,
@@ -390,11 +400,24 @@ export function matchBuild(
   };
 }
 
-export function buildToWeightMap(build: Build): StatWeightMap {
+export function buildToWeightMap(
+  build: Build,
+  globalConfig?: GlobalStatWeights
+): StatWeightMap {
   const map: StatWeightMap = {};
   for (const { stat, weight } of build.substats) {
     map[stat] = weight;
   }
+  // Flat stats inherit weight from their % counterpart, pre-scaled by
+  // globalConfig effectiveness so the scoring formula doesn't need special
+  // flat-stat handling. Without globalConfig, inherits at full weight
+  // (suitable for non-scoring uses like fingerprinting).
+  const flatHp = (globalConfig?.flatHp ?? 100) / 100;
+  const flatAtk = (globalConfig?.flatAtk ?? 100) / 100;
+  const flatDef = (globalConfig?.flatDef ?? 100) / 100;
+  if (map.hp == null && map["hp%"] != null) map.hp = map["hp%"] * flatHp;
+  if (map.atk == null && map["atk%"] != null) map.atk = map["atk%"] * flatAtk;
+  if (map.def == null && map["def%"] != null) map.def = map["def%"] * flatDef;
   return map;
 }
 
@@ -496,14 +519,23 @@ export function scoreAllSlots(
     }
 
     slotSubScores[slot] = slotSub;
-    slotMaxSubScores[slot] =
-      artifact.rarity === 5 || artifact.rarity === 4
-        ? calculateMaxSlotSubScore(
-            artifact.mainStatKey,
-            weights,
-            artifact.rarity
-          )
-        : 0;
+    if (artifact.rarity === 5 || artifact.rarity === 4) {
+      let maxScore = calculateMaxSlotSubScore(
+        artifact.mainStatKey,
+        weights,
+        artifact.rarity
+      );
+      // If the build's weights produce 0 (e.g. no weighted substats in pool),
+      // fall back to cr/cd weights so the progress bar still renders.
+      if (maxScore === 0) {
+        maxScore = calculateMaxSlotSubScore(
+          artifact.mainStatKey,
+          FALLBACK_WEIGHTS,
+          artifact.rarity
+        );
+      }
+      slotMaxSubScores[slot] = maxScore;
+    }
   }
 
   return {
@@ -521,7 +553,12 @@ export function scoreWithBuilds(
   builds: Build[],
   globalConfig: GlobalStatWeights
 ): ArtifactScoreResult {
-  const buildMatch = matchBuild(char.artifacts, builds, char.constellation);
+  const buildMatch = matchBuild(
+    char.artifacts,
+    builds,
+    char.constellation,
+    globalConfig
+  );
   const substatScore = scoreAllSlots(
     char,
     buildMatch?.statWeights ?? FALLBACK_WEIGHTS,
@@ -546,13 +583,26 @@ function countSetPieces(
   return count;
 }
 
-/** Check if the equipped artifacts satisfy a build's artifact set requirement. */
+/** Count how many slots have an equipped artifact. */
+function countEquipped(artifacts: Partial<Record<Slot, ArtifactData>>): number {
+  let count = 0;
+  for (const slot of allSlots) {
+    if (artifacts[slot] != null) count++;
+  }
+  return count;
+}
+
+/** Check if the equipped artifacts satisfy a build's artifact set requirement.
+ *  When slots are missing, give the benefit of the doubt: the unequipped slot
+ *  could have been the right set piece. Requires at least 3 confirmed pieces. */
 function isSetMatched(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   build: Build
 ): boolean {
   if (build.composition === "4pc" && build.artifactSet) {
-    return countSetPieces(artifacts, build.artifactSet) >= 4;
+    const missing = 5 - countEquipped(artifacts);
+    const threshold = Math.max(3, 4 - missing);
+    return countSetPieces(artifacts, build.artifactSet) >= threshold;
   }
 
   if (
@@ -570,10 +620,12 @@ function isSetMatched(
         halfSetCounts.set(halfSetId, (halfSetCounts.get(halfSetId) ?? 0) + 1);
       }
     }
-    return (
-      (halfSetCounts.get(build.halfSet1) ?? 0) >= 2 &&
-      (halfSetCounts.get(build.halfSet2) ?? 0) >= 2
-    );
+    const missing = 5 - countEquipped(artifacts);
+    const half1 = halfSetCounts.get(build.halfSet1) ?? 0;
+    const half2 = halfSetCounts.get(build.halfSet2) ?? 0;
+    // With missing slots, allow one half-set to be short by 1 (but need at least 1 piece)
+    const shortfall = 2 - half1 + (2 - half2);
+    return half1 >= 1 && half2 >= 1 && shortfall <= missing;
   }
 
   return false;

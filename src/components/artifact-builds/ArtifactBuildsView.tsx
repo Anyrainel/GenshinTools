@@ -69,7 +69,6 @@ export function ArtifactBuildsView({
         />
       }
       triggerLabel={t.ui("computeFilters.title")}
-      className="pt-4"
     >
       {/* Content Area - Scrollable */}
       <div

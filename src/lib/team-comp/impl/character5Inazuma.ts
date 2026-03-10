@@ -10,8 +10,8 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Inazuma Characters
@@ -53,12 +53,12 @@ class YumemizukiMizuki extends CharacterBase {
     }
 
     if (this.constellation >= 2) {
-      // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to team
+      // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to party (excl Mizuki)
       buffs.push(
         new ScalingBuff(
           cbs(this, "C2", ["E"]),
           {
-            receiver: "team",
+            receiver: "otherOnField",
             filter: { elements: ["Pyro", "Hydro", "Cryo", "Electro"] },
           },
           [],
@@ -286,11 +286,19 @@ class RaidenShogun extends CharacterBase {
         1.0
       ),
       // E: Team Burst DMG bonus based on energy cost (0.3% per energy at all levels)
-      // Assume average 70 energy cost Q
-      new StatBuff(
-        cbs(this, "E", ["E"]),
-        { receiver: "onField", filter: { abilities: ["burst"] } },
-        [{ key: "dmg%", value: 0.003 * 70 }]
+      // Each character's own burst energy cost determines the bonus.
+      // e.g. 90 energy → 0.3% × 90 = 27%, 60 energy → 18%
+      ...this.teamMeta.characters.map(
+        (charId) =>
+          new StatBuff(
+            cbs(this, "E", ["E"]),
+            {
+              receiver: "onField",
+              charId,
+              filter: { abilities: ["burst"] },
+            },
+            [{ key: "dmg%", value: 0.003 * this.teamMeta.energies[charId] }]
+          )
       ),
     ];
     // C2: Q attacks ignore 60% DEF
@@ -303,10 +311,10 @@ class RaidenShogun extends CharacterBase {
         )
       );
     }
-    // C4: After Q, team (excl self) ATK +30%
+    // C4: After Q, all party members (excl Raiden) ATK +30%
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "otherOnField" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
@@ -333,7 +341,26 @@ class RaidenShogun extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    // E coordinated attack: Lv10 75.6%, Lv13 (C5+) 89.2%, every 0.9s over 25s ≈ 27 hits
+    const coordMult = this.constellation >= 5 ? 0.892 : 0.756;
+    const electroSkill = {
+      element: "Electro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
+      "raiden-coordinated": {
+        label: {
+          zh: "E协同攻击×27",
+          en: "E Coordinated ATK (×27)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(coordMult, electroSkill),
+            hits: 27,
+          },
+        ],
+      },
       "raiden-initial": {
         label: {
           zh: "Q初始斩",
@@ -644,6 +671,20 @@ class KamisatoAyato extends CharacterBase {
           },
         ],
       },
+      // C6: 2 extra Shunsuiken strikes at 450% ATK each, not affected by Namisen
+      ...(this.constellation >= 6
+        ? {
+            "ayato-c6-strikes": {
+              label: { zh: "6命额外瞬水剑×2", en: "C6 Extra Shunsuiken (×2)" },
+              parts: [
+                {
+                  formula: new DirectFormula(4.5, hydroTag),
+                  hits: 2,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -844,7 +885,7 @@ class Yoimiya extends CharacterBase {
         { key: "pyro%", value: 0.2 },
       ]),
       // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
-      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "team" }, [
+      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "otherOnField" }, [
         { key: "atk%", value: 0.2 },
       ]),
     ];

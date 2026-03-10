@@ -13,8 +13,9 @@ import {
   type StatSheet,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { CalcContext, DamageTag, DisplayPart, OptionDef } from "../types";
+import type { CalcContext, DamageTag, DisplayPart } from "../types";
 
 class ArlecchinoNormalFormula extends DirectFormula {
   constructor(
@@ -278,6 +279,22 @@ class Arlecchino extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 2
+        ? {
+            "arlecchino-c2-bloodfire": {
+              label: { zh: "2命厄月血火", en: "C2 Balemoon Bloodfire" },
+              parts: [
+                {
+                  formula: new DirectFormula(9.0, {
+                    element: "Pyro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   }
 }

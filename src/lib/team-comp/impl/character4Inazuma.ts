@@ -5,8 +5,8 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Inazuma Characters
@@ -47,8 +47,8 @@ class Kirara extends CharacterBase {
 @RegisterCharacter("shikanoin_heizou")
 class ShikanoinHeizou extends CharacterBase {
   readonly buffs = [
-    // P2: E hit → Team EM +80 for 10s
-    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "team" }, [
+    // P2: E hit → party (excl Heizou) EM +80 for 10s
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "otherOnField" }, [
       { key: "em", value: 80 },
     ]),
     // C1: After taking field, Normal ATK SPD +15% for 5s
@@ -114,8 +114,8 @@ class ShikanoinHeizou extends CharacterBase {
 const kukiOption = {
   label: { zh: "HP状态", en: "HP State" },
   choices: [
-    { value: "high", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
     { value: "low", label: { zh: "HP ≤ 50%", en: "HP ≤ 50%" } },
+    { value: "high", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
     { value: "critical", label: { zh: "HP < 25%", en: "HP < 25%" } },
   ] as const,
   default: "low",

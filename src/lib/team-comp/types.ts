@@ -142,6 +142,8 @@ export type BuffTarget = {
   regions?: Region[];
   /** If set, buff only applies to characters from these factions. */
   factions?: Faction[];
+  /** If set, buff only applies to the character with this ID. */
+  charId?: string;
 };
 
 // ─── Reactions (re-exported from @/data/types — canonical definitions live there) ───
@@ -355,58 +357,5 @@ export type CharCompConfig = {
 };
 
 // ─── Combat Options (Schema-Driven) ───
-
-/**
- * Structural interface for TeamMeta, used by option predicates.
- * Avoids circular imports between types.ts and damageModels.ts.
- */
-export interface ITeamMeta {
-  characters: string[];
-  constellations: Record<string, number>;
-  elements: Record<string, Element | undefined>;
-  enemyElementAura?: Element;
-  hasReaction(reaction: ReactionType, charId?: string): boolean;
-  countByElement(element: Element): number;
-}
-
-/** A single selectable value in an OptionDef. */
-export type OptionChoice = {
-  value: string;
-  label: I18nLabel;
-  /** If provided, this choice is disabled when the predicate returns false. */
-  when?: (teamMeta: ITeamMeta) => boolean;
-};
-
-/**
- * Declarative option schema for a provider (character, weapon, or artifact set).
- * Defines a single select control with labeled choices.
- * UI renders as a toggle (2 choices) or dropdown (3+).
- */
-export type OptionDef = {
-  label: I18nLabel;
-  choices: readonly OptionChoice[];
-  default: string;
-};
-
-/**
- * Infer the typed option value union from an `as const` OptionDef.
- * Usage: `type DurinOption = InferOption<typeof durinOption>; // "dps" | "support"`
- */
-export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
-
-/**
- * User-selected combat options, keyed by provider ID (charId or weaponId).
- * Each value is the selected option string for that provider.
- * Providers with no entry get `""` → falls back to schema default via `resolveOption()`.
- *
- * Changing one entity's option only requires reconstructing that entity's CharBuild.
- *
- * Example:
- * ```
- * const opts: CombatOpts = {
- *   durin: "support",
- *   the_widsith: "em",
- * };
- * ```
- */
-export type CombatOpts = Record<string, string>;
+// OptionChoice, OptionDef, InferOption, CombatOpts live in damageModels.ts
+// (co-located with TeamMeta and resolveOption that consume them).

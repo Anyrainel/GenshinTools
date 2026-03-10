@@ -1,7 +1,7 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ══════════════════════════
 // 5★ Polearms

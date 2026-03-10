@@ -1,7 +1,8 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
-import type { OptionDef, StatKey } from "../types";
+import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Bows
@@ -140,10 +141,10 @@ class ScionOfTheBlazingSun extends WeaponBase {
 const fadingTwilightOption = {
   label: { zh: "随时间转换状态", en: "State" },
   choices: [
+    { value: "average", label: { zh: "期望平均", en: "Average" } },
     { value: "evengleam", label: { zh: "夕暮", en: "Evengleam" } },
     { value: "afterglow", label: { zh: "流霞", en: "Afterglow" } },
     { value: "dawnblaze", label: { zh: "朝辉", en: "Dawnblaze" } },
-    { value: "average", label: { zh: "期望平均", en: "Average" } },
   ] as const,
   default: "average",
 } satisfies OptionDef;

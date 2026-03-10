@@ -1,8 +1,8 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import type { ArtifactData, ReactionType } from "@/data/types";
+import type { ArtifactData, Element, ReactionType } from "@/data/types";
+import type { CombatOpts } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
-  CombatOpts,
   ComboFormula,
   DamageResult,
   ReactionOverride,
@@ -38,6 +38,8 @@ export interface Team {
   combos: ComboFormula[];
   /** Active combo ID, null = single formula mode */
   selectedCombo: string | null;
+  /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
+  enemyElementAura?: Element;
 }
 
 /** Importable/exportable team composition envelope. Backwards-compatible with raw Team[]. */

@@ -17,7 +17,7 @@ import { allSlots } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
-import { Sword } from "lucide-react";
+import { Pencil, Sword } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { StatDisplay } from "./StatDisplay";
@@ -25,9 +25,10 @@ import { StatDisplay } from "./StatDisplay";
 interface CharacterCardProps {
   char: CharacterData;
   score: ArtifactScoreResult;
+  onEdit?: () => void;
 }
 
-function CharacterCardComponent({ char, score }: CharacterCardProps) {
+function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
   const { t } = useLanguage();
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const isVeryNarrow = useMediaQuery("(max-width: 560px)");
@@ -137,6 +138,17 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
             </CharacterInfo>
           </div>
 
+          {/* Edit Button */}
+          {onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              className="flex-shrink-0 w-7 h-7 rounded-md bg-primary/20 hover:bg-primary/30 border border-primary/20 flex items-center justify-center transition-colors self-end mb-1 z-10"
+            >
+              <Pencil className="w-3.5 h-3.5 text-primary drop-shadow-sm" />
+            </button>
+          )}
+
           {/* Weapon Icon */}
           <Tooltip>
             {/* ... tooltip trigger ... */}
@@ -229,7 +241,7 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
         </div>
 
         {/* Artifact Score */}
-        {artifactScore.substatScore.isComplete && (
+        {artifactScore.substatScore.subScore > 0 && (
           <ArtifactScoreHoverCard
             score={artifactScore}
             characterId={char.key}
@@ -280,10 +292,18 @@ function CharacterCardComponent({ char, score }: CharacterCardProps) {
                     compact={isArtifactCompact}
                   />
                 ) : (
-                  <div className="flex-1 flex items-center justify-center py-4">
-                    <div className="w-10 h-10 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center text-sm text-muted-foreground/50 text-center px-1">
+                  <div
+                    className={cn(
+                      "flex-1 flex flex-col items-center justify-center gap-1",
+                      isArtifactCompact ? "min-h-[100px]" : "min-h-[136px]"
+                    )}
+                  >
+                    <span className="text-sm text-muted-foreground font-medium">
                       {t.slot(slot)}
-                    </div>
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {t.ui("accountData.unequipped")}
+                    </span>
                   </div>
                 )}
               </div>

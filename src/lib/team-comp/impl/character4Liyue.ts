@@ -5,8 +5,9 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef, StatKey } from "../types";
+import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Liyue Characters
@@ -65,12 +66,14 @@ class LanYan extends CharacterBase {
     return buffs;
   }
 
-  // E ring: Lv10 173.3%, Lv13 (C3+) 204.5%; hits 2 per use
-  // C1 grants an extra charge (use count), not extra hits per use
+  // E ring: Lv10 173.3%, Lv13 (C3+) 204.5%; hits 2 per ring
+  // C1 adds a second Feathermoon Ring, doubling hits. C6 grants an extra E charge.
   // Q: Lv10 433.9% ×3 hits, Lv13 (C5+) 512.3% ×3 hits
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 2.045 : 1.733;
     const qMult = this.constellation >= 5 ? 5.123 : 4.339;
+    // C1: 2 charges of E, but each cast still hit 1 time
+    // E: propagate to 2 additional targets, but we simulate single target damage, so hit is 1
     return {
       "lanyan-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -81,7 +84,7 @@ class LanYan extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
-            hits: 2,
+            hits: 1,
           },
         ],
       },
@@ -575,8 +578,8 @@ class Xingqiu extends CharacterBase {
 const yanfeiOption = {
   label: { zh: "敌人HP状态", en: "Enemy HP" },
   choices: [
-    { value: "above-50", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
     { value: "below-50", label: { zh: "HP < 50%", en: "HP < 50%" } },
+    { value: "above-50", label: { zh: "HP ≥ 50%", en: "HP ≥ 50%" } },
   ] as const,
   default: "below-50",
 } satisfies OptionDef;

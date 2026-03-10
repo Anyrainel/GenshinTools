@@ -214,6 +214,16 @@ class Diona extends CharacterBase {
 @RegisterCharacter("noelle")
 class Noelle extends CharacterBase {
   readonly buffs = [
+    // C2: Charged Attack DMG +15%
+    ...(this.constellation >= 2
+      ? [
+          new StatBuff(
+            cbs(this, "C2", []),
+            { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : []),
     // Q: DEF → ATK conversion: 72% (Lv10) / 85% (Lv13 C5+), C6 adds +50%
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
@@ -273,9 +283,11 @@ class Fischl extends CharacterBase {
     return buffs;
   })();
 
-  // E: Oz tick DMG Lv10 160%, Lv13 (C3+) 189%, 10 ticks over duration
+  // E: Oz tick DMG Lv10 160%, Lv13 (C3+) 189%
+  // C6 extends Oz duration by 2s (10s → 12s), so 12 hits instead of 10
   protected readonly formulaMap = (() => {
     const ozTickMult = this.constellation >= 3 ? 1.89 : 1.6;
+    const ozHits = this.constellation >= 6 ? 12 : 10;
     const tag = {
       element: "Electro" as const,
       ability: "skill" as const,
@@ -284,7 +296,13 @@ class Fischl extends CharacterBase {
     return {
       "fischl-oz-total": {
         label: { zh: "E奥兹连击", en: "E Oz Combo" },
-        parts: [{ formula: new DirectFormula(ozTickMult, tag), hits: 10 }],
+        parts: [
+          { formula: new DirectFormula(ozTickMult, tag), hits: ozHits },
+          // C6: Oz coordinated attack, 30% ATK Electro per active character hit
+          ...(this.constellation >= 6
+            ? [{ formula: new DirectFormula(0.3, tag), hits: ozHits }]
+            : []),
+        ],
       },
     };
   })();
@@ -352,12 +370,12 @@ class Rosaria extends CharacterBase {
 
   // Q initial: 2 separate hits with different multipliers — must NOT be summed (S3)
   // Lv10: 187%, 274%; Lv13 (C5+): 221%, 323%
-  // Q ice lance tick: Lv10 238%, Lv13 (C5+) 280%; base 6 ticks, C2 extends +4s → 9 ticks
+  // Q ice lance tick: Lv10 238%, Lv13 (C5+) 280%; KQM: 2s tick interval → 4 ticks (8s) / 6 ticks (C2, 12s)
   protected readonly formulaMap = (() => {
     const init1 = this.constellation >= 5 ? 2.21 : 1.87;
     const init2 = this.constellation >= 5 ? 3.23 : 2.74;
     const tickMult = this.constellation >= 5 ? 2.8 : 2.38;
-    const tickCount = this.constellation >= 2 ? 9 : 6;
+    const tickCount = this.constellation >= 2 ? 6 : 4;
     const cryoBurst = {
       element: "Cryo" as const,
       ability: "burst" as const,
@@ -602,11 +620,12 @@ class Kaeya extends CharacterBase {
   ];
 
   // E: Lv10 344%, Lv13 (C3+) 406%
-  // Q icicle: Lv10 140%, Lv13 (C5+) 165%, 3 icicles ×~10 hits
+  // Q icicle: Lv10 140%, Lv13 (C5+) 165%
+  // KQM data: ~13 total hits (C0, 3 icicles stationary), ~17 hits (C6, 4 icicles)
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 4.06 : 3.44;
     const qMult = this.constellation >= 5 ? 1.65 : 1.4;
-    const icicleCount = this.constellation >= 6 ? 4 : 3;
+    const qHits = this.constellation >= 6 ? 17 : 13;
     return {
       "kaeya-skill": {
         label: { zh: "E伤害", en: "E Skill" },
@@ -622,8 +641,8 @@ class Kaeya extends CharacterBase {
       },
       "kaeya-burst": {
         label: {
-          zh: `Q冰棱×${icicleCount * 10}`,
-          en: `Q Icicles (${icicleCount}×10)`,
+          zh: `Q冰棱×${qHits}`,
+          en: `Q Icicles ×${qHits}`,
         },
         parts: [
           {
@@ -632,7 +651,7 @@ class Kaeya extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
-            hits: icicleCount * 10,
+            hits: qHits,
           },
         ],
       },

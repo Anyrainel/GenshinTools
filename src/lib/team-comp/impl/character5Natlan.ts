@@ -10,10 +10,8 @@ import {
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
-  resolveOption,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -21,74 +19,37 @@ import type { OptionDef } from "../types";
 
 @RegisterCharacter("varesa")
 class Varesa extends CharacterBase {
-  readonly buffs = (() => {
-    const buffs: StatBuff[] = [
-      // P1: Fiery Passion Tag-Team Triple Jump → Plunge ground impact +180% ATK
-      new ScalingBuff(
-        cbs(this, "P1", ["E"]),
-        { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
-        [],
-        "atk",
-        "baseDmg",
-        1.8
-      ),
-      // P2: Nightsoul Burst → Varesa's ATK +35% (max 2 stacks = 70%)
-      new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
-        { key: "atk%", value: 0.7 },
-      ]),
-    ];
-
-    // C4: Burst in Fiery Passion/Apex Drive → DMG +100%
-    // Volcano Kablam's damage is "considered Plunging Attack DMG", so include "plunge" too.
-    // Also includes "burst" for the Fiery Passion Flying Kick Q variant.
-    if (this.constellation >= 4) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C4", ["Q"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["burst", "plunge"] },
-          },
-          [{ key: "dmg%", value: 1.0 }]
-        )
-      );
-      // C4 Diligent Refinement branch — only active without Fiery Passion/Apex Drive;
-      // low-priority branch, model but gate via CombatOpts if needed.
-      // In normal Varesa DPS rotation (Fiery Passion/Apex Drive active), this branch
-      // does NOT apply. Included for completeness; the +100% burst branch above takes
-      // precedence in peak-damage scenarios.
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C4", ["Q"]),
-          { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
-          [],
-          "atk",
-          "baseDmg",
-          5.0,
-          20000
-        )
-      );
-    }
-
+  readonly buffs = [
+    // P1: Fiery Passion Tag-Team Triple Jump → Plunge ground impact +180% ATK
+    new ScalingBuff(
+      cbs(this, "P1", ["E"]),
+      { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
+      [],
+      "atk",
+      "baseDmg",
+      1.8
+    ),
+    // P2: Nightsoul Burst → Varesa's ATK +35% (max 2 stacks = 70%)
+    new StatBuff(cbs(this, "P2", ["nightsoul-burst"]), { receiver: "self" }, [
+      { key: "atk%", value: 0.7 },
+    ]),
     // C6: Plunge and Burst → CR +10%, CD +100%
-    if (this.constellation >= 6) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "C6", ["Q", "plunge"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["plunge", "burst"] },
-          },
-          [
-            { key: "cr", value: 0.1 },
-            { key: "cd", value: 1.0 },
-          ]
-        )
-      );
-    }
-
-    return buffs;
-  })();
+    ...(this.constellation >= 6
+      ? [
+          new StatBuff(
+            cbs(this, "C6", ["Q", "plunge"]),
+            {
+              receiver: "selfOnField",
+              filter: { abilities: ["plunge", "burst"] },
+            },
+            [
+              { key: "cr", value: 0.1 },
+              { key: "cd", value: 1.0 },
+            ]
+          ),
+        ]
+      : []),
+  ];
 
   // Fiery Passion High Plunge (Lv10): 552.0%
   // Fiery Passion High Plunge (Lv13 C5+): 669.0%
@@ -107,6 +68,23 @@ class Varesa extends CharacterBase {
               ability: "plunge",
               reaction: "none",
             }),
+            // C4: Diligent Refinement — no Fiery Passion → +500% ATK as baseDmg (cap 20000)
+            ...(this.constellation >= 4
+              ? {
+                  bespokeBuff: new ScalingBuff(
+                    cbs(this, "C4", ["Q"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["plunge"] },
+                    },
+                    [],
+                    "atk",
+                    "baseDmg",
+                    5.0,
+                    20000
+                  ),
+                }
+              : {}),
           },
         ],
       },
@@ -123,6 +101,19 @@ class Varesa extends CharacterBase {
               ability: "plunge",
               reaction: "none",
             }),
+            // C4: Fiery Passion/Apex Drive active → this Q instance +100% DMG
+            ...(this.constellation >= 4
+              ? {
+                  bespokeBuff: new StatBuff(
+                    cbs(this, "C4", ["Q"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["plunge"] },
+                    },
+                    [{ key: "dmg%", value: 1.0 }]
+                  ),
+                }
+              : {}),
           },
         ],
       },
@@ -240,10 +231,13 @@ class Citlali extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    // E Obsidian Tzitzimitl initial hit: Lv10 131.3%, Lv13 (C3+) 155%
+    const eInitMult = this.constellation >= 3 ? 1.55 : 1.313;
     return {
       "citlali-e-total": {
         label: { zh: "E总伤害", en: "E Total" },
         parts: [
+          { formula: new DirectFormula(eInitMult, skillTag) },
           { formula: new DirectFormula(eStormMult, skillTag), hits: eHits },
           // C4: Obsidian Spiritvessel Skull (1800% EM, once per 8s)
           ...(this.constellation >= 4
@@ -547,6 +541,10 @@ class Chasca extends CharacterBase {
             .map(() => ({
               formula: new DirectFormula(shiningMult, baseTag),
             })),
+          // C2: Shining Shell hit → 400% ATK AoE (charged DMG), once per Multitarget Fire
+          ...(this.constellation >= 2
+            ? [{ formula: new DirectFormula(4.0, baseTag) }]
+            : []),
         ],
       },
       "chasca-burst": {
@@ -566,6 +564,18 @@ class Chasca extends CharacterBase {
             .map(() => ({
               formula: new DirectFormula(qMult, qTag),
             })),
+          // C4: Radiant Shell hit → 400% ATK AoE (charged DMG), once per Q cast
+          ...(this.constellation >= 4
+            ? [
+                {
+                  formula: new DirectFormula(4.0, {
+                    element: "Anemo" as const,
+                    ability: "charge" as const,
+                    reaction: "none" as const,
+                  }),
+                },
+              ]
+            : []),
         ],
       },
     };

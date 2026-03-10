@@ -1,7 +1,15 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
-import type { ReactionType } from "@/data/types";
+import { charactersById, elementResourcesByName } from "@/data/constants";
+import type { Element, ReactionType } from "@/data/types";
+import { elements } from "@/data/types";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type {
@@ -9,7 +17,7 @@ import type {
   I18nLabel,
   ReactionOverride,
 } from "@/lib/team-comp/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Minus, Plus, Swords } from "lucide-react";
 import { ReactionSelector } from "./ReactionSelector";
@@ -44,6 +52,80 @@ interface FormulaSelectorCardProps {
   t: ReturnType<typeof useLanguage>["t"];
 }
 
+function EnemyAuraSelect({
+  value,
+  onChange,
+  label,
+  t,
+}: {
+  value?: Element;
+  onChange: (el: Element | undefined) => void;
+  label: string;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  return (
+    <div className="flex-1">
+      <Select
+        value={value ?? "__none__"}
+        onValueChange={(v) =>
+          onChange(v === "__none__" ? undefined : (v as Element))
+        }
+      >
+        <SelectTrigger
+          className={cn(
+            "h-auto rounded-lg border-2 px-3 py-2.5 shadow-none border-border/30 bg-black/5",
+            value && "ring-2 ring-primary/50"
+          )}
+        >
+          <div className="flex items-center justify-center gap-3 w-full">
+            <span className="text-base md:text-lg font-bold text-foreground/80 shrink-0">
+              {label}
+            </span>
+            {value ? (
+              <>
+                <img
+                  src={getAssetUrl(elementResourcesByName[value]?.imagePath)}
+                  alt={value}
+                  className="w-6 h-6"
+                />
+                <span
+                  className={cn(
+                    "text-base md:text-lg font-bold",
+                    getElementColor(value, "text")
+                  )}
+                >
+                  {t.element(value)}
+                </span>
+              </>
+            ) : (
+              <span className="text-base md:text-lg font-bold text-foreground/80 pl-9">
+                {t.ui("teamComp.enemyAuraNone")}
+              </span>
+            )}
+          </div>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="__none__">
+            {t.ui("teamComp.enemyAuraNone")}
+          </SelectItem>
+          {elements.map((el) => (
+            <SelectItem key={el} value={el}>
+              <div className="flex items-center gap-2">
+                <img
+                  src={getAssetUrl(elementResourcesByName[el]?.imagePath)}
+                  alt={el}
+                  className="w-6 h-6"
+                />
+                <span>{t.element(el)}</span>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export function FormulaSelectorCard({
   team,
   effectiveTeam,
@@ -65,12 +147,24 @@ export function FormulaSelectorCard({
     <Card className={CARD_CLS}>
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <h3 className={CARD_TITLE_CLS}>
-          <Swords className="w-4 h-4 opacity-70" />
-          <span>{t.ui("teamComp.formulaSelection")}</span>
+          <span
+            data-tour-step-id="tod-formula"
+            className="inline-flex items-center gap-2"
+          >
+            <Swords className="w-4 h-4 opacity-70" />
+            <span>{t.ui("teamComp.formulaSelection")}</span>
+          </span>
         </h3>
       </CardHeader>
       {allFormulas.length > 0 && (
-        <div className="flex gap-2 px-2 md:px-4 py-2 border-b border-border/20">
+        <div className="flex flex-col md:flex-row gap-2 px-2 md:px-4 py-2 border-b border-border/20">
+          {/* Enemy Element Aura — dropdown select */}
+          <EnemyAuraSelect
+            value={team.enemyElementAura}
+            onChange={(el) => updateTeam(team.id, { enemyElementAura: el })}
+            label={t.ui("teamComp.enemyAura")}
+            t={t}
+          />
           {(["single", "combo"] as const).map((mode) => {
             const selected = formulaMode === mode;
             return (
@@ -128,6 +222,11 @@ export function FormulaSelectorCard({
             );
           })}
         </div>
+      )}
+      {formulaMode === "combo" && (
+        <p className="text-xs text-muted-foreground/70 px-2 md:px-4 py-1.5 border-b border-border/20">
+          {t.ui("teamComp.comboDisclaimer")}
+        </p>
       )}
       <CardContent className={CARD_BODY_CLS}>
         {allFormulas.length > 0 ? (

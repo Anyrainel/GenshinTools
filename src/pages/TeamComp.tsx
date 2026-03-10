@@ -236,6 +236,14 @@ export default function TeamCompPage() {
       <PageLayout
         onClearData={clearActiveTeam}
         clearLabel={t.ui("teamComp.clearTeamData")}
+        actions={[
+          {
+            key: "help",
+            icon: HelpCircle,
+            label: t.ui("buttons.help"),
+            onTrigger: () => tour.start("team-opt-detail"),
+          },
+        ]}
       >
         <ScrollLayout className="py-8 mt-2">
           <TeamOptDetail team={activeTeam} onBack={() => setActiveTeam(null)} />

@@ -8,9 +8,9 @@ import {
   StatBuff,
   resolveOption,
 } from "../damageModels";
-import type { TeamMeta } from "../damageModels";
+import type { OptionDef, TeamMeta } from "../damageModels";
 import { getReactionAuraElements } from "../helpers";
-import type { OptionDef, StatEntry, StatKey } from "../types";
+import type { StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // Artifact 4-Piece Set Bonuses
@@ -20,10 +20,15 @@ const blizzardStrayerOption = {
   label: { zh: "冰风4件套", en: "Blizzard 4pc" },
   choices: [
     {
+      value: "40",
+      label: { zh: "+40%暴击 (冻结)", en: "+40% CR (Frozen)" },
+      when: (tm) => tm.hasReaction("frozen"),
+    },
+    {
       value: "20",
       label: { zh: "+20%暴击 (挂冰)", en: "+20% CR (Cryo-aff.)" },
+      when: (tm) => tm.countByElement("Cryo") >= 1,
     },
-    { value: "40", label: { zh: "+40%暴击 (冻结)", en: "+40% CR (Frozen)" } },
   ] as const,
   default: "40",
 } satisfies OptionDef;

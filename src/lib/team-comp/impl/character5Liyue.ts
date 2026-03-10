@@ -6,14 +6,13 @@ import {
   TransformFormula,
 } from "../damageFormulas";
 import {
-  type BespokeBuffDef,
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Liyue Characters
@@ -258,11 +257,14 @@ class Zibai extends CharacterBase {
                     },
                     "def"
                   ),
-                  bespokeBuff: {
-                    source: cbs(this, "C1", ["E"]),
-                    entries: [{ key: "reactionDmg%", value: 2.2 }],
-                    filter: { reactions: ["lunarCrystallize"] },
-                  } satisfies BespokeBuffDef,
+                  bespokeBuff: new StatBuff(
+                    cbs(this, "C1", ["E"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { reactions: ["lunarCrystallize"] },
+                    },
+                    [{ key: "reactionDmg%", value: 2.2 }]
+                  ),
                 },
               ],
             },
@@ -300,20 +302,20 @@ const xianyunOption = {
   label: { zh: "风翎层数", en: "Storm Pinion Stacks" },
   choices: [
     {
-      value: "1",
-      label: { zh: "1 层 (+4% 暴击率)", en: "1 stack (+4% Crit Rate)" },
-    },
-    {
-      value: "2",
-      label: { zh: "2 层 (+6% 暴击率)", en: "2 stacks (+6% Crit Rate)" },
+      value: "4",
+      label: { zh: "4 层 (+10% 暴击率)", en: "4 stacks (+10% Crit Rate)" },
     },
     {
       value: "3",
       label: { zh: "3 层 (+8% 暴击率)", en: "3 stacks (+8% Crit Rate)" },
     },
     {
-      value: "4",
-      label: { zh: "4 层 (+10% 暴击率)", en: "4 stacks (+10% Crit Rate)" },
+      value: "2",
+      label: { zh: "2 层 (+6% 暴击率)", en: "2 stacks (+6% Crit Rate)" },
+    },
+    {
+      value: "1",
+      label: { zh: "1 层 (+4% 暴击率)", en: "1 stack (+4% Crit Rate)" },
     },
   ] as const,
   default: "4",
@@ -351,7 +353,7 @@ class Xianyun extends CharacterBase {
     // C2: After E → Xianyun ATK +20%
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
           { key: "atk%", value: 0.2 },
         ])
       );
@@ -482,6 +484,23 @@ class Baizhu extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 2
+        ? {
+            "baizhu-c2-sprite": {
+              label: { zh: "2命游丝徵灵·切×3", en: "C2 Gossamer Splice (×3)" },
+              parts: [
+                {
+                  formula: new DirectFormula(2.5, {
+                    element: "Dendro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                  hits: 3,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -559,6 +578,26 @@ class Yelan extends CharacterBase {
         ],
       },
     };
+
+    if (this.constellation >= 2) {
+      // C2: Extra water arrow fires once per 1.8s during Q (~8 procs over 15s), 14% Max HP each
+      formulas["yelan-c2-arrow"] = {
+        label: {
+          zh: "2命额外水箭×8",
+          en: "C2 Extra Arrow (x8)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(
+              0.14,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+            hits: 8,
+          },
+        ],
+      };
+    }
 
     if (this.constellation >= 6) {
       formulas["yelan-c6-barb"] = {
@@ -741,11 +780,12 @@ class Zhongli extends CharacterBase {
 const huTaoOption = {
   label: { zh: "生命值状态", en: "HP State" },
   choices: [
-    { value: "high", label: { zh: "生命值 > 50%", en: "HP > 50%" } },
     { value: "low", label: { zh: "生命值 ≤ 50%", en: "HP ≤ 50%" } },
+    { value: "high", label: { zh: "生命值 > 50%", en: "HP > 50%" } },
     {
       value: "1",
       label: { zh: "生命值为 1 (C6触发)", en: "HP = 1 (C6 Triggered)" },
+      when: (tm) => (tm.constellations.hu_tao ?? 0) >= 6,
     },
   ] as const,
   default: "low",
@@ -854,8 +894,31 @@ class HuTao extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("shenhe")
+const shenheOption = {
+  label: { zh: "E技能类型", en: "E Skill Type" },
+  choices: [
+    {
+      value: "press",
+      label: {
+        zh: "点按 (技能/爆发+15%)",
+        en: "Press (Skill/Burst +15%)",
+      },
+    },
+    {
+      value: "hold",
+      label: {
+        zh: "长按 (普攻/重击/下落+15%)",
+        en: "Hold (Normal/Charged/Plunge +15%)",
+      },
+    },
+  ] as const,
+  default: "press",
+} satisfies OptionDef;
+
+@RegisterCharacter("shenhe", shenheOption)
 class Shenhe extends CharacterBase {
+  private readonly eType = resolveOption(shenheOption, this.option);
+
   readonly buffs = [
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
@@ -873,10 +936,18 @@ class Shenhe extends CharacterBase {
       { receiver: "onField", filter: { elements: ["Cryo"] } },
       [{ key: "cryo%", value: 0.15 }]
     ),
-    // P2: Press E → team Skill/Burst DMG +15%
+    // P2: Press E → team Skill/Burst DMG +15%; Hold E → team Normal/Charged/Plunge DMG +15%
     new StatBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "team", filter: { abilities: ["skill", "burst"] } },
+      {
+        receiver: "team",
+        filter: {
+          abilities:
+            this.eType === "hold"
+              ? ["normal", "charge", "plunge"]
+              : ["skill", "burst"],
+        },
+      },
       [{ key: "dmg%", value: 0.15 }]
     ),
     // Q: Enemies in field lose 15% Cryo RES and Physical RES

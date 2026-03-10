@@ -353,14 +353,7 @@ export function ArtifactDataHoverCard({
   if (isMobile) {
     return (
       <Drawer>
-        <DrawerTrigger asChild>
-          <button
-            type="button"
-            className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer"
-          >
-            {children}
-          </button>
-        </DrawerTrigger>
+        <DrawerTrigger asChild>{children}</DrawerTrigger>
         <DrawerContent className="bg-slate-950/95 border-t border-white/10">
           {/* Accessible title/description (visually hidden) */}
           <DrawerTitle className="sr-only">
@@ -380,16 +373,7 @@ export function ArtifactDataHoverCard({
   // Desktop: Use HoverCard with click-to-pin
   return (
     <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
-      <HoverCardTrigger asChild>
-        <button
-          ref={triggerRef}
-          type="button"
-          className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer"
-          onClick={handleClick}
-        >
-          {children}
-        </button>
-      </HoverCardTrigger>
+      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent
         ref={contentRef}
         side={side}
@@ -516,16 +500,7 @@ export function ArtifactComparisonHoverCard({
   // Desktop: Use HoverCard with click-to-pin
   return (
     <HoverCard openDelay={200} open={isOpen} onOpenChange={handleOpenChange}>
-      <HoverCardTrigger asChild>
-        <button
-          ref={triggerRef}
-          type="button"
-          className="appearance-none bg-transparent border-none p-0 m-0 cursor-pointer text-left w-full"
-          onClick={handleClick}
-        >
-          {children}
-        </button>
-      </HoverCardTrigger>
+      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
       <HoverCardContent
         ref={contentRef}
         side="top"

@@ -350,6 +350,23 @@ class Sigewinne extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 4
+        ? {
+            "sigewinne-burst-c4": {
+              label: { zh: "4命Q伤害×14", en: "C4 Q (×14)" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    qMult,
+                    { element: "Hydro", ability: "burst", reaction: "none" },
+                    "hp"
+                  ),
+                  hits: 14,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -553,14 +570,15 @@ class Furina extends CharacterBase {
       ),
       // Q: Let the People Rejoice — team DMG% based on Fanfare stacks
       // Per stack Lv10: 0.25%, Lv13 (C3+): 0.31%
-      // Max stacks: 300 (C1: 400). Assume ~250 stacks in practice.
+      // Max stacks: 300 (C1: 400).
+      // C0: starts at 0, ramps over 18s → ~250 avg stacks.
+      // C1: starts at 150 (instant), cap 400, healing bonus feedback → ~350 avg stacks.
       new StatBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "team" },
         (() => {
           const perStack = this.constellation >= 3 ? 0.0031 : 0.0025;
-          const maxStacks = this.constellation >= 1 ? 400 : 300;
-          const avgStacks = Math.min(250, maxStacks);
+          const avgStacks = this.constellation >= 1 ? 350 : 250;
           return [{ key: "dmg%", value: perStack * avgStacks }];
         })()
       ),
@@ -771,11 +789,11 @@ class Neuvillette extends CharacterBase {
     };
     return {
       "neuvillette-judgment": {
-        label: { zh: "重击×10", en: "CA (×10)" },
+        label: { zh: "重击×8", en: "CA (×8)" },
         parts: [
           {
             formula: new DirectFormula(tickMult, chargeTag, "hp"),
-            hits: 10,
+            hits: 8,
           },
         ],
       },
@@ -783,8 +801,8 @@ class Neuvillette extends CharacterBase {
         ? {
             "neuvillette-c6-currents": {
               label: {
-                zh: "6命 重击×6",
-                en: "C6 CA (×6)",
+                zh: "6命 额外×6",
+                en: "C6 Extra (×6)",
               },
               parts: [
                 {
@@ -815,6 +833,13 @@ class Wriothesley extends CharacterBase {
       new StatBuff(cbs(this, "P2", ["E"]), { receiver: "selfOnField" }, [
         { key: "atk%", value: 0.3 },
       ]),
+      // E: Enhanced Repelling Fist deals 170.3% of Normal ATK DMG (baseDmg% zone)
+      // "造成原本170.3%的伤害" → baseDmg% +0.703
+      new StatBuff(
+        cbs(this, "E", ["E"]),
+        { receiver: "selfOnField", filter: { abilities: ["normal"] } },
+        [{ key: "baseDmg%", value: 0.703 }]
+      ),
     ];
 
     // C2: Each P2 stack gives +40% Q DMG (max 5 = 200%)
@@ -860,7 +885,7 @@ class Wriothesley extends CharacterBase {
   })();
 
   // E Enhanced Normal combo: 5 distinct hits (N4 has 2 hits)
-  // E enhancement ratio: 1.703 (Lv10 E, not constellation-boosted)
+  // E enhancement (170.3%) modeled as baseDmg% buff above (U4 zone correctness)
   // Lv10 NA (no C3): N1=1.055, N2=1.024, N3=1.329, N4=0.749(×2), N5=1.794
   // Lv13 NA (C3+):   N1=1.278, N2=1.241, N3=1.610, N4=0.908(×2), N5=2.174
   // Rebuke CA (Lv10): 275.3%
@@ -869,13 +894,12 @@ class Wriothesley extends CharacterBase {
   // Q Burst (Lv10): 5 × 228.96% + Surging Blade 76.32%
   // Q Burst (Lv13 C5+): 5 × 270.30% + Surging Blade 90.10%
   protected readonly formulaMap = (() => {
-    const eMult = 1.703;
     const isC3 = this.constellation >= 3;
-    const n1 = (isC3 ? 1.278 : 1.055) * eMult;
-    const n2 = (isC3 ? 1.241 : 1.024) * eMult;
-    const n3 = (isC3 ? 1.61 : 1.329) * eMult;
-    const n4 = (isC3 ? 0.908 : 0.749) * eMult;
-    const n5 = (isC3 ? 2.174 : 1.794) * eMult;
+    const n1 = isC3 ? 1.278 : 1.055;
+    const n2 = isC3 ? 1.241 : 1.024;
+    const n3 = isC3 ? 1.61 : 1.329;
+    const n4 = isC3 ? 0.908 : 0.749;
+    const n5 = isC3 ? 2.174 : 1.794;
     const cMult = isC3 ? 3.25 : 2.753;
     const cHits = this.constellation >= 6 ? 2 : 1; // C6: additional icicle at 100% base DMG
     const qHitMult = this.constellation >= 5 ? 2.703 : 2.2896;
@@ -942,17 +966,6 @@ class Wriothesley extends CharacterBase {
 class Lyney extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
-    // P1: Perilous Performance → Pyrotechnic Strike gains flat baseDmg = 80% ATK
-    buffs.push(
-      new ScalingBuff(
-        cbs(this, "P1", ["charge"]),
-        { receiver: "selfOnField", filter: { abilities: ["charge"] } },
-        [],
-        "atk",
-        "baseDmg",
-        0.8
-      )
-    );
     // P2: DMG to Pyro-affected enemies +60%, +20% per Pyro teammate (excl self), cap 100%
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
@@ -986,8 +999,19 @@ class Lyney extends CharacterBase {
   protected readonly formulaMap = (() => {
     const propMult = this.constellation >= 3 ? 3.672 : 3.11;
     const strikeMult = this.constellation >= 3 ? 4.505 : 3.816;
+    // P1: Perilous Performance → Pyrotechnic Strike gains flat baseDmg = 80% ATK
+    const p1Buff = new ScalingBuff(
+      cbs(this, "P1", ["charge"]),
+      { receiver: "selfOnField", filter: { abilities: ["charge"] } },
+      [],
+      "atk",
+      "baseDmg",
+      0.8
+    );
     // E has no constellation level boost (C3=Normal, C5=Q), always use Lv10
     const eMult = 3.01 + 0.958 * 5;
+
+    const c6StrikeMult = this.constellation >= 3 ? 3.604 : 3.0528;
 
     return {
       "lyney-prop": {
@@ -1011,6 +1035,7 @@ class Lyney extends CharacterBase {
               ability: "charge",
               reaction: "none",
             }),
+            bespokeBuff: p1Buff,
           },
         ],
       },
@@ -1026,6 +1051,23 @@ class Lyney extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 6
+        ? {
+            "lyney-c6-strike": {
+              label: { zh: "6命 礼花重奏", en: "C6 Strike Reprised" },
+              parts: [
+                {
+                  formula: new DirectFormula(c6StrikeMult, {
+                    element: "Pyro",
+                    ability: "charge",
+                    reaction: "none",
+                  }),
+                  bespokeBuff: p1Buff,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }

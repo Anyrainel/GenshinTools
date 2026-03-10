@@ -14,32 +14,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: raiden-e-coordinated
-  entity: raiden_shogun
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    Eye of Stormy Judgment coordinated attack fires every 0.9s based on ally actions.
-  detail: >
-    Periodic proc triggered by ally damage events. Complex combat state interaction
-    requiring per-hit tracking across the team.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
-- id: ayato-c6-extra-strikes
-  entity: kamisato_ayato
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    C6 grants 2 extra Shunsuiken strikes on first post-E hit.
-  detail: >
-    One-time bonus on first hit after E activation. Low overall DPS contribution
-    relative to modeling complexity.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
-
 - id: kokomi-c1-extra-fish
   entity: sangonomiya_kokomi
   rule: S8

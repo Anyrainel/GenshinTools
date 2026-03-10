@@ -181,7 +181,7 @@ export function CharacterDetailPanel({
   const owned = isOwned("character", characterId);
   const effectiveOwned = !unreleased && owned;
   const constellation = useConstellation(characterId);
-  const { toggleOwned, setConstellation } = useOwnershipActions();
+  const { toggleOwned } = useOwnershipActions();
 
   const [unlockClicks, setUnlockClicks] = useState(0);
 
@@ -225,24 +225,10 @@ export function CharacterDetailPanel({
                         : t.ui("archive.notOwned")}
                     </span>
                   </Button>
-                  {effectiveOwned && (
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: 7 }, (_, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() => setConstellation(characterId, i)}
-                          className={cn(
-                            "w-6 h-6 rounded-md text-xs font-semibold transition-colors",
-                            constellation === i
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                          )}
-                        >
-                          {t.format("teamComp.constellationFormat", i)}
-                        </button>
-                      ))}
-                    </div>
+                  {effectiveOwned && constellation > 0 && (
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {t.format("teamComp.constellationFormat", constellation)}
+                    </span>
                   )}
                 </div>
               </CharacterInfo>

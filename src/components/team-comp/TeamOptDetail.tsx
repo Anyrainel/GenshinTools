@@ -40,7 +40,7 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
@@ -63,6 +63,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { characterStats, weaponStats } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
+  const [ignoreArtifactSets, setIgnoreArtifactSets] = useState<
+    Record<string, boolean>
+  >({});
+
   const optimizerBuildMatchByChar = useMemo(() => {
     if (!accountData) return {};
     const map: Record<string, BuildMatchResult | null> = {};
@@ -74,11 +78,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       map[group.characterId] = matchBuild(
         char.artifacts ?? {},
         group.builds,
-        char.constellation
+        char.constellation,
+        scoreConfig.global
       );
     }
     return map;
-  }, [accountData, buildGroups]);
+  }, [accountData, buildGroups, scoreConfig.global]);
 
   const effectiveTeam = team;
 
@@ -105,7 +110,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { teamBuild, buildError } = useMemo(() => {
     try {
       return {
-        teamBuild: new TeamBuild(configs, team.opts || {}),
+        teamBuild: new TeamBuild(
+          configs,
+          team.opts || {},
+          team.enemyElementAura
+        ),
         buildError: null,
       };
     } catch (e: unknown) {
@@ -115,7 +124,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError: e instanceof Error ? e.message : String(e),
       };
     }
-  }, [configs, team.opts]);
+  }, [configs, team.opts, team.enemyElementAura]);
 
   const availableFormulas = useMemo(() => {
     return teamBuild ? teamBuild.getFormulaIds() : {};
@@ -457,7 +466,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
     let optTeamBuild: TeamBuild;
     try {
-      optTeamBuild = new TeamBuild(optimizerConfigs, team.opts || {});
+      optTeamBuild = new TeamBuild(
+        optimizerConfigs,
+        team.opts || {},
+        team.enemyElementAura
+      );
     } catch {
       optTeamBuild = teamBuild;
     }
@@ -477,6 +490,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
         reactionOverrides: team.reactionOverrides,
       }),
+      ignoreArtifactSets,
     });
   };
 
@@ -524,14 +538,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
   const hasOptResult = teamResult?.done || hasFrozenResult;
 
+  // Use rebuilt TeamBuild from optimizer result if sets were adjusted
+  const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
+
   const optimizedDamage = useMemo(() => {
-    if (!teamBuild || !resolvedFormula || !hasOptResult) return null;
+    if (!optTeamBuild || !resolvedFormula || !hasOptResult) return null;
     try {
       const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
+      const formulas = optTeamBuild.getFormulaIds()[charId];
       if (!formulas || !formulas[formulaId]) return null;
-      const postStats = teamBuild.getTeamStats(optArtifactSheets, charId);
-      return teamBuild.getDamageResult(
+      const postStats = optTeamBuild.getTeamStats(optArtifactSheets, charId);
+      return optTeamBuild.getDamageResult(
         charId,
         formulaId,
         postStats,
@@ -543,7 +560,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       return null;
     }
   }, [
-    teamBuild,
+    optTeamBuild,
     resolvedFormula,
     optArtifactSheets,
     hasOptResult,
@@ -552,12 +569,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   ]);
 
   const optimizedDisplayResult = useMemo(() => {
-    if (!teamBuild || !resolvedFormula || !hasOptResult) return null;
+    if (!optTeamBuild || !resolvedFormula || !hasOptResult) return null;
     try {
       const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
+      const formulas = optTeamBuild.getFormulaIds()[charId];
       if (!formulas || !formulas[formulaId]) return null;
-      return teamBuild.getDisplayResult(
+      return optTeamBuild.getDisplayResult(
         charId,
         formulaId,
         optArtifactSheets,
@@ -569,7 +586,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       return null;
     }
   }, [
-    teamBuild,
+    optTeamBuild,
     resolvedFormula,
     optArtifactSheets,
     hasOptResult,
@@ -578,12 +595,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   ]);
 
   const optimizedComboDisplayResult = useMemo(() => {
-    if (formulaMode !== "combo" || !teamBuild || !hasOptResult) return null;
+    if (formulaMode !== "combo" || !optTeamBuild || !hasOptResult) return null;
     const activeLines = combo.lines.filter((l) => l.count > 0);
     if (activeLines.length === 0) return null;
     try {
       return getComboDisplayResult(
-        teamBuild,
+        optTeamBuild,
         { ...combo, lines: activeLines },
         optArtifactSheets,
         displayContext,
@@ -595,7 +612,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }, [
     formulaMode,
     combo,
-    teamBuild,
+    optTeamBuild,
     optArtifactSheets,
     hasOptResult,
     displayContext,
@@ -821,6 +838,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         onUnfreeze={
           isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
         }
+        ignoreArtifactSets={ignoreArtifactSets}
+        onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
       />
 
       {/* Card 2 — Formula Selection */}

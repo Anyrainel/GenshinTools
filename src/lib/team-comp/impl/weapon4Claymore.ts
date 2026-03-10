@@ -1,7 +1,8 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
-import type { OptionDef, StatKey } from "../types";
+import type { StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Claymores

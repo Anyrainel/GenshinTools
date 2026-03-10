@@ -16,8 +16,9 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef, ReactionType } from "../types";
+import type { ReactionType } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Nod-Krai Characters
@@ -26,11 +27,20 @@ import type { OptionDef, ReactionType } from "../types";
 const columbinaOption = {
   label: { zh: "主要月曜反应", en: "Dominant Lunar Reaction" },
   choices: [
-    { value: "lunarCharged", label: { zh: "月感电", en: "Lunar-Charged" } },
-    { value: "lunarBloom", label: { zh: "月绽放", en: "Lunar-Bloom" } },
+    {
+      value: "lunarBloom",
+      label: { zh: "月绽放", en: "Lunar-Bloom" },
+      when: (tm) => tm.hasReaction("lunarBloom"),
+    },
+    {
+      value: "lunarCharged",
+      label: { zh: "月感电", en: "Lunar-Charged" },
+      when: (tm) => tm.hasReaction("lunarCharged"),
+    },
     {
       value: "lunarCrystallize",
       label: { zh: "月结晶", en: "Lunar-Crystallize" },
+      when: (tm) => tm.hasReaction("lunarCrystallize"),
     },
   ] as const,
   default: "lunarBloom",
@@ -120,6 +130,29 @@ class Columbina extends CharacterBase {
       }
     }
 
+    // C4: Per Gravity Interference, HP%-based baseDmg on the dominant Lunar reaction skill hit
+    // lunarCharged +12.5% HP, lunarBloom +2.5% HP, lunarCrystallize +12.5% HP (once/15s)
+    if (this.constellation >= 4) {
+      const c4Scale = {
+        lunarCharged: 0.125,
+        lunarBloom: 0.025,
+        lunarCrystallize: 0.125,
+      }[this.o];
+      buffs.push(
+        new ScalingBuff(
+          cbs(this, "C4", ["E"]),
+          {
+            receiver: "self",
+            filter: { abilities: ["skill"], reactions: [this.o] },
+          },
+          [],
+          "hp",
+          "baseDmg",
+          c4Scale
+        )
+      );
+    }
+
     // C6: +80% CD for elements involved in the dominant Lunar reaction
     // "依据参与反应的元素类型，使队伍中的所有角色造成的对应元素类型伤害的暴击伤害提升80%"
     // All lunar reactions involve Hydro plus a second element
@@ -179,7 +212,7 @@ class Columbina extends CharacterBase {
         ],
       },
       "columbina-skill-interference": {
-        label: { zh: "E", en: "E" },
+        label: { zh: "E干涉 (x1)", en: "E Interference (×1)" },
         parts: [
           {
             formula: new LunarDirectFormula(
@@ -195,6 +228,19 @@ class Columbina extends CharacterBase {
           },
         ],
       },
+      // Gravity Ripple continuous Hydro DMG: Lv10 16.8% HP, Lv13 (C3+) 19.9% HP per tick
+      "columbina-ripple": {
+        label: { zh: "E涟漪 (x1)", en: "E Ripple (×1)" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              isE13 ? 0.199 : 0.168,
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
     };
   })();
 }
@@ -202,16 +248,17 @@ class Columbina extends CharacterBase {
 const neferOption = {
   label: { zh: "伪秘之帷层数", en: "Veil of Falsehood Stacks" },
   choices: [
-    { value: "0", label: { zh: "0 层", en: "0 stacks" } },
-    { value: "1", label: { zh: "1 层", en: "1 stack" } },
+    {
+      value: "5",
+      label: { zh: "5 层 (C2上限)", en: "5 stacks (C2 max)" },
+      when: (tm) => (tm.constellations.nefer ?? 0) >= 2,
+    },
     {
       value: "3",
       label: { zh: "3 层 (C0上限)", en: "3 stacks (C0 max)" },
     },
-    {
-      value: "5",
-      label: { zh: "5 层 (C2上限)", en: "5 stacks (C2 max)" },
-    },
+    { value: "1", label: { zh: "1 层", en: "1 stack" } },
+    { value: "0", label: { zh: "0 层", en: "0 stacks" } },
   ] as const,
   default: "5",
 } satisfies OptionDef;
@@ -817,6 +864,27 @@ class Lauma extends CharacterBase {
                     },
                     "em"
                   ),
+                },
+              ],
+            },
+            // C6: Frostgrove Sanctuary extra Lunar-Bloom hit per tick (185% EM, up to 8 times)
+            "lauma-c6-sanctuary": {
+              label: {
+                zh: "6命 圣域×8",
+                en: "C6 Sanctuary ×8",
+              },
+              parts: [
+                {
+                  formula: new LunarDirectFormula(
+                    1.85,
+                    {
+                      element: "Dendro",
+                      ability: "skill",
+                      reaction: "lunarBloom",
+                    },
+                    "em"
+                  ),
+                  hits: 8,
                 },
               ],
             },

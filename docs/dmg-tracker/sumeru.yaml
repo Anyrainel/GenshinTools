@@ -126,25 +126,6 @@
   created: "2026-02-25"
   resolved: "2026-02-26"
 
-- id: nahida-p1-highest-em
-  entity: nahida
-  rule: U4
-  status: wont-do
-  category: approximation
-  summary: >
-    P1 ScalingBuff reads Nahida's own EM as the source, but game text says
-    "25% of the party member with the highest EM." When Nahida is not the
-    highest-EM character, the buff is under-estimated.
-  detail: >
-    Approximation is within acceptable range. In nearly all practical team
-    compositions, Nahida IS the highest-EM character (she builds full EM with
-    ~800-1000 EM). The discrepancy only arises in niche setups where another
-    character stacks more EM (very rare). Implementing the true behavior would
-    require cross-character stat reads that the engine's ScalingBuff does not
-    support (it reads the buff provider's own stats). The error is typically 0%
-    in standard builds, making this within the +/-10% tolerance.
-  created: "2026-02-26"
-  resolved: "2026-02-26"
 
 - id: dehya-c1c2-e-receiver
   entity: dehya

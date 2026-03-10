@@ -21,13 +21,13 @@ import {
   createWeapon,
 } from "./damageModels";
 
+import type { CombatOpts } from "./damageModels";
 import { AVG_SUBSTAT_ROLL } from "./inspection";
 import type {
   BuffSource,
   BuffTarget,
   CalcContext,
   CharCompConfig,
-  CombatOpts,
   ComboFormula,
   ComboResult,
   DamageResult,
@@ -421,7 +421,13 @@ export class CharBuild {
       // Apply per-part stat overlay if present
       const stats = bespokeBuff
         ? selfPostStats.merge(
-            StatSheet.fromEntries(bespokeBuff.entries, bespokeBuff.filter)
+            StatSheet.fromEntries(
+              [
+                ...bespokeBuff.staticBuffs,
+                ...bespokeBuff.dynamicBuffs(selfPostStats, []),
+              ],
+              bespokeBuff.target.filter
+            )
           )
         : selfPostStats;
 
@@ -516,6 +522,10 @@ export function isBuffApplicable(
   selfRegion?: Region,
   selfFaction?: Faction
 ): boolean {
+  // CharId filter: if buff specifies charId, target must match
+  if (buff.target.charId !== undefined) {
+    if (buff.target.charId !== selfCharId) return false;
+  }
   // Region filter: if buff specifies regions, target must be from one of them
   if (buff.target.regions && selfRegion !== undefined) {
     if (!buff.target.regions.includes(selfRegion)) return false;

@@ -1,8 +1,8 @@
+import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "../account-data/artifactScore";
-import type { TeamBuild } from "./damageCalc";
-import { evaluateCombo } from "./damageCalc";
+import { TeamBuild, evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
   type OptFailReason,
@@ -12,6 +12,7 @@ import {
 } from "./optimizer";
 import type {
   CalcContext,
+  CharCompConfig,
   ComboFormula,
   ComboResult,
   DamageResult,
@@ -48,6 +49,8 @@ interface TeamOptResultBase {
   passResults: TeamOptPassResult[];
   /** Per-character failure reasons (only for characters that failed to find a build). */
   failReasons: Record<string, OptFailReason>;
+  /** Rebuilt TeamBuild if artifact sets were adjusted (ignoreArtifactSets fallback or detected accidental sets). */
+  teamBuild?: TeamBuild;
   done: true;
 }
 
@@ -89,6 +92,8 @@ export interface TeamOptimizerOptions {
   combo?: ComboFormula;
   /** Per-formula reaction overrides (keyed by "charId.formulaId"), used by combo evaluation. */
   reactionOverrides?: Record<string, ReactionOverride>;
+  /** Per-character flag: retry failed passes without artifact set constraints (keyed by charId). */
+  ignoreArtifactSets?: Record<string, boolean>;
 }
 
 // ─── Helpers ───
@@ -248,6 +253,31 @@ export async function* runTeamOptimization(
   // The round-1 order: carries first, then supports
   const round1Order = [...carryCharIds, ...supportCharIds];
 
+  // Mutable effective state: tracks the current TeamBuild and perChar configs
+  // (modified when ignoreArtifactSets triggers set removal or accidental set detection)
+  let effectiveTeamBuild = teamBuild;
+  const effectivePerChar = { ...perChar };
+
+  // Helper: rebuild TeamBuild from the original configs with modified set fields
+  function rebuildTeamBuild(): TeamBuild {
+    const newConfigs = teamBuild.configs.map((c) => {
+      const epc = effectivePerChar[c.charId];
+      if (epc) {
+        return {
+          ...c,
+          artifactSetId: epc.artifactSetId ?? null,
+          artifactHalfSetIds: epc.artifactHalfSetIds ?? [],
+        };
+      }
+      return c;
+    });
+    return new TeamBuild(
+      newConfigs,
+      teamBuild.combatOpts,
+      teamBuild.enemyElementAura
+    );
+  }
+
   // Helper: run a single character's optimizer pass and yield progress
   async function* runCharPass(
     charId: string,
@@ -256,17 +286,41 @@ export async function* runTeamOptimization(
     excludedIds: Set<string> | undefined,
     passIdx: number,
     totalPasses: number,
-    passResults: TeamOptPassResult[]
+    passResults: TeamOptPassResult[],
+    overrideTeamBuild?: TeamBuild,
+    overrideCharConfig?: PerCharConfig
   ): AsyncGenerator<
     TeamOptimizationProgress,
     OptimizationResult | null,
     undefined
   > {
-    const charConfig = perChar[charId];
+    const charConfig = overrideCharConfig ?? effectivePerChar[charId];
     if (!charConfig) return null;
+    const tb = overrideTeamBuild ?? effectiveTeamBuild;
+
+    // Rebuild combo scoreFn with current teamBuild if it was overridden
+    const passComboScoreFn =
+      tb !== teamBuild && isComboMode
+        ? (
+            sheets: Record<string, StatSheet>,
+            _calcTargetId: string
+          ): number => {
+            try {
+              return evaluateCombo(
+                tb,
+                combo,
+                sheets,
+                calcContext,
+                reactionOverrides
+              ).totalDamage;
+            } catch {
+              return 0;
+            }
+          }
+        : comboScoreFn;
 
     const passOpts: OptimizerOptions = {
-      teamBuild,
+      teamBuild: tb,
       targetCharId: carryCharId,
       formulaId,
       targetEr: charConfig.targetEr,
@@ -285,7 +339,7 @@ export async function* runTeamOptimization(
       excludedArtifactIds: excludedIds,
       reactionOverride,
       altCount: opts.altCount,
-      scoreFn: comboScoreFn,
+      scoreFn: passComboScoreFn,
     };
 
     const gen = runOptimization(passOpts);
@@ -358,6 +412,43 @@ export async function* runTeamOptimization(
       yield value;
     }
 
+    // ignoreArtifactSets fallback: if pass failed and flag is set for this character, retry without sets
+    if (
+      lastResult?.failReason &&
+      opts.ignoreArtifactSets?.[charId] &&
+      (effectivePerChar[charId]?.artifactSetId ||
+        (effectivePerChar[charId]?.artifactHalfSetIds?.length ?? 0) > 0)
+    ) {
+      // Strip set constraints for this character
+      effectivePerChar[charId] = {
+        ...effectivePerChar[charId],
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      };
+      effectiveTeamBuild = rebuildTeamBuild();
+
+      // Retry without set constraints
+      const retryGen = runCharPass(
+        charId,
+        passId,
+        unlockedSheets,
+        undefined,
+        i,
+        estimatedTotal,
+        allPassResults,
+        effectiveTeamBuild,
+        effectivePerChar[charId]
+      );
+      for (;;) {
+        const { value, done } = await retryGen.next();
+        if (done) {
+          lastResult = value;
+          break;
+        }
+        yield value;
+      }
+    }
+
     if (lastResult) {
       unlockedResults[charId] = {
         arts: lastResult.bestArtifacts,
@@ -426,7 +517,7 @@ export async function* runTeamOptimization(
   }
   let bestR1PassResults: TeamOptPassResult[] = [...unlockedPassResults];
   let bestR1Score = computeFinalScore(
-    teamBuild,
+    effectiveTeamBuild,
     bestR1ArtifactsByChar,
     baseSheets,
     carryCharId,
@@ -664,7 +755,7 @@ export async function* runTeamOptimization(
             }
 
             const permScore = computeFinalScore(
-              teamBuild,
+              effectiveTeamBuild,
               newPermArtifacts,
               baseSheets,
               carryCharId,
@@ -700,7 +791,7 @@ export async function* runTeamOptimization(
       }
 
       const permScore = computeFinalScore(
-        teamBuild,
+        effectiveTeamBuild,
         permArtifactsByChar,
         baseSheets,
         carryCharId,
@@ -800,10 +891,50 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  // Final result
+  // Final result — detect accidental set bonuses and rebuild if needed
   // ════════════════════════════════════════════════════════════════════════
 
   const bestArtifactsByChar = bestR1ArtifactsByChar;
+
+  // Post-optimization: detect actual artifact sets formed by optimized pieces
+  // and rebuild TeamBuild if they differ from what was used during optimization
+  let setsChanged = effectiveTeamBuild !== teamBuild; // already changed if fallback fired
+  for (const charId of allCharIds) {
+    const arts = bestArtifactsByChar[charId];
+    if (!arts) continue;
+    const pieces = allSlots
+      .map((s) => arts[s])
+      .filter(Boolean) as ArtifactData[];
+    const detected = detectEquippedSets(pieces);
+    const epc = effectivePerChar[charId];
+    if (!epc) continue;
+
+    // Compare detected sets with what the effective config has
+    const currentSetId = epc.artifactSetId ?? null;
+    const currentHalfIds = epc.artifactHalfSetIds ?? [];
+    const detectedSetId = detected.artifactSetId;
+    const detectedHalfIds = detected.artifactHalfSetIds;
+
+    const setIdChanged = detectedSetId !== currentSetId;
+    const halfIdsChanged =
+      detectedHalfIds.length !== currentHalfIds.length ||
+      [...detectedHalfIds].sort().join(",") !==
+        [...currentHalfIds].sort().join(",");
+
+    if (setIdChanged || halfIdsChanged) {
+      effectivePerChar[charId] = {
+        ...epc,
+        artifactSetId: detectedSetId,
+        artifactHalfSetIds: detectedHalfIds,
+      };
+      setsChanged = true;
+    }
+  }
+
+  if (setsChanged) {
+    effectiveTeamBuild = rebuildTeamBuild();
+  }
+
   const finalSheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
 
   // Collect per-character failure reasons from the last pass result per char
@@ -822,12 +953,14 @@ export async function* runTeamOptimization(
     bestArtifactsByChar,
     passResults,
     failReasons,
+    // Include rebuilt TeamBuild if sets were adjusted
+    ...(setsChanged ? { teamBuild: effectiveTeamBuild } : {}),
     done: true as const,
   };
 
   if (isComboMode) {
     const comboRes = evaluateCombo(
-      teamBuild,
+      effectiveTeamBuild,
       combo,
       finalSheets,
       calcContext,
@@ -840,12 +973,12 @@ export async function* runTeamOptimization(
       bestComboResult: comboRes,
     } satisfies TeamOptComboResult;
   } else {
-    const finalPostStats = teamBuild.getTeamStats(
+    const finalPostStats = effectiveTeamBuild.getTeamStats(
       finalSheets,
       carryCharId,
       calcContext
     );
-    const finalDmg = teamBuild.getDamageResult(
+    const finalDmg = effectiveTeamBuild.getDamageResult(
       carryCharId,
       formulaId,
       finalPostStats,

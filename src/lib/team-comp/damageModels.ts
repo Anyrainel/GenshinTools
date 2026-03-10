@@ -28,36 +28,24 @@ import type {
   BuffSource,
   BuffTarget,
   CalcContext,
-  CombatOpts,
   DamageResult,
   DamageTag,
   DamageTagFilter,
   ElementalOrPhysical,
   I18nLabel,
-  InferOption,
-  OptionDef,
   ReactionOverride,
   ReactionType,
   StatEntry,
   StatKey,
 } from "./types";
 
-/**
- * Per-part stat overlay: entries added to the StatSheet only when computing
- * this specific formula part. Enforced to use selfOnField semantics.
- */
-export type BespokeBuffDef = {
-  source: BuffSource;
-  entries: StatEntry[];
-  filter?: DamageTagFilter;
-};
-
 /** A single formula with an optional hit count (defaults to 1). */
 export type FormulaPart = {
   formula: DamageFormula;
   hits?: number;
-  /** Stat entries applied only when computing this part (selfOnField scope). */
-  bespokeBuff?: BespokeBuffDef;
+  /** Per-part buff applied only when computing this part (selfOnField scope).
+   *  Accepts any StatBuff subclass (StatBuff, ScalingBuff, CrossScalingBuff). */
+  bespokeBuff?: StatBuff;
 };
 
 /** Declarative entry in a character's formulaMap. */
@@ -80,7 +68,6 @@ export {
 } from "./damageFormulas";
 
 import type { StatBuff } from "./damageBuffs";
-import { validateBespokeBuff } from "./damageBuffs";
 
 /** Stats that use the base × (1 + %) + flat formula */
 const SCALED_STAT_BASES = {
@@ -130,12 +117,15 @@ function normalizeEntry(
 
 const EMPTY_FILTER_KEY = "";
 
-/** Serialize a DamageTagFilter into a deterministic string key. */
+/** Serialize a DamageTagFilter into a deterministic string key.
+ *  Array fields are sorted to ensure equal filters produce the same key. */
 function serializeFilter(filter: DamageTagFilter): string {
   const parts: string[] = [];
-  if (filter.abilities) parts.push(`a:${filter.abilities.join(",")}`);
-  if (filter.elements) parts.push(`e:${filter.elements.join(",")}`);
-  if (filter.reactions) parts.push(`r:${filter.reactions.join(",")}`);
+  if (filter.abilities)
+    parts.push(`a:${[...filter.abilities].sort().join(",")}`);
+  if (filter.elements) parts.push(`e:${[...filter.elements].sort().join(",")}`);
+  if (filter.reactions)
+    parts.push(`r:${[...filter.reactions].sort().join(",")}`);
   return parts.length === 0 ? EMPTY_FILTER_KEY : parts.join("|");
 }
 
@@ -361,6 +351,20 @@ export class StatSheet {
     return StatSheet.fromData(merged);
   }
 
+  /** Yield all (statKey, filterKey, value) triples. filterKey="" for universal. */
+  *dump(): Iterable<{ key: StatKey; filterKey: string; value: number }> {
+    for (const [key, bucket] of this.data) {
+      for (const [fk, fv] of bucket) {
+        if (fv !== 0) yield { key, filterKey: fk, value: fv };
+      }
+    }
+  }
+
+  /** Parse a serialized filter key back into a DamageTagFilter. */
+  static parseFilterKey(fk: string): DamageTagFilter {
+    return deserializeFilter(fk);
+  }
+
   /**
    * Return all non-zero computed stat values as a flat record.
    * Scaled stats (ATK/HP/DEF) are returned as computed totals.
@@ -457,11 +461,14 @@ export class TeamMeta {
   readonly isShielder: Record<string, boolean>;
   /** 4pc artifact set IDs equipped by each character (charId → setId) */
   readonly artifactSets: Record<string, string>;
+  /** Persistent element aura on the enemy, injected into reaction checks. */
+  readonly enemyElementAura?: Element;
 
   constructor(
     characterIds: string[],
     constellations: Record<string, number> = {},
-    artifactSets: Record<string, string> = {}
+    artifactSets: Record<string, string> = {},
+    enemyElementAura?: Element
   ) {
     this.characters = characterIds;
     this.constellations = constellations;
@@ -474,6 +481,7 @@ export class TeamMeta {
     this.isHealer = {};
     this.isShielder = {};
     this.artifactSets = artifactSets;
+    this.enemyElementAura = enemyElementAura;
 
     const charStatsData = getCharacterStatsSync();
     for (const id of characterIds) {
@@ -529,6 +537,12 @@ export class TeamMeta {
     const teamElements = Object.values(this.elements).filter(
       (e): e is Element => e != null
     );
+    if (
+      this.enemyElementAura &&
+      !teamElements.includes(this.enemyElementAura)
+    ) {
+      teamElements.push(this.enemyElementAura);
+    }
     // Initialize to true if charId is undefined
     let charParticipates = !charId;
     const hasElements = req.requiredElements.every((group) => {
@@ -567,6 +581,42 @@ export class TeamMeta {
     return true;
   }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Combat Options (Schema-Driven)
+// ═══════════════════════════════════════════════════════════════
+
+/** A single selectable value in an OptionDef. */
+export type OptionChoice = {
+  value: string;
+  label: I18nLabel;
+  /** If provided, this choice is disabled when the predicate returns false. */
+  when?: (teamMeta: TeamMeta) => boolean;
+};
+
+/**
+ * Declarative option schema for a provider (character, weapon, or artifact set).
+ * Defines a single select control with labeled choices.
+ * UI renders as a toggle (2 choices) or dropdown (3+).
+ */
+export type OptionDef = {
+  label: I18nLabel;
+  choices: readonly OptionChoice[];
+  default: string;
+};
+
+/**
+ * Infer the typed option value union from an `as const` OptionDef.
+ * Usage: `type DurinOption = InferOption<typeof durinOption>; // "dps" | "support"`
+ */
+export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
+
+/**
+ * User-selected combat options, keyed by provider ID (charId or weaponId).
+ * Each value is the selected option string for that provider.
+ * Providers with no entry get `""` → falls back to schema default via `resolveOption()`.
+ */
+export type CombatOpts = Record<string, string>;
 
 // ═══════════════════════════════════════════════════════════════
 // Stat Auto-Resolution Helpers
@@ -680,24 +730,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Subclasses declare all formulas here — labels + formula instances in one place. */
   protected abstract readonly formulaMap: Record<string, FormulaEntry>;
 
-  private _bespokeValidated = false;
-
   /** Derived from formulaMap — public API for consumers. */
   get formulaIds(): Record<string, I18nLabel> {
-    if (!this._bespokeValidated) {
-      this._bespokeValidated = true;
-      for (const entry of Object.values(this.formulaMap)) {
-        for (const part of entry.parts) {
-          if (part.bespokeBuff) {
-            validateBespokeBuff(
-              part.bespokeBuff.entries,
-              part.bespokeBuff.filter,
-              part.bespokeBuff.source
-            );
-          }
-        }
-      }
-    }
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {
       result[id] = entry.label;
@@ -714,7 +748,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   getDamageResult(
     formulaId: string,
     selfStats: StatSheet,
-    _teamStats: StatSheet[],
+    teamStats: StatSheet[],
     ctx: CalcContext,
     reactionOverride?: ReactionOverride
   ): DamageResult {
@@ -728,7 +762,13 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       // Apply per-part stat overlay if present
       const stats = bespokeBuff
         ? selfStats.merge(
-            StatSheet.fromEntries(bespokeBuff.entries, bespokeBuff.filter)
+            StatSheet.fromEntries(
+              [
+                ...bespokeBuff.staticBuffs,
+                ...bespokeBuff.dynamicBuffs(selfStats, teamStats),
+              ],
+              bespokeBuff.target.filter
+            )
           )
         : selfStats;
 
@@ -988,8 +1028,21 @@ export function getEntityOption(entityId: string): OptionDef | null {
 }
 
 /**
+ * Check whether a choice is enabled given the team context.
+ * Choices without a `when` predicate are always enabled.
+ */
+export function isChoiceEnabled(
+  choice: OptionChoice,
+  teamMeta?: TeamMeta
+): boolean {
+  if (!choice.when || !teamMeta) return true;
+  return choice.when(teamMeta);
+}
+
+/**
  * Resolve a raw option string against a typed schema, returning the
- * narrowed value. Falls back to schema default if raw value is invalid.
+ * narrowed value. Falls back to first enabled choice (or schema default)
+ * if raw value is invalid or disabled.
  *
  * Usage inside a subclass:
  * ```
@@ -999,8 +1052,14 @@ export function getEntityOption(entityId: string): OptionDef | null {
  */
 export function resolveOption<const D extends OptionDef>(
   def: D,
-  raw: string
+  raw: string,
+  teamMeta?: TeamMeta
 ): InferOption<D> {
-  const valid = raw !== "" && def.choices.some((c) => c.value === raw);
-  return (valid ? raw : def.default) as InferOption<D>;
+  const validChoice = raw !== "" && def.choices.find((c) => c.value === raw);
+  if (validChoice && isChoiceEnabled(validChoice, teamMeta)) {
+    return raw as InferOption<D>;
+  }
+  // Fall back to first enabled choice, or schema default if none enabled
+  const firstEnabled = def.choices.find((c) => isChoiceEnabled(c, teamMeta));
+  return (firstEnabled ? firstEnabled.value : def.default) as InferOption<D>;
 }

@@ -15,7 +15,7 @@ import {
   getEntityOption,
   resolveOption,
 } from "@/lib/team-comp/damageModels";
-import type { OptionDef } from "@/lib/team-comp/types";
+import type { OptionDef } from "@/lib/team-comp/damageModels";
 
 // Side-effect barrel: register all characters, weapons, artifacts
 import "@/lib/team-comp/index";

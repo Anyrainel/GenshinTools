@@ -1,16 +1,4 @@
 # Mondstadt Damage Tracker
-- id: fischl-c6-coordinated
-  entity: fischl
-  rule: S8
-  status: wont-do
-  category: missing-formula
-  summary: >
-    Oz coordinated attack (30% ATK Electro per active hit) not modeled.
-  detail: >
-    Periodic proc triggered by active character hits. Complex combat state interaction,
-    low DPS contribution relative to modeling effort.
-  created: "2026-02-25"
-  resolved: "2026-02-25"
 
 - id: albedo-p1-enemy-hp-combatopt
   entity: albedo
@@ -53,12 +41,37 @@
 - id: razor-p4-hexerei-lightning
   entity: razor
   rule: S8
-  status: open
+  status: wont-do
   category: missing-formula
   summary: >
     P4 Hexerei: Secret Rite lightning strike (150% ATK Electro AoE, once per 1s
     when sigils overflow during Q) is not modeled. Potentially significant damage
     source over 15s Q duration, especially at C6 where every E triggers overflow.
-  detail: ""
+  detail: >
+    Not in DmgRunbook. Only active with >=2 Hexerei teammates (niche comp).
+    Over 15s Q, realistically 2-3 E presses trigger overflow = 300-450% ATK total.
+    Compare to Q Normal Combo total of ~1124% ATK equivalent per rotation (physical
+    + wolf). Estimated <5% DPS contribution even in Hexerei comps. Periodic/minor
+    proc, not worth modeling.
   created: "2026-02-26"
-  resolved: null
+  resolved: "2026-03-08"
+
+- id: mona-c1-offfield-enhancement
+  entity: mona
+  rule: S6
+  status: wont-do
+  category: approximation
+  summary: >
+    C1 off-field party members get 160% of the reaction DMG bonus (24% instead
+    of 15%), but the implementation uses a flat 15% for all team members.
+  detail: >
+    Approximation is within acceptable range. The delta is 9pp reactionDmg%
+    (24% vs 15%) for off-field party members only. In Mona teams, the calcTarget
+    (optimization target) is typically the on-field DPS who correctly receives
+    15%. Off-field characters' reaction damage is not being optimized and
+    contributes minimally to total team DPS. No existing receiver type cleanly
+    models "other off-field party members" for differential bonus, and the
+    accuracy impact on the optimization target is zero. Not worth the
+    complexity.
+  created: "2026-03-08"
+  resolved: "2026-03-08"

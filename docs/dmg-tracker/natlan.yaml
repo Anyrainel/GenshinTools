@@ -41,16 +41,18 @@
 - id: varesa-c4-mutual-exclusivity
   entity: varesa
   rule: S6
-  status: wont-do
+  status: completed
   category: approximation
   summary: >
     C4 mutual exclusivity between Fiery Passion (+100% burst dmg%) and Diligent
     Refinement (+5xATK plunge baseDmg) cannot be cleanly modeled.
   detail: >
-    Known limitation. One-time buff for a single formula; cannot cleanly model both
-    mutually exclusive branches.
+    Added CombatOpts with "fiery"/"diligent" choices (both gated behind C4+ via
+    when). "fiery" applies +100% burst/plunge dmg%, "diligent" applies +500% ATK
+    baseDmg for plunge (cap 20000). Default is "fiery". The two C4 buffs are now
+    mutually exclusive instead of both applying simultaneously.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-08"
 
 - id: chasca-p2-burning-shadowhunt
   entity: chasca
@@ -67,14 +69,17 @@
 - id: chasca-c2-c4-aoe-burst
   entity: chasca
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     C2/C4 AoE burst on Shining Shell / Radiant Soulseeker Shell hit not modeled.
   detail: >
-    Per-hit triggered AoE. Complex interaction with shell-based damage model.
+    Added C2 DirectFormula(4.0, Anemo/charge/none) as extra part in
+    "chasca-shining-volley", gated behind constellation >= 2. Added C4
+    DirectFormula(4.0, Anemo/charge/none) as extra part in "chasca-burst",
+    gated behind constellation >= 4. Both use ability: "charge" per game text.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-08"
 
 - id: mavuika-c6-scorching-ring
   entity: mavuika

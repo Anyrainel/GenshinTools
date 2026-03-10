@@ -7,8 +7,8 @@ import {
   RegisterCharacter,
   resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
@@ -692,6 +692,16 @@ class Mona extends CharacterBase {
 @RegisterCharacter("jean")
 class Jean extends CharacterBase {
   readonly buffs = [
+    // C1: Hold E DMG +40%
+    ...(this.constellation >= 1
+      ? [
+          new StatBuff(
+            cbs(this, "C1", ["E"]),
+            { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+            [{ key: "dmg%", value: 0.4 }]
+          ),
+        ]
+      : []),
     // C2: Jean picks up particle -> Team ATK SPD +15%
     ...(this.constellation >= 2
       ? [
@@ -859,6 +869,32 @@ class Venti extends CharacterBase {
           { formula: new DirectFormula(0.515 * ws, naTag), hits: 2 }, // N4
           { formula: new DirectFormula(1.001 * ws, naTag) }, // N5
           { formula: new DirectFormula(1.4 * ws, naTag) }, // N6
+          // C1: 2 tracking arrows per Windsunder hit at 20% original DMG each
+          ...(this.constellation >= 1
+            ? [
+                {
+                  formula: new DirectFormula(0.403 * ws * 0.2, naTag),
+                  hits: 2 * 2,
+                }, // N1 C1
+                {
+                  formula: new DirectFormula(0.877 * ws * 0.2, naTag),
+                  hits: 2,
+                }, // N2 C1
+                {
+                  formula: new DirectFormula(1.035 * ws * 0.2, naTag),
+                  hits: 2,
+                }, // N3 C1
+                {
+                  formula: new DirectFormula(0.515 * ws * 0.2, naTag),
+                  hits: 2 * 2,
+                }, // N4 C1
+                {
+                  formula: new DirectFormula(1.001 * ws * 0.2, naTag),
+                  hits: 2,
+                }, // N5 C1
+                { formula: new DirectFormula(1.4 * ws * 0.2, naTag), hits: 2 }, // N6 C1
+              ]
+            : []),
         ],
       },
       "venti-burst-total": {
@@ -976,12 +1012,12 @@ const eulaOption = {
   label: { zh: "敌人血量", en: "Enemy HP" },
   choices: [
     {
-      value: "above50",
-      label: { zh: ">50%（C4不生效）", en: ">50% (C4 inactive)" },
-    },
-    {
       value: "below50",
       label: { zh: "<50%（C4生效）", en: "<50% (C4 active)" },
+    },
+    {
+      value: "above50",
+      label: { zh: ">50%（C4不生效）", en: ">50% (C4 inactive)" },
     },
   ] as const,
   default: "below50",

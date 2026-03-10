@@ -180,7 +180,6 @@ export function CharacterBuildView({
         triggerLabel={triggerLabel}
         contentScrollRef={mainScrollRef}
         contentScrollsInternally
-        className="pt-4"
       >
         {deferredCharacters.length === 0 ? (
           <div

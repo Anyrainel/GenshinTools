@@ -5,10 +5,16 @@
   status: wont-do
   category: approximation
   summary: >
-    P3 +1 E level to all party members requires all-Hydro/Cryo team with at least
-    1 of each; team buff not implemented.
+    P3 +1 Normal Attack talent level for all party members not modeled.
+    Effect is unconditional but engine lacks talent-level adjustment.
   detail: >
-    Known limitation. Team-wide E level buff requires team composition validation
-    not currently supported. Shared limitation with skirk P3.
+    P3 "Master of Weaponry" grants +1 Normal Attack Level to all party members
+    (unconditional, no team comp requirement). Engine cannot model this because
+    talent multipliers are hardcoded constants in each character's formulaMap.
+    A +1 talent level maps to different percentage increases per character
+    (~5-7% at Lv10->11), so no single baseDmg% team buff can accurately
+    represent it. Would require a talent-level-aware formula system or
+    per-character multiplier lookup tables. Impact is moderate (~5% Normal ATK
+    increase) but universal across all party members.
   created: "2026-02-25"
   resolved: "2026-02-25"

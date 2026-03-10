@@ -629,6 +629,58 @@ describe("matchBuild", () => {
     });
   });
 
+  describe("missing slots — set matching tolerance", () => {
+    it("still matches 4pc when 1 slot is missing and 3 equipped are from the set", () => {
+      // Arlecchino has 4pc fragment_of_harmonic_whimsy; remove goblet (1 missing)
+      // Remaining: flower, plume, sands from set (3 pieces) + circlet from different set
+      const partialArtifacts: CharacterData["artifacts"] = {
+        flower: arlecchinoArtifacts.flower,
+        plume: arlecchinoArtifacts.plume,
+        sands: arlecchinoArtifacts.sands,
+        // goblet missing
+        circlet: arlecchinoArtifacts.circlet, // emblem_of_severed_fate
+      };
+      const result = matchBuild(partialArtifacts, [arlecchinoBuild], 6)!;
+      expect(result.setMatched).toBe(true);
+    });
+
+    it("does not match 4pc when 1 slot is missing and only 2 equipped are from the set", () => {
+      // Only 2 pieces from the set → not enough even with 1 missing
+      const partialArtifacts: CharacterData["artifacts"] = {
+        flower: arlecchinoArtifacts.flower, // fragment
+        plume: arlecchinoArtifacts.plume, // fragment
+        // sands missing
+        // goblet missing — wait, we need 4 equipped for 1 missing
+        circlet: arlecchinoArtifacts.circlet, // emblem
+      };
+      // 3 equipped, 2 missing, 2 from set → threshold = max(3, 4-2) = 3 → not matched
+      const result = matchBuild(partialArtifacts, [arlecchinoBuild], 6)!;
+      expect(result.setMatched).toBe(false);
+    });
+
+    it("prefers 4pc build over alternative when 1 slot is unequipped", () => {
+      // With goblet missing, the 4pc build should still win over a non-set build
+      const partialArtifacts: CharacterData["artifacts"] = {
+        flower: arlecchinoArtifacts.flower,
+        plume: arlecchinoArtifacts.plume,
+        sands: arlecchinoArtifacts.sands,
+        circlet: arlecchinoArtifacts.circlet,
+      };
+      const altBuild: Build = {
+        ...xilonenBuild,
+        id: "alt-build",
+        artifactSet: "tenacity_of_the_millelith",
+      };
+      const result = matchBuild(
+        partialArtifacts,
+        [altBuild, arlecchinoBuild],
+        6
+      )!;
+      expect(result.build.id).toBe("CRMaUWu");
+      expect(result.setMatched).toBe(true);
+    });
+  });
+
   describe("no set match — all builds are candidates", () => {
     it("falls through to main stat matching when no set matches", () => {
       // Give Arlecchino builds that don't match her equipped set
@@ -663,7 +715,7 @@ describe("matchBuild", () => {
 describe("buildToWeightMap", () => {
   it("converts WeightedSubStat[] to StatWeightMap", () => {
     const map = buildToWeightMap(arlecchinoBuild);
-    expect(map).toEqual({ cd: 100, cr: 100, "atk%": 90, em: 50 });
+    expect(map).toEqual({ cd: 100, cr: 100, "atk%": 90, atk: 90, em: 50 });
   });
 
   it("returns empty map for build with no substats", () => {
@@ -780,6 +832,81 @@ describe("scoreWithMatchedBuild", () => {
         [citlaliBuild3], // cd(50), cr(50)
         GLOBAL_CONFIG
       );
+      expect(result.substatScore.statScores.cr.subScore).toBeGreaterThan(0);
+      expect(result.substatScore.statScores.cd.subScore).toBeGreaterThan(0);
+    });
+  });
+
+  describe("missing slot — correct build and scoring", () => {
+    it("selects the correct 4pc build when goblet is missing", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands,
+          // goblet missing
+          circlet: arlecchinoArtifacts.circlet,
+        },
+      };
+      const result = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      expect(result.buildMatch).not.toBeNull();
+      expect(result.buildMatch!.build.id).toBe("CRMaUWu");
+      expect(result.buildMatch!.setMatched).toBe(true);
+    });
+
+    it("produces positive slot scores for equipped slots when 1 slot is missing", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands,
+          circlet: arlecchinoArtifacts.circlet,
+        },
+      };
+      const result = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      // All equipped slots should have positive sub scores and max scores
+      for (const slot of ["flower", "plume", "sands", "circlet"] as const) {
+        expect(result.substatScore.slotSubScores[slot]).toBeGreaterThan(0);
+        expect(result.substatScore.slotMaxSubScores[slot]).toBeGreaterThan(0);
+      }
+      // Missing slot stays at 0
+      expect(result.substatScore.slotSubScores.goblet).toBe(0);
+      expect(result.substatScore.slotMaxSubScores.goblet).toBe(0);
+    });
+
+    it("uses correct build weights even when competing build has different set", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands,
+          circlet: arlecchinoArtifacts.circlet,
+        },
+      };
+      // Add a competing build with different set and different weights
+      const altBuild: Build = {
+        ...xilonenBuild,
+        id: "alt-def-build",
+      };
+      const result = scoreWithBuilds(
+        partialChar,
+        [altBuild, arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      // Should still pick arlecchinoBuild (3 set pieces with 1 missing)
+      expect(result.buildMatch!.build.id).toBe("CRMaUWu");
+      // CR/CD should score positively (arlecchinoBuild weights)
       expect(result.substatScore.statScores.cr.subScore).toBeGreaterThan(0);
       expect(result.substatScore.statScores.cd.subScore).toBeGreaterThan(0);
     });

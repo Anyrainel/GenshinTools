@@ -4,7 +4,7 @@ import {
   setsMatch,
 } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, ReactionType } from "@/data/types";
-import type { CombatOpts } from "@/lib/team-comp/types";
+import type { CombatOpts } from "@/lib/team-comp/damageModels";
 import { describe, expect, it } from "vitest";
 import {
   createAccountData,

@@ -96,8 +96,27 @@ class Illuga extends CharacterBase {
     return buffs;
   })();
 
-  // E/Q scale with EM+DEF — complex dual scaling, skip formulas for support
-  protected readonly formulaMap = {};
+  // C2: Aedon summon per 7 Nightingale's Song stacks consumed
+  // 400% EM + 200% DEF, Geo Burst DMG
+  protected readonly formulaMap = {
+    ...(this.constellation >= 2
+      ? {
+          "illuga-c2-aedon": {
+            label: { zh: "C2阿咚", en: "C2 Aedon" },
+            parts: [
+              {
+                formula: new DirectFormula(
+                  4.0,
+                  { element: "Geo", ability: "burst", reaction: "none" },
+                  "em",
+                  { key: "def", multiplier: 2.0 }
+                ),
+              },
+            ],
+          },
+        }
+      : {}),
+  };
 }
 
 @RegisterCharacter("jahoda")
@@ -216,6 +235,28 @@ class Aino extends CharacterBase {
           },
         ],
       },
+      ...(this.constellation >= 2
+        ? {
+            "aino-c2-ball": {
+              label: { zh: "C2水弹×3", en: "C2 Ball ×3" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    0.25,
+                    {
+                      element: "Hydro",
+                      ability: "burst",
+                      reaction: "none",
+                    },
+                    "atk",
+                    { key: "em", multiplier: 1.0 }
+                  ),
+                  hits: 3,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }

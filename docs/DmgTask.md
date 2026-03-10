@@ -77,27 +77,27 @@ If a character has randomized or playstyle-based mechanics that are mutually exc
 - **Do NOT** create separate character files or subclasses.
 - **Do** define an `OptionDef` schema with labeled choices and pass it to `@RegisterCharacter`.
 - **Do** use `resolveOption(schema, this.option)` to get a typed value inside your class.
+- **Do** order choices by preference — **first choice = most preferred default**. The `default` field must match the first choice's value.
+- **Do** add `when?: (teamMeta: ITeamMeta) => boolean` to choices that require specific conditions (constellation level, team elements, reactions). The UI shows all choices but disables invalid ones.
 
 **Example:**
 ```typescript
 import { resolveOption, type OptionDef } from './damageModels';
 
-const durinOption = {
-  label: { zh: "角色定位", en: "Role" },
+const huTaoOption = {
+  label: { zh: "生命值状态", en: "HP State" },
   choices: [
-    { value: "dps",     label: { zh: "输出", en: "DPS" } },
-    { value: "support", label: { zh: "辅助", en: "Support" } },
+    { value: "low",  label: { zh: "生命值 ≤ 50%", en: "HP ≤ 50%" } },
+    { value: "high", label: { zh: "生命值 > 50%", en: "HP > 50%" } },
+    { value: "1",    label: { zh: "生命值为 1 (C6)", en: "HP = 1 (C6)" },
+      when: (tm) => (tm.constellations["hu_tao"] ?? 0) >= 6 },
   ] as const,
-  default: "dps",
+  default: "low",
 } satisfies OptionDef;
 
-@RegisterCharacter("durin", durinOption)
-class Durin extends CharacterBase {
-  private readonly o = resolveOption(durinOption, this.option);
-  
-  get buffs(): StatBuff[] {
-    return this.o === "support" ? this.supportBuffs : this.dpsBuffs;
-  }
+@RegisterCharacter("hu_tao", huTaoOption)
+class HuTao extends CharacterBase {
+  private readonly o = resolveOption(huTaoOption, this.option);
 }
 ```
 
@@ -274,6 +274,13 @@ For full annotated examples, see [DmgDesign.md §5.3](./DmgDesign.md#53-extensio
 
 ### 7. 互斥机制与 `CombatOpts`
 如果一个角色拥有切换不同玩法的机制（例如芙宁娜的荒/芒性，杜林的白/黑龙形态，哥伦比亚的引力干涉类型，阿蕾奇诺的生命之契起始数值130%/155%/200%），或随机增益（例如流浪乐章），请避免假设所有增益同时存在，或者写死某个平均值。应通过 `@RegisterCharacter` 使用 `OptionDef` 定义并在运行时解析 `CombatOpts`。让用户在使用中规定一个状态。
+
+**选项排序规则**：choices 必须按偏好排序——**第一个选项是最优默认值**。`default` 字段必须与第一个选项的 value 一致。
+
+**条件可用性（`when`）**：如果某个选项需要特定条件才有意义（如命座等级、队伍元素、反应），应添加 `when?: (teamMeta: ITeamMeta) => boolean`。UI 会显示所有选项但禁用不满足条件的选项，`resolveOption()` 会跳过被禁用的选项。常见模式：
+- 命座门控：`when: (tm) => (tm.constellations["hu_tao"] ?? 0) >= 6`
+- 反应门控：`when: (tm) => tm.hasReaction("freeze")`
+- 元素门控：`when: (tm) => tm.countByElement("Electro") >= 1`
 
 ### 8. 特殊技能的 `AbilityType`
 - 一些技能描述会包含“该伤害视为X伤害”，则即使该技能描述出现在E或Q的文本中，也应该将其归类为X类型的伤害，如瓦蕾莎在极限驱动状态时的Q技能被视为下落攻击伤害。

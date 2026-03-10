@@ -14,6 +14,7 @@ import {
   type StatWeightMap,
   buildToWeightMap,
   calculateMaxSlotSubScore,
+  scaleFlatWeights,
   scoreMainStat,
   scoreSlot,
 } from "./artifactScore";
@@ -409,6 +410,7 @@ function findBestArtifact(
   requireSets?: string | string[]
 ): { artifact: ArtifactData; score: number } | null {
   let best: { artifact: ArtifactData; score: number } | null = null;
+  const weights = scaleFlatWeights(evalBuild.weights, globalConfig);
 
   const setFilter = requireSets
     ? typeof requireSets === "string"
@@ -422,7 +424,7 @@ function findBestArtifact(
     if (setFilter && !setFilter.has(art.setKey)) continue;
     if (!matchesMainStat(art, slot, evalBuild)) continue;
 
-    const score = scoreSlot(art, evalBuild.weights, globalConfig);
+    const score = scoreSlot(art, weights, globalConfig);
     if (!best || score > best.score) {
       best = { artifact: art, score };
     }

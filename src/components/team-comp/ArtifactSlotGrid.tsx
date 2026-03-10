@@ -29,9 +29,11 @@ export function ArtifactSlotGrid({
           return (
             <div
               key={slot}
-              className="aspect-square rounded border border-dashed border-border/30 flex items-center justify-center opacity-20 bg-card/10 text-[8px] uppercase font-bold text-muted-foreground"
+              className="aspect-square rounded border border-dashed border-border/30 flex items-center justify-center bg-card/10 p-0.5"
             >
-              {t.slot(slot).slice(0, 1)}
+              <span className="text-[10px] text-muted-foreground/50 font-medium leading-tight text-center">
+                {t.ui("accountData.unequipped")}
+              </span>
             </div>
           );
         return (

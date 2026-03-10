@@ -383,6 +383,74 @@ describe("isBuffApplicable — faction scoping", () => {
   });
 });
 
+describe("isBuffApplicable — charId scoping", () => {
+  const makeBuffWithCharId = (
+    ownerId: string,
+    receiver: "onField" | "team",
+    charId: string
+  ) =>
+    new StatBuff(
+      { type: "character", id: ownerId, origin: "E" },
+      { receiver, charId },
+      [{ key: "dmg%", value: 0.27 }]
+    );
+
+  it("charId-scoped onField buff applies only to matching character", () => {
+    expect(
+      isBuffApplicable(
+        makeBuffWithCharId("raiden_shogun", "onField", "hu_tao"),
+        "raiden_shogun",
+        "hu_tao",
+        "hu_tao"
+      )
+    ).toBe(true);
+  });
+
+  it("charId-scoped onField buff does NOT apply to non-matching character", () => {
+    expect(
+      isBuffApplicable(
+        makeBuffWithCharId("raiden_shogun", "onField", "hu_tao"),
+        "raiden_shogun",
+        "xingqiu",
+        "xingqiu"
+      )
+    ).toBe(false);
+  });
+
+  it("charId-scoped team buff applies to matching character", () => {
+    expect(
+      isBuffApplicable(
+        makeBuffWithCharId("raiden_shogun", "team", "xingqiu"),
+        "raiden_shogun",
+        "xingqiu",
+        "hu_tao"
+      )
+    ).toBe(true);
+  });
+
+  it("charId-scoped team buff does NOT apply to non-matching character", () => {
+    expect(
+      isBuffApplicable(
+        makeBuffWithCharId("raiden_shogun", "team", "xingqiu"),
+        "raiden_shogun",
+        "hu_tao",
+        "hu_tao"
+      )
+    ).toBe(false);
+  });
+
+  it("buff without charId applies regardless of target", () => {
+    const buff = new StatBuff(
+      { type: "character", id: "raiden_shogun", origin: "E" },
+      { receiver: "onField" },
+      [{ key: "dmg%", value: 0.27 }]
+    );
+    expect(isBuffApplicable(buff, "raiden_shogun", "hu_tao", "hu_tao")).toBe(
+      true
+    );
+  });
+});
+
 // Import the side-effect barrel to register all characters, weapons, and artifacts
 import "@/lib/team-comp/index";
 import { TeamBuild, getComboDisplayResult } from "@/lib/team-comp/damageCalc";
@@ -1224,5 +1292,130 @@ describe("marginalGains — ER with ER-scaling weapon", () => {
     // converts ER over 100% into ATK%, which is used in the formula
     expect(display.marginalGains.raiden_shogun).toBeDefined();
     expect(display.marginalGains.raiden_shogun!.er).toBeGreaterThan(0);
+  });
+});
+
+describe("Raiden E — per-character burst DMG bonus via charId", () => {
+  // Team: Raiden (90 energy), Bennett (60 energy), Xingqiu (80 energy), Kazuha (60 energy)
+  const configs: CharCompConfig[] = [
+    {
+      charId: "raiden_shogun",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "engulfing_lightning",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "bennett",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "xingqiu",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "kaedehara_kazuha",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "sacrificial_sword",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+  const tb = new TeamBuild(configs);
+  const emptySheets = Object.fromEntries(
+    configs.map((c) => [c.charId, new StatSheet([])])
+  );
+
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    assumeCrit: false,
+  };
+
+  it("emits separate E burst DMG buffs with correct per-character energy scaling", () => {
+    // Get display for Raiden on-field to inspect resolved buffs
+    const formulas = tb.getFormulaIds();
+    const formulaId = Object.keys(formulas.raiden_shogun!)[0]!;
+    const display = tb.getDisplayResult(
+      "raiden_shogun",
+      formulaId,
+      emptySheets,
+      ctx
+    );
+
+    // Find Raiden E buffs with charId targeting
+    const raidenEBuffs = display.buffs.filter(
+      (b) =>
+        b.source.type === "character" &&
+        b.source.id === "raiden_shogun" &&
+        b.source.origin === "E" &&
+        b.target.charId !== undefined
+    );
+
+    // Should have one buff per team member (4 characters)
+    expect(raidenEBuffs).toHaveLength(4);
+
+    // Verify each buff targets the right character with correct energy scaling
+    const byCharId = Object.fromEntries(
+      raidenEBuffs.map((b) => [b.target.charId, b])
+    );
+
+    // Raiden: 90 energy → 0.3% × 90 = 27%
+    expect(byCharId.raiden_shogun).toBeDefined();
+    expect(byCharId.raiden_shogun!.staticEntries[0]!.value).toBeCloseTo(
+      0.003 * 90
+    );
+
+    // Bennett: 60 energy → 0.3% × 60 = 18%
+    expect(byCharId.bennett).toBeDefined();
+    expect(byCharId.bennett!.staticEntries[0]!.value).toBeCloseTo(0.003 * 60);
+
+    // Xingqiu: 80 energy → 0.3% × 80 = 24%
+    expect(byCharId.xingqiu).toBeDefined();
+    expect(byCharId.xingqiu!.staticEntries[0]!.value).toBeCloseTo(0.003 * 80);
+
+    // Kazuha: 60 energy → 0.3% × 60 = 18%
+    expect(byCharId.kaedehara_kazuha).toBeDefined();
+    expect(byCharId.kaedehara_kazuha!.staticEntries[0]!.value).toBeCloseTo(
+      0.003 * 60
+    );
+  });
+
+  it("only the matching charId buff is active for a given calc target", () => {
+    const formulas = tb.getFormulaIds();
+    // Pick a burst formula so the abilities:["burst"] filter passes
+    const display = tb.getDisplayResult(
+      "raiden_shogun",
+      "raiden-initial",
+      emptySheets,
+      ctx
+    );
+
+    const raidenEBuffs = display.buffs.filter(
+      (b) =>
+        b.source.type === "character" &&
+        b.source.id === "raiden_shogun" &&
+        b.source.origin === "E" &&
+        b.target.charId !== undefined
+    );
+
+    // When Raiden is calc target with a burst formula, only her charId buff should be active
+    const activeBuffs = raidenEBuffs.filter((b) => b.active);
+    expect(activeBuffs).toHaveLength(1);
+    expect(activeBuffs[0]!.target.charId).toBe("raiden_shogun");
   });
 });

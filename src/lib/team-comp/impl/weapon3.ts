@@ -1,7 +1,7 @@
 import { StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { r, wbs } from "../helpers";
-import type { OptionDef } from "../types";
 
 @RegisterWeapon("harbinger_of_dawn")
 class HarbingerOfDawn extends WeaponBase {
