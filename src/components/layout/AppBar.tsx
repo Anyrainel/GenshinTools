@@ -147,9 +147,11 @@ export function AppBar({
 
   const navItems = getNavigationConfig(t);
 
-  // Split actions into always visible and collapsible
-  const alwaysShowActions = actions?.filter((a) => a.alwaysShow) ?? [];
-  const collapsibleActions = actions?.filter((a) => !a.alwaysShow) ?? [];
+  // Split actions: help actions go to context menu, rest split by alwaysShow
+  const helpActions = actions?.filter((a) => a.key === "help") ?? [];
+  const nonHelpActions = actions?.filter((a) => a.key !== "help") ?? [];
+  const alwaysShowActions = nonHelpActions.filter((a) => a.alwaysShow);
+  const collapsibleActions = nonHelpActions.filter((a) => !a.alwaysShow);
   const hasCollapsibleActions = collapsibleActions.length > 0;
   const hasTabs = tabs && tabs.length > 0;
   const isHomePage = location.pathname === "/";
@@ -377,6 +379,22 @@ export function AppBar({
                     ))}
                     {hasCollapsibleActions && <DropdownMenuSeparator />}
                   </div>
+
+                  {helpActions.length > 0 && (
+                    <>
+                      {helpActions.map((action) => (
+                        <DropdownMenuItem
+                          key={action.key}
+                          onClick={action.onTrigger}
+                          className="gap-2"
+                        >
+                          <action.icon className="w-4 h-4" />
+                          {action.label}
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
 
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="gap-2">

@@ -86,6 +86,30 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
     ],
   },
   {
+    id: "team-opt-detail",
+    guideContent: t.ui("tour.guide.teamOptDetail"),
+    steps: [
+      {
+        id: "tod-roster",
+        title: t.ui("tour.teamOptDetail.rosterTitle"),
+        content: t.ui("tour.teamOptDetail.rosterContent"),
+        side: "bottom",
+      },
+      {
+        id: "tod-formula",
+        title: t.ui("tour.teamOptDetail.formulaTitle"),
+        content: t.ui("tour.teamOptDetail.formulaContent"),
+        side: "bottom",
+      },
+      {
+        id: "tod-damage",
+        title: t.ui("tour.teamOptDetail.damageTitle"),
+        content: t.ui("tour.teamOptDetail.damageContent"),
+        side: "top",
+      },
+    ],
+  },
+  {
     id: "account-data",
     guideContent: t.ui("tour.guide.accountData"),
     steps: [
@@ -116,6 +140,7 @@ export const TOUR_STORAGE_KEYS = {
   "artifact-filter": "tour-artifact-filter-completed",
   "tier-list": "tour-tier-list-completed",
   "team-comp": "tour-team-comp-completed",
+  "team-opt-detail": "tour-team-opt-detail-completed",
   "account-data": "tour-account-data-completed",
 } as const;
 

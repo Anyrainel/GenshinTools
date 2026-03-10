@@ -15,13 +15,14 @@ import { Link } from "react-router-dom";
 
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { WhatsNew } from "@/components/shared/WhatsNew";
 
 export default function Home() {
   const { t } = useLanguage();
 
   return (
     <PageLayout>
-      <ScrollLayout className="mx-auto p-4 flex flex-col gap-6">
+      <ScrollLayout className="mx-auto px-8 py-4 flex flex-col gap-6 overflow-x-hidden">
         {/* Hero Section */}
         <div className="text-center space-y-1 pb-0">
           <div className="relative flex flex-col items-center justify-center pt-6">
@@ -113,85 +114,88 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Featured Card — full width */}
-        <FeatureCard
-          icon={<Database className="w-6 h-6" />}
-          title={t.ui("app.navAccountData")}
-          problem={t.ui("app.accountDataProblem")}
-          guideline={t.ui("app.accountDataGuideline")}
-          link="/account-data"
-          bgImage="assets/home/account_bg.png"
-          bgPosition="center 12%"
-          ctaText={t.ui("app.ctaScoreArtifacts")}
-          featured
-          index={0}
-        />
-
-        {/* Core Tools — 2×2 grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        {/* Cards area — WhatsNew wraps cards to provide the pacman traversal boundary */}
+        <WhatsNew>
+          {/* Featured Card — full width */}
           <FeatureCard
-            icon={<Filter className="w-6 h-6" />}
-            title={t.ui("app.navArtifactFilter")}
-            problem={t.ui("app.artifactFilterProblem")}
-            guideline={t.ui("app.artifactFilterGuideline")}
-            link="/artifact-filter"
-            bgImage="assets/home/columbina.png"
-            bgPosition="center 50%"
-            ctaText={t.ui("app.ctaConfigureFilters")}
-            index={1}
+            icon={<Database className="w-6 h-6" />}
+            title={t.ui("app.navAccountData")}
+            problem={t.ui("app.accountDataProblem")}
+            guideline={t.ui("app.accountDataGuideline")}
+            link="/account-data"
+            bgImage="assets/home/account_bg.png"
+            bgPosition="center 12%"
+            ctaText={t.ui("app.ctaScoreArtifacts")}
+            featured
+            index={0}
           />
 
-          <FeatureCard
-            icon={<Award className="w-6 h-6" />}
-            title={t.ui("app.navTierList")}
-            problem={t.ui("app.tierListProblem")}
-            guideline={t.ui("app.tierListGuideline")}
-            link="/tier-list"
-            bgImage="assets/home/traveler.png"
-            bgPosition="center 25%"
-            ctaText={t.ui("app.ctaRankCharacters")}
-            index={2}
-          />
+          {/* Core Tools — 2×2 grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+            <FeatureCard
+              icon={<Filter className="w-6 h-6" />}
+              title={t.ui("app.navArtifactFilter")}
+              problem={t.ui("app.artifactFilterProblem")}
+              guideline={t.ui("app.artifactFilterGuideline")}
+              link="/artifact-filter"
+              bgImage="assets/home/columbina.png"
+              bgPosition="center 50%"
+              ctaText={t.ui("app.ctaConfigureFilters")}
+              index={1}
+            />
 
-          <FeatureCard
-            icon={<Sword className="w-6 h-6" />}
-            title={t.ui("app.navArchive")}
-            problem={t.ui("app.archiveProblem")}
-            guideline={t.ui("app.archiveGuideline")}
-            link="/archive"
-            bgImage="assets/home/escoffier.png"
-            bgPosition="center 50%"
-            ctaText={t.ui("app.ctaBrowseDetails")}
-            index={3}
-          />
+            <FeatureCard
+              icon={<Award className="w-6 h-6" />}
+              title={t.ui("app.navTierList")}
+              problem={t.ui("app.tierListProblem")}
+              guideline={t.ui("app.tierListGuideline")}
+              link="/tier-list"
+              bgImage="assets/home/traveler.png"
+              bgPosition="center 25%"
+              ctaText={t.ui("app.ctaRankCharacters")}
+              index={2}
+            />
 
-          <FeatureCard
-            icon={<Users className="w-6 h-6" />}
-            title={t.ui("app.navTeamComp")}
-            problem={t.ui("app.teamCompProblem")}
-            guideline={t.ui("app.teamCompGuideline")}
-            link="/team-comp"
-            bgImage="assets/home/ineffa.png"
-            bgPosition="center 42%"
-            ctaText={t.ui("app.ctaCalculateDamage")}
-            index={4}
-          />
-        </div>
+            <FeatureCard
+              icon={<Sword className="w-6 h-6" />}
+              title={t.ui("app.navArchive")}
+              problem={t.ui("app.archiveProblem")}
+              guideline={t.ui("app.archiveGuideline")}
+              link="/archive"
+              bgImage="assets/home/escoffier.png"
+              bgPosition="center 50%"
+              ctaText={t.ui("app.ctaBrowseDetails")}
+              index={3}
+            />
 
-        {/* Community Banner */}
-        <FeatureCard
-          icon={<Sparkles className="w-5 h-5" />}
-          title={t.ui("app.navMoreToCome")}
-          problem={t.ui("app.moreProblem")}
-          guideline={t.ui("app.moreGuideline")}
-          link="https://discord.gg/4RNAHYBaHa"
-          bgImage="assets/home/mizuki.png"
-          bgPosition="center 32%"
-          ctaText={t.ui("app.ctaJoinCommunity")}
-          external
-          banner
-          index={5}
-        />
+            <FeatureCard
+              icon={<Users className="w-6 h-6" />}
+              title={t.ui("app.navTeamComp")}
+              problem={t.ui("app.teamCompProblem")}
+              guideline={t.ui("app.teamCompGuideline")}
+              link="/team-comp"
+              bgImage="assets/home/ineffa.png"
+              bgPosition="center 48%"
+              ctaText={t.ui("app.ctaCalculateDamage")}
+              index={4}
+            />
+          </div>
+
+          {/* Community Banner */}
+          <FeatureCard
+            icon={<Sparkles className="w-5 h-5" />}
+            title={t.ui("app.navMoreToCome")}
+            problem={t.ui("app.moreProblem")}
+            guideline={t.ui("app.moreGuideline")}
+            link="https://discord.gg/4RNAHYBaHa"
+            bgImage="assets/home/mizuki.png"
+            bgPosition="center 32%"
+            ctaText={t.ui("app.ctaJoinCommunity")}
+            external
+            banner
+            index={5}
+          />
+        </WhatsNew>
 
         {/* Footer */}
         <footer className="mt-auto pt-6 pb-2 border-t border-border/20 text-center space-y-1">

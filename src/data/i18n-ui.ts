@@ -835,6 +835,10 @@ export const i18nUiData = {
       en: "Combine formulas into a rotation",
       zh: "将公式组合为循环",
     },
+    comboDisclaimer: {
+      en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
+      zh: "组合模式不追踪Buff持续时间和层数，长轴循环的结果可能不准确。",
+    },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

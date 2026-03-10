@@ -134,6 +134,33 @@ function TourProvider({
     const activeGuide = tours.find((tour) => tour.id === activeGuideId)
     const steps = activeTour?.steps || []
 
+    // Auto-dismiss: close tour/guide after 10s of no interaction
+    const autoDismissRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const resetAutoDismiss = React.useCallback(() => {
+        if (autoDismissRef.current) clearTimeout(autoDismissRef.current)
+        autoDismissRef.current = setTimeout(() => {
+            setIsOpen(false)
+            setCurrentStepIndex(0)
+            setActiveTourId(null)
+            setIsGuideOpen(false)
+            setActiveGuideId(null)
+        }, 10_000)
+    }, [])
+
+    // Reset timer whenever tour state changes (step navigation, open)
+    React.useEffect(() => {
+        if (isOpen || isGuideOpen) {
+            resetAutoDismiss()
+        } else if (autoDismissRef.current) {
+            clearTimeout(autoDismissRef.current)
+            autoDismissRef.current = null
+        }
+        return () => {
+            if (autoDismissRef.current) clearTimeout(autoDismissRef.current)
+        }
+    }, [isOpen, isGuideOpen, currentStepIndex, resetAutoDismiss])
+
     function next() {
         if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex((prev) => prev + 1)
@@ -154,7 +181,7 @@ function TourProvider({
         setIsOpen(false)
         setCurrentStepIndex(0)
         setActiveTourId(null)
-        
+
         setIsGuideOpen(false)
         setActiveGuideId(null)
     }
@@ -276,7 +303,7 @@ function TourOverlay({
                     if (rect.width === 0 && rect.height === 0) continue
 
                     const style = window.getComputedStyle(element)
-                    const radius = Number(style.borderRadius) || 4
+                    const radius = parseFloat(style.borderRadius) || 4
 
                     validElements.push({
                         rect: {
@@ -325,37 +352,33 @@ function TourOverlay({
         window.addEventListener("resize", scheduleUpdate)
         window.addEventListener("scroll", scheduleUpdate, true)
 
-        const observer = new MutationObserver((mutations) => {
-            const overlayEl = overlayRef.current
-            if (overlayEl) {
-                const allFromOverlay = mutations.every(
-                    (m) => overlayEl.contains(m.target)
-                )
-                if (allFromOverlay) return
-            }
-            scheduleUpdate()
-        })
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-        })
-
+        // Only observe the target element for resize, not the entire body
+        const targetEl = document.querySelector(
+            `[data-tour-step-id*='${step.id}']`
+        )
         const resizeObserver = new ResizeObserver(scheduleUpdate)
-        resizeObserver.observe(document.body)
+        if (targetEl) {
+            resizeObserver.observe(targetEl)
+        }
 
         return () => {
             if (rafId != null) cancelAnimationFrame(rafId)
             window.removeEventListener("resize", scheduleUpdate)
             window.removeEventListener("scroll", scheduleUpdate, true)
-            observer.disconnect()
             resizeObserver.disconnect()
         }
     }, [step])
 
     React.useEffect(() => {
+        // Compensate for scrollbar disappearing to prevent layout shift (Windows)
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+        if (scrollbarWidth > 0) {
+            document.body.style.paddingRight = `${scrollbarWidth}px`
+        }
         document.body.style.overflow = "hidden"
         return () => {
             document.body.style.overflow = ""
+            document.body.style.paddingRight = ""
         }
     }, [])
 

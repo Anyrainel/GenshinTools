@@ -15,7 +15,6 @@ interface SidebarLayoutProps {
   triggerIcon?: LucideIcon;
   triggerLabel?: string;
   children: React.ReactNode;
-  className?: string;
   /**
    * Optional ref for the main scrollable content area.
    * Pass this when using virtualization (e.g., @tanstack/react-virtual).
@@ -43,7 +42,6 @@ export function SidebarLayout({
   triggerIcon: TriggerIcon = Filter,
   triggerLabel = "Filters",
   children,
-  className,
   contentScrollRef,
   contentScrollsInternally = false,
 }: SidebarLayoutProps) {
@@ -52,9 +50,7 @@ export function SidebarLayout({
   return (
     <div
       className={cn(
-        "h-full overflow-hidden flex flex-col lg:flex-row gap-3",
-        "wide-container",
-        className
+        "h-full overflow-hidden flex flex-col lg:flex-row wide-container gap-2 lg:gap-3 pt-2 lg:pt-4"
       )}
     >
       {/* Mobile/Tablet trigger button */}

@@ -89,7 +89,7 @@ export const i18nAppData = {
     "elemental%": { en: "Elemental%", zh: "元素伤%" },
     // Calculator internal stats
     "dmg%": { en: "DMG%", zh: "伤害%" },
-    baseDmg: { en: "BaseDMG", zh: "基础伤害" },
+    baseDmg: { en: "BaseDMG", zh: "附加伤害" },
     "baseDmg%": { en: "BaseDMG%", zh: "倍率%" },
     "reactionBaseDmg%": { en: "RxnBase%", zh: "反应基础%" },
     "elevated%": { en: "Elevated%", zh: "擢升%" },
