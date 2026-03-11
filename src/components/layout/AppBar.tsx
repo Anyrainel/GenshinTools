@@ -192,7 +192,7 @@ export function AppBar({
         )}
       >
         <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4 md:gap-6">
+          <div className="flex items-center gap-1 md:gap-4">
             {/* Mobile Menu */}
             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <SheetTrigger asChild>
@@ -518,7 +518,7 @@ export function AppBar({
                     className={cn(
                       "gap-2 h-9 px-4 text-sm pt-1.5 pb-2.5",
                       activeTab === tab.value &&
-                        "bg-primary text-primary-foreground"
+                        "bg-primary/60 text-primary-foreground"
                     )}
                     data-tour-step-id={tab.tourStepId}
                   >

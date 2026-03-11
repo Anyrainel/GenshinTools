@@ -128,9 +128,7 @@ function BuildEvaluationCardComponent({
               key={slot}
               className="inline-flex items-center gap-0.5 whitespace-nowrap"
             >
-              {i > 0 && (
-                <span className="text-muted-foreground/20 mr-1.5">·</span>
-              )}
+              {i > 0 && <span className="text-muted-foreground mr-1.5">·</span>}
               <Icon className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-foreground/35 shrink-0" />
               {evalBuild.mainStats[slot].map((s) => t.statShort(s)).join("/")}
             </span>
@@ -178,31 +176,22 @@ function BuildEvaluationCardComponent({
                   slot={slot}
                   side="top"
                 >
-                  <div className="relative">
-                    <img
-                      src={
-                        artifactsById[slotEval.artifact!.setKey]?.imagePaths[
-                          slot
-                        ] || ""
-                      }
-                      alt=""
-                      className={cn(
-                        "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
-                        isOffSet && "ring-1 ring-amber-500/60"
-                      )}
-                    />
-                    {isOffSet && (
-                      <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 2xl:w-4 2xl:h-4 rounded-full bg-amber-500 flex items-center justify-center">
-                        <span className="text-[7px] 2xl:text-[8px] font-bold text-black">
-                          F
-                        </span>
-                      </div>
+                  <img
+                    src={
+                      artifactsById[slotEval.artifact!.setKey]?.imagePaths[
+                        slot
+                      ] || ""
+                    }
+                    alt=""
+                    className={cn(
+                      "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
+                      isOffSet && "ring-1 ring-amber-500/60"
                     )}
-                  </div>
+                  />
                 </ArtifactDataHoverCard>
               ) : (
-                <div className="w-11 h-11 2xl:w-14 2xl:h-14 rounded border border-dashed border-muted-foreground/15 flex items-center justify-center">
-                  <span className="text-xs text-muted-foreground/20">--</span>
+                <div className="w-11 h-11 2xl:w-14 2xl:h-14 rounded border border-dashed border-border flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">--</span>
                 </div>
               )}
 
@@ -219,9 +208,7 @@ function BuildEvaluationCardComponent({
               <span
                 className={cn(
                   "text-xs 2xl:text-sm font-mono font-semibold leading-none",
-                  hasArtifact
-                    ? getTier(slotPct).text
-                    : "text-muted-foreground/20"
+                  hasArtifact ? getTier(slotPct).text : "text-muted-foreground"
                 )}
               >
                 {hasArtifact ? `${slotPctRounded}%` : "--"}

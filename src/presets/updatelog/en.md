@@ -2,17 +2,18 @@
 - Ongoing: more damage formulas and customization options
 - P0: Better OCR tools
 - P0: More useful artifact upgrade and sub-stat reroll suggestions
-- P0: Enemy bestiary
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
-## 2025-03-09
+## 2025-03-11
 
 ### features
 - Manual account data editing
+- Stygian Onslaught Archive
+- Enable swap after optimize, swapped result can be frozen
 - Optional off-set piece mode for builds with high crit or ER requirements
 - Redesigned character stat panel: now shows sub-stat details under various conditions, plus the max value of each stat used by the formula
-- Select enemy innate elements to automatically adjust available formulas and reaction-triggered buffs
+- Select enemy innate element aura to adjust available formulas and reaction-triggered buffs
 
 ### fixes
 - Fixed artifact score not appearing for certain slots

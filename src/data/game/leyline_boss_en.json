@@ -1,0 +1,1257 @@
+{
+  "bosses": [
+    {
+      "id": 10011,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1001041,
+          "name": "Hydro Tulpa: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1001051,
+          "name": "Hydro Tulpa: Wuthertide"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1001061,
+          "name": "Hydro Tulpa: Turbulent Vortex"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro characters"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Hydro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Helping Half-Tulpa",
+          "short": "Will absorb <color=#FFD780FF>Half-Tulpas</color> that emerge during the challenge at intervals to <color=#FFD780FF>enhance itself</color>. Use attacks or Elemental Reactions to destroy Half-Tulpas in time or <color=#FFD780FF>Freeze</color> them to interrupt this absorption.",
+          "detail": "<color=#FFD780FF>1 Half-Tulpa</color> will emerge during the challenge at intervals. After some time, the Hydro Tulpa will absorb Half-Tulpas to <color=#FFD780FF>enhance itself</color>: It will grow larger, its ATK will increase, and it will launch more dangerous attacks.\\nUse attacks or Elemental Reactions to destroy Half-Tulpas in time or <color=#FFD780FF>Freeze</color> them to interrupt this absorption."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Twin Half-Tulpas",
+          "short": "Affected by the Ley Line disturbance, this being will absorb the <color=#FFD780FF>2 Half-Tulpas</color> that emerge during the challenge at intervals to <color=#FFD780FF>enhance and heal itself</color>. Use attacks or Elemental Reactions to destroy Half-Tulpas in time or <color=#FFD780FF>Freeze</color> them to interrupt this absorption.",
+          "detail": "Affected by the Ley Line disturbance, <color=#FFD780FF>2 Half-Tulpas</color> will emerge during the challenge at intervals. After some time, the Hydro Tulpa will absorb Half-Tulpas to <color=#FFD780FF>enhance itself</color>: <color=#FFD780FF>It will heal a large amount of HP</color> and grow larger, its ATK will increase, and it will launch more dangerous attacks.\\nUse attacks or Elemental Reactions to destroy the Half-Tulpas in time or <color=#FFD780FF>Freeze</color> them to interrupt this absorption."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Torrential Flurry",
+          "short": "Affected by the Ley Line disturbance, the Hydro Tulpa <color=#FFD780FF>will deploy a Shield</color> at intervals. Deal as much DMG to the Shield as possible and destroy it. If not, the Hydro Tulpa will unleash Torrential Flurry after a short time, <color=#FFD780FF>which will immediately defeat your current active character</color>.",
+          "detail": "Affected by the Ley Line disturbance, the Hydro Tulpa will deploy a Shield during the challenge and enter a charging state as it prepares to launch Torrential Flurry. If it is successfully unleashed, <color=#FFD780FF>your current active character will be immediately defeated</color>.\\nWhen the Hydro Tulpa deploys its Shield, all party members' Elemental Skill and Burst CDs will be reset, while their Elemental Energy, Fighting Spirit, and Serpent's Subtlety will be restored. Breaking the Shield before the Hydro Tulpa can charge up will interrupt Torrential Flurry."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 512,
+          "name": "Hydro Tulpa"
+        },
+        {
+          "id": 516,
+          "name": "Hydro Tulpa"
+        }
+      ]
+    },
+    {
+      "id": 10012,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1001042,
+          "name": "Lava Dragon Statue: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1001052,
+          "name": "Lava Dragon Statue: Forged Flame"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1001062,
+          "name": "Lava Dragon Statue: Blazing Flame"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Geo Electro characters"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Pyro Hydro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Dual Pyroclast",
+          "short": "Has two forms. Its initial form possesses <color=#FFD780FF>higher All RES</color>. After it takes a certain number of <color=#FF9999FF>Pyro DMG</color> instances, it will enter its second form, in which <color=#FFD780FF>all RES apart from Pyro RES is greatly decreased</color>. After it goes on to take a certain number of additional <color=#FF9999FF>Pyro DMG</color> instances, it will take immense DMG and be immobilized. This will also cause its <color=#FFD780FF>All RES to be further decreased</color>.",
+          "detail": "Starts in the Geohuman form, which possesses <color=#FFD780FF>higher All Elemental and Physical RES</color>. After it takes a certain number of <color=#FF9999FF>Pyro DMG</color> instances, it will completely enter its Molten Dragon form, in which <color=#FFD780FF>All Elemental and Physical RES apart from Pyro RES is greatly decreased</color>. After it goes on to take <color=#FF9999FF>Pyro DMG</color>, it will progressively take additional DMG. If it takes a certain number of additional <color=#FF9999FF>Pyro DMG</color> instances while in Molten Dragon form, it will enter Overburn, falling down and becoming immobilized. This will also cause its <color=#FFD780FF>All Elemental and Physical RES to be further decreased</color>. After being immobilized for a time, it will return to Geohuman form."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Cooldown Effect",
+          "short": "After taking <color=#80C0FFFF>Hydro DMG</color> or <color=#99FFFFFF>Cryo DMG</color>, it will gradually return to the higher-RES initial form.",
+          "detail": "After taking <color=#80C0FFFF>Hydro DMG</color> or <color=#99FFFFFF>Cryo DMG</color>, it will gradually return to the higher-RES Geohuman form."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Cooldown Effect",
+          "short": "Affected by the Ley Line disturbance, this great foe has its All RES further increased, and the number of Pyro DMG instances it must take to change form is increased.",
+          "detail": "After taking <color=#80C0FFFF>Hydro DMG</color> or <color=#99FFFFFF>Cryo DMG</color>, it will gradually return to the higher-RES Geohuman form."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Roiling Agglomeration",
+          "short": "After taking <color=#80C0FFFF>Hydro DMG</color> or <color=#99FFFFFF>Cryo DMG</color>, it will gradually return to the higher-RES initial form.",
+          "detail": "Affected by the Ley Line disturbance, this great foe has its All RES further increased, and the number of Pyro DMG instances it must take to change form is increased."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 62703,
+          "name": "Lava Dragon Statue"
+        }
+      ]
+    },
+    {
+      "id": 10013,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1001043,
+          "name": "Secret Source Automaton: Overseer Device - Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1001053,
+          "name": "Secret Source Automaton: Overseer Device - Swift Strike"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1001063,
+          "name": "Secret Source Automaton: Overseer Device - Obliterator Panoply"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Pyro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Sweeper Mode",
+          "short": "Will enter Sweeper Mode while in combat: <color=#FFD780FF>All RES is greatly increased</color>, and it will perform rotating attacks while generating Flow Momentum. It will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will temporarily stop rotating and attacking, and its <color=#FFD780FF>All RES will be greatly decreased</color>.",
+          "detail": "Will enter Sweeper Mode while in combat: <color=#FFD780FF>All Elemental and Physical RES is greatly increased</color>, and it will generate Flow Momentum while performing attacks. The higher its Flow Momentum, the faster it will rotate and the more DMG it will deal.\\nIt will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will stop rotating and attacking, and its <color=#FFD780FF>All Elemental and Physical RES will be greatly decreased</color>, with its <color=#99FFFFFF>Cryo RES</color> <color=#FFD780FF>decreasing still more</color>."
+        },
+        {
+          "tiers": [4],
+          "title": "Preemptive Sweeper Mode",
+          "short": "Will immediately enter Sweeper Mode when combat starts: <color=#FFD780FF>All RES is greatly increased</color>, and it will perform rotating attacks while generating Flow Momentum. It will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will temporarily stop rotating and attacking, and its <color=#FFD780FF>All RES will be greatly decreased</color>.",
+          "detail": "Will immediately enter Sweeper Mode when combat starts: <color=#FFD780FF>All Elemental and Physical RES is greatly increased</color>, and it will generate Flow Momentum while performing attacks. The higher its Flow Momentum, the faster it will rotate and the more DMG it will deal.\\nIt will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will stop rotating and attacking, and its <color=#FFD780FF>All Elemental and Physical RES will be greatly decreased</color>, with its <color=#99FFFFFF>Cryo RES</color> <color=#FFD780FF>decreasing still more</color>."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Counterstrike Mode",
+          "short": "If an active character enters and maintains the <color=#FFD780FF>Nightsoul's Blessing</color> state for a time, this opponent will enter Counterstrike Mode and switch to attacking with tracking rays. At this time, its <color=#FFD780FF>All RES will be greatly decreased</color>.",
+          "detail": "If an active character enters and maintains the <color=#FFD780FF>Nightsoul's Blessing</color> state for a time, this opponent will enter Counterstrike Mode and switch to attacking with tracking rays. At this time, its <color=#FFD780FF>All Elemental and Physical RES will be decreased</color>.\\nIn this state, after it takes a certain number of <color=#99FFFFFF>Cryo DMG</color> instances, it will cease attacking altogether and its <color=#FFD780FF> All Elemental and Physical RES will be further decreased</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Preemptive Sweeper Mode",
+          "short": "Will immediately enter Sweeper Mode when combat starts: <color=#FFD780FF>All RES is greatly increased</color>, and it will perform rotating attacks while generating Flow Momentum. It will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will temporarily stop rotating and attacking, and its <color=#FFD780FF>All RES will be greatly decreased</color>.",
+          "detail": "Will immediately enter Sweeper Mode when combat starts: <color=#FFD780FF>All Elemental and Physical RES is greatly increased</color>, and it will generate Flow Momentum while performing attacks. The higher its Flow Momentum, the faster it will rotate and the more DMG it will deal.\\nIt will lose Flow Momentum after taking <color=#99FFFFFF>Cryo DMG</color>. Below a certain Flow Momentum value, it will stop rotating and attacking, and its <color=#FFD780FF>All Elemental and Physical RES will be greatly decreased</color>, with its <color=#99FFFFFF>Cryo RES</color> <color=#FFD780FF>decreasing still more</color>.\\nEach time it enters Sweeper Mode, it will produce additional Elemental Orbs the first time its rotating attacks are stopped."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Forced Counterstrike Mode",
+          "short": "If an active character enters and maintains the <color=#FFD780FF>Nightsoul's Blessing</color> state for a time, this opponent will enter Forced Counterstrike Mode and switch to attacking with powerful tracking rays. At this time, its <color=#FFD780FF>All RES will be greatly decreased</color>.",
+          "detail": "If an active character enters and maintains the <color=#FFD780FF>Nightsoul's Blessing</color> state for a time, this opponent will enter Forced Counterstrike Mode and switch to attacking with powerful tracking rays. At this time, its <color=#FFD780FF>All Elemental and Physical RES will be decreased</color>.\\nIn this state, after it takes a certain number of <color=#99FFFFFF>Cryo DMG</color> instances, it will cease attacking altogether and its <color=#FFD780FF> All Elemental and Physical RES will be further decreased</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Damage-Resistant Structure",
+          "short": "Affected by the Ley Line disturbance, this great foe has its All RES further increased, and it loses less Flow Momentum when struck by <color=#99FFFFFF>Cryo DMG</color>. When in Counterstrike Mode, it will launch even more powerful tracking ray attacks, and it will lose less RES.",
+          "detail": "Affected by the Ley Line disturbance, this great foe has its All RES further increased, and it loses less Flow Momentum when struck by <color=#99FFFFFF>Cryo DMG</color>. It will also lose less RES when in Forced Counterstrike Mode."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 40905,
+          "name": "Secret Source Automaton: Overseer Device"
+        }
+      ]
+    },
+    {
+      "id": 10021,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1002041,
+          "name": "Tenebrous Papilla: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1002051,
+          "name": "Tenebrous Papilla: Cunning Speed"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1002061,
+          "name": "Tenebrous Papilla: Shadow Void Transfiguration"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "High-frequency Elemental DMG | Nightsoul-aligned DMG"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Tenebrous Mimesis",
+          "short": "For a while after the battle begins, the enemy will grant itself a Void Ward. You need to quickly destroy the Ward by using <color=#FFD780FF>a certain number of Elemental attacks</color>, which will cause it to become disoriented. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> will be more effective at breaking the Ward. If you fail to destroy the Ward within the given time, the enemy will unleash a powerful, large-area strike.",
+          "detail": "It can warp itself and transform into a formidable foe to attack."
+        },
+        {
+          "tiers": [4],
+          "title": "Tenebrous Mimesis",
+          "short": "Right after the battle begins, the enemy will grant itself a Void Ward. You need to quickly destroy the Ward by using <color=#FFD780FF>a certain number of Elemental attacks</color>, which will cause it to become disoriented. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> will be more effective at breaking the Ward. If you fail to destroy the Ward within the given time, the enemy will unleash a powerful, large-area strike.",
+          "detail": "It can warp itself and transform into a formidable foe to attack."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Attrition Assault",
+          "detail": "Some attacks will inflict the stackable \"Attrition\" state, which will cause your own active party member to lose HP after a certain amount of time passes."
+        },
+        {
+          "tiers": [1, 2, 3],
+          "title": "Beseech the Dark",
+          "detail": "During battle, the Tenebrous Papilla will initiate Beseech the Dark: Gives itself a Void Ward, enters a charging state, and prepares to unleash a Dark Bombardment. When Dark Bombardment is unleashed, it will deal DMG over an immense AoE.\\nIf you perform <color=#FFD780FF>a certain number of Elemental attacks</color> during this time, you can break the Ward, throwing the Tenebrous Papilla into disarray and preventing the Dark Bombardment from being unleashed. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> are more effective at breaking the Ward.\\nAfter breaking the Ward, the Tenebrous Papilla's All RES will be decreased for a period of time."
+        },
+        {
+          "tiers": [4],
+          "title": "Beseech the Dark",
+          "detail": "When the battle begins, the Tenebrous Papilla will immediately initiate Beseech the Dark: Gives itself a Void Ward, enters a charging state, and prepares to unleash a Dark Bombardment. When Dark Bombardment is unleashed, it will deal DMG over an immense AoE.\\nIf you perform <color=#FFD780FF>a certain number of Elemental attacks</color> during this time, you can break the Ward, throwing the Tenebrous Papilla into disarray and preventing the Dark Bombardment from being unleashed. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> are more effective at breaking the Ward.\\nThe Tenebrous Papilla begins the battle with increased RES. After breaking the Ward, the Tenebrous Papilla's All RES will be decreased for a period of time."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Tenebrous Mimesis",
+          "short": "Affected by the Ley Line disturbance, the Tenebrous Papilla will remain protected by a Void Ward throughout the battle. You must quickly break the Ward by using <color=#FFD780FF>a certain number of Elemental attacks</color>. Once the Ward is broken, the enemy will suffer a high amount of DMG based on the DMG absorbed by the Ward and will then enter an extended state of disarray. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> will have greater Ward-breaking efficiency. They will also further increase the damage the enemy takes when the Ward is broken.",
+          "detail": "It can warp itself and transform into a formidable foe to attack."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Attrition Assault",
+          "short": "Affected by the Ley Line disturbance, should you fail to destroy the Void Ward within the given time, the enemy will unleash \"Hatefully Beseech the Dark\": after a brief delay, it will release a massive AoE strike that will <color=#FFD780FF>instantly knock out your active character</color>. If you break the Void Ward before this strike, you can prevent it from being unleashed.",
+          "detail": "Some attacks will inflict the stackable \"Attrition\" state, which will cause your own active party member to lose HP after a certain amount of time passes."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Shadow Void Aegis",
+          "detail": "Affected by the Ley Line disturbance, the Tenebrous Papilla will deploy a Void Ward while initiating attacks. Perform <color=#FFD780FF>a certain number of Elemental attacks</color> to break the Ward. Once the Void Ward is broken, the Tenebrous Papilla will receive a single instance of immense DMG based on the DMG absorbed by the Ward and enter a weakened state for an extended period of time. <color=#FFD780FF>Nightsoul-aligned Elemental attacks</color> are more effective at breaking the Ward and will increase the DMG dealt when the Ward is broken. After being in the weakened state for a while, the Tenebrous Papilla will attempt to re-deploy its Void Ward."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Hatefully Beseech the Dark",
+          "detail": "Affected by the Ley Line disturbance, if the Void Ward remains unbroken for too long, the Tenebrous Papilla will initiate Hatefully Beseech the Dark: Enters a charging state, which, if the Void Ward continues to remain unbroken, will conclude with the Tenebrous Papilla unleashing a Wrathful Dark Bombardment, <color=#FFD780FF>immediately defeating your current active character</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 21201,
+          "name": "Tenebrous Papilla: Type I"
+        },
+        {
+          "id": 21216,
+          "name": "Tenebrous Papilla: Type II"
+        },
+        {
+          "id": 21217,
+          "name": "Tenebrous Papilla: Type III"
+        }
+      ]
+    },
+    {
+      "id": 10022,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1002042,
+          "name": "Battle-Hardened Tent Tortoise: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1002052,
+          "name": "Battle-Hardened Tent Tortoise: Electro Surge"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1002062,
+          "name": "Battle-Hardened Tent Tortoise: Thunderous Aegis"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Low-frequency DMG"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "High-frequency DMG"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Thunderthorn Ward",
+          "short": "After taking <color=#FFD780FF>a certain number of attacks</color>, it will deploy a \"Thunderthorn Ward\": Attacks against it will be reflected onto nearby characters. The Ward can be broken by using Elemental Reactions to <color=#FFD780FF>drain the Ward of Electro</color>.",
+          "detail": "After taking <color=#FFD780FF>a certain number of attacks</color>, it will deploy a \"Thunderthorn Ward\": While the Ward is active, DMG will be reflected to nearby characters when it is attacked. The Ward can be broken by using Elemental Reactions to <color=#FFD780FF>drain the Ward of Electro</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Thunderous Attrition",
+          "short": "Affected by the Ley Line disturbance, the deployment progress of the \"Thunderthorn Ward\" will increase more rapidly, but it will also gradually recede over time. Meanwhile, the Electro contained within the \"Thunderthorn Ward\" will be significantly boosted.",
+          "detail": "Affected by the Ley Line disturbance, every time the foe is attacked, its progress toward deploying a Thunderthorn Ward will increase by a greater amount, but that progress will also gradually decrease over time. In addition, the Elemental requirements for breaking the Thunderthorn Ward are greatly increased."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 80213,
+          "name": "Battle-Hardened Tent Tortoise"
+        }
+      ]
+    },
+    {
+      "id": 10023,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1002043,
+          "name": "Battle-Hardened Pipilpan Idol: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1002053,
+          "name": "Battle-Hardened Pipilpan Idol: Flickering Mirage"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1002063,
+          "name": "Battle-Hardened Pipilpan Idol: Hundred Deceptions"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro-Charged reactions | Shields"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Hat Show",
+          "short": "During battle, the entity will create multiple hats and hide within one of them, then rapidly switch the positions of these hats. After a certain number of switches, if <color=#FFD780FF>the hat that conceals the entity takes Electro-Charged or Lunar-Charged damage</color>, the entity will temporarily halt all hat-swapping actions.",
+          "detail": "During battle, the entity will create multiple hats and hide within one of them, then rapidly switch the positions of these hats. After a certain number of switches, if <color=#FFD780FF>the hat that conceals the entity takes Electro-Charged or Lunar-Charged damage</color>, the entity will temporarily halt all hat-swapping actions.\\nDeal a certain amount of DMG to <color=#FFD780FF>the hat concealing the entity</color> to break all of the hats, causing the entity to reveal itself, receive a single instance of immense DMG, and temporarily enter a weakened state. <color=#FFD780FF>Electro-Charged or Lunar-Charged reactions</color> are more effective at breaking the hat. The DMG received by the entity when the hat breaks will increase based on the <color=#80C0FFFF>Hydro DMG</color>, <color=#FFACFFFF>Electro DMG</color>, <color=#FFD780FF>Electro-Charged DMG, or Lunar-Charged DMG</color> the hat has taken."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "short": "Deal a certain amount of DMG to <color=#FFD780FF>the hat concealing the entity</color> to break it, dealing a single instance of immense DMG to the entity and temporarily leaving it in a weakened state. <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color> is more effective at breaking the hat, and will cause the entity to take higher DMG when the hat breaks."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Hat Denial",
+          "short": "Deal a certain amount of DMG to <color=#FFD780FF>the hat concealing the entity</color> to break it, dealing a single instance of immense DMG to the entity and temporarily leaving it in a weakened state. <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color> is more effective at breaking the hat, and will cause the entity to take higher DMG when the hat breaks.",
+          "detail": "Affected by the Ley Line disturbance, the foe will unleash a powerful \"Hat Denial\" attack: Continuously hurls hats that deal <color=#FFACFFFF>high Electro DMG</color> and have <color=#FFD780FF>powerful interruption capabilities</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "short": "Affected by the Ley Line disturbance, this enemy will attack by hurling a large number of hats that have <color=#FFD780FF>powerful interruption capabilities</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 55602,
+          "name": "Battle-Hardened Pipilpan Idol"
+        }
+      ]
+    },
+    {
+      "id": 10031,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1003041,
+          "name": "Aeonblight Drake: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1003051,
+          "name": "Aeonblight Drake: Skyshaker"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1003061,
+          "name": "Aeonblight Drake: Annihilation Configuration"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Multi Elemental DMG | Bow characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Multi Elemental DMG"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Single Elemental DMG"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Countermeasures",
+          "short": "Periodically releases a torrent of energy, and changes form in response to the type of Elemental DMG it has suffered up to that point, <color=#FFD780FF>increasing its Elemental RES to that Element</color>.",
+          "detail": "Periodically releases a dangerous torrent of energy during combat and changes form in response to the main type of Elemental DMG it has suffered up to that point, <color=#FFD780FF>increasing its Elemental RES to that Element</color>."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Combat Mechanics",
+          "short": "<color=#FFD780FF>Attack the exposed cores</color> to paralyze the creature and remove its Elemental RES boost. Once paralysis ends, it will switch between aerial- and ground-attack states.",
+          "detail": "Able to switch between aerial- and ground-attack states. Under various circumstances, the cores all over its body will be exposed. Take the opportunity to <color=#FFD780FF>attack these cores</color> to paralyze the creature and remove its Elemental RES boost. Once paralysis ends, it will switch between aerial- and ground-attack states."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Emergency Countermeasures",
+          "short": "Affected by the Ley Line disturbance, every time DMG equaling a certain percentage of its HP is taken, a torrent of energy will be unleashed, and the creature will change form in response to the type of Elemental DMG it has suffered the most during that period, <color=#FFD780FF>significantly increasing its Elemental RES to that Element</color>.",
+          "detail": "Affected by the Ley Line disturbance, every time DMG equaling a certain percentage of its HP is taken, a torrent of energy will be unleashed, and the creature will change form in response to the type of Elemental DMG it has suffered the most during that period, <color=#FFD780FF>significantly increasing its Elemental RES to that Element</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Multi-Combat Mechanics",
+          "short": "Affected by the Ley Line disturbance, the creature will start combat in the ground-attack state. If it fails to release a torrent of energy for a long enough time, it will switch to the aerial-attack state.",
+          "detail": "Affected by the Ley Line disturbance, the creature will start combat in the ground-attack state. If it fails to release a torrent of energy for a long enough time, it will switch to the aerial-attack state to continue combat."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Core Armor Compartment",
+          "short": "Affected by the Ley Line disturbance, the creature's many cores are now protected, and it will no longer be paralyzed when they are attacked, nor will its Elemental RES boost be removed.",
+          "detail": "Affected by the Ley Line disturbance, the creature's many cores are now protected, and it will no longer be paralyzed when they are attacked, nor will its Elemental RES boost be removed."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 40303,
+          "name": "Aeonblight Drake"
+        }
+      ]
+    },
+    {
+      "id": 10032,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1003042,
+          "name": "Battle-Scarred Rock Crab: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1003052,
+          "name": "Battle-Scarred Rock Crab: Steel-Plated"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1003062,
+          "name": "Battle-Scarred Rock Crab: One Million Blasts"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Bloom-related reactions"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [5, 6],
+          "text": "Electro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Stoneborne Seeds",
+          "short": "In battle, Stoneborne Seeds will be scattered across the battlefield before exploding after a short delay. If these seeds take <color=#FFD780FF>Bloom, Hyperbloom, Lunar-Bloom, or Burgeon DMG</color> before they explode, they will undergo conversion and turn their attacks toward the Rock Crab instead, dealing DMG based on the total amount of DMG they themselves received.",
+          "detail": "In battle, Stoneborne Seeds will be continuously scattered across the battlefield before exploding after a short delay. If these seeds take <color=#FFD780FF>Bloom, Hyperbloom, Lunar-Bloom, or Burgeon DMG</color> before they explode, they will undergo conversion and turn their attacks toward the Rock Crab instead, dealing DMG based on the total amount of DMG they themselves received."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Almighty Bombardment",
+          "short": "After the battle begins, the Rock Crab will leap into the air and enter a short period of charging up before unleashing a powerful attack. While charging, the Rock Crab will deploy a Ward, which can be broken if <color=#FFD780FF>a certain amount of Stoneborne Seeds are converted</color>. Breaking its Ward will interrupt the Rock Crab's charging and leave it paralyzed.",
+          "detail": "After the battle begins, the Rock Crab will leap into the air, scatter a large number of Stoneborne Seeds, and then begin charging up. It will detonate the Stoneborne Seeds, dealing DMG over a wide area. While charging, the Rock Crab will deploy a Ward, which can be broken by <color=#FFD780FF>converting a certain amount of Stoneborne Seeds</color>. Breaking its Ward will interrupt the Rock Crab's charging and leave it paralyzed."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Stoneborne Seeds",
+          "short": "In battle, Stoneborne Seeds will be scattered across the battlefield before exploding after a short delay. If these seeds take <color=#FFD780FF>Bloom, Hyperbloom, Lunar-Bloom, or Burgeon DMG</color> before they explode, they will undergo conversion and turn their attacks toward the Rock Crab instead, dealing DMG based on the total amount of DMG they themselves received.",
+          "detail": "In battle, Stoneborne Seeds will be scattered across the battlefield before exploding after a short delay. If these seeds take <color=#FFD780FF>Bloom, Hyperbloom, Lunar-Bloom, or Burgeon DMG</color> before they explode, they will undergo conversion and turn their attacks toward the Rock Crab instead, dealing DMG based on the total amount of DMG they themselves received."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Flammable Hermit",
+          "short": "Affected by the Ley Line disturbance, Stoneborne Seeds will violently explode after taking Pyro DMG, knocking characters back and dealing massive DMG.",
+          "detail": "Affected by the Ley Line disturbance, Stoneborne Seeds will violently explode after taking Pyro DMG, knocking characters back and dealing massive DMG."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Almighty Tsarly Bombardment",
+          "short": "Affected by the Ley Line disturbance, after the battle begins, the Rock Crab will leap into the air and enter a short period of charging up before unleashing a powerful attack, <color=#FFD780FF>immediately defeating your current active character</color> and greatly increasing its own All RES. While charging, the Rock Crab will deploy a Ward, which can be broken if <color=#FFD780FF>a certain amount of Stoneborne Seeds are converted</color>. Breaking its Ward will interrupt the Rock Crab's charging and leave it paralyzed.",
+          "detail": "Affected by the Ley Line disturbance, after the battle begins, the Rock Crab will leap into the air, scatter a large number of Stoneborne Seeds, and then begin charging up. It will detonate the Stoneborne Seeds, dealing DMG over a wide area, <color=#FFD780FF>immediately defeating your current active character</color> and greatly increasing its own All RES for a period of time. While charging, the Rock Crab will deploy a Ward, which can be broken by <color=#FFD780FF>converting a certain amount of Stoneborne Seeds</color>. Breaking its Ward will interrupt the Rock Crab's charging and leave it paralyzed."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 61626,
+          "name": "Battle-Scarred Rock Crab"
+        }
+      ]
+    },
+    {
+      "id": 10033,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1003043,
+          "name": "Battle-Hardened Fireblade Shock Trooper: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1003053,
+          "name": "Battle-Hardened Fireblade Shock Trooper: Frenzied"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1003063,
+          "name": "Battle-Hardened Fireblade Shock Trooper: Forlorn Hope"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro-Charged reactions | Anemo characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Multi-Shield",
+          "short": "While the opponent is preparing to activate Thundering Suite, <color=#FFD780FF>focus on breaking the triple-layer Experimental Multi-Shield that they deploy</color>, as this will prevent the suite's activation. The Shield will periodically repair itself. <color=#FFD780FF>Electro-Charged and Lunar-Charged DMG</color> are more effective at destroying the Shield. Each layer of the Shield that is destroyed will cause a single instance of massive damage to be dealt to the opponent, while generating additional Elemental Orbs.",
+          "detail": "In battle, the opponent will deploy a special Experimental Multi-Shield to protect themselves while they prepare to activate Thundering Suite. The Shield will repair itself by a certain amount at regular intervals. Destroying all 3 layers of the Shield will prevent Thundering Suite's activation and paralyze the opponent. <color=#FFD780FF>Electro-Charged and Lunar-Charged DMG</color> are more effective at destroying the Shield. Each layer of the Shield that is destroyed will cause a single instance of massive damage to be dealt to the opponent, while generating additional Elemental Orbs."
+        },
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Thundering Barrage",
+          "short": "When Thundering Suite is activated, it will deal Electro DMG over a large AoE and unleash continuous Electro attacks. If you successfully prevent the suite's activation, the opponent's <color=#FFD780FF>Electro RES will be greatly decreased</color>.",
+          "detail": "When Thundering Suite is activated, it will deal Electro DMG over a large AoE and then unleash continuous Electro attacks for a period of time. If you successfully prevent the suite's activation, the opponent's equipment will malfunction, causing their <color=#FFD780FF>Electro RES to be greatly decreased</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Emergency Power Surge",
+          "short": "Affected by the Ley Line disturbance, the Experimental Multi-Shield increases All RES except Electro, and its self-repairing abilities are boosted. However, after taking <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color>, its rate of self-repair will be greatly reduced. Once activated, the DMG dealt by Thundering Suite, as well as its duration, is greatly increased.",
+          "detail": "Affected by the Ley Line disturbance, the Experimental Multi-Shield increases All RES except Electro, and its self-repairing abilities are boosted. However, after taking <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color>, its rate of self-repair will be greatly reduced. Once activated, the DMG dealt by Thundering Suite is greatly increased, as is the duration of its attacks."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 30791,
+          "name": "Oprichniki Fireblade Shock Trooper"
+        },
+        {
+          "id": 30794,
+          "name": "Battle-Hardened Fireblade Shock Trooper"
+        }
+      ]
+    },
+    {
+      "id": 10041,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1004041,
+          "name": "Frostnight Herra: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1004051,
+          "name": "Frostnight Herra: Eclipse"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1004061,
+          "name": "Frostnight Herra: Hatred and Rage"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "High-frequency Elemental DMG | Multi Elemental DMG | Lunar Reaction DMG"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Gloomveiled",
+          "short": "Will enter a Gloomveiled state while in combat: <color=#FFD780FF>All RES is greatly increased</color>. After taking <color=#FFD780FF>a certain number of DMG instances</color>, it will exit the Gloomveiled state and change its Elemental Type to the element whose DMG it received the most during the time it was Gloomveiled, thereby <color=#FFD780FF>gaining the corresponding Elemental DMG Immunity and Elemental Effects</color>.",
+          "detail": "Will enter a Gloomveiled state while in combat: <color=#FFD780FF>All RES is greatly increased</color>. After taking <color=#FFD780FF>a certain number of DMG instances</color>, it will exit the Gloomveiled state and change its Elemental Type to the element whose DMG it received the most during the time it was Gloomveiled, thereby <color=#FFD780FF>gaining the corresponding Elemental DMG Immunity and Elemental Effects</color>."
+        },
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Purest Moonglow",
+          "short": "<color=#FFD780FF>Lunar Reaction DMG</color> is more effective when breaking the Gloomveiled state. If it has taken more Lunar Reaction DMG when it exits the Gloomveiled state, its Elemental Type will change to Elementless, and it <color=#FFD780FF>will not gain any Elemental DMG Immunity or Elemental Effects</color>.",
+          "detail": "<color=#FFD780FF>Lunar Reaction DMG</color> is more effective when breaking the Gloomveiled state. If it has taken more Lunar Reaction DMG when it exits the Gloomveiled state, its Elemental Type will change to Elementless, and it <color=#FFD780FF>will not gain any Elemental DMG Immunity or Elemental Effects</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 810,
+          "name": "Frostnight Herra"
+        },
+        {
+          "id": 811,
+          "name": "Frostnight Herra"
+        }
+      ]
+    },
+    {
+      "id": 10042,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1004042,
+          "name": "Battle-Hardened Lightkeeper: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1004052,
+          "name": "Battle-Hardened Lightkeeper: Bitter Sorrow"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1004062,
+          "name": "Battle-Hardened Lightkeeper: Mourning Echoes"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Moonsign: Ascendant Gleam"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Wandering Lament",
+          "short": "Begins the battle in the \"Roaming\" state. When its HP is completely depleted, it will enter the \"Wild Hunt\" state.",
+          "detail": "Begins the battle in the \"Roaming\" state. When its HP is completely depleted, it will enter the \"Wild Hunt\" state."
+        },
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Grief-Stricken",
+          "short": "When in the Wild Hunt state, even if its HP is reduced to zero, it will regain its HP up to its maximum after a period of time. It can only be defeated when its Max HP is reduced to zero. <color=#FFD780FF>Drain its HP completely or use Skills enhanced by Moonsign: Ascendant Gleam</color> to send it into a brief Grief-Stricken state. A certain ratio of the DMG dealt to it while in this state will be converted to reduce its Max HP. If you have Moonsign: Ascendant Gleam, this ratio will be increased.",
+          "detail": "When in the Wild Hunt state, even if its HP is reduced to zero, it will regain its HP up to its maximum after a period of time. It can only be defeated when its Max HP is reduced to zero. <color=#FFD780FF>Drain its HP completely or use Skills enhanced by Moonsign: Ascendant Gleam</color> to send it into a brief Grief-Stricken state. A certain ratio of the DMG dealt to it while in this state will be converted to reduce its Max HP. If you have Moonsign: Ascendant Gleam, this ratio will be increased."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Exiles Returned",
+          "short": "When in the Wild Hunt state, Wilderness Exiles will be drawn to the battlefield. If you fail to defeat all of these exiles within a certain period of time, your foe will perform a harvest, dealing massive AoE DMG and slaughtering the Wilderness Exiles, restoring its own Max HP based on the Max HP of the exiles.",
+          "detail": "When in the Wild Hunt state, Wilderness Exiles will appear periodically. If you fail to defeat all of these exiles within a certain period of time, your foe will perform a harvest, dealing massive AoE DMG and slaughtering the Wilderness Exiles, restoring its own Max HP based on the remaining Max HP of the exiles."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Exiles Surge",
+          "short": "When in the Wild Hunt state, Wilderness Exiles will be drawn to the battlefield. If you fail to defeat all of these exiles within a certain period of time, your foe will perform a harvest, dealing massive AoE DMG and slaughtering the Wilderness Exiles, restoring its own Max HP based on the Max HP of the exiles.",
+          "detail": "When in the Wild Hunt state, Wilderness Exiles will appear periodically. If you fail to defeat all of these exiles within a certain period of time, your foe will perform a harvest, dealing massive AoE DMG and slaughtering the Wilderness Exiles, restoring its own Max HP based on the remaining Max HP of the exiles. Affected by the Ley Line disturbance, the Wilderness Exiles' Max HP is increased, and the ratio at which the foe's Max HP is restored upon harvesting the exiles is higher."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 21320,
+          "name": "Battle-Hardened Lightkeeper"
+        }
+      ]
+    },
+    {
+      "id": 10043,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1004043,
+          "name": "Veteran Frost Operative: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1004053,
+          "name": "Veteran Frost Operative: Swift Strike"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1004063,
+          "name": "Veteran Frost Operative: Bloodsoaked Blade"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Healing Characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Bond of Life Characters | Shield Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Rapid Kill",
+          "short": "Consumes HP in combat to use \"Hunt Down\": When this hits, it restores a certain percentage of the foe's HP and attaches a Bond of Life to any character it hits. While Bond of Life is active, the affected character will take continuous DMG. Characters with Bond of Life attached will take increased DMG from this attack.",
+          "detail": "Consumes a certain percentage of HP in combat to use Hunt Down: When this hits a character, it restores a certain percentage of the foe's HP and attaches a Bond of Life to the character hit. While Bond of Life is active, the affected character will take continuous DMG. Characters with Bond of Life attached will take increased DMG from this attack."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Bloody Pursuit",
+          "short": "Affected by the Ley Line disturbance, the foe's interruption capabilities and interruption resistance are both increased. When preparing to use Hunt Down, the foe creates a Shield to protect itself. While the Shield is active, the foe will <color=#FFD780FF>continuously attach Bonds of Life to all characters</color>. After the Shield is broken, the foe will take immense DMG.",
+          "detail": "Affected by the Ley Line disturbance, the foe possesses greater interruption capabilities and interruption resistance. When preparing to use Hunt Down, it will enter the Bloody Pursuit state, creating a Shield to protect itself. While the Shield is active, the foe will <color=#FFD780FF>continuously attach Bonds of Life to all characters</color>. After the Shield is broken, the foe will take immense DMG."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 30601,
+          "name": "Frost Operative"
+        },
+        {
+          "id": 30603,
+          "name": "Veteran Frost Operative"
+        },
+        {
+          "id": 30605,
+          "name": "Veteran Frost Operative"
+        }
+      ]
+    },
+    {
+      "id": 10051,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1005041,
+          "name": "Iniquitous Baptist: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1005051,
+          "name": "Iniquitous Baptist: Cutting Words"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1005061,
+          "name": "Iniquitous Baptist: Resonant Wrath"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Pyro Hydro Geo characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Elemental Ring: Polymorph",
+          "short": "During battle, the foe will generate <color=#FFD780FF>Electro, Pyro, and Hydro</color> Rings on the field while charging up to unleash a devastating attack. You must <color=#FFD780FF>trigger Elemental Reactions to destroy all the Elemental Rings</color> in order to interrupt this attack.",
+          "detail": "During battle, the foe will generate <color=#FFD780FF>Electro, Pyro, and Hydro</color> Rings on the field and start chanting as it prepares to unleash a devastating attack, causing all Elemental Rings to explode after a period of time. Destroy all the Elemental Rings with <color=#FFD780FF>Elemental Reactions</color> to interrupt the chant and temporarily paralyze the foe."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Elemental Ward: Polymorph",
+          "short": "During battle, the foe will sequentially deploy <color=#FFD780FF>Electro, Pyro, and Hydro Wards</color> to protect itself. <color=#FFD780FF>These Wards can be broken by triggering Elemental Reactions</color>. Breaking all three Wards will cause the foe to be temporarily paralyzed.",
+          "detail": "During battle, the foe will sequentially deploy <color=#FFD780FF>Electro, Pyro, and Hydro Wards</color> to protect itself, while adjusting its attacks to match the corresponding element. <color=#FFD780FF>Breaking a Ward using Elemental Reactions</color> will force the foe to shift to another elemental form and deploy the corresponding Ward. Breaking all three Wards will cause the foe to be temporarily paralyzed."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Elemental Ward: Frenzied Chaos",
+          "short": "Affected by the Ley Line disturbance, the foe sequentially deploys stronger <color=#FFD780FF>Electro, Pyro, and Hydro Wards</color> to protect itself once the battle begins. <color=#FFD780FF>These Wards can be broken by triggering Elemental Reactions</color>. Each time a Ward is broken, the foe will take immense DMG based on the <color=#FFD780FF>amount of DMG the Ward absorbed</color>. Breaking all three Wards will cause the foe to be temporarily paralyzed.",
+          "detail": "Affected by the Ley Line disturbance, after the battle begins, the foe will sequentially deploy <color=#FFD780FF>Electro, Pyro, and Hydro Wards</color> to protect itself, while adjusting its attacks to match the corresponding element. <color=#FFD780FF>Breaking a Ward using Elemental Reactions</color> will deal immense DMG to the foe, based on the <color=#FFD780FF>amount of DMG the Ward absorbed</color>, forcing it to shift to another elemental form and deploy the corresponding Ward. Breaking all three Wards will cause the foe to be temporarily paralyzed."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 21001,
+          "name": "Iniquitous Baptist - Invoker of Fire, Frost, and Fulmination"
+        },
+        {
+          "id": 21002,
+          "name": "Iniquitous Baptist - Bringer of Flood, Flame, and Frost"
+        },
+        {
+          "id": 21003,
+          "name": "Iniquitous Baptist - Caller of Flood, Flame, and Fulmination"
+        },
+        {
+          "id": 21004,
+          "name": "Iniquitous Baptist - Summoner of Flood, Frost, and Fulmination"
+        },
+        {
+          "id": 21005,
+          "name": "Iniquitous Baptist"
+        }
+      ]
+    },
+    {
+      "id": 10052,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1005042,
+          "name": "Battle-Hardened Iktomisaurus: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1005052,
+          "name": "Battle-Hardened Iktomisaurus: Merciless Cold"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1005062,
+          "name": "Battle-Hardened Iktomisaurus: Frostbound Resolve"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Electro characters | Ranged Characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Electro characters | Ranged Characters | Crowd-control Characters"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Melee Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Sonic Shockwave",
+          "short": "During battle, the foe periodically leaps up into the air, continuously unleashing powerful sonic shockwaves while airborne.",
+          "detail": "During battle, the foe periodically leaps up into the air, temporarily hovering in place and continuously unleashing powerful sonic shockwaves."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Frosthail Execution",
+          "short": "During battle, the foe will deploy a <color=#FFD780FF>Cryo Ward</color> to shield itself and leap into the air, dealing continuous damage over a wide area. After a period of time, it will unleash a single, devastating AoE attack. <color=#FFD780FF>Break the Ward with Elemental Reactions</color> to knock the foe to the ground, dealing a single instance of massive DMG, as well as interrupting its attack preparation.",
+          "detail": "During battle, the foe will deploy a <color=#FFD780FF>Cryo Ward</color> to shield itself and leap into the air, dealing continuous damage over a wide area. After a period of time, it will unleash Frosthail Execution, dealing massive AoE damage to all nearby characters. <color=#FFD780FF>Break the Ward with Elemental Reactions</color> to knock the foe to the ground, dealing a single instance of massive DMG, as well as interrupting its attack preparation."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Torch of Awakening",
+          "short": "Three special torches will appear at the edge of the battlefield. While near a torch, hitting opponents with Charged Attacks or Aimed Shots will trigger an additional instance of Pyro DMG.",
+          "detail": "Three special torches will appear at the edge of the battlefield. While near a torch, hitting opponents with Charged Attacks or Aimed Shots will trigger an additional instance of Pyro DMG."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Sonic Shockwave: Sonorous Sequence",
+          "short": "Affected by the Ley Line disturbance, the foe gains increased All RES. During battle, it leaps into the air more frequently, continuously unleashing powerful sonic shockwaves while airborne.",
+          "detail": "Affected by the Ley Line disturbance, the foe gains increased All RES. During battle, it leaps into the air more frequently, temporarily hovering in place and continuously unleashing powerful sonic shockwaves while airborne."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Frosthail Execution: Sweeping Strike",
+          "short": "During battle, the foe will deploy a <color=#FFD780FF>Cryo Ward</color> for protection and leap into the air to begin charging. After a period of time, it will <color=#FFD780FF>instantly defeat your active character</color>. <color=#FFD780FF>Break the Ward with Elemental Reactions</color> to knock the foe to the ground, interrupt its attack preparation, and deal a single instance of massive DMG based on the <color=#FFD780FF>amount of DMG the Ward absorbed</color>. While the foe is preparing its attack, all characters in your party will <color=#FFD780FF>regain Elemental Energy, Fighting Spirit, or Serpent's Subtlety</color>. If, after a period of time, the Ward has not been broken, Frosthail Zones will appear on the ground: <color=#FFD780FF>Triggering Elemental Reactions to destroy each Frosthail Zone</color> can also weaken and eventually break the Cryo Ward.",
+          "detail": "During battle, the foe will deploy a <color=#FFD780FF>Cryo Ward</color> for protection and leap into the air to charge up Frosthail Execution. After a period of time, it will unleash Frosthail Execution and <color=#FFD780FF>instantly defeat your active character</color>. <color=#FFD780FF>Break the Ward with Elemental Reactions</color> to knock the foe to the ground, interrupt its attack preparation, and deal a single instance of massive DMG based on the <color=#FFD780FF>amount of DMG the Ward absorbed</color>. While the foe is preparing its attack, all characters in your party will <color=#FFD780FF>regain Elemental Energy, Fighting Spirit, or Serpent's Subtlety</color>. If, after a period of time, the Ward has not been broken, Frosthail Zones will appear on the ground: <color=#FFD780FF>Triggering Elemental Reactions to destroy each Frosthail Zone</color> can also weaken and eventually break the Cryo Ward."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Disruption Vortex",
+          "short": "Affected by the Ley Line disturbance, when the foe begins charging up Frosthail Execution, a Disruption Vortex will appear on the field, dealing AoE Cryo DMG to <color=#FFD780FF>both allies and enemies</color>. If the vortex hits the foe, the foe's <color=#FFD780FF>Anemo RES</color> will be reduced and its Ward will be depleted.\\nAdditionally, the Disruption Vortex can also be affected by pull effects, which may alter its movement path.",
+          "detail": "Affected by the Ley Line disturbance, when the foe begins charging up Frosthail Execution, a Disruption Vortex will appear on the field, dealing AoE Cryo DMG to <color=#FFD780FF>both allies and enemies</color>. If the vortex hits the foe, the foe's <color=#FFD780FF>Anemo RES</color> will be reduced and its Ward will be depleted.\\nAdditionally, the Disruption Vortex can also be affected by pull effects, which may alter its movement path."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 62402,
+          "name": "Iktomisaurus"
+        }
+      ]
+    },
+    {
+      "id": 10053,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1005043,
+          "name": "Experimental Field Generator: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1005053,
+          "name": "Experimental Field Generator: Enhanced"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1005063,
+          "name": "Experimental Field Generator: Extreme Potential"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Plunging-Attack Characters | Characters with Arkhe: Pneuma"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Plunging-Attack Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Gravitational Core",
+          "short": "During battle, the foe generates a Gravity Reduction Field that greatly increases characters' jump height, while <color=#FFD780FF>gravitational shockwaves that cannot be dodged continuously erupt on the ground</color>. The Gravity Reduction Field can be shut down by directing <color=#FFD780FF>3 Pneuma attacks</color> at the exposed Ousia core.",
+          "detail": "During combat, it will channel Ousia energy to unleash a Gravity Reduction Field, while <color=#FFD780FF>gravitational shockwaves that cannot be dodged continuously erupt on the ground</color>. Characters within this field can jump significantly higher. When active, the Gravity Reduction Field can be shut down by hitting the exposed Ousia core with 3 Pneuma attacks."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Gravitational Core: Critical Depth",
+          "short": "Affected by the Ley Lines disturbance, the foe generates a Gravity Reduction Field during combat, greatly increasing characters' jump height. Each time a character reaches a certain height, their ATK is significantly increased for a short period. In addition, <color=#FFD780FF>gravitational shockwaves that cannot be dodged continuously erupt on the ground, growing stronger and more frequent over time</color>. The enhancement to the gravitational shockwaves will gradually be reduced with each <color=#FFD780FF>Plunging Attack</color> received.",
+          "detail": "Affected by the Ley Lines disturbance, the foe generates a Gravity Reduction Field during combat, greatly increasing characters' jump height. Each time a character reaches a certain height, their ATK is significantly increased for 1.5s. When the field is active, <color=#FFD780FF>gravitational shockwaves that cannot be dodged periodically erupt on the ground</color>. The strength and frequency of these shockwaves will gain 1 stack of enhancement every 5s. Each <color=#FFD780FF>Plunging Attack</color> received will remove 1 stack of enhancement."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Resilient Core",
+          "short": "Affected by the Ley Line disturbance, the Ousia core grows more robust, and the Gravity Reduction Field will remain active even after receiving <color=#FFD780FF>3 Pneuma attacks</color>.",
+          "detail": "Affected by the Ley Line disturbance, the Ousia core grows more robust, and the Gravity Reduction Field will remain active even after receiving <color=#FFD780FF>3 Pneuma attacks</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 40801,
+          "name": "Experimental Field Generator"
+        }
+      ]
+    },
+    {
+      "id": 10061,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1006041,
+          "name": "Lord of the Hidden Depths: Whisperer of Nightmares — Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1006051,
+          "name": "Lord of the Hidden Depths: Whisperer of Nightmares — Sharpened Claws"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1006061,
+          "name": "Lord of the Hidden Depths: Whisperer of Nightmares — Ravager's Edge"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Lunar Reaction DMG"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Deepdark Shield",
+          "short": "During battle, the powerful foe will deploy a protective Shield. <color=#FFD780FF>Lunar Reaction DMG</color> is more effective at destroying this Shield. When the Shield is destroyed, the opponent takes a single instance of immense DMG and temporarily enters a weakened state.",
+          "detail": "The Lord of the Hidden Depths: Whisperer of Nightmares gathers Abyssal energy to create a protective Shield. <color=#FFD780FF>Lunar Reaction DMG</color> is more effective at destroying this Shield. When the Shield is destroyed, the Lord of the Hidden Depths: Whisperer of Nightmares takes a single instance of immense DMG and temporarily enters a weakened state."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Riftscar Devour",
+          "short": "During battle, the powerful foe will enter a charging state and summon multiple Fishers of Hidden Depths. Once it has fully charged, it will devour all Fishers and deal DMG over a large AoE. Defeat Fishers before this happens to destroy its shield and interrupt its charging.",
+          "detail": "During battle, the Lord of the Hidden Depths: Whisperer of Nightmares will unleash Rift Assaults, forming a Shield as it begins to charge while summoning multiple Fishers of Hidden Depths. Once it has fully charged, it will deal DMG over a large AoE and devour all Fishers. Defeating Fishers will cause the Shield to take DMG. Destroy the Shield to interrupt the Lord of the Hidden Depths: Whisperer of Nightmares' charging."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Deepdark Shield: Deeproot Blight",
+          "short": "Affected by the Ley Line disturbance, the powerful opponent will deploy an extremely durable protective shield. <color=#FFD780FF>Lunar Reaction DMG</color> is more effective at destroying this shield. When the powerful opponent deploys a shield, the first time the shield takes Lunar reaction DMG, it generates an additional Elemental Orb. When the shield is destroyed, the opponent takes a single instance of immense DMG and temporarily enters a weakened state.",
+          "detail": "Affected by the Ley Line disturbance, the Lord of the Hidden Depths: Whisperer of Nightmares gathers Abyssal energy to create an extremely durable protective shield. <color=#FFD780FF>Lunar Reaction DMG</color> is more effective at destroying this shield. When the powerful opponent deploys a shield, the first time the shield takes Lunar reaction DMG, it generates an additional Elemental Orb. When the shield is destroyed, the Lord of the Hidden Depths: Whisperer of Nightmares takes a single instance of immense DMG and temporarily enters a weakened state."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Rift Assault",
+          "short": "Affected by the Ley Line disturbance, the powerful foe will enter a lengthy charging state and summon multiple Fishers of Hidden Depths. Once it has fully charged, it will devour all Fishers and deal DMG over a large AoE. Defeat Fishers before this happens to destroy its shield and interrupt its charging.",
+          "detail": "Affected by the Ley Line disturbance, the Lord of the Hidden Depths: Whisperer of Nightmares will enter a lengthy charging state and summon multiple Fishers of Hidden Depths. Once it has fully charged, it will deal DMG over a large AoE and devour all Fishers. Defeat Fishers before this happens to destroy the Shield and interrupt the Lord of the Hidden Depths: Whisperer of Nightmares' charging."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 21501,
+          "name": "Lord of the Hidden Depths: Whisperer of Nightmares"
+        }
+      ]
+    },
+    {
+      "id": 10063,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1006043,
+          "name": "Emperor of Fire and Iron: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1006053,
+          "name": "Emperor of Fire and Iron: Raid"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1006063,
+          "name": "Emperor of Fire and Iron: Ordained Conquest"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Hydro characters"
+        }
+      ],
+      "disadvantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Molten Crown",
+          "short": "While the powerful foe's twin molten horns remain intact, it can unleash fiercer elemental attacks and will possess <color=#FFD780FF>exceedingly high All Elemental and Physical RES</color>. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the twin molten horns are destroyed, the foe will take a single instance of immense DMG and will be unable to restore them for a period of time.",
+          "detail": "The twin molten horns located high up on the body of the Emperor of Fire and Iron are <color=#FFD780FF>Pyro-aligned</color> organs that enable it to unleash more vicious elemental attacks and grant it even stronger defensive capabilities. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the Pyro element stored within the twin molten horns is exhausted, they will be destroyed and cannot be restored for a period of time."
+        },
+        {
+          "tiers": [4],
+          "title": "Molten Crown",
+          "short": "While the powerful foe's twin molten horns remain intact, it can unleash fiercer elemental attacks and will possess higher All Elemental and Physical RES. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the twin molten horns are destroyed, they cannot be restored for a period of time.",
+          "detail": "The twin molten horns located high up on the body of the Emperor of Fire and Iron are <color=#FFD780FF>Pyro-aligned</color> organs that enable it to unleash more vicious elemental attacks and grant it even stronger defensive capabilities. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the Pyro element stored within the twin molten horns is exhausted, they will be destroyed and cannot be restored for a period of time."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Molten Crown",
+          "short": "While the powerful foe's twin molten horns remain intact, it can unleash fiercer elemental attacks and will possess <color=#FFD780FF>exceedingly high All Elemental and Physical RES</color>. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the twin molten horns are destroyed, the foe will take a single instance of immense DMG and will be unable to restore them for a period of time.",
+          "detail": "The twin molten horns located high up on the body of the Emperor of Fire and Iron are <color=#FFD780FF>Pyro-aligned</color> organs that enable it to unleash more vicious elemental attacks and grant it even stronger defensive capabilities. When unleashing certain attacks, its twin molten horns will <color=#FFD780FF>stay close to the ground</color>, providing an opportunity to <color=#FFD780FF>use Elemental Reactions to destroy them</color>. Once the Pyro element stored within the twin molten horns is exhausted, they will be destroyed, causing the powerful foe to take a single instance of immense DMG. Once destroyed, the horns cannot be restored for a period of time."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Shield Bearers",
+          "short": "Affected by the Ley Line disturbance, the powerful foe will summon Sternshield Crabs to assist during battle. Sternshield Crabs continuously channel Pyro to the twin molten horns. Once their Pyro is exhausted, the Sternshield Crabs will be defeated. Once a Sternshield Crab is defeated, it will lose control and collide with the foe, damaging its twin molten horns and dealing DMG proportional to the DMG it itself has received.",
+          "detail": "Affected by the Ley Line disturbance, the Emperor of Fire and Iron will summon Sternshield Crabs to assist during battle. Sternshield Crabs continuously channel Pyro to the twin molten horns. Once their Pyro is exhausted, the Sternshield Crabs will be defeated. Once a Sternshield Crab is defeated, it will lose control and collide with the Emperor of Fire and Iron, overloading the Pyro element within its twin molten horns and damaging them, causing the Emperor of Fire and Iron to take DMG proportional to the DMG the Sternshield Crab itself has received. A maximum of three Sternshield Crabs can be on the field at once."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Radiant Coronation",
+          "short": "Affected by the Ley Line disturbance, the powerful foe will begin to charge during battle, dealing DMG over a large AoE after a short period of time. Destroy the twin molten horns to interrupt its charging.",
+          "detail": "Affected by the Ley Line disturbance, the Emperor of Fire and Iron will perform Radiant Coronation in battle, charging briefly before dealing DMG over a large AoE. Destroy the twin molten horns to interrupt its charging."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 61701,
+          "name": "Emperor of Fire and Iron"
+        }
+      ]
+    },
+    {
+      "id": 10071,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1007041,
+          "name": "Battle-Hardened Hexadecatonic Mandragora: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1007051,
+          "name": "Battle-Hardened Hexadecatonic Mandragora: Green Scourge"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1007061,
+          "name": "Battle-Hardened Hexadecatonic Mandragora: Stormvine"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro Anemo Characters | Crowd Control Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Agglomerated State",
+          "short": "This Nemesis starts in the Agglomerated State, which comes with <color=#FFD780FF>increased RES</color>; after some time, it then switches to the Split State. Deal <color=#FFD780FF>Pyro or Electro DMG to this Nemesis</color> to speed up this switch.",
+          "detail": "When battle begins, the Nemesis enters the Agglomerated State, during which <color=#FFD780FF>all RES is greatly increased</color>. While in this state, the Nemesis's Agglomeration Energy is constantly consumed. Dealing <color=#FFD780FF>Pyro or Electro</color> DMG to the Nemesis drains this energy more quickly. When its Agglomeration Energy is fully depleted, the Nemesis unleashes Sporebloom and switches to the Split State."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Powerful Agglomerated State",
+          "short": "Affected by the Ley Line disturbance, this Nemesis starts in the Agglomerated State, which comes with <color=#FFD780FF>extremely high RES</color>. After some time, the Nemesis then switches to the Split State. Deal <color=#FFD780FF>Pyro or Electro DMG to this Nemesis</color> to speed up this switch.",
+          "detail": "Affected by the Ley Line disturbance, when battle begins, this Nemesis enters the Agglomerated State, during which <color=#FFD780FF>all RES is dramatically increased</color>. While in this state, the Nemesis's Agglomeration Energy is constantly consumed. Dealing <color=#FFD780FF>Pyro or Electro</color> DMG to the Nemesis drains this energy more quickly. When its Agglomeration Energy is fully depleted, the Nemesis unleashes Sporebloom and switches to the Split State."
+        },
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "title": "Split State",
+          "short": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in the Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead.",
+          "detail": "When this Nemesis enters the Split State, it splits into a large number of spores. When these spores take damage, a certain percentage of the total damage is also dealt to the Nemesis. After remaining in the Split State for a period of time, the Nemesis will return to the Agglomerated State. In this case, if the number of spores on the field falls below a certain number, the Nemesis will enter the Brittle Agglomerated State, during which <color=#FFD780FF>all RES is greatly reduced</color> and its combat abilities are diminished. Additionally, if all spores generated in Split State are defeated, the Nemesis will exit the Split State early and go into the Brittle Agglomerated State instead."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Hollow Structure",
+          "short": "Affected by the Ley Line disturbance, when this Nemesis is in the Split State or the Brittle Agglomerated State, its <color=#FFD780FF>Anemo RES is greatly reduced</color>.",
+          "detail": "Affected by the Ley Line disturbance, when this Nemesis is in the Split State or the Brittle Agglomerated State, its <color=#FFD780FF>Anemo RES is greatly reduced</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 812,
+          "name": "Hexadecatonic Battle-Hardened Mandragora"
+        }
+      ]
+    },
+    {
+      "id": 10072,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1007042,
+          "name": "Knuckle Duckle: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1007052,
+          "name": "Knuckle Duckle: Command"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1007062,
+          "name": "Knuckle Duckle: Armored Arsenal"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Electro-Charged Reactions | Anemo Characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Duckstruction Mode",
+          "short": "In battle, this Nemesis enters Duckstruction Mode, in which its aggression increases. It also generates a Ward for itself <color=#FFD780FF>that increases all RES</color> and summons the Stamping Devices.",
+          "detail": "Once the battle has progressed to a certain point, this Nemesis will go into Duckstruction Mode, in which its aggression increases. It also generates a Ward for itself <color=#FFD780FF>that increases all RES</color> and summons floating Stamping Devices to harass you."
+        },
+        {
+          "tiers": [4],
+          "title": "Duckstruction Mode",
+          "short": "When battle begins, this Nemesis will go into Duckstruction Mode, in which its aggression increases. It also generates a Ward for itself <color=#FFD780FF>that increases all RES</color>, and summons floating Stamping Devices to harass you.",
+          "detail": "When battle begins, this Nemesis will go into Duckstruction Mode, in which its aggression increases. It also generates a Ward for itself <color=#FFD780FF>that increases all RES</color>, and summons floating Stamping Devices to harass you."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Stamping Devices",
+          "short": "Stamping devices are <color=#FFD780FF>fairly resistant to all DMG except Electro DMG</color>. <color=#FFD780FF>Deal Electro-Charged or Lunar-Charged DMG repeatedly, or deal enough damage to destroy them</color> to disrupt these devices. Disrupted stamping devices will go out of control, crash into the Knuckle Duckle, and deal a certain amount of damage to its Ward. By destroying the Nemesis's Ward this way, you can cause it to exit Duckstruction Mode and become incapacitated from Overloaded.",
+          "detail": "Stamping devices are <color=#FFD780FF>fairly resistant to all DMG except Electro DMG</color>. <color=#FFD780FF>Deal Electro-Charged or Lunar-Charged DMG repeatedly, or deal enough damage to destroy them</color> to disrupt these devices. Disrupted stamping devices will go out of control, crash into the Knuckle Duckle, and deal a certain amount of damage to its Ward. By destroying the Nemesis's Ward this way, you can cause it to exit Duckstruction Mode and become incapacitated from Overloaded."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Heavy Duckstruction Mode",
+          "short": "Due to the effects of the Ley Line disturbance, when battle begins, this Nemesis enters Heavy Duckstruction Mode, in which its aggression increases. This mode also activates a Ward that <color=#FFD780FF>greatly increases all RES</color> and summons the stamping devices.",
+          "detail": "Due to the effects of the Ley Line disturbance, when battle begins, this Nemesis will go into Heavy Duckstruction Mode, in which its aggression increases. It also generates a Ward for itself <color=#FFD780FF>that increases all RES</color>, and summons floating Stamping Devices to harass you."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Low-Resistance Stamping Devices",
+          "short": "<color=#FFD780FF>Deal Electro-Charged or Lunar-Charged DMG repeatedly, or simply deal enough damage to destroy the stamping devices</color> to disrupt them. Disrupted devices will lose control and crash into the Knuckle Duckle, dealing a certain amount of damage to its Ward. Destroying the Nemesis's Ward this way will cause it to exit Heavy Duckstruction Mode and become incapacitated from Overloaded. This will also <color=#FFD780FF>greatly reduce the Nemesis's Electro RES for a certain time</color>.",
+          "detail": "<color=#FFD780FF>Deal Electro-Charged or Lunar-Charged DMG repeatedly, or simply deal enough damage to destroy the stamping devices</color> to disrupt them. Disrupted devices will lose control and crash into the Knuckle Duckle, dealing a certain amount of damage to its Ward. Destroying the Nemesis's Ward this way will cause it to exit Heavy Duckstruction Mode and become incapacitated from Overloaded. This will also <color=#FFD780FF>greatly reduce the Nemesis's Electro RES for a certain time</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Fast Frequency-Hopping System",
+          "short": "Due to the effects of the Ley Line disturbance, <color=#FFD780FF>more instances of Electro-Charged or Lunar-Charged DMG</color> are needed to disrupt the stamping devices. Alternatively, <color=#FFD780FF>deal more damage</color> to these devices for the same effect. <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color> causes damage to the stamping devices more effectively. The damage caused by the stamping devices to the Knuckle Duckle increases based on <color=#FFD780FF>the total damage</color> taken by the stamping devices. In particular, any Electro-Charged DMG, Lunar-Charged DMG, and Electro DMG receive a higher scaling bonus.",
+          "detail": "Due to the effects of the Ley Line disturbance, the stamping devices become more resilient — deal <color=#FFD780FF>more instances of Electro-Charged or Lunar-Charged DMG</color> or <color=#FFD780FF>more damage</color> to these devices to disrupt them. <color=#FFD780FF>Electro-Charged or Lunar-Charged DMG</color> dealt to stamping devices will be more effective, and when they lose control and crash into the Knuckle Duckle, the damage dealt to the latter increases based on <color=#FFD780FF>the total damage taken</color> by the devices."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 41001,
+          "name": "Knuckle Duckle"
+        },
+        {
+          "id": 41002,
+          "name": "Knuckle Duckle"
+        }
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "id": 5269001,
+      "name": "Incursion Repeller"
+    },
+    {
+      "id": 5269002,
+      "name": "Savage Onslaught"
+    },
+    {
+      "id": 5269003,
+      "name": "Terrorshock Blitz"
+    },
+    {
+      "id": 5269004,
+      "name": "Sweeping Assault"
+    },
+    {
+      "id": 5269005,
+      "name": "Tremorfall Trial"
+    },
+    {
+      "id": 5269006,
+      "name": "Blightpurge Battle"
+    },
+    {
+      "id": 5269007,
+      "name": "Crush and Obliterate"
+    }
+  ]
+}

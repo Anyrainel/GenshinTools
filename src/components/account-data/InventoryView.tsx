@@ -49,10 +49,15 @@ export function InventoryView({ data }: InventoryViewProps) {
   const iconSize = isMobile ? "lg" : "xl";
 
   // ── Category toggles (default: unequipped + maxLevel) ──
-  const [showEquipped, setShowEquipped] = useState(false);
-  const [showUnequipped, setShowUnequipped] = useState(true);
-  const [showMaxLevel, setShowMaxLevel] = useState(true);
-  const [showOther, setShowOther] = useState(false);
+  const [wShowEquipped, setWShowEquipped] = useState(false);
+  const [wShowUnequipped, setWShowUnequipped] = useState(true);
+  const [wShowMaxLevel, setWShowMaxLevel] = useState(true);
+  const [wShowOther, setWShowOther] = useState(false);
+
+  const [aShowEquipped, setAShowEquipped] = useState(false);
+  const [aShowUnequipped, setAShowUnequipped] = useState(true);
+  const [aShowMaxLevel, setAShowMaxLevel] = useState(true);
+  const [aShowOther, setAShowOther] = useState(false);
 
   // ── Weapon filters ──
   const allSecondaryStats = useMemo(() => {
@@ -114,8 +119,8 @@ export function InventoryView({ data }: InventoryViewProps) {
 
     return combined.filter((w) => {
       // Category filter
-      const eqMatch = w.equipped ? showEquipped : showUnequipped;
-      const lvlMatch = isMaxWeapon(w) ? showMaxLevel : showOther;
+      const eqMatch = w.equipped ? wShowEquipped : wShowUnequipped;
+      const lvlMatch = isMaxWeapon(w) ? wShowMaxLevel : wShowOther;
       if (!eqMatch || !lvlMatch) return false;
 
       // Rarity filter
@@ -136,10 +141,10 @@ export function InventoryView({ data }: InventoryViewProps) {
   }, [
     equippedWeapons,
     unequippedWeapons,
-    showEquipped,
-    showUnequipped,
-    showMaxLevel,
-    showOther,
+    wShowEquipped,
+    wShowUnequipped,
+    wShowMaxLevel,
+    wShowOther,
     weaponRarities,
     weaponSubstats,
     weaponStats,
@@ -176,8 +181,8 @@ export function InventoryView({ data }: InventoryViewProps) {
     return combined
       .filter((a) => {
         // Category filter
-        const eqMatch = a.equipped ? showEquipped : showUnequipped;
-        const lvlMatch = isMaxArtifact(a) ? showMaxLevel : showOther;
+        const eqMatch = a.equipped ? aShowEquipped : aShowUnequipped;
+        const lvlMatch = isMaxArtifact(a) ? aShowMaxLevel : aShowOther;
         if (!eqMatch || !lvlMatch) return false;
 
         // Rarity filter
@@ -205,10 +210,10 @@ export function InventoryView({ data }: InventoryViewProps) {
   }, [
     equippedArtifacts,
     unequippedArtifacts,
-    showEquipped,
-    showUnequipped,
-    showMaxLevel,
-    showOther,
+    aShowEquipped,
+    aShowUnequipped,
+    aShowMaxLevel,
+    aShowOther,
     artifactRarities,
     artifactHalfSetFilter,
   ]);
@@ -256,29 +261,29 @@ export function InventoryView({ data }: InventoryViewProps) {
         <div className="flex flex-wrap items-center gap-1.5 px-2">
           <CategoryChip
             color="teal"
-            active={showUnequipped}
-            onClick={() => setShowUnequipped((p) => !p)}
+            active={wShowUnequipped}
+            onClick={() => setWShowUnequipped((p) => !p)}
           >
             {t.ui("accountData.unequipped")}
           </CategoryChip>
           <CategoryChip
             color="teal"
-            active={showEquipped}
-            onClick={() => setShowEquipped((p) => !p)}
+            active={wShowEquipped}
+            onClick={() => setWShowEquipped((p) => !p)}
           >
             {t.ui("accountData.equipped")}
           </CategoryChip>
           <CategoryChip
             color="orange"
-            active={showMaxLevel}
-            onClick={() => setShowMaxLevel((p) => !p)}
+            active={wShowMaxLevel}
+            onClick={() => setWShowMaxLevel((p) => !p)}
           >
             {t.ui("accountData.maxLevel")}
           </CategoryChip>
           <CategoryChip
             color="orange"
-            active={showOther}
-            onClick={() => setShowOther((p) => !p)}
+            active={wShowOther}
+            onClick={() => setWShowOther((p) => !p)}
           >
             {t.ui("accountData.other")}
           </CategoryChip>
@@ -325,29 +330,29 @@ export function InventoryView({ data }: InventoryViewProps) {
         <div className="flex flex-wrap items-center gap-1.5 px-2">
           <CategoryChip
             color="teal"
-            active={showUnequipped}
-            onClick={() => setShowUnequipped((p) => !p)}
+            active={aShowUnequipped}
+            onClick={() => setAShowUnequipped((p) => !p)}
           >
             {t.ui("accountData.unequipped")}
           </CategoryChip>
           <CategoryChip
             color="teal"
-            active={showEquipped}
-            onClick={() => setShowEquipped((p) => !p)}
+            active={aShowEquipped}
+            onClick={() => setAShowEquipped((p) => !p)}
           >
             {t.ui("accountData.equipped")}
           </CategoryChip>
           <CategoryChip
             color="orange"
-            active={showMaxLevel}
-            onClick={() => setShowMaxLevel((p) => !p)}
+            active={aShowMaxLevel}
+            onClick={() => setAShowMaxLevel((p) => !p)}
           >
             {t.ui("accountData.maxLevel")}
           </CategoryChip>
           <CategoryChip
             color="orange"
-            active={showOther}
-            onClick={() => setShowOther((p) => !p)}
+            active={aShowOther}
+            onClick={() => setAShowOther((p) => !p)}
           >
             {t.ui("accountData.other")}
           </CategoryChip>

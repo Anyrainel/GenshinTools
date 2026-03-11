@@ -117,7 +117,7 @@ const WeightedSelectTrigger = React.forwardRef<
                     // setPopoverOpen(false); // keep open for tweaking
                   }}
                   className={cn(
-                    "h-6 flex-1 text-[10px] px-0 border-slate-700 hover:bg-slate-800 hover:text-white transition-colors",
+                    "h-6 flex-1 text-xs px-0 border-slate-700 hover:bg-slate-800 hover:text-white transition-colors",
                     weight === preset &&
                       "bg-amber-500/20 text-amber-100 border-amber-500/50"
                   )}

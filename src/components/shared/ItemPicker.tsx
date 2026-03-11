@@ -339,7 +339,7 @@ function PickerTrigger({
   if (!value) {
     return (
       <div className={cn(baseClasses, "ring-1 ring-inset ring-foreground/20")}>
-        <span className="text-4xl text-muted-foreground/50 select-none pb-1 group-hover:text-primary transition-colors">
+        <span className="text-4xl text-muted-foreground select-none pb-1 group-hover:text-primary transition-colors">
           +
         </span>
       </div>

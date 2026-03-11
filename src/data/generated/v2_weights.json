@@ -1,0 +1,2967 @@
+{
+  "builds": [
+    {
+      "characterId": "varka",
+      "buildName": "varka V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Anemo",
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "substats": {
+        "cr": 100,
+        "cd": 71,
+        "atk%": 42,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 15,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 9.7,
+        "cd": 30.3,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "anemo%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "reaction": "swirl",
+      "idealScore": 397.313775,
+      "normalizer": 0.7550707246432621,
+      "meta": {
+        "method": "auto",
+        "weaponId": "gest_of_the_mighty_wolf",
+        "teamContexts": ["Team 3379"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "zibai",
+      "buildName": "zibai V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "def",
+      "element": "Geo",
+      "artifactSet": "night_of_the_skys_unveiling",
+      "substats": {
+        "cr": 100,
+        "cd": 52,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 54,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 18
+      },
+      "idealRolls": {
+        "cr": 13.7,
+        "cd": 12.7,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 13.7,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "reaction": "lunarCrystallize",
+      "idealScore": 390.37905,
+      "normalizer": 0.7684838620310183,
+      "meta": {
+        "method": "auto",
+        "weaponId": "lightbearing_moonshard",
+        "teamContexts": ["Team 3691"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "nefer",
+      "buildName": "nefer V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "em",
+      "element": "Dendro",
+      "artifactSet": "night_of_the_skys_unveiling",
+      "substats": {
+        "cr": 100,
+        "cd": 49,
+        "atk%": 37,
+        "hp%": 0,
+        "def%": 0,
+        "em": 39,
+        "er": 0,
+        "atk": 14,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 14.8,
+        "cd": 25.3,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 99
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 98
+        },
+        {
+          "stat": "atk%",
+          "weight": 98
+        }
+      ],
+      "reaction": "lunarBloom",
+      "idealScore": 389.05815,
+      "normalizer": 0.7710929587260927,
+      "meta": {
+        "method": "auto",
+        "weaponId": "reliquary_of_truth",
+        "teamContexts": ["Team 4235"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "flins",
+      "buildName": "flins V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Electro",
+      "artifactSet": "night_of_the_skys_unveiling",
+      "substats": {
+        "cr": 100,
+        "cd": 81,
+        "atk%": 76,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 25,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 9.7,
+        "cd": 21.7,
+        "atk%": 8.7,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "reaction": "lunarCharged",
+      "idealScore": 418.44817500000005,
+      "normalizer": 0.7169346598297387,
+      "meta": {
+        "method": "auto",
+        "weaponId": "bloodsoaked_ruins",
+        "teamContexts": ["Team 0266"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "venti",
+      "buildName": "venti V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Anemo",
+      "artifactSet": "a_day_carved_from_rising_winds",
+      "substats": {
+        "cr": 100,
+        "cd": 61,
+        "atk%": 36,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 13,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 18.8,
+        "cd": 21.2,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 93
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 94
+        }
+      ],
+      "reaction": "swirl",
+      "idealScore": 388.06747500000006,
+      "normalizer": 0.7730614373183425,
+      "meta": {
+        "method": "auto",
+        "weaponId": "the_daybreak_chronicles",
+        "teamContexts": ["Team 9764"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "skirk",
+      "buildName": "skirk V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Cryo",
+      "artifactSet": "finale_of_the_deep_galleries",
+      "substats": {
+        "cr": 100,
+        "cd": 65,
+        "atk%": 45,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 15,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 14,
+        "cd": 26,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 97
+        }
+      ],
+      "reaction": "frozen",
+      "idealScore": 394.34175000000005,
+      "normalizer": 0.7607614461314328,
+      "meta": {
+        "method": "auto",
+        "weaponId": "azurelight",
+        "teamContexts": ["Team 6545"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "varesa",
+      "buildName": "varesa V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Electro",
+      "artifactSet": "long_nights_oath",
+      "substats": {
+        "cr": 100,
+        "cd": 55,
+        "atk%": 34,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 11,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 17.8,
+        "cd": 22.2,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 90
+        },
+        {
+          "stat": "def%",
+          "weight": 90
+        },
+        {
+          "stat": "em",
+          "weight": 90
+        },
+        {
+          "stat": "er",
+          "weight": 90
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 98
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "reaction": "overloaded",
+      "idealScore": 382.783875,
+      "normalizer": 0.7837320733534033,
+      "meta": {
+        "method": "auto",
+        "weaponId": "vivid_notions",
+        "teamContexts": ["Team 7768", "Team 8488"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "mavuika",
+      "buildName": "mavuika V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Pyro",
+      "artifactSet": "obsidian_codex",
+      "substats": {
+        "cr": 100,
+        "cd": 79,
+        "atk%": 68,
+        "hp%": 0,
+        "def%": 0,
+        "em": 65,
+        "er": 0,
+        "atk": 21,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 10.8,
+        "cd": 21.8,
+        "atk%": 4.6,
+        "hp%": 0,
+        "def%": 0,
+        "em": 2.9,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 99
+        },
+        {
+          "stat": "em",
+          "weight": 99
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "reaction": "melt",
+      "idealScore": 427.694475,
+      "normalizer": 0.701435294435356,
+      "meta": {
+        "method": "auto",
+        "weaponId": "a_thousand_blazing_suns",
+        "teamContexts": ["Team 1969"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "mualani",
+      "buildName": "mualani V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "hp",
+      "element": "Hydro",
+      "artifactSet": "obsidian_codex",
+      "substats": {
+        "cr": 100,
+        "cd": 100,
+        "atk%": 0,
+        "hp%": 95,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 32,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 7.7,
+        "cd": 20.3,
+        "atk%": 0,
+        "hp%": 12,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 99
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "reaction": "melt",
+      "idealScore": 439.582575,
+      "normalizer": 0.6824656323103799,
+      "meta": {
+        "method": "auto",
+        "weaponId": "surfs_up",
+        "teamContexts": ["Team 4407"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "chasca",
+      "buildName": "chasca V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Anemo",
+      "artifactSet": "obsidian_codex",
+      "substats": {
+        "cr": 100,
+        "cd": 95,
+        "atk%": 65,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 23,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 7.7,
+        "cd": 32.1,
+        "atk%": 0.3,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 99
+        }
+      ],
+      "reaction": "melt",
+      "idealScore": 423.40155000000004,
+      "normalizer": 0.7085472407930485,
+      "meta": {
+        "method": "auto",
+        "weaponId": "astral_vultures_crimson_plumage",
+        "teamContexts": ["Team 1568", "Team 5723"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "kinich",
+      "buildName": "kinich V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Dendro",
+      "artifactSet": "obsidian_codex",
+      "substats": {
+        "cr": 100,
+        "cd": 79,
+        "atk%": 57,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 18,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 9.4,
+        "cd": 30.6,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 98
+        }
+      ],
+      "reaction": "burning",
+      "idealScore": 408.541425,
+      "normalizer": 0.7343196592609917,
+      "meta": {
+        "method": "auto",
+        "weaponId": "fang_of_the_mountain_king",
+        "teamContexts": ["Team 4905"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "clorinde",
+      "buildName": "clorinde V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Electro",
+      "artifactSet": "fragment_of_harmonic_whimsy",
+      "substats": {
+        "cr": 100,
+        "cd": 75,
+        "atk%": 59,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 19,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 13.4,
+        "cd": 22.5,
+        "atk%": 4.1,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "reaction": "overloaded",
+      "idealScore": 406.8903,
+      "normalizer": 0.7372994637621,
+      "meta": {
+        "method": "auto",
+        "weaponId": "absolution",
+        "teamContexts": ["Team 0330", "Team 6287"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "arlecchino",
+      "buildName": "arlecchino V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "em",
+      "element": "Pyro",
+      "artifactSet": "fragment_of_harmonic_whimsy",
+      "substats": {
+        "cr": 100,
+        "cd": 81,
+        "atk%": 54,
+        "hp%": 0,
+        "def%": 0,
+        "em": 66,
+        "er": 0,
+        "atk": 18,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 19.3,
+        "cd": 19.3,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 1.5,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "pyro%",
+          "weight": 99
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 96
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "reaction": "melt",
+      "idealScore": 424.72245000000004,
+      "normalizer": 0.7063436368856885,
+      "meta": {
+        "method": "auto",
+        "weaponId": "crimson_moons_semblance",
+        "teamContexts": ["Team 6622", "Team 7489"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "chiori",
+      "buildName": "chiori V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "def",
+      "element": "Geo",
+      "artifactSet": "husk_of_opulent_dreams",
+      "substats": {
+        "cr": 100,
+        "cd": 52,
+        "atk%": 25,
+        "hp%": 0,
+        "def%": 43,
+        "em": 0,
+        "er": 0,
+        "atk": 10,
+        "hp": 0,
+        "def": 14
+      },
+      "idealRolls": {
+        "cr": 20.1,
+        "cd": 19.5,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0.5,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "geo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "def%",
+          "weight": 98
+        },
+        {
+          "stat": "atk%",
+          "weight": 93
+        }
+      ],
+      "reaction": "none",
+      "idealScore": 388.39770000000004,
+      "normalizer": 0.7724041620225865,
+      "meta": {
+        "method": "auto",
+        "weaponId": "uraku_misugiri",
+        "teamContexts": ["Team 5986"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "xianyun",
+      "buildName": "xianyun V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Anemo",
+      "substats": {
+        "cr": 100,
+        "cd": 45,
+        "atk%": 34,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 11,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 22,
+        "cd": 18,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 90
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "reaction": "none",
+      "idealScore": 376.17937500000005,
+      "normalizer": 0.7974918880122015,
+      "meta": {
+        "method": "auto",
+        "weaponId": "vivid_notions",
+        "teamContexts": ["Team 0163"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "furina",
+      "buildName": "furina V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "hp",
+      "element": "Hydro",
+      "artifactSet": "long_nights_oath",
+      "substats": {
+        "cr": 100,
+        "cd": 72,
+        "atk%": 0,
+        "hp%": 84,
+        "def%": 0,
+        "em": 79,
+        "er": 0,
+        "atk": 0,
+        "hp": 29,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 19.8,
+        "cd": 7.9,
+        "atk%": 0,
+        "hp%": 8.6,
+        "def%": 0,
+        "em": 3.7,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 95
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "reaction": "vaporize",
+      "idealScore": 436.94077500000003,
+      "normalizer": 0.6865919071068612,
+      "meta": {
+        "method": "auto",
+        "weaponId": "splendor_of_tranquil_waters",
+        "teamContexts": ["Team 8452"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "navia",
+      "buildName": "navia V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Geo",
+      "artifactSet": "nighttime_whispers_in_the_echoing_woods",
+      "substats": {
+        "cr": 100,
+        "cd": 77,
+        "atk%": 60,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 20,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 18.7,
+        "cd": 21.2,
+        "atk%": 0.2,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "geo%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "reaction": "lunarCrystallize",
+      "idealScore": 408.87165000000005,
+      "normalizer": 0.7337265863260511,
+      "meta": {
+        "method": "auto",
+        "weaponId": "verdict",
+        "teamContexts": ["Team 5978"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "neuvillette",
+      "buildName": "neuvillette V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "hp",
+      "element": "Hydro",
+      "artifactSet": "marechaussee_hunter",
+      "substats": {
+        "cr": 100,
+        "cd": 60,
+        "atk%": 0,
+        "hp%": 62,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 21,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 14.7,
+        "cd": 16.3,
+        "atk%": 0,
+        "hp%": 9,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 97
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "reaction": "none",
+      "idealScore": 399.29512500000004,
+      "normalizer": 0.7513239737149306,
+      "meta": {
+        "method": "auto",
+        "weaponId": "tome_of_the_eternal_flow",
+        "teamContexts": ["Team 0091"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "wriothesley",
+      "buildName": "wriothesley V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "em",
+      "element": "Cryo",
+      "artifactSet": "marechaussee_hunter",
+      "substats": {
+        "cr": 80,
+        "cd": 100,
+        "atk%": 48,
+        "hp%": 0,
+        "def%": 0,
+        "em": 81,
+        "er": 0,
+        "atk": 16,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 4.4,
+        "cd": 31,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 4.6,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 99
+        },
+        {
+          "stat": "cr",
+          "weight": 96
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "reaction": "melt",
+      "idealScore": 427.36425,
+      "normalizer": 0.7019772945444079,
+      "meta": {
+        "method": "auto",
+        "weaponId": "cashflow_supervision",
+        "teamContexts": ["Team 0370"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "lyney",
+      "buildName": "lyney V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Pyro",
+      "artifactSet": "marechaussee_hunter",
+      "substats": {
+        "cr": 100,
+        "cd": 85,
+        "atk%": 51,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 18,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 9,
+        "cd": 31,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 95
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 99
+        },
+        {
+          "stat": "atk%",
+          "weight": 97
+        }
+      ],
+      "reaction": "overloaded",
+      "idealScore": 410.522775,
+      "normalizer": 0.7307755337082089,
+      "meta": {
+        "method": "auto",
+        "weaponId": "the_first_great_magic",
+        "teamContexts": ["Team 5251"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "alhaitham",
+      "buildName": "alhaitham V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "em",
+      "element": "Dendro",
+      "artifactSet": "gilded_dreams",
+      "substats": {
+        "cr": 100,
+        "cd": 60,
+        "atk%": 54,
+        "hp%": 0,
+        "def%": 0,
+        "em": 61,
+        "er": 0,
+        "atk": 21,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 24.7,
+        "cd": 12.9,
+        "atk%": 0.3,
+        "hp%": 0,
+        "def%": 0,
+        "em": 2.1,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 99
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 99
+        }
+      ],
+      "reaction": "hyperbloom",
+      "idealScore": 409.5321,
+      "normalizer": 0.7325433097918331,
+      "meta": {
+        "method": "auto",
+        "weaponId": "light_of_foliar_incision",
+        "teamContexts": ["Team 8575"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "wanderer",
+      "buildName": "wanderer V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Anemo",
+      "artifactSet": "desert_pavilion_chronicle",
+      "substats": {
+        "cr": 100,
+        "cd": 62,
+        "atk%": 40,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 14,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 19.7,
+        "cd": 20.3,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 94
+        }
+      ],
+      "reaction": "none",
+      "idealScore": 390.37905,
+      "normalizer": 0.7684838620310183,
+      "meta": {
+        "method": "auto",
+        "weaponId": "tulaytullahs_remembrance",
+        "teamContexts": ["Team 5386"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "nilou",
+      "buildName": "nilou V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "hp",
+      "element": "Hydro",
+      "substats": {
+        "cr": 100,
+        "cd": 85,
+        "atk%": 0,
+        "hp%": 53,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 18,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 23,
+        "cd": 17,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 91
+        }
+      ],
+      "reaction": "bloom",
+      "idealScore": 411.183225,
+      "normalizer": 0.7296017487094714,
+      "meta": {
+        "method": "auto",
+        "weaponId": "key_of_khajnisut",
+        "teamContexts": ["Team 4709"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "kamisato_ayaka",
+      "buildName": "kamisato_ayaka V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Cryo",
+      "artifactSet": "blizzard_strayer",
+      "substats": {
+        "cr": 100,
+        "cd": 78,
+        "atk%": 52,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 16,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 9,
+        "cd": 31,
+        "atk%": 0,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 96
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 97
+        }
+      ],
+      "reaction": "frozen",
+      "idealScore": 405.5694,
+      "normalizer": 0.7397007762419946,
+      "meta": {
+        "method": "auto",
+        "weaponId": "mistsplitter_reforged",
+        "teamContexts": ["Team 4629"],
+        "generatedAt": 1773185551117
+      }
+    },
+    {
+      "characterId": "raiden_shogun",
+      "buildName": "raiden_shogun V2 Auto",
+      "roles": ["dps"],
+      "styles": ["on-field"],
+      "scalingStat": "atk",
+      "element": "Electro",
+      "artifactSet": "emblem_of_severed_fate",
+      "substats": {
+        "cr": 96,
+        "cd": 100,
+        "atk%": 80,
+        "hp%": 0,
+        "def%": 0,
+        "em": 49,
+        "er": 41,
+        "atk": 31,
+        "hp": 0,
+        "def": 0
+      },
+      "idealRolls": {
+        "cr": 12.3,
+        "cd": 25,
+        "atk%": 2.8,
+        "hp%": 0,
+        "def%": 0,
+        "em": 0,
+        "er": 0,
+        "atk": 0,
+        "hp": 0,
+        "def": 0
+      },
+      "sands": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 94
+        },
+        {
+          "stat": "er",
+          "weight": 92
+        }
+      ],
+      "goblet": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "electro%",
+          "weight": 98
+        },
+        {
+          "stat": "em",
+          "weight": 94
+        }
+      ],
+      "circlet": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 98
+        },
+        {
+          "stat": "em",
+          "weight": 92
+        }
+      ],
+      "reaction": "lunarCharged",
+      "idealScore": 437.601225,
+      "normalizer": 0.68555566772008,
+      "meta": {
+        "method": "auto",
+        "weaponId": "staff_of_the_scarlet_sands",
+        "teamContexts": ["Team 4139"],
+        "generatedAt": 1773185551117
+      }
+    }
+  ],
+  "profiles": {
+    "varka": {
+      "characterId": "varka",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "a_day_carved_from_rising_winds",
+      "weapons": ["gest_of_the_mighty_wolf"],
+      "teams": [
+        {
+          "name": "Team 3379",
+          "characters": ["varka", "durin", "venti", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "swirl",
+          "dpsWeaponId": "gest_of_the_mighty_wolf",
+          "builds": [
+            {
+              "weapon": "gest_of_the_mighty_wolf",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "elegy_for_the_end",
+              "artifacts": ["viridescent_venerer"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "swirl",
+      "teamBuffPresets": {}
+    },
+    "zibai": {
+      "characterId": "zibai",
+      "scalingStat": "def",
+      "element": "",
+      "defaultArtifactSet": "night_of_the_skys_unveiling",
+      "weapons": ["lightbearing_moonshard"],
+      "teams": [
+        {
+          "name": "Team 3691",
+          "characters": ["zibai", "illuga", "columbina", "gorou"],
+          "dpsIndex": 0,
+          "reaction": "lunarCrystallize",
+          "dpsWeaponId": "lightbearing_moonshard",
+          "builds": [
+            {
+              "weapon": "lightbearing_moonshard",
+              "artifacts": ["night_of_the_skys_unveiling"]
+            },
+            {
+              "weapon": "favonius_lance",
+              "artifacts": ["silken_moons_serenade"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["aubade_of_morningstar_and_moon"]
+            },
+            {
+              "weapon": "favonius_warbow",
+              "artifacts": ["instructor"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["def%"],
+      "gobletOptions": ["def%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "lunarCrystallize",
+      "teamBuffPresets": {}
+    },
+    "nefer": {
+      "characterId": "nefer",
+      "scalingStat": "em",
+      "element": "",
+      "defaultArtifactSet": "night_of_the_skys_unveiling",
+      "weapons": ["reliquary_of_truth"],
+      "teams": [
+        {
+          "name": "Team 4235",
+          "characters": ["nefer", "lauma", "columbina", "nilou"],
+          "dpsIndex": 0,
+          "reaction": "lunarBloom",
+          "dpsWeaponId": "reliquary_of_truth",
+          "builds": [
+            {
+              "weapon": "reliquary_of_truth",
+              "artifacts": ["night_of_the_skys_unveiling"]
+            },
+            {
+              "weapon": "nightweavers_looking_glass",
+              "artifacts": ["deepwood_memories"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["silken_moons_serenade"]
+            },
+            {
+              "weapon": "key_of_khajnisut",
+              "artifacts": ["instructor"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["em"],
+      "gobletOptions": ["em"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "lunarBloom",
+      "teamBuffPresets": {}
+    },
+    "flins": {
+      "characterId": "flins",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "night_of_the_skys_unveiling",
+      "weapons": ["bloodsoaked_ruins"],
+      "teams": [
+        {
+          "name": "Team 0266",
+          "characters": ["flins", "ineffa", "columbina", "sucrose"],
+          "dpsIndex": 0,
+          "reaction": "lunarCharged",
+          "dpsWeaponId": "bloodsoaked_ruins",
+          "builds": [
+            {
+              "weapon": "bloodsoaked_ruins",
+              "artifacts": ["night_of_the_skys_unveiling"]
+            },
+            {
+              "weapon": "fractured_halo",
+              "artifacts": ["aubade_of_morningstar_and_moon"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["silken_moons_serenade"]
+            },
+            {
+              "weapon": "thrilling_tales_of_dragon_slayers",
+              "artifacts": ["viridescent_venerer"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "lunarCharged",
+      "teamBuffPresets": {}
+    },
+    "venti": {
+      "characterId": "venti",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "a_day_carved_from_rising_winds",
+      "weapons": ["the_daybreak_chronicles", "elegy_for_the_end"],
+      "teams": [
+        {
+          "name": "Team 9764",
+          "characters": ["venti", "durin", "bennett", "faruzan"],
+          "dpsIndex": 0,
+          "reaction": "swirl",
+          "dpsWeaponId": "the_daybreak_chronicles",
+          "builds": [
+            {
+              "weapon": "the_daybreak_chronicles",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "favonius_warbow",
+              "artifacts": ["tenacity_of_the_millelith"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["anemo%"],
+      "circletOptions": ["cr", "cd"],
+      "primaryReaction": "swirl",
+      "teamBuffPresets": {}
+    },
+    "skirk": {
+      "characterId": "skirk",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "finale_of_the_deep_galleries",
+      "weapons": ["azurelight"],
+      "teams": [
+        {
+          "name": "Team 6545",
+          "characters": ["skirk", "escoffier", "furina", "shenhe"],
+          "dpsIndex": 0,
+          "reaction": "frozen",
+          "dpsWeaponId": "azurelight",
+          "builds": [
+            {
+              "weapon": "azurelight",
+              "artifacts": ["finale_of_the_deep_galleries"]
+            },
+            {
+              "weapon": "symphonist_of_scents",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "calamity_queller",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["cryo%"],
+      "circletOptions": ["cd", "cr"],
+      "primaryReaction": "frozen",
+      "teamBuffPresets": {}
+    },
+    "varesa": {
+      "characterId": "varesa",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "long_nights_oath",
+      "weapons": ["vivid_notions"],
+      "teams": [
+        {
+          "name": "Team 7768",
+          "characters": ["varesa", "iansan", "chevreuse", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "overloaded",
+          "dpsWeaponId": "vivid_notions",
+          "builds": [
+            {
+              "weapon": "vivid_notions",
+              "artifacts": ["long_nights_oath"]
+            },
+            {
+              "weapon": "skyward_spine",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "dialogues_of_the_desert_sages",
+              "artifacts": ["song_of_days_past"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        },
+        {
+          "name": "Team 8488",
+          "characters": ["varesa", "iansan", "furina", "xianyun"],
+          "dpsIndex": 0,
+          "reaction": "none",
+          "dpsWeaponId": "vivid_notions",
+          "builds": [
+            {
+              "weapon": "vivid_notions",
+              "artifacts": ["long_nights_oath"]
+            },
+            {
+              "weapon": "skyward_spine",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "cranes_echoing_call",
+              "artifacts": ["atk%-18", "atk%-18"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["electro%", "atk%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "overloaded",
+      "teamBuffPresets": {}
+    },
+    "mavuika": {
+      "characterId": "mavuika",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "obsidian_codex",
+      "weapons": ["a_thousand_blazing_suns"],
+      "teams": [
+        {
+          "name": "Team 1969",
+          "characters": ["mavuika", "citlali", "xilonen", "kaedehara_kazuha"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "a_thousand_blazing_suns",
+          "builds": [
+            {
+              "weapon": "a_thousand_blazing_suns",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["instructor"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["viridescent_venerer"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%", "em"],
+      "gobletOptions": ["pyro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "melt",
+      "teamBuffPresets": {}
+    },
+    "mualani": {
+      "characterId": "mualani",
+      "scalingStat": "em",
+      "element": "",
+      "defaultArtifactSet": "obsidian_codex",
+      "weapons": ["surfs_up"],
+      "teams": [
+        {
+          "name": "Team 4407",
+          "characters": ["mualani", "mavuika", "citlali", "xilonen"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "surfs_up",
+          "builds": [
+            {
+              "weapon": "surfs_up",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "a_thousand_blazing_suns",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["instructor"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["em", "hp%"],
+      "gobletOptions": ["hp%", "hydro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "melt",
+      "teamBuffPresets": {}
+    },
+    "chasca": {
+      "characterId": "chasca",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "obsidian_codex",
+      "weapons": ["astral_vultures_crimson_plumage"],
+      "teams": [
+        {
+          "name": "Team 1568",
+          "characters": ["chasca", "citlali", "xilonen", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "astral_vultures_crimson_plumage",
+          "builds": [
+            {
+              "weapon": "astral_vultures_crimson_plumage",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["instructor"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        },
+        {
+          "name": "Team 5723",
+          "characters": ["chasca", "citlali", "furina", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "astral_vultures_crimson_plumage",
+          "builds": [
+            {
+              "weapon": "astral_vultures_crimson_plumage",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "key_of_khajnisut",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "melt",
+      "teamBuffPresets": {}
+    },
+    "kinich": {
+      "characterId": "kinich",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "obsidian_codex",
+      "weapons": ["fang_of_the_mountain_king"],
+      "teams": [
+        {
+          "name": "Team 4905",
+          "characters": ["kinich", "emilie", "durin", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "burning",
+          "dpsWeaponId": "fang_of_the_mountain_king",
+          "builds": [
+            {
+              "weapon": "fang_of_the_mountain_king",
+              "artifacts": ["obsidian_codex"]
+            },
+            {
+              "weapon": "lumidouce_elegy",
+              "artifacts": ["unfinished_reverie"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["deepwood_memories"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["dendro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "burning",
+      "teamBuffPresets": {}
+    },
+    "clorinde": {
+      "characterId": "clorinde",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "fragment_of_harmonic_whimsy",
+      "weapons": ["absolution"],
+      "teams": [
+        {
+          "name": "Team 0330",
+          "characters": ["clorinde", "chevreuse", "durin", "fischl"],
+          "dpsIndex": 0,
+          "reaction": "overloaded",
+          "dpsWeaponId": "absolution",
+          "builds": [
+            {
+              "weapon": "absolution",
+              "artifacts": ["fragment_of_harmonic_whimsy"]
+            },
+            {
+              "weapon": "dialogues_of_the_desert_sages",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "elegy_for_the_end",
+              "artifacts": ["tenacity_of_the_millelith"]
+            }
+          ]
+        },
+        {
+          "name": "Team 6287",
+          "characters": ["clorinde", "columbina", "ineffa", "xilonen"],
+          "dpsIndex": 0,
+          "reaction": "lunarCharged",
+          "dpsWeaponId": "absolution",
+          "builds": [
+            {
+              "weapon": "absolution",
+              "artifacts": ["fragment_of_harmonic_whimsy"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["aubade_of_morningstar_and_moon"]
+            },
+            {
+              "weapon": "fractured_halo",
+              "artifacts": ["silken_moons_serenade"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%", "electro%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "overloaded",
+      "teamBuffPresets": {}
+    },
+    "arlecchino": {
+      "characterId": "arlecchino",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "fragment_of_harmonic_whimsy",
+      "weapons": ["crimson_moons_semblance"],
+      "teams": [
+        {
+          "name": "Team 6622",
+          "characters": ["arlecchino", "citlali", "xilonen", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "crimson_moons_semblance",
+          "builds": [
+            {
+              "weapon": "crimson_moons_semblance",
+              "artifacts": ["fragment_of_harmonic_whimsy"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["instructor"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        },
+        {
+          "name": "Team 7489",
+          "characters": ["arlecchino", "furina", "yelan", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "vaporize",
+          "dpsWeaponId": "crimson_moons_semblance",
+          "builds": [
+            {
+              "weapon": "crimson_moons_semblance",
+              "artifacts": ["fragment_of_harmonic_whimsy"]
+            },
+            {
+              "weapon": "key_of_khajnisut",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "aqua_simulacra",
+              "artifacts": ["emblem_of_severed_fate"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%", "pyro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "melt",
+      "teamBuffPresets": {}
+    },
+    "chiori": {
+      "characterId": "chiori",
+      "scalingStat": "def",
+      "element": "",
+      "defaultArtifactSet": "husk_of_opulent_dreams",
+      "weapons": ["uraku_misugiri"],
+      "teams": [
+        {
+          "name": "Team 5986",
+          "characters": ["chiori", "xilonen", "gorou", "furina"],
+          "dpsIndex": 0,
+          "reaction": "none",
+          "dpsWeaponId": "uraku_misugiri",
+          "builds": [
+            {
+              "weapon": "uraku_misugiri",
+              "artifacts": ["husk_of_opulent_dreams"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "favonius_warbow",
+              "artifacts": ["husk_of_opulent_dreams"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["golden_troupe"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["def%"],
+      "gobletOptions": ["geo%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "none",
+      "teamBuffPresets": {}
+    },
+    "xianyun": {
+      "characterId": "xianyun",
+      "scalingStat": "atk",
+      "element": "",
+      "weapons": ["vivid_notions", "cranes_echoing_call"],
+      "teams": [
+        {
+          "name": "Team 0163",
+          "characters": ["xianyun", "furina", "faruzan", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "none",
+          "dpsWeaponId": "vivid_notions",
+          "builds": [
+            {
+              "weapon": "vivid_notions",
+              "artifacts": ["atk%-18", "atk%-18"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["golden_troupe"]
+            },
+            {
+              "weapon": "favonius_warbow",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["atk%"],
+      "circletOptions": ["atk%"],
+      "primaryReaction": "none",
+      "teamBuffPresets": {}
+    },
+    "furina": {
+      "characterId": "furina",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "long_nights_oath",
+      "weapons": [
+        "splendor_of_tranquil_waters",
+        "freedomsworn",
+        "key_of_khajnisut"
+      ],
+      "teams": [
+        {
+          "name": "Team 8452",
+          "characters": ["furina", "xianyun", "durin", "citlali"],
+          "dpsIndex": 0,
+          "reaction": "vaporize",
+          "dpsWeaponId": "splendor_of_tranquil_waters",
+          "builds": [
+            {
+              "weapon": "splendor_of_tranquil_waters",
+              "artifacts": ["long_nights_oath"]
+            },
+            {
+              "weapon": "cranes_echoing_call",
+              "artifacts": ["atk%-18", "atk%-18"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["er", "hp%"],
+      "gobletOptions": ["hp%", "hydro%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "vaporize",
+      "teamBuffPresets": {}
+    },
+    "navia": {
+      "characterId": "navia",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "nighttime_whispers_in_the_echoing_woods",
+      "weapons": ["verdict"],
+      "teams": [
+        {
+          "name": "Team 5978",
+          "characters": ["navia", "columbina", "furina", "xilonen"],
+          "dpsIndex": 0,
+          "reaction": "lunarCrystallize",
+          "dpsWeaponId": "verdict",
+          "builds": [
+            {
+              "weapon": "verdict",
+              "artifacts": ["nighttime_whispers_in_the_echoing_woods"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["silken_moons_serenade"]
+            },
+            {
+              "weapon": "splendor_of_tranquil_waters",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["geo%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "lunarCrystallize",
+      "teamBuffPresets": {}
+    },
+    "neuvillette": {
+      "characterId": "neuvillette",
+      "scalingStat": "hp",
+      "element": "",
+      "defaultArtifactSet": "marechaussee_hunter",
+      "weapons": ["tome_of_the_eternal_flow"],
+      "teams": [
+        {
+          "name": "Team 0091",
+          "characters": ["neuvillette", "furina", "citlali", "xilonen"],
+          "dpsIndex": 0,
+          "reaction": "none",
+          "dpsWeaponId": "tome_of_the_eternal_flow",
+          "builds": [
+            {
+              "weapon": "tome_of_the_eternal_flow",
+              "artifacts": ["marechaussee_hunter"]
+            },
+            {
+              "weapon": "splendor_of_tranquil_waters",
+              "artifacts": ["golden_troupe"]
+            },
+            {
+              "weapon": "starcallers_watch",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["husk_of_opulent_dreams"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["hp%"],
+      "gobletOptions": ["hp%", "hydro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "none",
+      "teamBuffPresets": {}
+    },
+    "wriothesley": {
+      "characterId": "wriothesley",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "marechaussee_hunter",
+      "weapons": ["cashflow_supervision"],
+      "teams": [
+        {
+          "name": "Team 0370",
+          "characters": ["wriothesley", "durin", "bennett", "shenhe"],
+          "dpsIndex": 0,
+          "reaction": "melt",
+          "dpsWeaponId": "cashflow_supervision",
+          "builds": [
+            {
+              "weapon": "cashflow_supervision",
+              "artifacts": ["marechaussee_hunter"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "calamity_queller",
+              "artifacts": ["instructor"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["cryo%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "melt",
+      "teamBuffPresets": {}
+    },
+    "lyney": {
+      "characterId": "lyney",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "marechaussee_hunter",
+      "weapons": ["the_first_great_magic"],
+      "teams": [
+        {
+          "name": "Team 5251",
+          "characters": ["lyney", "durin", "chevreuse", "fischl"],
+          "dpsIndex": 0,
+          "reaction": "overloaded",
+          "dpsWeaponId": "the_first_great_magic",
+          "builds": [
+            {
+              "weapon": "the_first_great_magic",
+              "artifacts": ["marechaussee_hunter"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "symphonist_of_scents",
+              "artifacts": ["noblesse_oblige"]
+            },
+            {
+              "weapon": "elegy_for_the_end",
+              "artifacts": ["tenacity_of_the_millelith"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["pyro%"],
+      "circletOptions": ["cd"],
+      "primaryReaction": "overloaded",
+      "teamBuffPresets": {}
+    },
+    "alhaitham": {
+      "characterId": "alhaitham",
+      "scalingStat": "em",
+      "element": "",
+      "defaultArtifactSet": "gilded_dreams",
+      "weapons": ["light_of_foliar_incision"],
+      "teams": [
+        {
+          "name": "Team 8575",
+          "characters": ["alhaitham", "nahida", "xingqiu", "kuki_shinobu"],
+          "dpsIndex": 0,
+          "reaction": "hyperbloom",
+          "dpsWeaponId": "light_of_foliar_incision",
+          "builds": [
+            {
+              "weapon": "light_of_foliar_incision",
+              "artifacts": ["gilded_dreams"]
+            },
+            {
+              "weapon": "a_thousand_floating_dreams",
+              "artifacts": ["deepwood_memories"]
+            },
+            {
+              "weapon": "sacrificial_sword",
+              "artifacts": ["instructor"]
+            },
+            {
+              "weapon": "xiphos_moonlight",
+              "artifacts": ["flower_of_paradise_lost"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["em"],
+      "gobletOptions": ["dendro%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "hyperbloom",
+      "teamBuffPresets": {}
+    },
+    "wanderer": {
+      "characterId": "wanderer",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "desert_pavilion_chronicle",
+      "weapons": ["tulaytullahs_remembrance"],
+      "teams": [
+        {
+          "name": "Team 5386",
+          "characters": ["wanderer", "faruzan", "durin", "bennett"],
+          "dpsIndex": 0,
+          "reaction": "none",
+          "dpsWeaponId": "tulaytullahs_remembrance",
+          "builds": [
+            {
+              "weapon": "tulaytullahs_remembrance",
+              "artifacts": ["desert_pavilion_chronicle"]
+            },
+            {
+              "weapon": "favonius_warbow",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "athame_artis",
+              "artifacts": ["a_day_carved_from_rising_winds"]
+            },
+            {
+              "weapon": "skyward_blade",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["anemo%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "none",
+      "teamBuffPresets": {}
+    },
+    "nilou": {
+      "characterId": "nilou",
+      "scalingStat": "hp",
+      "element": "",
+      "weapons": ["key_of_khajnisut"],
+      "teams": [
+        {
+          "name": "Team 4709",
+          "characters": ["nilou", "nahida", "lauma", "sangonomiya_kokomi"],
+          "dpsIndex": 0,
+          "reaction": "bloom",
+          "dpsWeaponId": "key_of_khajnisut",
+          "builds": [
+            {
+              "weapon": "key_of_khajnisut",
+              "artifacts": ["hp%-20", "hp%-20"]
+            },
+            {
+              "weapon": "a_thousand_floating_dreams",
+              "artifacts": ["gilded_dreams"]
+            },
+            {
+              "weapon": "nightweavers_looking_glass",
+              "artifacts": ["deepwood_memories"]
+            },
+            {
+              "weapon": "sacrificial_fragments",
+              "artifacts": ["flower_of_paradise_lost"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["hp%"],
+      "gobletOptions": ["hp%"],
+      "circletOptions": ["hp%"],
+      "primaryReaction": "bloom",
+      "teamBuffPresets": {}
+    },
+    "kamisato_ayaka": {
+      "characterId": "kamisato_ayaka",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "blizzard_strayer",
+      "weapons": ["mistsplitter_reforged"],
+      "teams": [
+        {
+          "name": "Team 4629",
+          "characters": ["kamisato_ayaka", "escoffier", "furina", "shenhe"],
+          "dpsIndex": 0,
+          "reaction": "frozen",
+          "dpsWeaponId": "mistsplitter_reforged",
+          "builds": [
+            {
+              "weapon": "mistsplitter_reforged",
+              "artifacts": ["blizzard_strayer"]
+            },
+            {
+              "weapon": "symphonist_of_scents",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "calamity_queller",
+              "artifacts": ["noblesse_oblige"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["atk%"],
+      "gobletOptions": ["cryo%"],
+      "circletOptions": ["cr"],
+      "primaryReaction": "frozen",
+      "teamBuffPresets": {}
+    },
+    "raiden_shogun": {
+      "characterId": "raiden_shogun",
+      "scalingStat": "atk",
+      "element": "",
+      "defaultArtifactSet": "emblem_of_severed_fate",
+      "weapons": ["staff_of_the_scarlet_sands", "engulfing_lightning"],
+      "teams": [
+        {
+          "name": "Team 4139",
+          "characters": ["raiden_shogun", "furina", "xilonen", "columbina"],
+          "dpsIndex": 0,
+          "reaction": "lunarCharged",
+          "dpsWeaponId": "staff_of_the_scarlet_sands",
+          "builds": [
+            {
+              "weapon": "staff_of_the_scarlet_sands",
+              "artifacts": ["emblem_of_severed_fate"]
+            },
+            {
+              "weapon": "freedomsworn",
+              "artifacts": ["tenacity_of_the_millelith"]
+            },
+            {
+              "weapon": "peak_patrol_song",
+              "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+            },
+            {
+              "weapon": "nocturnes_curtain_call",
+              "artifacts": ["aubade_of_morningstar_and_moon"]
+            }
+          ]
+        }
+      ],
+      "sandsOptions": ["er"],
+      "gobletOptions": ["atk%", "electro%"],
+      "circletOptions": ["cd", "cr"],
+      "primaryReaction": "lunarCharged",
+      "teamBuffPresets": {}
+    }
+  },
+  "errors": [],
+  "generatedAt": 1773185551117
+}

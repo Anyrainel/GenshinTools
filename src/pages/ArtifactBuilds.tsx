@@ -2,6 +2,7 @@ import { ArtifactBuildsView } from "@/components/artifact-builds/ArtifactBuildsV
 import { BuildImportControl } from "@/components/artifact-builds/BuildImportControl";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
 import { CharacterBuildView } from "@/components/artifact-builds/CharacterBuildView";
+import { V2WeightsView } from "@/components/artifact-builds/V2WeightsView";
 
 // ... (imports are mostly fine from previous step, just adding ArtifactBuildsView back)
 
@@ -312,6 +313,10 @@ export default function ArtifactBuildsPage() {
               setActiveTab("configure");
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="weights" className="mt-0 h-full">
+          <V2WeightsView />
         </TabsContent>
       </Tabs>
     </PageLayout>

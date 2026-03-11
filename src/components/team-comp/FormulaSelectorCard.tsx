@@ -183,7 +183,7 @@ export function FormulaSelectorCard({
                 <div
                   className={cn(
                     "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                    selected ? "border-primary" : "border-muted-foreground/40"
+                    selected ? "border-primary" : "border-border"
                   )}
                 >
                   {selected && (
@@ -208,7 +208,7 @@ export function FormulaSelectorCard({
                       "text-xs leading-snug",
                       selected
                         ? "text-muted-foreground"
-                        : "text-muted-foreground/60"
+                        : "text-muted-foreground"
                     )}
                   >
                     {t.ui(
@@ -224,7 +224,7 @@ export function FormulaSelectorCard({
         </div>
       )}
       {formulaMode === "combo" && (
-        <p className="text-xs text-muted-foreground/70 px-2 md:px-4 py-1.5 border-b border-border/20">
+        <p className="text-xs text-muted-foreground px-2 md:px-4 py-1.5 border-b border-border/20">
           {t.ui("teamComp.comboDisclaimer")}
         </p>
       )}
@@ -405,7 +405,7 @@ export function FormulaSelectorCard({
                                             className={cn(
                                               "text-base font-mono tabular-nums w-5 text-center font-bold",
                                               count === 0 &&
-                                                "text-muted-foreground/50"
+                                                "text-muted-foreground"
                                             )}
                                           >
                                             {count}
@@ -456,7 +456,7 @@ export function FormulaSelectorCard({
                                               className={cn(
                                                 "text-base font-mono tabular-nums w-5 text-center font-bold",
                                                 c === 0 &&
-                                                  "text-muted-foreground/50"
+                                                  "text-muted-foreground"
                                               )}
                                             >
                                               {c}

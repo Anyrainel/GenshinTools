@@ -6,8 +6,10 @@ import {
   Book,
   Box,
   Filter,
+  FlaskConical,
   LayoutGrid,
   Settings,
+  Skull,
   Sword,
   Users,
 } from "lucide-react";
@@ -78,6 +80,16 @@ export const getNavigationConfig = (
         icon: Filter,
         tourStepId: "af-compute-tab",
       },
+      ...(import.meta.env.DEV
+        ? [
+            {
+              label: "V2 Weights",
+              href: "/artifact-filter?tab=weights",
+              value: "weights",
+              icon: FlaskConical,
+            },
+          ]
+        : []),
     ],
   },
   {
@@ -119,6 +131,12 @@ export const getNavigationConfig = (
         href: "/archive?tab=artifacts",
         value: "artifacts",
         icon: Box,
+      },
+      {
+        label: t.ui("archive.bosses"),
+        href: "/archive?tab=bosses",
+        value: "bosses",
+        icon: Skull,
       },
     ],
   },

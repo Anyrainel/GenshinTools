@@ -75,7 +75,7 @@ function MathVar({
       )}
     >
       <span className="text-xs md:text-sm leading-none">{val}</span>
-      <span className="text-[9px] md:text-xs text-muted-foreground opacity-80 mt-0.5 md:mt-1 font-sans leading-none tracking-tight">
+      <span className="text-[10px] md:text-xs text-muted-foreground opacity-80 mt-0.5 md:mt-1 font-sans leading-none tracking-tight">
         {label}
       </span>
     </span>

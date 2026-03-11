@@ -911,7 +911,12 @@ export async function* runOptimization(
         scoreFn
       );
 
-      if (currentEval.damage > 0) {
+      const seedValid = matchesSetRequirement(
+        current,
+        artifactSetId,
+        artifactHalfSetIds
+      );
+      if (currentEval.damage > 0 && seedValid) {
         updateBest(current, currentEval.damage, currentEval.result);
       }
       combinationsEvaluated++;

@@ -477,7 +477,7 @@ function ArtifactScoreContent({
                         </span>
                       </>
                     ) : (
-                      <span className="text-muted-foreground/30">-</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </td>
 
@@ -492,7 +492,7 @@ function ArtifactScoreContent({
                           {data.subScore.toFixed(1)}
                         </span>
                       ) : (
-                        <span className="text-muted-foreground/30">-</span>
+                        <span className="text-muted-foreground">-</span>
                       )}
                     </div>
                   </td>

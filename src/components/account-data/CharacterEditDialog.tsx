@@ -650,13 +650,13 @@ function OverviewPanel({
                     size="sm"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full border border-dashed border-muted-foreground/30 flex items-center justify-center bg-muted/20">
-                    <Plus className="w-5 h-5 text-muted-foreground/30" />
+                  <div className="w-12 h-12 rounded-full border border-dashed border-border flex items-center justify-center bg-muted/20">
+                    <Plus className="w-5 h-5 text-muted-foreground" />
                   </div>
                 )}
                 <span
                   className={cn(
-                    "mt-2 text-[10px] lg:text-xs uppercase font-bold tracking-wider leading-none",
+                    "mt-2 text-xs uppercase font-bold tracking-wider leading-none",
                     isSelected ? "text-foreground" : "text-muted-foreground"
                   )}
                 >
@@ -1269,7 +1269,7 @@ function SectionHeader({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-[10px] lg:text-xs uppercase font-bold tracking-wider text-muted-foreground block">
+    <span className="text-xs uppercase font-bold tracking-wider text-muted-foreground block">
       {children}
     </span>
   );
@@ -1345,7 +1345,7 @@ const PickerItem = forwardRef<
       <div className="group-hover:scale-105 transition-transform duration-200">
         {children}
       </div>
-      <span className="text-[10px] sm:text-xs leading-tight text-center font-medium line-clamp-2 w-full text-foreground/80 group-hover:text-foreground">
+      <span className="text-xs leading-tight text-center font-medium line-clamp-2 w-full text-foreground/80 group-hover:text-foreground">
         {label}
       </span>
     </button>

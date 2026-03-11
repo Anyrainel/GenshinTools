@@ -58,7 +58,7 @@ function LightweightMultiSelect({
           )}
         >
           <span
-            className={cn("truncate", isEmpty && "text-muted-foreground/70")}
+            className={cn("truncate", isEmpty && "text-muted-foreground")}
           >
             {isEmpty
               ? (placeholder ?? "—")

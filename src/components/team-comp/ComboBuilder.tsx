@@ -276,7 +276,7 @@ export function ComboBuilder({
                     <span
                       className={cn(
                         "text-xs font-mono tabular-nums w-5 text-center font-semibold",
-                        count === 0 && "text-muted-foreground/50"
+                        count === 0 && "text-muted-foreground"
                       )}
                     >
                       {count}
@@ -333,13 +333,13 @@ export function ComboBuilder({
                       {count > 1 && (
                         <>
                           <span className="text-foreground/60">{count}</span>
-                          <span className="text-muted-foreground/40 mx-0.5">
+                          <span className="text-muted-foreground mx-0.5">
                             {"\u00D7"}
                           </span>
                           <span className="text-foreground/60">
                             {Math.round(damage.perHit).toLocaleString()}
                           </span>
-                          <span className="text-muted-foreground/40 mx-0.5">
+                          <span className="text-muted-foreground mx-0.5">
                             =
                           </span>
                         </>

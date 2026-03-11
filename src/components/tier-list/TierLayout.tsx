@@ -224,7 +224,7 @@ export const TierLayout = forwardRef<
                   alt={getGroupName(group as keyof typeof groupConfig)}
                   className="w-6 h-6 object-contain flex-shrink-0"
                 />
-                <span className="text-[10px] truncate w-full text-center">
+                <span className="text-xs truncate w-full text-center">
                   {getGroupName(group as keyof typeof groupConfig)}
                 </span>
               </TabsTrigger>

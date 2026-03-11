@@ -265,9 +265,7 @@ export function ReactionSelector({
                 <span
                   className={cn(
                     "text-xs font-semibold shrink-0",
-                    isChecked
-                      ? "text-foreground/70"
-                      : "text-muted-foreground/40"
+                    isChecked ? "text-foreground/70" : "text-muted-foreground"
                   )}
                 >
                   {t.ability(part.formula.tag.ability)}:
@@ -277,9 +275,7 @@ export function ReactionSelector({
                 <span
                   className={cn(
                     "text-xs font-mono tabular-nums truncate",
-                    isChecked
-                      ? "text-foreground/80"
-                      : "text-muted-foreground/40"
+                    isChecked ? "text-foreground/80" : "text-muted-foreground"
                   )}
                 >
                   {partLabel(part, t)}
@@ -288,7 +284,7 @@ export function ReactionSelector({
                 {/* Hit count dropdown — only for multi-hit parts */}
                 {totalHits > 1 && (
                   <>
-                    <span className="text-muted-foreground/40 text-xs shrink-0">
+                    <span className="text-muted-foreground text-xs shrink-0">
                       ×
                     </span>
                     <Select

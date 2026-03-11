@@ -1,6 +1,6 @@
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
+import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -21,7 +21,7 @@ import { useIsOwned } from "@/hooks/useOwnership";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { characterMatchesSearch } from "@/lib/search";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { ArrowLeft, Book } from "lucide-react";
+import { Book } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "./ArchiveToolbar";
@@ -395,67 +395,30 @@ export function CharacterArchiveView() {
     </div>
   );
 
-  // ────────────────── Mobile: grid-to-detail ──────────────────────────────
-  if (!isDesktop) {
-    // Show detail view with back button when a character is selected
-    if (selectedId) {
-      return (
-        <div className="flex flex-col h-full overflow-hidden px-2">
-          <BuildsDefaultPresetPrompt />
-          <div className="shrink-0 py-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBack}
-              className="gap-1.5 text-muted-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t.ui("archive.characterLabel")}
-            </Button>
-          </div>
-          <div className="flex-1 min-h-0 overflow-y-auto pb-4">
-            {detailPanel}
-          </div>
-        </div>
-      );
-    }
-
-    // Show grid view
-    return (
-      <div className="flex flex-col h-full overflow-y-auto px-2">
-        <BuildsDefaultPresetPrompt />
-        <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
+  return (
+    <SidebarDetailLayout
+      header={toolbar}
+      hasSelection={!!selectedId}
+      onBack={handleBack}
+      backLabel={t.ui("archive.characterLabel")}
+      banner={<BuildsDefaultPresetPrompt />}
+      sidebar={
+        <CharacterListPanel
+          characters={filteredCharacters}
+          characterStats={characterStats}
+          selectedId={selectedId}
+          onSelect={handleSelect}
+        />
+      }
+      mobileGrid={
         <CharacterGrid
           characters={filteredCharacters}
           characterStats={characterStats}
           onSelect={handleSelect}
         />
-      </div>
-    );
-  }
-
-  // Desktop: sidebar + detail
-  return (
-    <div
-      className={cn(
-        "h-full overflow-hidden flex flex-col",
-        "w-full max-w-full lg:max-w-[90%] xl:max-w-[80%] 2xl:max-w-[70%] mx-auto",
-        "px-2 md:px-4 lg:px-6"
-      )}
+      }
     >
-      <BuildsDefaultPresetPrompt />
-      <div className="shrink-0 pt-3 pb-4">{toolbar}</div>
-      <div className="flex-1 min-h-0 flex flex-row gap-3 pb-3">
-        <aside className="w-1/3 max-w-[14rem] shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1">
-          <CharacterListPanel
-            characters={filteredCharacters}
-            characterStats={characterStats}
-            selectedId={selectedId}
-            onSelect={handleSelect}
-          />
-        </aside>
-        <main className="flex-1 min-w-0 overflow-y-auto">{detailPanel}</main>
-      </div>
-    </div>
+      {detailPanel}
+    </SidebarDetailLayout>
   );
 }

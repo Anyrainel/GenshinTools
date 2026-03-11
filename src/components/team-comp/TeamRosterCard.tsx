@@ -506,7 +506,7 @@ export function TeamRosterCard({
                   <div className="flex flex-col gap-1 w-full shrink pr-0.5">
                     <span
                       className={cn(
-                        "font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                        "font-bold text-muted-foreground line-clamp-1 break-all",
                         isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
                       )}
                       title={t.ui("teamComp.overrideLevel")}
@@ -540,7 +540,7 @@ export function TeamRosterCard({
                   <div className="flex flex-col gap-1 w-full shrink px-0.5 border-l border-border/20">
                     <span
                       className={cn(
-                        "font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                        "font-bold text-muted-foreground line-clamp-1 break-all",
                         isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
                       )}
                       title={t.ui("teamComp.overrideConst")}
@@ -575,7 +575,7 @@ export function TeamRosterCard({
                     <div className="flex flex-col gap-1 w-full shrink pl-0.5 border-l border-border/20">
                       <span
                         className={cn(
-                          "font-bold text-muted-foreground/70 line-clamp-1 break-all",
+                          "font-bold text-muted-foreground line-clamp-1 break-all",
                           isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
                         )}
                         title={t.ui("teamComp.overrideRefine")}

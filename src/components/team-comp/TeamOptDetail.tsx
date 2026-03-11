@@ -41,6 +41,7 @@ import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
@@ -417,6 +418,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (!teamBuild || !accountData) return;
     if (!resolvedFormula && formulaMode !== "combo") return;
 
+    // Clear any ephemeral swap overrides when re-optimizing
+    setSwapOverrides({});
+
     // In combo mode, pick the first combo character as the nominal carry
     const carryCharId =
       resolvedFormula?.charId ??
@@ -508,21 +512,40 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return map;
   }, [effectiveTeam.characters, accountData]);
 
+  /** Local swap overrides: charId → slot → replacement artifact. Ephemeral — not persisted. */
+  const [swapOverrides, setSwapOverrides] = useState<
+    Record<string, Partial<Record<Slot, ArtifactData>>>
+  >({});
+  const hasSwapOverrides = Object.keys(swapOverrides).length > 0;
+
   const optimizedArtifactsByChar = useMemo(() => {
-    // Use live optimizer result if available
-    const source = teamResult?.done
-      ? teamResult.bestArtifactsByChar
-      : // Restore from freeze store when re-entering a frozen team
-        isFrozen
-        ? freezeStore.getFrozenTeam(team.id)?.artifactsByChar
-        : null;
+    // Prefer freeze store when frozen
+    const frozenData = isFrozen
+      ? freezeStore.getFrozenTeam(team.id)?.artifactsByChar
+      : null;
+    const source =
+      frozenData ?? (teamResult?.done ? teamResult.bestArtifactsByChar : null);
     if (!source) return equippedArtifactsByChar;
     const map = { ...equippedArtifactsByChar };
     for (const [charId, arts] of Object.entries(source)) {
-      map[charId] = arts as Record<string, ArtifactData>;
+      map[charId] = { ...(arts as Record<string, ArtifactData>) };
+    }
+    // Apply ephemeral swap overrides on top
+    for (const [charId, overrides] of Object.entries(swapOverrides)) {
+      if (!map[charId]) continue;
+      for (const [slot, art] of Object.entries(overrides)) {
+        map[charId] = { ...map[charId], [slot]: art };
+      }
     }
     return map;
-  }, [teamResult, equippedArtifactsByChar, isFrozen, freezeStore, team.id]);
+  }, [
+    teamResult,
+    equippedArtifactsByChar,
+    isFrozen,
+    freezeStore,
+    team.id,
+    swapOverrides,
+  ]);
 
   const optArtifactSheets = useMemo(() => {
     const sheets: Record<string, StatSheet> = {};
@@ -801,6 +824,77 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     team.reactionOverrides,
   ]);
 
+  // ─── Artifact Swap (ephemeral local overrides) ───
+
+  const [swapTarget, setSwapTarget] = useState<{
+    charId: string;
+    slot: Slot;
+    artifact: ArtifactData;
+  } | null>(null);
+
+  const fullInventory = useMemo(() => {
+    if (!accountData) return [];
+    return [
+      ...accountData.extraArtifacts,
+      ...accountData.characters.flatMap((c: CharacterData) =>
+        (
+          Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
+        ).filter((a): a is ArtifactData => !!a)
+      ),
+    ];
+  }, [accountData]);
+
+  // Artifact IDs used by the current result (excluding the slot being swapped)
+  const usedArtifactIds = useMemo(() => {
+    const ids = new Set<string>();
+    const otherFrozen = freezeStore.getFrozenArtifactIds(team.id);
+    for (const id of otherFrozen) ids.add(id);
+    for (const arts of Object.values(optimizedArtifactsByChar)) {
+      for (const art of Object.values(arts)) {
+        if (art && swapTarget && art.id === swapTarget.artifact.id) continue;
+        if (art) ids.add(art.id);
+      }
+    }
+    return ids;
+  }, [optimizedArtifactsByChar, freezeStore, team.id, swapTarget]);
+
+  const swapMatchingSetIds = useMemo(() => {
+    if (!swapTarget) return new Set<string>();
+    const charIdx = effectiveTeam.characters.indexOf(swapTarget.charId);
+    const adapted = {
+      artifacts: effectiveTeam.artifacts.map((a) => a ?? undefined),
+    };
+    return getMatchingSetIds(adapted, charIdx);
+  }, [swapTarget, effectiveTeam]);
+
+  const handleArtifactSwap = useCallback(
+    (charId: string, slot: Slot, artifact: ArtifactData) => {
+      setSwapTarget({ charId, slot, artifact });
+    },
+    []
+  );
+
+  const handleSwapConfirm = useCallback(
+    (newArtifact: ArtifactData) => {
+      if (!swapTarget) return;
+      const { charId, slot } = swapTarget;
+      setSwapOverrides((prev) => ({
+        ...prev,
+        [charId]: { ...(prev[charId] || {}), [slot]: newArtifact },
+      }));
+      setSwapTarget(null);
+    },
+    [swapTarget]
+  );
+
+  const handleRestoreOriginal = useCallback(() => {
+    setSwapOverrides({});
+  }, []);
+
+  // Only allow swapping when there's a non-frozen result to edit
+  const canSwap =
+    !isFrozen && teamResult?.done === true && teamResult.bestDamage > 0;
+
   return (
     <div
       className={cn(
@@ -870,17 +964,23 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         isFrozen={isFrozen}
         onFreeze={() => {
           if (!teamResult?.done) return;
+          // Freeze the current view (includes any swap overrides)
           const allIds: string[] = [];
-          for (const arts of Object.values(teamResult.bestArtifactsByChar)) {
-            for (const art of Object.values(arts)) {
-              if (art) allIds.push(art.id);
+          const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
+          for (const [charId, arts] of Object.entries(
+            optimizedArtifactsByChar
+          )) {
+            const charArts: Record<string, ArtifactData | null> = {};
+            for (const [slot, art] of Object.entries(arts)) {
+              if (art) {
+                allIds.push((art as ArtifactData).id);
+                charArts[slot] = art as ArtifactData;
+              }
             }
+            byChar[charId] = charArts as Record<Slot, ArtifactData | null>;
           }
-          freezeStore.freezeTeam(
-            team.id,
-            allIds,
-            teamResult.bestArtifactsByChar
-          );
+          freezeStore.freezeTeam(team.id, allIds, byChar);
+          setSwapOverrides({});
         }}
         onUnfreeze={
           isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
@@ -938,7 +1038,27 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         idealComboResult={
           formulaMode === "combo" ? (idealResult?.comboResult ?? null) : null
         }
+        onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
+        hasSwapOverrides={hasSwapOverrides}
+        onRestoreOriginal={hasSwapOverrides ? handleRestoreOriginal : undefined}
       />
+
+      {/* Artifact Swap Dialog */}
+      {swapTarget && (
+        <ArtifactSwapDialog
+          open={!!swapTarget}
+          onOpenChange={(open) => {
+            if (!open) setSwapTarget(null);
+          }}
+          currentArtifact={swapTarget.artifact}
+          slot={swapTarget.slot}
+          inventory={fullInventory}
+          usedArtifactIds={usedArtifactIds}
+          matchingSetIds={swapMatchingSetIds}
+          onSwap={handleSwapConfirm}
+          t={t}
+        />
+      )}
     </div>
   );
 }

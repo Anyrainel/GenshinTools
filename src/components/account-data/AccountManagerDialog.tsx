@@ -227,7 +227,7 @@ export function AccountManagerDialog({
                               : acc.name}
                           </span>
                           {!isImportMode && isActive && (
-                            <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">
+                            <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">
                               {t.ui("common.active")}
                             </span>
                           )}

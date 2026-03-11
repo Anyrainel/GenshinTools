@@ -44,6 +44,7 @@ import {
   Play,
   Snowflake,
   Swords,
+  Undo2,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -99,6 +100,7 @@ function DamageBody({
   t,
   failReasons,
   isFrozen,
+  onArtifactSwap,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -114,6 +116,11 @@ function DamageBody({
     import("@/lib/team-comp/optimizer").OptFailReason
   >;
   isFrozen?: boolean;
+  onArtifactSwap?: (
+    charId: string,
+    slot: import("@/data/types").Slot,
+    artifact: ArtifactData
+  ) => void;
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey | "charLevel";
@@ -143,6 +150,7 @@ function DamageBody({
           t={t}
           failReasons={failReasons}
           isFrozen={isFrozen}
+          onArtifactSwap={onArtifactSwap}
         />
       )}
 
@@ -183,7 +191,7 @@ function DamageBody({
                     </div>
                     <span
                       className={cn(
-                        "text-muted-foreground/70 whitespace-nowrap",
+                        "text-muted-foreground whitespace-nowrap",
                         isMobile ? "text-[10px] ml-0.5" : "text-xs ml-1.5"
                       )}
                     >
@@ -193,7 +201,7 @@ function DamageBody({
                     </span>
                     <ChevronDown
                       className={cn(
-                        "w-4 h-4 text-muted-foreground/70 transition-transform shrink-0",
+                        "w-4 h-4 text-muted-foreground transition-transform shrink-0",
                         formulaExpanded && "rotate-180"
                       )}
                     />
@@ -360,7 +368,7 @@ function ComboBreakdown({
                 </div>
                 <span
                   className={cn(
-                    "text-muted-foreground/70 whitespace-nowrap",
+                    "text-muted-foreground whitespace-nowrap",
                     isMobile ? "text-[10px] ml-0.5" : "text-xs ml-1.5"
                   )}
                 >
@@ -370,7 +378,7 @@ function ComboBreakdown({
                 </span>
                 <ChevronDown
                   className={cn(
-                    "w-4 h-4 text-muted-foreground/70 transition-transform shrink-0",
+                    "w-4 h-4 text-muted-foreground transition-transform shrink-0",
                     expanded && "rotate-180"
                   )}
                 />
@@ -449,7 +457,7 @@ function ComboBreakdown({
                                 </span>
                                 {line.count > 1 && (
                                   <>
-                                    <span className="text-muted-foreground/40">
+                                    <span className="text-muted-foreground">
                                       ×
                                     </span>
                                     <span className="text-muted-foreground">
@@ -462,7 +470,7 @@ function ComboBreakdown({
                           );
                         })
                       ) : (
-                        <span className="text-sm text-muted-foreground/40 px-1 py-1">
+                        <span className="text-sm text-muted-foreground px-1 py-1">
                           —
                         </span>
                       )}
@@ -528,6 +536,14 @@ interface DamageCardProps {
   isFrozen?: boolean;
   onFreeze?: () => void;
   onUnfreeze?: () => void;
+  // Artifact swap (ephemeral editing of optimizer results)
+  onArtifactSwap?: (
+    charId: string,
+    slot: import("@/data/types").Slot,
+    artifact: ArtifactData
+  ) => void;
+  hasSwapOverrides?: boolean;
+  onRestoreOriginal?: () => void;
 }
 
 // ─── Shared inline control helpers ───
@@ -805,6 +821,9 @@ export function DamageCard({
   isFrozen,
   onFreeze,
   onUnfreeze,
+  onArtifactSwap,
+  hasSwapOverrides,
+  onRestoreOriginal,
 }: DamageCardProps) {
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
@@ -874,7 +893,7 @@ export function DamageCard({
               <div
                 className={cn(
                   "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                  selected ? "border-primary" : "border-muted-foreground/40"
+                  selected ? "border-primary" : "border-border"
                 )}
               >
                 {selected && (
@@ -893,9 +912,7 @@ export function DamageCard({
                 <span
                   className={cn(
                     "text-xs leading-snug",
-                    selected
-                      ? "text-muted-foreground"
-                      : "text-muted-foreground/60"
+                    selected ? "text-muted-foreground" : "text-muted-foreground"
                   )}
                 >
                   {t.ui(desc)}
@@ -1010,6 +1027,17 @@ export function DamageCard({
                   labelBusy={t.ui("teamComp.optimizing")}
                 />
               </span>
+              {hasSwapOverrides && onRestoreOriginal && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRestoreOriginal}
+                  className="gap-1.5 font-bold px-4 text-xs shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
+                >
+                  <Undo2 className="w-3.5 h-3.5" />
+                  {t.ui("teamComp.swapRestoreOriginal")}
+                </Button>
+              )}
               {onFreeze && !isFrozen && (
                 <Button
                   variant="outline"
@@ -1092,7 +1120,7 @@ export function DamageCard({
                     {teamProgress.passResults.map((pr, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-semibold"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
                       >
                         <Check className="w-2.5 h-2.5" />
                         {t.character(pr.charId)}
@@ -1147,6 +1175,7 @@ export function DamageCard({
                       teamResult?.done ? teamResult.failReasons : undefined
                     }
                     isFrozen={isFrozen}
+                    onArtifactSwap={onArtifactSwap}
                   />
                 )}
                 <ComboBreakdown
@@ -1183,6 +1212,7 @@ export function DamageCard({
                   teamResult?.done ? teamResult.failReasons : undefined
                 }
                 isFrozen={isFrozen}
+                onArtifactSwap={onArtifactSwap}
               />
             ) : null}
 

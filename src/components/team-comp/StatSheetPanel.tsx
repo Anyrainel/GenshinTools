@@ -35,6 +35,12 @@ type Props = {
   t: ReturnType<typeof useLanguage>["t"];
   failReasons?: Record<string, OptFailReason>;
   isFrozen?: boolean;
+  /** When provided, artifact icons become clickable to open a swap dialog */
+  onArtifactSwap?: (
+    charId: string,
+    slot: import("@/data/types").Slot,
+    artifact: ArtifactData
+  ) => void;
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -330,6 +336,7 @@ export function StatSheetPanel({
   t,
   failReasons,
   isFrozen,
+  onArtifactSwap,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [viewMode, setViewMode] = useState<"max" | "conditional">("max");
@@ -461,6 +468,11 @@ export function StatSheetPanel({
                     charId={charId}
                     artifactsObj={artifactsObj}
                     t={t}
+                    onSwap={
+                      onArtifactSwap
+                        ? (slot, art) => onArtifactSwap(charId, slot, art)
+                        : undefined
+                    }
                   />
                 )}
               </div>

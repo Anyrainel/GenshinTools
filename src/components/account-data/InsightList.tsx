@@ -403,8 +403,8 @@ function InsightItem({
             <CirclePlus
               className={
                 compact
-                  ? "w-4 h-4 text-muted-foreground/30"
-                  : "w-6 h-6 text-muted-foreground/30"
+                  ? "w-4 h-4 text-muted-foreground"
+                  : "w-6 h-6 text-muted-foreground"
               }
             />
           </div>
@@ -449,8 +449,8 @@ function InsightItem({
             <PlaceholderIcon
               className={
                 compact
-                  ? "w-7 h-7 text-muted-foreground/50"
-                  : "w-10 h-10 text-muted-foreground/50"
+                  ? "w-7 h-7 text-muted-foreground"
+                  : "w-10 h-10 text-muted-foreground"
               }
             />
           </div>

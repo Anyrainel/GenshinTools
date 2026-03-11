@@ -3,6 +3,8 @@ import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Slot } from "@/data/types";
+import { cn } from "@/lib/utils";
+import { ArrowRightLeft } from "lucide-react";
 
 const ARTIFACT_SLOTS: Slot[] = [
   "flower",
@@ -16,10 +18,13 @@ export function ArtifactSlotGrid({
   charId,
   artifactsObj,
   t,
+  onSwap,
 }: {
   charId: string;
   artifactsObj: Record<string, ArtifactData>;
   t: ReturnType<typeof useLanguage>["t"];
+  /** When provided, artifacts become clickable to trigger a swap */
+  onSwap?: (slot: Slot, artifact: ArtifactData) => void;
 }) {
   return (
     <div className="grid grid-cols-5 gap-1.5">
@@ -31,11 +36,37 @@ export function ArtifactSlotGrid({
               key={slot}
               className="aspect-square rounded border border-dashed border-border/30 flex items-center justify-center bg-card/10 p-0.5"
             >
-              <span className="text-[10px] text-muted-foreground/50 font-medium leading-tight text-center">
+              <span className="text-[10px] text-muted-foreground font-medium leading-tight text-center">
                 {t.ui("accountData.unequipped")}
               </span>
             </div>
           );
+
+        if (onSwap) {
+          return (
+            <button
+              key={slot}
+              type="button"
+              onClick={() => onSwap(slot, art)}
+              className={cn(
+                "relative group/swap rounded transition-all cursor-pointer w-fit",
+                "hover:bg-primary/10"
+              )}
+              title={t.ui("teamComp.swapArtifact")}
+            >
+              <ArtifactIcon
+                artifact={art}
+                artInfo={artifactsById[art.setKey]}
+                slot={slot}
+                size="md"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
+                <ArrowRightLeft className="w-4 h-4 text-primary" />
+              </div>
+            </button>
+          );
+        }
+
         return (
           <ArtifactDataHoverCard
             key={slot}

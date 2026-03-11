@@ -230,7 +230,7 @@ function ArtifactPlaceholder({
       >
         <CircleHelp
           className={cn(
-            "text-muted-foreground/50",
+            "text-muted-foreground",
             compact ? "w-8 h-8" : "w-12 h-12"
           )}
         />

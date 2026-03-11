@@ -184,46 +184,52 @@ For builds tagged as DPS with existing damage formula implementations, weights c
 - **At optimum (full allocation):** Marginals are roughly equalized (by the equal marginal principle of convex optimization) — weights become too flat, losing discriminating power.
 - **At midpoint:** Represents a "decent but improvable" player. Preserves real stat value differences while accounting for partial diminishing returns. The linear scoring approximation is most accurate near the gradient evaluation point, and the midpoint minimizes maximum approximation error across the full range.
 
-### Damage Proxy Function
+### Damage Calculator: Real Team-Comp Library
 
-For auto-tuning, we need a damage function. The full team-comp calculator is too complex and context-dependent. Instead, use a simplified proxy:
+Auto-tuning uses the full `TeamBuild` damage calculator from `src/lib/team-comp/`, not a simplified proxy. This ensures that all buff interactions — character passives, weapon passives, artifact set bonuses (e.g., Blizzard Strayer's +40% CR), elemental resonances, and cross-character scaling buffs — are properly accounted for when computing marginal gains.
+
+**Key APIs:**
+- `TeamBuild(configs: CharCompConfig[])` — Constructs a full team with all buff resolution
+- `TeamBuild.getTeamStats(artifactStats, calcTargetId)` — Computes final stat sheets for all members
+- `TeamBuild.getDamageResult(charId, formulaId, teamStats, ctx)` — Evaluates damage for a formula
+- `StatSheet.withDelta(key, delta)` — Creates a tweaked stat sheet for marginal analysis
+
+**Why real calculations matter:**
+- Artifact set bonuses (Blizzard Strayer +40% CR, Emblem ER→burst DMG%) change stat valuations fundamentally
+- Cross-character buffs (Kazuha A4 EM→DMG%, Shenhe flat DMG, Bennett flat ATK) shift optimal stat distributions
+- Elemental resonances (Pyro +25% ATK, Cryo +15% CR) affect the baseline
+- Weapon passives (TTDS, Elegy, Favonius procs) alter the full stat picture
+
+A simplified proxy that ignores these interactions produces misleading weights — e.g., overvaluing CR when the artifact set already provides it.
+
+### Data Sources: Curated Presets
+
+Team compositions and builds come from curated preset data, not from guessing:
+
+1. **Flagship Teams** (`src/presets/team-comp/[GGArtifact] Flagship Teams.json`): ~30 meta teams with full 4-member builds (characters, weapons, artifact sets)
+2. **AllCharacterBuilds** (`src/presets/artifact-builds/[GGArtifact] AllCharacterBuilds.json`): 112 characters with curated builds (weapons, artifact sets, main stats)
+
+For each DPS character appearing in a Flagship Team:
+- The full team composition (4 characters + 4 weapons + 4 artifact sets) is used to construct a `TeamBuild`
+- The DPS character's registered damage formula drives the marginal analysis
+- Multiple team contexts (if the character appears in multiple teams) are averaged
+
+### Elemental Goblet Valuation
+
+Compute the CD-equivalent of an elemental DMG% goblet via the real calculator:
 
 ```
-damage = totalATK × (1 + CR × CD) × (1 + dmgBonus) × reactionMult(EM) × talentMV
-```
-
-Where:
-- `totalATK = (baseATK × (1 + atkPct) + flatATK)` (or HP/DEF scaling variant)
-- `CR` is clamped to [0, 1]
-- `dmgBonus` is the sum of all damage bonus sources
-- `reactionMult(EM)` uses the official EM → reaction bonus formula
-- `talentMV` is a constant (doesn't affect marginal ratios, can be set to 1)
-
-For HP/DEF-scaling DPS (Hu Tao, Itto, etc.), substitute the appropriate scaling stat.
-
-### Elemental Goblet Valuation (Auto-Tuned)
-
-Compute the CD-equivalent of an elemental DMG% goblet via the damage proxy:
-
-```
-damageWithElemGoblet = proxy(baseline stats with goblet's elemDmg% added to dmgBonus)
-damageWithAtkGoblet  = proxy(baseline stats with 46.6% added to atkPct instead)
+damageWithElemGoblet = calc(team with goblet's elemDmg% main stat)
+damageWithAtkGoblet  = calc(team with ATK% goblet main stat instead)
 
 elemGobletCDEquiv = 62.1 × (damageWithElemGoblet / damageWithAtkGoblet)
 ```
 
-This typically yields ~68–75 CD-equivalent, reflecting that elemental goblet is usually superior to ATK% goblet.
+This uses the full buff pipeline, so set bonuses that interact with DMG% (e.g., Crimson Witch 4pc) are properly reflected.
 
-### Team Variance (Optional Enhancement)
+### Team Variance
 
-To make weights robust across team compositions:
-
-1. Define 3–5 representative team contexts per character (e.g., "with Bennett," "with Kazuha," "solo")
-2. Each team context modifies the baseline (e.g., Bennett adds +1000 flat ATK, Kazuha adds +200 EM)
-3. Compute weights for each team context separately
-4. Final weight = average across all contexts
-
-This produces weights that are "generally good" — not perfect for any one team but not terrible for any either. Analogous to robust optimization / ensemble averaging.
+Weights are averaged across all Flagship Team contexts where a character appears as DPS. This naturally produces weights that are "generally good" across team compositions — accounting for different buff environments, reactions, and teammate synergies.
 
 ### Support Builds: Manual Tuning
 

@@ -140,7 +140,7 @@ function BuffChip({
               {source.triggers?.map((trig) => (
                 <span
                   key={trig}
-                  className="bg-primary/10 text-primary text-[9px] md:text-[10px] px-1 md:px-1.5 py-0.5 rounded font-black uppercase tracking-wider leading-none"
+                  className="bg-primary/10 text-primary text-xs px-1 md:px-1.5 py-0.5 rounded font-black uppercase tracking-wider leading-none"
                 >
                   {trig}
                 </span>
@@ -201,7 +201,7 @@ function BuffChip({
               <div className="flex items-baseline gap-1">
                 <span
                   className={cn(
-                    "font-mono font-bold text-xs md:text-[15px]",
+                    "font-mono font-bold text-xs md:text-base",
                     e.value > 0
                       ? "text-green-500 dark:text-green-400"
                       : "text-red-500 dark:text-red-400"
@@ -318,7 +318,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
                     <span className="text-xs md:text-sm font-bold text-foreground truncate">
                       {t.character(charId)}
                     </span>
-                    <span className="ml-auto text-[9px] md:text-[10px] font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
+                    <span className="ml-auto text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
                       {charBuffs.length}
                     </span>
                   </div>

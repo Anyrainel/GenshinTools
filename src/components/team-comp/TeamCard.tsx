@@ -123,7 +123,7 @@ export function TeamCard({
     >
       {/* Header: Index + Reaction tags + Name + Context menu */}
       <div className="flex items-center gap-1.5 px-3 pt-3 pb-1">
-        <span className="text-xs font-bold text-muted-foreground/60 select-none w-5 text-center shrink-0">
+        <span className="text-xs font-bold text-muted-foreground select-none w-5 text-center shrink-0">
           {index + 1}
         </span>
         <LightweightMultiSelect
@@ -140,7 +140,7 @@ export function TeamCard({
           value={team.name}
           onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder={t.ui("teamComp.teamName")}
-          className="font-semibold text-sm bg-transparent border-none px-2 h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground/40 flex-1 min-w-0"
+          className="font-semibold text-sm bg-transparent border-none px-2 h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
           disabled={isFrozen}
         />
         <DropdownMenu>
@@ -230,7 +230,7 @@ export function TeamCard({
           })}
 
           {/* Row 1: Character icon + Character pickers */}
-          <User2 className="w-3.5 h-3.5 text-muted-foreground/80" />
+          <User2 className="w-3.5 h-3.5 text-muted-foreground" />
           {team.characters.map((charId, idx) => (
             <ItemPicker
               key={`char-${idx}`}
@@ -285,7 +285,7 @@ export function TeamCard({
           ))}
 
           {/* Row 2: Weapon icon + Weapon pickers */}
-          <Swords className="w-3.5 h-3.5 text-muted-foreground/80" />
+          <Swords className="w-3.5 h-3.5 text-muted-foreground" />
           {team.weapons.map((weaponId, idx) => (
             <ItemPicker
               key={`wpn-${idx}`}
@@ -325,7 +325,7 @@ export function TeamCard({
           ))}
 
           {/* Row 3: Artifact icon + Artifact pickers */}
-          <Diamond className="w-3.5 h-3.5 text-muted-foreground/80" />
+          <Diamond className="w-3.5 h-3.5 text-muted-foreground" />
           {team.artifacts.map((artConfig, idx) => (
             <ItemPicker
               key={`art-${idx}`}
