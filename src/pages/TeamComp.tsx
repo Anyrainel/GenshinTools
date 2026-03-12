@@ -20,6 +20,7 @@ import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import type { TeamCompData } from "@/stores/useTeamStore";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -46,6 +47,8 @@ export default function TeamCompPage() {
   const { t } = useLanguage();
   const tour = useTour();
   const { ready: gameStatsReady, characterStats } = useGameStats();
+  const activeAccount = useAccountStore(getActiveAccount);
+  const accountData = activeAccount?.data || null;
   const teams = useTeamStore((state) => state.teams);
   const activeTeamId = useTeamStore((state) => state.activeTeamId);
   const addTeam = useTeamStore((state) => state.addTeam);
@@ -420,7 +423,19 @@ export default function TeamCompPage() {
                       : undefined
                   }
                   isFrozen={freezeStore.isFrozen(team.id)}
+                  isFullyFrozen={(() => {
+                    const frozenIds = freezeStore.getFrozenCharIds(team.id);
+                    const charIds = team.characters.filter(Boolean);
+                    return (
+                      frozenIds.length > 0 &&
+                      charIds.every((id) => frozenIds.includes(id!))
+                    );
+                  })()}
+                  frozenCount={freezeStore.getFrozenCharIds(team.id).length}
+                  totalCharCount={team.characters.filter(Boolean).length}
+                  frozenCharIds={new Set(freezeStore.getFrozenCharIds(team.id))}
                   onUnfreeze={() => freezeStore.unfreezeTeam(team.id)}
+                  accountData={accountData}
                 />
               );
             })}

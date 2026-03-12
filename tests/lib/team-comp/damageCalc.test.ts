@@ -1076,7 +1076,7 @@ describe("getNextLevelTier", () => {
   it("returns the next tier for non-max levels", () => {
     expect(getNextLevelTier(70)).toBe(80);
     expect(getNextLevelTier(80)).toBe(90);
-    expect(getNextLevelTier(90)).toBe(100); // skip 95
+    expect(getNextLevelTier(90)).toBe(95);
     expect(getNextLevelTier(95)).toBe(100);
   });
 
@@ -1103,7 +1103,7 @@ describe("levelUpGains", () => {
     assumeCrit: false,
   };
 
-  it("computes level-up gain for Lv90 calc target", () => {
+  it("computes level-up gain for Lv90 calc target (both 90→95 and 90→100)", () => {
     const configs: CharCompConfig[] = [
       {
         charId: "diluc",
@@ -1125,12 +1125,20 @@ describe("levelUpGains", () => {
     );
 
     expect(display.levelUpGains.diluc).toBeDefined();
-    expect(display.levelUpGains.diluc.gain).toBeGreaterThan(0);
-    expect(display.levelUpGains.diluc.from).toBe(90);
-    expect(display.levelUpGains.diluc.to).toBe(100);
+    expect(display.levelUpGains.diluc.length).toBe(2);
+    // First entry: 90→95
+    expect(display.levelUpGains.diluc[0].from).toBe(90);
+    expect(display.levelUpGains.diluc[0].to).toBe(95);
+    expect(display.levelUpGains.diluc[0].gain).toBeGreaterThan(0);
+    // Second entry: 90→100
+    expect(display.levelUpGains.diluc[1].from).toBe(90);
+    expect(display.levelUpGains.diluc[1].to).toBe(100);
+    expect(display.levelUpGains.diluc[1].gain).toBeGreaterThan(
+      display.levelUpGains.diluc[0].gain
+    );
   });
 
-  it("computes level-up gain for Lv80 calc target (80→90)", () => {
+  it("computes level-up gain for Lv80 calc target (80→90 only)", () => {
     const configs: CharCompConfig[] = [
       {
         charId: "diluc",
@@ -1152,9 +1160,10 @@ describe("levelUpGains", () => {
     );
 
     expect(display.levelUpGains.diluc).toBeDefined();
-    expect(display.levelUpGains.diluc.from).toBe(80);
-    expect(display.levelUpGains.diluc.to).toBe(90);
-    expect(display.levelUpGains.diluc.gain).toBeGreaterThan(0);
+    expect(display.levelUpGains.diluc.length).toBe(1);
+    expect(display.levelUpGains.diluc[0].from).toBe(80);
+    expect(display.levelUpGains.diluc[0].to).toBe(90);
+    expect(display.levelUpGains.diluc[0].gain).toBeGreaterThan(0);
   });
 
   it("Lv80→90 gain is larger than Lv95→100 gain", () => {
@@ -1180,7 +1189,7 @@ describe("levelUpGains", () => {
     expect(lv80).toBeDefined();
     expect(lv95).toBeDefined();
     // 80→90 spans a larger stat range than 95→100
-    expect(lv80.gain).toBeGreaterThan(lv95.gain);
+    expect(lv80[0].gain).toBeGreaterThan(lv95[0].gain);
   });
 
   it("no level-up gain for Lv100 (already max)", () => {
@@ -1240,15 +1249,16 @@ describe("levelUpGains", () => {
       ctx
     );
 
-    // Calc target (Diluc at Lv90) should have a gain
+    // Calc target (Diluc at Lv90) should have gains (90→95 and 90→100)
     expect(display.levelUpGains.diluc).toBeDefined();
-    expect(display.levelUpGains.diluc.from).toBe(90);
+    expect(display.levelUpGains.diluc[0].from).toBe(90);
+    expect(display.levelUpGains.diluc.length).toBe(2);
     // Teammate (Mona at Lv80) — may or may not have a gain depending on
     // whether her buffs affect Diluc's damage. If present, verify shape.
     if (display.levelUpGains.mona) {
-      expect(display.levelUpGains.mona.from).toBe(80);
-      expect(display.levelUpGains.mona.to).toBe(90);
-      expect(display.levelUpGains.mona.gain).toBeGreaterThan(0);
+      expect(display.levelUpGains.mona[0].from).toBe(80);
+      expect(display.levelUpGains.mona[0].to).toBe(90);
+      expect(display.levelUpGains.mona[0].gain).toBeGreaterThan(0);
     }
   });
 });

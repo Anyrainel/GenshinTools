@@ -1,0 +1,3373 @@
+{
+  "meta": {
+    "generated": "2026-03-11",
+    "description": "Synthesized team compositions from online guides (KQM, Game8, Genshin.gg, etc.) for V3 scoring weight derivation. Each team has full 4-member builds with weapons and artifact sets.",
+    "sources": [
+      "keqingmains.com",
+      "game8.co",
+      "genshin-builds.com",
+      "genshin.gg",
+      "icy-veins.com",
+      "prydwen.gg"
+    ],
+    "notes": "Weapon choices are BiS 5-star. Artifact sets are 4pc unless specified as 2pc+2pc. IDs follow codebase snake_case convention."
+  },
+  "teams": [
+    {
+      "name": "Neuvillette Hypercarry (Xilonen)",
+      "characters": ["neuvillette", "furina", "kaedehara_kazuha", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Neuvillette Hypercarry (Mavuika)",
+      "characters": ["neuvillette", "furina", "xilonen", "mavuika"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Neuvillette Classic (Zhongli)",
+      "characters": ["neuvillette", "furina", "kaedehara_kazuha", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Neuvillette Taser (Fischl)",
+      "characters": ["neuvillette", "furina", "kaedehara_kazuha", "fischl"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Neuvillette Freeze (Citlali)",
+      "characters": ["neuvillette", "furina", "citlali", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Mavuika Forward Melt (Citlali + Xilonen)",
+      "characters": ["mavuika", "citlali", "bennett", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Mavuika Forward Melt (Citlali + Kazuha)",
+      "characters": ["mavuika", "citlali", "bennett", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Mavuika Vaporize (Furina)",
+      "characters": ["mavuika", "furina", "xilonen", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Mavuika Overload (Chevreuse)",
+      "characters": ["mavuika", "ororon", "chevreuse", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Clorinde Aggravate",
+      "characters": ["clorinde", "fischl", "nahida", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Clorinde Quickbloom",
+      "characters": ["clorinde", "fischl", "nahida", "furina"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Clorinde Overload (Chevreuse)",
+      "characters": ["clorinde", "chevreuse", "kujou_sara", "mavuika"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Clorinde Electro-Charged",
+      "characters": ["clorinde", "furina", "kaedehara_kazuha", "fischl"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Navia Xilonen Premium",
+      "characters": ["navia", "xilonen", "furina", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "verdict",
+          "artifacts": ["nighttime_whispers_in_the_echoing_woods"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Navia Chiori Double Geo",
+      "characters": ["navia", "chiori", "fischl", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "verdict",
+          "artifacts": ["nighttime_whispers_in_the_echoing_woods"]
+        },
+        {
+          "weapon": "uraku_misugiri",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Navia Chiori Furina",
+      "characters": ["navia", "chiori", "furina", "sigewinne"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "verdict",
+          "artifacts": ["nighttime_whispers_in_the_echoing_woods"]
+        },
+        {
+          "weapon": "uraku_misugiri",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["song_of_days_past"]
+        }
+      ]
+    },
+    {
+      "name": "Kinich Burning (Emilie + Mavuika)",
+      "characters": ["kinich", "emilie", "mavuika", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "fang_of_the_mountain_king",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "lumidouce_elegy",
+          "artifacts": ["unfinished_reverie"]
+        },
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kinich Burning (Emilie + Xiangling)",
+      "characters": ["kinich", "emilie", "xiangling", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "fang_of_the_mountain_king",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "lumidouce_elegy",
+          "artifacts": ["unfinished_reverie"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kinich Burgeon",
+      "characters": ["kinich", "xiangling", "furina", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "burgeon",
+      "builds": [
+        {
+          "weapon": "fang_of_the_mountain_king",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Arlecchino Vaporize (Yelan)",
+      "characters": ["arlecchino", "yelan", "xilonen", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "crimson_moons_semblance",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Arlecchino Vaporize (Xingqiu + Kazuha)",
+      "characters": ["arlecchino", "xingqiu", "kaedehara_kazuha", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "crimson_moons_semblance",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Arlecchino Melt (Citlali)",
+      "characters": ["arlecchino", "citlali", "bennett", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "crimson_moons_semblance",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Arlecchino Overload (Chevreuse)",
+      "characters": ["arlecchino", "chevreuse", "fischl", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "crimson_moons_semblance",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Arlecchino Mono Pyro",
+      "characters": ["arlecchino", "bennett", "kaedehara_kazuha", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "crimson_moons_semblance",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Wriothesley Melt (Xiangling + Kazuha)",
+      "characters": ["wriothesley", "bennett", "xiangling", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Wriothesley Melt (Xiangling + Xilonen)",
+      "characters": ["wriothesley", "bennett", "xiangling", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Wriothesley Freeze (Furina + Yelan)",
+      "characters": ["wriothesley", "furina", "xilonen", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Wriothesley Freeze (Shenhe)",
+      "characters": ["wriothesley", "furina", "shenhe", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Lyney Mono Pyro (Kazuha + Zhongli)",
+      "characters": ["lyney", "bennett", "kaedehara_kazuha", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "the_first_great_magic",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Lyney Mono Pyro (Chiori + Xilonen)",
+      "characters": ["lyney", "bennett", "chiori", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "the_first_great_magic",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "uraku_misugiri",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Lyney Burning (Emilie)",
+      "characters": ["lyney", "emilie", "bennett", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "the_first_great_magic",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "lumidouce_elegy",
+          "artifacts": ["unfinished_reverie"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Hu Tao Double Hydro (Furina + Xilonen)",
+      "characters": ["hu_tao", "furina", "xingqiu", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Hu Tao Double Hydro (Classic)",
+      "characters": ["hu_tao", "xingqiu", "yelan", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Hu Tao Vape (Citlali)",
+      "characters": ["hu_tao", "xingqiu", "citlali", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Raiden Hypercarry (Classic)",
+      "characters": [
+        "raiden_shogun",
+        "kujou_sara",
+        "kaedehara_kazuha",
+        "bennett"
+      ],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Raiden National",
+      "characters": ["raiden_shogun", "xiangling", "xingqiu", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Raiden Aggravate",
+      "characters": ["raiden_shogun", "nahida", "kujou_sara", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Raiden Hyperbloom",
+      "characters": ["raiden_shogun", "nahida", "xingqiu", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "dragons_bane",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Raiden Hypercarry (Chevreuse)",
+      "characters": ["raiden_shogun", "chevreuse", "kujou_sara", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Ayaka Freeze (Escoffier Premium)",
+      "characters": ["kamisato_ayaka", "furina", "escoffier", "shenhe"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "symphonist_of_scents",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Ayaka Freeze (Classic)",
+      "characters": [
+        "kamisato_ayaka",
+        "shenhe",
+        "sangonomiya_kokomi",
+        "kaedehara_kazuha"
+      ],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Ganyu Freeze (Furina)",
+      "characters": ["ganyu", "furina", "venti", "shenhe"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Ganyu Reverse Melt",
+      "characters": ["ganyu", "xiangling", "bennett", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "hunters_path",
+          "artifacts": ["wanderers_troupe"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Eula Superconduct (Raiden)",
+      "characters": ["eula", "raiden_shogun", "rosaria", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "song_of_broken_pines",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Eula Physical (Mika)",
+      "characters": ["eula", "raiden_shogun", "mika", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "song_of_broken_pines",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Xiao Hypercarry (Premium)",
+      "characters": ["xiao", "xianyun", "faruzan", "furina"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "primordial_jade_wingedspear",
+          "artifacts": ["vermillion_hereafter"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Xiao Classic (Budget)",
+      "characters": ["xiao", "faruzan", "bennett", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "primordial_jade_wingedspear",
+          "artifacts": ["vermillion_hereafter"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Yoimiya Vaporize",
+      "characters": ["yoimiya", "xingqiu", "yun_jin", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "thundering_pulse",
+          "artifacts": ["shimenawas_reminiscence"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Yoimiya Overload (Chevreuse)",
+      "characters": ["yoimiya", "fischl", "chevreuse", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "thundering_pulse",
+          "artifacts": ["shimenawas_reminiscence"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Tartaglia International",
+      "characters": ["tartaglia", "xiangling", "bennett", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "polar_star",
+          "artifacts": ["heart_of_depth"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Tartaglia Taser",
+      "characters": ["tartaglia", "fischl", "beidou", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "polar_star",
+          "artifacts": ["heart_of_depth"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Ayato Hyperbloom",
+      "characters": [
+        "kamisato_ayato",
+        "nahida",
+        "kuki_shinobu",
+        "kaedehara_kazuha"
+      ],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "haran_geppaku_futsu",
+          "artifacts": ["heart_of_depth"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Ayato Vaporize (National)",
+      "characters": [
+        "kamisato_ayato",
+        "xiangling",
+        "bennett",
+        "kaedehara_kazuha"
+      ],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "haran_geppaku_futsu",
+          "artifacts": ["echoes_of_an_offering"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Cyno Aggravate",
+      "characters": ["cyno", "nahida", "fischl", "baizhu"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "staff_of_the_scarlet_sands",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Cyno Hyperbloom",
+      "characters": ["cyno", "nahida", "xingqiu", "baizhu"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "staff_of_the_scarlet_sands",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["oceanhued_clam"]
+        }
+      ]
+    },
+    {
+      "name": "Nilou Bloom (Standard)",
+      "characters": ["nilou", "nahida", "sangonomiya_kokomi", "baizhu"],
+      "dpsIndex": 0,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["tenacity_of_the_millelith", "vourukashas_glow"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Nilou Bloom (Furina)",
+      "characters": ["nilou", "nahida", "furina", "baizhu"],
+      "dpsIndex": 0,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["tenacity_of_the_millelith", "vourukashas_glow"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["oceanhued_clam"]
+        }
+      ]
+    },
+    {
+      "name": "Al-Haitham Spread",
+      "characters": ["alhaitham", "fischl", "nahida", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "spread",
+      "builds": [
+        {
+          "weapon": "light_of_foliar_incision",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Al-Haitham Bloom (Nilou)",
+      "characters": ["alhaitham", "nilou", "sangonomiya_kokomi", "baizhu"],
+      "dpsIndex": 0,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "light_of_foliar_incision",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["tenacity_of_the_millelith", "vourukashas_glow"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Wanderer Hypercarry (Zhongli)",
+      "characters": ["wanderer", "faruzan", "bennett", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tulaytullahs_remembrance",
+          "artifacts": ["desert_pavilion_chronicle"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Wanderer Hypercarry (Yelan)",
+      "characters": ["wanderer", "faruzan", "bennett", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tulaytullahs_remembrance",
+          "artifacts": ["desert_pavilion_chronicle"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Tighnari Spread",
+      "characters": ["tighnari", "fischl", "yae_miko", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "spread",
+      "builds": [
+        {
+          "weapon": "hunters_path",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Itto Mono Geo",
+      "characters": ["arataki_itto", "gorou", "albedo", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "redhorn_stonethresher",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["the_exile"]
+        },
+        {
+          "weapon": "cinnabar_spindle",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Noelle Mono Geo",
+      "characters": ["noelle", "gorou", "albedo", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "redhorn_stonethresher",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["the_exile"]
+        },
+        {
+          "weapon": "cinnabar_spindle",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Nahida Hyperbloom (Kuki)",
+      "characters": ["nahida", "xingqiu", "kuki_shinobu", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Nahida Quicken (Yae + Fischl)",
+      "characters": ["nahida", "yae_miko", "fischl", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "spread",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Mualani Vaporize (Premium)",
+      "characters": ["mualani", "mavuika", "xilonen", "sucrose"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "surfs_up",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Mualani Vaporize (Xiangling + Kazuha)",
+      "characters": ["mualani", "xiangling", "kaedehara_kazuha", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "surfs_up",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Varesa Hypercarry (Xilonen)",
+      "characters": ["varesa", "iansan", "xilonen", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "vivid_notions",
+          "artifacts": ["long_nights_oath"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Varesa Plunge (Xianyun)",
+      "characters": ["varesa", "iansan", "furina", "xianyun"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "vivid_notions",
+          "artifacts": ["long_nights_oath"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Varesa Aggravate",
+      "characters": ["varesa", "nahida", "iansan", "xianyun"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "vivid_notions",
+          "artifacts": ["long_nights_oath"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Gaming Plunge Vaporize (Xianyun)",
+      "characters": ["gaming", "xianyun", "furina", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Gaming Overload (Chevreuse)",
+      "characters": ["gaming", "chevreuse", "fischl", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Dehya Overload (Clorinde)",
+      "characters": ["dehya", "clorinde", "fischl", "chevreuse"],
+      "dpsIndex": 1,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "favonius_greatsword",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Sucrose National",
+      "characters": ["sucrose", "xiangling", "xingqiu", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Sucrose Taser",
+      "characters": ["sucrose", "xingqiu", "fischl", "beidou"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Double Hydro National (Yelan)",
+      "characters": ["xiangling", "xingqiu", "yelan", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kuki Hyperbloom (Al-Haitham)",
+      "characters": ["kuki_shinobu", "alhaitham", "xingqiu", "nahida"],
+      "dpsIndex": 1,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "light_of_foliar_incision",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Sigewinne Nilou Bloom",
+      "characters": ["sigewinne", "nilou", "nahida", "yelan"],
+      "dpsIndex": 1,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["oceanhued_clam"]
+        },
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Emilie Burnmelt (Wriothesley)",
+      "characters": ["wriothesley", "emilie", "thoma", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "lumidouce_elegy",
+          "artifacts": ["unfinished_reverie"]
+        },
+        {
+          "weapon": "favonius_lance",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Xianyun Gaming Melt",
+      "characters": ["gaming", "xianyun", "rosaria", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kaveh Hyperbloom",
+      "characters": ["kaveh", "xingqiu", "kuki_shinobu", "nahida"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "favonius_greatsword",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Kokomi Taser",
+      "characters": ["sangonomiya_kokomi", "fischl", "sucrose", "beidou"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "serpent_spine",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Chasca Overvape (Iansan)",
+      "characters": ["chasca", "bennett", "furina", "iansan"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "astral_vultures_crimson_plumage",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Chasca Overvape (Ororon)",
+      "characters": ["chasca", "bennett", "furina", "ororon"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "astral_vultures_crimson_plumage",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["obsidian_codex"]
+        }
+      ]
+    },
+    {
+      "name": "Chasca Vaporize (Mavuika)",
+      "characters": ["chasca", "bennett", "furina", "mavuika"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "astral_vultures_crimson_plumage",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Skirk Freeze (Escoffier + Shenhe)",
+      "characters": ["skirk", "furina", "escoffier", "shenhe"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "azurelight",
+          "artifacts": ["finale_of_the_deep_galleries"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Skirk Freeze (Escoffier + Citlali)",
+      "characters": ["skirk", "furina", "escoffier", "citlali"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "azurelight",
+          "artifacts": ["finale_of_the_deep_galleries"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Skirk Freeze (Escoffier + Yelan)",
+      "characters": ["skirk", "furina", "escoffier", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "azurelight",
+          "artifacts": ["finale_of_the_deep_galleries"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Columbina Lunar-Charged (Flins + Ineffa)",
+      "characters": ["flins", "ineffa", "columbina", "sucrose"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["aubade_of_morningstar_and_moon"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["aubade_of_morningstar_and_moon"]
+        },
+        {
+          "weapon": "nocturnes_curtain_call",
+          "artifacts": ["silken_moons_serenade"]
+        },
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Columbina Lunar-Bloom (Lauma)",
+      "characters": ["lauma", "columbina", "ineffa", "sucrose"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["night_of_the_skys_unveiling"]
+        },
+        {
+          "weapon": "nocturnes_curtain_call",
+          "artifacts": ["silken_moons_serenade"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["aubade_of_morningstar_and_moon"]
+        },
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Columbina Lunar-Crystallize (Zibai)",
+      "characters": ["zibai", "columbina", "illuga", "gorou"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "redhorn_stonethresher",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "nocturnes_curtain_call",
+          "artifacts": ["silken_moons_serenade"]
+        },
+        {
+          "weapon": "redhorn_stonethresher",
+          "artifacts": ["aubade_of_morningstar_and_moon"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Ifa Taser (Fischl + Ororon)",
+      "characters": ["ifa", "fischl", "ororon", "furina"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "sunny_morning_sleepin",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Ifa Lunar-Charged (Ineffa)",
+      "characters": ["ifa", "ineffa", "columbina", "fischl"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "sunny_morning_sleepin",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["aubade_of_morningstar_and_moon"]
+        },
+        {
+          "weapon": "nocturnes_curtain_call",
+          "artifacts": ["silken_moons_serenade"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Ifa Anemo DPS (Faruzan)",
+      "characters": ["ifa", "faruzan", "bennett", "furina"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Citlali On-Field Melt (Xiangling + Bennett)",
+      "characters": ["citlali", "xiangling", "bennett", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Citlali On-Field Freeze (Furina + Xilonen)",
+      "characters": ["citlali", "furina", "xilonen", "shenhe"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Lan Yan Aggravate Driver (Clorinde)",
+      "characters": ["lan_yan", "clorinde", "fischl", "nahida"],
+      "dpsIndex": 1,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "absolution",
+          "artifacts": ["fragment_of_harmonic_whimsy"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Lan Yan Xiao Support",
+      "characters": ["lan_yan", "xiao", "xianyun", "furina"],
+      "dpsIndex": 1,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "primordial_jade_wingedspear",
+          "artifacts": ["vermillion_hereafter"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["song_of_days_past"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Lan Yan Wanderer Support",
+      "characters": ["lan_yan", "wanderer", "faruzan", "bennett"],
+      "dpsIndex": 1,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        },
+        {
+          "weapon": "tulaytullahs_remembrance",
+          "artifacts": ["desert_pavilion_chronicle"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Lan Yan Hyperbloom Driver",
+      "characters": ["lan_yan", "fischl", "xingqiu", "nahida"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Lan Yan Electro-Charged Driver",
+      "characters": ["lan_yan", "ororon", "yae_miko", "yelan"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Diluc Vaporize (Xingqiu + Kazuha)",
+      "characters": ["diluc", "xingqiu", "kaedehara_kazuha", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "beacon_of_the_reed_sea",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Diluc Double Hydro (Yelan + Xingqiu)",
+      "characters": ["diluc", "xingqiu", "yelan", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "beacon_of_the_reed_sea",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Diluc Burgeon (Nahida + Xingqiu)",
+      "characters": ["diluc", "nahida", "xingqiu", "sangonomiya_kokomi"],
+      "dpsIndex": 0,
+      "reaction": "burgeon",
+      "builds": [
+        {
+          "weapon": "wolfs_gravestone",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "everlasting_moonglow",
+          "artifacts": ["oceanhued_clam"]
+        }
+      ]
+    },
+    {
+      "name": "Keqing Aggravate (Nahida + Kazuha)",
+      "characters": ["keqing", "fischl", "nahida", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Keqing Aggravate (Nahida + Xilonen)",
+      "characters": ["keqing", "fischl", "nahida", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Keqing Aggravate (Budget)",
+      "characters": ["keqing", "fischl", "collei", "sucrose"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Klee Overload (Chevreuse)",
+      "characters": ["klee", "chevreuse", "fischl", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "reliquary_of_truth",
+          "artifacts": ["a_day_carved_from_rising_winds"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["song_of_days_past"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Klee Furina (Albedo + Xilonen)",
+      "characters": ["klee", "furina", "albedo", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "cinnabar_spindle",
+          "artifacts": ["husk_of_opulent_dreams"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Klee Vaporize (Yelan + Xingqiu)",
+      "characters": ["klee", "yelan", "xingqiu", "fischl"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "reliquary_of_truth",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        }
+      ]
+    },
+    {
+      "name": "Jean Sunfire Raiden",
+      "characters": ["raiden_shogun", "jean", "bennett", "xingqiu"],
+      "dpsIndex": 0,
+      "reaction": "overload",
+      "builds": [
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Jean Sunfire Ganyu Melt",
+      "characters": ["ganyu", "jean", "bennett", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "amos_bow",
+          "artifacts": ["wanderers_troupe"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Sethos Aggravate (Nahida + Zhongli)",
+      "characters": ["sethos", "fischl", "nahida", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "hunters_path",
+          "artifacts": ["wanderers_troupe"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Sethos Aggravate (Kirara + Sucrose)",
+      "characters": ["sethos", "fischl", "kirara", "sucrose"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "hunters_path",
+          "artifacts": ["wanderers_troupe"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "sacrificial_fragments",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Freminet Physical (Mika + Fischl)",
+      "characters": ["freminet", "fischl", "mika", "zhongli"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "song_of_broken_pines",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "skyward_spine",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["tenacity_of_the_millelith"]
+        }
+      ]
+    },
+    {
+      "name": "Freminet Freeze (Furina + Escoffier)",
+      "characters": ["freminet", "furina", "escoffier", "shenhe"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "fang_of_the_mountain_king",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Lynette Anemo DPS (Faruzan + Furina)",
+      "characters": ["lynette", "faruzan", "furina", "xianyun"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "starcallers_watch",
+          "artifacts": ["song_of_days_past"]
+        }
+      ]
+    },
+    {
+      "name": "Lynette Xiao Support",
+      "characters": ["xiao", "lynette", "faruzan", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "primordial_jade_wingedspear",
+          "artifacts": ["vermillion_hereafter"]
+        },
+        {
+          "weapon": "favonius_sword",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "favonius_warbow",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Zhongli Physical Driver (Fischl + Beidou)",
+      "characters": ["zhongli", "fischl", "beidou", "xingqiu"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "crescent_pike",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "wolfs_gravestone",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Qiqi Superconduct Support (Eula)",
+      "characters": ["eula", "qiqi", "raiden_shogun", "rosaria"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "song_of_broken_pines",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "skyward_blade",
+          "artifacts": ["oceanhued_clam"]
+        },
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "primordial_jade_wingedspear",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Qiqi Freeze Support (Wriothesley)",
+      "characters": ["wriothesley", "qiqi", "furina", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "skyward_blade",
+          "artifacts": ["oceanhued_clam"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Dori Hyperbloom (Jean Sunfire)",
+      "characters": ["jean", "dori", "yelan", "nahida"],
+      "dpsIndex": 2,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "wolfs_gravestone",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "aqua_simulacra",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        }
+      ]
+    },
+    {
+      "name": "Dori Aggravate Support (Keqing)",
+      "characters": ["keqing", "dori", "nahida", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "wolfs_gravestone",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Lisa Aggravate (On-Field)",
+      "characters": ["lisa", "fischl", "nahida", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "kaguras_verity",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Lisa Support (Eula Superconduct)",
+      "characters": ["eula", "lisa", "raiden_shogun", "mika"],
+      "dpsIndex": 0,
+      "reaction": "superconduct",
+      "builds": [
+        {
+          "weapon": "song_of_broken_pines",
+          "artifacts": ["pale_flame"]
+        },
+        {
+          "weapon": "thrilling_tales_of_dragon_slayers",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "engulfing_lightning",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "skyward_spine",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Lisa Support (Neuvillette)",
+      "characters": ["neuvillette", "lisa", "furina", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "tome_of_the_eternal_flow",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "prototype_amber",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Amber Support (Hu Tao VV Vape)",
+      "characters": ["hu_tao", "amber", "kaedehara_kazuha", "xingqiu"],
+      "dpsIndex": 0,
+      "reaction": "vaporize",
+      "builds": [
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["crimson_witch_of_flames"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        }
+      ]
+    },
+    {
+      "name": "Amber Support (Lyney Mono Pyro)",
+      "characters": ["lyney", "amber", "bennett", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "none",
+      "builds": [
+        {
+          "weapon": "the_first_great_magic",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Kaeya Freeze (Furina + Shenhe)",
+      "characters": ["kaeya", "furina", "shenhe", "escoffier"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "silvershower_heartstrings",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kaeya Reverse Melt",
+      "characters": ["kaeya", "shenhe", "xiangling", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "calamity_queller",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Kaeya Forward Melt Support (Mavuika)",
+      "characters": ["mavuika", "kaeya", "bennett", "xilonen"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "a_thousand_blazing_suns",
+          "artifacts": ["obsidian_codex"]
+        },
+        {
+          "weapon": "favonius_sword",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "peak_patrol_song",
+          "artifacts": ["scroll_of_the_hero_of_cinder_city"]
+        }
+      ]
+    },
+    {
+      "name": "Layla Shield Support (Ayaka Freeze)",
+      "characters": ["kamisato_ayaka", "layla", "furina", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "freeze",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["blizzard_strayer"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "splendor_of_tranquil_waters",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Layla Shield Support (Wriothesley Melt)",
+      "characters": ["wriothesley", "layla", "xiangling", "bennett"],
+      "dpsIndex": 0,
+      "reaction": "melt",
+      "builds": [
+        {
+          "weapon": "cashflow_supervision",
+          "artifacts": ["marechaussee_hunter"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["tenacity_of_the_millelith"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "aquila_favonia",
+          "artifacts": ["noblesse_oblige"]
+        }
+      ]
+    },
+    {
+      "name": "Candace Nilou Bloom (Yaoyao)",
+      "characters": ["nilou", "candace", "yaoyao", "nahida"],
+      "dpsIndex": 0,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["noblesse_oblige"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["gilded_dreams"]
+        }
+      ]
+    },
+    {
+      "name": "Collei Aggravate Support (Keqing)",
+      "characters": ["keqing", "fischl", "collei", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "aggravate",
+      "builds": [
+        {
+          "weapon": "mistsplitter_reforged",
+          "artifacts": ["thundering_fury"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Collei Spread Support (Tighnari)",
+      "characters": ["tighnari", "fischl", "collei", "kaedehara_kazuha"],
+      "dpsIndex": 0,
+      "reaction": "spread",
+      "builds": [
+        {
+          "weapon": "hunters_path",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "skyward_harp",
+          "artifacts": ["golden_troupe"]
+        },
+        {
+          "weapon": "elegy_for_the_end",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "freedomsworn",
+          "artifacts": ["viridescent_venerer"]
+        }
+      ]
+    },
+    {
+      "name": "Yaoyao Nilou Bloom",
+      "characters": ["nilou", "yaoyao", "nahida", "sangonomiya_kokomi"],
+      "dpsIndex": 0,
+      "reaction": "bloom",
+      "builds": [
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["flower_of_paradise_lost"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "everlasting_moonglow",
+          "artifacts": ["oceanhued_clam"]
+        }
+      ]
+    },
+    {
+      "name": "Yaoyao Hyperbloom Support",
+      "characters": ["kuki_shinobu", "yaoyao", "xingqiu", "nahida"],
+      "dpsIndex": 0,
+      "reaction": "hyperbloom",
+      "builds": [
+        {
+          "weapon": "key_of_khajnisut",
+          "artifacts": ["gilded_dreams"]
+        },
+        {
+          "weapon": "staff_of_homa",
+          "artifacts": ["deepwood_memories"]
+        },
+        {
+          "weapon": "primordial_jade_cutter",
+          "artifacts": ["emblem_of_severed_fate"]
+        },
+        {
+          "weapon": "a_thousand_floating_dreams",
+          "artifacts": ["gilded_dreams"]
+        }
+      ]
+    }
+  ]
+}

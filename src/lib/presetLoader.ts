@@ -8,17 +8,14 @@ import type { PresetOption } from "@/data/types";
 export async function loadPresetMetadata<
   T extends { author?: string; description?: string },
 >(
-  presetModules: Record<string, () => Promise<{ default: T } | T>>
+  presetModules: Record<string, () => Promise<{ default: T }>>
 ): Promise<PresetOption[]> {
   const options = await Promise.all(
     Object.keys(presetModules).map(async (path) => {
       try {
         const loader = presetModules[path];
         const module = await loader();
-        const payload =
-          module && typeof module === "object" && "default" in module
-            ? (module as { default: T }).default
-            : (module as unknown as T);
+        const payload = module.default;
 
         // Use author and description if available, otherwise fallback to filename
         if (payload.author && payload.description) {
@@ -52,7 +49,7 @@ export async function loadPresetMetadata<
  * @throws Error if preset not found
  */
 export async function loadPresetPayload<T>(
-  presetModules: Record<string, () => Promise<{ default: T } | T>>,
+  presetModules: Record<string, () => Promise<{ default: T }>>,
   path: string
 ): Promise<T> {
   const loader = presetModules[path];
@@ -61,8 +58,5 @@ export async function loadPresetPayload<T>(
   }
 
   const module = await loader();
-  if (module && typeof module === "object" && "default" in module) {
-    return (module as { default: T }).default;
-  }
-  return module as unknown as T;
+  return module.default;
 }

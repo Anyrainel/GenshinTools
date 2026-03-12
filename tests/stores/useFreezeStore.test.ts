@@ -43,49 +43,94 @@ describe("useFreezeStore", () => {
     });
   });
 
-  describe("freezeTeam", () => {
-    it("freezes a team with artifact IDs and per-char data", () => {
-      const ids = ["a1", "a2", "a3"];
-      const byChar = makeArtifactsByChar("hu_tao", ids);
+  describe("freezeCharacters", () => {
+    it("freezes characters with per-char data", () => {
+      const byChar = makeArtifactsByChar("hu_tao", ["a1", "a2", "a3"]);
       act(() => {
-        useFreezeStore.getState().freezeTeam("team1", ids, byChar);
+        useFreezeStore.getState().freezeCharacters("team1", ["hu_tao"], byChar);
       });
       const state = useFreezeStore.getState();
       expect(state.frozenTeams.team1).toBeDefined();
-      expect(state.frozenTeams.team1.artifactIds).toEqual(ids);
+      expect(state.frozenTeams.team1.frozenCharIds).toEqual(["hu_tao"]);
       expect(state.frozenTeams.team1.artifactsByChar).toEqual(byChar);
     });
 
-    it("overwrites a previously frozen team", () => {
-      const ids1 = ["a1", "a2"];
-      const ids2 = ["b1", "b2", "b3"];
+    it("merges with existing frozen chars", () => {
+      const byChar1 = makeArtifactsByChar("hu_tao", ["a1", "a2"]);
+      const byChar2 = makeArtifactsByChar("xingqiu", ["b1", "b2"]);
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("team1", ids1, makeArtifactsByChar("hu_tao", ids1));
+          .freezeCharacters("team1", ["hu_tao"], byChar1);
       });
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("team1", ids2, makeArtifactsByChar("hu_tao", ids2));
+          .freezeCharacters("team1", ["xingqiu"], byChar2);
       });
       const state = useFreezeStore.getState();
-      expect(state.frozenTeams.team1.artifactIds).toEqual(ids2);
+      expect(state.frozenTeams.team1.frozenCharIds).toEqual([
+        "hu_tao",
+        "xingqiu",
+      ]);
+      expect(state.frozenTeams.team1.artifactsByChar.hu_tao).toBeDefined();
+      expect(state.frozenTeams.team1.artifactsByChar.xingqiu).toBeDefined();
     });
 
     it("can freeze multiple teams independently", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("t1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "t1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
         useFreezeStore
           .getState()
-          .freezeTeam("t2", ["b1"], makeArtifactsByChar("ganyu", ["b1"]));
+          .freezeCharacters(
+            "t2",
+            ["ganyu"],
+            makeArtifactsByChar("ganyu", ["b1"])
+          );
       });
       const state = useFreezeStore.getState();
       expect(Object.keys(state.frozenTeams)).toHaveLength(2);
-      expect(state.frozenTeams.t1.artifactIds).toEqual(["a1"]);
-      expect(state.frozenTeams.t2.artifactIds).toEqual(["b1"]);
+    });
+  });
+
+  describe("unfreezeCharacters", () => {
+    it("removes specific characters", () => {
+      const byChar = {
+        ...makeArtifactsByChar("hu_tao", ["a1"]),
+        ...makeArtifactsByChar("xingqiu", ["b1"]),
+      };
+      act(() => {
+        useFreezeStore
+          .getState()
+          .freezeCharacters("team1", ["hu_tao", "xingqiu"], byChar);
+      });
+      act(() => {
+        useFreezeStore.getState().unfreezeCharacters("team1", ["hu_tao"]);
+      });
+      const state = useFreezeStore.getState();
+      expect(state.frozenTeams.team1.frozenCharIds).toEqual(["xingqiu"]);
+    });
+
+    it("removes team entry when no chars remain", () => {
+      act(() => {
+        useFreezeStore
+          .getState()
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
+      });
+      act(() => {
+        useFreezeStore.getState().unfreezeCharacters("team1", ["hu_tao"]);
+      });
+      expect(useFreezeStore.getState().frozenTeams.team1).toBeUndefined();
     });
   });
 
@@ -94,23 +139,34 @@ describe("useFreezeStore", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("team1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
       });
       act(() => {
         useFreezeStore.getState().unfreezeTeam("team1");
       });
-      const state = useFreezeStore.getState();
-      expect(state.frozenTeams.team1).toBeUndefined();
+      expect(useFreezeStore.getState().frozenTeams.team1).toBeUndefined();
     });
 
     it("does not affect other frozen teams", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("t1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "t1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
         useFreezeStore
           .getState()
-          .freezeTeam("t2", ["b1"], makeArtifactsByChar("ganyu", ["b1"]));
+          .freezeCharacters(
+            "t2",
+            ["ganyu"],
+            makeArtifactsByChar("ganyu", ["b1"])
+          );
       });
       act(() => {
         useFreezeStore.getState().unfreezeTeam("t1");
@@ -133,10 +189,18 @@ describe("useFreezeStore", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("t1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "t1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
         useFreezeStore
           .getState()
-          .freezeTeam("t2", ["b1"], makeArtifactsByChar("ganyu", ["b1"]));
+          .freezeCharacters(
+            "t2",
+            ["ganyu"],
+            makeArtifactsByChar("ganyu", ["b1"])
+          );
       });
       act(() => {
         useFreezeStore.getState().clearAll();
@@ -145,25 +209,39 @@ describe("useFreezeStore", () => {
     });
   });
 
-  describe("isFrozen", () => {
-    it("returns true for a frozen team", () => {
+  describe("isFrozen / isCharFrozen", () => {
+    it("returns true for a team with frozen chars", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("team1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
       });
       expect(useFreezeStore.getState().isFrozen("team1")).toBe(true);
+      expect(useFreezeStore.getState().isCharFrozen("team1", "hu_tao")).toBe(
+        true
+      );
+      expect(useFreezeStore.getState().isCharFrozen("team1", "ganyu")).toBe(
+        false
+      );
     });
 
     it("returns false for a non-frozen team", () => {
       expect(useFreezeStore.getState().isFrozen("team1")).toBe(false);
     });
 
-    it("returns false after unfreezing", () => {
+    it("returns false after unfreezing all chars", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("team1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "team1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
       });
       act(() => {
         useFreezeStore.getState().unfreezeTeam("team1");
@@ -172,16 +250,36 @@ describe("useFreezeStore", () => {
     });
   });
 
+  describe("getFrozenCharIds", () => {
+    it("returns frozen character IDs", () => {
+      act(() => {
+        useFreezeStore
+          .getState()
+          .freezeCharacters("team1", ["hu_tao", "xingqiu"], {
+            ...makeArtifactsByChar("hu_tao", ["a1"]),
+            ...makeArtifactsByChar("xingqiu", ["b1"]),
+          });
+      });
+      expect(useFreezeStore.getState().getFrozenCharIds("team1")).toEqual([
+        "hu_tao",
+        "xingqiu",
+      ]);
+    });
+
+    it("returns empty array for non-frozen team", () => {
+      expect(useFreezeStore.getState().getFrozenCharIds("team1")).toEqual([]);
+    });
+  });
+
   describe("getFrozenTeam", () => {
     it("returns the frozen team data", () => {
-      const ids = ["a1", "a2"];
-      const byChar = makeArtifactsByChar("hu_tao", ids);
+      const byChar = makeArtifactsByChar("hu_tao", ["a1", "a2"]);
       act(() => {
-        useFreezeStore.getState().freezeTeam("team1", ids, byChar);
+        useFreezeStore.getState().freezeCharacters("team1", ["hu_tao"], byChar);
       });
       const frozen = useFreezeStore.getState().getFrozenTeam("team1");
       expect(frozen).toBeDefined();
-      expect(frozen!.artifactIds).toEqual(ids);
+      expect(frozen!.frozenCharIds).toEqual(["hu_tao"]);
       expect(frozen!.artifactsByChar).toEqual(byChar);
     });
 
@@ -193,20 +291,20 @@ describe("useFreezeStore", () => {
   });
 
   describe("getFrozenArtifactIds", () => {
-    it("returns all artifact IDs across frozen teams", () => {
+    it("returns artifact IDs only from frozen characters", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam(
+          .freezeCharacters(
             "t1",
-            ["a1", "a2"],
+            ["hu_tao"],
             makeArtifactsByChar("hu_tao", ["a1", "a2"])
           );
         useFreezeStore
           .getState()
-          .freezeTeam(
+          .freezeCharacters(
             "t2",
-            ["b1", "b2"],
+            ["ganyu"],
             makeArtifactsByChar("ganyu", ["b1", "b2"])
           );
       });
@@ -218,16 +316,16 @@ describe("useFreezeStore", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam(
+          .freezeCharacters(
             "t1",
-            ["a1", "a2"],
+            ["hu_tao"],
             makeArtifactsByChar("hu_tao", ["a1", "a2"])
           );
         useFreezeStore
           .getState()
-          .freezeTeam(
+          .freezeCharacters(
             "t2",
-            ["b1", "b2"],
+            ["ganyu"],
             makeArtifactsByChar("ganyu", ["b1", "b2"])
           );
       });
@@ -244,7 +342,11 @@ describe("useFreezeStore", () => {
       act(() => {
         useFreezeStore
           .getState()
-          .freezeTeam("t1", ["a1"], makeArtifactsByChar("hu_tao", ["a1"]));
+          .freezeCharacters(
+            "t1",
+            ["hu_tao"],
+            makeArtifactsByChar("hu_tao", ["a1"])
+          );
       });
       const ids = useFreezeStore.getState().getFrozenArtifactIds("t1");
       expect(ids).toEqual(new Set());

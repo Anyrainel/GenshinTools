@@ -3,6 +3,7 @@ import {
   fmtMult,
   fmtPercent,
   fmtStat,
+  isPctStat,
 } from "@/components/team-comp/displayFormatters";
 import { describe, expect, it } from "vitest";
 
@@ -46,6 +47,34 @@ describe("fmtStat", () => {
   it("does not add '+' when forceSign is false", () => {
     expect(fmtStat("cr", 0.5, false)).toBe("50.0%");
     expect(fmtStat("cr", 0.5)).toBe("50.0%");
+  });
+
+  it("formats human-readable percent values when pct=true", () => {
+    expect(fmtStat("cr", 5.2, false, true)).toBe("5.2%");
+    expect(fmtStat("atk%", 46.6, false, true)).toBe("46.6%");
+    expect(fmtStat("atk", 311, false, true)).toMatch(/311/);
+  });
+});
+
+describe("isPctStat", () => {
+  it("returns true for keys ending with %", () => {
+    expect(isPctStat("atk%")).toBe(true);
+    expect(isPctStat("hp%")).toBe(true);
+    expect(isPctStat("pyro%")).toBe(true);
+  });
+
+  it("returns true for cr, cd, er, reactionCr, reactionCd", () => {
+    expect(isPctStat("cr")).toBe(true);
+    expect(isPctStat("cd")).toBe(true);
+    expect(isPctStat("er")).toBe(true);
+    expect(isPctStat("reactionCr")).toBe(true);
+    expect(isPctStat("reactionCd")).toBe(true);
+  });
+
+  it("returns false for flat stats", () => {
+    expect(isPctStat("atk")).toBe(false);
+    expect(isPctStat("hp")).toBe(false);
+    expect(isPctStat("em")).toBe(false);
   });
 });
 

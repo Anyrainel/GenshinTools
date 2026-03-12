@@ -247,9 +247,10 @@ export type DisplayResult = {
    *  Teammates: filtered by inputKeys of their scaling buffs that affect calc target. */
   marginalGains: Record<string, Partial<Record<StatKey, number>>>;
 
-  /** Relative damage gain from leveling to the next tier.
-   *  Only populated for characters below max level. Keyed by charId. */
-  levelUpGains: Record<string, { gain: number; from: number; to: number }>;
+  /** Relative damage gain from leveling to the next tier(s).
+   *  Only populated for characters below max level. Keyed by charId.
+   *  Array may contain multiple entries (e.g. 90→95 and 90→100). */
+  levelUpGains: Record<string, { gain: number; from: number; to: number }[]>;
 
   // DEPRECATED — kept during migration, remove after UI rewrite verified
   idleStats: Record<string, Partial<Record<StatKey, number>>>;

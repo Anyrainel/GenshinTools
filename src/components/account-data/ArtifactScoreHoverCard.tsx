@@ -1,3 +1,4 @@
+import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   Drawer,
   DrawerContent,
@@ -452,11 +453,8 @@ function ArtifactScoreContent({
               return a[0].localeCompare(b[0]);
             })
             .map(([key, data]) => {
-              const isPercent =
-                key.endsWith("%") || ["cr", "cd", "er"].includes(key);
-
               const formatValue = (val: number) =>
-                isPercent ? `${val.toFixed(1)}%` : Math.round(val);
+                fmtStat(key, val, false, true);
 
               return (
                 <tr key={key}>

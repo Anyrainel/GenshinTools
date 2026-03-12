@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { StatSheet } from "@/lib/team-comp/damageModels";
@@ -8,20 +13,23 @@ import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
 import { fmtPercent, fmtStat } from "./displayFormatters";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import type { ArtifactData } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
 import type { OptFailReason } from "@/lib/team-comp/optimizer";
-import { AlertTriangle, ChevronDown } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
+  Flame,
+  Snowflake,
+} from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
 import { detectEquippedSets, setsMatch } from "./teamOptUtils";
 
 type HlKey = StatKey | "charLevel";
 type HighlightedStat = { key: HlKey; charId: string } | null;
+
+type ViewMode = "conditional" | "max" | "marginal";
 
 type Props = {
   result?: DisplayResult | null;
@@ -34,13 +42,18 @@ type Props = {
   onStatHover: (stat: HighlightedStat) => void;
   t: ReturnType<typeof useLanguage>["t"];
   failReasons?: Record<string, OptFailReason>;
-  isFrozen?: boolean;
+  /** Per-character frozen state */
+  frozenCharIds?: Set<string>;
   /** When provided, artifact icons become clickable to open a swap dialog */
   onArtifactSwap?: (
     charId: string,
     slot: import("@/data/types").Slot,
     artifact: ArtifactData
   ) => void;
+  /** Callback to freeze a character's artifacts */
+  onFreezeChar?: (charId: string) => void;
+  /** Callback to unfreeze a character's artifacts */
+  onUnfreezeChar?: (charId: string) => void;
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -97,21 +110,15 @@ function getSortedKeys(keys: Set<StatKey>): StatKey[] {
 
 /**
  * Determine which column is "primary" (highlighted) vs "secondary" (muted).
- * - isTarget (calc target): on-field is primary
- * - teammate: off-field is primary (they're usually off-field)
- * - no target (combo overview, targetCharId=""): both equal, no muting
- * Returns: "on" | "off" | "both" — which column(s) to highlight.
  */
 function getPrimaryColumn(
   charId: string,
   targetCharId: string,
   comboActiveCharIds?: Set<string>
 ): "on" | "off" | "both" {
-  // Combo mode: on-field for chars with active lines, off-field for others
   if (comboActiveCharIds) {
     return comboActiveCharIds.has(charId) ? "on" : "off";
   }
-  // Single mode
   if (targetCharId === "") return "both";
   return charId === targetCharId ? "on" : "off";
 }
@@ -205,13 +212,11 @@ function useMaxViewData(
 
     const allKeys = new Set<StatKey>(REQUIRED_STATS);
 
-    // Collect keys from both sheets
     for (const { key } of onField.dump()) allKeys.add(key);
     for (const { key } of offField.dump()) allKeys.add(key);
 
     const rows: { key: StatKey; offValue: number; onValue: number }[] = [];
     for (const key of getSortedKeys(allKeys)) {
-      // Skip intermediate % keys for scaled stats
       if (key === "atk%" || key === "hp%" || key === "def%") continue;
       if (key === "baseAtk" || key === "baseHp" || key === "baseDef") continue;
 
@@ -260,7 +265,6 @@ function useConditionalViewData(
     const { onField, offField } = result.statSheets[charId];
     const allTags = result.charFormulaTags?.[charId] ?? [];
 
-    // Collect all (key, filterKey) pairs from both sheets
     const pairMap = new Map<
       string,
       { key: StatKey; filterKey: string; offValue: number; onValue: number }
@@ -307,7 +311,6 @@ function useConditionalViewData(
       });
     }
 
-    // Sort by stat order, then universal first, then by condition
     rows.sort((a, b) => {
       let ia = STAT_ORDER.indexOf(a.key);
       let ib = STAT_ORDER.indexOf(b.key);
@@ -335,13 +338,23 @@ export function StatSheetPanel({
   onStatHover,
   t,
   failReasons,
-  isFrozen,
+  frozenCharIds,
   onArtifactSwap,
+  onFreezeChar,
+  onUnfreezeChar,
 }: Props) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [viewMode, setViewMode] = useState<"max" | "conditional">("max");
+  // Per-character open view: null = collapsed
+  const [openViews, setOpenViews] = useState<Record<string, ViewMode | null>>(
+    {}
+  );
 
-  // Check if new stat sheets are available (migration: fall back to old view)
+  const toggleView = (charId: string, mode: ViewMode) => {
+    setOpenViews((prev) => ({
+      ...prev,
+      [charId]: prev[charId] === mode ? null : mode,
+    }));
+  };
+
   const hasStatSheets = result?.statSheets != null;
 
   return (
@@ -351,6 +364,7 @@ export function StatSheetPanel({
 
         const isTarget = charId === targetCharId;
         const char = charactersById[charId];
+        const isFrozen = frozenCharIds?.has(charId) ?? false;
         const marginal = result?.marginalGains[charId] || {};
         const primary = getPrimaryColumn(
           charId,
@@ -364,7 +378,8 @@ export function StatSheetPanel({
         marginalKeys.sort(
           (a, b) => (marginal[b] as number) - (marginal[a] as number)
         );
-        const levelUpGain = result?.levelUpGains[charId];
+        const levelUpGains = result?.levelUpGains[charId] ?? [];
+        const hasMarginal = marginalKeys.length > 0 || levelUpGains.length > 0;
 
         const artifactsObj = artifactsByChar[charId] || {};
         const hasArtifacts = Object.values(artifactsObj).some(Boolean);
@@ -373,20 +388,22 @@ export function StatSheetPanel({
         const hasMismatch =
           hasArtifacts && goalConfig && !setsMatch(goalConfig, equippedSets);
 
+        const activeView = openViews[charId] ?? null;
+
         return (
-          <Collapsible
+          <div
             key={charId}
-            open={isExpanded}
-            onOpenChange={setIsExpanded}
             className={cn(
-              "flex flex-col bg-black/15 border rounded-lg overflow-hidden group/card",
+              "flex flex-col bg-black/15 border rounded-lg overflow-hidden",
               isTarget
                 ? "border-primary/40 shadow-inner"
-                : "border-border/10 text-foreground/80"
+                : "border-border/10 text-foreground/80",
+              isFrozen &&
+                "ring-1 ring-cyan-400/30 shadow-[0_0_12px_rgba(34,211,238,0.06)]"
             )}
           >
-            {/* Context Header */}
-            <CollapsibleTrigger className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10 w-full hover:bg-white/5 transition-colors group">
+            {/* Header: avatar + name + freeze toggle */}
+            <div className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10 w-full">
               <img
                 src={getAssetUrl(char?.imagePath)}
                 className="w-7 h-7 rounded-full bg-black/20 shrink-0"
@@ -400,255 +417,289 @@ export function StatSheetPanel({
               >
                 {t.character(charId)}
               </span>
-
-              {result && (
-                <div className="flex items-center gap-2 group-hover:text-foreground transition-all">
-                  {/* View mode toggle */}
-                  {/* biome-ignore lint/a11y/useSemanticElements: cannot nest button inside button */}
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setViewMode((m) => (m === "max" ? "conditional" : "max"));
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        setViewMode((m) =>
-                          m === "max" ? "conditional" : "max"
-                        );
-                      }
-                    }}
-                    className="flex items-center gap-0.5 bg-black/40 border border-border/10 rounded-full p-1 cursor-pointer"
-                  >
-                    <span
-                      className={cn(
-                        "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
-                        viewMode === "conditional"
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "text-muted-foreground opacity-60 hover:opacity-100"
-                      )}
-                    >
-                      {t.ui("teamComp.conditional")}
+              {result && !isTarget && marginalKeys.length === 0 && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="shrink-0 text-xs font-bold bg-amber-500/15 text-amber-400 px-1.5 py-0.5 rounded-full cursor-help">
+                      {t.ui("teamComp.saturated")}
                     </span>
-                    <span
-                      className={cn(
-                        "text-xs font-bold px-3 py-0.5 rounded-full transition-all leading-relaxed",
-                        viewMode === "max"
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "text-muted-foreground opacity-60 hover:opacity-100"
-                      )}
-                    >
-                      {t.ui("teamComp.max")}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm font-semibold text-foreground/70 ml-2">
-                    <span className="hidden sm:inline-block">
-                      {t.ui("teamComp.stats")}
-                    </span>
-                    <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]:rotate-180" />
-                  </div>
-                </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-56 text-xs">
+                    {t.ui("teamComp.saturatedTooltip")}
+                  </TooltipContent>
+                </Tooltip>
               )}
-            </CollapsibleTrigger>
+              <span className="flex-1" />
 
-            {/* Content area — frozen overlay applied here */}
-            <div className={cn(isFrozen && "frozen-card")}>
-              {/* Artifacts Grid or Fail Reason */}
-              <div className="p-2 border-b border-border/10">
-                {failReasons?.[charId] ? (
-                  <div className="flex items-center gap-2 px-2 py-2 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                    <span>{formatFailReason(failReasons[charId], t)}</span>
-                  </div>
-                ) : (
-                  <ArtifactSlotGrid
-                    charId={charId}
-                    artifactsObj={artifactsObj}
-                    t={t}
-                    onSwap={
-                      onArtifactSwap
-                        ? (slot, art) => onArtifactSwap(charId, slot, art)
-                        : undefined
-                    }
-                  />
-                )}
-              </div>
+              {/* Freeze/unfreeze toggle */}
+              {isFrozen && onUnfreezeChar ? (
+                <button
+                  type="button"
+                  onClick={() => onUnfreezeChar(charId)}
+                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-red-400/40 bg-red-500/10 text-red-300 ring-1 ring-red-400/20 hover:bg-red-500/15 hover:text-red-200 hover:ring-red-400/40 transition-colors"
+                >
+                  <Flame className="w-3 h-3" />
+                  {t.ui("teamComp.unfreezeChar")}
+                </button>
+              ) : onFreezeChar && result && hasArtifacts ? (
+                <button
+                  type="button"
+                  onClick={() => onFreezeChar(charId)}
+                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors"
+                >
+                  <Snowflake className="w-3 h-3" />
+                  {t.ui("teamComp.freezeChar")}
+                </button>
+              ) : null}
+            </div>
 
-              {/* Collapsible Stats */}
-              {result && (
-                <CollapsibleContent>
-                  {/* Set Mismatch Warning */}
-                  {hasMismatch && (
-                    <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
-                      <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                      <span>{t.ui("teamComp.equippedSetDiffers")}</span>
-                    </div>
-                  )}
-
-                  {hasStatSheets && viewMode === "max" ? (
-                    <MaxView
-                      charId={charId}
-                      result={result}
-                      primary={primary}
-                      highlightedStat={highlightedStat}
-                      onStatHover={onStatHover}
-                      t={t}
-                    />
-                  ) : hasStatSheets && viewMode === "conditional" ? (
-                    <ConditionalView
-                      charId={charId}
-                      result={result}
-                      primary={primary}
-                      highlightedStat={highlightedStat}
-                      onStatHover={onStatHover}
-                      t={t}
-                    />
-                  ) : (
-                    <LegacyStatView
-                      charId={charId}
-                      result={result}
-                      highlightedStat={highlightedStat}
-                      onStatHover={onStatHover}
-                      t={t}
-                    />
-                  )}
-
-                  {/* Marginal Gains Section */}
-                  {(marginalKeys.length > 0 || levelUpGain != null) && (
-                    <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1 border-t border-border/10">
-                      <div className="text-xs font-bold text-muted-foreground uppercase opacity-80 mb-1 tracking-widest px-1.5">
-                        {t.ui("teamComp.marginalGains")}
-                      </div>
-                      {marginalKeys.map((k) => {
-                        const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
-                        const gain = marginal[k] as number;
-                        // Map percent keys to their base stat for cross-highlighting
-                        // with the stats table (e.g. "atk%" → "atk")
-                        const hlKey: StatKey =
-                          k === "atk%"
-                            ? "atk"
-                            : k === "hp%"
-                              ? "hp"
-                              : k === "def%"
-                                ? "def"
-                                : k;
-                        const isHl =
-                          highlightedStat?.charId === charId &&
-                          highlightedStat?.key === hlKey;
-                        return (
-                          <div
-                            key={k}
-                            onMouseEnter={() =>
-                              onStatHover({ key: hlKey, charId })
-                            }
-                            onMouseLeave={() => onStatHover(null)}
-                            onClick={() =>
-                              onStatHover(isHl ? null : { key: hlKey, charId })
-                            }
-                            className={cn(
-                              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
-                              isHl
-                                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
-                                : ""
-                            )}
-                          >
-                            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
-                              +1
-                            </span>
-                            <span
-                              className={cn(
-                                "font-bold text-base",
-                                isHl
-                                  ? "text-[color:hsl(var(--primary))] opacity-100"
-                                  : "text-primary"
-                              )}
-                            >
-                              {t.statShort(k)}
-                            </span>
-                            <span className="text-xs whitespace-nowrap">
-                              <span className="text-muted-foreground opacity-60">
-                                ({t.ui("teamComp.avgVal")}
-                              </span>
-                              <span className="font-bold text-foreground opacity-90">
-                                +{fmtStat(k, rollVal)}
-                              </span>
-                              <span className="text-muted-foreground opacity-60">
-                                )
-                              </span>
-                            </span>
-                            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
-                              ➔
-                            </span>
-                            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
-                              {fmtPercent(gain, true)}
-                            </span>
-                            <span className="text-foreground opacity-60">
-                              {t.ui("teamComp.gain")}
-                            </span>
-                          </div>
-                        );
-                      })}
-                      {levelUpGain != null &&
-                        (() => {
-                          const lvHl =
-                            highlightedStat?.charId === charId &&
-                            highlightedStat?.key === "charLevel";
-                          return (
-                            <div
-                              onMouseEnter={() =>
-                                onStatHover({ key: "charLevel", charId })
-                              }
-                              onMouseLeave={() => onStatHover(null)}
-                              onClick={() =>
-                                onStatHover(
-                                  lvHl ? null : { key: "charLevel", charId }
-                                )
-                              }
-                              className={cn(
-                                "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
-                                lvHl
-                                  ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
-                                  : ""
-                              )}
-                            >
-                              <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
-                                Lv
-                              </span>
-                              <span
-                                className={cn(
-                                  "font-bold text-base",
-                                  lvHl
-                                    ? "text-[color:hsl(var(--primary))] opacity-100"
-                                    : "text-primary"
-                                )}
-                              >
-                                {t.format(
-                                  "teamComp.levelUpGain",
-                                  levelUpGain.from,
-                                  levelUpGain.to
-                                )}
-                              </span>
-                              <span className="text-xs text-muted-foreground opacity-50 px-0.5">
-                                ➔
-                              </span>
-                              <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
-                                {fmtPercent(levelUpGain.gain, true)}
-                              </span>
-                              <span className="text-foreground opacity-60">
-                                {t.ui("teamComp.gain")}
-                              </span>
-                            </div>
-                          );
-                        })()}
-                    </div>
-                  )}
-                </CollapsibleContent>
+            {/* Artifacts Grid or Fail Reason — frozen overlay only here */}
+            <div
+              className={cn(
+                "p-2 border-b border-border/10",
+                isFrozen && "frozen-card"
+              )}
+            >
+              {failReasons?.[charId] ? (
+                <div className="flex items-center gap-2 px-2 py-2 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{formatFailReason(failReasons[charId], t)}</span>
+                </div>
+              ) : (
+                <ArtifactSlotGrid
+                  charId={charId}
+                  artifactsObj={artifactsObj}
+                  t={t}
+                  onSwap={
+                    onArtifactSwap && !isFrozen
+                      ? (slot, art) => onArtifactSwap(charId, slot, art)
+                      : undefined
+                  }
+                />
               )}
             </div>
-          </Collapsible>
+
+            {/* Thin view-mode bar */}
+            {result && (
+              <div className="flex items-stretch gap-1 px-2 py-1.5 bg-black/10 border-b border-border/10">
+                {(
+                  [
+                    {
+                      mode: "conditional" as const,
+                      label: "teamComp.conditional" as const,
+                    },
+                    { mode: "max" as const, label: "teamComp.max" as const },
+                    {
+                      mode: "marginal" as const,
+                      label: "teamComp.marginalGains" as const,
+                    },
+                  ] as const
+                ).map(({ mode, label }) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => toggleView(charId, mode)}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-0.5 text-[10px] xl:text-xs font-bold px-2.5 py-1 rounded-full transition-all leading-relaxed",
+                      activeView === mode
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground/80 hover:bg-white/5"
+                    )}
+                  >
+                    {t.ui(label)}
+                    {activeView === mode ? (
+                      <ChevronUp className="w-3 h-3" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3 opacity-50" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Set Mismatch Warning */}
+            {hasMismatch && activeView != null && (
+              <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                <span>{t.ui("teamComp.equippedSetDiffers")}</span>
+              </div>
+            )}
+
+            {/* View content */}
+            {result && activeView === "max" && hasStatSheets && (
+              <MaxView
+                charId={charId}
+                result={result}
+                primary={primary}
+                highlightedStat={highlightedStat}
+                onStatHover={onStatHover}
+                t={t}
+              />
+            )}
+            {result && activeView === "conditional" && hasStatSheets && (
+              <ConditionalView
+                charId={charId}
+                result={result}
+                primary={primary}
+                highlightedStat={highlightedStat}
+                onStatHover={onStatHover}
+                t={t}
+              />
+            )}
+            {result && activeView === "conditional" && !hasStatSheets && (
+              <LegacyStatView
+                charId={charId}
+                result={result}
+                highlightedStat={highlightedStat}
+                onStatHover={onStatHover}
+                t={t}
+              />
+            )}
+            {result &&
+              activeView === "marginal" &&
+              (hasMarginal ? (
+                <MarginalView
+                  charId={charId}
+                  marginal={marginal}
+                  marginalKeys={marginalKeys}
+                  levelUpGains={levelUpGains}
+                  highlightedStat={highlightedStat}
+                  onStatHover={onStatHover}
+                  t={t}
+                />
+              ) : (
+                <div className="p-4 text-xs text-muted-foreground text-center italic">
+                  {t.ui("teamComp.saturatedTooltip")}
+                </div>
+              ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Marginal View ───
+
+function MarginalView({
+  charId,
+  marginal,
+  marginalKeys,
+  levelUpGains,
+  highlightedStat,
+  onStatHover,
+  t,
+}: {
+  charId: string;
+  marginal: Record<string, number>;
+  marginalKeys: StatKey[];
+  levelUpGains: { from: number; to: number; gain: number }[];
+  highlightedStat: HighlightedStat;
+  onStatHover: (stat: HighlightedStat) => void;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  return (
+    <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1">
+      {marginalKeys.map((k) => {
+        const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
+        const gain = marginal[k] as number;
+        const hlKey: StatKey =
+          k === "atk%" ? "atk" : k === "hp%" ? "hp" : k === "def%" ? "def" : k;
+        const isHl =
+          highlightedStat?.charId === charId && highlightedStat?.key === hlKey;
+        return (
+          <div
+            key={k}
+            onMouseEnter={() => onStatHover({ key: hlKey, charId })}
+            onMouseLeave={() => onStatHover(null)}
+            onClick={() => onStatHover(isHl ? null : { key: hlKey, charId })}
+            className={cn(
+              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
+              isHl
+                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                : ""
+            )}
+          >
+            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+              +1
+            </span>
+            <span
+              className={cn(
+                "font-bold text-base",
+                isHl
+                  ? "text-[color:hsl(var(--primary))] opacity-100"
+                  : "text-primary"
+              )}
+            >
+              {t.statShort(k)}
+            </span>
+            <span className="text-xs whitespace-nowrap">
+              <span className="text-muted-foreground opacity-60">
+                ({t.ui("teamComp.avgVal")}
+              </span>
+              <span className="font-bold text-foreground opacity-90">
+                +{fmtStat(k, rollVal)}
+              </span>
+              <span className="text-muted-foreground opacity-60">)</span>
+            </span>
+            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+              ➔
+            </span>
+            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+              {fmtPercent(gain, true)}
+            </span>
+            <span className="text-foreground opacity-60">
+              {t.ui("teamComp.gain")}
+            </span>
+          </div>
+        );
+      })}
+      {levelUpGains.map((levelUpGain) => {
+        const lvHl =
+          highlightedStat?.charId === charId &&
+          highlightedStat?.key === "charLevel";
+        return (
+          <div
+            key={`${levelUpGain.from}-${levelUpGain.to}`}
+            onMouseEnter={() => onStatHover({ key: "charLevel", charId })}
+            onMouseLeave={() => onStatHover(null)}
+            onClick={() =>
+              onStatHover(lvHl ? null : { key: "charLevel", charId })
+            }
+            className={cn(
+              "flex flex-wrap items-center gap-[6px] px-1.5 py-1.5 rounded-sm hover:bg-white/5 transition-colors text-sm font-mono leading-none",
+              lvHl
+                ? "bg-primary/10 border-primary/30 ring-1 ring-primary/20"
+                : ""
+            )}
+          >
+            <span className="text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+              Lv
+            </span>
+            <span
+              className={cn(
+                "font-bold text-base",
+                lvHl
+                  ? "text-[color:hsl(var(--primary))] opacity-100"
+                  : "text-primary"
+              )}
+            >
+              {t.format(
+                "teamComp.levelUpGain",
+                levelUpGain.from,
+                levelUpGain.to
+              )}
+            </span>
+            <span className="text-xs text-muted-foreground opacity-50 px-0.5">
+              ➔
+            </span>
+            <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-sm">
+              {fmtPercent(levelUpGain.gain, true)}
+            </span>
+            <span className="text-foreground opacity-60">
+              {t.ui("teamComp.gain")}
+            </span>
+          </div>
         );
       })}
     </div>

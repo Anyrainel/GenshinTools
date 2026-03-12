@@ -184,7 +184,7 @@ class MakhairaAquamarine extends WeaponBase {
     // Game text: "多件同名武器产生的此效果可以叠加" — stacks from multiple copies, no noStackId
     new ScalingBuff(
       wbs(this),
-      { receiver: "team" },
+      { receiver: "otherOnField" },
       [],
       "em",
       "atk",

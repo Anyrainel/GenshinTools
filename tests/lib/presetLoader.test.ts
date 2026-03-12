@@ -3,10 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 // Type for mock preset data - matches the generic constraint in presetLoader
 type MockPreset = { author?: string; description?: string; data?: unknown[] };
-type MockModules = Record<
-  string,
-  () => Promise<{ default: MockPreset } | MockPreset>
->;
+type MockModules = Record<string, () => Promise<{ default: MockPreset }>>;
 
 describe("loadPresetMetadata", () => {
   it("extracts author and description when present", async () => {
@@ -44,21 +41,6 @@ describe("loadPresetMetadata", () => {
     expect(result[0].label).toBe("my preset file");
     expect(result[0].author).toBeUndefined();
     expect(result[0].description).toBeUndefined();
-  });
-
-  it("handles modules without default export", async () => {
-    const mockModules: MockModules = {
-      "/presets/direct.json": () =>
-        Promise.resolve({
-          author: "Direct Author",
-          description: "Direct Desc",
-        }),
-    };
-
-    const result = await loadPresetMetadata(mockModules);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].label).toBe("[Direct Author] Direct Desc");
   });
 
   it("sorts options alphabetically by label", async () => {
@@ -119,17 +101,6 @@ describe("loadPresetPayload", () => {
     };
 
     const result = await loadPresetPayload(mockModules, "/presets/test.json");
-
-    expect(result).toEqual(mockPayload);
-  });
-
-  it("loads payload from direct export (no default)", async () => {
-    const mockPayload: MockPreset = { author: "Direct" };
-    const mockModules: MockModules = {
-      "/presets/direct.json": () => Promise.resolve(mockPayload),
-    };
-
-    const result = await loadPresetPayload(mockModules, "/presets/direct.json");
 
     expect(result).toEqual(mockPayload);
   });

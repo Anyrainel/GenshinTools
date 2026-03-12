@@ -1,4 +1,5 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
   weaponsById,
 } from "@/data/constants";
 import {
+  type AccountData,
   type ReactionType,
   TEAM_REACTION_OPTIONS,
   type WeaponResource,
@@ -34,7 +36,6 @@ import {
   Diamond,
   Flame,
   MoreVertical,
-  Snowflake,
   Sparkles,
   Swords,
   Trash2,
@@ -72,7 +73,12 @@ interface TeamCardProps {
   onMoveUp?: () => void;
   onMoveDown?: () => void;
   isFrozen?: boolean;
+  isFullyFrozen?: boolean;
+  frozenCount?: number;
+  totalCharCount?: number;
+  frozenCharIds?: Set<string>;
   onUnfreeze?: () => void;
+  accountData?: AccountData | null;
 }
 
 export function TeamCard({
@@ -85,15 +91,20 @@ export function TeamCard({
   onMoveUp,
   onMoveDown,
   isFrozen,
+  isFullyFrozen,
+  frozenCount,
+  totalCharCount,
+  frozenCharIds,
   onUnfreeze,
+  accountData,
 }: TeamCardProps) {
   const { t } = useLanguage();
   const { characterStats, weaponStats } = useGameStats();
 
-  const isFullyConfigured =
-    team.characters.every(Boolean) &&
-    team.weapons.every(Boolean) &&
-    team.artifacts.every(Boolean);
+  // At least one character with a weapon is enough to optimize
+  const hasConfiguredMember = team.characters.some(
+    (charId, i) => charId != null && team.weapons[i] != null
+  );
 
   const reactionOptions = useMemo(
     () =>
@@ -117,8 +128,11 @@ export function TeamCard({
         "bg-card/40 backdrop-blur-md rounded-xl border border-border/30",
         "hover:border-border/60 transition-all duration-200",
         "group w-fit mx-auto",
+        isFullyFrozen &&
+          "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]",
         isFrozen &&
-          "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+          !isFullyFrozen &&
+          "ring-1 ring-cyan-400/15 border-cyan-400/10"
       )}
     >
       {/* Header: Index + Reaction tags + Name + Context menu */}
@@ -141,7 +155,7 @@ export function TeamCard({
           onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder={t.ui("teamComp.teamName")}
           className="font-semibold text-sm bg-transparent border-none px-2 h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
-          disabled={isFrozen}
+          disabled={isFullyFrozen}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -231,120 +245,202 @@ export function TeamCard({
 
           {/* Row 1: Character icon + Character pickers */}
           <User2 className="w-3.5 h-3.5 text-muted-foreground" />
-          {team.characters.map((charId, idx) => (
-            <ItemPicker
-              key={`char-${idx}`}
-              type="character"
-              value={charId}
-              triggerSize="md"
-              filter={(item) => {
-                const c = item as { id: string };
-                return !team.characters.some(
-                  (otherId, j) => j !== idx && otherId === c.id
-                );
-              }}
-              onChange={(val) => {
-                const newChars = [...team.characters];
-                newChars[idx] = val;
-                const newWeapons = [...team.weapons];
-                const char = charactersById[val];
-                const weaponId = newWeapons[idx];
-                if (weaponId && char) {
-                  const weapon = weaponsById[weaponId];
+          {team.characters.map((charId, idx) => {
+            // Only allow clearing the last filled slot (enforce prefix ordering)
+            const isLastFilled =
+              charId != null &&
+              !team.characters.some((c, j) => j > idx && c != null);
+            return (
+              <ItemPicker
+                key={`char-${idx}`}
+                type="character"
+                value={charId}
+                triggerSize="md"
+                frozen={!!(charId && frozenCharIds?.has(charId))}
+                filter={(item) => {
+                  const c = item as { id: string };
+                  return !team.characters.some(
+                    (otherId, j) => j !== idx && otherId === c.id
+                  );
+                }}
+                onChange={(val) => {
+                  const newChars = [...team.characters];
+                  newChars[idx] = val;
+                  const newWeapons = [...team.weapons];
+                  const newArts = [...team.artifacts];
+                  const char = charactersById[val];
+
+                  // Prefill weapon and artifact from account data
+                  const acctChar = accountData?.characters.find(
+                    (c) => c.key === val
+                  );
+                  if (acctChar) {
+                    // Prefill weapon if slot is empty or weapon type is incompatible
+                    if (
+                      acctChar.weapon?.key &&
+                      weaponsById[acctChar.weapon.key]
+                    ) {
+                      const existingWeapon = newWeapons[idx];
+                      const shouldPrefillWeapon =
+                        !existingWeapon ||
+                        (() => {
+                          if (!char) return true;
+                          const curWeapon = weaponsById[existingWeapon];
+                          if (!curWeapon) return true;
+                          const charMeta = getCharacterDisplayMeta(
+                            char,
+                            characterStats?.[val]
+                          );
+                          const wMeta = getWeaponDisplayMeta(
+                            curWeapon,
+                            weaponStats?.[existingWeapon]
+                          );
+                          return (
+                            charMeta.weaponType != null &&
+                            wMeta.type != null &&
+                            charMeta.weaponType !== wMeta.type
+                          );
+                        })();
+                      if (shouldPrefillWeapon) {
+                        newWeapons[idx] = acctChar.weapon.key;
+                      }
+                    }
+
+                    // Prefill artifact set from equipped artifacts
+                    const equipped = Object.values(acctChar.artifacts || {});
+                    if (equipped.length > 0) {
+                      const detected = detectEquippedSets(equipped);
+                      if (detected.artifactSetId) {
+                        newArts[idx] = {
+                          type: "4pc",
+                          setId: detected.artifactSetId,
+                        };
+                      } else if (detected.artifactHalfSetIds.length === 2) {
+                        newArts[idx] = {
+                          type: "2pc+2pc",
+                          id1: detected.artifactHalfSetIds[0],
+                          id2: detected.artifactHalfSetIds[1],
+                        };
+                      }
+                    }
+                  } else {
+                    // No account data for this character — clear incompatible weapon
+                    const weaponId = newWeapons[idx];
+                    if (weaponId && char) {
+                      const weapon = weaponsById[weaponId];
+                      const charMeta = getCharacterDisplayMeta(
+                        char,
+                        characterStats?.[char.id]
+                      );
+                      const weaponMeta = weapon
+                        ? getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id])
+                        : null;
+                      if (
+                        weaponMeta?.type != null &&
+                        charMeta.weaponType != null &&
+                        weaponMeta.type !== charMeta.weaponType
+                      ) {
+                        newWeapons[idx] = null;
+                      }
+                    }
+                  }
+                  onUpdate({
+                    characters: newChars,
+                    weapons: newWeapons,
+                    artifacts: newArts,
+                  });
+                }}
+                onClear={
+                  isLastFilled
+                    ? () => {
+                        const newChars = [...team.characters];
+                        newChars[idx] = null;
+                        const newWeapons = [...team.weapons];
+                        newWeapons[idx] = null;
+                        const newArts = [...team.artifacts];
+                        newArts[idx] = null;
+                        onUpdate({
+                          characters: newChars,
+                          weapons: newWeapons,
+                          artifacts: newArts,
+                        });
+                      }
+                    : undefined
+                }
+              />
+            );
+          })}
+
+          {/* Row 2: Weapon icon + Weapon pickers */}
+          <Swords className="w-3.5 h-3.5 text-muted-foreground" />
+          {team.weapons.map((weaponId, idx) => {
+            const charId = team.characters[idx];
+            return (
+              <ItemPicker
+                key={`wpn-${idx}`}
+                type="weapon"
+                value={weaponId}
+                triggerSize="md"
+                frozen={!!(charId && frozenCharIds?.has(charId))}
+                onChange={(val) => {
+                  const newWeapons = [...team.weapons];
+                  newWeapons[idx] = val;
+                  onUpdate({ weapons: newWeapons });
+                }}
+                onClear={() => {
+                  const newWeapons = [...team.weapons];
+                  newWeapons[idx] = null;
+                  onUpdate({ weapons: newWeapons });
+                }}
+                disabled={!team.characters[idx]}
+                filter={(item) => {
+                  const char = team.characters[idx]
+                    ? charactersById[team.characters[idx]!]
+                    : null;
+                  if (!char) return true;
                   const charMeta = getCharacterDisplayMeta(
                     char,
                     characterStats?.[char.id]
                   );
-                  const weaponMeta = weapon
-                    ? getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id])
-                    : null;
-                  if (
-                    weaponMeta?.type != null &&
-                    charMeta.weaponType != null &&
-                    weaponMeta.type !== charMeta.weaponType
-                  ) {
-                    newWeapons[idx] = null;
-                  }
-                }
-                onUpdate({ characters: newChars, weapons: newWeapons });
-              }}
-              onClear={() => {
-                const newChars = [...team.characters];
-                newChars[idx] = null;
-                const newWeapons = [...team.weapons];
-                newWeapons[idx] = null;
-                const newArts = [...team.artifacts];
-                newArts[idx] = null;
-                onUpdate({
-                  characters: newChars,
-                  weapons: newWeapons,
-                  artifacts: newArts,
-                });
-              }}
-            />
-          ))}
-
-          {/* Row 2: Weapon icon + Weapon pickers */}
-          <Swords className="w-3.5 h-3.5 text-muted-foreground" />
-          {team.weapons.map((weaponId, idx) => (
-            <ItemPicker
-              key={`wpn-${idx}`}
-              type="weapon"
-              value={weaponId}
-              triggerSize="md"
-              onChange={(val) => {
-                const newWeapons = [...team.weapons];
-                newWeapons[idx] = val;
-                onUpdate({ weapons: newWeapons });
-              }}
-              onClear={() => {
-                const newWeapons = [...team.weapons];
-                newWeapons[idx] = null;
-                onUpdate({ weapons: newWeapons });
-              }}
-              disabled={!team.characters[idx]}
-              filter={(item) => {
-                const char = team.characters[idx]
-                  ? charactersById[team.characters[idx]!]
-                  : null;
-                if (!char) return true;
-                const charMeta = getCharacterDisplayMeta(
-                  char,
-                  characterStats?.[char.id]
-                );
-                const weaponMeta = getWeaponDisplayMeta(
-                  item as WeaponResource,
-                  weaponStats?.[(item as WeaponResource).id]
-                );
-                return (
-                  charMeta.weaponType == null ||
-                  weaponMeta.type === charMeta.weaponType
-                );
-              }}
-            />
-          ))}
+                  const weaponMeta = getWeaponDisplayMeta(
+                    item as WeaponResource,
+                    weaponStats?.[(item as WeaponResource).id]
+                  );
+                  return (
+                    charMeta.weaponType == null ||
+                    weaponMeta.type === charMeta.weaponType
+                  );
+                }}
+              />
+            );
+          })}
 
           {/* Row 3: Artifact icon + Artifact pickers */}
           <Diamond className="w-3.5 h-3.5 text-muted-foreground" />
-          {team.artifacts.map((artConfig, idx) => (
-            <ItemPicker
-              key={`art-${idx}`}
-              type="artifact"
-              value={artConfig}
-              triggerSize="md"
-              onChange={(val) => {
-                const newArts = [...team.artifacts];
-                newArts[idx] = val;
-                onUpdate({ artifacts: newArts });
-              }}
-              onClear={() => {
-                const newArts = [...team.artifacts];
-                newArts[idx] = null;
-                onUpdate({ artifacts: newArts });
-              }}
-              disabled={!team.characters[idx]}
-            />
-          ))}
+          {team.artifacts.map((artConfig, idx) => {
+            const charId = team.characters[idx];
+            const charFrozen = !!(charId && frozenCharIds?.has(charId));
+            return (
+              <ItemPicker
+                key={`art-${idx}`}
+                type="artifact"
+                value={artConfig}
+                triggerSize="md"
+                onChange={(val) => {
+                  const newArts = [...team.artifacts];
+                  newArts[idx] = val;
+                  onUpdate({ artifacts: newArts });
+                }}
+                onClear={() => {
+                  const newArts = [...team.artifacts];
+                  newArts[idx] = null;
+                  onUpdate({ artifacts: newArts });
+                }}
+                disabled={!charId}
+                frozen={charFrozen}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -368,7 +464,7 @@ export function TeamCard({
             isFrozen ? "flex-1" : "w-full"
           )}
           onClick={onSelect}
-          disabled={!isFullyConfigured}
+          disabled={!hasConfiguredMember}
         >
           <Sparkles className="w-4 h-4" />
           <span>{t.ui("teamComp.teamOptimization")}</span>

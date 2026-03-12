@@ -1,5 +1,6 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -904,7 +905,7 @@ function SubstatsEditor({
               value={value}
               min={0}
               max={999}
-              step={isPercentStat(key) ? 0.1 : 1}
+              step={isPctStat(key) ? 0.1 : 1}
               onChange={(v) => onChange({ ...substats, [key]: v })}
               className="w-24 lg:w-32 text-right pr-3"
             />
@@ -1369,7 +1370,3 @@ const PickerItem = forwardRef<
   );
 });
 PickerItem.displayName = "PickerItem";
-
-function isPercentStat(stat: string): boolean {
-  return stat.includes("%") || stat === "cr" || stat === "cd" || stat === "er";
-}

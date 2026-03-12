@@ -9,11 +9,22 @@ interface DoubleItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   className?: string;
   alt1?: string;
   alt2?: string;
+  /** Replace rarity background with an icy/snowy background */
+  frozen?: boolean;
 }
 
 export const DoubleItemIcon = forwardRef<HTMLDivElement, DoubleItemIconProps>(
   (
-    { imagePath1, imagePath2, size = "lg", className, alt1, alt2, ...props },
+    {
+      imagePath1,
+      imagePath2,
+      size = "lg",
+      className,
+      alt1,
+      alt2,
+      frozen,
+      ...props
+    },
     ref
   ) => {
     return (
@@ -22,11 +33,12 @@ export const DoubleItemIcon = forwardRef<HTMLDivElement, DoubleItemIconProps>(
         className={cn(
           SIZE_CLASSES[size],
           "rounded-md overflow-hidden relative shadow-md border-2 border-[#b27330] bg-[#3a2d13]",
+          frozen && "ring-2 ring-cyan-400/60",
           className
         )}
         {...props}
       >
-        {/* Background - Rarity 5 style */}
+        {/* Background - Rarity 5 style or frozen */}
         <div className="absolute inset-0 bg-[#b27330]" />
 
         {/* Top Left Half - Shifted towards corner */}

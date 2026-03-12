@@ -1,3 +1,4 @@
+import { isPctStat } from "@/components/team-comp/displayFormatters";
 import {
   AVERAGE_ROLL_MULTIPLIER,
   artifactsById,
@@ -74,10 +75,6 @@ function rollToInternal(
   return isPctStat(stat) ? raw / 100 : raw;
 }
 
-function isPctStat(k: string): boolean {
-  return k.endsWith("%") || k === "cr" || k === "cd" || k === "er";
-}
-
 // 5★: 4 initial + 5 upgrades = 9; 4★: 3 initial + 1 unlock + 3 upgrades = 7
 function rollsPerArtifact(rarity: 4 | 5): number {
   return rarity === 5 ? 9 : 7;
@@ -143,7 +140,11 @@ function evaluateDamage(
       reactionOverride
     );
     return result.totalDamage;
-  } catch {
+  } catch (e) {
+    console.warn(
+      `[idealArtifactGen] evaluateDamage failed for ${carryCharId}/${formulaId}:`,
+      e
+    );
     return 0;
   }
 }
@@ -766,8 +767,11 @@ export async function* runIdealArtifactGen(
       );
       damage = damageResult.totalDamage;
     }
-  } catch {
-    // keep defaults
+  } catch (e) {
+    console.warn(
+      `[idealArtifactGen] final damage calc failed for ${carryCharId}:`,
+      e
+    );
   }
 
   yield {
@@ -843,8 +847,11 @@ function makeResult(
       );
       damage = damageResult.totalDamage;
     }
-  } catch {
-    // keep defaults
+  } catch (e) {
+    console.warn(
+      `[idealArtifactGen] snapshot damage calc failed for ${carryCharId}:`,
+      e
+    );
   }
 
   return {

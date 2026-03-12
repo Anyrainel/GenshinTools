@@ -44,26 +44,31 @@ export function ArtifactSlotGrid({
 
         if (onSwap) {
           return (
-            <button
+            <ArtifactDataHoverCard
               key={slot}
-              type="button"
-              onClick={() => onSwap(slot, art)}
-              className={cn(
-                "relative group/swap rounded transition-all cursor-pointer w-fit",
-                "hover:bg-primary/10"
-              )}
-              title={t.ui("teamComp.swapArtifact")}
+              artifact={art}
+              slot={slot}
+              side="bottom"
             >
-              <ArtifactIcon
-                artifact={art}
-                artInfo={artifactsById[art.setKey]}
-                slot={slot}
-                size="md"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
-                <ArrowRightLeft className="w-4 h-4 text-primary" />
-              </div>
-            </button>
+              <button
+                type="button"
+                onClick={() => onSwap(slot, art)}
+                className={cn(
+                  "relative group/swap rounded transition-all cursor-pointer w-fit",
+                  "hover:bg-primary/10"
+                )}
+              >
+                <ArtifactIcon
+                  artifact={art}
+                  artInfo={artifactsById[art.setKey]}
+                  slot={slot}
+                  size="md"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
+                  <ArrowRightLeft className="w-4 h-4 text-primary" />
+                </div>
+              </button>
+            </ArtifactDataHoverCard>
           );
         }
 

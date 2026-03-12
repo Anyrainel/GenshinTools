@@ -1,5 +1,6 @@
 import { ArtifactDataContent } from "@/components/account-data/ArtifactDataHoverCard";
 import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
+import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -304,11 +305,6 @@ export function ArtifactSwapDialog({
                 <div className="flex flex-wrap gap-x-2 gap-y-0 mt-0.5">
                   {Object.entries(art.substats ?? {}).map(([key, val]) => {
                     if (val == null) return null;
-                    const isPercent =
-                      key.endsWith("%") ||
-                      key === "cr" ||
-                      key === "cd" ||
-                      key === "er";
                     const isHighlighted = activeStats.includes(key);
                     return (
                       <span
@@ -320,11 +316,21 @@ export function ArtifactSwapDialog({
                             : "text-foreground/70"
                         )}
                       >
-                        {t.statMin(key)}{" "}
-                        {isPercent ? `${val.toFixed(1)}%` : Math.round(val)}
+                        {t.statMin(key)} {fmtStat(key, val, false, true)}
                       </span>
                     );
                   })}
+                  {Object.entries(art.unactivatedSubstats ?? {}).map(
+                    ([key, val]) =>
+                      val != null && (
+                        <span
+                          key={key}
+                          className="text-xs font-mono text-muted-foreground"
+                        >
+                          {t.statMin(key)} {fmtStat(key, val, false, true)}
+                        </span>
+                      )
+                  )}
                 </div>
               </div>
               {isSelected && (

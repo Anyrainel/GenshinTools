@@ -50,11 +50,11 @@ function formatWeaponEffect(
 }
 
 // Lazy-loaded game data modules (weapon/artifact per-language JSONs)
-const weaponModules = import.meta.glob<WeaponGameData>(
+const weaponModules = import.meta.glob<{ default: WeaponGameData }>(
   "../data/game/weapon_*.json",
   { eager: false }
 );
-const artifactModules = import.meta.glob<ArtifactGameData>(
+const artifactModules = import.meta.glob<{ default: ArtifactGameData }>(
   "../data/game/artifact_*.json",
   { eager: false }
 );
@@ -167,18 +167,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const artifactLoader = artifactModules[artifactPath];
 
     if (weaponLoader) {
-      weaponLoader().then((mod) => {
-        const data =
-          (mod as unknown as { default: WeaponGameData }).default ?? mod;
-        setWeaponData(data);
-      });
+      weaponLoader().then((mod) => setWeaponData(mod.default));
     }
     if (artifactLoader) {
-      artifactLoader().then((mod) => {
-        const data =
-          (mod as unknown as { default: ArtifactGameData }).default ?? mod;
-        setArtifactData(data);
-      });
+      artifactLoader().then((mod) => setArtifactData(mod.default));
     }
   }, [language]);
 

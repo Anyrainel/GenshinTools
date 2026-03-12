@@ -109,14 +109,9 @@ export function getCharacterLevelTier(level: number): CharacterLevelTier {
 }
 
 /** Get the next level tier above the given level, or null if at max. */
-/**
- * Returns the target level for the level-up gain display.
- * 70→80, 80→90, 90→100 (skip 95), 95→100. Null if already max.
- */
 export function getNextLevelTier(level: number): number | null {
   const currentTier = Number(getCharacterLevelTier(level));
   if (currentTier >= 100) return null;
-  if (currentTier === 90) return 100; // skip 95 — show full 90→100 gain
   const tiers = CHARACTER_LEVEL_TIERS.map(Number);
   const idx = tiers.indexOf(currentTier);
   return idx >= 0 && idx < tiers.length - 1 ? tiers[idx + 1] : null;

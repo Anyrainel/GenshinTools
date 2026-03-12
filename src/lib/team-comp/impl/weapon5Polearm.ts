@@ -145,8 +145,8 @@ class SymphonistOfScents extends WeaponBase {
 const homaOption = {
   label: { zh: "生命值状态", en: "HP State" },
   choices: [
-    { value: "below50", label: { zh: "生命值低于50%", en: "HP below 50%" } },
-    { value: "above50", label: { zh: "生命值高于50%", en: "HP above 50%" } },
+    { value: "below50", label: { zh: "生命值≤50%", en: "HP ≤ 50%" } },
+    { value: "above50", label: { zh: "生命值>50%", en: "HP > 50%" } },
   ] as const,
   default: "below50",
 } satisfies OptionDef;

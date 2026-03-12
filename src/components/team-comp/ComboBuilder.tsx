@@ -15,6 +15,7 @@ import type { Team } from "@/stores/useTeamStore";
 import { Minus, Plus } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { ReactionSelector } from "./ReactionSelector";
+import { fmtDamage } from "./displayFormatters";
 
 // ─── Props ───
 
@@ -119,7 +120,8 @@ export function ComboBuilder({
         calcContext,
         team.reactionOverrides
       );
-    } catch {
+    } catch (e) {
+      console.warn("[ComboBuilder] evaluateCombo failed:", e);
       return null;
     }
   }, [combo, teamBuild, artifactSheets, calcContext, team.reactionOverrides]);
@@ -337,7 +339,7 @@ export function ComboBuilder({
                             {"\u00D7"}
                           </span>
                           <span className="text-foreground/60">
-                            {Math.round(damage.perHit).toLocaleString()}
+                            {fmtDamage(damage.perHit)}
                           </span>
                           <span className="text-muted-foreground mx-0.5">
                             =
@@ -345,7 +347,7 @@ export function ComboBuilder({
                         </>
                       )}
                       <span className="text-foreground font-semibold">
-                        {Math.round(damage.total).toLocaleString()}
+                        {fmtDamage(damage.total)}
                       </span>
                     </span>
                   )}
@@ -369,7 +371,7 @@ export function ComboBuilder({
             {t.ui("teamComp.totalRotation")}
           </span>
           <span className="text-foreground font-[math] font-black text-2xl md:text-3xl drop-shadow-sm">
-            {Math.round(comboResult.totalDamage).toLocaleString()}
+            {fmtDamage(comboResult.totalDamage)}
           </span>
         </div>
       )}

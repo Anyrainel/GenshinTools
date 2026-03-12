@@ -1250,17 +1250,12 @@ export class TeamBuild {
     ctx: CalcContext,
     baseDamage: number,
     reactionOverride?: ReactionOverride
-  ): Record<string, { gain: number; from: number; to: number }> {
+  ): Record<string, { gain: number; from: number; to: number }[]> {
     if (baseDamage === 0) return {};
 
-    const gains: Record<string, { gain: number; from: number; to: number }> =
-      {};
-    for (const config of this.configs) {
-      const nextLevel = getNextLevelTier(config.charLevel);
-      if (!nextLevel) continue;
-
+    const computeGain = (charId: string, targetLevel: number) => {
       const tweakedConfigs = this.configs.map((c) =>
-        c.charId === config.charId ? { ...c, charLevel: nextLevel } : c
+        c.charId === charId ? { ...c, charLevel: targetLevel } : c
       );
       const tweakedTeam = new TeamBuild(
         tweakedConfigs,
@@ -1279,9 +1274,29 @@ export class TeamBuild {
         ctx,
         reactionOverride
       );
-      const gain = (tweakedResult.totalDamage - baseDamage) / baseDamage;
+      return (tweakedResult.totalDamage - baseDamage) / baseDamage;
+    };
+
+    const gains: Record<string, { gain: number; from: number; to: number }[]> =
+      {};
+    for (const config of this.configs) {
+      const nextLevel = getNextLevelTier(config.charLevel);
+      if (!nextLevel) continue;
+
+      const entries: { gain: number; from: number; to: number }[] = [];
+      const gain = computeGain(config.charId, nextLevel);
       if (gain > 0) {
-        gains[config.charId] = { gain, from: config.charLevel, to: nextLevel };
+        entries.push({ gain, from: config.charLevel, to: nextLevel });
+      }
+      // For level 90, also show the full 90→100 gain
+      if (config.charLevel === 90 && nextLevel < 100) {
+        const fullGain = computeGain(config.charId, 100);
+        if (fullGain > 0) {
+          entries.push({ gain: fullGain, from: config.charLevel, to: 100 });
+        }
+      }
+      if (entries.length > 0) {
+        gains[config.charId] = entries;
       }
     }
 
@@ -1598,24 +1613,25 @@ export function getComboDisplayResult(
           buffMap.set(buffKey, buff);
         }
       }
-    } catch {
-      // Skip if formula evaluation fails
+    } catch (e) {
+      console.warn(
+        `[damageCalc] buff collection failed for ${onFieldCharId}/${firstFormulaId}:`,
+        e
+      );
     }
   }
 
   const buffs = Array.from(buffMap.values());
 
-  // ── Level-up gains (current tier → next tier) ──
+  // ── Level-up gains (current tier → next tier(s)) ──
   const levelUpGains: Record<
     string,
-    { gain: number; from: number; to: number }
+    { gain: number; from: number; to: number }[]
   > = {};
   if (baseDamage > 0) {
-    for (const config of teamBuild.configs) {
-      const nextLevel = getNextLevelTier(config.charLevel);
-      if (!nextLevel) continue;
+    const computeComboGain = (charId: string, targetLevel: number) => {
       const tweakedConfigs = teamBuild.configs.map((c) =>
-        c.charId === config.charId ? { ...c, charLevel: nextLevel } : c
+        c.charId === charId ? { ...c, charLevel: targetLevel } : c
       );
       const tweakedTeam = new TeamBuild(
         tweakedConfigs,
@@ -1629,13 +1645,26 @@ export function getComboDisplayResult(
         ctx,
         singleModeOverrides
       );
-      const gain = (newResult.totalDamage - baseDamage) / baseDamage;
+      return (newResult.totalDamage - baseDamage) / baseDamage;
+    };
+
+    for (const config of teamBuild.configs) {
+      const nextLevel = getNextLevelTier(config.charLevel);
+      if (!nextLevel) continue;
+      const entries: { gain: number; from: number; to: number }[] = [];
+      const gain = computeComboGain(config.charId, nextLevel);
       if (gain > 0) {
-        levelUpGains[config.charId] = {
-          gain,
-          from: config.charLevel,
-          to: nextLevel,
-        };
+        entries.push({ gain, from: config.charLevel, to: nextLevel });
+      }
+      // For level 90, also show the full 90→100 gain
+      if (config.charLevel === 90 && nextLevel < 100) {
+        const fullGain = computeComboGain(config.charId, 100);
+        if (fullGain > 0) {
+          entries.push({ gain: fullGain, from: config.charLevel, to: 100 });
+        }
+      }
+      if (entries.length > 0) {
+        levelUpGains[config.charId] = entries;
       }
     }
   }

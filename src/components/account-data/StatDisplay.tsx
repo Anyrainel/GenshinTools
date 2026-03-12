@@ -1,3 +1,4 @@
+import { fmtStat } from "@/components/team-comp/displayFormatters";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData, SubStat } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
@@ -28,12 +29,7 @@ export function StatDisplay({
     weight = 0
   ) => {
     if (value == null) return null;
-    const isPercent =
-      statKey.endsWith("%") ||
-      statKey === "cr" ||
-      statKey === "cd" ||
-      statKey === "er";
-    const displayValue = isPercent ? `${value.toFixed(1)}%` : Math.round(value);
+    const displayValue = fmtStat(statKey, value, false, true);
 
     const statName = compact ? t.statMin(statKey) : t.statShort(statKey);
 
@@ -90,9 +86,16 @@ export function StatDisplay({
           // If no scoreResult (inventory), treat as weight=1 (active/visible)
           return renderStatLine(key, val, scoreResult ? weight : 1);
         })}
+        {/* Unactivated substats */}
+        {Object.entries(artifact.unactivatedSubstats ?? {}).map(([key, val]) =>
+          val != null ? renderStatLine(key, val, 0) : null
+        )}
         {/* Add empty rows to ensure consistent height (4 substat rows) */}
         {Array.from({
-          length: 4 - Object.keys(artifact.substats ?? {}).length,
+          length:
+            4 -
+            Object.keys(artifact.substats ?? {}).length -
+            Object.keys(artifact.unactivatedSubstats ?? {}).length,
         }).map((_, i) => (
           <div key={`empty-${i}`} className={compact ? "text-xs" : "text-sm"}>
             &nbsp;

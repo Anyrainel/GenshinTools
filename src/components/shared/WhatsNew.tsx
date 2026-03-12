@@ -145,7 +145,10 @@ function buildGraph(
   for (let i = 0; i < rows.length - 1; i++) {
     const bot = Math.max(...rows[i].map((c) => c.b));
     const top = Math.min(...rows[i + 1].map((c) => c.y));
-    hGaps.push({ y: (bot + top) / 2, wide: top - bot >= MIN_INTERIOR_GAP });
+    hGaps.push({
+      y: bot + (top - bot) * 0.38,
+      wide: top - bot >= MIN_INTERIOR_GAP,
+    });
   }
 
   // Vertical gap between columns (if 2+ column rows exist)

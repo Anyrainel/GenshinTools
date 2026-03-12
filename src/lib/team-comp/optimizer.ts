@@ -1,9 +1,11 @@
+import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
   type BuildMatchResult,
   getFixedMainStatValue,
+  getMainStatValueAtLevel,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
@@ -104,7 +106,12 @@ function scorePiece(
       buildMatch.build
     );
     if (recommended.has(art.mainStatKey)) {
-      let mainScore = scoreMainStat(art.mainStatKey, art.rarity, globalConfig);
+      let mainScore = scoreMainStat(
+        art.mainStatKey,
+        art.rarity,
+        globalConfig,
+        art.level
+      );
       // Also discount CR main stat when CR is devalued
       if (crDiscount < 1 && art.mainStatKey === "cr") {
         mainScore *= crDiscount;
@@ -179,7 +186,7 @@ function getArtifactEr(art: ArtifactData | null): number {
   if (!art) return 0;
   let er = 0;
   if (art.mainStatKey === "er") {
-    er += getFixedMainStatValue("er", art.rarity) / 100;
+    er += getMainStatValueAtLevel("er", art.rarity, art.level) / 100;
   }
   if (art.substats.er) {
     er += art.substats.er / 100;
@@ -192,7 +199,7 @@ function getArtifactCr(art: ArtifactData | null): number {
   if (!art) return 0;
   let cr = 0;
   if (art.mainStatKey === "cr") {
-    cr += getFixedMainStatValue("cr", art.rarity) / 100;
+    cr += getMainStatValueAtLevel("cr", art.rarity, art.level) / 100;
   }
   if (art.substats.cr) {
     cr += art.substats.cr / 100;
@@ -223,9 +230,6 @@ function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
 
 // ── Marginal-gain scoring ──
 
-const isPct = (k: string) =>
-  k.endsWith("%") || k === "cr" || k === "cd" || k === "er";
-
 const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
   ...AVG_SUBSTAT_ROLL,
   "pyro%": getFixedMainStatValue("pyro%", 5) / 100,
@@ -246,10 +250,14 @@ function scorePieceMarginal(
 ): number {
   let score = 0;
 
-  // Main stat contribution
+  // Main stat contribution (level-aware)
   if (art.mainStatKey) {
-    let mainVal = getFixedMainStatValue(art.mainStatKey, art.rarity);
-    if (isPct(art.mainStatKey)) mainVal /= 100;
+    let mainVal = getMainStatValueAtLevel(
+      art.mainStatKey,
+      art.rarity,
+      art.level
+    );
+    if (isPctStat(art.mainStatKey)) mainVal /= 100;
     const gain = marginalGains[art.mainStatKey as StatKey];
     if (gain) {
       const delta = MARGINAL_GAIN_DELTAS[art.mainStatKey as StatKey];
@@ -261,7 +269,7 @@ function scorePieceMarginal(
   for (const [subKey, subVal] of Object.entries(art.substats)) {
     if (!subVal) continue;
     let v = subVal;
-    if (isPct(subKey)) v /= 100;
+    if (isPctStat(subKey)) v /= 100;
     const gain = marginalGains[subKey as StatKey];
     if (gain) {
       const delta = MARGINAL_GAIN_DELTAS[subKey as StatKey];
@@ -847,6 +855,61 @@ export async function* runOptimization(
         halfSetIds: artifactHalfSetIds,
       };
     }
+    yield getResult("evaluating", true);
+    return;
+  }
+
+  // ── Early-exit: check if the set requirement is satisfiable ──
+  // If it's impossible, no amount of altCount widening will help, so bail
+  // before the retry loop to avoid expensive no-op iterations.
+  let setFeasible = true;
+  if (is4pc) {
+    let slotsWithSetPiece = 0;
+    for (const slot of allSlots) {
+      if (scoredPools[slot].some((s) => s.art.setKey === artifactSetId))
+        slotsWithSetPiece++;
+    }
+    if (slotsWithSetPiece < 4) {
+      setFeasible = false;
+      const slotCounts: Record<string, number> = {};
+      for (const slot of allSlots) {
+        slotCounts[slot] = scoredPools[slot].filter(
+          (s) => s.art.setKey === artifactSetId
+        ).length;
+      }
+      failReason = { kind: "set-impossible", setId: artifactSetId, slotCounts };
+    }
+  } else if (is2pc) {
+    // For 2+2, check that each half-set has pieces in ≥2 distinct slots
+    const [h1, h2] = artifactHalfSetIds!;
+    const slotsForHalf = (hId: string): number => {
+      let count = 0;
+      for (const slot of allSlots) {
+        if (
+          scoredPools[slot].some(
+            (s) => artifactIdToHalfSetId[s.art.setKey] === hId
+          )
+        )
+          count++;
+      }
+      return count;
+    };
+    if (slotsForHalf(h1) < 2 || slotsForHalf(h2) < 2) {
+      setFeasible = false;
+      const slotCounts: Record<string, number> = {};
+      for (const slot of allSlots) {
+        slotCounts[slot] = scoredPools[slot].length;
+      }
+      failReason = {
+        kind: "set-impossible",
+        halfSetIds: artifactHalfSetIds,
+        slotCounts,
+      };
+    }
+  }
+
+  if (!setFeasible) {
+    combinationsTotal = combinationsEvaluated;
     yield getResult("evaluating", true);
     return;
   }

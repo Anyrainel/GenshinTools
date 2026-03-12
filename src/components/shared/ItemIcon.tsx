@@ -24,6 +24,8 @@ interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   size?: ItemIconSize; // Predefined sizes
   /** When set, auto-adds a bottom-center element overlay for variant characters (traveler/manekin/manekina) */
   characterId?: string;
+  /** Replace rarity background with an icy/snowy background */
+  frozen?: boolean;
   children?: React.ReactNode;
 }
 
@@ -120,6 +122,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       level,
       size = "lg",
       characterId,
+      frozen,
       children,
       className,
       style,
@@ -164,8 +167,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       <div
         className={cn(
           "relative overflow-hidden flex-shrink-0 select-none",
-          // showBadge && "rounded-tl-sm", // Removed: handled via explicit style
-          getRarityColor(rarity, "bg")
+          getRarityColor(rarity, "bg"),
+          frozen && "ring-2 ring-cyan-400/60"
         )}
         style={{
           width: iconSize,

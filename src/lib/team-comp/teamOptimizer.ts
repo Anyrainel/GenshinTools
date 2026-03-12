@@ -4,6 +4,8 @@ import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "../account-data/artifactScore";
 import { TeamBuild, evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
+
+const warnedCalcErrors = new Set<string>();
 import {
   type OptFailReason,
   type OptimizationResult,
@@ -181,7 +183,15 @@ function computeFinalScore(
         calcContext,
         reactionOverrides
       ).totalDamage;
-    } catch {
+    } catch (e) {
+      const key = `computeFinalScore:${carryCharId}`;
+      if (!warnedCalcErrors.has(key)) {
+        warnedCalcErrors.add(key);
+        console.warn(
+          `[teamOptimizer] computeFinalScore failed for ${carryCharId}:`,
+          e
+        );
+      }
       return 0;
     }
   }
@@ -228,7 +238,15 @@ export async function* runTeamOptimization(
             calcContext,
             reactionOverrides
           ).totalDamage;
-        } catch {
+        } catch (e) {
+          const key = `comboScoreFn:${_calcTargetId}`;
+          if (!warnedCalcErrors.has(key)) {
+            warnedCalcErrors.add(key);
+            console.warn(
+              `[teamOptimizer] comboScoreFn failed for ${_calcTargetId}:`,
+              e
+            );
+          }
           return 0;
         }
       }
@@ -313,7 +331,15 @@ export async function* runTeamOptimization(
                 calcContext,
                 reactionOverrides
               ).totalDamage;
-            } catch {
+            } catch (e) {
+              const key = `passComboScoreFn:${carryCharId}`;
+              if (!warnedCalcErrors.has(key)) {
+                warnedCalcErrors.add(key);
+                console.warn(
+                  `[teamOptimizer] passComboScoreFn failed for ${carryCharId}:`,
+                  e
+                );
+              }
               return 0;
             }
           }
@@ -530,6 +556,11 @@ export async function* runTeamOptimization(
   );
 
   if (competitorSet.size >= 2) {
+    // The unlocked results may have duplicate artifacts (multiple characters
+    // claiming the same piece), inflating bestR1Score. Reset to -1 so that
+    // any valid (duplicate-free) permutation result replaces the initial.
+    bestR1Score = -1;
+
     const competitorArr = [...competitorSet];
     const nonCompetitors = allCharIds.filter((id) => !competitorSet.has(id));
     const perms = permutations(competitorArr);
@@ -551,11 +582,15 @@ export async function* runTeamOptimization(
       > = {};
       const permPassResults: TeamOptPassResult[] = [];
 
-      // Non-competitors keep their unlocked results (artifacts NOT locked)
+      // Non-competitors keep their unlocked results; lock their artifacts
+      // so competitors cannot claim them (prevents duplicate assignments).
       for (const cid of nonCompetitors) {
         const ur = unlockedResults[cid];
         if (ur) {
           permArtifactsByChar[cid] = ur.arts;
+          for (const id of collectArtifactIds(ur.arts)) {
+            permExcluded.add(id);
+          }
           const pieces = allSlots
             .map((s) => ur.arts[s])
             .filter((a): a is ArtifactData => a != null);
@@ -683,6 +718,9 @@ export async function* runTeamOptimization(
               const ur = unlockedResults[ncid];
               if (ur) {
                 newPermArtifacts[ncid] = ur.arts;
+                for (const id of collectArtifactIds(ur.arts)) {
+                  newPermExcluded.add(id);
+                }
                 const pieces = allSlots
                   .map((s) => ur.arts[s])
                   .filter((a): a is ArtifactData => a != null);

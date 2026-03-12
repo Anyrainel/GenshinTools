@@ -18,6 +18,7 @@
 ### fixes
 - Fixed artifact score not appearing for certain slots
 - Fixed implementation issues for some characters and weapons
+- Fixed issues where optimize would sometimes reuse the same artifact
 
 ## 2025-03-08
 

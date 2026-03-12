@@ -208,7 +208,7 @@ function ScalingZone({
         return (
           <span key={k} className="flex gap-0.5 items-center">
             <MathVar
-              val={Math.round(p.statValues[k] || 0).toLocaleString()}
+              val={fmtDamage(p.statValues[k] || 0)}
               label={t.statShort(k)}
               highlight={kHl}
             />
@@ -227,7 +227,7 @@ function ScalingZone({
   return (
     <MathZone
       label={t.formula("Base")}
-      value={Math.round(val).toLocaleString()}
+      value={fmtDamage(val)}
       mathLine={mathLine}
       highlight={isHl}
     />
@@ -314,7 +314,7 @@ function FlatBonusZone({
         mathLine={
           <span className="flex items-center">
             <MathVar
-              val={Math.round(fb).toLocaleString()}
+              val={fmtDamage(fb)}
               label={t.formula("Add")}
               highlight={hl === "baseDmg"}
             />
@@ -347,11 +347,11 @@ function CatalyzeAdditiveZone({
     <MathZone
       label={t.formula("Additive")}
       highlight={hl === "em" || hl === "reactionDmg%" || hl === "charLevel"}
-      value={Math.round(val).toLocaleString()}
+      value={fmtDamage(val)}
       mathLine={
         <span className="flex items-center">
           <MathVar
-            val={Math.round(levelMult).toLocaleString()}
+            val={fmtDamage(levelMult)}
             label={t.formula("LvMult")}
             highlight={hl === "charLevel"}
           />
@@ -793,10 +793,7 @@ function TransformEq({
         t={t}
       />
       <Op />
-      <MathVar
-        val={Math.round(levelMult).toLocaleString()}
-        label={t.formula("LvMult")}
-      />
+      <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
       <Op />
       <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
@@ -828,10 +825,7 @@ function LunarEq({
         t={t}
       />
       <Op />
-      <MathVar
-        val={Math.round(levelMult).toLocaleString()}
-        label={t.formula("LvMult")}
-      />
+      <MathVar val={fmtDamage(levelMult)} label={t.formula("LvMult")} />
       {bdp ? (
         <>
           <Op />

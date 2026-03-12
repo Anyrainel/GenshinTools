@@ -48,6 +48,7 @@ export interface IGOODCharacter {
   level: number; // 1-90 inclusive
   constellation: number; // 0-6 inclusive
   ascension: number; // 0-6 inclusive, disambiguates 80/90 vs 80/80
+  element?: string; // e.g. "Anemo", "Pyro" — used to disambiguate multi-element characters
   talent?: {
     auto: number;
     skill: number;
@@ -140,6 +141,49 @@ const slotKeyMap: Record<string, Slot> = {
   circlet: "circlet",
 };
 
+// Multi-element characters: bare key -> default element fallback
+const MULTI_ELEMENT_DEFAULTS: Record<string, string> = {
+  Traveler: "Anemo",
+  Manekin: "Pyro",
+  Manekina: "Pyro",
+};
+
+// Build a lookup from character entries to find which elements exist per base name
+// e.g. charElementLookup["traveler"] = Set{"anemo","geo","electro",...}
+const charElementLookup = new Map<string, Set<string>>();
+for (const data of Object.values(i18nGameData.characters)) {
+  // Match names like "Traveler (Pyro)", "Manekin (Electro)", etc.
+  const match = data.en.match(/^(Traveler|Manekin|Manekina)\s*\((\w+)\)$/);
+  if (match) {
+    const baseName = match[1];
+    const element = match[2].toLowerCase();
+    if (!charElementLookup.has(baseName)) {
+      charElementLookup.set(baseName, new Set());
+    }
+    charElementLookup.get(baseName)!.add(element);
+  }
+}
+
+/**
+ * Resolve a bare multi-element character key (e.g. "Traveler", "Manekin")
+ * to a suffixed key using the element field if available.
+ * Falls back to a default element if element is missing or invalid.
+ */
+const resolveMultiElementKey = (key: string, element?: string): string => {
+  const defaultElement = MULTI_ELEMENT_DEFAULTS[key];
+  if (!defaultElement) return key; // Not a multi-element character
+
+  if (element) {
+    // Validate that this element variant exists
+    const validElements = charElementLookup.get(key);
+    if (validElements?.has(element.toLowerCase())) {
+      return `${key} (${element.charAt(0).toUpperCase() + element.slice(1).toLowerCase()})`;
+    }
+  }
+
+  return `${key} (${defaultElement})`;
+};
+
 export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
   const charactersMap = new Map<string, CharacterData>();
   const extraWeapons: WeaponData[] = [];
@@ -151,20 +195,19 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
   const seenArtifactKeys = new Set<string>();
   const warnings: ConversionWarning[] = [];
 
+  // Map from bare character key -> element (from character data)
+  // Used to resolve weapon/artifact locations for multi-element characters
+  const charElementMap = new Map<string, string>();
+
   // 1. Process Characters
   if (Array.isArray(data.characters)) {
     for (const char of data.characters) {
-      let key = char.key;
-      // Fallback for third-party GOOD imports that use bare names
-      // without element suffixes for multi-element characters
-      if (key === "Traveler") {
-        key = "Traveler (Anemo)";
-      } else if (key === "Manekin") {
-        key = "Manekin (Pyro)";
-      } else if (key === "Manekina") {
-        key = "Manekina (Pyro)";
+      // Store element info for location resolution in weapons/artifacts
+      if (char.element && char.key in MULTI_ELEMENT_DEFAULTS) {
+        charElementMap.set(char.key, char.element);
       }
 
+      const key = resolveMultiElementKey(char.key, char.element);
       const normalizedKey = normalize(key);
 
       const internalId = charMap.get(normalizedKey);
@@ -201,10 +244,10 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
         let assigned = false;
         if (wp.location) {
-          let charKey = wp.location;
-          if (charKey === "Traveler") charKey = "Traveler (Anemo)";
-          else if (charKey === "Manekin") charKey = "Manekin (Pyro)";
-          else if (charKey === "Manekina") charKey = "Manekina (Pyro)";
+          const charKey = resolveMultiElementKey(
+            wp.location,
+            charElementMap.get(wp.location)
+          );
           const locationId = charMap.get(normalize(charKey));
 
           if (locationId && charactersMap.has(locationId)) {
@@ -301,10 +344,10 @@ export const convertGOODToAccountData = (data: GOODData): ConversionResult => {
 
           let assigned = false;
           if (art.location) {
-            let charKey = art.location;
-            if (charKey === "Traveler") charKey = "Traveler (Anemo)";
-            else if (charKey === "Manekin") charKey = "Manekin (Pyro)";
-            else if (charKey === "Manekina") charKey = "Manekina (Pyro)";
+            const charKey = resolveMultiElementKey(
+              art.location,
+              charElementMap.get(art.location)
+            );
             const locationId = charMap.get(normalize(charKey));
 
             if (locationId && charactersMap.has(locationId)) {

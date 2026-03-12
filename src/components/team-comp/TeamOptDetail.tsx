@@ -40,7 +40,7 @@ import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
@@ -61,6 +61,31 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const scoreConfig = useArtifactScoreStore((state) => state.config);
   const freezeStore = useFreezeStore();
   const isFrozen = freezeStore.isFrozen(team.id);
+  const frozenCharIds = freezeStore.getFrozenCharIds(team.id);
+  const frozenCharIdSet = useMemo(
+    () => new Set(frozenCharIds),
+    [frozenCharIds]
+  );
+  const teamCharIds = useMemo(
+    () => team.characters.filter((id): id is string => id != null),
+    [team.characters]
+  );
+  const isFullyFrozen =
+    isFrozen &&
+    teamCharIds.length > 0 &&
+    teamCharIds.every((id) => frozenCharIdSet.has(id));
+  const isPartiallyFrozen = isFrozen && !isFullyFrozen;
+
+  // Ephemeral cache of freeze store artifacts — survives unfreeze within this session
+  const cachedFreezeArtifacts = useRef<
+    Record<string, Record<Slot, ArtifactData | null>>
+  >({});
+  // Keep cache in sync with freeze store
+  const frozenTeamData = freezeStore.getFrozenTeam(team.id);
+  if (frozenTeamData?.artifactsByChar) {
+    cachedFreezeArtifacts.current = frozenTeamData.artifactsByChar;
+  }
+
   const { characterStats, weaponStats } = useGameStats();
   const buildGroups = useAllResolvedBuilds();
 
@@ -295,7 +320,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         displayContext,
         team.reactionOverrides
       );
-    } catch {
+    } catch (e) {
+      console.warn("[TeamOptDetail] comboResult failed:", e);
       return null;
     }
   }, [
@@ -403,7 +429,20 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const getInventory = () => {
     if (!accountData) return [];
-    const frozenIds = freezeStore.getFrozenArtifactIds(team.id);
+    // Exclude ALL other teams' frozen artifacts
+    const otherFrozenIds = freezeStore.getFrozenArtifactIds(team.id);
+    // Also exclude THIS team's frozen chars' artifact IDs (they're locked in place)
+    const thisTeamFrozen = freezeStore.getFrozenTeam(team.id);
+    const allExcluded = new Set(otherFrozenIds);
+    if (thisTeamFrozen) {
+      for (const cid of thisTeamFrozen.frozenCharIds) {
+        const arts = thisTeamFrozen.artifactsByChar[cid];
+        if (!arts) continue;
+        for (const art of Object.values(arts)) {
+          if (art) allExcluded.add((art as ArtifactData).id);
+        }
+      }
+    }
     return [
       ...accountData.extraArtifacts,
       ...accountData.characters.flatMap((c: CharacterData) =>
@@ -411,7 +450,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           Object.values(c.artifacts || {}) as (ArtifactData | undefined)[]
         ).filter((a): a is ArtifactData => !!a)
       ),
-    ].filter((a) => !frozenIds.has(a.id));
+    ].filter((a) => !allExcluded.has(a.id));
   };
 
   const handleOptimize = () => {
@@ -444,6 +483,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     for (let ci = 0; ci < effectiveTeam.characters.length; ci++) {
       const cid = effectiveTeam.characters[ci];
       if (!cid) continue;
+      // Skip frozen characters — their artifacts are locked
+      if (frozenCharIdSet.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
       const hasFavonius = team.weapons[ci]?.startsWith("favonius_") ?? false;
@@ -475,8 +516,29 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         team.opts || {},
         team.enemyElementAura
       );
-    } catch {
+    } catch (e) {
+      console.warn(
+        "[TeamOptDetail] TeamBuild construction failed, using original:",
+        e
+      );
       optTeamBuild = teamBuild;
+    }
+
+    // Use frozen chars' artifact sheets as base so their buffs are accounted for
+    const optBaseSheets = { ...artifactSheets };
+    if (isFrozen) {
+      const frozenData = freezeStore.getFrozenTeam(team.id);
+      if (frozenData) {
+        for (const cid of frozenData.frozenCharIds) {
+          const arts = frozenData.artifactsByChar[cid];
+          if (arts) {
+            const pieces = Object.values(arts).filter(
+              (a): a is ArtifactData => a != null
+            );
+            optBaseSheets[cid] = StatSheet.fromArtifacts(pieces);
+          }
+        }
+      }
     }
 
     startTeamOpt({
@@ -486,7 +548,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       inventory: getInventory(),
       calcContext: activeContext,
       globalConfig: scoreConfig.global,
-      baseSheets: artifactSheets,
+      baseSheets: optBaseSheets,
       perChar,
       reactionOverride: currentReactionOverride,
       altCount: isMobile ? 5 : 7,
@@ -519,18 +581,43 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const hasSwapOverrides = Object.keys(swapOverrides).length > 0;
 
   const optimizedArtifactsByChar = useMemo(() => {
-    // Prefer freeze store when frozen
-    const frozenData = isFrozen
-      ? freezeStore.getFrozenTeam(team.id)?.artifactsByChar
-      : null;
-    const source =
-      frozenData ?? (teamResult?.done ? teamResult.bestArtifactsByChar : null);
-    if (!source) return equippedArtifactsByChar;
-    const map = { ...equippedArtifactsByChar };
-    for (const [charId, arts] of Object.entries(source)) {
-      map[charId] = { ...(arts as Record<string, ArtifactData>) };
+    const map: Record<string, Record<string, ArtifactData>> = {};
+    const frozenData = freezeStore.getFrozenTeam(team.id);
+    const artifactSource =
+      frozenData?.artifactsByChar ?? cachedFreezeArtifacts.current;
+    const hasFrozenChars = frozenData
+      ? frozenData.frozenCharIds.length > 0
+      : false;
+
+    // Layer 0: Base — use equipped artifacts, but leave non-frozen chars empty
+    // when the team is partially frozen (their gear may belong to frozen chars)
+    for (const [cid, arts] of Object.entries(equippedArtifactsByChar)) {
+      if (hasFrozenChars && !frozenData?.frozenCharIds.includes(cid)) {
+        map[cid] = {} as Record<string, ArtifactData>;
+      } else {
+        map[cid] = { ...arts };
+      }
     }
-    // Apply ephemeral swap overrides on top
+
+    // Layer 1: Apply stored artifacts from freeze store (or ephemeral cache after unfreeze)
+    for (const [cid, arts] of Object.entries(artifactSource)) {
+      if (arts) {
+        map[cid] = { ...(arts as Record<string, ArtifactData>) };
+      }
+    }
+
+    // Layer 2: Apply optimizer results for unfrozen chars
+    if (teamResult?.done) {
+      for (const [charId, arts] of Object.entries(
+        teamResult.bestArtifactsByChar
+      )) {
+        // Don't overwrite frozen chars with optimizer results
+        if (frozenData?.frozenCharIds.includes(charId)) continue;
+        map[charId] = { ...(arts as Record<string, ArtifactData>) };
+      }
+    }
+
+    // Layer 3: Apply ephemeral swap overrides on top
     for (const [charId, overrides] of Object.entries(swapOverrides)) {
       if (!map[charId]) continue;
       for (const [slot, art] of Object.entries(overrides)) {
@@ -541,7 +628,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   }, [
     teamResult,
     equippedArtifactsByChar,
-    isFrozen,
     freezeStore,
     team.id,
     swapOverrides,
@@ -559,7 +645,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const hasFrozenResult =
     isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
-  const hasOptResult = teamResult?.done || hasFrozenResult;
+  const hasCachedArtifacts =
+    Object.keys(cachedFreezeArtifacts.current).length > 0;
+  const hasOptResult =
+    teamResult?.done || hasFrozenResult || hasCachedArtifacts;
+  const hasAnyResult = hasOptResult;
 
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
@@ -629,7 +719,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         displayContext,
         team.reactionOverrides
       );
-    } catch {
+    } catch (e) {
+      console.warn("[TeamOptDetail] optimizedComboDisplayResult failed:", e);
       return null;
     }
   }, [
@@ -811,7 +902,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         displayContext,
         team.reactionOverrides
       );
-    } catch {
+    } catch (e) {
+      console.warn("[TeamOptDetail] idealComboDisplayResult failed:", e);
       return null;
     }
   }, [
@@ -891,9 +983,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     setSwapOverrides({});
   }, []);
 
-  // Only allow swapping when there's a non-frozen result to edit
+  // Only allow swapping when there's a non-fully-frozen result to edit
   const canSwap =
-    !isFrozen && teamResult?.done === true && teamResult.bestDamage > 0;
+    !isFullyFrozen &&
+    ((teamResult?.done === true && teamResult.bestDamage > 0) ||
+      freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null ||
+      Object.keys(cachedFreezeArtifacts.current).length > 0);
 
   return (
     <div
@@ -928,10 +1023,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         weaponStats={weaponStats}
         isMobile={isMobile}
         t={t}
-        isFrozen={isFrozen}
-        onUnfreeze={
-          isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
-        }
+        frozenCharIds={frozenCharIdSet}
         ignoreArtifactSets={ignoreArtifactSets}
         onIgnoreArtifactSetsChange={setIgnoreArtifactSets}
       />
@@ -961,30 +1053,51 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         effectiveTeam={effectiveTeam}
         updateTeam={updateTeam}
         resolvedFormula={resolvedFormula}
+        hasOptResult={hasOptResult}
         isFrozen={isFrozen}
-        onFreeze={() => {
-          if (!teamResult?.done) return;
-          // Freeze the current view (includes any swap overrides)
-          const allIds: string[] = [];
+        isFullyFrozen={isFullyFrozen}
+        isPartiallyFrozen={isPartiallyFrozen}
+        frozenCharIds={frozenCharIdSet}
+        onFreezeAll={() => {
+          if (!teamResult?.done && !isFrozen) return;
+          // Freeze all chars with current view artifacts (skip chars with nothing equipped)
           const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
+          const freezableCharIds: string[] = [];
           for (const [charId, arts] of Object.entries(
             optimizedArtifactsByChar
           )) {
+            if (!Object.values(arts).some(Boolean)) continue;
             const charArts: Record<string, ArtifactData | null> = {};
             for (const [slot, art] of Object.entries(arts)) {
               if (art) {
-                allIds.push((art as ArtifactData).id);
                 charArts[slot] = art as ArtifactData;
               }
             }
             byChar[charId] = charArts as Record<Slot, ArtifactData | null>;
+            freezableCharIds.push(charId);
           }
-          freezeStore.freezeTeam(team.id, allIds, byChar);
+          if (freezableCharIds.length === 0) return;
+          freezeStore.freezeCharacters(team.id, freezableCharIds, byChar);
           setSwapOverrides({});
         }}
-        onUnfreeze={
+        onUnfreezeAll={
           isFrozen ? () => freezeStore.unfreezeTeam(team.id) : undefined
         }
+        onFreezeChar={(charId: string) => {
+          // Freeze a single character using current view artifacts
+          const arts = optimizedArtifactsByChar[charId];
+          if (!arts || !Object.values(arts).some(Boolean)) return;
+          const charArts: Record<string, ArtifactData | null> = {};
+          for (const [slot, art] of Object.entries(arts)) {
+            if (art) charArts[slot] = art as ArtifactData;
+          }
+          freezeStore.freezeCharacters(team.id, [charId], {
+            [charId]: charArts as Record<Slot, ArtifactData | null>,
+          });
+        }}
+        onUnfreezeChar={(charId: string) => {
+          freezeStore.unfreezeCharacters(team.id, [charId]);
+        }}
         isMobile={isMobile}
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}

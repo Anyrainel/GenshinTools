@@ -1,4 +1,5 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   Drawer,
   DrawerContent,
@@ -19,6 +20,7 @@ import {
 } from "@/data/constants";
 import type { ArtifactData, Rarity, Slot, SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { getMainStatValueAtLevel } from "@/lib/account-data/artifactScore";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
@@ -64,12 +66,7 @@ export function ArtifactDataContent({
   const renderStatLine = (statKey: SubStat, value: number | undefined) => {
     if (value == null) return null;
 
-    const isPercent =
-      statKey.endsWith("%") ||
-      statKey === "cr" ||
-      statKey === "cd" ||
-      statKey === "er";
-    const displayValue = isPercent ? `${value.toFixed(1)}%` : Math.round(value);
+    const displayValue = fmtStat(statKey, value, false, true);
     const rollCount = getRollCount(statKey, value, artifact.rarity);
 
     return (
@@ -152,31 +149,77 @@ export function ArtifactDataContent({
       <div className={cn("space-y-1", compact ? "p-2" : "p-3")}>
         {/* Main Stat */}
         <div className="flex items-center justify-between mb-2">
-          <div
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <span
+              className={cn(
+                "font-bold truncate text-amber-100",
+                compact ? "text-sm" : "text-base"
+              )}
+            >
+              {compact
+                ? t.statMin(artifact.mainStatKey)
+                : t.statShort(artifact.mainStatKey)}
+            </span>
+            <span
+              className={cn(
+                "rounded bg-black/40 font-mono shrink-0",
+                compact ? "text-[10px]" : "text-xs px-1",
+                getRarityColor(artifact.rarity, "text")
+              )}
+            >
+              +{artifact.level}
+            </span>
+          </div>
+          <span
             className={cn(
-              "font-bold truncate flex-1 text-amber-100",
+              "font-bold font-mono text-amber-100 shrink-0",
               compact ? "text-sm" : "text-base"
             )}
           >
-            {compact
-              ? t.statMin(artifact.mainStatKey)
-              : t.statShort(artifact.mainStatKey)}
-          </div>
-          <div
-            className={cn(
-              "rounded bg-black/40 font-mono",
-              compact ? "text-[10px]" : "text-xs px-1",
-              getRarityColor(artifact.rarity, "text")
+            {fmtStat(
+              artifact.mainStatKey,
+              getMainStatValueAtLevel(
+                artifact.mainStatKey,
+                artifact.rarity,
+                artifact.level
+              ),
+              false,
+              true
             )}
-          >
-            +{artifact.level}
-          </div>
+          </span>
         </div>
 
         {/* Substats with roll counts */}
         <div className="space-y-0.5">
           {Object.entries(artifact.substats ?? {}).map(([key, val]) =>
             renderStatLine(key as SubStat, val)
+          )}
+          {/* Unactivated substats (no roll count, muted) */}
+          {Object.entries(artifact.unactivatedSubstats ?? {}).map(
+            ([key, val]) =>
+              val != null && (
+                <div
+                  key={key}
+                  className={cn(
+                    "flex justify-between items-center gap-2 text-muted-foreground",
+                    compact ? "text-xs" : "text-sm"
+                  )}
+                >
+                  <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
+                    {compact
+                      ? t.statMin(key as SubStat)
+                      : t.statShort(key as SubStat)}
+                  </span>
+                  <span
+                    className={cn(
+                      "flex-shrink-0 font-mono",
+                      compact && "text-xs"
+                    )}
+                  >
+                    {fmtStat(key as SubStat, val, false, true)}
+                  </span>
+                </div>
+              )
           )}
         </div>
       </div>

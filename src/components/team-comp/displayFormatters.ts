@@ -1,13 +1,32 @@
-export function fmtStat(key: string, value: number, forceSign = false): string {
-  if (value === 0) return "0";
-  const isPercent =
+/** Whether a stat key represents a percentage value. */
+export function isPctStat(key: string): boolean {
+  return (
     key.endsWith("%") ||
-    ["cr", "cd", "er", "reactionCr", "reactionCd"].includes(key);
+    key === "cr" ||
+    key === "cd" ||
+    key === "er" ||
+    key === "reactionCr" ||
+    key === "reactionCd"
+  );
+}
 
+/**
+ * Format a stat value for display.
+ * @param pct — true when value is already in human-readable percent (e.g. 5.2 for 5.2%).
+ *              false (default) when value is in decimal form (e.g. 0.052 for 5.2%).
+ */
+export function fmtStat(
+  key: string,
+  value: number,
+  forceSign = false,
+  pct = false
+): string {
+  if (value === 0) return "0";
   const sign = forceSign && value > 0 ? "+" : "";
 
-  if (isPercent) {
-    return `${sign}${(value * 100).toFixed(1)}%`;
+  if (isPctStat(key)) {
+    const display = pct ? value.toFixed(1) : (value * 100).toFixed(1);
+    return `${sign}${display}%`;
   }
   return `${sign}${value.toLocaleString(undefined, { maximumFractionDigits: 1 })}`;
 }

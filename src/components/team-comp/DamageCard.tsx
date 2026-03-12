@@ -99,8 +99,10 @@ function DamageBody({
   isMobile,
   t,
   failReasons,
-  isFrozen,
+  frozenCharIds,
   onArtifactSwap,
+  onFreezeChar,
+  onUnfreezeChar,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -115,12 +117,14 @@ function DamageBody({
     string,
     import("@/lib/team-comp/optimizer").OptFailReason
   >;
-  isFrozen?: boolean;
+  frozenCharIds?: Set<string>;
   onArtifactSwap?: (
     charId: string,
     slot: import("@/data/types").Slot,
     artifact: ArtifactData
   ) => void;
+  onFreezeChar?: (charId: string) => void;
+  onUnfreezeChar?: (charId: string) => void;
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey | "charLevel";
@@ -149,8 +153,10 @@ function DamageBody({
           onStatHover={setHighlightedStat}
           t={t}
           failReasons={failReasons}
-          isFrozen={isFrozen}
+          frozenCharIds={frozenCharIds}
           onArtifactSwap={onArtifactSwap}
+          onFreezeChar={onFreezeChar}
+          onUnfreezeChar={onUnfreezeChar}
         />
       )}
 
@@ -187,7 +193,7 @@ function DamageBody({
                         isMobile ? "text-2xl" : "text-3xl md:text-4xl"
                       )}
                     >
-                      {Math.round(damageValue).toLocaleString()}
+                      {fmtDamage(damageValue)}
                     </div>
                     <span
                       className={cn(
@@ -364,7 +370,7 @@ function ComboBreakdown({
                     isMobile ? "text-2xl" : "text-3xl md:text-4xl"
                   )}
                 >
-                  {Math.round(damageValue).toLocaleString()}
+                  {fmtDamage(damageValue)}
                 </div>
                 <span
                   className={cn(
@@ -533,9 +539,15 @@ interface DamageCardProps {
   optimizedComboResult?: ComboResult | null;
   idealComboResult?: ComboResult | null;
   // Freeze
+  hasOptResult?: boolean;
   isFrozen?: boolean;
-  onFreeze?: () => void;
-  onUnfreeze?: () => void;
+  isFullyFrozen?: boolean;
+  isPartiallyFrozen?: boolean;
+  frozenCharIds?: Set<string>;
+  onFreezeAll?: () => void;
+  onUnfreezeAll?: () => void;
+  onFreezeChar?: (charId: string) => void;
+  onUnfreezeChar?: (charId: string) => void;
   // Artifact swap (ephemeral editing of optimizer results)
   onArtifactSwap?: (
     charId: string,
@@ -818,9 +830,15 @@ export function DamageCard({
   formulaMode = "single",
   optimizedComboResult,
   idealComboResult,
+  hasOptResult,
   isFrozen,
-  onFreeze,
-  onUnfreeze,
+  isFullyFrozen,
+  isPartiallyFrozen,
+  frozenCharIds,
+  onFreezeAll,
+  onUnfreezeAll,
+  onFreezeChar,
+  onUnfreezeChar,
   onArtifactSwap,
   hasSwapOverrides,
   onRestoreOriginal,
@@ -840,8 +858,10 @@ export function DamageCard({
     <Card
       className={cn(
         CARD_CLS,
-        isFrozen &&
-          "ring-1 ring-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.08)]"
+        isFullyFrozen &&
+          "ring-1 ring-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.08)]",
+        isPartiallyFrozen &&
+          "ring-1 ring-cyan-400/15 shadow-[0_0_10px_rgba(34,211,238,0.04)]"
       )}
     >
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
@@ -1013,16 +1033,24 @@ export function DamageCard({
               <EnemyResInput {...ctxProps} />
               <CritRateTargetInput {...ctxProps} />
               <span
-                title={isFrozen ? t.ui("teamComp.frozenTooltip") : undefined}
+                title={
+                  isFullyFrozen
+                    ? t.ui("teamComp.frozenTooltip")
+                    : isPartiallyFrozen
+                      ? t.ui("teamComp.partiallyFrozenTooltip")
+                      : undefined
+                }
               >
                 <ActionButton
                   onClick={handleOptimize}
-                  disabled={isFrozen || isComputing || !hasActiveFormula}
+                  disabled={isFullyFrozen || isComputing || !hasActiveFormula}
                   computing={isComputing}
                   labelIdle={
-                    isFrozen
+                    isFullyFrozen
                       ? t.ui("teamComp.frozenBadge")
-                      : t.ui("teamComp.runOptimization")
+                      : isPartiallyFrozen
+                        ? t.ui("teamComp.optimizeRest")
+                        : t.ui("teamComp.runOptimization")
                   }
                   labelBusy={t.ui("teamComp.optimizing")}
                 />
@@ -1038,14 +1066,14 @@ export function DamageCard({
                   {t.ui("teamComp.swapRestoreOriginal")}
                 </Button>
               )}
-              {onFreeze && !isFrozen && (
+              {onFreezeAll && !isFullyFrozen && (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={onFreeze}
+                  onClick={onFreezeAll}
                   disabled={
-                    !teamResult?.done ||
-                    teamResult.bestDamage <= 0 ||
+                    (!teamResult?.done && !isPartiallyFrozen) ||
+                    (teamResult?.done && teamResult.bestDamage <= 0) ||
                     !hasActiveFormula
                   }
                   className="gap-1.5 font-bold px-4 text-xs shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
@@ -1054,11 +1082,11 @@ export function DamageCard({
                   {t.ui("teamComp.freezeTeam")}
                 </Button>
               )}
-              {isFrozen && onUnfreeze && (
+              {isFrozen && onUnfreezeAll && (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={onUnfreeze}
+                  onClick={onUnfreezeAll}
                   className="gap-1.5 font-bold px-4 text-xs shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
                 >
                   <Flame className="w-3.5 h-3.5" />
@@ -1174,8 +1202,10 @@ export function DamageCard({
                     failReasons={
                       teamResult?.done ? teamResult.failReasons : undefined
                     }
-                    isFrozen={isFrozen}
+                    frozenCharIds={frozenCharIds}
                     onArtifactSwap={onArtifactSwap}
+                    onFreezeChar={onFreezeChar}
+                    onUnfreezeChar={onUnfreezeChar}
                   />
                 )}
                 <ComboBreakdown
@@ -1197,7 +1227,7 @@ export function DamageCard({
                 )}
               </div>
             ) : teamResult?.mode === "single" ||
-              (isFrozen && optimizedDisplayResult) ? (
+              (hasOptResult && optimizedDisplayResult) ? (
               <DamageBody
                 team={effectiveTeam}
                 hasFormula
@@ -1211,8 +1241,10 @@ export function DamageCard({
                 failReasons={
                   teamResult?.done ? teamResult.failReasons : undefined
                 }
-                isFrozen={isFrozen}
+                frozenCharIds={frozenCharIds}
                 onArtifactSwap={onArtifactSwap}
+                onFreezeChar={onFreezeChar}
+                onUnfreezeChar={onUnfreezeChar}
               />
             ) : null}
 

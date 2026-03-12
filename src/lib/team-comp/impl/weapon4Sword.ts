@@ -226,7 +226,7 @@ class XiphosMoonlight extends WeaponBase {
     ),
     new ScalingBuff(
       wbs(this),
-      { receiver: "team" },
+      { receiver: "otherOnField" },
       [],
       "em",
       "er",

@@ -30,9 +30,10 @@ const pending = new Map<Language, Promise<Record<string, CharacterKit>>>();
 
 // Split by rarity: character_4_*.json and character_5_*.json (loaded in parallel per language)
 const CHAR_RARITIES = ["4", "5"] as const;
-const modules = import.meta.glob<RawBundle>("../data/game/character_*_*.json", {
-  eager: false,
-});
+const modules = import.meta.glob<{ default: RawBundle }>(
+  "../data/game/character_*_*.json",
+  { eager: false }
+);
 
 /** Detail row: [label, Lv6, Lv7, …, Lv15] — 1 label + 10 values. */
 function transformDetails(raw: string[][]): CharacterSkillDetail[] {
@@ -109,10 +110,7 @@ export function loadCharacterKits(
     (mods) => {
       const raw: RawBundle = {};
       for (const mod of mods) {
-        const bundle =
-          (mod as unknown as { default: RawBundle }).default ??
-          (mod as unknown as RawBundle);
-        Object.assign(raw, bundle);
+        Object.assign(raw, mod.default);
       }
       const transformed = transformBundle(raw);
       cache.set(lang, transformed);

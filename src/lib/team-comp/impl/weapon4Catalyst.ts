@@ -232,7 +232,7 @@ class WanderingEvenstar extends WeaponBase {
     // Game text: stacks from multiple copies
     new ScalingBuff(
       wbs(this),
-      { receiver: "team" },
+      { receiver: "otherOnField" },
       [],
       "em",
       "atk",

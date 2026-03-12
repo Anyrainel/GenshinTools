@@ -92,6 +92,8 @@ interface ItemPickerProps<T extends ItemPickerType> {
   defaultOpen?: boolean;
   /** Called when the picker's open state changes (e.g. on close) */
   onOpenChange?: (open: boolean) => void;
+  /** Show icy/snowy background instead of rarity background */
+  frozen?: boolean;
 }
 
 const CHARACTER_RARITY_FILTERS = [5, 4] as const;
@@ -112,6 +114,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
   showElementBadge = false,
   defaultOpen = false,
   onOpenChange: onOpenChangeProp,
+  frozen = false,
 }: ItemPickerProps<T>) {
   const { characterStats, weaponStats } = useGameStats();
   const tierAssignments = useTierStore((s) => s.tierAssignments);
@@ -166,6 +169,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
         disabled={disabled}
         showElementBadge={showElementBadge}
         characterStats={characterStats}
+        frozen={frozen}
       />
       {showItemName && value && <PickerItemName type={type} value={value} />}
     </div>
@@ -322,6 +326,7 @@ function PickerTrigger({
   disabled,
   showElementBadge,
   characterStats,
+  frozen,
 }: {
   type: ItemPickerType;
   value: ValueType<ItemPickerType> | null;
@@ -329,6 +334,7 @@ function PickerTrigger({
   disabled?: boolean;
   showElementBadge?: boolean;
   characterStats: ReturnType<typeof useGameStats>["characterStats"];
+  frozen?: boolean;
 }) {
   const baseClasses = cn(
     SIZE_CLASSES[size],
@@ -355,6 +361,7 @@ function PickerTrigger({
           imagePath={art?.imagePaths.flower}
           rarity={art?.rarity ?? 5}
           size={size}
+          frozen={frozen}
         />
       );
     }
@@ -376,6 +383,7 @@ function PickerTrigger({
         size={size}
         alt1={art1?.id}
         alt2={art2?.id}
+        frozen={frozen}
       />
     );
   }
@@ -407,6 +415,7 @@ function PickerTrigger({
       characterId={
         type === "character" ? (item as CharacterResource).id : undefined
       }
+      frozen={frozen}
     />
   );
 }
@@ -745,7 +754,7 @@ function PickerContent({
               }
             }}
             className={cn(
-              "relative cursor-pointer hover:scale-105 transition-all rounded-md group",
+              "relative cursor-pointer hover:scale-105 transition-all rounded-md group w-fit",
               isSelected && "ring-2 ring-primary"
             )}
           >
