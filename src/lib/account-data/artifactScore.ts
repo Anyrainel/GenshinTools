@@ -492,7 +492,7 @@ export function getTargetMainStatsForSlot(
   slot: Slot,
   build: Build,
   equippedForSlot?: ArtifactData | null
-): Set<string> {
+): Set<MainStat> {
   if (slot === "flower") return new Set(["hp"]);
   if (slot === "plume") return new Set(["atk"]);
   const weights = buildToWeightMap(build);
@@ -505,9 +505,9 @@ export function getTargetMainStatsForSlot(
     (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
   )
     return new Set([equippedForSlot.mainStatKey]);
-  const fallback = new Set<string>();
+  const fallback = new Set<MainStat>();
   for (const [stat, w] of Object.entries(weights)) {
-    if (w > 40 && !stat.includes("flat")) fallback.add(stat);
+    if (w > 40 && !stat.includes("flat")) fallback.add(stat as MainStat);
   }
   return fallback.size > 0 ? fallback : new Set();
 }
@@ -531,6 +531,40 @@ export function scoreSlot(
       ).score;
     }
   }
+  return score;
+}
+
+/**
+ * Score a slot including both substats and main stat contribution.
+ * Used by the optimizer to correctly compare artifacts with different main stats.
+ * Main stat score uses the build's actual weights, so a wrong main stat (weight=0)
+ * contributes nothing while a correct one adds significant value.
+ */
+export function scoreSlotWithMainStat(
+  artifact: ArtifactData,
+  weights: StatWeightMap,
+  globalConfig: GlobalStatWeights,
+  targetMainStats: Set<string>
+): number {
+  let score = scoreSlot(artifact, weights, globalConfig);
+
+  // Add main stat contribution for sands/goblet/circlet
+  // Flower (hp) and plume (atk) are fixed so main stat doesn't differentiate candidates
+  const mainStat = artifact.mainStatKey;
+  if (mainStat === "hp" || mainStat === "atk") return score;
+
+  if (!targetMainStats.has(mainStat)) {
+    // Wrong main stat — no main stat contribution
+    return score;
+  }
+
+  // Score the main stat value using the same system
+  score += scoreMainStat(
+    mainStat,
+    artifact.rarity,
+    globalConfig,
+    artifact.level
+  );
   return score;
 }
 

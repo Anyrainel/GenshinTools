@@ -29,6 +29,7 @@ import {
   Flame,
   HelpCircle,
   Plus,
+  Swords,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -393,6 +394,34 @@ export default function TeamCompPage() {
         }
       >
         <div className="py-6">
+          {/* Empty state welcome — shown when all teams are unconfigured */}
+          {teams.length <= 1 && teams.every(isTeamEmpty) && (
+            <div className="flex flex-col items-center text-center px-4 pt-8 pb-4 max-w-md mx-auto">
+              <div className="relative mb-5">
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+                <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
+                  <Swords className="w-10 h-10 text-primary opacity-80" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {t.ui("teamComp.emptyTeamTitle")}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {t.ui("teamComp.emptyTeamDesc")}
+              </p>
+              <p className="text-xs text-muted-foreground mb-3">
+                {t.ui("teamComp.emptyTeamOrImport")}
+              </p>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => importRef.current?.open()}
+              >
+                <Download className="w-4 h-4" />
+                {t.ui("import.action")}
+              </Button>
+            </div>
+          )}
           <div
             className={cn("grid gap-4 justify-center items-start")}
             style={{

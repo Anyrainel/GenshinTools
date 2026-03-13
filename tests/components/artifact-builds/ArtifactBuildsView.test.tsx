@@ -16,7 +16,7 @@ describe("ArtifactBuildsView", () => {
 
     // Wait for async computation to settle
     await waitFor(() => {
-      expect(screen.getByText("⚙️")).toBeInTheDocument();
+      expect(screen.getByText("No Artifact Set Found")).toBeInTheDocument();
     });
   });
 
@@ -37,7 +37,9 @@ describe("ArtifactBuildsView", () => {
     // When a build is set up with an artifact set, it should compute filters
     // and show the artifact card (not the empty state)
     await waitFor(() => {
-      expect(screen.queryByText("⚙️")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("No Artifact Set Found")
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -59,7 +61,7 @@ describe("ArtifactBuildsView", () => {
     // Hidden character's build should not generate artifact filters
     // So we should see empty state after computation settles
     await waitFor(() => {
-      expect(screen.getByText("⚙️")).toBeInTheDocument();
+      expect(screen.getByText("No Artifact Set Found")).toBeInTheDocument();
     });
   });
 
@@ -77,7 +79,7 @@ describe("ArtifactBuildsView", () => {
 
     // Non-visible build should not generate artifact filters
     await waitFor(() => {
-      expect(screen.getByText("⚙️")).toBeInTheDocument();
+      expect(screen.getByText("No Artifact Set Found")).toBeInTheDocument();
     });
   });
 });

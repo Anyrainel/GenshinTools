@@ -703,7 +703,7 @@ export function TeamRosterCard({
                       <SelectContent>
                         {[0, 1, 2, 3, 4, 5, 6].map((c) => (
                           <SelectItem key={c} value={String(c)}>
-                            {t.format("teamComp.constellationFormat", c)}
+                            {t.format("common.constellationFormat", c)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -738,7 +738,7 @@ export function TeamRosterCard({
                         <SelectContent>
                           {[1, 2, 3, 4, 5].map((r) => (
                             <SelectItem key={r} value={String(r)}>
-                              {t.format("teamComp.refinementFormat", r)}
+                              {t.format("common.refinementFormat", r)}
                             </SelectItem>
                           ))}
                         </SelectContent>

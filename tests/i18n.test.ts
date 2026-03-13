@@ -90,35 +90,23 @@ describe("i18n App Data Integrity", () => {
     expect(missingKeys).toEqual([]);
   });
 
-  // Warn about unused keys
-  it("should warn about keys in i18nUiData not used in the codebase", () => {
-    // With implicit dynamic keys removed, we shouldn't need a whitelist anymore.
-    // However, if there are genuinely unused keys (or keys used in ways regex doesn't catch),
-    // they will show up here.
-
-    // Explicit exclusions if necessary (e.g. iterate loops, although we refactored those)
+  it("all i18nUiData keys should be used in the codebase", () => {
+    // Explicit exclusions for keys referenced dynamically (not caught by regex/string search)
     const allowedIgnoredKeys = new Set<string>();
 
     const unusedKeys: string[] = [];
     validUiKeys.forEach((key) => {
       if (allowedIgnoredKeys.has(key)) return;
 
-      // Loose check: is the key string present anywhere?
-      // Since we refactored to explicit strings, regex catch + simple string search should overlap well.
-      // But simple string search is a good fallback for non-t.ui usages if any exist (rare).
+      // Loose check: is the key string present anywhere in src/?
       if (!allFileContents.includes(key)) {
         unusedKeys.push(key);
       }
     });
 
     if (unusedKeys.length > 0) {
-      console.warn(
-        `Found ${unusedKeys.length} potential unused i18n keys:\n`,
-        JSON.stringify(unusedKeys, null, 2)
-      );
+      console.error("Unused i18n keys:\n", JSON.stringify(unusedKeys, null, 2));
     }
-
-    // Validating that we at least have some keys used
-    expect(validUiKeys.size).toBeGreaterThan(0);
+    expect(unusedKeys).toEqual([]);
   });
 });

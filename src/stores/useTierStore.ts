@@ -1,14 +1,17 @@
 import type {
+  InvestmentThresholds,
   LuckExpectation,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
+import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface TierListState {
   tierAssignments: TierAssignment;
   tierCustomization: TierCustomization;
+  investmentThresholds: InvestmentThresholds;
   customTitle: string;
   showWeapons: boolean;
   showTravelers: boolean;
@@ -22,6 +25,10 @@ interface TierListState {
   ) => void;
   setTierCustomization: (customization: TierCustomization) => void;
   setTierLuckExpectation: (tier: string, luck: LuckExpectation) => void;
+  setInvestmentThreshold: (
+    key: keyof InvestmentThresholds,
+    value: number
+  ) => void;
   setCustomTitle: (title: string) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
@@ -43,6 +50,7 @@ export const useTierStore = create<TierListState>()(
       // Initial state
       tierAssignments: {},
       tierCustomization: {},
+      investmentThresholds: { ...DEFAULT_INVESTMENT_THRESHOLDS },
       customTitle: "",
       showWeapons: true, // Default to true
       showTravelers: false, // Default to false
@@ -72,6 +80,14 @@ export const useTierStore = create<TierListState>()(
               hidden: state.tierCustomization[tier]?.hidden || false,
               luckExpectation: luck,
             },
+          },
+        })),
+
+      setInvestmentThreshold: (key, value) =>
+        set((state) => ({
+          investmentThresholds: {
+            ...state.investmentThresholds,
+            [key]: value,
           },
         })),
 
@@ -110,6 +126,7 @@ export const useTierStore = create<TierListState>()(
         // Only persist these fields
         tierAssignments: state.tierAssignments,
         tierCustomization: state.tierCustomization,
+        investmentThresholds: state.investmentThresholds,
         customTitle: state.customTitle,
         showWeapons: state.showWeapons,
         showTravelers: state.showTravelers,

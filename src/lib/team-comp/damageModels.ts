@@ -2,21 +2,17 @@ import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { charactersById } from "@/data/constants";
 import type {
   ArtifactData,
-  BaseStat,
   Element,
   Faction,
-  MainStat,
   Rarity,
   Region,
   WeaponType,
 } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/artifactScore";
 import {
-  getCharacterLevelStats,
-  getCharacterLevelTier,
   getCharacterStatsSync,
-  getWeaponStatsAt90,
-  getWeaponStatsSync,
+  resolveCharacterStats,
+  resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
 
 import {
@@ -624,78 +620,8 @@ export type CombatOpts = Record<string, string>;
 // Stat Auto-Resolution Helpers
 // ═══════════════════════════════════════════════════════════════
 
-/** Parse a charStats string value: strip '%' and divide by 100 for percentages */
-function parseStatValue(raw: string): number {
-  if (raw.endsWith("%")) {
-    return Number.parseFloat(raw.slice(0, -1)) / 100;
-  }
-  return Number.parseFloat(raw);
-}
-
-/**
- * Build StatEntry[] from character_stats.json for a given character.
- * Level is mapped to tier (70/80/90/95/100). Includes stat baselines (5% CR, 50% CD, 100% ER).
- * Requires game stats to be preloaded (e.g. via preloadGameStats() or useGameStats).
- */
-function resolveCharacterStats(charId: string, charLevel: number): StatEntry[] {
-  const statsData = getCharacterStatsSync();
-  if (!statsData)
-    throw new Error(
-      "Character stats not loaded; call preloadGameStats() or use useGameStats() first."
-    );
-  const tier = getCharacterLevelTier(charLevel);
-  const levelStats = getCharacterLevelStats(statsData, charId, tier);
-  if (!levelStats)
-    throw new Error(`No character stats for: ${charId} at tier ${tier}`);
-
-  const entries: StatEntry[] = [];
-  for (const [key, raw] of Object.entries(levelStats)) {
-    if (raw === undefined) continue;
-    const value = parseStatValue(raw);
-    if (value !== 0) {
-      entries.push({ key: key as BaseStat, value });
-    }
-  }
-  entries.push({ key: "cr", value: 0.05 });
-  entries.push({ key: "cd", value: 0.5 });
-  entries.push({ key: "er", value: 1.0 });
-
-  return entries;
-}
-
-/** Parse weapon secondary stat value string */
-function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
-  if (rawValue.endsWith("%")) {
-    return Number.parseFloat(rawValue.slice(0, -1)) / 100;
-  }
-  // Flat stats like EM — the stat type tells us it's flat (no %)
-  return Number.parseFloat(rawValue);
-}
-
-/** Build StatEntry[] from weapon_stats.json for a given weapon (L90). Requires game stats preloaded. */
-function resolveWeaponStats(weaponId: string): StatEntry[] {
-  const statsData = getWeaponStatsSync();
-  if (!statsData)
-    throw new Error(
-      "Weapon stats not loaded; call preloadGameStats() or use useGameStats() first."
-    );
-  const entry = statsData[weaponId];
-  if (!entry) throw new Error(`No weapon stats for: ${weaponId}`);
-  const level90 = getWeaponStatsAt90(statsData, weaponId);
-  if (!level90) throw new Error(`No L90 weapon stats for: ${weaponId}`);
-
-  const entries: StatEntry[] = [{ key: "baseAtk", value: level90.baseAtk }];
-  if (entry.secondaryStat && level90.secondaryStatValue) {
-    entries.push({
-      key: entry.secondaryStat,
-      value: parseWeaponSecondary(
-        entry.secondaryStat,
-        level90.secondaryStatValue
-      ),
-    });
-  }
-  return entries;
-}
+// parseStatValue, parseWeaponSecondary, resolveCharacterStats, resolveWeaponStats
+// are imported from @/lib/gameStatsLoader
 
 // ═══════════════════════════════════════════════════════════════
 // Extension Base Classes + Decorator Registries

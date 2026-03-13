@@ -312,6 +312,8 @@ export default function ArtifactBuildsPage() {
               setTargetCharacterId(characterId);
               setActiveTab("configure");
             }}
+            onGoToConfigure={() => setActiveTab("configure")}
+            onOpenImport={() => importRef.current?.open()}
           />
         </TabsContent>
 

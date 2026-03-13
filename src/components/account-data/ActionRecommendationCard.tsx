@@ -1,0 +1,213 @@
+import { ArtifactComparisonHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { artifactsById, charactersById } from "@/data/constants";
+import type { Recommendation } from "@/lib/account-data/recommendationEngine";
+import { cn } from "@/lib/utils";
+import {
+  ArrowBigUpDash,
+  ArrowRight,
+  ArrowRightLeft,
+  CircleHelp,
+  CirclePlus,
+  Dices,
+  Pickaxe,
+  RefreshCw,
+  TrendingUp,
+} from "lucide-react";
+import { memo } from "react";
+
+interface ActionRecommendationCardProps {
+  recommendation: Recommendation;
+  tierColor?: string;
+}
+
+function getActionIcon(actionType: string) {
+  switch (actionType) {
+    case "equip":
+      return { icon: CirclePlus, color: "text-teal-400", bg: "bg-teal-800/30" };
+    case "swap":
+      return {
+        icon: ArrowRightLeft,
+        color: "text-sky-400",
+        bg: "bg-sky-800/30",
+      };
+    case "upgrade":
+      return {
+        icon: ArrowBigUpDash,
+        color: "text-emerald-400",
+        bg: "bg-emerald-800/30",
+      };
+    case "reroll":
+      return { icon: Dices, color: "text-violet-400", bg: "bg-violet-800/30" };
+    case "farm":
+      return {
+        icon: Pickaxe,
+        color: "text-indigo-400",
+        bg: "bg-indigo-800/30",
+      };
+    default:
+      return { icon: CircleHelp, color: "text-gray-400", bg: "bg-gray-800/30" };
+  }
+}
+
+function getBorderColor(scoreDiff: number, actionType: string): string {
+  if (scoreDiff >= 15) return "border-l-tier-a";
+  if (scoreDiff >= 10) return "border-l-tier-b";
+  if (scoreDiff >= 6) return "border-l-tier-c";
+  if (scoreDiff >= 3) return "border-l-tier-d";
+  return "border-l-tier-pool";
+}
+
+function ActionRecommendationCardComponent({
+  recommendation: rec,
+  tierColor,
+}: ActionRecommendationCardProps) {
+  const { t } = useLanguage();
+  const charInfo = charactersById[rec.characterId];
+  if (!charInfo) return null;
+
+  const { icon: Icon, color, bg } = getActionIcon(rec.actionType);
+  const borderClass =
+    tierColor ?? getBorderColor(rec.slotScoreDiff, rec.actionType);
+
+  const isSwapLike =
+    rec.actionType === "swap" ||
+    rec.actionType === "equip" ||
+    (rec.actionType === "upgrade" &&
+      rec.optimalArtifact.sourceArtifactId !== rec.currentArtifact?.id);
+  const afterArtInfo = artifactsById[rec.optimalArtifact.setKey];
+
+  const getPlaceholderIcon = () => {
+    switch (rec.actionType) {
+      case "farm":
+        return CircleHelp;
+      case "upgrade":
+        return TrendingUp;
+      case "reroll":
+        return RefreshCw;
+      default:
+        return CircleHelp;
+    }
+  };
+  const PlaceholderIcon = getPlaceholderIcon();
+
+  const subtitle =
+    rec.isSteal && rec.donorCharacterId
+      ? t.format(
+          "accountData.insights.fromCharacter",
+          t.character(rec.donorCharacterId)
+        )
+      : rec.actionType === "upgrade" &&
+          rec.optimalArtifact.sourceArtifactId === rec.currentArtifact?.id
+        ? t.ui("accountData.insights.equipped")
+        : "";
+
+  const cardContent = (
+    <div
+      className={cn(
+        "flex items-center py-2 px-2 rounded-md border-l-[4px] border-y border-r border-white/5 transition-colors bg-gradient-card cursor-pointer hover:bg-white/5 gap-2",
+        borderClass
+      )}
+    >
+      {/* Character icon (small) */}
+      <ItemIcon
+        imagePath={charInfo.imagePath}
+        rarity={charInfo.rarity}
+        size="sm"
+      />
+
+      {/* Text content: 3 rows */}
+      <div className="flex-1 min-w-0">
+        {/* Row 1: Character name + score diff */}
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-sm font-semibold text-foreground">
+            {t.character(rec.characterId)}
+          </span>
+          {rec.slotScoreDiff > 0 && (
+            <span className="text-sm italic font-extrabold tracking-tighter bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+              +{rec.slotScoreDiff.toFixed(1)}
+            </span>
+          )}
+        </div>
+        {/* Row 2: Action icon + action name + subtitle */}
+        <div className="flex items-center gap-1 mt-0.5">
+          <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />
+          <span className={cn("text-xs font-medium", color)}>
+            {t.ui(`accountData.insights.${rec.actionType}`)}
+          </span>
+          {subtitle && (
+            <span className="text-xs text-muted-foreground">· {subtitle}</span>
+          )}
+        </div>
+        {/* Row 3: Slot name */}
+        <div className="text-xs text-muted-foreground mt-0.5">
+          {t.slot(rec.slot)}
+        </div>
+      </div>
+
+      {/* Artifact icons: before → after */}
+      <div className="flex items-center gap-1 shrink-0">
+        {rec.actionType === "equip" ? (
+          <div className="flex items-center justify-center rounded-md border-2 border-dashed border-white/10 w-10 h-10">
+            <CirclePlus className="w-4 h-4 text-muted-foreground" />
+          </div>
+        ) : isSwapLike && rec.currentArtifact ? (
+          <ArtifactIcon
+            artifact={rec.currentArtifact}
+            artInfo={artifactsById[rec.currentArtifact.setKey]}
+            slot={rec.slot}
+            size="sm"
+          />
+        ) : (
+          <ArtifactIcon
+            artifact={rec.currentArtifact ?? rec.optimalArtifact}
+            artInfo={
+              artifactsById[(rec.currentArtifact ?? rec.optimalArtifact).setKey]
+            }
+            slot={rec.slot}
+            size="sm"
+          />
+        )}
+        <ArrowRight className="w-3 h-3 text-muted-foreground" />
+        {isSwapLike || rec.actionType === "equip" ? (
+          <ArtifactIcon
+            artifact={rec.optimalArtifact}
+            artInfo={afterArtInfo}
+            slot={rec.slot}
+            size="sm"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-10 h-10">
+            <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  // Wrap with hover card
+  if (rec.actionType === "equip") {
+    return (
+      <ArtifactComparisonHoverCard
+        afterArtifact={rec.optimalArtifact}
+        slot={rec.slot}
+      >
+        {cardContent}
+      </ArtifactComparisonHoverCard>
+    );
+  }
+
+  return (
+    <ArtifactComparisonHoverCard
+      beforeArtifact={rec.currentArtifact ?? rec.optimalArtifact}
+      afterArtifact={isSwapLike ? rec.optimalArtifact : undefined}
+      slot={rec.slot}
+    >
+      {cardContent}
+    </ArtifactComparisonHoverCard>
+  );
+}
+
+export const ActionRecommendationCard = memo(ActionRecommendationCardComponent);

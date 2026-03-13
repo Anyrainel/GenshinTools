@@ -1,9 +1,16 @@
 ## roadmap
 - Ongoing: more damage formulas and customization options
-- P0: Better OCR tools
-- P0: More useful artifact upgrade and sub-stat reroll suggestions
+- P0: More useful upgrade and sub-stat reroll suggestions
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
+
+## 2025-03-12
+
+### features
+- GOODScanner release: comprehensive OCR scanning
+- Redesigned recommendation page: new UI, new algorithm, accounts for crit overflow (continuous improvements coming)
+- Support optimizing teams with fewer than 4 characters
+- Allow deleting existing items from inventory
 
 ## 2025-03-11
 

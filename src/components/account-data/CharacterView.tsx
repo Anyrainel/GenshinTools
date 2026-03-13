@@ -1,3 +1,4 @@
+import { ArtifactScoreGlobalSettings } from "@/components/account-data/ArtifactScoreGlobalSettings";
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
@@ -162,7 +163,8 @@ export function CharacterView({
       }
       triggerLabel={triggerLabel}
     >
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto space-y-3">
+        <ArtifactScoreGlobalSettings />
         {filteredCharacters.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="text-6xl mb-4">🔍</div>

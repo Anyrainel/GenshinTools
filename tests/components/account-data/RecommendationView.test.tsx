@@ -110,8 +110,8 @@ describe("RecommendationView", () => {
 
     render(<RecommendationView scores={{ hu_tao: mockScoreResult }} />);
 
-    // Should show tier headings
-    const headings = screen.getAllByRole("heading");
-    expect(headings.length).toBeGreaterThan(0);
+    // The new UI uses tab-based layout (Upgrade/Reroll/Farm tabs)
+    // With no buildMatch, no recommendations are generated, so the "no recommendations" message shows
+    expect(screen.getByText(/No recommendations|无推荐/)).toBeInTheDocument();
   });
 });

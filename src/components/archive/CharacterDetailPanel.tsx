@@ -227,7 +227,7 @@ export function CharacterDetailPanel({
                   </Button>
                   {effectiveOwned && constellation > 0 && (
                     <span className="text-xs font-medium text-muted-foreground">
-                      {t.format("teamComp.constellationFormat", constellation)}
+                      {t.format("common.constellationFormat", constellation)}
                     </span>
                   )}
                 </div>

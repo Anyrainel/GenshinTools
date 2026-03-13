@@ -109,7 +109,7 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
               nameClassName={isVeryNarrow ? "text-base" : undefined}
             >
               {!isVeryNarrow && (
-                <div className="ml-2 flex flex-shrink-0 items-center gap-3 text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap">
+                <div className="3xl:ml-2 flex flex-shrink-0 items-center gap-1.5 text-muted-foreground text-sm overflow-hidden text-ellipsis whitespace-nowrap">
                   <span>
                     {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
                     <span className="text-foreground/90">

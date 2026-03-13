@@ -505,7 +505,7 @@ function OverviewPanel({
                 <SelectContent>
                   {Array.from({ length: 7 }, (_, i) => (
                     <SelectItem key={i} value={String(i)}>
-                      {t.format("teamComp.constellationFormat", i)}
+                      {t.format("common.constellationFormat", i)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -598,7 +598,7 @@ function OverviewPanel({
                   <SelectContent>
                     {[1, 2, 3, 4, 5].map((r) => (
                       <SelectItem key={r} value={String(r)}>
-                        {t.format("teamComp.refinementFormat", r)}
+                        {t.format("common.refinementFormat", r)}
                       </SelectItem>
                     ))}
                   </SelectContent>

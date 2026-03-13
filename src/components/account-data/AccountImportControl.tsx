@@ -4,7 +4,6 @@ import {
   Info,
   Loader2,
   Monitor,
-  PackageOpen,
   Smartphone,
   Star,
   Upload,
@@ -24,12 +23,10 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { GOODData } from "@/lib/account-data/goodConversion";
-import type { MonaData } from "@/lib/account-data/monaConversion";
 import { cn } from "@/lib/utils";
 
 interface AccountImportControlProps {
   onLocalImport: (data: GOODData, optionalUid: string) => void;
-  onMonaImport: (data: MonaData, optionalUid: string) => void;
   onUidImport: (uid: string, clearData: boolean) => Promise<void>;
   initialUid?: string;
 }
@@ -40,8 +37,8 @@ const TOOLS = [
     url: "https://konkers.github.io/irminsul/02-quickstart.html",
   },
   {
-    labelKey: "import.toolKamera" as const,
-    url: "https://github.com/taiwenlee/Inventory_Kamera",
+    labelKey: "import.toolGoodScanner" as const,
+    url: "https://github.com/Anyrainel/GOODScanner/releases",
   },
 ] as const;
 
@@ -55,7 +52,7 @@ export const AccountImportControl = forwardRef<
   ControlHandle,
   AccountImportControlProps
 >(function AccountImportControl(
-  { onLocalImport, onMonaImport, onUidImport, initialUid },
+  { onLocalImport, onUidImport, initialUid },
   ref
 ) {
   const { t } = useLanguage();
@@ -66,21 +63,9 @@ export const AccountImportControl = forwardRef<
   const [localUidInput, setLocalUidInput] = useState(
     () => localStorage.getItem("gg_last_local_uid") || ""
   );
-  const [monaUidInput, setMonaUidInput] = useState(
-    () => localStorage.getItem("gg_last_local_uid") || ""
-  );
   const [clearData, setClearData] = useState(false);
 
   const isValidUid = (uid: string) => /^\d{9,10}$/.test(uid.trim());
-
-  const isMonaFormat = (data: unknown): boolean =>
-    typeof data === "object" &&
-    data !== null &&
-    ("flower" in data ||
-      "feather" in data ||
-      "sand" in data ||
-      "cup" in data ||
-      "head" in data);
 
   const isGOODFormat = (data: unknown): boolean =>
     typeof data === "object" &&
@@ -116,8 +101,8 @@ export const AccountImportControl = forwardRef<
     reader.onload = async (e) => {
       try {
         const imported = JSON.parse(e.target?.result as string);
-        if (isMonaFormat(imported) && !isGOODFormat(imported)) {
-          setErrorMessage(t.ui("import.wrongFormatMona"));
+        if (!isGOODFormat(imported)) {
+          setErrorMessage(t.ui("import.wrongFormatGOOD"));
           return;
         }
         if (localUidInput) {
@@ -129,43 +114,6 @@ export const AccountImportControl = forwardRef<
         setIsOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
-        setErrorMessage(t.ui("import.fileLoadError"));
-      } finally {
-        setIsBusy(false);
-      }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
-  };
-
-  const handleMonaImport = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      event.target.value = "";
-      return;
-    }
-
-    setIsBusy(true);
-    setErrorMessage(null);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const imported = JSON.parse(e.target?.result as string);
-        if (isGOODFormat(imported)) {
-          setErrorMessage(t.ui("import.wrongFormatGOOD"));
-          return;
-        }
-        if (monaUidInput) {
-          localStorage.setItem("gg_last_local_uid", monaUidInput);
-        } else {
-          localStorage.removeItem("gg_last_local_uid");
-        }
-        onMonaImport(imported, monaUidInput.trim());
-        setIsOpen(false);
-      } catch (error) {
-        console.error("Failed to import Mona data:", error);
         setErrorMessage(t.ui("import.fileLoadError"));
       } finally {
         setIsBusy(false);
@@ -314,94 +262,6 @@ export const AccountImportControl = forwardRef<
                 </Button>
               </div>
               {localUidInput.trim() && !isValidUid(localUidInput) && (
-                <p className="text-xs text-destructive">
-                  {t.ui("import.uidInvalid")}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* ── Artifact Only: Mona/yas Import Card ── */}
-          <div className="rounded-lg border border-border p-4">
-            {/* Header row */}
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-muted/60 p-2 shrink-0">
-                <PackageOpen className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-semibold text-sm md:text-base text-foreground">
-                  {t.ui("import.monaTitle")}
-                </h3>
-                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                  {t.ui("import.monaDescription")}
-                </p>
-              </div>
-            </div>
-
-            {/* PC requirement + tool link */}
-            <div className="mt-3 p-3 rounded-md bg-yellow-500/10 border border-yellow-500/20">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-yellow-500 shrink-0" />
-                <span className="text-sm text-yellow-500">
-                  {t.ui("import.monaRequiresPC")}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2 lg:ml-6">
-                <a
-                  href="https://github.com/1803233552/yas"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
-                    "text-xs font-medium",
-                    "border border-primary/30 bg-primary/15",
-                    "text-foreground/80 hover:bg-primary/25 hover:border-primary/50",
-                    "transition-colors"
-                  )}
-                >
-                  {t.ui("import.toolYas")}
-                  <ExternalLink className="w-3 h-3 opacity-60" />
-                </a>
-              </div>
-            </div>
-
-            {/* Upload button */}
-            <div className="mt-3 flex flex-col gap-1.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="text"
-                  placeholder={
-                    t.ui("import.optionalUidPlaceholder") || "Optional UID"
-                  }
-                  value={monaUidInput}
-                  onChange={(e) => setMonaUidInput(e.target.value)}
-                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={isBusy}
-                />
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  className="gap-2 shrink-0 flex-grow sm:flex-1 relative overflow-hidden"
-                  disabled={
-                    isBusy ||
-                    (!!monaUidInput.trim() && !isValidUid(monaUidInput))
-                  }
-                >
-                  <Upload className="w-4 h-4" />
-                  {t.ui("import.goodFileButton")}
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleMonaImport}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    disabled={
-                      isBusy ||
-                      (!!monaUidInput.trim() && !isValidUid(monaUidInput))
-                    }
-                  />
-                </Button>
-              </div>
-              {monaUidInput.trim() && !isValidUid(monaUidInput) && (
                 <p className="text-xs text-destructive">
                   {t.ui("import.uidInvalid")}
                 </p>

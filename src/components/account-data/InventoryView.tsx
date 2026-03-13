@@ -1,9 +1,21 @@
-import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import {
+  ArtifactDataContent,
+  ArtifactDataHoverCard,
+} from "@/components/account-data/ArtifactDataHoverCard";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 import {
   Tooltip,
   TooltipContent,
@@ -26,11 +38,14 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
-import { Check, Minus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Check, Minus, Trash2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
 interface InventoryViewProps {
   data: AccountData;
+  isEditMode?: boolean;
+  onDeleteWeapon?: (weaponId: string) => void;
+  onDeleteArtifact?: (artifactId: string) => void;
 }
 
 type TaggedWeapon = WeaponData & { equipped: boolean };
@@ -42,11 +57,23 @@ const isMaxWeapon = (w: WeaponData) => w.level === 90;
 const isMaxArtifact = (a: ArtifactData) =>
   (a.rarity === 5 && a.level === 20) || (a.rarity === 4 && a.level === 16);
 
-export function InventoryView({ data }: InventoryViewProps) {
+export function InventoryView({
+  data,
+  isEditMode = false,
+  onDeleteWeapon,
+  onDeleteArtifact,
+}: InventoryViewProps) {
   const { t } = useLanguage();
   const { weaponStats } = useGameStats();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const iconSize = isMobile ? "lg" : "xl";
+
+  // ── Edit mode dialog state ──
+  const [selectedWeapon, setSelectedWeapon] = useState<TaggedWeapon | null>(
+    null
+  );
+  const [selectedArtifact, setSelectedArtifact] =
+    useState<TaggedArtifact | null>(null);
 
   // ── Category toggles (default: unequipped + maxLevel) ──
   const [wShowEquipped, setWShowEquipped] = useState(false);
@@ -247,6 +274,35 @@ export function InventoryView({ data }: InventoryViewProps) {
     });
   };
 
+  // ── Edit mode handlers ──
+  const handleWeaponClick = useCallback(
+    (w: TaggedWeapon) => {
+      if (isEditMode) setSelectedWeapon(w);
+    },
+    [isEditMode]
+  );
+
+  const handleArtifactClick = useCallback(
+    (a: TaggedArtifact) => {
+      if (isEditMode) setSelectedArtifact(a);
+    },
+    [isEditMode]
+  );
+
+  const handleDeleteWeapon = useCallback(() => {
+    if (selectedWeapon && onDeleteWeapon) {
+      onDeleteWeapon(selectedWeapon.id);
+      setSelectedWeapon(null);
+    }
+  }, [selectedWeapon, onDeleteWeapon]);
+
+  const handleDeleteArtifact = useCallback(() => {
+    if (selectedArtifact && onDeleteArtifact) {
+      onDeleteArtifact(selectedArtifact.id);
+      setSelectedArtifact(null);
+    }
+  }, [selectedArtifact, onDeleteArtifact]);
+
   return (
     <ScrollLayout className="space-y-6 pb-12 mt-2">
       {/* ══════ WEAPONS ══════ */}
@@ -315,7 +371,13 @@ export function InventoryView({ data }: InventoryViewProps) {
           </div>
         )}
 
-        <WeaponGrid weapons={groupedWeapons} iconSize={iconSize} t={t} />
+        <WeaponGrid
+          weapons={groupedWeapons}
+          iconSize={iconSize}
+          t={t}
+          isEditMode={isEditMode}
+          onWeaponClick={handleWeaponClick}
+        />
       </div>
 
       {/* ══════ ARTIFACTS ══════ */}
@@ -387,8 +449,106 @@ export function InventoryView({ data }: InventoryViewProps) {
           ))}
         </div>
 
-        <ArtifactGrid artifacts={filteredArtifacts} iconSize={iconSize} />
+        <ArtifactGrid
+          artifacts={filteredArtifacts}
+          iconSize={iconSize}
+          isEditMode={isEditMode}
+          onArtifactClick={handleArtifactClick}
+        />
       </div>
+
+      {/* ══════ WEAPON DETAIL DIALOG ══════ */}
+      <ResponsiveDialog
+        open={!!selectedWeapon}
+        onOpenChange={(open) => {
+          if (!open) setSelectedWeapon(null);
+        }}
+      >
+        <ResponsiveDialogContent className="sm:max-w-md">
+          <ResponsiveDialogHeader>
+            <ResponsiveDialogTitle>
+              {selectedWeapon ? t.weaponName(selectedWeapon.key) : ""}
+            </ResponsiveDialogTitle>
+            <ResponsiveDialogDescription asChild>
+              <span>
+                Lv. {selectedWeapon?.level}{" "}
+                {selectedWeapon &&
+                  t
+                    .ui("common.refinementFormat")
+                    .replace("{0}", String(selectedWeapon.refinement))}
+                {selectedWeapon?.equipped &&
+                  ` \u2022 ${t.ui("accountData.equipped")}`}
+              </span>
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
+          {selectedWeapon && (
+            <div className="flex justify-center py-2">
+              <WeaponTooltip weaponId={selectedWeapon.key} />
+            </div>
+          )}
+
+          <ResponsiveDialogFooter>
+            <Button variant="outline" onClick={() => setSelectedWeapon(null)}>
+              {t.ui("common.cancel")}
+            </Button>
+            {selectedWeapon && !selectedWeapon.equipped && onDeleteWeapon && (
+              <Button variant="destructive" onClick={handleDeleteWeapon}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                {t.ui("common.delete")}
+              </Button>
+            )}
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
+
+      {/* ══════ ARTIFACT DETAIL DIALOG ══════ */}
+      <ResponsiveDialog
+        open={!!selectedArtifact}
+        onOpenChange={(open) => {
+          if (!open) setSelectedArtifact(null);
+        }}
+      >
+        <ResponsiveDialogContent className="sm:max-w-md">
+          <ResponsiveDialogHeader>
+            <ResponsiveDialogTitle>
+              {selectedArtifact ? t.artifact(selectedArtifact.setKey) : ""}
+            </ResponsiveDialogTitle>
+            <ResponsiveDialogDescription asChild>
+              <span>
+                {selectedArtifact && t.slot(selectedArtifact.slotKey)} +
+                {selectedArtifact?.level}
+                {selectedArtifact?.equipped &&
+                  ` \u2022 ${t.ui("accountData.equipped")}`}
+              </span>
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
+          {selectedArtifact && (
+            <div className="flex justify-center py-2">
+              <ArtifactDataContent
+                artifact={selectedArtifact}
+                slot={selectedArtifact.slotKey}
+                showIcon
+              />
+            </div>
+          )}
+
+          <ResponsiveDialogFooter>
+            <Button variant="outline" onClick={() => setSelectedArtifact(null)}>
+              {t.ui("common.cancel")}
+            </Button>
+            {selectedArtifact &&
+              !selectedArtifact.equipped &&
+              onDeleteArtifact && (
+                <Button variant="destructive" onClick={handleDeleteArtifact}>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {t.ui("common.delete")}
+                </Button>
+              )}
+          </ResponsiveDialogFooter>
+        </ResponsiveDialogContent>
+      </ResponsiveDialog>
     </ScrollLayout>
   );
 }
@@ -487,45 +647,63 @@ function WeaponGrid({
   weapons,
   iconSize,
   t,
+  isEditMode,
+  onWeaponClick,
 }: {
   weapons: (WeaponData & { equipped: boolean; count: number })[];
   iconSize: "lg" | "xl";
   t: ReturnType<typeof useLanguage>["t"];
+  isEditMode: boolean;
+  onWeaponClick: (w: WeaponData & { equipped: boolean }) => void;
 }) {
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-3 px-2">
       {weapons.map((w) => {
         const weaponInfo = weaponsById[w.key];
         const name = t.weaponName(w.key);
+
+        const cardContent = (
+          <Card
+            className={cn(
+              "flex flex-col bg-transparent border-0 shadow-none group",
+              isEditMode ? "cursor-pointer" : "cursor-help"
+            )}
+            onClick={isEditMode ? () => onWeaponClick(w) : undefined}
+          >
+            <div className="relative transition-transform group-hover:scale-105 duration-200">
+              <ItemIcon
+                imagePath={weaponInfo?.imagePath || ""}
+                rarity={weaponInfo?.rarity || 1}
+                badge={w.refinement}
+                lock={w.lock}
+                level={`Lv. ${w.level}`}
+                size={iconSize}
+              />
+              {w.count > 1 && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="bg-black/60 text-white font-bold text-lg px-2 py-0.5 rounded-full shadow-sm backdrop-blur-[2px]">
+                    x{w.count}
+                  </div>
+                </div>
+              )}
+              {w.equipped && (
+                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
+              )}
+            </div>
+            <div className="pt-1 text-xs text-center font-medium opacity-90 group-hover:opacity-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
+              {name}
+            </div>
+          </Card>
+        );
+
+        // In edit mode, clicking opens the dialog — no tooltip
+        if (isEditMode) {
+          return <div key={w.id}>{cardContent}</div>;
+        }
+
         return (
           <Tooltip key={w.id}>
-            <TooltipTrigger asChild>
-              <Card className="flex flex-col cursor-help bg-transparent border-0 shadow-none group">
-                <div className="relative transition-transform group-hover:scale-105 duration-200">
-                  <ItemIcon
-                    imagePath={weaponInfo?.imagePath || ""}
-                    rarity={weaponInfo?.rarity || 1}
-                    badge={w.refinement}
-                    lock={w.lock}
-                    level={`Lv. ${w.level}`}
-                    size={iconSize}
-                  />
-                  {w.count > 1 && (
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="bg-black/60 text-white font-bold text-lg px-2 py-0.5 rounded-full shadow-sm backdrop-blur-[2px]">
-                        x{w.count}
-                      </div>
-                    </div>
-                  )}
-                  {w.equipped && (
-                    <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
-                  )}
-                </div>
-                <div className="pt-1 text-xs text-center font-medium opacity-90 group-hover:opacity-100 group-hover:text-white transition-colors line-clamp-2 leading-tight">
-                  {name}
-                </div>
-              </Card>
-            </TooltipTrigger>
+            <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
             <TooltipContent
               side="right"
               className="p-0 border-none bg-transparent"
@@ -542,15 +720,46 @@ function WeaponGrid({
 function ArtifactGrid({
   artifacts,
   iconSize,
+  isEditMode,
+  onArtifactClick,
 }: {
   artifacts: (ArtifactData & { equipped: boolean })[];
   iconSize: "lg" | "xl";
+  isEditMode: boolean;
+  onArtifactClick: (a: ArtifactData & { equipped: boolean }) => void;
 }) {
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-3 px-2">
       {artifacts.map((a) => {
         const artInfo = artifactsById[a.setKey];
         const badge = a.astralMark ? "⭐" : undefined;
+
+        const iconContent = (
+          <div
+            className={cn(
+              "relative rounded-md overflow-hidden group transition-transform hover:scale-105 duration-200",
+              isEditMode ? "cursor-pointer" : "cursor-help"
+            )}
+            onClick={isEditMode ? () => onArtifactClick(a) : undefined}
+          >
+            <ItemIcon
+              imagePath={artInfo?.imagePaths[a.slotKey] || ""}
+              rarity={a.rarity}
+              badge={badge}
+              lock={a.lock}
+              level={`+${a.level}`}
+              size={iconSize}
+            />
+            {a.equipped && (
+              <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
+            )}
+          </div>
+        );
+
+        // In edit mode, clicking opens the dialog — no hovercard
+        if (isEditMode) {
+          return <div key={a.id}>{iconContent}</div>;
+        }
 
         return (
           <ArtifactDataHoverCard
@@ -559,19 +768,7 @@ function ArtifactGrid({
             slot={a.slotKey}
             side="right"
           >
-            <div className="relative rounded-md overflow-hidden group cursor-help transition-transform hover:scale-105 duration-200">
-              <ItemIcon
-                imagePath={artInfo?.imagePaths[a.slotKey] || ""}
-                rarity={a.rarity}
-                badge={badge}
-                lock={a.lock}
-                level={`+${a.level}`}
-                size={iconSize}
-              />
-              {a.equipped && (
-                <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-green-400 shadow-sm" />
-              )}
-            </div>
+            {iconContent}
           </ArtifactDataHoverCard>
         );
       })}

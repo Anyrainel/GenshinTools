@@ -23,6 +23,8 @@ export const i18nUiData = {
     moveDown: { en: "Move Down", zh: "下移" },
     revert: { en: "Revert Changes", zh: "撤销更改" },
     delete: { en: "Delete", zh: "删除" },
+    constellationFormat: { en: "C{0}", zh: "{0}命" },
+    refinementFormat: { en: "R{0}", zh: "精{0}" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
     previous: { en: "Previous", zh: "上一步" },
@@ -121,32 +123,15 @@ export const i18nUiData = {
     },
     toolIrminsul: {
       en: "Irminsul (Packet Capture)",
-      zh: "Irminsul (抓包，非云原神)",
+      zh: "Irminsul (抓包)",
     },
-    toolKamera: {
-      en: "Inventory Kamera (OCR)",
-      zh: "Inventory Kamera (扫图, 英文客户端)",
-    },
-    monaTitle: { en: "Artifact Only Import", zh: "仅圣遗物导入" },
-    monaDescription: {
-      en: "Artifacts only — no character details or weapon data. Characters are created as C0, Lv90, talent 10/10/10.",
-      zh: "仅导入圣遗物，不含角色详情和武器数据。角色将默认 0命，90级，天赋10/10/10。",
-    },
-    monaRequiresPC: {
-      en: "Use a PC scanner tool to export your artifact data as a Mona format .json file",
-      zh: "需要在电脑上运行扫描工具，将圣遗物数据导出为 Mona 格式 .json 文件",
-    },
-    toolYas: {
-      en: "yas (OCR, Chinese client)",
-      zh: "yas (扫图)",
-    },
-    wrongFormatMona: {
-      en: 'This looks like a Mona/yas file. Please use the "Artifact Only Import" section instead.',
-      zh: "该文件为 Mona/yas 格式，请使用「仅圣遗物导入」选项。",
+    toolGoodScanner: {
+      en: "GOODScanner (OCR, 16:9 Chinese client)",
+      zh: "GOODScanner (扫图, 16:9)",
     },
     wrongFormatGOOD: {
-      en: 'This looks like a GOOD format file. Please use the "Full Data Import" section instead.',
-      zh: "该文件为 GOOD 格式，请使用「完整数据导入」选项。",
+      en: "This file is not in GOOD format. Please export using a supported scanner tool.",
+      zh: "该文件不是 GOOD 格式，请使用支持的扫描工具导出。",
     },
     uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
     uidDescription: {
@@ -202,10 +187,6 @@ export const i18nUiData = {
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
     recommendations: { en: "Recommendations", zh: "推荐" },
-    maxLvlWeapons: { en: "Max Level Weapons", zh: "满级武器" },
-    otherWeapons: { en: "Other Weapons", zh: "其他武器" },
-    maxLvlArtifacts: { en: "Max Level Artifacts", zh: "满级圣遗物" },
-    otherArtifacts: { en: "Other Artifacts", zh: "其他圣遗物" },
     weapons: { en: "Weapons", zh: "武器" },
     artifacts: { en: "Artifacts", zh: "圣遗物" },
     equipped: { en: "Equipped", zh: "已装备" },
@@ -221,6 +202,26 @@ export const i18nUiData = {
     importPrompt: {
       en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
       zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
+    },
+    emptyStateEnkaTitle: {
+      en: "Enka UID",
+      zh: "Enka UID",
+    },
+    emptyStateEnkaDesc: {
+      en: "Paste your UID to fetch your showcase characters instantly.",
+      zh: "粘贴 UID 即可即时获取你的展示角色。",
+    },
+    emptyStateGoodTitle: {
+      en: "GOOD JSON",
+      zh: "GOOD JSON",
+    },
+    emptyStateGoodDesc: {
+      en: "Upload a full artifact scanner export for complete analysis.",
+      zh: "上传完整的圣遗物扫描导出文件以获得全面分析。",
+    },
+    emptyStateAfterImport: {
+      en: "After importing, you'll see build scores, upgrade recommendations, and inventory insights.",
+      zh: "导入后，你将看到配装评分、升级建议和库存分析。",
     },
     importProfileSelect: { en: "Select Profile", zh: "选择账号配置" },
     manageProfiles: { en: "Manage Profiles", zh: "管理账号配置" },
@@ -348,6 +349,15 @@ export const i18nUiData = {
       showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
       showLess: { en: "Show less", zh: "收起" },
     },
+    recTabs: {
+      upgrade: { en: "Upgrade", zh: "强化" },
+      reroll: { en: "Reroll", zh: "洗词条" },
+      farm: { en: "Farm", zh: "刷取" },
+    },
+    recNoRecommendations: {
+      en: "No recommendations — all builds are optimal!",
+      zh: "无推荐 — 所有配装已最优！",
+    },
     luckExpectation: {
       label: { en: "Roll Value Expectation", zh: "词条期望" },
       description: {
@@ -362,23 +372,22 @@ export const i18nUiData = {
       balanced: { en: "Balanced", zh: "平衡" },
       hopeful: { en: "Hopeful", zh: "乐观" },
     },
+    investmentLevel: {
+      label: { en: "Min. Score Diff", zh: "最低分差" },
+    },
   },
   charEdit: {
     description: { en: "Edit character data", zh: "编辑角色数据" },
-    stats: { en: "Stats", zh: "属性" },
     level: { en: "Level", zh: "等级" },
     constellation: { en: "Constellation", zh: "命座" },
     refinement: { en: "Refinement", zh: "精炼" },
-    rarity: { en: "Rarity", zh: "稀有度" },
     mainStat: { en: "Main Stat", zh: "主属性" },
     substats: { en: "Substats", zh: "副属性" },
     addSubstat: { en: "Add substat", zh: "添加副属性" },
     change: { en: "Change", zh: "更换" },
     stash: { en: "Stash", zh: "卸下" },
-    noWeapon: { en: "No weapon equipped", zh: "未装备武器" },
     equipWeapon: { en: "Equip Weapon", zh: "装备武器" },
     emptySlot: { en: "No artifact in this slot", zh: "此位置无圣遗物" },
-    equipOrCreate: { en: "Equip or Create", zh: "装备或新建" },
     equip: { en: "Equip", zh: "装备" },
     create: { en: "Create", zh: "创建" },
     save: { en: "Save", zh: "保存" },
@@ -394,8 +403,8 @@ export const i18nUiData = {
       zh: "圣遗物评分是如何计算的？",
     },
     formula: {
-      en: "Final Score = Stat Value × Normalization Factor × (Weight / 100) × [Punishment Factor]",
-      zh: "最终评分 = 属性数值 × 折算系数 × (权重 / 100) × [惩罚系数]",
+      en: "Final Score = Σ( Stat Value × Normalization Factor × (Weight / 100) × [Punishment Factor] )",
+      zh: "最终评分 = Σ( 属性数值 × 折算系数 × (权重 / 100) × [惩罚系数] )",
     },
     normalization: {
       title: { en: "Normalization Factor", zh: "折算系数" },
@@ -649,6 +658,18 @@ export const i18nUiData = {
     nodkrai: { en: "Nod-Krai", zh: "挪德卡莱" },
   },
   teamComp: {
+    emptyTeamTitle: {
+      en: "Build your first team",
+      zh: "创建你的第一支队伍",
+    },
+    emptyTeamDesc: {
+      en: "Pick 4 characters, assign weapons and artifacts, then calculate optimized damage.",
+      zh: "选择4个角色、分配武器和圣遗物，然后计算优化伤害。",
+    },
+    emptyTeamOrImport: {
+      en: "Or import a community team preset to get started.",
+      zh: "或导入社区队伍预设以快速开始。",
+    },
     teamName: { en: "Team Name", zh: "队伍名称" },
     weapon: { en: "Weapon", zh: "武器" },
     artifact: { en: "Artifact", zh: "圣遗物" },
@@ -680,8 +701,6 @@ export const i18nUiData = {
       en: "Not all hits in this formula are using reactions — partial reaction settings from single mode are applied.",
       zh: "此公式并非所有命中均使用元素反应——已应用单公式模式的部分反应设置。",
     },
-    idle: { en: "Idle", zh: "面板" },
-    combat: { en: "Combat", zh: "实战" },
     max: { en: "Max", zh: "最大面板" },
     conditional: { en: "Details", zh: "详细面板" },
     onField: { en: "On-Field", zh: "站场" },
@@ -712,9 +731,6 @@ export const i18nUiData = {
     overrideLevel: { en: "Level", zh: "等级" },
     overrideConst: { en: "Const.", zh: "命座" },
     overrideRefine: { en: "Refine", zh: "精炼" },
-    constellationFormat: { en: "C{0}", zh: "{0}命" },
-    refinementFormat: { en: "R{0}", zh: "精{0}" },
-    calcContextOptions: { en: "Context Settings", zh: "环境设置" },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
@@ -776,7 +792,6 @@ export const i18nUiData = {
     passCarryRefine: { en: "Carry (Refine)", zh: "主C (精修)" },
     passSupport: { en: "Support", zh: "辅助" },
     passLabel: { en: "Pass {0}/{1}: {2}", zh: "阶段 {0}/{1}: {2}" },
-    idealArtifacts: { en: "Ideal Artifacts", zh: "理想圣遗物" },
     generateIdeal: { en: "Generate", zh: "生成" },
     generatingIdeal: { en: "Generating…", zh: "正在生成…" },
     idealEmptyMessage: {
@@ -785,27 +800,8 @@ export const i18nUiData = {
     },
     // Formula v2: Reaction Selector + Combo
     reaction: { en: "Reaction", zh: "元素反应" },
-    reactionNone: { en: "None", zh: "无反应" },
-    perHit: { en: "Per-Hit", zh: "逐段" },
     combo: { en: "Combo", zh: "连招" },
-    comboName: { en: "Combo Name", zh: "连招名称" },
-    newCombo: { en: "New Combo", zh: "新建连招" },
-    addLine: { en: "Add Line", zh: "添加条目" },
     totalRotation: { en: "Total Rotation Damage", zh: "循环总伤害" },
-    selectCharacter: { en: "Select Character", zh: "选择角色" },
-    selectFormula: { en: "Select Formula", zh: "选择公式" },
-    createFromCurrent: {
-      en: "Create from current formula",
-      zh: "从当前公式创建",
-    },
-    teamMissing: {
-      en: "Missing element partner",
-      zh: "缺少元素搭档",
-    },
-    orphanedLine: {
-      en: "Character removed from team",
-      zh: "角色已从队伍中移除",
-    },
     formulaSelection: {
       en: "Formula Selection",
       zh: "公式选择",
@@ -869,7 +865,6 @@ export const i18nUiData = {
       zh: "所有角色已冻结——解冻后可重新优化。",
     },
     frozenBadge: { en: "Frozen", zh: "已冻结" },
-    partiallyFrozenBadge: { en: "{0}/{1} Frozen", zh: "{0}/{1} 已冻结" },
     singleFormula: { en: "Single Formula", zh: "单公式" },
     comboFormula: {
       en: "Combo Formula",
@@ -913,6 +908,22 @@ export const i18nUiData = {
     noConfigurations: {
       en: "No Artifact Set Found",
       zh: "没有找到圣遗物套装",
+    },
+    noConfigurationsDesc: {
+      en: "Configure builds for your characters first, then switch here to see which artifacts to keep or trash.",
+      zh: "请先为角色配置配装，然后切换到这里查看哪些圣遗物该保留或丢弃。",
+    },
+    noConfigurationsCta: {
+      en: "Go to Configure",
+      zh: "前往配置",
+    },
+    noConfigurationsOrPreset: {
+      en: "Or import a community preset to get started in seconds.",
+      zh: "或者导入社区预设，几秒钟即可开始。",
+    },
+    noConfigurationsImportPreset: {
+      en: "Import Presets",
+      zh: "导入预设",
     },
     configuration: { en: "Configuration", zh: "配置" },
     mainStat: { en: "Main Stat", zh: "主词条" },
@@ -1266,15 +1277,11 @@ export const i18nUiData = {
       en: "Import account data and configure artifact builds to see evaluations.",
       zh: "导入账号数据并配置圣遗物配装方案后可查看评估。",
     },
-    flex: { en: "Flex", zh: "散件" },
-    score: { en: "Score", zh: "评分" },
     sortAsc: { en: "Weakest first", zh: "最弱优先" },
     sortDesc: { en: "Strongest first", zh: "最强优先" },
     all: { en: "All", zh: "全部" },
   },
   v2Weights: {
-    title: { en: "V2 Auto-Tuned Weights", zh: "V2 自动调优权重" },
-    experimental: { en: "Experimental", zh: "实验性" },
     profiled: { en: "{0} characters profiled", zh: "已分析 {0} 个角色" },
     errors: { en: "{0} error(s)", zh: "{0} 个错误" },
     generationErrors: { en: "Generation Errors", zh: "生成错误" },
@@ -1282,32 +1289,11 @@ export const i18nUiData = {
       en: "Loading game data & generating weights...",
       zh: "正在加载游戏数据并生成权重...",
     },
-    substats: { en: "Substat Weights", zh: "副词条权重" },
-    mainStats: { en: "Main Stats", zh: "主词条" },
-    sands: { en: "Sands", zh: "时之沙" },
-    goblet: { en: "Goblet", zh: "空之杯" },
-    circlet: { en: "Circlet", zh: "理之冠" },
-    teamContexts: { en: "Team Contexts", zh: "队伍上下文" },
-    calibration: { en: "Calibration", zh: "校准" },
     idealScore: { en: "Ideal", zh: "理想分" },
     normalizer: { en: "Norm.", zh: "归一化" },
-    maxScore: { en: "Max", zh: "满分" },
-    weapon: { en: "Weapon", zh: "武器" },
-    weapons: { en: "Weapon Options", zh: "武器选项" },
-    artifactSet: { en: "Artifact Set", zh: "圣遗物套装" },
-    buffs: { en: "Buffs", zh: "增益" },
-    setBonus: { en: "Set Bonus", zh: "套装效果" },
-    method: { en: "Method", zh: "方法" },
-    auto: { en: "Auto", zh: "自动" },
-    manual: { en: "Manual", zh: "手动" },
-    scaling: { en: "Scaling", zh: "倍率属性" },
-    reaction: { en: "Reaction", zh: "反应" },
-    teams: { en: "{0} team(s)", zh: "{0} 支队伍" },
   },
   whatsNew: {
     title: { en: "What's New", zh: "更新日志" },
-    features: { en: "New", zh: "新功能" },
-    fixes: { en: "Fixes", zh: "修复" },
     roadmap: { en: "Roadmap", zh: "计划" },
   },
 };

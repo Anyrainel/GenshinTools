@@ -25,6 +25,10 @@ import {
   scoreWithBuilds,
 } from "@/lib/account-data/artifactScore";
 import {
+  deleteInventoryArtifact,
+  deleteInventoryWeapon,
+} from "@/lib/account-data/characterEditor";
+import {
   convertEnkaToGOOD,
   fetchEnkaData,
 } from "@/lib/account-data/enkaFetcher";
@@ -41,11 +45,7 @@ import {
   routeUidImport,
 } from "@/lib/account-data/importRouting";
 import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
-import {
-  type MonaData,
-  convertMonaToAccountData,
-  mergeMonaWithExisting,
-} from "@/lib/account-data/monaConversion";
+import { mergeMonaWithExisting } from "@/lib/account-data/monaConversion";
 import {
   syncOwnershipAdditive,
   syncOwnershipExhaustive,
@@ -61,6 +61,8 @@ import {
   AlertTriangle,
   Database,
   Download,
+  FileJson,
+  Globe,
   HelpCircle,
   Pencil,
   Users,
@@ -77,7 +79,7 @@ const NoDataPlaceholder = ({
   t: ReturnType<typeof useLanguage>["t"];
   onAction: () => void;
 }) => (
-  <div className="flex flex-col items-center pt-24 h-full p-4">
+  <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
     <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
       <div className="relative">
         <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
@@ -105,6 +107,40 @@ const NoDataPlaceholder = ({
           {t.ui("import.action")}
         </Button>
       </div>
+
+      {/* Import method hints */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md pt-2">
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
+          <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
+            <Globe className="w-4 h-4 text-primary" />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <span className="text-sm font-medium text-foreground">
+              {t.ui("accountData.emptyStateEnkaTitle")}
+            </span>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t.ui("accountData.emptyStateEnkaDesc")}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card/50 text-left">
+          <div className="rounded-md bg-primary/10 p-1.5 mt-0.5 shrink-0">
+            <FileJson className="w-4 h-4 text-primary" />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <span className="text-sm font-medium text-foreground">
+              {t.ui("accountData.emptyStateGoodTitle")}
+            </span>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t.ui("accountData.emptyStateGoodDesc")}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-xs text-muted-foreground max-w-sm">
+        {t.ui("accountData.emptyStateAfterImport")}
+      </p>
     </div>
   </div>
 );
@@ -286,48 +322,6 @@ export default function AccountDataPage() {
     }
   };
 
-  const handleMonaImport = (data: MonaData, optionalUid: string) => {
-    try {
-      const result = convertMonaToAccountData(data);
-      const currentAccounts = useAccountStore.getState().accounts;
-      const routing = routeLocalImport(
-        currentAccounts,
-        result.data,
-        optionalUid,
-        t.ui("accountData.defaultAccount")
-      );
-
-      if (routing.kind === "direct") {
-        const existing = currentAccounts[routing.id]?.data;
-        const finalData = existing
-          ? mergeMonaWithExisting(existing, routing.data)
-          : routing.data;
-        addOrUpdateAccount(routing.id, {
-          data: finalData,
-          name: routing.name,
-        });
-        setActiveAccount(routing.activeId);
-        syncOwnershipAdditive(
-          routing.activeId,
-          routing.data.characters.map((c) => c.key)
-        );
-        toast.success(t.ui("accountData.importSuccess"));
-      } else {
-        setPendingImport({
-          ...routing.pendingImport,
-          type: "mona",
-        });
-        setIsAccountManagerOpen(true);
-      }
-
-      showConversionWarnings(result);
-    } catch (error) {
-      console.error("Failed to convert Mona data", error);
-      toast.error(t.ui("accountData.failedToParseFile"));
-      throw error;
-    }
-  };
-
   const handleUidImport = async (uid: string, clearBeforeImport: boolean) => {
     try {
       const rawData = await fetchEnkaData(uid);
@@ -467,7 +461,7 @@ export default function AccountDataPage() {
         onTrigger: () => importRef.current?.open(),
         tourStepId: "ad-import",
       },
-      ...(activeTab === "characters"
+      ...(activeTab === "characters" || activeTab === "inventory"
         ? [
             {
               key: "edit",
@@ -508,7 +502,6 @@ export default function AccountDataPage() {
       <AccountImportControl
         ref={importRef}
         onLocalImport={handleLocalImport}
-        onMonaImport={handleMonaImport}
         onUidImport={handleUidImport}
         initialUid={lastUid}
       />
@@ -610,7 +603,23 @@ export default function AccountDataPage() {
 
         <TabsContent value="inventory" className="mt-0 h-full">
           {accountData ? (
-            <InventoryView data={accountData} />
+            <InventoryView
+              data={accountData}
+              isEditMode={isEditMode}
+              onDeleteWeapon={(weaponId) => {
+                if (!activeAccountId) return;
+                const newData = deleteInventoryWeapon(accountData, weaponId);
+                addOrUpdateAccount(activeAccountId, { data: newData });
+              }}
+              onDeleteArtifact={(artifactId) => {
+                if (!activeAccountId) return;
+                const newData = deleteInventoryArtifact(
+                  accountData,
+                  artifactId
+                );
+                addOrUpdateAccount(activeAccountId, { data: newData });
+              }}
+            />
           ) : (
             <NoDataPlaceholder
               t={t}

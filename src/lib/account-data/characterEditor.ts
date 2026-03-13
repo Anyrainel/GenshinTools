@@ -443,6 +443,30 @@ export function createAndEquipArtifact(
   return result;
 }
 
+// ─── Inventory operations (extra/unequipped items) ───────────────────────────
+
+/** Delete a weapon from inventory (extraWeapons) by id */
+export function deleteInventoryWeapon(
+  data: AccountData,
+  weaponId: string
+): AccountData {
+  const result = cloneData(data);
+  result.extraWeapons = result.extraWeapons.filter((w) => w.id !== weaponId);
+  return result;
+}
+
+/** Delete an artifact from inventory (extraArtifacts) by id */
+export function deleteInventoryArtifact(
+  data: AccountData,
+  artifactId: string
+): AccountData {
+  const result = cloneData(data);
+  result.extraArtifacts = result.extraArtifacts.filter(
+    (a) => a.id !== artifactId
+  );
+  return result;
+}
+
 // ─── Query helpers ────────────────────────────────────────────────────────────
 
 /** Get all inventory weapons */

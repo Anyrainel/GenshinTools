@@ -224,7 +224,7 @@ function WeaponDetailDrawer({
                           : "bg-muted/50 text-muted-foreground hover:bg-muted"
                       )}
                     >
-                      {t.format("teamComp.refinementFormat", i + 1)}
+                      {t.format("common.refinementFormat", i + 1)}
                     </button>
                   ))}
                 </div>

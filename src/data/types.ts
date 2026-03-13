@@ -421,11 +421,25 @@ export type TierAssignment = {
   };
 };
 
+export type InvestmentThresholds = {
+  swap: number;
+  upgrade: number;
+  reroll: number;
+  farm: number;
+};
+
+export const DEFAULT_INVESTMENT_THRESHOLDS: InvestmentThresholds = {
+  swap: 1,
+  upgrade: 3,
+  reroll: 7,
+  farm: 5,
+};
+
 export type TierCustomization = {
   [tier: string]: {
     displayName: string;
     hidden: boolean;
-    luckExpectation?: LuckExpectation; // Per-tier luck expectation for insights
+    luckExpectation?: LuckExpectation;
   };
 };
 
