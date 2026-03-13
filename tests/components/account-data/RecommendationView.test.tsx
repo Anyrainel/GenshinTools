@@ -19,6 +19,7 @@ const mockScoreResult: ArtifactScoreResult = {
     isComplete: true,
   },
   buildMatch: null,
+  normalized: null,
 };
 
 describe("RecommendationView", () => {

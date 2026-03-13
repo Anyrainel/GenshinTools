@@ -134,7 +134,9 @@ export function ArtifactScoreHoverCard({
             compact ? "text-xl" : "text-2xl"
           )}
         >
-          {score.substatScore.subScore.toFixed(0)}
+          {score.normalized
+            ? score.normalized.normalizedScore.toFixed(0)
+            : score.substatScore.subScore.toFixed(0)}
         </span>
       </div>
     </div>
@@ -303,6 +305,14 @@ function ArtifactScoreContent({
   const { t } = useLanguage();
   const buildSetLabel = useBuildSetLabel(artifactScore);
   const hasSetMismatch = artifactScore.buildMatch?.setDifferent;
+  const norm = artifactScore.normalized;
+  const normalizer = norm?.normalizer ?? 0;
+
+  // Compute normalized main/sub totals for the summary bar
+  const normMainTotal = norm ? norm.rawMainStatScore * normalizer : 0;
+  const normSubTotal = norm
+    ? artifactScore.substatScore.subScore * normalizer
+    : 0;
 
   return (
     <div className="flex flex-col gap-4">
@@ -322,29 +332,51 @@ function ArtifactScoreContent({
         </div>
       )}
 
+      {/* Header: title + score summary */}
       <div className="flex justify-between items-end border-b border-white/10 pb-2">
         <span className="text-lg font-bold text-amber-200 uppercase tracking-wider">
           {t.ui("accountData.artifactScore")}
         </span>
-        <div className="flex gap-4 text-base text-slate-400 font-mono">
-          <span className="flex gap-1">
-            <span className="text-sm font-sans">
+        <div className="flex items-baseline gap-1 font-mono">
+          <span className="text-2xl font-black text-amber-200">
+            {norm
+              ? norm.normalizedScore.toFixed(1)
+              : artifactScore.substatScore.subScore.toFixed(1)}
+          </span>
+          {norm && (
+            <span className="text-sm text-slate-400">
+              {t.ui("accountData.outOf300")}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Main + Sub score summary bar */}
+      {norm && (
+        <div className="flex items-center gap-3 text-sm font-mono">
+          <span className="flex items-center gap-1.5">
+            <span className="text-slate-400 font-sans">
+              {t.ui("accountData.mainStatContrib")}:
+            </span>
+            <span className="text-emerald-300">{normMainTotal.toFixed(1)}</span>
+          </span>
+          <span className="text-slate-600">+</span>
+          <span className="flex items-center gap-1.5">
+            <span className="text-slate-400 font-sans">
+              {t.ui("accountData.subStatContrib")}:
+            </span>
+            <span className="text-amber-200">{normSubTotal.toFixed(1)}</span>
+          </span>
+          <span className="ml-auto flex items-center gap-1.5">
+            <span className="text-slate-400 font-sans">
               {t.ui("accountData.statCount")}:
             </span>
             <span className="text-sky-300">
               {artifactScore.substatScore.statCount.toFixed(1)}
             </span>
           </span>
-          <span className="flex gap-1">
-            <span className="text-sm font-sans">
-              {t.ui("accountData.score")}:
-            </span>
-            <span className="text-amber-200">
-              {artifactScore.substatScore.subScore.toFixed(1)}
-            </span>
-          </span>
         </div>
-      </div>
+      )}
 
       {/* Breakdown by Slot */}
       <div className="grid grid-cols-[auto_repeat(5,auto)] gap-y-2 gap-x-4 text-base">
@@ -361,14 +393,13 @@ function ArtifactScoreContent({
 
         {/* Main Stat Row */}
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
-          {t.ui("computeFilters.mainStat")}
+          {t.ui("accountData.mainStatContrib")}
         </div>
         {allSlots.map((slot) => {
           const isMainStat = ["sands", "goblet", "circlet"].includes(slot);
           const isEquipped =
             artifactScore.substatScore.slotMaxSubScores[slot as Slot] > 0;
 
-          // If it's a flower/plume, or slot is empty, or no build matched (cant judge)
           if (!isMainStat || !isEquipped || !artifactScore.buildMatch) {
             return (
               <div key={slot} className="text-center text-slate-600">
@@ -380,25 +411,34 @@ function ArtifactScoreContent({
           const hasMismatch = artifactScore.buildMatch.mainStatMismatches.some(
             (m) => m.slot === slot
           );
+          const mainScore = norm?.slotMainStatScores[slot as Slot] ?? 0;
+          const normMainSlot = mainScore * normalizer;
 
           if (hasMismatch) {
             return (
-              <div key={slot} className="flex justify-center items-center">
-                <TriangleAlert className="w-4 h-4 text-amber-500" />
+              <div
+                key={slot}
+                className="flex items-center justify-center gap-1"
+              >
+                <TriangleAlert className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-xs font-mono text-amber-500">0</span>
               </div>
             );
           }
 
           return (
-            <div key={slot} className="flex justify-center items-center">
-              <Check className="w-4 h-4 text-emerald-500" />
+            <div
+              key={slot}
+              className="text-center font-mono text-emerald-300 bg-emerald-500/10 rounded py-1 px-2"
+            >
+              {normMainSlot > 0 ? `+${normMainSlot.toFixed(0)}` : "-"}
             </div>
           );
         })}
 
         {/* Sub Stat Row */}
         <div className="text-right text-sm text-slate-400 pr-2 self-center">
-          {t.ui("computeFilters.subStat")}
+          {t.ui("accountData.subStatContrib")}
         </div>
         {allSlots.map((slot) => {
           const subScore = artifactScore.substatScore.slotSubScores[slot];
@@ -406,13 +446,15 @@ function ArtifactScoreContent({
           const percent =
             maxScore && maxScore > 0 ? (subScore ?? 0) / maxScore : 0;
 
-          // Dynamic font weight based on percentage of potential
-          // <60%: normal, 60-80%: medium, 80-90%: semibold, 90-100%: bold, 100%+: extrabold
           let fontWeight = "font-normal";
           if (percent >= 1.0) fontWeight = "font-extrabold";
           else if (percent >= 0.9) fontWeight = "font-bold";
           else if (percent >= 0.8) fontWeight = "font-semibold";
           else if (percent >= 0.6) fontWeight = "font-medium";
+
+          // Show in normalized space when available
+          const displayScore =
+            normalizer > 0 ? (subScore ?? 0) * normalizer : subScore;
 
           return (
             <div
@@ -422,7 +464,7 @@ function ArtifactScoreContent({
                 fontWeight
               )}
             >
-              {subScore !== undefined ? subScore.toFixed(1) : "-"}
+              {displayScore !== undefined ? displayScore.toFixed(1) : "-"}
             </div>
           );
         })}

@@ -90,6 +90,39 @@ describe("i18n App Data Integrity", () => {
     expect(missingKeys).toEqual([]);
   });
 
+  it("no t.ui() or t.format() calls should use dynamic keys", () => {
+    // Match t.ui(`...`) or t.format(`...`) — backtick means template literal
+    const dynamicKeyRegex = /t\.(?:ui|format)\(\s*`/g;
+    const violations: string[] = [];
+
+    const files = fs.readdirSync(path.resolve(__dirname, "../src"), {
+      recursive: true,
+    }) as string[];
+
+    for (const file of files) {
+      const fullPath = path.join(path.resolve(__dirname, "../src"), file);
+      if (!fs.statSync(fullPath).isFile()) continue;
+      if (!/\.(tsx|ts)$/.test(file)) continue;
+
+      const content = fs.readFileSync(fullPath, "utf-8");
+      const lines = content.split("\n");
+      for (let i = 0; i < lines.length; i++) {
+        if (dynamicKeyRegex.test(lines[i])) {
+          violations.push(`${file}:${i + 1}: ${lines[i].trim()}`);
+        }
+        dynamicKeyRegex.lastIndex = 0;
+      }
+    }
+
+    if (violations.length > 0) {
+      console.error(
+        "Dynamic i18n keys found (use static string literals instead):\n",
+        violations.join("\n")
+      );
+    }
+    expect(violations).toEqual([]);
+  });
+
   it("all i18nUiData keys should be used in the codebase", () => {
     // Explicit exclusions for keys referenced dynamically (not caught by regex/string search)
     const allowedIgnoredKeys = new Set<string>();

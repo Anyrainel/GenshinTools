@@ -168,6 +168,15 @@ export interface SubstatScoreResult {
   isComplete: boolean;
 }
 
+/** CD-equivalent value of a correct main stat (5★ Lv.20) */
+const MAIN_STAT_CD_EQUIV_5STAR = 62.1;
+/** CD-equivalent value of a correct main stat (4★ Lv.16) */
+const MAIN_STAT_CD_EQUIV_4STAR = 46.4;
+/** Average CD-equiv per roll (7.77 × 0.85) */
+const AVG_ROLL_CD_EQUIV = 7.77 * 0.85;
+/** Ideal roll distribution across top-4 weighted substats for a perfect set */
+const IDEAL_ROLL_DISTRIBUTION = [22, 10, 5, 5];
+
 export type MainStatMismatch = {
   slot: MainStatSlot;
   equipped: MainStat;
@@ -198,9 +207,25 @@ export type BuildMatchResult = {
   mainStatMismatches: MainStatMismatch[];
 };
 
+/** Normalized score info (main stat scoring + 300-point scale) */
+export interface NormalizedScoreInfo {
+  /** Total normalized score out of 300 */
+  normalizedScore: number;
+  /** Raw main stat CD-equiv score (before normalization) */
+  rawMainStatScore: number;
+  /** Per-slot main stat CD-equiv (0 for flower/plume or wrong main stat) */
+  slotMainStatScores: Record<Slot, number>;
+  /** Ideal score for a perfect build with these weights (main + sub) */
+  idealScore: number;
+  /** 300 / idealScore */
+  normalizer: number;
+}
+
 export interface ArtifactScoreResult {
   substatScore: SubstatScoreResult;
   buildMatch: BuildMatchResult | null;
+  /** Normalized scoring (main stat + 300-scale). Null when no build is matched. */
+  normalized: NormalizedScoreInfo | null;
 }
 
 // ----------------------------------------------------------------------------
@@ -649,6 +674,77 @@ export function scoreAllSlots(
   };
 }
 
+/**
+ * Compute ideal score for V1 normalization.
+ * Main stats: 3 slots × CD-equiv at 100% weight (simplified — V2 will add per-stat weights).
+ * Substats: [22, 10, 5, 5] ideal rolls across top 4 weighted stats.
+ */
+function computeIdealScoreV1(weights: StatWeightMap): number {
+  // Main stat ideal: all 3 main stat slots contribute at full weight
+  const mainStatIdeal = 3 * MAIN_STAT_CD_EQUIV_5STAR;
+
+  // Substat ideal: top 4 weights get ideal roll distribution
+  const sortedWeights = Object.entries(weights)
+    .filter(([, w]) => (w ?? 0) > 0)
+    .map(([, w]) => w ?? 0)
+    .sort((a, b) => b - a)
+    .slice(0, 4);
+
+  let substatIdeal = 0;
+  for (let i = 0; i < Math.min(sortedWeights.length, 4); i++) {
+    substatIdeal +=
+      IDEAL_ROLL_DISTRIBUTION[i] * AVG_ROLL_CD_EQUIV * (sortedWeights[i] / 100);
+  }
+
+  return mainStatIdeal + substatIdeal;
+}
+
+/**
+ * Compute main stat scores and normalize the total to a 300-point scale.
+ * Every recommended main stat is treated as 100% effective (weight = 1.0).
+ */
+function computeNormalizedScore(
+  artifacts: Partial<Record<Slot, ArtifactData>>,
+  buildMatch: BuildMatchResult,
+  substatRawScore: number
+): NormalizedScoreInfo {
+  const slotMainStatScores = Object.fromEntries(
+    allSlots.map((s) => [s, 0])
+  ) as Record<Slot, number>;
+
+  let rawMainStatScore = 0;
+
+  for (const slot of mainStatSlots) {
+    const artifact = artifacts[slot];
+    if (!artifact) continue;
+
+    const hasMismatch = buildMatch.mainStatMismatches.some(
+      (m) => m.slot === slot
+    );
+    if (hasMismatch) continue;
+
+    // Correct main stat → full CD-equiv
+    const cdEquiv =
+      artifact.rarity === 4
+        ? MAIN_STAT_CD_EQUIV_4STAR
+        : MAIN_STAT_CD_EQUIV_5STAR;
+    slotMainStatScores[slot] = cdEquiv;
+    rawMainStatScore += cdEquiv;
+  }
+
+  const idealScore = computeIdealScoreV1(buildMatch.statWeights);
+  const normalizer = idealScore > 0 ? 300 / idealScore : 1;
+  const normalizedScore = (rawMainStatScore + substatRawScore) * normalizer;
+
+  return {
+    normalizedScore,
+    rawMainStatScore,
+    slotMainStatScores,
+    idealScore,
+    normalizer,
+  };
+}
+
 export function scoreWithBuilds(
   char: CharacterData,
   builds: Build[],
@@ -665,7 +761,15 @@ export function scoreWithBuilds(
     buildMatch?.statWeights ?? FALLBACK_WEIGHTS,
     globalConfig
   );
-  return { substatScore, buildMatch };
+  const normalized =
+    buildMatch != null
+      ? computeNormalizedScore(
+          char.artifacts,
+          buildMatch,
+          substatScore.subScore
+        )
+      : null;
+  return { substatScore, buildMatch, normalized };
 }
 
 // ----------------------------------------------------------------------------

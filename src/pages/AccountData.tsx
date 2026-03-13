@@ -3,6 +3,7 @@ import { CharacterView } from "@/components/account-data/CharacterView";
 import { EvaluationView } from "@/components/account-data/EvaluationView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
+import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
@@ -497,6 +498,7 @@ export default function AccountDataPage() {
       clearLabel={t.ui("common.clearAccountData")}
     >
       <BuildsDefaultPresetPrompt />
+      <ScoreChangeAnnouncement />
 
       {/* Control dialogs - render without triggers, opened via ref */}
       <AccountImportControl

@@ -44,11 +44,13 @@ const mockScoreWithBuild: ArtifactScoreResult = {
     mainStatMatches: 3,
     mainStatMismatches: [],
   } as unknown as BuildMatchResult,
+  normalized: null,
 };
 
 const mockScoreNoBuild: ArtifactScoreResult = {
   substatScore: baseMockSubstatScore,
   buildMatch: null,
+  normalized: null,
 };
 
 describe("ArtifactScoreHoverCard", () => {

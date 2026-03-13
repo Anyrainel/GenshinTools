@@ -204,7 +204,11 @@ export const createArtifactScoreResult = (
     isComplete: true,
     ...overrides.substatScore,
   };
-  return { substatScore: substat, buildMatch: overrides.buildMatch ?? null };
+  return {
+    substatScore: substat,
+    buildMatch: overrides.buildMatch ?? null,
+    normalized: null,
+  };
 };
 
 export const MOCK_SCORES = {

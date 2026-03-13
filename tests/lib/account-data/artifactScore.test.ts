@@ -958,6 +958,319 @@ describe("scoreWithMatchedBuild", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Normalized Score (main stat scoring + 300-point scale)
+// ---------------------------------------------------------------------------
+
+describe("normalizedScore", () => {
+  describe("full character — all main stats correct", () => {
+    it("returns normalized info when build is matched", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      expect(result.normalized).not.toBeNull();
+    });
+
+    it("normalizedScore = (rawMainStatScore + subScore) × normalizer", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      const expected =
+        (n.rawMainStatScore + result.substatScore.subScore) * n.normalizer;
+      expect(n.normalizedScore).toBeCloseTo(expected, 5);
+    });
+
+    it("normalizer = 300 / idealScore", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.normalizer).toBeCloseTo(300 / n.idealScore, 5);
+    });
+
+    it("awards 62.1 CD-equiv per correct 5★ main stat slot", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      // Arlecchino: sands=atk%(✓), goblet=pyro%(✓), circlet=cd(✓) → 3 × 62.1
+      expect(n.rawMainStatScore).toBeCloseTo(62.1 * 3, 1);
+      expect(n.slotMainStatScores.sands).toBeCloseTo(62.1, 1);
+      expect(n.slotMainStatScores.goblet).toBeCloseTo(62.1, 1);
+      expect(n.slotMainStatScores.circlet).toBeCloseTo(62.1, 1);
+    });
+
+    it("flower and plume main stat scores are always 0", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.slotMainStatScores.flower).toBe(0);
+      expect(n.slotMainStatScores.plume).toBe(0);
+    });
+
+    it("normalizedScore is below 300 for non-perfect artifacts", () => {
+      const result = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      expect(result.normalized!.normalizedScore).toBeLessThan(300);
+      expect(result.normalized!.normalizedScore).toBeGreaterThan(0);
+    });
+  });
+
+  describe("all main stats wrong", () => {
+    it("rawMainStatScore is 0 when all main stats mismatch", () => {
+      const result = scoreWithBuilds(
+        mismatchedChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.rawMainStatScore).toBe(0);
+      expect(n.slotMainStatScores.sands).toBe(0);
+      expect(n.slotMainStatScores.goblet).toBe(0);
+      expect(n.slotMainStatScores.circlet).toBe(0);
+    });
+
+    it("normalizedScore is much lower than with correct main stats", () => {
+      const correct = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const wrong = scoreWithBuilds(
+        mismatchedChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      expect(wrong.normalized!.normalizedScore).toBeLessThan(
+        correct.normalized!.normalizedScore
+      );
+    });
+  });
+
+  describe("partial character — missing slots", () => {
+    it("scores main stats only for equipped sands/goblet/circlet", () => {
+      // Only sands equipped (correct main stat atk%)
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands,
+          // goblet, circlet missing
+        },
+      };
+      const result = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      // Only sands contributes main stat score
+      expect(n.slotMainStatScores.sands).toBeCloseTo(62.1, 1);
+      expect(n.slotMainStatScores.goblet).toBe(0);
+      expect(n.slotMainStatScores.circlet).toBe(0);
+      expect(n.rawMainStatScore).toBeCloseTo(62.1, 1);
+    });
+
+    it("normalizedScore is lower with missing slots", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands,
+        },
+      };
+      const full = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const partial = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      expect(partial.normalized!.normalizedScore).toBeLessThan(
+        full.normalized!.normalizedScore
+      );
+    });
+
+    it("uses the same normalizer regardless of how many slots are equipped", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          sands: arlecchinoArtifacts.sands,
+        },
+      };
+      const full = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const partial = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      // Normalizer depends only on build weights, not on what's equipped
+      expect(partial.normalized!.normalizer).toBeCloseTo(
+        full.normalized!.normalizer,
+        5
+      );
+    });
+  });
+
+  describe("only flower and plume equipped", () => {
+    it("rawMainStatScore is 0 (no sands/goblet/circlet)", () => {
+      const partialChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+        },
+      };
+      const result = scoreWithBuilds(
+        partialChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.rawMainStatScore).toBe(0);
+      // But substats still contribute
+      expect(n.normalizedScore).toBeGreaterThan(0);
+    });
+  });
+
+  describe("no build — fallback", () => {
+    it("normalized is null when no builds provided", () => {
+      const result = scoreWithBuilds(arlecchinoChar, [], GLOBAL_CONFIG);
+      expect(result.normalized).toBeNull();
+    });
+  });
+
+  describe("empty character — no artifacts", () => {
+    it("normalized score is 0 with no artifacts", () => {
+      const result = scoreWithBuilds(
+        bareChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.normalizedScore).toBe(0);
+      expect(n.rawMainStatScore).toBe(0);
+    });
+  });
+
+  describe("4-star artifact main stat", () => {
+    it("awards 46.4 CD-equiv for a correct 4★ main stat", () => {
+      const char4Star: CharacterData = {
+        key: "citlali",
+        constellation: 0,
+        level: 70,
+        talent: { auto: 1, skill: 1, burst: 1 },
+        artifacts: {
+          sands: {
+            id: "art-4star-sands",
+            setKey: "scroll_of_the_hero_of_cinder_city",
+            slotKey: "sands",
+            level: 16,
+            rarity: 4,
+            mainStatKey: "em",
+            lock: false,
+            substats: { er: 5.0, cr: 3.0 },
+          },
+        },
+      };
+      const result = scoreWithBuilds(char4Star, [citlaliBuild1], GLOBAL_CONFIG);
+      const n = result.normalized!;
+      expect(n.slotMainStatScores.sands).toBeCloseTo(46.4, 1);
+    });
+  });
+
+  describe("mixed correct and wrong main stats", () => {
+    it("scores only the correct slots", () => {
+      // sands correct (atk%), goblet wrong (hp%), circlet correct (cd)
+      const mixedChar: CharacterData = {
+        ...arlecchinoChar,
+        artifacts: {
+          flower: arlecchinoArtifacts.flower,
+          plume: arlecchinoArtifacts.plume,
+          sands: arlecchinoArtifacts.sands, // atk% ✓
+          goblet: {
+            id: "art-wrong-gob",
+            setKey: "fragment_of_harmonic_whimsy",
+            slotKey: "goblet",
+            level: 20,
+            rarity: 5,
+            mainStatKey: "hp%", // ✗ (build wants atk% or pyro%)
+            lock: false,
+            substats: { cr: 5, cd: 10 },
+          },
+          circlet: arlecchinoArtifacts.circlet, // cd ✓
+        },
+      };
+      const result = scoreWithBuilds(
+        mixedChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      expect(n.slotMainStatScores.sands).toBeCloseTo(62.1, 1);
+      expect(n.slotMainStatScores.goblet).toBe(0);
+      expect(n.slotMainStatScores.circlet).toBeCloseTo(62.1, 1);
+      expect(n.rawMainStatScore).toBeCloseTo(62.1 * 2, 1);
+    });
+  });
+
+  describe("Citlali EM build — normalizer differs by build weights", () => {
+    it("produces different normalizer than Arlecchino build", () => {
+      const arlResult = scoreWithBuilds(
+        arlecchinoChar,
+        [arlecchinoBuild],
+        GLOBAL_CONFIG
+      );
+      const citResult = scoreWithBuilds(
+        citlaliChar,
+        [citlaliBuild1],
+        GLOBAL_CONFIG
+      );
+      // Different weight distributions → different ideal scores → different normalizers
+      expect(arlResult.normalized!.normalizer).not.toBeCloseTo(
+        citResult.normalized!.normalizer,
+        2
+      );
+    });
+
+    it("all 3 main stats scored for Citlali EM build", () => {
+      const result = scoreWithBuilds(
+        citlaliChar,
+        [citlaliBuild1],
+        GLOBAL_CONFIG
+      );
+      const n = result.normalized!;
+      // Citlali: sands=em(✓), goblet=em(✓), circlet=em(✓)
+      expect(n.rawMainStatScore).toBeCloseTo(62.1 * 3, 1);
+    });
+  });
+});
+
 describe("calculateArtifactScore", () => {
   describe("complete character (5 artifacts)", () => {
     it("returns isComplete = true", () => {

@@ -422,6 +422,10 @@ interface BnBContext {
   collector: TopKCollector;
   evaluations: number;
   sinceLastYield: number;
+  /** Optional deadline (performance.now timestamp). DFS aborts if exceeded. */
+  deadline?: number;
+  /** Set to true if the DFS was aborted early due to deadline. */
+  aborted?: boolean;
 }
 
 // ─── Core B&B DFS ───
@@ -461,6 +465,14 @@ function bnbDfs(
   const pieces: ArtifactTuple = [null, null, null, null, null];
 
   function dfs(depth: number, cumEr: number, cumCr: number): void {
+    if (ctx.aborted) return;
+    // Check deadline every 1000 evaluations to avoid perf.now() overhead
+    if (ctx.deadline && ctx.evaluations % 1000 === 0) {
+      if (performance.now() > ctx.deadline) {
+        ctx.aborted = true;
+        return;
+      }
+    }
     if (depth === 5) {
       const { damage, result } = evaluateBuild(
         pieces,
@@ -575,7 +587,8 @@ function runCharacterBnB(
   scoreFn:
     | ((sheets: Record<string, StatSheet>, calcTargetId: string) => number)
     | undefined,
-  topK: number
+  topK: number,
+  deadline?: number
 ): {
   collector: TopKCollector;
   evaluations: number;
@@ -712,6 +725,7 @@ function runCharacterBnB(
     collector,
     evaluations: 0,
     sinceLastYield: 0,
+    deadline,
   };
 
   // Build and run tasks
@@ -1037,6 +1051,7 @@ export async function* runTeamOptimization(
     reactionOverride,
     combo,
     reactionOverrides,
+    perCharDeadlineMs,
   } = opts;
 
   const isComboMode =
@@ -1127,6 +1142,9 @@ export async function* runTeamOptimization(
     await new Promise((r) => setTimeout(r, 0));
 
     // Run B&B
+    const charDeadline = perCharDeadlineMs
+      ? performance.now() + perCharDeadlineMs
+      : undefined;
     let result = runCharacterBnB(
       charId,
       charConfig,
@@ -1140,7 +1158,8 @@ export async function* runTeamOptimization(
       undefined, // no exclusions in phase 1
       reactionOverride,
       comboScoreFn,
-      TOP_K
+      TOP_K,
+      charDeadline
     );
 
     // ignoreArtifactSets fallback
@@ -1169,7 +1188,8 @@ export async function* runTeamOptimization(
         undefined,
         reactionOverride,
         comboScoreFn,
-        TOP_K
+        TOP_K,
+        charDeadline
       );
     }
 

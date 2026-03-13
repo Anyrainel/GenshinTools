@@ -96,6 +96,8 @@ export interface TeamOptimizerOptions {
   reactionOverrides?: Record<string, ReactionOverride>;
   /** Per-character flag: retry failed passes without artifact set constraints (keyed by charId). */
   ignoreArtifactSets?: Record<string, boolean>;
+  /** Optional per-character time budget in ms (V2 only). B&B aborts if exceeded. */
+  perCharDeadlineMs?: number;
 }
 
 // ─── Helpers ───

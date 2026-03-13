@@ -47,6 +47,7 @@ const mockScoreResult: ArtifactScoreResult = {
     } as Record<SubStat, StatScoreBreakdown>,
   },
   buildMatch: null,
+  normalized: null,
 };
 
 describe("StatDisplay", () => {

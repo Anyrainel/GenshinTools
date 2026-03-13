@@ -308,6 +308,28 @@ export const i18nUiData = {
     flatDef: { en: "Flat DEF", zh: "小防御" },
     wrongMainStat: { en: "Ineffective main stat", zh: "无效主属性" },
     subStatScore: { en: "Sub", zh: "副词条" },
+    mainStatContrib: { en: "Main", zh: "主属性" },
+    subStatContrib: { en: "Sub", zh: "副属性" },
+    outOf300: { en: "/ 300", zh: "/ 300" },
+    scoreChangeAnnouncement: {
+      title: {
+        en: "Scoring Revamped",
+        zh: "评分系统已升级",
+      },
+      headline: {
+        en: "Every character's max score is now",
+        zh: "所有角色的满分统一为",
+      },
+      detail: {
+        en: "Main stats are now scored alongside substats.",
+        zh: "主属性现与副属性一同计入评分。",
+      },
+      note: {
+        en: "Tap a character's score to see the breakdown.",
+        zh: "点击角色评分即可查看详细拆分。",
+      },
+      dismiss: { en: "Got it", zh: "知道了" },
+    },
     scoredUsing: {
       en: "Scored using: {0}",
       zh: "基于配装评分: {0}",

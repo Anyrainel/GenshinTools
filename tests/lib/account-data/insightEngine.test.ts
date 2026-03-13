@@ -60,6 +60,7 @@ function makeScoreResultFromWeights(
       mainStatMatches: 3,
       mainStatMismatches: [],
     },
+    normalized: null,
   };
 }
 
