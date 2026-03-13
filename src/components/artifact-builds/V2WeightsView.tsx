@@ -314,7 +314,11 @@ function V2CharacterCard({
                 >
                   <Icon className="w-3.5 h-3.5 text-foreground/50 shrink-0" />
                   <span className="text-foreground/60">
-                    {t.ui(`v2Weights.${slot}`)}
+                    {slot === "sands"
+                      ? t.ui("v2Weights.sands")
+                      : slot === "goblet"
+                        ? t.ui("v2Weights.goblet")
+                        : t.ui("v2Weights.circlet")}
                   </span>
                   {options.map((ms, i) => (
                     <span

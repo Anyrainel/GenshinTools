@@ -103,7 +103,7 @@ interface GEdge {
 
 const S = 28;
 const OFF = S / 2 + 4;
-const SPEED = 60;
+const SPEED = import.meta.env.DEV ? 600 : 60;
 
 // ── Graph builder ──────────────────────────────────────────────────────
 
@@ -115,8 +115,9 @@ function buildGraph(
   const H = container.offsetHeight;
   const cRect = container.getBoundingClientRect();
 
-  // Collect card rects relative to container
-  const cardEls = container.querySelectorAll('[class*="rounded-2xl"]');
+  // Collect card rects relative to container.
+  // Cards must have data-wn-card to be detected — never use fragile CSS selectors.
+  const cardEls = container.querySelectorAll("[data-wn-card]");
   const cards: { x: number; y: number; r: number; b: number }[] = [];
   for (const el of cardEls) {
     if (el === skipEl || el.contains(skipEl) || skipEl.contains(el)) continue;
@@ -146,7 +147,7 @@ function buildGraph(
     const bot = Math.max(...rows[i].map((c) => c.b));
     const top = Math.min(...rows[i + 1].map((c) => c.y));
     hGaps.push({
-      y: bot + (top - bot) * 0.38,
+      y: bot + (top - bot) * 0.5,
       wide: top - bot >= MIN_INTERIOR_GAP,
     });
   }
@@ -550,7 +551,13 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
                               "text-foreground"
                           )}
                         >
-                          {t.ui(`whatsNew.${section.category}`)}
+                          {section.category === "features"
+                            ? t.ui("whatsNew.features")
+                            : section.category === "fixes"
+                              ? t.ui("whatsNew.fixes")
+                              : section.category === "roadmap"
+                                ? t.ui("whatsNew.roadmap")
+                                : section.category}
                         </h3>
                         <ul className="space-y-1">
                           {section.items.map((item, i) => (

@@ -388,6 +388,7 @@ const FeatureCard = ({
         rel="noreferrer"
         className={sharedClassName}
         style={animationStyle}
+        data-wn-card
       >
         {content}
       </a>
@@ -395,7 +396,12 @@ const FeatureCard = ({
   }
 
   return (
-    <Link to={link} className={sharedClassName} style={animationStyle}>
+    <Link
+      to={link}
+      className={sharedClassName}
+      style={animationStyle}
+      data-wn-card
+    >
       {content}
     </Link>
   );

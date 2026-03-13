@@ -399,12 +399,16 @@ export const i18nUiData = {
   scoreExplanation: {
     title: { en: "Artifact Score Calculation", zh: "圣遗物评分计算逻辑" },
     description: {
-      en: "How we derive the score for each artifact.",
-      zh: "圣遗物评分是如何计算的？",
+      en: "How we derive the artifact score (out of 300) for each character.",
+      zh: "角色的圣遗物评分（满分 300）是如何计算的？",
     },
     formula: {
-      en: "Final Score = Σ( Stat Value × Normalization Factor × (Weight / 100) × [Punishment Factor] )",
-      zh: "最终评分 = Σ( 属性数值 × 折算系数 × (权重 / 100) × [惩罚系数] )",
+      en: "Score = ( Main Stat Score + Substat Score ) × Normalizer",
+      zh: "评分 = ( 主属性分 + 副属性分 ) × 归一化系数",
+    },
+    subFormula: {
+      en: "Substat Score = Σ( Value × CD-Equiv Factor × Weight/100 × [Punishment] )",
+      zh: "副属性分 = Σ( 数值 × 暴伤折算系数 × 权重/100 × [惩罚系数] )",
     },
     normalization: {
       title: { en: "Normalization Factor", zh: "折算系数" },
@@ -425,6 +429,20 @@ export const i18nUiData = {
       description: {
         en: "Applied only to flat stats (ATK, HP, DEF) to reflect their reduced effectiveness compared to percentage stats. This is usually set between 30% to 40% for Lv.90-100 characters.",
         zh: "仅适用于固定数值属性（小攻击、小生命、小防御），以反映其相对于百分比属性较低的有效性。对于 90-100 级角色，通常设置为 30% 到 40%。",
+      },
+    },
+    mainStat: {
+      title: { en: "Main Stat Scoring", zh: "主属性评分" },
+      description: {
+        en: "The sands, goblet, and circlet main stats are scored when they match the build's recommendation. A correct 5★ main stat is worth 62.1 CD-equivalent points (46.4 for 4★). Wrong main stats contribute 0.",
+        zh: "当沙漏、杯子和头冠的主属性与配装推荐一致时，会计入评分。正确的 5★ 主属性等效 62.1 暴伤点（4★ 为 46.4）。错误的主属性贡献为 0。",
+      },
+    },
+    scale300: {
+      title: { en: "300-Point Scale", zh: "300 分制" },
+      description: {
+        en: "The total score (main stats + substats) is normalized to a 300-point scale. 300 represents a theoretically perfect artifact set — correct main stats on all 3 slots, plus ideal substat rolls distributed across your top weighted stats.",
+        zh: "总分（主属性 + 副属性）被归一化为 300 分制。300 分代表理论上的完美圣遗物套装 — 3 个位置的主属性全部正确，且副属性词条完美分配到最高权重的属性上。",
       },
     },
     factors: {
@@ -1291,9 +1309,14 @@ export const i18nUiData = {
     },
     idealScore: { en: "Ideal", zh: "理想分" },
     normalizer: { en: "Norm.", zh: "归一化" },
+    sands: { en: "Sands", zh: "时之沙" },
+    goblet: { en: "Goblet", zh: "空之杯" },
+    circlet: { en: "Circlet", zh: "理之冠" },
   },
   whatsNew: {
     title: { en: "What's New", zh: "更新日志" },
     roadmap: { en: "Roadmap", zh: "计划" },
+    features: { en: "Features", zh: "新功能" },
+    fixes: { en: "Fixes", zh: "修复" },
   },
 };

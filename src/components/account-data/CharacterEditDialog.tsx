@@ -522,7 +522,13 @@ function OverviewPanel({
               className="flex items-center gap-1.5 sm:gap-2 shrink-0"
             >
               <div className="min-w-[28px] sm:min-w-[40px]">
-                <FieldLabel>{t.ui(`accountData.talents.${key}`)}</FieldLabel>
+                <FieldLabel>
+                  {key === "auto"
+                    ? t.ui("accountData.talents.auto")
+                    : key === "skill"
+                      ? t.ui("accountData.talents.skill")
+                      : t.ui("accountData.talents.burst")}
+                </FieldLabel>
               </div>
               <NumberInput
                 value={talents[key]}

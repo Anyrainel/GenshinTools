@@ -135,7 +135,17 @@ function ActionRecommendationCardComponent({
         <div className="flex items-center gap-1 mt-0.5">
           <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />
           <span className={cn("text-xs font-medium", color)}>
-            {t.ui(`accountData.insights.${rec.actionType}`)}
+            {rec.actionType === "swap"
+              ? t.ui("accountData.insights.swap")
+              : rec.actionType === "upgrade"
+                ? t.ui("accountData.insights.upgrade")
+                : rec.actionType === "reroll"
+                  ? t.ui("accountData.insights.reroll")
+                  : rec.actionType === "farm"
+                    ? t.ui("accountData.insights.farm")
+                    : rec.actionType === "equip"
+                      ? t.ui("accountData.insights.equip")
+                      : rec.actionType}
           </span>
           {subtitle && (
             <span className="text-xs text-muted-foreground">· {subtitle}</span>
