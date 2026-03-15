@@ -487,10 +487,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       if (frozenCharIdSet.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
-      const hasFavonius = team.weapons[ci]?.startsWith("favonius_") ?? false;
       perChar[cid] = {
         targetEr: team.targetEr?.[cid] ?? 1.0,
-        targetCr: hasFavonius ? (team.targetCr?.[cid] ?? 0.05) : 0,
+        targetCr: team.targetCr?.[cid] ?? 0,
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
