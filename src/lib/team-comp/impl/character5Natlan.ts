@@ -12,7 +12,7 @@ import {
   RegisterCharacter,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { ElementalOrPhysical } from "../types";
+import type { ElementalOrPhysical, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -739,36 +739,27 @@ class Xilonen extends CharacterBase {
       );
     }
 
-    // C2: Element-dependent onField buffs
+    // C2: Each active Source Sample grants a buff to teammates matching that element.
+    // Use charId to target each teammate individually based on their element.
     if (this.constellation >= 2) {
-      if (this.teamPHEC.has("Pyro")) {
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
-            { key: "atk%", value: 0.45 },
-          ])
-        );
+      const elementBuffMap: Record<string, { key: StatKey; value: number }> = {
+        Geo: { key: "dmg%", value: 0.5 },
+        Pyro: { key: "atk%", value: 0.45 },
+        Hydro: { key: "hp%", value: 0.45 },
+        Cryo: { key: "cd", value: 0.6 },
+        // Electro: energy restore + CD reduction only, not modeled
+      };
+      for (const [charId, el] of Object.entries(this.teamMeta.elements)) {
+        if (!el) continue;
+        const buff = elementBuffMap[el];
+        if (buff) {
+          buffs.push(
+            new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team", charId }, [
+              { key: buff.key, value: buff.value },
+            ])
+          );
+        }
       }
-      if (this.teamPHEC.has("Hydro")) {
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
-            { key: "hp%", value: 0.45 },
-          ])
-        );
-      }
-      if (this.teamPHEC.has("Cryo")) {
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
-            { key: "cd", value: 0.6 },
-          ])
-        );
-      }
-      // C2 Geo Source Sample always active at C2: Geo characters → DMG dealt +50%
-      // Approximated as geo% since Geo characters primarily deal Geo DMG
-      buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
-          { key: "geo%", value: 0.5 },
-        ])
-      );
     }
 
     // C4: Blooming Blessing — all party members gain +65% Xilonen DEF as Base DMG

@@ -100,7 +100,7 @@ class Kaveh extends CharacterBase {
     ...(this.constellation >= 4
       ? [
           new StatBuff(
-            cbs(this, "C4", ["Q"]),
+            cbs(this, "C4", []),
             {
               receiver: "self",
               filter: { reactions: ["bloom", "lunarBloom"] },

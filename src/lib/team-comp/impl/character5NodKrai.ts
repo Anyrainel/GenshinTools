@@ -286,7 +286,7 @@ class Nefer extends CharacterBase {
     // P1: EM +100/200 when Veil stacks ≥3 (C0-1 cap=3, C2+ cap=5)
     new StatBuff(
       cbs(this, this.constellation >= 2 ? "P1/C2" : "P1", ["charge"]),
-      { receiver: "selfOnField" },
+      { receiver: "self" },
       [
         {
           key: "em",
@@ -359,7 +359,7 @@ class Nefer extends CharacterBase {
       ? [
           new StatBuff(
             cbs(this, "C6", []),
-            { receiver: "selfOnField", filter: { reactions: ["lunarBloom"] } },
+            { receiver: "self", filter: { reactions: ["lunarBloom"] } },
             [{ key: "elevated%", value: 0.15 }]
           ),
         ]
@@ -531,7 +531,7 @@ class Flins extends CharacterBase {
           new StatBuff(
             cbs(this, "P1", ["passive"]),
             {
-              receiver: "selfOnField",
+              receiver: "self",
               filter: { reactions: ["lunarCharged"] },
             },
             [{ key: "reactionDmg%", value: 0.2 }]
@@ -574,7 +574,7 @@ class Flins extends CharacterBase {
           new StatBuff(
             cbs(this, "C6", []),
             {
-              receiver: "selfOnField",
+              receiver: "self",
               filter: { reactions: ["lunarCharged"] },
             },
             [{ key: "elevated%", value: 0.35 }]

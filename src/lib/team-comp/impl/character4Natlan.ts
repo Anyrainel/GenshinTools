@@ -164,11 +164,12 @@ class Ororon extends CharacterBase {
 
     // C1: Nighttide enemies take 50% extra DMG from Hypersense — "伤害提升50%" → dmg%
     // Assumed active (peak model: E applied Nighttide before Hypersense triggers)
+    // Hypersense triggers off-field, so receiver is "self" (not "selfOnField")
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(
           cbs(this, "C1", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["special"] } },
+          { receiver: "self", filter: { abilities: ["special"] } },
           [{ key: "dmg%", value: 0.5 }]
         )
       );

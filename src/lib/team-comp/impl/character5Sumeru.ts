@@ -600,13 +600,12 @@ class Cyno extends CharacterBase {
       ...(this.constellation >= 6
         ? {
             "cyno-c6-bolts": {
-              label: { zh: "6命追影牙", en: "C6 Duststalker Bolts" },
+              label: { zh: "6命渡荒之雷", en: "C6 Duststalker Bolts" },
               parts: [
                 {
                   formula: new DirectFormula(1.0, eBaseTag),
-                  hits: 3,
+                  hits: 5,
                 },
-                { formula: new DirectFormula(1.0, eBaseTag), hits: 2 },
               ],
             },
           }

@@ -1380,36 +1380,38 @@ class Varka extends CharacterBase {
       parts: naParts,
     };
 
-    // ── 2. Four Winds' Ascension ──
-    const fwParts: { formula: DirectFormula; hits?: number }[] = [
-      { formula: new DirectFormula(fwRight, skillTag(el)) },
-      { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
-    ];
-    // C2: extra 800% ATK Anemo AoE hit
-    if (this.constellation >= 2) {
-      fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
-    }
-    formulas["varka-four-winds"] = {
-      label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
-      parts: fwParts,
-    };
+    // ── 2. Four Winds' Ascension (only when PHEC teammate present) ──
+    if (this.priorityElement) {
+      const fwParts: { formula: DirectFormula; hits?: number }[] = [
+        { formula: new DirectFormula(fwRight, skillTag(el)) },
+        { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
+      ];
+      // C2: extra 800% ATK Anemo AoE hit
+      if (this.constellation >= 2) {
+        fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
+      }
+      formulas["varka-four-winds"] = {
+        label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
+        parts: fwParts,
+      };
 
-    // ── 3. Azure Devour ──
-    // "特殊重击" — still classified as charge per S4 rule (no "不被视为重击伤害")
-    const azParts: { formula: DirectFormula; hits?: number }[] = [
-      { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
-      { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
-    ];
-    // C2: extra 800% ATK Anemo AoE hit
-    if (this.constellation >= 2) {
-      azParts.push({
-        formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
-      });
+      // ── 3. Azure Devour (only when PHEC teammate present) ──
+      // "特殊重击" — still classified as charge per S4 rule (no "不被视为重击伤害")
+      const azParts: { formula: DirectFormula; hits?: number }[] = [
+        { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
+        { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
+      ];
+      // C2: extra 800% ATK Anemo AoE hit
+      if (this.constellation >= 2) {
+        azParts.push({
+          formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
+        });
+      }
+      formulas["varka-azure-devour"] = {
+        label: { zh: "E重击苍噬", en: "E Azure Devour" },
+        parts: azParts,
+      };
     }
-    formulas["varka-azure-devour"] = {
-      label: { zh: "苍噬", en: "Azure Devour" },
-      parts: azParts,
-    };
 
     // ── 4. Q: Northwind Avatar (2 hits) ──
     // First hit uses priority element, second is always Anemo

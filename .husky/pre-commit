@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 # Per-file lint & format (Biome for TS, Ruff for Python)
 npx lint-staged
 

@@ -402,7 +402,7 @@ class Xianyun extends CharacterBase {
 class Baizhu extends CharacterBase {
   readonly buffs = [
     // P1: Active HP ≥50% → Baizhu Dendro DMG +25% (assume active)
-    new StatBuff(cbs(this, "P1", []), { receiver: "selfOnField" }, [
+    new StatBuff(cbs(this, "P1", []), { receiver: "self" }, [
       { key: "dendro%", value: 0.25 },
     ]),
     // P2: Per 1000 HP (cap 50k), on-field characters gain:
@@ -924,7 +924,7 @@ class Shenhe extends CharacterBase {
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
     new ScalingBuff(
       cbs(this, "E", ["E"]),
-      { receiver: "onField", filter: { elements: ["Cryo"] } },
+      { receiver: "team", filter: { elements: ["Cryo"] } },
       [],
       "atk",
       "baseDmg",

@@ -141,7 +141,7 @@ class Emilie extends CharacterBase {
             new StatBuff(
               cbs(this, "C1", ["E"]),
               {
-                receiver: "selfOnField",
+                receiver: "self",
                 filter: { abilities: ["skill", "special"] },
               },
               [{ key: "dmg%", value: 0.2 }]
@@ -970,7 +970,7 @@ class Lyney extends CharacterBase {
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
     buffs.push(
-      new StatBuff(cbs(this, "P2", []), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
         { key: "dmg%", value: p2Bonus },
       ])
     );
