@@ -1,4 +1,4 @@
-import { ActionRecommendationCard } from "@/components/account-data/ActionRecommendationCard";
+import { RecommendationCard } from "@/components/account-data/RecommendationCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import {
+  type CharacterData,
   type InvestmentThresholds,
   LUCK_MULTIPLIERS,
   type LuckExpectation,
@@ -14,7 +15,6 @@ import {
 } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
-  type ActionType,
   type Recommendation,
   generateAllRecommendations,
 } from "@/lib/account-data/recommendationEngine";
@@ -36,44 +36,6 @@ import { Link } from "react-router-dom";
 interface RecommendationViewProps {
   scores: Record<string, ArtifactScoreResult>;
 }
-
-/** Sections shown within each tier, in display order. */
-const SECTIONS: {
-  key: ActionType | "free";
-  labelKey: string;
-  icon: typeof ArrowBigUpDash;
-  color: string;
-  actionTypes: ActionType[];
-}[] = [
-  {
-    key: "free",
-    labelKey: "accountData.insights.swap",
-    icon: ArrowRightLeft,
-    color: "text-sky-400",
-    actionTypes: ["swap", "equip"],
-  },
-  {
-    key: "upgrade",
-    labelKey: "accountData.recTabs.upgrade",
-    icon: ArrowBigUpDash,
-    color: "text-emerald-400",
-    actionTypes: ["upgrade"],
-  },
-  {
-    key: "farm",
-    labelKey: "accountData.recTabs.farm",
-    icon: Pickaxe,
-    color: "text-indigo-400",
-    actionTypes: ["farm"],
-  },
-  {
-    key: "reroll",
-    labelKey: "accountData.recTabs.reroll",
-    icon: Dices,
-    color: "text-violet-400",
-    actionTypes: ["reroll"],
-  },
-];
 
 export function RecommendationView({ scores }: RecommendationViewProps) {
   const { t } = useLanguage();
@@ -113,52 +75,65 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
     investmentThresholds,
   ]);
 
-  // Group all recommendations by tier, then by section
-  const recsByTier = useMemo(() => {
-    if (!allRecs) return {};
-    const grouped: Record<string, Record<string, Recommendation[]>> = {};
+  // Group characters by tier, sorted by max recommendation impact
+  const charactersByTier = useMemo(() => {
+    if (!accountData || !allRecs) return {};
 
+    const byTier: Record<
+      string,
+      {
+        char: CharacterData;
+        scoreResult: ArtifactScoreResult;
+        recommendations: Recommendation[];
+      }[]
+    > = {};
     for (const tier of tiers) {
-      grouped[tier] = {};
-      for (const section of SECTIONS) {
-        grouped[tier][section.key] = [];
+      byTier[tier] = [];
+    }
+
+    for (const char of accountData.characters) {
+      const scoreResult = scores[char.key];
+      if (!scoreResult) continue;
+
+      const assignment = tierAssignments[char.key];
+      const tier = assignment ? assignment.tier : "Pool";
+
+      const charRecs = allRecs.perCharacter[char.key];
+      const recommendations = charRecs?.recommendations ?? [];
+
+      if (!byTier[tier]) {
+        if (!byTier.Pool) byTier.Pool = [];
+        byTier.Pool.push({ char, scoreResult, recommendations });
+      } else {
+        byTier[tier].push({ char, scoreResult, recommendations });
       }
     }
 
-    // Distribute all recommendations
-    for (const charRecs of Object.values(allRecs.perCharacter)) {
-      const tier = tierAssignments[charRecs.characterId]?.tier || "Pool";
-      if (tier === "Pool") continue;
-      if (!grouped[tier]) continue;
-
-      for (const rec of charRecs.recommendations) {
-        const section = SECTIONS.find((s) =>
-          s.actionTypes.includes(rec.actionType)
+    // Sort by max buildScoreDiff (highest improvement potential first)
+    for (const tier of Object.keys(byTier)) {
+      byTier[tier].sort((a, b) => {
+        const aMax = Math.max(
+          0,
+          ...a.recommendations.map((r) => r.buildScoreDiff)
         );
-        if (section && grouped[tier][section.key]) {
-          grouped[tier][section.key].push(rec);
-        }
-      }
-    }
-
-    // Sort each section by buildScoreDiff desc
-    for (const tier of Object.keys(grouped)) {
-      for (const sectionKey of Object.keys(grouped[tier])) {
-        grouped[tier][sectionKey].sort(
-          (a, b) => b.buildScoreDiff - a.buildScoreDiff
+        const bMax = Math.max(
+          0,
+          ...b.recommendations.map((r) => r.buildScoreDiff)
         );
-      }
+        return bMax - aMax;
+      });
     }
 
-    return grouped;
-  }, [allRecs, tierAssignments]);
+    return byTier;
+  }, [accountData, scores, tierAssignments, allRecs]);
 
   if (!accountData) return null;
 
-  // Check if there are any recommendations at all
-  const hasAnyRecs = Object.values(recsByTier).some((tierSections) =>
-    Object.values(tierSections).some((recs) => recs.length > 0)
-  );
+  const hasAnyRecs =
+    allRecs &&
+    Object.values(allRecs.perCharacter).some(
+      (cr) => cr.recommendations.length > 0
+    );
 
   return (
     <ScrollLayout className="space-y-8 pb-10 mt-2">
@@ -231,14 +206,8 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
         const customization = tierCustomization[tier];
         if (customization?.hidden) return null;
 
-        const tierSections = recsByTier[tier];
-        if (!tierSections) return null;
-
-        const totalCount = Object.values(tierSections).reduce(
-          (sum, recs) => sum + recs.length,
-          0
-        );
-        if (totalCount === 0) return null;
+        const chars = charactersByTier[tier] || [];
+        if (chars.length === 0) return null;
 
         const displayName = customization?.displayName || t.tier(tier);
         const luckExpectation = customization?.luckExpectation || "balanced";
@@ -250,7 +219,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               <h2 className="text-2xl font-bold text-white pb-1">
                 {displayName}
                 <span className="text-base font-normal text-muted-foreground pl-2">
-                  ({totalCount})
+                  ({chars.length})
                 </span>
               </h2>
               <div className="flex items-center gap-2 text-sm">
@@ -304,37 +273,18 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               </div>
             </div>
 
-            {/* Sections within tier */}
-            {SECTIONS.map(
-              ({ key, labelKey, icon: SectionIcon, color: sectionColor }) => {
-                const recs = tierSections[key];
-                if (!recs || recs.length === 0) return null;
-
-                return (
-                  <div key={key} className="space-y-1.5">
-                    <div className="flex items-center gap-2 pl-1">
-                      <SectionIcon className={cn("w-4 h-4", sectionColor)} />
-                      <span
-                        className={cn("text-sm font-semibold", sectionColor)}
-                      >
-                        {t.ui(labelKey)}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        ({recs.length})
-                      </span>
-                    </div>
-                    <div className="grid gap-2 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
-                      {recs.map((rec) => (
-                        <ActionRecommendationCard
-                          key={`${rec.characterId}-${rec.slot}-${rec.actionType}`}
-                          recommendation={rec}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-            )}
+            {/* Per-character cards */}
+            <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(360px,1fr))]">
+              {chars.map(({ char, scoreResult, recommendations }) => (
+                <RecommendationCard
+                  key={char.key}
+                  char={char}
+                  tier={tier}
+                  recommendations={recommendations}
+                  score={scoreResult}
+                />
+              ))}
+            </div>
           </div>
         );
       })}

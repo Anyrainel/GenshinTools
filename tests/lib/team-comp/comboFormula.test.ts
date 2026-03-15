@@ -145,9 +145,10 @@ function makeBuildMatch(): BuildMatchResult {
       composition: "4pc",
       artifactSet: "crimson_witch_of_flames",
       roles: ["dps"],
-      sands: ["atk%"],
-      goblet: ["pyro%"],
-      circlet: ["cr"],
+      sandsWeights: [{ stat: "atk%", weight: 100 }],
+      gobletWeights: [{ stat: "pyro%", weight: 100 }],
+      circletWeights: [{ stat: "cr", weight: 100 }],
+      normalizer: 0,
       substats: [
         { stat: "cr", weight: 100 },
         { stat: "cd", weight: 100 },

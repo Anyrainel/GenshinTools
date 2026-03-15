@@ -3,8 +3,8 @@ import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
-} from "@/lib/team-comp/teamOptimizer";
-import { runTeamOptimization } from "@/lib/team-comp/teamOptimizer";
+} from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface AsyncTeamOptimizerState {

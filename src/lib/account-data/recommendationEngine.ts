@@ -7,6 +7,7 @@ import type {
   CharacterData,
   GlobalStatWeights,
   Slot,
+  Tier,
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
@@ -285,7 +286,7 @@ export function generateAllRecommendations(
   ];
 
   for (const char of accountData.characters) {
-    const tier = tierAssignments[char.key]?.tier || "Pool";
+    const tier: Tier = tierAssignments[char.key]?.tier || "Pool";
     if (tier === "Pool") {
       perCharacter[char.key] = {
         characterId: char.key,
@@ -339,7 +340,8 @@ export function generateAllRecommendations(
       buildMatch,
       allArtifacts,
       tierAssignments,
-      luckMultiplier
+      luckMultiplier,
+      tier
     );
 
     // Phase 3: Optimize (two-pass with investment constraints)

@@ -1,17 +1,15 @@
 /**
- * Artifact Score V2: Normalized Scoring with Main Stat Integration
+ * Artifact Scoring: Normalized Scoring with Main Stat Integration
  *
- * Public API for the V2 scoring system.
+ * Public API for the scoring system.
  * Uses real TeamBuild damage calculations for auto-tuned weights.
  */
 
 // Core types
 export type {
-  BuildV2Weights,
-  MainStatWeight,
   TeamContext,
   AutoTuneResult,
-} from "./types";
+} from "./utils";
 
 export {
   SUBSTAT_COEFFICIENTS,
@@ -20,16 +18,22 @@ export {
   AVG_ROLL_CD_EQUIV,
   MAIN_STAT_CD_EQUIV_5STAR,
   MAIN_STAT_CD_EQUIV_4STAR,
+  MAIN_STAT_VALUES_5STAR,
+  MAIN_STAT_VALUES_4STAR,
   SUBSTAT_BUDGET_ROLLS,
   IDEAL_ROLL_DISTRIBUTION,
-} from "./types";
+  computeIdealScore,
+  computeCrDeduction,
+  getMainStatValue,
+} from "./utils";
 
 // Auto-tuning (uses real TeamBuild damage calculator)
 export {
   autoTuneWeights,
-  computeIdealScore,
   averageWeights,
+  toWeightedFormulas,
 } from "./autoTune";
+export type { WeightedFormula } from "./autoTune";
 
 // Team database (derived from curated presets)
 export {
@@ -43,11 +47,18 @@ export type { CharacterBuildProfile } from "./teamDatabase";
 export {
   runPipeline,
   generateBuildWeights,
-  v2WeightsToLegacyBuild,
-  formatBuildWeights,
+  autoTuneBuild,
+  formatPipelineBuild,
 } from "./pipeline";
-export type { PipelineResult } from "./pipeline";
+export type {
+  PipelineResult,
+  PipelineBuildMeta,
+  AutoTuneInput,
+  AutoTuneOutput,
+  TeamBreakdown,
+  ComboBreakdown,
+} from "./pipeline";
 
 // Scorer
-export { scoreV2, getScoreTier } from "./scorer";
-export type { V2ScoreResult, V2SlotScore } from "./scorer";
+export { scoreNormalized } from "./scorer";
+export type { ScoreResult, SlotScore } from "./scorer";

@@ -68,14 +68,42 @@ export type {
   TeamOptPassId,
 };
 
-// ─── Constants ───
+// ─── Constants & Dynamic Hyperparameters ───
 
-/** Default number of top results to keep per character for team allocation. */
-const TOP_K = 200;
-/** Max DFS iterations for team allocation before stopping. */
-const MAX_TEAM_SEARCH = 500_000;
 /** How many evaluations between cooperative yields. */
 const YIELD_INTERVAL = 300;
+
+/**
+ * Compute dynamic hyperparameters based on inventory size.
+ *
+ * With small inventories (<500 artifacts), B&B completes quickly and smaller
+ * top-K is sufficient. With large inventories (>1500), we need more top-K
+ * alternatives for team allocation (more conflicts) but can afford it since
+ * the DFS prunes effectively with a well-seeded threshold.
+ *
+ * Game limit: 2400 artifacts max. Typical: 1000-2000.
+ * Per-set max observed: ~300 pieces. Per-set-slot max: ~60.
+ */
+function computeHyperparams(inventorySize: number): {
+  topK: number;
+  maxTeamSearch: number;
+} {
+  // topK: scale linearly from 100 (at 500 arts) to 300 (at 2400 arts)
+  // More artifacts → more potential conflicts → need more alternatives
+  const topK = Math.max(
+    100,
+    Math.min(300, Math.round(100 + (inventorySize - 500) * (200 / 1900)))
+  );
+
+  // maxTeamSearch: scale with topK^2 (DFS complexity grows with K)
+  // At topK=100: 200K is plenty. At topK=300: need ~1M.
+  const maxTeamSearch = Math.max(
+    200_000,
+    Math.min(2_000_000, Math.round(topK * topK * 20))
+  );
+
+  return { topK, maxTeamSearch };
+}
 
 const warnedCalcErrors = new Set<string>();
 
@@ -113,7 +141,14 @@ class TopKCollector {
   private entries: TopKEntry[] = [];
   threshold = Number.NEGATIVE_INFINITY;
 
-  constructor(private k: number) {}
+  constructor(
+    private k: number,
+    initialThreshold?: number
+  ) {
+    if (initialThreshold !== undefined && initialThreshold > this.threshold) {
+      this.threshold = initialThreshold;
+    }
+  }
 
   get best(): TopKEntry | undefined {
     return this.entries[0];
@@ -366,12 +401,13 @@ function prepareSlotData(
   excludedIds: Set<string> | undefined,
   buildMatch: BuildMatchResult | null | undefined,
   globalConfig: GlobalStatWeights,
-  crDiscount: number
+  crDiscount: number,
+  maxArtsPerSlot = 0
 ): PreparedSlotData[] {
   const result: PreparedSlotData[] = [];
   for (let si = 0; si < 5; si++) {
     const slot = allSlots[si];
-    const arts = inventory
+    let arts = inventory
       .filter(
         (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
       )
@@ -380,6 +416,9 @@ function prepareSlotData(
           computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
           computeWeightScore(a, buildMatch, globalConfig, crDiscount)
       );
+    if (maxArtsPerSlot > 0 && arts.length > maxArtsPerSlot) {
+      arts = arts.slice(0, maxArtsPerSlot);
+    }
     const bySet = new Map<string, ArtifactData[]>();
     for (const art of arts) {
       const arr = bySet.get(art.setKey);
@@ -588,7 +627,9 @@ function runCharacterBnB(
     | ((sheets: Record<string, StatSheet>, calcTargetId: string) => number)
     | undefined,
   topK: number,
-  deadline?: number
+  deadline?: number,
+  warmStartThreshold?: number,
+  maxArtsPerSlot = 0
 ): {
   collector: TopKCollector;
   evaluations: number;
@@ -621,7 +662,8 @@ function runCharacterBnB(
     excludedIds,
     charConfig.buildMatch,
     globalConfig,
-    crDiscount
+    crDiscount,
+    maxArtsPerSlot
   );
 
   // Empty pool check
@@ -706,7 +748,7 @@ function runCharacterBnB(
       crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
   }
 
-  const collector = new TopKCollector(topK);
+  const collector = new TopKCollector(topK, warmStartThreshold);
   const ctx: BnBContext = {
     teamBuild,
     swapCharId,
@@ -728,17 +770,146 @@ function runCharacterBnB(
     deadline,
   };
 
+  // ── Helper: Collect pattern tasks, sort by upper bound, run B&B with pruning ──
+  interface PatternTask {
+    groups: ArtifactData[][];
+    supers: SuperArtifact[];
+    upperBound: number;
+  }
+
+  /**
+   * Hill-climbing warm-start: greedy build → iterative improvement per slot.
+   * Seeds the threshold with a high-quality solution so B&B can prune effectively.
+   */
+  function hillClimbWarmStart(tasks: PatternTask[]): void {
+    for (const task of tasks) {
+      const pieces: ArtifactTuple = [null, null, null, null, null];
+      let valid = true;
+      for (let s = 0; s < 5; s++) {
+        if (task.groups[s].length === 0) {
+          valid = false;
+          break;
+        }
+        pieces[s] = task.groups[s][0]; // start with top weight-scored
+      }
+      if (!valid) continue;
+
+      // Evaluate initial greedy build
+      let bestDamage = evaluateBuild(
+        pieces,
+        teamBuild,
+        swapCharId,
+        formulaCharId,
+        formulaId,
+        baseSheets,
+        calcTargetId,
+        calcContext,
+        erCheckCharId,
+        charConfig.targetEr,
+        charConfig.targetCr,
+        reactionOverride,
+        scoreFn
+      ).damage;
+      collector.add(bestDamage, null, pieces);
+      ctx.evaluations++;
+
+      // Hill-climb: iteratively try alternatives per slot (up to top-15 per slot)
+      const HC_ALT_COUNT = 15;
+      let improved = true;
+      while (improved) {
+        improved = false;
+        for (let s = 0; s < 5; s++) {
+          const group = task.groups[s];
+          const limit = Math.min(group.length, HC_ALT_COUNT);
+          for (let gi = 0; gi < limit; gi++) {
+            if (group[gi] === pieces[s]) continue;
+            const saved = pieces[s];
+            pieces[s] = group[gi];
+            const { damage } = evaluateBuild(
+              pieces,
+              teamBuild,
+              swapCharId,
+              formulaCharId,
+              formulaId,
+              baseSheets,
+              calcTargetId,
+              calcContext,
+              erCheckCharId,
+              charConfig.targetEr,
+              charConfig.targetCr,
+              reactionOverride,
+              scoreFn
+            );
+            ctx.evaluations++;
+            if (damage > bestDamage) {
+              bestDamage = damage;
+              collector.add(damage, null, pieces);
+              improved = true;
+            } else {
+              pieces[s] = saved;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function collectAndRunPatternTasks(tasks: PatternTask[]): void {
+    // Hill-climbing warm-start to seed a good threshold before DFS
+    hillClimbWarmStart(tasks);
+    // Sort by upper bound descending — explore most promising patterns first
+    tasks.sort((a, b) => b.upperBound - a.upperBound);
+    for (const task of tasks) {
+      if (ctx.aborted) break;
+      // Pattern-level pruning: skip entire pattern if upper bound can't beat threshold
+      if (
+        ctx.collector.threshold > 0 &&
+        task.upperBound <= ctx.collector.threshold
+      )
+        continue;
+      bnbDfs(task.groups, task.supers, ctx);
+    }
+  }
+
+  function computePatternUpperBound(supers: SuperArtifact[]): number {
+    return evaluateUpperBound(
+      [], // no real pieces
+      supers.map((s) => s.stats),
+      teamBuild,
+      swapCharId,
+      formulaCharId,
+      formulaId,
+      baseSheets,
+      calcTargetId,
+      calcContext,
+      reactionOverride,
+      scoreFn
+    );
+  }
+
+  function buildTask(
+    built: { groups: ArtifactData[][]; supers: SuperArtifact[] } | null
+  ): PatternTask | null {
+    if (!built) return null;
+    return {
+      groups: built.groups,
+      supers: built.supers,
+      upperBound: computePatternUpperBound(built.supers),
+    };
+  }
+
   // Build and run tasks
   if (is4pc) {
+    const tasks: PatternTask[] = [];
     for (const pattern of SET4_PATTERNS) {
-      const built = buildSlotGroupsForPattern(
-        pattern,
-        slotData,
-        charConfig.artifactSetId!
+      const t = buildTask(
+        buildSlotGroupsForPattern(pattern, slotData, charConfig.artifactSetId!)
       );
-      if (built) bnbDfs(built.groups, built.supers, ctx);
+      if (t) tasks.push(t);
     }
+    collectAndRunPatternTasks(tasks);
   } else if (is2pc) {
+    const tasks: PatternTask[] = [];
     const [h1, h2] = charConfig.artifactHalfSetIds as [string, string];
     const h1Keys = artifactHalfSetsById[h1]?.setIds ?? [];
     const h2Keys = artifactHalfSetsById[h2]?.setIds ?? [];
@@ -746,26 +917,28 @@ function runCharacterBnB(
       for (const sk1 of h1Keys) {
         for (const sk2 of h2Keys) {
           if (h1 === h2 && sk1 === sk2) continue;
-          const built = buildSlotGroupsForPattern(pattern, slotData, sk1, sk2);
-          if (built) bnbDfs(built.groups, built.supers, ctx);
+          const t = buildTask(
+            buildSlotGroupsForPattern(pattern, slotData, sk1, sk2)
+          );
+          if (t) tasks.push(t);
         }
       }
       if (h1 !== h2) {
         for (const sk1 of h2Keys) {
           for (const sk2 of h1Keys) {
-            const built = buildSlotGroupsForPattern(
-              pattern,
-              slotData,
-              sk1,
-              sk2
+            const t = buildTask(
+              buildSlotGroupsForPattern(pattern, slotData, sk1, sk2)
             );
-            if (built) bnbDfs(built.groups, built.supers, ctx);
+            if (t) tasks.push(t);
           }
         }
       }
     }
+    collectAndRunPatternTasks(tasks);
   } else {
     // No set constraint → try all viable 4pc, 2+2, and rainbow
+    const allTasks: PatternTask[] = [];
+
     const setCounts = new Map<string, number>();
     for (let s = 0; s < 5; s++) {
       const seen = new Set<string>();
@@ -779,8 +952,10 @@ function runCharacterBnB(
     for (const [setKey, count] of setCounts) {
       if (count >= 4) {
         for (const pattern of SET4_PATTERNS) {
-          const built = buildSlotGroupsForPattern(pattern, slotData, setKey);
-          if (built) bnbDfs(built.groups, built.supers, ctx);
+          const t = buildTask(
+            buildSlotGroupsForPattern(pattern, slotData, setKey)
+          );
+          if (t) allTasks.push(t);
         }
       }
     }
@@ -808,25 +983,19 @@ function runCharacterBnB(
           for (const sk1 of h1Keys) {
             for (const sk2 of h2Keys) {
               if (h1 === h2 && sk1 === sk2) continue;
-              const built = buildSlotGroupsForPattern(
-                pattern,
-                slotData,
-                sk1,
-                sk2
+              const t = buildTask(
+                buildSlotGroupsForPattern(pattern, slotData, sk1, sk2)
               );
-              if (built) bnbDfs(built.groups, built.supers, ctx);
+              if (t) allTasks.push(t);
             }
           }
           if (h1 !== h2) {
             for (const sk1 of h2Keys) {
               for (const sk2 of h1Keys) {
-                const built = buildSlotGroupsForPattern(
-                  pattern,
-                  slotData,
-                  sk1,
-                  sk2
+                const t = buildTask(
+                  buildSlotGroupsForPattern(pattern, slotData, sk1, sk2)
                 );
-                if (built) bnbDfs(built.groups, built.supers, ctx);
+                if (t) allTasks.push(t);
               }
             }
           }
@@ -835,11 +1004,17 @@ function runCharacterBnB(
     }
 
     // Rainbow
-    bnbDfs(
-      slotData.map((sd) => sd.allArtifacts),
-      slotData.map((sd) => sd.slotSuperArtifact),
-      ctx
-    );
+    {
+      const rainbowGroups = slotData.map((sd) => sd.allArtifacts);
+      const rainbowSupers = slotData.map((sd) => sd.slotSuperArtifact);
+      allTasks.push({
+        groups: rainbowGroups,
+        supers: rainbowSupers,
+        upperBound: computePatternUpperBound(rainbowSupers),
+      });
+    }
+
+    collectAndRunPatternTasks(allTasks);
   }
 
   // Diagnose failure
@@ -894,19 +1069,27 @@ function runCharacterBnB(
  * - Upper-bound pruning (remaining chars use rank-1 damage)
  * - Artifact intersection skipping
  */
+/** Number of top candidate allocations to collect for full-team re-evaluation. */
+const ALLOC_TOP_N = 50;
+
 function findBestTeamAllocation(
   charIds: string[],
   topKByChar: Record<string, TopKEntry[]>,
-  maxIterations: number
+  maxIterations: number,
+  carryCharIds?: string[]
 ): {
-  assignment: Record<string, TopKEntry> | null;
+  /** Top-N candidate assignments sorted by proxy score (descending). */
+  candidates: { assignment: Record<string, TopKEntry>; score: number }[];
   iterations: number;
 } {
-  if (charIds.length === 0) return { assignment: null, iterations: 0 };
+  if (charIds.length === 0) return { candidates: [], iterations: 0 };
 
-  // Order characters by flexibility: least flexible first (smallest
-  // gap between rank-1 and rank-K → most to lose from not getting their best)
+  // Order characters: carries first (to give them priority for best artifacts),
+  // then by flexibility (least flexible first → most to lose from not getting their best)
   const ordered = [...charIds].sort((a, b) => {
+    const aIsCarry = carryCharIds?.includes(a) ? 1 : 0;
+    const bIsCarry = carryCharIds?.includes(b) ? 1 : 0;
+    if (aIsCarry !== bIsCarry) return bIsCarry - aIsCarry; // carries first
     const aEntries = topKByChar[a] ?? [];
     const bEntries = topKByChar[b] ?? [];
     const aFlex =
@@ -926,9 +1109,40 @@ function findBestTeamAllocation(
     rank1Damage[cid] = topKByChar[cid]?.[0]?.damage ?? 0;
   }
 
-  let bestScore = Number.NEGATIVE_INFINITY;
-  let bestAssignment: Record<string, TopKEntry> | null = null;
+  // Collect top-N candidates (sorted descending by proxy score)
+  const topCandidates: {
+    assignment: Record<string, TopKEntry>;
+    score: number;
+  }[] = [];
+  let worstTopScore = Number.NEGATIVE_INFINITY;
   let iterations = 0;
+
+  function insertCandidate(
+    assignment: Record<string, TopKEntry>,
+    score: number
+  ): void {
+    if (topCandidates.length >= ALLOC_TOP_N && score <= worstTopScore) return;
+    // Binary search insert (descending)
+    let lo = 0;
+    let hi = topCandidates.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1;
+      if (topCandidates[mid].score > score) lo = mid + 1;
+      else hi = mid;
+    }
+    topCandidates.splice(lo, 0, { assignment: { ...assignment }, score });
+    if (topCandidates.length > ALLOC_TOP_N) topCandidates.length = ALLOC_TOP_N;
+    if (topCandidates.length >= ALLOC_TOP_N) {
+      worstTopScore = topCandidates[topCandidates.length - 1].score;
+    }
+  }
+
+  // Use the N-th best score for pruning (allows collecting N candidates)
+  function getPruneThreshold(): number {
+    return topCandidates.length >= ALLOC_TOP_N
+      ? worstTopScore
+      : Number.NEGATIVE_INFINITY;
+  }
 
   // DFS: at each level, assign one character's result
   function dfs(
@@ -940,22 +1154,20 @@ function findBestTeamAllocation(
     if (iterations >= maxIterations) return;
 
     if (level === ordered.length) {
-      if (currentScore > bestScore) {
-        bestScore = currentScore;
-        bestAssignment = { ...assignment };
-      }
+      insertCandidate(assignment, currentScore);
       return;
     }
 
     const charId = ordered[level];
     const entries = topKByChar[charId] ?? [];
+    const pruneThreshold = getPruneThreshold();
 
     // Upper-bound: current score + rank-1 damage for all remaining characters
     let ubRemaining = 0;
     for (let r = level; r < ordered.length; r++) {
       ubRemaining += rank1Damage[ordered[r]];
     }
-    if (currentScore + ubRemaining <= bestScore) return;
+    if (currentScore + ubRemaining <= pruneThreshold) return;
 
     for (const entry of entries) {
       iterations++;
@@ -976,7 +1188,7 @@ function findBestTeamAllocation(
       for (let r = level + 1; r < ordered.length; r++) {
         ubWithEntry += rank1Damage[ordered[r]];
       }
-      if (ubWithEntry <= bestScore) continue;
+      if (ubWithEntry <= getPruneThreshold()) continue;
 
       // Add artifacts to used set
       for (const artId of entry.artifactIds) usedArtifacts.add(artId);
@@ -991,7 +1203,60 @@ function findBestTeamAllocation(
   }
 
   dfs(0, new Set(), 0, {});
-  return { assignment: bestAssignment, iterations };
+
+  // Greedy fallback: if DFS found no conflict-free allocation (common when
+  // all top-K entries for multiple characters share a dominant artifact),
+  // try greedy assignment with multiple orderings and keep the best.
+  if (topCandidates.length === 0) {
+    // Try multiple orderings: carry-first, least-flexible-first, most-damage-first
+    const orderings: string[][] = [ordered];
+
+    // Carry-first ordering
+    if (carryCharIds && carryCharIds.length > 0) {
+      const carryFirst = [
+        ...charIds.filter((id) => carryCharIds.includes(id)),
+        ...charIds.filter((id) => !carryCharIds.includes(id)),
+      ];
+      orderings.push(carryFirst);
+    }
+
+    // Most-damage-first ordering (give top artifacts to highest-damage chars)
+    const byDamage = [...charIds].sort(
+      (a, b) => (rank1Damage[b] ?? 0) - (rank1Damage[a] ?? 0)
+    );
+    orderings.push(byDamage);
+
+    for (const ordering of orderings) {
+      const greedyUsed = new Set<string>();
+      const greedyAssignment: Record<string, TopKEntry> = {};
+      let greedyScore = 0;
+
+      for (const cid of ordering) {
+        const entries = topKByChar[cid] ?? [];
+        for (const entry of entries) {
+          let conflict = false;
+          for (const artId of entry.artifactIds) {
+            if (greedyUsed.has(artId)) {
+              conflict = true;
+              break;
+            }
+          }
+          if (!conflict) {
+            greedyAssignment[cid] = entry;
+            greedyScore += entry.damage;
+            for (const artId of entry.artifactIds) greedyUsed.add(artId);
+            break;
+          }
+        }
+      }
+
+      if (Object.keys(greedyAssignment).length === ordering.length) {
+        insertCandidate(greedyAssignment, greedyScore);
+      }
+    }
+  }
+
+  return { candidates: topCandidates, iterations };
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -1051,8 +1316,27 @@ export async function* runTeamOptimization(
     reactionOverride,
     combo,
     reactionOverrides,
-    perCharDeadlineMs,
+    perCharDeadlineMs: rawPerCharDeadlineMs,
+    teamDeadlineMs,
+    maxArtsPerSlot,
   } = opts;
+
+  // ── Dynamic hyperparameters based on inventory size ──
+  const { topK: TOP_K, maxTeamSearch: MAX_TEAM_SEARCH } = computeHyperparams(
+    inventory.length
+  );
+
+  // ── Time budget management ──
+  // If teamDeadlineMs is set, compute per-char budgets dynamically.
+  // Budget split: Phase 1 gets 40%, Phase 3+3b gets 40%, Phase 2+overhead gets 20%.
+  const numChars = Object.keys(perChar).length || 4;
+  const phase1Fraction = 0.4;
+  const perCharDeadlineMs = teamDeadlineMs
+    ? Math.max(
+        500,
+        ((teamDeadlineMs - performance.now()) * phase1Fraction) / numChars
+      )
+    : rawPerCharDeadlineMs;
 
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
@@ -1110,7 +1394,14 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Phase 1: Per-character B&B → top-K results
+  // Phase 1: Sequential Per-character B&B → top-K results
+  //
+  // Process carry first, then supports. After each character, update
+  // the running base sheets with that character's top-1 artifacts.
+  // This way, each support's B&B evaluates carry damage in the context
+  // of the carry's actual (top-1) artifacts + previous supports'
+  // artifacts — capturing cross-character interactions that independent
+  // B&B would miss.
   // ════════════════════════════════════════════════════════════════════
 
   const topKByChar: Record<string, TopKEntry[]> = {};
@@ -1118,8 +1409,17 @@ export async function* runTeamOptimization(
   const passResults: TeamOptPassResult[] = [];
   const totalPhases = allCharIds.length + 1; // +1 for team allocation phase
 
-  for (let ci = 0; ci < allCharIds.length; ci++) {
-    const charId = allCharIds[ci];
+  // Order: carries first, then supports (supports see carry's top-1 context)
+  const phase1Order = [
+    ...allCharIds.filter((id) => carryCharIds.includes(id)),
+    ...allCharIds.filter((id) => !carryCharIds.includes(id)),
+  ];
+
+  // Running base sheets: updated after each character with their top-1 artifacts
+  let runningBaseSheets = { ...baseSheets };
+
+  for (let ci = 0; ci < phase1Order.length; ci++) {
+    const charId = phase1Order[ci];
     const charConfig = effectivePerChar[charId];
     if (!charConfig) continue;
 
@@ -1141,7 +1441,8 @@ export async function* runTeamOptimization(
     } satisfies TeamOptimizationProgress;
     await new Promise((r) => setTimeout(r, 0));
 
-    // Run B&B
+    // Run B&B with running base sheets (includes previous chars' top-1)
+    // Per-char budget clamped to team deadline
     const charDeadline = perCharDeadlineMs
       ? performance.now() + perCharDeadlineMs
       : undefined;
@@ -1153,13 +1454,15 @@ export async function* runTeamOptimization(
       formulaId,
       inventory,
       globalConfig,
-      baseSheets,
+      runningBaseSheets,
       calcContext,
       undefined, // no exclusions in phase 1
       reactionOverride,
       comboScoreFn,
       TOP_K,
-      charDeadline
+      charDeadline,
+      undefined,
+      maxArtsPerSlot ?? 0
     );
 
     // ignoreArtifactSets fallback
@@ -1183,13 +1486,15 @@ export async function* runTeamOptimization(
         formulaId,
         inventory,
         globalConfig,
-        baseSheets,
+        runningBaseSheets,
         calcContext,
         undefined,
         reactionOverride,
         comboScoreFn,
         TOP_K,
-        charDeadline
+        charDeadline,
+        undefined,
+        maxArtsPerSlot ?? 0
       );
     }
 
@@ -1207,6 +1512,18 @@ export async function* runTeamOptimization(
       failReason: result.failReason,
     });
 
+    // Update running base sheets with this character's top-1 artifacts
+    // so subsequent characters see the updated team context
+    if (best) {
+      const pieces = best.artifacts.filter((a): a is ArtifactData => a != null);
+      if (pieces.length > 0) {
+        runningBaseSheets = {
+          ...runningBaseSheets,
+          [charId]: StatSheet.fromArtifacts(pieces),
+        };
+      }
+    }
+
     // Yield progress: done with this character
     yield {
       currentPass: passId,
@@ -1220,6 +1537,129 @@ export async function* runTeamOptimization(
       done: false,
     } satisfies TeamOptimizationProgress;
     await new Promise((r) => setTimeout(r, 0));
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Phase 1b: Contested Artifact Resolution
+  //
+  // When a "dominant" artifact (e.g., best flower) appears in ALL top-K
+  // entries for multiple characters, the DFS can never find a conflict-
+  // free allocation. Fix: identify artifacts that appear in >=90% of
+  // entries for 2+ characters, then re-run B&B for lower-priority
+  // characters with those artifacts excluded — adding alternatives to
+  // their top-K pools.
+  // ════════════════════════════════════════════════════════════════════
+
+  {
+    // Count per-artifact usage across characters
+    const artUsage: Map<string, { charId: string; count: number }[]> =
+      new Map();
+    for (const charId of allCharIds) {
+      const entries = topKByChar[charId] ?? [];
+      if (entries.length === 0) continue;
+      const artCounts = new Map<string, number>();
+      for (const entry of entries) {
+        for (const artId of entry.artifactIds) {
+          artCounts.set(artId, (artCounts.get(artId) ?? 0) + 1);
+        }
+      }
+      for (const [artId, count] of artCounts) {
+        if (count / entries.length >= 0.8) {
+          // This artifact is in >=80% of this character's top-K
+          if (!artUsage.has(artId)) artUsage.set(artId, []);
+          artUsage.get(artId)!.push({ charId, count });
+        }
+      }
+    }
+
+    // Find contested artifacts: used dominantly by 2+ characters
+    const contested: {
+      artId: string;
+      chars: { charId: string; count: number }[];
+    }[] = [];
+    for (const [artId, chars] of artUsage) {
+      if (chars.length >= 2) {
+        contested.push({ artId, chars });
+      }
+    }
+
+    if (contested.length > 0) {
+      // For each contested artifact, determine the winner (highest priority).
+      // Then, for each loser character, collect ALL contested artifacts they
+      // should yield and re-run B&B once with all of them excluded.
+      const excludeByChar = new Map<string, Set<string>>();
+
+      for (const { artId, chars } of contested) {
+        // Priority: carry > higher rank-1 damage
+        const sorted = [...chars].sort((a, b) => {
+          const aIsCarry = carryCharIds.includes(a.charId) ? 1 : 0;
+          const bIsCarry = carryCharIds.includes(b.charId) ? 1 : 0;
+          if (aIsCarry !== bIsCarry) return bIsCarry - aIsCarry;
+          const aDmg = topKByChar[a.charId]?.[0]?.damage ?? 0;
+          const bDmg = topKByChar[b.charId]?.[0]?.damage ?? 0;
+          return bDmg - aDmg;
+        });
+
+        // The winner keeps the artifact; losers must yield it
+        for (let i = 1; i < sorted.length; i++) {
+          const loserId = sorted[i].charId;
+          if (!excludeByChar.has(loserId))
+            excludeByChar.set(loserId, new Set());
+          excludeByChar.get(loserId)!.add(artId);
+        }
+      }
+
+      // (debug) console.log(`[V2] Phase 1b: ${contested.length} contested, ${excludeByChar.size} re-runs`);
+
+      // Re-run B&B for each loser with all their excluded artifacts at once
+      for (const [loserId, excludeSet] of excludeByChar) {
+        if (teamDeadlineMs && performance.now() > teamDeadlineMs) break;
+        const loserConfig = effectivePerChar[loserId];
+        if (!loserConfig) continue;
+
+        const altDeadline = perCharDeadlineMs
+          ? performance.now() + perCharDeadlineMs
+          : undefined;
+
+        const altResult = runCharacterBnB(
+          loserId,
+          loserConfig,
+          effectiveTeamBuild,
+          carryCharId,
+          formulaId,
+          inventory,
+          globalConfig,
+          runningBaseSheets,
+          calcContext,
+          excludeSet,
+          reactionOverride,
+          comboScoreFn,
+          TOP_K,
+          altDeadline,
+          undefined,
+          maxArtsPerSlot ?? 0
+        );
+
+        // Merge alternative results into the existing top-K
+        const existing = topKByChar[loserId] ?? [];
+        const alternatives = altResult.collector.results;
+        const merged = [...existing];
+        for (const alt of alternatives) {
+          // Only add entries that don't use ANY of the excluded artifacts
+          let usesExcluded = false;
+          for (const artId of excludeSet) {
+            if (alt.artifactIds.has(artId)) {
+              usesExcluded = true;
+              break;
+            }
+          }
+          if (!usesExcluded) merged.push(alt);
+        }
+        // Sort by damage descending and keep top-K * 2 (extra room for diversity)
+        merged.sort((a, b) => b.damage - a.damage);
+        topKByChar[loserId] = merged.slice(0, TOP_K * 2);
+      }
+    }
   }
 
   // ════════════════════════════════════════════════════════════════════
@@ -1244,29 +1684,353 @@ export async function* runTeamOptimization(
   } satisfies TeamOptimizationProgress;
   await new Promise((r) => setTimeout(r, 0));
 
-  const { assignment } = findBestTeamAllocation(
+  let { candidates, iterations: allocIterations } = findBestTeamAllocation(
     allocatableChars,
     topKByChar,
-    MAX_TEAM_SEARCH
+    MAX_TEAM_SEARCH,
+    carryCharIds
   );
 
-  // Build final artifact assignment
+  // If DFS + greedy both failed, do sequential B&B assignment:
+  // Process characters in priority order (carry first), running B&B
+  // for each with previously assigned artifacts excluded. This is
+  // guaranteed to produce a conflict-free assignment (like V1's approach).
+  if (candidates.length === 0 && allocatableChars.length > 1) {
+    // (debug) console.log(`[V2] Phase 2b: Sequential B&B fallback`);
+
+    const seqOrder = [
+      ...allocatableChars.filter((id) => carryCharIds.includes(id)),
+      ...allocatableChars.filter((id) => !carryCharIds.includes(id)),
+    ];
+    const seqUsed = new Set<string>();
+    const seqAssignment: Record<string, TopKEntry> = {};
+    let seqScore = 0;
+
+    for (const cid of seqOrder) {
+      // First try existing top-K entries
+      const entries = topKByChar[cid] ?? [];
+      let found = false;
+      for (const entry of entries) {
+        let conflict = false;
+        for (const artId of entry.artifactIds) {
+          if (seqUsed.has(artId)) {
+            conflict = true;
+            break;
+          }
+        }
+        if (!conflict) {
+          seqAssignment[cid] = entry;
+          seqScore += entry.damage;
+          for (const artId of entry.artifactIds) seqUsed.add(artId);
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        if (teamDeadlineMs && performance.now() > teamDeadlineMs) break;
+        // Run a fresh B&B excluding all taken artifacts
+        const charConfig = effectivePerChar[cid];
+        if (!charConfig) continue;
+        const altDeadline = perCharDeadlineMs
+          ? performance.now() + perCharDeadlineMs
+          : undefined;
+        const altResult = runCharacterBnB(
+          cid,
+          charConfig,
+          effectiveTeamBuild,
+          carryCharId,
+          formulaId,
+          inventory,
+          globalConfig,
+          runningBaseSheets,
+          calcContext,
+          seqUsed,
+          reactionOverride,
+          comboScoreFn,
+          1, // only need the best result
+          altDeadline,
+          undefined,
+          maxArtsPerSlot ?? 0
+        );
+        const best = altResult.collector.best;
+        if (best) {
+          seqAssignment[cid] = best;
+          seqScore += best.damage;
+          for (const artId of best.artifactIds) seqUsed.add(artId);
+        }
+      }
+    }
+
+    if (Object.keys(seqAssignment).length === seqOrder.length) {
+      // Use insertCandidate-style approach: create a proper candidate
+      candidates = [{ assignment: { ...seqAssignment }, score: seqScore }];
+      // Sequential fallback succeeded
+    } else {
+      // Sequential fallback couldn't assign all characters (shouldn't happen)
+    }
+  }
+
+  // Re-evaluate top candidates with full team damage (not the sum proxy).
+  // The DFS ranked by sum-of-individual-damages which doesn't capture
+  // cross-character interactions. Full evaluation fixes this.
+  let bestAllocation: Record<string, TopKEntry> | null = null;
+  let bestFullDamage = Number.NEGATIVE_INFINITY;
+
+  for (const candidate of candidates) {
+    const candidateArts: Record<string, Record<Slot, ArtifactData | null>> = {};
+    for (const charId of allCharIds) {
+      if (candidate.assignment[charId]) {
+        candidateArts[charId] = artsTupleToRecord(
+          candidate.assignment[charId].artifacts
+        );
+      } else {
+        const best = topKByChar[charId]?.[0];
+        candidateArts[charId] = best
+          ? artsTupleToRecord(best.artifacts)
+          : { ...emptyArtifacts };
+      }
+    }
+
+    const sheets = buildSheetsFromArtifacts(baseSheets, candidateArts);
+    let damage: number;
+    if (comboScoreFn) {
+      damage = comboScoreFn(sheets, carryCharId);
+    } else {
+      try {
+        const postStats = effectiveTeamBuild.getTeamStats(
+          sheets,
+          carryCharId,
+          calcContext
+        );
+        damage = effectiveTeamBuild.getDamageResult(
+          carryCharId,
+          formulaId,
+          postStats,
+          calcContext,
+          reactionOverride
+        ).totalDamage;
+      } catch {
+        damage = 0;
+      }
+    }
+
+    if (damage > bestFullDamage) {
+      bestFullDamage = damage;
+      bestAllocation = candidate.assignment;
+    }
+  }
+
+  // Build final artifact assignment from best full-team-evaluated allocation
   const bestArtifactsByChar: Record<
     string,
     Record<Slot, ArtifactData | null>
   > = {};
   for (const charId of allCharIds) {
-    if (assignment?.[charId]) {
+    if (bestAllocation?.[charId]) {
       bestArtifactsByChar[charId] = artsTupleToRecord(
-        assignment[charId].artifacts
+        bestAllocation[charId].artifacts
       );
     } else {
-      // Fallback: use the character's rank-1 result (may conflict, but best we have)
       const best = topKByChar[charId]?.[0];
       bestArtifactsByChar[charId] = best
         ? artsTupleToRecord(best.artifacts)
         : { ...emptyArtifacts };
     }
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Phase 3: Carry Re-optimization
+  //
+  // Phase 1 B&B ran the carry with base sheets (account-equipped
+  // artifacts for supports). After Phase 2 allocated optimized artifacts
+  // to supports, the carry's optimal build may differ because support
+  // buffs changed. Re-run the carry's B&B with the allocated support
+  // artifacts as context — analogous to V1's "carry round-2".
+  // ════════════════════════════════════════════════════════════════════
+
+  for (const carryId of carryCharIds) {
+    const carryConfig = effectivePerChar[carryId];
+    if (!carryConfig) continue;
+
+    // Build base sheets: use Phase 2 allocated artifacts for all supports
+    const refinedBaseSheets: Record<string, StatSheet> = { ...baseSheets };
+    const excludedIds = new Set<string>();
+
+    for (const otherId of allCharIds) {
+      if (otherId === carryId) continue;
+      const otherArts = bestArtifactsByChar[otherId];
+      if (!otherArts) continue;
+      const pieces = allSlots
+        .map((s) => otherArts[s])
+        .filter((a): a is ArtifactData => a != null);
+      if (pieces.length > 0) {
+        refinedBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
+      }
+      for (const art of pieces) excludedIds.add(art.id);
+    }
+
+    // Yield for cooperative scheduling / timeout checking
+    yield {
+      currentPass: "carry-2",
+      currentPassCharId: carryId,
+      passIndex: allCharIds.length + 1,
+      totalPasses: totalPhases + 1,
+      passPhase: "evaluating",
+      passProgress: 0,
+      overallProgress: (allCharIds.length + 1) / (totalPhases + 1),
+      passResults: [...passResults],
+      done: false,
+    } satisfies TeamOptimizationProgress;
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Evaluate Phase 2 carry artifacts in the refined context (warm-start baseline)
+    const phase2Pieces = allSlots.map(
+      (s) => bestArtifactsByChar[carryId]?.[s] ?? null
+    ) as ArtifactTuple;
+    const phase2Eval = evaluateBuild(
+      phase2Pieces,
+      effectiveTeamBuild,
+      carryId,
+      carryCharId,
+      formulaId,
+      refinedBaseSheets,
+      carryCharId,
+      calcContext,
+      carryId,
+      carryConfig.targetEr,
+      carryConfig.targetCr,
+      reactionOverride,
+      comboScoreFn
+    );
+    const phase2Damage = phase2Eval.damage;
+
+    // Run carry B&B with actual support context, warm-started from Phase 2
+    const refineDeadline = perCharDeadlineMs
+      ? performance.now() + perCharDeadlineMs
+      : undefined;
+    const refineResult = runCharacterBnB(
+      carryId,
+      carryConfig,
+      effectiveTeamBuild,
+      carryCharId,
+      formulaId,
+      inventory,
+      globalConfig,
+      refinedBaseSheets,
+      calcContext,
+      excludedIds,
+      reactionOverride,
+      comboScoreFn,
+      TOP_K,
+      refineDeadline,
+      phase2Damage > 0 ? phase2Damage : undefined,
+      maxArtsPerSlot ?? 0
+    );
+
+    // Only use refinement result if it actually beats Phase 2
+    if (
+      refineResult.collector.best &&
+      refineResult.collector.best.damage > phase2Damage
+    ) {
+      bestArtifactsByChar[carryId] = artsTupleToRecord(
+        refineResult.collector.best.artifacts
+      );
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Phase 3b: Full Team Re-optimization
+  //
+  // Sequentially re-optimize each character with all other characters'
+  // artifacts locked/excluded. This closes the gap with V1's permutation
+  // approach: each character gets a fresh B&B search tailored to the
+  // remaining artifact pool after teammates have been assigned.
+  // ════════════════════════════════════════════════════════════════════
+
+  const MAX_REOPT_PASSES = 3;
+  for (let reoptPass = 0; reoptPass < MAX_REOPT_PASSES; reoptPass++) {
+    // If team deadline is set and remaining time < 1s, skip further passes
+    if (teamDeadlineMs && teamDeadlineMs - performance.now() < 1000) break;
+
+    let anyImproved = false;
+
+    for (const charId of allCharIds) {
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+
+      // Build base sheets from current team assignment (all other chars)
+      const reoptBaseSheets: Record<string, StatSheet> = { ...baseSheets };
+      const reoptExcluded = new Set<string>();
+
+      for (const otherId of allCharIds) {
+        if (otherId === charId) continue;
+        const otherArts = bestArtifactsByChar[otherId];
+        if (!otherArts) continue;
+        const pieces = allSlots
+          .map((s) => otherArts[s])
+          .filter((a): a is ArtifactData => a != null);
+        if (pieces.length > 0) {
+          reoptBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
+        }
+        for (const art of pieces) reoptExcluded.add(art.id);
+      }
+
+      // Evaluate current assignment in this context
+      const currentPieces = allSlots.map(
+        (s) => bestArtifactsByChar[charId]?.[s] ?? null
+      ) as ArtifactTuple;
+      const currentEval = evaluateBuild(
+        currentPieces,
+        effectiveTeamBuild,
+        charId,
+        carryCharId,
+        formulaId,
+        reoptBaseSheets,
+        carryCharId,
+        calcContext,
+        charId,
+        charConfig.targetEr,
+        charConfig.targetCr,
+        reactionOverride,
+        comboScoreFn
+      );
+
+      // Phase 3b uses half the per-char budget (refinement, not discovery)
+      const reoptDeadline = perCharDeadlineMs
+        ? performance.now() + perCharDeadlineMs * 0.5
+        : undefined;
+      const reoptResult = runCharacterBnB(
+        charId,
+        charConfig,
+        effectiveTeamBuild,
+        carryCharId,
+        formulaId,
+        inventory,
+        globalConfig,
+        reoptBaseSheets,
+        calcContext,
+        reoptExcluded,
+        reactionOverride,
+        comboScoreFn,
+        TOP_K,
+        reoptDeadline,
+        currentEval.damage > 0 ? currentEval.damage : undefined,
+        maxArtsPerSlot ?? 0
+      );
+
+      if (
+        reoptResult.collector.best &&
+        reoptResult.collector.best.damage > currentEval.damage
+      ) {
+        bestArtifactsByChar[charId] = artsTupleToRecord(
+          reoptResult.collector.best.artifacts
+        );
+        anyImproved = true;
+      }
+    }
+
+    if (!anyImproved) break;
   }
 
   // ════════════════════════════════════════════════════════════════════

@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1772721909554",
+  "id": "export-1773465532506",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -9,9 +9,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -35,16 +32,32 @@
       "characterId": "ineffa",
       "styles": ["off-field"],
       "roles": ["dps", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "FeFhg8O": {
       "id": "FeFhg8O",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cr", "atk%"],
       "substats": [
         {
           "stat": "cd",
@@ -68,16 +81,36 @@
       "characterId": "ineffa",
       "styles": ["off-field"],
       "roles": ["support", "sustain", "dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "FeFbZ18": {
       "id": "FeFbZ18",
       "name": "",
       "visible": false,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -101,16 +134,32 @@
       "characterId": "ineffa",
       "styles": ["off-field"],
       "roles": ["dps", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "FeFQ6rm": {
       "id": "FeFQ6rm",
       "name": "",
       "visible": false,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "atk%",
@@ -134,16 +183,32 @@
       "characterId": "ineffa",
       "styles": ["off-field"],
       "roles": ["sustain", "support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "EB7C1KG": {
       "id": "EB7C1KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -166,16 +231,36 @@
       "characterId": "citlali",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6965946968245731
     },
     "EB6yOLm": {
       "id": "EB6yOLm",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -198,16 +283,36 @@
       "characterId": "citlali",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "EB7C1Te": {
       "id": "EB7C1Te",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -227,16 +332,32 @@
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
       "minCons": 6,
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7390989829074122
     },
     "CRMdXqu": {
       "id": "CRMdXqu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "pyro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -260,16 +381,36 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6758651919288179
     },
     "CaggW4u": {
       "id": "CaggW4u",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "electro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -288,16 +429,36 @@
       "characterId": "clorinde",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "D0cprhe": {
       "id": "D0cprhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "dendro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -316,16 +477,36 @@
       "characterId": "emilie",
       "styles": ["off-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "D0clfNm": {
       "id": "D0clfNm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "dendro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -344,16 +525,40 @@
       "characterId": "emilie",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "DSYzUqO": {
       "id": "DSYzUqO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "hp%"],
-      "goblet": ["hp%", "hydro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -377,16 +582,40 @@
       "characterId": "mualani",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.663524326045901
     },
     "D9wtYKO": {
       "id": "D9wtYKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["dendro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -405,16 +634,32 @@
       "characterId": "kinich",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "DuV6PaO": {
       "id": "DuV6PaO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -433,16 +678,32 @@
       "characterId": "chasca",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "E1p9Siu": {
       "id": "E1p9Siu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "em"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -466,16 +727,36 @@
       "kOverride": 3,
       "styles": ["on-field", "off-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.663524326045901
     },
     "CtIdIeu": {
       "id": "CtIdIeu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -499,16 +780,36 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6516260513579072
     },
     "EKR6-tm": {
       "id": "EKR6-tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "atk%",
@@ -523,16 +824,32 @@
       "characterId": "lan_yan",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "EmNOdUu": {
       "id": "EmNOdUu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["electro%", "atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -551,16 +868,36 @@
       "characterId": "varesa",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "F2_Ry0u": {
       "id": "F2_Ry0u",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -584,7 +921,30 @@
       "characterId": "escoffier",
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "F2_Trrm": {
       "id": "F2_Trrm",
@@ -592,9 +952,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "er",
@@ -616,16 +973,32 @@
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "Apmx9Du": {
       "id": "Apmx9Du",
       "name": "冰伤流",
       "visible": false,
       "composition": "2pc+2pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "cryo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -646,16 +1019,40 @@
       "halfSet2": "cryo%-15",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "Aqv_zdu": {
       "id": "Aqv_zdu",
       "name": "物伤流",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "phys%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -673,16 +1070,40 @@
       "artifactSet": "pale_flame",
       "characterId": "freminet",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "phys%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "Dbt08KG": {
       "id": "Dbt08KG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -705,16 +1126,32 @@
       "characterId": "xilonen",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "DbspXhG": {
       "id": "DbspXhG",
       "name": "队友带勇者",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -729,16 +1166,32 @@
       "characterId": "xilonen",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.8227710104862165
     },
     "Dbt0TDm": {
       "id": "Dbt0TDm",
       "name": "",
       "visible": false,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["def%", "geo%"],
-      "circlet": ["cr", "cd"],
       "substats": [
         {
           "stat": "cr",
@@ -758,16 +1211,40 @@
       "styles": ["on-field"],
       "roles": ["dps"],
       "source": "preset",
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "BioN-eO": {
       "id": "BioN-eO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["geo%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -786,16 +1263,32 @@
       "characterId": "navia",
       "styles": ["on-field", "off-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "Bs6RJ6G": {
       "id": "Bs6RJ6G",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -810,16 +1303,36 @@
       "characterId": "chevreuse",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "Bs6GF5m": {
       "id": "Bs6GF5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -834,16 +1347,36 @@
       "characterId": "chevreuse",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "BYQzdRG": {
       "id": "BYQzdRG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["heal%"],
       "substats": [
         {
           "stat": "atk%",
@@ -859,16 +1392,32 @@
       "characterId": "charlotte",
       "styles": ["off-field"],
       "roles": ["sustain", "support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "AYHvhPG": {
       "id": "AYHvhPG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["anemo%", "atk%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -886,16 +1435,40 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "lynette",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "AYHvhPH": {
       "id": "AYHvhPH",
       "name": "超绽放（染雷）",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -910,16 +1483,32 @@
       "characterId": "lynette",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "FnZe87m": {
       "id": "FnZe87m",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -942,16 +1531,36 @@
       "characterId": "lauma",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6965946968245731
     },
     "FnZkdAG": {
       "id": "FnZkdAG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -974,7 +1583,30 @@
       "characterId": "lauma",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6965946968245731
     },
     "FnZkCDG": {
       "id": "FnZkCDG",
@@ -982,9 +1614,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1007,16 +1636,32 @@
       "styles": ["on-field"],
       "roles": ["dps"],
       "minCons": 6,
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "FnZe8H8": {
       "id": "FnZe8H8",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -1036,7 +1681,26 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "source": "preset",
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7390989829074122
     },
     "Ihqg4Pu": {
       "id": "Ihqg4Pu",
@@ -1044,9 +1708,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%", "er"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%", "cr"],
       "substats": [
         {
           "stat": "er",
@@ -1069,7 +1730,34 @@
       "kOverride": 3,
       "roles": ["support", "dps"],
       "styles": ["off-field"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6563337851097554
     },
     "IhqgSqO": {
       "id": "IhqgSqO",
@@ -1077,9 +1765,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["cr", "cd"],
       "substats": [
         {
           "stat": "cr",
@@ -1101,7 +1786,30 @@
       "artifactSet": "aubade_of_morningstar_and_moon",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["dps", "support"]
+      "roles": ["dps", "support"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "I-Sm0jO": {
       "id": "I-Sm0jO",
@@ -1109,9 +1817,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em", "cr"],
       "substats": [
         {
           "stat": "em",
@@ -1134,7 +1839,34 @@
       "minCons": 2,
       "roles": ["support"],
       "styles": ["off-field"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "IyzxbmG": {
       "id": "IyzxbmG",
@@ -1142,9 +1874,6 @@
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["em", "er"],
-      "goblet": ["em"],
-      "circlet": ["em", "cr"],
       "substats": [
         {
           "stat": "em",
@@ -1167,7 +1896,34 @@
       "styles": ["off-field"],
       "source": "preset",
       "halfSet1": "em-80",
-      "halfSet2": "em-80"
+      "halfSet2": "em-80",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "GMpiOrm": {
       "id": "GMpiOrm",
@@ -1175,9 +1931,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%", "cd"],
       "substats": [
         {
           "stat": "atk%",
@@ -1200,7 +1953,30 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6563337851097554
     },
     "GMpxGle": {
       "id": "GMpxGle",
@@ -1208,9 +1984,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%", "atk%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1233,7 +2006,30 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "G4Bq8Zu": {
       "id": "G4Bq8Zu",
@@ -1241,9 +2037,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1270,7 +2063,26 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "Ir8idJu": {
       "id": "Ir8idJu",
@@ -1278,9 +2090,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["def%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cr",
@@ -1302,7 +2111,26 @@
       "artifactSet": "night_of_the_skys_unveiling",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "GW7zVOm": {
       "id": "GW7zVOm",
@@ -1310,9 +2138,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%", "heal%"],
       "substats": [
         {
           "stat": "er",
@@ -1330,7 +2155,34 @@
       "artifactSet": "silken_moons_serenade",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "GW7padm": {
       "id": "GW7padm",
@@ -1338,9 +2190,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%", "heal%"],
       "substats": [
         {
           "stat": "er",
@@ -1358,16 +2207,40 @@
       "artifactSet": "viridescent_venerer",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "FwtnbQG": {
       "id": "FwtnbQG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -1386,16 +2259,36 @@
       "characterId": "aino",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "FwtZ5hG": {
       "id": "FwtZ5hG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -1414,16 +2307,36 @@
       "characterId": "aino",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "BQAHdmu": {
       "id": "BQAHdmu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%", "hydro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -1447,16 +2360,40 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["support", "dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "BQA3udG": {
       "id": "BQA3udG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hp%"],
-      "circlet": ["cr", "hp%"],
       "substats": [
         {
           "stat": "er",
@@ -1480,16 +2417,36 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "BOfjRIm": {
       "id": "BOfjRIm",
       "name": "",
       "visible": false,
       "composition": "2pc+2pc",
-      "sands": ["er"],
-      "goblet": ["hp%", "hydro%"],
-      "circlet": ["cr", "hp%"],
       "substats": [
         {
           "stat": "er",
@@ -1514,7 +2471,34 @@
       "characterId": "furina",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "GDVt6pu": {
       "id": "GDVt6pu",
@@ -1522,9 +2506,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1542,16 +2523,32 @@
       "artifactSet": "night_of_the_skys_unveiling",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "FUxQZLm": {
       "id": "FUxQZLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "er",
@@ -1565,16 +2562,36 @@
       "artifactSet": "noblesse_oblige",
       "characterId": "dahlia",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "C8kPanm": {
       "id": "C8kPanm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -1598,16 +2615,36 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "CI2ZSne": {
       "id": "CI2ZSne",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["geo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -1625,16 +2662,32 @@
       "artifactSet": "golden_troupe",
       "characterId": "chiori",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "CI2M8tm": {
       "id": "CI2M8tm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["geo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -1653,16 +2706,32 @@
       "characterId": "chiori",
       "styles": ["on-field", "off-field"],
       "roles": ["dps"],
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "B-NPETm": {
       "id": "B-NPETm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "atk%",
@@ -1686,16 +2755,32 @@
       "characterId": "xianyun",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7482299684808127
     },
     "B_QW8uG": {
       "id": "B_QW8uG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "anemo%"],
-      "circlet": ["cr", "cd"],
       "substats": [
         {
           "stat": "atk%",
@@ -1715,16 +2800,40 @@
       "roles": ["dps"],
       "source": "preset",
       "artifactSet": "long_nights_oath",
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "Cj-j9am": {
       "id": "Cj-j9am",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -1747,16 +2856,36 @@
       "characterId": "sigewinne",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7803659916500839
     },
     "Ci_roTG": {
       "id": "Ci_roTG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -1781,16 +2910,36 @@
       "characterId": "sigewinne",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7803659916500839
     },
     "DJEwArm": {
       "id": "DJEwArm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%", "er"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -1804,16 +2953,36 @@
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "kachina",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "DlB35bm": {
       "id": "DlB35bm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%", "electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cr",
@@ -1832,16 +3001,40 @@
       "kOverride": 3,
       "characterId": "ororon",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "EvhQtbm": {
       "id": "EvhQtbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "atk%",
@@ -1855,16 +3048,32 @@
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "iansan",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "FLdauvO": {
       "id": "FLdauvO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["cryo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -1882,16 +3091,36 @@
       "artifactSet": "finale_of_the_deep_galleries",
       "characterId": "skirk",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "B7YBFwu": {
       "id": "B7YBFwu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["cryo%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1911,16 +3140,32 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "BGsEEAu": {
       "id": "BGsEEAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%", "hydro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1939,16 +3184,36 @@
       "characterId": "neuvillette",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "Ahc2LAu": {
       "id": "Ahc2LAu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -1967,16 +3232,32 @@
       "characterId": "lyney",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "48Vohrm": {
       "id": "48Vohrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "atk%",
@@ -1990,16 +3271,32 @@
       "artifactSet": "noblesse_oblige",
       "characterId": "shenhe",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "47Suh_G": {
       "id": "47Suh_G",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%"],
       "substats": [
         {
           "stat": "atk%",
@@ -2014,16 +3311,32 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "halfSet1": "atk%-18",
-      "halfSet2": "atk%-18"
+      "halfSet2": "atk%-18",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "AN_6D-0": {
       "id": "AN_6D-0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2039,16 +3352,32 @@
       "halfSet2": "hp%-20",
       "characterId": "kirara",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "AOzw9sG": {
       "id": "AOzw9sG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2064,16 +3393,32 @@
       "halfSet2": "hp%-20",
       "characterId": "kirara",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "AFftB70": {
       "id": "AFftB70",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2087,16 +3432,32 @@
       "artifactSet": "deepwood_memories",
       "characterId": "baizhu",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "AFftAdm": {
       "id": "AFftAdm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2114,16 +3475,32 @@
       "artifactSet": "deepwood_memories",
       "characterId": "baizhu",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.701977294544408
     },
     "AEh3Fk0": {
       "id": "AEh3Fk0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2138,16 +3515,32 @@
       "styles": ["off-field"],
       "roles": ["sustain"],
       "halfSet1": "hp%-20",
-      "halfSet2": "hp%-20"
+      "halfSet2": "hp%-20",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "4t44y8O": {
       "id": "4t44y8O",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "hp%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2170,16 +3563,36 @@
       "kOverride": 3,
       "characterId": "hu_tao",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6684061937859948
     },
     "6cqXpLm": {
       "id": "6cqXpLm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2193,16 +3606,32 @@
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "zhongli",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "7Uiwt-O": {
       "id": "7Uiwt-O",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hydro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2225,16 +3654,32 @@
       "kOverride": 3,
       "characterId": "yelan",
       "styles": ["off-field"],
-      "roles": ["dps", "support"]
+      "roles": ["dps", "support"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6783886573416492
     },
     "7TUW-dG": {
       "id": "7TUW-dG",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["hp%"],
-      "goblet": ["hydro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2260,16 +3705,32 @@
       "characterId": "yelan",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6783886573416492
     },
     "8fDMpcO": {
       "id": "8fDMpcO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["electro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -2292,16 +3753,32 @@
       "kOverride": 3,
       "characterId": "cyno",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "9NncRhO": {
       "id": "9NncRhO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2319,16 +3796,32 @@
       "artifactSet": "desert_pavilion_chronicle",
       "characterId": "wanderer",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "9NnU2jm": {
       "id": "9NnU2jm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cr",
@@ -2347,16 +3840,32 @@
       "characterId": "wanderer",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "9gPhdMO": {
       "id": "9gPhdMO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["dendro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2379,16 +3888,32 @@
       "kOverride": 3,
       "characterId": "alhaitham",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "8xrST3e": {
       "id": "8xrST3e",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["dendro%", "em"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2411,16 +3936,36 @@
       "characterId": "nahida",
       "styles": ["off-field", "on-field"],
       "roles": ["support", "dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "8xrSq-u": {
       "id": "8xrSq-u",
       "name": "队友带深林",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["dendro%", "em"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2443,16 +3988,36 @@
       "characterId": "nahida",
       "styles": ["off-field", "on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "9z1jNP8": {
       "id": "9z1jNP8",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -2476,16 +4041,36 @@
       "kOverride": 3,
       "styles": ["on-field"],
       "roles": ["dps"],
-      "minCons": 4
+      "minCons": 4,
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "9z1n-ym": {
       "id": "9z1n-ym",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2503,16 +4088,32 @@
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "dehya",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "9z1cA7G": {
       "id": "9z1cA7G",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2526,16 +4127,32 @@
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "dehya",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "9X5eJt0": {
       "id": "9X5eJt0",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2549,16 +4166,36 @@
       "artifactSet": "deepwood_memories",
       "characterId": "yaoyao",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "9ETNJ0e": {
       "id": "9ETNJ0e",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["anemo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2582,16 +4219,32 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["support"],
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6809310370068995
     },
     "9pjcdbm": {
       "id": "9pjcdbm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hp%"],
-      "circlet": ["cr", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2605,16 +4258,36 @@
       "artifactSet": "noblesse_oblige",
       "characterId": "mika",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "959KL6W": {
       "id": "959KL6W",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2628,16 +4301,32 @@
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "layla",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "8UwVaEm": {
       "id": "8UwVaEm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2653,16 +4342,32 @@
       "characterId": "nilou",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "8VvBUxG": {
       "id": "8VvBUxG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2673,16 +4378,32 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "artifactSet": "instructor",
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.9047071915174653
     },
     "A6LqwWu": {
       "id": "A6LqwWu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2696,16 +4417,32 @@
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "kaveh",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "Ed3Ctz0": {
       "id": "Ed3Ctz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2719,16 +4456,32 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "yumemizuki_mizuki",
       "styles": ["on-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "FCJOmz0": {
       "id": "FCJOmz0",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2742,16 +4495,32 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "ifa",
       "styles": ["on-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "8oXHprm": {
       "id": "8oXHprm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2766,16 +4535,36 @@
       "characterId": "candace",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "8n1DH-m": {
       "id": "8n1DH-m",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -2792,16 +4581,36 @@
       "characterId": "candace",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "8DH5wrm": {
       "id": "8DH5wrm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "er",
@@ -2815,16 +4624,36 @@
       "artifactSet": "noblesse_oblige",
       "characterId": "dori",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "83zAatm": {
       "id": "83zAatm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["dendro%"],
-      "circlet": ["atk%", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2842,16 +4671,40 @@
       "artifactSet": "deepwood_memories",
       "characterId": "collei",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "7wf2E8u": {
       "id": "7wf2E8u",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["dendro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -2874,16 +4727,32 @@
       "characterId": "tighnari",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.663524326045901
     },
     "7nL1AD0": {
       "id": "7nL1AD0",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2901,16 +4770,36 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "shikanoin_heizou",
       "styles": ["on-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "7e12Rhe": {
       "id": "7e12Rhe",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -2924,16 +4813,32 @@
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "kuki_shinobu",
       "styles": ["off-field"],
-      "roles": ["dps", "sustain"]
+      "roles": ["dps", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "4R7u-4O": {
       "id": "4R7u-4O",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["hydro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -2956,16 +4861,32 @@
       "kOverride": 3,
       "characterId": "kamisato_ayato",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "14w-ZXe": {
       "id": "14w-ZXe",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["electro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -2983,16 +4904,32 @@
       "artifactSet": "golden_troupe",
       "characterId": "yae_miko",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "2NFAU-m": {
       "id": "2NFAU-m",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["er"],
-      "goblet": ["hp%"],
-      "circlet": ["hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -3007,16 +4944,32 @@
       "halfSet2": "hp%-20",
       "characterId": "thoma",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "2OlNPj8": {
       "id": "2OlNPj8",
       "name": "烈绽放",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -3030,16 +4983,32 @@
       "characterId": "thoma",
       "artifactSet": "flower_of_paradise_lost",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "oIhGnm": {
       "id": "oIhGnm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["def%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "def%",
@@ -3057,16 +5026,32 @@
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "gorou",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7214896597003834
     },
     "oIjxhG": {
       "id": "oIjxhG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["def%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "def%",
@@ -3084,16 +5069,32 @@
       "artifactSet": "instructor",
       "characterId": "gorou",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7214896597003834
     },
     "59i4Pbu": {
       "id": "59i4Pbu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["geo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3111,16 +5112,32 @@
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "arataki_itto",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "3ZFZO5m": {
       "id": "3ZFZO5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["hp%", "er"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%"],
       "substats": [
         {
           "stat": "hp%",
@@ -3135,16 +5152,36 @@
       "characterId": "sangonomiya_kokomi",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.8227710104862165
     },
     "3ZFlAFO": {
       "id": "3ZFlAFO",
       "name": "原绽放",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "hp%",
@@ -3163,16 +5200,32 @@
       "characterId": "sangonomiya_kokomi",
       "styles": ["on-field"],
       "roles": ["dps", "sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7243660438929604
     },
     "72mn_BO": {
       "id": "72mn_BO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%", "electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3195,16 +5248,40 @@
       "characterId": "raiden_shogun",
       "kOverride": 3,
       "styles": ["on-field", "off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "VgiBkm": {
       "id": "VgiBkm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3227,16 +5304,36 @@
       "characterId": "kujou_sara",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6809310370068995
     },
     "2z_V7Nm": {
       "id": "2z_V7Nm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "em"],
-      "goblet": ["atk%", "em"],
-      "circlet": ["heal%", "em"],
       "substats": [
         {
           "stat": "atk%",
@@ -3254,16 +5351,44 @@
       "artifactSet": "viridescent_venerer",
       "characterId": "sayu",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7421177815131039
     },
     "e-eIXm": {
       "id": "e-eIXm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%", "er"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -3277,16 +5402,36 @@
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "yun_jin",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "dnM9om": {
       "id": "dnM9om",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["def%", "er"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -3302,16 +5447,36 @@
       "halfSet2": "er-20",
       "characterId": "yun_jin",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "e-gCcG": {
       "id": "e-gCcG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%", "er"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -3325,16 +5490,36 @@
       "artifactSet": "archaic_petra",
       "characterId": "yun_jin",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "2FRItMu": {
       "id": "2FRItMu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3352,16 +5537,32 @@
       "artifactSet": "shimenawas_reminiscence",
       "characterId": "yoimiya",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "2FRCOKO": {
       "id": "2FRCOKO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3379,16 +5580,32 @@
       "artifactSet": "echoes_of_an_offering",
       "characterId": "yoimiya",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "4aRtNc0": {
       "id": "4aRtNc0",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["cryo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3406,7 +5623,26 @@
       "artifactSet": "blizzard_strayer",
       "characterId": "kamisato_ayaka",
       "styles": ["on-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "4aRxcbm": {
       "id": "4aRxcbm",
@@ -3414,9 +5650,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "er",
@@ -3434,16 +5667,32 @@
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7214896597003834
     },
     "37JY4fG": {
       "id": "37JY4fG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -3458,16 +5707,32 @@
       "characterId": "kaedehara_kazuha",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "37JY26m": {
       "id": "37JY26m",
       "name": "",
       "visible": false,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em", "cr"],
       "substats": [
         {
           "stat": "em",
@@ -3491,16 +5756,36 @@
       "styles": ["on-field"],
       "roles": ["dps"],
       "source": "preset",
-      "minCons": 6
+      "minCons": 6,
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "xcrqdu": {
       "id": "xcrqdu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["phys%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3523,16 +5808,36 @@
       "kOverride": 3,
       "characterId": "eula",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "phys%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6939342341177971
     },
     "6KCVIaG": {
       "id": "6KCVIaG",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -3546,16 +5851,36 @@
       "artifactSet": "noblesse_oblige",
       "characterId": "diona",
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7671859236726724
     },
     "3PxdDeO": {
       "id": "3PxdDeO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "em"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3573,16 +5898,40 @@
       "artifactSet": "crimson_witch_of_flames",
       "characterId": "yanfei",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "4jl-arm": {
       "id": "4jl-arm",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%", "cryo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cr",
@@ -3601,16 +5950,36 @@
       "characterId": "rosaria",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "4jmAo5m": {
       "id": "4jmAo5m",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%", "cryo%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cr",
@@ -3629,16 +5998,36 @@
       "characterId": "rosaria",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "7LOwXiO": {
       "id": "7LOwXiO",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -3662,16 +6051,32 @@
       "characterId": "xiao",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "7LOzzQu": {
       "id": "7LOzzQu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -3695,16 +6100,32 @@
       "characterId": "xiao",
       "styles": ["on-field"],
       "roles": ["dps"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "3_BnzOu": {
       "id": "3_BnzOu",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["cryo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3722,16 +6143,36 @@
       "artifactSet": "wanderers_troupe",
       "characterId": "ganyu",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "3_BpXV8": {
       "id": "3_BpXV8",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3754,16 +6195,36 @@
       "kOverride": 3,
       "characterId": "ganyu",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "3zhLqYm": {
       "id": "3zhLqYm",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "er",
@@ -3779,16 +6240,32 @@
       "halfSet2": "er-20",
       "characterId": "ganyu",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "6m8b8o8": {
       "id": "6m8b8o8",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3806,16 +6283,36 @@
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "albedo",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "6m8oVHe": {
       "id": "6m8oVHe",
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%"],
-      "goblet": ["geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3833,16 +6330,36 @@
       "artifactSet": "golden_troupe",
       "characterId": "albedo",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "5t31BI0": {
       "id": "5t31BI0",
       "name": "",
       "visible": true,
       "composition": "2pc+2pc",
-      "sands": ["def%"],
-      "goblet": ["def%"],
-      "circlet": ["def%"],
       "substats": [
         {
           "stat": "def%",
@@ -3857,7 +6374,26 @@
       "halfSet2": "er-20",
       "characterId": "xinyan",
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "61aYSLu": {
       "id": "61aYSLu",
@@ -3865,9 +6401,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["hydro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -3893,7 +6426,26 @@
       "artifactSet": "nymphs_dream",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6587132530636342
     },
     "61aPLC0": {
       "id": "61aPLC0",
@@ -3901,9 +6453,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "er",
@@ -3922,7 +6471,26 @@
       "kOverride": 3,
       "styles": ["off-field"],
       "roles": ["support"],
-      "minCons": 4
+      "minCons": 4,
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "1pVHzJO": {
       "id": "1pVHzJO",
@@ -3930,9 +6498,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -3949,7 +6514,26 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "1pV2lUO": {
       "id": "1pV2lUO",
@@ -3957,9 +6541,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "em"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -3978,7 +6559,34 @@
       "styles": ["off-field"],
       "roles": ["support"],
       "minCons": 2,
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "1pU_iAO": {
       "id": "1pU_iAO",
@@ -3986,9 +6594,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4006,7 +6611,30 @@
       "artifactSet": "tenacity_of_the_millelith",
       "styles": ["off-field"],
       "roles": ["support"],
-      "minCons": 2
+      "minCons": 2,
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "7C4qw_8": {
       "id": "7C4qw_8",
@@ -4014,9 +6642,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4038,7 +6663,34 @@
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6809310370068995
     },
     "ETlHyrm": {
       "id": "ETlHyrm",
@@ -4046,9 +6698,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4065,7 +6714,30 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "8MbGXNm": {
       "id": "8MbGXNm",
@@ -4073,9 +6745,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["dendro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4092,7 +6761,30 @@
       ],
       "artifactSet": "deepwood_memories",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "dendro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "D2b6UW": {
       "id": "D2b6UW",
@@ -4100,9 +6792,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["heal%"],
       "substats": [
         {
           "stat": "cd",
@@ -4124,7 +6813,26 @@
       "artifactSet": "oceanhued_clam",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["sustain"]
+      "roles": ["sustain"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6684061937859946
     },
     "1EF1tlu": {
       "id": "1EF1tlu",
@@ -4132,9 +6840,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4152,7 +6857,30 @@
       "artifactSet": "nighttime_whispers_in_the_echoing_woods",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "1EF16wu": {
       "id": "1EF16wu",
@@ -4160,9 +6888,6 @@
       "name": "带芙",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4180,7 +6905,30 @@
       "artifactSet": "marechaussee_hunter",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "1WswTmO": {
       "id": "1WswTmO",
@@ -4188,9 +6936,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4212,7 +6957,30 @@
       "artifactSet": "thundering_fury",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "1NY-0_8": {
       "id": "1NY-0_8",
@@ -4220,9 +6988,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["cryo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4239,7 +7004,30 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "cryo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "3GdlhpO": {
       "id": "3GdlhpO",
@@ -4247,9 +7035,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["anemo%"],
-      "circlet": ["cr", "cd"],
       "substats": [
         {
           "stat": "cd",
@@ -4271,7 +7056,30 @@
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "anemo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6809310370068995
     },
     "3Gdb2vG": {
       "id": "3Gdb2vG",
@@ -4279,9 +7087,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["em"],
-      "circlet": ["em", "cr"],
       "substats": [
         {
           "stat": "er",
@@ -4298,7 +7103,30 @@
       ],
       "artifactSet": "viridescent_venerer",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "3iZfn5m": {
       "id": "3iZfn5m",
@@ -4306,9 +7134,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hp%", "atk%"],
-      "circlet": ["heal%"],
       "substats": [
         {
           "stat": "er",
@@ -4321,7 +7146,30 @@
       ],
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "3rtmytm": {
       "id": "3rtmytm",
@@ -4329,9 +7177,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%", "er"],
-      "goblet": ["atk%"],
-      "circlet": ["atk%", "heal%"],
       "substats": [
         {
           "stat": "er",
@@ -4344,7 +7189,34 @@
       ],
       "artifactSet": "viridescent_venerer",
       "styles": ["off-field"],
-      "roles": ["sustain", "support"]
+      "roles": ["sustain", "support"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "heal%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "4Hpvv5W": {
       "id": "4Hpvv5W",
@@ -4352,9 +7224,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em"],
-      "goblet": ["em"],
-      "circlet": ["em"],
       "substats": [
         {
           "stat": "em",
@@ -4367,7 +7236,26 @@
       ],
       "artifactSet": "viridescent_venerer",
       "styles": ["off-field", "on-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "5J0ATrm": {
       "id": "5J0ATrm",
@@ -4375,9 +7263,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4399,7 +7284,26 @@
       "artifactSet": "noblesse_oblige",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "5J0727G": {
       "id": "5J0727G",
@@ -4407,9 +7311,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4431,7 +7332,26 @@
       "artifactSet": "tenacity_of_the_millelith",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "50OFbrW": {
       "id": "50OFbrW",
@@ -4439,9 +7359,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er", "hp%"],
-      "goblet": ["hp%"],
-      "circlet": ["heal%", "hp%"],
       "substats": [
         {
           "stat": "hp%",
@@ -4455,7 +7372,34 @@
       "artifactSet": "song_of_days_past",
       "styles": ["off-field"],
       "roles": ["sustain"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "heal%",
+          "weight": 100
+        },
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "5SKNl1e": {
       "id": "5SKNl1e",
@@ -4463,9 +7407,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4487,7 +7428,30 @@
       "artifactSet": "golden_troupe",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "5SKSJ_e": {
       "id": "5SKSJ_e",
@@ -4495,9 +7459,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4519,7 +7480,30 @@
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "1gB3-jG": {
       "id": "1gB3-jG",
@@ -4527,9 +7511,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4551,7 +7532,30 @@
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
       "styles": ["off-field"],
-      "roles": ["support", "sustain"]
+      "roles": ["support", "sustain"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6834925443778894
     },
     "26794Lm": {
       "id": "26794Lm",
@@ -4559,9 +7563,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "er",
@@ -4574,7 +7575,30 @@
       ],
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
-      "roles": ["support"]
+      "roles": ["support"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7871273198117978
     },
     "5beKEF8": {
       "id": "5beKEF8",
@@ -4582,9 +7606,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["hydro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4601,7 +7622,30 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hydro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "5kyGIbu": {
       "id": "5kyGIbu",
@@ -4609,9 +7653,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%", "er"],
-      "goblet": ["geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4628,7 +7669,34 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "5kyTGgu": {
       "id": "5kyTGgu",
@@ -4636,9 +7704,6 @@
       "name": "带芙",
       "visible": true,
       "composition": "4pc",
-      "sands": ["def%", "er"],
-      "goblet": ["def%", "geo%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4655,7 +7720,38 @@
       ],
       "artifactSet": "marechaussee_hunter",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "def%",
+          "weight": 100
+        },
+        {
+          "stat": "geo%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "MMfDF8": {
       "id": "MMfDF8",
@@ -4663,9 +7759,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["electro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4682,7 +7775,30 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "styles": ["off-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "electro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     },
     "6AuViOO": {
       "id": "6AuViOO",
@@ -4690,9 +7806,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["em", "atk%"],
-      "goblet": ["pyro%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4714,7 +7827,34 @@
       "artifactSet": "crimson_witch_of_flames",
       "kOverride": 3,
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "em",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "pyro%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.6708741658099044
     },
     "6vSw03O": {
       "id": "6vSw03O",
@@ -4722,9 +7862,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cd", "cr"],
       "substats": [
         {
           "stat": "cd",
@@ -4741,7 +7878,30 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7102089878722937
     },
     "6TWYFrm": {
       "id": "6TWYFrm",
@@ -4749,9 +7909,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["er"],
-      "goblet": ["atk%"],
-      "circlet": ["cr"],
       "substats": [
         {
           "stat": "cr",
@@ -4769,7 +7926,26 @@
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
       "roles": ["support"],
-      "source": "preset"
+      "source": "preset",
+      "sandsWeights": [
+        {
+          "stat": "er",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.7544436732353562
     },
     "J7mpj3O": {
       "id": "J7mpj3O",
@@ -4777,9 +7953,6 @@
       "name": "",
       "visible": true,
       "composition": "4pc",
-      "sands": ["atk%"],
-      "goblet": ["atk%"],
-      "circlet": ["cd"],
       "substats": [
         {
           "stat": "cd",
@@ -4796,7 +7969,26 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "styles": ["on-field"],
-      "roles": ["dps"]
+      "roles": ["dps"],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cd",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0.696594696824573
     }
   },
   "characterBuilds": {

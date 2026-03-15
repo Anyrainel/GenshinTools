@@ -15,14 +15,16 @@ import {
   WeightedSelectValue,
 } from "@/components/ui/weighted-select";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SubStat, WeightedSubStat } from "@/data/types";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useState } from "react";
+
+/** Generic weighted stat item — works for both substats and main stats. */
+export type WeightedItem = { stat: string; weight: number };
 
 interface WeightedStatSelectProps {
-  values: WeightedSubStat[];
-  onValuesChange: (values: WeightedSubStat[]) => void;
+  values: WeightedItem[];
+  onValuesChange: (values: WeightedItem[]) => void;
   options: readonly string[]; // All available stats
   maxLength: number;
   label?: string;
@@ -30,13 +32,13 @@ interface WeightedStatSelectProps {
 }
 
 // Helper to sort weights descending
-const sortWeights = (items: WeightedSubStat[]) => {
+const sortWeights = (items: WeightedItem[]) => {
   return [...items].sort((a, b) => b.weight - a.weight);
 };
 
 interface WeightedStatItemProps {
-  item: WeightedSubStat;
-  onUpdate: (newItem: WeightedSubStat | null) => void; // null to remove
+  item: WeightedItem;
+  onUpdate: (newItem: WeightedItem | null) => void; // null to remove
   availableOptions: string[];
 }
 
@@ -51,7 +53,7 @@ function WeightedStatItem({
     if (newStat === "__DESELECT__") {
       onUpdate(null);
     } else {
-      onUpdate({ ...item, stat: newStat as SubStat });
+      onUpdate({ ...item, stat: newStat });
     }
   };
 
@@ -97,13 +99,6 @@ function WeightedStatSelectComponent({
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
 
-  // Filter out flat stats from options
-  const flatStats = ["hp", "atk", "def"];
-  const validOptions = useMemo(
-    () => options.filter((opt) => !flatStats.includes(opt)),
-    [options]
-  );
-
   const handleAddItem = useCallback(
     (stat: string) => {
       if (stat === "__DESELECT__") {
@@ -115,8 +110,8 @@ function WeightedStatSelectComponent({
       const lastWeight =
         values.length > 0 ? values[values.length - 1].weight : 100;
 
-      const newItem: WeightedSubStat = {
-        stat: stat as SubStat,
+      const newItem: WeightedItem = {
+        stat,
         weight: lastWeight,
       };
 
@@ -132,15 +127,15 @@ function WeightedStatSelectComponent({
   const getAvailableOptions = useCallback(
     (currentStat?: string) => {
       const selectedStats = values.map((v) => v.stat);
-      return validOptions.filter(
-        (opt) => opt === currentStat || !selectedStats.includes(opt as SubStat)
+      return options.filter(
+        (opt) => opt === currentStat || !selectedStats.includes(opt)
       );
     },
-    [values, validOptions]
+    [values, options]
   );
 
   const handleUpdateItem = useCallback(
-    (index: number, newItem: WeightedSubStat | null) => {
+    (index: number, newItem: WeightedItem | null) => {
       if (newItem === null) {
         // Remove
         const newValues = values.filter((_, i) => i !== index);

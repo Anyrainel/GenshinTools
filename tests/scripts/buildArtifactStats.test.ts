@@ -1,10 +1,10 @@
-import type { PresetBuildEntry } from "@/lib/buildArtifactStats";
+import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
+import type { PresetBuildEntry } from "../../scripts/buildArtifactStats";
 import {
-  MAIN_STAT_5STAR,
   TOTAL_SUB_ROLLS,
   buildArtifactStats,
   findPresetBuild,
-} from "@/lib/buildArtifactStats";
+} from "../../scripts/buildArtifactStats";
 import { describe, expect, it } from "vitest";
 
 // ── Test data ────────────────────────────────────────────────────────────────
@@ -128,7 +128,7 @@ describe("buildArtifactStats", () => {
     // All should be present as substats add to main stats
     expect(sheet.getRaw("cd")).toBeGreaterThan(0);
     // hp% should have both main stat + substat contribution
-    expect(sheet.getRaw("hp%")).toBeGreaterThan(MAIN_STAT_5STAR["hp%"]!);
+    expect(sheet.getRaw("hp%")).toBeGreaterThan(MAIN_STAT_VALUES_5STAR["hp%"]!);
     expect(sheet.getRaw("em")).toBeGreaterThan(0);
   });
 
@@ -143,7 +143,7 @@ describe("buildArtifactStats", () => {
     );
 
     // Sands override to EM adds main stat EM value
-    expect(sheet.getRaw("em")).toBeGreaterThanOrEqual(MAIN_STAT_5STAR.em!);
+    expect(sheet.getRaw("em")).toBeGreaterThanOrEqual(MAIN_STAT_VALUES_5STAR.em!);
   });
 
   it("uses sensible defaults for unknown character", () => {

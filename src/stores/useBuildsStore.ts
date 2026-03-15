@@ -156,10 +156,11 @@ export const useBuildsStore = create<BuildsState>()(
           name: "",
           visible: true,
           composition: "4pc",
-          sands: [],
-          goblet: [],
-          circlet: [],
           substats: [],
+          sandsWeights: [],
+          gobletWeights: [],
+          circletWeights: [],
+          normalizer: 0,
         };
 
         set((state) => {

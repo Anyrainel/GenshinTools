@@ -37,9 +37,10 @@ function createBuild(overrides: Partial<Build> = {}): Build {
     name: "",
     visible: true,
     composition: "4pc",
-    sands: ["atk%"],
-    goblet: ["pyro%"],
-    circlet: ["cd"],
+    sandsWeights: [{ stat: "atk%", weight: 100 }],
+    gobletWeights: [{ stat: "pyro%", weight: 100 }],
+    circletWeights: [{ stat: "cd", weight: 100 }],
+    normalizer: 0,
     substats: [
       { stat: "cd", weight: 100 },
       { stat: "cr", weight: 100 },
@@ -96,9 +97,9 @@ const mockT = {
 // Reusable builds
 const atkDpsBuild = createBuild({
   id: "atk-dps",
-  sands: ["atk%"],
-  goblet: ["pyro%"],
-  circlet: ["cd"],
+  sandsWeights: [{ stat: "atk%", weight: 100 }],
+  gobletWeights: [{ stat: "pyro%", weight: 100 }],
+  circletWeights: [{ stat: "cd", weight: 100 }],
   substats: [
     { stat: "cd", weight: 100 },
     { stat: "cr", weight: 100 },
@@ -111,9 +112,9 @@ const atkDpsBuild = createBuild({
 
 const hpSupportBuild = createBuild({
   id: "hp-support",
-  sands: ["hp%"],
-  goblet: ["hp%"],
-  circlet: ["heal%"],
+  sandsWeights: [{ stat: "hp%", weight: 100 }],
+  gobletWeights: [{ stat: "hp%", weight: 100 }],
+  circletWeights: [{ stat: "heal%", weight: 100 }],
   substats: [
     { stat: "hp%", weight: 100 },
     { stat: "er", weight: 80 },
@@ -130,9 +131,9 @@ const twoPlusTwoBuild = createBuild({
   artifactSet: undefined,
   halfSet1: "atk%-18",
   halfSet2: "hp%-20",
-  sands: ["atk%"],
-  goblet: ["pyro%"],
-  circlet: ["cd"],
+  sandsWeights: [{ stat: "atk%", weight: 100 }],
+  gobletWeights: [{ stat: "pyro%", weight: 100 }],
+  circletWeights: [{ stat: "cd", weight: 100 }],
   substats: [
     { stat: "cd", weight: 100 },
     { stat: "cr", weight: 100 },
@@ -147,28 +148,32 @@ const twoPlusTwoBuild = createBuild({
 
 describe("getScalingStat", () => {
   it("infers atk from atk% sands", () => {
-    const build = createBuild({ sands: ["atk%"] });
+    const build = createBuild({
+      sandsWeights: [{ stat: "atk%", weight: 100 }],
+    });
     expect(getScalingStat(build)).toBe("atk");
   });
 
   it("infers hp from hp% sands", () => {
-    const build = createBuild({ sands: ["hp%"] });
+    const build = createBuild({ sandsWeights: [{ stat: "hp%", weight: 100 }] });
     expect(getScalingStat(build)).toBe("hp");
   });
 
   it("infers def from def% sands", () => {
-    const build = createBuild({ sands: ["def%"] });
+    const build = createBuild({
+      sandsWeights: [{ stat: "def%", weight: 100 }],
+    });
     expect(getScalingStat(build)).toBe("def");
   });
 
   it("infers em from em sands", () => {
-    const build = createBuild({ sands: ["em"] });
+    const build = createBuild({ sandsWeights: [{ stat: "em", weight: 100 }] });
     expect(getScalingStat(build)).toBe("em");
   });
 
   it("falls back to substat weights when sands is ER-only", () => {
     const build = createBuild({
-      sands: ["er"],
+      sandsWeights: [{ stat: "er", weight: 100 }],
       substats: [
         { stat: "hp%", weight: 100 },
         { stat: "er", weight: 80 },
@@ -179,7 +184,7 @@ describe("getScalingStat", () => {
 
   it("falls back to atk when sands is empty and no scaling substats", () => {
     const build = createBuild({
-      sands: [],
+      sandsWeights: [],
       substats: [
         { stat: "cr", weight: 100 },
         { stat: "cd", weight: 100 },
@@ -191,7 +196,7 @@ describe("getScalingStat", () => {
   it("sands main stat takes priority over higher-weighted substats", () => {
     // hp% sands, but atk% substat is much higher weighted
     const build = createBuild({
-      sands: ["hp%"],
+      sandsWeights: [{ stat: "hp%", weight: 100 }],
       substats: [
         { stat: "atk%", weight: 100 },
         { stat: "hp%", weight: 30 },
@@ -371,15 +376,15 @@ describe("collectEvalBuilds", () => {
     it("unions sands/goblet/circlet main stats", () => {
       const build1 = createBuild({
         id: "b1",
-        sands: ["atk%"],
-        goblet: ["pyro%"],
-        circlet: ["cd"],
+        sandsWeights: [{ stat: "atk%", weight: 100 }],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [{ stat: "cd", weight: 100 }],
       });
       const build2 = createBuild({
         id: "b2",
-        sands: ["em"],
-        goblet: ["atk%"],
-        circlet: ["cr"],
+        sandsWeights: [{ stat: "em", weight: 100 }],
+        gobletWeights: [{ stat: "atk%", weight: 100 }],
+        circletWeights: [{ stat: "cr", weight: 100 }],
       });
       // Both share same 100+75 fingerprint → should merge
       const groups = [createBuildGroup("char1", [build1, build2])];
@@ -394,8 +399,14 @@ describe("collectEvalBuilds", () => {
     });
 
     it("does not duplicate main stats in union", () => {
-      const build1 = createBuild({ id: "b1", sands: ["atk%"] });
-      const build2 = createBuild({ id: "b2", sands: ["atk%"] });
+      const build1 = createBuild({
+        id: "b1",
+        sandsWeights: [{ stat: "atk%", weight: 100 }],
+      });
+      const build2 = createBuild({
+        id: "b2",
+        sandsWeights: [{ stat: "atk%", weight: 100 }],
+      });
       const groups = [createBuildGroup("char1", [build1, build2])];
       const result = collectEvalBuilds(groups, false);
       expect(result).toHaveLength(1);
@@ -772,7 +783,7 @@ describe("evaluateAllBuilds", () => {
           { stat: "hp%", weight: 100 },
           { stat: "er", weight: 80 },
         ],
-        sands: ["hp%"],
+        sandsWeights: [{ stat: "hp%", weight: 100 }],
         roles: ["support"],
       });
       const groups = [createBuildGroup("char1", [build1, build2])];
@@ -845,7 +856,7 @@ describe("evaluateAllBuilds", () => {
           { stat: "hp%", weight: 100 },
           { stat: "er", weight: 80 },
         ],
-        sands: ["hp%"],
+        sandsWeights: [{ stat: "hp%", weight: 100 }],
         roles: ["support"],
       });
       const artifacts = makeArtifactSet("fragment_of_harmonic_whimsy");
@@ -894,7 +905,7 @@ describe("evaluateAllBuilds", () => {
           { stat: "em", weight: 100 },
           { stat: "er", weight: 100 },
         ],
-        sands: ["em"],
+        sandsWeights: [{ stat: "em", weight: 100 }],
         roles: ["support"],
       });
       const groups = [createBuildGroup("char1", [build1, build2])];
@@ -1137,9 +1148,9 @@ describe("evaluateAllBuilds", () => {
     it("handles builds with no recommended main stats", () => {
       const build = createBuild({
         artifactSet: "fragment_of_harmonic_whimsy",
-        sands: [],
-        goblet: [],
-        circlet: [],
+        sandsWeights: [],
+        gobletWeights: [],
+        circletWeights: [],
       });
       const artifacts = makeArtifactSet("fragment_of_harmonic_whimsy");
       const account = createAccountData({

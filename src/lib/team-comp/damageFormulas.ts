@@ -718,6 +718,10 @@ export class LunarDirectFormula extends DamageFormula {
 /**
  * Create a reaction variant of a formula. Returns the formula itself if it
  * already has the target reaction, or creates a new variant via factory methods.
+ *
+ * Only works for DirectFormula (reaction: "none") → amplified/catalyzed.
+ * Formulas with built-in reactions (lunar, transformative) are returned as-is
+ * since converting them to a different formula type would be incorrect.
  */
 export function createReactionVariant(
   formula: DamageFormula,
@@ -729,6 +733,14 @@ export function createReactionVariant(
   // No reaction requested → create direct variant
   if (targetReaction === "none") return formula.createDirect();
 
+  // Only "none" reaction formulas can be converted to amplified/catalyzed.
+  // Converting lunar/transform formulas to a different type is a code bug.
+  if (formula.tag.reaction !== "none") {
+    throw new Error(
+      `Cannot convert formula with built-in reaction "${formula.tag.reaction}" to "${targetReaction}". Only "none" reaction formulas can be overridden. This likely means a reaction override is being applied to a formula part that shouldn't receive it.`
+    );
+  }
+
   // Amplifying reaction
   if (targetReaction === "vaporize" || targetReaction === "melt")
     return formula.createAmplified(targetReaction);
@@ -737,6 +749,6 @@ export function createReactionVariant(
   if (targetReaction === "spread" || targetReaction === "aggravate")
     return formula.createCatalyzed(targetReaction);
 
-  // For other reaction types (transformative, lunar), return as-is
+  // For other reaction types, return as-is
   return formula;
 }

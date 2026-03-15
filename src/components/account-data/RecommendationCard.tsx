@@ -19,25 +19,27 @@ import {
 import type { CharacterData, Tier } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import type { Insight } from "@/lib/account-data/insightEngine";
-import { memo } from "react";
-import { InsightList } from "./InsightList";
+import type { Recommendation } from "@/lib/account-data/recommendationEngine";
+import { PartyPopper } from "lucide-react";
+import { memo, useState } from "react";
+import { ActionRecommendationCard } from "./ActionRecommendationCard";
 
 interface RecommendationCardProps {
   char: CharacterData;
   tier?: Tier;
-  insights?: Insight[];
+  recommendations?: Recommendation[];
   score?: ArtifactScoreResult;
 }
 
 function RecommendationCardComponent({
   char,
   tier,
-  insights,
+  recommendations,
   score,
 }: RecommendationCardProps) {
   const { t } = useLanguage();
   const isCompact = !useMediaQuery("(min-width: 768px)");
+  const [expanded, setExpanded] = useState(false);
 
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
@@ -54,38 +56,27 @@ function RecommendationCardComponent({
     .filter((entry): entry is [string, number] => entry[1] >= 2)
     .sort((a, b) => b[1] - a[1]);
 
-  // Determine set type label
   const getSetTypeLabel = () => {
     if (activeSets.length === 0) return null;
-
-    // Check for 4pc (single set with 4+ pieces)
     const fourPcSet = activeSets.find(([, count]) => count >= 4);
-    if (fourPcSet) {
-      return t.artifact(fourPcSet[0]); // Return set name
-    }
-
-    // Check for 2+2 (two sets with 2+ pieces each)
+    if (fourPcSet) return t.artifact(fourPcSet[0]);
     const twoPcSets = activeSets.filter(([, count]) => count >= 2);
-    if (twoPcSets.length >= 2) {
-      return t.ui("buildCard.2pc+2pc");
-    }
-
-    // Single 2pc set
-    if (twoPcSets.length === 1) {
-      return t.artifact(twoPcSets[0][0]);
-    }
-
+    if (twoPcSets.length >= 2) return t.ui("buildCard.2pc+2pc");
+    if (twoPcSets.length === 1) return t.artifact(twoPcSets[0][0]);
     return null;
   };
 
   const setTypeLabel = getSetTypeLabel();
+  const recs = recommendations ?? [];
+  const showCollapseControls = recs.length > 2;
+  const visibleRecs =
+    showCollapseControls && !expanded ? recs.slice(0, 2) : recs;
 
   return (
     <div className="w-full min-w-[280px]">
       <Card className="flex flex-col bg-black/10 border-border/50 transition-colors overflow-hidden">
         {/* Header: Character & Sets */}
         <div className="flex items-start p-3 pb-2 gap-2 md:p-4 md:pb-3 md:gap-3 bg-gradient-select border-b border-border/40">
-          {/* Character Icon */}
           <Tooltip>
             <TooltipTrigger>
               <ItemIcon
@@ -104,7 +95,6 @@ function RecommendationCardComponent({
             </TooltipContent>
           </Tooltip>
 
-          {/* Character Name (row 1) + Set Name & Artifact Icon (row 2) */}
           <div className="flex flex-col min-w-0 flex-1 gap-0.5 md:gap-1">
             <div className="font-semibold text-base md:text-lg whitespace-nowrap text-white leading-none tracking-tight">
               {t.character(char.key)}
@@ -177,7 +167,6 @@ function RecommendationCardComponent({
             </div>
           </div>
 
-          {/* Artifact Score */}
           {score && (
             <ArtifactScoreHoverCard
               score={score}
@@ -187,14 +176,53 @@ function RecommendationCardComponent({
           )}
         </div>
 
-        {/* Insights - Skip for pool tier */}
+        {/* Recommendations */}
         {tier !== "Pool" && (
           <CardContent className="p-0 flex-1 bg-black/10 flex flex-col justify-end">
-            <InsightList
-              insights={insights ?? []}
-              isComplete={score?.substatScore.isComplete}
-              compact={isCompact}
-            />
+            {recs.length === 0 ? (
+              <div className="flex items-center justify-center gap-3 px-4 py-3 border-t border-primary/10">
+                <div className="rounded-full bg-primary/20 w-8 h-8 flex items-center justify-center shrink-0">
+                  <PartyPopper className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-foreground">
+                    {t.ui("accountData.insights.allGood")}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {t.ui("accountData.insights.allGoodDescription")}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1 pt-1 pb-3 px-3 border-t border-white/5">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  {t.ui("accountData.insights.title")}
+                </div>
+                <div className="flex flex-col gap-2">
+                  {visibleRecs.map((rec) => (
+                    <ActionRecommendationCard
+                      key={`${rec.slot}-${rec.actionType}`}
+                      recommendation={rec}
+                      inline
+                    />
+                  ))}
+                  {showCollapseControls && (
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(!expanded)}
+                      className="text-xs font-medium text-muted-foreground hover:text-foreground bg-white/5 hover:bg-white/10 border border-white/10 rounded-md px-3 py-1.5 transition-colors"
+                    >
+                      {expanded
+                        ? t.ui("accountData.insights.showLess")
+                        : t.format(
+                            "accountData.insights.showMore",
+                            recs.length - 2
+                          )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </CardContent>
         )}
       </Card>

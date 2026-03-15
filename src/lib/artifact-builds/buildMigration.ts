@@ -1,4 +1,5 @@
-import type { Build } from "@/data/types";
+import type { Build, MainStat, SubStat, WeightedMainStat } from "@/data/types";
+import { computeIdealScore } from "@/lib/account-data/scoring/utils";
 
 /**
  * Migration map from legacy numeric halfSet IDs to new string-based IDs.
@@ -60,13 +61,66 @@ function normalizeHalfSetId(
 }
 
 /**
+ * Populate main stat weights and normalizer from existing build data.
+ * Each accepted main stat gets weight 100 (no differentiation in legacy builds).
+ * Normalizer is computed from the build's substat weights.
+ * Idempotent — skips fields already present.
+ */
+function migrateWeightsAndNormalizer(build: Build): void {
+  // Migrate legacy sands/goblet/circlet arrays → weighted main stats
+  const legacy = build as Record<string, unknown>;
+  if (!build.sandsWeights || build.sandsWeights.length === 0) {
+    const old = (legacy.sands ?? []) as MainStat[];
+    build.sandsWeights = old.map(
+      (stat): WeightedMainStat => ({ stat, weight: 100 })
+    );
+  }
+  if (!build.gobletWeights || build.gobletWeights.length === 0) {
+    const old = (legacy.goblet ?? []) as MainStat[];
+    build.gobletWeights = old.map(
+      (stat): WeightedMainStat => ({ stat, weight: 100 })
+    );
+  }
+  if (!build.circletWeights || build.circletWeights.length === 0) {
+    const old = (legacy.circlet ?? []) as MainStat[];
+    build.circletWeights = old.map(
+      (stat): WeightedMainStat => ({ stat, weight: 100 })
+    );
+  }
+  // Remove legacy fields
+  legacy.sands = undefined;
+  legacy.goblet = undefined;
+  legacy.circlet = undefined;
+
+  // Normalizer: compute from substat weights + best main stat weights
+  if (build.normalizer == null || build.normalizer === 0) {
+    const weights = {} as Record<SubStat, number>;
+    for (const { stat, weight } of build.substats ?? []) {
+      weights[stat] = weight;
+    }
+    const sandsW = build.sandsWeights[0]?.weight ?? 100;
+    const gobletW = build.gobletWeights[0]?.weight ?? 100;
+    const circletW = build.circletWeights[0]?.weight ?? 100;
+    build.normalizer = computeIdealScore(
+      weights,
+      sandsW,
+      gobletW,
+      circletW
+    ).normalizer;
+  }
+}
+
+/**
  * Apply all build-level migrations in-place. Idempotent — safe to call on
  * every load, import, or preset subscription.
  *
  * Currently handles:
  * - halfSet1/halfSet2: legacy numeric → stat-derived string IDs
+ * - sandsWeights/gobletWeights/circletWeights: populate from sands/goblet/circlet arrays
+ * - normalizer: compute from substat weights if missing
  */
 export function migrateBuild(build: Build): void {
   build.halfSet1 = normalizeHalfSetId(build.halfSet1);
   build.halfSet2 = normalizeHalfSetId(build.halfSet2);
+  migrateWeightsAndNormalizer(build);
 }

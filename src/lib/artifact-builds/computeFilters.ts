@@ -324,15 +324,20 @@ function createConfigFromBuild(
   const minStatCount = Math.min(effectiveSubstats.length, 3);
 
   // Preprocess main stats (expand elemental DMG and crit circlet early)
-  const sandsMainStats = expandMainStats(build.sands, "sands", options, is4pc);
+  const sandsMainStats = expandMainStats(
+    build.sandsWeights.map((w) => w.stat),
+    "sands",
+    options,
+    is4pc
+  );
   const gobletMainStats = expandMainStats(
-    build.goblet,
+    build.gobletWeights.map((w) => w.stat),
     "goblet",
     options,
     is4pc
   );
   const circletMainStats = expandMainStats(
-    build.circlet,
+    build.circletWeights.map((w) => w.stat),
     "circlet",
     options,
     is4pc

@@ -15,6 +15,14 @@ import type {
   SubStat,
 } from "@/data/types";
 import { allSlots, mainStatSlots } from "@/data/types";
+import {
+  MAIN_STAT_CD_EQUIV_4STAR,
+  MAIN_STAT_CD_EQUIV_5STAR,
+  SUBSTAT_COEFFICIENTS,
+  computeCrDeduction,
+  computeIdealScore as computeIdealScoreShared,
+  getMainStatValue,
+} from "./scoring/utils";
 
 // ----------------------------------------------------------------------------
 // 1. Constants & Helpers
@@ -38,54 +46,8 @@ const SUB_STATS: SubStat[] = [
   "def",
 ];
 
-// Max level main stat values (reference)
-const MAIN_STAT_VALUES_5STAR: Record<string, number> = {
-  hp: 4780,
-  atk: 311,
-  "hp%": 46.6,
-  "atk%": 46.6,
-  "def%": 58.3,
-  em: 186.5,
-  er: 51.8,
-  "pyro%": 46.6,
-  "hydro%": 46.6,
-  "cryo%": 46.6,
-  "electro%": 46.6,
-  "anemo%": 46.6,
-  "geo%": 46.6,
-  "dendro%": 46.6,
-  "phys%": 58.3,
-  cr: 31.1,
-  cd: 62.2,
-  "heal%": 35.9,
-};
-
-const MAIN_STAT_VALUES_4STAR: Record<string, number> = {
-  hp: 3571,
-  atk: 232,
-  "hp%": 34.8,
-  "atk%": 34.8,
-  "def%": 43.5,
-  em: 139.3,
-  er: 38.7,
-  "pyro%": 34.8,
-  "hydro%": 34.8,
-  "cryo%": 34.8,
-  "electro%": 34.8,
-  "anemo%": 34.8,
-  "geo%": 34.8,
-  "dendro%": 34.8,
-  "phys%": 43.5,
-  cr: 23.2,
-  cd: 46.4,
-  "heal%": 26.8,
-};
-
-export function getFixedMainStatValue(key: MainStat, rarity: number): number {
-  const is4Star = rarity === 4;
-  const maxValues = is4Star ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
-  return maxValues[key] || 0;
-}
+/** @deprecated Use getMainStatValue from scoring/utils instead */
+export const getFixedMainStatValue = getMainStatValue;
 
 // Base values at level 0 for 5★ artifacts
 const MAIN_STAT_BASE_5STAR: Record<string, number> = {
@@ -143,9 +105,8 @@ export function getMainStatValueAtLevel(
   const is4Star = rarity === 4;
   const maxLevel = is4Star ? 16 : 20;
   const baseValues = is4Star ? MAIN_STAT_BASE_4STAR : MAIN_STAT_BASE_5STAR;
-  const maxValues = is4Star ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
   const base = baseValues[key] ?? 0;
-  const max = maxValues[key] ?? 0;
+  const max = getMainStatValue(key, rarity);
   const clampedLevel = Math.max(0, Math.min(level, maxLevel));
   return base + (max - base) * (clampedLevel / maxLevel);
 }
@@ -167,15 +128,6 @@ export interface SubstatScoreResult {
   statScores: Record<SubStat, StatScoreBreakdown>;
   isComplete: boolean;
 }
-
-/** CD-equivalent value of a correct main stat (5★ Lv.20) */
-const MAIN_STAT_CD_EQUIV_5STAR = 62.1;
-/** CD-equivalent value of a correct main stat (4★ Lv.16) */
-const MAIN_STAT_CD_EQUIV_4STAR = 46.4;
-/** Average CD-equiv per roll (7.77 × 0.85) */
-const AVG_ROLL_CD_EQUIV = 7.77 * 0.85;
-/** Ideal roll distribution across top-4 weighted substats for a perfect set */
-const IDEAL_ROLL_DISTRIBUTION = [22, 10, 5, 5];
 
 export type MainStatMismatch = {
   slot: MainStatSlot;
@@ -242,52 +194,11 @@ export function calculateStatScore(
   weights: StatWeightMap,
   globalConfig: GlobalStatWeights
 ): { score: number; weight: number } {
-  let score = 0;
-  // Weight is 0-100, so we divide by 100
   const rawWeight = weights[stat] ?? 0;
-  const w = rawWeight / 100;
-  const effectiveWeight = rawWeight;
+  const coeff = SUBSTAT_COEFFICIENTS[stat] ?? 0;
+  const score = value * coeff * (rawWeight / 100);
 
-  // stats that can appear on sub stat are converted based on sub stat scaling.
-  // main-only stats are converted based on main stat scaling.
-  // The ratio is calculated to be equivalent of crit damage if it had the same roll.
-  switch (stat) {
-    case "cr":
-      score = value * 2 * w;
-      break;
-    case "cd":
-      score = value * w;
-      break;
-    case "em":
-      score = value * 0.3333 * w;
-      break;
-    case "er":
-      score = value * 1.1991 * w;
-      break;
-    case "atk%":
-      score = value * 1.3328 * w;
-      break;
-    case "hp%":
-      score = value * 1.3328 * w;
-      break;
-    case "def%":
-      score = value * 1.0658 * w;
-      break;
-    case "atk":
-      // Flat stat weight is pre-scaled by globalConfig in buildToWeightMap
-      score = value * 0.3995 * w;
-      break;
-    case "hp":
-      score = value * 0.026 * w;
-      break;
-    case "def":
-      score = value * 0.3356 * w;
-      break;
-    default:
-      score = 0;
-  }
-
-  return { score, weight: effectiveWeight };
+  return { score, weight: rawWeight };
 }
 
 /**
@@ -387,8 +298,21 @@ export function calculateMaxSlotSubScore(
  * For DPS builds whose circlet recommends only one of CR/CD,
  * treat both CR and CD as correct main stats.
  */
+const SLOT_TO_WEIGHTS_KEY: Record<
+  MainStatSlot,
+  "sandsWeights" | "gobletWeights" | "circletWeights"
+> = {
+  sands: "sandsWeights",
+  goblet: "gobletWeights",
+  circlet: "circletWeights",
+};
+
+function getMainStats(build: Build, slot: MainStatSlot): MainStat[] {
+  return build[SLOT_TO_WEIGHTS_KEY[slot]].map((w) => w.stat);
+}
+
 function getEffectiveMainStats(slot: MainStatSlot, build: Build): MainStat[] {
-  const stats = build[slot];
+  const stats = getMainStats(build, slot);
   if (
     slot === "circlet" &&
     build.roles?.includes("dps") &&
@@ -500,10 +424,9 @@ export function buildToWeightMap(
   for (const { stat, weight } of build.substats) {
     map[stat] = weight;
   }
-  // Flat stats inherit weight from their % counterpart, pre-scaled by
-  // globalConfig effectiveness so the scoring formula doesn't need special
-  // flat-stat handling. Without globalConfig, inherits at full weight
-  // (suitable for non-scoring uses like fingerprinting).
+  // Flat stats: if explicitly set in the build, honor that weight directly.
+  // Otherwise, inherit from the % counterpart scaled by globalConfig
+  // effectiveness (punishment factor).
   const flatHp = (globalConfig?.flatHp ?? 100) / 100;
   const flatAtk = (globalConfig?.flatAtk ?? 100) / 100;
   const flatDef = (globalConfig?.flatDef ?? 100) / 100;
@@ -596,7 +519,8 @@ export function scoreSlotWithMainStat(
 export function scoreAllSlots(
   char: CharacterData,
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  globalConfig: GlobalStatWeights,
+  nonArtifactCr?: number
 ): SubstatScoreResult {
   const statScores = Object.fromEntries(
     SUB_STATS.map((key) => {
@@ -664,6 +588,22 @@ export function scoreAllSlots(
     }
   }
 
+  // CR clamp: deduct score contribution of CR exceeding the budget
+  if (nonArtifactCr != null) {
+    const crWeight = weights.cr ?? 0;
+    if (crWeight > 0) {
+      let totalArtifactCr = statScores.cr.subValue / 100;
+      for (const slot of mainStatSlots) {
+        const artifact = char.artifacts?.[slot];
+        if (artifact?.mainStatKey === "cr") {
+          const rarity = artifact.rarity === 4 ? 4 : 5;
+          totalArtifactCr += getFixedMainStatValue("cr", rarity) / 100;
+        }
+      }
+      subScore -= computeCrDeduction(totalArtifactCr, nonArtifactCr, crWeight);
+    }
+  }
+
   return {
     subScore,
     statCount,
@@ -675,28 +615,15 @@ export function scoreAllSlots(
 }
 
 /**
- * Compute ideal score for V1 normalization.
- * Main stats: 3 slots × CD-equiv at 100% weight (simplified — V2 will add per-stat weights).
- * Substats: [22, 10, 5, 5] ideal rolls across top 4 weighted stats.
+ * Compute ideal score for normalization (delegates to shared computeIdealScore).
+ * V1 legacy: all 3 main stat slots at 100% weight.
  */
 function computeIdealScoreV1(weights: StatWeightMap): number {
-  // Main stat ideal: all 3 main stat slots contribute at full weight
-  const mainStatIdeal = 3 * MAIN_STAT_CD_EQUIV_5STAR;
-
-  // Substat ideal: top 4 weights get ideal roll distribution
-  const sortedWeights = Object.entries(weights)
-    .filter(([, w]) => (w ?? 0) > 0)
-    .map(([, w]) => w ?? 0)
-    .sort((a, b) => b - a)
-    .slice(0, 4);
-
-  let substatIdeal = 0;
-  for (let i = 0; i < Math.min(sortedWeights.length, 4); i++) {
-    substatIdeal +=
-      IDEAL_ROLL_DISTRIBUTION[i] * AVG_ROLL_CD_EQUIV * (sortedWeights[i] / 100);
+  const fullWeights = {} as Record<SubStat, number>;
+  for (const stat of SUB_STATS) {
+    fullWeights[stat] = weights[stat] ?? 0;
   }
-
-  return mainStatIdeal + substatIdeal;
+  return computeIdealScoreShared(fullWeights, 100, 100, 100).idealScore;
 }
 
 /**
@@ -748,7 +675,8 @@ function computeNormalizedScore(
 export function scoreWithBuilds(
   char: CharacterData,
   builds: Build[],
-  globalConfig: GlobalStatWeights
+  globalConfig: GlobalStatWeights,
+  nonArtifactCr?: number
 ): ArtifactScoreResult {
   const buildMatch = matchBuild(
     char.artifacts,
@@ -759,7 +687,8 @@ export function scoreWithBuilds(
   const substatScore = scoreAllSlots(
     char,
     buildMatch?.statWeights ?? FALLBACK_WEIGHTS,
-    globalConfig
+    globalConfig,
+    nonArtifactCr
   );
   const normalized =
     buildMatch != null

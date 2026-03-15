@@ -953,24 +953,19 @@ function getTemplateName(
   t: ReturnType<typeof useLanguage>["t"]
 ) {
   const abilityPrefix = p.tag?.ability ? `${t.ability(p.tag.ability)}: ` : "";
-  if (p.template === "direct") return abilityPrefix + t.formula("DirectDamage");
+  const elName = p.tag?.element ? `${t.element(p.tag.element)} ` : "";
+  if (p.template === "direct")
+    return abilityPrefix + elName + t.formula("DirectDamage");
   if (p.tag?.reaction && p.tag.reaction !== "none") {
     const rxn = t.reaction(p.tag.reaction);
     if (p.template === "lunarDirect")
-      return abilityPrefix + rxn + t.formula("DirectSuffix");
-    return abilityPrefix + rxn + t.formula("ReactionSuffix");
+      return abilityPrefix + elName + rxn + t.formula("DirectSuffix");
+    return abilityPrefix + elName + rxn + t.formula("ReactionSuffix");
   }
-  return abilityPrefix + t.formula(TEMPLATE_KEYS[p.template]);
-}
-
-/** Circled number for part indices (①②③…). Falls back to (N) for > 20. */
-function circledIndex(i: number): string {
-  if (i >= 0 && i < 20) return String.fromCodePoint(0x2460 + i);
-  return `(${i + 1})`;
+  return abilityPrefix + elName + t.formula(TEMPLATE_KEYS[p.template]);
 }
 
 export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
-  const showIndex = parts.length > 1;
   return (
     <div className="w-full overflow-x-auto pt-3 px-1">
       <div className="w-max mx-auto flex flex-col items-center gap-2 md:gap-4">
@@ -978,11 +973,6 @@ export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
           const Renderer = RENDERERS[p.template];
           return (
             <div key={idx} className="flex items-center pt-2">
-              {showIndex && (
-                <span className="text-xs md:text-sm text-foreground/70 font-medium mr-1.5 md:mr-2.5 mt-6 shrink-0">
-                  {circledIndex(idx)}
-                </span>
-              )}
               <Renderer p={p} hl={highlightedStat} t={t} />
               <div className="flex px-1 md:px-2 shrink-0 h-10 md:h-16 items-center">
                 <Op char="=" />

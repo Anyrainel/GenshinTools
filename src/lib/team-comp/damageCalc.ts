@@ -21,8 +21,8 @@ import {
   createWeapon,
 } from "./damageModels";
 
+import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { CombatOpts } from "./damageModels";
-import { AVG_SUBSTAT_ROLL } from "./inspection";
 import type {
   BuffSource,
   BuffTarget,
@@ -434,7 +434,9 @@ export class CharBuild {
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
-      if (!hasReaction) {
+      // Skip reaction override if the formula already has a built-in reaction
+      // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
+      if (!hasReaction || formula.tag.reaction !== "none") {
         const dp = formula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = h;
         totalDamage += dp.damage * h;
@@ -473,11 +475,7 @@ export class CharBuild {
         displayParts.push(dp);
       }
       if (nonReactingHits > 0) {
-        const directFormula =
-          formula.tag.reaction !== "none"
-            ? createReactionVariant(formula, "none")
-            : formula;
-        const dp = directFormula.display(stats, this.charBase.charLevel, ctx);
+        const dp = formula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = nonReactingHits;
         totalDamage += dp.damage * nonReactingHits;
         displayParts.push(dp);
@@ -1155,7 +1153,7 @@ export class TeamBuild {
     if (targetRollable.length > 0) {
       const charGains: Partial<Record<StatKey, number>> = {};
       for (const key of targetRollable) {
-        const delta = AVG_SUBSTAT_ROLL[key];
+        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
         if (!delta) continue;
         const tweaked = { ...artifactStats };
         tweaked[calcTargetId] = (
@@ -1213,7 +1211,7 @@ export class TeamBuild {
 
       const charGains: Partial<Record<StatKey, number>> = {};
       for (const key of teamRollable) {
-        const delta = AVG_SUBSTAT_ROLL[key];
+        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
         if (!delta) continue;
         const tweaked = { ...artifactStats };
         tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(
@@ -1553,7 +1551,7 @@ export function getComboDisplayResult(
 
       const charGains: Partial<Record<StatKey, number>> = {};
       for (const key of charRollable) {
-        const delta = AVG_SUBSTAT_ROLL[key];
+        const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
         if (!delta) continue;
         const tweaked = { ...artifactStats };
         tweaked[cid] = (artifactStats[cid] ?? new StatSheet([])).withDelta(

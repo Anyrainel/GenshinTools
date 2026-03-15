@@ -6,8 +6,9 @@
  * data-driven artifact stats without hand-authoring main/sub-stat values.
  */
 
+import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
+import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { StatKey } from "@/lib/team-comp/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -39,32 +40,6 @@ export interface ArtifactStatsOverride {
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-/**
- * Max +20 5★ main-stat values.
- * Percentage stats are stored as fractions (e.g. 46.6% → 0.466)
- * to match StatSheet's internal representation.
- */
-export const MAIN_STAT_5STAR: Partial<Record<StatKey, number>> = {
-  hp: 4780,
-  atk: 311,
-  "hp%": 0.466,
-  "atk%": 0.466,
-  "def%": 0.583,
-  em: 186.5,
-  er: 0.518,
-  "pyro%": 0.466,
-  "hydro%": 0.466,
-  "electro%": 0.466,
-  "cryo%": 0.466,
-  "anemo%": 0.466,
-  "geo%": 0.466,
-  "dendro%": 0.466,
-  "phys%": 0.583,
-  cr: 0.311,
-  cd: 0.622,
-  "heal%": 0.359,
-};
 
 /**
  * Total "virtual rolls" to distribute as substat budget.
@@ -137,7 +112,7 @@ export function buildArtifactStats(
 
   // Variable main stats: Sands / Goblet / Circlet
   for (const key of [sands, goblet, circlet]) {
-    const val = MAIN_STAT_5STAR[key];
+    const val = MAIN_STAT_VALUES_5STAR[key];
     if (val !== undefined) {
       combined[key] = (combined[key] ?? 0) + val;
     }
@@ -145,14 +120,14 @@ export function buildArtifactStats(
 
   // Substats: proportional roll distribution
   const validSubs = substatConfig.filter(
-    ({ stat }) => AVG_SUBSTAT_ROLL[stat as StatKey] !== undefined
+    ({ stat }) => (AVG_SUBSTAT_ROLL as Record<string, number>)[stat] !== undefined
   );
   const totalWeight = validSubs.reduce((s, x) => s + x.weight, 0);
 
   if (totalWeight > 0) {
     for (const { stat, weight } of validSubs) {
       const key = stat as StatKey;
-      const rollVal = AVG_SUBSTAT_ROLL[key];
+      const rollVal = (AVG_SUBSTAT_ROLL as Record<string, number>)[key];
       if (!rollVal) continue;
       const rolls = (weight / totalWeight) * TOTAL_SUB_ROLLS;
       combined[key] = (combined[key] ?? 0) + rolls * rollVal;

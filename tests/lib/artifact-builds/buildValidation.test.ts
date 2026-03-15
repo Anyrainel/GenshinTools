@@ -12,9 +12,10 @@ const validBuild: Build = {
   styles: ["on-field"],
   roles: ["dps"],
   minCons: 0,
-  sands: ["hp%"],
-  goblet: ["pyro%"],
-  circlet: ["cr"],
+  sandsWeights: [{ stat: "hp%", weight: 100 }],
+  gobletWeights: [{ stat: "pyro%", weight: 100 }],
+  circletWeights: [{ stat: "cr", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "cr", weight: 100 },
     { stat: "cd", weight: 100 },
@@ -98,17 +99,26 @@ describe("getBuildValidationErrors", () => {
   // --- Main Stats ---
 
   it("reports missing sands main stat", () => {
-    const errors = getBuildValidationErrors({ ...validBuild, sands: [] });
+    const errors = getBuildValidationErrors({
+      ...validBuild,
+      sandsWeights: [],
+    });
     expect(errors).toContain("buildCard.missingSandsMainStat");
   });
 
   it("reports missing goblet main stat", () => {
-    const errors = getBuildValidationErrors({ ...validBuild, goblet: [] });
+    const errors = getBuildValidationErrors({
+      ...validBuild,
+      gobletWeights: [],
+    });
     expect(errors).toContain("buildCard.missingGobletMainStat");
   });
 
   it("reports missing circlet main stat", () => {
-    const errors = getBuildValidationErrors({ ...validBuild, circlet: [] });
+    const errors = getBuildValidationErrors({
+      ...validBuild,
+      circletWeights: [],
+    });
     expect(errors).toContain("buildCard.missingCircletMainStat");
   });
 
@@ -152,9 +162,10 @@ describe("getBuildValidationErrors", () => {
       composition: "4pc",
       styles: [],
       roles: [],
-      sands: [],
-      goblet: [],
-      circlet: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
       substats: [],
     };
     const errors = getBuildValidationErrors(emptyBuild);

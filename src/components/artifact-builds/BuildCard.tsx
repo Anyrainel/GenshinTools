@@ -48,8 +48,9 @@ import {
   type BuildRole,
   type BuildStyle,
   type Element,
-  type MainStat,
   type MainStatSlot,
+  type WeightedMainStat,
+  type WeightedSubStat,
   buildConstellations,
   buildRoles,
   buildStyles,
@@ -57,6 +58,7 @@ import {
 } from "@/data/types";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { AutoTuneOutput } from "@/lib/account-data/scoring/pipeline";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import {
@@ -68,10 +70,23 @@ import {
   MoreVertical,
   RotateCcw,
   Trash2,
+  Wand2,
 } from "lucide-react";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StatSelect } from "./StatSelect";
+import {
+  Suspense,
+  lazy,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { WeightedStatSelect } from "./WeightedStatSelect";
+
+const AutoTuneDialog = lazy(() =>
+  import("./AutoTuneDialog").then((m) => ({ default: m.AutoTuneDialog }))
+);
 
 // Local constants for UI colors
 const STYLE_COLORS: Record<BuildStyle, string> = {
@@ -121,6 +136,7 @@ function BuildCardComponent({
   const [confirmAction, setConfirmAction] = useState<
     "delete" | "revert" | null
   >(null);
+  const [autoTuneOpen, setAutoTuneOpen] = useState(false);
 
   // ... (localName logic, handleNameChange, handleBuildChange ...)
   const [localName, setLocalName] = useState("");
@@ -183,6 +199,19 @@ function BuildCardComponent({
     }
     setConfirmAction(null);
   };
+
+  const handleAutoTuneApply = useCallback(
+    (result: AutoTuneOutput) => {
+      handleBuildChange({
+        substats: result.substats,
+        sandsWeights: result.sandsWeights,
+        gobletWeights: result.gobletWeights,
+        circletWeights: result.circletWeights,
+        normalizer: result.normalizer,
+      });
+    },
+    [handleBuildChange]
+  );
 
   const validationErrors = useBuildsStore(
     (state) => state.validationErrors?.[buildId]
@@ -398,6 +427,13 @@ function BuildCardComponent({
                     <span>{t.ui("common.moveDown")}</span>
                   </DropdownMenuItem>
 
+                  {isMobile && currentRoles.includes("dps") && (
+                    <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
+                      <Wand2 className="mr-2 h-4 w-4" />
+                      <span>{t.ui("buildCard.autoTune")}</span>
+                    </DropdownMenuItem>
+                  )}
+
                   {build.source === "modified" && (
                     <DropdownMenuItem
                       onClick={() => setConfirmAction("revert")}
@@ -458,30 +494,54 @@ function BuildCardComponent({
                 )}
               >
                 <div className={cn("grid grid-cols-3 gap-1")}>
-                  {mainStatSlots.map((slot) => (
-                    <StatSelect
-                      key={slot}
-                      label={mainStatLabel(slot)}
-                      values={build[slot]}
+                  {mainStatSlots.map((slot) => {
+                    const weightsKey = `${slot}Weights` as const;
+                    return (
+                      <WeightedStatSelect
+                        key={slot}
+                        label={mainStatLabel(slot)}
+                        values={build[weightsKey]}
+                        onValuesChange={(values) =>
+                          handleBuildChange({
+                            [weightsKey]: values as WeightedMainStat[],
+                          })
+                        }
+                        options={localStatPools[slot]}
+                        maxLength={3}
+                        compact={isMobile}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="flex items-end gap-2">
+                  <div className="flex-1 min-w-0">
+                    <WeightedStatSelect
+                      label={t.ui("buildCard.substats")}
+                      values={build.substats}
                       onValuesChange={(values) =>
-                        handleBuildChange({ [slot]: values as MainStat[] })
+                        handleBuildChange({
+                          substats: values as WeightedSubStat[],
+                        })
                       }
-                      options={localStatPools[slot]}
-                      maxLength={3}
+                      options={statPools.substat}
+                      maxLength={5}
                       compact={isMobile}
                     />
-                  ))}
+                  </div>
+                  {currentRoles.includes("dps") && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 gap-1 flex-shrink-0 hidden md:inline-flex"
+                      onClick={() => setAutoTuneOpen(true)}
+                    >
+                      <Wand2 className="w-3.5 h-3.5" />
+                      <span className="text-xs">
+                        {t.ui("buildCard.autoTune")}
+                      </span>
+                    </Button>
+                  )}
                 </div>
-                <WeightedStatSelect
-                  label={t.ui("buildCard.substats")}
-                  values={build.substats}
-                  onValuesChange={(values) =>
-                    handleBuildChange({ substats: values })
-                  }
-                  options={statPools.substat}
-                  maxLength={5}
-                  compact={isMobile}
-                />
               </div>
             </div>
           </div>
@@ -524,6 +584,19 @@ function BuildCardComponent({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {autoTuneOpen && (
+        <Suspense fallback={null}>
+          <AutoTuneDialog
+            open={autoTuneOpen}
+            onOpenChange={setAutoTuneOpen}
+            characterId={build.characterId}
+            element={element}
+            build={build}
+            onApply={handleAutoTuneApply}
+          />
+        </Suspense>
+      )}
     </>
   );
 }

@@ -9,9 +9,20 @@ import type {
   Rarity,
   Slot,
   SubStat,
+  Tier,
   TierAssignment,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
+
+/** Lower index = higher priority. A character can only steal from strictly lower-priority tiers. */
+const TIER_RANK: Record<Tier, number> = {
+  S: 0,
+  A: 1,
+  B: 2,
+  C: 3,
+  D: 4,
+  Pool: 5,
+};
 import {
   MAX_LEVEL_BY_RARITY,
   getAllSubstats,
@@ -38,6 +49,8 @@ export type CandidateArtifact = ArtifactData & {
   source: CandidateSource;
   sourceArtifactId?: string;
   donorCharacterId?: string;
+  /** Original artifact before projection (for upgrade/current candidates) */
+  sourceArtifact?: ArtifactData;
 };
 
 // ─── Substat Projection Helpers ───
@@ -215,7 +228,8 @@ export function buildCandidatePool(
   buildMatch: BuildMatchResult,
   allArtifacts: (ArtifactData & { location?: string })[],
   tierAssignments: TierAssignment,
-  luckMultiplier: number
+  luckMultiplier: number,
+  charTier: Tier = "Pool"
 ): Record<Slot, CandidateArtifact[]> {
   const result = {} as Record<Slot, CandidateArtifact[]>;
 
@@ -239,6 +253,7 @@ export function buildCandidatePool(
         ...equipped,
         substats: projected,
         level: MAX_LEVEL_BY_RARITY[equipped.rarity] ?? 20,
+        sourceArtifact: equipped,
         source: "current",
         sourceArtifactId: equipped.id,
       });
@@ -250,9 +265,11 @@ export function buildCandidatePool(
       if (!targetMainStats.has(art.mainStatKey)) continue;
       if (art.id === equipped?.id) continue;
 
-      // Only steal from Pool tier
-      if (art.location && tierAssignments[art.location]?.tier !== "Pool")
-        continue;
+      // Only steal from characters in a strictly lower-priority tier
+      if (art.location) {
+        const donorTier = tierAssignments[art.location]?.tier ?? "Pool";
+        if (TIER_RANK[donorTier] <= TIER_RANK[charTier]) continue;
+      }
 
       const maxLevel = MAX_LEVEL_BY_RARITY[art.rarity] ?? 20;
 
@@ -275,6 +292,7 @@ export function buildCandidatePool(
           ...art,
           substats: projected,
           level: maxLevel,
+          sourceArtifact: art,
           source: "upgrade",
           sourceArtifactId: art.id,
           donorCharacterId: art.location,

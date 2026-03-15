@@ -186,7 +186,11 @@ function evaluateFixMain(ctx: SlotContext): Insight | null {
   const mismatch = buildMatch.mainStatMismatches.find((m) => m.slot === slot);
   if (!mismatch) return null;
 
-  const recommended = buildMatch.build[mismatch.slot];
+  const weightsKey = `${mismatch.slot}Weights` as
+    | "sandsWeights"
+    | "gobletWeights"
+    | "circletWeights";
+  const recommended = buildMatch.build[weightsKey];
   if (!recommended || recommended.length === 0) return null;
 
   return {
@@ -195,7 +199,7 @@ function evaluateFixMain(ctx: SlotContext): Insight | null {
     slot,
     artifact: equipped,
     compareArtifact: equipped,
-    suggestedMainStats: recommended,
+    suggestedMainStats: recommended.map((w) => w.stat),
     isEquipped: true,
   };
 }

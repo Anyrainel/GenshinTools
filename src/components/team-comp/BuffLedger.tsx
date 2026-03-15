@@ -12,7 +12,6 @@ import {
 } from "@/data/constants";
 import { elementResourcesByName } from "@/data/constants";
 import type { Element } from "@/data/types";
-import { isTrivialBuff } from "@/lib/team-comp/inspection";
 import type {
   BuffTarget,
   DamageTagFilter,
@@ -228,9 +227,7 @@ export function BuffLedger({ buffs, team, t }: Props) {
   const [showAll, setShowAll] = useState(false);
 
   const activeCount = buffs.filter((b) => b.active).length;
-  const visibleBuffs = buffs.filter(
-    (b) => showAll || (b.active && !isTrivialBuff(b))
-  );
+  const visibleBuffs = buffs.filter((b) => showAll || b.active);
 
   const resonanceBuffs = visibleBuffs.filter((b) => !b.providerCharId);
 

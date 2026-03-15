@@ -1,41 +1,44 @@
 /**
- * V2 Artifact Scorer
+ * Normalized Artifact Scorer
  *
  * Scores artifacts on a 0-300 scale using:
  * - Main stat scoring (sands/goblet/circlet)
- * - Substat scoring (same CD-equivalent formula as V1)
+ * - Substat scoring (CD-equivalent formula)
  * - Normalization to 300-point scale
  */
 
 import type {
   ArtifactData,
+  Build,
   MainStat,
   MainStatSlot,
   Slot,
   SubStat,
+  WeightedMainStat,
 } from "@/data/types";
 import { allSlots, mainStatSlots } from "@/data/types";
-import type { BuildV2Weights, MainStatWeight } from "./types";
 import {
   MAIN_STAT_CD_EQUIV_4STAR,
   MAIN_STAT_CD_EQUIV_5STAR,
   SUBSTAT_COEFFICIENTS,
-} from "./types";
+  computeCrDeduction,
+  getMainStatValue,
+} from "./utils";
 
 // ─── Score Result Types ───
 
-export type V2SlotScore = {
+export type SlotScore = {
   mainStatScore: number;
   substatScore: number;
   totalScore: number;
   mainStatCorrect: boolean;
 };
 
-export type V2ScoreResult = {
+export type ScoreResult = {
   /** Total score out of 300 */
   totalScore: number;
   /** Per-slot breakdown */
-  slots: Record<Slot, V2SlotScore | null>;
+  slots: Record<Slot, SlotScore | null>;
   /** Main stat score subtotal (before normalization) */
   rawMainStatScore: number;
   /** Substat score subtotal (before normalization) */
@@ -50,14 +53,38 @@ export type V2ScoreResult = {
   mainStatMatches: number;
 };
 
+/** Map slot name → the corresponding Weights field on Build */
+const SLOT_TO_WEIGHTS: Record<
+  MainStatSlot,
+  "sandsWeights" | "gobletWeights" | "circletWeights"
+> = {
+  sands: "sandsWeights",
+  goblet: "gobletWeights",
+  circlet: "circletWeights",
+};
+
 /**
- * Score a character's equipped artifacts using V2 weights.
+ * Build a substat weight lookup from Build.substats (WeightedSubStat[]).
  */
-export function scoreV2(
+function substatWeightMap(build: Build): Record<string, number> {
+  const map: Record<string, number> = {};
+  for (const { stat, weight } of build.substats) {
+    map[stat] = weight;
+  }
+  return map;
+}
+
+/**
+ * Score a character's equipped artifacts against a Build.
+ */
+export function scoreNormalized(
   artifacts: Partial<Record<Slot, ArtifactData>>,
-  build: BuildV2Weights
-): V2ScoreResult {
-  const slots: Record<Slot, V2SlotScore | null> = {
+  build: Build,
+  nonArtifactCr?: number
+): ScoreResult {
+  const weights = substatWeightMap(build);
+
+  const slots: Record<Slot, SlotScore | null> = {
     flower: null,
     plume: null,
     sands: null,
@@ -84,8 +111,8 @@ export function scoreV2(
         if (val == null) continue;
         const stat = key as SubStat;
         const coeff = SUBSTAT_COEFFICIENTS[stat] ?? 0;
-        const weight = build.substats[stat] ?? 0;
-        slotSubScore += val * coeff * (weight / 100);
+        const w = weights[stat] ?? 0;
+        slotSubScore += val * coeff * (w / 100);
       }
     }
     rawSubstatScore += slotSubScore;
@@ -95,11 +122,11 @@ export function scoreV2(
     let mainStatCorrect = true;
 
     if (mainStatSlots.includes(slot as MainStatSlot)) {
-      const mainStatSlot = slot as MainStatSlot;
-      const mainStatWeights = build[mainStatSlot] as MainStatWeight[];
+      const msSlot = slot as MainStatSlot;
+      const mainStatWeights: WeightedMainStat[] =
+        build[SLOT_TO_WEIGHTS[msSlot]];
       const equippedMain = artifact.mainStatKey as MainStat;
 
-      // Find if this main stat is in the recommended list
       const matchedWeight = mainStatWeights.find(
         (w) => w.stat === equippedMain
       );
@@ -111,17 +138,14 @@ export function scoreV2(
         slotMainScore = cdEquiv * (matchedWeight.weight / 100);
         mainStatMatches++;
       } else {
-        // Wrong main stat: score it at reduced value
-        // Use the substat coefficient if available, otherwise 0
+        // Wrong main stat: score using substat coefficient if available
         const asSubstat = equippedMain as SubStat;
         const coeff = SUBSTAT_COEFFICIENTS[asSubstat];
         if (coeff) {
-          // Score the main stat value as a substat equivalent
           const mainStatValue = getMainStatValue(equippedMain, rarity);
-          const weight = build.substats[asSubstat] ?? 0;
-          slotMainScore = mainStatValue * coeff * (weight / 100);
+          const w = weights[asSubstat] ?? 0;
+          slotMainScore = mainStatValue * coeff * (w / 100);
         }
-        // Elemental/Physical DMG% that isn't recommended: score 0
         mainStatCorrect = false;
       }
 
@@ -134,6 +158,34 @@ export function scoreV2(
       totalScore: (slotMainScore + slotSubScore) * build.normalizer,
       mainStatCorrect,
     };
+  }
+
+  // CR clamp: deduct substat score contribution of CR exceeding the budget
+  if (nonArtifactCr != null) {
+    const crWeight = weights.cr ?? 0;
+    if (crWeight > 0) {
+      let totalArtifactCr = 0;
+      for (const slot of allSlots) {
+        const artifact = artifacts[slot];
+        if (!artifact) continue;
+        if (artifact.substats) {
+          const crVal = artifact.substats.cr;
+          if (crVal != null) totalArtifactCr += crVal / 100;
+        }
+        if (
+          mainStatSlots.includes(slot as MainStatSlot) &&
+          artifact.mainStatKey === "cr"
+        ) {
+          const rarity = artifact.rarity === 4 ? 4 : 5;
+          totalArtifactCr += getMainStatValue("cr", rarity) / 100;
+        }
+      }
+      rawSubstatScore -= computeCrDeduction(
+        totalArtifactCr,
+        nonArtifactCr,
+        crWeight
+      );
+    }
   }
 
   const rawTotal = rawMainStatScore + rawSubstatScore;
@@ -149,48 +201,4 @@ export function scoreV2(
     equippedCount,
     mainStatMatches,
   };
-}
-
-/**
- * Get the Lv.20 value of a main stat for scoring purposes.
- */
-function getMainStatValue(stat: MainStat, rarity: number): number {
-  const values5: Record<string, number> = {
-    hp: 4780,
-    atk: 311,
-    "hp%": 46.6,
-    "atk%": 46.6,
-    "def%": 58.3,
-    em: 186.5,
-    er: 51.8,
-    cr: 31.1,
-    cd: 62.2,
-  };
-
-  const values4: Record<string, number> = {
-    hp: 3571,
-    atk: 232,
-    "hp%": 34.8,
-    "atk%": 34.8,
-    "def%": 43.5,
-    em: 139.3,
-    er: 38.7,
-    cr: 23.2,
-    cd: 46.4,
-  };
-
-  const table = rarity === 4 ? values4 : values5;
-  return table[stat] ?? 0;
-}
-
-/**
- * Score interpretation helper.
- */
-export function getScoreTier(score: number): { label: string; tier: string } {
-  if (score >= 270) return { label: "Exceptional", tier: "S" };
-  if (score >= 240) return { label: "Very Strong", tier: "A" };
-  if (score >= 200) return { label: "Solid", tier: "B" };
-  if (score >= 160) return { label: "Decent", tier: "C" };
-  if (score >= 120) return { label: "Needs Work", tier: "D" };
-  return { label: "Unbuilt", tier: "F" };
 }

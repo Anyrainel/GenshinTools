@@ -284,6 +284,13 @@ export type CharacterKit = {
 
 export type BuildSource = "preset" | "modified" | "custom";
 
+export type WeightedMainStat = {
+  stat: MainStat;
+  weight: number; // 0-100
+  /** CD-equivalent override (default = 62.1 for 5★). Populated by auto-tune for elemental DMG% goblets. */
+  cdEquiv?: number;
+};
+
 export type Build = {
   id: string;
   source?: BuildSource; // Derived field
@@ -297,10 +304,15 @@ export type Build = {
   artifactSet?: string; // for 4pc
   halfSet1?: number | string; // for 2pc+2pc - ID (legacy number or new string)
   halfSet2?: number | string; // for 2pc+2pc - ID (legacy number or new string)
-  sands: MainStat[];
-  goblet: MainStat[];
-  circlet: MainStat[];
   substats: WeightedSubStat[];
+
+  /** Per-main-stat weights (populated by auto-tune or migration). */
+  sandsWeights: WeightedMainStat[];
+  gobletWeights: WeightedMainStat[];
+  circletWeights: WeightedMainStat[];
+
+  /** 300 / idealScore — used to normalize raw scores to 0-300 scale. */
+  normalizer: number;
 };
 
 export type WeightedSubStat = {

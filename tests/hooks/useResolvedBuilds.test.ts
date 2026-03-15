@@ -27,9 +27,10 @@ function makeBuild(id: string, characterId: string, name: string): Build {
     visible: true,
     composition: "4pc",
     artifactSet: "gladiators_finale",
-    sands: ["atk%"],
-    goblet: ["pyro%"],
-    circlet: ["cr"],
+    sandsWeights: [{ stat: "atk%", weight: 100 }],
+    gobletWeights: [{ stat: "pyro%", weight: 100 }],
+    circletWeights: [{ stat: "cr", weight: 100 }],
+    normalizer: 0,
     substats: [
       { stat: "cr", weight: 100 },
       { stat: "cd", weight: 100 },

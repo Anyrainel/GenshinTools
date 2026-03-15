@@ -146,9 +146,13 @@ const arlecchinoBuild: Build = {
   name: "",
   visible: true,
   composition: "4pc",
-  sands: ["atk%"],
-  goblet: ["atk%", "pyro%"],
-  circlet: ["cd"],
+  sandsWeights: [{ stat: "atk%", weight: 100 }],
+  gobletWeights: [
+    { stat: "atk%", weight: 100 },
+    { stat: "pyro%", weight: 100 },
+  ],
+  circletWeights: [{ stat: "cd", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "cd", weight: 100 },
     { stat: "cr", weight: 100 },
@@ -167,9 +171,13 @@ const citlaliBuild1: Build = {
   name: "",
   visible: true,
   composition: "4pc",
-  sands: ["em", "er"],
-  goblet: ["em"],
-  circlet: ["em"],
+  sandsWeights: [
+    { stat: "em", weight: 100 },
+    { stat: "er", weight: 100 },
+  ],
+  gobletWeights: [{ stat: "em", weight: 100 }],
+  circletWeights: [{ stat: "em", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "em", weight: 100 },
     { stat: "er", weight: 100 },
@@ -185,9 +193,13 @@ const citlaliBuild2: Build = {
   name: "队友带勇者",
   visible: true,
   composition: "4pc",
-  sands: ["em", "er"],
-  goblet: ["em"],
-  circlet: ["em"],
+  sandsWeights: [
+    { stat: "em", weight: 100 },
+    { stat: "er", weight: 100 },
+  ],
+  gobletWeights: [{ stat: "em", weight: 100 }],
+  circletWeights: [{ stat: "em", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "em", weight: 100 },
     { stat: "er", weight: 70 },
@@ -204,9 +216,10 @@ const citlaliBuild3: Build = {
   name: "",
   visible: true,
   composition: "4pc",
-  sands: ["em"],
-  goblet: ["em"],
-  circlet: ["em"],
+  sandsWeights: [{ stat: "em", weight: 100 }],
+  gobletWeights: [{ stat: "em", weight: 100 }],
+  circletWeights: [{ stat: "em", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "em", weight: 100 },
     { stat: "cd", weight: 50 },
@@ -225,9 +238,10 @@ const xilonenBuild: Build = {
   name: "",
   visible: true,
   composition: "4pc",
-  sands: ["def%"],
-  goblet: ["def%"],
-  circlet: ["def%"],
+  sandsWeights: [{ stat: "def%", weight: 100 }],
+  gobletWeights: [{ stat: "def%", weight: 100 }],
+  circletWeights: [{ stat: "def%", weight: 100 }],
+  normalizer: 0,
   substats: [
     { stat: "def%", weight: 100 },
     { stat: "er", weight: 50 },
@@ -540,16 +554,16 @@ describe("matchBuild", () => {
       const buildGoodMains: Build = {
         ...citlaliBuild1,
         id: "good-mains",
-        sands: ["em"],
-        goblet: ["em"],
-        circlet: ["em"],
+        sandsWeights: [{ stat: "em", weight: 100 }],
+        gobletWeights: [{ stat: "em", weight: 100 }],
+        circletWeights: [{ stat: "em", weight: 100 }],
       };
       const buildBadMains: Build = {
         ...citlaliBuild1,
         id: "bad-mains",
-        sands: ["er"],
-        goblet: ["hp%"],
-        circlet: ["hp%"],
+        sandsWeights: [{ stat: "er", weight: 100 }],
+        gobletWeights: [{ stat: "hp%", weight: 100 }],
+        circletWeights: [{ stat: "hp%", weight: 100 }],
       };
       // Citlali has em/em/em
       const result = matchBuild(
@@ -688,9 +702,9 @@ describe("matchBuild", () => {
         ...arlecchinoBuild,
         id: "wrong1",
         artifactSet: "tenacity_of_the_millelith",
-        sands: ["atk%"],
-        goblet: ["pyro%"],
-        circlet: ["cd"],
+        sandsWeights: [{ stat: "atk%", weight: 100 }],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [{ stat: "cd", weight: 100 }],
       };
       const wrongSet2: Build = {
         ...xilonenBuild,

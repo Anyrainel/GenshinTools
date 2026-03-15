@@ -14,6 +14,7 @@ import type {
   Element,
   ElementResource,
   MainStat,
+  SubStat,
   TierAssignment,
   WeaponResource,
   WeaponTypeResource,
@@ -145,6 +146,95 @@ export const maxSubstatRolls = {
 
 /** Multiplier for average substat roll vs max roll (~0.85). Use for roll count: value / (AVERAGE_ROLL_MULTIPLIER * maxRoll). */
 export const AVERAGE_ROLL_MULTIPLIER = 0.85;
+
+/**
+ * Average 5★ substat roll values in StatSheet-internal format (pct stats ÷ 100).
+ * Derived from maxSubstatRolls[5] × AVERAGE_ROLL_MULTIPLIER.
+ * Used for marginal-gain analysis (one roll ≈ this delta).
+ */
+const FLAT_SUBSTATS: ReadonlySet<string> = new Set(["hp", "atk", "def", "em"]);
+export const AVG_SUBSTAT_ROLL: Record<SubStat, number> = Object.fromEntries(
+  Object.entries(maxSubstatRolls[5]).map(([stat, maxVal]) => {
+    const avg = maxVal * AVERAGE_ROLL_MULTIPLIER;
+    return [stat, FLAT_SUBSTATS.has(stat) ? avg : avg / 100];
+  })
+) as Record<SubStat, number>;
+
+// ─── Main stat values at max level ───
+
+/**
+ * 5★ artifact main stat values at Lv.20.
+ * Percentage stats in decimal form (0.466 = 46.6%) to match StatSheet internals.
+ */
+export const MAIN_STAT_VALUES_5STAR: Record<string, number> = {
+  hp: 4780,
+  atk: 311,
+  "hp%": 0.466,
+  "atk%": 0.466,
+  "def%": 0.583,
+  em: 186.5,
+  er: 0.518,
+  cr: 0.311,
+  cd: 0.622,
+  "pyro%": 0.466,
+  "hydro%": 0.466,
+  "cryo%": 0.466,
+  "electro%": 0.466,
+  "anemo%": 0.466,
+  "geo%": 0.466,
+  "dendro%": 0.466,
+  "phys%": 0.583,
+  "heal%": 0.359,
+};
+
+/** 4★ artifact main stat values at Lv.16. Percentage stats in decimal form. */
+export const MAIN_STAT_VALUES_4STAR: Record<string, number> = {
+  hp: 3571,
+  atk: 232,
+  "hp%": 0.348,
+  "atk%": 0.348,
+  "def%": 0.435,
+  em: 139.3,
+  er: 0.387,
+  cr: 0.232,
+  cd: 0.464,
+  "pyro%": 0.348,
+  "hydro%": 0.348,
+  "cryo%": 0.348,
+  "electro%": 0.348,
+  "anemo%": 0.348,
+  "geo%": 0.348,
+  "dendro%": 0.348,
+  "phys%": 0.435,
+  "heal%": 0.268,
+};
+
+/**
+ * Get the max-level main stat value in display form (46.6 for ATK%, 311 for flat ATK).
+ * Use for scoring and display; for StatSheet construction use the decimal tables directly.
+ */
+export function getMainStatValue(stat: MainStat, rarity: number): number {
+  const table = rarity === 4 ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
+  const val = table[stat] ?? 0;
+  if (stat === "hp" || stat === "atk" || stat === "em") return val;
+  return val * 100;
+}
+
+// ─── Substat scoring constants ───
+
+/** Maps each substat to its CD-equivalent coefficient: 7.77 / maxRollValue */
+export const SUBSTAT_COEFFICIENTS: Record<string, number> = {
+  cd: 1.0,
+  cr: 1.9974,
+  "atk%": 1.3328,
+  "hp%": 1.3328,
+  "def%": 1.0658,
+  em: 0.3333,
+  er: 1.1991,
+  atk: 0.3995,
+  hp: 0.026,
+  def: 0.3356,
+};
 
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],

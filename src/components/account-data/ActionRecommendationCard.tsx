@@ -21,6 +21,8 @@ import { memo } from "react";
 interface ActionRecommendationCardProps {
   recommendation: Recommendation;
   tierColor?: string;
+  /** When true, renders without character icon (used inside per-character cards) */
+  inline?: boolean;
 }
 
 function getActionIcon(actionType: string) {
@@ -52,7 +54,7 @@ function getActionIcon(actionType: string) {
   }
 }
 
-function getBorderColor(scoreDiff: number, actionType: string): string {
+function getBorderColor(scoreDiff: number): string {
   if (scoreDiff >= 15) return "border-l-tier-a";
   if (scoreDiff >= 10) return "border-l-tier-b";
   if (scoreDiff >= 6) return "border-l-tier-c";
@@ -63,20 +65,19 @@ function getBorderColor(scoreDiff: number, actionType: string): string {
 function ActionRecommendationCardComponent({
   recommendation: rec,
   tierColor,
+  inline,
 }: ActionRecommendationCardProps) {
   const { t } = useLanguage();
   const charInfo = charactersById[rec.characterId];
   if (!charInfo) return null;
 
   const { icon: Icon, color, bg } = getActionIcon(rec.actionType);
-  const borderClass =
-    tierColor ?? getBorderColor(rec.slotScoreDiff, rec.actionType);
+  const borderClass = tierColor ?? getBorderColor(rec.slotScoreDiff);
 
   const isSwapLike =
     rec.actionType === "swap" ||
     rec.actionType === "equip" ||
-    (rec.actionType === "upgrade" &&
-      rec.optimalArtifact.sourceArtifactId !== rec.currentArtifact?.id);
+    rec.actionType === "upgrade";
   const afterArtInfo = artifactsById[rec.optimalArtifact.setKey];
 
   const getPlaceholderIcon = () => {
@@ -102,7 +103,10 @@ function ActionRecommendationCardComponent({
       : rec.actionType === "upgrade" &&
           rec.optimalArtifact.sourceArtifactId === rec.currentArtifact?.id
         ? t.ui("accountData.insights.equipped")
-        : "";
+        : (rec.actionType === "swap" || rec.actionType === "equip") &&
+            !rec.donorCharacterId
+          ? t.ui("accountData.insights.fromInventory")
+          : "";
 
   const cardContent = (
     <div
@@ -111,29 +115,51 @@ function ActionRecommendationCardComponent({
         borderClass
       )}
     >
-      {/* Character icon (small) */}
-      <ItemIcon
-        imagePath={charInfo.imagePath}
-        rarity={charInfo.rarity}
-        size="sm"
-      />
-
-      {/* Text content: 3 rows */}
-      <div className="flex-1 min-w-0">
-        {/* Row 1: Character name + score diff */}
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-sm font-semibold text-foreground">
-            {t.character(rec.characterId)}
-          </span>
-          {rec.slotScoreDiff > 0 && (
-            <span className="text-sm italic font-extrabold tracking-tighter bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-              +{rec.slotScoreDiff.toFixed(1)}
-            </span>
+      {/* Lead icon: character icon (standalone) or action icon circle (inline) */}
+      {inline ? (
+        <div
+          className={cn(
+            "rounded-full flex items-center justify-center shrink-0 w-8 h-8",
+            bg,
+            color
           )}
+        >
+          <Icon className="w-4 h-4" />
         </div>
-        {/* Row 2: Action icon + action name + subtitle */}
+      ) : (
+        <ItemIcon
+          imagePath={charInfo.imagePath}
+          rarity={charInfo.rarity}
+          size="sm"
+        />
+      )}
+
+      {/* Text content */}
+      <div className="flex-1 min-w-0">
+        {/* Row 1: score diff (inline) or character name + score diff (standalone) */}
+        {inline ? (
+          rec.slotScoreDiff > 0 && (
+            <div className="flex items-baseline gap-1 italic font-extrabold tracking-tighter leading-none">
+              <span className="text-lg leading-none bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+                +{rec.slotScoreDiff.toFixed(1)}
+              </span>
+            </div>
+          )
+        ) : (
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-sm font-semibold text-foreground">
+              {t.character(rec.characterId)}
+            </span>
+            {rec.slotScoreDiff > 0 && (
+              <span className="text-base italic font-extrabold tracking-tighter bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+                +{rec.slotScoreDiff.toFixed(1)}
+              </span>
+            )}
+          </div>
+        )}
+        {/* Row 2: Action label + slot */}
         <div className="flex items-center gap-1 mt-0.5">
-          <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />
+          {!inline && <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />}
           <span className={cn("text-xs font-medium", color)}>
             {rec.actionType === "swap"
               ? t.ui("accountData.insights.swap")
@@ -147,20 +173,20 @@ function ActionRecommendationCardComponent({
                       ? t.ui("accountData.insights.equip")
                       : rec.actionType}
           </span>
-          {subtitle && (
-            <span className="text-xs text-muted-foreground">· {subtitle}</span>
-          )}
+          <span className="text-xs text-foreground">{t.slot(rec.slot)}</span>
         </div>
-        {/* Row 3: Slot name */}
-        <div className="text-xs text-muted-foreground mt-0.5">
-          {t.slot(rec.slot)}
-        </div>
+        {/* Row 3: Source label */}
+        {subtitle && (
+          <div className="text-xs text-muted-foreground mt-0.5 truncate">
+            {subtitle}
+          </div>
+        )}
       </div>
 
       {/* Artifact icons: before → after */}
       <div className="flex items-center gap-1 shrink-0">
         {rec.actionType === "equip" ? (
-          <div className="flex items-center justify-center rounded-md border-2 border-dashed border-white/10 w-10 h-10">
+          <div className="flex items-center justify-center rounded-sm border-2 border-dashed border-white/10 w-12 h-12">
             <CirclePlus className="w-4 h-4 text-muted-foreground" />
           </div>
         ) : isSwapLike && rec.currentArtifact ? (
@@ -183,13 +209,17 @@ function ActionRecommendationCardComponent({
         <ArrowRight className="w-3 h-3 text-muted-foreground" />
         {isSwapLike || rec.actionType === "equip" ? (
           <ArtifactIcon
-            artifact={rec.optimalArtifact}
+            artifact={
+              rec.actionType === "upgrade" && rec.optimalArtifact.sourceArtifact
+                ? rec.optimalArtifact.sourceArtifact
+                : rec.optimalArtifact
+            }
             artInfo={afterArtInfo}
             slot={rec.slot}
             size="sm"
           />
         ) : (
-          <div className="flex items-center justify-center w-10 h-10">
+          <div className="flex items-center justify-center w-12 h-12">
             <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
           </div>
         )}

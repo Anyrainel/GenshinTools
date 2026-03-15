@@ -2,13 +2,18 @@ import { isPctStat } from "@/components/team-comp/displayFormatters";
 import {
   AVERAGE_ROLL_MULTIPLIER,
   artifactsById,
-  maxSubstatRolls,
   statPools,
 } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { getFixedMainStatValue } from "@/lib/account-data/artifactScore";
 
+import {
+  buildSheetFromMainAndSubs,
+  constrainedGreedyAllocate,
+  emptySubRolls,
+  getRollValues,
+  rollToInternal,
+} from "./constrainedGreedy";
 import type { TeamBuild } from "./damageCalc";
 import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
@@ -53,38 +58,6 @@ export interface IdealGenResult {
 
 // ─── Constants ───
 
-/** Compute per-stat roll values for a given multiplier and rarity */
-function getRollValues(
-  multiplier: number,
-  rarity: 4 | 5 = 5
-): Record<SubStat, number> {
-  const rv = {} as Record<SubStat, number>;
-  for (const [stat, maxVal] of Object.entries(maxSubstatRolls[rarity])) {
-    rv[stat as SubStat] = maxVal * multiplier;
-  }
-  return rv;
-}
-
-/** Convert a roll value to StatSheet-internal representation (percent stats ÷ 100) */
-function rollToInternal(
-  stat: SubStat,
-  rolls: number,
-  rv: Record<SubStat, number>
-): number {
-  const raw = rv[stat] * rolls;
-  return isPctStat(stat) ? raw / 100 : raw;
-}
-
-// 5★: 4 initial + 5 upgrades = 9; 4★: 3 initial + 1 unlock + 3 upgrades = 7
-function rollsPerArtifact(rarity: 4 | 5): number {
-  return rarity === 5 ? 9 : 7;
-}
-// 5★: 1 initial + up to 5 upgrades = 6; 4★: 1 initial + up to 3 upgrades = 4
-function maxRollsPerStat(rarity: 4 | 5): number {
-  return rarity === 5 ? 6 : 4;
-}
-const MAX_SUBSTATS_PER_SLOT = 4;
-
 // Valid main stat pools per slot
 const mainStatPools: Record<Slot, readonly MainStat[]> = {
   flower: statPools.flower,
@@ -93,8 +66,6 @@ const mainStatPools: Record<Slot, readonly MainStat[]> = {
   goblet: statPools.goblet,
   circlet: statPools.circlet,
 };
-
-const allSubstats: readonly SubStat[] = statPools.substat;
 
 /** Determine artifact rarity for a character from their set keys */
 function getCharRarity(
@@ -111,10 +82,6 @@ function getCharRarity(
 }
 
 // ─── Helpers ───
-
-function getValidSubstats(slotMainStat: MainStat): SubStat[] {
-  return allSubstats.filter((s) => s !== slotMainStat);
-}
 
 function evaluateDamage(
   teamBuild: TeamBuild,
@@ -149,35 +116,6 @@ function evaluateDamage(
   }
 }
 
-function buildSheetFromMainAndSubs(
-  mainStats: Record<Slot, MainStat>,
-  subRolls: Record<Slot, Partial<Record<SubStat, number>>>,
-  rv: Record<SubStat, number>,
-  rarity: 4 | 5 = 5
-): StatSheet {
-  const combined: Partial<Record<StatKey, number>> = {};
-
-  for (const slot of allSlots) {
-    // Main stat (getFixedMainStatValue returns display %, convert to fraction)
-    const ms = mainStats[slot];
-    const rawVal = getFixedMainStatValue(ms, rarity);
-    if (rawVal) {
-      const mainVal = isPctStat(ms) ? rawVal / 100 : rawVal;
-      combined[ms as StatKey] = (combined[ms as StatKey] ?? 0) + mainVal;
-    }
-
-    // Substats
-    const slotSubs = subRolls[slot];
-    for (const [stat, rolls] of Object.entries(slotSubs)) {
-      if (!rolls) continue;
-      const val = rollToInternal(stat as SubStat, rolls, rv);
-      combined[stat as StatKey] = (combined[stat as StatKey] ?? 0) + val;
-    }
-  }
-
-  return StatSheet.fromRaw(combined);
-}
-
 function synthesizeArtifacts(
   charId: string,
   mainStats: Record<Slot, MainStat>,
@@ -209,14 +147,6 @@ function synthesizeArtifacts(
   }
   return result;
 }
-
-const emptySubRolls = (): Record<Slot, Partial<Record<SubStat, number>>> => ({
-  flower: {},
-  plume: {},
-  sands: {},
-  goblet: {},
-  circlet: {},
-});
 
 // ─── Phase 1: Find best main stats ───
 
@@ -283,15 +213,12 @@ function findBestMainStats(
   return bestMainStats;
 }
 
-// ─── Phase 2: Fill substats via global one-roll-at-a-time hill climbing ───
+// ─── Phase 2: Fill substats via constrained greedy allocation ───
 //
-// Each iteration:
-//   1. Evaluate marginal gain of every substat (globally, not per-slot)
-//   2. Pick the stat with highest gain
-//   3. Find a slot that can accept it (not full, stat ≠ main stat,
-//      stat already chosen or slot has < 4 distinct substats)
-//   4. If no slot can accept the best stat, try the next best, etc.
-//   5. Allocate one roll and repeat until all 45 rolls are placed.
+// Delegates to the shared constrainedGreedyAllocate, which respects:
+// - 4 distinct substats per artifact
+// - Main stat / substat exclusion
+// - Per-stat and per-artifact roll caps
 
 function fillSubstats(
   teamBuild: TeamBuild,
@@ -307,115 +234,24 @@ function fillSubstats(
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
 ): Record<Slot, Partial<Record<SubStat, number>>> {
-  const subRolls = emptySubRolls();
-  const maxRolls = rollsPerArtifact(rarity);
-  const totalRolls = maxRolls * 5;
-
-  // Per-slot tracking
-  const slotTotalRolls: Record<Slot, number> = {
-    flower: 0,
-    plume: 0,
-    sands: 0,
-    goblet: 0,
-    circlet: 0,
-  };
-  const chosenPerSlot: Record<Slot, Set<SubStat>> = {
-    flower: new Set(),
-    plume: new Set(),
-    sands: new Set(),
-    goblet: new Set(),
-    circlet: new Set(),
-  };
-
-  const getSheet = () =>
-    buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
-  const getSheets = () => ({ ...currentSheets, [charId]: getSheet() });
-
-  const statCap = maxRollsPerStat(rarity);
-
-  /** Can this slot accept one more roll of `stat`? */
-  const canPlace = (slot: Slot, stat: SubStat): boolean => {
-    if (stat === (mainStats[slot] as string)) return false;
-    if (slotTotalRolls[slot] >= maxRolls) return false;
-    if ((subRolls[slot][stat] ?? 0) >= statCap) return false;
-    if (chosenPerSlot[slot].has(stat)) {
-      // Reserve remaining rolls for unchosen substats (1 each)
-      const unchosenNeeded = MAX_SUBSTATS_PER_SLOT - chosenPerSlot[slot].size;
-      return maxRolls - slotTotalRolls[slot] > unchosenNeeded;
-    }
-    return chosenPerSlot[slot].size < MAX_SUBSTATS_PER_SLOT; // room for a new substat
-  };
-
-  /** Find a slot to place `stat`, preferring slots with fewer total rolls. */
-  const findSlot = (stat: SubStat): Slot | null => {
-    let best: Slot | null = null;
-    let bestRolls = Number.POSITIVE_INFINITY;
-    for (const slot of allSlots) {
-      if (canPlace(slot, stat) && slotTotalRolls[slot] < bestRolls) {
-        best = slot;
-        bestRolls = slotTotalRolls[slot];
-      }
-    }
-    return best;
-  };
-
-  for (let roll = 0; roll < totalRolls; roll++) {
-    const baseDmg = evaluateDamage(
-      teamBuild,
-      getSheets(),
-      carryCharId,
-      formulaId,
-      ctx,
-      reactionOverride,
-      combo,
-      reactionOverrides
-    );
-
-    // Evaluate marginal gain for every substat and rank them
-    const gains: { stat: SubStat; gain: number }[] = [];
-    for (const stat of allSubstats) {
-      // Quick check: can any slot accept this stat?
-      if (!allSlots.some((s) => canPlace(s, stat))) continue;
-
-      // Temporarily add one roll to any slot (stat value is slot-independent)
-      const testSlot = allSlots.find((s) => canPlace(s, stat))!;
-      subRolls[testSlot][stat] = (subRolls[testSlot][stat] ?? 0) + 1;
-      const newDmg = evaluateDamage(
+  return constrainedGreedyAllocate({
+    charId,
+    mainStats,
+    currentSheets,
+    evalDamage: (sheets) =>
+      evaluateDamage(
         teamBuild,
-        getSheets(),
+        sheets,
         carryCharId,
         formulaId,
         ctx,
         reactionOverride,
         combo,
         reactionOverrides
-      );
-      subRolls[testSlot][stat]! -= 1;
-      if (subRolls[testSlot][stat] === 0) delete subRolls[testSlot][stat];
-
-      gains.push({ stat, gain: newDmg - baseDmg });
-    }
-
-    // Sort by gain descending
-    gains.sort((a, b) => b.gain - a.gain);
-
-    // Try to place the best stat; if no slot available, try next best
-    let placed = false;
-    for (const { stat } of gains) {
-      const slot = findSlot(stat);
-      if (slot) {
-        subRolls[slot][stat] = (subRolls[slot][stat] ?? 0) + 1;
-        slotTotalRolls[slot]++;
-        chosenPerSlot[slot].add(stat);
-        placed = true;
-        break;
-      }
-    }
-
-    if (!placed) break; // all slots full (shouldn't happen with correct math)
-  }
-
-  return subRolls;
+      ),
+    rv,
+    rarity,
+  });
 }
 
 // ─── Phase 1b: Find best main stats ignoring main/sub conflicts ───
@@ -524,8 +360,8 @@ export async function* runIdealArtifactGen(
   const rv = getRollValues(rollMult);
   const supportCharIds = allCharIds.filter((id) => id !== carryCharId);
 
-  // Total steps: main(1+N) + sub(1+N) + reroll(1) + resub(1) = 2N+4
-  const totalSteps = 2 * supportCharIds.length + 4;
+  // Total steps: main(1+N) + sub(1+N) + reroll(1) + resub(1) + crcd(1) = 2N+5
+  const totalSteps = 2 * supportCharIds.length + 5;
   let step = 0;
 
   const currentSheets: Record<string, StatSheet> = {};
@@ -714,6 +550,71 @@ export async function* runIdealArtifactGen(
     carryRv,
     carryR
   );
+  step++;
+
+  // ── Step 7: CR/CD circlet branching ──
+  // Greedy tends to lock into one CR/CD path due to their multiplicative
+  // relationship. If circlet is CR or CD, try the alternative with fresh
+  // substat allocation and keep whichever yields higher damage.
+  const currentCirclet = allMainStats[carryCharId].circlet;
+  const altCirclet: MainStat | null =
+    currentCirclet === "cr" ? "cd" : currentCirclet === "cd" ? "cr" : null;
+
+  if (altCirclet) {
+    yield yieldProgress("carry: compare cr/cd circlet");
+    await yieldFrame();
+
+    const currentDmg = evaluateDamage(
+      teamBuild,
+      currentSheets,
+      carryCharId,
+      formulaId,
+      calcContext,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+
+    // Try the alternative circlet with fresh substats
+    const altMainStats = { ...allMainStats[carryCharId], circlet: altCirclet };
+    const altSubRolls = fillSubstats(
+      teamBuild,
+      carryCharId,
+      carryCharId,
+      formulaId,
+      altMainStats,
+      currentSheets,
+      calcContext,
+      carryRv,
+      carryR,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    const altSheet = buildSheetFromMainAndSubs(
+      altMainStats,
+      altSubRolls,
+      carryRv,
+      carryR
+    );
+    const altSheets = { ...currentSheets, [carryCharId]: altSheet };
+    const altDmg = evaluateDamage(
+      teamBuild,
+      altSheets,
+      carryCharId,
+      formulaId,
+      calcContext,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+
+    if (altDmg > currentDmg) {
+      allMainStats[carryCharId] = altMainStats;
+      allSubRolls[carryCharId] = altSubRolls;
+      currentSheets[carryCharId] = altSheet;
+    }
+  }
   step++;
 
   // ── Final result ──

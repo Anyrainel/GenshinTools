@@ -46,9 +46,13 @@ function makeScoreResultFromWeights(
         visible: true,
         name: "Test",
         composition: "4pc",
-        sands: ["atk%"],
-        goblet: ["pyro%"],
-        circlet: ["cr", "cd"],
+        sandsWeights: [{ stat: "atk%", weight: 100 }],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+        ],
+        normalizer: 0,
         substats: Object.entries(weights)
           .filter((entry): entry is [string, number] => (entry[1] ?? 0) > 0)
           .map(([stat, weight]) => ({ stat: stat as SubStat, weight })),

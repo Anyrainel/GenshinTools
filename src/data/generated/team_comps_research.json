@@ -1,7 +1,7 @@
 {
   "meta": {
     "generated": "2026-03-11",
-    "description": "Synthesized team compositions from online guides (KQM, Game8, Genshin.gg, etc.) for V3 scoring weight derivation. Each team has full 4-member builds with weapons and artifact sets.",
+    "description": "Synthesized team compositions from online guides (KQM, Game8, Genshin.gg, etc.) for scoring weight derivation. Each team has full 4-member builds with weapons and artifact sets.",
     "sources": [
       "keqingmains.com",
       "game8.co",

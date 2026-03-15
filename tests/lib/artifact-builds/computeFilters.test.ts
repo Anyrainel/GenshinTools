@@ -15,9 +15,10 @@ function createBuild(overrides: Partial<Build> = {}): Build {
     visible: true,
     composition: "4pc",
     artifactSet: "viridescent_venerer",
-    sands: ["atk%"],
-    goblet: ["anemo%"],
-    circlet: ["cr"],
+    sandsWeights: [{ stat: "atk%", weight: 100 }],
+    gobletWeights: [{ stat: "anemo%", weight: 100 }],
+    circletWeights: [{ stat: "cr", weight: 100 }],
+    normalizer: 0,
     substats: [
       { stat: "cr", weight: 100 },
       { stat: "cd", weight: 100 },

@@ -10,10 +10,10 @@ import { beforeAll, describe, expect, it } from "vitest";
 import "@/lib/team-comp";
 import {
   type PipelineResult,
-  formatBuildWeights,
+  formatPipelineBuild,
   runPipeline,
-} from "@/lib/account-data/scorev2/pipeline";
-import { CHARACTER_BUILD_PROFILES } from "@/lib/account-data/scorev2/teamDatabase";
+} from "@/lib/account-data/scoring/pipeline";
+import { CHARACTER_BUILD_PROFILES } from "@/lib/account-data/scoring/teamDatabase";
 
 let result: PipelineResult;
 
@@ -22,7 +22,7 @@ beforeAll(async () => {
   result = runPipeline();
 }, 300_000); // 5 min timeout for full combo enumeration
 
-describe("V2 full pipeline with real data", () => {
+describe("Full pipeline with real data", () => {
   it("should generate weights for most profiled characters", () => {
     console.log(
       `Generated ${result.builds.length}/${CHARACTER_BUILD_PROFILES.length} builds`
@@ -39,7 +39,7 @@ describe("V2 full pipeline with real data", () => {
     );
 
     for (const build of result.builds) {
-      console.log(`\n${formatBuildWeights(build)}`);
+      console.log(`\n${formatPipelineBuild(build)}`);
     }
   });
 
@@ -55,24 +55,27 @@ describe("V2 full pipeline with real data", () => {
 
       expect(build.normalizer).toBeGreaterThan(0);
       expect(build.normalizer).toBeLessThan(2);
-      expect(build.idealScore).toBeGreaterThan(100);
     }
   });
 
   it("should auto-discover multiple viable main stats", () => {
     for (const build of result.builds) {
       // Each slot should have at least 1 main stat option
-      expect(build.sands.length).toBeGreaterThanOrEqual(1);
-      expect(build.goblet.length).toBeGreaterThanOrEqual(1);
-      expect(build.circlet.length).toBeGreaterThanOrEqual(1);
+      expect(build.sandsWeights.length).toBeGreaterThanOrEqual(1);
+      expect(build.gobletWeights.length).toBeGreaterThanOrEqual(1);
+      expect(build.circletWeights.length).toBeGreaterThanOrEqual(1);
 
       // Best main stat should have weight 100
-      expect(build.sands[0].weight).toBe(100);
-      expect(build.goblet[0].weight).toBe(100);
-      expect(build.circlet[0].weight).toBe(100);
+      expect(build.sandsWeights[0].weight).toBe(100);
+      expect(build.gobletWeights[0].weight).toBe(100);
+      expect(build.circletWeights[0].weight).toBe(100);
 
       // All weights should be > 0 (only qualifying combos included)
-      for (const ms of [...build.sands, ...build.goblet, ...build.circlet]) {
+      for (const ms of [
+        ...build.sandsWeights,
+        ...build.gobletWeights,
+        ...build.circletWeights,
+      ]) {
         expect(ms.weight).toBeGreaterThan(0);
       }
     }

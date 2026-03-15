@@ -1,8 +1,8 @@
 /**
  * Offline Weight Generator
  *
- * Runs the V2 pipeline against game data and writes output JSON.
- * Usage: npx vite-node src/lib/account-data/scorev2/generateWeights.ts
+ * Runs the pipeline against game data and writes output JSON.
+ * Usage: npx vite-node src/lib/account-data/scoring/generateWeights.ts
  *
  * Requires game stats to be loadable (uses Vite's module resolution for JSON imports).
  */
@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 // Register all character/weapon/artifact implementations
 import "@/lib/team-comp";
-import { formatBuildWeights, runPipeline } from "./pipeline";
+import { formatPipelineBuild, runPipeline } from "./pipeline";
 import type { PipelineResult } from "./pipeline";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +25,7 @@ async function main() {
   console.log("Loading game stats...");
   await preloadGameStats();
 
-  console.log("Running V2 pipeline (real TeamBuild damage calculator)...");
+  console.log("Running pipeline (real TeamBuild damage calculator)...");
   const result = runPipeline();
 
   console.log(
@@ -34,7 +34,7 @@ async function main() {
 
   // Print each build
   for (const build of result.builds) {
-    console.log(`\n${formatBuildWeights(build)}`);
+    console.log(`\n${formatPipelineBuild(build)}`);
   }
 
   // Print errors

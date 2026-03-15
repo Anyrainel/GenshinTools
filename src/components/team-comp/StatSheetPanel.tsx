@@ -13,8 +13,8 @@ import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
 import { fmtPercent, fmtStat } from "./displayFormatters";
 
+import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
-import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
 import type { OptFailReason } from "@/lib/team-comp/optimizer";
 import {
   AlertTriangle,
@@ -601,7 +601,7 @@ function MarginalView({
   return (
     <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1">
       {marginalKeys.map((k) => {
-        const rollVal = AVG_SUBSTAT_ROLL[k] || 0;
+        const rollVal = (AVG_SUBSTAT_ROLL as Record<string, number>)[k] || 0;
         const gain = marginal[k] as number;
         const hlKey: StatKey =
           k === "atk%" ? "atk" : k === "hp%" ? "hp" : k === "def%" ? "def" : k;
@@ -730,13 +730,13 @@ function MaxView({
       <table className="w-full border-collapse text-xs xl:text-sm">
         <thead>
           <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
-            <th className="text-left font-bold py-1 pr-2">
+            <th className="text-left font-bold py-1 pr-2 whitespace-nowrap">
               {t.ui("teamComp.stats")}
             </th>
-            <th className="text-right font-bold py-1 px-1">
+            <th className="text-right font-bold py-1 px-1 whitespace-nowrap">
               {t.ui("teamComp.offField")}
             </th>
-            <th className="text-right font-bold py-1 pl-1">
+            <th className="text-right font-bold py-1 pl-1 whitespace-nowrap">
               {t.ui("teamComp.onField")}
             </th>
           </tr>
@@ -764,8 +764,8 @@ function MaxView({
                 >
                   <td
                     className={cn(
-                      "py-1 pr-2 opacity-80",
-                      isHl && "text-[color:hsl(var(--primary))] opacity-100"
+                      "py-1 pr-2 whitespace-nowrap",
+                      isHl && "text-[color:hsl(var(--primary))]"
                     )}
                   >
                     {t.statShort(row.key)}
@@ -819,16 +819,16 @@ function ConditionalView({
       <table className="w-full border-collapse text-xs xl:text-sm">
         <thead>
           <tr className="text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
-            <th className="text-left font-bold py-1 pr-2">
+            <th className="text-left font-bold py-1 pr-2 whitespace-nowrap">
               {t.ui("teamComp.stats")}
             </th>
-            <th className="text-left font-bold py-1 px-1 tracking-tight">
+            <th className="text-left font-bold py-1 px-1 tracking-tight w-full">
               {t.ui("teamComp.conditional")}
             </th>
-            <th className="text-right font-bold py-1 px-1">
+            <th className="text-right font-bold py-1 px-1 whitespace-nowrap">
               {t.ui("teamComp.offField")}
             </th>
-            <th className="text-right font-bold py-1 pl-1">
+            <th className="text-right font-bold py-1 pl-1 whitespace-nowrap">
               {t.ui("teamComp.onField")}
             </th>
           </tr>
@@ -853,9 +853,9 @@ function ConditionalView({
                 >
                   <td
                     className={cn(
-                      "py-1 pr-2 opacity-80",
+                      "py-1 pr-2 whitespace-nowrap",
                       !showKey && "opacity-0",
-                      isHl && "text-[color:hsl(var(--primary))] opacity-100"
+                      isHl && "text-[color:hsl(var(--primary))]"
                     )}
                   >
                     {showKey ? t.statShort(row.key) : "\u00A0"}

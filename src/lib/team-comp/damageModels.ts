@@ -703,7 +703,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
-      if (!hasReaction) {
+      // Skip reaction override if the formula already has a built-in reaction
+      // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
+      if (!hasReaction || formula.tag.reaction !== "none") {
         parts.push({
           damage: formula.calc(stats, this.charLevel, ctx),
           hits: h,
@@ -739,12 +741,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
         });
       }
       if (nonReactingHits > 0) {
-        const directFormula =
-          formula.tag.reaction !== "none"
-            ? createReactionVariant(formula, "none")
-            : formula;
         parts.push({
-          damage: directFormula.calc(stats, this.charLevel, ctx),
+          damage: formula.calc(stats, this.charLevel, ctx),
           hits: nonReactingHits,
         });
       }

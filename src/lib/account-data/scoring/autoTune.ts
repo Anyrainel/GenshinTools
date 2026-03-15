@@ -1,26 +1,38 @@
 /**
- * Auto-Tuning Engine for V2 Build Weights
+ * Auto-Tuning Engine for Build Weights
  *
  * Uses the real TeamBuild damage calculator for marginal analysis.
- * Algorithm: greedy allocation at midpoint (see ArtifactScoreV2.md).
+ * Algorithm: constrained greedy allocation at midpoint.
  *
  * 1. Construct baseline artifact stats (main stats only, no substats)
- * 2. Greedy-allocate substat rolls using real damage evaluation (sum of all formulas)
+ * 2. Constrained greedy-allocate substat rolls respecting artifact rules
  * 3. Compute weights at the midpoint of the allocation
  * 4. Normalize weights to 0-100 scale
  */
 
-import type { SubStat } from "@/data/types";
+import { AVG_SUBSTAT_ROLL } from "@/data/constants";
+import type { MainStat, Slot, SubStat } from "@/data/types";
+import {
+  buildSheetFromMainAndSubs,
+  constrainedGreedyAllocate,
+  emptySubRolls,
+  flattenAllocation,
+  getRollValues,
+} from "@/lib/team-comp/constrainedGreedy";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { AVG_SUBSTAT_ROLL } from "@/lib/team-comp/inspection";
 import type {
   CalcContext,
   ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
-import type { AutoTuneResult } from "./types";
-import { SUBSTAT_BUDGET_ROLLS } from "./types";
+import type { AutoTuneResult } from "./utils";
+import {
+  AVG_ROLL_CD_EQUIV,
+  IDEAL_ROLL_DISTRIBUTION,
+  SUBSTAT_BUDGET_ROLLS,
+} from "./utils";
+export { computeIdealScore } from "./utils";
 
 /** Substat keys eligible for roll allocation */
 export const TUNABLE_SUBSTATS: SubStat[] = [
@@ -43,29 +55,36 @@ export const DEFAULT_CALC_CTX: CalcContext = {
   assumeCrit: false,
 };
 
+/** A formula with an optional weight (count in the rotation) and per-formula reaction. */
+export type WeightedFormula = {
+  formulaId: string;
+  count: number;
+  reaction?: ReactionOverride;
+};
+
 /**
  * Evaluate damage for a given artifact stat configuration.
- * Sums damage across all provided formula IDs.
+ * Sums damage across all provided formulas, weighted by count.
+ * Each formula carries its own reaction override.
  */
 function evalDamage(
   teamBuild: TeamBuild,
   dpsCharId: string,
-  formulaIds: string[],
+  formulas: WeightedFormula[],
   artifactStats: Record<string, StatSheet>,
-  ctx: CalcContext,
-  reactionOverride?: ReactionOverride
+  ctx: CalcContext
 ): number {
   const teamStats = teamBuild.getTeamStats(artifactStats, dpsCharId, ctx);
   let total = 0;
-  for (const formulaId of formulaIds) {
+  for (const { formulaId, count, reaction } of formulas) {
     const result = teamBuild.getDamageResult(
       dpsCharId,
       formulaId,
       teamStats,
       ctx,
-      reactionOverride
+      reaction
     );
-    total += result.totalDamage;
+    total += result.totalDamage * count;
   }
   return total;
 }
@@ -76,17 +95,16 @@ function evalDamage(
 function computeMarginals(
   teamBuild: TeamBuild,
   dpsCharId: string,
-  formulaIds: string[],
+  formulas: WeightedFormula[],
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
-  reactionOverride: ReactionOverride | undefined,
   baseDamage: number
 ): Record<SubStat, number> {
   const marginals = {} as Record<SubStat, number>;
   const baseSheet = artifactStats[dpsCharId] ?? new StatSheet([]);
 
   for (const stat of TUNABLE_SUBSTATS) {
-    const delta = AVG_SUBSTAT_ROLL[stat as StatKey];
+    const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[stat];
     if (!delta) {
       marginals[stat] = 0;
       continue;
@@ -96,14 +114,7 @@ function computeMarginals(
       ...artifactStats,
       [dpsCharId]: baseSheet.withDelta(stat as StatKey, delta),
     };
-    const dmg = evalDamage(
-      teamBuild,
-      dpsCharId,
-      formulaIds,
-      tweaked,
-      ctx,
-      reactionOverride
-    );
+    const dmg = evalDamage(teamBuild, dpsCharId, formulas, tweaked, ctx);
     marginals[stat] = dmg - baseDamage;
   }
 
@@ -111,67 +122,7 @@ function computeMarginals(
 }
 
 /**
- * Greedy-allocate substat rolls to maximize damage.
- * At each step, adds one avg roll of the stat with highest marginal gain.
- */
-function greedyAllocate(
-  teamBuild: TeamBuild,
-  dpsCharId: string,
-  formulaIds: string[],
-  baseArtifactStats: Record<string, StatSheet>,
-  ctx: CalcContext,
-  reactionOverride?: ReactionOverride,
-  totalRolls: number = SUBSTAT_BUDGET_ROLLS
-): Record<SubStat, number> {
-  const allocation = {} as Record<SubStat, number>;
-  for (const s of TUNABLE_SUBSTATS) allocation[s] = 0;
-
-  let currentStats = { ...baseArtifactStats };
-
-  for (let i = 0; i < totalRolls; i++) {
-    const baseDmg = evalDamage(
-      teamBuild,
-      dpsCharId,
-      formulaIds,
-      currentStats,
-      ctx,
-      reactionOverride
-    );
-    const marginals = computeMarginals(
-      teamBuild,
-      dpsCharId,
-      formulaIds,
-      currentStats,
-      ctx,
-      reactionOverride,
-      baseDmg
-    );
-
-    // Find stat with highest marginal gain
-    let bestStat: SubStat = "cr";
-    let bestGain = Number.NEGATIVE_INFINITY;
-    for (const stat of TUNABLE_SUBSTATS) {
-      if (marginals[stat] > bestGain) {
-        bestGain = marginals[stat];
-        bestStat = stat;
-      }
-    }
-
-    // Allocate one roll
-    allocation[bestStat]++;
-    const delta = AVG_SUBSTAT_ROLL[bestStat as StatKey]!;
-    const baseSheet = currentStats[dpsCharId] ?? new StatSheet([]);
-    currentStats = {
-      ...currentStats,
-      [dpsCharId]: baseSheet.withDelta(bestStat as StatKey, delta),
-    };
-  }
-
-  return allocation;
-}
-
-/**
- * Apply a roll allocation to a base sheet and return the resulting StatSheet.
+ * Apply a flat roll allocation to a base sheet and return the resulting StatSheet.
  */
 export function applyAllocation(
   baseSheet: StatSheet,
@@ -181,7 +132,7 @@ export function applyAllocation(
   let sheet = baseSheet;
   for (const stat of TUNABLE_SUBSTATS) {
     const rolls = Math.round(allocation[stat] * fraction);
-    const delta = AVG_SUBSTAT_ROLL[stat as StatKey];
+    const delta = (AVG_SUBSTAT_ROLL as Record<string, number>)[stat];
     if (rolls > 0 && delta) {
       sheet = sheet.withDelta(stat as StatKey, delta * rolls);
     }
@@ -196,11 +147,10 @@ export function applyAllocation(
 function computeMidpointWeights(
   teamBuild: TeamBuild,
   dpsCharId: string,
-  formulaIds: string[],
+  formulas: WeightedFormula[],
   baseArtifactStats: Record<string, StatSheet>,
   allocation: Record<SubStat, number>,
-  ctx: CalcContext,
-  reactionOverride?: ReactionOverride
+  ctx: CalcContext
 ): Record<SubStat, number> {
   const baseSheet = baseArtifactStats[dpsCharId] ?? new StatSheet([]);
   const midpointSheet = applyAllocation(baseSheet, allocation, 0.5);
@@ -209,18 +159,16 @@ function computeMidpointWeights(
   const baseDmg = evalDamage(
     teamBuild,
     dpsCharId,
-    formulaIds,
+    formulas,
     midpointStats,
-    ctx,
-    reactionOverride
+    ctx
   );
   const marginals = computeMarginals(
     teamBuild,
     dpsCharId,
-    formulaIds,
+    formulas,
     midpointStats,
     ctx,
-    reactionOverride,
     baseDmg
   );
 
@@ -239,77 +187,88 @@ function computeMidpointWeights(
   return weights;
 }
 
+/** Convert plain formula IDs to weighted formulas (count=1 each, optional shared reaction). */
+export function toWeightedFormulas(
+  formulaIds: string[],
+  reaction?: ReactionOverride
+): WeightedFormula[] {
+  return formulaIds.map((formulaId) => ({ formulaId, count: 1, reaction }));
+}
+
 /**
  * Main auto-tuning function using the real TeamBuild damage calculator.
  *
+ * Uses constrained greedy allocation that respects real artifact rules:
+ * - 4 distinct substats per artifact
+ * - Main stat / substat exclusion
+ * - Per-stat and per-artifact roll caps
+ *
  * @param teamBuild - Constructed TeamBuild with full team + buff resolution
  * @param dpsCharId - The DPS character to optimize
- * @param formulaIds - All damage formula IDs to sum for evaluation
- * @param baseArtifactStats - Artifact stats with main stats only (no substats)
+ * @param formulas - Weighted formulas (formulaId + count + per-formula reaction)
+ * @param mainStats - Main stats per artifact slot
+ * @param baseArtifactStats - Artifact stats for all team members (teammates' sheets)
  * @param ctx - Calc context (enemy level, res, etc.)
- * @param reactionOverride - Optional reaction override
  */
 export function autoTuneWeights(
   teamBuild: TeamBuild,
   dpsCharId: string,
-  formulaIds: string[],
+  formulas: WeightedFormula[],
+  mainStats: Record<Slot, MainStat>,
   baseArtifactStats: Record<string, StatSheet>,
-  ctx: CalcContext = DEFAULT_CALC_CTX,
-  reactionOverride?: ReactionOverride
+  ctx: CalcContext = DEFAULT_CALC_CTX
 ): AutoTuneResult {
-  // Step 1: Greedy allocation
-  const allocation = greedyAllocate(
-    teamBuild,
-    dpsCharId,
-    formulaIds,
-    baseArtifactStats,
-    ctx,
-    reactionOverride
-  );
+  const rv = getRollValues();
+
+  // Build baseline sheet from main stats only (no substats)
+  const baseSheet = buildSheetFromMainAndSubs(mainStats, emptySubRolls(), rv);
+  const baseStats = { ...baseArtifactStats, [dpsCharId]: baseSheet };
+
+  // Step 1: Constrained greedy allocation
+  const perSlotAllocation = constrainedGreedyAllocate({
+    charId: dpsCharId,
+    mainStats,
+    currentSheets: baseStats,
+    evalDamage: (sheets) =>
+      evalDamage(teamBuild, dpsCharId, formulas, sheets, ctx),
+    rv,
+  });
+
+  // Flatten per-slot allocation into per-stat totals
+  const allocation = flattenAllocation(perSlotAllocation);
 
   // Step 2: Midpoint weights
   const weights = computeMidpointWeights(
     teamBuild,
     dpsCharId,
-    formulaIds,
-    baseArtifactStats,
+    formulas,
+    baseStats,
     allocation,
-    ctx,
-    reactionOverride
+    ctx
   );
 
   // Step 3: Midpoint marginals (for debugging/display)
-  const baseSheet = baseArtifactStats[dpsCharId] ?? new StatSheet([]);
   const midpointSheet = applyAllocation(baseSheet, allocation, 0.5);
-  const midStats = { ...baseArtifactStats, [dpsCharId]: midpointSheet };
-  const midDmg = evalDamage(
-    teamBuild,
-    dpsCharId,
-    formulaIds,
-    midStats,
-    ctx,
-    reactionOverride
-  );
+  const midStats = { ...baseStats, [dpsCharId]: midpointSheet };
+  const midDmg = evalDamage(teamBuild, dpsCharId, formulas, midStats, ctx);
   const midpointMarginals = computeMarginals(
     teamBuild,
     dpsCharId,
-    formulaIds,
+    formulas,
     midStats,
     ctx,
-    reactionOverride,
     midDmg
   );
 
   // Step 4: Final damage (full allocation applied)
   const finalSheet = applyAllocation(baseSheet, allocation);
-  const finalStats = { ...baseArtifactStats, [dpsCharId]: finalSheet };
+  const finalStats = { ...baseStats, [dpsCharId]: finalSheet };
   const finalDamage = evalDamage(
     teamBuild,
     dpsCharId,
-    formulaIds,
+    formulas,
     finalStats,
-    ctx,
-    reactionOverride
+    ctx
   );
 
   return {
@@ -326,58 +285,11 @@ export function autoTuneWeights(
 export function evalBaselineDamage(
   teamBuild: TeamBuild,
   dpsCharId: string,
-  formulaIds: string[],
+  formulas: WeightedFormula[],
   artifactStats: Record<string, StatSheet>,
-  ctx: CalcContext = DEFAULT_CALC_CTX,
-  reactionOverride?: ReactionOverride
+  ctx: CalcContext = DEFAULT_CALC_CTX
 ): number {
-  return evalDamage(
-    teamBuild,
-    dpsCharId,
-    formulaIds,
-    artifactStats,
-    ctx,
-    reactionOverride
-  );
-}
-
-/**
- * Compute the ideal score for a build (for normalization to 300).
- * This function is independent of the damage calculator.
- */
-export function computeIdealScore(
-  weights: Record<SubStat, number>,
-  sandsWeight: number,
-  gobletWeight: number,
-  circletWeight: number,
-  sandsCdEquiv = 62.1,
-  gobletCdEquiv = 62.1,
-  circletCdEquiv = 62.1
-): { idealScore: number; normalizer: number } {
-  // Main stat contribution
-  const mainStatScore =
-    sandsCdEquiv * (sandsWeight / 100) +
-    gobletCdEquiv * (gobletWeight / 100) +
-    circletCdEquiv * (circletWeight / 100);
-
-  // Substat contribution: distribute [22, 10, 5, 5] rolls across top 4 stats
-  const sortedWeights = Object.entries(weights)
-    .filter(([, w]) => w > 0)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 4);
-
-  const rollDistribution = [22, 10, 5, 5];
-  let substatScore = 0;
-  for (let i = 0; i < Math.min(sortedWeights.length, 4); i++) {
-    const [, weight] = sortedWeights[i];
-    const rolls = rollDistribution[i];
-    substatScore += rolls * 6.6045 * (weight / 100);
-  }
-
-  const idealScore = mainStatScore + substatScore;
-  const normalizer = idealScore > 0 ? 300 / idealScore : 1;
-
-  return { idealScore, normalizer };
+  return evalDamage(teamBuild, dpsCharId, formulas, artifactStats, ctx);
 }
 
 /**

@@ -10,7 +10,7 @@
 
 import { charactersById, weaponsById } from "@/data/constants";
 import { characters } from "@/data/resources";
-import type { TeamContext, TeamMemberBuild } from "./types";
+import type { TeamContext, TeamMemberBuild } from "./utils";
 
 // ─── Preset JSON imports ───
 
@@ -177,7 +177,10 @@ function teamEntryToContext(
 
 // ─── Build lookup from AllCharacterBuilds preset ───
 
-const presetBuilds = allBuildsJson.builds as Record<string, PresetBuild>;
+const presetBuilds = allBuildsJson.builds as unknown as Record<
+  string,
+  PresetBuild
+>;
 const characterBuildIds = allBuildsJson.characterBuilds as Record<
   string,
   string[]
@@ -195,7 +198,7 @@ function inferScalingStat(
   build: PresetBuild | undefined
 ): "atk" | "hp" | "def" | "em" {
   if (!build) return "atk";
-  const sands = build.sands[0] ?? "atk%";
+  const sands = build.sands?.[0] ?? "atk%";
   if (sands === "hp%") return "hp";
   if (sands === "def%") return "def";
   if (sands === "em") return "em";
@@ -322,13 +325,4 @@ export function getFlagshipTeamsForChar(
   charId: string
 ): { team: FlagshipTeamEntry; dpsIndex: number }[] {
   return dpsTeamMap.get(charId) ?? [];
-}
-
-/**
- * Get the selected formula from a team entry, if any.
- */
-export function getSelectedFormula(
-  team: FlagshipTeamEntry
-): { charId: string; formulaId: string } | null {
-  return team.selectedFormula;
 }

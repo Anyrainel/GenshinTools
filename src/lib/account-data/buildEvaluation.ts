@@ -115,8 +115,8 @@ const scalingMainStats: Record<string, ScalingStat> = {
 /** Infer primary scaling stat from a build's sands preferences + substats. */
 export function getScalingStat(build: Build): ScalingStat {
   // Check sands for a scaling-indicative main stat (priority: hp > def > em > atk)
-  for (const ms of build.sands) {
-    if (ms in scalingMainStats) return scalingMainStats[ms];
+  for (const { stat } of build.sandsWeights) {
+    if (stat in scalingMainStats) return scalingMainStats[stat];
   }
   // ER-only or empty sands: infer from substat weights
   const weights = buildToWeightMap(build);
@@ -187,17 +187,17 @@ function mergeInto(existing: EvalBuild, build: Build, characterId: string) {
   }
 
   // Merge main stats: union
-  for (const ms of build.sands) {
-    if (!existing.mainStats.sands.includes(ms))
-      existing.mainStats.sands.push(ms);
+  for (const { stat } of build.sandsWeights) {
+    if (!existing.mainStats.sands.includes(stat))
+      existing.mainStats.sands.push(stat);
   }
-  for (const ms of build.goblet) {
-    if (!existing.mainStats.goblet.includes(ms))
-      existing.mainStats.goblet.push(ms);
+  for (const { stat } of build.gobletWeights) {
+    if (!existing.mainStats.goblet.includes(stat))
+      existing.mainStats.goblet.push(stat);
   }
-  for (const ms of build.circlet) {
-    if (!existing.mainStats.circlet.includes(ms))
-      existing.mainStats.circlet.push(ms);
+  for (const { stat } of build.circletWeights) {
+    if (!existing.mainStats.circlet.includes(stat))
+      existing.mainStats.circlet.push(stat);
   }
 }
 
@@ -223,9 +223,9 @@ function newEvalBuild(
     characterIds: [characterId],
     weights: buildToWeightMap(build),
     mainStats: {
-      sands: [...build.sands],
-      goblet: [...build.goblet],
-      circlet: [...build.circlet],
+      sands: build.sandsWeights.map((w) => w.stat),
+      goblet: build.gobletWeights.map((w) => w.stat),
+      circlet: build.circletWeights.map((w) => w.stat),
     },
     sortedSubstats: [], // filled after collection
     scalingStat: scaling,

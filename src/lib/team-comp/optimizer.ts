@@ -1,5 +1,6 @@
 import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
+import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import {
@@ -12,7 +13,6 @@ import {
 } from "../account-data/artifactScore";
 import type { TeamBuild } from "./damageCalc";
 import { StatSheet } from "./damageModels";
-import { AVG_SUBSTAT_ROLL } from "./inspection";
 import type {
   CalcContext,
   DamageResult,
@@ -230,7 +230,7 @@ function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
 
 // ── Marginal-gain scoring ──
 
-const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
+export const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
   ...AVG_SUBSTAT_ROLL,
   "pyro%": getFixedMainStatValue("pyro%", 5) / 100,
   "hydro%": getFixedMainStatValue("hydro%", 5) / 100,
@@ -244,7 +244,7 @@ const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
 };
 
 /** Score an artifact by its actual stat contributions weighted by marginal gains. */
-function scorePieceMarginal(
+export function scorePieceMarginal(
   art: ArtifactData,
   marginalGains: Partial<Record<StatKey, number>>
 ): number {
@@ -281,7 +281,7 @@ function scorePieceMarginal(
 }
 
 /** Compute marginal gain per stat for the swap character. */
-function computeMarginalGainsForOptimizer(
+export function computeMarginalGainsForOptimizer(
   teamBuild: TeamBuild,
   swapCharId: string,
   formulaCharId: string,
@@ -735,6 +735,18 @@ export async function* runOptimization(
   }
   const effectiveMinArtifactEr = Math.max(0, minArtifactEr - maxSetErBonus);
 
+  // ── Pre-compute max achievable ER from artifacts (for early-exit) ──
+  let maxAchievableArtifactEr = maxSetErBonus;
+  if (minArtifactEr > 0) {
+    for (const slot of allSlots) {
+      let bestSlotEr = 0;
+      for (const { er } of scoredPools[slot]) {
+        if (er > bestSlotEr) bestSlotEr = er;
+      }
+      maxAchievableArtifactEr += bestSlotEr;
+    }
+  }
+
   // ── Pre-compute baseline CR for cheap CR pre-filter ──
   let crFloor = 0;
   if (targetCr > 0) {
@@ -784,6 +796,130 @@ export async function* runOptimization(
   const is4pc = !!artifactSetId;
   const is2pc =
     !artifactSetId && !!artifactHalfSetIds && artifactHalfSetIds.length === 2;
+
+  // ── Early-exit: check if the set requirement is satisfiable ──
+  // This must run BEFORE the ER check so that impossible sets are reported
+  // as "set-impossible" rather than "er-unmet".
+  {
+    let setFeasible = true;
+    if (is4pc) {
+      let slotsWithSetPiece = 0;
+      for (const slot of allSlots) {
+        if (scoredPools[slot].some((s) => s.art.setKey === artifactSetId))
+          slotsWithSetPiece++;
+      }
+      if (slotsWithSetPiece < 4) {
+        setFeasible = false;
+        const slotCounts: Record<string, number> = {};
+        for (const slot of allSlots) {
+          slotCounts[slot] = scoredPools[slot].filter(
+            (s) => s.art.setKey === artifactSetId
+          ).length;
+        }
+        failReason = {
+          kind: "set-impossible",
+          setId: artifactSetId,
+          slotCounts,
+        };
+      }
+    } else if (is2pc) {
+      const [h1, h2] = artifactHalfSetIds!;
+      const slotsForHalf = (hId: string): number => {
+        let count = 0;
+        for (const slot of allSlots) {
+          if (
+            scoredPools[slot].some(
+              (s) => artifactIdToHalfSetId[s.art.setKey] === hId
+            )
+          )
+            count++;
+        }
+        return count;
+      };
+      if (slotsForHalf(h1) < 2 || slotsForHalf(h2) < 2) {
+        setFeasible = false;
+        const slotCounts: Record<string, number> = {};
+        for (const slot of allSlots) {
+          slotCounts[slot] = scoredPools[slot].length;
+        }
+        failReason = {
+          kind: "set-impossible",
+          halfSetIds: artifactHalfSetIds,
+          slotCounts,
+        };
+      }
+    }
+
+    if (!setFeasible) {
+      combinationsTotal = combinationsEvaluated;
+      yield getResult("evaluating", true);
+      return;
+    }
+  }
+
+  // ── Early-exit: check if ER target is achievable ──
+  if (minArtifactEr > 0) {
+    // Compute set-constrained max ER: for each slot, the best ER from artifacts
+    // that satisfy the set requirement, plus the flex slot(s) can use any artifact.
+    let setConstrainedMaxEr = maxAchievableArtifactEr; // fallback = set-agnostic
+
+    if (is4pc) {
+      // 4pc: 4 slots must use set pieces, 1 flex slot gets best overall ER
+      // For each slot, compute best ER from set pieces and best ER from any piece
+      const bestSetEr: number[] = [];
+      const bestAnyEr: number[] = [];
+      for (const slot of allSlots) {
+        let bestSet = 0;
+        let bestAny = 0;
+        for (const { art, er } of scoredPools[slot]) {
+          if (er > bestAny) bestAny = er;
+          if (art.setKey === artifactSetId && er > bestSet) bestSet = er;
+        }
+        bestSetEr.push(bestSet);
+        bestAnyEr.push(bestAny);
+      }
+      // Try each slot as the flex slot, sum set-ER for the other 4 + any-ER for flex
+      let bestCombo = -1;
+      for (let flex = 0; flex < 5; flex++) {
+        // Check that the other 4 slots actually have set pieces
+        let valid = true;
+        let total = maxSetErBonus;
+        for (let s = 0; s < 5; s++) {
+          if (s === flex) {
+            total += bestAnyEr[s];
+          } else {
+            if (
+              bestSetEr[s] === 0 &&
+              scoredPools[allSlots[s]].every(
+                (p) => p.art.setKey !== artifactSetId
+              )
+            ) {
+              valid = false;
+              break;
+            }
+            total += bestSetEr[s];
+          }
+        }
+        if (valid && total > bestCombo) bestCombo = total;
+      }
+      if (bestCombo >= 0) setConstrainedMaxEr = bestCombo;
+    } else if (is2pc) {
+      // 2pc+2pc: 2 slots for half-set 1, 2 for half-set 2, 1 flex
+      // This is complex to compute exactly; use the set-agnostic max as upper bound
+      // (the set-agnostic check is still valuable for bailing on truly impossible cases)
+    }
+
+    if (setConstrainedMaxEr < minArtifactEr - 0.001) {
+      failReason = {
+        kind: "er-unmet",
+        targetEr,
+        bestEr: erFloor + setConstrainedMaxEr,
+      };
+      combinationsTotal = combinationsEvaluated;
+      yield getResult("evaluating", true);
+      return;
+    }
+  }
   // no-set = neither 4pc nor 2+2
 
   let seedBuilds: ArtifactTuple[];

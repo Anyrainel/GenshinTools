@@ -18,9 +18,10 @@ describe("createBuildExportPayloadV5", () => {
       styles: [],
       roles: [],
       minCons: 0,
-      sands: ["atk%"],
-      goblet: ["pyro%"],
-      circlet: ["cr"],
+      sandsWeights: [{ stat: "atk%", weight: 100 }],
+      gobletWeights: [{ stat: "pyro%", weight: 100 }],
+      circletWeights: [{ stat: "cr", weight: 100 }],
+      normalizer: 0,
       substats: [],
     };
 
@@ -56,9 +57,10 @@ describe("createBuildExportPayloadV5", () => {
       styles: [],
       roles: [],
       minCons: 0,
-      sands: [],
-      goblet: [],
-      circlet: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
       substats: [],
     };
 
@@ -91,9 +93,10 @@ describe("createBuildExportPayloadV5", () => {
       styles: [],
       roles: [],
       minCons: 0,
-      sands: [],
-      goblet: [],
-      circlet: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
       substats: [],
     };
 
@@ -125,9 +128,10 @@ describe("createBuildExportPayloadV5", () => {
       styles: [],
       roles: [],
       minCons: 0,
-      sands: [],
-      goblet: [],
-      circlet: [],
+      sandsWeights: [],
+      gobletWeights: [],
+      circletWeights: [],
+      normalizer: 0,
       substats: [],
     };
 

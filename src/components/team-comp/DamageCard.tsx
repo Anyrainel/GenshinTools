@@ -22,7 +22,7 @@ import type { IdealGenResult } from "@/lib/team-comp/idealArtifactGen";
 import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
-} from "@/lib/team-comp/teamOptimizer";
+} from "@/lib/team-comp/optimizerV2";
 import type {
   CalcContext,
   ComboLine,

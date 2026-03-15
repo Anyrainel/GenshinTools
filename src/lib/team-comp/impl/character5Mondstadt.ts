@@ -1286,9 +1286,10 @@ class Varka extends CharacterBase {
   })();
 
   protected readonly formulaMap = (() => {
-    const el = this.priorityElement;
-    // Element-specific key for the right hand (or Anemo if no priority element)
-    const rightEl = el ?? ("Anemo" as const);
+    // Right hand uses the team's priority element.
+    // When no PHEC teammate is present, right hand stays Anemo (no infusion).
+    const el = this.priorityElement ?? ("Anemo" as Element);
+    const rightEl = el;
 
     // Skill talent levels: C3 upgrades E (Lv10 → Lv13)
     const eLv13 = this.constellation >= 3;
@@ -1379,48 +1380,43 @@ class Varka extends CharacterBase {
       parts: naParts,
     };
 
-    // ── 2. Four Winds' Ascension (only when priority element present) ──
-    if (el) {
-      const fwParts: { formula: DirectFormula; hits?: number }[] = [
-        { formula: new DirectFormula(fwRight, skillTag(el)) },
-        { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
-      ];
-      // C2: extra 800% ATK Anemo AoE hit
-      if (this.constellation >= 2) {
-        fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
-      }
-      formulas["varka-four-winds"] = {
-        label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
-        parts: fwParts,
-      };
+    // ── 2. Four Winds' Ascension ──
+    const fwParts: { formula: DirectFormula; hits?: number }[] = [
+      { formula: new DirectFormula(fwRight, skillTag(el)) },
+      { formula: new DirectFormula(fwLeft, skillTag("Anemo")) },
+    ];
+    // C2: extra 800% ATK Anemo AoE hit
+    if (this.constellation >= 2) {
+      fwParts.push({ formula: new DirectFormula(c2Mult, skillTag("Anemo")) });
     }
+    formulas["varka-four-winds"] = {
+      label: { zh: "E四风将起", en: "E Four Winds' Ascension" },
+      parts: fwParts,
+    };
 
-    // ── 3. Azure Devour (only when priority element present) ──
+    // ── 3. Azure Devour ──
     // "特殊重击" — still classified as charge per S4 rule (no "不被视为重击伤害")
-    if (el) {
-      const azParts: { formula: DirectFormula; hits?: number }[] = [
-        { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
-        { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
-      ];
-      // C2: extra 800% ATK Anemo AoE hit
-      if (this.constellation >= 2) {
-        azParts.push({
-          formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
-        });
-      }
-      formulas["varka-azure-devour"] = {
-        label: { zh: "苍噬", en: "Azure Devour" },
-        parts: azParts,
-      };
+    const azParts: { formula: DirectFormula; hits?: number }[] = [
+      { formula: new DirectFormula(azRight, chargeTag(el)), hits: 2 },
+      { formula: new DirectFormula(azLeft, chargeTag("Anemo")), hits: 2 },
+    ];
+    // C2: extra 800% ATK Anemo AoE hit
+    if (this.constellation >= 2) {
+      azParts.push({
+        formula: new DirectFormula(c2Mult, chargeTag("Anemo")),
+      });
     }
+    formulas["varka-azure-devour"] = {
+      label: { zh: "苍噬", en: "Azure Devour" },
+      parts: azParts,
+    };
 
     // ── 4. Q: Northwind Avatar (2 hits) ──
-    // First hit converts to team priority element if available, second is always Anemo
-    const q1El = el ?? ("Anemo" as const);
+    // First hit uses priority element, second is always Anemo
     formulas["varka-burst"] = {
       label: { zh: "Q我即朔风", en: "Q Northwind Avatar" },
       parts: [
-        { formula: new DirectFormula(q1, burstTag(q1El)) },
+        { formula: new DirectFormula(q1, burstTag(el)) },
         { formula: new DirectFormula(q2, burstTag("Anemo")) },
       ],
     };

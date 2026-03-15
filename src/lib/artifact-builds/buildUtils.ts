@@ -38,9 +38,27 @@ export function areBuildsEqual(b1: Build, b2: Build): boolean {
   if (b1.minCons !== b2.minCons) return false;
 
   // Compare arrays
-  if (!arraysEqual(b1.sands, b2.sands)) return false;
-  if (!arraysEqual(b1.goblet, b2.goblet)) return false;
-  if (!arraysEqual(b1.circlet, b2.circlet)) return false;
+  if (
+    !arraysEqual(
+      b1.sandsWeights.map((w) => w.stat),
+      b2.sandsWeights.map((w) => w.stat)
+    )
+  )
+    return false;
+  if (
+    !arraysEqual(
+      b1.gobletWeights.map((w) => w.stat),
+      b2.gobletWeights.map((w) => w.stat)
+    )
+  )
+    return false;
+  if (
+    !arraysEqual(
+      b1.circletWeights.map((w) => w.stat),
+      b2.circletWeights.map((w) => w.stat)
+    )
+  )
+    return false;
   if (!arraysEqual(b1.styles, b2.styles)) return false;
   if (!arraysEqual(b1.roles, b2.roles)) return false;
 
@@ -241,10 +259,11 @@ export const createBuildExportPayloadV5 = (
         artifactSet: info.originalBuild.artifactSet,
         halfSet1: info.originalBuild.halfSet1,
         halfSet2: info.originalBuild.halfSet2,
-        sands: info.originalBuild.sands,
-        goblet: info.originalBuild.goblet,
-        circlet: info.originalBuild.circlet,
         substats: info.originalBuild.substats,
+        sandsWeights: info.originalBuild.sandsWeights,
+        gobletWeights: info.originalBuild.gobletWeights,
+        circletWeights: info.originalBuild.circletWeights,
+        normalizer: info.originalBuild.normalizer,
       };
 
       payload.builds[newId] = newBuild;

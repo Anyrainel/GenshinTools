@@ -98,6 +98,14 @@ export interface TeamOptimizerOptions {
   ignoreArtifactSets?: Record<string, boolean>;
   /** Optional per-character time budget in ms (V2 only). B&B aborts if exceeded. */
   perCharDeadlineMs?: number;
+  /**
+   * Optional total team deadline as performance.now() timestamp (V2 only).
+   * When set, per-phase budgets are computed dynamically from remaining time.
+   * Takes precedence over perCharDeadlineMs.
+   */
+  teamDeadlineMs?: number;
+  /** Max artifacts per slot for B&B pre-filtering (V2 only). 0 = no limit. */
+  maxArtsPerSlot?: number;
 }
 
 // ─── Helpers ───
@@ -253,6 +261,12 @@ export async function* runTeamOptimization(
         }
       }
     : undefined;
+
+  // ── Diagnostic logging (enabled via env or globalThis) ──
+  const LOG_DIAG =
+    typeof globalThis !== "undefined" &&
+    // biome-ignore lint/suspicious/noExplicitAny: debug flag
+    (globalThis as any).__TEAM_OPT_DIAG__;
 
   // Classify characters into carries and supports (randomized within groups)
   const allCharIds = Object.keys(perChar);
@@ -414,11 +428,15 @@ export async function* runTeamOptimization(
   const unlockedPassResults: TeamOptPassResult[] = [];
   let unlockedSheets = { ...baseSheets };
 
+  const _t0_phase1 = performance.now();
+
   for (let i = 0; i < round1Order.length; i++) {
     const charId = round1Order[i];
     const passId: TeamOptPassId = carryCharIds.includes(charId)
       ? "carry-1"
       : "support";
+
+    const _tCharStart = performance.now();
 
     const gen = runCharPass(
       charId,
@@ -477,6 +495,15 @@ export async function* runTeamOptimization(
       }
     }
 
+    if (LOG_DIAG) {
+      const _tCharEnd = performance.now();
+      const elapsed = ((_tCharEnd - _tCharStart) / 1000).toFixed(1);
+      const evalCount = lastResult?.combinationsEvaluated ?? 0;
+      console.log(
+        `  [DIAG] Phase 1 char ${i + 1}/${round1Order.length}: ${charId} → ${elapsed}s (${evalCount.toLocaleString()} evals, dmg=${lastResult?.bestDamage?.toFixed(0) ?? "null"})`
+      );
+    }
+
     if (lastResult) {
       unlockedResults[charId] = {
         arts: lastResult.bestArtifacts,
@@ -527,6 +554,8 @@ export async function* runTeamOptimization(
     return competitors;
   }
 
+  const _t1_phase1done = performance.now();
+
   const competitorSet = findCompetitorSet(unlockedResults);
 
   // ════════════════════════════════════════════════════════════════════════
@@ -566,6 +595,18 @@ export async function* runTeamOptimization(
     const competitorArr = [...competitorSet];
     const nonCompetitors = allCharIds.filter((id) => !competitorSet.has(id));
     const perms = permutations(competitorArr);
+
+    if (LOG_DIAG) {
+      console.log(
+        `  [DIAG] Phase 2: ${competitorArr.length} competitors: [${competitorArr.join(", ")}]`
+      );
+      console.log(
+        `  [DIAG]   → ${perms.length} permutations × ${competitorArr.length} passes = ${perms.length * competitorArr.length} optimizer runs`
+      );
+      console.log(
+        `  [DIAG]   Non-competitors (locked): [${nonCompetitors.join(", ")}]`
+      );
+    }
 
     // Update estimated total for progress reporting
     estimatedTotal =
@@ -687,6 +728,11 @@ export async function* runTeamOptimization(
           // Restart phase 3 with expanded competitor set
           cascadeExpanded = true;
           const newCompetitorArr = [...competitorSet];
+          if (LOG_DIAG) {
+            console.log(
+              `  [DIAG] CASCADE: competitors expanded to ${newCompetitorArr.length}: [${newCompetitorArr.join(", ")}]`
+            );
+          }
           const newNonCompetitors = allCharIds.filter(
             (id) => !competitorSet.has(id)
           );
@@ -851,6 +897,16 @@ export async function* runTeamOptimization(
     }
   }
 
+  const _t2_phase3done = performance.now();
+  if (LOG_DIAG) {
+    console.log(
+      `  [DIAG] Phase 1 (unlocked): ${((_t1_phase1done - _t0_phase1) / 1000).toFixed(1)}s`
+    );
+    console.log(
+      `  [DIAG] Phase 3 (permutations): ${((_t2_phase3done - _t1_phase1done) / 1000).toFixed(1)}s | competitors: ${competitorSet.size}`
+    );
+  }
+
   // ════════════════════════════════════════════════════════════════════════
   // Phase 4: Carry round-2 — re-optimize carries with support artifacts locked
   // ════════════════════════════════════════════════════════════════════════
@@ -928,6 +984,16 @@ export async function* runTeamOptimization(
         [charId]: StatSheet.fromArtifacts(pieces),
       };
     }
+  }
+
+  const _t3_phase4done = performance.now();
+  if (LOG_DIAG) {
+    console.log(
+      `  [DIAG] Phase 4 (carry-2): ${((_t3_phase4done - _t2_phase3done) / 1000).toFixed(1)}s`
+    );
+    console.log(
+      `  [DIAG] Total: ${((_t3_phase4done - _t0_phase1) / 1000).toFixed(1)}s`
+    );
   }
 
   // ════════════════════════════════════════════════════════════════════════

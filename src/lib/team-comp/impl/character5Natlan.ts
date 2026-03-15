@@ -12,6 +12,7 @@ import {
   RegisterCharacter,
 } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Natlan Characters
@@ -462,8 +463,8 @@ class Mavuika extends CharacterBase {
 
 @RegisterCharacter("chasca")
 class Chasca extends CharacterBase {
-  // Count unique eligible element types in team (Pyro/Hydro/Cryo/Electro)
-  private readonly eligibleTypes = (() => {
+  // Collect unique eligible element types in team (Pyro/Hydro/Cryo/Electro)
+  private readonly eligibleElements = (() => {
     const eligible = new Set<string>();
     for (const [id, el] of Object.entries(this.teamMeta.elements)) {
       if (
@@ -473,9 +474,9 @@ class Chasca extends CharacterBase {
       )
         eligible.add(el);
     }
-    return Math.min(eligible.size, 3);
+    return [...eligible].slice(0, 3);
   })();
-
+  private readonly eligibleTypes = this.eligibleElements.length;
   readonly buffs = [
     // P1: Per eligible element type, Shining Shell DMG bonus (non-linear)
     // 1 type → +15%, 2 → +35%, 3 → +65%
@@ -513,16 +514,79 @@ class Chasca extends CharacterBase {
     const qRadiantCount = this.eligibleTypes === 0 ? 0 : this.eligibleTypes * 2;
     const qNormalCount = 6 - qRadiantCount;
 
-    const baseTag = {
+    const anemoChargeTag = {
       element: "Anemo" as const,
       ability: "charge" as const,
       reaction: "none" as const,
     };
-    const qTag = {
+    const anemoBurstTag = {
       element: "Anemo" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
+
+    // Helper: build a charge/burst tag for a specific element
+    const chargeTagFor = (el: string) => ({
+      element: el as ElementalOrPhysical,
+      ability: "charge" as const,
+      reaction: "none" as const,
+    });
+    const burstTagFor = (el: string) => ({
+      element: el as ElementalOrPhysical,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    });
+
+    // Distribute converted shells evenly across all eligible elements.
+    // This prevents any single elemental DMG goblet from gaining an advantage.
+    const elems = this.eligibleElements;
+    const nElems = elems.length;
+
+    // E: distribute shiningCount shells across eligible elements
+    const shiningParts: { formula: DirectFormula }[] = [];
+    if (nElems > 0) {
+      const perElem = Math.floor(shiningCount / nElems);
+      let remainder = shiningCount % nElems;
+      for (const el of elems) {
+        const count = perElem + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) remainder--;
+        for (let i = 0; i < count; i++) {
+          shiningParts.push({
+            formula: new DirectFormula(shiningMult, chargeTagFor(el)),
+          });
+        }
+      }
+    }
+
+    // Q: distribute qRadiantCount shells across eligible elements
+    const radiantParts: { formula: DirectFormula }[] = [];
+    if (nElems > 0) {
+      const perElem = Math.floor(qRadiantCount / nElems);
+      let remainder = qRadiantCount % nElems;
+      for (const el of elems) {
+        const count = perElem + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) remainder--;
+        for (let i = 0; i < count; i++) {
+          radiantParts.push({
+            formula: new DirectFormula(qMult, burstTagFor(el)),
+          });
+        }
+      }
+    }
+
+    // C2/C4 AoE procs: also spread across eligible elements (one per element)
+    const c2Parts: { formula: DirectFormula }[] =
+      this.constellation >= 2
+        ? elems.map((el) => ({
+            formula: new DirectFormula(4.0 / nElems, chargeTagFor(el)),
+          }))
+        : [];
+    const c4Parts: { formula: DirectFormula }[] =
+      this.constellation >= 4
+        ? elems.map((el) => ({
+            formula: new DirectFormula(4.0 / nElems, chargeTagFor(el)),
+          }))
+        : [];
 
     return {
       "chasca-shining-volley": {
@@ -531,20 +595,16 @@ class Chasca extends CharacterBase {
           en: "E 6-Shell Volley",
         },
         parts: [
+          // Unconverted shells: Anemo
           ...Array(normalCount)
             .fill(0)
             .map(() => ({
-              formula: new DirectFormula(shellMult, baseTag),
+              formula: new DirectFormula(shellMult, anemoChargeTag),
             })),
-          ...Array(shiningCount)
-            .fill(0)
-            .map(() => ({
-              formula: new DirectFormula(shiningMult, baseTag),
-            })),
-          // C2: Shining Shell hit → 400% ATK AoE (charged DMG), once per Multitarget Fire
-          ...(this.constellation >= 2
-            ? [{ formula: new DirectFormula(4.0, baseTag) }]
-            : []),
+          // Shining (converted) shells: spread across eligible elements
+          ...shiningParts,
+          // C2: Shining Shell hit → 400% ATK AoE, spread across elements
+          ...c2Parts,
         ],
       },
       "chasca-burst": {
@@ -553,29 +613,18 @@ class Chasca extends CharacterBase {
           en: "Q + 6 Shells",
         },
         parts: [
-          { formula: new DirectFormula(qInitMult, qTag) },
+          // Galesplitting initial hit: always Anemo
+          { formula: new DirectFormula(qInitMult, anemoBurstTag) },
+          // Unconverted Soulseeker Shells: Anemo
           ...Array(qNormalCount)
             .fill(0)
             .map(() => ({
-              formula: new DirectFormula(qNormMult, qTag),
+              formula: new DirectFormula(qNormMult, anemoBurstTag),
             })),
-          ...Array(qRadiantCount)
-            .fill(0)
-            .map(() => ({
-              formula: new DirectFormula(qMult, qTag),
-            })),
-          // C4: Radiant Shell hit → 400% ATK AoE (charged DMG), once per Q cast
-          ...(this.constellation >= 4
-            ? [
-                {
-                  formula: new DirectFormula(4.0, {
-                    element: "Anemo" as const,
-                    ability: "charge" as const,
-                    reaction: "none" as const,
-                  }),
-                },
-              ]
-            : []),
+          // Radiant (converted) Soulseeker Shells: spread across eligible elements
+          ...radiantParts,
+          // C4: Radiant Shell hit → 400% ATK AoE, spread across elements
+          ...c4Parts,
         ],
       },
     };

@@ -71,9 +71,12 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
       useBuildsStore.getState().setBuild(buildId, {
         artifactSet: "crimson_witch_of_flames",
         composition: "4pc",
-        sands: ["hp%"],
-        goblet: ["pyro%"],
-        circlet: ["cr", "cd"],
+        sandsWeights: [{ stat: "hp%", weight: 100 }],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+        ],
         substats: [
           { stat: "cr", weight: 100 },
           { stat: "cd", weight: 100 },
@@ -114,12 +117,12 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
       useBuildsStore.getState().setBuild(huTaoBuildId, {
         artifactSet: "crimson_witch_of_flames",
         composition: "4pc",
-        sands: ["hp%"],
+        sandsWeights: [{ stat: "hp%", weight: 100 }],
       });
       useBuildsStore.getState().setBuild(xingqiuBuildId, {
         artifactSet: "emblem_of_severed_fate",
         composition: "4pc",
-        sands: ["er"],
+        sandsWeights: [{ stat: "er", weight: 100 }],
       });
     });
 
@@ -196,9 +199,9 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
       useBuildsStore.getState().setBuild(huTaoBuildId, {
         artifactSet: "crimson_witch_of_flames",
         composition: "4pc",
-        sands: ["hp%"],
-        goblet: ["pyro%"],
-        circlet: ["cr"],
+        sandsWeights: [{ stat: "hp%", weight: 100 }],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [{ stat: "cr", weight: 100 }],
         substats: [
           { stat: "cr", weight: 100 },
           { stat: "cd", weight: 100 },
@@ -207,9 +210,15 @@ describe("Integration: Build Configuration to Filter Computation Flow", () => {
       useBuildsStore.getState().setBuild(xianglingBuildId, {
         artifactSet: "crimson_witch_of_flames",
         composition: "4pc",
-        sands: ["atk%", "em"],
-        goblet: ["pyro%"],
-        circlet: ["cr", "cd"],
+        sandsWeights: [
+          { stat: "atk%", weight: 100 },
+          { stat: "em", weight: 100 },
+        ],
+        gobletWeights: [{ stat: "pyro%", weight: 100 }],
+        circletWeights: [
+          { stat: "cr", weight: 100 },
+          { stat: "cd", weight: 100 },
+        ],
         substats: [
           { stat: "cr", weight: 100 },
           { stat: "cd", weight: 100 },

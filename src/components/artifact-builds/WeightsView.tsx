@@ -1,7 +1,7 @@
 /**
- * V2 Weights View
+ * Weights View
  *
- * Displays pre-computed V2 artifact scoring weights.
+ * Displays pre-computed artifact scoring weights.
  * Data loaded from pre-generated JSON (see generateWeights.ts),
  * falls back to runtime computation if unavailable.
  *
@@ -25,14 +25,12 @@ import pregenerated from "@/data/generated/v2_weights.json";
 import type { Element, SubStat } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import {
+  type PipelineBuildMeta,
   type PipelineResult,
   runPipeline,
-} from "@/lib/account-data/scorev2/pipeline";
-import type { CharacterBuildProfile } from "@/lib/account-data/scorev2/teamDatabase";
-import type {
-  BuildV2Weights,
-  TeamContext,
-} from "@/lib/account-data/scorev2/types";
+} from "@/lib/account-data/scoring/pipeline";
+import type { CharacterBuildProfile } from "@/lib/account-data/scoring/teamDatabase";
+import type { TeamContext } from "@/lib/account-data/scoring/utils";
 import { cn, getElementColor } from "@/lib/utils";
 import { Clock, Crown, Loader2, Wine } from "lucide-react";
 import { useMemo } from "react";
@@ -198,7 +196,7 @@ function V2CharacterCard({
   build,
   profile,
 }: {
-  build: BuildV2Weights;
+  build: PipelineBuildMeta;
   profile: CharacterBuildProfile | undefined;
 }) {
   const { t } = useLanguage();
@@ -227,9 +225,9 @@ function V2CharacterCard({
   );
 
   const mainSlots = [
-    ["sands", build.sands],
-    ["goblet", build.goblet],
-    ["circlet", build.circlet],
+    ["sands", build.sandsWeights],
+    ["goblet", build.gobletWeights],
+    ["circlet", build.circletWeights],
   ] as const;
 
   return (
@@ -345,7 +343,6 @@ function V2CharacterCard({
               );
             })}
             <div className="text-xs text-foreground/50 font-mono tabular-nums pt-0.5">
-              {t.ui("v2Weights.idealScore")}={build.idealScore.toFixed(1)}{" "}
               {t.ui("v2Weights.normalizer")}={build.normalizer.toFixed(4)}
             </div>
           </div>
@@ -389,7 +386,7 @@ function V2CharacterCard({
 
 // ── Main View ──
 
-export function V2WeightsView() {
+export function WeightsView() {
   const { t } = useLanguage();
   const { ready } = useGameStats();
 

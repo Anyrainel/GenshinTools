@@ -40,9 +40,10 @@ function makeBuild(
     visible: true,
     composition: "4pc",
     artifactSet: "gladiators_finale",
-    sands: ["atk%"],
-    goblet: ["pyro%"],
-    circlet: ["cr"],
+    sandsWeights: [{ stat: "atk%", weight: 100 }],
+    gobletWeights: [{ stat: "pyro%", weight: 100 }],
+    circletWeights: [{ stat: "cr", weight: 100 }],
+    normalizer: 0,
     substats: [
       { stat: "cr", weight: 100 },
       { stat: "cd", weight: 100 },
@@ -60,8 +61,8 @@ const p2 = makeBuild("p-2", "hu_tao", {
 const p3 = makeBuild("p-3", "xingqiu", {
   name: "XQ Emblem",
   artifactSet: "emblem_of_severed_fate",
-  sands: ["er"],
-  goblet: ["hydro%"],
+  sandsWeights: [{ stat: "er", weight: 100 }],
+  gobletWeights: [{ stat: "hydro%", weight: 100 }],
 });
 
 const preset: BuildPayloadV5 = {

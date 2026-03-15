@@ -28,7 +28,7 @@ import {
   type AllBuildsPreset,
   type ArtifactStatsOverride,
   type PresetBuildEntry,
-} from "@/lib/buildArtifactStats";
+} from "./buildArtifactStats";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { StatSheet } from "@/lib/team-comp/damageModels";

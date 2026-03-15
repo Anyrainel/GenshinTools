@@ -37,13 +37,13 @@ export function getBuildValidationErrors(build: Build): string[] {
   }
 
   // Check main stats
-  if (build.sands.length === 0) {
+  if (build.sandsWeights.length === 0) {
     errors.push("buildCard.missingSandsMainStat");
   }
-  if (build.goblet.length === 0) {
+  if (build.gobletWeights.length === 0) {
     errors.push("buildCard.missingGobletMainStat");
   }
-  if (build.circlet.length === 0) {
+  if (build.circletWeights.length === 0) {
     errors.push("buildCard.missingCircletMainStat");
   }
 
