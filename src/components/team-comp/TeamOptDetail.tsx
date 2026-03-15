@@ -552,6 +552,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       perChar,
       reactionOverride: currentReactionOverride,
       altCount: isMobile ? 5 : 7,
+      teamDeadlineMs: performance.now() + 30_000,
       ...(formulaMode === "combo" && {
         combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
         reactionOverrides: team.reactionOverrides,
