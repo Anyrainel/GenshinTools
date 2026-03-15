@@ -4,6 +4,7 @@ import { EvaluationView } from "@/components/account-data/EvaluationView";
 import { InventoryView } from "@/components/account-data/InventoryView";
 import { RecommendationView } from "@/components/account-data/RecommendationView";
 import { ScoreChangeAnnouncement } from "@/components/account-data/ScoreChangeAnnouncement";
+import { TriageView } from "@/components/account-data/TriageView";
 
 import { AccountManagerDialog } from "@/components/account-data/AccountManagerDialog";
 import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
@@ -633,6 +634,17 @@ export default function AccountDataPage() {
         <TabsContent value="evaluation" className="mt-0 h-full">
           {accountData ? (
             <EvaluationView />
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="triage" className="mt-0 h-full">
+          {accountData ? (
+            <TriageView />
           ) : (
             <NoDataPlaceholder
               t={t}

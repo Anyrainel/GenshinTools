@@ -1345,4 +1345,72 @@ export const i18nUiData = {
     features: { en: "Features", zh: "新功能" },
     fixes: { en: "Fixes", zh: "修复" },
   },
+  triage: {
+    tabLabel: { en: "Triage", zh: "去留" },
+    title: { en: "Artifact Triage", zh: "圣遗物去留" },
+    subtitle: {
+      en: "{0} artifacts analyzed",
+      zh: "已分析 {0} 个圣遗物",
+    },
+    recommendLock: {
+      en: "Recommend Lock",
+      zh: "建议锁定",
+    },
+    recommendUnlock: {
+      en: "Recommend Unlock",
+      zh: "建议解锁",
+    },
+    recommendLockDesc: {
+      en: "Currently unlocked artifacts worth keeping",
+      zh: "当前未锁定但值得保留的圣遗物",
+    },
+    recommendUnlockDesc: {
+      en: "Currently locked artifacts that can be foddered",
+      zh: "当前已锁定但可以分解的圣遗物",
+    },
+    lock: { en: "Lock", zh: "锁定" },
+    borderline: { en: "Borderline", zh: "边缘" },
+    fodder: { en: "Fodder", zh: "分解" },
+    noRecommendations: {
+      en: "No recommendations — your lock status is optimal!",
+      zh: "无建议——你的锁定状态已经很好！",
+    },
+    noData: {
+      en: "Import account data and configure artifact builds to use triage.",
+      zh: "导入账号数据并配置圣遗物配装后可使用去留分析。",
+    },
+    reason: { en: "Reason", zh: "原因" },
+    rareEmbryo: { en: "Rare Embryo", zh: "稀有胚子" },
+    settings: { en: "Settings", zh: "设置" },
+    surplusBuffer: {
+      en: "Surplus buffer",
+      zh: "库存缓冲",
+    },
+    minimumKeep: {
+      en: "Minimum keep per type",
+      zh: "每种胚子最低保留数",
+    },
+    erHoarding: {
+      en: "ER hoarding (4-liner + ER)",
+      zh: "充能囤积（4初始+充能）",
+    },
+    doubleCritLock: {
+      en: "Double crit lock (4-liner + CR+CD)",
+      zh: "双暴锁定（4初始+暴击+暴伤）",
+    },
+    rareEmbryoLock: {
+      en: "Rare embryo lock (sands/goblet/circlet)",
+      zh: "稀有胚子锁定（沙/杯/头）",
+    },
+    maxLevelProtect: {
+      en: "Max level protection",
+      zh: "满级保护",
+    },
+    equippedProtect: {
+      en: "Equipped protection",
+      zh: "装备保护",
+    },
+    rulePrefixFlex: { en: "Off-piece", zh: "散件" },
+    for: { en: "for", zh: "用于" },
+  },
 };
