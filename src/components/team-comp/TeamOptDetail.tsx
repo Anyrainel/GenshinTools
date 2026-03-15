@@ -487,10 +487,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       if (frozenCharIdSet.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
-      const hasFavonius = team.weapons[ci]?.startsWith("favonius_") ?? false;
       perChar[cid] = {
         targetEr: team.targetEr?.[cid] ?? 1.0,
-        targetCr: hasFavonius ? (team.targetCr?.[cid] ?? 0.05) : 0,
+        targetCr: team.targetCr?.[cid] ?? 0,
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
@@ -1061,13 +1060,32 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         frozenCharIds={frozenCharIdSet}
         onFreezeAll={() => {
           if (!teamResult?.done && !isFrozen) return;
-          // Freeze all chars with current view artifacts (skip chars with nothing equipped)
+          // Freeze all chars with current view artifacts
+          // Skip: chars with nothing equipped, and saturated chars (no marginal gains)
+          const marginalGains =
+            formulaMode === "combo"
+              ? optimizedComboDisplayResult?.marginalGains
+              : optimizedDisplayResult?.marginalGains;
           const byChar: Record<string, Record<Slot, ArtifactData | null>> = {};
           const freezableCharIds: string[] = [];
           for (const [charId, arts] of Object.entries(
             optimizedArtifactsByChar
           )) {
             if (!Object.values(arts).some(Boolean)) continue;
+            // Skip saturated characters — their artifacts are heuristic leftovers
+            if (marginalGains) {
+              const charMarginal = marginalGains[charId];
+              if (!charMarginal || Object.keys(charMarginal).length === 0) {
+                // Check if this is the carry (target) — carries are never skipped
+                const isCarry =
+                  formulaMode === "combo"
+                    ? combo.lines.some(
+                        (l) => l.count > 0 && l.charId === charId
+                      )
+                    : resolvedFormula?.charId === charId;
+                if (!isCarry) continue;
+              }
+            }
             const charArts: Record<string, ArtifactData | null> = {};
             for (const [slot, art] of Object.entries(arts)) {
               if (art) {

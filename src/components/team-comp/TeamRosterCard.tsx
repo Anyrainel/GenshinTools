@@ -537,57 +537,51 @@ export function TeamRosterCard({
                     {t.character(charId)}
                   </span>
                   <div className="flex-1" />
-                  {team.weapons[i]?.startsWith("favonius_") && (
-                    <div
+                  <div
+                    className={cn(
+                      "flex items-center bg-secondary/60 rounded-md border border-border/30",
+                      isMobile ? "gap-0.5 px-1 py-0.5" : "gap-0.5 px-1.5 py-1.5"
+                    )}
+                  >
+                    <span
                       className={cn(
-                        "flex items-center bg-secondary/60 rounded-md border border-border/30",
-                        isMobile
-                          ? "gap-0.5 px-1 py-0.5"
-                          : "gap-0.5 px-1.5 py-1.5"
+                        "font-bold text-foreground/70",
+                        isMobile ? "text-[10px]" : "text-xs"
                       )}
                     >
-                      <span
-                        className={cn(
-                          "font-bold text-foreground/70",
-                          isMobile ? "text-[10px]" : "text-xs"
-                        )}
-                      >
-                        {t.ui("teamComp.minCr")}
-                      </span>
-                      <Input
-                        type="number"
-                        min={0}
-                        max={100}
-                        step={5}
-                        value={Math.round(
-                          (team.targetCr?.[charId] ?? 0.05) * 100
-                        )}
-                        onChange={(e) => {
-                          const val = Number(e.target.value) / 100;
-                          if (!Number.isNaN(val)) {
-                            updateTeam(team.id, {
-                              targetCr: {
-                                ...(team.targetCr ?? {}),
-                                [charId]: val,
-                              },
-                            });
-                          }
-                        }}
-                        className={cn(
-                          "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-                          isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
-                        )}
-                      />
-                      <span
-                        className={cn(
-                          "font-bold text-muted-foreground",
-                          isMobile ? "text-[10px]" : "text-xs"
-                        )}
-                      >
-                        %
-                      </span>
-                    </div>
-                  )}
+                      {t.ui("teamComp.minCr")}
+                    </span>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={5}
+                      value={Math.round((team.targetCr?.[charId] ?? 0) * 100)}
+                      onChange={(e) => {
+                        const val = Number(e.target.value) / 100;
+                        if (!Number.isNaN(val)) {
+                          updateTeam(team.id, {
+                            targetCr: {
+                              ...(team.targetCr ?? {}),
+                              [charId]: val,
+                            },
+                          });
+                        }
+                      }}
+                      className={cn(
+                        "text-center font-bold bg-black/20 rounded border border-border/20 p-0 focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+                        isMobile ? "w-9 h-5 text-xs" : "w-12 h-6 text-sm"
+                      )}
+                    />
+                    <span
+                      className={cn(
+                        "font-bold text-muted-foreground",
+                        isMobile ? "text-[10px]" : "text-xs"
+                      )}
+                    >
+                      %
+                    </span>
+                  </div>
                   <div
                     className={cn(
                       "flex items-center bg-secondary/60 rounded-md border border-border/30",
