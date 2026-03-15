@@ -165,6 +165,16 @@ export type ProvidedStaticBuff = {
   providerCharId: string;
 };
 
+/** Precomputed context for repeated optimizer evaluations. */
+export type OptimizerContext = {
+  swapCharId: string;
+  calcTargetId: string;
+  ctx?: CalcContext;
+  targetDependent: Record<string, StatBuff[]>;
+  supportPreStats: Record<string, StatSheet>;
+  charBuildOrder: [string, CharBuild][];
+};
+
 // ═══════════════════════════════════════════════════════════════
 // CharBuild
 // ═══════════════════════════════════════════════════════════════
@@ -699,6 +709,117 @@ export class TeamBuild {
     }
 
     // Phase 5: Apply critRateTarget bonus to all team members
+    if (ctx?.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id].withDelta("cr", crDelta);
+      }
+    }
+
+    return postStats;
+  }
+
+  /**
+   * Create a reusable context for repeated getTeamStats calls where only one
+   * character's artifact sheet changes.  Caches target-dependent buff filtering
+   * and support characters' preStats so the hot loop only recomputes the
+   * swapped character's preStats.
+   */
+  createOptimizerContext(
+    baseSheets: Record<string, StatSheet>,
+    swapCharId: string,
+    calcTargetId: string,
+    ctx?: CalcContext
+  ): OptimizerContext {
+    // Target-dependent buff filtering (constant for a given calcTargetId)
+    const targetDependent: Record<string, StatBuff[]> = {};
+    for (const charId of Object.keys(this.charBuilds)) {
+      targetDependent[charId] = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            charId,
+            calcTargetId,
+            this.teamMeta.regions[charId],
+            this.teamMeta.factions[charId]
+          );
+        })
+        .map((b) => b.buff);
+    }
+
+    // Support preStats (constant since their artifact sheets don't change)
+    const supportPreStats: Record<string, StatSheet> = {};
+    // charBuildOrder preserves Object.entries iteration order for FP parity
+    const charBuildOrder = Object.entries(this.charBuilds);
+    for (const [id, build] of charBuildOrder) {
+      if (id !== swapCharId) {
+        supportPreStats[id] = build.getPreStats(
+          baseSheets[id] ?? new StatSheet([]),
+          targetDependent[id]!
+        );
+      }
+    }
+
+    return {
+      swapCharId,
+      calcTargetId,
+      ctx,
+      targetDependent,
+      supportPreStats,
+      charBuildOrder,
+    };
+  }
+
+  /**
+   * Fast getTeamStats using a precomputed OptimizerContext.
+   * Only recomputes preStats for swapCharId; reuses cached support preStats.
+   * Produces identical FP results to getTeamStats.
+   */
+  getTeamStatsFast(
+    swapCharSheet: StatSheet,
+    optCtx: OptimizerContext
+  ): Record<string, StatSheet> {
+    const {
+      swapCharId,
+      calcTargetId,
+      ctx,
+      targetDependent,
+      supportPreStats,
+      charBuildOrder,
+    } = optCtx;
+
+    // Build preStats with same key insertion order as getTeamStats
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, build] of charBuildOrder) {
+      if (id === swapCharId) {
+        preStats[id] = build.getPreStats(swapCharSheet, targetDependent[id]!);
+      } else {
+        preStats[id] = supportPreStats[id]!;
+      }
+    }
+
+    // Dynamic buffs (must recompute — may depend on swapCharId's preStats)
+    const teamPreStatsArr = Object.values(preStats);
+    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
+
+    // Post-stats
+    const postStats: Record<string, StatSheet> = {};
+    for (const [id, build] of charBuildOrder) {
+      postStats[id] = build.getPostStats(
+        preStats[id]!,
+        allDynamicBuffs,
+        id,
+        calcTargetId,
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+
+    // critRateTarget
     if (ctx?.critRateTarget != null) {
       const crDelta = (100 - ctx.critRateTarget) / 100;
       for (const id of Object.keys(postStats)) {

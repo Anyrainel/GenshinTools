@@ -28,7 +28,7 @@ import {
   scoreMainStat,
   scoreSlot,
 } from "../account-data/artifactScore";
-import { TeamBuild, evaluateCombo } from "./damageCalc";
+import { type OptimizerContext, TeamBuild, evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import type {
   OptFailReason,
@@ -298,15 +298,24 @@ function evaluateBuild(
   targetEr: number,
   targetCr: number,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number,
+  optCtx?: OptimizerContext
 ): { damage: number; result: DamageResult | null } {
   const charSheet = StatSheet.fromArtifacts(pieces);
-  const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
-  const postStats = teamBuild.getTeamStats(
-    updatedSheets,
-    calcTargetId,
-    calcContext
-  );
+
+  // scoreFn needs updatedSheets (artifact-level), can't use fast path
+  if (scoreFn) {
+    const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
+    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
+  }
+
+  const postStats = optCtx
+    ? teamBuild.getTeamStatsFast(charSheet, optCtx)
+    : teamBuild.getTeamStats(
+        { ...baseSheets, [swapCharId]: charSheet },
+        calcTargetId,
+        calcContext
+      );
 
   if (targetEr > 0) {
     const er = postStats[erCheckCharId]?.get("er") ?? 0;
@@ -316,8 +325,6 @@ function evaluateBuild(
     const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
     if (cr < targetCr) return { damage: -1, result: null };
   }
-  if (scoreFn)
-    return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
 
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
@@ -340,20 +347,27 @@ function evaluateUpperBound(
   calcTargetId: string,
   calcContext: CalcContext,
   reactionOverride?: ReactionOverride,
-  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
+  scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number,
+  optCtx?: OptimizerContext
 ): number {
   const realArts = realPieces.filter((a): a is ArtifactData => a != null);
   let sheet = StatSheet.fromArtifacts(realArts);
   for (const ss of superStatsRemaining) {
     if (Object.keys(ss).length > 0) sheet = sheet.merge(StatSheet.fromRaw(ss));
   }
-  const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
-  if (scoreFn) return scoreFn(updatedSheets, calcTargetId);
-  const postStats = teamBuild.getTeamStats(
-    updatedSheets,
-    calcTargetId,
-    calcContext
-  );
+
+  if (scoreFn) {
+    const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
+    return scoreFn(updatedSheets, calcTargetId);
+  }
+
+  const postStats = optCtx
+    ? teamBuild.getTeamStatsFast(sheet, optCtx)
+    : teamBuild.getTeamStats(
+        { ...baseSheets, [swapCharId]: sheet },
+        calcTargetId,
+        calcContext
+      );
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
@@ -467,6 +481,8 @@ interface BnBContext {
   collector: TopKCollector;
   evaluations: number;
   sinceLastYield: number;
+  /** Precomputed optimizer context for fast getTeamStats. */
+  optCtx?: OptimizerContext;
   /** Optional deadline (performance.now timestamp). DFS aborts if exceeded. */
   deadline?: number;
   /** Set to true if the DFS was aborted early due to deadline. */
@@ -496,6 +512,7 @@ function bnbDfs(
     reactionOverride,
     scoreFn,
     collector,
+    optCtx,
   } = ctx;
   const needEr = targetEr > 0;
   const needCr = targetCr > 0;
@@ -532,7 +549,8 @@ function bnbDfs(
         targetEr,
         targetCr,
         reactionOverride,
-        scoreFn
+        scoreFn,
+        optCtx
       );
       collector.add(damage, result, pieces);
       ctx.evaluations++;
@@ -573,7 +591,8 @@ function bnbDfs(
           calcTargetId,
           calcContext,
           reactionOverride,
-          scoreFn
+          scoreFn,
+          optCtx
         );
         ctx.evaluations++;
         ctx.sinceLastYield++;
@@ -754,6 +773,16 @@ function runCharacterBnB(
       crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
   }
 
+  // Precompute optimizer context for fast getTeamStats (caches support preStats)
+  const optCtx = scoreFn
+    ? undefined
+    : teamBuild.createOptimizerContext(
+        baseSheets,
+        swapCharId,
+        calcTargetId,
+        calcContext
+      );
+
   const collector = new TopKCollector(topK, warmStartThreshold);
   const ctx: BnBContext = {
     teamBuild,
@@ -773,6 +802,7 @@ function runCharacterBnB(
     collector,
     evaluations: 0,
     sinceLastYield: 0,
+    optCtx,
     deadline,
   };
 
@@ -814,7 +844,8 @@ function runCharacterBnB(
         charConfig.targetEr,
         charConfig.targetCr,
         reactionOverride,
-        scoreFn
+        scoreFn,
+        optCtx
       ).damage;
       collector.add(bestDamage, null, pieces);
       ctx.evaluations++;
@@ -844,7 +875,8 @@ function runCharacterBnB(
               charConfig.targetEr,
               charConfig.targetCr,
               reactionOverride,
-              scoreFn
+              scoreFn,
+              optCtx
             );
             ctx.evaluations++;
             if (damage > bestDamage) {
@@ -889,7 +921,8 @@ function runCharacterBnB(
       calcTargetId,
       calcContext,
       reactionOverride,
-      scoreFn
+      scoreFn,
+      optCtx
     );
   }
 
