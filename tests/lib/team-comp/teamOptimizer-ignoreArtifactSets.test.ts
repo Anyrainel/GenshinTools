@@ -11,7 +11,6 @@
  * 7. Per-character flag     → only flagged char retried
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
@@ -23,9 +22,16 @@ import {
   runTeamOptimization,
 } from "@/lib/team-comp/teamOptimizer";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
+import {
+  drain,
+  emptySheets,
+  getFirstFormulaId,
+  makeArt,
+  makeBuildMatch,
+} from "../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
@@ -42,70 +48,6 @@ const GLOBAL_CONFIG: GlobalStatWeights = {
   flatHp: 0,
   flatDef: 0,
 };
-
-let artCounter = 0;
-function makeArt(
-  slot: ArtifactData["slotKey"],
-  setKey: string,
-  mainStat?: ArtifactData["mainStatKey"],
-  substats: ArtifactData["substats"] = { cr: 7.0, cd: 14.0, atk: 20, em: 20 }
-): ArtifactData {
-  const mainStats: Record<string, ArtifactData["mainStatKey"]> = {
-    flower: "hp",
-    plume: "atk",
-    sands: "hp%",
-    goblet: "pyro%",
-    circlet: "cr",
-  };
-  return {
-    id: `ias-test-${++artCounter}`,
-    setKey,
-    slotKey: slot,
-    rarity: 5,
-    level: 20,
-    mainStatKey: mainStat ?? mainStats[slot] ?? "hp",
-    lock: false,
-    substats,
-  };
-}
-
-function makeBuildMatch(): BuildMatchResult {
-  return {
-    build: {
-      id: "test-build",
-      characterId: "hu_tao",
-      visible: true,
-      name: "Test Build",
-      composition: "4pc",
-      artifactSet: "crimson_witch_of_flames",
-      roles: ["dps"],
-      sandsWeights: [{ stat: "hp%", weight: 100 }],
-      gobletWeights: [{ stat: "pyro%", weight: 100 }],
-      circletWeights: [{ stat: "cr", weight: 100 }],
-      normalizer: 0,
-      substats: [
-        { stat: "cr", weight: 100 },
-        { stat: "cd", weight: 100 },
-        { stat: "em", weight: 50 },
-        { stat: "hp%", weight: 50 },
-      ],
-    },
-    buildIndex: 0,
-    statWeights: { cr: 100, cd: 100, em: 50, "hp%": 50 },
-    setMatched: true,
-    setDifferent: false,
-    mainStatMatches: 3,
-    mainStatMismatches: [],
-  };
-}
-
-async function drain<T>(gen: AsyncGenerator<T>): Promise<T[]> {
-  const results: T[] = [];
-  for await (const item of gen) {
-    results.push(item);
-  }
-  return results;
-}
 
 async function getFinalResult(
   gen: AsyncGenerator<TeamOptYield>
@@ -146,20 +88,6 @@ const CONFIGS: CharCompConfig[] = [
 
 function makeTeamBuild(configs = CONFIGS) {
   return new TeamBuild(configs);
-}
-
-function getFirstFormulaId(tb: TeamBuild, charId: string): string {
-  const formulas = tb.getFormulaIds()[charId];
-  return Object.keys(formulas)[0];
-}
-
-function emptySheets(): Record<string, StatSheet> {
-  return {
-    hu_tao: new StatSheet([]),
-    xingqiu: new StatSheet([]),
-    zhongli: new StatSheet([]),
-    kaedehara_kazuha: new StatSheet([]),
-  };
 }
 
 /** Inventory that has NO CW pieces — will cause CW 4pc to fail. */

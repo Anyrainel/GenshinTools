@@ -10,10 +10,8 @@
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type OptimizationResult,
   runOptimization,
@@ -28,6 +26,12 @@ import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
+import {
+  drain,
+  emptySheets,
+  makeArt,
+  makeBuildMatch,
+} from "../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
@@ -45,71 +49,10 @@ const GLOBAL_CONFIG: GlobalStatWeights = {
   flatDef: 0,
 };
 
-let artCounter = 0;
-function makeArt(
-  slot: ArtifactData["slotKey"],
-  setKey: string,
-  mainStat?: ArtifactData["mainStatKey"],
-  substats: ArtifactData["substats"] = { cr: 7.0, cd: 14.0, atk: 20, em: 20 }
-): ArtifactData {
-  const mainStats: Record<string, ArtifactData["mainStatKey"]> = {
-    flower: "hp",
-    plume: "atk",
-    sands: "hp%",
-    goblet: "pyro%",
-    circlet: "cr",
-  };
-  return {
-    id: `conflict-test-${++artCounter}`,
-    setKey,
-    slotKey: slot,
-    rarity: 5,
-    level: 20,
-    mainStatKey: mainStat ?? mainStats[slot] ?? "hp",
-    lock: false,
-    substats,
-  };
-}
-
-function makeBuildMatch(
-  artifactSet = "crimson_witch_of_flames"
-): BuildMatchResult {
-  return {
-    build: {
-      id: "test-build",
-      characterId: "hu_tao",
-      visible: true,
-      name: "Test Build",
-      composition: "4pc",
-      artifactSet,
-      roles: ["dps"],
-      sandsWeights: [{ stat: "hp%", weight: 100 }],
-      gobletWeights: [{ stat: "pyro%", weight: 100 }],
-      circletWeights: [{ stat: "cr", weight: 100 }],
-      normalizer: 0,
-      substats: [
-        { stat: "cr", weight: 100 },
-        { stat: "cd", weight: 100 },
-        { stat: "em", weight: 50 },
-        { stat: "hp%", weight: 50 },
-      ],
-    },
-    buildIndex: 0,
-    statWeights: { cr: 100, cd: 100, em: 50, "hp%": 50 },
-    setMatched: true,
-    setDifferent: false,
-    mainStatMatches: 3,
-    mainStatMismatches: [],
-  };
-}
-
 async function getFinalResult(
   gen: AsyncGenerator<TeamOptYield>
 ): Promise<TeamOptimizationResult> {
-  const results: TeamOptYield[] = [];
-  for await (const item of gen) {
-    results.push(item);
-  }
+  const results = await drain(gen);
   const final = results[results.length - 1];
   if (!final.done) throw new Error("Expected done result");
   return final;
@@ -133,12 +76,6 @@ const WT = "wanderers_troupe";
 const OFF = "thundering_fury";
 const NO = "noblesse_oblige";
 const TM = "tenacity_of_the_millelith";
-
-function emptySheets(...charIds: string[]): Record<string, StatSheet> {
-  const sheets: Record<string, StatSheet> = {};
-  for (const id of charIds) sheets[id] = new StatSheet([]);
-  return sheets;
-}
 
 // ── Tests: no duplicate artifacts ─────────────────────────────────────────────
 

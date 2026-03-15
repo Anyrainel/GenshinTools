@@ -2,7 +2,7 @@
  * Tests for the combo formula system: evaluateCombo, getComboDisplayResult,
  * runTeamOptimization (combo mode), and runIdealArtifactGen (combo mode).
  */
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import {
@@ -29,6 +29,13 @@ import type {
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
+import {
+  makeBuildMatch as _makeBuildMatch,
+  drain,
+  emptySheets,
+  getFirstFormulaId,
+  makeArt,
+} from "../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
@@ -83,26 +90,9 @@ function makeTeamBuild() {
   return new TeamBuild(CONFIGS);
 }
 
-function emptySheets(): Record<string, StatSheet> {
-  return {
-    diluc: new StatSheet([]),
-    xingqiu: new StatSheet([]),
-    bennett: new StatSheet([]),
-    kaedehara_kazuha: new StatSheet([]),
-  };
-}
-
-function getFirstFormulaId(tb: TeamBuild, charId: string): string {
-  const formulas = tb.getFormulaIds()[charId];
-  return Object.keys(formulas)[0];
-}
-
-async function drain<T>(gen: AsyncGenerator<T>): Promise<T[]> {
-  const results: T[] = [];
-  for await (const item of gen) {
-    results.push(item);
-  }
-  return results;
+/** Diluc-team empty sheets */
+function dilucEmptySheets(): Record<string, StatSheet> {
+  return emptySheets("diluc", "xingqiu", "bennett", "kaedehara_kazuha");
 }
 
 const GLOBAL_CONFIG: GlobalStatWeights = {
@@ -111,44 +101,14 @@ const GLOBAL_CONFIG: GlobalStatWeights = {
   flatDef: 0,
 };
 
-let artCounter = 0;
-function makeArt(
-  slot: ArtifactData["slotKey"],
-  setKey = "crimson_witch_of_flames"
-): ArtifactData {
-  const mainStats: Record<string, ArtifactData["mainStatKey"]> = {
-    flower: "hp",
-    plume: "atk",
-    sands: "atk%",
-    goblet: "pyro%",
-    circlet: "cr",
-  };
-  return {
-    id: `combo-test-${++artCounter}`,
-    setKey,
-    slotKey: slot,
-    rarity: 5,
-    level: 20,
-    mainStatKey: mainStats[slot] ?? "hp",
-    lock: false,
-    substats: { cr: 7.0, cd: 14.0, atk: 20, em: 20 },
-  };
-}
-
+/** Diluc-specific build match (atk% sands, atk% substat weight). */
 function makeBuildMatch(): BuildMatchResult {
   return {
+    ..._makeBuildMatch(),
     build: {
-      id: "test-build",
+      ..._makeBuildMatch().build,
       characterId: "diluc",
-      visible: true,
-      name: "Test Build",
-      composition: "4pc",
-      artifactSet: "crimson_witch_of_flames",
-      roles: ["dps"],
       sandsWeights: [{ stat: "atk%", weight: 100 }],
-      gobletWeights: [{ stat: "pyro%", weight: 100 }],
-      circletWeights: [{ stat: "cr", weight: 100 }],
-      normalizer: 0,
       substats: [
         { stat: "cr", weight: 100 },
         { stat: "cd", weight: 100 },
@@ -156,12 +116,7 @@ function makeBuildMatch(): BuildMatchResult {
         { stat: "atk%", weight: 50 },
       ],
     },
-    buildIndex: 0,
     statWeights: { cr: 100, cd: 100, em: 50, "atk%": 50 },
-    setMatched: true,
-    setDifferent: false,
-    mainStatMatches: 3,
-    mainStatMismatches: [],
   };
 }
 
@@ -173,7 +128,7 @@ describe("evaluateCombo", () => {
   it("single line (count=1) matches getDamageResult", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const teamStats = tb.getTeamStats(sheets, "diluc", CTX);
     const singleResult = tb.getDamageResult("diluc", formulaId, teamStats, CTX);
@@ -201,7 +156,7 @@ describe("evaluateCombo", () => {
     const tb = makeTeamBuild();
     const dilucFormula = getFirstFormulaId(tb, "diluc");
     const xqFormula = getFirstFormulaId(tb, "xingqiu");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "multi",
@@ -221,7 +176,7 @@ describe("evaluateCombo", () => {
   it("line with count > 1: total = perHit * count", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "multi-count",
@@ -239,7 +194,7 @@ describe("evaluateCombo", () => {
   it("lines with count=0 do not contribute damage", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "zero",
@@ -260,7 +215,7 @@ describe("evaluateCombo", () => {
   it("empty combo (all counts 0) has totalDamage = 0", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "empty",
@@ -275,7 +230,7 @@ describe("evaluateCombo", () => {
   it("singleModeOverrides reaction is inherited when combo line has no reaction", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     // Without reaction
     const noRxn: ComboFormula = {
@@ -297,7 +252,7 @@ describe("evaluateCombo", () => {
   it("combo line's own reaction overrides singleModeOverrides", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     // singleModeOverrides says vaporize, combo line says none
     const combo: ComboFormula = {
@@ -340,7 +295,7 @@ describe("getComboDisplayResult", () => {
   it("returns DisplayResult with empty parts array", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "display",
@@ -355,7 +310,7 @@ describe("getComboDisplayResult", () => {
   it("totalDamage matches evaluateCombo", () => {
     const tb = makeTeamBuild();
     const dilucFormula = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "match",
@@ -377,7 +332,7 @@ describe("getComboDisplayResult", () => {
   it("combatStats are populated for all team characters", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "stats",
@@ -395,7 +350,7 @@ describe("getComboDisplayResult", () => {
   it("idleStats are populated for all team characters", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "idle",
@@ -412,7 +367,7 @@ describe("getComboDisplayResult", () => {
   it("marginalGains: carry character has non-zero gains for some stats", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "mg-carry",
@@ -430,7 +385,7 @@ describe("getComboDisplayResult", () => {
   it("buffs array is non-empty", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "buffs",
@@ -470,7 +425,7 @@ describe("runTeamOptimization — combo mode", () => {
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
-      baseSheets: emptySheets(),
+      baseSheets: dilucEmptySheets(),
       perChar,
       combo,
     };
@@ -498,7 +453,7 @@ describe("runTeamOptimization — combo mode", () => {
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
-      baseSheets: emptySheets(),
+      baseSheets: dilucEmptySheets(),
       perChar,
     };
 
@@ -535,7 +490,7 @@ describe("runTeamOptimization — combo mode", () => {
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
-      baseSheets: emptySheets(),
+      baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
         xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
@@ -582,7 +537,7 @@ describe("runTeamOptimization — combo mode", () => {
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
       baseSheets: {
-        ...emptySheets(),
+        ...dilucEmptySheets(),
         diluc: StatSheet.fromArtifacts(inventory),
       },
       perChar: {
@@ -616,7 +571,7 @@ describe("runTeamOptimization — combo mode", () => {
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
-      baseSheets: emptySheets(),
+      baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
       },
@@ -709,7 +664,7 @@ describe("combo edge cases", () => {
   it("combo with a character not in the team build does not crash", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "missing-char",
@@ -720,22 +675,15 @@ describe("combo edge cases", () => {
       ],
     };
 
-    // evaluateCombo should not crash — getDamageResult will throw for unknown char
-    // but the caller typically wraps in try/catch. Let's verify it at least doesn't
-    // throw an unrecoverable error. If it does throw, that's also acceptable behavior.
-    let threw = false;
-    try {
-      evaluateCombo(tb, combo, sheets, CTX);
-    } catch {
-      threw = true;
-    }
-    // Either way, the function should not cause an unhandled error
-    expect(typeof threw).toBe("boolean");
+    // evaluateCombo throws a proper Error for unknown characters.
+    expect(() => evaluateCombo(tb, combo, sheets, CTX)).toThrow(
+      /No CharBuild for character/
+    );
   });
 
   it("combo referencing a non-existent formulaId does not crash evaluateCombo callers", () => {
     const tb = makeTeamBuild();
-    const sheets = emptySheets();
+    const sheets = dilucEmptySheets();
 
     const combo: ComboFormula = {
       id: "bad-formula",
@@ -745,14 +693,10 @@ describe("combo edge cases", () => {
       ],
     };
 
-    // evaluateCombo may throw, but callers (idealArtifactGen, teamOptimizer) wrap in try/catch
-    let threw = false;
-    try {
-      evaluateCombo(tb, combo, sheets, CTX);
-    } catch {
-      threw = true;
-    }
-    expect(typeof threw).toBe("boolean");
+    // evaluateCombo throws a proper Error for unknown formula IDs.
+    expect(() => evaluateCombo(tb, combo, sheets, CTX)).toThrow(
+      /Unknown formula/
+    );
   });
 
   it("single-character combo: only 1 character has formulas, others are supports", async () => {
@@ -772,7 +716,7 @@ describe("combo edge cases", () => {
       inventory: [],
       calcContext: CTX,
       globalConfig: GLOBAL_CONFIG,
-      baseSheets: emptySheets(),
+      baseSheets: dilucEmptySheets(),
       perChar: {
         diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
         xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },

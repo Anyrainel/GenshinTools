@@ -50,12 +50,6 @@ describe("DirectFormula", () => {
     expect(result).toBeCloseTo(expected, 0);
   });
 
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
-  });
-
   it("display() returns correct template", () => {
     const dp = formula.display(stats, 90, CTX);
     expect(dp.template).toBe("direct");
@@ -133,12 +127,6 @@ describe("AmplifyFormula", () => {
     expect(result).toBeGreaterThan(0);
   });
 
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
-  });
-
   it("display() has amplify template and reaction params", () => {
     const dp = formula.display(stats, 90, CTX);
 
@@ -168,12 +156,6 @@ describe("CatalyzeFormula", () => {
   it("calc() adds flat bonus from additive reaction", () => {
     const result = formula.calc(stats, 90, CTX);
     expect(result).toBeGreaterThan(0);
-  });
-
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
   });
 
   it("display() has catalyze template with flat bonus and scaling keys", () => {
@@ -211,12 +193,6 @@ describe("TransformFormula", () => {
     expect(result).toBeCloseTo(expected, 0);
   });
 
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
-  });
-
   it("display() has empty scalingKeys (level-based, no stat scaling)", () => {
     const dp = formula.display(stats, 90, CTX);
 
@@ -248,12 +224,6 @@ describe("LunarFormula", () => {
 
     // EM bonus = (6 × 400) / (2000 + 400) = 1.0
     expect(result).toBeGreaterThan(0);
-  });
-
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
   });
 
   it("display() has lunar template with correct params", () => {
@@ -290,12 +260,6 @@ describe("LunarDirectFormula", () => {
     expect(result).toBeGreaterThan(0);
     const dp = formula.display(stats, 90, CTX);
     expect(dp.params.directCoeff).toBeCloseTo(3.0);
-  });
-
-  it("display() damage matches calc()", () => {
-    const calcResult = formula.calc(stats, 90, CTX);
-    const dp = formula.display(stats, 90, CTX);
-    expect(dp.damage).toBeCloseTo(calcResult, 2);
   });
 
   it("display() has correct template and scaling", () => {

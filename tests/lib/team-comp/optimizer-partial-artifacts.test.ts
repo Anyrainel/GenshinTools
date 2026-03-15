@@ -4,7 +4,6 @@
  * artifact inventories without errors.
  */
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
@@ -18,9 +17,15 @@ import {
   runTeamOptimization,
 } from "@/lib/team-comp/teamOptimizer";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
-import { beforeAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
+import {
+  drain,
+  getFirstFormulaId,
+  makeArt,
+  makeBuildMatch,
+} from "../../fixtures/optimizerHelpers";
 
 await preloadGameStats();
 
@@ -37,63 +42,6 @@ const GLOBAL_CONFIG: GlobalStatWeights = {
   flatHp: 0,
   flatDef: 0,
 };
-
-let artCounter = 0;
-function makeArt(
-  slot: ArtifactData["slotKey"],
-  setKey = "crimson_witch_of_flames",
-  mainStat: ArtifactData["mainStatKey"] = "hp",
-  substats: ArtifactData["substats"] = { cr: 7.0, cd: 14.0, atk: 20, em: 20 }
-): ArtifactData {
-  const mainStats: Record<string, ArtifactData["mainStatKey"]> = {
-    flower: "hp",
-    plume: "atk",
-    sands: "hp%",
-    goblet: "pyro%",
-    circlet: "cr",
-  };
-  return {
-    id: `partial-test-${++artCounter}`,
-    setKey,
-    slotKey: slot,
-    rarity: 5,
-    level: 20,
-    mainStatKey: mainStat === "hp" ? (mainStats[slot] ?? "hp") : mainStat,
-    lock: false,
-    substats,
-  };
-}
-
-/** Minimal build match result for optimizer scoring. */
-function makeBuildMatch(): BuildMatchResult {
-  return {
-    build: {
-      id: "test-build",
-      characterId: "hu_tao",
-      visible: true,
-      name: "Test Build",
-      composition: "4pc",
-      artifactSet: "crimson_witch_of_flames",
-      roles: ["dps"],
-      sandsWeights: [{ stat: "hp%", weight: 100 }],
-      gobletWeights: [{ stat: "pyro%", weight: 100 }],
-      circletWeights: [{ stat: "cr", weight: 100 }],
-      normalizer: 0,
-      substats: [
-        { stat: "cr", weight: 100 },
-        { stat: "cd", weight: 100 },
-        { stat: "em", weight: 50 },
-        { stat: "hp%", weight: 50 },
-      ],
-    },
-    buildIndex: 0,
-    statWeights: { cr: 100, cd: 100, em: 50, "hp%": 50 },
-    setMatched: true,
-    setDifferent: false,
-    mainStatMatches: 3,
-    mainStatMismatches: [],
-  };
-}
 
 // ── Team setup ──────────────────────────────────────────────────────────────
 
@@ -141,11 +89,6 @@ function makeTeamBuild() {
   return new TeamBuild(CONFIGS);
 }
 
-function getFirstFormulaId(tb: TeamBuild, charId: string): string {
-  const formulas = tb.getFormulaIds()[charId];
-  return Object.keys(formulas)[0];
-}
-
 /** Create a full 5-piece inventory for a single slot set */
 function makeFullInventory(): ArtifactData[] {
   return [
@@ -155,15 +98,6 @@ function makeFullInventory(): ArtifactData[] {
     makeArt("goblet"),
     makeArt("circlet"),
   ];
-}
-
-/** Collect all yields from an async generator */
-async function drain<T>(gen: AsyncGenerator<T>): Promise<T[]> {
-  const results: T[] = [];
-  for await (const item of gen) {
-    results.push(item);
-  }
-  return results;
 }
 
 // ── Single-pass optimizer (runOptimization) ─────────────────────────────────

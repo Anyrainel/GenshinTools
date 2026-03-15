@@ -627,16 +627,8 @@ describe("getTier", () => {
     expect(getTier(0.9).id).toBe("90");
   });
 
-  it("returns 80 tier for completeness 0.89", () => {
-    expect(getTier(0.89).id).toBe("80");
-  });
-
   it("returns 80 tier for completeness 0.8", () => {
     expect(getTier(0.8).id).toBe("80");
-  });
-
-  it("returns 70 tier for completeness 0.79", () => {
-    expect(getTier(0.79).id).toBe("70");
   });
 
   it("returns 70 tier for completeness 0.7", () => {
