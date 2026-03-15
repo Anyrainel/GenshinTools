@@ -1,6 +1,10 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
-import { CharacterBase, RegisterCharacter } from "../damageModels";
+import {
+  CharacterBase,
+  type FormulaEntry,
+  RegisterCharacter,
+} from "../damageModels";
 import { cbs } from "../helpers";
 import type { StatKey } from "../types";
 
@@ -177,8 +181,23 @@ class Razor extends CharacterBase {
           })),
         ],
       },
-      // C6: Every 10s, charged sword releases lightning on next Normal Attack
-      // Deals 100% ATK Electro DMG — separate hit, insignificant
+      // C6: Lupus Fulguris lightning (100% ATK Electro DMG, once per 10s during Q)
+      ...(this.constellation >= 6
+        ? {
+            "razor-c6-lightning": {
+              label: { zh: "C6狼魂落雷", en: "C6 Lupus Lightning" },
+              parts: [
+                {
+                  formula: new DirectFormula(1.0, {
+                    element: "Electro" as const,
+                    ability: "normal" as const,
+                    reaction: "none" as const,
+                  }),
+                },
+              ],
+            } satisfies FormulaEntry,
+          }
+        : {}),
     };
   })();
 }

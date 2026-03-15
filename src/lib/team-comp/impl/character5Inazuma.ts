@@ -756,8 +756,25 @@ class SangonomiyaKokomi extends CharacterBase {
       : []),
   ];
 
-  // On-field healer DPS — damage comes from Normal ATKs during Q
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = {
+    // C1: Swimming Fish — 30% Max HP as Hydro DMG (not Normal ATK DMG)
+    ...(this.constellation >= 1
+      ? {
+          "kokomi-c1-fish": {
+            label: { zh: "C1游鱼", en: "C1 Swimming Fish" },
+            parts: [
+              {
+                formula: new DirectFormula(
+                  0.3,
+                  { element: "Hydro", ability: "special", reaction: "none" },
+                  "hp"
+                ),
+              },
+            ],
+          },
+        }
+      : {}),
+  };
 }
 
 @RegisterCharacter("kaedehara_kazuha")

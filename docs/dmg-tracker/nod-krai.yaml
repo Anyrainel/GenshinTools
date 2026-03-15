@@ -3,10 +3,16 @@
   entity: columbina
   rule: S8
   status: wont-do
-  category: missing-formula
+  category: engine-gap
   summary: >
     P2 conditional 33% proc effects on Lunar reactions not modeled.
   detail: >
-    Periodic proc dependent on Lunar reaction triggers. Complex combat state interaction.
+    P2 "Law of the New Moon" grants three effects when in Lunar Domain (Q active):
+    (1) Lunar-Charged: 33% chance for Thundercloud to perform an extra lightning strike.
+    (2) Lunar-Bloom: grants special Moonridge Dew (extra Verdant Dew resource, not damage).
+    (3) Lunar-Crystallize: 33% chance for each Moondrift to perform an extra attack.
+    Effects (1) and (3) are ~1.33x expected multipliers on Lunar reaction hit output.
+    No existing stat key or buff mechanism models probabilistic extra hits on reaction
+    instances. Would require new engine feature (reaction hit-count multiplier).
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"

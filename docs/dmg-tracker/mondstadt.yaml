@@ -48,13 +48,13 @@
     when sigils overflow during Q) is not modeled. Potentially significant damage
     source over 15s Q duration, especially at C6 where every E triggers overflow.
   detail: >
-    Not in DmgRunbook. Only active with >=2 Hexerei teammates (niche comp).
-    Over 15s Q, realistically 2-3 E presses trigger overflow = 300-450% ATK total.
-    Compare to Q Normal Combo total of ~1124% ATK equivalent per rotation (physical
-    + wolf). Estimated <5% DPS contribution even in Hexerei comps. Periodic/minor
-    proc, not worth modeling.
+    Periodic/minor proc, estimated <5% DPS contribution. Not in DmgRunbook.
+    Only active with >=2 Hexerei teammates (niche comp). Over 15s Q, realistically
+    2-3 E presses trigger overflow = 300-450% ATK total. Compare to Q Normal Combo
+    total of ~1124% ATK equivalent per rotation (physical + wolf). Not worth
+    modeling for a niche conditional proc on a 4-star character.
   created: "2026-02-26"
-  resolved: "2026-03-08"
+  resolved: "2026-03-14"
 
 - id: mona-c1-offfield-enhancement
   entity: mona
@@ -75,3 +75,16 @@
     complexity.
   created: "2026-03-08"
   resolved: "2026-03-08"
+
+- id: razor-c6-lightning
+  entity: razor
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    C6 Lupus Fulguris lightning (100% ATK Electro DMG, once per 10s during Q) not modeled.
+  detail: >
+    Added DirectFormula(1.0, Electro/normal/none) as "razor-c6-lightning" entry in
+    formulaMap, gated behind constellation >= 6. Label: C6狼魂落雷 / C6 Lupus Lightning.
+  created: "2026-03-14"
+  resolved: "2026-03-14"

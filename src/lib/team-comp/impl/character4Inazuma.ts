@@ -40,8 +40,25 @@ class Kirara extends CharacterBase {
       : []),
   ];
 
-  // Pure shielder — no damage formulas modeled
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = {
+    // C4: Steed of Skanda — 200% ATK as Dendro DMG (considered Burst DMG)
+    ...(this.constellation >= 4
+      ? {
+          "kirara-c4-steed": {
+            label: { zh: "C4驰骋", en: "C4 Steed of Skanda" },
+            parts: [
+              {
+                formula: new DirectFormula(2.0, {
+                  element: "Dendro",
+                  ability: "burst",
+                  reaction: "none",
+                }),
+              },
+            ],
+          },
+        }
+      : {}),
+  };
 }
 
 @RegisterCharacter("shikanoin_heizou")
@@ -196,6 +213,23 @@ class KukiShinobu extends CharacterBase {
             },
           }
         : {}),
+      // C4: Thundergrass Mark — 9.7% Max HP as Electro DMG
+      ...(this.constellation >= 4
+        ? {
+            "shinobu-c4-thundergrass": {
+              label: { zh: "C4雷草印", en: "C4 Thundergrass Mark" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    0.097,
+                    { element: "Electro", ability: "skill", reaction: "none" },
+                    "hp"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 }
@@ -331,8 +365,74 @@ class Gorou extends CharacterBase {
     return buffs;
   })();
 
-  // Pure support — no damage formulas modeled
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = (() => {
+    const eMult = this.constellation >= 3 ? 2.281 : 1.931;
+    const qMult = this.constellation >= 5 ? 2.089 : 1.77;
+    const ccMult = this.constellation >= 5 ? 1.303 : 1.104;
+    const eTag = {
+      element: "Geo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const qTag = {
+      element: "Geo" as const,
+      ability: "burst" as const,
+      reaction: "none" as const,
+    };
+    const eBespokeTarget = {
+      receiver: "selfOnField" as const,
+      filter: { abilities: ["skill" as const] },
+    };
+    const qBespokeTarget = {
+      receiver: "selfOnField" as const,
+      filter: { abilities: ["burst" as const] },
+    };
+    return {
+      "gorou-skill": {
+        label: { zh: "E伤害", en: "E Skill" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, eTag, "def"),
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["E"]),
+              eBespokeTarget,
+              [],
+              "def",
+              "baseDmg",
+              1.56
+            ),
+          },
+        ],
+      },
+      "gorou-burst": {
+        label: { zh: "Q+结晶崩塌", en: "Q + Crystal Collapse" },
+        parts: [
+          {
+            formula: new DirectFormula(qMult, qTag, "def"),
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["Q"]),
+              qBespokeTarget,
+              [],
+              "def",
+              "baseDmg",
+              0.156
+            ),
+          },
+          {
+            formula: new DirectFormula(ccMult, qTag, "def"),
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["Q"]),
+              qBespokeTarget,
+              [],
+              "def",
+              "baseDmg",
+              0.156
+            ),
+          },
+        ],
+      },
+    };
+  })();
 }
 
 @RegisterCharacter("kujou_sara")

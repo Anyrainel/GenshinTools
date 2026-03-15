@@ -8,11 +8,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import {
   type CharacterData,
-  type InvestmentThresholds,
   LUCK_MULTIPLIERS,
   type LuckExpectation,
   tiers,
 } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Recommendation,
@@ -32,6 +32,40 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
+
+// Height model for masonry layout (measured px values)
+const CARD_GAP = 12; // gap-3
+const HEIGHT = {
+  compact: { empty: 146, base: 102, perRec: 83 },
+  normal: { empty: 155, base: 111, perRec: 83 },
+} as const;
+
+function estimateCardHeight(recCount: number, compact: boolean): number {
+  const h = compact ? HEIGHT.compact : HEIGHT.normal;
+  if (recCount === 0) return h.empty;
+  return h.base + recCount * h.perRec;
+}
+
+function computeMasonryColumns<T>(
+  items: T[],
+  getHeight: (item: T) => number,
+  columnCount: number
+): T[][] {
+  if (columnCount <= 1) return [items];
+  const columns: T[][] = Array.from({ length: columnCount }, () => []);
+  const heights: number[] = new Array(columnCount).fill(0);
+
+  for (const item of items) {
+    let minIdx = 0;
+    for (let i = 1; i < columnCount; i++) {
+      if (heights[i] < heights[minIdx]) minIdx = i;
+    }
+    columns[minIdx].push(item);
+    heights[minIdx] += getHeight(item) + CARD_GAP;
+  }
+
+  return columns;
+}
 
 interface RecommendationViewProps {
   scores: Record<string, ArtifactScoreResult>;
@@ -126,6 +160,14 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
 
     return byTier;
   }, [accountData, scores, tierAssignments, allRecs]);
+
+  const isSm = useMediaQuery("(min-width: 640px)");
+  const isMd = useMediaQuery("(min-width: 768px)");
+  const isLg = useMediaQuery("(min-width: 1024px)");
+  const isXl = useMediaQuery("(min-width: 1280px)");
+  const is2xl = useMediaQuery("(min-width: 1536px)");
+  const isCompact = !isMd;
+  const columnCount = is2xl ? 4 : isXl ? 3 : isLg ? 3 : isSm ? 2 : 1;
 
   if (!accountData) return null;
 
@@ -273,18 +315,31 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               </div>
             </div>
 
-            {/* Per-character cards */}
-            <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(360px,1fr))]">
-              {chars.map(({ char, scoreResult, recommendations }) => (
-                <RecommendationCard
-                  key={char.key}
-                  char={char}
-                  tier={tier}
-                  recommendations={recommendations}
-                  score={scoreResult}
-                />
-              ))}
-            </div>
+            {/* Per-character cards — masonry layout */}
+            {(() => {
+              const cols = computeMasonryColumns(
+                chars,
+                (c) => estimateCardHeight(c.recommendations.length, isCompact),
+                columnCount
+              );
+              return (
+                <div className="flex gap-3">
+                  {cols.map((col, i) => (
+                    <div key={i} className="flex-1 flex flex-col gap-3 min-w-0">
+                      {col.map(({ char, scoreResult, recommendations }) => (
+                        <RecommendationCard
+                          key={char.key}
+                          char={char}
+                          tier={tier}
+                          recommendations={recommendations}
+                          score={scoreResult}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
         );
       })}

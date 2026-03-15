@@ -24,7 +24,7 @@ class Dehya extends CharacterBase {
         ]),
         new ScalingBuff(
           cbs(this, "C1", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          { receiver: "self", filter: { abilities: ["skill"] } },
           [],
           "hp",
           "baseDmg",
@@ -46,7 +46,7 @@ class Dehya extends CharacterBase {
       buffs.push(
         new StatBuff(
           cbs(this, "C2", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+          { receiver: "self", filter: { abilities: ["skill"] } },
           [{ key: "dmg%", value: 0.5 }]
         )
       );
@@ -69,20 +69,41 @@ class Dehya extends CharacterBase {
     return buffs;
   })();
 
+  // E Molten Inferno: Field DMG (coordinated attack) ~4 hits over 12s
+  // Lv10: 108.4% ATK + 1.86% HP, Lv13 (C5+): 127.9% ATK + 2.19% HP
   // Q Leonine Bite: Flame-Mane's Fist ×10 + Incineration Drive ×1 (dual ATK+HP scaling)
   // Fist Lv10: 177.7% ATK + 3.05% HP, Lv13 (C3+): 209.7% ATK + 3.60% HP
   // Drive Lv10: 250.7% ATK + 4.30% HP, Lv13 (C3+): 296.0% ATK + 5.07% HP
   protected readonly formulaMap = (() => {
+    const fieldAtk = this.constellation >= 5 ? 1.279 : 1.084;
+    const fieldHp = this.constellation >= 5 ? 0.0219 : 0.0186;
     const fistAtk = this.constellation >= 3 ? 2.097 : 1.777;
     const fistHp = this.constellation >= 3 ? 0.036 : 0.0305;
     const driveAtk = this.constellation >= 3 ? 2.96 : 2.507;
     const driveHp = this.constellation >= 3 ? 0.0507 : 0.043;
+    const eTag = {
+      element: "Pyro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     const qTag = {
       element: "Pyro" as const,
       ability: "burst" as const,
       reaction: "none" as const,
     };
     return {
+      "dehya-molten-inferno": {
+        label: { zh: "E净世焚火", en: "E Molten Inferno" },
+        parts: [
+          {
+            formula: new DirectFormula(fieldAtk, eTag, "atk", {
+              key: "hp",
+              multiplier: fieldHp,
+            }),
+            hits: 4,
+          },
+        ],
+      },
       "dehya-burst-combo": {
         label: {
           zh: "Q连段10+1",
@@ -536,12 +557,7 @@ class Cyno extends CharacterBase {
       "baseDmg",
       2.5
     ),
-    // P1: Mortuary Rite (Judication) +35% DMG
-    new StatBuff(
-      cbs(this, "P1", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      [{ key: "dmg%", value: 0.35 }]
-    ),
+    // P1: Mortuary Rite (Judication) +35% DMG — applied via bespokeBuff on formula part
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
     ...(this.constellation >= 2
       ? [
@@ -592,6 +608,12 @@ class Cyno extends CharacterBase {
           },
           {
             formula: new DirectFormula(eMult, eBaseTag),
+            // P1: Judication +35% DMG applies only to Mortuary Rite, not Duststalker Bolts
+            bespokeBuff: new StatBuff(
+              cbs(this, "P1", ["E"]),
+              { receiver: "selfOnField", filter: { abilities: ["skill"] } },
+              [{ key: "dmg%", value: 0.35 }]
+            ),
           },
         ],
       },

@@ -2,83 +2,83 @@
 - id: gorou-p2-def-scaling
   entity: gorou
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     DEF-based E/Q DMG scaling not modeled (pure support).
   detail: >
-    Gorou is a pure DEF-buffing support not listed in DmgRunbook. His personal
-    damage (E 193-228% DEF, Q 177-209% DEF, Crystal Collapse 110-130% DEF) is
-    negligible compared to his team buff value. Estimated <5% DPS contribution
-    in any team where he appears.
+    Added DirectFormula for E Skill (1.931 DEF Lv10, 2.281 Lv13 C3+) Geo/skill/none
+    and Q + Crystal Collapse (1.770+1.104 DEF Lv10, 2.089+1.303 Lv13 C5+) Geo/burst/none.
+    P2 bespokeBuff: ScalingBuff(def->baseDmg, 1.56) on E, ScalingBuff(def->baseDmg, 0.156)
+    on Q parts (per game text: E +156% DEF, Q +15.6% DEF).
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: kokomi-c1-extra-fish
   entity: sangonomiya_kokomi
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     C1 extra fish on last Normal combo hit (doesn't count as Normal ATK).
   detail: >
-    Periodic proc on specific combo finisher. Does not count as Normal ATK so it
-    bypasses standard formula routing.
+    Added DirectFormula(0.3, Hydro/special/none, "hp") for C1 Swimming Fish,
+    gated behind constellation >= 1. Ability set to "special" per game text.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"
 
 - id: shinobu-c4-thundergrass
   entity: kuki_shinobu
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     C4 Thundergrass Mark on-field NA/CA/Plunge hit (every 5s, 9.7% HP).
   detail: >
-    Periodic proc with 5s cooldown. Low DPS contribution.
+    Added DirectFormula(0.097, Electro/skill/none, "hp") for C4 Thundergrass Mark,
+    gated behind constellation >= 4.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"
 
 - id: sayu-e-hold-absorption
   entity: sayu
   rule: S8
   status: wont-do
-  category: missing-formula
+  category: engine-gap
   summary: >
-    E hold mode absorption damage not modeled (no E hold formula exists as base).
+    E hold mode absorption damage not modeled (requires element absorption modeling).
   detail: >
-    Sayu is a healer/swirl support not listed in DmgRunbook. E hold absorption
-    ticks are 30.2-35.7% per hit (very low multiplier), and the kick elemental
-    DMG is 137.1-161.8%. Her field time is minimal in typical rotations.
-    Estimated <5% DPS contribution.
+    Sayu E hold absorption ticks deal elemental DMG matching the absorbed element.
+    Element absorption requires runtime element selection, which would need a new
+    CombatOpt per character with absorption (similar issue to Kazuha Q). Low priority
+    since Sayu is a healer support with minimal field time.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: kaedehara-kazuha-q-absorption
   entity: kaedehara_kazuha
   rule: S8
   status: wont-do
-  category: missing-formula
+  category: engine-gap
   summary: >
-    Q absorbed-element slash/DoT damage not modeled. Low significance relative to
-    swirl/team buff value.
+    Q absorbed-element slash/DoT damage not modeled (requires element absorption modeling).
   detail: >
-    Not required by DmgRunbook (only C6 high plunge is required, already implemented).
-    Q absorbed-element DoT is 65-76% per tick (5 ticks = ~325-380% total in absorbed
-    element). Kazuha's primary value is P2 team elemental DMG% buff and swirl damage,
-    not personal talent damage. The absorbed element portion is <5% of total team DPS
-    in typical support rotations.
+    Kazuha Q Kazuha Slash deals Anemo DMG plus absorbed-element DoT (65-76% per tick,
+    5 ticks). Element absorption requires a CombatOpt to select which element is absorbed,
+    and different element tags per formula part. This pattern is not currently supported
+    cleanly. Kazuha's primary value is P2 team elemental DMG% buff, not personal damage.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: kirara-c4-shield-coordinated
   entity: kirara
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     C4 shield-triggered coordinated attack (periodic, every ~5s) not modeled.
   detail: >
-    Periodic proc with long cooldown. Low DPS contribution.
+    Added DirectFormula(2.0, Dendro/burst/none) for C4 Steed of Skanda, gated behind
+    constellation >= 4. Used ability "burst" per game text ("considered Elemental Burst DMG").
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"

@@ -265,8 +265,22 @@ class Ororon extends CharacterBase {
             : []),
         ],
       },
-      // P1 Hypersense: 160% ATK Electro DMG per trigger (≤ once per 1.8s)
-      // Per-hit damage is fixed. Ignored due to insignificance.
+      // P1 Hypersense: 160% ATK Electro DMG per trigger, once per 1.8s.
+      // With 80 max Nightsoul points, up to 8 triggers (consuming 10 pts each).
+      // C1 +50% dmg% buff is already implemented via StatBuff scoped to ability: "special".
+      "ororon-hypersense": {
+        label: { zh: "P1超感×8", en: "P1 Hypersense ×8" },
+        parts: [
+          {
+            formula: new DirectFormula(hypersenseBase, {
+              element: "Electro",
+              ability: "special",
+              reaction: "none",
+            }),
+            hits: 8,
+          },
+        ],
+      },
     };
   })();
 }

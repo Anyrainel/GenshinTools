@@ -21,7 +21,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { Recommendation } from "@/lib/account-data/recommendationEngine";
 import { PartyPopper } from "lucide-react";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { ActionRecommendationCard } from "./ActionRecommendationCard";
 
 interface RecommendationCardProps {
@@ -39,7 +39,6 @@ function RecommendationCardComponent({
 }: RecommendationCardProps) {
   const { t } = useLanguage();
   const isCompact = !useMediaQuery("(min-width: 768px)");
-  const [expanded, setExpanded] = useState(false);
 
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
@@ -68,15 +67,12 @@ function RecommendationCardComponent({
 
   const setTypeLabel = getSetTypeLabel();
   const recs = recommendations ?? [];
-  const showCollapseControls = recs.length > 2;
-  const visibleRecs =
-    showCollapseControls && !expanded ? recs.slice(0, 2) : recs;
 
   return (
     <div className="w-full min-w-[280px]">
       <Card className="flex flex-col bg-black/10 border-border/50 transition-colors overflow-hidden">
         {/* Header: Character & Sets */}
-        <div className="flex items-start p-3 pb-2 gap-2 md:p-4 md:pb-3 md:gap-3 bg-gradient-select border-b border-border/40">
+        <div className="flex items-start p-3 pb-2 gap-2 md:gap-3 bg-gradient-select border-b border-border/40">
           <Tooltip>
             <TooltipTrigger>
               <ItemIcon
@@ -117,7 +113,7 @@ function RecommendationCardComponent({
                     const halfSetId2 = artifactIdToHalfSetId[twoPcSets[1][0]];
                     return (
                       <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger className={isCompact ? "" : "-mt-1"}>
                           <DoubleItemIcon
                             imagePath1={
                               artifactsById[twoPcSets[0][0]]?.imagePaths
@@ -127,7 +123,7 @@ function RecommendationCardComponent({
                               artifactsById[twoPcSets[1][0]]?.imagePaths
                                 .flower || ""
                             }
-                            size={isCompact ? "sm" : "md"}
+                            size={isCompact ? "xs" : "sm"}
                           />
                         </TooltipTrigger>
                         <TooltipContent
@@ -142,14 +138,14 @@ function RecommendationCardComponent({
 
                   return (
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger className={isCompact ? "" : "-mt-1"}>
                         <ItemIcon
                           imagePath={
                             artifactsById[activeSets[0][0]]?.imagePaths
                               .flower || ""
                           }
                           rarity={artifactsById[activeSets[0][0]]?.rarity || 5}
-                          size={isCompact ? "sm" : "md"}
+                          size={isCompact ? "xs" : "sm"}
                         />
                       </TooltipTrigger>
                       <TooltipContent
@@ -180,7 +176,7 @@ function RecommendationCardComponent({
         {tier !== "Pool" && (
           <CardContent className="p-0 flex-1 bg-black/10 flex flex-col justify-end">
             {recs.length === 0 ? (
-              <div className="flex items-center justify-center gap-3 px-4 py-3 border-t border-primary/10">
+              <div className="flex items-center justify-center gap-3 px-4 pt-2 pb-3 border-t border-primary/10">
                 <div className="rounded-full bg-primary/20 w-8 h-8 flex items-center justify-center shrink-0">
                   <PartyPopper className="w-4 h-4 text-primary" />
                 </div>
@@ -194,33 +190,14 @@ function RecommendationCardComponent({
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-1 pt-1 pb-3 px-3 border-t border-white/5">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  {t.ui("accountData.insights.title")}
-                </div>
-                <div className="flex flex-col gap-2">
-                  {visibleRecs.map((rec) => (
-                    <ActionRecommendationCard
-                      key={`${rec.slot}-${rec.actionType}`}
-                      recommendation={rec}
-                      inline
-                    />
-                  ))}
-                  {showCollapseControls && (
-                    <button
-                      type="button"
-                      onClick={() => setExpanded(!expanded)}
-                      className="text-xs font-medium text-muted-foreground hover:text-foreground bg-white/5 hover:bg-white/10 border border-white/10 rounded-md px-3 py-1.5 transition-colors"
-                    >
-                      {expanded
-                        ? t.ui("accountData.insights.showLess")
-                        : t.format(
-                            "accountData.insights.showMore",
-                            recs.length - 2
-                          )}
-                    </button>
-                  )}
-                </div>
+              <div className="flex flex-col gap-2 pt-2 pb-3 px-3 border-t border-white/5">
+                {recs.map((rec) => (
+                  <ActionRecommendationCard
+                    key={`${rec.slot}-${rec.actionType}`}
+                    recommendation={rec}
+                    inline
+                  />
+                ))}
               </div>
             )}
           </CardContent>

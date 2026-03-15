@@ -607,6 +607,17 @@ class Chasca extends CharacterBase {
           ...c2Parts,
         ],
       },
+      "chasca-p2-burning": {
+        label: { zh: "P2流焰追影弹", en: "P2 Burning Shadowhunt" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              nElems > 0 ? shiningMult * 1.5 : shellMult * 1.5,
+              nElems > 0 ? chargeTagFor(elems[0]) : anemoChargeTag
+            ),
+          },
+        ],
+      },
       "chasca-burst": {
         label: {
           zh: "Q+6弹",

@@ -57,14 +57,16 @@
 - id: chasca-p2-burning-shadowhunt
   entity: chasca
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     P2 Burning Shadowhunt Shot triggered per-Nightsoul-Burst not modeled.
   detail: >
-    Periodic proc triggered by Nightsoul-Burst state. Complex combat state interaction.
+    Added DirectFormula "chasca-p2-burning" in character5Natlan.ts. Uses
+    shiningMult * 1.5 with first eligible element tag when eligible elements
+    exist, otherwise shellMult * 1.5 with Anemo charge tag. 1 proc per rotation.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"
 
 - id: chasca-c2-c4-aoe-burst
   entity: chasca
@@ -89,6 +91,24 @@
   summary: >
     C6 Scorching Ring periodic damage not modeled.
   detail: >
-    Low priority periodic damage. Minor DPS contribution.
+    C6 Scorching Ring deals 500% ATK every 3s while riding Flamestrider. During
+    the 7s Q window, ~2 procs = 1000% ATK. Mavuika's total C6 rotation damage is
+    very high (Q ~945% + FS baseDmg ~680% + N/CA/Sprint combos + C2 baseDmg procs),
+    making the Scorching Ring contribution <5% of total DPS. C6-only, low priority.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-14"
+
+- id: ororon-p1-hypersense
+  entity: ororon
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    P1 Hypersense (160% ATK Electro DMG per trigger, once per 1.8s) not modeled.
+  detail: >
+    Added DirectFormula "ororon-hypersense" in character4Natlan.ts with
+    hypersenseBase=1.6, hits=8 (full 80 Nightsoul dump), tag
+    Electro/special/none. Replaced the TODO comment. C1 +50% dmg% buff was
+    already implemented via StatBuff scoped to ability: "special".
+  created: "2026-03-14"
+  resolved: "2026-03-14"

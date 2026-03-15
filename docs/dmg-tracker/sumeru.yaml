@@ -11,9 +11,10 @@
     Vortex, 194.4%), which is already modeled. The polyhedron deployment hit
     (267.8% ATK) is a one-time cast proc. Faruzan is an Anemo support whose value
     is her team buffs (Anemo RES shred, DMG%, baseDmg, C6 CD). The one-time
-    deployment hit is <5% of team DPS contribution.
+    deployment hit is <5% of team DPS contribution. Periodic/minor proc,
+    estimated <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: sethos-q-dusk-bolt
   entity: sethos
@@ -23,15 +24,11 @@
   summary: >
     Q Dusk Bolt (353.1% EM) not modeled.
   detail: >
-    Not in DmgRunbook. Sethos's runbook formula is "贯影箭伤害" (Shadowpiercing
-    Shot), which is already modeled with both direct and Aggravate variants. The Q
-    Dusk Bolt converts Normal Attacks to piercing Electro shots with 353.1% EM
-    bonus damage (considered Charged ATK DMG). This is a secondary combat mode;
-    Sethos's primary DPS loop is Shadowpiercing Shot with P2 Scorching Sandshade
-    (700% EM baseDmg), which far outscales Q Dusk Bolts. <5% DPS contribution
-    relative to main rotation.
+    Not in DmgRunbook. Sethos's primary DPS loop is Shadowpiercing Shot with P2
+    Scorching Sandshade (700% EM baseDmg), which far outscales Q Dusk Bolts.
+    Periodic/minor proc, estimated <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: kaveh-c6-pairidaeza
   entity: kaveh
@@ -41,13 +38,11 @@
   summary: >
     C6 Pairidaeza's Light (61.8% ATK Dendro) not modeled.
   detail: >
-    Not in DmgRunbook. Kaveh's runbook formula is "草原核伤害" (Bloom/Dendro Core
-    DMG), already modeled as TransformFormula. C6 Pairidaeza's Light deals 61.8%
-    ATK Dendro DMG once every 3s during Q. Kaveh's main damage is Bloom reaction
-    (transformative, scales with EM/level, not ATK). A 61.8% ATK proc every 3s is
-    negligible compared to Bloom core damage. <5% DPS contribution.
+    Not in DmgRunbook. Kaveh builds EM for Bloom reactions; a 61.8% ATK proc
+    every 3s is negligible compared to Bloom core damage. Periodic/minor proc,
+    estimated <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: collei-p1-sprout
   entity: collei
@@ -57,11 +52,11 @@
   summary: >
     P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with kaveh P1).
   detail: >
-    Collei has no runbook formulas. She is a 4-star Dendro support whose value is
-    off-field Dendro application for reactions. P1 Sprout deals 40% ATK Dendro DMG
-    over 3s (skill DMG) -- a minor periodic proc. Estimated <5% DPS contribution.
+    No runbook formulas for Collei. She is a 4-star Dendro support whose value is
+    off-field Dendro application. P1 Sprout is a minor periodic proc. Estimated
+    <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: kaveh-p1-sprout
   entity: kaveh
@@ -71,29 +66,24 @@
   summary: >
     P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with collei P1).
   detail: >
-    Not in DmgRunbook. Kaveh's runbook formula is "草原核伤害" (Bloom core DMG).
-    P1 Sprout deals 40% ATK Dendro DMG over 3s. Kaveh builds EM for Bloom
-    reactions; ATK-scaling procs are negligible. <5% DPS contribution.
+    Not in DmgRunbook. Kaveh builds EM for Bloom; ATK-scaling procs are
+    negligible. Periodic/minor proc, estimated <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: dehya-e-molten-inferno
   entity: dehya
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     E Molten Inferno coordinated attack not modeled (only Q).
   detail: >
-    Not in DmgRunbook. Dehya's runbook formula is "Q10次炽鬃拳+1次焚落踢伤害"
-    (Q combo), already modeled. The E Fiery Sanctum coordinated attack fires once
-    every 2.5s (108.4% ATK + 1.86% HP per hit, ~4-5 hits in 12s). This is
-    supplementary off-field damage. Dehya's primary DPS is her Q combo
-    (10x Flame-Mane's Fist + Incineration Drive). The E coordinated attack
-    contributes roughly 15-20% as much damage as the Q combo, but it is not
-    in the runbook and Dehya is typically evaluated on burst damage windows.
+    Added "dehya-molten-inferno" formula with dual ATK+HP scaling (Lv10: 108.4% ATK +
+    1.86% HP, Lv13 C5+: 127.9% ATK + 2.19% HP), hits: 4. Fixed C1/C2 E buff receivers
+    from selfOnField→self. Also fixed dehya-c1c2-e-receiver.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: nilou-e-dance-hits
   entity: nilou
@@ -103,13 +93,11 @@
   summary: >
     E Dance of Haftkarsvar multi-step hits not modeled (only Q + Bountiful Core).
   detail: >
-    Not in DmgRunbook. Nilou's runbook formulas are "丰穰之核伤害" (Bountiful Core)
-    and "Q伤害" (Burst), both already modeled. The E Dance steps (HP-scaling skill
-    hits) are setup for the Pirouette/Lunar Prayer state and Golden Chalice's
-    Bounty. Nilou's core DPS is Bloom/Bountiful Core reactions, not direct E hits.
-    The E dance hits are transition damage with low total multipliers. <5% DPS.
+    Not in DmgRunbook. Nilou's core DPS is Bloom/Bountiful Core reactions, not
+    direct E hits. The E dance hits are transition damage with low total
+    multipliers. Periodic/minor proc, estimated <5% DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: candace-c6-overflow
   entity: candace
@@ -119,51 +107,36 @@
   summary: >
     C6 The Overflow wave (15% HP Hydro, every 2.3s) not modeled.
   detail: >
-    Candace has no runbook formulas. She is a 4-star Hydro support whose value is
-    her Q Normal ATK DMG% buff and Hydro infusion. C6 wave deals 15% Max HP Hydro
-    DMG every 2.3s (burst DMG). This is a C6-only coordinated attack for a niche
-    support character. Not in runbook, minor proc. <5% team DPS.
+    No runbook formulas for Candace. C6-only coordinated attack for a niche
+    support character. Periodic/minor proc, estimated <5% team DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 
 - id: dehya-c1c2-e-receiver
   entity: dehya
   rule: U1
-  status: wont-do
+  status: completed
   category: approximation
   summary: >
     C1 E baseDmg and C2 E dmg% buffs use receiver "selfOnField", but Fiery
-    Sanctum coordinated attacks fire while Dehya is off-field. Should use
-    "self". Currently moot since E formula is not modeled.
+    Sanctum coordinated attacks fire while Dehya is off-field. Fixed to "self".
   detail: >
-    The E Molten Inferno coordinated attack formula is not modeled (see
-    dehya-e-molten-inferno, also wont-do). Since no E formula exists in the
-    formulaMap, the receiver mismatch has zero practical impact -- these buffs
-    never apply to any computed damage. If E formula is added in the future,
-    this should be revisited.
+    Fixed C1/C2 buff receivers from selfOnField→self as part of
+    dehya-e-molten-inferno implementation.
   created: "2026-02-26"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"
 
 - id: cyno-p1-dmg-leak
   entity: cyno
   rule: U5
-  status: wont-do
+  status: completed
   category: engine-gap
   summary: >
-    P1 Judication +35% DMG uses filter: { abilities: ["skill"] } which also
-    boosts C6 Duststalker Bolts and P1's own 3 bolts. Game text limits the
-    +35% to "this Secret Rite: Chasmic Soulfarer" (the Mortuary Rite hit only).
+    P1 Judication +35% DMG leaked to C6 Duststalker Bolts via ability filter.
   detail: >
-    DamageTagFilter only supports element/ability/reaction dimensions. Both
-    Mortuary Rite and Duststalker Bolts share ability:"skill", so there is no
-    way to scope the +35% dmg% to Mortuary Rite alone without adding sub-ability
-    granularity to the engine. Impact: at C0-C5 there is zero error (P1 bolts
-    have no formula entry, and the buff correctly applies to the Mortuary Rite
-    in the combo). At C6, the +35% leaks to 5 Duststalker Bolts (100% ATK each).
-    With ~96.6% existing Electro DMG bonus (ascension + C2 stacks), the bolt
-    over-estimation is ~17.8% relative, but bolts are ~25% of the C6 combo by
-    talent mult, yielding ~4.4% total combo error. Within acceptable range
-    (under 10%) for a C6-only scenario. Not worth engine complexity.
+    Moved P1 +35% dmg% from buffs array to bespokeBuff on Mortuary Rite formula
+    part. Now scoped to that specific formula part only, preventing leak to C6
+    Duststalker Bolts.
   created: "2026-02-26"
-  resolved: "2026-02-26"
+  resolved: "2026-03-14"

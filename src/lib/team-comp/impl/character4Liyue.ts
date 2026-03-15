@@ -358,7 +358,19 @@ class Chongyun extends CharacterBase {
           },
         ],
       },
-      // P2: When E field disappears, a spirit blade strikes for 100% of E Skill DMG (Cryo), insignificant
+      "chongyun-p2": {
+        // P2: When E field disappears, a spirit blade strikes for 100% of E Skill DMG (Cryo)
+        label: { zh: "P2 追冰剑诀", en: "Rimechaser Blade (P2)" },
+        parts: [
+          {
+            formula: new DirectFormula(eMult, {
+              element: "Cryo",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       ...(this.constellation >= 1
         ? {
             "chongyun-c1-blades": {
