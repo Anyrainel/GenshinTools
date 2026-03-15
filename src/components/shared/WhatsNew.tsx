@@ -103,7 +103,7 @@ interface GEdge {
 
 const S = 28;
 const OFF = S / 2 + 4;
-const SPEED = import.meta.env.DEV ? 600 : 60;
+const SPEED = 60;
 
 // ── Graph builder ──────────────────────────────────────────────────────
 
@@ -113,20 +113,29 @@ function buildGraph(
 ): { nodes: GNode[]; edges: GEdge[] } {
   const W = container.offsetWidth;
   const H = container.offsetHeight;
-  const cRect = container.getBoundingClientRect();
 
   // Collect card rects relative to container.
   // Cards must have data-wn-card to be detected — never use fragile CSS selectors.
+  // Use offset* properties instead of getBoundingClientRect() — they reflect
+  // layout position and are NOT affected by CSS transforms (e.g. entry animations).
   const cardEls = container.querySelectorAll("[data-wn-card]");
   const cards: { x: number; y: number; r: number; b: number }[] = [];
   for (const el of cardEls) {
     if (el === skipEl || el.contains(skipEl) || skipEl.contains(el)) continue;
-    const rect = el.getBoundingClientRect();
+    const htmlEl = el as HTMLElement;
+    let ox = 0;
+    let oy = 0;
+    let cur: HTMLElement | null = htmlEl;
+    while (cur && cur !== container) {
+      ox += cur.offsetLeft;
+      oy += cur.offsetTop;
+      cur = cur.offsetParent as HTMLElement | null;
+    }
     cards.push({
-      x: rect.left - cRect.left,
-      y: rect.top - cRect.top,
-      r: rect.right - cRect.left,
-      b: rect.bottom - cRect.top,
+      x: ox,
+      y: oy,
+      r: ox + htmlEl.offsetWidth,
+      b: oy + htmlEl.offsetHeight,
     });
   }
 

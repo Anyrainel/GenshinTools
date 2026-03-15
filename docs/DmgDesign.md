@@ -14,6 +14,8 @@
 4. [Damage Formula Catalogue](#4-damage-formula-catalogue)
 5. [Extension System](#5-extension-system)
 6. [Build Pipeline](#6-build-pipeline)
+7. [Reaction Override System](#7-reaction-override-system)
+8. [Combo Formulas (Rotation Modeling)](#8-combo-formulas-rotation-modeling)
 
 ---
 
@@ -498,5 +500,146 @@ See `CharCompConfig` in [`types.ts`](../src/lib/team-comp/types.ts). Fields: `ch
 ### 6.3 TeamBuild (`damageCalc.ts`)
 
 Orchestrates the full team pipeline. Constructed once per team configuration. See `TeamBuild` in [`damageCalc.ts`](../src/lib/team-comp/damageCalc.ts). Key method: `getTeamStats(artifactStats, calcTargetId)` is the hot path during artifact optimization.
+
+---
+
+## 7. Reaction Override System
+
+Allows users to dynamically select reactions for any formula without duplicating formula entries. A single `DirectFormula` entry can be evaluated as Direct, Amplified, or Catalyzed at runtime.
+
+### 7.1 Factory Methods on DamageFormula
+
+The `DamageFormula` base class provides three factory methods that create reaction variants while preserving the original formula's parameters (talentMultiplier, scalingKey, extraTerm):
+
+```typescript
+formula.createAmplified("vaporize" | "melt")    → AmplifyFormula
+formula.createCatalyzed("spread" | "aggravate")  → CatalyzeFormula
+formula.createDirect()                            → DirectFormula (reaction: "none")
+```
+
+Custom subclasses (e.g., `ArlecchinoNormalFormula` with overridden `getBaseDmg()`) override these factories to return their paired variant class, preserving custom logic.
+
+### 7.2 `createReactionVariant()` Utility
+
+A standalone factory function in `damageFormulas.ts` that dispatches to the correct factory method:
+
+```typescript
+createReactionVariant(formula, targetReaction) → DamageFormula
+```
+
+- If `targetReaction === formula.tag.reaction` → returns the formula itself (no-op).
+- If `targetReaction === "none"` → `formula.createDirect()`.
+- Only formulas with `reaction: "none"` can be converted. Attempting to convert a formula with a built-in reaction (lunar, transformative) **throws** — these formula types are fundamentally different damage models.
+
+### 7.3 ReactionOverride Type
+
+```typescript
+type ReactionOverride = {
+  reaction?: ReactionType;                    // gate reaction
+  partReactions?: Record<number, ReactionType>; // per-part overrides (sparse)
+  partHits?: Record<number, number>;          // per-part reacting hit count
+};
+```
+
+The override uses a **gate + per-part** resolution model:
+
+1. **Gate** (`reaction`): The top-level reaction selection (e.g., "Vaporize"). When "none" or absent, all parts compute as direct damage.
+2. **Per-part overrides** (`partReactions`): Sparse map to explicitly set or disable reactions on individual parts (e.g., ICD-locked hits set to "none").
+3. **Per-part hit counts** (`partHits`): For multi-hit parts, controls how many hits react vs. how many compute as direct. Default = all hits.
+
+### 7.4 `resolvePartReaction()` Resolution Logic
+
+Defined in `types.ts`. Resolves the effective reaction for each formula part:
+
+```typescript
+resolvePartReaction(override, partIndex, eligibleReactions) → ReactionType
+```
+
+Priority:
+1. No override or gate is "none" → `"none"`
+2. Explicit `partReactions[idx]` → use that value
+3. Gate reaction, if the element is eligible → inherit gate
+4. Element can't use this reaction → `"none"`
+
+Eligible reactions per element are defined in `constants.ts` → `ELEMENT_ELIGIBLE_REACTIONS`:
+
+| Element  | Eligible reactions        |
+|----------|---------------------------|
+| Pyro     | none, vaporize, melt      |
+| Hydro    | none, vaporize            |
+| Cryo     | none, melt                |
+| Electro  | none, aggravate           |
+| Dendro   | none, spread              |
+| Anemo/Geo/Physical | none only        |
+
+### 7.5 Pipeline Integration
+
+The `ReactionOverride` is threaded through the evaluation pipeline:
+
+`CharacterBase.getDamageResult(formulaId, selfStats, teamStats, ctx, reactionOverride?)` iterates over the formula entry's parts. For each part:
+
+1. **Skip override** if the formula already has a built-in reaction (`tag.reaction !== "none"`) — lunar and transformative formulas are never overridden.
+2. **Resolve** the effective reaction via `resolvePartReaction()`.
+3. **Split hits**: If `partHits[idx]` is set and less than total hits, the part is split into reacting hits (using the variant formula) and non-reacting hits (using the original formula).
+4. **Create variant** via `createReactionVariant()` only when the target reaction differs from the formula's tag.
+
+This ensures both `calc()` and `display()` use the correct variant, and the existing 5-phase stat resolution pipeline is fully preserved.
+
+### 7.6 Formula Entry Design
+
+With reaction overrides, character extensions only need one formula entry per damage instance. Duplicate entries (e.g., `charged-atk` and `charged-atk-vape`) are no longer needed — the reaction selector handles this at runtime.
+
+---
+
+## 8. Combo Formulas (Rotation Modeling)
+
+A combo is a named list of formula lines representing a rotation's total damage as a weighted sum. Each line references a character's formula with a hit count and optional reaction override.
+
+### 8.1 Data Model
+
+```typescript
+type ComboLine = {
+  charId: string;              // whose formula (also the on-field character)
+  formulaId: string;           // which formula from that character
+  count: number;               // repetitions (e.g., 9)
+  reaction?: ReactionOverride; // per-line reaction override
+};
+
+type ComboFormula = {
+  id: string;
+  label: I18nLabel;
+  lines: ComboLine[];
+};
+
+type ComboResult = {
+  lineDamages: { perHit: number; total: number }[];
+  totalDamage: number;
+};
+```
+
+Combo lines can reference formulas from **any team member**, enabling full rotation modeling (e.g., 9× Hu Tao CA + 1× Xingqiu Q). The same `formulaId` can appear multiple times with different reactions (partial-vaporize rotations).
+
+### 8.2 `evaluateCombo()` Implementation
+
+Defined in `damageCalc.ts`. Key design:
+
+**Stat caching**: Uses a `Map<string, Record<string, StatSheet>>` keyed by on-field character ID. `getTeamStats()` output depends only on the calc target (on-field character), not the formula, so stats are computed once per unique on-field character (typically 1–2 in a rotation).
+
+**Reaction override merging**: Each line's reaction override is merged with single-mode per-formula overrides (`singleModeOverrides`). Single-mode `partReactions`/`partHits` serve as defaults; the combo line's own values take priority on top.
+
+**Evaluation**: Each line calls `teamBuild.getDamageResult()` with the merged reaction override. The combo result is `Σ(perHitDamage × count)` across all lines.
+
+### 8.3 Combo Display (`getComboDisplayResult`)
+
+The display path in `damageCalc.ts` provides:
+
+- Per-character stat sheets (on-field and off-field contexts)
+- Base combo damage (total rotation)
+- **Marginal gains**: Per-stat damage sensitivity, computed by bumping each stat by one average substat roll and re-evaluating the full combo. Both the calc target's own stats and support characters' buff-contributing stats are tested.
+- **Level-up gains**: Damage improvement from leveling characters to the next tier.
+
+### 8.4 Optimizer Integration
+
+The optimizer uses `evaluateCombo()` when a combo is active, replacing the single-formula damage as the optimization objective. The multi-pass structure (carry-1 → supports → carry-2) is unchanged. Combo eval is ~2–5× a single formula (proportional to line count), acceptable for the optimizer hot path.
 
 

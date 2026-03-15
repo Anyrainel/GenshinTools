@@ -297,7 +297,7 @@ export function WeaponArchiveView() {
         <ArchiveToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          searchPlaceholder={t.ui("archive.weaponSearchPlaceholder")}
+          searchPlaceholder={t.ui("archive.searchItemPlaceholder")}
         >
           <WeaponFilterChips
             sortedWeaponSecondaryStats={sortedWeaponSecondaryStats}

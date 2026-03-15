@@ -16,11 +16,11 @@
  * - Top-K provides natural alternatives for team allocation
  */
 
-import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { toInternal } from "@/lib/account-data/scoring/utils";
 import {
   type BuildMatchResult,
   getMainStatValueAtLevel,
@@ -204,8 +204,11 @@ function getArtifactEr(art: ArtifactData | null): number {
   if (!art) return 0;
   let er = 0;
   if (art.mainStatKey === "er")
-    er += getMainStatValueAtLevel("er", art.rarity, art.level) / 100;
-  if (art.substats.er) er += art.substats.er / 100;
+    er += toInternal(
+      "er",
+      getMainStatValueAtLevel("er", art.rarity, art.level)
+    );
+  if (art.substats.er) er += toInternal("er", art.substats.er);
   return er;
 }
 
@@ -213,22 +216,25 @@ function getArtifactCr(art: ArtifactData | null): number {
   if (!art) return 0;
   let cr = 0;
   if (art.mainStatKey === "cr")
-    cr += getMainStatValueAtLevel("cr", art.rarity, art.level) / 100;
-  if (art.substats.cr) cr += art.substats.cr / 100;
+    cr += toInternal(
+      "cr",
+      getMainStatValueAtLevel("cr", art.rarity, art.level)
+    );
+  if (art.substats.cr) cr += toInternal("cr", art.substats.cr);
   return cr;
 }
 
 function getArtifactStats(art: ArtifactData): Partial<Record<StatKey, number>> {
   const stats: Partial<Record<StatKey, number>> = {};
-  let mainVal = getMainStatValueAtLevel(art.mainStatKey, art.rarity, art.level);
-  if (isPctStat(art.mainStatKey)) mainVal /= 100;
+  const mainVal = toInternal(
+    art.mainStatKey,
+    getMainStatValueAtLevel(art.mainStatKey, art.rarity, art.level)
+  );
   stats[art.mainStatKey as StatKey] = mainVal;
   for (const [key, val] of Object.entries(art.substats)) {
     if (!val) continue;
-    let v = val as number;
-    if (isPctStat(key)) v /= 100;
     const sk = key as StatKey;
-    stats[sk] = (stats[sk] ?? 0) + v;
+    stats[sk] = (stats[sk] ?? 0) + toInternal(key, val as number);
   }
   return stats;
 }

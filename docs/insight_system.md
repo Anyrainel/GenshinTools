@@ -1,351 +1,174 @@
-# Insight System Algorithm Specification
+# Recommendation System
 
-This document describes the algorithms and magic numbers used by the Insight Engine (`src/lib/insightEngine.ts`) to generate actionable recommendations for artifact optimization.
+圣遗物优化建议系统。基于组合优化器为每个角色找到最优 build，再 diff 当前装备生成可执行建议。
 
-## Overview
+## 架构
 
-The insight system analyzes a character's equipped artifacts and compares them against available alternatives (from inventory or other characters) to suggest improvements. It generates five types of insights:
-
-| Type | Description | Priority |
-|------|-------------|----------|
-| `SWAP` | Immediately equip a better max-level artifact | 1 (highest) |
-| `UPGRADE` | Invest resources (Mora, XP) to level up an artifact | 2 |
-| `REROLL` | Use Sanctifying Essence to reroll substats on a Lv.20 artifact | 3 |
-| `FARM` | Suggest farming a new artifact for a weak slot | 4 (lowest) |
-| `FIX_MAIN` | Alert about an artifact with 0-weight main stat | Special |
-
-Only lower priority insights are shown if they provide a higher expected score gain than the higher priority ones.
-
----
-
-## Magic Numbers Summary
-
-| Constant | Value | Purpose | Notes |
-|----------|-------|---------|-------|
-| `DEFAULT_LUCK_MULTIPLIER` | `0.85` | Expected roll value as fraction of max | Can be overridden per tier |
-| `SWAP_THRESHOLD` | `1.0` | Min score gain to suggest swap | |
-| `UPGRADE_THRESHOLD` | `3.0` | Min projected gain to suggest upgrade | |
-| `REROLL_THRESHOLD` | `5.0` | Min gain to suggest reroll | Most expensive action |
-| `FARM_THRESHOLD` | `2.0` | Min gain to suggest farming | |
-
-### Luck Expectation (Per-Tier Setting)
-
-Users can configure the expected roll quality per tier group:
-
-| Setting | Multiplier | Description |
-|---------|------------|-------------|
-| Cautious | 0.80x | Pessimistic - expect lower rolls |
-| Balanced | 0.85x | Realistic average (default) |
-| Hopeful | 0.90x | Optimistic - expect higher rolls |
-
-This setting affects all projection calculations for characters in that tier.
-
-### Efficiency Percentage
-
-Each insight includes an efficiency percentage displayed alongside the score diff (e.g., "+12.1 (23%)").
-
-**Formula**: `efficiencyDiff = scoreDiff / maxPotentialScore`
-
-Where `maxPotentialScore` is calculated using `calculateMaxSlotSubScore()`:
-- Considers the artifact's main stat (excluded from substat pool)
-- Uses character's stat weights
-- Assumes optimal 5-1-1-1 roll distribution (8 rolls for 5★, 6 rolls for 4★)
-
-### Max Level by Rarity
-
-| Rarity | Max Level |
-|--------|-----------|
-| 5★ | 20 |
-| 4★ | 16 |
-| 3★ | 12 |
-| 2★ | 8 |
-| 1★ | 4 |
-
----
-
-## Max Substat Roll Values
-
-From `constants.ts` (`maxSubstatRolls`), sourced from game data:
-
-| Stat | 5★ Max | 4★ Max |
-|------|--------|--------|
-| HP (flat) | 298.75 | 239.0 |
-| ATK (flat) | 19.45 | 15.56 |
-| DEF (flat) | 23.15 | 18.52 |
-| HP% | 5.83% | 4.66% |
-| ATK% | 5.83% | 4.66% |
-| DEF% | 7.29% | 5.83% |
-| EM | 23.31 | 18.65 |
-| ER | 6.48% | 5.18% |
-| CR | 3.89% | 3.11% |
-| CD | 7.77% | 6.22% |
-
-**Expected Roll Value** = `maxRollValue × 0.85`
-
----
-
-## Scoring System
-
-### Stat-to-Score Conversion
-
-The system converts substat values to a CD-equivalent score using these multipliers (from `artifactScore.ts`):
-
-| Stat | Multiplier | Notes |
-|------|------------|-------|
-| `cr` | `× 2.0` | CR has half the max roll of CD |
-| `cd` | `× 1.0` | Baseline |
-| `em` | `× 0.3333` | EM has ~3x the roll value |
-| `er` | `× 1.1991` | Based on max roll ratio |
-| `atk%`, `hp%` | `× 1.3328` | |
-| `def%` | `× 1.0658` | |
-| `atk` (flat) | `× 0.3995 × (flatAtk/100)` | Uses global config |
-| `hp` (flat) | `× 0.026 × (flatHp/100)` | Uses global config |
-| `def` (flat) | `× 0.3356 × (flatDef/100)` | Uses global config |
-
-Formula: `score = value × multiplier × (weight / 100)`
-
----
-
-## Algorithm Details by Insight Type
-
-### 1. SWAP Strategy
-
-**Purpose**: Find immediately-usable max-level artifacts in inventory or from "Pool" characters.
-
-**Candidate Filtering**:
-- Same slot
-- Matching main stat (or main stat with weight > 40 for flexible slots)
-- Must be at max level for rarity
-- Source is either:
-  - Inventory (no `location`)
-  - Equipped by a "Pool" tier character (stealable)
-
-**Safe Swap Check** (`checkSafeSwap`):
-
-A swap is safe if it doesn't break set bonuses:
-- Same set: ✅ Safe
-- Current is off-piece (count = 1): ✅ Safe
-- Current count = 5 or 3: ✅ Safe (reducing to 4pc or 2pc is fine)
-- Current count = 4 or 2: ❌ Unsafe (would break 4pc or 2pc bonus)
-
-**Performance Optimization**: If swap is unsafe, only consider same-set candidates.
-
-**Score Comparison**:
 ```
-if (candScore > currentScore + 1.0) {
-  suggest SWAP
+recommendationEngine.ts  → 入口：两轮约束优化 + diff 生成建议
+candidatePool.ts         → 构建候选池：current / swap / upgrade / reroll / farm
+buildOptimizer.ts        → 5 槽组合优化器（分支定界 + CR 溢出惩罚）
+crBudget.ts              → 计算非圣遗物 CR 预算（角色/武器/套装）
+artifactProjection.ts    → 副词条投影（升级/洗/刷本期望值）
+artifactScore.ts         → 评分：CD 当量转换、主词条评分
+RecommendationView.tsx   → 页面入口（AccountData 页面使用）
+RecommendationCard.tsx   → 角色维度卡片
+ActionRecommendationCard.tsx → 单条建议卡片
+```
+
+> **注意**：旧的 `insightEngine.ts` / `InsightList.tsx` 已废弃，无页面引用。
+
+## 流程
+
+```
+                  ┌─────────────────────────┐
+                  │  generateAllRecommendations  │
+                  └────────────┬────────────┘
+                               │
+          ┌────────────────────┼────────────────────┐
+          ▼                    ▼                    ▼
+   1. crBudget          2. candidatePool      (per character)
+   计算非圣遗物CR        构建5槽候选列表
+          │                    │
+          └────────┬───────────┘
+                   ▼
+           3. buildOptimizer
+           两轮约束优化
+                   │
+                   ▼
+           4. diff → Recommendation[]
+```
+
+### Phase 1: CR Budget
+
+计算角色不依赖圣遗物的暴击率总量，用于优化器判断 CR 溢出：
+
+| 来源 | 说明 |
+|------|------|
+| baseCr | 固定 0.05 |
+| ascensionCr | 突破属性 CR（超出 0.05 的部分）|
+| weaponSecondaryCr | 武器副属性 CR |
+| weaponPassiveCr | 武器被动 CR（取最大可能值）|
+| artifactSetCr | 套装效果 CR（仅 4pc，取最大值）|
+
+### Phase 2: Candidate Pool
+
+每个槽位构建候选列表，每个候选带 `source` 标签：
+
+| Source | 来源 | 处理 |
+|--------|------|------|
+| `current` | 当前装备 | 投影到满级 |
+| `swap` | 背包/低优先级角色的满级圣遗物 | 原样使用 |
+| `upgrade` | 背包/低优先级角色的未满级圣遗物 | 投影到满级 |
+| `reroll` | 当前装备的 5★ 满级圣遗物 | 重新分配强化（需有废词条或 9+ totalRolls）|
+| `farm` | 虚拟理想圣遗物 | 每个目标主词条生成一个 |
+
+**Steal 规则**：只能从严格低优先级 tier 的角色拿（`TIER_RANK[donor] > TIER_RANK[char]`）。
+
+### Phase 3: Build Optimizer
+
+5 槽组合优化器，核心特性：
+
+- **套装约束**：按 build 定义的 4pc / 2pc+2pc 枚举所有合法的槽位-套装分配模式
+  - 4pc: 5 种模式（每种 1 个 flex 槽）
+  - 2pc+2pc: C(5,2)×C(3,2) = 30 种模式
+- **Top-K 剪枝**：每个槽位只保留前 15 个候选（`TOP_K_PER_SLOT = 15`）
+- **分支定界**：partial score + 剩余槽位 upper bound ≤ 当前最优 → 剪枝
+- **CR 溢出惩罚**：`penalty = max(0, totalCr - 1.0) × 100 × 2 × (crWeight / 100)`
+- **输出**：Top-N builds（默认 3），按 finalScore 排序
+
+### Phase 4: Two-Pass Constrained Optimization
+
+```
+Pass 1: 无约束优化 → 找到全局最优 build
+         ↓
+对每个槽位：如果 slotDiff < 对应 action 的 threshold → 标记为"不值得"
+         ↓
+Pass 2: 锁定"不值得"的槽位为 current-only → 重新优化
+```
+
+**投资阈值**（用户可调，`DEFAULT_INVESTMENT_THRESHOLDS`）：
+
+| Action | 默认阈值 | 含义 |
+|--------|---------|------|
+| swap | 1.0 | 换装最低收益 |
+| upgrade | 3.0 | 升级最低收益 |
+| reroll | 7.0 | 洗词条最低收益 |
+| farm | 5.0 | 刷本最低收益 |
+
+### Phase 5: Diff → Recommendations
+
+对比 optimal build 和当前装备，每个有差异的槽位生成一条 `Recommendation`：
+
+```typescript
+interface Recommendation {
+  actionType: "swap" | "upgrade" | "reroll" | "farm" | "equip";
+  slot: Slot;
+  optimalArtifact: CandidateArtifact;  // 优化器选出的
+  currentArtifact: ArtifactData | null; // 当前装备
+  slotScoreDiff: number;               // 该槽位收益
+  buildScoreDiff: number;              // 整体 build 收益
 }
 ```
 
-**Threshold**: `SWAP_THRESHOLD = 1.0`
+`slotScoreDiff < 0.5` 的建议被过滤。结果按 `slotScoreDiff` 降序排列。
+
+## 投影算法
+
+**运气系数**（per-tier 可配）：cautious=0.80 / balanced=0.85 / hopeful=0.90
+
+### 升级投影
+
+1. 3 词条未满级：先解锁第 4 词条（+1 次期望值），再分配剩余强化
+2. 剩余强化 ≥5 次：高权重 2 词条各多 0.5 次，低权重 2 词条各 1 次，余量均分
+3. 剩余强化 <5 次：均分
+
+### 洗词条投影
+
+保留词条类型，重分配强化次数：
+- 8 次总强化（3 词条起始）：每个词条 +1 次
+- 9 次总强化（4 词条起始）：top2 各 +1.5 次，bottom2 各 +1 次
+
+### 刷本投影
+
+保守估计：3 词条起始（8 次总强化），top4 权重词条各 2 次（均分 `[2,2,2,2]`）。
+
+## 评分体系
+
+副词条 → CD 当量：`score = value × multiplier × (weight / 100)`
+
+| 词条 | 乘数 | 词条 | 乘数 |
+|------|------|------|------|
+| CR | ×2.0 | ATK%/HP% | ×1.3328 |
+| CD | ×1.0 | DEF% | ×1.0658 |
+| EM | ×0.3333 | ER | ×1.1991 |
+
+小攻/小生/小防按 `globalConfig` 缩放。
 
 ---
 
-### 2. LEVEL Strategy
+## 开放问题
 
-**Purpose**: Identify artifacts worth investing resources to level up.
+### 1. 优化器对 donor 的影响是单向的
 
-**Considerations**:
-- Artifacts below max level for their rarity (Lv.20 for 5★, Lv.16 for 4★)
-- Both inventory artifacts and currently equipped artifacts
-- Must be safe to swap (if from inventory)
+系统只检查 `TIER_RANK[donor] > TIER_RANK[char]` 就允许 steal，但不评估拿走后 donor 会变差多少。如果 donor 是 B tier 而非 Pool，用户执行建议后可能发现 donor 角色明显变弱。
 
-**Projected Score Calculation**:
+### 2. 两轮优化可能丢失全局最优解
 
-1. Identify 3-line vs 4-line artifacts:
-   - **3-line**: Has 3 activated substats + 1 unactivated substat
-   - **4-line**: Has 4 activated substats
+Pass 2 锁定"不值得"的槽位后重新优化，但锁定决策基于 Pass 1 的结果。如果某个槽位在 Pass 1 中 diff 低是因为其他槽位的选择导致的耦合效应，锁定它可能排除了真正的最优解。
 
-2. **For 3-line artifacts below Lv.4**:
-   - The Lv.4 upgrade unlocks the 4th stat (from `unactivatedSubstats`)
-   - This is NOT a roll on existing stats—it adds the 4th stat's initial value
-   - Remaining upgrades (Lv.8, 12, 16, 20) are distributed among all 4 stats
+### 3. CR 溢出惩罚的权重系数是否合理？
 
-3. For all artifacts, count remaining upgrade rolls (every 4 levels after the 4th stat unlock)
+`penalty = wastedCr × 100 × 2 × (crWeight/100)`，其中 `×2` 是硬编码的惩罚倍率。这个值太小可能导致推荐溢出 CR 的 build，太大则过度回避 CR 词条。用户无法调节。
 
-4. Get all substats including `unactivatedSubstats`
+### 4. TOP_K_PER_SLOT=15 的截断可能遗漏最优组合
 
-5. Pad with weight-0 placeholders if fewer than 4 stats known
+每个槽位只保留分数前 15 的候选，但在套装约束下，某个槽位的"第 16 名"候选可能因为恰好满足套装需求而构成全局最优 build。尤其是 2pc+2pc 模式下，候选池被套装过滤后可能所剩无几。
 
-6. Sort by weight to identify top stats
+### 5. 投资阈值的用户心智模型不清晰
 
-**Roll Distribution** (for remaining rolls after 4th stat unlock):
-- **5+ remaining rolls**: Favorable distribution
-  - Top 2 stats: 1.5 rolls each
-  - Bottom 2 stats: 1.0 roll each
-  - Remaining rolls distributed evenly (0.25 each)
-- **< 5 remaining rolls**: Even distribution (rolls / 4 each)
+用户看到的是 swap=1, upgrade=3, reroll=7, farm=5 这样的数字，但不清楚"3 分收益"在实际游戏中意味着什么。缺少将分数差异映射到实际伤害变化或相对百分比的参照物。
 
-**Formula**:
-```
-// For 3-line artifacts below Lv.4, add 4th stat initial value
-if (has3Lines && level < 4) {
-  expectedGain += calcStatScore(expectedRollValue for 4th stat)
-}
+### 6. Farm 投影过于保守可能导致"永远不推荐刷本"
 
-// Then add expected gain from remaining rolls
-expectedGain += Σ(rollCount × expectedRollValue × statScore)
-projectedScore = currentScore + expectedGain
-```
-
-Where `expectedRollValue = getMaxRollValue(stat, rarity) × 0.85`
-
-**Score Comparison**:
-```
-if (projectedScore > currentProjectedScore + 3.0) {
-  gain = projectedScore - currentScore  // Gain from NOW
-  suggest LEVEL
-}
-```
-
-**Threshold**: `LEVEL_THRESHOLD = 3.0`
-
----
-
-### 3. REROLL Strategy
-
-**Purpose**: Identify Lv.20 5★ artifacts with poor substat distribution that could benefit from Sanctifying Essence reroll.
-
-**Conditions**:
-- Artifact is 5★ and at Lv.20
-- Has 4 substats (including unactivated)
-- At least one substat has weight = 0 (completely useless)
-
-**Mechanics**: Reroll redistributes upgrade rolls among existing stat types. Stat types do NOT change—only which stats receive upgrades and the roll values.
-
-**Expected Score Calculation**:
-
-1. Determine `totalRolls` from artifact data (default: 8)
-   - `totalRolls = 8`: Started with 3 substats (4th unlocked at +4)
-   - `totalRolls = 9`: Started with 4 substats
-
-2. Get initial values for each stat:
-   - Use `initialValues[stat]` if available (from GOOD v3 format)
-   - Fallback: `maxRollValue × 0.85`
-
-3. Sort substats by weight (highest first = selected for guaranteed upgrades)
-
-**For `totalRolls = 8`** (started with 3 lines):
-```
-For each of 4 stats:
-  expectedValue = initialValue + (1 × expectedRollValue)
-  expectedScore += calcStatScore(expectedValue)
-```
-
-**For `totalRolls = 9`** (started with 4 lines):
-```
-For top 2 stats:
-  expectedValue = initialValue + (1.5 × expectedRollValue)
-For bottom 2 stats:
-  expectedValue = initialValue + (1.0 × expectedRollValue)
-```
-
-4. Calculate current substat score and compare
-
-**Score Comparison**:
-```
-scoreDiff = expectedSubScore - currentSubScore
-if (scoreDiff > 5.0) {
-  suggest REROLL
-}
-```
-
-**Threshold**: `REROLL_THRESHOLD = 5.0`
-
----
-
-### 4. FARM Strategy
-
-**Purpose**: Suggest farming when current artifact is significantly below potential.
-
-**Expected Score Calculation**:
-
-Assume optimal new artifact:
-- Same main stat as current
-- 4 starting lines (best case)
-- Top 4 weighted substats (excluding main stat overlap)
-
-**Roll Distribution** (4 initials + 5 upgrades = 9 total):
-
-| Stat Rank | Initial Rolls | Upgrade Rolls | Total |
-|-----------|---------------|---------------|-------|
-| Top 1 | 1 | 1.5 | 2.5 |
-| Top 2 | 1 | 1.5 | 2.5 |
-| Top 3 | 1 | 1.0 | 2.0 |
-| Top 4 | 1 | 1.0 | 2.0 |
-
-**Formula**:
-```
-For each of top 4 weighted stats:
-  expected = totalRolls × (maxRollValue × 0.85)
-  farmExpectedScore += calcStatScore(expected)
-
-scoreDiff = farmExpectedScore - currentScore
-if (scoreDiff > 1.0) {
-  suggest FARM with efficiency = currentScore / farmExpectedScore
-}
-```
-
-**Threshold**: `FARM_THRESHOLD = 1.0` (aligned with SWAP)
-
----
-
-### 5. Priority Selection
-
-For each slot, insights are generated and selected in this priority:
-
-```
-bestScoreSoFar = 0
-
-1. SWAP - if found, add and update bestScoreSoFar
-2. LEVEL - only add if scoreDiff > bestScoreSoFar
-3. REROLL - only add if scoreDiff > bestScoreSoFar
-4. FARM - only add if scoreDiff > bestScoreSoFar
-```
-
-This ensures:
-- Free/cheap actions (SWAP) are preferred
-- Expensive actions (REROLL, FARM) only shown if they provide greater benefit
-- No redundant suggestions for the same slot
-
-Final insights are sorted by `scoreDiff` (highest first).
-
----
-
-## Future Tuning Opportunities
-
-### EXPECTED_ROLL_MULTIPLIER
-- Currently fixed at `0.85`
-- Could be configurable per user tier (optimistic vs conservative)
-- Higher values = more aggressive recommendations
-
-### Threshold Tuning
-- All thresholds could become user-configurable
-- Different playstyles may prefer different sensitivity
-
-### Multi-Character Optimization
-- Currently doesn't consider overall account optimization
-- Could weigh actions by character tier importance
-- Could detect circular dependencies in artifact swaps
-
-### Resin Cost Analysis
-- Could factor in expected resin cost per action type
-- LEVEL: ~20 resin equivalent (artifact XP + mora)
-- REROLL: ~40 resin equivalent (Sanctifying Essence)
-- FARM: Variable based on expected domain runs
-
----
-
-## Appendix: Helper Functions
-
-### `getMaxRollValue(stat, rarity)`
-Returns the maximum roll value for a substat at given rarity.
-
-### `getExpectedRollValue(stat, rarity)`
-Returns `getMaxRollValue(stat, rarity) × 0.85`.
-
-### `getAllSubstats(artifact)`
-Returns combined list of `substats` and `unactivatedSubstats` keys.
-
-### `calcStatScore(value, stat, weights, globalConfig)`
-Converts a stat value to CD-equivalent score using the multipliers above.
+Farm 使用 `[2,2,2,2]` 均匀分配（8 次总强化），是所有投影中最保守的。加上 farm 阈值本身就高（默认 5.0），实际触发条件非常苛刻。用户可能期望在"当前圣遗物明显差"时看到刷本建议，但系统几乎不会给出。

@@ -1,9 +1,4 @@
-import {
-  AVERAGE_ROLL_MULTIPLIER,
-  artifactIdToHalfSetId,
-  maxSubstatRolls,
-  statPools,
-} from "@/data/constants";
+import { artifactIdToHalfSetId, statPools } from "@/data/constants";
 import type {
   ArtifactData,
   Build,
@@ -22,6 +17,9 @@ import {
   computeCrDeduction,
   computeIdealScore as computeIdealScoreShared,
   getMainStatValue,
+  getMainStatValueAtLevel,
+  getSubstatAvgRoll,
+  getSubstatMaxRoll,
 } from "./scoring/utils";
 
 // ----------------------------------------------------------------------------
@@ -29,8 +27,8 @@ import {
 // ----------------------------------------------------------------------------
 
 // Max CD roll value used as baseline for sub-score calculation
-const MAX_CD_ROLL_5STAR = 7.77;
-const MAX_CD_ROLL_4STAR = 6.22;
+const MAX_CD_ROLL_5STAR = getSubstatMaxRoll("cd", 5);
+const MAX_CD_ROLL_4STAR = getSubstatMaxRoll("cd", 4);
 
 // All stat keys that can appear as main or sub stats
 const SUB_STATS: SubStat[] = [
@@ -49,67 +47,7 @@ const SUB_STATS: SubStat[] = [
 /** @deprecated Use getMainStatValue from scoring/utils instead */
 export const getFixedMainStatValue = getMainStatValue;
 
-// Base values at level 0 for 5★ artifacts
-const MAIN_STAT_BASE_5STAR: Record<string, number> = {
-  hp: 717,
-  atk: 47,
-  "hp%": 7.0,
-  "atk%": 7.0,
-  "def%": 8.7,
-  em: 28.0,
-  er: 7.8,
-  "pyro%": 7.0,
-  "hydro%": 7.0,
-  "cryo%": 7.0,
-  "electro%": 7.0,
-  "anemo%": 7.0,
-  "geo%": 7.0,
-  "dendro%": 7.0,
-  "phys%": 8.7,
-  cr: 4.7,
-  cd: 9.3,
-  "heal%": 5.4,
-};
-
-// Base values at level 0 for 4★ artifacts
-const MAIN_STAT_BASE_4STAR: Record<string, number> = {
-  hp: 645,
-  atk: 42,
-  "hp%": 6.3,
-  "atk%": 6.3,
-  "def%": 7.9,
-  em: 25.2,
-  er: 7.0,
-  "pyro%": 6.3,
-  "hydro%": 6.3,
-  "cryo%": 6.3,
-  "electro%": 6.3,
-  "anemo%": 6.3,
-  "geo%": 6.3,
-  "dendro%": 6.3,
-  "phys%": 7.9,
-  cr: 4.2,
-  cd: 8.4,
-  "heal%": 4.8,
-};
-
-/**
- * Get the main stat value at a specific level (linear interpolation between base and max).
- * Values are in display units (e.g., 46.6 for ATK%, 4780 for HP).
- */
-export function getMainStatValueAtLevel(
-  key: MainStat,
-  rarity: number,
-  level: number
-): number {
-  const is4Star = rarity === 4;
-  const maxLevel = is4Star ? 16 : 20;
-  const baseValues = is4Star ? MAIN_STAT_BASE_4STAR : MAIN_STAT_BASE_5STAR;
-  const base = baseValues[key] ?? 0;
-  const max = getMainStatValue(key, rarity);
-  const clampedLevel = Math.max(0, Math.min(level, maxLevel));
-  return base + (max - base) * (clampedLevel / maxLevel);
-}
+export { getMainStatValueAtLevel };
 
 /** Per-stat breakdown for UI (value and weighted sub-score only; main score not exposed). */
 export interface StatScoreBreakdown {
@@ -556,12 +494,12 @@ export function scoreAllSlots(
       statScores[stat].subValue += val;
       statScores[stat].subScore += score;
 
-      // Compute roll count for stats with positive weight (average roll = 0.85 × max)
+      // Compute roll count for stats with positive weight
       if ((weights[stat] ?? 0) > 0) {
-        const maxRoll =
-          maxSubstatRolls[rarity as keyof typeof maxSubstatRolls]?.[stat];
-        if (maxRoll) {
-          const count = val / (AVERAGE_ROLL_MULTIPLIER * maxRoll);
+        const r = rarity === 4 || rarity === 5 ? rarity : 5;
+        const avgRoll = getSubstatAvgRoll(stat, r as 4 | 5);
+        if (avgRoll) {
+          const count = val / avgRoll;
           statScores[stat].subCount += count;
           statCount += count;
         }

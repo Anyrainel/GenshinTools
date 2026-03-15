@@ -11,15 +11,10 @@
  * autoTune (scoring weight generation).
  */
 
-import { isPctStat } from "@/components/team-comp/displayFormatters";
-import {
-  AVERAGE_ROLL_MULTIPLIER,
-  getMainStatValue,
-  maxSubstatRolls,
-  statPools,
-} from "@/data/constants";
+import { avgSubstatRolls, maxSubstatRolls, statPools } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { getMainStatValue, toInternal } from "@/lib/account-data/scoring/utils";
 
 import { StatSheet } from "./damageModels";
 import type { StatKey } from "./types";
@@ -41,26 +36,33 @@ function maxRollsPerStat(rarity: 4 | 5): number {
 
 // ─── Roll value helpers ───
 
-/** Compute per-stat roll values for a given multiplier and rarity */
+/**
+ * Get roll values per stat in display format for a given rarity.
+ * When multiplier is provided, returns max × multiplier (for ideal-gen quality scaling).
+ * When omitted, returns exact averages from game data.
+ */
 export function getRollValues(
-  multiplier: number = AVERAGE_ROLL_MULTIPLIER,
+  multiplier?: number,
   rarity: 4 | 5 = 5
 ): Record<SubStat, number> {
-  const rv = {} as Record<SubStat, number>;
-  for (const [stat, maxVal] of Object.entries(maxSubstatRolls[rarity])) {
-    rv[stat as SubStat] = maxVal * multiplier;
+  if (multiplier != null) {
+    return Object.fromEntries(
+      Object.entries(maxSubstatRolls[rarity]).map(([k, v]) => [
+        k,
+        v * multiplier,
+      ])
+    ) as Record<SubStat, number>;
   }
-  return rv;
+  return { ...avgSubstatRolls[rarity] };
 }
 
-/** Convert a roll value to StatSheet-internal representation (percent stats / 100) */
+/** Convert a display-format roll value to StatSheet-internal representation */
 export function rollToInternal(
   stat: SubStat,
   rolls: number,
   rv: Record<SubStat, number>
 ): number {
-  const raw = rv[stat] * rolls;
-  return isPctStat(stat) ? raw / 100 : raw;
+  return toInternal(stat, rv[stat] * rolls);
 }
 
 // ─── Sheet building ───
@@ -68,7 +70,7 @@ export function rollToInternal(
 /**
  * Build a StatSheet from main stats and substat rolls.
  * Main stat values come from getMainStatValue (display form),
- * converted to internal representation (pct stats / 100).
+ * converted to internal representation via toInternal.
  */
 export function buildSheetFromMainAndSubs(
   mainStats: Record<Slot, MainStat>,
@@ -83,8 +85,8 @@ export function buildSheetFromMainAndSubs(
     const ms = mainStats[slot];
     const rawVal = getMainStatValue(ms, rarity);
     if (rawVal) {
-      const mainVal = isPctStat(ms) ? rawVal / 100 : rawVal;
-      combined[ms as StatKey] = (combined[ms as StatKey] ?? 0) + mainVal;
+      combined[ms as StatKey] =
+        (combined[ms as StatKey] ?? 0) + toInternal(ms, rawVal);
     }
 
     // Substats

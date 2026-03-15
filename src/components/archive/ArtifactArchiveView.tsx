@@ -67,7 +67,7 @@ export function ArtifactArchiveView() {
         <ArchiveToolbar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          searchPlaceholder={t.ui("archive.artifactSearchPlaceholder")}
+          searchPlaceholder={t.ui("archive.searchItemPlaceholder")}
         />
       }
     >

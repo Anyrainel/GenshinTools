@@ -123,6 +123,56 @@ describe("i18n App Data Integrity", () => {
     expect(violations).toEqual([]);
   });
 
+  it("no two keys should have identical zh and en labels (reuse the same key instead)", () => {
+    const leafEntries: { key: string; en: string; zh: string }[] = [];
+
+    function collectLeaves(obj: Record<string, unknown>, prefix = "") {
+      for (const k in obj) {
+        const value = obj[k];
+        const newKey = prefix ? `${prefix}.${k}` : k;
+        if (
+          value &&
+          typeof value === "object" &&
+          "en" in value &&
+          "zh" in value
+        ) {
+          leafEntries.push({
+            key: newKey,
+            en: (value as { en: string }).en,
+            zh: (value as { zh: string }).zh,
+          });
+        } else if (value && typeof value === "object") {
+          collectLeaves(value as Record<string, unknown>, newKey);
+        }
+      }
+    }
+
+    collectLeaves(i18nUiData as unknown as Record<string, unknown>);
+
+    const seen = new Map<string, string>(); // "en||zh" -> first key
+    const duplicates: string[] = [];
+
+    for (const { key, en, zh } of leafEntries) {
+      const signature = `${en}||${zh}`;
+      const existing = seen.get(signature);
+      if (existing) {
+        duplicates.push(
+          `"${key}" and "${existing}" both have en="${en}", zh="${zh}"`
+        );
+      } else {
+        seen.set(signature, key);
+      }
+    }
+
+    if (duplicates.length > 0) {
+      console.error(
+        "Duplicate i18n entries (reuse a single key instead):\n",
+        duplicates.join("\n")
+      );
+    }
+    expect(duplicates).toEqual([]);
+  });
+
   it("all i18nUiData keys should be used in the codebase", () => {
     // Explicit exclusions for keys referenced dynamically (not caught by regex/string search)
     const allowedIgnoredKeys = new Set<string>();

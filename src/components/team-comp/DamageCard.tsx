@@ -1050,7 +1050,7 @@ export function DamageCard({
                       ? t.ui("teamComp.frozenBadge")
                       : isPartiallyFrozen
                         ? t.ui("teamComp.optimizeRest")
-                        : t.ui("teamComp.runOptimization")
+                        : t.ui("teamComp.tabOptimize")
                   }
                   labelBusy={t.ui("teamComp.optimizing")}
                 />
@@ -1090,7 +1090,7 @@ export function DamageCard({
                   className="gap-1.5 font-bold px-4 text-xs shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
                 >
                   <Flame className="w-3.5 h-3.5" />
-                  {t.ui("teamComp.unfreezeTeam")}
+                  {t.ui("teamComp.unfreezeAll")}
                 </Button>
               )}
             </div>
@@ -1274,7 +1274,7 @@ export function DamageCard({
               onClick={handleGenerateIdeal}
               disabled={idealComputing || !hasActiveFormula}
               computing={idealComputing}
-              labelIdle={t.ui("teamComp.generateIdeal")}
+              labelIdle={t.ui("teamComp.tabGenerateIdeal")}
               labelBusy={t.ui("teamComp.generatingIdeal")}
             />
           </div>

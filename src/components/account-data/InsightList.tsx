@@ -206,7 +206,7 @@ function InsightItem({
           icon: CirclePlus,
           color: "text-teal-400",
           iconBg: "bg-teal-800/30",
-          label: t.ui("accountData.insights.equip"),
+          label: t.ui("common.equip"),
           subtitle:
             insight.isSteal && insight.donorCharacterId
               ? t.format(
@@ -222,7 +222,7 @@ function InsightItem({
           iconBg: "bg-emerald-800/30",
           label: t.ui("accountData.insights.upgrade"),
           subtitle: insight.isEquipped
-            ? t.ui("accountData.insights.equipped")
+            ? t.ui("accountData.equipped")
             : insight.isSteal && insight.donorCharacterId
               ? t.format(
                   "accountData.insights.fromCharacter",

@@ -91,7 +91,7 @@ function ImportControlInner<T>(
         confirmDescription: t.ui("import.confirmDescTierList"),
         confirmAction: t.ui("import.presetConfirmAction"),
         loadError: t.ui("import.loadErrorTierList"),
-        emptyList: t.ui("import.presetEmptyTierList"),
+        emptyList: t.ui("import.presetEmpty"),
         importFromFile: t.ui("import.fromFile"),
       };
     }
@@ -104,7 +104,7 @@ function ImportControlInner<T>(
         confirmDescription: t.ui("import.confirmDescTeamComp"),
         confirmAction: t.ui("import.presetConfirmAction"),
         loadError: t.ui("import.loadErrorTeamComp"),
-        emptyList: t.ui("import.presetEmptyTeamComp"),
+        emptyList: t.ui("import.presetEmpty"),
         importFromFile: t.ui("import.fromFile"),
       };
     }

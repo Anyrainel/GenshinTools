@@ -265,7 +265,7 @@ export function ComputeSidebarMobile({
           className="gap-2"
         >
           <Filter className="w-4 h-4" />
-          {t.ui("computeFilters.title")}
+          {t.ui("filters.title")}
           {hasActiveFilters && (
             <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
               {searchQuery.length > 0 ? "1" : "0"}
@@ -278,7 +278,7 @@ export function ComputeSidebarMobile({
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
         <SheetContent side="left" className="w-80 p-0">
           <SheetHeader className="p-6 pb-4 border-b">
-            <SheetTitle>{t.ui("computeFilters.title")}</SheetTitle>
+            <SheetTitle>{t.ui("filters.title")}</SheetTitle>
           </SheetHeader>
           <div className="flex-1 overflow-hidden">
             <div className="h-full">

@@ -13,7 +13,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
     steps: [
       {
         id: "af-presets",
-        title: t.ui("tour.artifactFilter.presetsTitle"),
+        title: t.ui("computeFilters.noConfigurationsImportPreset"),
         content: t.ui("tour.artifactFilter.presetsContent"),
         side: "bottom",
       },
@@ -49,7 +49,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "tl-customize",
-        title: t.ui("tour.tierList.customizeTitle"),
+        title: t.ui("customizeDialog.title"),
         content: t.ui("tour.tierList.customizeContent"),
         side: "left",
       },
@@ -73,13 +73,13 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "tc-optimize",
-        title: t.ui("tour.teamComp.optimizeTitle"),
+        title: t.ui("app.ctaCalculateDamage"),
         content: t.ui("tour.teamComp.optimizeContent"),
         side: "top",
       },
       {
         id: "tc-import",
-        title: t.ui("tour.teamComp.importTitle"),
+        title: t.ui("computeFilters.noConfigurationsImportPreset"),
         content: t.ui("tour.teamComp.importContent"),
         side: "bottom",
       },
@@ -97,7 +97,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "tod-formula",
-        title: t.ui("tour.teamOptDetail.formulaTitle"),
+        title: t.ui("teamComp.formulaSelection"),
         content: t.ui("tour.teamOptDetail.formulaContent"),
         side: "bottom",
       },
@@ -127,7 +127,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "ad-recommendations",
-        title: t.ui("tour.accountData.recommendationsTitle"),
+        title: t.ui("accountData.recommendations"),
         content: t.ui("tour.accountData.recommendationsContent"),
         side: "bottom",
       },

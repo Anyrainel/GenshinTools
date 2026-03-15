@@ -1,14 +1,7 @@
-/** Whether a stat key represents a percentage value. */
-export function isPctStat(key: string): boolean {
-  return (
-    key.endsWith("%") ||
-    key === "cr" ||
-    key === "cd" ||
-    key === "er" ||
-    key === "reactionCr" ||
-    key === "reactionCd"
-  );
-}
+import { isPctStat } from "@/data/constants";
+
+// Re-export from canonical location so existing component imports still work
+export { isPctStat };
 
 /**
  * Format a stat value for display.

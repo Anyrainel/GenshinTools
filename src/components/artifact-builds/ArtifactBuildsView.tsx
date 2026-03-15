@@ -73,7 +73,7 @@ export function ArtifactBuildsView({
           onComputeOptionChange={handleComputeOptionChange}
         />
       }
-      triggerLabel={t.ui("computeFilters.title")}
+      triggerLabel={t.ui("filters.title")}
     >
       {/* Content Area - Scrollable */}
       <div

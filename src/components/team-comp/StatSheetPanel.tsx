@@ -13,8 +13,8 @@ import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
 import { fmtPercent, fmtStat } from "./displayFormatters";
 
-import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { ArtifactData } from "@/data/types";
+import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import type { OptFailReason } from "@/lib/team-comp/optimizer";
 import {
   AlertTriangle,

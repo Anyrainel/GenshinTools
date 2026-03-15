@@ -102,7 +102,7 @@ function ActionRecommendationCardComponent({
         )
       : rec.actionType === "upgrade" &&
           rec.optimalArtifact.sourceArtifactId === rec.currentArtifact?.id
-        ? t.ui("accountData.insights.equipped")
+        ? t.ui("accountData.equipped")
         : (rec.actionType === "swap" || rec.actionType === "equip") &&
             !rec.donorCharacterId
           ? t.ui("accountData.insights.fromInventory")
@@ -170,7 +170,7 @@ function ActionRecommendationCardComponent({
                   : rec.actionType === "farm"
                     ? t.ui("accountData.insights.farm")
                     : rec.actionType === "equip"
-                      ? t.ui("accountData.insights.equip")
+                      ? t.ui("common.equip")
                       : rec.actionType}
           </span>
           <span className="text-xs text-foreground">{t.slot(rec.slot)}</span>

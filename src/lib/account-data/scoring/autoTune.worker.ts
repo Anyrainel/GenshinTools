@@ -1,23 +1,25 @@
 /**
- * Web Worker for autoTuneBuild — keeps the main thread free so the UI
- * spinner can animate while the heavy damage computation runs.
+ * Web Worker for auto-tune — handles a single team's computation
+ * so multiple teams can run in parallel across workers.
  */
-import type { AutoTuneInput, AutoTuneOutput } from "./pipeline";
-import { autoTuneBuild } from "./pipeline";
+import { preloadGameStats } from "@/lib/gameStatsLoader";
+import type { AutoTuneTeamInput, AutoTuneTeamResult } from "./pipeline";
+import { autoTuneTeam } from "./pipeline";
 
 export type AutoTuneWorkerRequest = {
   id: number;
-  input: AutoTuneInput;
+  input: AutoTuneTeamInput;
 };
 
 export type AutoTuneWorkerResponse =
-  | { id: number; result: AutoTuneOutput }
+  | { id: number; result: AutoTuneTeamResult }
   | { id: number; error: string };
 
-self.onmessage = (e: MessageEvent<AutoTuneWorkerRequest>) => {
+self.onmessage = async (e: MessageEvent<AutoTuneWorkerRequest>) => {
   const { id, input } = e.data;
   try {
-    const result = autoTuneBuild(input);
+    await preloadGameStats();
+    const result = autoTuneTeam(input);
     self.postMessage({ id, result } satisfies AutoTuneWorkerResponse);
   } catch (err) {
     self.postMessage({

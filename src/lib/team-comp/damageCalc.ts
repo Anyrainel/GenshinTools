@@ -21,7 +21,7 @@ import {
   createWeapon,
 } from "./damageModels";
 
-import { AVG_SUBSTAT_ROLL } from "@/data/constants";
+import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import type { CombatOpts } from "./damageModels";
 import type {
   BuffSource,

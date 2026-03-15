@@ -15,6 +15,7 @@ export {
   SUBSTAT_COEFFICIENTS,
   MAX_ROLLS_5STAR,
   AVG_ROLL_VALUES,
+  AVG_SUBSTAT_ROLL,
   AVG_ROLL_CD_EQUIV,
   MAIN_STAT_CD_EQUIV_5STAR,
   MAIN_STAT_CD_EQUIV_4STAR,
@@ -25,6 +26,12 @@ export {
   computeIdealScore,
   computeCrDeduction,
   getMainStatValue,
+  getMainStatValueAtLevel,
+  getSubstatRollTiers,
+  getSubstatMaxRoll,
+  getSubstatAvgRoll,
+  toInternal,
+  isFlatStat,
 } from "./utils";
 
 // Auto-tuning (uses real TeamBuild damage calculator)

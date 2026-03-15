@@ -1,4 +1,5 @@
 import type { CharacterStatsMap, WeaponStatsMap } from "@/lib/gameStatsLoader";
+import artifactStatData from "./game/artifact_stat.json";
 import {
   artifactHalfSets,
   artifacts,
@@ -116,125 +117,142 @@ export const statPoolWithWeights = {
   },
 };
 
-// Max substat roll values per rarity (from ArtifactScore.md documentation)
-export const maxSubstatRolls = {
-  5: {
-    hp: 298.75,
-    atk: 19.45,
-    def: 23.15,
-    "hp%": 5.83,
-    "atk%": 5.83,
-    "def%": 7.29,
-    em: 23.31,
-    er: 6.48,
-    cr: 3.89,
-    cd: 7.77,
-  },
-  4: {
-    hp: 239.0,
-    atk: 15.56,
-    def: 18.52,
-    "hp%": 4.66,
-    "atk%": 4.66,
-    "def%": 5.83,
-    em: 18.65,
-    er: 5.18,
-    cr: 3.11,
-    cd: 6.22,
-  },
-} as const;
+// ─── Artifact stat data (derived from official game data) ───
 
-/** Multiplier for average substat roll vs max roll (~0.85). Use for roll count: value / (AVERAGE_ROLL_MULTIPLIER * maxRoll). */
-export const AVERAGE_ROLL_MULTIPLIER = 0.85;
+/** Stats where values are flat numbers (not percentages) */
+const FLAT_STATS: ReadonlySet<string> = new Set(["hp", "atk", "def", "em"]);
 
-/**
- * Average 5★ substat roll values in StatSheet-internal format (pct stats ÷ 100).
- * Derived from maxSubstatRolls[5] × AVERAGE_ROLL_MULTIPLIER.
- * Used for marginal-gain analysis (one roll ≈ this delta).
- */
-const FLAT_SUBSTATS: ReadonlySet<string> = new Set(["hp", "atk", "def", "em"]);
-export const AVG_SUBSTAT_ROLL: Record<SubStat, number> = Object.fromEntries(
-  Object.entries(maxSubstatRolls[5]).map(([stat, maxVal]) => {
-    const avg = maxVal * AVERAGE_ROLL_MULTIPLIER;
-    return [stat, FLAT_SUBSTATS.has(stat) ? avg : avg / 100];
-  })
-) as Record<SubStat, number>;
-
-// ─── Main stat values at max level ───
-
-/**
- * 5★ artifact main stat values at Lv.20.
- * Percentage stats in decimal form (0.466 = 46.6%) to match StatSheet internals.
- */
-export const MAIN_STAT_VALUES_5STAR: Record<string, number> = {
-  hp: 4780,
-  atk: 311,
-  "hp%": 0.466,
-  "atk%": 0.466,
-  "def%": 0.583,
-  em: 186.5,
-  er: 0.518,
-  cr: 0.311,
-  cd: 0.622,
-  "pyro%": 0.466,
-  "hydro%": 0.466,
-  "cryo%": 0.466,
-  "electro%": 0.466,
-  "anemo%": 0.466,
-  "geo%": 0.466,
-  "dendro%": 0.466,
-  "phys%": 0.583,
-  "heal%": 0.359,
-};
-
-/** 4★ artifact main stat values at Lv.16. Percentage stats in decimal form. */
-export const MAIN_STAT_VALUES_4STAR: Record<string, number> = {
-  hp: 3571,
-  atk: 232,
-  "hp%": 0.348,
-  "atk%": 0.348,
-  "def%": 0.435,
-  em: 139.3,
-  er: 0.387,
-  cr: 0.232,
-  cd: 0.464,
-  "pyro%": 0.348,
-  "hydro%": 0.348,
-  "cryo%": 0.348,
-  "electro%": 0.348,
-  "anemo%": 0.348,
-  "geo%": 0.348,
-  "dendro%": 0.348,
-  "phys%": 0.435,
-  "heal%": 0.268,
-};
-
-/**
- * Get the max-level main stat value in display form (46.6 for ATK%, 311 for flat ATK).
- * Use for scoring and display; for StatSheet construction use the decimal tables directly.
- */
-export function getMainStatValue(stat: MainStat, rarity: number): number {
-  const table = rarity === 4 ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
-  const val = table[stat] ?? 0;
-  if (stat === "hp" || stat === "atk" || stat === "em") return val;
-  return val * 100;
+/** Convert JSON decimal to display format. Pct stats ×100, flat stats unchanged. */
+function toDisplay(stat: string, val: number): number {
+  if (FLAT_STATS.has(stat)) return val;
+  return Math.round(val * 1e6) / 1e4;
 }
 
-// ─── Substat scoring constants ───
+/** Whether a stat key is a flat (non-percentage) stat */
+export function isFlatStat(stat: string): boolean {
+  return FLAT_STATS.has(stat);
+}
 
-/** Maps each substat to its CD-equivalent coefficient: 7.77 / maxRollValue */
-export const SUBSTAT_COEFFICIENTS: Record<string, number> = {
-  cd: 1.0,
-  cr: 1.9974,
-  "atk%": 1.3328,
-  "hp%": 1.3328,
-  "def%": 1.0658,
-  em: 0.3333,
-  er: 1.1991,
-  atk: 0.3995,
-  hp: 0.026,
-  def: 0.3356,
+/** Whether a stat key represents a percentage value (needs ÷100 for internal format). */
+export function isPctStat(key: string): boolean {
+  return (
+    key.endsWith("%") ||
+    key === "cr" ||
+    key === "cd" ||
+    key === "er" ||
+    key === "reactionCr" ||
+    key === "reactionCd"
+  );
+}
+
+// Valid stat keys (filter out FIGHT_PROP_FIRE_SUB_HURT etc from JSON)
+const VALID_SUBSTATS = new Set<string>(statPools.substat);
+const VALID_MAIN_STATS = new Set<string>([
+  ...statPools.flower,
+  ...statPools.plume,
+  ...statPools.sands,
+  ...statPools.goblet,
+  ...statPools.circlet,
+]);
+
+function buildSubstatTiers(
+  raw: Record<string, number[]>
+): Record<SubStat, [number, number, number, number]> {
+  return Object.fromEntries(
+    Object.entries(raw)
+      .filter(([k]) => VALID_SUBSTATS.has(k))
+      .map(([stat, tiers]) => [stat, tiers.map((v) => toDisplay(stat, v))])
+  ) as Record<SubStat, [number, number, number, number]>;
+}
+
+function buildMainStatTable(
+  raw: Record<string, number[]>
+): Record<string, number[]> {
+  return Object.fromEntries(
+    Object.entries(raw)
+      .filter(([k]) => VALID_MAIN_STATS.has(k))
+      .map(([stat, levels]) => [stat, levels.map((v) => toDisplay(stat, v))])
+  );
+}
+
+// ─── Substat roll data ───
+
+/** 4 possible roll values per substat, in display format (e.g. CR: [2.72, 3.11, 3.5, 3.89]) */
+export const substatRollTiers = {
+  5: buildSubstatTiers(artifactStatData.subStats.rarity5),
+  4: buildSubstatTiers(artifactStatData.subStats.rarity4),
 };
+
+/** Max substat roll value per stat per rarity (display format: 3.89 for CR) */
+export const maxSubstatRolls = {
+  5: Object.fromEntries(
+    Object.entries(substatRollTiers[5]).map(([k, t]) => [k, t[3]])
+  ) as Record<SubStat, number>,
+  4: Object.fromEntries(
+    Object.entries(substatRollTiers[4]).map(([k, t]) => [k, t[3]])
+  ) as Record<SubStat, number>,
+};
+
+/** Average of 4 roll tiers per stat per rarity (display format: 3.305 for CR) */
+export const avgSubstatRolls = {
+  5: Object.fromEntries(
+    Object.entries(substatRollTiers[5]).map(([k, t]) => [
+      k,
+      (t[0] + t[1] + t[2] + t[3]) / 4,
+    ])
+  ) as Record<SubStat, number>,
+  4: Object.fromEntries(
+    Object.entries(substatRollTiers[4]).map(([k, t]) => [
+      k,
+      (t[0] + t[1] + t[2] + t[3]) / 4,
+    ])
+  ) as Record<SubStat, number>,
+};
+
+// ─── Main stat data ───
+
+/**
+ * Main stat values at every level, display format (46.6 for ATK%, 4780 for HP).
+ * 5★: 21 entries [Lv.0..20], 4★: 17 entries [Lv.0..16].
+ */
+export const mainStatLevelValues = {
+  5: buildMainStatTable(artifactStatData.mainStats.rarity5),
+  4: buildMainStatTable(artifactStatData.mainStats.rarity4),
+};
+
+/** 5★ main stat values at Lv.20, display format (46.6 for ATK%, 4780 for HP) */
+export const MAIN_STAT_VALUES_5STAR: Record<string, number> =
+  Object.fromEntries(
+    Object.entries(mainStatLevelValues[5]).map(([k, levels]) => [
+      k,
+      levels[levels.length - 1],
+    ])
+  );
+
+/** 4★ main stat values at Lv.16, display format */
+export const MAIN_STAT_VALUES_4STAR: Record<string, number> =
+  Object.fromEntries(
+    Object.entries(mainStatLevelValues[4]).map(([k, levels]) => [
+      k,
+      levels[levels.length - 1],
+    ])
+  );
+
+/** Get the max-level main stat value in display format (46.6 for ATK%, 311 for flat ATK) */
+export function getMainStatValue(stat: MainStat, rarity: number): number {
+  const table = rarity === 4 ? MAIN_STAT_VALUES_4STAR : MAIN_STAT_VALUES_5STAR;
+  return table[stat] ?? 0;
+}
+
+// ─── Derived scoring constants ───
+
+/** Maps each substat to its CD-equivalent coefficient: maxRoll(cd) / maxRoll(stat) */
+export const SUBSTAT_COEFFICIENTS: Record<string, number> = Object.fromEntries(
+  Object.entries(maxSubstatRolls[5]).map(([stat, maxRoll]) => [
+    stat,
+    Math.round((maxSubstatRolls[5].cd / maxRoll) * 10000) / 10000,
+  ])
+);
 
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],

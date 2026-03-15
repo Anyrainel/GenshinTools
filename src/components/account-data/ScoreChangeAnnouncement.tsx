@@ -56,7 +56,7 @@ function ScoreChangeDialog({
 
         <ResponsiveDialogFooter className="px-6 pb-6 pt-0">
           <Button onClick={onClose} className="w-full">
-            {t.ui("accountData.scoreChangeAnnouncement.dismiss")}
+            {t.ui("common.gotIt")}
           </Button>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>

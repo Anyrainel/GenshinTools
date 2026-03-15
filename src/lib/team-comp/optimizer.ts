@@ -1,8 +1,7 @@
-import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
+import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
 import {
   type BuildMatchResult,
   getFixedMainStatValue,
@@ -181,28 +180,34 @@ export function matchesSetRequirement(
 
 // ── Helpers ──
 
-/** Extract artifact ER contribution (decimal, e.g. 0.518 for 51.8% ER sands). */
+/** Extract artifact ER contribution (internal, e.g. 0.518 for 51.8% ER sands). */
 function getArtifactEr(art: ArtifactData | null): number {
   if (!art) return 0;
   let er = 0;
   if (art.mainStatKey === "er") {
-    er += getMainStatValueAtLevel("er", art.rarity, art.level) / 100;
+    er += toInternal(
+      "er",
+      getMainStatValueAtLevel("er", art.rarity, art.level)
+    );
   }
   if (art.substats.er) {
-    er += art.substats.er / 100;
+    er += toInternal("er", art.substats.er);
   }
   return er;
 }
 
-/** Extract artifact CR contribution (decimal, e.g. 0.311 for 31.1% CR circlet). */
+/** Extract artifact CR contribution (internal, e.g. 0.311 for 31.1% CR circlet). */
 function getArtifactCr(art: ArtifactData | null): number {
   if (!art) return 0;
   let cr = 0;
   if (art.mainStatKey === "cr") {
-    cr += getMainStatValueAtLevel("cr", art.rarity, art.level) / 100;
+    cr += toInternal(
+      "cr",
+      getMainStatValueAtLevel("cr", art.rarity, art.level)
+    );
   }
   if (art.substats.cr) {
-    cr += art.substats.cr / 100;
+    cr += toInternal("cr", art.substats.cr);
   }
   return cr;
 }
@@ -232,15 +237,15 @@ function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
 
 export const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
   ...AVG_SUBSTAT_ROLL,
-  "pyro%": getFixedMainStatValue("pyro%", 5) / 100,
-  "hydro%": getFixedMainStatValue("hydro%", 5) / 100,
-  "anemo%": getFixedMainStatValue("anemo%", 5) / 100,
-  "electro%": getFixedMainStatValue("electro%", 5) / 100,
-  "dendro%": getFixedMainStatValue("dendro%", 5) / 100,
-  "cryo%": getFixedMainStatValue("cryo%", 5) / 100,
-  "geo%": getFixedMainStatValue("geo%", 5) / 100,
-  "phys%": getFixedMainStatValue("phys%", 5) / 100,
-  "heal%": getFixedMainStatValue("heal%", 5) / 100,
+  "pyro%": toInternal("pyro%", getFixedMainStatValue("pyro%", 5)),
+  "hydro%": toInternal("hydro%", getFixedMainStatValue("hydro%", 5)),
+  "anemo%": toInternal("anemo%", getFixedMainStatValue("anemo%", 5)),
+  "electro%": toInternal("electro%", getFixedMainStatValue("electro%", 5)),
+  "dendro%": toInternal("dendro%", getFixedMainStatValue("dendro%", 5)),
+  "cryo%": toInternal("cryo%", getFixedMainStatValue("cryo%", 5)),
+  "geo%": toInternal("geo%", getFixedMainStatValue("geo%", 5)),
+  "phys%": toInternal("phys%", getFixedMainStatValue("phys%", 5)),
+  "heal%": toInternal("heal%", getFixedMainStatValue("heal%", 5)),
 };
 
 /** Score an artifact by its actual stat contributions weighted by marginal gains. */
@@ -252,12 +257,10 @@ export function scorePieceMarginal(
 
   // Main stat contribution (level-aware)
   if (art.mainStatKey) {
-    let mainVal = getMainStatValueAtLevel(
+    const mainVal = toInternal(
       art.mainStatKey,
-      art.rarity,
-      art.level
+      getMainStatValueAtLevel(art.mainStatKey, art.rarity, art.level)
     );
-    if (isPctStat(art.mainStatKey)) mainVal /= 100;
     const gain = marginalGains[art.mainStatKey as StatKey];
     if (gain) {
       const delta = MARGINAL_GAIN_DELTAS[art.mainStatKey as StatKey];
@@ -268,8 +271,7 @@ export function scorePieceMarginal(
   // Substat contributions
   for (const [subKey, subVal] of Object.entries(art.substats)) {
     if (!subVal) continue;
-    let v = subVal;
-    if (isPctStat(subKey)) v /= 100;
+    const v = toInternal(subKey, subVal);
     const gain = marginalGains[subKey as StatKey];
     if (gain) {
       const delta = MARGINAL_GAIN_DELTAS[subKey as StatKey];

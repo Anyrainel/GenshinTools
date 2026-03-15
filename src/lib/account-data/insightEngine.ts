@@ -8,9 +8,9 @@ import type {
   TierAssignment,
   TierCustomization,
 } from "@/data/types";
-import { LUCK_MULTIPLIERS, allSlots } from "@/data/types";
+import type { LuckExpectation } from "@/data/types";
+import { allSlots } from "@/data/types";
 import {
-  DEFAULT_LUCK_MULTIPLIER,
   MAX_LEVEL_BY_RARITY,
   calculateFarmExpectedScore,
   calculateRerollExpectedScore,
@@ -85,7 +85,7 @@ interface SlotContext {
   maxPotentialScore: number;
   buildMatch: BuildMatchResult;
   globalConfig: GlobalStatWeights;
-  luckMultiplier: number;
+  quality: LuckExpectation;
 }
 
 // ----------------------------------------------------------------------------
@@ -263,11 +263,11 @@ function evaluateUpgrade(
     maxPotentialScore,
     buildMatch,
     globalConfig,
-    luckMultiplier,
+    quality,
   } = ctx;
 
   const currentProjected = equipped
-    ? getProjectedScore(equipped, buildMatch, globalConfig, luckMultiplier)
+    ? getProjectedScore(equipped, buildMatch, globalConfig, quality)
     : 0;
 
   let best: Insight | null = null;
@@ -282,7 +282,7 @@ function evaluateUpgrade(
       cand,
       buildMatch,
       globalConfig,
-      luckMultiplier
+      quality
     );
     if (candProjected <= currentProjected + UPGRADE_THRESHOLD) continue;
 
@@ -337,7 +337,7 @@ function evaluateReroll(ctx: SlotContext): Insight | null {
     maxPotentialScore,
     buildMatch,
     globalConfig,
-    luckMultiplier,
+    quality,
   } = ctx;
   if (!equipped || equipped.rarity !== 5) return null;
 
@@ -356,7 +356,7 @@ function evaluateReroll(ctx: SlotContext): Insight | null {
     equipped,
     buildMatch,
     globalConfig,
-    luckMultiplier
+    quality
   );
   const scoreDiff = expectedScore - currentScore;
   if (scoreDiff <= REROLL_THRESHOLD) return null;
@@ -382,7 +382,7 @@ function evaluateFarm(ctx: SlotContext): Insight | null {
     maxPotentialScore,
     buildMatch,
     globalConfig,
-    luckMultiplier,
+    quality,
   } = ctx;
   if (!equipped) return null;
 
@@ -391,7 +391,7 @@ function evaluateFarm(ctx: SlotContext): Insight | null {
     buildMatch,
     globalConfig,
     equipped.rarity,
-    luckMultiplier
+    quality
   );
   const scoreDiff = farmExpected - currentScore;
   if (scoreDiff <= FARM_THRESHOLD) return null;
@@ -442,7 +442,7 @@ export function generateCharacterInsights(
   scoreResult: ArtifactScoreResult | undefined,
   globalConfig: GlobalStatWeights,
   tierAssignments: TierAssignment,
-  luckMultiplier: number = DEFAULT_LUCK_MULTIPLIER
+  quality: LuckExpectation = "balanced"
 ): CharacterInsights {
   const buildMatch = scoreResult?.buildMatch;
   if (!buildMatch)
@@ -474,7 +474,7 @@ export function generateCharacterInsights(
       maxPotentialScore,
       buildMatch,
       globalConfig,
-      luckMultiplier,
+      quality,
     };
 
     const candidates = filterCandidates(
@@ -535,9 +535,8 @@ export function generateAllInsights(
       return { characterId: char.key, insights: [], totalPotentialGain: 0 };
     }
 
-    const luckExpectation =
+    const luckExpectation: LuckExpectation =
       tierCustomization[tier]?.luckExpectation || "balanced";
-    const luckMultiplier = LUCK_MULTIPLIERS[luckExpectation];
     const scoreResult = scores[char.key];
 
     return generateCharacterInsights(
@@ -546,7 +545,7 @@ export function generateAllInsights(
       scoreResult,
       globalConfig,
       tierAssignments,
-      luckMultiplier
+      luckExpectation
     );
   });
 }

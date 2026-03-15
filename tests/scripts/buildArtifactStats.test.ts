@@ -1,4 +1,5 @@
 import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
+import { toInternal } from "@/lib/account-data/scoring/utils";
 import type { PresetBuildEntry } from "../../scripts/buildArtifactStats";
 import {
   TOTAL_SUB_ROLLS,
@@ -127,8 +128,8 @@ describe("buildArtifactStats", () => {
     // cd has weight 100, hp% has 75, em has 50
     // All should be present as substats add to main stats
     expect(sheet.getRaw("cd")).toBeGreaterThan(0);
-    // hp% should have both main stat + substat contribution
-    expect(sheet.getRaw("hp%")).toBeGreaterThan(MAIN_STAT_VALUES_5STAR["hp%"]!);
+    // hp% should have both main stat + substat contribution (getRaw returns internal, constant is display)
+    expect(sheet.getRaw("hp%")).toBeGreaterThan(toInternal("hp%", MAIN_STAT_VALUES_5STAR["hp%"]!));
     expect(sheet.getRaw("em")).toBeGreaterThan(0);
   });
 
@@ -142,7 +143,7 @@ describe("buildArtifactStats", () => {
       }
     );
 
-    // Sands override to EM adds main stat EM value
+    // Sands override to EM adds main stat EM value (em is flat, no conversion needed)
     expect(sheet.getRaw("em")).toBeGreaterThanOrEqual(MAIN_STAT_VALUES_5STAR.em!);
   });
 

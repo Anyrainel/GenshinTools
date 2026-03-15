@@ -1,9 +1,4 @@
-import { isPctStat } from "@/components/team-comp/displayFormatters";
-import {
-  AVERAGE_ROLL_MULTIPLIER,
-  artifactsById,
-  statPools,
-} from "@/data/constants";
+import { artifactsById, statPools } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 
@@ -345,7 +340,7 @@ export async function* runIdealArtifactGen(
     combo,
     reactionOverrides,
   } = opts;
-  const rollMult = opts.rollMultiplier ?? AVERAGE_ROLL_MULTIPLIER;
+  const rollMult = opts.rollMultiplier;
 
   // Per-character rarity and roll values
   const charRarity: Record<string, 4 | 5> = {};

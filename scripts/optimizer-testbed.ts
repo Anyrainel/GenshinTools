@@ -39,7 +39,6 @@ import type {
 } from "@/lib/team-comp/teamOptimizer";
 import { runTeamOptimization as runV1 } from "@/lib/team-comp/teamOptimizer";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizerV2";
-import { runTeamOptimization as runMona } from "@/lib/team-comp/optimizerMona";
 import type {
   AccountData,
   ArtifactData,
@@ -126,7 +125,7 @@ export interface TeamResult {
 }
 
 interface TestbedOutput {
-  algorithm: "v1" | "v2" | "mona";
+  algorithm: "v1" | "v2";
   timestamp: string;
   accountFile: string;
   totalTeams: number;
@@ -390,7 +389,7 @@ export async function runOptimizerOnTeam(
   team: Team,
   accountData: AccountData,
   inventory: ArtifactData[],
-  algorithm: "v1" | "v2" | "mona",
+  algorithm: "v1" | "v2",
   timeoutMs: number = 120_000,
   perCharDeadlineMs?: number,
   /** If provided, optimize for this specific formula instead of picking the first */
@@ -473,13 +472,11 @@ export async function runOptimizerOnTeam(
       perChar,
       ...((algorithm === "v2") && timeoutMs > 0
         ? { teamDeadlineMs: performance.now() + timeoutMs }
-        : (algorithm === "mona") && perCharDeadlineMs
-          ? { perCharDeadlineMs }
-          : {}),
+        : {}),
       ...(maxArtsPerSlot ? { maxArtsPerSlot } : {}),
     };
 
-    const runFn = algorithm === "v1" ? runV1 : algorithm === "v2" ? runV2 : runMona;
+    const runFn = algorithm === "v1" ? runV1 : runV2;
     const startTime = performance.now();
 
     let finalResult: TeamOptimizationResult | null = null;
@@ -602,7 +599,7 @@ function printTeamProgress(
 
 async function runParallel(
   teams: Team[],
-  algorithm: "v1" | "v2" | "mona",
+  algorithm: "v1" | "v2",
   accountFile: string,
   timeoutSec: number,
   workerCount: number,
@@ -625,7 +622,7 @@ async function runParallel(
       if (nextIdx < teams.length) {
         const idx = nextIdx++;
         const perCharMs =
-          (algorithm === "v2" || algorithm === "mona") ? (timeoutSec * 1000) / 4 : undefined;
+          algorithm === "v2" ? (timeoutSec * 1000) / 4 : undefined;
         child.send({
           type: "run",
           team: teams[idx],
@@ -726,14 +723,13 @@ async function main(): Promise<void> {
   if (!accountFile) {
     console.log(
       "Usage: npx tsx --tsconfig tsconfig.scripts.json scripts/optimizer-testbed.ts <account-export.json>\n" +
-        "Options: --v1-only  --v2-only  --mona-only  --combined  --per-formula  --limit N  --timeout SECS  --parallel N  --filter PATTERN  --max-arts N"
+        "Options: --v1-only  --v2-only  --per-formula  --limit N  --timeout SECS  --parallel N  --filter PATTERN  --max-arts N"
     );
     process.exit(0);
   }
 
   const onlyV1 = args.includes("--v1-only");
   const onlyV2 = args.includes("--v2-only");
-  const onlyMona = args.includes("--mona-only");
   const perFormula = args.includes("--per-formula");
   const limitIdx = args.indexOf("--limit");
   const teamLimit = limitIdx >= 0 ? parseInt(args[limitIdx + 1]) : Infinity;
@@ -747,7 +743,6 @@ async function main(): Promise<void> {
   // Enable diagnostic logging
   if (args.includes("--diag")) {
     (globalThis as any).__TEAM_OPT_DIAG__ = true;
-    (globalThis as any).__MONA_DEBUG__ = true;
   }
 
   console.log("Loading game stats...");
@@ -768,18 +763,13 @@ async function main(): Promise<void> {
   const outputDir = resolve("scripts/output");
   mkdirSync(outputDir, { recursive: true });
 
-  const onlyCombined = args.includes("--combined");
-  const algorithms: ("v1" | "v2" | "mona" | "combined")[] = [];
+  const algorithms: ("v1" | "v2")[] = [];
   if (onlyV1) {
     algorithms.push("v1");
   } else if (onlyV2) {
     algorithms.push("v2");
-  } else if (onlyMona) {
-    algorithms.push("mona");
-  } else if (onlyCombined) {
-    algorithms.push("combined");
   } else {
-    algorithms.push("v1", "v2", "mona");
+    algorithms.push("v1", "v2");
   }
 
   const filterIdx = args.indexOf("--filter");
@@ -833,29 +823,12 @@ async function main(): Promise<void> {
         for (const { formulaId, label } of formulas) {
           runIdx++;
           let teamResult: TeamResult;
-          if (algo === "combined") {
-            // Run V1 first (fast), then Mona, keep the best
-            const v1Result = await runOptimizerOnTeam(
-              team, accountData, inventory, "v1",
-              perTeamTimeoutSec * 1000, undefined, formulaId
-            );
-            const monaPerChar = (perTeamTimeoutSec * 1000) / 4;
-            const monaResult = await runOptimizerOnTeam(
-              team, accountData, inventory, "mona",
-              perTeamTimeoutSec * 1000, monaPerChar, formulaId
-            );
-            const v1Dmg = v1Result.error ? 0 : v1Result.optimizedDamage;
-            const monaDmg = monaResult.error ? 0 : monaResult.optimizedDamage;
-            teamResult = v1Dmg >= monaDmg ? v1Result : monaResult;
-            teamResult.optimizeTimeSec = v1Result.optimizeTimeSec + monaResult.optimizeTimeSec;
-          } else {
-            const perCharMs =
-              (algo === "v2" || algo === "mona") ? (perTeamTimeoutSec * 1000) / 4 : undefined;
-            teamResult = await runOptimizerOnTeam(
-              team, accountData, inventory, algo,
-              perTeamTimeoutSec * 1000, perCharMs, formulaId, maxArtsPerSlot
-            );
-          }
+          const perCharMs =
+              algo === "v2" ? (perTeamTimeoutSec * 1000) / 4 : undefined;
+          teamResult = await runOptimizerOnTeam(
+            team, accountData, inventory, algo,
+            perTeamTimeoutSec * 1000, perCharMs, formulaId, maxArtsPerSlot
+          );
           // Tag teamId with formula to keep entries unique
           teamResult.teamId = `${team.id}::${formulaId}`;
           teamResult.teamName = `${team.name || team.characters.filter(Boolean).join("/")} [${label}]`;
@@ -882,9 +855,8 @@ async function main(): Promise<void> {
       for (let i = 0; i < teamsToRun.length; i++) {
         const team = teamsToRun[i];
 
-        // For V2/Mona, set per-character deadline to 1/4 of total timeout (4 chars)
         const perCharMs =
-          (algo === "v2" || algo === "mona") ? (perTeamTimeoutSec * 1000) / 4 : undefined;
+          algo === "v2" ? (perTeamTimeoutSec * 1000) / 4 : undefined;
         const teamResult = await runOptimizerOnTeam(
           team,
           accountData,

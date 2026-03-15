@@ -162,7 +162,7 @@ export function TierCustomizationDialog({
           <Button variant="secondary" onClick={handleCancel}>
             {t.ui("common.cancel")}
           </Button>
-          <Button onClick={handleSave}>{t.ui("customizeDialog.save")}</Button>
+          <Button onClick={handleSave}>{t.ui("common.save")}</Button>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>
     </ResponsiveDialog>

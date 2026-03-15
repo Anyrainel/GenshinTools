@@ -1,4 +1,3 @@
-import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { charactersById } from "@/data/constants";
 import type {
   ArtifactData,
@@ -8,7 +7,10 @@ import type {
   Region,
   WeaponType,
 } from "@/data/types";
-import { getMainStatValueAtLevel } from "@/lib/account-data/artifactScore";
+import {
+  getMainStatValueAtLevel,
+  toInternal,
+} from "@/lib/account-data/scoring/utils";
 import {
   getCharacterStatsSync,
   resolveCharacterStats,
@@ -224,21 +226,20 @@ export class StatSheet {
     for (const art of artifacts) {
       if (!art || !art.mainStatKey) continue;
 
-      let mainStatVal = getMainStatValueAtLevel(
+      const mainStatVal = toInternal(
         art.mainStatKey,
-        art.rarity,
-        art.level
+        getMainStatValueAtLevel(art.mainStatKey, art.rarity, art.level)
       );
-      if (isPctStat(art.mainStatKey)) mainStatVal /= 100;
 
       entries.push({ key: art.mainStatKey as StatKey, value: mainStatVal });
 
       if (art.substats) {
         for (const [subKey, subVal] of Object.entries(art.substats)) {
           if (subVal) {
-            let v = subVal;
-            if (isPctStat(subKey)) v /= 100;
-            entries.push({ key: subKey as StatKey, value: v });
+            entries.push({
+              key: subKey as StatKey,
+              value: toInternal(subKey, subVal),
+            });
           }
         }
       }

@@ -8,7 +8,10 @@
 
 import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { AVG_SUBSTAT_ROLL } from "@/data/constants";
+import {
+  AVG_SUBSTAT_ROLL,
+  toInternal,
+} from "@/lib/account-data/scoring/utils";
 import type { StatKey } from "@/lib/team-comp/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -106,19 +109,19 @@ export function buildArtifactStats(
 
   const combined: Partial<Record<StatKey, number>> = {};
 
-  // Fixed main stats: Flower (hp) + Plume (atk)
-  combined.hp = 4780;
-  combined.atk = 311;
+  // Fixed main stats: Flower (hp) + Plume (atk) — already internal format
+  combined.hp = MAIN_STAT_VALUES_5STAR.hp;
+  combined.atk = MAIN_STAT_VALUES_5STAR.atk;
 
-  // Variable main stats: Sands / Goblet / Circlet
+  // Variable main stats: convert display → internal for StatSheet
   for (const key of [sands, goblet, circlet]) {
     const val = MAIN_STAT_VALUES_5STAR[key];
     if (val !== undefined) {
-      combined[key] = (combined[key] ?? 0) + val;
+      combined[key] = (combined[key] ?? 0) + toInternal(key, val);
     }
   }
 
-  // Substats: proportional roll distribution
+  // Substats: proportional roll distribution (AVG_SUBSTAT_ROLL is already internal)
   const validSubs = substatConfig.filter(
     ({ stat }) => (AVG_SUBSTAT_ROLL as Record<string, number>)[stat] !== undefined
   );

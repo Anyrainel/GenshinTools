@@ -153,19 +153,19 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
               },
               {
                 key: "upgrade" as const,
-                label: "accountData.recTabs.upgrade",
+                label: "accountData.insights.upgrade",
                 icon: ArrowBigUpDash,
                 color: "text-emerald-400",
               },
               {
                 key: "farm" as const,
-                label: "accountData.recTabs.farm",
+                label: "accountData.insights.farm",
                 icon: Pickaxe,
                 color: "text-indigo-400",
               },
               {
                 key: "reroll" as const,
-                label: "accountData.recTabs.reroll",
+                label: "accountData.insights.reroll",
                 icon: Dices,
                 color: "text-violet-400",
               },

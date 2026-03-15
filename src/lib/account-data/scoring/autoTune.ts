@@ -10,7 +10,6 @@
  * 4. Normalize weights to 0-100 scale
  */
 
-import { AVG_SUBSTAT_ROLL } from "@/data/constants";
 import type { MainStat, Slot, SubStat } from "@/data/types";
 import {
   buildSheetFromMainAndSubs,
@@ -29,6 +28,7 @@ import type {
 import type { AutoTuneResult } from "./utils";
 import {
   AVG_ROLL_CD_EQUIV,
+  AVG_SUBSTAT_ROLL,
   IDEAL_ROLL_DISTRIBUTION,
   SUBSTAT_BUDGET_ROLLS,
 } from "./utils";

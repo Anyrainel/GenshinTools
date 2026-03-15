@@ -372,7 +372,7 @@ export function ArtifactSwapDialog({
         <div className="grid grid-cols-2 gap-3 mb-2">
           <div className="flex flex-col items-center">
             <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
-              {t.ui("teamComp.swapCurrent")}
+              {t.ui("teamComp.tabCurrentEquipped")}
             </div>
             <ArtifactDataContent
               artifact={currentArtifact}

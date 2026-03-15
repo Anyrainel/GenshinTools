@@ -12,7 +12,11 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AccountData, Build, Element } from "@/data/types";
 import type { AutoTuneWorkerResponse } from "@/lib/account-data/scoring/autoTune.worker";
-import type { AutoTuneOutput } from "@/lib/account-data/scoring/pipeline";
+import type {
+  AutoTuneOutput,
+  AutoTuneTeamResult,
+} from "@/lib/account-data/scoring/pipeline";
+import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
@@ -308,45 +312,75 @@ export function AutoTuneDialog({
   const handleCalculate = useCallback(() => {
     dispatch({ type: "startCompute" });
 
-    const teamSetups = enabledTeams.map((team) =>
-      buildTeamConfigs(team, accountData)
-    );
-    const teamLabels = enabledTeams.map(
-      (team) => team.name || buildTeamLabel(team, t)
-    );
-    const teamOpts = enabledTeams.map(
-      (team) => (team.opts ?? {}) as Record<string, unknown>
-    );
+    const formulas = activeFormulas.length > 0 ? activeFormulas : undefined;
 
-    // Run computation in a Web Worker so the spinner keeps animating
-    const worker = new Worker(
-      new URL("@/lib/account-data/scoring/autoTune.worker.ts", import.meta.url),
-      { type: "module" }
-    );
-    worker.onmessage = (e: MessageEvent<AutoTuneWorkerResponse>) => {
-      const resp = e.data;
-      if ("error" in resp) {
-        dispatch({ type: "computeError", error: resp.error });
-      } else {
-        dispatch({ type: "computeSuccess", result: resp.result });
-      }
-      worker.terminate();
-    };
-    worker.onerror = (e) => {
-      dispatch({ type: "computeError", error: e.message || "Worker error" });
-      worker.terminate();
-    };
-    worker.postMessage({
-      id: 1,
-      input: {
-        characterId,
-        teamSetups,
-        teamOpts,
-        formulas: activeFormulas.length > 0 ? activeFormulas : undefined,
-        teamLabels,
-        element,
-      },
-    });
+    // Spawn one worker per team for parallel computation
+    const teamInputs = enabledTeams.map((team, i) => ({
+      characterId,
+      configs: buildTeamConfigs(team, accountData),
+      opts: (team.opts ?? {}) as Record<string, string>,
+      formulas,
+      label: team.name || buildTeamLabel(team, t),
+      teamIndex: i,
+      element,
+    }));
+
+    const results: (AutoTuneTeamResult | null)[] = new Array(
+      teamInputs.length
+    ).fill(null);
+    let completed = 0;
+    let failed = false;
+
+    for (let i = 0; i < teamInputs.length; i++) {
+      const worker = new Worker(
+        new URL(
+          "@/lib/account-data/scoring/autoTune.worker.ts",
+          import.meta.url
+        ),
+        { type: "module" }
+      );
+      worker.onmessage = (e: MessageEvent<AutoTuneWorkerResponse>) => {
+        worker.terminate();
+        if (failed) return;
+        const resp = e.data;
+        if ("error" in resp) {
+          failed = true;
+          dispatch({ type: "computeError", error: resp.error });
+          return;
+        }
+        results[i] = resp.result;
+        completed++;
+        if (completed === teamInputs.length) {
+          try {
+            const validResults = results.filter(
+              (r): r is AutoTuneTeamResult => r !== null
+            );
+            const output = aggregateTeamResults(
+              validResults,
+              characterId,
+              element
+            );
+            dispatch({ type: "computeSuccess", result: output });
+          } catch (err) {
+            dispatch({
+              type: "computeError",
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+        }
+      };
+      worker.onerror = (e) => {
+        worker.terminate();
+        if (!failed) {
+          failed = true;
+          dispatch({
+            type: "computeError",
+            error: e.message || "Worker error",
+          });
+        }
+      };
+      worker.postMessage({ id: i, input: teamInputs[i] });
+    }
   }, [enabledTeams, accountData, characterId, element, activeFormulas, t]);
 
   const handleApply = useCallback(() => {

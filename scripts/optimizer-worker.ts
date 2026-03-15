@@ -20,7 +20,7 @@ import type { Team } from "./optimizer-testbed.js";
 interface RunMessage {
   type: "run";
   team: Team;
-  algorithm: "v1" | "v2" | "mona";
+  algorithm: "v1" | "v2";
   timeoutMs: number;
   perCharMs?: number;
   teamIdx: number;

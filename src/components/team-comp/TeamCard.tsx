@@ -453,7 +453,7 @@ export function TeamCard({
             onClick={onUnfreeze}
           >
             <Flame className="w-4 h-4" />
-            <span>{t.ui("teamComp.unfreezeTeam")}</span>
+            <span>{t.ui("teamComp.unfreezeAll")}</span>
           </Button>
         )}
         <Button

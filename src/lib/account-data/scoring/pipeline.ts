@@ -548,6 +548,260 @@ export type AutoTuneOutput = {
 };
 
 /**
+ * Input for a single-team auto-tune worker task.
+ * Contains everything needed to compute one team's results independently.
+ */
+export type AutoTuneTeamInput = {
+  characterId: string;
+  configs: CharCompConfig[];
+  opts: Record<string, string>;
+  formulas?: WeightedFormula[];
+  label: string;
+  teamIndex: number;
+  element: string;
+};
+
+/**
+ * Result from a single-team auto-tune computation.
+ * Multiple of these are aggregated into the final AutoTuneOutput.
+ */
+export type AutoTuneTeamResult = {
+  qualifying: ComboResult[];
+  teamBreakdown: TeamBreakdown;
+};
+
+/**
+ * Compute auto-tune results for a single team context.
+ * This is the parallelizable unit of work — each team is independent.
+ */
+export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
+  const { characterId, configs, opts, element, label, teamIndex } = input;
+
+  const gobletCandidates = getGobletPool(element as Element);
+  const teamBuild = new TeamBuild(configs, opts);
+
+  let formulas: WeightedFormula[];
+  if (input.formulas && input.formulas.length > 0) {
+    formulas = input.formulas;
+  } else {
+    formulas = toWeightedFormulas(findAllFormulaIds(teamBuild, characterId));
+  }
+  if (formulas.length === 0) {
+    throw new Error(`No formulas found for ${characterId} in team "${label}"`);
+  }
+
+  // Phase 1: Quick baseline eval for all combos
+  const combos: {
+    s: MainStat;
+    g: MainStat;
+    c: MainStat;
+    baselineDmg: number;
+  }[] = [];
+
+  for (const s of SANDS_CANDIDATES) {
+    for (const g of gobletCandidates) {
+      for (const c of CIRCLET_CANDIDATES) {
+        const sheet = buildBaselineSheet(s, g, c);
+        const artifactStats = buildTeamArtifactStats(
+          configs,
+          characterId,
+          sheet
+        );
+        const dmg = evalBaselineDamage(
+          teamBuild,
+          characterId,
+          formulas,
+          artifactStats,
+          DEFAULT_CALC_CTX
+        );
+        combos.push({ s, g, c, baselineDmg: dmg });
+      }
+    }
+  }
+
+  // Pre-filter: keep combos with baseline ≥ 50% of best baseline
+  const baselineBest = Math.max(...combos.map((c) => c.baselineDmg));
+  const viable = combos.filter(
+    (c) => c.baselineDmg >= baselineBest * BASELINE_PREFILTER
+  );
+
+  // Phase 2: Full greedy allocation for viable combos
+  const teamResults: {
+    combo: (typeof viable)[0];
+    tuneResult: AutoTuneResult;
+  }[] = [];
+
+  for (const combo of viable) {
+    const mainStats: Record<Slot, MainStat> = {
+      flower: "hp",
+      plume: "atk",
+      sands: combo.s,
+      goblet: combo.g,
+      circlet: combo.c,
+    };
+    const dummySheet = buildBaselineSheet(combo.s, combo.g, combo.c);
+    const artifactStats = buildTeamArtifactStats(
+      configs,
+      characterId,
+      dummySheet
+    );
+    const tuneResult = autoTuneWeights(
+      teamBuild,
+      characterId,
+      formulas,
+      mainStats,
+      artifactStats,
+      DEFAULT_CALC_CTX
+    );
+    teamResults.push({ combo, tuneResult });
+  }
+
+  // Phase 3: Filter to ≥95% of best post-greedy damage
+  const bestFinalDmg = Math.max(
+    ...teamResults.map((r) => r.tuneResult.finalDamage)
+  );
+
+  const comboBreakdowns: ComboBreakdown[] = [];
+  const qualifying: ComboResult[] = [];
+
+  for (const { combo, tuneResult } of teamResults) {
+    const normalizedDamage =
+      bestFinalDmg > 0 ? tuneResult.finalDamage / bestFinalDmg : 0;
+    comboBreakdowns.push({
+      mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
+      rollAllocation: { ...tuneResult.rollAllocation },
+      damage: tuneResult.finalDamage,
+      damageRatio: normalizedDamage,
+    });
+    if (normalizedDamage >= QUALIFYING_THRESHOLD) {
+      qualifying.push({
+        sands: combo.s,
+        goblet: combo.g,
+        circlet: combo.c,
+        tuneResult,
+        normalizedDamage,
+      });
+    }
+  }
+
+  comboBreakdowns.sort((a, b) => b.damage - a.damage);
+
+  return {
+    qualifying,
+    teamBreakdown: {
+      teamIndex,
+      label,
+      combos: comboBreakdowns,
+      bestDamage: bestFinalDmg,
+    },
+  };
+}
+
+/**
+ * Aggregate results from multiple single-team auto-tune computations
+ * into the final AutoTuneOutput.
+ */
+export function aggregateTeamResults(
+  teamResults: AutoTuneTeamResult[],
+  characterId: string,
+  element: string
+): AutoTuneOutput {
+  const gobletCandidates = getGobletPool(element as Element);
+  const allQualifying: ComboResult[] = [];
+  const teamBreakdowns: TeamBreakdown[] = [];
+
+  for (const result of teamResults) {
+    allQualifying.push(...result.qualifying);
+    teamBreakdowns.push(result.teamBreakdown);
+  }
+
+  if (allQualifying.length === 0) {
+    throw new Error(
+      `All team contexts failed for ${characterId}. Check that character/weapon/artifact implementations exist.`
+    );
+  }
+
+  const avgWeights = averageWeights(allQualifying.map((q) => q.tuneResult));
+
+  const sortedQualifying = [...allQualifying].sort((a, b) => {
+    const dmgDiff = b.tuneResult.finalDamage - a.tuneResult.finalDamage;
+    if (Math.abs(dmgDiff) > 1e-6) return dmgDiff;
+    const aCrCdDiff = Math.abs(
+      (a.tuneResult.rollAllocation.cr || 0) -
+        (a.tuneResult.rollAllocation.cd || 0)
+    );
+    const bCrCdDiff = Math.abs(
+      (b.tuneResult.rollAllocation.cr || 0) -
+        (b.tuneResult.rollAllocation.cd || 0)
+    );
+    return aCrCdDiff - bCrCdDiff;
+  });
+  const bestCombo = sortedQualifying[0];
+  const idealRolls = {} as Record<SubStat, number>;
+  for (const stat of TUNABLE_SUBSTATS) {
+    idealRolls[stat] =
+      Math.round((bestCombo.tuneResult.rollAllocation[stat] || 0) * 10) / 10;
+  }
+
+  const sandsWeights = computeMainStatWeightsFromDamage(
+    "sands",
+    SANDS_CANDIDATES,
+    allQualifying
+  );
+  const gobletWeights = computeMainStatWeightsFromDamage(
+    "goblet",
+    gobletCandidates,
+    allQualifying
+  );
+  const circletWeights = computeMainStatWeightsFromDamage(
+    "circlet",
+    CIRCLET_CANDIDATES,
+    allQualifying
+  );
+
+  const bestSandsWeight = sandsWeights[0]?.weight ?? 100;
+  const bestGobletWeight = gobletWeights[0]?.weight ?? 100;
+  const bestCircletWeight = circletWeights[0]?.weight ?? 100;
+
+  const { normalizer } = computeIdealScore(
+    avgWeights,
+    bestSandsWeight,
+    bestGobletWeight,
+    bestCircletWeight
+  );
+
+  // Normalize weights
+  const weights = { ...avgWeights };
+  const maxNonCr = Math.max(
+    ...Object.entries(weights)
+      .filter(([stat]) => stat !== "cr")
+      .map(([, w]) => w)
+  );
+  if (maxNonCr > 0 && maxNonCr !== 100) {
+    const scale = 100 / maxNonCr;
+    for (const stat of Object.keys(weights) as SubStat[]) {
+      weights[stat] = Math.round(weights[stat] * scale);
+    }
+  }
+  if (weights.cr > 100) weights.cr = 100;
+
+  const substats = Object.entries(weights)
+    .filter(([, weight]) => weight > 20)
+    .map(([stat, weight]) => ({ stat: stat as SubStat, weight }))
+    .sort((a, b) => b.weight - a.weight);
+
+  return {
+    substats,
+    sandsWeights,
+    gobletWeights,
+    circletWeights,
+    normalizer,
+    idealRolls,
+    teamBreakdowns,
+  };
+}
+
+/**
  * Compute auto-tuned weights for a single build given explicit inputs.
  *
  * Unlike `generateBuildWeights` which reads from the preset database,

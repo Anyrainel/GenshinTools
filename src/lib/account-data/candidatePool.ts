@@ -1,10 +1,11 @@
 /**
  * Builds per-slot candidate lists of synthetic ArtifactData objects tagged with their source.
  */
-import { maxSubstatRolls, statPools } from "@/data/constants";
+import { statPools } from "@/data/constants";
 import type {
   ArtifactData,
   GlobalStatWeights,
+  LuckExpectation,
   MainStat,
   Rarity,
   Slot,
@@ -62,7 +63,7 @@ export type CandidateArtifact = ArtifactData & {
 function projectArtifactSubstats(
   artifact: ArtifactData,
   buildMatch: BuildMatchResult,
-  luckMultiplier: number
+  quality: LuckExpectation
 ): Partial<Record<SubStat, number>> {
   const maxLevel = MAX_LEVEL_BY_RARITY[artifact.rarity] ?? 20;
   const result: Partial<Record<SubStat, number>> = { ...artifact.substats };
@@ -105,7 +106,7 @@ function projectArtifactSubstats(
       const val = getExpectedRollValue(
         unactivated.stat,
         artifact.rarity,
-        luckMultiplier
+        quality
       );
       result[unactivated.stat] = (result[unactivated.stat] ?? 0) + val;
     }
@@ -119,7 +120,7 @@ function projectArtifactSubstats(
 
     for (let i = 0; i < 4; i++) {
       const stat = weightedStats[i].stat;
-      const val = getExpectedRollValue(stat, artifact.rarity, luckMultiplier);
+      const val = getExpectedRollValue(stat, artifact.rarity, quality);
       result[stat] = (result[stat] ?? 0) + rollCounts[i] * val;
     }
   }
@@ -134,7 +135,7 @@ function projectArtifactSubstats(
 function rerollArtifactSubstats(
   artifact: ArtifactData,
   buildMatch: BuildMatchResult,
-  luckMultiplier: number
+  quality: LuckExpectation
 ): Partial<Record<SubStat, number>> {
   const allSubs = getAllSubstats(artifact);
   if (allSubs.length < 4) return { ...artifact.substats };
@@ -149,7 +150,7 @@ function rerollArtifactSubstats(
 
   const getInitialValue = (stat: SubStat): number =>
     artifact.initialValues?.[stat] ??
-    getExpectedRollValue(stat, rarity, luckMultiplier);
+    getExpectedRollValue(stat, rarity, quality);
 
   const totalRolls = artifact.totalRolls ?? 8;
   const result: Partial<Record<SubStat, number>> = {};
@@ -157,21 +158,19 @@ function rerollArtifactSubstats(
   if (totalRolls === 8) {
     for (const { stat } of weightedStats.slice(0, 4)) {
       result[stat] =
-        getInitialValue(stat) +
-        getExpectedRollValue(stat, rarity, luckMultiplier);
+        getInitialValue(stat) + getExpectedRollValue(stat, rarity, quality);
     }
   } else {
     for (let i = 0; i < 2; i++) {
       const { stat } = weightedStats[i];
       result[stat] =
         getInitialValue(stat) +
-        1.5 * getExpectedRollValue(stat, rarity, luckMultiplier);
+        1.5 * getExpectedRollValue(stat, rarity, quality);
     }
     for (let i = 2; i < 4; i++) {
       const { stat } = weightedStats[i];
       result[stat] =
-        getInitialValue(stat) +
-        getExpectedRollValue(stat, rarity, luckMultiplier);
+        getInitialValue(stat) + getExpectedRollValue(stat, rarity, quality);
     }
   }
 
@@ -189,7 +188,7 @@ function farmArtifactSubstats(
   mainStat: MainStat,
   buildMatch: BuildMatchResult,
   rarity: Rarity,
-  luckMultiplier: number
+  quality: LuckExpectation
 ): Partial<Record<SubStat, number>> {
   const pool = statPools.substat.filter((s) => s !== mainStat) as SubStat[];
   const weightedStats = pool
@@ -211,7 +210,7 @@ function farmArtifactSubstats(
 
   for (let i = 0; i < 4; i++) {
     const stat = weightedStats[i].stat;
-    const val = getExpectedRollValue(stat, rarity, luckMultiplier);
+    const val = getExpectedRollValue(stat, rarity, quality);
     result[stat] = rollDistribution[i] * val;
   }
 
@@ -228,7 +227,7 @@ export function buildCandidatePool(
   buildMatch: BuildMatchResult,
   allArtifacts: (ArtifactData & { location?: string })[],
   tierAssignments: TierAssignment,
-  luckMultiplier: number,
+  quality: LuckExpectation,
   charTier: Tier = "Pool"
 ): Record<Slot, CandidateArtifact[]> {
   const result = {} as Record<Slot, CandidateArtifact[]>;
@@ -244,11 +243,7 @@ export function buildCandidatePool(
 
     // 1. Current artifact → projected to max level
     if (equipped) {
-      const projected = projectArtifactSubstats(
-        equipped,
-        buildMatch,
-        luckMultiplier
-      );
+      const projected = projectArtifactSubstats(equipped, buildMatch, quality);
       candidates.push({
         ...equipped,
         substats: projected,
@@ -283,11 +278,7 @@ export function buildCandidatePool(
         });
       } else {
         // Upgrade candidate (project to max)
-        const projected = projectArtifactSubstats(
-          art,
-          buildMatch,
-          luckMultiplier
-        );
+        const projected = projectArtifactSubstats(art, buildMatch, quality);
         candidates.push({
           ...art,
           substats: projected,
@@ -316,7 +307,7 @@ export function buildCandidatePool(
             const rerolled = rerollArtifactSubstats(
               equipped,
               buildMatch,
-              luckMultiplier
+              quality
             );
             candidates.push({
               ...equipped,
@@ -340,7 +331,7 @@ export function buildCandidatePool(
           mainStat,
           buildMatch,
           rarity,
-          luckMultiplier
+          quality
         );
         candidates.push({
           id: `synth-farm-${char.key}-${slot}-${setKey}-${mainStat}`,

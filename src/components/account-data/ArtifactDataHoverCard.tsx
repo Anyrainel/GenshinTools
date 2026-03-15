@@ -13,26 +13,24 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  AVERAGE_ROLL_MULTIPLIER,
-  artifactsById,
-  maxSubstatRolls,
-} from "@/data/constants";
+import { artifactsById } from "@/data/constants";
 import type { ArtifactData, Rarity, Slot, SubStat } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { getMainStatValueAtLevel } from "@/lib/account-data/artifactScore";
+import {
+  getMainStatValueAtLevel,
+  getSubstatAvgRoll,
+} from "@/lib/account-data/scoring/utils";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 // -----------------------------------------------------------------------------
-// Utility: Calculate roll count for a substat (average roll = 0.85 × max roll)
+// Utility: Calculate roll count for a substat
 // -----------------------------------------------------------------------------
 function getRollCount(statKey: SubStat, value: number, rarity: Rarity): number {
-  const maxRolls = maxSubstatRolls[rarity as 4 | 5];
-  const maxValue = maxRolls?.[statKey];
-  if (!maxValue) return 0;
-  const avgRollValue = AVERAGE_ROLL_MULTIPLIER * maxValue;
+  const r = rarity === 4 || rarity === 5 ? rarity : 5;
+  const avgRollValue = getSubstatAvgRoll(statKey, r as 4 | 5);
+  if (!avgRollValue) return 0;
   return value / avgRollValue;
 }
 

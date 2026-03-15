@@ -167,7 +167,7 @@ function ScoreExplanationDialog() {
                 <span className="bg-amber-500/20 text-amber-500 w-5 h-5 rounded-full flex items-center justify-center text-xs border border-amber-500/50">
                   5
                 </span>
-                {t.ui("scoreExplanation.punishment.title")}
+                {t.ui("accountData.punishmentFactor")}
               </h4>
               <p className="text-slate-300 text-xs leading-relaxed">
                 {t.ui("scoreExplanation.punishment.description")}

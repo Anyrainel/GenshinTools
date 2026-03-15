@@ -305,7 +305,13 @@ function ComboRow({
       <td
         className={cn(
           "py-1 text-right font-mono",
-          combo.damageRatio >= 0.99 ? "text-green-500" : "text-foreground"
+          combo.damageRatio >= 0.99
+            ? "text-green-600"
+            : combo.damageRatio >= 0.98
+              ? "text-green-500"
+              : combo.damageRatio >= 0.97
+                ? "text-green-400"
+                : "text-green-300"
         )}
       >
         {(combo.damageRatio * 100).toFixed(1)}%

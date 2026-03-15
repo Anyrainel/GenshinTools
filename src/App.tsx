@@ -9,7 +9,6 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import AccountDataPage from "./pages/AccountData";
 import ArchivePage from "./pages/Archive";
 import ArtifactBuildsPage from "./pages/ArtifactBuilds";
-import ComparePage from "./pages/Compare";
 import Home from "./pages/Home";
 import TeamCompPage from "./pages/TeamComp";
 import TierListPage from "./pages/TierList";
@@ -39,7 +38,6 @@ function App() {
               <Route path="/tier-list" element={<TierListPage />} />
               <Route path="/archive" element={<ArchivePage />} />
               <Route path="/team-comp" element={<TeamCompPage />} />
-              <Route path="/compare" element={<ComparePage />} />
             </Routes>
           </main>
           <Toaster />

@@ -150,7 +150,19 @@ function generate2pc2pcPatterns(): SlotPattern[] {
 
 // ─── Core Optimizer ───
 
-const TOP_K_PER_SLOT = 15;
+/**
+ * Top-K limits per slot role:
+ * - Set-constrained slots are already filtered by set, so candidates are naturally few.
+ *   A higher cap avoids truncating good candidates when a user has many same-set artifacts.
+ * - Flex slots are unfiltered and dominate combinatorial cost, so we cap them tighter.
+ *
+ * Typical combo counts (pre-pruning):
+ *   4pc:     5 patterns × S⁴ × F  (S=set candidates, F=flex cap)
+ *   2pc+2pc: 30 patterns × S1² × S2² × F
+ * With S≈10, F=15: ~150K/pattern → well within budget after branch-and-bound.
+ */
+const TOP_K_SET = 30;
+const TOP_K_FLEX = 15;
 
 export function optimizeBuild(
   config: BuildOptimizerConfig
@@ -236,8 +248,9 @@ export function optimizeBuild(
       }));
       scored.sort((a, b) => b.score - a.score);
 
-      // Take top-K
-      const topK = scored.slice(0, TOP_K_PER_SLOT);
+      // Take top-K: set-constrained slots get a higher cap since they're already filtered
+      const k = setRequirement === "flex" ? TOP_K_FLEX : TOP_K_SET;
+      const topK = scored.slice(0, k);
       slotCandidates.push(topK.map((s) => s.candidate));
       slotScoresCache.push(topK.map((s) => s.score));
     }
@@ -329,5 +342,54 @@ export function optimizeBuild(
     builds: tracker.getResults(),
     currentScore,
     combinationsEvaluated,
+  };
+}
+
+// ─── CR/CD Circlet Exploration ───
+
+/**
+ * Run optimizer twice when the top build uses a CR or CD circlet:
+ * once normally, once forcing the alternative main stat.
+ *
+ * Why: per-slot scoring is additive, so the optimizer can't see that
+ * swapping a CR circlet for CD changes the *relative value* of CR substats
+ * on other slots. A CR head with strong CD subs can score higher than a
+ * CD head per-slot, even when the CD-head build is globally better once
+ * other slots shift their CR/CD substat balance.
+ *
+ * Cost: one extra optimizeBuild call (~same time), only when circlet is CR/CD.
+ */
+export function optimizeBuildWithCrCdExploration(
+  config: BuildOptimizerConfig
+): BuildOptimizerResult {
+  const primary = optimizeBuild(config);
+
+  if (primary.builds.length === 0) return primary;
+
+  const circletMain = primary.builds[0].artifacts.circlet?.mainStatKey;
+  if (circletMain !== "cr" && circletMain !== "cd") return primary;
+
+  // Force the alternative: exclude the chosen main stat from circlet candidates
+  const altCirclet = config.candidates.circlet.filter(
+    (c) => c.mainStatKey !== circletMain
+  );
+  if (altCirclet.length === 0) return primary;
+
+  const altResult = optimizeBuild({
+    ...config,
+    candidates: { ...config.candidates, circlet: altCirclet },
+  });
+
+  // Merge top builds from both runs, deduplicate by finalScore, keep topN
+  const topN = config.topN ?? 3;
+  const merged = [...primary.builds, ...altResult.builds]
+    .sort((a, b) => b.finalScore - a.finalScore)
+    .slice(0, topN);
+
+  return {
+    builds: merged,
+    currentScore: primary.currentScore,
+    combinationsEvaluated:
+      primary.combinationsEvaluated + altResult.combinationsEvaluated,
   };
 }

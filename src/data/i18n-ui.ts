@@ -27,6 +27,9 @@ export const i18nUiData = {
     refinementFormat: { en: "R{0}", zh: "精{0}" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
+    save: { en: "Save", zh: "保存" },
+    equip: { en: "Equip", zh: "装备" },
+    level: { en: "Level", zh: "等级" },
     previous: { en: "Previous", zh: "上一步" },
     next: { en: "Next", zh: "下一步" },
     finish: { en: "Finish", zh: "完成" },
@@ -89,12 +92,11 @@ export const i18nUiData = {
       en: "Failed to load team comp",
       zh: "队伍配队加载失败",
     },
-    presetEmptyTeamComp: { en: "No presets found", zh: "未找到预设" },
+    presetEmpty: { en: "No presets found", zh: "未找到预设" },
     presetEmptyBuilds: {
       en: "No presets found. Add preset JSON files to the presets folder.",
       zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
     },
-    presetEmptyTierList: { en: "No presets found", zh: "未找到预设" },
     fileTitle: { en: "Import File", zh: "导入文件" },
     actionPrompt: {
       en: "Choose how you want to import these builds:",
@@ -328,7 +330,6 @@ export const i18nUiData = {
         en: "Tap a character's score to see the breakdown.",
         zh: "点击角色评分即可查看详细拆分。",
       },
-      dismiss: { en: "Got it", zh: "知道了" },
     },
     scoredUsing: {
       en: "Scored using: {0}",
@@ -341,13 +342,11 @@ export const i18nUiData = {
     },
     insights: {
       title: { en: "Recommended Actions", zh: "推荐操作" },
-      equip: { en: "Equip", zh: "装备" },
       upgrade: { en: "Upgrade", zh: "强化" },
       swap: { en: "Swap", zh: "替换" },
       reroll: { en: "Reroll", zh: "洗词条" },
       farm: { en: "Farm", zh: "刷取" },
       fixMain: { en: "Fix Main", zh: "修正主词条" },
-      equipped: { en: "Equipped", zh: "已装备" },
       fromInventory: { en: "In Inventory", zh: "背包中" },
       fromCharacter: { en: "from {0}", zh: "取自 {0}" },
       rerollCost: {
@@ -370,11 +369,6 @@ export const i18nUiData = {
       goToTierList: { en: "Manage Tiers", zh: "管理层级" },
       showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
       showLess: { en: "Show less", zh: "收起" },
-    },
-    recTabs: {
-      upgrade: { en: "Upgrade", zh: "强化" },
-      reroll: { en: "Reroll", zh: "洗词条" },
-      farm: { en: "Farm", zh: "刷取" },
     },
     recNoRecommendations: {
       en: "No recommendations — all builds are optimal!",
@@ -400,7 +394,6 @@ export const i18nUiData = {
   },
   charEdit: {
     description: { en: "Edit character data", zh: "编辑角色数据" },
-    level: { en: "Level", zh: "等级" },
     constellation: { en: "Constellation", zh: "命座" },
     refinement: { en: "Refinement", zh: "精炼" },
     mainStat: { en: "Main Stat", zh: "主属性" },
@@ -410,9 +403,7 @@ export const i18nUiData = {
     stash: { en: "Stash", zh: "卸下" },
     equipWeapon: { en: "Equip Weapon", zh: "装备武器" },
     emptySlot: { en: "No artifact in this slot", zh: "此位置无圣遗物" },
-    equip: { en: "Equip", zh: "装备" },
     create: { en: "Create", zh: "创建" },
-    save: { en: "Save", zh: "保存" },
     equippedByOthers: { en: "On Other Characters", zh: "其他角色装备中" },
     willSwap: { en: "Will swap", zh: "将交换" },
     createNew: { en: "Create New", zh: "新建" },
@@ -447,7 +438,6 @@ export const i18nUiData = {
       },
     },
     punishment: {
-      title: { en: "Punishment Factor", zh: "惩罚系数" },
       description: {
         en: "Applied only to flat stats (ATK, HP, DEF) to reflect their reduced effectiveness compared to percentage stats. This is usually set between 30% to 40% for Lv.90-100 characters.",
         zh: "仅适用于固定数值属性（小攻击、小生命、小防御），以反映其相对于百分比属性较低的有效性。对于 90-100 级角色，通常设置为 30% 到 40%。",
@@ -655,8 +645,6 @@ export const i18nUiData = {
       zh: "选择一个角色查看详情",
     },
     artifactBuilds: { en: "Artifact Builds", zh: "圣遗物配装" },
-    accountData: { en: "Account Data", zh: "账号数据" },
-
     goToAccountData: {
       en: "Import data in Account Data",
       zh: "前往账号数据页面导入",
@@ -665,17 +653,13 @@ export const i18nUiData = {
       en: "No characters match your search",
       zh: "没有角色匹配搜索",
     },
-    weaponSearchPlaceholder: {
+    searchItemPlaceholder: {
       en: "Search name, effects...",
       zh: "搜索名称、特效...",
     },
     noWeaponResults: {
       en: "No weapons match your search",
       zh: "没有武器匹配搜索",
-    },
-    artifactSearchPlaceholder: {
-      en: "Search name, effects...",
-      zh: "搜索名称、特效...",
     },
     noArtifactResults: {
       en: "No artifacts match your search",
@@ -725,7 +709,6 @@ export const i18nUiData = {
     clearTeamData: { en: "Clear Team Data", zh: "清空队伍数据" },
     setupError: { en: "Setup Error:", zh: "设置错误：" },
     equipAndDamage: { en: "Artifacts & Damage", zh: "圣遗物 & 伤害" },
-    runOptimization: { en: "Optimize", zh: "优化" },
     optimizing: { en: "Optimizing…", zh: "正在优化…" },
     totalExpectedDamage: { en: "Total Expected Damage:", zh: "总伤害期望：" },
     pending: { en: "Pending", zh: "等待计算" },
@@ -768,7 +751,6 @@ export const i18nUiData = {
       en: "Equipped set differs from Team Roster goal",
       zh: "已装备的套装与队伍配置目标不一致",
     },
-    overrideLevel: { en: "Level", zh: "等级" },
     overrideConst: { en: "Const.", zh: "命座" },
     overrideRefine: { en: "Refine", zh: "精炼" },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
@@ -827,12 +809,10 @@ export const i18nUiData = {
       en: "Import data",
       zh: "导入数据",
     },
-    teamOpt: { en: "Team", zh: "全队" },
     passCarryInitial: { en: "Carry (Initial)", zh: "主C (初始)" },
     passCarryRefine: { en: "Carry (Refine)", zh: "主C (精修)" },
     passSupport: { en: "Support", zh: "辅助" },
     passLabel: { en: "Pass {0}/{1}: {2}", zh: "阶段 {0}/{1}: {2}" },
-    generateIdeal: { en: "Generate", zh: "生成" },
     generatingIdeal: { en: "Generating…", zh: "正在生成…" },
     idealEmptyMessage: {
       en: "Press Generate to compute ideal artifact stats.",
@@ -877,9 +857,8 @@ export const i18nUiData = {
     },
     freezeTeam: { en: "Freeze All", zh: "全部冻结" },
     freezeChar: { en: "Freeze", zh: "冻结" },
-    unfreezeTeam: { en: "Thaw All", zh: "全部解冻" },
-    unfreezeChar: { en: "Thaw", zh: "解冻" },
     unfreezeAll: { en: "Thaw All", zh: "全部解冻" },
+    unfreezeChar: { en: "Thaw", zh: "解冻" },
     optimizeRest: { en: "Optimize Rest", zh: "优化其余" },
     partiallyFrozenTooltip: {
       en: "Some characters are frozen — only unfrozen ones will be re-optimized.",
@@ -896,7 +875,6 @@ export const i18nUiData = {
       en: "No artifacts found for this slot",
       zh: "未找到该部位的圣遗物",
     },
-    swapCurrent: { en: "Current", zh: "当前" },
     swapSortBy: { en: "Sort by", zh: "排序" },
     swapSortPlaceholder: { en: "Not set", zh: "未选择" },
     swapRestoreOriginal: { en: "Restore Original", zh: "恢复原始结果" },
@@ -922,13 +900,6 @@ export const i18nUiData = {
       en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
       zh: "组合模式不追踪Buff持续时间和层数，长轴循环的结果可能不准确。",
     },
-    viewing: { en: "Viewing", zh: "查看中" },
-    allFormulas: { en: "All Formulas", zh: "全部公式" },
-    noAccountData: {
-      en: "Please load account data first",
-      zh: "请先加载账号数据",
-    },
-    selectTeam: { en: "Select a team", zh: "选择队伍" },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },
@@ -949,7 +920,6 @@ export const i18nUiData = {
     rarity: { en: "Rarity", zh: "稀有度" },
   },
   computeFilters: {
-    title: { en: "Filters", zh: "过滤" },
     searchSets: { en: "Search Sets", zh: "搜索套装" },
     searchPlaceholder: { en: "Enter set name...", zh: "输入套装名称..." },
     noConfigurations: {
@@ -1226,8 +1196,6 @@ export const i18nUiData = {
     tierName: { en: "Tier Name", zh: "梯度名称" },
     defaultPrefix: { en: "Default: ", zh: "默认: " },
     hideTier: { en: "Hide Tier", zh: "隐藏梯度" },
-
-    save: { en: "Save", zh: "保存" },
   },
 
   tour: {
@@ -1256,7 +1224,6 @@ export const i18nUiData = {
       },
     },
     artifactFilter: {
-      presetsTitle: { en: "Import Presets", zh: "导入预设" },
       presetsContent: {
         en: "Start by importing community presets for quick setup, or create custom builds for each character.",
         zh: "从社区预设快速开始，或为每个角色创建自定义配装。",
@@ -1283,7 +1250,6 @@ export const i18nUiData = {
         en: "Drag characters into tiers to rank them. Higher tiers = higher priority for farming and building.",
         zh: "将角色拖入梯度进行排名。梯度越高 = 培养优先级越高。",
       },
-      customizeTitle: { en: "Customize Tiers", zh: "自定义梯度" },
       customizeContent: {
         en: "Rename tiers, hide unused ones, or add a custom list title for sharing.",
         zh: "重命名梯度、隐藏未使用的梯度，或添加自定义榜单标题以便分享。",
@@ -1300,12 +1266,10 @@ export const i18nUiData = {
         en: "Pick 4 characters, their weapons, and artifact sets. Each column corresponds to one slot.",
         zh: "选择4个角色、他们的武器和圣遗物套装。每一列对应一个位置。",
       },
-      optimizeTitle: { en: "Optimize Damage", zh: "优化伤害" },
       optimizeContent: {
         en: "Once all slots are filled, click Optimize to find the best artifact loadout from your inventory.",
         zh: "当所有位置填满后，点击优化从你的背包中找到最佳圣遗物搭配。",
       },
-      importTitle: { en: "Import Presets", zh: "导入预设" },
       importContent: {
         en: "Load community team presets for a quick start, or import your own saved teams.",
         zh: "加载社区队伍预设快速开始，或导入你保存的队伍。",
@@ -1317,7 +1281,6 @@ export const i18nUiData = {
         en: "Configure characters, weapons, artifact sets, and combat options. Toggle constellation overrides and set conditions for each slot.",
         zh: "配置角色、武器、圣遗物套装和战斗选项。切换命座覆盖并为每个位置设置条件。",
       },
-      formulaTitle: { en: "Formula Selection", zh: "公式选择" },
       formulaContent: {
         en: "Pick a damage formula in Single mode, or switch to Combo mode to build a full rotation with hit counts for each skill.",
         zh: "在单一模式下选择伤害公式，或切换到连招模式以构建包含每个技能命中次数的完整循环。",
@@ -1339,7 +1302,6 @@ export const i18nUiData = {
         en: "View all your imported characters with their equipped artifacts and weapons. Click any character to see detailed stats.",
         zh: "查看所有导入的角色及其装备的圣遗物和武器。点击任意角色查看详细属性。",
       },
-      recommendationsTitle: { en: "Recommendations", zh: "推荐" },
       recommendationsContent: {
         en: "Get personalized recommendations for artifact upgrades, swaps, and farming priorities based on your collection.",
         zh: "根据你的圣遗物收藏，获取个性化的强化、替换和刷取建议。",

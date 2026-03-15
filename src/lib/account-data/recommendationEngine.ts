@@ -13,10 +13,9 @@ import type {
 } from "@/data/types";
 import {
   type InvestmentThresholds,
-  LUCK_MULTIPLIERS,
+  type LuckExpectation,
   allSlots,
 } from "@/data/types";
-import { DEFAULT_LUCK_MULTIPLIER } from "./artifactProjection";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
@@ -31,6 +30,7 @@ import {
   type BuildOptimizerResult,
   type OptimizedBuild,
   optimizeBuild,
+  optimizeBuildWithCrCdExploration,
 } from "./buildOptimizer";
 import { type CandidateArtifact, buildCandidatePool } from "./candidatePool";
 import { type CrBudgetResult, computeCrBudget } from "./crBudget";
@@ -185,8 +185,8 @@ function optimizeWithInvestmentConstraints(
   globalConfig: GlobalStatWeights,
   thresholds: { swap: number; upgrade: number; reroll: number; farm: number }
 ): BuildOptimizerResult {
-  // Pass 1: unconstrained
-  const pass1 = optimizeBuild(baseConfig);
+  // Pass 1: unconstrained (with CR/CD exploration)
+  const pass1 = optimizeBuildWithCrCdExploration(baseConfig);
   if (pass1.builds.length === 0) return pass1;
 
   const topBuild = pass1.builds[0];
@@ -250,7 +250,7 @@ function optimizeWithInvestmentConstraints(
     }
   }
 
-  return optimizeBuild({
+  return optimizeBuildWithCrCdExploration({
     ...baseConfig,
     candidates: constrainedCandidates,
   });
@@ -315,9 +315,8 @@ export function generateAllRecommendations(
       continue;
     }
 
-    const luckExpectation =
+    const luckExpectation: LuckExpectation =
       tierCustomization[tier]?.luckExpectation || "balanced";
-    const luckMultiplier = LUCK_MULTIPLIERS[luckExpectation];
 
     // Phase 1: CR Budget
     let crBudget: CrBudgetResult;
@@ -340,7 +339,7 @@ export function generateAllRecommendations(
       buildMatch,
       allArtifacts,
       tierAssignments,
-      luckMultiplier,
+      luckExpectation,
       tier
     );
 
@@ -379,7 +378,7 @@ export function generateAllRecommendations(
           globalConfig,
           investmentThresholds
         )
-      : optimizeBuild(baseConfig);
+      : optimizeBuildWithCrCdExploration(baseConfig);
 
     // Phase 4: Generate Recommendations
     const charRecs = generateRecommendations(

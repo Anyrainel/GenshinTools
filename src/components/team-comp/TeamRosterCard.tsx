@@ -648,9 +648,9 @@ export function TeamRosterCard({
                         "font-bold text-muted-foreground line-clamp-1 break-all",
                         isMobile ? "text-[10px] px-0.5" : "text-xs px-1"
                       )}
-                      title={t.ui("teamComp.overrideLevel")}
+                      title={t.ui("common.level")}
                     >
-                      {t.ui("teamComp.overrideLevel")}
+                      {t.ui("common.level")}
                     </span>
                     <Select
                       value={String(charLevel)}

@@ -1,18 +1,21 @@
 /**
  * Artifact Scoring: Shared Constants & Utilities
  *
- * Re-exports artifact constants from @/data/constants and provides
- * scoring-specific derived constants and pure functions.
- * No dependency on the damage calculator.
+ * Clean interfaces for artifact stat data, derived from official game data.
+ * All display-format constants come from @/data/constants (derived from artifact_stat.json).
+ * This module provides scoring-specific derived values and format conversion helpers.
  */
 
 import {
-  AVERAGE_ROLL_MULTIPLIER,
   MAIN_STAT_VALUES_4STAR,
   MAIN_STAT_VALUES_5STAR,
   SUBSTAT_COEFFICIENTS,
+  avgSubstatRolls,
   getMainStatValue,
+  isFlatStat,
+  mainStatLevelValues,
   maxSubstatRolls,
+  substatRollTiers,
 } from "@/data/constants";
 import type { MainStat, SubStat } from "@/data/types";
 
@@ -22,32 +25,83 @@ export {
   MAIN_STAT_VALUES_5STAR,
   SUBSTAT_COEFFICIENTS,
   getMainStatValue,
+  isFlatStat,
 };
 
-/** Max roll values per substat (5-star). Alias for maxSubstatRolls[5]. */
-export const MAX_ROLLS_5STAR: Record<SubStat, number> =
-  maxSubstatRolls[5] as Record<SubStat, number>;
+// ─── Substat roll accessors ───
 
-/** One average roll of a stat in display form (value = maxRoll × 0.85) */
-export const AVG_ROLL_VALUES: Record<SubStat, number> = Object.fromEntries(
-  Object.entries(maxSubstatRolls[5]).map(([k, v]) => [
-    k,
-    v * AVERAGE_ROLL_MULTIPLIER,
+/** Max roll values per substat (5-star), display format. Alias for maxSubstatRolls[5]. */
+export const MAX_ROLLS_5STAR: Record<SubStat, number> = maxSubstatRolls[5];
+
+/** Average roll values per substat (5-star), display format. */
+export const AVG_ROLL_VALUES: Record<SubStat, number> = avgSubstatRolls[5];
+
+/**
+ * Average 5★ substat roll values in StatSheet-internal format (pct stats ÷ 100).
+ * Used for marginal-gain analysis where one roll ≈ this delta on a StatSheet.
+ */
+export const AVG_SUBSTAT_ROLL: Record<SubStat, number> = Object.fromEntries(
+  Object.entries(avgSubstatRolls[5]).map(([stat, avg]) => [
+    stat,
+    isFlatStat(stat) ? avg : avg / 100,
   ])
 ) as Record<SubStat, number>;
 
+/** Convert a display-format stat value to StatSheet-internal format (pct stats ÷ 100) */
+export function toInternal(stat: string, displayValue: number): number {
+  return isFlatStat(stat) ? displayValue : displayValue / 100;
+}
+
 /**
- * CD-equivalent of one average roll = 7.77 × 0.85 = 6.6045
- * (Same for all stats by design — the coefficient normalizes them.)
+ * Get the 4 roll tier values for a substat (display format).
+ * Index 0 = lowest tier, index 3 = highest tier.
  */
-export const AVG_ROLL_CD_EQUIV =
-  maxSubstatRolls[5].cd * AVERAGE_ROLL_MULTIPLIER;
+export function getSubstatRollTiers(
+  stat: SubStat,
+  rarity: 4 | 5 = 5
+): readonly [number, number, number, number] {
+  return substatRollTiers[rarity][stat];
+}
 
-/** CD-equivalent of a 5-star main stat at Lv.20 ≈ 62.1 */
-export const MAIN_STAT_CD_EQUIV_5STAR = 62.1;
+/** Get the max substat roll value (display format) */
+export function getSubstatMaxRoll(stat: SubStat, rarity: 4 | 5 = 5): number {
+  return maxSubstatRolls[rarity][stat];
+}
 
-/** CD-equivalent of a 4-star main stat at Lv.16 ≈ 46.4 */
-export const MAIN_STAT_CD_EQUIV_4STAR = 46.4;
+/** Get the average substat roll value (display format) */
+export function getSubstatAvgRoll(stat: SubStat, rarity: 4 | 5 = 5): number {
+  return avgSubstatRolls[rarity][stat];
+}
+
+// ─── Main stat accessors ───
+
+/**
+ * Get the main stat value at a specific level (display format).
+ * Direct table lookup — no interpolation.
+ */
+export function getMainStatValueAtLevel(
+  stat: MainStat,
+  rarity: number,
+  level: number
+): number {
+  const r = rarity === 4 ? 4 : 5;
+  const table = mainStatLevelValues[r][stat];
+  if (!table) return 0;
+  const maxLevel = r === 4 ? 16 : 20;
+  const idx = Math.max(0, Math.min(level, maxLevel));
+  return table[idx] ?? 0;
+}
+
+// ─── Scoring constants ───
+
+/** CD-equivalent of one average roll = avg(cd tiers) in display form */
+export const AVG_ROLL_CD_EQUIV = avgSubstatRolls[5].cd;
+
+/** CD-equivalent of a 5-star main stat at Lv.20 (= CD main stat value) */
+export const MAIN_STAT_CD_EQUIV_5STAR = MAIN_STAT_VALUES_5STAR.cd;
+
+/** CD-equivalent of a 4-star main stat at Lv.16 (= CD main stat value) */
+export const MAIN_STAT_CD_EQUIV_4STAR = MAIN_STAT_VALUES_4STAR.cd;
 
 /** Reference substat budget: 40 average rolls for 5 artifacts */
 export const SUBSTAT_BUDGET_ROLLS = 40;

@@ -144,14 +144,6 @@ export const getNavigationConfig = (
     label: t.ui("app.navTeamComp"),
     href: "/team-comp",
   },
-  ...(import.meta.env.DEV
-    ? [
-        {
-          label: "Compare",
-          href: "/compare",
-        },
-      ]
-    : []),
 ];
 
 export function getTabsForRoute(

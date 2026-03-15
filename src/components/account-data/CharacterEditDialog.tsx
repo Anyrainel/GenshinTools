@@ -302,7 +302,7 @@ export function CharacterEditDialog({
     if (view.kind === "weapon-pick") return t.ui("teamComp.weapon");
     // artifact-pick
     if (view.kind === "artifact-pick") {
-      return `${t.slot(view.slot)} — ${view.mode === "equip" ? t.ui("charEdit.equip") : t.ui("charEdit.createNew")}`;
+      return `${t.slot(view.slot)} — ${view.mode === "equip" ? t.ui("common.equip") : t.ui("charEdit.createNew")}`;
     }
     return "";
   })();
@@ -482,7 +482,7 @@ function OverviewPanel({
 
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <FieldLabel>{t.ui("charEdit.level")}</FieldLabel>
+              <FieldLabel>{t.ui("common.level")}</FieldLabel>
               <NumberInput
                 value={char.level}
                 min={1}
@@ -581,7 +581,7 @@ function OverviewPanel({
 
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-2">
-                <FieldLabel>{t.ui("charEdit.level")}</FieldLabel>
+                <FieldLabel>{t.ui("common.level")}</FieldLabel>
                 <NumberInput
                   value={weapon.level}
                   min={1}
@@ -698,7 +698,7 @@ function OverviewPanel({
           {t.ui("common.cancel")}
         </Button>
         <Button variant="default" onClick={onSave}>
-          {t.ui("charEdit.save")}
+          {t.ui("common.save")}
         </Button>
       </div>
     </div>
@@ -749,7 +749,7 @@ function ArtifactEditor({
             onClick={() => onPick("equip")}
           >
             <Package className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
-            {t.ui("charEdit.equip")}
+            {t.ui("common.equip")}
           </Button>
           <Button
             variant="outline"
@@ -820,7 +820,7 @@ function ArtifactEditor({
           )}
         </div>
         <div className="space-y-1.5 flex-1">
-          <FieldLabel>{t.ui("charEdit.level")}</FieldLabel>
+          <FieldLabel>{t.ui("common.level")}</FieldLabel>
           <NumberInput
             value={art.level}
             min={0}
@@ -845,7 +845,7 @@ function ArtifactEditor({
             disabled={!isLegal}
             className="w-full sm:w-auto"
           >
-            {t.ui("charEdit.save")}
+            {t.ui("common.save")}
           </Button>
         </div>
       )}

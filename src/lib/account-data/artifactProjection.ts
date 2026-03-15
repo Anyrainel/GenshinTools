@@ -1,7 +1,8 @@
-import { maxSubstatRolls, statPools } from "@/data/constants";
+import { statPools } from "@/data/constants";
 import type {
   ArtifactData,
   GlobalStatWeights,
+  LuckExpectation,
   MainStat,
   Rarity,
   SubStat,
@@ -11,6 +12,11 @@ import {
   calculateStatScore,
   scoreSlot,
 } from "./artifactScore";
+import {
+  getSubstatAvgRoll,
+  getSubstatMaxRoll,
+  getSubstatRollTiers,
+} from "./scoring/utils";
 
 export const MAX_LEVEL_BY_RARITY: Record<Rarity, number> = {
   5: 20,
@@ -20,21 +26,24 @@ export const MAX_LEVEL_BY_RARITY: Record<Rarity, number> = {
   1: 4,
 };
 
-export const DEFAULT_LUCK_MULTIPLIER = 0.85;
-
-function getMaxRollValue(stat: SubStat, rarity: Rarity): number {
-  const rarityRolls = maxSubstatRolls[rarity as 4 | 5];
-  if (!rarityRolls)
-    return maxSubstatRolls[5][stat as keyof (typeof maxSubstatRolls)[5]] ?? 0;
-  return rarityRolls[stat as keyof typeof rarityRolls] ?? 0;
-}
-
+/**
+ * Get the expected roll value for a substat based on quality expectation.
+ * - "cautious" → tier 2 (2nd lowest of 4 tiers)
+ * - "balanced" → exact average of all 4 tiers (default)
+ * - "hopeful"  → tier 3 (2nd highest of 4 tiers)
+ */
 export function getExpectedRollValue(
   stat: SubStat,
   rarity: Rarity,
-  luckMultiplier: number = DEFAULT_LUCK_MULTIPLIER
+  quality: LuckExpectation = "balanced"
 ): number {
-  return getMaxRollValue(stat, rarity) * luckMultiplier;
+  const r = rarity === 4 || rarity === 5 ? rarity : 5;
+  if (quality === "balanced") {
+    return getSubstatAvgRoll(stat, r as 4 | 5);
+  }
+  const tiers = getSubstatRollTiers(stat, r as 4 | 5);
+  // cautious = tier index 1, hopeful = tier index 2
+  return tiers[quality === "cautious" ? 1 : 2];
 }
 
 /** Combines activated and unactivated substats into a deduplicated list. */
@@ -54,7 +63,7 @@ export function getProjectedScore(
   artifact: ArtifactData,
   buildMatch: BuildMatchResult,
   globalConfig: GlobalStatWeights,
-  luckMultiplier: number = DEFAULT_LUCK_MULTIPLIER
+  quality: LuckExpectation = "balanced"
 ): number {
   const currentScore = scoreSlot(
     artifact,
@@ -103,7 +112,7 @@ export function getProjectedScore(
       const val = getExpectedRollValue(
         unactivated.stat,
         artifact.rarity,
-        luckMultiplier
+        quality
       );
       expectedGain += calculateStatScore(
         unactivated.stat,
@@ -124,7 +133,7 @@ export function getProjectedScore(
 
     for (let i = 0; i < 4; i++) {
       const stat = weightedStats[i].stat;
-      const val = getExpectedRollValue(stat, artifact.rarity, luckMultiplier);
+      const val = getExpectedRollValue(stat, artifact.rarity, quality);
       expectedGain += calculateStatScore(
         stat,
         rollCounts[i] * val,
@@ -146,7 +155,7 @@ export function calculateFarmExpectedScore(
   buildMatch: BuildMatchResult,
   globalConfig: GlobalStatWeights,
   rarity: Rarity = 5,
-  luckMultiplier: number = DEFAULT_LUCK_MULTIPLIER
+  quality: LuckExpectation = "balanced"
 ): number {
   const pool = statPools.substat.filter((s) => s !== mainStat) as SubStat[];
   const weightedStats = pool
@@ -166,7 +175,7 @@ export function calculateFarmExpectedScore(
   // Bottom 2: 1 initial + 1 upgrade = 2 total rolls
   const rollDistribution = [2.5, 2.5, 2, 2];
   return weightedStats.reduce((sum, { stat }, i) => {
-    const val = getExpectedRollValue(stat, rarity, luckMultiplier);
+    const val = getExpectedRollValue(stat, rarity, quality);
     return (
       sum +
       calculateStatScore(
@@ -187,7 +196,7 @@ export function calculateRerollExpectedScore(
   artifact: ArtifactData,
   buildMatch: BuildMatchResult,
   globalConfig: GlobalStatWeights,
-  luckMultiplier: number = DEFAULT_LUCK_MULTIPLIER
+  quality: LuckExpectation = "balanced"
 ): number {
   const allSubstats = getAllSubstats(artifact);
   if (allSubstats.length < 4) return 0;
@@ -202,7 +211,7 @@ export function calculateRerollExpectedScore(
 
   const getInitialValue = (stat: SubStat): number =>
     artifact.initialValues?.[stat] ??
-    getExpectedRollValue(stat, rarity, luckMultiplier);
+    getExpectedRollValue(stat, rarity, quality);
 
   const totalRolls = artifact.totalRolls ?? 8;
   let expectedScore = 0;
@@ -211,8 +220,7 @@ export function calculateRerollExpectedScore(
     // 3-line start: each stat gets initial + 1 upgrade
     for (const { stat } of weightedStats.slice(0, 4)) {
       const val =
-        getInitialValue(stat) +
-        getExpectedRollValue(stat, rarity, luckMultiplier);
+        getInitialValue(stat) + getExpectedRollValue(stat, rarity, quality);
       expectedScore += calculateStatScore(
         stat,
         val,
@@ -226,7 +234,7 @@ export function calculateRerollExpectedScore(
       const { stat } = weightedStats[i];
       const val =
         getInitialValue(stat) +
-        1.5 * getExpectedRollValue(stat, rarity, luckMultiplier);
+        1.5 * getExpectedRollValue(stat, rarity, quality);
       expectedScore += calculateStatScore(
         stat,
         val,
@@ -237,8 +245,7 @@ export function calculateRerollExpectedScore(
     for (let i = 2; i < 4; i++) {
       const { stat } = weightedStats[i];
       const val =
-        getInitialValue(stat) +
-        getExpectedRollValue(stat, rarity, luckMultiplier);
+        getInitialValue(stat) + getExpectedRollValue(stat, rarity, quality);
       expectedScore += calculateStatScore(
         stat,
         val,
