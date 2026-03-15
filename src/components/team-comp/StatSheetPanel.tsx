@@ -569,7 +569,7 @@ export function StatSheetPanel({
                 />
               ) : (
                 <div className="p-4 text-xs text-muted-foreground text-center italic">
-                  {t.ui("teamComp.saturatedTooltip")}
+                  {t.ui("teamComp.saturatedMarginalHint")}
                 </div>
               ))}
           </div>

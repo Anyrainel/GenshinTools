@@ -1376,6 +1376,80 @@ export async function* runTeamOptimization(
       )
     : [carryCharId];
 
+  // ── Saturation detection ──
+  // For each support, test if any artifact stats affect team damage.
+  // If super-artifact (max possible stats) vs empty sheet produces < ε
+  // relative damage difference, the character is "intrinsically saturated"
+  // and B&B is skipped entirely.
+  const saturatedCharIds = new Set<string>();
+  {
+    const supportCharIds = allCharIds.filter(
+      (id) => !carryCharIds.includes(id)
+    );
+    for (const cid of supportCharIds) {
+      try {
+        // Evaluate with empty artifact sheet
+        const emptySheets = { ...baseSheets, [cid]: new StatSheet([]) };
+        let dmgEmpty: number;
+        if (comboScoreFn) {
+          dmgEmpty = comboScoreFn(emptySheets, carryCharId);
+        } else {
+          const ps = teamBuild.getTeamStats(
+            emptySheets,
+            carryCharId,
+            calcContext
+          );
+          dmgEmpty = teamBuild.getDamageResult(
+            carryCharId,
+            formulaId,
+            ps,
+            calcContext,
+            reactionOverride
+          ).totalDamage;
+        }
+
+        // Build super-artifact sheet: max stat per slot, then sum across slots
+        const superStats: Partial<Record<StatKey, number>> = {};
+        for (let si = 0; si < 5; si++) {
+          const slot = allSlots[si];
+          const slotArts = inventory.filter((a) => a.slotKey === slot);
+          if (slotArts.length === 0) continue;
+          const sa = buildSuperArtifact(slotArts);
+          for (const [key, val] of Object.entries(sa.stats)) {
+            const sk = key as StatKey;
+            superStats[sk] = (superStats[sk] ?? 0) + val;
+          }
+        }
+        const superSheet = StatSheet.fromRaw(superStats);
+        const superSheets = { ...baseSheets, [cid]: superSheet };
+        let dmgSuper: number;
+        if (comboScoreFn) {
+          dmgSuper = comboScoreFn(superSheets, carryCharId);
+        } else {
+          const ps = teamBuild.getTeamStats(
+            superSheets,
+            carryCharId,
+            calcContext
+          );
+          dmgSuper = teamBuild.getDamageResult(
+            carryCharId,
+            formulaId,
+            ps,
+            calcContext,
+            reactionOverride
+          ).totalDamage;
+        }
+
+        const base = Math.max(dmgEmpty, 1);
+        if (Math.abs(dmgSuper - dmgEmpty) / base < 0.001) {
+          saturatedCharIds.add(cid);
+        }
+      } catch {
+        // If evaluation fails, don't mark as saturated — let B&B handle it
+      }
+    }
+  }
+
   // Mutable effective state
   let effectiveTeamBuild = teamBuild;
   const effectivePerChar = { ...perChar };
@@ -1428,6 +1502,17 @@ export async function* runTeamOptimization(
     const charId = phase1Order[ci];
     const charConfig = effectivePerChar[charId];
     if (!charConfig) continue;
+
+    // Skip saturated characters — they'll be filled heuristically after Phase 3b
+    if (saturatedCharIds.has(charId)) {
+      passResults.push({
+        passId: "support",
+        charId,
+        bestDamage: -1,
+        bestArtifacts: { ...emptyArtifacts },
+      });
+      continue;
+    }
 
     const passId: TeamOptPassId = carryCharIds.includes(charId)
       ? "carry-1"
@@ -1964,6 +2049,7 @@ export async function* runTeamOptimization(
     for (const charId of allCharIds) {
       const charConfig = effectivePerChar[charId];
       if (!charConfig) continue;
+      if (saturatedCharIds.has(charId)) continue;
 
       // Build base sheets from current team assignment (all other chars)
       const reoptBaseSheets: Record<string, StatSheet> = { ...baseSheets };
@@ -2037,6 +2123,163 @@ export async function* runTeamOptimization(
     }
 
     if (!anyImproved) break;
+  }
+
+  // ════════════════════════════════════════════════════════════════════
+  // Phase 4: Heuristic Fill for Saturated Characters
+  //
+  // Saturated characters' artifacts don't affect team damage, so B&B
+  // was skipped. Fill them from the remaining pool using build-page
+  // heuristic weights, respecting set constraints and ER/CR targets.
+  // ════════════════════════════════════════════════════════════════════
+
+  if (saturatedCharIds.size > 0) {
+    // Collect all artifact IDs already assigned to non-saturated characters
+    const assignedIds = new Set<string>();
+    for (const [cid, arts] of Object.entries(bestArtifactsByChar)) {
+      if (saturatedCharIds.has(cid)) continue;
+      for (const slot of allSlots) {
+        const a = arts[slot];
+        if (a) assignedIds.add(a.id);
+      }
+    }
+
+    for (const charId of allCharIds) {
+      if (!saturatedCharIds.has(charId)) continue;
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+
+      const is4pc = !!charConfig.artifactSetId;
+      const is2pc =
+        !charConfig.artifactSetId &&
+        !!charConfig.artifactHalfSetIds &&
+        charConfig.artifactHalfSetIds.length === 2;
+
+      // Score and pick artifacts per slot using build weights
+      const buildMatch = charConfig.buildMatch;
+      const picked: Record<Slot, ArtifactData | null> = { ...emptyArtifacts };
+      const pickedIds = new Set<string>();
+
+      // For set constraints, track which slots are assigned to which set
+      // We'll do a simple greedy: for 4pc, try to fill 4 slots on-set first
+      // For 2+2, fill 2 slots per half-set first
+      const slotSetAssignment: (string | null)[] = [
+        null,
+        null,
+        null,
+        null,
+        null,
+      ];
+
+      if (is4pc) {
+        // Need 4 slots on-set. Pick the slot with fewest on-set candidates as flex.
+        const setId = charConfig.artifactSetId!;
+        const onSetCounts = allSlots.map(
+          (slot) =>
+            inventory.filter(
+              (a) =>
+                a.slotKey === slot &&
+                a.setKey === setId &&
+                !assignedIds.has(a.id)
+            ).length
+        );
+        // Flex slot = slot with fewest on-set candidates
+        let flexSlotIdx = 0;
+        for (let i = 1; i < 5; i++) {
+          if (onSetCounts[i] < onSetCounts[flexSlotIdx]) flexSlotIdx = i;
+        }
+        for (let i = 0; i < 5; i++) {
+          slotSetAssignment[i] = i === flexSlotIdx ? null : setId;
+        }
+      } else if (is2pc) {
+        const [h1, h2] = charConfig.artifactHalfSetIds!;
+        const h1Sets = new Set(artifactHalfSetsById[h1]?.setIds ?? []);
+        const h2Sets = new Set(artifactHalfSetsById[h2]?.setIds ?? []);
+        // Greedy: assign first 2 available slots to h1, next 2 to h2
+        let h1Count = 0;
+        let h2Count = 0;
+        for (let i = 0; i < 5; i++) {
+          if (h1Count < 2) {
+            const hasH1 = inventory.some(
+              (a) =>
+                a.slotKey === allSlots[i] &&
+                h1Sets.has(a.setKey) &&
+                !assignedIds.has(a.id)
+            );
+            if (hasH1) {
+              slotSetAssignment[i] = h1;
+              h1Count++;
+              continue;
+            }
+          }
+          if (h2Count < 2) {
+            const hasH2 = inventory.some(
+              (a) =>
+                a.slotKey === allSlots[i] &&
+                h2Sets.has(a.setKey) &&
+                !assignedIds.has(a.id)
+            );
+            if (hasH2) {
+              slotSetAssignment[i] = h2;
+              h2Count++;
+            }
+          }
+        }
+      }
+
+      for (let si = 0; si < 5; si++) {
+        const slot = allSlots[si];
+        const requiredSetOrHalf = slotSetAssignment[si];
+
+        let candidates = inventory.filter(
+          (a) =>
+            a.slotKey === slot && !assignedIds.has(a.id) && !pickedIds.has(a.id)
+        );
+
+        // Filter by set constraint for this slot
+        if (requiredSetOrHalf) {
+          const halfSet = artifactHalfSetsById[requiredSetOrHalf];
+          if (halfSet) {
+            // It's a half-set ID — filter to any set in that half-set group
+            const validSets = new Set(halfSet.setIds);
+            const filtered = candidates.filter((a) => validSets.has(a.setKey));
+            if (filtered.length > 0) candidates = filtered;
+          } else {
+            // It's a full set ID
+            const filtered = candidates.filter(
+              (a) => a.setKey === requiredSetOrHalf
+            );
+            if (filtered.length > 0) candidates = filtered;
+          }
+        }
+
+        if (candidates.length === 0) continue;
+
+        // Score by build weights (no CR/CD fallback for saturated chars)
+        // Use ER as fallback weight if no build match exists
+        const fallbackWeights = buildMatch
+          ? undefined
+          : ({ er: 100 } as Record<string, number>);
+        candidates.sort((a, b) => {
+          const sa = buildMatch
+            ? computeWeightScore(a, buildMatch, globalConfig, 1)
+            : scoreSlot(a, fallbackWeights!, globalConfig);
+          const sb = buildMatch
+            ? computeWeightScore(b, buildMatch, globalConfig, 1)
+            : scoreSlot(b, fallbackWeights!, globalConfig);
+          if (sb !== sa) return sb - sa;
+          // Tiebreak: prefer higher level
+          return b.level - a.level;
+        });
+
+        picked[slot] = candidates[0];
+        pickedIds.add(candidates[0].id);
+      }
+
+      bestArtifactsByChar[charId] = picked;
+      // Mark assigned IDs so subsequent saturated chars don't reuse them
+      for (const id of pickedIds) assignedIds.add(id);
+    }
   }
 
   // ════════════════════════════════════════════════════════════════════

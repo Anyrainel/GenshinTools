@@ -852,8 +852,12 @@ export const i18nUiData = {
     },
     saturated: { en: "Saturated", zh: "已饱和" },
     saturatedTooltip: {
-      en: "All buffs are at max scaling. Okay to consider stacking more ER or CR (Favonius).",
-      zh: "所有buff均达上限，有需要时可以考虑追更多充能/暴击(西风)。",
+      en: "No artifact stats affect team damage (e.g. buff scales from base ATK only). Artifacts filled from remaining pool. Set an ER or Favonius CR requirement if needed.",
+      zh: "没有圣遗物属性影响队伍伤害（如增益仅基于基础攻击力）。圣遗物从剩余池中分配。如有需要请设置充能或西风暴击要求。",
+    },
+    saturatedMarginalHint: {
+      en: "This character's contributions to team damage are independent of artifact stats. Set an ER or CR requirement if you need burst uptime or Favonius procs.",
+      zh: "该角色对队伍伤害的贡献与圣遗物属性无关。如需保证大招循环或西风触发，请设置充能或暴击要求。",
     },
     freezeTeam: { en: "Freeze All", zh: "全部冻结" },
     freezeChar: { en: "Freeze", zh: "冻结" },
