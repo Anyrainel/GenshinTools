@@ -54,6 +54,8 @@ type Props = {
   onFreezeChar?: (charId: string) => void;
   /** Callback to unfreeze a character's artifacts */
   onUnfreezeChar?: (charId: string) => void;
+  /** Characters detected as intrinsically saturated by the optimizer. */
+  saturatedCharIds?: string[];
 };
 
 const LEVEL_AFFECTED_STATS: StatKey[] = ["atk", "hp", "def"];
@@ -342,6 +344,7 @@ export function StatSheetPanel({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
+  saturatedCharIds,
 }: Props) {
   // Per-character open view: null = collapsed
   const [openViews, setOpenViews] = useState<Record<string, ViewMode | null>>(
@@ -424,8 +427,13 @@ export function StatSheetPanel({
                       {t.ui("teamComp.saturated")}
                     </span>
                   </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-56 text-xs">
-                    {t.ui("teamComp.saturatedTooltip")}
+                  <TooltipContent side="bottom" className="max-w-64 text-xs">
+                    <p>{t.ui("teamComp.saturatedTooltip")}</p>
+                    {saturatedCharIds?.includes(charId) && (
+                      <p className="mt-1.5 text-amber-400/80">
+                        {t.ui("teamComp.saturatedIntrinsicHint")}
+                      </p>
+                    )}
                   </TooltipContent>
                 </Tooltip>
               )}

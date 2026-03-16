@@ -103,6 +103,7 @@ function DamageBody({
   onArtifactSwap,
   onFreezeChar,
   onUnfreezeChar,
+  saturatedCharIds,
 }: {
   team: Team;
   hasFormula: boolean;
@@ -125,6 +126,7 @@ function DamageBody({
   ) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
+  saturatedCharIds?: string[];
 }) {
   const [highlightedStat, setHighlightedStat] = useState<{
     key: StatKey | "charLevel";
@@ -157,6 +159,7 @@ function DamageBody({
           onArtifactSwap={onArtifactSwap}
           onFreezeChar={onFreezeChar}
           onUnfreezeChar={onUnfreezeChar}
+          saturatedCharIds={saturatedCharIds}
         />
       )}
 
@@ -1206,6 +1209,9 @@ export function DamageCard({
                     onArtifactSwap={onArtifactSwap}
                     onFreezeChar={onFreezeChar}
                     onUnfreezeChar={onUnfreezeChar}
+                    saturatedCharIds={
+                      teamResult?.done ? teamResult.saturatedCharIds : undefined
+                    }
                   />
                 )}
                 <ComboBreakdown
@@ -1245,6 +1251,9 @@ export function DamageCard({
                 onArtifactSwap={onArtifactSwap}
                 onFreezeChar={onFreezeChar}
                 onUnfreezeChar={onUnfreezeChar}
+                saturatedCharIds={
+                  teamResult?.done ? teamResult.saturatedCharIds : undefined
+                }
               />
             ) : null}
 

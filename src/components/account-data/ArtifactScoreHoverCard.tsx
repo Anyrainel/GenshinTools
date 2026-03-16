@@ -529,7 +529,10 @@ function ArtifactScoreContent({
                       </span>
                       {data.subScore > 0 ? (
                         <span className="text-amber-200">
-                          {data.subScore.toFixed(1)}
+                          {(normalizer > 0
+                            ? data.subScore * normalizer
+                            : data.subScore
+                          ).toFixed(1)}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">-</span>

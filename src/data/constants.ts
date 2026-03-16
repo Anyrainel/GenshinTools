@@ -81,9 +81,9 @@ export const statPoolWithWeights = {
   plume: { atk: 1 },
   sands: { "atk%": 26.66, "hp%": 26.66, "def%": 26.66, em: 10, er: 10 },
   goblet: {
-    "atk%": 21.25,
-    "hp%": 21.25,
-    "def%": 20,
+    "atk%": 19.25,
+    "hp%": 19.25,
+    "def%": 19,
     em: 2.5,
     "pyro%": 5,
     "hydro%": 5,

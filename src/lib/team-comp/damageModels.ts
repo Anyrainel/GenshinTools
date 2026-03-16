@@ -359,6 +359,27 @@ export class StatSheet {
     }
   }
 
+  /** Serialize to a structured-clonable array (for Web Worker transfer). */
+  toSerializable(): { key: StatKey; filterKey: string; value: number }[] {
+    return [...this.dump()];
+  }
+
+  /** Reconstruct from serialized dump (inverse of toSerializable). */
+  static fromDump(
+    entries: { key: StatKey; filterKey: string; value: number }[]
+  ): StatSheet {
+    const data = new Map<StatKey, Map<string, number>>();
+    for (const { key, filterKey, value } of entries) {
+      let bucket = data.get(key);
+      if (!bucket) {
+        bucket = new Map();
+        data.set(key, bucket);
+      }
+      bucket.set(filterKey, (bucket.get(filterKey) ?? 0) + value);
+    }
+    return StatSheet.fromData(data);
+  }
+
   /** Parse a serialized filter key back into a DamageTagFilter. */
   static parseFilterKey(fk: string): DamageTagFilter {
     return deserializeFilter(fk);

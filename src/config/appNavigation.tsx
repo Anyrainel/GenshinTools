@@ -5,13 +5,16 @@ import {
   BarChart3,
   Book,
   Box,
+  Crown,
+  Diamond,
   Filter,
   FlaskConical,
-  LayoutGrid,
+  Lightbulb,
   Lock,
   Settings,
   Skull,
   Sword,
+  Swords,
   Users,
 } from "lucide-react";
 
@@ -47,7 +50,7 @@ export const getNavigationConfig = (
         label: t.ui("accountData.recommendations"),
         href: "/account-data?tab=recommendations",
         value: "recommendations",
-        icon: LayoutGrid,
+        icon: Lightbulb,
         tourStepId: "ad-recommendations",
       },
       {
@@ -107,7 +110,7 @@ export const getNavigationConfig = (
         label: t.ui("app.tierListTitle"),
         href: "/tier-list?tab=characters",
         value: "characters",
-        icon: LayoutGrid,
+        icon: Crown,
       },
       {
         label: t.ui("app.weaponTierListTitle"),
@@ -131,13 +134,13 @@ export const getNavigationConfig = (
         label: t.ui("archive.weapons"),
         href: "/archive?tab=weapons",
         value: "weapons",
-        icon: Sword,
+        icon: Swords,
       },
       {
         label: t.ui("archive.artifacts"),
         href: "/archive?tab=artifacts",
         value: "artifacts",
-        icon: Box,
+        icon: Diamond,
       },
       {
         label: t.ui("archive.bosses"),

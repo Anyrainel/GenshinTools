@@ -1,5 +1,5 @@
+import { ArtifactStatList } from "@/components/account-data/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   Drawer,
   DrawerContent,
@@ -14,25 +14,11 @@ import {
 } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
-import type { ArtifactData, Rarity, Slot, SubStat } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import {
-  getMainStatValueAtLevel,
-  getSubstatAvgRoll,
-} from "@/lib/account-data/scoring/utils";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-
-// -----------------------------------------------------------------------------
-// Utility: Calculate roll count for a substat
-// -----------------------------------------------------------------------------
-function getRollCount(statKey: SubStat, value: number, rarity: Rarity): number {
-  const r = rarity === 4 || rarity === 5 ? rarity : 5;
-  const avgRollValue = getSubstatAvgRoll(statKey, r as 4 | 5);
-  if (!avgRollValue) return 0;
-  return value / avgRollValue;
-}
 
 // -----------------------------------------------------------------------------
 // ArtifactDataContent - Shared content component for single artifact display
@@ -57,37 +43,7 @@ export function ArtifactDataContent({
   const artInfo = artifactsById[artifact.setKey];
   const name = t.artifact(artifact.setKey);
   const badge = artifact.astralMark ? "⭐" : undefined;
-
-  // Total rolls from artifact data (8 for 3-liner start, 9 for 4-liner start)
   const totalRolls = artifact.totalRolls;
-
-  const renderStatLine = (statKey: SubStat, value: number | undefined) => {
-    if (value == null) return null;
-
-    const displayValue = fmtStat(statKey, value, false, true);
-    const rollCount = getRollCount(statKey, value, artifact.rarity);
-
-    return (
-      <div
-        key={statKey}
-        className={cn(
-          "flex justify-between items-center gap-2",
-          compact ? "text-xs" : "text-sm",
-          "text-gray-200"
-        )}
-      >
-        <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
-          <span>{compact ? t.statMin(statKey) : t.statShort(statKey)}</span>
-          <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums">
-            {rollCount.toFixed(1)}
-          </span>
-        </span>
-        <span className={cn("flex-shrink-0 font-mono", compact && "text-xs")}>
-          {displayValue}
-        </span>
-      </div>
-    );
-  };
 
   return (
     <div
@@ -144,82 +100,8 @@ export function ArtifactDataContent({
       </div>
 
       {/* Stats */}
-      <div className={cn("space-y-1", compact ? "p-2" : "p-3")}>
-        {/* Main Stat */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            <span
-              className={cn(
-                "font-bold truncate text-amber-100",
-                compact ? "text-sm" : "text-base"
-              )}
-            >
-              {compact
-                ? t.statMin(artifact.mainStatKey)
-                : t.statShort(artifact.mainStatKey)}
-            </span>
-            <span
-              className={cn(
-                "rounded bg-black/40 font-mono shrink-0",
-                compact ? "text-[10px]" : "text-xs px-1",
-                getRarityColor(artifact.rarity, "text")
-              )}
-            >
-              +{artifact.level}
-            </span>
-          </div>
-          <span
-            className={cn(
-              "font-bold font-mono text-amber-100 shrink-0",
-              compact ? "text-sm" : "text-base"
-            )}
-          >
-            {fmtStat(
-              artifact.mainStatKey,
-              getMainStatValueAtLevel(
-                artifact.mainStatKey,
-                artifact.rarity,
-                artifact.level
-              ),
-              false,
-              true
-            )}
-          </span>
-        </div>
-
-        {/* Substats with roll counts */}
-        <div className="space-y-0.5">
-          {Object.entries(artifact.substats ?? {}).map(([key, val]) =>
-            renderStatLine(key as SubStat, val)
-          )}
-          {/* Unactivated substats (no roll count, muted) */}
-          {Object.entries(artifact.unactivatedSubstats ?? {}).map(
-            ([key, val]) =>
-              val != null && (
-                <div
-                  key={key}
-                  className={cn(
-                    "flex justify-between items-center gap-2 text-muted-foreground",
-                    compact ? "text-xs" : "text-sm"
-                  )}
-                >
-                  <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
-                    {compact
-                      ? t.statMin(key as SubStat)
-                      : t.statShort(key as SubStat)}
-                  </span>
-                  <span
-                    className={cn(
-                      "flex-shrink-0 font-mono",
-                      compact && "text-xs"
-                    )}
-                  >
-                    {fmtStat(key as SubStat, val, false, true)}
-                  </span>
-                </div>
-              )
-          )}
-        </div>
+      <div className={cn(compact ? "p-2" : "p-3")}>
+        <ArtifactStatList artifact={artifact} compact={compact} />
       </div>
     </div>
   );
