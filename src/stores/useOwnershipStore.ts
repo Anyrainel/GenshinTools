@@ -1,3 +1,4 @@
+import { ALWAYS_OWNED_CHARACTER_IDS } from "@/lib/account-data/alwaysOwned";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -88,9 +89,10 @@ export function migrateOwnershipStore(
 ): PersistedOwnershipState {
   // biome-ignore lint/suspicious/noExplicitAny: migration across legacy formats
   const state = persistedState as any;
+  let v = version;
 
   // v0: flat { unownedCharacters, unownedWeapons } shape (no profiles)
-  if (version === 0) {
+  if (v === 0) {
     const unownedCharacters: Record<string, true> =
       state.unownedCharacters || {};
     const unownedWeapons: Record<string, true> = state.unownedWeapons || {};
@@ -110,26 +112,40 @@ export function migrateOwnershipStore(
       // ignore parse errors
     }
 
-    return {
-      profiles: {
-        [activeId]: {
-          unownedCharacters,
-          unownedWeapons,
-          characterConstellations: {},
-          weaponRefinements: {},
-        },
+    state.profiles = {
+      [activeId]: {
+        unownedCharacters,
+        unownedWeapons,
+        characterConstellations: {},
+        weaponRefinements: {},
       },
     };
+    v = 2; // fall through to v2 → v3 migration
   }
 
   // v1 → v2: add characterConstellations & weaponRefinements to existing profiles
-  if (version === 1) {
+  if (v === 1) {
     const profiles = state.profiles || {};
     for (const key of Object.keys(profiles)) {
       if (!profiles[key].characterConstellations)
         profiles[key].characterConstellations = {};
       if (!profiles[key].weaponRefinements)
         profiles[key].weaponRefinements = {};
+    }
+    state.profiles = profiles;
+    v = 2; // fall through to v2 → v3 migration
+  }
+
+  // v2 → v3: remove always-owned characters (Traveler/Manekin/Manekina) from unowned sets
+  if (v === 2) {
+    const profiles = state.profiles || {};
+    for (const key of Object.keys(profiles)) {
+      const unowned = profiles[key].unownedCharacters;
+      if (unowned) {
+        for (const id of ALWAYS_OWNED_CHARACTER_IDS) {
+          delete unowned[id];
+        }
+      }
     }
     return { profiles };
   }
@@ -286,7 +302,7 @@ export const useOwnershipStore = create<OwnershipState>()(
     })),
     {
       name: "genshin-ownership",
-      version: 2,
+      version: 3,
       migrate: migrateOwnershipStore,
     }
   )

@@ -406,11 +406,17 @@ describe("migrateOwnershipStore", () => {
     });
   });
 
-  it("passes through v2 state unchanged", () => {
+  it("v2 → v3: removes always-owned characters from unowned sets", () => {
     const v2State = {
       profiles: {
         "800000001": {
-          unownedCharacters: { hu_tao: true },
+          unownedCharacters: {
+            hu_tao: true,
+            traveler_anemo: true,
+            traveler_geo: true,
+            manekin_pyro: true,
+            manekina_hydro: true,
+          },
           unownedWeapons: {},
           characterConstellations: { raiden_shogun: 2 },
           weaponRefinements: { engulfing_lightning: 1 },
@@ -419,6 +425,16 @@ describe("migrateOwnershipStore", () => {
     };
 
     const result = migrateOwnershipStore(v2State, 2);
-    expect(result).toBe(v2State);
+    // Traveler/Manekin/Manekina variants removed, hu_tao stays
+    expect(result.profiles["800000001"].unownedCharacters).toStrictEqual({
+      hu_tao: true,
+    });
+    // Other fields preserved
+    expect(result.profiles["800000001"].characterConstellations).toStrictEqual({
+      raiden_shogun: 2,
+    });
+    expect(result.profiles["800000001"].weaponRefinements).toStrictEqual({
+      engulfing_lightning: 1,
+    });
   });
 });

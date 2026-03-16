@@ -1,5 +1,6 @@
 import { characters, weapons } from "@/data/resources";
 import { useOwnershipStore } from "@/stores/useOwnershipStore";
+import { ALWAYS_OWNED_CHARACTER_IDS } from "./alwaysOwned";
 
 const allCharacterIds = new Set(characters.map((c) => c.id));
 const allWeaponIds = new Set(weapons.map((w) => w.id));
@@ -15,7 +16,7 @@ export function syncOwnershipExhaustive(
   const imported = new Set(importedCharacterKeys);
   const unownedIds: string[] = [];
   for (const id of allCharacterIds) {
-    if (!imported.has(id)) {
+    if (!imported.has(id) && !ALWAYS_OWNED_CHARACTER_IDS.has(id)) {
       unownedIds.push(id);
     }
   }
