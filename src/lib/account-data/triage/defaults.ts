@@ -1,13 +1,15 @@
 import type { TriageSettings } from "./types";
 
 export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
-  coreThreshold: 85,
-  valuableThreshold: 50,
-  surplusBuffer: 1,
-  minimumKeep: 1,
+  mainStatThreshold: 90,
+  optionalSubThreshold: 50,
+  neutralKeep: 2,
+  qualityMargin: 2,
+  setSlotKeep: 2,
+  ownedOnly: true,
   erHoardingEnabled: true,
   doubleCritLockEnabled: true,
-  rareEmbryoEnabled: true,
-  maxLevelProtection: true,
+  levelProtection: 12,
   equippedProtection: true,
+  disabledFlexPatterns: [],
 };

@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SubStat } from "@/data/types";
 import type {
@@ -8,6 +13,10 @@ import type {
 import { cn } from "@/lib/utils";
 import { AlertTriangle, ChevronDown, ChevronRight } from "lucide-react";
 import { useState } from "react";
+
+// ── Exported sub-components for reuse (e.g., batch AutoTune view) ──
+
+export { SubstatPills, MainStatColumn, TeamBreakdownSection };
 
 // Color mapping for stat categories
 const STAT_COLORS: Record<
@@ -146,26 +155,7 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
         <h4 className="text-sm font-medium mb-2">
           {t.ui("buildCard.autoTuneSubstats")}
         </h4>
-        <div className="flex flex-wrap gap-1.5">
-          {result.substats.map(({ stat, weight }) => {
-            const style = getStatStyle(stat);
-            return (
-              <div
-                key={stat}
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border",
-                  style.bg,
-                  style.border
-                )}
-              >
-                <span className="text-xs font-medium">{t.stat(stat)}</span>
-                <span className="text-xs font-mono font-bold">
-                  {Math.round(weight)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <SubstatPills substats={result.substats} t={t} />
       </section>
 
       {/* Per-Team Breakdown */}
@@ -219,6 +209,37 @@ function MainStatColumn({
   );
 }
 
+function SubstatPills({
+  substats,
+  t,
+}: {
+  substats: { stat: string; weight: number }[];
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {substats.map(({ stat, weight }) => {
+        const style = getStatStyle(stat);
+        return (
+          <div
+            key={stat}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border",
+              style.bg,
+              style.border
+            )}
+          >
+            <span className="text-xs font-medium">{t.stat(stat)}</span>
+            <span className="text-xs font-mono font-bold">
+              {Math.round(weight)}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 /** Format roll allocation as compact text: "cr 8 · cd 12 · atk% 6" */
 function formatRolls(
   allocation: Record<SubStat, number>,
@@ -258,7 +279,7 @@ function TeamBreakdownSection({
         )}
         <span className="text-sm font-medium">{breakdown.label}</span>
         <span className="text-xs text-muted-foreground ml-auto">
-          {qualifyingCount} combos
+          {qualifyingCount}
         </span>
       </button>
       {expanded && (
@@ -315,6 +336,16 @@ function ComboRow({
         )}
       >
         {(combo.damageRatio * 100).toFixed(1)}%
+        {combo.lopsided && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="text-red-400 ml-0.5 cursor-help">(-2)</span>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-64">
+              {t.ui("buildCard.autoTuneLopsidedPenalty")}
+            </TooltipContent>
+          </Tooltip>
+        )}
       </td>
       <td className="py-1 pl-3 text-muted-foreground">
         {formatRolls(combo.rollAllocation, t)}

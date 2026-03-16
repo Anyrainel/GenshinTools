@@ -757,7 +757,7 @@ export const i18nUiData = {
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
     critRateTarget: { en: "DPS CR Target", zh: "主C暴击目标" },
-    rollMultiplier: { en: "Roll", zh: "词条值" },
+    rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
@@ -852,8 +852,12 @@ export const i18nUiData = {
     },
     saturated: { en: "Saturated", zh: "已饱和" },
     saturatedTooltip: {
-      en: "No artifact stats affect team damage (e.g. buff scales from base ATK only). Artifacts filled from remaining pool. Set an ER or Favonius CR requirement if needed.",
-      zh: "没有圣遗物属性影响队伍伤害（如增益仅基于基础攻击力）。圣遗物从剩余池中分配。如有需要请设置充能或西风暴击要求。",
+      en: "All relevant stats have reached their cap. Additional artifact stats won't increase team damage. Consider raising CR or ER requirements for better rotation comfort.",
+      zh: "所有相关属性已达上限，更多圣遗物属性不会提升队伍伤害。可以提高暴击或充能要求以优化循环舒适度。",
+    },
+    saturatedIntrinsicHint: {
+      en: "This character's artifact stats never affect team damage (e.g. buff scales from base ATK only). Artifacts are filled from the remaining pool and this character is skipped when freezing all.",
+      zh: "该角色的圣遗物属性从不影响队伍伤害（如增益仅基于基础攻击力）。圣遗物从剩余池中分配，冻结全部时会跳过该角色。",
     },
     saturatedMarginalHint: {
       en: "This character's contributions to team damage are independent of artifact stats. Set an ER or CR requirement if you need burst uptime or Favonius procs.",
@@ -1136,6 +1140,10 @@ export const i18nUiData = {
     autoTuneMainStats: { en: "Main Stat Weights", zh: "主词条权重" },
     autoTuneIdealRolls: { en: "Ideal Rolls", zh: "理想词条数" },
     autoTuneDamageRatio: { en: "Damage", zh: "伤害" },
+    autoTuneLopsidedPenalty: {
+      en: "Lopsided allocation: the highest substat has ≥15 more rolls than the 2nd highest, suggesting this main stat forces an unbalanced build. −2% penalty applied.",
+      zh: "词条分配不均：最多的副词条比第二多的多出≥15条，说明该主词条迫使副词条严重倾斜。已扣除2%伤害惩罚。",
+    },
     autoTuneError: { en: "Calculation failed", zh: "计算失败" },
     autoTuneAddTeam: { en: "Add Team", zh: "添加队伍" },
     autoTuneFormulas: { en: "Formulas (Rotation)", zh: "公式（循环）" },
@@ -1327,17 +1335,25 @@ export const i18nUiData = {
     all: { en: "All", zh: "全部" },
   },
   v2Weights: {
-    profiled: { en: "{0} characters profiled", zh: "已分析 {0} 个角色" },
-    errors: { en: "{0} error(s)", zh: "{0} 个错误" },
-    generationErrors: { en: "Generation Errors", zh: "生成错误" },
     loading: {
       en: "Loading game data & generating weights...",
       zh: "正在加载游戏数据并生成权重...",
     },
-    normalizer: { en: "Norm.", zh: "归一化" },
-    sands: { en: "Sands", zh: "时之沙" },
-    goblet: { en: "Goblet", zh: "空之杯" },
-    circlet: { en: "Circlet", zh: "理之冠" },
+  },
+  batchAutoTune: {
+    selectAll: { en: "Select All", zh: "全选" },
+    deselectAll: { en: "Deselect All", zh: "取消全选" },
+    run: { en: "Batch AutoTune", zh: "批量 AutoTune" },
+    running: { en: "Computing {0}/{1}...", zh: "计算中 {0}/{1}..." },
+    apply: { en: "Apply", zh: "应用" },
+    applyAll: { en: "Apply All", zh: "全部应用" },
+    applied: { en: "Applied", zh: "已应用" },
+    noTeams: { en: "No teams available", zh: "没有可用的队伍" },
+    done: { en: "Done ({0}/{1} succeeded)", zh: "完成（{0}/{1} 成功）" },
+    noBuild: {
+      en: "No builds to tune. Import or create builds first.",
+      zh: "没有可调整的配装。请先导入或创建配装。",
+    },
   },
   whatsNew: {
     title: { en: "What's New", zh: "更新日志" },
@@ -1346,11 +1362,11 @@ export const i18nUiData = {
     fixes: { en: "Fixes", zh: "修复" },
   },
   triage: {
-    tabLabel: { en: "Triage", zh: "去留" },
-    title: { en: "Artifact Triage", zh: "圣遗物去留" },
+    tabLabel: { en: "Triage", zh: "锁定" },
+    title: { en: "Artifact Triage Helper", zh: "圣遗物锁定助手" },
     subtitle: {
-      en: "{0} artifacts analyzed",
-      zh: "已分析 {0} 个圣遗物",
+      en: "{0} artifacts analyzed:",
+      zh: "已分析 {0} 个圣遗物：",
     },
     recommendLock: {
       en: "Recommend Lock",
@@ -1368,49 +1384,123 @@ export const i18nUiData = {
       en: "Currently locked artifacts that can be foddered",
       zh: "当前已锁定但可以分解的圣遗物",
     },
-    lock: { en: "Lock", zh: "锁定" },
-    borderline: { en: "Borderline", zh: "边缘" },
-    fodder: { en: "Fodder", zh: "分解" },
+    noActionNeeded: {
+      en: "Protected",
+      zh: "保护区",
+    },
+    noActionDesc: {
+      en: "High-level or equipped artifacts — already protected, no lock change needed",
+      zh: "高等级或已装备的圣遗物——已受保护，无需改变锁定状态",
+    },
+    noChange: {
+      en: "No Change",
+      zh: "无变化",
+    },
+    noChangeDesc: {
+      en: "Artifacts whose lock status already matches the recommendation",
+      zh: "锁定状态已与建议一致的圣遗物",
+    },
     noRecommendations: {
-      en: "No recommendations — your lock status is optimal!",
-      zh: "无建议——你的锁定状态已经很好！",
+      en: "No items in this category",
+      zh: "此类别中没有圣遗物",
     },
     noData: {
       en: "Import account data and configure artifact builds to use triage.",
       zh: "导入账号数据并配置圣遗物配装后可使用去留分析。",
     },
-    reason: { en: "Reason", zh: "原因" },
-    rareEmbryo: { en: "Rare Embryo", zh: "稀有胚子" },
-    settings: { en: "Settings", zh: "设置" },
-    surplusBuffer: {
-      en: "Surplus buffer",
-      zh: "库存缓冲",
+    // Decision labels (lock / unlock)
+    label: {
+      lock: { en: "Lock", zh: "锁定" },
+      unlock: { en: "Unlock", zh: "解锁" },
     },
-    minimumKeep: {
-      en: "Minimum keep per type",
-      zh: "每种胚子最低保留数",
+    // Quality tier names
+    tier: {
+      P: { en: "Prime", zh: "极品" },
+      Q: { en: "Solid", zh: "精良" },
+      N: { en: "Filler", zh: "过渡" },
+      T: { en: "Fodder", zh: "狗粮" },
+    },
+    // Rule descriptions (what decided the action)
+    rule: {
+      TP: { en: "Premium — always keep", zh: "极品装全部保留" },
+      TQ: { en: "Quality — default keep", zh: "精良装默认保留" },
+      QB: { en: "Over-supplied — quality fodder", zh: "供大于求，精良装分解" },
+      NK: { en: "Under-supplied — filler kept", zh: "供不应求，过渡装保留" },
+      TN: { en: "Filler — default fodder", zh: "过渡装默认分解" },
+      TF: { en: "Substats don't match", zh: "副词条不匹配，狗粮分解" },
+      TD: { en: "Main stat no demand", zh: "主词条无需求，狗粮分解" },
+    },
+    // Special rule labels (short, for inline display)
+    sp: {
+      SP1: { en: "4-liner ER (support set)", zh: "4初始充能（辅助套）" },
+      SP3: { en: "Level protected", zh: "高等级保护" },
+      SP4: { en: "Equipped protected", zh: "已装备保护" },
+      SP5: { en: "4-liner CR+CD", zh: "4初始双暴" },
+      SP6: { en: "Set+slot keep", zh: "套装部位最低保留" },
+      FLEX: { en: "Flex match", zh: "散件匹配保留" },
+    },
+    // Detail panel labels
+    detail: {
+      demand: { en: "Demand", zh: "需求" },
+      supply: { en: "Supply", zh: "供给" },
+      rankInTier: {
+        en: "Rank {0}/{1} in {2}",
+        zh: "{2}中第{0}/{1}",
+      },
+    },
+    // Settings
+    flexPatterns: { en: "Flex Patterns", zh: "散件保留" },
+    settings: { en: "Settings", zh: "设置" },
+    settingsProtection: {
+      en: "Protection rules (excluded from analysis)",
+      zh: "保护规则（不参与分析）",
+    },
+    settingsThreshold: { en: "Build conversion rules", zh: "配装转化规则" },
+    settingsKeepRules: { en: "Custom keep rules", zh: "自定义保留规则" },
+    mainStatThreshold: {
+      en: "Main stat threshold",
+      zh: "主词条阈值",
+    },
+    optionalSubThreshold: {
+      en: "Substat threshold",
+      zh: "副词条阈值",
+    },
+    ownedOnly: {
+      en: "Owned characters only",
+      zh: "只考虑已拥有角色",
+    },
+    neutralKeep: {
+      en: "Neutral keep per type",
+      zh: "过渡装保留数（低于需求时备用几个）",
+    },
+    qualityMargin: {
+      en: "Quality surplus margin",
+      zh: "精良装保留数（超过需求后多留几个）",
+    },
+    setSlotKeep: {
+      en: "Min keep per set+slot",
+      zh: "每套装每部位最少保留",
     },
     erHoarding: {
       en: "ER hoarding (4-liner + ER)",
-      zh: "充能囤积（4初始+充能）",
+      zh: "辅助套充能锁定（4初始+充能）",
     },
     doubleCritLock: {
       en: "Double crit lock (4-liner + CR+CD)",
       zh: "双暴锁定（4初始+暴击+暴伤）",
     },
-    rareEmbryoLock: {
-      en: "Rare embryo lock (sands/goblet/circlet)",
-      zh: "稀有胚子锁定（沙/杯/头）",
-    },
-    maxLevelProtect: {
-      en: "Max level protection",
-      zh: "满级保护",
+    levelProtection: {
+      en: "Level protection",
+      zh: "等级保护",
     },
     equippedProtect: {
       en: "Equipped protection",
-      zh: "装备保护",
+      zh: "已装备保护",
     },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
-    for: { en: "for", zh: "用于" },
+    flexDialogDesc: {
+      en: "Auto-detected premium off-piece patterns. Toggle on to lock regardless of set. (Format: Slot·MainStat·SubStat)",
+      zh: "自动检测的散件类型。开启后无视套装锁定。（选项为“部位·主词条·副词条”）",
+    },
   },
 };

@@ -3,31 +3,17 @@ import {
   statPoolWithWeights,
   statPools,
 } from "@/data/constants";
-import type { Build, MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots } from "@/data/types";
-import type { DemandProfile, TriageSettings } from "./types";
-
-/**
- * Classify a build's substats into core/valuable tiers based on threshold settings.
- */
-function classifyStats(
-  build: Build,
-  settings: TriageSettings
-): { coreStats: SubStat[]; valuableStats: SubStat[] } {
-  const core: SubStat[] = [];
-  const valuable: SubStat[] = [];
-  for (const { stat, weight } of build.substats) {
-    if (weight >= settings.coreThreshold) core.push(stat);
-    else if (weight >= settings.valuableThreshold) valuable.push(stat);
-  }
-  return { coreStats: core, valuableStats: valuable };
-}
+import type { Build, MainStat, Slot } from "@/data/types";
 
 /**
  * Get accepted main stats for a slot from a build's main stat weights.
- * Only includes stats with weight > 0.
+ * Only includes stats with weight >= threshold.
  */
-function getAcceptedMainStats(build: Build, slot: Slot): MainStat[] {
+export function getAcceptedMainStats(
+  build: Build,
+  slot: Slot,
+  threshold = 0
+): MainStat[] {
   if (slot === "flower") return ["hp"];
   if (slot === "plume") return ["atk"];
 
@@ -40,73 +26,7 @@ function getAcceptedMainStats(build: Build, slot: Slot): MainStat[] {
     // Fallback: accept all possible main stats for this slot
     return [...statPools[slot]] as MainStat[];
   }
-  return weights.filter((w) => w.weight > 0).map((w) => w.stat);
-}
-
-/**
- * Extract all demand profiles from a list of resolved builds.
- * Each build generates demands based on its composition (4pc or 2pc+2pc).
- */
-export function extractDemands(
-  builds: { characterId: string; builds: Build[] }[],
-  settings: TriageSettings
-): DemandProfile[] {
-  const demands: DemandProfile[] = [];
-
-  for (const { characterId, builds: charBuilds } of builds) {
-    for (const build of charBuilds) {
-      if (!build.visible) continue;
-
-      const { coreStats, valuableStats } = classifyStats(build, settings);
-
-      if (build.composition === "4pc" && build.artifactSet) {
-        // 4pc: one demand per slot for the set
-        for (const slot of allSlots) {
-          demands.push({
-            buildId: build.id,
-            characterId,
-            demandSource: { type: "4pc", setKey: build.artifactSet },
-            slot,
-            acceptedMainStats: getAcceptedMainStats(build, slot),
-            coreStats,
-            valuableStats,
-          });
-        }
-      } else if (build.composition === "2pc+2pc") {
-        const hs1 = build.halfSet1 != null ? String(build.halfSet1) : null;
-        const hs2 = build.halfSet2 != null ? String(build.halfSet2) : null;
-
-        // 2pc demands: every slot can serve either half-set
-        for (const slot of allSlots) {
-          const accepted = getAcceptedMainStats(build, slot);
-          if (hs1) {
-            demands.push({
-              buildId: build.id,
-              characterId,
-              demandSource: { type: "2pc", halfSetId: hs1 },
-              slot,
-              acceptedMainStats: accepted,
-              coreStats,
-              valuableStats,
-            });
-          }
-          if (hs2 && hs2 !== hs1) {
-            demands.push({
-              buildId: build.id,
-              characterId,
-              demandSource: { type: "2pc", halfSetId: hs2 },
-              slot,
-              acceptedMainStats: accepted,
-              coreStats,
-              valuableStats,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return demands;
+  return weights.filter((w) => w.weight >= threshold).map((w) => w.stat);
 }
 
 /**

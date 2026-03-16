@@ -310,21 +310,36 @@ function runComboEnumerationPipeline(
       }
 
       // ─── Phase 3: Filter to ≥95% of best post-greedy damage ───
-      const bestFinalDmg = Math.max(
-        ...teamResults.map((r) => r.tuneResult.finalDamage)
-      );
+      // Baseline = best damage among balanced (non-lopsided) combos.
+      // Lopsided combos are capped at 100% so they never define the baseline.
+      const balancedDmgs = teamResults
+        .filter((r) => !isLopsidedAllocation(r.tuneResult.rollAllocation))
+        .map((r) => r.tuneResult.finalDamage);
+      const bestBalancedDmg =
+        balancedDmgs.length > 0 ? Math.max(...balancedDmgs) : null;
+      const bestFinalDmg =
+        bestBalancedDmg ??
+        Math.max(...teamResults.map((r) => r.tuneResult.finalDamage));
 
       // Collect per-team breakdown
       const comboBreakdowns: ComboBreakdown[] = [];
       for (const { combo, tuneResult } of teamResults) {
-        const normalizedDamage =
-          bestFinalDmg > 0 ? tuneResult.finalDamage / bestFinalDmg : 0;
+        const comboLopsided =
+          bestBalancedDmg !== null &&
+          isLopsidedAllocation(tuneResult.rollAllocation);
+        // Cap at 1.0, then apply -2% penalty for lopsided combos
+        let normalizedDamage =
+          bestFinalDmg > 0
+            ? Math.min(tuneResult.finalDamage / bestFinalDmg, 1.0)
+            : 0;
+        if (comboLopsided) normalizedDamage -= 0.02;
 
         comboBreakdowns.push({
           mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
           rollAllocation: { ...tuneResult.rollAllocation },
           damage: tuneResult.finalDamage,
           damageRatio: normalizedDamage,
+          ...(comboLopsided && { lopsided: true }),
         });
 
         if (normalizedDamage >= QUALIFYING_THRESHOLD) {
@@ -527,7 +542,10 @@ export type ComboBreakdown = {
   mainStats: { sands: MainStat; goblet: MainStat; circlet: MainStat };
   rollAllocation: Record<SubStat, number>;
   damage: number;
+  /** Normalized damage ratio (0-1), with lopsided penalty already applied. */
   damageRatio: number;
+  /** True if this combo has lopsided allocation (max-2nd >= 15) and was penalized. */
+  lopsided?: boolean;
 };
 
 export type TeamBreakdown = {
@@ -657,21 +675,34 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
   }
 
   // Phase 3: Filter to ≥95% of best post-greedy damage
-  const bestFinalDmg = Math.max(
-    ...teamResults.map((r) => r.tuneResult.finalDamage)
-  );
+  // Baseline = best damage among balanced (non-lopsided) combos, capped at 100%.
+  const balancedDmgs = teamResults
+    .filter((r) => !isLopsidedAllocation(r.tuneResult.rollAllocation))
+    .map((r) => r.tuneResult.finalDamage);
+  const bestBalancedDmg =
+    balancedDmgs.length > 0 ? Math.max(...balancedDmgs) : null;
+  const bestFinalDmg =
+    bestBalancedDmg ??
+    Math.max(...teamResults.map((r) => r.tuneResult.finalDamage));
 
   const comboBreakdowns: ComboBreakdown[] = [];
   const qualifying: ComboResult[] = [];
 
   for (const { combo, tuneResult } of teamResults) {
-    const normalizedDamage =
-      bestFinalDmg > 0 ? tuneResult.finalDamage / bestFinalDmg : 0;
+    const comboLopsided =
+      bestBalancedDmg !== null &&
+      isLopsidedAllocation(tuneResult.rollAllocation);
+    let normalizedDamage =
+      bestFinalDmg > 0
+        ? Math.min(tuneResult.finalDamage / bestFinalDmg, 1.0)
+        : 0;
+    if (comboLopsided) normalizedDamage -= 0.02;
     comboBreakdowns.push({
       mainStats: { sands: combo.s, goblet: combo.g, circlet: combo.c },
       rollAllocation: { ...tuneResult.rollAllocation },
       damage: tuneResult.finalDamage,
       damageRatio: normalizedDamage,
+      ...(comboLopsided && { lopsided: true }),
     });
     if (normalizedDamage >= QUALIFYING_THRESHOLD) {
       qualifying.push({
@@ -884,18 +915,42 @@ export function autoTuneBuild(input: AutoTuneInput): AutoTuneOutput {
 }
 
 /**
+ * Check if an allocation is lopsided: max roll count - second max >= threshold.
+ */
+function isLopsidedAllocation(
+  allocation: Record<string, number>,
+  threshold = 15
+): boolean {
+  const rolls = Object.values(allocation)
+    .filter((v) => v > 0)
+    .sort((a, b) => b - a);
+  if (rolls.length < 2) return false;
+  return rolls[0] - rolls[1] >= threshold;
+}
+
+/**
  * Compute main stat weights for a slot based on damage ratios.
  * For each candidate, find the best normalized damage across all qualifying combos
  * that use that candidate. Express as percentage of overall best (0-100).
  * Only include candidates that appear in qualifying combos.
+ *
+ * Combos with lopsided allocation (max - 2nd-max >= 15 rolls) are excluded from
+ * the 100% baseline. The best balanced combo's damage becomes 100%.
+ * All ratios are capped at 1.0 (no combo exceeds 100%).
+ * Lopsided stats receive -2% on damage ratio (= -10 on weight scale) before 5x-4.
+ * Results are sorted by weight descending.
  */
 function computeMainStatWeightsFromDamage(
   slot: "sands" | "goblet" | "circlet",
   candidates: readonly MainStat[],
   qualifying: ComboResult[]
 ): WeightedMainStat[] {
-  // For each candidate stat, find the best combo (by damage, then cr/cd split)
-  const bestPerStat: Record<string, { dmg: number; crCdDiff: number }> = {};
+  // For each candidate stat, find the best combo (by damage, then cr/cd split).
+  // Also track whether that best combo is lopsided.
+  const bestPerStat: Record<
+    string,
+    { dmg: number; crCdDiff: number; lopsided: boolean }
+  > = {};
 
   for (const combo of qualifying) {
     const stat = combo[slot];
@@ -904,45 +959,60 @@ function computeMainStatWeightsFromDamage(
       (combo.tuneResult.rollAllocation.cr || 0) -
         (combo.tuneResult.rollAllocation.cd || 0)
     );
+    const comboLopsided = isLopsidedAllocation(combo.tuneResult.rollAllocation);
     const prev = bestPerStat[stat];
     if (
       !prev ||
       dmg > prev.dmg + 1e-6 ||
       (Math.abs(dmg - prev.dmg) <= 1e-6 && crCdDiff < prev.crCdDiff)
     ) {
-      bestPerStat[stat] = { dmg, crCdDiff };
+      bestPerStat[stat] = { dmg, crCdDiff, lopsided: comboLopsided };
     }
   }
 
-  // Find the best cr/cd split across all candidates
-  const bestCrCdDiff = Math.min(
-    ...Object.values(bestPerStat).map((v) => v.crCdDiff)
+  // normalizedDamage already has: balanced baseline, cap at 1.0, and -2% lopsided
+  // penalty baked in. Just apply 5x-4 directly.
+  const entries = Object.entries(bestPerStat).map(
+    ([stat, { dmg, crCdDiff, lopsided: isLopsided }]) => {
+      const weight = Math.max(0, Math.round((5 * dmg - 4) * 100));
+      return {
+        stat: stat as MainStat,
+        weight,
+        crCdDiff,
+        dmg,
+        penalty: isLopsided ? -2 : undefined,
+      };
+    }
   );
 
-  // Sort by damage desc, then by cr/cd split asc (even split preferred).
-  // This means among damage-tied stats, the one with better cr/cd split ranks first.
-  const sorted = Object.entries(bestPerStat).sort(([, a], [, b]) => {
-    const dmgDiff = b.dmg - a.dmg;
-    if (Math.abs(dmgDiff) > 1e-6) return dmgDiff;
+  // Sort by weight desc, then by cr/cd split asc for ties.
+  entries.sort((a, b) => {
+    const wDiff = b.weight - a.weight;
+    if (wDiff !== 0) return wDiff;
     return a.crCdDiff - b.crCdDiff;
   });
 
-  // Enlarge differences by 5x to counteract substat compensation compressing
-  // the ratios. Formula: (5 × ratio - 4) × 100
-  // Maps: 1.0→100, 0.99→95, 0.97→85, 0.95→75
-  // Among damage-tied candidates, penalize those with worse cr/cd split by 2pts.
-  return sorted.map(([stat, { dmg, crCdDiff }], i) => {
-    let weight = Math.max(0, Math.round((5 * dmg - 4) * 100));
-    // Penalize damage-tied candidates (within 1%) that have a worse cr/cd split
-    // than the best-split candidate at their damage tier
-    if (i > 0) {
-      const prev = sorted[i - 1][1];
-      if (Math.abs(dmg - prev.dmg) < 0.01 && crCdDiff > prev.crCdDiff + 0.5) {
-        weight = Math.max(0, weight - 2);
-      }
+  // Among weight-tied candidates, penalize those with worse cr/cd split by 2pts.
+  for (let i = 1; i < entries.length; i++) {
+    const curr = entries[i];
+    const prev = entries[i - 1];
+    if (curr.weight === prev.weight && curr.crCdDiff > prev.crCdDiff + 0.5) {
+      curr.weight = Math.max(0, curr.weight - 2);
     }
-    return { stat: stat as MainStat, weight };
+  }
+
+  // Re-sort after tie-breaking penalty
+  entries.sort((a, b) => {
+    const wDiff = b.weight - a.weight;
+    if (wDiff !== 0) return wDiff;
+    return a.crCdDiff - b.crCdDiff;
   });
+
+  return entries.map(({ stat, weight, penalty }) => ({
+    stat,
+    weight,
+    ...(penalty !== undefined && { penalty }),
+  }));
 }
 
 /** Infer scaling stat from substat weight distribution. */

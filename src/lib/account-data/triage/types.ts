@@ -4,9 +4,9 @@ import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 // Core labels & tiers
 // ---------------------------------------------------------------------------
 
-export type TriageLabel = "LOCK" | "BORDERLINE" | "FODDER";
+export type TriageLabel = "lock" | "unlock";
 
-export type StatTier = "core" | "valuable" | "minor" | "unwanted";
+export type QualityTier = "P" | "Q" | "N" | "T";
 
 // ---------------------------------------------------------------------------
 // Demand & Embryo
@@ -40,20 +40,30 @@ export type EmbryoMatch = {
   demand: DemandProfile;
   grade: SubstatGrade;
   embryoKey: string;
-  isRareEmbryo: boolean;
 };
 
 // ---------------------------------------------------------------------------
 // Decision output
 // ---------------------------------------------------------------------------
 
-export type TriageRuleId = string; // e.g. "L4-1", "F2-2", "S1", "SP1"
+export type TriageRuleId = string;
 
 export type EmbryoResult = {
   embryo: EmbryoMatch;
   label: TriageLabel;
   ruleId: TriageRuleId;
   reason: string;
+  /** Numeric args for i18n reason templates ({0}, {1}, ...) */
+  reasonArgs: (string | number)[];
+  /** Quality tier (P/Q/N/T) */
+  tier?: QualityTier;
+};
+
+export type SupplyDemandInfo = {
+  demand: number;
+  supplyByTier: Record<QualityTier, number>;
+  rankInTier: number; // 1-based
+  tierTotal: number;
 };
 
 export type TriageDecision = {
@@ -65,6 +75,8 @@ export type TriageDecision = {
   allResults: EmbryoResult[];
   /** Special rules that fired (SP1, SP5, etc.) */
   specialRules: string[];
+  /** Supply/demand context for the deciding embryoKey */
+  supplyDemand: SupplyDemandInfo | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -72,25 +84,55 @@ export type TriageDecision = {
 // ---------------------------------------------------------------------------
 
 export type TriageSettings = {
-  coreThreshold: number; // default 85
-  valuableThreshold: number; // default 50
-  surplusBuffer: number; // default 1
-  minimumKeep: number; // default 1, range 0-3
+  mainStatThreshold: number; // default 90 (weight 0-100 scale)
+  optionalSubThreshold: number; // default 50 (weight 0-100 scale)
+  neutralKeep: number; // default 2
+  qualityMargin: number; // default 2
+  setSlotKeep: number; // default 2 (min artifacts to keep per set+slot)
+  ownedOnly: boolean; // default true (only consider owned characters' builds)
   erHoardingEnabled: boolean; // default true
   doubleCritLockEnabled: boolean; // default true
-  rareEmbryoEnabled: boolean; // default true
-  maxLevelProtection: boolean; // default true
+  levelProtection: number; // default 12 (artifacts >= this level are protected)
   equippedProtection: boolean; // default true
+  disabledFlexPatterns: string[];
 };
 
 // ---------------------------------------------------------------------------
-// Rare Embryo
+// Tier system types
 // ---------------------------------------------------------------------------
 
-export type RareEmbryoEntry = {
+export type TierCondition = {
+  k: number; // hit ≥ k desired substats
+  crcd: boolean; // require both CR and CD present
+  is4L: boolean; // require initial 4-line
+  fill: boolean; // require ≥1 filler hit (only when k == subN)
+  tier: Exclude<QualityTier, "T">;
+};
+
+export type DemandTierEntry = {
+  subN: number;
+  hasCrCd: boolean;
+  hasFillers: boolean;
+  conditions: TierCondition[]; // sorted best-first (P → Q → N)
+};
+
+export type TriageRule = {
+  characterId: string;
+  buildId: string;
+  demandSource: DemandSource;
   slot: Slot;
   mainStat: MainStat;
-  requiredSubstats: SubStat[];
-  demandCharacters: string[];
-  combinedRarity: number; // lower = rarer
+  desired: SubStat[];
+  optional: SubStat[]; // for ranking only
+  fillers: SubStat[];
+  tierEntry: DemandTierEntry;
+};
+
+export type FlexPattern = {
+  key: string;
+  slot: Slot;
+  mainStat: MainStat;
+  requiredSubs: SubStat[];
+  /** E2E rarity probability */
+  rarity: number;
 };
