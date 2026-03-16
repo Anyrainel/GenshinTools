@@ -17,14 +17,8 @@
  */
 
 import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
-import {
-  artifactHalfSetsById,
-  artifactIdToHalfSetId,
-} from "@/data/constants";
-import {
-  MAIN_STAT_VALUES_5STAR,
-  statPools,
-} from "@/data/constants";
+import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
+import { MAIN_STAT_VALUES_5STAR, statPools } from "@/data/constants";
 import type {
   ArtifactData,
   GlobalStatWeights,
@@ -33,10 +27,7 @@ import type {
   SubStat,
 } from "@/data/types";
 import { allSlots } from "@/data/types";
-import {
-  AVG_SUBSTAT_ROLL,
-  toInternal,
-} from "@/lib/account-data/scoring/utils";
+import { AVG_SUBSTAT_ROLL, toInternal } from "@/lib/account-data/scoring/utils";
 import {
   type BuildMatchResult,
   getMainStatValueAtLevel,
@@ -298,7 +289,16 @@ function computeWeightScore(
 
 /** Substats eligible for marginal analysis */
 const MARGINAL_SUBSTATS: SubStat[] = [
-  "cr", "cd", "atk%", "hp%", "def%", "em", "er", "atk", "hp", "def",
+  "cr",
+  "cd",
+  "atk%",
+  "hp%",
+  "def%",
+  "em",
+  "er",
+  "atk",
+  "hp",
+  "def",
 ];
 
 /** Main stat pools for variable slots (sands/goblet/circlet) */
@@ -345,7 +345,11 @@ function computeMarginalWeights(
   // better for Chiori because she already has geo% from other sources).
   let baseSheet = new StatSheet([]);
   if (buildMatch) {
-    const slotKeys: ("sands" | "goblet" | "circlet")[] = ["sands", "goblet", "circlet"];
+    const slotKeys: ("sands" | "goblet" | "circlet")[] = [
+      "sands",
+      "goblet",
+      "circlet",
+    ];
     for (const slot of slotKeys) {
       const rec = getTargetMainStatsForSlot(slot, buildMatch.build);
       if (rec.size > 0) {
@@ -369,7 +373,11 @@ function computeMarginalWeights(
   let baseDamage: number;
   try {
     const result = teamBuild.getDamageResult(
-      charId, formulaId, teamStats, calcContext, reactionOverride
+      charId,
+      formulaId,
+      teamStats,
+      calcContext,
+      reactionOverride
     );
     baseDamage = result.totalDamage;
   } catch {
@@ -382,12 +390,21 @@ function computeMarginalWeights(
   let maxMarginal = 0;
   for (const stat of MARGINAL_SUBSTATS) {
     const delta = AVG_SUBSTAT_ROLL[stat];
-    if (!delta) { subMarginals[stat] = 0; continue; }
+    if (!delta) {
+      subMarginals[stat] = 0;
+      continue;
+    }
     const tweakedSheet = baseSheet.withDelta(stat as StatKey, delta);
     const tweakedSheets = { ...baseSheets, [charId]: tweakedSheet };
     const ts = teamBuild.getTeamStats(tweakedSheets, charId, calcContext);
     try {
-      const r = teamBuild.getDamageResult(charId, formulaId, ts, calcContext, reactionOverride);
+      const r = teamBuild.getDamageResult(
+        charId,
+        formulaId,
+        ts,
+        calcContext,
+        reactionOverride
+      );
       subMarginals[stat] = Math.max(0, r.totalDamage - baseDamage);
     } catch {
       subMarginals[stat] = 0;
@@ -398,9 +415,10 @@ function computeMarginalWeights(
   // Normalize substats to 0-100
   const substatWeights: Record<string, number> = {};
   for (const stat of MARGINAL_SUBSTATS) {
-    substatWeights[stat] = maxMarginal > 0
-      ? Math.round((subMarginals[stat] / maxMarginal) * 100)
-      : 0;
+    substatWeights[stat] =
+      maxMarginal > 0
+        ? Math.round((subMarginals[stat] / maxMarginal) * 100)
+        : 0;
   }
 
   // Compute main stat marginals for variable slots
@@ -410,13 +428,22 @@ function computeMarginalWeights(
     let slotMax = 0;
     for (const mainStat of pool) {
       const value = MAIN_STAT_VALUES_5STAR[mainStat];
-      if (!value) { slotMarginals[mainStat] = 0; continue; }
+      if (!value) {
+        slotMarginals[mainStat] = 0;
+        continue;
+      }
       const internalVal = toInternal(mainStat, value);
       const msSheet = baseSheet.withDelta(mainStat as StatKey, internalVal);
       const msSheets = { ...baseSheets, [charId]: msSheet };
       const ts = teamBuild.getTeamStats(msSheets, charId, calcContext);
       try {
-        const r = teamBuild.getDamageResult(charId, formulaId, ts, calcContext, reactionOverride);
+        const r = teamBuild.getDamageResult(
+          charId,
+          formulaId,
+          ts,
+          calcContext,
+          reactionOverride
+        );
         slotMarginals[mainStat] = Math.max(0, r.totalDamage - baseDamage);
       } catch {
         slotMarginals[mainStat] = 0;
@@ -425,9 +452,8 @@ function computeMarginalWeights(
     }
     // Normalize per-slot: best main stat → 1.0
     for (const mainStat of pool) {
-      slotMarginals[mainStat] = slotMax > 0
-        ? slotMarginals[mainStat] / slotMax
-        : 0;
+      slotMarginals[mainStat] =
+        slotMax > 0 ? slotMarginals[mainStat] / slotMax : 0;
     }
     mainStatMarginals[slot] = slotMarginals;
   }
@@ -438,7 +464,11 @@ function computeMarginalWeights(
   // because the build's substat weights are tuned for the build's main stats.
   let hasMainStatDisagreement = false;
   if (buildMatch) {
-    const slotKeys: ("sands" | "goblet" | "circlet")[] = ["sands", "goblet", "circlet"];
+    const slotKeys: ("sands" | "goblet" | "circlet")[] = [
+      "sands",
+      "goblet",
+      "circlet",
+    ];
     for (const slot of slotKeys) {
       const rec = getTargetMainStatsForSlot(slot, buildMatch.build);
       const slotM = mainStatMarginals[slot];
@@ -447,7 +477,10 @@ function computeMarginalWeights(
       let bestMain = "";
       let bestVal = 0;
       for (const [ms, val] of Object.entries(slotM)) {
-        if (val > bestVal) { bestVal = val; bestMain = ms; }
+        if (val > bestVal) {
+          bestVal = val;
+          bestMain = ms;
+        }
       }
       if (bestMain && !rec.has(bestMain as MainStat)) {
         hasMainStatDisagreement = true;
@@ -501,13 +534,23 @@ function computeMarginalScore(
   if (slotMarginals) {
     const proportion = slotMarginals[art.mainStatKey] ?? 0;
     if (proportion > 0) {
-      let ms = scoreMainStat(art.mainStatKey, art.rarity, globalConfig, art.level);
+      let ms = scoreMainStat(
+        art.mainStatKey,
+        art.rarity,
+        globalConfig,
+        art.level
+      );
       if (crDiscount < 1 && art.mainStatKey === "cr") ms *= crDiscount;
       score += ms * proportion;
     }
   } else {
     // flower/plume: always give full main stat bonus
-    score += scoreMainStat(art.mainStatKey, art.rarity, globalConfig, art.level);
+    score += scoreMainStat(
+      art.mainStatKey,
+      art.rarity,
+      globalConfig,
+      art.level
+    );
   }
 
   return score;
@@ -664,8 +707,20 @@ function prepareSlotData(
       )
       .sort((a, b) =>
         marginals
-          ? computeMarginalScore(b, buildMatch, globalConfig, crDiscount, marginals) -
-            computeMarginalScore(a, buildMatch, globalConfig, crDiscount, marginals)
+          ? computeMarginalScore(
+              b,
+              buildMatch,
+              globalConfig,
+              crDiscount,
+              marginals
+            ) -
+            computeMarginalScore(
+              a,
+              buildMatch,
+              globalConfig,
+              crDiscount,
+              marginals
+            )
           : computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
             computeWeightScore(a, buildMatch, globalConfig, crDiscount)
       );
@@ -924,12 +979,22 @@ export function runCharacterBnB(
   let marginals: MarginalWeights | null = null;
   if (swapCharId === formulaCharId && !scoreFn) {
     marginals = computeMarginalWeights(
-      teamBuild, swapCharId, formulaId, baseSheets, calcContext,
-      charConfig.buildMatch, reactionOverride
+      teamBuild,
+      swapCharId,
+      formulaId,
+      baseSheets,
+      calcContext,
+      charConfig.buildMatch,
+      reactionOverride
     );
-    if (marginals && (globalThis as Record<string, unknown>).__TEAM_OPT_DIAG__) {
+    if (
+      marginals &&
+      (globalThis as Record<string, unknown>).__TEAM_OPT_DIAG__
+    ) {
       const d = marginals.hasMainStatDisagreement ? "YES" : "no";
-      console.log(`  [MARGINAL] ${charId}: mainStatDisagree=${d}, substats=${JSON.stringify(marginals.substatWeights)}`);
+      console.log(
+        `  [MARGINAL] ${charId}: mainStatDisagree=${d}, substats=${JSON.stringify(marginals.substatWeights)}`
+      );
     }
   }
 
@@ -1127,10 +1192,20 @@ export function runCharacterBnB(
       for (const seed of seeds) {
         const pieces: ArtifactTuple = [...seed] as ArtifactTuple;
         let bestDamage = evaluateBuild(
-          pieces, teamBuild, swapCharId, formulaCharId, formulaId,
-          baseSheets, calcTargetId, calcContext, erCheckCharId,
-          charConfig.targetEr, charConfig.targetCr, reactionOverride,
-          scoreFn, optCtx
+          pieces,
+          teamBuild,
+          swapCharId,
+          formulaCharId,
+          formulaId,
+          baseSheets,
+          calcTargetId,
+          calcContext,
+          erCheckCharId,
+          charConfig.targetEr,
+          charConfig.targetCr,
+          reactionOverride,
+          scoreFn,
+          optCtx
         ).damage;
         collector.add(bestDamage, null, pieces);
         ctx.evaluations++;
@@ -1146,10 +1221,20 @@ export function runCharacterBnB(
               const saved = pieces[s];
               pieces[s] = group[gi];
               const { damage } = evaluateBuild(
-                pieces, teamBuild, swapCharId, formulaCharId, formulaId,
-                baseSheets, calcTargetId, calcContext, erCheckCharId,
-                charConfig.targetEr, charConfig.targetCr, reactionOverride,
-                scoreFn, optCtx
+                pieces,
+                teamBuild,
+                swapCharId,
+                formulaCharId,
+                formulaId,
+                baseSheets,
+                calcTargetId,
+                calcContext,
+                erCheckCharId,
+                charConfig.targetEr,
+                charConfig.targetCr,
+                reactionOverride,
+                scoreFn,
+                optCtx
               );
               ctx.evaluations++;
               if (damage > bestDamage) {
