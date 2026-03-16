@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1773465532506",
+  "id": "export-1773675315302",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -935,6 +935,10 @@
       "gobletWeights": [
         {
           "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "cryo%",
           "weight": 100
         }
       ],
@@ -4224,6 +4228,10 @@
         {
           "stat": "er",
           "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
         }
       ],
       "gobletWeights": [
@@ -4238,7 +4246,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.6809310370068995
+      "normalizer": 0.6809310370068995,
+      "source": "preset"
     },
     "9pjcdbm": {
       "id": "9pjcdbm",
@@ -5638,11 +5647,12 @@
       ],
       "circletWeights": [
         {
-          "stat": "cr",
+          "stat": "cd",
           "weight": 100
         }
       ],
-      "normalizer": 0.7102089878722937
+      "normalizer": 0.7102089878722937,
+      "source": "preset"
     },
     "4aRxcbm": {
       "id": "4aRxcbm",
@@ -7157,10 +7167,6 @@
         {
           "stat": "hp%",
           "weight": 100
-        },
-        {
-          "stat": "atk%",
-          "weight": 100
         }
       ],
       "circletWeights": [
@@ -7169,7 +7175,8 @@
           "weight": 100
         }
       ],
-      "normalizer": 0.7544436732353562
+      "normalizer": 0.7544436732353562,
+      "source": "preset"
     },
     "3rtmytm": {
       "id": "3rtmytm",

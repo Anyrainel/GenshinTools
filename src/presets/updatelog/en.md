@@ -4,6 +4,19 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-03-16
+
+### features
+- Optimizer algorithm reworked: prioritizes optimal results more aggressively, but takes longer
+- DPS builds now support auto-tuning: automatically calculates sub-stat weights based on constellation and refinement
+- Artifact lock / unlock recommendations
+- More character formulas
+
+### fixes
+- Fixed other-element Travelers being marked as unowned during import
+- Fixed incorrect artifact generation for 2+2 set combinations
+- Fixed optimizer producing level 0 artifacts when no buffs are active
+
 ## 2025-03-12
 
 ### features
