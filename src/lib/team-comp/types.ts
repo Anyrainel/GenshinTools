@@ -360,3 +360,84 @@ export type CharCompConfig = {
 // ─── Combat Options (Schema-Driven) ───
 // OptionChoice, OptionDef, InferOption, CombatOpts live in damageModels.ts
 // (co-located with TeamMeta and resolveOption that consume them).
+
+// ─── Optimizer Types (shared across V1, V2, Mona, benchmark) ───
+
+import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
+import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
+import type { TeamBuild } from "./damageCalc";
+import type { OptFailReason } from "./optimizer";
+export type { OptFailReason } from "./optimizer";
+
+export type TeamOptPassId = "carry-1" | "support" | "carry-2";
+
+export interface TeamOptPassResult {
+  passId: TeamOptPassId;
+  charId: string;
+  bestDamage: number;
+  bestArtifacts: Record<Slot, ArtifactData | null>;
+  failReason?: OptFailReason;
+}
+
+export interface TeamOptimizationProgress {
+  currentPass: TeamOptPassId;
+  currentPassCharId: string;
+  passIndex: number;
+  totalPasses: number;
+  passPhase: "pruning" | "evaluating";
+  passProgress: number;
+  overallProgress: number;
+  passResults: TeamOptPassResult[];
+  done: false;
+}
+
+interface TeamOptResultBase {
+  bestDamage: number;
+  bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
+  passResults: TeamOptPassResult[];
+  failReasons: Record<string, OptFailReason>;
+  saturatedCharIds: string[];
+  teamBuild?: TeamBuild;
+  done: true;
+}
+
+export interface TeamOptSingleResult extends TeamOptResultBase {
+  mode: "single";
+  bestDamageResult: DamageResult;
+}
+
+export interface TeamOptComboResult extends TeamOptResultBase {
+  mode: "combo";
+  bestComboResult: ComboResult;
+}
+
+export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
+
+export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
+
+export interface PerCharConfig {
+  targetEr: number;
+  targetCr: number;
+  buildMatch?: BuildMatchResult | null;
+  artifactSetId?: string | null;
+  artifactHalfSetIds?: string[];
+}
+
+export interface TeamOptimizerOptions {
+  teamBuild: TeamBuild;
+  carryCharId: string;
+  formulaId: string;
+  inventory: ArtifactData[];
+  calcContext: CalcContext;
+  globalConfig: GlobalStatWeights;
+  baseSheets: Record<string, StatSheet>;
+  perChar: Record<string, PerCharConfig>;
+  reactionOverride?: ReactionOverride;
+  altCount?: number;
+  combo?: ComboFormula;
+  reactionOverrides?: Record<string, ReactionOverride>;
+  ignoreArtifactSets?: Record<string, boolean>;
+  perCharDeadlineMs?: number;
+  teamDeadlineMs?: number;
+  maxArtsPerSlot?: number;
+}

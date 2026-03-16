@@ -36,9 +36,22 @@ Retained as backup code. No longer used in the UI.
 
 ## V2: Branch-and-Bound with Hill-Climbing Warm-Start
 
-### Phase 1: Per-Character B&B
+### Phase 0: Heuristic Base Sheets
 
-For each character independently, find the top-K artifact builds:
+Before any B&B search begins, build a heuristic artifact assignment for every character to seed realistic team stat context. This replaces the previous approach of using account-equipped artifacts, which could belong to the wrong set and create artificially high initial bounds that pruned all valid search results.
+
+1. **Order characters.** Carries get first pick, then supports.
+2. **Determine set constraints.** For 4pc requirements, assign the on-set requirement to 4 slots (choosing the slot with fewest on-set candidates as the flex slot). For 2+2, greedily assign half-set slots.
+3. **Weight-scored selection.** For each slot, filter candidates by set constraint and sort by `computeWeightScore` (using the character's `buildMatch` stat weights). Pick the top candidate, mark it as assigned so later characters cannot reuse it.
+4. **Build StatSheets.** Convert each character's picked artifacts into a `StatSheet` for use as `baseSheets` in Phase 1.
+
+This ensures every character's B&B search sees a valid initial bound from set-matching artifacts, avoiding the impossible-bound bug while still providing a strong pruning threshold.
+
+### Phase 1: Per-Character B&B (Parallel)
+
+For each character independently, find the top-K artifact builds. In the browser, Phase 1 runs all characters in parallel via Web Workers; in Node.js or single-character cases, it falls back to sequential execution on the main thread.
+
+**Per-character B&B algorithm:**
 
 1. **Pattern enumeration.** Based on set constraints, enumerate all valid slot assignment patterns (which slots are on-set vs off-set). For a 4pc set, there are 5 patterns (one per off-set slot position).
 
@@ -52,6 +65,14 @@ For each character independently, find the top-K artifact builds:
 
 5. **Deadline enforcement.** B&B aborts after the time budget expires. The hill-climbing warm-start ensures that even aborted searches return high-quality results.
 
+**Parallelization via Web Workers:**
+
+- Each worker receives: the character config, serialized `TeamBuild` (as `CharCompConfig[]` + `CombatOpts`), serialized `baseSheets` (via `StatSheet.toSerializable()`), inventory, and time budget.
+- Workers reconstruct the `TeamBuild` and `StatSheet` objects internally, then run `runCharacterBnB`.
+- Each worker gets the full Phase 1 time budget (since they run concurrently, the wall-clock time equals a single character's budget).
+- Results are serialized back: `artifactIds` as `string[]` (converted back to `Set<string>` on the main thread).
+- Worker crashes or timeouts are handled gracefully — the character gets empty results and later phases compensate.
+
 ### Phase 2: Conflict-Aware Team Allocation
 
 Select one build per character from their top-K lists such that no artifact is shared:
@@ -62,7 +83,7 @@ Select one build per character from their top-K lists such that no artifact is s
 
 ### Phase 3: Carry Re-Optimization
 
-After Phase 2 assigns optimized artifacts to supports, the carry's optimal build may change (Phase 1 used account-equipped support stats). Re-run carry B&B with actual support stats and previously assigned artifacts excluded.
+After Phase 2 assigns optimized artifacts to supports, the carry's optimal build may change (Phase 1 used heuristic support stats). Re-run carry B&B with actual optimized support stats and previously assigned artifacts excluded.
 
 ### Phase 3b: Iterative Team Re-Optimization
 

@@ -1,21 +1,18 @@
 /**
- * Worker process for parallel optimizer testbed.
+ * Worker process for parallel optimizer benchmark.
  * Spawned via child_process.fork() — communicates via IPC (process.send/on).
  * Each worker independently loads game stats + account data,
  * then processes teams on demand via message passing.
  */
 
-// Side-effect barrel: registers all character/weapon/artifact implementations.
-import "@/lib/team-comp/index";
-
-import { preloadGameStats } from "@/lib/gameStatsLoader";
-import {
-  loadAccountData,
-  getAllArtifacts,
-  runOptimizerOnTeam,
-} from "./optimizer-testbed.js";
 import type { AccountData, ArtifactData } from "@/data/types";
-import type { Team } from "./optimizer-testbed.js";
+import {
+  getAllArtifacts,
+  loadAccountData,
+  preloadGameStats,
+  runOptimizerOnTeam,
+} from "./runner";
+import type { Team } from "./runner";
 
 interface RunMessage {
   type: "run";
@@ -23,6 +20,7 @@ interface RunMessage {
   algorithm: "v1" | "v2";
   timeoutMs: number;
   perCharMs?: number;
+  maxArtsPerSlot?: number;
   teamIdx: number;
 }
 
@@ -31,6 +29,11 @@ const accountFile = process.argv[2];
 if (!accountFile) {
   console.error("Worker: no account file provided");
   process.exit(1);
+}
+
+// Enable diagnostic logging if requested (passed as second arg)
+if (process.argv[3] === "--diag") {
+  (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
 }
 
 let accountData: AccountData;
@@ -52,7 +55,9 @@ process.on("message", async (msg: RunMessage) => {
         inventory,
         msg.algorithm,
         msg.timeoutMs,
-        msg.perCharMs
+        msg.perCharMs,
+        undefined, // formulaIdOverride: handled by caller tagging team
+        msg.maxArtsPerSlot
       );
       process.send!({
         type: "result",

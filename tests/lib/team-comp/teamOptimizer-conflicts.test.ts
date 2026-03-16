@@ -16,14 +16,14 @@ import {
   type OptimizationResult,
   runOptimization,
 } from "@/lib/team-comp/optimizer";
-import {
-  type TeamOptYield,
-  type TeamOptimizationResult,
-  type TeamOptimizerOptions,
-  runTeamOptimization,
-} from "@/lib/team-comp/teamOptimizer";
+import type {
+  TeamOptYield,
+  TeamOptimizationResult,
+  TeamOptimizerOptions,
+} from "@/lib/team-comp/types";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
+import { runTeamOptimization } from "../../../tests/benchmark/gen/v1";
 
 import "@/lib/team-comp/index";
 import {

@@ -15,11 +15,10 @@ import {
   type IdealGenOptions,
   runIdealArtifactGen,
 } from "@/lib/team-comp/idealArtifactGen";
-import {
-  type PerCharConfig,
-  type TeamOptimizerOptions,
-  runTeamOptimization,
-} from "@/lib/team-comp/teamOptimizer";
+import type {
+  PerCharConfig,
+  TeamOptimizerOptions,
+} from "@/lib/team-comp/types";
 import type {
   CalcContext,
   CharCompConfig,
@@ -27,6 +26,7 @@ import type {
   ReactionOverride,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
+import { runTeamOptimization } from "../../../tests/benchmark/gen/v1";
 
 import "@/lib/team-comp/index";
 import {

@@ -30,13 +30,16 @@ import {
 } from "../account-data/artifactScore";
 import { type OptimizerContext, TeamBuild, evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
+import type { OptimizationResult, OptimizerOptions } from "./optimizer";
 import type {
+  CalcContext,
+  ComboFormula,
+  ComboResult,
+  DamageResult,
   OptFailReason,
-  OptimizationResult,
-  OptimizerOptions,
-} from "./optimizer";
-import type {
   PerCharConfig,
+  ReactionOverride,
+  StatKey,
   TeamOptComboResult,
   TeamOptPassId,
   TeamOptPassResult,
@@ -45,17 +48,9 @@ import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
-} from "./teamOptimizer";
-import type {
-  CalcContext,
-  ComboFormula,
-  ComboResult,
-  DamageResult,
-  ReactionOverride,
-  StatKey,
 } from "./types";
 
-// Re-export types so consumers can import from this module
+// Re-export optimizer types so consumers can import from this module
 export type {
   TeamOptPassResult,
   TeamOptimizationProgress,
@@ -127,7 +122,7 @@ type ArtifactTuple = [
   ArtifactData | null,
 ];
 
-interface TopKEntry {
+export interface TopKEntry {
   damage: number;
   result: DamageResult | null;
   artifacts: ArtifactTuple;
@@ -636,7 +631,7 @@ function buildSlotGroupsForPattern(
  * Run B&B for one character across all applicable set compositions.
  * Returns a TopKCollector with the top-K results.
  */
-function runCharacterBnB(
+export function runCharacterBnB(
   charId: string,
   charConfig: PerCharConfig,
   teamBuild: TeamBuild,
@@ -1336,6 +1331,180 @@ function buildSheetsFromArtifacts(
   return sheets;
 }
 
+// ─── Heuristic Initial baseSheets Builder ───
+
+/**
+ * Build a heuristic artifact assignment for one character using weight-scored
+ * artifacts that respect set constraints. Returns the picked artifacts record.
+ * Used to seed baseSheets before Phase 1 so all characters see a realistic
+ * team context without sequential dependency.
+ */
+function buildHeuristicAssignment(
+  charConfig: PerCharConfig,
+  inventory: ArtifactData[],
+  globalConfig: GlobalStatWeights,
+  assignedIds: Set<string>
+): Record<Slot, ArtifactData | null> {
+  const empty: Record<Slot, ArtifactData | null> = {
+    flower: null,
+    plume: null,
+    sands: null,
+    goblet: null,
+    circlet: null,
+  };
+
+  const is4pc = !!charConfig.artifactSetId;
+  const is2pc =
+    !charConfig.artifactSetId &&
+    !!charConfig.artifactHalfSetIds &&
+    charConfig.artifactHalfSetIds.length === 2;
+
+  const buildMatch = charConfig.buildMatch;
+
+  // Determine per-slot set constraints
+  const slotSetAssignment: (string | null)[] = [null, null, null, null, null];
+
+  if (is4pc) {
+    const setId = charConfig.artifactSetId!;
+    const onSetCounts = allSlots.map(
+      (slot) =>
+        inventory.filter(
+          (a) =>
+            a.slotKey === slot && a.setKey === setId && !assignedIds.has(a.id)
+        ).length
+    );
+    let flexSlotIdx = 0;
+    for (let i = 1; i < 5; i++) {
+      if (onSetCounts[i] < onSetCounts[flexSlotIdx]) flexSlotIdx = i;
+    }
+    for (let i = 0; i < 5; i++) {
+      slotSetAssignment[i] = i === flexSlotIdx ? null : setId;
+    }
+  } else if (is2pc) {
+    const [h1, h2] = charConfig.artifactHalfSetIds!;
+    const h1Sets = new Set(artifactHalfSetsById[h1]?.setIds ?? []);
+    const h2Sets = new Set(artifactHalfSetsById[h2]?.setIds ?? []);
+    let h1Count = 0;
+    let h2Count = 0;
+    for (let i = 0; i < 5; i++) {
+      if (h1Count < 2) {
+        const hasH1 = inventory.some(
+          (a) =>
+            a.slotKey === allSlots[i] &&
+            h1Sets.has(a.setKey) &&
+            !assignedIds.has(a.id)
+        );
+        if (hasH1) {
+          slotSetAssignment[i] = h1;
+          h1Count++;
+          continue;
+        }
+      }
+      if (h2Count < 2) {
+        const hasH2 = inventory.some(
+          (a) =>
+            a.slotKey === allSlots[i] &&
+            h2Sets.has(a.setKey) &&
+            !assignedIds.has(a.id)
+        );
+        if (hasH2) {
+          slotSetAssignment[i] = h2;
+          h2Count++;
+        }
+      }
+    }
+  }
+
+  const picked = { ...empty };
+  const pickedIds = new Set<string>();
+
+  for (let si = 0; si < 5; si++) {
+    const slot = allSlots[si];
+    const requiredSetOrHalf = slotSetAssignment[si];
+
+    let candidates = inventory.filter(
+      (a) =>
+        a.slotKey === slot && !assignedIds.has(a.id) && !pickedIds.has(a.id)
+    );
+
+    if (requiredSetOrHalf) {
+      const halfSet = artifactHalfSetsById[requiredSetOrHalf];
+      if (halfSet) {
+        const validSets = new Set(halfSet.setIds);
+        const filtered = candidates.filter((a) => validSets.has(a.setKey));
+        if (filtered.length > 0) candidates = filtered;
+      } else {
+        const filtered = candidates.filter(
+          (a) => a.setKey === requiredSetOrHalf
+        );
+        if (filtered.length > 0) candidates = filtered;
+      }
+    }
+
+    if (candidates.length === 0) continue;
+
+    const fallbackWeights = buildMatch
+      ? undefined
+      : ({ er: 100 } as Record<string, number>);
+    candidates.sort((a, b) => {
+      const sa = buildMatch
+        ? computeWeightScore(a, buildMatch, globalConfig, 1)
+        : scoreSlot(a, fallbackWeights!, globalConfig);
+      const sb = buildMatch
+        ? computeWeightScore(b, buildMatch, globalConfig, 1)
+        : scoreSlot(b, fallbackWeights!, globalConfig);
+      return sb - sa || b.level - a.level;
+    });
+
+    picked[slot] = candidates[0];
+    pickedIds.add(candidates[0].id);
+  }
+
+  // Mark picked IDs as assigned for subsequent characters
+  for (const id of pickedIds) assignedIds.add(id);
+  return picked;
+}
+
+/**
+ * Build heuristic baseSheets for all characters. Carries get first pick.
+ * Returns baseSheets where each character's entry uses set-valid artifacts.
+ */
+function buildHeuristicBaseSheets(
+  allCharIds: string[],
+  carryCharIds: string[],
+  perChar: Record<string, PerCharConfig>,
+  inventory: ArtifactData[],
+  globalConfig: GlobalStatWeights,
+  baseSheets: Record<string, StatSheet>
+): Record<string, StatSheet> {
+  const result = { ...baseSheets };
+  const assignedIds = new Set<string>();
+
+  // Process carries first, then supports
+  const ordered = [
+    ...allCharIds.filter((id) => carryCharIds.includes(id)),
+    ...allCharIds.filter((id) => !carryCharIds.includes(id)),
+  ];
+
+  for (const charId of ordered) {
+    const charConfig = perChar[charId];
+    if (!charConfig) continue;
+    const picked = buildHeuristicAssignment(
+      charConfig,
+      inventory,
+      globalConfig,
+      assignedIds
+    );
+    const pieces = allSlots
+      .map((s) => picked[s])
+      .filter((a): a is ArtifactData => a != null);
+    if (pieces.length > 0) {
+      result[charId] = StatSheet.fromArtifacts(pieces);
+    }
+  }
+  return result;
+}
+
 /**
  * V2 Team Optimizer: B&B per character → top-K → conflict-aware DFS.
  * Same interface as V1's `runTeamOptimization`.
@@ -1507,14 +1676,11 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Phase 1: Sequential Per-character B&B → top-K results
+  // Phase 1: Parallel Per-character B&B → top-K results (via Web Workers)
   //
-  // Process carry first, then supports. After each character, update
-  // the running base sheets with that character's top-1 artifacts.
-  // This way, each support's B&B evaluates carry damage in the context
-  // of the carry's actual (top-1) artifacts + previous supports'
-  // artifacts — capturing cross-character interactions that independent
-  // B&B would miss.
+  // Build heuristic baseSheets so all characters see a realistic team
+  // context without sequential dependency, then run each character's
+  // B&B in a separate Web Worker.
   // ════════════════════════════════════════════════════════════════════
 
   const topKByChar: Record<string, TopKEntry[]> = {};
@@ -1522,21 +1688,35 @@ export async function* runTeamOptimization(
   const passResults: TeamOptPassResult[] = [];
   const totalPhases = allCharIds.length + 1; // +1 for team allocation phase
 
-  // Order: carries first, then supports (supports see carry's top-1 context)
-  const phase1Order = [
-    ...allCharIds.filter((id) => carryCharIds.includes(id)),
-    ...allCharIds.filter((id) => !carryCharIds.includes(id)),
-  ];
+  // Build heuristic baseSheets with set-valid artifacts for realistic team context
+  const heuristicSheets = buildHeuristicBaseSheets(
+    allCharIds,
+    carryCharIds,
+    effectivePerChar,
+    inventory,
+    globalConfig,
+    baseSheets
+  );
 
-  // Running base sheets: updated after each character with their top-1 artifacts
-  let runningBaseSheets = { ...baseSheets };
+  // Yield: Phase 1 starting
+  yield {
+    currentPass: "carry-1",
+    currentPassCharId: carryCharIds[0] ?? allCharIds[0],
+    passIndex: 0,
+    totalPasses: totalPhases,
+    passPhase: "pruning",
+    passProgress: 0,
+    overallProgress: 0,
+    passResults: [],
+    done: false,
+  } satisfies TeamOptimizationProgress;
+  await new Promise((r) => setTimeout(r, 0));
 
-  for (let ci = 0; ci < phase1Order.length; ci++) {
-    const charId = phase1Order[ci];
-    const charConfig = effectivePerChar[charId];
-    if (!charConfig) continue;
-
-    // Skip saturated characters — they'll be filled heuristically after Phase 3b
+  // Identify characters to optimize (skip saturated)
+  const charsToOptimize = allCharIds.filter(
+    (id) => !saturatedCharIds.has(id) && effectivePerChar[id]
+  );
+  for (const charId of allCharIds) {
     if (saturatedCharIds.has(charId)) {
       passResults.push({
         passId: "support",
@@ -1544,73 +1724,170 @@ export async function* runTeamOptimization(
         bestDamage: -1,
         bestArtifacts: { ...emptyArtifacts },
       });
-      continue;
     }
+  }
 
-    const passId: TeamOptPassId = carryCharIds.includes(charId)
-      ? "carry-1"
-      : "support";
+  // Serialize baseSheets for workers
+  const baseSheetsDump: Record<
+    string,
+    { key: StatKey; filterKey: string; value: number }[]
+  > = {};
+  for (const [cid, sheet] of Object.entries(heuristicSheets)) {
+    baseSheetsDump[cid] = sheet.toSerializable();
+  }
 
-    // Yield progress: starting this character
-    yield {
-      currentPass: passId,
-      currentPassCharId: charId,
-      passIndex: ci,
-      totalPasses: totalPhases,
-      passPhase: "pruning",
-      passProgress: 0,
-      overallProgress: ci / totalPhases,
-      passResults: [...passResults],
-      done: false,
-    } satisfies TeamOptimizationProgress;
-    await new Promise((r) => setTimeout(r, 0));
+  // Phase 1 budget: each worker gets the full per-char budget (they run in parallel)
+  const phase1BudgetMs = perCharDeadlineMs
+    ? perCharDeadlineMs * numChars // total Phase 1 budget = per-char × numChars
+    : undefined;
 
-    // Run B&B with running base sheets (includes previous chars' top-1)
-    // Per-char budget clamped to team deadline
-    const charDeadline = perCharDeadlineMs
-      ? performance.now() + perCharDeadlineMs
-      : undefined;
-    let result = runCharacterBnB(
-      charId,
-      charConfig,
-      effectiveTeamBuild,
-      carryCharId,
-      formulaId,
-      inventory,
-      globalConfig,
-      runningBaseSheets,
-      calcContext,
-      undefined, // no exclusions in phase 1
-      reactionOverride,
-      comboScoreFn,
-      TOP_K,
-      charDeadline,
-      undefined,
-      maxArtsPerSlot ?? 0
+  // Try parallel execution via Web Workers; fall back to sequential if unavailable
+  const useWorkers =
+    typeof Worker !== "undefined" && charsToOptimize.length > 1;
+
+  if (useWorkers) {
+    // Spawn one worker per character
+    type WorkerResult = {
+      charId: string;
+      entries: TopKEntry[];
+      evaluations: number;
+      failReason?: OptFailReason;
+    };
+
+    const workerPromises: Promise<WorkerResult>[] = charsToOptimize.map(
+      (charId) => {
+        const charConfig = effectivePerChar[charId];
+        return new Promise<WorkerResult>((resolve, reject) => {
+          const worker = new Worker(
+            new URL("./optimizerV2.worker.ts", import.meta.url),
+            { type: "module" }
+          );
+
+          const timeoutId = setTimeout(
+            () => {
+              worker.terminate();
+              // Timeout is not fatal — return empty results
+              resolve({
+                charId,
+                entries: [],
+                evaluations: 0,
+                failReason: { kind: "empty-pool", emptySlots: [] },
+              });
+            },
+            (phase1BudgetMs ?? 30_000) * 1.5
+          );
+
+          worker.onmessage = (
+            e: MessageEvent<import("./optimizerV2.worker").BnBWorkerResponse>
+          ) => {
+            clearTimeout(timeoutId);
+            worker.terminate();
+            const resp = e.data;
+            if ("error" in resp) {
+              console.warn(
+                `[optimizerV2] Worker error for ${charId}:`,
+                resp.error
+              );
+              resolve({
+                charId,
+                entries: [],
+                evaluations: 0,
+              });
+              return;
+            }
+            // Deserialize: convert artifactIds string[] back to Set<string>
+            const entries: TopKEntry[] = resp.entries.map((entry) => ({
+              damage: entry.damage,
+              result: entry.result,
+              artifacts: entry.artifacts as ArtifactTuple,
+              artifactIds: new Set(entry.artifactIds),
+            }));
+            resolve({
+              charId,
+              entries,
+              evaluations: resp.evaluations,
+              failReason: resp.failReason,
+            });
+          };
+
+          worker.onerror = (e) => {
+            clearTimeout(timeoutId);
+            worker.terminate();
+            console.warn(`[optimizerV2] Worker crashed for ${charId}:`, e);
+            resolve({
+              charId,
+              entries: [],
+              evaluations: 0,
+            });
+          };
+
+          const request: import("./optimizerV2.worker").BnBWorkerRequest = {
+            id: 0,
+            charId,
+            charConfig,
+            configs: teamBuild.configs,
+            combatOpts: teamBuild.combatOpts,
+            enemyElementAura: teamBuild.enemyElementAura,
+            carryCharId,
+            formulaId,
+            inventory,
+            globalConfig,
+            baseSheetsDump,
+            calcContext,
+            reactionOverride,
+            topK: TOP_K,
+            deadlineMs: phase1BudgetMs,
+            maxArtsPerSlot: maxArtsPerSlot ?? 0,
+            isComboMode,
+            combo: isComboMode ? combo : undefined,
+            reactionOverrides: isComboMode ? reactionOverrides : undefined,
+          };
+
+          worker.postMessage(request);
+        });
+      }
     );
 
-    // ignoreArtifactSets fallback
-    if (
-      result.failReason &&
-      opts.ignoreArtifactSets?.[charId] &&
-      (charConfig.artifactSetId ||
-        (charConfig.artifactHalfSetIds?.length ?? 0) > 0)
-    ) {
-      effectivePerChar[charId] = {
-        ...charConfig,
-        artifactSetId: null,
-        artifactHalfSetIds: [],
-      };
-      effectiveTeamBuild = rebuildTeamBuild();
-      result = runCharacterBnB(
+    // Await all workers
+    const workerResults = await Promise.all(workerPromises);
+
+    // Collect results
+    for (const wr of workerResults) {
+      topKByChar[wr.charId] = wr.entries;
+      if (wr.failReason) failReasons[wr.charId] = wr.failReason;
+
+      const passId: TeamOptPassId = carryCharIds.includes(wr.charId)
+        ? "carry-1"
+        : "support";
+      const best = wr.entries[0];
+      passResults.push({
+        passId,
+        charId: wr.charId,
+        bestDamage: best?.damage ?? -1,
+        bestArtifacts: best
+          ? artsTupleToRecord(best.artifacts)
+          : { ...emptyArtifacts },
+        failReason: wr.failReason,
+      });
+    }
+  } else {
+    // Fallback: sequential execution on main thread (no Worker support or single char)
+    for (const charId of charsToOptimize) {
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+
+      const charDeadline = perCharDeadlineMs
+        ? performance.now() + perCharDeadlineMs
+        : undefined;
+      const result = runCharacterBnB(
         charId,
-        effectivePerChar[charId],
+        charConfig,
         effectiveTeamBuild,
         carryCharId,
         formulaId,
         inventory,
         globalConfig,
-        runningBaseSheets,
+        heuristicSheets,
         calcContext,
         undefined,
         reactionOverride,
@@ -1620,48 +1897,99 @@ export async function* runTeamOptimization(
         undefined,
         maxArtsPerSlot ?? 0
       );
+
+      topKByChar[charId] = result.collector.results;
+      if (result.failReason) failReasons[charId] = result.failReason;
+
+      const passId: TeamOptPassId = carryCharIds.includes(charId)
+        ? "carry-1"
+        : "support";
+      const best = result.collector.best;
+      passResults.push({
+        passId,
+        charId,
+        bestDamage: best?.damage ?? -1,
+        bestArtifacts: best
+          ? artsTupleToRecord(best.artifacts)
+          : { ...emptyArtifacts },
+        failReason: result.failReason,
+      });
     }
+  }
 
-    topKByChar[charId] = result.collector.results;
-    if (result.failReason) failReasons[charId] = result.failReason;
-
-    const best = result.collector.best;
-    passResults.push({
-      passId,
-      charId,
-      bestDamage: best?.damage ?? -1,
-      bestArtifacts: best
-        ? artsTupleToRecord(best.artifacts)
-        : { ...emptyArtifacts },
-      failReason: result.failReason,
-    });
-
-    // Update running base sheets with this character's top-1 artifacts
-    // so subsequent characters see the updated team context
-    if (best) {
-      const pieces = best.artifacts.filter((a): a is ArtifactData => a != null);
-      if (pieces.length > 0) {
-        runningBaseSheets = {
-          ...runningBaseSheets,
-          [charId]: StatSheet.fromArtifacts(pieces),
+  // ignoreArtifactSets fallback: re-run failed characters without set constraints
+  for (const charId of charsToOptimize) {
+    const charConfig = effectivePerChar[charId];
+    if (
+      failReasons[charId] &&
+      opts.ignoreArtifactSets?.[charId] &&
+      charConfig &&
+      (charConfig.artifactSetId ||
+        (charConfig.artifactHalfSetIds?.length ?? 0) > 0)
+    ) {
+      effectivePerChar[charId] = {
+        ...charConfig,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      };
+      effectiveTeamBuild = rebuildTeamBuild();
+      const charDeadline = perCharDeadlineMs
+        ? performance.now() + perCharDeadlineMs
+        : undefined;
+      const result = runCharacterBnB(
+        charId,
+        effectivePerChar[charId],
+        effectiveTeamBuild,
+        carryCharId,
+        formulaId,
+        inventory,
+        globalConfig,
+        heuristicSheets,
+        calcContext,
+        undefined,
+        reactionOverride,
+        comboScoreFn,
+        TOP_K,
+        charDeadline,
+        undefined,
+        maxArtsPerSlot ?? 0
+      );
+      topKByChar[charId] = result.collector.results;
+      if (result.failReason) {
+        failReasons[charId] = result.failReason;
+      } else {
+        delete failReasons[charId];
+      }
+      // Update pass result
+      const prIdx = passResults.findIndex((pr) => pr.charId === charId);
+      if (prIdx >= 0) {
+        const best = result.collector.best;
+        passResults[prIdx] = {
+          passId: passResults[prIdx].passId,
+          charId,
+          bestDamage: best?.damage ?? -1,
+          bestArtifacts: best
+            ? artsTupleToRecord(best.artifacts)
+            : { ...emptyArtifacts },
+          failReason: result.failReason,
         };
       }
     }
-
-    // Yield progress: done with this character
-    yield {
-      currentPass: passId,
-      currentPassCharId: charId,
-      passIndex: ci,
-      totalPasses: totalPhases,
-      passPhase: "evaluating",
-      passProgress: 1,
-      overallProgress: (ci + 1) / totalPhases,
-      passResults: [...passResults],
-      done: false,
-    } satisfies TeamOptimizationProgress;
-    await new Promise((r) => setTimeout(r, 0));
   }
+
+  // Yield: Phase 1 complete
+  yield {
+    currentPass: "support",
+    currentPassCharId: allCharIds[allCharIds.length - 1],
+    passIndex: allCharIds.length - 1,
+    totalPasses: totalPhases,
+    passPhase: "evaluating",
+    passProgress: 1,
+    overallProgress: allCharIds.length / totalPhases,
+    passResults: [...passResults],
+    done: false,
+  } satisfies TeamOptimizationProgress;
+  await new Promise((r) => setTimeout(r, 0));
 
   // ════════════════════════════════════════════════════════════════════
   // Phase 1b: Contested Artifact Resolution
@@ -1753,7 +2081,7 @@ export async function* runTeamOptimization(
           formulaId,
           inventory,
           globalConfig,
-          runningBaseSheets,
+          heuristicSheets,
           calcContext,
           excludeSet,
           reactionOverride,
@@ -1867,7 +2195,7 @@ export async function* runTeamOptimization(
           formulaId,
           inventory,
           globalConfig,
-          runningBaseSheets,
+          heuristicSheets,
           calcContext,
           seqUsed,
           reactionOverride,
@@ -2359,6 +2687,7 @@ export async function* runTeamOptimization(
     bestArtifactsByChar,
     passResults,
     failReasons,
+    saturatedCharIds: [...saturatedCharIds],
     ...(setsChanged ? { teamBuild: effectiveTeamBuild } : {}),
     done: true as const,
   };

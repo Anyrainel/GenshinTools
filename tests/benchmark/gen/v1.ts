@@ -1,112 +1,40 @@
+/**
+ * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
+ *
+ * Backup algorithm for benchmark solution generation.
+ * Moved from src/lib/team-comp/teamOptimizer.ts.
+ */
 import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
-import type { BuildMatchResult } from "../account-data/artifactScore";
-import { TeamBuild, evaluateCombo } from "./damageCalc";
-import { StatSheet } from "./damageModels";
-
-const warnedCalcErrors = new Set<string>();
+import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
+import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
+import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type OptFailReason,
   type OptimizationResult,
   type OptimizerOptions,
   runOptimization,
-} from "./optimizer";
+} from "@/lib/team-comp/optimizer";
 import type {
   CalcContext,
   CharCompConfig,
   ComboFormula,
   ComboResult,
   DamageResult,
+  PerCharConfig,
   ReactionOverride,
-} from "./types";
+  TeamOptComboResult,
+  TeamOptPassId,
+  TeamOptPassResult,
+  TeamOptSingleResult,
+  TeamOptYield,
+  TeamOptimizationProgress,
+  TeamOptimizationResult,
+  TeamOptimizerOptions,
+} from "@/lib/team-comp/types";
 
-// ─── Types ───
-
-export type TeamOptPassId = "carry-1" | "support" | "carry-2";
-
-export interface TeamOptPassResult {
-  passId: TeamOptPassId;
-  charId: string;
-  bestDamage: number;
-  bestArtifacts: Record<Slot, ArtifactData | null>;
-  failReason?: OptFailReason;
-}
-
-export interface TeamOptimizationProgress {
-  currentPass: TeamOptPassId;
-  currentPassCharId: string;
-  passIndex: number;
-  totalPasses: number;
-  passPhase: "pruning" | "evaluating";
-  passProgress: number; // 0–1 within current pass
-  overallProgress: number; // 0–1 across all passes
-  passResults: TeamOptPassResult[];
-  done: false;
-}
-
-interface TeamOptResultBase {
-  bestDamage: number;
-  bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
-  passResults: TeamOptPassResult[];
-  /** Per-character failure reasons (only for characters that failed to find a build). */
-  failReasons: Record<string, OptFailReason>;
-  /** Rebuilt TeamBuild if artifact sets were adjusted (ignoreArtifactSets fallback or detected accidental sets). */
-  teamBuild?: TeamBuild;
-  done: true;
-}
-
-export interface TeamOptSingleResult extends TeamOptResultBase {
-  mode: "single";
-  bestDamageResult: DamageResult;
-}
-
-export interface TeamOptComboResult extends TeamOptResultBase {
-  mode: "combo";
-  bestComboResult: ComboResult;
-}
-
-export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
-
-export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
-
-export interface PerCharConfig {
-  targetEr: number;
-  targetCr: number;
-  buildMatch?: BuildMatchResult | null;
-  artifactSetId?: string | null;
-  artifactHalfSetIds?: string[];
-}
-
-export interface TeamOptimizerOptions {
-  teamBuild: TeamBuild;
-  carryCharId: string;
-  formulaId: string;
-  inventory: ArtifactData[];
-  calcContext: CalcContext;
-  globalConfig: GlobalStatWeights;
-  baseSheets: Record<string, StatSheet>;
-  /** Per-character optimizer config (keyed by charId) */
-  perChar: Record<string, PerCharConfig>;
-  reactionOverride?: ReactionOverride;
-  altCount?: number; // Alternatives per slot in hill-climbing (default 7, use 5 on mobile)
-  /** Combo mode: optimize for total combo damage instead of single formula. */
-  combo?: ComboFormula;
-  /** Per-formula reaction overrides (keyed by "charId.formulaId"), used by combo evaluation. */
-  reactionOverrides?: Record<string, ReactionOverride>;
-  /** Per-character flag: retry failed passes without artifact set constraints (keyed by charId). */
-  ignoreArtifactSets?: Record<string, boolean>;
-  /** Optional per-character time budget in ms (V2 only). B&B aborts if exceeded. */
-  perCharDeadlineMs?: number;
-  /**
-   * Optional total team deadline as performance.now() timestamp (V2 only).
-   * When set, per-phase budgets are computed dynamically from remaining time.
-   * Takes precedence over perCharDeadlineMs.
-   */
-  teamDeadlineMs?: number;
-  /** Max artifacts per slot for B&B pre-filtering (V2 only). 0 = no limit. */
-  maxArtsPerSlot?: number;
-}
+const warnedCalcErrors = new Set<string>();
 
 // ─── Helpers ───
 
@@ -1059,6 +987,7 @@ export async function* runTeamOptimization(
     bestArtifactsByChar,
     passResults,
     failReasons,
+    saturatedCharIds: [],
     // Include rebuilt TeamBuild if sets were adjusted
     ...(setsChanged ? { teamBuild: effectiveTeamBuild } : {}),
     done: true as const,
