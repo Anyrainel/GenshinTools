@@ -778,8 +778,12 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
           hs1?.setIds[0] ??
           "ideal";
+        // For sk2, skip sk1 so both half-sets use distinct concrete sets
         const sk2 =
-          hs2?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
+          hs2?.setIds.find(
+            (id) => artifactsById[id]?.rarity === 5 && id !== sk1
+          ) ??
+          hs2?.setIds.find((id) => id !== sk1) ??
           hs2?.setIds[0] ??
           "ideal";
         setKeysByChar[cid] = {

@@ -1,4 +1,8 @@
-import { artifactsById, statPools } from "@/data/constants";
+import {
+  artifactHalfSetsById,
+  artifactsById,
+  statPools,
+} from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 
@@ -139,6 +143,57 @@ function synthesizeArtifacts(
       lock: false,
       substats: subs,
     };
+  }
+  return result;
+}
+
+// ─── Derive slot set keys from TeamBuild configs ───
+
+/**
+ * Build per-char, per-slot set keys from the TeamBuild configs.
+ * For 4pc: all 5 slots → the 4pc set key.
+ * For 2+2pc: slots 1-3 (flower/plume/sands) → first half-set,
+ *            slots 4-5 (goblet/circlet) → second half-set.
+ * Falls back to "ideal" if half-set lookup fails.
+ */
+function deriveSetKeysByChar(
+  teamBuild: TeamBuild
+): Record<string, Record<Slot, string>> {
+  const result: Record<string, Record<Slot, string>> = {};
+  for (const cfg of teamBuild.configs) {
+    if (cfg.artifactSetId) {
+      // 4pc
+      result[cfg.charId] = {
+        flower: cfg.artifactSetId,
+        plume: cfg.artifactSetId,
+        sands: cfg.artifactSetId,
+        goblet: cfg.artifactSetId,
+        circlet: cfg.artifactSetId,
+      };
+    } else if (cfg.artifactHalfSetIds.length === 2) {
+      // 2+2pc: pick a concrete 5★ set from each half-set
+      const hs1 = artifactHalfSetsById[cfg.artifactHalfSetIds[0]];
+      const hs2 = artifactHalfSetsById[cfg.artifactHalfSetIds[1]];
+      const sk1 =
+        hs1?.setIds.find((id) => artifactsById[id]?.rarity === 5) ??
+        hs1?.setIds[0] ??
+        "ideal";
+      // For sk2, skip sk1 so both half-sets use distinct concrete sets
+      const sk2 =
+        hs2?.setIds.find(
+          (id) => artifactsById[id]?.rarity === 5 && id !== sk1
+        ) ??
+        hs2?.setIds.find((id) => id !== sk1) ??
+        hs2?.setIds[0] ??
+        "ideal";
+      result[cfg.charId] = {
+        flower: sk1,
+        plume: sk1,
+        sands: sk1,
+        goblet: sk2,
+        circlet: sk2,
+      };
+    }
   }
   return result;
 }
@@ -335,11 +390,18 @@ export async function* runIdealArtifactGen(
     carryCharId,
     formulaId,
     calcContext,
-    setKeysByChar,
     reactionOverride,
     combo,
     reactionOverrides,
   } = opts;
+  // Derive slot→set mapping from TeamBuild configs; caller entries override
+  const derived = deriveSetKeysByChar(teamBuild);
+  const setKeysByChar: Record<string, Record<Slot, string>> = { ...derived };
+  if (opts.setKeysByChar) {
+    for (const [cid, slotKeys] of Object.entries(opts.setKeysByChar)) {
+      setKeysByChar[cid] = slotKeys;
+    }
+  }
   const rollMult = opts.rollMultiplier;
 
   // Per-character rarity and roll values
