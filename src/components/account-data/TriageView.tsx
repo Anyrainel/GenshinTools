@@ -1,4 +1,6 @@
+import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import { TriageCard } from "@/components/account-data/TriageCard";
+import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Badge } from "@/components/ui/badge";
@@ -9,13 +11,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-  ResponsiveDialogDescription,
-  ResponsiveDialogHeader,
-  ResponsiveDialogTitle,
-} from "@/components/ui/responsive-dialog";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -32,6 +27,7 @@ import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 import {
   CheckCircle2,
+  CircleHelp,
   Lock,
   LockOpen,
   Puzzle,
@@ -53,6 +49,13 @@ const TIER_KEY = {
   N: "triage.tier.N",
   T: "triage.tier.T",
 } as const;
+
+const TIER_COLOR: Record<string, string> = {
+  P: "text-amber-300",
+  Q: "text-purple-300",
+  N: "text-blue-300",
+  T: "text-zinc-400",
+};
 
 // ---------------------------------------------------------------------------
 // Grid column count (read from actual DOM grid via ResizeObserver)
@@ -99,251 +102,131 @@ function TriageSettingsPanel({
     value: TriageSettings[K]
   ) => onChange({ ...settings, [key]: value });
 
-  return (
-    <div className="space-y-4 w-72">
-      {/* Section 1: Protection */}
-      <div className="space-y-3">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          {t.ui("triage.settingsProtection")}
-        </h4>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">{t.ui("triage.levelProtection")}</Label>
-            <span className="text-sm font-mono">
-              +{settings.levelProtection}
-            </span>
-          </div>
-          <Slider
-            value={[settings.levelProtection]}
-            onValueChange={([v]) => update("levelProtection", v)}
-            min={4}
-            max={20}
-            step={4}
-          />
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <Label
-            className="text-sm cursor-pointer"
-            htmlFor="equippedProtection"
-          >
-            {t.ui("triage.equippedProtect")}
-          </Label>
-          <Switch
-            id="equippedProtection"
-            checked={settings.equippedProtection}
-            onCheckedChange={(v) => update("equippedProtection", v)}
-          />
-        </div>
+  const SliderRow = ({
+    labelKey,
+    settingsKey,
+    min,
+    max,
+    step,
+    prefix = "",
+  }: {
+    labelKey: string;
+    settingsKey: keyof TriageSettings;
+    min: number;
+    max: number;
+    step: number;
+    prefix?: string;
+  }) => (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm">{t.ui(labelKey)}</Label>
+        <span className="text-sm font-mono">
+          {prefix}
+          {settings[settingsKey] as number}
+        </span>
       </div>
-
-      {/* Section 2: Thresholds */}
-      <div className="border-t border-border pt-3 space-y-3">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          {t.ui("triage.settingsThreshold")}
-        </h4>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">
-              {t.ui("triage.mainStatThreshold")}
-            </Label>
-            <span className="text-sm font-mono">
-              {settings.mainStatThreshold}
-            </span>
-          </div>
-          <Slider
-            value={[settings.mainStatThreshold]}
-            onValueChange={([v]) => update("mainStatThreshold", v)}
-            min={50}
-            max={100}
-            step={5}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">
-              {t.ui("triage.optionalSubThreshold")}
-            </Label>
-            <span className="text-sm font-mono">
-              {settings.optionalSubThreshold}
-            </span>
-          </div>
-          <Slider
-            value={[settings.optionalSubThreshold]}
-            onValueChange={([v]) => update("optionalSubThreshold", v)}
-            min={10}
-            max={80}
-            step={5}
-          />
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <Label className="text-sm cursor-pointer" htmlFor="ownedOnly">
-            {t.ui("triage.ownedOnly")}
-          </Label>
-          <Switch
-            id="ownedOnly"
-            checked={settings.ownedOnly}
-            onCheckedChange={(v) => update("ownedOnly", v)}
-          />
-        </div>
-      </div>
-
-      {/* Section 3: Custom keep rules */}
-      <div className="border-t border-border pt-3 space-y-3">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          {t.ui("triage.settingsKeepRules")}
-        </h4>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">{t.ui("triage.setSlotKeep")}</Label>
-            <span className="text-sm font-mono">{settings.setSlotKeep}</span>
-          </div>
-          <Slider
-            value={[settings.setSlotKeep]}
-            onValueChange={([v]) => update("setSlotKeep", v)}
-            min={1}
-            max={5}
-            step={1}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">{t.ui("triage.neutralKeep")}</Label>
-            <span className="text-sm font-mono">{settings.neutralKeep}</span>
-          </div>
-          <Slider
-            value={[settings.neutralKeep]}
-            onValueChange={([v]) => update("neutralKeep", v)}
-            min={1}
-            max={5}
-            step={1}
-          />
-        </div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm">{t.ui("triage.qualityMargin")}</Label>
-            <span className="text-sm font-mono">{settings.qualityMargin}</span>
-          </div>
-          <Slider
-            value={[settings.qualityMargin]}
-            onValueChange={([v]) => update("qualityMargin", v)}
-            min={1}
-            max={5}
-            step={1}
-          />
-        </div>
-      </div>
+      <Slider
+        value={[settings[settingsKey] as number]}
+        onValueChange={([v]) => update(settingsKey, v as never)}
+        min={min}
+        max={max}
+        step={step}
+      />
     </div>
   );
-}
 
-// ---------------------------------------------------------------------------
-// Flex Pattern Dialog
-// ---------------------------------------------------------------------------
+  const SwitchRow = ({
+    id,
+    labelKey,
+    settingsKey,
+  }: {
+    id: string;
+    labelKey: string;
+    settingsKey: keyof TriageSettings;
+  }) => (
+    <div className="flex items-center justify-between gap-3">
+      <Label className="text-sm cursor-pointer" htmlFor={id}>
+        {t.ui(labelKey)}
+      </Label>
+      <Switch
+        id={id}
+        checked={settings[settingsKey] as boolean}
+        onCheckedChange={(v) => update(settingsKey, v as never)}
+      />
+    </div>
+  );
 
-function FlexPatternDialog({
-  open,
-  onOpenChange,
-  flexPatterns,
-  settings,
-  onSettingsChange,
-  t,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  flexPatterns: FlexPattern[];
-  settings: TriageSettings;
-  onSettingsChange: (s: TriageSettings) => void;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
-  const togglePattern = (fp: FlexPattern) => {
-    const disabled = settings.disabledFlexPatterns;
-    const next = disabled.includes(fp.key)
-      ? disabled.filter((k) => k !== fp.key)
-      : [...disabled, fp.key];
-    onSettingsChange({ ...settings, disabledFlexPatterns: next });
-  };
+  const SectionHeading = ({ labelKey }: { labelKey: string }) => (
+    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      {t.ui(labelKey)}
+    </h4>
+  );
 
   return (
-    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="sm:max-w-2xl">
-        <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>
-            {t.ui("triage.flexPatterns")}
-          </ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>
-            {t.ui("triage.flexDialogDesc")}
-          </ResponsiveDialogDescription>
-        </ResponsiveDialogHeader>
-
-        <div className="space-y-2 max-h-[60vh] overflow-y-auto">
-          {/* Special lock rules */}
-          {(
-            [
-              ["doubleCritLockEnabled", t.ui("triage.doubleCritLock")],
-              ["erHoardingEnabled", t.ui("triage.erHoarding")],
-            ] as const
-          ).map(([key, label]) => (
-            <div
-              key={key}
-              className={cn(
-                "flex items-center gap-3 p-3 rounded-lg border",
-                settings[key]
-                  ? "border-purple-500/20 bg-purple-500/5"
-                  : "border-border opacity-50"
-              )}
-            >
-              <Switch
-                checked={settings[key] as boolean}
-                onCheckedChange={(v) =>
-                  onSettingsChange({ ...settings, [key]: v })
-                }
-              />
-              <span className="text-sm font-medium">{label}</span>
-            </div>
-          ))}
-
-          {/* Separator */}
-          {flexPatterns.length > 0 && (
-            <div className="border-t border-border my-1" />
-          )}
-
-          {/* Flex patterns */}
-          {flexPatterns.map((fp) => {
-            const enabled = !settings.disabledFlexPatterns.includes(fp.key);
-            return (
-              <div
-                key={fp.key}
-                className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg border",
-                  enabled
-                    ? "border-amber-500/20 bg-amber-500/5"
-                    : "border-border opacity-50"
-                )}
-              >
-                <Switch
-                  checked={enabled}
-                  onCheckedChange={() => togglePattern(fp)}
-                />
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2 text-sm font-medium whitespace-nowrap">
-                    <span>{t.slot(fp.slot)}</span>
-                    <span className="text-muted-foreground">·</span>
-                    <span>{t.statShort(fp.mainStat)}</span>
-                    <span className="text-muted-foreground">·</span>
-                    <span>
-                      {fp.requiredSubs.map((s) => t.statShort(s)).join("+")}
-                    </span>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      {(fp.rarity * 100).toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </ResponsiveDialogContent>
-    </ResponsiveDialog>
+    <div className="space-y-4 w-72">
+      <div className="space-y-3">
+        <SectionHeading labelKey="triage.settingsProtection" />
+        <SliderRow
+          labelKey="triage.levelProtection"
+          settingsKey="levelProtection"
+          min={4}
+          max={20}
+          step={4}
+          prefix="+"
+        />
+        <SwitchRow
+          id="equippedProtection"
+          labelKey="triage.equippedProtect"
+          settingsKey="equippedProtection"
+        />
+      </div>
+      <div className="border-t border-border pt-3 space-y-3">
+        <SectionHeading labelKey="triage.settingsThreshold" />
+        <SliderRow
+          labelKey="triage.mainStatThreshold"
+          settingsKey="mainStatThreshold"
+          min={50}
+          max={100}
+          step={5}
+        />
+        <SliderRow
+          labelKey="triage.optionalSubThreshold"
+          settingsKey="optionalSubThreshold"
+          min={10}
+          max={80}
+          step={5}
+        />
+        <SwitchRow
+          id="ownedOnly"
+          labelKey="triage.ownedOnly"
+          settingsKey="ownedOnly"
+        />
+      </div>
+      <div className="border-t border-border pt-3 space-y-3">
+        <SectionHeading labelKey="triage.settingsKeepRules" />
+        <SliderRow
+          labelKey="triage.setSlotKeep"
+          settingsKey="setSlotKeep"
+          min={1}
+          max={5}
+          step={1}
+        />
+        <SliderRow
+          labelKey="triage.neutralKeep"
+          settingsKey="neutralKeep"
+          min={1}
+          max={5}
+          step={1}
+        />
+        <SliderRow
+          labelKey="triage.qualityMargin"
+          settingsKey="qualityMargin"
+          min={1}
+          max={5}
+          step={1}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -376,6 +259,7 @@ export function TriageView() {
   const isRowExpanded = (tab: string, index: number) =>
     expandedRows.has(`${tab}:${Math.floor(index / gridCols)}`);
   const [flexOpen, setFlexOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [tierFilter, setTierFilter] = useState<Set<string>>(
     new Set(["P", "Q", "N", "T"])
   );
@@ -545,45 +429,46 @@ export function TriageView() {
             )}
           </Button>
         </div>
-        <p className="text-sm">
-          {t.ui("triage.subtitle").replace("{0}", totalArtifacts.toString())}
-        </p>
-        <div className="flex items-center gap-1.5">
-          {(["P", "Q", "N", "T"] as const).map((tier) => (
-            <FilterChip
-              key={tier}
-              active={tierFilter.has(tier)}
-              onClick={() => toggleTier(tier)}
+        <div className="flex items-center gap-2">
+          <p className="text-sm">
+            {t.ui("triage.subtitle").replace("{0}", totalArtifacts.toString())}
+            <button
+              type="button"
+              onClick={() => setHelpOpen(true)}
+              className="ml-1.5 inline-flex align-text-bottom text-amber-400 hover:text-amber-300 transition-colors"
             >
-              <span
-                className={cn(
-                  "text-sm font-semibold",
-                  tier === "P"
-                    ? "text-amber-300"
-                    : tier === "Q"
-                      ? "text-purple-300"
-                      : tier === "N"
-                        ? "text-blue-300"
-                        : "text-zinc-400"
-                )}
+              <CircleHelp className="size-4" />
+            </button>
+          </p>
+          <div className="flex items-center gap-1.5 ml-2">
+            {(["P", "Q", "N", "T"] as const).map((tier) => (
+              <FilterChip
+                key={tier}
+                active={tierFilter.has(tier)}
+                onClick={() => toggleTier(tier)}
               >
-                {tierCounts[tier]}
-              </span>
-              <span className="text-sm">{t.ui(TIER_KEY[tier])}</span>
-            </FilterChip>
-          ))}
+                <span className={cn("text-sm font-semibold", TIER_COLOR[tier])}>
+                  {tierCounts[tier]}
+                </span>
+                <span className="text-sm">{t.ui(TIER_KEY[tier])}</span>
+              </FilterChip>
+            ))}
+          </div>
         </div>
+        <p className="text-sm italic text-right -mt-1 bg-gradient-to-r from-amber-400 to-pink-400 bg-clip-text text-transparent">
+          {t.ui("triage.autoLockWip")}
+        </p>
+        {/* Dialogs (portaled, no layout impact) */}
+        <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} t={t} />
+        <FlexPatternDialog
+          open={flexOpen}
+          onOpenChange={setFlexOpen}
+          flexPatterns={flexPatterns}
+          settings={settings}
+          onSettingsChange={setSettings}
+          t={t}
+        />
       </div>
-
-      {/* Flex Pattern Dialog */}
-      <FlexPatternDialog
-        open={flexOpen}
-        onOpenChange={setFlexOpen}
-        flexPatterns={flexPatterns}
-        settings={settings}
-        onSettingsChange={setSettings}
-        t={t}
-      />
 
       {/* Tabs */}
       <Tabs

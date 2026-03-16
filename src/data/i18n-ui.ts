@@ -1368,6 +1368,10 @@ export const i18nUiData = {
       en: "{0} artifacts analyzed:",
       zh: "已分析 {0} 个圣遗物：",
     },
+    autoLockWip: {
+      en: "Auto lock/unlock tool coming soon~",
+      zh: "自动加解锁工具正在制作中~",
+    },
     recommendLock: {
       en: "Recommend Lock",
       zh: "建议锁定",
@@ -1437,7 +1441,7 @@ export const i18nUiData = {
       SP4: { en: "Equipped protected", zh: "已装备保护" },
       SP5: { en: "4-liner CR+CD", zh: "4初始双暴" },
       SP6: { en: "Set+slot keep", zh: "套装部位最低保留" },
-      FLEX: { en: "Flex match", zh: "散件匹配保留" },
+      FLEX: { en: "Flex match", zh: "散件匹配保留（可控制每种开关）" },
     },
     // Detail panel labels
     detail: {
@@ -1471,11 +1475,11 @@ export const i18nUiData = {
     },
     neutralKeep: {
       en: "Neutral keep per type",
-      zh: "过渡装保留数（低于需求时备用几个）",
+      zh: "过渡装保底数（低于需求时备用几个）",
     },
     qualityMargin: {
       en: "Quality surplus margin",
-      zh: "精良装保留数（超过需求后多留几个）",
+      zh: "精良装余量数（超过需求后多留几个）",
     },
     setSlotKeep: {
       en: "Min keep per set+slot",
@@ -1498,6 +1502,73 @@ export const i18nUiData = {
       zh: "已装备保护",
     },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
+    // Help dialog
+    help: {
+      title: { en: "How does this work?", zh: "这是怎么运作的？" },
+      desc: {
+        en: "Compares every artifact's substats against your builds to decide what to keep.",
+        zh: "将每件圣遗物的副词条与你的配装需求进行比对，决定去留。",
+      },
+      howTitle: { en: "How it decides", zh: "决策方式" },
+      howMatch: {
+        en: "Match artifacts to builds by set, slot, and main stat",
+        zh: "按套装、部位、主词条匹配圣遗物与配装",
+      },
+      howRarity: {
+        en: "Score substat hits as a rarity — rarer combos rank higher",
+        zh: "将命中的副词条换算为稀有度——越稀有排名越高",
+      },
+      howFactors: {
+        en: "Bonuses: CR+CD pair, 4 initial substats, useful minor stat when all core stats hit",
+        zh: "加分项：双暴、初始4词条、核心全中时带实用小词条",
+      },
+      tierTitle: { en: "Rarity tiers", zh: "稀有度档位" },
+      badgeAlwaysLock: { en: "Always lock", zh: "无条件锁定" },
+      badgeAlwaysFodder: { en: "Always fodder", zh: "无条件解锁" },
+      badgeOverSupply: { en: "Over-supply → unlock", zh: "供过于求 → 解锁" },
+      badgeUnderSupply: { en: "Under-supply → lock", zh: "供不应求 → 锁定" },
+      tierPrime: {
+        en: "Flower / Plume ≤ 1%  ·  Others ≤ 0.5% — Always locked.",
+        zh: "花/羽 ≤ 1%  ·  沙/杯/头 ≤ 0.5% — 无条件锁定。",
+      },
+      tierSolid: {
+        en: "Flower / Plume ≤ 4%  ·  Others ≤ 2% — Locked unless you have too many.",
+        zh: "花/羽 ≤ 4%  ·  沙/杯/头 ≤ 2% — 默认锁定，供过于求时淘汰。",
+      },
+      tierFiller: {
+        en: "Flower / Plume ≤ 20%  ·  Others ≤ 10% — Only kept when supply is short.",
+        zh: "花/羽 ≤ 20%  ·  沙/杯/头 ≤ 10% — 仅在供不应求时保留。",
+      },
+      tierFodder: {
+        en: "Everything else — Always fodder.",
+        zh: "其余全部 — 无条件分解。",
+      },
+      supplyTitle: { en: "Supply & demand", zh: "供需机制" },
+      supplyOver: { en: "Plenty of pieces", zh: "供给充足" },
+      supplyUnder: { en: "Short on pieces", zh: "供不应求" },
+      supplyDemand: { en: "demand", zh: "需求" },
+      supplyMargin: { en: "margin", zh: "余量" },
+      supplyBackup: { en: "backup", zh: "保底" },
+      supplyRecycle: { en: "recycle", zh: "回收" },
+      supplyKeep: { en: "keep limit", zh: "保留" },
+      supplyCustomizable: {
+        en: "Backup and margin counts are customizable in settings.",
+        zh: "保底和余量的数量可以在设置中自定义。",
+      },
+      spTitle: { en: "Exceptions", zh: "例外规则" },
+      spOverride: {
+        en: "Extra lock rules (optional)",
+        zh: "额外锁定规则（可选）",
+      },
+      spSP6Detail: {
+        en: "Set+slot keep: ensures at least N pieces per set+slot.",
+        zh: "套装部位最低保留：确保每个套装的每个部位至少保留 N 个。",
+      },
+      spProtect: {
+        en: "Protection rules (no suggestions)",
+        zh: "保护规则（不提供建议）",
+      },
+    },
     flexDialogDesc: {
       en: "Auto-detected premium off-piece patterns. Toggle on to lock regardless of set. (Format: Slot·MainStat·SubStat)",
       zh: "自动检测的散件类型。开启后无视套装锁定。（选项为“部位·主词条·副词条”）",
