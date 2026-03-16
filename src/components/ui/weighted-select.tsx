@@ -22,8 +22,9 @@ const WeightedSelectTrigger = React.forwardRef<
     weight: number;
     onWeightChange: (val: number) => void;
     weightLabel?: string;
+    weightPresets?: number[];
   }
->(({ className, children, weight, onWeightChange, weightLabel = "Weight", ...props }, ref) => {
+>(({ className, children, weight, onWeightChange, weightLabel = "Weight", weightPresets = [50, 75, 90, 100], ...props }, ref) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   // Stop propagation to prevent selecting the select trigger when clicking weight
@@ -99,15 +100,15 @@ const WeightedSelectTrigger = React.forwardRef<
 
             <Slider
               value={[weight]}
-              min={0}
+              min={1}
               max={100}
-              step={5}
+              step={1}
               onValueChange={([val]) => onWeightChange(val)}
               className="[&_.bg-primary]:bg-amber-500"
             />
 
             <div className="flex justify-between gap-1">
-              {[50, 75, 90, 100].map((preset) => (
+              {weightPresets.map((preset) => (
                 <Button
                   key={preset}
                   size="sm"

@@ -494,11 +494,27 @@ export function WeightsView() {
     (idx: number) => {
       const entry = entries[idx];
       if (!entry.result) return;
+
+      // Preserve existing ER weights — autotune ignores ER so we carry them over
+      const oldErSands = entry.build.sandsWeights.find((w) => w.stat === "er");
+      const oldErSub = entry.build.substats.find((s) => s.stat === "er");
+
+      const newSandsWeights = oldErSands
+        ? [
+            ...entry.result.sandsWeights.filter((w) => w.stat !== "er"),
+            oldErSands,
+          ]
+        : entry.result.sandsWeights;
+
+      const newSubstats = oldErSub
+        ? [...entry.result.substats.filter((s) => s.stat !== "er"), oldErSub]
+        : entry.result.substats;
+
       setBuild(
         entry.buildId,
         {
-          substats: entry.result.substats,
-          sandsWeights: entry.result.sandsWeights,
+          substats: newSubstats,
+          sandsWeights: newSandsWeights,
           gobletWeights: entry.result.gobletWeights,
           circletWeights: entry.result.circletWeights,
           normalizer: entry.result.normalizer,

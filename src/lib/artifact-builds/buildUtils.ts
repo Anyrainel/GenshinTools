@@ -26,6 +26,20 @@ function arraysEqual<T>(
   return [...a].sort().join(",") === [...b].sort().join(",");
 }
 
+function weightedArraysEqual(
+  a: readonly { stat: string; weight: number }[],
+  b: readonly { stat: string; weight: number }[]
+): boolean {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort((x, y) => x.stat.localeCompare(y.stat));
+  const sb = [...b].sort((x, y) => x.stat.localeCompare(y.stat));
+  for (let i = 0; i < sa.length; i++) {
+    if (sa[i].stat !== sb[i].stat || sa[i].weight !== sb[i].weight)
+      return false;
+  }
+  return true;
+}
+
 export function areBuildsEqual(b1: Build, b2: Build): boolean {
   // Compare top-level metadata and configuration
   if (b1.characterId !== b2.characterId) return false;
@@ -37,28 +51,10 @@ export function areBuildsEqual(b1: Build, b2: Build): boolean {
   if (!!b1.visible !== !!b2.visible) return false;
   if (b1.minCons !== b2.minCons) return false;
 
-  // Compare arrays
-  if (
-    !arraysEqual(
-      b1.sandsWeights.map((w) => w.stat),
-      b2.sandsWeights.map((w) => w.stat)
-    )
-  )
-    return false;
-  if (
-    !arraysEqual(
-      b1.gobletWeights.map((w) => w.stat),
-      b2.gobletWeights.map((w) => w.stat)
-    )
-  )
-    return false;
-  if (
-    !arraysEqual(
-      b1.circletWeights.map((w) => w.stat),
-      b2.circletWeights.map((w) => w.stat)
-    )
-  )
-    return false;
+  // Compare main stat weights (stat + weight)
+  if (!weightedArraysEqual(b1.sandsWeights, b2.sandsWeights)) return false;
+  if (!weightedArraysEqual(b1.gobletWeights, b2.gobletWeights)) return false;
+  if (!weightedArraysEqual(b1.circletWeights, b2.circletWeights)) return false;
   if (!arraysEqual(b1.styles, b2.styles)) return false;
   if (!arraysEqual(b1.roles, b2.roles)) return false;
 

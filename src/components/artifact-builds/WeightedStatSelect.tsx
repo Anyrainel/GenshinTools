@@ -29,6 +29,7 @@ interface WeightedStatSelectProps {
   maxLength: number;
   label?: string;
   compact?: boolean;
+  weightPresets?: number[];
 }
 
 // Helper to sort weights descending
@@ -40,12 +41,14 @@ interface WeightedStatItemProps {
   item: WeightedItem;
   onUpdate: (newItem: WeightedItem | null) => void; // null to remove
   availableOptions: string[];
+  weightPresets?: number[];
 }
 
 function WeightedStatItem({
   item,
   onUpdate,
   availableOptions,
+  weightPresets,
 }: WeightedStatItemProps) {
   const { t } = useLanguage();
 
@@ -68,6 +71,7 @@ function WeightedStatItem({
         weight={item.weight}
         onWeightChange={handleWeightChange}
         weightLabel={t.ui("scoreExplanation.weight.title")}
+        weightPresets={weightPresets}
       >
         <WeightedSelectValue>{t.statShort(item.stat)}</WeightedSelectValue>
       </WeightedSelectTrigger>
@@ -95,6 +99,7 @@ function WeightedStatSelectComponent({
   maxLength,
   label,
   compact = false,
+  weightPresets,
 }: WeightedStatSelectProps) {
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
@@ -181,10 +186,11 @@ function WeightedStatSelectComponent({
       <div className="flex items-center gap-1 flex-wrap min-h-8">
         {values.map((item, index) => (
           <WeightedStatItem
-            key={`${item.stat}-${index}`}
+            key={item.stat}
             item={item}
             onUpdate={(newItem) => handleUpdateItem(index, newItem)}
             availableOptions={getAvailableOptions(item.stat)}
+            weightPresets={weightPresets}
           />
         ))}
 
@@ -241,7 +247,8 @@ export const WeightedStatSelect = memo(
       prev.options === next.options &&
       prev.maxLength === next.maxLength &&
       prev.label === next.label &&
-      prev.compact === next.compact
+      prev.compact === next.compact &&
+      prev.weightPresets === next.weightPresets
     );
   }
 );

@@ -88,6 +88,8 @@ const AutoTuneDialog = lazy(() =>
   import("./AutoTuneDialog").then((m) => ({ default: m.AutoTuneDialog }))
 );
 
+const MAIN_STAT_PRESETS = [80, 85, 90, 95, 100];
+
 // Local constants for UI colors
 const STYLE_COLORS: Record<BuildStyle, string> = {
   "on-field": "#f59e0b", // amber-500
@@ -202,15 +204,27 @@ function BuildCardComponent({
 
   const handleAutoTuneApply = useCallback(
     (result: AutoTuneOutput) => {
+      // Preserve existing ER weights — autotune ignores ER so we carry them over
+      const oldErSands = build.sandsWeights.find((w) => w.stat === "er");
+      const oldErSub = build.substats.find((s) => s.stat === "er");
+
+      const newSandsWeights = oldErSands
+        ? [...result.sandsWeights.filter((w) => w.stat !== "er"), oldErSands]
+        : result.sandsWeights;
+
+      const newSubstats = oldErSub
+        ? [...result.substats.filter((s) => s.stat !== "er"), oldErSub]
+        : result.substats;
+
       handleBuildChange({
-        substats: result.substats,
-        sandsWeights: result.sandsWeights,
+        substats: newSubstats,
+        sandsWeights: newSandsWeights,
         gobletWeights: result.gobletWeights,
         circletWeights: result.circletWeights,
         normalizer: result.normalizer,
       });
     },
-    [handleBuildChange]
+    [handleBuildChange, build.sandsWeights, build.substats]
   );
 
   const validationErrors = useBuildsStore(
@@ -509,6 +523,7 @@ function BuildCardComponent({
                         options={localStatPools[slot]}
                         maxLength={3}
                         compact={isMobile}
+                        weightPresets={MAIN_STAT_PRESETS}
                       />
                     );
                   })}
