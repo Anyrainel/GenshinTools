@@ -17,10 +17,11 @@ import type { Team } from "./runner";
 interface RunMessage {
   type: "run";
   team: Team;
-  algorithm: "v1" | "v2";
+  algorithm: "v1" | "v2" | "mona";
   timeoutMs: number;
   perCharMs?: number;
   maxArtsPerSlot?: number;
+  formulaIdOverride?: string;
   teamIdx: number;
 }
 
@@ -56,7 +57,7 @@ process.on("message", async (msg: RunMessage) => {
         msg.algorithm,
         msg.timeoutMs,
         msg.perCharMs,
-        undefined, // formulaIdOverride: handled by caller tagging team
+        msg.formulaIdOverride,
         msg.maxArtsPerSlot
       );
       process.send!({

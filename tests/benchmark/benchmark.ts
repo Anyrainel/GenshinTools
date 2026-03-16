@@ -19,7 +19,7 @@
  *   --filter PATTERN          Filter problems by team/char name
  *   --problem KEY             Run a single problem by key (teamId::formulaId)
  *   --timeout SECS            Per-team timeout (default: 30)
- *   --algo v1|v2              Algorithm to run (default: v2)
+ *   --algo v1|v2|mona              Algorithm to run (default: v2)
  *   --parallel N              Run N problems in parallel via child_process.fork
  *   --max-arts N              Max artifacts per slot for B&B pre-filtering
  *   --diag                    Enable diagnostic logging
@@ -258,7 +258,7 @@ function assignmentsEqual(
 
 async function runParallel(
   tasks: { team: Team; formulaId: string; key: string }[],
-  algorithm: "v1" | "v2",
+  algorithm: "v1" | "v2" | "mona",
   timeoutSec: number,
   workerCount: number,
   maxArtsPerSlot: number,
@@ -281,19 +281,15 @@ async function runParallel(
         const idx = nextIdx++;
         const { team, formulaId } = tasks[idx];
         const perCharMs =
-          algorithm === "v2" ? (timeoutSec * 1000) / 4 : undefined;
-        // Override team's selectedFormula so worker optimizes the right formula
-        const teamForWorker = {
-          ...team,
-          selectedFormula: { charId: team.characters[0]!, formulaId },
-        };
+          algorithm !== "v1" ? (timeoutSec * 1000) / 4 : undefined;
         child.send({
           type: "run",
-          team: teamForWorker,
+          team,
           algorithm,
           timeoutMs: timeoutSec * 1000,
           perCharMs,
           maxArtsPerSlot: maxArtsPerSlot || undefined,
+          formulaIdOverride: formulaId,
           teamIdx: idx,
         });
       }
@@ -615,7 +611,7 @@ async function cmdRun(opts: {
   filter?: string;
   problemKey?: string;
   timeoutSec: number;
-  algo: "v1" | "v2";
+  algo: "v1" | "v2" | "mona";
   parallel: number;
   maxArtsPerSlot: number;
   diag: boolean;
@@ -885,7 +881,7 @@ async function cmdRun(opts: {
         inventory,
         opts.algo,
         opts.timeoutSec * 1000,
-        opts.algo === "v2" ? (opts.timeoutSec * 1000) / 4 : undefined,
+        opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         formulaId,
         opts.maxArtsPerSlot || undefined
       );
@@ -1053,7 +1049,7 @@ async function cmdRefresh(): Promise<void> {
 async function cmdEnrich(opts: {
   filter?: string;
   problemKey?: string;
-  algo: "v1" | "v2";
+  algo: "v1" | "v2" | "mona";
   timeoutSec: number;
   parallel: number;
   maxArtsPerSlot: number;
@@ -1192,7 +1188,7 @@ async function cmdEnrich(opts: {
         inventory,
         opts.algo,
         opts.timeoutSec * 1000,
-        opts.algo === "v2" ? (opts.timeoutSec * 1000) / 4 : undefined,
+        opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         formulaId,
         opts.maxArtsPerSlot || undefined
       );
@@ -1317,7 +1313,7 @@ function printStatDiff(label: string, diffs: StatDiffEntry[]): void {
 
 async function cmdCompare(opts: {
   problemKey: string;
-  algo?: "v1" | "v2";
+  algo?: "v1" | "v2" | "mona";
   timeoutSec: number;
   maxArtsPerSlot: number;
   diag: boolean;
@@ -1400,7 +1396,7 @@ async function cmdCompare(opts: {
         inventory,
         opts.algo,
         opts.timeoutSec * 1000,
-        opts.algo === "v2" ? (opts.timeoutSec * 1000) / 4 : undefined,
+        opts.algo !== "v1" ? (opts.timeoutSec * 1000) / 4 : undefined,
         problem.formulaId,
         opts.maxArtsPerSlot || undefined
       );
@@ -1592,7 +1588,7 @@ async function main(): Promise<void> {
         "  --filter PATTERN   Filter by team/char name\n" +
         "  --problem KEY      Run single problem (supports partial match)\n" +
         "  --timeout SECS     Per-team timeout (default: 30)\n" +
-        "  --algo v1|v2       Algorithm (default: v2 for run, v1 for enrich)\n" +
+        "  --algo v1|v2|mona       Algorithm (default: v2 for run, v1 for enrich)\n" +
         "  --parallel N       Run N problems in parallel via child_process.fork\n" +
         "  --max-arts N       Max artifacts per slot for B&B pre-filtering\n" +
         "  --diag             Enable diagnostic logging"
@@ -1633,7 +1629,7 @@ async function main(): Promise<void> {
         filter: parseFlag(args, "--filter"),
         problemKey: parseFlag(args, "--problem"),
         timeoutSec: parseFlagInt(args, "--timeout", 30),
-        algo: (parseFlag(args, "--algo") ?? "v2") as "v1" | "v2",
+        algo: (parseFlag(args, "--algo") ?? "v2") as "v1" | "v2" | "mona",
         parallel: parseFlagInt(args, "--parallel", 0),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
@@ -1655,7 +1651,7 @@ async function main(): Promise<void> {
       await cmdEnrich({
         filter: parseFlag(args, "--filter"),
         problemKey: parseFlag(args, "--problem"),
-        algo: (parseFlag(args, "--algo") ?? "v1") as "v1" | "v2",
+        algo: (parseFlag(args, "--algo") ?? "v1") as "v1" | "v2" | "mona",
         timeoutSec: parseFlagInt(args, "--timeout", 30),
         parallel: parseFlagInt(args, "--parallel", 0),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
@@ -1668,13 +1664,13 @@ async function main(): Promise<void> {
       const problemKey = parseFlag(args, "--problem");
       if (!problemKey) {
         console.error(
-          "Usage: benchmark compare --problem KEY [--algo v1|v2] [--timeout SECS]"
+          "Usage: benchmark compare --problem KEY [--algo v1|v2|mona] [--timeout SECS]"
         );
         process.exit(1);
       }
       await cmdCompare({
         problemKey,
-        algo: parseFlag(args, "--algo") as "v1" | "v2" | undefined,
+        algo: parseFlag(args, "--algo") as "v1" | "v2" | "mona" | undefined,
         timeoutSec: parseFlagInt(args, "--timeout", 30),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),

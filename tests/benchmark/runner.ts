@@ -41,6 +41,7 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import { runTeamOptimization as runMona } from "./gen/mona";
 import { runTeamOptimization as runV1 } from "./gen/v1";
 
 // ─── Build preset import ─────────────────────────────────────────────────────
@@ -388,7 +389,7 @@ export async function runOptimizerOnTeam(
   team: Team,
   accountData: AccountData,
   inventory: ArtifactData[],
-  algorithm: "v1" | "v2",
+  algorithm: "v1" | "v2" | "mona",
   timeoutMs = 120_000,
   perCharDeadlineMs?: number,
   formulaIdOverride?: string,
@@ -464,13 +465,14 @@ export async function runOptimizerOnTeam(
       globalConfig: DEFAULT_GLOBAL_CONFIG,
       baseSheets,
       perChar,
-      ...(algorithm === "v2" && timeoutMs > 0
+      ...((algorithm === "v2" || algorithm === "mona") && timeoutMs > 0
         ? { teamDeadlineMs: performance.now() + timeoutMs }
         : {}),
       ...(maxArtsPerSlot ? { maxArtsPerSlot } : {}),
     };
 
-    const runFn = algorithm === "v1" ? runV1 : runV2;
+    const runFn =
+      algorithm === "v1" ? runV1 : algorithm === "mona" ? runMona : runV2;
     const startTime = performance.now();
 
     let finalResult: TeamOptimizationResult | null = null;
