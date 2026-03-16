@@ -17,10 +17,26 @@
  */
 
 import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
-import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
+import {
+  artifactHalfSetsById,
+  artifactIdToHalfSetId,
+} from "@/data/constants";
+import {
+  MAIN_STAT_VALUES_5STAR,
+  statPools,
+} from "@/data/constants";
+import type {
+  ArtifactData,
+  GlobalStatWeights,
+  MainStat,
+  Slot,
+  SubStat,
+} from "@/data/types";
 import { allSlots } from "@/data/types";
-import { toInternal } from "@/lib/account-data/scoring/utils";
+import {
+  AVG_SUBSTAT_ROLL,
+  toInternal,
+} from "@/lib/account-data/scoring/utils";
 import {
   type BuildMatchResult,
   getMainStatValueAtLevel,
@@ -278,6 +294,225 @@ function computeWeightScore(
   return score;
 }
 
+// ─── Marginal-Gain Weights ───
+
+/** Substats eligible for marginal analysis */
+const MARGINAL_SUBSTATS: SubStat[] = [
+  "cr", "cd", "atk%", "hp%", "def%", "em", "er", "atk", "hp", "def",
+];
+
+/** Main stat pools for variable slots (sands/goblet/circlet) */
+const VARIABLE_SLOT_POOLS: Record<string, readonly MainStat[]> = {
+  sands: statPools.sands,
+  goblet: statPools.goblet,
+  circlet: statPools.circlet,
+};
+
+/**
+ * Marginal-gain weights computed from the actual damage formula.
+ * Used to rank artifacts by their expected contribution to team damage.
+ */
+interface MarginalWeights {
+  /** Substat weights (0-100 scale, highest marginal = 100) */
+  substatWeights: Record<string, number>;
+  /** Main stat marginal damage per slot (for proportional main stat scoring) */
+  mainStatMarginals: Record<string, Record<string, number>>;
+  /** True when marginal analysis suggests different best main stats than build */
+  hasMainStatDisagreement: boolean;
+}
+
+/**
+ * Compute marginal-gain weights for the carry character.
+ *
+ * Evaluates the damage delta from +1 avg roll of each substat and from
+ * adding each possible main stat. This gives context-aware weights that
+ * account for CR capping, team buffs, and formula-specific stat valuation.
+ *
+ * Cost: ~20 damage evaluations (10 substats + ~10 main stats).
+ */
+function computeMarginalWeights(
+  teamBuild: TeamBuild,
+  charId: string,
+  formulaId: string,
+  baseSheets: Record<string, StatSheet>,
+  calcContext: CalcContext,
+  buildMatch: BuildMatchResult | null | undefined,
+  reactionOverride?: ReactionOverride
+): MarginalWeights | null {
+  // Build a midpoint operating-point sheet: add 50% of expected main stat values.
+  // This prevents marginals from being skewed by zero-artifact baselines
+  // (e.g., at zero artifacts geo% has huge marginal, but at midpoint def% is
+  // better for Chiori because she already has geo% from other sources).
+  let baseSheet = new StatSheet([]);
+  if (buildMatch) {
+    const slotKeys: ("sands" | "goblet" | "circlet")[] = ["sands", "goblet", "circlet"];
+    for (const slot of slotKeys) {
+      const rec = getTargetMainStatsForSlot(slot, buildMatch.build);
+      if (rec.size > 0) {
+        // Use the first recommended main stat at 50% value
+        const mainStat = rec.values().next().value as MainStat;
+        const value = MAIN_STAT_VALUES_5STAR[mainStat];
+        if (value) {
+          baseSheet = baseSheet.withDelta(
+            mainStat as StatKey,
+            toInternal(mainStat, value) * 0.5
+          );
+        }
+      }
+    }
+  }
+
+  const sheets = { ...baseSheets, [charId]: baseSheet };
+
+  // Compute baseline damage at midpoint
+  const teamStats = teamBuild.getTeamStats(sheets, charId, calcContext);
+  let baseDamage: number;
+  try {
+    const result = teamBuild.getDamageResult(
+      charId, formulaId, teamStats, calcContext, reactionOverride
+    );
+    baseDamage = result.totalDamage;
+  } catch {
+    return null;
+  }
+  if (baseDamage <= 0) return null;
+
+  // Compute substat marginals
+  const subMarginals: Record<string, number> = {};
+  let maxMarginal = 0;
+  for (const stat of MARGINAL_SUBSTATS) {
+    const delta = AVG_SUBSTAT_ROLL[stat];
+    if (!delta) { subMarginals[stat] = 0; continue; }
+    const tweakedSheet = baseSheet.withDelta(stat as StatKey, delta);
+    const tweakedSheets = { ...baseSheets, [charId]: tweakedSheet };
+    const ts = teamBuild.getTeamStats(tweakedSheets, charId, calcContext);
+    try {
+      const r = teamBuild.getDamageResult(charId, formulaId, ts, calcContext, reactionOverride);
+      subMarginals[stat] = Math.max(0, r.totalDamage - baseDamage);
+    } catch {
+      subMarginals[stat] = 0;
+    }
+    if (subMarginals[stat] > maxMarginal) maxMarginal = subMarginals[stat];
+  }
+
+  // Normalize substats to 0-100
+  const substatWeights: Record<string, number> = {};
+  for (const stat of MARGINAL_SUBSTATS) {
+    substatWeights[stat] = maxMarginal > 0
+      ? Math.round((subMarginals[stat] / maxMarginal) * 100)
+      : 0;
+  }
+
+  // Compute main stat marginals for variable slots
+  const mainStatMarginals: Record<string, Record<string, number>> = {};
+  for (const [slot, pool] of Object.entries(VARIABLE_SLOT_POOLS)) {
+    const slotMarginals: Record<string, number> = {};
+    let slotMax = 0;
+    for (const mainStat of pool) {
+      const value = MAIN_STAT_VALUES_5STAR[mainStat];
+      if (!value) { slotMarginals[mainStat] = 0; continue; }
+      const internalVal = toInternal(mainStat, value);
+      const msSheet = baseSheet.withDelta(mainStat as StatKey, internalVal);
+      const msSheets = { ...baseSheets, [charId]: msSheet };
+      const ts = teamBuild.getTeamStats(msSheets, charId, calcContext);
+      try {
+        const r = teamBuild.getDamageResult(charId, formulaId, ts, calcContext, reactionOverride);
+        slotMarginals[mainStat] = Math.max(0, r.totalDamage - baseDamage);
+      } catch {
+        slotMarginals[mainStat] = 0;
+      }
+      if (slotMarginals[mainStat] > slotMax) slotMax = slotMarginals[mainStat];
+    }
+    // Normalize per-slot: best main stat → 1.0
+    for (const mainStat of pool) {
+      slotMarginals[mainStat] = slotMax > 0
+        ? slotMarginals[mainStat] / slotMax
+        : 0;
+    }
+    mainStatMarginals[slot] = slotMarginals;
+  }
+
+  // Detect main stat disagreements: cases where the marginal-gain analysis
+  // suggests a different best main stat than the build recommendation.
+  // When disagreement exists, marginal substat weights should also be used
+  // because the build's substat weights are tuned for the build's main stats.
+  let hasMainStatDisagreement = false;
+  if (buildMatch) {
+    const slotKeys: ("sands" | "goblet" | "circlet")[] = ["sands", "goblet", "circlet"];
+    for (const slot of slotKeys) {
+      const rec = getTargetMainStatsForSlot(slot, buildMatch.build);
+      const slotM = mainStatMarginals[slot];
+      if (!slotM || rec.size === 0) continue;
+      // Find the marginal-best main stat
+      let bestMain = "";
+      let bestVal = 0;
+      for (const [ms, val] of Object.entries(slotM)) {
+        if (val > bestVal) { bestVal = val; bestMain = ms; }
+      }
+      if (bestMain && !rec.has(bestMain as MainStat)) {
+        hasMainStatDisagreement = true;
+        break;
+      }
+    }
+  }
+
+  return { substatWeights, mainStatMarginals, hasMainStatDisagreement };
+}
+
+/**
+ * Score an artifact using marginal-gain weights.
+ *
+ * Main stats: scored proportionally to their marginal damage contribution
+ * (from computeMarginalWeights). This fixes the main stat mismatch problem
+ * where e.g. EM goblet tops the ranking but dendro% is optimal for burst.
+ *
+ * Substats: when there's a main stat disagreement (marginal analysis suggests
+ * a different best main stat than the build), also use marginal substat weights.
+ * Otherwise, use the build's static weights which are well-calibrated for the
+ * character's general use.
+ */
+function computeMarginalScore(
+  art: ArtifactData,
+  buildMatch: BuildMatchResult | null | undefined,
+  globalConfig: GlobalStatWeights,
+  crDiscount: number,
+  marginals: MarginalWeights
+): number {
+  // Substat score: use marginal weights when main stats disagree,
+  // build weights otherwise (to preserve existing well-calibrated ranking)
+  let score: number;
+  if (marginals.hasMainStatDisagreement) {
+    const mWeights = { ...marginals.substatWeights };
+    if (crDiscount < 1) {
+      mWeights.cr = (mWeights.cr ?? 0) * crDiscount;
+    }
+    score = scoreSlot(art, mWeights, globalConfig);
+  } else {
+    const baseWeights = buildMatch?.statWeights ?? { cr: 100, cd: 100 };
+    const weights =
+      crDiscount < 1
+        ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }
+        : baseWeights;
+    score = scoreSlot(art, weights, globalConfig);
+  }
+
+  // Main stat score: proportional to marginal damage contribution
+  const slotMarginals = marginals.mainStatMarginals[art.slotKey];
+  if (slotMarginals) {
+    const proportion = slotMarginals[art.mainStatKey] ?? 0;
+    if (proportion > 0) {
+      let ms = scoreMainStat(art.mainStatKey, art.rarity, globalConfig, art.level);
+      if (crDiscount < 1 && art.mainStatKey === "cr") ms *= crDiscount;
+      score += ms * proportion;
+    }
+  } else {
+    // flower/plume: always give full main stat bonus
+    score += scoreMainStat(art.mainStatKey, art.rarity, globalConfig, art.level);
+  }
+
+  return score;
+}
+
 // ─── Damage Evaluation ───
 
 function evaluateBuild(
@@ -417,7 +652,8 @@ function prepareSlotData(
   buildMatch: BuildMatchResult | null | undefined,
   globalConfig: GlobalStatWeights,
   crDiscount: number,
-  maxArtsPerSlot = 0
+  maxArtsPerSlot = 0,
+  marginals?: MarginalWeights | null
 ): PreparedSlotData[] {
   const result: PreparedSlotData[] = [];
   for (let si = 0; si < 5; si++) {
@@ -426,10 +662,12 @@ function prepareSlotData(
       .filter(
         (a) => a.slotKey === slot && (!excludedIds || !excludedIds.has(a.id))
       )
-      .sort(
-        (a, b) =>
-          computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
-          computeWeightScore(a, buildMatch, globalConfig, crDiscount)
+      .sort((a, b) =>
+        marginals
+          ? computeMarginalScore(b, buildMatch, globalConfig, crDiscount, marginals) -
+            computeMarginalScore(a, buildMatch, globalConfig, crDiscount, marginals)
+          : computeWeightScore(b, buildMatch, globalConfig, crDiscount) -
+            computeWeightScore(a, buildMatch, globalConfig, crDiscount)
       );
     if (maxArtsPerSlot > 0 && arts.length > maxArtsPerSlot) {
       arts = arts.slice(0, maxArtsPerSlot);
@@ -660,12 +898,15 @@ export function runCharacterBnB(
   const formulaCharId = carryCharId;
   const erCheckCharId = charId;
 
-  // CR discount
+  // CR discount: reduce CR weight in artifact ranking when the character
+  // already has high base CR (from character stats, weapon, team buffs).
+  // The damage formula caps CR at 100%, so additional CR substats have
+  // diminishing value as total CR approaches the cap.
   let crDiscount = 1;
   if (swapCharId === formulaCharId) {
     if (calcContext.assumeCrit) {
       crDiscount = 0;
-    } else if (calcContext.critRateTarget != null) {
+    } else {
       const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,
@@ -677,13 +918,29 @@ export function runCharacterBnB(
     }
   }
 
+  // Compute marginal-gain weights for carry characters (costs ~20 damage evals).
+  // Gives context-aware artifact ranking that accounts for CR capping, team buffs,
+  // and formula-specific stat valuation (e.g., dendro% vs EM for burst damage).
+  let marginals: MarginalWeights | null = null;
+  if (swapCharId === formulaCharId && !scoreFn) {
+    marginals = computeMarginalWeights(
+      teamBuild, swapCharId, formulaId, baseSheets, calcContext,
+      charConfig.buildMatch, reactionOverride
+    );
+    if (marginals && (globalThis as Record<string, unknown>).__TEAM_OPT_DIAG__) {
+      const d = marginals.hasMainStatDisagreement ? "YES" : "no";
+      console.log(`  [MARGINAL] ${charId}: mainStatDisagree=${d}, substats=${JSON.stringify(marginals.substatWeights)}`);
+    }
+  }
+
   const slotData = prepareSlotData(
     inventory,
     excludedIds,
     charConfig.buildMatch,
     globalConfig,
     crDiscount,
-    maxArtsPerSlot
+    maxArtsPerSlot,
+    marginals
   );
 
   // Empty pool check
@@ -809,77 +1066,99 @@ export function runCharacterBnB(
   }
 
   /**
-   * Hill-climbing warm-start: greedy build → iterative improvement per slot.
-   * Seeds the threshold with a high-quality solution so B&B can prune effectively.
+   * Hill-climbing warm-start: greedy seed + iterative single-slot improvement.
+   *
+   * For each pattern task, starts from the top weight-scored artifact per slot,
+   * then iteratively swaps single slots to improve damage. Tries the top
+   * HC_ALT_COUNT artifacts per slot per iteration.
+   *
+   * Additionally, for multi-main-stat slots (sands/goblet/circlet), generates
+   * extra seeds starting from each distinct main stat type's best artifact.
+   * This prevents the HC from being trapped in a local optimum when the weight
+   * scoring heavily favors one main stat (e.g. ER for Raiden) that isn't
+   * actually optimal in context.
    */
   function hillClimbWarmStart(tasks: PatternTask[]): void {
+    const HC_ALT_COUNT = 15;
+    // Only add diverse main-stat seeds when few enough tasks that the cost
+    // won't eat into DFS budget. With many patterns (no-set-constraint teams),
+    // standard HC already covers diverse artifacts via different set patterns.
+    const useDiverseSeeds = tasks.length <= 10;
+
     for (const task of tasks) {
-      const pieces: ArtifactTuple = [null, null, null, null, null];
       let valid = true;
       for (let s = 0; s < 5; s++) {
         if (task.groups[s].length === 0) {
           valid = false;
           break;
         }
-        pieces[s] = task.groups[s][0]; // start with top weight-scored
       }
       if (!valid) continue;
 
-      // Evaluate initial greedy build
-      let bestDamage = evaluateBuild(
-        pieces,
-        teamBuild,
-        swapCharId,
-        formulaCharId,
-        formulaId,
-        baseSheets,
-        calcTargetId,
-        calcContext,
-        erCheckCharId,
-        charConfig.targetEr,
-        charConfig.targetCr,
-        reactionOverride,
-        scoreFn,
-        optCtx
-      ).damage;
-      collector.add(bestDamage, null, pieces);
-      ctx.evaluations++;
+      // Collect seeds: primary greedy + optionally diverse main stat seeds
+      const baseSeed: ArtifactTuple = [
+        task.groups[0][0],
+        task.groups[1][0],
+        task.groups[2][0],
+        task.groups[3][0],
+        task.groups[4][0],
+      ];
+      const seeds: ArtifactTuple[] = [baseSeed];
 
-      // Hill-climb: iteratively try alternatives per slot (up to top-15 per slot)
-      const HC_ALT_COUNT = 15;
-      let improved = true;
-      while (improved) {
-        improved = false;
-        for (let s = 0; s < 5; s++) {
+      if (useDiverseSeeds) {
+        // For sands/goblet/circlet, seed from each distinct main stat's best
+        for (let s = 2; s < 5 && seeds.length <= 7; s++) {
           const group = task.groups[s];
-          const limit = Math.min(group.length, HC_ALT_COUNT);
-          for (let gi = 0; gi < limit; gi++) {
-            if (group[gi] === pieces[s]) continue;
-            const saved = pieces[s];
-            pieces[s] = group[gi];
-            const { damage } = evaluateBuild(
-              pieces,
-              teamBuild,
-              swapCharId,
-              formulaCharId,
-              formulaId,
-              baseSheets,
-              calcTargetId,
-              calcContext,
-              erCheckCharId,
-              charConfig.targetEr,
-              charConfig.targetCr,
-              reactionOverride,
-              scoreFn,
-              optCtx
-            );
-            ctx.evaluations++;
-            if (damage > bestDamage) {
-              bestDamage = damage;
-              collector.add(damage, null, pieces);
-              improved = true;
-            } else {
-              pieces[s] = saved;
+          const topMain = group[0].mainStatKey;
+          const seenMains = new Set<string>([topMain]);
+          for (const art of group) {
+            if (seeds.length > 7) break;
+            if (seenMains.size >= 3) break; // max 2 alt main stats per slot
+            if (seenMains.has(art.mainStatKey)) continue;
+            seenMains.add(art.mainStatKey);
+            const altSeed: ArtifactTuple = [...baseSeed] as ArtifactTuple;
+            altSeed[s] = art;
+            seeds.push(altSeed);
+          }
+        }
+      }
+
+      // Run HC from each seed
+      for (const seed of seeds) {
+        const pieces: ArtifactTuple = [...seed] as ArtifactTuple;
+        let bestDamage = evaluateBuild(
+          pieces, teamBuild, swapCharId, formulaCharId, formulaId,
+          baseSheets, calcTargetId, calcContext, erCheckCharId,
+          charConfig.targetEr, charConfig.targetCr, reactionOverride,
+          scoreFn, optCtx
+        ).damage;
+        collector.add(bestDamage, null, pieces);
+        ctx.evaluations++;
+
+        let improved = true;
+        while (improved) {
+          improved = false;
+          for (let s = 0; s < 5; s++) {
+            const group = task.groups[s];
+            const limit = Math.min(group.length, HC_ALT_COUNT);
+            for (let gi = 0; gi < limit; gi++) {
+              if (group[gi] === pieces[s]) continue;
+              const saved = pieces[s];
+              pieces[s] = group[gi];
+              const { damage } = evaluateBuild(
+                pieces, teamBuild, swapCharId, formulaCharId, formulaId,
+                baseSheets, calcTargetId, calcContext, erCheckCharId,
+                charConfig.targetEr, charConfig.targetCr, reactionOverride,
+                scoreFn, optCtx
+              );
+              ctx.evaluations++;
+              if (damage > bestDamage) {
+                bestDamage = damage;
+                collector.add(damage, null, pieces);
+                improved = true;
+              } else {
+                pieces[s] = saved;
+              }
             }
           }
         }
@@ -890,6 +1169,7 @@ export function runCharacterBnB(
   function collectAndRunPatternTasks(tasks: PatternTask[]): void {
     // Hill-climbing warm-start to seed a good threshold before DFS
     hillClimbWarmStart(tasks);
+
     // Sort by upper bound descending — explore most promising patterns first
     tasks.sort((a, b) => b.upperBound - a.upperBound);
     for (const task of tasks) {
@@ -1536,9 +1816,9 @@ export async function* runTeamOptimization(
 
   // ── Time budget management ──
   // If teamDeadlineMs is set, compute per-char budgets dynamically.
-  // Budget split: Phase 1 gets 40%, Phase 3+3b gets 40%, Phase 2+overhead gets 20%.
+  // Budget split: Phase 1 gets 60%, Phase 3+3b gets 30%, Phase 2+overhead gets 10%.
   const numChars = Object.keys(perChar).length || 4;
-  const phase1Fraction = 0.4;
+  const phase1Fraction = 0.6;
   const perCharDeadlineMs = teamDeadlineMs
     ? Math.max(
         500,

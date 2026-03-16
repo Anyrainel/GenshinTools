@@ -42,9 +42,12 @@ import {
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { AccountData, ArtifactData } from "@/data/types";
+import type { AccountData, ArtifactData, GlobalStatWeights, SubStat } from "@/data/types";
+import { allSlots } from "@/data/types";
+import { scoreSlot, scoreMainStat, getTargetMainStatsForSlot } from "@/lib/account-data/artifactScore";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { runCharacterBnB } from "@/lib/team-comp/optimizerV2";
 import type {
   CalcContext,
   CharCompConfig,
@@ -1551,6 +1554,430 @@ async function cmdCompare(opts: {
   }
 }
 
+// ─── Diagnose Command ────────────────────────────────────────────────────────
+
+/**
+ * Reverse-engineer what weights would have ranked optimal artifacts better.
+ * For each problem, compares the substat profiles of optimal vs top-ranked
+ * artifacts to identify systematic weight biases.
+ */
+async function cmdReverseWeights(filter?: string): Promise<void> {
+  const store = loadStore();
+  if (!existsSync(ACCOUNT_PATH)) {
+    console.error(`${C.red}No account fixture.${C.reset}`);
+    process.exit(1);
+  }
+
+  await preloadGameStats();
+  const accountData = loadAccountData(ACCOUNT_PATH);
+  const inventory = getAllArtifacts(accountData);
+  const artById = new Map<string, ArtifactData>();
+  for (const a of inventory) artById.set(a.id, a);
+
+  const teamPreset = loadTeamPreset();
+  const teamById = new Map<string, Team>();
+  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const globalConfig = DEFAULT_GLOBAL_CONFIG;
+
+  // Accumulate per-stat "rank penalty" across all problems to find systematic biases
+  const statRankPenalties: Record<string, { sumRank: number; count: number; slots: string[] }> = {};
+
+  for (const [key, problem] of Object.entries(store.problems)) {
+    if (filter && !key.includes(filter)) continue;
+    const team = teamById.get(problem.teamId);
+    if (!team) continue;
+
+    // Find best solution
+    let bestSol: Solution | null = null;
+    let bestDamage = Number.NEGATIVE_INFINITY;
+    for (const sol of problem.solutions) {
+      const dmg = evaluateAssignment(
+        team, problem.formulaId, sol.artifactAssignment, accountData, inventory
+      );
+      if (dmg !== null && dmg > bestDamage) {
+        bestDamage = dmg;
+        bestSol = sol;
+      }
+    }
+    if (!bestSol) continue;
+
+    const carryId = problem.carryCharId;
+    const perChar = buildPerChar(team, carryId, accountData);
+    const carryConfig = perChar[carryId];
+    if (!carryConfig?.buildMatch) continue;
+
+    const baseWeights = carryConfig.buildMatch.statWeights;
+    const bestCarrySlots = bestSol.artifactAssignment[carryId] ?? {};
+
+    let hasIssue = false;
+    for (const slot of allSlots) {
+      const bestArtId = bestCarrySlots[slot];
+      const bestArt = bestArtId ? artById.get(bestArtId) : null;
+      if (!bestArt) continue;
+
+      // Rank the optimal artifact
+      const slotArts = inventory
+        .filter((a) => a.slotKey === slot)
+        .map((a) => {
+          let score = scoreSlot(a, baseWeights as Record<string, number>, globalConfig);
+          if (carryConfig.buildMatch) {
+            const rec = getTargetMainStatsForSlot(slot, carryConfig.buildMatch.build);
+            if (rec.has(a.mainStatKey)) {
+              score += scoreMainStat(a.mainStatKey, a.rarity, globalConfig, a.level);
+            }
+          }
+          return { art: a, score };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      const rank = slotArts.findIndex((x) => x.art.id === bestArtId);
+      if (rank < 10) continue; // Only care about poorly ranked slots
+
+      if (!hasIssue) {
+        console.log(
+          `\n${C.bold}${problem.teamName} → ${problem.formulaId}${C.reset}` +
+          ` | weights: ${JSON.stringify(baseWeights)}`
+        );
+        hasIssue = true;
+      }
+
+      const top = slotArts[0];
+      const opt = slotArts[rank];
+
+      // Compare substats
+      console.log(
+        `  ${slot}: optimal rank #${rank + 1} | main: ${bestArt.mainStatKey} vs top: ${top.art.mainStatKey}`
+      );
+      console.log(
+        `    Optimal (${opt.score.toFixed(1)}): ${JSON.stringify(bestArt.substats)}`
+      );
+      console.log(
+        `    Top #1  (${top.score.toFixed(1)}): ${JSON.stringify(top.art.substats)}`
+      );
+
+      // What substats does the optimal have MORE of vs the top?
+      const optSubs = bestArt.substats ?? {};
+      const topSubs = top.art.substats ?? {};
+      const allStats = new Set([...Object.keys(optSubs), ...Object.keys(topSubs)]);
+      const diffs: string[] = [];
+      for (const stat of allStats) {
+        const optVal = optSubs[stat as SubStat] ?? 0;
+        const topVal = topSubs[stat as SubStat] ?? 0;
+        const diff = optVal - topVal;
+        if (Math.abs(diff) > 0.01) {
+          diffs.push(`${stat}: ${diff > 0 ? "+" : ""}${diff.toFixed(1)}`);
+          // Track for aggregate analysis
+          if (!statRankPenalties[stat]) {
+            statRankPenalties[stat] = { sumRank: 0, count: 0, slots: [] };
+          }
+          // If optimal has LESS of this stat, it means the weight is too high for this stat
+          if (diff < 0) {
+            statRankPenalties[stat].sumRank += rank;
+            statRankPenalties[stat].count++;
+            statRankPenalties[stat].slots.push(`${problem.formulaId}/${slot}`);
+          }
+        }
+      }
+      // Also track main stat difference
+      if (bestArt.mainStatKey !== top.art.mainStatKey) {
+        const mainKey = `MAIN:${top.art.mainStatKey}→${bestArt.mainStatKey}`;
+        if (!statRankPenalties[mainKey]) {
+          statRankPenalties[mainKey] = { sumRank: 0, count: 0, slots: [] };
+        }
+        statRankPenalties[mainKey].sumRank += rank;
+        statRankPenalties[mainKey].count++;
+        statRankPenalties[mainKey].slots.push(`${problem.formulaId}/${slot}`);
+      }
+      console.log(`    Diff (opt-top): ${diffs.join(", ")}`);
+    }
+  }
+
+  // Print aggregate analysis
+  console.log(`\n${C.bold}═══ Aggregate: Stats that penalize optimal artifacts ═══${C.reset}`);
+  console.log(`  (Stats where optimal has LESS than top-ranked → weight too high)\n`);
+  const entries = Object.entries(statRankPenalties)
+    .filter(([, v]) => v.count > 0)
+    .sort((a, b) => b[1].sumRank - a[1].sumRank);
+  for (const [stat, data] of entries) {
+    console.log(
+      `  ${stat}: ${data.count} cases, avg rank=${(data.sumRank / data.count).toFixed(0)}` +
+      ` | ${data.slots.join(", ")}`
+    );
+  }
+}
+
+/**
+ * Diagnose WHY V2 can't find the optimal solution for a specific problem.
+ * Traces the carry character's artifact pool, slot rankings, and B&B results.
+ */
+async function cmdDiagnose(opts: {
+  problemKey: string;
+  timeoutSec: number;
+}): Promise<void> {
+  const store = loadStore();
+  if (!existsSync(ACCOUNT_PATH)) {
+    console.error(`${C.red}No account fixture.${C.reset}`);
+    process.exit(1);
+  }
+
+  await preloadGameStats();
+  const accountData = loadAccountData(ACCOUNT_PATH);
+  const inventory = getAllArtifacts(accountData);
+  const artById = new Map<string, ArtifactData>();
+  for (const a of inventory) artById.set(a.id, a);
+
+  const teamPreset = loadTeamPreset();
+  const teamById = new Map<string, Team>();
+  for (const t of teamPreset.teams) teamById.set(t.id, t);
+
+  const matches = Object.keys(store.problems).filter((k) =>
+    k.includes(opts.problemKey)
+  );
+  if (matches.length === 0) {
+    console.error(`${C.red}No problems matching "${opts.problemKey}"${C.reset}`);
+    process.exit(1);
+  }
+
+  for (const key of matches) {
+    const problem = store.problems[key];
+    const team = teamById.get(problem.teamId);
+    if (!team) continue;
+
+    console.log(
+      `\n${C.bold}═══ DIAGNOSE: ${problem.teamName} → ${problem.formulaId} ═══${C.reset}\n`
+    );
+
+    // Find best solution
+    let bestSol: Solution | null = null;
+    let bestDamage = Number.NEGATIVE_INFINITY;
+    for (const sol of problem.solutions) {
+      const dmg = evaluateAssignment(
+        team, problem.formulaId, sol.artifactAssignment, accountData, inventory
+      );
+      if (dmg !== null && dmg > bestDamage) {
+        bestDamage = dmg;
+        bestSol = sol;
+      }
+    }
+    if (!bestSol) {
+      console.log(`  ${C.yellow}No valid stored solutions${C.reset}`);
+      continue;
+    }
+
+    const carryId = problem.carryCharId;
+    console.log(
+      `  Best: ${fmt(bestDamage)} (${bestSol.algorithm}) | carry: ${carryId}`
+    );
+
+    // Set up V2 context
+    const configs: CharCompConfig[] = [];
+    for (let i = 0; i < team.characters.length; i++) {
+      const cfg = buildCharCompConfig(team, i, accountData);
+      if (cfg) configs.push(cfg);
+    }
+    if (configs.length === 0) continue;
+
+    const teamBuild = new TeamBuild(
+      configs, team.opts || {},
+      team.enemyElementAura as import("@/data/types").Element | undefined
+    );
+    const calcContext: CalcContext = {
+      enemyLevel: team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
+      enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      assumeCrit: team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
+      critRateTarget: (team.calcContext as Record<string, unknown>)?.critRateTarget as number | undefined,
+    };
+    const perChar = buildPerChar(team, carryId, accountData);
+    const carryConfig = perChar[carryId];
+    if (!carryConfig) {
+      console.log(`  ${C.red}No carry config${C.reset}`);
+      continue;
+    }
+
+    const globalConfig = DEFAULT_GLOBAL_CONFIG;
+
+    // ── 1) Carry artifact ranking per slot ──
+    console.log(`\n  ${C.magenta}── Carry Artifact Ranking ──${C.reset}`);
+    const bestCarrySlots = bestSol.artifactAssignment[carryId] ?? {};
+
+    // Compute weight scores for ranking (same as prepareSlotData)
+    const baseWeights = carryConfig.buildMatch?.statWeights ?? { cr: 100, cd: 100 };
+    console.log(`  Build weights: ${JSON.stringify(baseWeights)}`);
+    console.log(`  Set constraint: ${carryConfig.artifactSetId ?? carryConfig.artifactHalfSetIds?.join("+") ?? "none"}`);
+    console.log(`  ER target: ${carryConfig.targetEr} | CR target: ${carryConfig.targetCr}`);
+
+    for (const slot of allSlots) {
+      const bestArtId = bestCarrySlots[slot];
+      const bestArt = bestArtId ? artById.get(bestArtId) : null;
+
+      // Get all artifacts for this slot, sorted by weight score
+      const slotArts = inventory
+        .filter((a) => a.slotKey === slot)
+        .map((a) => {
+          const weights = baseWeights;
+          let score = scoreSlot(a, weights as Record<string, number>, globalConfig);
+          if (carryConfig.buildMatch) {
+            const rec = getTargetMainStatsForSlot(slot, carryConfig.buildMatch.build);
+            if (rec.has(a.mainStatKey)) {
+              score += scoreMainStat(a.mainStatKey, a.rarity, globalConfig, a.level);
+            }
+          }
+          return { art: a, score };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      const rank = slotArts.findIndex((x) => x.art.id === bestArtId);
+      const total = slotArts.length;
+
+      if (!bestArt) {
+        console.log(`  ${slot}: ${C.yellow}no optimal artifact${C.reset}`);
+        continue;
+      }
+
+      const topScore = slotArts[0]?.score ?? 0;
+      const optEntry = slotArts[rank];
+      const color = rank < 5 ? C.green : rank < 20 ? C.yellow : C.red;
+      console.log(
+        `  ${slot}: optimal rank ${color}#${rank + 1}/${total}${C.reset}` +
+        ` | score=${optEntry?.score.toFixed(1)} (top=${topScore.toFixed(1)})` +
+        ` | main=${bestArt.mainStatKey} set=${bestArt.setKey}` +
+        ` | id=${bestArtId}`
+      );
+
+      // Show the top-3 and where the gap is
+      if (rank >= 3) {
+        for (let i = 0; i < Math.min(3, slotArts.length); i++) {
+          const e = slotArts[i];
+          console.log(
+            `    #${i + 1}: score=${e.score.toFixed(1)} main=${e.art.mainStatKey} set=${e.art.setKey} id=${e.art.id}`
+          );
+        }
+      }
+    }
+
+    // ── 2) Run carry-only B&B and see what it finds ──
+    console.log(`\n  ${C.magenta}── Carry-only B&B ──${C.reset}`);
+
+    // Build heuristic base sheets (same as the optimizer would)
+    const baseSheets: Record<string, StatSheet> = {};
+    for (const cid of problem.characters) {
+      // Use the BEST solution's support artifacts as base
+      const solSlots = bestSol.artifactAssignment[cid] ?? {};
+      const pieces: ArtifactData[] = Object.values(solSlots)
+        .map((id) => artById.get(id))
+        .filter((a): a is ArtifactData => !!a);
+      if (cid !== carryId) {
+        baseSheets[cid] = StatSheet.fromArtifacts(pieces);
+      } else {
+        baseSheets[cid] = new StatSheet([]);
+      }
+    }
+
+    // Get the optimal carry artifacts as an excluded set from other characters
+    const supportArtIds = new Set<string>();
+    for (const [cid, slots] of Object.entries(bestSol.artifactAssignment)) {
+      if (cid === carryId) continue;
+      for (const artId of Object.values(slots)) supportArtIds.add(artId);
+    }
+
+    const carryResult = runCharacterBnB(
+      carryId,
+      carryConfig,
+      teamBuild,
+      carryId,
+      problem.formulaId,
+      inventory,
+      globalConfig,
+      baseSheets,
+      calcContext,
+      supportArtIds, // exclude support artifacts
+      undefined, // reactionOverride
+      undefined, // scoreFn
+      15, // topK
+      performance.now() + opts.timeoutSec * 1000, // deadline
+      undefined, // warmStartThreshold
+      0 // maxArtsPerSlot
+    );
+
+    console.log(
+      `  B&B result: ${fmt(carryResult.collector.best?.damage ?? 0)} ` +
+      `(${carryResult.evaluations} evals)` +
+      (carryResult.failReason ? ` FAIL: ${carryResult.failReason.kind}` : "")
+    );
+
+    // Now evaluate the best solution's carry artifacts through the same pipeline
+    const bestCarryPieces = allSlots.map((s) => {
+      const id = bestCarrySlots[s];
+      return id ? artById.get(id) ?? null : null;
+    });
+    const bestCarrySheet = StatSheet.fromArtifacts(
+      bestCarryPieces.filter((a): a is ArtifactData => a != null)
+    );
+    const bestSheets = { ...baseSheets, [carryId]: bestCarrySheet };
+    const bestPostStats = teamBuild.getTeamStats(bestSheets, carryId, calcContext);
+    const bestDmgResult = teamBuild.getDamageResult(
+      carryId, problem.formulaId, bestPostStats, calcContext
+    );
+    console.log(
+      `  Optimal carry damage: ${fmt(bestDmgResult.totalDamage)} (with best supports)`
+    );
+
+    const bnbBest = carryResult.collector.best;
+    if (bnbBest) {
+      const bnbIds = allSlots.map((_, i) => bnbBest.artifacts[i]?.id ?? "?");
+      const optIds = allSlots.map((s) => bestCarrySlots[s] ?? "?");
+      const shared = bnbIds.filter((id, i) => id === optIds[i]).length;
+      console.log(`  B&B vs optimal: ${shared}/5 artifacts match`);
+      console.log(`  B&B artifacts:  [${bnbIds.join(", ")}]`);
+      console.log(`  Opt artifacts:  [${optIds.join(", ")}]`);
+
+      // Show the slot differences
+      for (let i = 0; i < 5; i++) {
+        if (bnbIds[i] !== optIds[i]) {
+          const bnbArt = bnbBest.artifacts[i];
+          const optArt = artById.get(optIds[i]);
+          console.log(
+            `  ${allSlots[i]} DIFF: V2=${bnbArt?.mainStatKey}/${bnbArt?.setKey} ` +
+            `vs Opt=${optArt?.mainStatKey}/${optArt?.setKey}`
+          );
+        }
+      }
+    }
+
+    // ── 3) Check: does V2 get same result with no support exclusion? ──
+    console.log(`\n  ${C.magenta}── Carry B&B (no exclusion, support context from best) ──${C.reset}`);
+    const noExclResult = runCharacterBnB(
+      carryId, carryConfig, teamBuild, carryId, problem.formulaId,
+      inventory, globalConfig, baseSheets, calcContext,
+      undefined, undefined, undefined, 15,
+      performance.now() + opts.timeoutSec * 1000, undefined, 0
+    );
+    console.log(
+      `  No-excl B&B: ${fmt(noExclResult.collector.best?.damage ?? 0)} ` +
+      `(${noExclResult.evaluations} evals)`
+    );
+
+    if (noExclResult.collector.best) {
+      const ids = allSlots.map((_, i) => noExclResult.collector.best!.artifacts[i]?.id ?? "?");
+      const optIds = allSlots.map((s) => bestCarrySlots[s] ?? "?");
+      const shared = ids.filter((id, i) => id === optIds[i]).length;
+      console.log(`  Artifacts match: ${shared}/5`);
+      if (shared < 5) {
+        for (let i = 0; i < 5; i++) {
+          if (ids[i] !== optIds[i]) {
+            const bnbArt = noExclResult.collector.best!.artifacts[i];
+            const optArt = artById.get(optIds[i]);
+            console.log(
+              `  ${allSlots[i]}: V2=${bnbArt?.mainStatKey}/${bnbArt?.setKey} ` +
+              `vs Opt=${optArt?.mainStatKey}/${optArt?.setKey}`
+            );
+          }
+        }
+      }
+    }
+  }
+}
+
 // ─── CLI Argument Parsing ────────────────────────────────────────────────────
 
 function parseFlag(args: string[], flag: string): string | undefined {
@@ -1674,6 +2101,27 @@ async function main(): Promise<void> {
         timeoutSec: parseFlagInt(args, "--timeout", 30),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
+      });
+      break;
+    }
+
+    case "reverse-weights": {
+      const filter = parseFlag(args, "--filter") || parseFlag(args, "--problem");
+      await cmdReverseWeights(filter ?? undefined);
+      break;
+    }
+
+    case "diagnose": {
+      const problemKey = parseFlag(args, "--problem");
+      if (!problemKey) {
+        console.error(
+          "Usage: benchmark diagnose --problem KEY [--timeout SECS]"
+        );
+        process.exit(1);
+      }
+      await cmdDiagnose({
+        problemKey,
+        timeoutSec: parseFlagInt(args, "--timeout", 120),
       });
       break;
     }
