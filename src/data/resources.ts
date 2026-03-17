@@ -4,6 +4,7 @@
 import { ArtifactHalfSet, ArtifactSetResource, CharacterResource, ElementResource, EnemyResource, WeaponResource, WeaponTypeResource } from './types';
 
 export const characters: CharacterResource[] = [
+  {"id": "linnea", "rarity": 5, "imagePath": "/character/linnea.png"},
   {"id": "varka", "rarity": 5, "imagePath": "/character/varka.png"},
   {"id": "illuga", "rarity": 4, "imagePath": "/character/illuga.png"},
   {"id": "zibai", "rarity": 5, "imagePath": "/character/zibai.png"},
