@@ -1,7 +1,21 @@
 import { artifactIdToHalfSetId } from "@/data/constants";
 import type { AccountData, ArtifactData } from "@/data/types";
 import { getCharacterLevelTier } from "@/lib/gameStatsLoader";
-import type { CharCompConfig } from "@/lib/team-comp/types";
+import {
+  type TeamBuild,
+  evaluateCombo,
+  getComboDisplayResult,
+} from "@/lib/team-comp/damageCalc";
+import { StatSheet } from "@/lib/team-comp/damageModels";
+import type {
+  CalcContext,
+  CharCompConfig,
+  ComboFormula,
+  ComboResult,
+  DamageResult,
+  DisplayResult,
+  ReactionOverride,
+} from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 
 export interface TeamOptDetailProps {
@@ -167,4 +181,100 @@ export function buildTeamConfigs(
     });
   }
   return configs;
+}
+
+// ─── Damage calculation helpers ──────────────────────────────────────────────
+
+/** Build StatSheet map from a charId→artifacts record. */
+export function toStatSheets(
+  charIds: (string | null)[],
+  artsByChar: Record<string, Record<string, ArtifactData>>
+): Record<string, StatSheet> {
+  const sheets: Record<string, StatSheet> = {};
+  for (const charId of charIds) {
+    if (!charId) continue;
+    sheets[charId] = StatSheet.fromArtifacts(
+      Object.values(artsByChar[charId] || {})
+    );
+  }
+  return sheets;
+}
+
+/**
+ * Compute both DamageResult and DisplayResult for a single formula in one pass.
+ * Returns nulls when any input is missing or the formula doesn't exist.
+ */
+export function calcDamageAndDisplay(
+  build: TeamBuild | null,
+  formula: { charId: string; formulaId: string } | null,
+  sheets: Record<string, StatSheet>,
+  context: CalcContext,
+  override?: ReactionOverride
+): { damage: DamageResult | null; display: DisplayResult | null } {
+  if (!build || !formula) return { damage: null, display: null };
+  try {
+    const { charId, formulaId } = formula;
+    const formulas = build.getFormulaIds()[charId];
+    if (!formulas || !formulas[formulaId])
+      return { damage: null, display: null };
+    const postStats = build.getTeamStats(sheets, charId);
+    return {
+      damage: build.getDamageResult(
+        charId,
+        formulaId,
+        postStats,
+        context,
+        override
+      ),
+      display: build.getDisplayResult(
+        charId,
+        formulaId,
+        sheets,
+        context,
+        override
+      ),
+    };
+  } catch (e) {
+    console.error("Damage calc failed:", e);
+    return { damage: null, display: null };
+  }
+}
+
+/**
+ * Compute combo-mode DisplayResult (and optionally ComboResult) for a rotation.
+ * Filters to active lines and returns null when inputs are missing.
+ */
+export function calcComboResults(
+  build: TeamBuild | null,
+  combo: ComboFormula,
+  sheets: Record<string, StatSheet>,
+  context: CalcContext,
+  overrides?: Record<string, ReactionOverride>
+): { comboResult: ComboResult | null; comboDisplay: DisplayResult | null } {
+  if (!build) return { comboResult: null, comboDisplay: null };
+  const activeLines = combo.lines.filter((l) => l.count > 0);
+  if (activeLines.length === 0)
+    return { comboResult: null, comboDisplay: null };
+  const activeCombo = { ...combo, lines: activeLines };
+  try {
+    return {
+      comboResult: evaluateCombo(
+        build,
+        activeCombo,
+        sheets,
+        context,
+        overrides
+      ),
+      comboDisplay: getComboDisplayResult(
+        build,
+        activeCombo,
+        sheets,
+        context,
+        overrides
+      ),
+    };
+  } catch (e) {
+    console.warn("Combo calc failed:", e);
+    return { comboResult: null, comboDisplay: null };
+  }
 }

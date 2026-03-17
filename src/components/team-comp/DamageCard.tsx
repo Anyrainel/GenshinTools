@@ -503,6 +503,86 @@ function ComboBreakdown({
   );
 }
 
+/** Combo-mode result view: StatSheetPanel + ComboBreakdown + BuffLedger. */
+function ComboResultView({
+  displayResult,
+  comboResult,
+  comboLines,
+  teamBuild,
+  team,
+  artifactsByChar,
+  isMobile,
+  t,
+  reactionOverrides,
+  failReasons,
+  frozenCharIds,
+  onArtifactSwap,
+  onFreezeChar,
+  onUnfreezeChar,
+  saturatedCharIds,
+}: {
+  displayResult: DisplayResult | null | undefined;
+  comboResult: ComboResult;
+  comboLines: ComboLine[];
+  teamBuild: TeamBuild;
+  team: Team;
+  artifactsByChar: Record<string, Record<string, ArtifactData>>;
+  isMobile: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+  reactionOverrides: Record<string, ReactionOverride>;
+  failReasons?: Record<
+    string,
+    import("@/lib/team-comp/optimizer").OptFailReason
+  >;
+  frozenCharIds?: Set<string>;
+  onArtifactSwap?: (
+    charId: string,
+    slot: import("@/data/types").Slot,
+    artifact: ArtifactData
+  ) => void;
+  onFreezeChar?: (charId: string) => void;
+  onUnfreezeChar?: (charId: string) => void;
+  saturatedCharIds?: string[];
+}) {
+  return (
+    <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
+      {displayResult && (
+        <StatSheetPanel
+          result={displayResult}
+          team={team}
+          artifactsByChar={artifactsByChar}
+          targetCharId={""}
+          comboActiveCharIds={
+            new Set(comboLines.filter((l) => l.count > 0).map((l) => l.charId))
+          }
+          highlightedStat={null}
+          onStatHover={() => {}}
+          t={t}
+          failReasons={failReasons}
+          frozenCharIds={frozenCharIds}
+          onArtifactSwap={onArtifactSwap}
+          onFreezeChar={onFreezeChar}
+          onUnfreezeChar={onUnfreezeChar}
+          saturatedCharIds={saturatedCharIds}
+        />
+      )}
+      <ComboBreakdown
+        team={team}
+        comboResult={comboResult}
+        comboLines={comboLines}
+        teamBuild={teamBuild}
+        damageValue={comboResult.totalDamage}
+        reactionOverrides={reactionOverrides}
+        isMobile={isMobile}
+        t={t}
+      />
+      {displayResult && (
+        <BuffLedger buffs={displayResult.buffs} team={team} t={t} />
+      )}
+    </div>
+  );
+}
+
 interface DamageCardProps {
   team: Team;
   effectiveTeam: Team;
@@ -955,41 +1035,17 @@ export function DamageCard({
             <AssumeCritToggle {...ctxProps} />
           </div>
           {formulaMode === "combo" && comboResult && comboLines && teamBuild ? (
-            <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
-              {currentDisplayResult && (
-                <StatSheetPanel
-                  result={currentDisplayResult}
-                  team={effectiveTeam}
-                  artifactsByChar={equippedArtifactsByChar}
-                  targetCharId={""}
-                  comboActiveCharIds={
-                    new Set(
-                      comboLines.filter((l) => l.count > 0).map((l) => l.charId)
-                    )
-                  }
-                  highlightedStat={null}
-                  onStatHover={() => {}}
-                  t={t}
-                />
-              )}
-              <ComboBreakdown
-                team={effectiveTeam}
-                comboResult={comboResult}
-                comboLines={comboLines}
-                teamBuild={teamBuild}
-                damageValue={comboResult.totalDamage}
-                reactionOverrides={team.reactionOverrides}
-                isMobile={isMobile}
-                t={t}
-              />
-              {currentDisplayResult && (
-                <BuffLedger
-                  buffs={currentDisplayResult.buffs}
-                  team={effectiveTeam}
-                  t={t}
-                />
-              )}
-            </div>
+            <ComboResultView
+              displayResult={currentDisplayResult}
+              comboResult={comboResult}
+              comboLines={comboLines}
+              teamBuild={teamBuild}
+              team={effectiveTeam}
+              artifactsByChar={equippedArtifactsByChar}
+              isMobile={isMobile}
+              t={t}
+              reactionOverrides={team.reactionOverrides}
+            />
           ) : formulaMode === "combo" && comboLines && !comboResult ? (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
@@ -1185,53 +1241,27 @@ export function DamageCard({
               optimizedComboResult &&
               comboLines &&
               teamBuild ? (
-              <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
-                {optimizedDisplayResult && (
-                  <StatSheetPanel
-                    result={optimizedDisplayResult}
-                    team={effectiveTeam}
-                    artifactsByChar={optimizedArtifactsByChar}
-                    targetCharId={""}
-                    comboActiveCharIds={
-                      new Set(
-                        comboLines
-                          .filter((l) => l.count > 0)
-                          .map((l) => l.charId)
-                      )
-                    }
-                    highlightedStat={null}
-                    onStatHover={() => {}}
-                    t={t}
-                    failReasons={
-                      teamResult?.done ? teamResult.failReasons : undefined
-                    }
-                    frozenCharIds={frozenCharIds}
-                    onArtifactSwap={onArtifactSwap}
-                    onFreezeChar={onFreezeChar}
-                    onUnfreezeChar={onUnfreezeChar}
-                    saturatedCharIds={
-                      teamResult?.done ? teamResult.saturatedCharIds : undefined
-                    }
-                  />
-                )}
-                <ComboBreakdown
-                  team={effectiveTeam}
-                  comboResult={optimizedComboResult}
-                  comboLines={comboLines}
-                  teamBuild={teamBuild}
-                  damageValue={optimizedComboResult.totalDamage}
-                  reactionOverrides={team.reactionOverrides}
-                  isMobile={isMobile}
-                  t={t}
-                />
-                {optimizedDisplayResult && (
-                  <BuffLedger
-                    buffs={optimizedDisplayResult.buffs}
-                    team={effectiveTeam}
-                    t={t}
-                  />
-                )}
-              </div>
+              <ComboResultView
+                displayResult={optimizedDisplayResult}
+                comboResult={optimizedComboResult}
+                comboLines={comboLines}
+                teamBuild={teamBuild}
+                team={effectiveTeam}
+                artifactsByChar={optimizedArtifactsByChar}
+                isMobile={isMobile}
+                t={t}
+                reactionOverrides={team.reactionOverrides}
+                failReasons={
+                  teamResult?.done ? teamResult.failReasons : undefined
+                }
+                frozenCharIds={frozenCharIds}
+                onArtifactSwap={onArtifactSwap}
+                onFreezeChar={onFreezeChar}
+                onUnfreezeChar={onUnfreezeChar}
+                saturatedCharIds={
+                  teamResult?.done ? teamResult.saturatedCharIds : undefined
+                }
+              />
             ) : teamResult?.mode === "single" ||
               (hasOptResult && optimizedDisplayResult) ? (
               <DamageBody
@@ -1327,41 +1357,17 @@ export function DamageCard({
           idealComboResult &&
           comboLines &&
           teamBuild ? (
-            <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
-              {idealDisplayResult && (
-                <StatSheetPanel
-                  result={idealDisplayResult}
-                  team={effectiveTeam}
-                  artifactsByChar={idealArtifactsByChar}
-                  targetCharId={""}
-                  comboActiveCharIds={
-                    new Set(
-                      comboLines.filter((l) => l.count > 0).map((l) => l.charId)
-                    )
-                  }
-                  highlightedStat={null}
-                  onStatHover={() => {}}
-                  t={t}
-                />
-              )}
-              <ComboBreakdown
-                team={effectiveTeam}
-                comboResult={idealComboResult}
-                comboLines={comboLines}
-                teamBuild={teamBuild}
-                damageValue={idealComboResult.totalDamage}
-                reactionOverrides={team.reactionOverrides}
-                isMobile={isMobile}
-                t={t}
-              />
-              {idealDisplayResult && (
-                <BuffLedger
-                  buffs={idealDisplayResult.buffs}
-                  team={effectiveTeam}
-                  t={t}
-                />
-              )}
-            </div>
+            <ComboResultView
+              displayResult={idealDisplayResult}
+              comboResult={idealComboResult}
+              comboLines={comboLines}
+              teamBuild={teamBuild}
+              team={effectiveTeam}
+              artifactsByChar={idealArtifactsByChar}
+              isMobile={isMobile}
+              t={t}
+              reactionOverrides={team.reactionOverrides}
+            />
           ) : idealResult?.done && idealResult.damageResult ? (
             <DamageBody
               team={effectiveTeam}

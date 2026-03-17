@@ -1,9 +1,13 @@
 import {
   buildTeamConfigs,
+  calcComboResults,
+  calcDamageAndDisplay,
   detectEquippedSets,
   setsMatch,
+  toStatSheets,
 } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, ReactionType } from "@/data/types";
+import { StatSheet } from "@/lib/team-comp/damageModels";
 import type { CombatOpts } from "@/lib/team-comp/damageModels";
 import { describe, expect, it } from "vitest";
 import {
@@ -435,5 +439,137 @@ describe("buildTeamConfigs", () => {
     // Should detect equipped 2+2pc, NOT fall back to goal 4pc CW
     expect(configs[0].artifactSetId).toBeNull();
     expect(configs[0].artifactHalfSetIds).toHaveLength(2);
+  });
+});
+
+// ── toStatSheets ────────────────────────────────────────────────────────────
+
+describe("toStatSheets", () => {
+  it("builds stat sheets for each character", () => {
+    const artsByChar: Record<string, Record<string, ArtifactData>> = {
+      hu_tao: {
+        flower: createArtifactData({
+          slotKey: "flower",
+          mainStatKey: "hp",
+          substats: { cr: 10, cd: 20 },
+        }),
+      },
+      xingqiu: {},
+    };
+    const sheets = toStatSheets(["hu_tao", "xingqiu"], artsByChar);
+    expect(sheets.hu_tao).toBeInstanceOf(StatSheet);
+    expect(sheets.xingqiu).toBeInstanceOf(StatSheet);
+  });
+
+  it("skips null charIds", () => {
+    const sheets = toStatSheets([null, "hu_tao", null], {
+      hu_tao: {},
+    });
+    expect(Object.keys(sheets)).toEqual(["hu_tao"]);
+  });
+
+  it("handles missing charId in artsByChar gracefully", () => {
+    const sheets = toStatSheets(["hu_tao"], {});
+    expect(sheets.hu_tao).toBeInstanceOf(StatSheet);
+  });
+
+  it("returns empty record for all-null charIds", () => {
+    const sheets = toStatSheets([null, null], {});
+    expect(sheets).toEqual({});
+  });
+});
+
+// ── calcDamageAndDisplay ────────────────────────────────────────────────────
+
+describe("calcDamageAndDisplay", () => {
+  it("returns nulls when build is null", () => {
+    const result = calcDamageAndDisplay(
+      null,
+      { charId: "hu_tao", formulaId: "E" },
+      {},
+      {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      }
+    );
+    expect(result.damage).toBeNull();
+    expect(result.display).toBeNull();
+  });
+
+  it("returns nulls when formula is null", () => {
+    // Use a mock-like object — calcDamageAndDisplay checks formula first
+    const result = calcDamageAndDisplay(
+      {} as never,
+      null,
+      {},
+      {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      }
+    );
+    expect(result.damage).toBeNull();
+    expect(result.display).toBeNull();
+  });
+});
+
+// ── calcComboResults ────────────────────────────────────────────────────────
+
+describe("calcComboResults", () => {
+  it("returns nulls when build is null", () => {
+    const combo = {
+      id: "c1",
+      label: { en: "Test", zh: "测试" },
+      lines: [{ charId: "hu_tao", formulaId: "E", count: 1 }],
+    };
+    const result = calcComboResults(
+      null,
+      combo,
+      {},
+      {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      }
+    );
+    expect(result.comboResult).toBeNull();
+    expect(result.comboDisplay).toBeNull();
+  });
+
+  it("returns nulls when all lines have count 0", () => {
+    const combo = {
+      id: "c1",
+      label: { en: "Test", zh: "测试" },
+      lines: [{ charId: "hu_tao", formulaId: "E", count: 0 }],
+    };
+    const result = calcComboResults(
+      {} as never,
+      combo,
+      {},
+      {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      }
+    );
+    expect(result.comboResult).toBeNull();
+    expect(result.comboDisplay).toBeNull();
+  });
+
+  it("returns nulls when lines array is empty", () => {
+    const combo = { id: "c1", label: { en: "Test", zh: "测试" }, lines: [] };
+    const result = calcComboResults(
+      {} as never,
+      combo,
+      {},
+      {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        assumeCrit: false,
+      }
+    );
+    expect(result.comboResult).toBeNull();
+    expect(result.comboDisplay).toBeNull();
   });
 });

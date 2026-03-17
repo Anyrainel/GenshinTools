@@ -75,6 +75,10 @@ export type {
 /** How many evaluations between cooperative yields. */
 const YIELD_INTERVAL = 300;
 
+/** After scoring & sorting, keep at most this many unleveled (level 0) artifacts per slot.
+ *  Leveled artifacts are always retained regardless of rank. */
+const UNLEVELED_TOP_N = 50;
+
 /**
  * Compute dynamic hyperparameters based on inventory size.
  *
@@ -512,7 +516,9 @@ function computeMarginalScore(
   marginals: MarginalWeights
 ): number {
   // Substat score: use marginal weights when main stats disagree,
-  // build weights otherwise (to preserve existing well-calibrated ranking)
+  // build weights otherwise. Full marginal substats cause regressions
+  // in time-limited DFS because reordering changes which branches are
+  // explored before the deadline.
   let score: number;
   if (marginals.hasMainStatDisagreement) {
     const mWeights = { ...marginals.substatWeights };
@@ -696,7 +702,8 @@ function prepareSlotData(
   globalConfig: GlobalStatWeights,
   crDiscount: number,
   maxArtsPerSlot = 0,
-  marginals?: MarginalWeights | null
+  marginals?: MarginalWeights | null,
+  filterUnleveled = false
 ): PreparedSlotData[] {
   const result: PreparedSlotData[] = [];
   for (let si = 0; si < 5; si++) {
@@ -726,6 +733,13 @@ function prepareSlotData(
       );
     if (maxArtsPerSlot > 0 && arts.length > maxArtsPerSlot) {
       arts = arts.slice(0, maxArtsPerSlot);
+    }
+    // Drop unleveled artifacts beyond top N for carry characters — they add
+    // search cost but never appear in optimal carry solutions. Leveled
+    // artifacts (user has invested in them) are always kept regardless of rank.
+    // Supports are excluded because they frequently use unleveled artifacts.
+    if (filterUnleveled && arts.length > UNLEVELED_TOP_N) {
+      arts = arts.filter((a, i) => i < UNLEVELED_TOP_N || a.level > 0);
     }
     const bySet = new Map<string, ArtifactData[]>();
     for (const art of arts) {
@@ -998,6 +1012,7 @@ export function runCharacterBnB(
     }
   }
 
+  const isCarry = swapCharId === carryCharId;
   const slotData = prepareSlotData(
     inventory,
     excludedIds,
@@ -1005,7 +1020,8 @@ export function runCharacterBnB(
     globalConfig,
     crDiscount,
     maxArtsPerSlot,
-    marginals
+    marginals,
+    isCarry
   );
 
   // Empty pool check

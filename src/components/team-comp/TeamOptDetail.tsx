@@ -21,11 +21,7 @@ import {
   type BuildMatchResult,
   matchBuild,
 } from "@/lib/account-data/artifactScore";
-import {
-  TeamBuild,
-  evaluateCombo,
-  getComboDisplayResult,
-} from "@/lib/team-comp/damageCalc";
+import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
@@ -45,7 +41,12 @@ import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { TeamRosterCard } from "./TeamRosterCard";
-import { buildTeamConfigs } from "./teamOptUtils";
+import {
+  buildTeamConfigs,
+  calcComboResults,
+  calcDamageAndDisplay,
+  toStatSheets,
+} from "./teamOptUtils";
 import type { TeamOptDetailProps } from "./teamOptUtils";
 
 /** Get the reaction override key for a charId + formulaId pair */
@@ -156,22 +157,22 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return teamBuild ? teamBuild.getFormulaIds() : {};
   }, [teamBuild]);
 
-  const artifactSheets = useMemo(() => {
-    if (!accountData) return {};
-    const sheets: Record<string, StatSheet> = {};
-    for (const charId of effectiveTeam.characters) {
-      if (!charId) continue;
-      const acctChar = accountData.characters.find(
-        (c: CharacterData) => c.key === charId
+  const equippedArtifactsByChar = useMemo(() => {
+    const map: Record<string, Record<string, ArtifactData>> = {};
+    for (const cid of effectiveTeam.characters) {
+      if (!cid) continue;
+      const acctChar = accountData?.characters.find(
+        (c: CharacterData) => c.key === cid
       );
-      if (!acctChar) continue;
-      const artifacts = Object.values(
-        acctChar.artifacts || {}
-      ) as ArtifactData[];
-      sheets[charId] = StatSheet.fromArtifacts(artifacts);
+      map[cid] = (acctChar?.artifacts || {}) as Record<string, ArtifactData>;
     }
-    return sheets;
-  }, [accountData, effectiveTeam.characters]);
+    return map;
+  }, [effectiveTeam.characters, accountData]);
+
+  const artifactSheets = useMemo(
+    () => toStatSheets(effectiveTeam.characters, equippedArtifactsByChar),
+    [effectiveTeam.characters, equippedArtifactsByChar]
+  );
 
   const validCharIds = Object.keys(availableFormulas);
 
@@ -308,108 +309,46 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
-  const comboResult = useMemo(() => {
-    if (formulaMode !== "combo" || !teamBuild) return null;
-    const activeLines = combo.lines.filter((l) => l.count > 0);
-    if (activeLines.length === 0) return null;
-    try {
-      return evaluateCombo(
-        teamBuild,
-        { ...combo, lines: activeLines },
-        artifactSheets,
-        displayContext,
-        team.reactionOverrides
-      );
-    } catch (e) {
-      console.warn("[TeamOptDetail] comboResult failed:", e);
-      return null;
-    }
-  }, [
-    formulaMode,
-    combo,
-    teamBuild,
-    artifactSheets,
-    displayContext,
-    team.reactionOverrides,
-  ]);
-
-  const comboDisplayResult = useMemo(() => {
-    if (formulaMode !== "combo" || !teamBuild) return null;
-    const activeLines = combo.lines.filter((l) => l.count > 0);
-    if (activeLines.length === 0) return null;
-    try {
-      return getComboDisplayResult(
-        teamBuild,
-        { ...combo, lines: activeLines },
-        artifactSheets,
-        displayContext,
-        team.reactionOverrides
-      );
-    } catch (e) {
-      console.error("getComboDisplayResult failed:", e);
-      return null;
-    }
-  }, [
-    formulaMode,
-    combo,
-    teamBuild,
-    artifactSheets,
-    displayContext,
-    team.reactionOverrides,
-  ]);
+  const { comboResult, comboDisplay: comboDisplayResult } = useMemo(
+    () =>
+      formulaMode === "combo"
+        ? calcComboResults(
+            teamBuild,
+            combo,
+            artifactSheets,
+            displayContext,
+            team.reactionOverrides
+          )
+        : { comboResult: null, comboDisplay: null },
+    [
+      formulaMode,
+      combo,
+      teamBuild,
+      artifactSheets,
+      displayContext,
+      team.reactionOverrides,
+    ]
+  );
 
   // ─── Damage Calculations ───
 
-  const currentDamage = useMemo(() => {
-    if (!teamBuild || !resolvedFormula) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      const postStats = teamBuild.getTeamStats(artifactSheets, charId);
-      return teamBuild.getDamageResult(
-        charId,
-        formulaId,
-        postStats,
-        displayContext,
-        currentReactionOverride
-      );
-    } catch (e) {
-      console.error("Damage calc failed:", e);
-      return null;
-    }
-  }, [
-    teamBuild,
-    resolvedFormula,
-    artifactSheets,
-    displayContext,
-    currentReactionOverride,
-  ]);
-
-  const currentDisplayResult = useMemo(() => {
-    if (!teamBuild || !resolvedFormula) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      return teamBuild.getDisplayResult(
-        charId,
-        formulaId,
+  const { damage: currentDamage, display: currentDisplayResult } = useMemo(
+    () =>
+      calcDamageAndDisplay(
+        teamBuild,
+        resolvedFormula,
         artifactSheets,
         displayContext,
         currentReactionOverride
-      );
-    } catch (e) {
-      console.error("Display calc failed:", e);
-      return null;
-    }
-  }, [
-    teamBuild,
-    resolvedFormula,
-    artifactSheets,
-    displayContext,
-    currentReactionOverride,
-  ]);
+      ),
+    [
+      teamBuild,
+      resolvedFormula,
+      artifactSheets,
+      displayContext,
+      currentReactionOverride,
+    ]
+  );
 
   const targetErRaw =
     (resolvedFormula && team.targetEr?.[resolvedFormula.charId]) ?? 1.0;
@@ -562,18 +501,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // ─── Artifact Maps ───
 
-  const equippedArtifactsByChar = useMemo(() => {
-    const map: Record<string, Record<string, ArtifactData>> = {};
-    for (const cid of effectiveTeam.characters) {
-      if (!cid) continue;
-      const acctChar = accountData?.characters.find(
-        (c: CharacterData) => c.key === cid
-      );
-      map[cid] = (acctChar?.artifacts || {}) as Record<string, ArtifactData>;
-    }
-    return map;
-  }, [effectiveTeam.characters, accountData]);
-
   /** Local swap overrides: charId → slot → replacement artifact. Ephemeral — not persisted. */
   const [swapOverrides, setSwapOverrides] = useState<
     Record<string, Partial<Record<Slot, ArtifactData>>>
@@ -633,15 +560,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     swapOverrides,
   ]);
 
-  const optArtifactSheets = useMemo(() => {
-    const sheets: Record<string, StatSheet> = {};
-    for (const charId of effectiveTeam.characters) {
-      if (!charId) continue;
-      const artifacts = Object.values(optimizedArtifactsByChar[charId] || {});
-      sheets[charId] = StatSheet.fromArtifacts(artifacts);
-    }
-    return sheets;
-  }, [optimizedArtifactsByChar, effectiveTeam.characters]);
+  const optArtifactSheets = useMemo(
+    () => toStatSheets(effectiveTeam.characters, optimizedArtifactsByChar),
+    [optimizedArtifactsByChar, effectiveTeam.characters]
+  );
 
   const hasFrozenResult =
     isFrozen && freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null;
@@ -654,84 +576,48 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
 
-  const optimizedDamage = useMemo(() => {
-    if (!optTeamBuild || !resolvedFormula || !hasOptResult) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = optTeamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      const postStats = optTeamBuild.getTeamStats(optArtifactSheets, charId);
-      return optTeamBuild.getDamageResult(
-        charId,
-        formulaId,
-        postStats,
-        displayContext,
-        currentReactionOverride
-      );
-    } catch (e) {
-      console.error("Opt damage calc failed:", e);
-      return null;
-    }
-  }, [
-    optTeamBuild,
-    resolvedFormula,
-    optArtifactSheets,
-    hasOptResult,
-    displayContext,
-    currentReactionOverride,
-  ]);
+  const { damage: optimizedDamage, display: optimizedDisplayResult } = useMemo(
+    () =>
+      hasOptResult
+        ? calcDamageAndDisplay(
+            optTeamBuild,
+            resolvedFormula,
+            optArtifactSheets,
+            displayContext,
+            currentReactionOverride
+          )
+        : { damage: null, display: null },
+    [
+      optTeamBuild,
+      resolvedFormula,
+      optArtifactSheets,
+      hasOptResult,
+      displayContext,
+      currentReactionOverride,
+    ]
+  );
 
-  const optimizedDisplayResult = useMemo(() => {
-    if (!optTeamBuild || !resolvedFormula || !hasOptResult) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = optTeamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      return optTeamBuild.getDisplayResult(
-        charId,
-        formulaId,
-        optArtifactSheets,
-        displayContext,
-        currentReactionOverride
-      );
-    } catch (e) {
-      console.error("Opt display calc failed:", e);
-      return null;
-    }
-  }, [
-    optTeamBuild,
-    resolvedFormula,
-    optArtifactSheets,
-    hasOptResult,
-    displayContext,
-    currentReactionOverride,
-  ]);
-
-  const optimizedComboDisplayResult = useMemo(() => {
-    if (formulaMode !== "combo" || !optTeamBuild || !hasOptResult) return null;
-    const activeLines = combo.lines.filter((l) => l.count > 0);
-    if (activeLines.length === 0) return null;
-    try {
-      return getComboDisplayResult(
-        optTeamBuild,
-        { ...combo, lines: activeLines },
-        optArtifactSheets,
-        displayContext,
-        team.reactionOverrides
-      );
-    } catch (e) {
-      console.warn("[TeamOptDetail] optimizedComboDisplayResult failed:", e);
-      return null;
-    }
-  }, [
-    formulaMode,
-    combo,
-    optTeamBuild,
-    optArtifactSheets,
-    hasOptResult,
-    displayContext,
-    team.reactionOverrides,
-  ]);
+  const { comboDisplay: optimizedComboDisplayResult } = useMemo(
+    () =>
+      formulaMode === "combo" && hasOptResult
+        ? calcComboResults(
+            optTeamBuild,
+            combo,
+            optArtifactSheets,
+            displayContext,
+            team.reactionOverrides
+          )
+        : { comboResult: null, comboDisplay: null },
+    [
+      formulaMode,
+      combo,
+      optTeamBuild,
+      optArtifactSheets,
+      hasOptResult,
+      displayContext,
+      team.reactionOverrides,
+    ]
+  );
 
   // ─── Ideal Artifact Generator (dev only) ───
 
@@ -834,91 +720,51 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return map;
   }, [idealResult, equippedArtifactsByChar]);
 
-  const idealArtifactSheets = useMemo(() => {
-    const sheets: Record<string, StatSheet> = {};
-    for (const charId of effectiveTeam.characters) {
-      if (!charId) continue;
-      const artifacts = Object.values(idealArtifactsByChar[charId] || {});
-      sheets[charId] = StatSheet.fromArtifacts(artifacts);
-    }
-    return sheets;
-  }, [idealArtifactsByChar, effectiveTeam.characters]);
+  const idealArtifactSheets = useMemo(
+    () => toStatSheets(effectiveTeam.characters, idealArtifactsByChar),
+    [idealArtifactsByChar, effectiveTeam.characters]
+  );
 
-  const idealDisplayDamage = useMemo(() => {
-    if (!teamBuild || !resolvedFormula || !idealResult?.done) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      const postStats = teamBuild.getTeamStats(idealArtifactSheets, charId);
-      return teamBuild.getDamageResult(
-        charId,
-        formulaId,
-        postStats,
-        displayContext
-      );
-    } catch (e) {
-      console.error("Ideal damage calc failed:", e);
-      return null;
-    }
-  }, [
-    teamBuild,
-    resolvedFormula,
-    idealArtifactSheets,
-    idealResult?.done,
-    displayContext,
-  ]);
+  const { damage: idealDisplayDamage, display: idealDisplayResult } = useMemo(
+    () =>
+      idealResult?.done
+        ? calcDamageAndDisplay(
+            teamBuild,
+            resolvedFormula,
+            idealArtifactSheets,
+            displayContext
+          )
+        : { damage: null, display: null },
+    [
+      teamBuild,
+      resolvedFormula,
+      idealArtifactSheets,
+      idealResult?.done,
+      displayContext,
+    ]
+  );
 
-  const idealDisplayResult = useMemo(() => {
-    if (!teamBuild || !resolvedFormula || !idealResult?.done) return null;
-    try {
-      const { charId, formulaId } = resolvedFormula;
-      const formulas = teamBuild.getFormulaIds()[charId];
-      if (!formulas || !formulas[formulaId]) return null;
-      return teamBuild.getDisplayResult(
-        charId,
-        formulaId,
-        idealArtifactSheets,
-        displayContext
-      );
-    } catch (e) {
-      console.error("Ideal display calc failed:", e);
-      return null;
-    }
-  }, [
-    teamBuild,
-    resolvedFormula,
-    idealArtifactSheets,
-    idealResult?.done,
-    displayContext,
-  ]);
-
-  const idealComboDisplayResult = useMemo(() => {
-    if (formulaMode !== "combo" || !teamBuild || !idealResult?.done)
-      return null;
-    const activeLines = combo.lines.filter((l) => l.count > 0);
-    if (activeLines.length === 0) return null;
-    try {
-      return getComboDisplayResult(
-        teamBuild,
-        { ...combo, lines: activeLines },
-        idealArtifactSheets,
-        displayContext,
-        team.reactionOverrides
-      );
-    } catch (e) {
-      console.warn("[TeamOptDetail] idealComboDisplayResult failed:", e);
-      return null;
-    }
-  }, [
-    formulaMode,
-    combo,
-    teamBuild,
-    idealArtifactSheets,
-    idealResult?.done,
-    displayContext,
-    team.reactionOverrides,
-  ]);
+  const { comboDisplay: idealComboDisplayResult } = useMemo(
+    () =>
+      formulaMode === "combo" && idealResult?.done
+        ? calcComboResults(
+            teamBuild,
+            combo,
+            idealArtifactSheets,
+            displayContext,
+            team.reactionOverrides
+          )
+        : { comboResult: null, comboDisplay: null },
+    [
+      formulaMode,
+      combo,
+      teamBuild,
+      idealArtifactSheets,
+      idealResult?.done,
+      displayContext,
+      team.reactionOverrides,
+    ]
+  );
 
   // ─── Artifact Swap (ephemeral local overrides) ───
 

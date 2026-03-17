@@ -15,7 +15,7 @@ import { fmtPercent, fmtStat } from "./displayFormatters";
 
 import type { ArtifactData } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
-import type { OptFailReason } from "@/lib/team-comp/optimizer";
+import type { OptFailReason } from "@/lib/team-comp/types";
 import {
   AlertTriangle,
   ChevronDown,
