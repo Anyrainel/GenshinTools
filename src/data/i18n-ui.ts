@@ -922,6 +922,10 @@ export const i18nUiData = {
       en: "Configure tiers on the Tier List page first",
       zh: "请先在榜单页面配置评级",
     },
+    ownedOnlyDisabled: {
+      en: "Import your data first to use this filter",
+      zh: "请先导入数据以使用此筛选",
+    },
     elements: { en: "Elements", zh: "元素" },
     weaponTypes: { en: "Weapon Types", zh: "武器类型" },
     regions: { en: "Regions", zh: "地区" },

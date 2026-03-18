@@ -54,12 +54,14 @@ import type {
 import type { TierAssignment } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { getIsOwned } from "@/hooks/useOwnership";
+import { useIsOwned } from "@/hooks/useOwnership";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Check, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
@@ -471,6 +473,10 @@ function PickerContent({
   sortedWeaponSecondaryStats,
 }: PickerContentProps) {
   const { t } = useLanguage();
+  const isOwned = useIsOwned();
+  const hasOwnershipData = useOwnershipStore(
+    (s) => !!s.profiles[useAccountStore.getState().activeAccountId ?? "default"]
+  );
   const [search, setSearch] = useState("");
   const [activeFilters, setActiveFilters] = useState<
     Record<string, string | number>
@@ -624,7 +630,7 @@ function PickerContent({
       (type === "character" || type === "weapon")
     ) {
       const itemType = type as "character" | "weapon";
-      result = result.filter((item) => getIsOwned(itemType, item.id as string));
+      result = result.filter((item) => isOwned(itemType, item.id as string));
     }
 
     // 4. (Special) 2pc Duplicate Checking
@@ -645,6 +651,7 @@ function PickerContent({
     filter,
     search,
     activeFilters,
+    isOwned,
     type,
     artifactTab,
     pickingSlot,
@@ -838,6 +845,7 @@ function PickerContent({
             sortByTier={sortByTier}
             onSortByTierChange={setSortByTier}
             hasTierData={hasTierData}
+            hasOwnershipData={hasOwnershipData}
           />
         )}
       </div>
@@ -900,6 +908,7 @@ function FilterBar({
   sortByTier,
   onSortByTierChange,
   hasTierData,
+  hasOwnershipData,
 }: {
   type: ItemPickerType;
   activeFilters: Record<string, string | number>;
@@ -908,6 +917,7 @@ function FilterBar({
   sortByTier: boolean;
   onSortByTierChange: (v: boolean) => void;
   hasTierData: boolean;
+  hasOwnershipData: boolean;
 }) {
   const toggle = (key: string, val: string | number) => {
     const next = { ...activeFilters };
@@ -939,9 +949,16 @@ function FilterBar({
         {(type === "character" || type === "weapon") && (
           <FilterChip
             isActive={!!activeFilters.ownedOnly}
-            onClick={() => toggle("ownedOnly", 1)}
-            className="w-auto px-2 gap-1"
-            title={t.ui("common.ownedOnly")}
+            onClick={() => hasOwnershipData && toggle("ownedOnly", 1)}
+            className={cn(
+              "w-auto px-2 gap-1",
+              !hasOwnershipData && "opacity-40 cursor-not-allowed"
+            )}
+            title={
+              hasOwnershipData
+                ? t.ui("common.ownedOnly")
+                : t.ui("filters.ownedOnlyDisabled")
+            }
           >
             <Bookmark
               className={cn(
