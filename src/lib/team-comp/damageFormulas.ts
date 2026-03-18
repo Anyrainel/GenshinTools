@@ -1,4 +1,6 @@
 import type { StatSheet } from "./damageModels";
+import { type Expr, E, simplify } from "./expr";
+import type { ExprStats } from "./exprStats";
 import type {
   CalcContext,
   DamageTag,
@@ -176,6 +178,109 @@ export abstract class DamageFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
+  // ─── Expr Builders (for AST-based compilation) ───
+
+  /**
+   * Build an Expr that computes the same value as calc().
+   * Used by the formula compiler to generate optimized evaluation functions.
+   */
+  abstract buildExpr(
+    stats: ExprStats,
+    charLevel: number,
+    ctx: CalcContext
+  ): Expr;
+
+  protected computeDefMultExpr(
+    stats: ExprStats,
+    charLevel: number,
+    ctx: CalcContext
+  ): Expr {
+    const defReduction = stats.get("defReduction%", this.tag);
+    const defIgnore = stats.get("defIgnore%", this.tag);
+    const charDef = charLevel + 100;
+    const enemyDef = ctx.enemyLevel + 100;
+    // charDef / (charDef + enemyDef × (1 - defReduction) × (1 - defIgnore))
+    return simplify(
+      E.div(
+        E.const(charDef),
+        E.add(
+          E.const(charDef),
+          E.mul(
+            E.const(enemyDef),
+            E.add(E.const(1), E.mul(E.const(-1), defReduction)),
+            E.add(E.const(1), E.mul(E.const(-1), defIgnore))
+          )
+        )
+      )
+    );
+  }
+
+  protected computeResMultExpr(stats: ExprStats, ctx: CalcContext): Expr {
+    const resReduction = stats.get("resReduction%", this.tag);
+    // resReduction% is almost always a constant (team buff, not artifact stat).
+    // Resolve the 3-way branch at compile time if possible.
+    if (resReduction.tag === "const") {
+      const effectiveRes = ctx.enemyRes - resReduction.value;
+      if (effectiveRes < 0) return E.const(1 - effectiveRes / 2);
+      if (effectiveRes <= 0.75) return E.const(1 - effectiveRes);
+      return E.const(1 / (1 + 4 * effectiveRes));
+    }
+    // Variable case (rare): build piecewise with min/max
+    // effectiveRes = enemyRes - resReduction
+    const effRes = E.add(E.const(ctx.enemyRes), E.mul(E.const(-1), resReduction));
+    // Use the middle branch (1 - effectiveRes) as the most common case
+    // This is a simplification; for full piecewise we'd need conditional nodes.
+    // In practice, resReduction is always constant.
+    return simplify(E.add(E.const(1), E.mul(E.const(-1), effRes)));
+  }
+
+  protected computeCritMultExpr(stats: ExprStats, ctx: CalcContext): Expr {
+    const cr = E.add(
+      stats.get("cr", this.tag),
+      stats.get("reactionCr", this.tag)
+    );
+    const cd = E.add(
+      stats.get("cd", this.tag),
+      stats.get("reactionCd", this.tag)
+    );
+    if (ctx.assumeCrit) {
+      return simplify(E.add(E.const(1), cd));
+    }
+    // 1 + clamp(cr, 0, 1) * cd
+    return simplify(
+      E.add(
+        E.const(1),
+        E.mul(E.clamp(cr, E.const(0), E.const(1)), cd)
+      )
+    );
+  }
+
+  protected computeDmgBonusMultExpr(stats: ExprStats): Expr {
+    return simplify(E.add(E.const(1), stats.get("dmg%", this.tag)));
+  }
+
+  protected getBaseDmgExpr(stats: ExprStats): Expr {
+    let talentDmg: Expr = E.mul(
+      stats.get(this.scalingKey),
+      E.const(this.talentMultiplier)
+    );
+    if (this.extraTerm) {
+      talentDmg = E.add(
+        talentDmg,
+        E.mul(stats.get(this.extraTerm.key), E.const(this.extraTerm.multiplier))
+      );
+    }
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    // talentDmg × (1 + baseDmg%) + flatBaseDmg
+    return simplify(
+      E.add(
+        E.mul(talentDmg, E.add(E.const(1), baseDmgPct)),
+        flatBaseDmg
+      )
+    );
+  }
+
   /** Create an amplified variant (vaporize/melt) with the same params. */
   createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
     return new AmplifyFormula(
@@ -227,6 +332,18 @@ export class DirectFormula extends DamageFormula {
 
     return (
       baseDmg * dmgBonusMult * defMult * resMult * critMult * (1 + elevated)
+    );
+  }
+
+  buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+    const baseDmg = this.getBaseDmgExpr(stats);
+    const dmgBonusMult = this.computeDmgBonusMultExpr(stats);
+    const defMult = this.computeDefMultExpr(stats, charLevel, ctx);
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+    const elevated = stats.get("elevated%", this.tag);
+    return simplify(
+      E.mul(baseDmg, dmgBonusMult, defMult, resMult, critMult, E.add(E.const(1), elevated))
     );
   }
 
@@ -288,6 +405,25 @@ export class AmplifyFormula extends DirectFormula {
     }
   }
 
+  override buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+    const directExpr = super.buildExpr(stats, charLevel, ctx);
+    const reactionBase =
+      AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
+    const em = stats.get("em");
+    // emBonus = 2.78 * em / (1400 + em)
+    const emBonus = E.div(
+      E.mul(E.const(2.78), em),
+      E.add(E.const(1400), em)
+    );
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    // ampMult = reactionBase * (1 + emBonus + reactionDmgBonus)
+    const ampMult = E.mul(
+      E.const(reactionBase),
+      E.add(E.const(1), emBonus, reactionDmgBonus)
+    );
+    return simplify(E.mul(directExpr, ampMult));
+  }
+
   override calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const directDmg = super.calc(stats, charLevel, ctx);
     const reactionBase =
@@ -341,6 +477,47 @@ export class CatalyzeFormula extends DamageFormula {
         `CatalyzeFormula requires reaction "spread" or "aggravate", got "${this.tag.reaction}"`
       );
     }
+  }
+
+  buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+    let scalingDmg: Expr = E.mul(
+      stats.get(this.scalingKey),
+      E.const(this.talentMultiplier)
+    );
+    if (this.extraTerm) {
+      scalingDmg = E.add(
+        scalingDmg,
+        E.mul(stats.get(this.extraTerm.key), E.const(this.extraTerm.multiplier))
+      );
+    }
+    const em = stats.get("em");
+    const emBonus = E.div(E.mul(E.const(5), em), E.add(E.const(1200), em));
+    const reactionCoeff = CATALYZE_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    // flatBonus = levelMult * reactionCoeff * (1 + emBonus + reactionDmgBonus)
+    const flatBonus = E.mul(
+      E.const(levelMult * reactionCoeff),
+      E.add(E.const(1), emBonus, reactionDmgBonus)
+    );
+
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    // baseDmg = scalingDmg * (1 + baseDmgPct) + flatBonus + flatBaseDmg
+    const baseDmg = E.add(
+      E.mul(scalingDmg, E.add(E.const(1), baseDmgPct)),
+      flatBonus,
+      flatBaseDmg
+    );
+    const dmgBonusMult = this.computeDmgBonusMultExpr(stats);
+    const defMult = this.computeDefMultExpr(stats, charLevel, ctx);
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+    const elevated = stats.get("elevated%", this.tag);
+
+    return simplify(
+      E.mul(baseDmg, dmgBonusMult, defMult, resMult, critMult, E.add(E.const(1), elevated))
+    );
   }
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
@@ -444,6 +621,40 @@ export class TransformFormula extends DamageFormula {
     }
   }
 
+  buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+    const em = stats.get("em");
+    const emBonus = E.div(E.mul(E.const(16), em), E.add(E.const(2000), em));
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionCoeff = TRANSFORMATIVE_COEFFICIENTS[this.tag.reaction] ?? 0;
+    const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const resMult = this.computeResMultExpr(stats, ctx);
+
+    // Reaction CRIT for transformative reactions
+    const reactionCr = stats.get("reactionCr", this.tag);
+    const reactionCd = stats.get("reactionCd", this.tag);
+    let critMult: Expr;
+    if (reactionCr.tag === "const" && reactionCr.value === 0) {
+      critMult = E.const(1);
+    } else if (ctx.assumeCrit) {
+      critMult = E.add(E.const(1), reactionCd);
+    } else {
+      critMult = E.add(
+        E.const(1),
+        E.mul(E.clamp(reactionCr, E.const(0), E.const(1)), reactionCd)
+      );
+    }
+
+    const baseDmg = levelMult * reactionCoeff;
+    return simplify(
+      E.mul(
+        E.const(baseDmg),
+        E.add(E.const(1), emBonus, reactionDmgBonus),
+        resMult,
+        critMult
+      )
+    );
+  }
+
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
     const em = stats.get("em");
     const emBonus = (16 * em) / (2000 + em);
@@ -525,6 +736,33 @@ export class LunarFormula extends DamageFormula {
         `LunarFormula requires a lunar reaction, got "${this.tag.reaction}"`
       );
     }
+  }
+
+  buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+    const em = stats.get("em");
+    const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const reactionCoeff = LUNAR_REACTION_COEFFICIENTS[this.tag.reaction] ?? 1.8;
+    const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+
+    const baseDmg = levelMult * reactionCoeff;
+    return simplify(
+      E.mul(
+        E.const(baseDmg),
+        E.add(E.const(1), baseDmgBonus),
+        E.add(E.const(1), reactionBaseDmg),
+        E.add(E.const(1), emBonus, reactionDmgBonus),
+        E.add(E.const(1), elevated),
+        resMult,
+        critMult
+      )
+    );
   }
 
   calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number {
@@ -621,6 +859,43 @@ export class LunarDirectFormula extends DamageFormula {
         `LunarDirectFormula requires a lunar reaction, got "${this.tag.reaction}"`
       );
     }
+  }
+
+  buildExpr(stats: ExprStats, _charLevel: number, ctx: CalcContext): Expr {
+    let scalingDmg: Expr = E.mul(
+      stats.get(this.scalingKey),
+      E.const(this.talentMultiplier)
+    );
+    if (this.extraTerm) {
+      scalingDmg = E.add(
+        scalingDmg,
+        E.mul(stats.get(this.extraTerm.key), E.const(this.extraTerm.multiplier))
+      );
+    }
+    const directCoeff = LUNAR_DIRECT_COEFFICIENTS[this.tag.reaction] ?? 1.0;
+
+    const em = stats.get("em");
+    const emBonus = E.div(E.mul(E.const(6), em), E.add(E.const(2000), em));
+    const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
+    const baseDmgBonus = stats.get("baseDmg%", this.tag);
+    const reactionBaseDmg = stats.get("reactionBaseDmg%", this.tag);
+    const flatBaseDmg = stats.get("baseDmg", this.tag);
+    const elevated = stats.get("elevated%", this.tag);
+    const resMult = this.computeResMultExpr(stats, ctx);
+    const critMult = this.computeCritMultExpr(stats, ctx);
+
+    // talentDmg = scalingDmg * directCoeff * (1+baseDmgBonus) * (1+reactionBaseDmg) * (1+emBonus+reactionDmgBonus)
+    const talentDmg = E.mul(
+      scalingDmg,
+      E.const(directCoeff),
+      E.add(E.const(1), baseDmgBonus),
+      E.add(E.const(1), reactionBaseDmg),
+      E.add(E.const(1), emBonus, reactionDmgBonus)
+    );
+    const baseDmg = E.add(talentDmg, flatBaseDmg);
+    return simplify(
+      E.mul(baseDmg, E.add(E.const(1), elevated), critMult, resMult)
+    );
   }
 
   calc(stats: StatSheet, _charLevel: number, ctx: CalcContext): number {

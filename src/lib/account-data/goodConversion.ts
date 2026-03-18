@@ -143,7 +143,7 @@ const slotKeyMap: Record<string, Slot> = {
 
 // Multi-element characters: bare key -> default element fallback
 const MULTI_ELEMENT_DEFAULTS: Record<string, string> = {
-  Traveler: "Anemo",
+  Traveler: "Pyro",
   Manekin: "Pyro",
   Manekina: "Pyro",
 };

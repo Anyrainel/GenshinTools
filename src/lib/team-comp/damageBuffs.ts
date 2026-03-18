@@ -1,4 +1,6 @@
 import type { StatSheet } from "./damageModels";
+import { type Expr, E, simplify } from "./expr";
+import type { ExprStats } from "./exprStats";
 import type { BuffSource, BuffTarget, StatEntry, StatKey } from "./types";
 
 /**
@@ -264,6 +266,16 @@ export class StatBuff {
   }
 
   /**
+   * Expr-based dynamic buffs that depend on team stats.
+   * Override in subclasses that use teamStats in dynamicBuffs().
+   * Returns null by default (meaning: use numeric fallback).
+   */
+  dynamicBuffsExprTeam?(
+    selfStats: ExprStats,
+    teamExprStats: ExprStats[]
+  ): { key: StatKey; expr: Expr }[];
+
+  /**
    * True when this buff will never contribute any stat entries and can be
    * safely filtered out before the buff pipeline runs.
    *
@@ -308,6 +320,24 @@ export class ScalingBuff extends StatBuff {
     const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
     return [{ key: this.outputKey, value }];
   }
+
+  dynamicBuffsExpr(
+    selfStats: ExprStats
+  ): { key: StatKey; expr: Expr }[] {
+    let input: Expr = selfStats.get(this.inputKey);
+    if (this.threshold) {
+      // max(0, input - threshold)
+      input = E.max(
+        E.const(0),
+        E.add(input, E.const(-this.threshold))
+      );
+    }
+    let result: Expr = E.mul(input, E.const(this.scale));
+    if (this.cap !== undefined) {
+      result = E.min(result, E.const(this.cap));
+    }
+    return [{ key: this.outputKey, expr: simplify(result) }];
+  }
 }
 
 /**
@@ -336,6 +366,17 @@ export class CrossScalingBuff extends StatBuff {
     const a = selfStats.get(this.statA) * this.scaleA;
     const capped = this.capA !== undefined ? Math.min(a, this.capA) : a;
     return [{ key: this.outputKey, value: capped * selfStats.get(this.statB) }];
+  }
+
+  dynamicBuffsExpr(
+    selfStats: ExprStats
+  ): { key: StatKey; expr: Expr }[] {
+    let a: Expr = E.mul(selfStats.get(this.statA), E.const(this.scaleA));
+    if (this.capA !== undefined) {
+      a = E.min(a, E.const(this.capA));
+    }
+    const result = E.mul(a, selfStats.get(this.statB));
+    return [{ key: this.outputKey, expr: simplify(result) }];
   }
 }
 

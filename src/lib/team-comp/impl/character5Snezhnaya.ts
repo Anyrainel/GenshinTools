@@ -7,6 +7,8 @@ import {
   LunarFormula,
   TransformFormula,
 } from "../damageFormulas";
+import { type Expr, E, simplify } from "../expr";
+import type { ExprStats } from "../exprStats";
 import {
   CharacterBase,
   RegisterCharacter,
@@ -39,6 +41,15 @@ class ArlecchinoNormalFormula extends DirectFormula {
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
+  }
+
+  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+    const currentBol = this.getBol();
+    const talentDmg = E.mul(stats.get(this.scalingKey), E.const(this.talentMultiplier));
+    const extraBaseDmg = E.mul(stats.get("atk"), E.const(currentBol * this.masqueScale));
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
+    return simplify(E.add(E.mul(talentDmg, E.add(E.const(1), baseDmgPct)), flatBaseDmg));
   }
 
   override createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
@@ -91,6 +102,15 @@ class ArlecchinoNormalAmplifyFormula extends AmplifyFormula {
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
   }
 
+  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+    const currentBol = this.getBol();
+    const talentDmg = E.mul(stats.get(this.scalingKey), E.const(this.talentMultiplier));
+    const extraBaseDmg = E.mul(stats.get("atk"), E.const(currentBol * this.masqueScale));
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
+    return simplify(E.add(E.mul(talentDmg, E.add(E.const(1), baseDmgPct)), flatBaseDmg));
+  }
+
   override display(
     stats: StatSheet,
     charLevel: number,
@@ -125,6 +145,16 @@ class ArlecchinoBurstFormula extends DirectFormula {
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
+  }
+
+  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+    const talentDmg = E.mul(stats.get(this.scalingKey), E.const(this.talentMultiplier));
+    const extraBaseDmg = this.hasC6
+      ? E.mul(stats.get("atk"), E.const(this.initialBol * 7.0))
+      : E.const(0);
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
+    return simplify(E.add(E.mul(talentDmg, E.add(E.const(1), baseDmgPct)), flatBaseDmg));
   }
 
   override createAmplified(reaction: "vaporize" | "melt"): DamageFormula {
@@ -171,6 +201,16 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
+  }
+
+  protected override getBaseDmgExpr(stats: ExprStats): Expr {
+    const talentDmg = E.mul(stats.get(this.scalingKey), E.const(this.talentMultiplier));
+    const extraBaseDmg = this.hasC6
+      ? E.mul(stats.get("atk"), E.const(this.initialBol * 7.0))
+      : E.const(0);
+    const baseDmgPct = stats.get("baseDmg%", this.tag);
+    const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
+    return simplify(E.add(E.mul(talentDmg, E.add(E.const(1), baseDmgPct)), flatBaseDmg));
   }
 
   override display(

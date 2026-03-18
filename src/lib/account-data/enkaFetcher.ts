@@ -305,12 +305,20 @@ export async function convertEnkaToGOOD(
         continue;
       }
 
-      // Character
+      // Character — preserve element for multi-element characters in GOOD output
+      const elementMatch = charKey.match(
+        /^(?:traveler|manekin|manekina)_(\w+)$/
+      );
       characters.push({
         key: charKey,
         level: Number(avatar.propMap?.["4001"]?.ival ?? 1),
         constellation: avatar.talentIdList?.length ?? 0,
         ascension: Number(avatar.propMap?.["1002"]?.ival ?? 0),
+        ...(elementMatch && {
+          element:
+            elementMatch[1].charAt(0).toUpperCase() +
+            elementMatch[1].slice(1),
+        }),
         talent: {
           auto:
             avatar.skillLevelMap?.[
