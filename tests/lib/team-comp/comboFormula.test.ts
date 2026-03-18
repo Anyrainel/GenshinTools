@@ -26,7 +26,7 @@ import type {
   ReactionOverride,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
-import { runTeamOptimization } from "../../../tests/benchmark/gen/v1";
+import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
 
 import "@/lib/team-comp/index";
 import {
@@ -661,7 +661,7 @@ describe("runIdealArtifactGen — combo mode", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("combo edge cases", () => {
-  it("combo with a character not in the team build does not crash", () => {
+  it("combo with a character not in the team build skips that line", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = dilucEmptySheets();
@@ -675,13 +675,13 @@ describe("combo edge cases", () => {
       ],
     };
 
-    // evaluateCombo throws a proper Error for unknown characters.
-    expect(() => evaluateCombo(tb, combo, sheets, CTX)).toThrow(
-      /No CharBuild for character/
-    );
+    // Non-existent character lines are silently skipped (only valid line evaluated)
+    const result = evaluateCombo(tb, combo, sheets, CTX);
+    expect(result.lineDamages).toHaveLength(1);
+    expect(result.totalDamage).toBeGreaterThanOrEqual(0);
   });
 
-  it("combo referencing a non-existent formulaId does not crash evaluateCombo callers", () => {
+  it("combo referencing a non-existent formulaId skips that line", () => {
     const tb = makeTeamBuild();
     const sheets = dilucEmptySheets();
 
@@ -693,10 +693,10 @@ describe("combo edge cases", () => {
       ],
     };
 
-    // evaluateCombo throws a proper Error for unknown formula IDs.
-    expect(() => evaluateCombo(tb, combo, sheets, CTX)).toThrow(
-      /Unknown formula/
-    );
+    // Non-existent formula lines are silently skipped
+    const result = evaluateCombo(tb, combo, sheets, CTX);
+    expect(result.lineDamages).toHaveLength(0);
+    expect(result.totalDamage).toBe(0);
   });
 
   it("single-character combo: only 1 character has formulas, others are supports", async () => {

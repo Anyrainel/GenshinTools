@@ -586,9 +586,7 @@ class Diluc extends CharacterBase {
     return {
       "diluc-skill": 1,
       "diluc-burst": 1,
-      ...("diluc-plunge-xianyun" in this.formulaMap
-        ? { "diluc-plunge-xianyun": 3 }
-        : {}),
+      "diluc-plunge-xianyun": 3,
     };
   }
 }
@@ -974,7 +972,7 @@ class Venti extends CharacterBase {
     return {
       "venti-windsunder": 1,
       "venti-burst-total": 1,
-      ...("venti-c2-skill" in this.formulaMap ? { "venti-c2-skill": 1 } : {}),
+      "venti-c2-skill": 1,
     };
   }
 }
@@ -1345,12 +1343,8 @@ class Varka extends CharacterBase {
   protected override get defaultRotation() {
     return {
       "varka-normal": 2,
-      ...("varka-four-winds" in this.formulaMap
-        ? { "varka-four-winds": 2 }
-        : {}),
-      ...("varka-azure-devour" in this.formulaMap
-        ? { "varka-azure-devour": 2 }
-        : {}),
+      "varka-four-winds": 2,
+      "varka-azure-devour": 2,
       "varka-burst": 0,
     };
   }

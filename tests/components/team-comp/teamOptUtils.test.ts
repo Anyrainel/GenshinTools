@@ -1,7 +1,7 @@
 import {
   buildTeamConfigs,
   calcComboResults,
-  calcDamageAndDisplay,
+  calcDisplayResult,
   detectEquippedSets,
   setsMatch,
   toStatSheets,
@@ -479,11 +479,11 @@ describe("toStatSheets", () => {
   });
 });
 
-// ── calcDamageAndDisplay ────────────────────────────────────────────────────
+// ── calcDisplayResult ────────────────────────────────────────────────────
 
-describe("calcDamageAndDisplay", () => {
-  it("returns nulls when build is null", () => {
-    const result = calcDamageAndDisplay(
+describe("calcDisplayResult", () => {
+  it("returns null when build is null", () => {
+    const result = calcDisplayResult(
       null,
       { charId: "hu_tao", formulaId: "E" },
       {},
@@ -493,13 +493,11 @@ describe("calcDamageAndDisplay", () => {
         assumeCrit: false,
       }
     );
-    expect(result.damage).toBeNull();
-    expect(result.display).toBeNull();
+    expect(result).toBeNull();
   });
 
-  it("returns nulls when formula is null", () => {
-    // Use a mock-like object — calcDamageAndDisplay checks formula first
-    const result = calcDamageAndDisplay(
+  it("returns null when formula is null", () => {
+    const result = calcDisplayResult(
       {} as never,
       null,
       {},
@@ -509,8 +507,7 @@ describe("calcDamageAndDisplay", () => {
         assumeCrit: false,
       }
     );
-    expect(result.damage).toBeNull();
-    expect(result.display).toBeNull();
+    expect(result).toBeNull();
   });
 });
 

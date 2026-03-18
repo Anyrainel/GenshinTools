@@ -94,7 +94,6 @@ function DamageBody({
   emptyMessage,
   artifactsByChar,
   targetCharId,
-  damageValue,
   displayResult,
   isMobile,
   t,
@@ -110,7 +109,6 @@ function DamageBody({
   emptyMessage: string;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId?: string;
-  damageValue: number | null;
   displayResult?: DisplayResult | null;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
@@ -172,7 +170,7 @@ function DamageBody({
             )}
           >
             <div className="flex flex-col items-center justify-center">
-              {damageValue != null ? (
+              {displayResult ? (
                 <CollapsibleTrigger asChild>
                   <div
                     className={cn(
@@ -196,7 +194,7 @@ function DamageBody({
                         isMobile ? "text-2xl" : "text-3xl md:text-4xl"
                       )}
                     >
-                      {fmtDamage(damageValue)}
+                      {fmtDamage(displayResult.totalDamage)}
                     </div>
                     <span
                       className={cn(
@@ -297,7 +295,11 @@ function ComboBreakdown({
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
-  const activeLines = comboLines.filter((l) => l.count > 0);
+  // Filter to active lines whose formula still exists (matches evaluateCombo's filtering)
+  const activeLines = comboLines.filter(
+    (l) =>
+      l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
+  );
 
   // Build per-line damage lookup (matches evaluateCombo's activeLines order)
   const lineDamages = comboResult.lineDamages;
@@ -571,7 +573,7 @@ function ComboResultView({
         comboResult={comboResult}
         comboLines={comboLines}
         teamBuild={teamBuild}
-        damageValue={comboResult.totalDamage}
+        damageValue={displayResult?.totalDamage ?? comboResult.totalDamage}
         reactionOverrides={reactionOverrides}
         isMobile={isMobile}
         t={t}
@@ -592,7 +594,6 @@ interface DamageCardProps {
   t: ReturnType<typeof useLanguage>["t"];
   // Current equipped
   equippedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
-  currentDamageValue: number | null;
   currentDisplayResult: DisplayResult | null | undefined;
   // Optimizer
   accountData: AccountData | null;
@@ -603,7 +604,6 @@ interface DamageCardProps {
   teamError: Error | null;
   handleOptimize: () => void;
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
-  optimizedDamageValue: number | null;
   optimizedDisplayResult: DisplayResult | null | undefined;
   targetErRaw: number;
   // Ideal gen (dev only)
@@ -612,7 +612,6 @@ interface DamageCardProps {
   idealError: Error | null;
   handleGenerateIdeal: () => void;
   idealArtifactsByChar: Record<string, Record<string, ArtifactData>>;
-  idealDamageValue: number | null;
   idealDisplayResult: DisplayResult | null | undefined;
   // Combo mode
   comboResult?: ComboResult | null;
@@ -887,7 +886,6 @@ export function DamageCard({
   isMobile,
   t,
   equippedArtifactsByChar,
-  currentDamageValue,
   currentDisplayResult,
   accountData,
   activeContext,
@@ -897,7 +895,6 @@ export function DamageCard({
   teamError,
   handleOptimize,
   optimizedArtifactsByChar,
-  optimizedDamageValue,
   optimizedDisplayResult,
   targetErRaw,
   idealComputing,
@@ -905,7 +902,6 @@ export function DamageCard({
   idealError,
   handleGenerateIdeal,
   idealArtifactsByChar,
-  idealDamageValue,
   idealDisplayResult,
   comboResult,
   comboLines,
@@ -1058,7 +1054,6 @@ export function DamageCard({
               emptyMessage={t.ui("teamComp.emptyDamageMessage")}
               artifactsByChar={equippedArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
-              damageValue={currentDamageValue}
               displayResult={currentDisplayResult}
               isMobile={isMobile}
               t={t}
@@ -1270,7 +1265,6 @@ export function DamageCard({
                 emptyMessage=""
                 artifactsByChar={optimizedArtifactsByChar}
                 targetCharId={resolvedFormula?.charId}
-                damageValue={optimizedDamageValue ?? 0}
                 displayResult={optimizedDisplayResult}
                 isMobile={isMobile}
                 t={t}
@@ -1368,14 +1362,13 @@ export function DamageCard({
               t={t}
               reactionOverrides={team.reactionOverrides}
             />
-          ) : idealResult?.done && idealResult.damageResult ? (
+          ) : idealResult?.done && idealDisplayResult ? (
             <DamageBody
               team={effectiveTeam}
               hasFormula
               emptyMessage=""
               artifactsByChar={idealArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
-              damageValue={idealDamageValue ?? 0}
               displayResult={idealDisplayResult}
               isMobile={isMobile}
               t={t}

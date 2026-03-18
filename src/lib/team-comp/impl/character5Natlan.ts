@@ -891,8 +891,8 @@ class Xilonen extends CharacterBase {
   // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
   protected override get defaultRotation() {
     return {
-      ...(this.constellation >= 6 ? { "xilonen-normal": 3 } : {}),
-      ...(this.convertedSamples <= 1 ? { "xilonen-burst-beats": 1 } : {}),
+      "xilonen-normal": 3,
+      "xilonen-burst-beats": 1,
     };
   }
 }

@@ -210,7 +210,7 @@ class Razor extends CharacterBase {
   protected override get defaultRotation() {
     return {
       "razor-burst-na": 4,
-      ...(this.constellation >= 6 ? { "razor-c6-lightning": 1 } : {}),
+      "razor-c6-lightning": 1,
     };
   }
 }

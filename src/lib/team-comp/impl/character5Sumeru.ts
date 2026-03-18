@@ -541,7 +541,7 @@ class Nahida extends CharacterBase {
   protected override get defaultRotation() {
     return {
       "nahida-karma": 8,
-      ...(this.constellation >= 6 ? { "nahida-c6-karma": 1 } : {}),
+      "nahida-c6-karma": 1,
     };
   }
 }
@@ -662,7 +662,7 @@ class Cyno extends CharacterBase {
   protected override get defaultRotation() {
     return {
       "cyno-combo": 6,
-      ...(this.constellation >= 6 ? { "cyno-c6-bolts": 6 } : {}),
+      "cyno-c6-bolts": 6,
     };
   }
 }
@@ -803,9 +803,7 @@ class Nilou extends CharacterBase {
   protected override get defaultRotation() {
     return {
       "nilou-burst": 1,
-      ...(Object.keys(this.formulaMap).includes("nilou-bountiful-core")
-        ? { "nilou-bountiful-core": 5 }
-        : {}),
+      "nilou-bountiful-core": 5,
     };
   }
 }

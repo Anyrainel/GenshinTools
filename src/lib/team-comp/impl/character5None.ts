@@ -295,10 +295,9 @@ class Skirk extends CharacterBase {
       "skirk-e-normal-2": 4,
       "skirk-e-charge": 3,
       "skirk-burst": 1,
-      ...(this.constellation >= 1 ? { "skirk-c1-blade": 1 } : {}),
-      ...(this.constellation >= 6
-        ? { "skirk-c6-burst-coord": 1, "skirk-c6-normal-coord": 4 }
-        : {}),
+      "skirk-c1-blade": 1,
+      "skirk-c6-burst-coord": 1,
+      "skirk-c6-normal-coord": 4,
     };
   }
 }

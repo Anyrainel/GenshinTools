@@ -12,7 +12,6 @@ import type {
   CharCompConfig,
   ComboFormula,
   ComboResult,
-  DamageResult,
   DisplayResult,
   ReactionOverride,
 } from "@/lib/team-comp/types";
@@ -201,43 +200,21 @@ export function toStatSheets(
 }
 
 /**
- * Compute both DamageResult and DisplayResult for a single formula in one pass.
- * Returns nulls when any input is missing or the formula doesn't exist.
+ * Compute DisplayResult for a single formula.
+ * Returns null when any input is missing or the formula doesn't exist.
  */
-export function calcDamageAndDisplay(
+export function calcDisplayResult(
   build: TeamBuild | null,
   formula: { charId: string; formulaId: string } | null,
   sheets: Record<string, StatSheet>,
   context: CalcContext,
   override?: ReactionOverride
-): { damage: DamageResult | null; display: DisplayResult | null } {
-  if (!build || !formula) return { damage: null, display: null };
-  try {
-    const { charId, formulaId } = formula;
-    const formulas = build.getFormulaIds()[charId];
-    if (!formulas || !formulas[formulaId])
-      return { damage: null, display: null };
-    const postStats = build.getTeamStats(sheets, charId);
-    return {
-      damage: build.getDamageResult(
-        charId,
-        formulaId,
-        postStats,
-        context,
-        override
-      ),
-      display: build.getDisplayResult(
-        charId,
-        formulaId,
-        sheets,
-        context,
-        override
-      ),
-    };
-  } catch (e) {
-    console.error("Damage calc failed:", e);
-    return { damage: null, display: null };
-  }
+): DisplayResult | null {
+  if (!build || !formula) return null;
+  const { charId, formulaId } = formula;
+  const formulas = build.getFormulaIds()[charId];
+  if (!formulas || !formulas[formulaId]) return null;
+  return build.getDisplayResult(charId, formulaId, sheets, context, override);
 }
 
 /**
@@ -256,25 +233,19 @@ export function calcComboResults(
   if (activeLines.length === 0)
     return { comboResult: null, comboDisplay: null };
   const activeCombo = { ...combo, lines: activeLines };
-  try {
-    return {
-      comboResult: evaluateCombo(
-        build,
-        activeCombo,
-        sheets,
-        context,
-        overrides
-      ),
-      comboDisplay: getComboDisplayResult(
-        build,
-        activeCombo,
-        sheets,
-        context,
-        overrides
-      ),
-    };
-  } catch (e) {
-    console.warn("Combo calc failed:", e);
-    return { comboResult: null, comboDisplay: null };
-  }
+  const comboResult = evaluateCombo(
+    build,
+    activeCombo,
+    sheets,
+    context,
+    overrides
+  );
+  const comboDisplay = getComboDisplayResult(
+    build,
+    activeCombo,
+    sheets,
+    context,
+    overrides
+  );
+  return { comboResult, comboDisplay };
 }

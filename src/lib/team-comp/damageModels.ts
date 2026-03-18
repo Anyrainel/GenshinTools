@@ -687,12 +687,18 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     return {};
   }
 
-  /** Public accessor for default rotation counts. */
+  /** Public accessor — filters defaultRotation to only formulas that exist in formulaMap. */
   get rotation(): Record<string, number> {
-    return this.defaultRotation;
+    const raw = this.defaultRotation;
+    const map = this.formulaMap;
+    const result: Record<string, number> = {};
+    for (const [id, count] of Object.entries(raw)) {
+      if (map[id]) result[id] = count;
+    }
+    return result;
   }
 
-  /** Derived from formulaMap — public API for consumers. */
+  /** Derived from formulaMap — exposes formula IDs and labels for UI/combo evaluation. */
   get formulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};
     for (const [id, entry] of Object.entries(this.formulaMap)) {

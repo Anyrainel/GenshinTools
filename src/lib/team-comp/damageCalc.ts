@@ -1447,6 +1447,13 @@ export function evaluateCombo(
   /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
   singleModeOverrides?: Record<string, ReactionOverride>
 ): ComboResult {
+  // Skip lines whose formula no longer exists (e.g. constellation lowered)
+  const allFormulas = teamBuild.getFormulaIds();
+  const validLines = combo.lines.filter((line) => {
+    const charFormulas = allFormulas[line.charId];
+    return charFormulas && charFormulas[line.formulaId];
+  });
+
   // Cache stat resolution per unique on-field character
   const statsCache = new Map<string, Record<string, StatSheet>>();
   const getStats = (onFieldCharId: string) => {
@@ -1459,7 +1466,7 @@ export function evaluateCombo(
     return statsCache.get(onFieldCharId)!;
   };
 
-  const lineDamages = combo.lines.map((line) => {
+  const lineDamages = validLines.map((line) => {
     const teamStats = getStats(line.charId);
 
     // Merge: single-mode per-part config as defaults, combo line overrides on top
@@ -1528,7 +1535,13 @@ export function getComboDisplayResult(
   ctx: CalcContext,
   singleModeOverrides?: Record<string, ReactionOverride>
 ): DisplayResult {
-  const activeLines = combo.lines.filter((l) => l.count > 0);
+  // Skip lines whose formula no longer exists (e.g. constellation lowered)
+  const allFormulas = teamBuild.getFormulaIds();
+  const activeLines = combo.lines.filter((l) => {
+    if (l.count <= 0) return false;
+    const charFormulas = allFormulas[l.charId];
+    return charFormulas && charFormulas[l.formulaId];
+  });
 
   // Determine unique on-field characters and which chars have active lines
   const activeCharIds = new Set(activeLines.map((l) => l.charId));

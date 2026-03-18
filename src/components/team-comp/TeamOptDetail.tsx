@@ -44,7 +44,7 @@ import { TeamRosterCard } from "./TeamRosterCard";
 import {
   buildTeamConfigs,
   calcComboResults,
-  calcDamageAndDisplay,
+  calcDisplayResult,
   toStatSheets,
 } from "./teamOptUtils";
 import type { TeamOptDetailProps } from "./teamOptUtils";
@@ -345,9 +345,9 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // ─── Damage Calculations ───
 
-  const { damage: currentDamage, display: currentDisplayResult } = useMemo(
+  const currentDisplayResult = useMemo(
     () =>
-      calcDamageAndDisplay(
+      calcDisplayResult(
         teamBuild,
         resolvedFormula,
         artifactSheets,
@@ -589,17 +589,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
   const optTeamBuild = teamResult?.teamBuild ?? teamBuild;
 
-  const { damage: optimizedDamage, display: optimizedDisplayResult } = useMemo(
+  const optimizedDisplayResult = useMemo(
     () =>
       hasOptResult
-        ? calcDamageAndDisplay(
+        ? calcDisplayResult(
             optTeamBuild,
             resolvedFormula,
             optArtifactSheets,
             displayContext,
             currentReactionOverride
           )
-        : { damage: null, display: null },
+        : null,
     [
       optTeamBuild,
       resolvedFormula,
@@ -738,16 +738,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [idealArtifactsByChar, effectiveTeam.characters]
   );
 
-  const { damage: idealDisplayDamage, display: idealDisplayResult } = useMemo(
+  const idealDisplayResult = useMemo(
     () =>
       idealResult?.done
-        ? calcDamageAndDisplay(
+        ? calcDisplayResult(
             teamBuild,
             resolvedFormula,
             idealArtifactSheets,
             displayContext
           )
-        : { damage: null, display: null },
+        : null,
     [
       teamBuild,
       resolvedFormula,
@@ -757,7 +757,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     ]
   );
 
-  const { comboDisplay: idealComboDisplayResult } = useMemo(
+  const {
+    comboResult: idealComboResultRecalc,
+    comboDisplay: idealComboDisplayResult,
+  } = useMemo(
     () =>
       formulaMode === "combo" && idealResult?.done
         ? calcComboResults(
@@ -983,11 +986,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         isMobile={isMobile}
         t={t}
         equippedArtifactsByChar={equippedArtifactsByChar}
-        currentDamageValue={
-          formulaMode === "combo"
-            ? (comboResult?.totalDamage ?? null)
-            : (currentDamage?.totalDamage ?? null)
-        }
         currentDisplayResult={
           formulaMode === "combo" ? comboDisplayResult : currentDisplayResult
         }
@@ -1003,11 +1001,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         teamError={teamError}
         handleOptimize={handleOptimize}
         optimizedArtifactsByChar={optimizedArtifactsByChar}
-        optimizedDamageValue={
-          teamResult?.mode === "combo"
-            ? teamResult.bestComboResult.totalDamage
-            : (optimizedDamage?.totalDamage ?? null)
-        }
         optimizedComboResult={
           teamResult?.mode === "combo" ? teamResult.bestComboResult : null
         }
@@ -1022,16 +1015,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         idealError={idealError}
         handleGenerateIdeal={handleGenerateIdeal}
         idealArtifactsByChar={idealArtifactsByChar}
-        idealDamageValue={
-          formulaMode === "combo"
-            ? (idealResult?.comboResult?.totalDamage ?? null)
-            : (idealDisplayDamage?.totalDamage ?? null)
-        }
         idealDisplayResult={
           formulaMode === "combo" ? idealComboDisplayResult : idealDisplayResult
         }
         idealComboResult={
-          formulaMode === "combo" ? (idealResult?.comboResult ?? null) : null
+          formulaMode === "combo" ? (idealComboResultRecalc ?? null) : null
         }
         onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
         hasSwapOverrides={hasSwapOverrides}
