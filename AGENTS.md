@@ -1,10 +1,10 @@
-# Genshin Tools - Project Context
+# Genshin Tools - Agent Context
 
 ## Overview
 
-**React 19 + TypeScript + Vite 7** app using **Tailwind CSS 3** and **shadcn/ui**. Provides utilities for Genshin Impact players: Artifact Filter, Tier List Maker, Account Analytics, Team Builder, and Archive.
+**React 19 + TypeScript + Vite 7** app using **Tailwind CSS 3** and **shadcn/ui**. Provides utilities for Genshin Impact players: Account Data, Artifact Filter, Tier List, Archive, and Team Comp.
 
-- **UI**: shadcn/ui, Radix primitives, Vaul (drawers)
+- **UI**: shadcn/ui, Radix primitives, Vaul (drawers), Lucide icons, Sonner (toasts)
 - **State**: Zustand 5 (Immer + persist middleware)
 - **Desktop**: Tauri 2 (`src-tauri/`)
 - **Edge**: Cloudflare Workers (`functions/api/`, Wrangler)
@@ -14,95 +14,202 @@
 
 Hosted on **Cloudflare Pages** (`npm run build` → `dist/`).
 
+---
+
+## ⚠️ Reusable Components — USE THESE, DON'T REBUILD
+
+Before building any UI, check this section. Re-inventing these is a common mistake.
+
+### Game Item Display
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Any game item icon (character, weapon, artifact) | `ItemIcon` | `shared/ItemIcon.tsx` | `imagePath`, `size` (xs/sm/md/lg/xl), `rarity` (1-5), `badge`, `level`, `elementBadge`, `lock`, `frozen`, `imagePath2` (for 2pc+2pc split) |
+| Artifact icon with data | `ArtifactIcon` | `shared/ArtifactIcon.tsx` | `artifact`, `artInfo`, `slot`, `size` |
+| Character name/element/rarity header | `CharacterInfo` | `shared/CharacterInfo.tsx` | `character`, `showDate?`, `children` |
+| Artifact stat breakdown | `StatDisplay` | `account-data/StatDisplay.tsx` | `artifact`, `scoreResult?`, `compact?` |
+| 5-slot artifact grid | `ArtifactSlotGrid` | `team-comp/ArtifactSlotGrid.tsx` | `charId`, `artifactsObj`, `onSwap?` |
+
+**Sizing:** Use exported `ICON_CONFIG` and `SIZE_CLASSES` from `ItemIcon.tsx` for consistent dimensions.
+
+### Pickers & Selectors
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Pick a character, weapon, or artifact | `ItemPicker` | `shared/ItemPicker.tsx` | `type` ('character'/'weapon'/'artifact'), `value`, `onChange`, `filter?`, `triggerSize?`, `menuSize?`, `frozen?` |
+| 4-slot team picker (char+weapon+artifact) | `TeamPickerGrid` | `shared/TeamPickerGrid.tsx` | `characters`, `weapons`, `artifacts`, `onChange`, `accountData?` (auto-prefill), `frozenCharIds?` |
+| Stat multi-select | `StatSelect` | `artifact-builds/StatSelect.tsx` | `values`, `onValuesChange`, `options`, `maxLength`, `compact?` |
+| Stat multi-select with weights | `WeightedStatSelect` | `artifact-builds/WeightedStatSelect.tsx` | `values`, `options`, `maxLength`, `weightPresets?` |
+| Weight slider (0-100%) | `WeightPopover` | `shared/WeightPopover.tsx` | `value`, `onChange`, `label?` |
+| 2pc+2pc artifact builder | `ArtifactMixedBuilder` | `shared/ArtifactMixedBuilder.tsx` | `mixedSlot1`, `mixedSlot2`, `pickingSlot`, `confirmMixedSet` |
+
+`ItemPicker` is responsive: Popover on desktop, Drawer on mobile. It has built-in search, filter chips, tier sorting, and owned-only filter.
+
+### Tooltips & Preview Cards
+
+| Need | Component | Path | Props |
+|------|-----------|------|-------|
+| Character preview on hover | `CharacterTooltip` | `shared/CharacterTooltip.tsx` | `characterId` |
+| Weapon preview on hover | `WeaponTooltip` | `shared/WeaponTooltip.tsx` | `weaponId` |
+| Artifact set effects on hover | `ArtifactTooltip` | `shared/ArtifactTooltip.tsx` | `setId`, `hideFourPieceEffect?` |
+| 2pc+2pc set effects on hover | `MixedSetTooltip` | `shared/MixedSetTooltip.tsx` | `id1`, `id2` |
+| Artifact detail (hover + mobile drawer) | `ArtifactDataHoverCard` | `account-data/ArtifactDataHoverCard.tsx` | `artifact`, `slot`, `children` (trigger) |
+
+### Filter Panels
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Full character filter panel | `CharacterFilterSidebar` | `shared/CharacterFilterSidebar.tsx` | `filters`, `onFiltersChange`, `hasTierData?` |
+| Tri-state sort toggle | `SortToggleGroup` | `shared/SortToggleGroup.tsx` | `value`, `onChange`, `label?` |
+
+`CharacterFilterSidebar` provides: owned-only, element, rarity, weapon type, region, tier/release sort.
+
+### Page Layouts
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Standard page wrapper (AppBar + error boundary) | `PageLayout` | `layout/PageLayout.tsx` | AppBar props passthrough, `children` |
+| Content + sidebar (drawer on mobile) | `SidebarLayout` | `layout/SidebarLayout.tsx` | `sidebar`, `children`, `triggerIcon?` |
+| Sidebar + detail view (archive pattern) | `SidebarDetailLayout` | `layout/SidebarDetailLayout.tsx` | `sidebar`, `children`, `mobileGrid?`, `hasSelection`, `onBack` |
+| Dense tabular layout with filters | `WideLayout` | `layout/WideLayout.tsx` | `title`, `actions?`, `filters?` (FilterGroup[]), `children` |
+| Simple centered scroll container | `ScrollLayout` | `layout/ScrollLayout.tsx` | `children` |
+
+### Action Dialogs (Import/Export/Clear)
+
+All use the **ref handle pattern**: `useRef<ControlHandle>()` → `ref.current?.open()`.
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Export with metadata | `ExportControl` | `shared/ExportControl.tsx` | `onExport(author, description)` |
+| Import from preset or file | `ImportControl` | `shared/ImportControl.tsx` | `options`, `loadPreset`, `onApply` |
+| Confirm-to-clear | `ClearAllControl` | `shared/ClearAllControl.tsx` | `onConfirm` |
+
+Wire these to AppBar via `actions` prop:
+```tsx
+const exportRef = useRef<ControlHandle>(null);
+<ExportControl ref={exportRef} onExport={handleExport} />
+<PageLayout actions={[
+  { key: "export", icon: Download, label: "Export", onTrigger: () => exportRef.current?.open() }
+]} />
+```
+
+### Tier List Rendering
+
+| Need | Component | Path | Key Props |
+|------|-----------|------|-----------|
+| Universal tier grid (3 responsive modes) | `TierLayout` | `tier-list/TierLayout.tsx` | `mode` ('compact'/'tablet'/'desktop'), `iconSize`, `allTiers`, `itemsPerTier`, `groups`, `getItemGroup`, `getItemName` |
+
+### Error Boundaries
+
+| Need | Component | Path |
+|------|-----------|------|
+| Full-page error | `PageErrorBoundary` | `shared/ErrorBoundary.tsx` |
+| Section-level error | `SectionErrorBoundary` | `shared/ErrorBoundary.tsx` |
+
+---
+
+## Styling Rules
+
+- Use `cn()` (from `lib/utils.ts`) to merge Tailwind classes. Never concatenate class strings manually.
+- **NEVER** use opacity on `text-muted-foreground` (e.g., `text-muted-foreground/50`). It's already muted — opacity makes text unreadable.
+- Same for `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
+- Color helpers: `getRarityColor(rarity, "bg"|"text")`, `getElementColor(element, "bg"|"text")`, `getTierColor(tier, "bg"|"text")`.
+- Asset URLs: always use `getAssetUrl(path)` for images (handles Vite BASE_URL for GitHub Pages).
+- Theme: 9 palettes via `ThemeContext` + `themeGenerator.ts`. CSS variables applied at runtime.
+
+---
+
+## Responsive Patterns
+
+- **Mobile first**: Design for small screens, add desktop breakpoints.
+- **Mobile ↔ Desktop dialogs**: Use `Drawer` (vaul) for mobile, `Popover`/`Dialog` for desktop. See `ItemPicker.tsx` for the canonical pattern.
+- Many components accept `compact?: boolean` for mobile optimization.
+- Use `useMediaQuery()` hook for responsive logic.
+- `SidebarLayout` handles mobile (Sheet trigger) vs desktop (fixed sidebar) automatically.
+
+---
+
 ## Project Structure
-
-### Pages, Tabs & User Journeys
-
-Navigation config: `src/config/appNavigation.tsx`. Layout shells: `src/components/layout/`.
-
-#### `/` — Home
-Landing page with feature cards linking to each tool. Serves as the navigation hub.
-
-#### `/account-data` — Account Data
-Import game account data (via Enka UID fetch, GOOD JSON upload, or Mona/yas artifact-only scan), then analyze it across four tabs. Supports multi-account/profile management.
-
-- **Characters** — Browse imported characters with their equipped artifacts and scores. Filter/sort by element, weapon type, or name. Tap a character to see artifact details and per-slot scores.
-- **Recommendations** — View actionable upgrade suggestions generated by the Insight Engine. Each recommendation shows the strategy (equip, swap, upgrade, reroll, farm, fix main stat), affected slot, and projected score gain.
-- **Inventory** — Browse all imported artifacts. Filter by set, slot, main stat, or substats. Mark artifacts as locked/trash. View which character an artifact is equipped on.
-- **Evaluation** — Account-wide analytics: per-character build efficiency tiers (S/A/B/C/F), archetype classification (DPS/Support), stat coverage overview, and completion tracking. Deep-link to Artifact Filter for a specific character.
-
-#### `/artifact-filter` — Artifact Builds / Filter
-Define desired artifact builds per character, then compute which artifacts to keep or trash.
-
-- **Configure** — Select a character, add/edit builds (artifact sets, main stats, substats, priorities). Import community preset builds or create custom ones. Reorder builds per character.
-- **Filters** — View the computed filter result: for each artifact slot + main stat combination, see whether to keep or trash. Export the filter as a shareable PNG image or JSON.
-
-#### `/tier-list` — Tier List
-Drag-and-drop ranking tool for characters and weapons.
-
-- **Characters** — Drag characters into tier rows (SS/S/A/B/C/D). Filter by element or weapon type. Reset to default or clear all.
-- **Weapons** — Same drag-and-drop tier ranking for weapons. Filter by weapon type.
-
-#### `/archive` — Archive
-Read-only game data encyclopedia for quick reference.
-
-- **Characters** — Browse all characters with base stats, ascension materials, talent info. Filter by element, weapon type, rarity.
-- **Weapons** — Browse all weapons with stats and passive descriptions. Filter by weapon type, rarity.
-- **Artifacts** — Browse all artifact sets with 2-piece and 4-piece set effect descriptions.
-
-#### `/team-comp` — Team Composition
-Build and manage team lineups of 4 characters. Assign weapons and artifacts per character. Filter teams by element or region. Reorder, duplicate, or delete teams. Import/export team presets. The detail view (TeamOptDetail) shows damage calculation results with buff breakdowns, stat resolution, and team-wide optimization.
 
 ### Directory Map
 
-- `src/components/{domain}` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-comp`, `archive`
-- `src/components/shared` — Cross-domain: `ItemPicker`, `ItemIcon`, `CharacterFilterSidebar`, controls, tooltips
-- `src/components/ui` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
-- `src/stores` — One Zustand store per domain (persist to `localStorage`)
-- `src/data` — Static JSON resources, `types.ts`, `constants.ts`, localization (`i18n-ui.ts`, `i18n-app.ts`, `i18n-game.ts`)
-- `src/lib` — Pure logic: merge algorithms, filter computation, artifact scoring, build evaluation, insight engine, preset system, build utilities, damage calculation (`team-comp/`)
-- `src/hooks` — `useResolvedBuilds`, `useAsyncCompute`, `useMediaQuery`, `useGlobalScroll`
-- `src/contexts` — `LanguageContext` (EN/ZH), `ThemeContext` (per-element palette via `themeGenerator.ts`)
-- `src/presets` — Bundled preset JSONs for artifact builds, character tier lists, weapon tier lists
+- `src/pages/` — Route-level page components (Home, AccountData, ArtifactBuilds, TierList, Archive, TeamComp)
+- `src/components/{domain}/` — Domain UI: `account-data`, `artifact-builds`, `tier-list`, `team-comp`, `archive`
+- `src/components/shared/` — Cross-domain reusable components (see table above)
+- `src/components/ui/` — shadcn/ui primitives + custom widgets (`tour`, `responsive-dialog`, `weighted-select`)
+- `src/components/layout/` — Layout shells (PageLayout, AppBar, SidebarLayout, etc.)
+- `src/stores/` — One Zustand store per domain (persist to `localStorage`)
+- `src/data/` — Static JSON resources, `types.ts`, `constants.ts`, localization files
+- `src/lib/` — Pure logic: filter computation, artifact scoring, damage calculation (`team-comp/`), build evaluation, insight engine
+- `src/hooks/` — `useResolvedBuilds`, `useAsyncCompute`, `useMediaQuery`, `useGlobalScroll`
+- `src/contexts/` — `LanguageContext` (EN/ZH), `ThemeContext` (9-palette via `themeGenerator.ts`)
+- `src/presets/` — Bundled preset JSONs for artifact builds, character tier lists, weapon tier lists
+- `src/config/` — Navigation config (`appNavigation.tsx`), character info
 - `scripts/` — Python ETL (Enka, Hakush.in, HoYoLab, Fandom). Run `update_data.cmd` or `uv run --project scripts/pyproject.toml scripts/<script>.py`
 - `docs/` — Design docs, product specs, roadmap
 
-## Data Flow & Build System
+### Pages & Tabs
 
-1. **Static data** (`src/data/*.json`) is the immutable source of truth for game data.
-2. **User data** enters via GOOD Format (JSON), Mona/yas Format (artifact-only JSON), Enka.Network (UID), or preset subscription → persists in `localStorage`. Import merge rules: GOOD always wipes, Mona keeps character/weapon details but replaces all artifacts, UID upserts characters/weapons and deduplicates artifacts.
+Navigation config: `src/config/appNavigation.tsx`.
+
+| Route | Page | Tabs |
+|-------|------|------|
+| `/` | Home | — |
+| `/account-data` | Account Data | Characters, Recommendations, Inventory, Evaluation, Triage |
+| `/artifact-filter` | Artifact Filter | Configure, Compute Filters, AutoTune |
+| `/tier-list` | Tier List | Characters, Weapons |
+| `/archive` | Archive | Characters, Weapons, Artifacts, Bosses |
+| `/team-comp` | Team Comp | — (detail view via internal state) |
+
+---
+
+## Data Flow
+
+1. **Static game data** (`src/data/*.json`) is the immutable source of truth.
+2. **User data** enters via GOOD Format (JSON), Mona/yas Format (artifact-only JSON), Enka.Network (UID), or preset subscription → persists in `localStorage`.
 3. **Preset system**: presets in `src/presets/artifact-builds/` serve as the **Immutable Base**. They DO NOT exist in `useBuildsStore` directly.
-4. **Build Store (`useBuildsStore`)**: Contains **ONLY** User Overrides, Custom Builds, and Ordering (`characterToBuildIds`). It is a Delta Store. **DO NOT** read `builds` directly from the store for scoring!
-5. **Build Resolution**: `useResolvedBuilds` (single char) / `useAllResolvedBuilds` (all chars) are the **Single Source of Truth**. They merge the `Preset Base` + `Store Deltas` to produce the effective `Build[]`.
+4. **Build Store (`useBuildsStore`)**: Contains **ONLY** User Overrides, Custom Builds, and Ordering. It is a Delta Store. **DO NOT** read `builds` directly for scoring.
+5. **Build Resolution**: `useResolvedBuilds` (single char) / `useAllResolvedBuilds` (all chars) are the **Single Source of Truth**. They merge Preset Base + Store Deltas.
    - **Rule**: Always use these hooks to get builds. Never traverse `useBuildsStore.builds` or `presetRegistry` manually.
-6. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts. See `src/lib/` for all algorithms.
-7. **Zero `any`**: all external data (Import/API) must be typed and validated.
+6. **Merge → Filter pipeline**: `greedyMerge` / `smartMerge` → `computeFilters` → lock/trash scripts.
+7. **Zero `any`**: all external data must be typed and validated.
 
-## Build Evaluation & Insight Engine (Account Data)
+---
 
-The `src/lib/account-data/` module powers the evaluation and recommendation tabs:
+## Key Domain Systems
 
-1. **Build Evaluation** (`buildEvaluation.ts`): Per-character build assessment — archetype classification (DPS/Support), scaling stat detection, slot completion tracking, and efficiency tier ratings (S/A/B/C/F).
-2. **Insight Engine** (`insightEngine.ts`): Generates actionable recommendations using strategies: EQUIP (empty slot), SWAP (better artifact found), UPGRADE (level existing), REROLL (elixir/reroll), FARM (weakest slot), FIX_MAIN (wrong main stat). Each insight includes score differential and efficiency projections.
+### Build Evaluation & Insight Engine (Account Data)
 
-## Damage Calculation (Team Comp)
+`src/lib/account-data/`:
+- **Build Evaluation** (`buildEvaluation.ts`): Per-character archetype classification (DPS/Support), slot completion, efficiency tiers (S/A/B/C/F).
+- **Insight Engine** (`insightEngine.ts`): Generates actionable recommendations (EQUIP, SWAP, UPGRADE, REROLL, FARM, FIX_MAIN) with score differentials.
+- **Triage** (`triage/`): Probability-based artifact evaluation with P/Q/N/T tiers and special rules.
+- **AutoTune** (`scoring/autoTune.ts`): Generates stat weights via marginal damage analysis using real TeamBuild calculator.
 
-The `src/lib/team-comp/` module implements a full damage calculation pipeline:
+### Damage Calculation (Team Comp)
 
-1. **Character implementations** (`impl/`): Per-character formula definitions, buff providers, and talent scalings.
-2. **Damage models** (`damageModels.ts`): Zone-based damage calculation (Base DMG, DMG Bonus, CRIT, RES, DEF, Elevate/Reaction).
-3. **Buff system** (`damageBuffs.ts`): Stackable team-wide and character-specific buffs with source tracking.
-4. **Optimizer** (`optimizer.ts`): Artifact assignment optimizer that maximizes total team damage.
-5. **Stat resolution**: Idle → Combat stat pipeline with weapon, artifact, ascension, and buff contributions.
+`src/lib/team-comp/`:
+- **Character implementations** (`impl/`): 70+ characters with per-character formulas, buffs, and `defaultRotation` data.
+- **Damage formulas** (`damageFormulas.ts`): 6 formula types (Direct, Amplify, Catalyze, Transform, Lunar, LunarDirect).
+- **Buff system** (`damageBuffs.ts`): StatBuff, ScalingBuff, CrossScalingBuff with source tracking and buff validation.
+- **Stat resolution** (`damageModels.ts`): StatSheet (immutable two-level map), zone-based damage with DamageTagFilter scoping.
+- **Optimizer V2** (`optimizer/`): Branch-and-bound per-character → conflict-aware team DFS. Web Worker parallelization.
+- **Combo/Rotation** (`types.ts`): Multi-character rotation evaluation with per-line reaction overrides.
 
-## Cloudflare Functions (CORS Proxy)
+### Cloudflare Functions (CORS Proxy)
 
-The `functions/` directory contains Cloudflare Pages Functions that run on the edge. Currently used as a CORS proxy for the Enka.Network API:
+`functions/api/enka/[[path]].ts` — proxies `/api/enka/*` → `https://enka.network/api/*` for CORS. Frontend caller: `src/lib/account-data/enkaFetcher.ts`.
 
-- **Route**: `functions/api/enka/[[path]].ts` — catch-all handler that proxies `/api/enka/*` → `https://enka.network/api/*`
-- **Purpose**: Bypass CORS restrictions when fetching player data from Enka.Network
-- **Frontend caller**: `src/lib/account-data/enkaFetcher.ts` — calls `fetch("/api/enka/uid/<uid>")` when running on Cloudflare Pages (ggartifact.com, *.pages.dev) or localhost:8788 (Wrangler). Falls back to `corsproxy.io` on other hosts (e.g. GitHub Pages).
-- **Dev**: `npm run dev` starts Vite + Wrangler together so Functions are available locally on port 8788. `npm run dev:vite` skips Wrangler (Functions unavailable, fallback proxy used).
+---
+
+## Localization
+
+- **`i18n-ui.ts`**: Static UI strings. **CRITICAL**: `t.ui()` calls MUST use string literals (e.g., `t.ui('common.save')`), never dynamically constructed keys. I18n tests enforce this.
+- **`i18n-app.ts`**: Dynamic terms via custom hooks on `t`, for enum concept labels. No tests.
+- **`i18n-game.ts`**: Game entity names, auto-generated by scrapers.
+- **Usage**: `const { t } = useLanguage()` → `t.ui("key")`, `t.character("id")`, `t.weaponEffect("id")`.
+
+---
 
 ## Commands
 
@@ -115,44 +222,30 @@ The `functions/` directory contains Cloudflare Pages Functions that run on the e
 - `npm run test:e2e` / `test:e2e:ui` — Playwright e2e tests
 
 ### Safe & Piped Variants (Agent Use)
-You must use these to avoid explicit pipe (`|`) or redirect (`2>&1`) in the terminal:
-- `npm run type-check:head` / `lint:head` / `test:head` — Limits output to first 20 lines (avoids spam). Pass `-- N` to change (e.g. `npm run test:head -- 100`).
-- `npm run type-check:tail` / `lint:tail` / `test:tail` — Shows only the last 20 lines (error summaries). Pass `-- N` to change.
-- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15 lines (skips middle). Pass `-- N` to change.
-- `npm run type-check:filter -- "Error"` / `lint:filter -- "Pattern"` / `test:filter -- "Pattern"` — Greps output for pattern.
-  - Example: `npm run type-check:filter -- "character5.ts"` to find errors in a specific file.
+Agents must use these to avoid explicit pipe (`|`) or redirect (`2>&1`):
+- `npm run type-check:head` / `lint:head` / `test:head` — First 20 lines. Pass `-- N` to change.
+- `npm run type-check:tail` / `lint:tail` / `test:tail` — Last 20 lines.
+- `npm run type-check:headtail` / `lint:headtail` / `test:headtail` — First 15 + last 15.
+- `npm run type-check:filter -- "Error"` / `lint:filter -- "Pattern"` / `test:filter -- "Pattern"` — Grep output.
+
+---
 
 ## Development Rules
 
 ### Architecture
-
 - **`SidebarLayout`**: Drawer on mobile, fixed sidebar on desktop (lg+). Standard for pages with filter panels.
 - **`AppBar`**: Sticky header. Actions via `ActionConfig[]`; dialog controls use ref forwarding (`useImperativeHandle`).
-- **Mobile first**: `Drawer` (vaul) for mobile interactions, `Popover` for desktop. See `ItemPicker.tsx`.
-
-### Styling
-
-- Always use `cn()` to merge styles. Layers: `tailwind.config.ts` → `index.css` → inline.
-- `ThemeContext` + `themeGenerator.ts` for 9 color palettes.
-
-### Localization
-
-- **`i18n-ui.ts`**: Static UI strings. **CRITICAL**: `t.ui()` calls MUST use string literals (e.g. `t.ui('common.save')`), never dynamically constructed keys. I18n test will ensure all i18n-ui labels are referenced by code.
-- **`i18n-app.ts`**: Dynamic terms, meant to be consumed via custom hooks on `t`, usually for labels of enum concepts. No tests.
-- **`i18n-game.ts`**: Game entity names, auto-generated by scrapers.
+- **Mobile first**: `Drawer` (vaul) for mobile, `Popover` for desktop. See `ItemPicker.tsx`.
 
 ### Testing
-
 - Unit tests in `tests/` mirror `src/`. Use `@/` path alias.
 - Store tests: use `useStore.getState()` to verify state after actions.
 
 ### Terminal Hygiene
-
 - Avoid `|` pipe and `2>&1` / `>` redirection (triggers safety review).
-- Never inline Python/JS code in terminal commands (e.g. python -c "..." or node -e "..."). Write a temporary .py/.js fil under temp/, run it, then delete it. Consider all side effects and failure modes, avoid dangerous actions and defer to user decision.
+- Never inline Python/JS code in terminal commands. Write a temporary file under `temp/`, run it, then delete it.
 
 ### File Safety
-
-- **Never run destructive scripts (regex replace, refactor, migration) directly on source files.** Always write output to a `.new` or `.tmp` copy first, diff/inspect the result, and only then replace the original.
-- Before any bulk file transformation, make a backup copy of the target file.
-- Test regex patterns with dry-run (print matches only) before applying replacements.
+- **Never run destructive scripts directly on source files.** Write output to `.new` or `.tmp` first, diff/inspect, then replace.
+- Before bulk file transformations, back up the target file.
+- Test regex patterns with dry-run (print matches only) before applying.
