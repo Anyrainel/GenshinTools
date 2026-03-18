@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+# Project-level checks before pushing
+
+# TypeScript type check + tests
+STAGED_TS_FILES=$(git diff --name-only HEAD@{1}..HEAD 2>/dev/null | grep -E '\.(ts|tsx)$' || true)
+if [ -n "$STAGED_TS_FILES" ]; then
+  echo "Running TypeScript type check..."
+  npm run type-check || exit 1
+
+  echo "Running tests..."
+  npm run test || exit 1
+fi
+
+# Python checks
+STAGED_PY_FILES=$(git diff --name-only HEAD@{1}..HEAD 2>/dev/null | grep -E 'scripts/.*\.py$' || true)
+if [ -n "$STAGED_PY_FILES" ]; then
+  echo "Running ty check..."
+  cd scripts || exit 1
+  uv run ty check . || exit 1
+  cd .. || exit 1
+fi
