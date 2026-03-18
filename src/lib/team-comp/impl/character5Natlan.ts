@@ -120,6 +120,11 @@ class Varesa extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q > ECP ×4 + sQ ×2 (~20s, plunge carry, KQM)
+  protected override get defaultRotation() {
+    return { "varesa-plunge": 4, "varesa-kablam": 2 };
+  }
 }
 
 @RegisterCharacter("citlali")
@@ -260,6 +265,11 @@ class Citlali extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E Q > swap (off-field support, E total bakes in all hits, KQM)
+  protected override get defaultRotation() {
+    return { "citlali-e-total": 1, "citlali-burst-total": 1 };
+  }
 }
 
 @RegisterCharacter("mavuika")
@@ -459,6 +469,11 @@ class Mavuika extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q (Sunfell) > SCSCC2 combo in 7s Crucible window (Melt carry, KQM)
+  protected override get defaultRotation() {
+    return { "mavuika-sunfell": 1, "mavuika-szszzp": 1 };
+  }
 }
 
 @RegisterCharacter("chasca")
@@ -640,6 +655,15 @@ class Chasca extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E 4[C] (Q) + P2 proc (on-field carry, Q every ~2 rotations, KQM)
+  protected override get defaultRotation() {
+    return {
+      "chasca-shining-volley": 4,
+      "chasca-p2-burning": 1,
+      "chasca-burst": 1,
+    };
+  }
 }
 
 @RegisterCharacter("xilonen")
@@ -863,6 +887,14 @@ class Xilonen extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
+  protected override get defaultRotation() {
+    return {
+      ...(this.constellation >= 6 ? { "xilonen-normal": 3 } : {}),
+      ...(this.convertedSamples <= 1 ? { "xilonen-burst-beats": 1 } : {}),
+    };
+  }
 }
 
 @RegisterCharacter("mualani")
@@ -951,6 +983,11 @@ class Mualani extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E combo (3 Surging Bites) > Q (~16s rotation, vape carry, KQM)
+  protected override get defaultRotation() {
+    return { "mualani-bite": 3, "mualani-burst": 1 };
+  }
 }
 
 @RegisterCharacter("kinich")
@@ -1068,4 +1105,9 @@ class Kinich extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
+  protected override get defaultRotation() {
+    return { "kinich-cannon": 4, "kinich-burst": 1 };
+  }
 }

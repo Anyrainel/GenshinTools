@@ -174,6 +174,15 @@ class Columbina extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: E > Q > swap; off-field enabler. Ripple ticks ~12 over 25s, ~2 Gravity Interferences, ~3 CAs if driving
+  protected override get defaultRotation() {
+    return {
+      "columbina-charge": 0,
+      "columbina-skill-interference": 2,
+      "columbina-ripple": 12,
+    };
+  }
+
   protected readonly formulaMap = (() => {
     const isE13 = this.constellation >= 3;
 
@@ -375,6 +384,12 @@ class Nefer extends CharacterBase {
   //   Hit 3: Lv10 230.4% EM, Lv13 (C3+) 272.0% EM
   // Q total: Lv10 (404.4%+606.5%) ATK + (808.7%+1213.1%) EM = 1010.9% ATK + 2021.8% EM
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
+
+  // Rotation: E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 6 Phantasm Performances per rotation)
+  protected override get defaultRotation() {
+    return { "nefer-phantasm": 6, "nefer-burst": 0 };
+  }
+
   protected readonly formulaMap = (() => {
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     const isE13 = this.constellation >= 3;
@@ -601,6 +616,15 @@ class Flins extends CharacterBase {
   // Q final phase (LunarDirect): Lv10 210.5%, Lv13 (C3+) 248.5%
   // Thunderous Symphony (LunarDirect): Lv10 128.6%, Lv13 (C3+) 151.8%
   //   Moonsign Ascendant Gleam adds 1 extra hit (187.1%/220.9%)
+
+  // Rotation: E > E > sQ > N4D×2 > N2 > E > sQ > N4D > N5 (on-field carry, ~10s field time)
+  protected override get defaultRotation() {
+    return {
+      "flins-spearstorm": this.constellation >= 1 ? 3 : 2,
+      "flins-thunderous": this.constellation >= 1 ? 3 : 2,
+    };
+  }
+
   protected readonly formulaMap = (() => {
     const spearstormMult = this.constellation >= 5 ? 3.791 : 3.211;
     const qInitMult = this.constellation >= 3 ? 5.522 : 4.677;
@@ -789,6 +813,16 @@ class Lauma extends CharacterBase {
       : []),
   ];
 
+  // Rotation: Hold E > Q > swap (off-field support). Sanctuary ticks every 2s for 15s ≈ 7 hits.
+  protected override get defaultRotation() {
+    return {
+      "lauma-sanctuary": 7,
+      "lauma-hold": 1,
+      "lauma-c6-normal": 0,
+      "lauma-c6-sanctuary": 1,
+    };
+  }
+
   // E press: Lv10 218.9%, Lv13 (C5+) 258.4%
   // Frostgrove Sanctuary: Lv10 172.8% ATK + 345.6% EM, Lv13 (C5+) 204.0% ATK + 408.0% EM
   protected readonly formulaMap = (() => {
@@ -932,6 +966,15 @@ class Ineffa extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: E > Q > swap (off-field sub-DPS). Birgitta 10 hits baked in formula. C6 triggers ~6 times over 20s.
+  protected override get defaultRotation() {
+    return {
+      "ineffa-birgitta": 1,
+      "ineffa-burst": 1,
+      "ineffa-c6-thundercloud": 6,
+    };
+  }
 
   // Birgitta Discharge: Lv10 172.8%, Lv13 (C3+) 204.0%, every 2s ≈ 10 ticks
   // P1: If thunderclouds nearby (from lunarCharged), each discharge also does 65% ATK lunarCharged hit

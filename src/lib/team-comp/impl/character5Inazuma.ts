@@ -84,6 +84,11 @@ class YumemizukiMizuki extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: Q > E (Dreamdrifter ~10s with P1 extension); ~6 ticks during float
+  protected override get defaultRotation() {
+    return { "mizuki-skill-swirl": 6 };
+  }
+
   protected readonly formulaMap = (() => {
     const eTickMult = this.constellation >= 3 ? 0.954 : 0.808;
     const canSwirl = this.teamMeta.hasReaction("swirl");
@@ -137,6 +142,11 @@ class Chiori extends CharacterBase {
       this.constellation >= 6 ? 2.35 : 0
     ),
   ];
+
+  // Rotation: EE (Tapestry swap) > Q; off-field Tamoto + Kinu procs per window
+  protected override get defaultRotation() {
+    return { "chiori-e-combo": 1, "chiori-burst": 1, "chiori-na": 1 };
+  }
 
   protected readonly formulaMap = (() => {
     // Tamoto: Lv10 148% ATK + 185% DEF, C3+: 174% ATK + 218% DEF
@@ -322,6 +332,11 @@ class RaidenShogun extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: E > supports > Q 3[N3C] N1C (~20s, hypercarry)
+  protected override get defaultRotation() {
+    return { "raiden-coordinated": 1, "raiden-initial": 1, "raiden-charge": 3 };
+  }
+
   // Q initial slash: Lv10 721% + 7%×60 = 1141%, Lv13 (C3+): 852% + 8.26%×60 = 1347.6%
   // Q Charged ATK (Musou Isshin): two hits at different multipliers (S3 requires separate parts)
   //   Lv10: 109.9% + 132.7%, resolve +1.31%×60 per hit
@@ -453,6 +468,11 @@ class AratakiItto extends CharacterBase {
     ),
   ];
 
+  // Rotation: supports > Q > N1 E > 2×Kesagiri chain > E (Geo carry)
+  protected override get defaultRotation() {
+    return { "itto-kesagiri": 2 };
+  }
+
   protected readonly formulaMap = (() => {
     // Arataki Kesagiri: combo slashes + 1 final slash
     // C6: Ushi assists each slash → doubles combo count from 4 to 8
@@ -522,6 +542,11 @@ class KamisatoAyaka extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
+  protected override get defaultRotation() {
+    return { "ayaka-charged": 3, "ayaka-burst": 1 };
+  }
 
   // Charged ATK: Lv10 109.0%×3 (Normal talent, no constellation boost)
   // Q cutting: Lv10 202%, Lv13 (C3+) 239%, ~19 cuts + bloom 303%/358%
@@ -611,6 +636,15 @@ class KamisatoAyato extends CharacterBase {
     }
     return ibuffs;
   })();
+
+  // Rotation: Q > E (Shunsuiken ×16 baked) > swap (~20s, Hydro carry)
+  protected override get defaultRotation() {
+    return {
+      "ayato-shunsuiken": 1,
+      "ayato-bloomwater": 1,
+      "ayato-c6-strikes": 1,
+    };
+  }
 
   // Shunsuiken 3-hit combo (S3: separate parts per different multiplier)
   // N1: Lv10 104.6%, Lv13 (C3+) 126.7%
@@ -756,6 +790,11 @@ class SangonomiyaKokomi extends CharacterBase {
       : []),
   ];
 
+  // Rotation: E > supports > Q N2D×~5 (on-field during Q, ~3 fish procs at C1)
+  protected override get defaultRotation() {
+    return { "kokomi-c1-fish": 3 };
+  }
+
   protected readonly formulaMap = {
     // C1: Swimming Fish — 30% Max HP as Hydro DMG (not Normal ATK DMG)
     ...(this.constellation >= 1
@@ -832,6 +871,11 @@ class KaedeharaKazuha extends CharacterBase {
 
     return buffs;
   })();
+
+  // Rotation: E (plunge) > Q > E (plunge) (VV support, ~20s)
+  protected override get defaultRotation() {
+    return { "kazuha-skill": 2, "kazuha-plunge-c6": 2, "kazuha-burst": 1 };
+  }
 
   // E press: Lv10 346%, Lv13 (C3+) 408%
   // C6 High Plunge (Midare Ranzan): Normal ATK talent, no constellation boost. High plunge Lv10 404%
@@ -929,6 +973,11 @@ class Yoimiya extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: supports > E > 3×N1-N5 string (~20s, Pyro carry)
+  protected override get defaultRotation() {
+    return { "yoimiya-normal": 3 };
+  }
+
   protected readonly formulaMap = (() => {
     // Per-hit NA multipliers at Lv10
     const n1a = 0.636;
@@ -1016,6 +1065,11 @@ class YaeMiko extends CharacterBase {
     }
     return buffs;
   })();
+
+  // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + 1 burst per rotation
+  protected override get defaultRotation() {
+    return { "yae_miko-skill": 15, "yae_miko-burst": 1 };
+  }
 
   protected readonly formulaMap = (() => {
     let eMult = 0;

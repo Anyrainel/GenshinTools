@@ -245,12 +245,25 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const combo = useMemo<ComboFormula>(() => {
     if (team.combos.length > 0) return team.combos[0];
+    // Initialize from default rotation data when no user combo exists
+    const lines: ComboLine[] = [];
+    if (teamBuild) {
+      for (const charId of team.characters) {
+        if (!charId) continue;
+        const rotation = teamBuild.getRotation(charId);
+        for (const [formulaId, count] of Object.entries(rotation)) {
+          if (count > 0) {
+            lines.push({ charId, formulaId, count });
+          }
+        }
+      }
+    }
     return {
       id: `combo-${Date.now()}`,
       label: { en: "Rotation", zh: "循环" },
-      lines: [],
+      lines,
     };
-  }, [team.combos]);
+  }, [team.combos, teamBuild, team.characters]);
 
   const comboLineMap = useMemo(() => {
     const map = new Map<string, { lineIndex: number; line: ComboLine }>();

@@ -839,6 +839,11 @@ export class TeamBuild {
     return result;
   }
 
+  /** Default rotation counts for a character (from CharacterBase.rotation). */
+  getRotation(charId: string): Record<string, number> {
+    return this.charBuilds[charId]?.charBase.rotation ?? {};
+  }
+
   /** Evaluate a specific character's damage formula with the given team stats */
   getDamageResult(
     charId: string,

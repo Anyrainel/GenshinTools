@@ -84,6 +84,11 @@ class Chevreuse extends CharacterBase {
         }
       : {}),
   }))();
+
+  // Rotation: E once per rotation (pure support); C2 chain triggers once/10s
+  protected override get defaultRotation() {
+    return { "chevreuse-c2-chain": 1 };
+  }
 }
 
 @RegisterCharacter("charlotte")
@@ -148,6 +153,11 @@ class Charlotte extends CharacterBase {
         }
       : {}),
   }))();
+
+  // Rotation: E + Q (healer/support); C6 coord triggers once/6s ≈ 3 per ~20s rotation
+  protected override get defaultRotation() {
+    return { "charlotte-c6-coord": 3 };
+  }
 }
 
 @RegisterCharacter("freminet")
@@ -240,6 +250,11 @@ class Freminet extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: EQ N2E 3[EN2E] — 4× Lv4 Shattering Pressure + Q (physical carry, KQM)
+  protected override get defaultRotation() {
+    return { "freminet-shatter-lv4": 4, "freminet-burst": 1 };
+  }
 }
 
 @RegisterCharacter("lynette")

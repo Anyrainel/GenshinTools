@@ -1,7 +1,6 @@
 import { ArtifactMixedBuilder } from "@/components/shared/ArtifactMixedBuilder";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { DoubleItemIcon } from "@/components/shared/DoubleItemIcon";
 import {
   ItemIcon,
   type ItemIconSize,
@@ -377,12 +376,10 @@ function PickerTrigger({
       .find((a) => a?.rarity === 5);
 
     return (
-      <DoubleItemIcon
-        imagePath1={art1?.imagePaths.flower || ""}
+      <ItemIcon
+        imagePath={art1?.imagePaths.flower || ""}
         imagePath2={art2?.imagePaths.flower || ""}
         size={size}
-        alt1={art1?.id}
-        alt2={art2?.id}
         frozen={frozen}
       />
     );

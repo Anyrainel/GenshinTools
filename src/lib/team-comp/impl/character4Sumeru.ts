@@ -66,6 +66,11 @@ class Sethos extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: C E 3[C] — 4 Shadowpiercing Shots per 15s cycle (KQM)
+  protected override get defaultRotation() {
+    return { "sethos-shadowpiercer": 4 };
+  }
 }
 
 @RegisterCharacter("kaveh")
@@ -127,6 +132,11 @@ class Kaveh extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM)
+  protected override get defaultRotation() {
+    return { "kaveh-core": 5 };
+  }
 }
 
 @RegisterCharacter("faruzan")
@@ -183,6 +193,11 @@ class Faruzan extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E charged-shot Q — Anemo support, 1 vortex per rotation (KQM)
+  protected override get defaultRotation() {
+    return { "faruzan-vortex": 1 };
+  }
 }
 
 @RegisterCharacter("layla")

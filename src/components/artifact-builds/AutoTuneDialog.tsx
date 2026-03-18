@@ -193,56 +193,69 @@ export function AutoTuneDialog({
   // ─── Formula Discovery ───
   // Build a TeamBuild from the first valid enabled team to discover formulas
   // and eligible reactions per the character's element and team composition
-  const { discoveredFormulas, eligibleReactions } = useMemo(() => {
-    const formulas: { formulaId: string; label: I18nLabel }[] = [];
-    let reactions: ReactionType[] = ["none"];
-    for (const team of enabledTeams) {
-      const configs = buildTeamConfigs(team, accountData);
-      if (
-        configs.length === 0 ||
-        !configs.some((c) => c.charId === characterId)
-      )
-        continue;
-      try {
-        const tb = new TeamBuild(
-          configs,
-          (team.opts ?? {}) as Record<string, string>
-        );
-        const allFormulas = tb.getFormulaIds();
-        const charFormulas = allFormulas[characterId];
-        if (!charFormulas || Object.keys(charFormulas).length === 0) continue;
-        for (const [fid, label] of Object.entries(charFormulas)) {
-          formulas.push({ formulaId: fid, label });
+  const { discoveredFormulas, eligibleReactions, defaultRotation } =
+    useMemo(() => {
+      const formulas: { formulaId: string; label: I18nLabel }[] = [];
+      let reactions: ReactionType[] = ["none"];
+      let rotation: Record<string, number> = {};
+      for (const team of enabledTeams) {
+        const configs = buildTeamConfigs(team, accountData);
+        if (
+          configs.length === 0 ||
+          !configs.some((c) => c.charId === characterId)
+        )
+          continue;
+        try {
+          const tb = new TeamBuild(
+            configs,
+            (team.opts ?? {}) as Record<string, string>
+          );
+          const allFormulas = tb.getFormulaIds();
+          const charFormulas = allFormulas[characterId];
+          if (!charFormulas || Object.keys(charFormulas).length === 0) continue;
+          for (const [fid, label] of Object.entries(charFormulas)) {
+            formulas.push({ formulaId: fid, label });
+          }
+          rotation = tb.getRotation(characterId);
+          // Determine eligible reactions for this element + team
+          const eligible = ELEMENT_ELIGIBLE_REACTIONS[
+            element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
+          ] ?? ["none"];
+          reactions = eligible.filter(
+            (rx) => rx === "none" || tb.teamMeta.hasReaction(rx, characterId)
+          ) as ReactionType[];
+          return {
+            discoveredFormulas: formulas,
+            eligibleReactions: reactions,
+            defaultRotation: rotation,
+          };
+        } catch {
+          // try next team
         }
-        // Determine eligible reactions for this element + team
-        const eligible = ELEMENT_ELIGIBLE_REACTIONS[
-          element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
-        ] ?? ["none"];
-        reactions = eligible.filter(
-          (rx) => rx === "none" || tb.teamMeta.hasReaction(rx, characterId)
-        ) as ReactionType[];
-        return { discoveredFormulas: formulas, eligibleReactions: reactions };
-      } catch {
-        // try next team
       }
-    }
-    return { discoveredFormulas: formulas, eligibleReactions: reactions };
-  }, [enabledTeams, accountData, characterId, element]);
+      return {
+        discoveredFormulas: formulas,
+        eligibleReactions: reactions,
+        defaultRotation: rotation,
+      };
+    }, [enabledTeams, accountData, characterId, element]);
 
   const hasReactions = eligibleReactions.length > 1;
 
   // Auto-populate combo lines when formulas are discovered
   useEffect(() => {
     if (discoveredFormulas.length > 0 && state.comboLines.length === 0) {
+      const hasRotation = Object.keys(defaultRotation).length > 0;
       // Create one line per formula × reaction variant
       const lines: ComboLine[] = [];
       for (const f of discoveredFormulas) {
+        const rotCount = hasRotation ? (defaultRotation[f.formulaId] ?? 0) : 1;
         if (hasReactions) {
           for (const rx of eligibleReactions) {
             lines.push({
               charId: characterId,
               formulaId: f.formulaId,
-              count: rx === "none" ? 1 : 0,
+              count: rx === "none" ? rotCount : 0,
               reaction: rx !== "none" ? { reaction: rx } : undefined,
             });
           }
@@ -250,7 +263,7 @@ export function AutoTuneDialog({
           lines.push({
             charId: characterId,
             formulaId: f.formulaId,
-            count: 1,
+            count: rotCount,
           });
         }
       }
@@ -262,6 +275,7 @@ export function AutoTuneDialog({
     characterId,
     hasReactions,
     eligibleReactions,
+    defaultRotation,
   ]);
 
   // ─── Add Team (via edit dialog) ───

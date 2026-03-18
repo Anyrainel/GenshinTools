@@ -226,6 +226,15 @@ class Arlecchino extends CharacterBase {
     ),
   ];
 
+  // Rotation: E > teammates > C absorb > 6[N3D] > Q (KQM, ~20s carry window)
+  protected override get defaultRotation() {
+    return {
+      "arlecchino-normal": 3,
+      "arlecchino-burst": 1,
+      "arlecchino-c2-bloodfire": 1,
+    };
+  }
+
   get formulaMap() {
     const c3Plus = this.constellation >= 3;
     const nMults = c3Plus
@@ -306,6 +315,11 @@ class Tartaglia extends CharacterBase {
     // P1: Riptide extends duration (utility)
     // C4: Riptide triggers every 4s (utility)
   ];
+
+  // Rotation: rQ > E > 4[N3C] (~9s melee, International team, KQM)
+  protected override get defaultRotation() {
+    return { "tartaglia-melee-combo": 4, "tartaglia-burst-melee": 1 };
+  }
 
   // Burst Melee (Lv10): 835.0%
   // Burst Melee (Lv13 C5+): 986.0%

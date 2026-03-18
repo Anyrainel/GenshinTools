@@ -40,6 +40,11 @@ class Kirara extends CharacterBase {
       : []),
   ];
 
+  // Rotation: E > swap > on-field NA triggers C4 every 3.8s (~5 procs per rotation)
+  protected override get defaultRotation() {
+    return { "kirara-c4-steed": 5 };
+  }
+
   protected readonly formulaMap = {
     // C4: Steed of Skanda — 200% ATK as Dendro DMG (considered Burst DMG)
     ...(this.constellation >= 4
@@ -92,6 +97,11 @@ class ShikanoinHeizou extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: swap-in > E (full conviction) > Q > swap out (driver sub-DPS)
+  protected override get defaultRotation() {
+    return { "heizou-skill": 2, "heizou-burst": 1 };
+  }
 
   // E max stacks (Lv10): 409.5% + 4*102.4% + 204.8% = 1023.9%
   // E max (Lv13 C3+): 483.5% + 4*120.9% + 241.7% = 1208.8%
@@ -171,6 +181,15 @@ class KukiShinobu extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: E (off-field ring) > Q > swap; hyperbloom ~8 seeds per rotation, C4 ~4 procs
+  protected override get defaultRotation() {
+    return {
+      "shinobu-burst": 1,
+      "shinobu-hyperbloom": 8,
+      "shinobu-c4-thundergrass": 4,
+    };
+  }
 
   // Q: Single hit 6.5%/7.7% HP
   // HP ≥ 50%: normal duration → 7 hits; HP ≤ 50%: extended duration → 12 hits
@@ -260,6 +279,11 @@ class Sayu extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: E (hold roll) > Q; Daruma attacks ~7 times over 12s (healer/swirl support)
+  protected override get defaultRotation() {
+    return { "sayu-daruma": 7 };
+  }
+
   protected readonly formulaMap = (() => {
     // Muji-Muji Daruma DMG: Lv10 = 94%, Lv13 (C3+) = 110%
     const darumaScaling = this.constellation >= 3 ? 1.1 : 0.94;
@@ -298,6 +322,11 @@ class Thoma extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: E > Q > swap; Fiery Collapse every 1s over 15s (C2: 18s)
+  protected override get defaultRotation() {
+    return { "thoma-burst-collapse": 15 };
+  }
 
   // Q Fiery Collapse Lv10: 104% ATK + 2.2% HP (P2)
   // Lv13 (C5+): 123% ATK + 2.2% HP
@@ -364,6 +393,11 @@ class Gorou extends CharacterBase {
     }
     return buffs;
   })();
+
+  // Rotation: E > Q > swap (Geo support, minimal field time)
+  protected override get defaultRotation() {
+    return { "gorou-skill": 1, "gorou-burst": 1 };
+  }
 
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 2.281 : 1.931;
@@ -459,6 +493,11 @@ class KujouSara extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: E (ATK buff) > Q > swap (Electro support, buff bot)
+  protected override get defaultRotation() {
+    return { "sara-burst": 1 };
+  }
 
   // Q Titanbreaker: Lv10 737.3%, Lv13 (C3+) 870.4% + 4×61.4%/72.5% Stormcluster (C4: 6×)
   protected readonly formulaMap = (() => {

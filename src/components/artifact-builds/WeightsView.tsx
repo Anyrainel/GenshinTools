@@ -6,35 +6,42 @@
  * Results display in V2-style cards with shared AutoTuneResults sub-components.
  */
 
+import { buildTeamLabel } from "@/components/artifact-builds/AutoTuneDialog";
 import {
+  ComboTable,
   MainStatColumn,
   SubstatPills,
-  TeamBreakdownSection,
 } from "@/components/artifact-builds/AutoTuneResults";
+import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { buildTeamConfigs } from "@/components/team-comp/teamOptUtils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import {
+  artifactHalfSetsById,
+  artifactsById,
+  charactersById,
+} from "@/data/constants";
 import type { Build, BuildGroup, Element } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import type { WeightedFormula } from "@/lib/account-data/scoring/autoTune";
 import type { AutoTuneWorkerResponse } from "@/lib/account-data/scoring/autoTune.worker";
 import type {
   AutoTuneOutput,
   AutoTuneTeamInput,
   AutoTuneTeamResult,
+  TeamBreakdown,
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
-import {
-  getFlagshipTeamsForChar,
-  teamEntryToConfigs,
-} from "@/lib/account-data/scoring/teamDatabase";
-import type { CharCompConfig } from "@/lib/team-comp/types";
+import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { cn, getElementColor } from "@/lib/utils";
+import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { Check, Loader2 } from "lucide-react";
+import { type Team, useTeamStore } from "@/stores/useTeamStore";
+import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -54,6 +61,9 @@ const ELEMENT_HEX: Record<string, string> = {
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";
 
+/** Filter mode: show only builds with matched teams, or all DPS builds */
+type ViewFilter = "available" | "all";
+
 type BuildEntry = {
   buildId: string;
   characterId: string;
@@ -61,6 +71,8 @@ type BuildEntry = {
   selected: boolean;
   status: EntryStatus;
   result: AutoTuneOutput | null;
+  /** Matching user teams for this build */
+  teams: Team[];
 };
 
 type Phase = "selection" | "computing" | "review";
@@ -101,7 +113,7 @@ function runAutoTuneWorkers(
         const resp = e.data;
         if ("error" in resp) {
           failed = true;
-          workers.forEach((w) => w.terminate());
+          for (const w of workers) w.terminate();
           reject(new Error(resp.error));
           return;
         }
@@ -123,7 +135,7 @@ function runAutoTuneWorkers(
         worker.terminate();
         if (!failed) {
           failed = true;
-          workers.forEach((w) => w.terminate());
+          for (const w of workers) w.terminate();
           reject(new Error(e.message || "Worker error"));
         }
       };
@@ -133,25 +145,49 @@ function runAutoTuneWorkers(
   });
 }
 
-// ── Build team inputs from Flagship Teams ──
+// ── Build team inputs from user teams (matches AutoTuneDialog logic) ──
 
-function buildTeamInputsForBuild(
+function buildTeamInputsFromUserTeams(
+  teams: Team[],
   characterId: string,
-  element: string
+  element: string,
+  accountData: import("@/data/types").AccountData | null,
+  t: { character: (id: string) => string }
 ): AutoTuneTeamInput[] {
-  const teamEntries = getFlagshipTeamsForChar(characterId);
   const inputs: AutoTuneTeamInput[] = [];
 
-  for (const { team } of teamEntries) {
+  for (const team of teams) {
     try {
-      const configs = teamEntryToConfigs(team) as CharCompConfig[];
-      const label = team.name || `Team ${team.id.slice(-4)}`;
+      const configs = buildTeamConfigs(team, accountData);
+      if (
+        configs.length === 0 ||
+        !configs.some((c) => c.charId === characterId)
+      )
+        continue;
+      const opts = (team.opts ?? {}) as Record<string, string>;
+      // Build rotation-based formulas from character's defaultRotation
+      let formulas: WeightedFormula[] | undefined;
+      try {
+        const tb = new TeamBuild(configs, opts);
+        const rotation = tb.getRotation(characterId);
+        if (Object.keys(rotation).length > 0) {
+          const charFormulas = tb.getFormulaIds()[characterId];
+          if (charFormulas) {
+            formulas = Object.keys(charFormulas).map((formulaId) => ({
+              formulaId,
+              count: rotation[formulaId] ?? 0,
+            }));
+          }
+        }
+      } catch {
+        // Fall back to undefined (pipeline will use count=1 for all)
+      }
       inputs.push({
         characterId,
         configs,
-        opts: team.opts ?? {},
-        formulas: undefined,
-        label,
+        opts,
+        formulas,
+        label: team.name || buildTeamLabel(team, t),
         teamIndex: inputs.length,
         element,
       });
@@ -165,68 +201,324 @@ function buildTeamInputsForBuild(
 
 // ── Collect DPS builds ──
 
-function collectEntries(groups: BuildGroup[]): BuildEntry[] {
+/** Filter user teams matching this build's character + artifact set (same logic as AutoTuneDialog) */
+function getMatchingTeams(
+  allTeams: Team[],
+  characterId: string,
+  build: Build
+): Team[] {
+  return allTeams.filter((team) => {
+    const charIdx = team.characters.indexOf(characterId);
+    if (charIdx === -1) return false;
+
+    const teamArt = team.artifacts[charIdx];
+    if (!teamArt) return true; // no artifact configured = match
+    if (build.composition === "4pc" && build.artifactSet) {
+      if (teamArt.type === "4pc") return teamArt.setId === build.artifactSet;
+      return true;
+    }
+    if (build.composition === "2pc+2pc" && build.halfSet1 && build.halfSet2) {
+      if (teamArt.type === "2pc+2pc") {
+        const buildIds = [
+          String(build.halfSet1),
+          String(build.halfSet2),
+        ].sort();
+        const teamIds = [String(teamArt.id1), String(teamArt.id2)].sort();
+        return buildIds[0] === teamIds[0] && buildIds[1] === teamIds[1];
+      }
+      return true;
+    }
+    return true;
+  });
+}
+
+function collectEntries(
+  groups: BuildGroup[],
+  allTeams: Team[],
+  filter: ViewFilter,
+  characterStats?: Record<string, { releaseDate?: string }> | null
+): BuildEntry[] {
   const entries: BuildEntry[] = [];
   for (const group of groups) {
     for (const build of group.builds) {
       if (!build.roles?.includes("dps")) continue;
+      const teams = getMatchingTeams(allTeams, group.characterId, build);
+      if (filter === "available" && teams.length === 0) continue;
       entries.push({
         buildId: build.id,
         characterId: group.characterId,
         build,
-        selected: true,
+        selected: teams.length > 0,
         status: "idle",
         result: null,
+        teams,
       });
     }
   }
-  entries.sort((a, b) => a.characterId.localeCompare(b.characterId));
+  entries.sort((a, b) => {
+    const dateA = characterStats?.[a.characterId]?.releaseDate ?? "";
+    const dateB = characterStats?.[b.characterId]?.releaseDate ?? "";
+    if (dateA || dateB) {
+      if (!dateA) return 1;
+      if (!dateB) return -1;
+      const cmp = dateB.localeCompare(dateA);
+      if (cmp !== 0) return cmp;
+    }
+    return a.characterId.localeCompare(b.characterId);
+  });
   return entries;
 }
 
-// ── Selection chip ──
+// ── Artifact set icon helper ──
 
-function SelectionChip({
+function ArtifactSetIcons({ build }: { build: Build }) {
+  if (build.composition === "4pc" && build.artifactSet) {
+    const art = artifactsById[build.artifactSet];
+    if (!art) return null;
+    return (
+      <ItemIcon
+        imagePath={art.imagePaths.flower}
+        rarity={art.rarity}
+        size="xs"
+      />
+    );
+  }
+  if (build.composition === "2pc+2pc") {
+    const hs1 =
+      build.halfSet1 != null ? artifactHalfSetsById[build.halfSet1] : null;
+    const hs2 =
+      build.halfSet2 != null ? artifactHalfSetsById[build.halfSet2] : null;
+    const setId1 = hs1?.setIds.find((s) => artifactsById[s]?.rarity === 5);
+    const setId2 = hs2?.setIds.find((s) => artifactsById[s]?.rarity === 5);
+    const art1 = setId1 ? artifactsById[setId1] : null;
+    const art2 = setId2 ? artifactsById[setId2] : null;
+    if (!art1 && !art2) return null;
+    return (
+      <ItemIcon
+        imagePath={art1?.imagePaths.flower ?? ""}
+        imagePath2={art2?.imagePaths.flower ?? ""}
+        size="xs"
+      />
+    );
+  }
+  return null;
+}
+
+// ── Teams hover tooltip ──
+
+function TeamsTooltip({
+  teams,
+  characterId,
+  accountData,
+  t,
+}: {
+  teams: Team[];
+  characterId: string;
+  accountData: import("@/data/types").AccountData | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  if (teams.length === 0) return null;
+  return (
+    <div className="space-y-1.5 p-2">
+      {teams.map((team) => (
+        <AutoTuneTeamRow
+          key={team.id}
+          team={team}
+          characterId={characterId}
+          enabled={true}
+          onToggle={() => {}}
+          accountData={accountData}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ── Selection card ──
+
+function SelectionCard({
   entry,
   onToggle,
+  element,
+  accountData,
 }: {
   entry: BuildEntry;
   onToggle: () => void;
+  element: string;
+  accountData: import("@/data/types").AccountData | null;
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
+  const elHex = ELEMENT_HEX[element] || "#888";
+  const elColor = getElementColor(element as Element, "text");
+  const noTeams = entry.teams.length === 0;
 
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className={cn(
-        "flex items-center gap-1.5 px-2 py-1.5 rounded-md border text-left transition-colors",
-        entry.selected
-          ? "border-primary/50 bg-primary/10"
-          : "border-border/30 bg-muted/10 opacity-50"
-      )}
-    >
-      <Checkbox
-        checked={entry.selected}
-        onCheckedChange={onToggle}
-        className="shrink-0 pointer-events-none"
-        tabIndex={-1}
-      />
-      {char && (
-        <ItemIcon imagePath={char.imagePath} rarity={char.rarity} size="xs" />
-      )}
-      <div className="min-w-0 text-xs leading-tight">
-        <div className="font-medium truncate">
-          {t.character(entry.characterId)}
-        </div>
-        {entry.build.name && (
-          <div className="text-muted-foreground truncate">
-            {entry.build.name}
-          </div>
+    <div className="relative group">
+      <button
+        type="button"
+        onClick={noTeams ? undefined : onToggle}
+        disabled={noTeams}
+        className={cn(
+          "relative flex items-center gap-1.5 rounded-lg border text-left transition-all",
+          "w-full overflow-hidden p-1.5 pl-2",
+          noTeams
+            ? "border-transparent bg-muted/5 opacity-30 cursor-not-allowed"
+            : entry.selected
+              ? "border-border bg-gradient-card"
+              : "border-transparent bg-muted/5 opacity-40 hover:opacity-65"
         )}
-      </div>
-    </button>
+      >
+        {/* Element accent — left edge */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg"
+          style={{
+            background: entry.selected && !noTeams ? elHex : "transparent",
+          }}
+        />
+
+        {/* Checkbox on far left */}
+        <Checkbox
+          checked={noTeams ? false : entry.selected}
+          onCheckedChange={noTeams ? undefined : onToggle}
+          className={cn(
+            "shrink-0 pointer-events-none",
+            noTeams && "opacity-50"
+          )}
+          tabIndex={-1}
+          disabled={noTeams}
+        />
+
+        {/* Character icon */}
+        {char && (
+          <ItemIcon
+            imagePath={char.imagePath}
+            rarity={char.rarity}
+            size="md"
+            characterId={entry.characterId}
+          />
+        )}
+
+        {/* Right column: name top, artifact + team count bottom */}
+        <div className="min-w-0 flex flex-col gap-1 self-stretch py-0.5">
+          {/* Name */}
+          <span
+            className={cn(
+              "text-sm font-semibold truncate leading-none",
+              elColor
+            )}
+          >
+            {t.character(entry.characterId)}
+          </span>
+
+          {/* Artifact icons row */}
+          <div className="flex items-end mt-auto">
+            <ArtifactSetIcons build={entry.build} />
+          </div>
+        </div>
+      </button>
+
+      {/* Hover tooltip — teams */}
+      {entry.teams.length > 0 && (
+        <div
+          className={cn(
+            "absolute z-50 left-0 top-full mt-1",
+            "bg-popover border border-border rounded-lg shadow-xl",
+            "opacity-0 pointer-events-none scale-95 origin-top-left",
+            "group-hover:opacity-100 group-hover:pointer-events-auto group-hover:scale-100",
+            "transition-all duration-150"
+          )}
+        >
+          <TeamsTooltip
+            teams={entry.teams}
+            characterId={entry.characterId}
+            accountData={accountData}
+            t={t}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Per-team result row: team grid + expandable combo table ──
+
+function TeamResultRow({
+  team,
+  characterId,
+  breakdown,
+  accountData,
+  t,
+}: {
+  team: Team | null;
+  characterId: string;
+  breakdown: TeamBreakdown;
+  accountData: import("@/data/types").AccountData | null;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const qualifying = breakdown.combos.filter((c) => c.damageRatio >= 0.96);
+
+  return (
+    <div className="border border-border/30 rounded-lg overflow-hidden">
+      <button
+        type="button"
+        className="flex items-center gap-3 w-full px-2.5 py-2 text-left hover:bg-muted/20 transition-colors"
+        onClick={() => setExpanded(!expanded)}
+      >
+        {/* Team grid or fallback label */}
+        {team ? (
+          <div className="flex-1 min-w-0 pointer-events-none">
+            <AutoTuneTeamRow
+              team={team}
+              characterId={characterId}
+              enabled={true}
+              onToggle={() => {}}
+              accountData={accountData}
+            />
+          </div>
+        ) : (
+          <span className="text-xs text-muted-foreground truncate flex-1">
+            {breakdown.label}
+          </span>
+        )}
+
+        {/* Info: formula counts + qualifying combo count */}
+        <div className="shrink-0 text-right space-y-0.5">
+          {breakdown.formulas
+            ?.filter((f) => f.count > 0)
+            .map((f) => (
+              <div key={f.formulaId} className="text-xs">
+                <span className="font-medium text-foreground md:text-sm">
+                  {f.label ? t.resolveLabel(f.label) : f.formulaId}
+                </span>{" "}
+                <span className="text-sm font-mono font-semibold text-foreground/70">
+                  ×{f.count}
+                </span>
+              </div>
+            ))}
+          <div className="text-xs text-muted-foreground">
+            {t.format(
+              "batchAutoTune.mainStatCombos",
+              qualifying.length,
+              qualifying.length !== 1 ? "s" : ""
+            )}
+          </div>
+        </div>
+
+        {expanded ? (
+          <ChevronUp className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+        )}
+      </button>
+
+      {expanded && qualifying.length > 0 && (
+        <div className="px-2.5 pb-2">
+          <ComboTable combos={qualifying} t={t} />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -235,11 +527,15 @@ function SelectionChip({
 function ResultCard({
   entry,
   onApply,
+  onDismiss,
   element,
+  accountData,
 }: {
   entry: BuildEntry;
   onApply: () => void;
+  onDismiss: () => void;
   element: string;
+  accountData: import("@/data/types").AccountData | null;
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
@@ -326,14 +622,19 @@ function ResultCard({
               {t.ui("batchAutoTune.applied")}
             </span>
           ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 text-xs"
-              onClick={onApply}
-            >
-              {t.ui("batchAutoTune.apply")}
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs"
+                onClick={onDismiss}
+              >
+                {t.ui("batchAutoTune.dismiss")}
+              </Button>
+              <Button size="sm" className="h-7 text-xs" onClick={onApply}>
+                {t.ui("batchAutoTune.apply")}
+              </Button>
+            </div>
           )}
         </div>
 
@@ -359,11 +660,18 @@ function ResultCard({
         {/* ── Substat pills ── */}
         <SubstatPills substats={result.substats} t={t} />
 
-        {/* ── Team breakdowns ── */}
+        {/* ── Per-team breakdowns with icon grid ── */}
         {result.teamBreakdowns.length > 0 && (
-          <div className="border-t border-white/10 pt-2 space-y-1">
+          <div className="border-t border-white/10 pt-2 space-y-2">
             {result.teamBreakdowns.map((tb) => (
-              <TeamBreakdownSection key={tb.teamIndex} breakdown={tb} t={t} />
+              <TeamResultRow
+                key={tb.teamIndex}
+                team={entry.teams[tb.teamIndex] ?? null}
+                characterId={entry.characterId}
+                breakdown={tb}
+                accountData={accountData}
+                t={t}
+              />
             ))}
           </div>
         )}
@@ -379,18 +687,23 @@ export function WeightsView() {
   const { ready, characterStats } = useGameStats();
   const groups = useAllResolvedBuilds();
   const setBuild = useBuildsStore((s) => s.setBuild);
+  const allUserTeams = useTeamStore((s) => s.teams);
+  const accountData = useAccountStore((s) => getActiveAccount(s)?.data ?? null);
 
   const [entries, setEntries] = useState<BuildEntry[]>([]);
   const [phase, setPhase] = useState<Phase>("selection");
   const [progress, setProgress] = useState({ done: 0, total: 0 });
+  const [viewFilter, setViewFilter] = useState<ViewFilter>("available");
   const abortRef = useRef(false);
 
-  // Initialize entries when groups change (only in selection phase)
+  // Initialize entries when groups or filter change (only in selection phase)
   useMemo(() => {
     if (phase === "selection") {
-      setEntries(collectEntries(groups));
+      setEntries(
+        collectEntries(groups, allUserTeams, viewFilter, characterStats)
+      );
     }
-  }, [groups, phase]);
+  }, [groups, allUserTeams, phase, viewFilter, characterStats]);
 
   // ── Selection controls ──
 
@@ -444,7 +757,13 @@ export function WeightsView() {
         return next;
       });
 
-      const teamInputs = buildTeamInputsForBuild(entry.characterId, element);
+      const teamInputs = buildTeamInputsFromUserTeams(
+        entry.teams,
+        entry.characterId,
+        element,
+        accountData,
+        t
+      );
 
       if (teamInputs.length === 0) {
         toast.error(
@@ -486,7 +805,7 @@ export function WeightsView() {
     }
 
     setPhase("review");
-  }, [entries, characterStats, t]);
+  }, [entries, characterStats, accountData, t]);
 
   // ── Apply ──
 
@@ -541,8 +860,10 @@ export function WeightsView() {
   const handleReset = useCallback(() => {
     abortRef.current = true;
     setPhase("selection");
-    setEntries(collectEntries(groups));
-  }, [groups]);
+    setEntries(
+      collectEntries(groups, allUserTeams, viewFilter, characterStats)
+    );
+  }, [groups, allUserTeams, viewFilter, characterStats]);
 
   // ── Derived counts ──
   const successCount = entries.filter(
@@ -574,38 +895,76 @@ export function WeightsView() {
 
   return (
     <ScrollLayout className="pb-6 pt-2">
+      {/* ── Header ── */}
+      <div className="mb-4">
+        <h2 className="text-xl font-bold">{t.ui("batchAutoTune.title")}</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          {t.ui("batchAutoTune.subtitle")}
+        </p>
+      </div>
+
       {/* ── Control bar ── */}
-      <div className="flex items-center gap-3 mb-3 flex-wrap">
+      <div className="flex items-center gap-3 mb-4 flex-wrap">
         {phase === "selection" && (
           <>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 text-xs"
-              onClick={() => selectAll(!allSelected)}
-            >
-              {allSelected
-                ? t.ui("batchAutoTune.deselectAll")
-                : t.ui("batchAutoTune.selectAll")}
-            </Button>
-            <span className="text-xs text-muted-foreground">
-              {selectedCount}/{entries.length}
-            </span>
-            <Button
-              size="sm"
-              className="h-7 text-xs"
-              disabled={selectedCount === 0}
-              onClick={handleRun}
-            >
-              {t.ui("batchAutoTune.run")}
-            </Button>
+            {/* View filter toggle */}
+            <div className="flex rounded-lg border border-border overflow-hidden text-sm">
+              <button
+                type="button"
+                className={cn(
+                  "px-3.5 py-1.5 font-medium transition-colors",
+                  viewFilter === "available"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/20 text-muted-foreground hover:bg-muted/40"
+                )}
+                onClick={() => setViewFilter("available")}
+              >
+                {t.ui("batchAutoTune.available")}
+              </button>
+              <button
+                type="button"
+                className={cn(
+                  "px-3.5 py-1.5 font-medium transition-colors border-l border-border",
+                  viewFilter === "all"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/20 text-muted-foreground hover:bg-muted/40"
+                )}
+                onClick={() => setViewFilter("all")}
+              >
+                {t.ui("batchAutoTune.allBuilds")}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 ml-auto">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-8 text-sm"
+                onClick={() => selectAll(!allSelected)}
+              >
+                {allSelected
+                  ? t.ui("batchAutoTune.deselectAll")
+                  : t.ui("batchAutoTune.selectAll")}
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                {selectedCount}/{entries.length}
+              </span>
+              <Button
+                size="default"
+                className="text-sm"
+                disabled={selectedCount === 0}
+                onClick={handleRun}
+              >
+                {t.ui("batchAutoTune.run")}
+              </Button>
+            </div>
           </>
         )}
 
         {phase === "computing" && (
           <div className="flex items-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <span className="text-base text-muted-foreground">
               {t.format("batchAutoTune.running", progress.done, progress.total)}
             </span>
           </div>
@@ -613,7 +972,7 @@ export function WeightsView() {
 
         {phase === "review" && (
           <>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-base text-muted-foreground">
               {t.format(
                 "batchAutoTune.done",
                 successCount,
@@ -621,14 +980,14 @@ export function WeightsView() {
               )}
             </span>
             {unappliedCount > 0 && (
-              <Button size="sm" className="h-7 text-xs" onClick={applyAll}>
+              <Button size="default" onClick={applyAll}>
                 {t.ui("batchAutoTune.applyAll")} ({unappliedCount})
               </Button>
             )}
             <Button
               size="sm"
               variant="ghost"
-              className="h-7 text-xs"
+              className="h-8 text-sm"
               onClick={handleReset}
             >
               Reset
@@ -639,12 +998,19 @@ export function WeightsView() {
 
       {/* ── Selection grid ── */}
       {phase === "selection" && (
-        <div className="flex flex-wrap gap-1.5">
+        <div
+          className="grid gap-1.5"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+          }}
+        >
           {entries.map((entry, idx) => (
-            <SelectionChip
+            <SelectionCard
               key={entry.buildId}
               entry={entry}
               onToggle={() => toggleEntry(idx)}
+              element={characterStats?.[entry.characterId]?.element ?? ""}
+              accountData={accountData}
             />
           ))}
         </div>
@@ -668,7 +1034,9 @@ export function WeightsView() {
                   key={entry.buildId}
                   entry={entry}
                   onApply={() => applyEntry(idx)}
+                  onDismiss={() => toggleEntry(idx)}
                   element={characterStats?.[entry.characterId]?.element ?? ""}
+                  accountData={accountData}
                 />
               );
             })}

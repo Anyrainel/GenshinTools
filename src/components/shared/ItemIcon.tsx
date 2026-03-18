@@ -16,6 +16,8 @@ function getVariantElement(characterId?: string): string | null {
 
 interface ItemIconProps extends React.ComponentPropsWithoutRef<"div"> {
   imagePath: string;
+  /** When provided, renders a split double-icon layout (e.g. 2pc+2pc artifact sets) */
+  imagePath2?: string;
   rarity?: Rarity;
   badge?: string | number; // Top Left - Constellation/Refinement/AstralMark (e.g. "1", "⭐")
   lock?: boolean; // Top Right - Show red lock icon when true
@@ -115,6 +117,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
   (
     {
       imagePath,
+      imagePath2,
       rarity = 1,
       badge,
       lock,
@@ -130,6 +133,51 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
     },
     ref
   ) => {
+    // Double-icon mode: split layout for 2pc+2pc artifact sets
+    if (imagePath2 !== undefined) {
+      const config = ICON_CONFIG[size] || ICON_CONFIG.lg;
+      const iconSize = config.icon;
+      const borderRadius = config.radius;
+      return (
+        <div
+          ref={ref}
+          className={cn(
+            "overflow-hidden relative flex-shrink-0 border-2 border-[#b27330] bg-[#3a2d13]",
+            frozen && "ring-2 ring-cyan-400/60",
+            className
+          )}
+          style={{
+            ...style,
+            width: iconSize,
+            height: iconSize,
+            borderRadius,
+          }}
+          {...props}
+        >
+          <div className="absolute inset-0 bg-[#b27330]" />
+          <div className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] z-10">
+            <img
+              src={getAssetUrl(imagePath)}
+              className="w-full h-full object-cover"
+              alt={imagePath}
+              draggable={false}
+            />
+          </div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[80%] z-20">
+            <img
+              src={getAssetUrl(imagePath2)}
+              className="w-full h-full object-cover"
+              alt={imagePath2}
+              draggable={false}
+            />
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-5">
+            <div className="w-[1px] h-[200%] bg-black/20 rotate-45" />
+          </div>
+        </div>
+      );
+    }
+
     const config = ICON_CONFIG[size];
     // Fallback to lg if size is invalid (though type check prevents this)
     const effectiveConfig = config || ICON_CONFIG.lg;

@@ -103,6 +103,11 @@ class LanYan extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (Anemo VV support)
+  protected override get defaultRotation() {
+    return { "lanyan-skill": 1, "lanyan-burst": 1 };
+  }
 }
 
 @RegisterCharacter("gaming")
@@ -169,6 +174,11 @@ class Gaming extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q > 5×E plunge (Pyro plunge carry, ~12s Q window)
+  protected override get defaultRotation() {
+    return { "gaming-cloudstrider": 5, "gaming-burst-manchai": 1 };
+  }
 }
 
 @RegisterCharacter("yaoyao")
@@ -247,6 +257,11 @@ class Yaoyao extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E + Q (Dendro healer/support, minimal field time)
+  protected override get defaultRotation() {
+    return { "yaoyao-skill": 1, "yaoyao-burst": 1 };
+  }
 }
 
 @RegisterCharacter("xiangling")
@@ -310,6 +325,11 @@ class Xiangling extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (off-field Pyronado sub-DPS, swings + ticks baked in)
+  protected override get defaultRotation() {
+    return { "xiangling-pyronado": 1 };
+  }
 }
 
 @RegisterCharacter("chongyun")
@@ -404,6 +424,11 @@ class Chongyun extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (Cryo sub-DPS nuke, blades baked into Q)
+  protected override get defaultRotation() {
+    return { "chongyun-skill": 1, "chongyun-p2": 1, "chongyun-burst": 1 };
+  }
 }
 
 @RegisterCharacter("xinyan")
@@ -511,6 +536,11 @@ class Xinyan extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q > 5×CA (physical carry with shield)
+  protected override get defaultRotation() {
+    return { "xinyan-skill": 1, "xinyan-burst": 1, "xinyan-charge": 5 };
+  }
 }
 
 @RegisterCharacter("xingqiu")
@@ -585,6 +615,11 @@ class Xingqiu extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: EQ > ~15 rain sword procs (off-field Hydro sub-DPS, 1 proc/sec over 15s Q)
+  protected override get defaultRotation() {
+    return { "xingqiu-skill": 1, "xingqiu-burst-tick": 15 };
+  }
 }
 
 const yanfeiOption = {
@@ -690,6 +725,11 @@ class Yanfei extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q > 6×N3C (Pyro on-field carry, vape)
+  protected override get defaultRotation() {
+    return { "yanfei-skill": 2, "yanfei-burst": 1, "yanfei-charge": 6 };
+  }
 }
 
 @RegisterCharacter("beidou")
@@ -753,6 +793,11 @@ class Beidou extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E counter > Q (~10 lightning discharges over 15s, 1/sec)
+  protected override get defaultRotation() {
+    return { "beidou-skill-counter": 1, "beidou-burst-lightning": 10 };
+  }
 }
 
 @RegisterCharacter("ningguang")
@@ -799,6 +844,11 @@ class Ningguang extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (Geo burst DPS, gems baked into Q ×12)
+  protected override get defaultRotation() {
+    return { "ningguang-skill": 2, "ningguang-burst": 1 };
+  }
 }
 
 @RegisterCharacter("yun_jin")
@@ -929,4 +979,9 @@ class YunJin extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E hold (max charge) > Q (Geo support, buffs normal attackers)
+  protected override get defaultRotation() {
+    return { "yun_jin-skill-charge2": 1, "yun_jin-burst": 1 };
+  }
 }

@@ -1,7 +1,6 @@
 import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { DoubleItemIcon } from "@/components/shared/DoubleItemIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
 import { Card, CardContent } from "@/components/ui/card";
@@ -114,8 +113,8 @@ function RecommendationCardComponent({
                     return (
                       <Tooltip>
                         <TooltipTrigger className={isCompact ? "" : "-mt-1"}>
-                          <DoubleItemIcon
-                            imagePath1={
+                          <ItemIcon
+                            imagePath={
                               artifactsById[twoPcSets[0][0]]?.imagePaths
                                 .flower || ""
                             }

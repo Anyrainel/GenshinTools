@@ -37,6 +37,7 @@ import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
   CharCompConfig,
+  I18nLabel,
   ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
@@ -355,11 +356,18 @@ function runComboEnumerationPipeline(
 
       // Sort breakdowns by damage descending, keep top combos
       comboBreakdowns.sort((a, b) => b.damage - a.damage);
+      const charFormulaLabels =
+        ctx.teamBuild.getFormulaIds()[characterId] ?? {};
       teamBreakdowns.push({
         teamIndex: teamIdx,
         label: ctx.label,
         combos: comboBreakdowns, // all combos for debugging/display
         bestDamage: bestFinalDmg,
+        formulas: ctx.formulas.map((f) => ({
+          formulaId: f.formulaId,
+          count: f.count,
+          label: charFormulaLabels[f.formulaId],
+        })),
       });
     } catch {}
   }
@@ -471,14 +479,15 @@ export function generateBuildWeights(
     try {
       const configs = teamEntryToConfigs(team) as CharCompConfig[];
       const teamBuild = new TeamBuild(configs, team.opts ?? {});
-      const formulaIds = findAllFormulaIds(teamBuild, characterId);
-      if (formulaIds.length === 0) continue;
 
       const reaction = team.reactions[0];
       const reactionOverride: ReactionOverride | undefined =
         reaction && reaction !== "none"
           ? { reaction: reaction as ReactionOverride["reaction"] }
           : undefined;
+
+      const formulaIds = findAllFormulaIds(teamBuild, characterId);
+      if (formulaIds.length === 0) continue;
 
       const label = team.name || `Team ${team.id.slice(-4)}`;
       teamContexts.push({
@@ -553,6 +562,8 @@ export type TeamBreakdown = {
   label: string;
   combos: ComboBreakdown[];
   bestDamage: number;
+  /** Formula IDs, counts, and labels used for this team context (for display). */
+  formulas?: { formulaId: string; count: number; label?: I18nLabel }[];
 };
 
 export type AutoTuneOutput = {
@@ -717,6 +728,7 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
 
   comboBreakdowns.sort((a, b) => b.damage - a.damage);
 
+  const charFormulaLabels = teamBuild.getFormulaIds()[characterId] ?? {};
   return {
     qualifying,
     teamBreakdown: {
@@ -724,6 +736,11 @@ export function autoTuneTeam(input: AutoTuneTeamInput): AutoTuneTeamResult {
       label,
       combos: comboBreakdowns,
       bestDamage: bestFinalDmg,
+      formulas: formulas.map((f) => ({
+        formulaId: f.formulaId,
+        count: f.count,
+        label: charFormulaLabels[f.formulaId],
+      })),
     },
   };
 }

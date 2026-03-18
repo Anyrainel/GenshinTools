@@ -256,6 +256,13 @@ class Durin extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (off-field burst DPS, 3 initial hits + 10 dragon ticks baked in)
+  protected override get defaultRotation(): Record<string, number> {
+    return this.form === "white"
+      ? { "durin-burst-white": 1 }
+      : { "durin-burst-dark": 1 };
+  }
 }
 
 @RegisterCharacter("albedo")
@@ -425,6 +432,11 @@ class Albedo extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E (place isotoma) + ~5 blossom procs + Q (off-field sub-DPS)
+  protected override get defaultRotation() {
+    return { "albedo-blossom": 5, "albedo-burst": 1 };
+  }
 }
 
 const dilucOption = {
@@ -568,6 +580,17 @@ class Diluc extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: Q > N1E > N1E > N1E (vape carry)
+  protected override get defaultRotation() {
+    return {
+      "diluc-skill": 1,
+      "diluc-burst": 1,
+      ...("diluc-plunge-xianyun" in this.formulaMap
+        ? { "diluc-plunge-xianyun": 3 }
+        : {}),
+    };
+  }
 }
 
 @RegisterCharacter("mona")
@@ -687,6 +710,11 @@ class Mona extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q (omen support, bubble explosion)
+  protected override get defaultRotation() {
+    return { "mona-burst": 1 };
+  }
 }
 
 @RegisterCharacter("jean")
@@ -754,6 +782,11 @@ class Jean extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E×2 + Q (Anemo support, 6s E CD)
+  protected override get defaultRotation() {
+    return { "jean-skill": 1, "jean-burst": 1 };
+  }
 }
 
 @RegisterCharacter("venti")
@@ -935,6 +968,15 @@ class Venti extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: Q (burst ticks baked in) + 1 Windsunder NA string + C2 E
+  protected override get defaultRotation() {
+    return {
+      "venti-windsunder": 1,
+      "venti-burst-total": 1,
+      ...("venti-c2-skill" in this.formulaMap ? { "venti-c2-skill": 1 } : {}),
+    };
+  }
 }
 
 @RegisterCharacter("klee")
@@ -1006,6 +1048,11 @@ class Klee extends CharacterBase {
       ],
     },
   };
+
+  // Rotation: ~6 Charged Attacks per rotation (N1C or N2C combos during Q window)
+  protected override get defaultRotation() {
+    return { "klee-charged": 6 };
+  }
 }
 
 const eulaOption = {
@@ -1056,6 +1103,15 @@ class Eula extends CharacterBase {
         ]
       : []),
   ];
+
+  // Rotation: E tap + E hold + Q lightfall (physical carry)
+  protected override get defaultRotation() {
+    return {
+      "eula-skill-tap": 1,
+      "eula-skill-hold": 1,
+      "eula-burst-lightfall": 1,
+    };
+  }
 
   // E Tap: Lv10 264%, Lv13 (C5+) 311%
   // E Hold: Lv10 442%, Lv13 (C5+) 522%; Icewhirl Brand: 173%/204% × 2
@@ -1284,6 +1340,20 @@ class Varka extends CharacterBase {
 
     return buffs;
   })();
+
+  // Rotation: E > 2×N5 > 2×Four Winds > 2×Azure Devour > Q (Anemo carry)
+  protected override get defaultRotation() {
+    return {
+      "varka-normal": 2,
+      ...("varka-four-winds" in this.formulaMap
+        ? { "varka-four-winds": 2 }
+        : {}),
+      ...("varka-azure-devour" in this.formulaMap
+        ? { "varka-azure-devour": 2 }
+        : {}),
+      "varka-burst": 0,
+    };
+  }
 
   protected readonly formulaMap = (() => {
     // Right hand uses the team's priority element.

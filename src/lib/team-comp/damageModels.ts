@@ -680,6 +680,18 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Subclasses declare all formulas here — labels + formula instances in one place. */
   protected abstract readonly formulaMap: Record<string, FormulaEntry>;
 
+  /** How many times each formula fires in one standard rotation (~20-25s).
+   *  Keys = formulaMap keys. Omitted keys = 0 (not used).
+   *  Default: empty (no rotation defined). */
+  protected get defaultRotation(): Record<string, number> {
+    return {};
+  }
+
+  /** Public accessor for default rotation counts. */
+  get rotation(): Record<string, number> {
+    return this.defaultRotation;
+  }
+
   /** Derived from formulaMap — public API for consumers. */
   get formulaIds(): Record<string, I18nLabel> {
     const result: Record<string, I18nLabel> = {};

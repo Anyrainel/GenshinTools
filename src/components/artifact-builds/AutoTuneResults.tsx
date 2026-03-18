@@ -16,7 +16,13 @@ import { useState } from "react";
 
 // ── Exported sub-components for reuse (e.g., batch AutoTune view) ──
 
-export { SubstatPills, MainStatColumn, TeamBreakdownSection };
+export {
+  SubstatPills,
+  MainStatColumn,
+  TeamBreakdownSection,
+  ComboTable,
+  formatRolls,
+};
 
 // Color mapping for stat categories
 const STAT_COLORS: Record<
@@ -199,7 +205,7 @@ function MainStatColumn({
                 style.border
               )}
             >
-              <span className="text-xs font-medium">{t.stat(stat)}</span>
+              <span className="text-xs font-medium">{t.statShort(stat)}</span>
               <span className="text-xs font-mono font-bold">{weight}</span>
             </span>
           );
@@ -229,7 +235,7 @@ function SubstatPills({
               style.border
             )}
           >
-            <span className="text-xs font-medium">{t.stat(stat)}</span>
+            <span className="text-xs font-medium">{t.statShort(stat)}</span>
             <span className="text-xs font-mono font-bold">
               {Math.round(weight)}
             </span>
@@ -248,8 +254,42 @@ function formatRolls(
   return Object.entries(allocation)
     .filter(([, v]) => v > 0)
     .sort(([, a], [, b]) => b - a)
-    .map(([stat, rolls]) => `${t.stat(stat as SubStat)} ${Math.round(rolls)}`)
+    .map(
+      ([stat, rolls]) => `${t.statShort(stat as SubStat)} ${Math.round(rolls)}`
+    )
     .join(" · ");
+}
+
+/** Reusable combo table: header + qualifying combo rows */
+function ComboTable({
+  combos,
+  t,
+}: {
+  combos: ComboBreakdown[];
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  return (
+    <table className="w-full text-xs">
+      <thead>
+        <tr className="text-muted-foreground border-b border-border/20">
+          <th className="text-left py-1 font-medium">
+            {t.slot("sands")} / {t.slot("goblet")} / {t.slot("circlet")}
+          </th>
+          <th className="text-right py-1 font-medium w-16">
+            {t.ui("buildCard.autoTuneDamageRatio")}
+          </th>
+          <th className="text-left py-1 pl-3 font-medium">
+            {t.ui("buildCard.autoTuneIdealRolls")}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {combos.map((combo, i) => (
+          <ComboRow key={i} combo={combo} t={t} />
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 function TeamBreakdownSection({
@@ -284,26 +324,7 @@ function TeamBreakdownSection({
       </button>
       {expanded && (
         <div className="px-2 pb-2">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-muted-foreground border-b border-border/20">
-                <th className="text-left py-1 font-medium">
-                  {t.slot("sands")} / {t.slot("goblet")} / {t.slot("circlet")}
-                </th>
-                <th className="text-right py-1 font-medium w-16">
-                  {t.ui("buildCard.autoTuneDamageRatio")}
-                </th>
-                <th className="text-left py-1 pl-3 font-medium">
-                  {t.ui("buildCard.autoTuneIdealRolls")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {qualifying.map((combo, i) => (
-                <ComboRow key={i} combo={combo} t={t} />
-              ))}
-            </tbody>
-          </table>
+          <ComboTable combos={qualifying} t={t} />
         </div>
       )}
     </div>
@@ -319,13 +340,14 @@ function ComboRow({
 }) {
   return (
     <tr className="border-b border-border/10 last:border-0">
-      <td className="py-1">
-        {t.stat(combo.mainStats.sands)} / {t.stat(combo.mainStats.goblet)} /{" "}
-        {t.stat(combo.mainStats.circlet)}
+      <td className="py-1 whitespace-nowrap">
+        {t.statShort(combo.mainStats.sands)} /{" "}
+        {t.statShort(combo.mainStats.goblet)} /{" "}
+        {t.statShort(combo.mainStats.circlet)}
       </td>
       <td
         className={cn(
-          "py-1 text-right font-mono",
+          "py-1 text-right font-mono whitespace-nowrap",
           combo.damageRatio >= 0.99
             ? "text-green-600"
             : combo.damageRatio >= 0.98

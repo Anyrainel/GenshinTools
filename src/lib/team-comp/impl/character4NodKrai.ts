@@ -96,6 +96,11 @@ class Illuga extends CharacterBase {
     return buffs;
   })();
 
+  // Rotation: E > Q > swap (support buffer, C2 Aedon fires per 7 stacks; 21 base stacks ≈ 3 triggers)
+  protected override get defaultRotation() {
+    return { "illuga-c2-aedon": 3 };
+  }
+
   // C2: Aedon summon per 7 Nightingale's Song stacks consumed
   // 400% EM + 200% DEF, Geo Burst DMG
   protected readonly formulaMap = {
@@ -192,6 +197,11 @@ class Aino extends CharacterBase {
       ];
     })(),
   ];
+
+  // Rotation: E > Q > swap (off-field sub-DPS, Q 14 hits baked in)
+  protected override get defaultRotation() {
+    return { "aino-skill": 1, "aino-burst-total": 1, "aino-c2-ball": 1 };
+  }
 
   // E: Musecatcher — Stage 1 + Stage 2 (separate hits, different multipliers)
   // Stage 1: Lv10 118.1%, Lv13 (C5+) 139.4%

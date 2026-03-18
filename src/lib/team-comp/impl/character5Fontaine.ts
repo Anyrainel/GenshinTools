@@ -113,6 +113,15 @@ class Escoffier extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E + Q (Cryo healer/support, off-field); formulas already bake in hit counts
+  protected override get defaultRotation() {
+    return {
+      "escoffier-skill-parfait": 1,
+      "escoffier-burst": 1,
+      "escoffier-c6-parfait": 1,
+    };
+  }
 }
 
 @RegisterCharacter("emilie")
@@ -269,6 +278,15 @@ class Emilie extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E + Q (off-field Dendro sub-DPS in Burning teams); formulas bake in hit counts
+  protected override get defaultRotation() {
+    return {
+      "emilie-skill-burning": 1,
+      "emilie-burst-9hit": 1,
+      "emilie-c6-normal": 1,
+    };
+  }
 }
 
 @RegisterCharacter("sigewinne")
@@ -369,6 +387,11 @@ class Sigewinne extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E + Q (Hydro healer/support); Q used to fill downtime
+  protected override get defaultRotation() {
+    return { "sigewinne-burst": 1, "sigewinne-burst-c4": 1 };
+  }
 }
 
 @RegisterCharacter("clorinde")
@@ -458,6 +481,11 @@ class Clorinde extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q > E 6[N3E] — 6 N3E cycles per E window + Q (Electro carry, KQM)
+  protected override get defaultRotation() {
+    return { "clorinde-normal": 6, "clorinde-burst": 1 };
+  }
 }
 
 @RegisterCharacter("navia")
@@ -552,6 +580,11 @@ class Navia extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q > teammates > 2[E combo] — 2 E charges per ~16.5s rotation (Geo carry, KQM)
+  protected override get defaultRotation() {
+    return { "navia-crystalshot": 2 };
+  }
 }
 
 @RegisterCharacter("furina")
@@ -712,6 +745,11 @@ class Furina extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E + Q then swap off (off-field support); salon formula bakes in 32 hits
+  protected override get defaultRotation() {
+    return { "furina-salon-total": 1, "furina-c6-normal": 1 };
+  }
 }
 
 @RegisterCharacter("neuvillette")
@@ -817,6 +855,11 @@ class Neuvillette extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E C E C Q > teammates > 2[C] — 3 CAs per rotation (Hydro carry, KQM)
+  protected override get defaultRotation() {
+    return { "neuvillette-judgment": 3, "neuvillette-c6-currents": 3 };
+  }
 }
 
 @RegisterCharacter("wriothesley")
@@ -960,6 +1003,15 @@ class Wriothesley extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E 5[N3C] Q (every other rot) — ~3 normal combos + 5 CAs + Q (Cryo carry, KQM)
+  protected override get defaultRotation() {
+    return {
+      "wriothesley-normal": 3,
+      "wriothesley-charge": 5,
+      "wriothesley-burst": 1,
+    };
+  }
 }
 
 @RegisterCharacter("lyney")
@@ -1070,4 +1122,14 @@ class Lyney extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: 3[CA] Q E — 3 Prop Arrows + 3 Strikes + E max stacks + Q (Pyro carry, KQM)
+  protected override get defaultRotation() {
+    return {
+      "lyney-prop": 3,
+      "lyney-strike": 3,
+      "lyney-skill-max": 1,
+      "lyney-c6-strike": 3,
+    };
+  }
 }

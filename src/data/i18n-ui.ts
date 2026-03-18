@@ -1046,6 +1046,7 @@ export const i18nUiData = {
       en: "Artifact Filters",
       zh: "圣遗物过滤器",
     },
+    autoTune: { en: "AutoTune", zh: "自动调参" },
   },
   characterCard: {
     addFirstBuild: { en: "Add First Build", zh: "添加第一个配装" },
@@ -1341,18 +1342,30 @@ export const i18nUiData = {
     },
   },
   batchAutoTune: {
+    title: { en: "Batch AutoTune", zh: "批量自动调参" },
+    subtitle: {
+      en: "Compute optimal substat and main stat weights for DPS builds using damage simulations across team compositions.",
+      zh: "通过队伍配置的伤害模拟，为 DPS 配装计算最优副词条和主词条权重。",
+    },
+    available: { en: "DPS Builds (with teams)", zh: "输出配装（有团队）" },
+    allBuilds: { en: "All DPS Builds", zh: "全部输出配装" },
     selectAll: { en: "Select All", zh: "全选" },
     deselectAll: { en: "Deselect All", zh: "取消全选" },
-    run: { en: "Batch AutoTune", zh: "批量 AutoTune" },
+    run: { en: "Run AutoTune", zh: "开始调参" },
     running: { en: "Computing {0}/{1}...", zh: "计算中 {0}/{1}..." },
     apply: { en: "Apply", zh: "应用" },
     applyAll: { en: "Apply All", zh: "全部应用" },
     applied: { en: "Applied", zh: "已应用" },
+    dismiss: { en: "Skip", zh: "跳过" },
     noTeams: { en: "No teams available", zh: "没有可用的队伍" },
     done: { en: "Done ({0}/{1} succeeded)", zh: "完成（{0}/{1} 成功）" },
     noBuild: {
       en: "No builds to tune. Import or create builds first.",
       zh: "没有可调整的配装。请先导入或创建配装。",
+    },
+    mainStatCombos: {
+      en: "{0} main stat combo{1}",
+      zh: "{0} 种主属性组合",
     },
   },
   whatsNew: {

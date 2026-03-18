@@ -296,6 +296,11 @@ class Zibai extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
+  protected override get defaultRotation() {
+    return { "zibai-e-combo": 3, "zibai-steed": 3, "zibai-burst": 1 };
+  }
 }
 
 const xianyunOption = {
@@ -396,6 +401,11 @@ class Xianyun extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: Q > E (3 Skyladders) > Driftcloud Wave (plunge support)
+  protected override get defaultRotation() {
+    return { "xianyun-driftcloud": 1 };
+  }
 }
 
 @RegisterCharacter("baizhu")
@@ -503,6 +513,11 @@ class Baizhu extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: E > Q (Dendro healer/support, spiritveins baked into Q ×6)
+  protected override get defaultRotation() {
+    return { "baizhu-burst": 1 };
+  }
 }
 
 @RegisterCharacter("yelan")
@@ -620,6 +635,11 @@ class Yelan extends CharacterBase {
 
     return formulas;
   })();
+
+  // Rotation: E > Q > ~15 throw procs (off-field Hydro sub-DPS, 1 proc/sec over 15s)
+  protected override get defaultRotation() {
+    return { "yelan-skill": 1, "yelan-burst-throw": 15 };
+  }
 }
 
 @RegisterCharacter("xiao")
@@ -665,6 +685,11 @@ class Xiao extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: EE > Q > 11×high plunge (Anemo carry, ~15s Q window)
+  protected override get defaultRotation() {
+    return { "xiao-plunge-high": 11 };
+  }
 }
 
 const zhongliOption = {
@@ -772,6 +797,11 @@ class Zhongli extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: hE > Q > ~10 resonance ticks (shield support, 20s rotation)
+  protected override get defaultRotation() {
+    return { "zhongli-hold": 1, "zhongli-resonance": 10, "zhongli-burst": 1 };
+  }
 }
 
 // 5-Star Character Implementations
@@ -892,6 +922,11 @@ class HuTao extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > 9×N1C > Q (Pyro vape carry, 9s E window)
+  protected override get defaultRotation() {
+    return { "hutao-charged": 9, "hutao-blood-blossom": 2, "hutao-burst": 1 };
+  }
 }
 
 const shenheOption = {
@@ -986,6 +1021,11 @@ class Shenhe extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E press > Q (Cryo buffer/support, minimal personal damage)
+  protected override get defaultRotation() {
+    return { "shenhe-skill": 1 };
+  }
 }
 
 @RegisterCharacter("ganyu")
@@ -1059,6 +1099,11 @@ class Ganyu extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: 6×CA + Q (~10 shards over 15s, Cryo carry melt/freeze)
+  protected override get defaultRotation() {
+    return { "ganyu-frostflake": 6, "ganyu-q-shard": 10 };
+  }
 }
 
 @RegisterCharacter("keqing")
@@ -1156,6 +1201,11 @@ class Keqing extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q > 5×N1C (Electro aggravate carry)
+  protected override get defaultRotation() {
+    return { "keqing-charged": 5, "keqing-burst": 1 };
+  }
 }
 
 @RegisterCharacter("qiqi")
@@ -1198,4 +1248,9 @@ class Qiqi extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E (healer, hits baked into E ×8)
+  protected override get defaultRotation() {
+    return { "qiqi-skill-hit": 1 };
+  }
 }

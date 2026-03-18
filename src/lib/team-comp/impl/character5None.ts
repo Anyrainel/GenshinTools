@@ -198,7 +198,7 @@ class Skirk extends CharacterBase {
     };
     return {
       "skirk-e-normal": {
-        label: { zh: "E+Q 普攻5段", en: "E+Q NA Combo (5-hit)" },
+        label: { zh: "EQ后 普攻x5", en: "E+Q NA Combo (x5)" },
         parts: [
           { formula: new DirectFormula(n1, cryoNormal) },
           { formula: new DirectFormula(n2, cryoNormal) },
@@ -207,8 +207,15 @@ class Skirk extends CharacterBase {
           { formula: new DirectFormula(n5, cryoNormal) },
         ],
       },
+      "skirk-e-normal-2": {
+        label: { zh: "EQ后 普攻x2", en: "E+Q NAx2" },
+        parts: [
+          { formula: new DirectFormula(n1, cryoNormal) },
+          { formula: new DirectFormula(n2, cryoNormal) },
+        ],
+      },
       "skirk-e-charge": {
-        label: { zh: "E+Q 重击", en: "E+Q CA" },
+        label: { zh: "EQ后 重击", en: "E+Q CA" },
         parts: [
           {
             formula: new DirectFormula(caHit, {
@@ -280,6 +287,20 @@ class Skirk extends CharacterBase {
         : {}),
     };
   })();
+
+  // Rotation: tE > sQ (Extinction) > 4×N5D > 1 CA (rift absorb) > Q (Ruin) (freeze carry)
+  protected override get defaultRotation() {
+    return {
+      "skirk-e-normal": 4,
+      "skirk-e-normal-2": 4,
+      "skirk-e-charge": 3,
+      "skirk-burst": 1,
+      ...(this.constellation >= 1 ? { "skirk-c1-blade": 1 } : {}),
+      ...(this.constellation >= 6
+        ? { "skirk-c6-burst-coord": 1, "skirk-c6-normal-coord": 4 }
+        : {}),
+    };
+  }
 }
 
 @RegisterCharacter("aloy")
@@ -314,6 +335,11 @@ class Aloy extends CharacterBase {
       ],
     },
   };
+
+  // Rotation: E > Q (sub-DPS, minimal field time)
+  protected override get defaultRotation() {
+    return { "aloy-burst": 1 };
+  }
 }
 
 // P3 cross-resonance: Traveler gains buffs for every element resonated with.
@@ -411,6 +437,11 @@ class TravelerAnemo extends CharacterBase {
     }
     return formulas;
   })();
+
+  // Rotation: E (hold) > Q (Anemo support, quickswap)
+  protected override get defaultRotation() {
+    return { "traveler-anemo-burst": 1 };
+  }
 }
 
 // Traveler (Geo)
@@ -467,6 +498,11 @@ class TravelerGeo extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: 3×E > Q (Geo sub-DPS, 6s CD with P1)
+  protected override get defaultRotation() {
+    return { "traveler-geo-skill": 3, "traveler-geo-burst": 1 };
+  }
 }
 
 // Traveler (Electro)
@@ -542,6 +578,11 @@ class TravelerElectro extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: E > Q (Electro battery/support, 13.5s CD)
+  protected override get defaultRotation() {
+    return { "traveler-electro-skill": 1, "traveler-electro-burst": 1 };
+  }
 }
 
 // Traveler (Dendro)
@@ -643,6 +684,11 @@ class TravelerDendro extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: 2×E > Q (Dendro support, 8s CD)
+  protected override get defaultRotation() {
+    return { "traveler-dendro-skill": 2, "traveler-dendro-burst": 1 };
+  }
 }
 
 // Traveler (Hydro)
@@ -691,6 +737,11 @@ class TravelerHydro extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: 2×E > Q (Hydro sub-DPS, 10s CD)
+  protected override get defaultRotation() {
+    return { "traveler-hydro-skill": 2, "traveler-hydro-burst": 1 };
+  }
 }
 
 // Traveler (Pyro)
@@ -784,6 +835,11 @@ class TravelerPyro extends CharacterBase {
       },
     };
   })();
+
+  // Rotation: hE > Q > swap (off-field Pyro support)
+  protected override get defaultRotation() {
+    return { "traveler-pyro-skill": 1, "traveler-pyro-burst": 1 };
+  }
 }
 
 function manekinFormulas(element: Element) {
@@ -815,86 +871,135 @@ function manekinFormulas(element: Element) {
   };
 }
 
+// Manekin/Manekina rotation: 2×E (2 charges) > Q > swap (off-field support)
+const manekinDefaultRotation = {
+  "manekin-skill": 2,
+  "manekin-burst": 1,
+  "manekin-p1-explosion": 1,
+};
+
 @RegisterCharacter("manekin_anemo")
 class ManekinAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Anemo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_cryo")
 class ManekinCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Cryo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_dendro")
 class ManekinDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Dendro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_electro")
 class ManekinElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Electro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_geo")
 class ManekinGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Geo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_hydro")
 class ManekinHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Hydro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekin_pyro")
 class ManekinPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Pyro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_anemo")
 class ManekinaAnemo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Anemo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_cryo")
 class ManekinaCryo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Cryo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_dendro")
 class ManekinaDendro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Dendro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_electro")
 class ManekinaElectro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Electro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_geo")
 class ManekinaGeo extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Geo");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_hydro")
 class ManekinaHydro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Hydro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }
 
 @RegisterCharacter("manekina_pyro")
 class ManekinaPyro extends CharacterBase {
   readonly buffs: StatBuff[] = [];
   protected readonly formulaMap = manekinFormulas("Pyro");
+  protected override get defaultRotation() {
+    return manekinDefaultRotation;
+  }
 }

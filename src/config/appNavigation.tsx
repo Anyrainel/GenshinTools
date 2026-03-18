@@ -90,16 +90,12 @@ export const getNavigationConfig = (
         icon: Filter,
         tourStepId: "af-compute-tab",
       },
-      ...(import.meta.env.DEV
-        ? [
-            {
-              label: "V2 Weights",
-              href: "/artifact-filter?tab=weights",
-              value: "weights",
-              icon: FlaskConical,
-            },
-          ]
-        : []),
+      {
+        label: t.ui("navigation.autoTune"),
+        href: "/artifact-filter?tab=weights",
+        value: "weights",
+        icon: FlaskConical,
+      },
     ],
   },
   {
