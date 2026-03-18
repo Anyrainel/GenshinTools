@@ -23,8 +23,8 @@ export interface OptimizerOptions {
   teamBuild: TeamBuild;
   targetCharId: string;
   formulaId: string;
-  targetEr: number; // e.g. 1.2 for 120%
-  targetCr: number; // e.g. 0.05 for 5% (for Favonius weapons)
+  minEr: number; // e.g. 1.2 for 120%
+  minCr: number; // e.g. 0.05 for 5% (for Favonius weapons)
   inventory: ArtifactData[];
   buildMatch?: BuildMatchResult | null;
   globalConfig: GlobalStatWeights;
@@ -55,8 +55,8 @@ export interface OptimizerOptions {
 export type OptFailReason =
   | { kind: "empty-pool"; emptySlots: Slot[] }
   | { kind: "no-seeds"; setId?: string | null; halfSetIds?: string[] }
-  | { kind: "er-unmet"; targetEr: number; bestEr: number }
-  | { kind: "cr-unmet"; targetCr: number; bestCr: number }
+  | { kind: "er-unmet"; minEr: number; bestEr: number }
+  | { kind: "cr-unmet"; minCr: number; bestCr: number }
   | {
       kind: "set-impossible";
       setId?: string | null;
@@ -350,8 +350,8 @@ function evaluateBuild(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number,
-  targetCr: number,
+  minEr: number,
+  minCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
@@ -363,14 +363,14 @@ function evaluateBuild(
     calcContext
   );
 
-  if (targetEr > 0) {
+  if (minEr > 0) {
     const er = postStats[erCheckCharId]?.get("er") ?? 0;
-    if (er < targetEr) return { damage: -1, result: null };
+    if (er < minEr) return { damage: -1, result: null };
   }
 
-  if (targetCr > 0) {
+  if (minCr > 0) {
     const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
-    if (cr < targetCr) return { damage: -1, result: null };
+    if (cr < minCr) return { damage: -1, result: null };
   }
 
   if (scoreFn) {
@@ -430,8 +430,8 @@ function buildSeedBuilds2pc(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number,
-  targetCr: number,
+  minEr: number,
+  minCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): ArtifactTuple[] {
@@ -483,8 +483,8 @@ function buildSeedBuilds2pc(
       calcTargetId,
       calcContext,
       erCheckCharId,
-      targetEr,
-      targetCr,
+      minEr,
+      minCr,
       reactionOverride,
       scoreFn
     );
@@ -630,8 +630,8 @@ export async function* runOptimization(
     teamBuild,
     targetCharId,
     formulaId,
-    targetEr,
-    targetCr,
+    minEr,
+    minCr,
     inventory,
     buildMatch,
     globalConfig,
@@ -703,12 +703,12 @@ export async function* runOptimization(
 
   // ── Pre-compute baseline ER for cheap ER pre-filter ──
   let erFloor = 0;
-  if (targetEr > 0) {
+  if (minEr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
     erFloor = baselineStats[erCheckCharId]?.get("er") ?? 0;
   }
-  const minArtifactEr = Math.max(0, targetEr - erFloor);
+  const minArtifactEr = Math.max(0, minEr - erFloor);
 
   let maxSetErBonus = 0;
   if (minArtifactEr > 0) {
@@ -746,12 +746,12 @@ export async function* runOptimization(
 
   // ── Pre-compute baseline CR for cheap CR pre-filter ──
   let crFloor = 0;
-  if (targetCr > 0) {
+  if (minCr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
     crFloor = baselineStats[erCheckCharId]?.get("cr") ?? 0;
   }
-  const minArtifactCr = Math.max(0, targetCr - crFloor);
+  const minArtifactCr = Math.max(0, minCr - crFloor);
   const effectiveMinArtifactCr = Math.max(0, minArtifactCr);
 
   // ── Yield initial progress ──
@@ -909,7 +909,7 @@ export async function* runOptimization(
     if (setConstrainedMaxEr < minArtifactEr - 0.001) {
       failReason = {
         kind: "er-unmet",
-        targetEr,
+        minEr,
         bestEr: erFloor + setConstrainedMaxEr,
       };
       combinationsTotal = combinationsEvaluated;
@@ -933,8 +933,8 @@ export async function* runOptimization(
       calcTargetId,
       calcContext,
       erCheckCharId,
-      targetEr,
-      targetCr,
+      minEr,
+      minCr,
       reactionOverride,
       scoreFn
     );
@@ -1101,8 +1101,8 @@ export async function* runOptimization(
         calcTargetId,
         calcContext,
         erCheckCharId,
-        targetEr,
-        targetCr,
+        minEr,
+        minCr,
         reactionOverride,
         scoreFn
       );
@@ -1137,7 +1137,7 @@ export async function* runOptimization(
         // ER/CR pieces need to rank higher in alternatives. The multiplier
         // ramps up with each step: 0.5, 1.0, 1.5, 2.0, ... so early steps
         // balance damage + constraint, and later steps push harder if still unmet.
-        if (targetEr > 0 || targetCr > 0) {
+        if (minEr > 0 || minCr > 0) {
           const currentSheet = StatSheet.fromArtifacts(current);
           const sheets = { ...baseSheets, [swapCharId]: currentSheet };
           const postStats = teamBuild.getTeamStats(
@@ -1150,18 +1150,18 @@ export async function* runOptimization(
             ...Object.values(marginalGains).map((v) => Math.abs(v ?? 0))
           );
           const rampMultiplier = step + 1;
-          if (targetEr > 0) {
+          if (minEr > 0) {
             const currentEr = postStats[erCheckCharId]?.get("er") ?? 0;
-            if (currentEr < targetEr) {
+            if (currentEr < minEr) {
               marginalGains.er = Math.max(
                 marginalGains.er ?? 0,
                 maxGain * rampMultiplier
               );
             }
           }
-          if (targetCr > 0) {
+          if (minCr > 0) {
             const currentCr = postStats[erCheckCharId]?.get("cr") ?? 0;
-            if (currentCr < targetCr) {
+            if (currentCr < minCr) {
               marginalGains.cr = Math.max(
                 marginalGains.cr ?? 0,
                 maxGain * rampMultiplier
@@ -1224,8 +1224,8 @@ export async function* runOptimization(
             calcTargetId,
             calcContext,
             erCheckCharId,
-            targetEr,
-            targetCr,
+            minEr,
+            minCr,
             reactionOverride,
             scoreFn
           );
@@ -1262,11 +1262,7 @@ export async function* runOptimization(
 
     // If we found a valid build, or there's no ER/CR requirement, or we've
     // already widened altCount to cover all available pieces, stop retrying.
-    if (
-      bestDamage > 0 ||
-      (targetEr <= 0 && targetCr <= 0) ||
-      altCount >= maxPoolSize
-    )
+    if (bestDamage > 0 || (minEr <= 0 && minCr <= 0) || altCount >= maxPoolSize)
       break;
 
     // Only widen if at least one slot would gain new candidates
@@ -1279,7 +1275,7 @@ export async function* runOptimization(
   if (bestDamage <= 0 && !failReason) {
     if (emptySlots.length > 0) {
       failReason = { kind: "empty-pool", emptySlots };
-    } else if (targetEr > 0 || targetCr > 0) {
+    } else if (minEr > 0 || minCr > 0) {
       // Find the best ER/CR we could achieve across seeds to report the gap
       let bestErSeen = 0;
       let bestCrSeen = 0;
@@ -1296,10 +1292,10 @@ export async function* runOptimization(
         const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
         if (cr > bestCrSeen) bestCrSeen = cr;
       }
-      if (targetEr > 0 && bestErSeen < targetEr) {
-        failReason = { kind: "er-unmet", targetEr, bestEr: bestErSeen };
-      } else if (targetCr > 0 && bestCrSeen < targetCr) {
-        failReason = { kind: "cr-unmet", targetCr, bestCr: bestCrSeen };
+      if (minEr > 0 && bestErSeen < minEr) {
+        failReason = { kind: "er-unmet", minEr, bestEr: bestErSeen };
+      } else if (minCr > 0 && bestCrSeen < minCr) {
+        failReason = { kind: "cr-unmet", minCr, bestCr: bestCrSeen };
       } else {
         failReason = {
           kind: "all-filtered",

@@ -1628,6 +1628,41 @@
           "recordedDamage": 1319545.1089175234,
           "foundAt": "2026-03-18T05:51:48.389Z",
           "algorithm": "v2"
+        },
+        {
+          "artifactAssignment": {
+            "zibai": {
+              "flower": "artifact-1665",
+              "plume": "artifact-1014",
+              "sands": "artifact-1344",
+              "goblet": "artifact-1641",
+              "circlet": "artifact-1129"
+            },
+            "illuga": {
+              "flower": "artifact-266",
+              "plume": "artifact-1280",
+              "sands": "artifact-1506",
+              "goblet": "artifact-1296",
+              "circlet": "artifact-1305"
+            },
+            "columbina": {
+              "flower": "artifact-380",
+              "plume": "artifact-1913",
+              "sands": "artifact-1565",
+              "goblet": "artifact-1581",
+              "circlet": "artifact-1599"
+            },
+            "gorou": {
+              "flower": "artifact-1605",
+              "plume": "artifact-1995",
+              "sands": "artifact-1571",
+              "goblet": "artifact-1574",
+              "circlet": "artifact-909"
+            }
+          },
+          "recordedDamage": 1319545.1089175234,
+          "foundAt": "2026-03-18T10:40:32.302Z",
+          "algorithm": "v2"
         }
       ]
     },
@@ -2643,6 +2678,41 @@
           },
           "recordedDamage": 388224.3131110059,
           "foundAt": "2026-03-18T04:01:31.141Z",
+          "algorithm": "v2"
+        },
+        {
+          "artifactAssignment": {
+            "flins": {
+              "flower": "artifact-1135",
+              "plume": "artifact-1141",
+              "sands": "artifact-1548",
+              "goblet": "artifact-345",
+              "circlet": "artifact-1260"
+            },
+            "ineffa": {
+              "flower": "artifact-2012",
+              "plume": "artifact-1563",
+              "sands": "artifact-1561",
+              "goblet": "artifact-2027",
+              "circlet": "artifact-899"
+            },
+            "columbina": {
+              "flower": "artifact-1272",
+              "plume": "artifact-1422",
+              "sands": "artifact-1565",
+              "goblet": "artifact-1409",
+              "circlet": "artifact-1418"
+            },
+            "sucrose": {
+              "flower": "artifact-266",
+              "plume": "artifact-360",
+              "sands": "artifact-929",
+              "goblet": "artifact-361",
+              "circlet": "artifact-1614"
+            }
+          },
+          "recordedDamage": 388232.3420859635,
+          "foundAt": "2026-03-18T10:42:18.212Z",
           "algorithm": "v2"
         }
       ]

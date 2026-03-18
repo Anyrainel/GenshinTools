@@ -330,8 +330,8 @@ function evaluateBuild(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number,
-  targetCr: number,
+  minEr: number,
+  minCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
@@ -343,13 +343,13 @@ function evaluateBuild(
     calcContext
   );
 
-  if (targetEr > 0) {
+  if (minEr > 0) {
     const er = postStats[erCheckCharId]?.get("er") ?? 0;
-    if (er < targetEr) return { damage: -1, result: null };
+    if (er < minEr) return { damage: -1, result: null };
   }
-  if (targetCr > 0) {
+  if (minCr > 0) {
     const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
-    if (cr < targetCr) return { damage: -1, result: null };
+    if (cr < minCr) return { damage: -1, result: null };
   }
   if (scoreFn)
     return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
@@ -489,8 +489,8 @@ interface AStarContext {
   calcTargetId: string;
   calcContext: CalcContext;
   erCheckCharId: string;
-  targetEr: number;
-  targetCr: number;
+  minEr: number;
+  minCr: number;
   erFloor: number;
   crFloor: number;
   reactionOverride?: ReactionOverride;
@@ -518,16 +518,16 @@ function aStarSearch(
     calcTargetId,
     calcContext,
     erCheckCharId,
-    targetEr,
-    targetCr,
+    minEr,
+    minCr,
     erFloor,
     crFloor,
     reactionOverride,
     scoreFn,
     collector,
   } = ctx;
-  const needEr = targetEr > 0;
-  const needCr = targetCr > 0;
+  const needEr = minEr > 0;
+  const needCr = minCr > 0;
 
   // Precompute suffix max ER/CR for pruning
   const suffixMaxEr = new Float64Array(6);
@@ -596,8 +596,8 @@ function aStarSearch(
         calcTargetId,
         calcContext,
         erCheckCharId,
-        targetEr,
-        targetCr,
+        minEr,
+        minCr,
         reactionOverride,
         scoreFn
       );
@@ -633,9 +633,9 @@ function aStarSearch(
       const newCumCr = state.cumCr + artCr;
 
       // ER prefix-sum pruning
-      if (needEr && erFloor + newCumEr + sfxEr < targetEr) continue;
+      if (needEr && erFloor + newCumEr + sfxEr < minEr) continue;
       // CR prefix-sum pruning
-      if (needCr && crFloor + newCumCr + sfxCr < targetCr) continue;
+      if (needCr && crFloor + newCumCr + sfxCr < minCr) continue;
 
       const childArts = [...state.artifacts] as ArtifactTuple;
       childArts[state.depth] = art;
@@ -845,13 +845,11 @@ function runCharacterAStar(
   // Baseline ER/CR
   let erFloor = 0;
   let crFloor = 0;
-  if (charConfig.targetEr > 0 || charConfig.targetCr > 0) {
+  if (charConfig.minEr > 0 || charConfig.minCr > 0) {
     const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-    if (charConfig.targetEr > 0)
-      erFloor = blStats[erCheckCharId]?.get("er") ?? 0;
-    if (charConfig.targetCr > 0)
-      crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
+    if (charConfig.minEr > 0) erFloor = blStats[erCheckCharId]?.get("er") ?? 0;
+    if (charConfig.minCr > 0) crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
   }
 
   const collector = new TopKCollector(topK, warmStartThreshold);
@@ -864,8 +862,8 @@ function runCharacterAStar(
     calcTargetId,
     calcContext,
     erCheckCharId,
-    targetEr: charConfig.targetEr,
-    targetCr: charConfig.targetCr,
+    minEr: charConfig.minEr,
+    minCr: charConfig.minCr,
     erFloor,
     crFloor,
     reactionOverride,
@@ -1053,26 +1051,23 @@ function runCharacterAStar(
   // Diagnose failure
   let failReason: OptFailReason | undefined;
   if (collector.best == null || collector.best.damage <= 0) {
-    if (charConfig.targetEr > 0 || charConfig.targetCr > 0) {
+    if (charConfig.minEr > 0 || charConfig.minCr > 0) {
       let maxEr = 0;
       let maxCr = 0;
       for (let s = 0; s < 5; s++) {
         maxEr += slotData[s].slotSuperArtifact.maxEr;
         maxCr += slotData[s].slotSuperArtifact.maxCr;
       }
-      if (charConfig.targetEr > 0 && erFloor + maxEr < charConfig.targetEr) {
+      if (charConfig.minEr > 0 && erFloor + maxEr < charConfig.minEr) {
         failReason = {
           kind: "er-unmet",
-          targetEr: charConfig.targetEr,
+          minEr: charConfig.minEr,
           bestEr: erFloor + maxEr,
         };
-      } else if (
-        charConfig.targetCr > 0 &&
-        crFloor + maxCr < charConfig.targetCr
-      ) {
+      } else if (charConfig.minCr > 0 && crFloor + maxCr < charConfig.minCr) {
         failReason = {
           kind: "cr-unmet",
-          targetCr: charConfig.targetCr,
+          minCr: charConfig.minCr,
           bestCr: crFloor + maxCr,
         };
       } else {
@@ -1948,8 +1943,8 @@ export async function* runTeamOptimization(
       carryCharId,
       calcContext,
       carryId,
-      carryConfig.targetEr,
-      carryConfig.targetCr,
+      carryConfig.minEr,
+      carryConfig.minCr,
       reactionOverride,
       comboScoreFn
     );

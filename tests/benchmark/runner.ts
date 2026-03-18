@@ -71,8 +71,8 @@ export interface Team {
   artifacts: (ArtifactConfig | null)[];
   reactions: string[];
   opts: Record<string, string>;
-  targetEr: Record<string, number>;
-  targetCr?: Record<string, number>;
+  minEr: Record<string, number>;
+  minCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: unknown;
   calcContext?: Partial<CalcContext>;
@@ -313,10 +313,10 @@ export function buildPerChar(
           )
         : null;
 
-    const targetEr = isDps ? DPS_TARGET_ER : getTeammateTargetEr(goalArt);
+    const minEr = isDps ? DPS_TARGET_ER : getTeammateTargetEr(goalArt);
     perChar[cid] = {
-      targetEr,
-      targetCr: hasFavonius ? (team.targetCr?.[cid] ?? 0.05) : 0,
+      minEr,
+      minCr: hasFavonius ? (team.minCr?.[cid] ?? 0.05) : 0,
       buildMatch: bm ?? undefined,
       artifactSetId: goalSetId,
       artifactHalfSetIds: goalHalfSetIds,

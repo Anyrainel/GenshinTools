@@ -14,12 +14,18 @@
  * the inner loop, leaving ~20-50 arithmetic ops per evaluation.
  */
 
+import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import { CrossScalingBuff, ScalingBuff } from "./damageBuffs";
-import type { OptimizerContext, TeamBuild } from "./damageCalc";
+import {
+  type OptimizerContext,
+  type TeamBuild,
+  isBuffApplicable,
+} from "./damageCalc";
+import { createReactionVariant } from "./damageFormulas";
 import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet } from "./damageModels";
-import { type Expr, E, compileExpr, simplify } from "./expr";
-import { ExprStats, VarMapping, createExprStats } from "./exprStats";
+import { E, type Expr, compileExpr, simplify } from "./expr";
+import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
 import type {
   CalcContext,
   ComboFormula,
@@ -29,8 +35,6 @@ import type {
   StatKey,
 } from "./types";
 import { resolvePartReaction } from "./types";
-import { createReactionVariant } from "./damageFormulas";
-import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 
 // ─── Public Interface ───
 
@@ -215,15 +219,11 @@ export function compileTeamDamage(
     const erStats = postExprStats[erCheckCharId];
     if (erStats) {
       if (minEr && minEr > 0) {
-        const erExpr = simplify(
-          E.add(erStats.get("er"), E.const(-minEr))
-        );
+        const erExpr = simplify(E.add(erStats.get("er"), E.const(-minEr)));
         evaluateEr = compileExpr(erExpr);
       }
       if (minCr && minCr > 0) {
-        const crExpr = simplify(
-          E.add(erStats.get("cr"), E.const(-minCr))
-        );
+        const crExpr = simplify(E.add(erStats.get("cr"), E.const(-minCr)));
         evaluateCr = compileExpr(crExpr);
       }
     }
@@ -269,10 +269,7 @@ export function compileComboTeamDamage(
   }
 
   // Group lines by on-field character (= calcTargetId)
-  const linesByCalcTarget = new Map<
-    string,
-    typeof validLines
-  >();
+  const linesByCalcTarget = new Map<string, typeof validLines>();
   for (const line of validLines) {
     let group = linesByCalcTarget.get(line.charId);
     if (!group) {
@@ -438,7 +435,10 @@ function collectDynamicBuffExprs(
     } else if (buff.dynamicBuffsExprTeam) {
       // Expr-aware team dynamic buff (e.g. Nahida P1)
       const teamExprStatsArr = charIds.map((id) => exprStatsMap[id]!);
-      for (const { key, expr } of buff.dynamicBuffsExprTeam(ownerStats, teamExprStatsArr)) {
+      for (const { key, expr } of buff.dynamicBuffsExprTeam(
+        ownerStats,
+        teamExprStatsArr
+      )) {
         results.push({
           key,
           expr,
@@ -471,6 +471,75 @@ function collectDynamicBuffExprs(
 
 // ─── Apply Dynamic Buffs as Expr ───
 
+/**
+ * Deduplicate dynamic buff Exprs by noStackId.
+ *
+ * When all competing buffs in a group are const, we pick the highest (same as
+ * the standard path). When any buff is variable (depends on swap-char
+ * artifacts), the runtime value may differ from the compile-time baseline, so
+ * we emit E.max(...) to let the JIT resolve the winner at evaluation time.
+ */
+function deduplicateDynamicBuffExprs(
+  buffs: DynamicBuffExpr[]
+): DynamicBuffExpr[] {
+  const result: DynamicBuffExpr[] = [];
+  const groups = new Map<string, DynamicBuffExpr[]>();
+
+  for (const b of buffs) {
+    if (!b.source.noStackId) {
+      result.push(b);
+    } else {
+      let g = groups.get(b.source.noStackId);
+      if (!g) {
+        g = [];
+        groups.set(b.source.noStackId, g);
+      }
+      g.push(b);
+    }
+  }
+
+  for (const group of groups.values()) {
+    if (group.length === 1) {
+      result.push(group[0]!);
+      continue;
+    }
+
+    // Check if any Expr in the group is variable (non-const)
+    const hasVariable = group.some((b) => b.expr.tag !== "const");
+
+    if (!hasVariable) {
+      // All const: pick the one with the highest value (same as standard path)
+      let best = group[0]!;
+      let maxVal = Number.NEGATIVE_INFINITY;
+      for (const b of group) {
+        const val = b.expr.tag === "const" ? b.expr.value : 0;
+        if (val > maxVal) {
+          maxVal = val;
+          best = b;
+        }
+      }
+      result.push(best);
+    } else {
+      // Variable group: emit E.max across all competing exprs.
+      // All entries share the same output key and filter (noStackId groups
+      // always produce the same stat — e.g., gleam resonance → reactionDmg%).
+      // Use the first entry as the template for key/target/etc., replacing its
+      // expr with E.max(expr1, expr2, ...).
+      const template = group[0]!;
+      let merged = group[0]!.expr;
+      for (let i = 1; i < group.length; i++) {
+        merged = E.max(merged, group[i]!.expr);
+      }
+      result.push({
+        ...template,
+        expr: simplify(merged),
+      });
+    }
+  }
+
+  return result;
+}
+
 function applyDynamicBuffExprs(
   preExprStats: Record<string, ExprStats>,
   dynamicBuffExprs: DynamicBuffExpr[],
@@ -478,39 +547,36 @@ function applyDynamicBuffExprs(
   swapCharId: string,
   optCtx: OptimizerContext
 ): Record<string, ExprStats> {
-  // For now, bake dynamic buff values as constants evaluated at the support preStats,
-  // unless the provider is the swapChar (then use Expr).
-  // This is a simplification that works when only one character has variable artifacts.
-
   const result: Record<string, ExprStats> = {};
 
   for (const [id] of optCtx.charBuildOrder) {
     let stats = preExprStats[id]!;
 
-    // Collect applicable dynamic buffs for this character
-    for (const dbExpr of dynamicBuffExprs) {
-      if (
-        !isBuffApplicableSimple(
-          dbExpr.target,
-          dbExpr.providerCharId,
-          id,
-          optCtx.calcTargetId,
-          teamBuild
-        )
-      ) {
-        continue;
-      }
+    // Filter applicable dynamic buffs for this character — reuse the standard isBuffApplicable
+    const applicable = dynamicBuffExprs.filter((dbExpr) =>
+      isBuffApplicable(
+        // Wrap as a minimal StatBuff-like object for isBuffApplicable
+        { target: dbExpr.target, source: dbExpr.source } as StatBuff,
+        dbExpr.providerCharId,
+        id,
+        optCtx.calcTargetId,
+        teamBuild.teamMeta.regions[id],
+        teamBuild.teamMeta.factions[id]
+      )
+    );
 
+    // Deduplicate by noStackId — for all-const groups, picks the highest
+    // (same as standard path). For variable groups, emits E.max to defer
+    // the winner choice to runtime.
+    const deduped = deduplicateDynamicBuffExprs(applicable);
+
+    for (const dbExpr of deduped) {
       if (dbExpr.expr.tag === "const") {
-        // Constant dynamic buff — merge as constant
         stats = stats.withMergedConst(
           [{ key: dbExpr.key, value: dbExpr.expr.value }],
           dbExpr.target.filter
         );
       } else {
-        // Variable dynamic buff — merge the Expr directly into ExprStats.
-        // The Expr contains variables referencing the provider's artifact stats,
-        // so it will evaluate correctly for each artifact combination.
         stats = stats.withMergedExpr(
           [{ key: dbExpr.key, expr: dbExpr.expr }],
           dbExpr.target.filter
@@ -522,46 +588,6 @@ function applyDynamicBuffExprs(
   }
 
   return result;
-}
-
-/** Simplified buff applicability check for the compiler. */
-function isBuffApplicableSimple(
-  target: StatBuff["target"],
-  providerCharId: string,
-  selfCharId: string,
-  calcTargetId: string,
-  teamBuild: TeamBuild
-): boolean {
-  const r = target.receiver;
-
-  // Check charId restriction
-  if (target.charId && target.charId !== selfCharId) return false;
-
-  // Check region/faction
-  if (target.regions) {
-    const region = teamBuild.teamMeta.regions[selfCharId];
-    if (!region || !target.regions.includes(region)) return false;
-  }
-  if (target.factions) {
-    const faction = teamBuild.teamMeta.factions[selfCharId];
-    if (!target.factions.includes(faction)) return false;
-  }
-
-  switch (r) {
-    case "self":
-    case "selfOffField":
-      return providerCharId === selfCharId;
-    case "selfOnField":
-      return providerCharId === selfCharId && selfCharId === calcTargetId;
-    case "onField":
-      return selfCharId === calcTargetId;
-    case "otherOnField":
-      return selfCharId !== providerCharId && selfCharId === calcTargetId;
-    case "team":
-      return true;
-    default:
-      return false;
-  }
 }
 
 // ─── Formula Expr Builder ───
@@ -588,7 +614,10 @@ function buildTotalDamageExpr(
         bespokeBuff.target.filter
       );
       // Apply bespoke dynamic buffs
-      if (bespokeBuff instanceof ScalingBuff || bespokeBuff instanceof CrossScalingBuff) {
+      if (
+        bespokeBuff instanceof ScalingBuff ||
+        bespokeBuff instanceof CrossScalingBuff
+      ) {
         for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(stats)) {
           if (expr.tag === "const") {
             stats = stats.withMergedConst(

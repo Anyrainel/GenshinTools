@@ -14,6 +14,7 @@
  *   refresh                  Re-import & cache problem configs from team presets
  *   enrich [options]         Generate solutions from backup algorithms (V1, etc.)
  *   compare --problem KEY    StatSheet diff between current result & best stored solution
+ *   fuzz-combo               Fuzz-test AST combo vs evaluateCombo (all teams × all formulas)
  *
  * Common options:
  *   --filter PATTERN          Filter problems by team/char name
@@ -54,12 +55,23 @@ import {
   scoreMainStat,
   scoreSlot,
 } from "@/lib/account-data/artifactScore";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import {
+  buildSheetFromMainAndSubs,
+  getRollValues,
+} from "@/lib/team-comp/constrainedGreedy";
+import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import {
+  compileComboTeamDamage,
+  compileTeamDamage,
+  fillVarsFromArtifacts,
+  fillVarsFromSheet,
+} from "@/lib/team-comp/formulaCompiler";
 import { runCharacterBnB } from "@/lib/team-comp/optimizerV2";
 import type {
   CalcContext,
   CharCompConfig,
+  ComboFormula,
   StatKey,
 } from "@/lib/team-comp/types";
 import type { PerCharConfig } from "@/lib/team-comp/types";
@@ -1855,7 +1867,7 @@ async function cmdDiagnose(opts: {
       `  Set constraint: ${carryConfig.artifactSetId ?? carryConfig.artifactHalfSetIds?.join("+") ?? "none"}`
     );
     console.log(
-      `  ER target: ${carryConfig.targetEr} | CR target: ${carryConfig.targetCr}`
+      `  ER target: ${carryConfig.minEr} | CR target: ${carryConfig.minCr}`
     );
 
     for (const slot of allSlots) {
@@ -2063,6 +2075,482 @@ async function cmdDiagnose(opts: {
   }
 }
 
+// ─── Fuzz: AST vs Standard Equivalence ───────────────────────────────────────
+
+async function cmdFuzz(opts: {
+  filter?: string;
+  problemKey?: string;
+  trials: number;
+}): Promise<void> {
+  await preloadGameStats();
+  const accountData = loadAccountData(ACCOUNT_PATH);
+  const inventory = getAllArtifacts(accountData);
+  const problemCache = loadProblemCache();
+
+  if (!problemCache) {
+    console.error("No problem cache. Run: benchmark refresh");
+    process.exit(1);
+  }
+
+  // Group inventory by slot
+  const bySlot: Record<string, ArtifactData[]> = {};
+  for (const art of inventory) {
+    (bySlot[art.slotKey] ??= []).push(art);
+  }
+  const slotKeys = allSlots;
+
+  // Filter problems
+  let problems = problemCache.problems;
+  if (opts.problemKey) {
+    problems = problems.filter((p) =>
+      p.key.toLowerCase().includes(opts.problemKey!.toLowerCase())
+    );
+  } else if (opts.filter) {
+    const f = opts.filter.toLowerCase();
+    problems = problems.filter(
+      (p) =>
+        p.teamName.toLowerCase().includes(f) ||
+        p.characters.some((c) => c.toLowerCase().includes(f))
+    );
+  }
+
+  if (problems.length === 0) {
+    console.error("No problems matched filter.");
+    process.exit(1);
+  }
+
+  console.log(
+    `${C.bold}═══ Fuzz: AST vs Standard on ${problems.length} problems × ${opts.trials} trials ═══${C.reset}\n`
+  );
+
+  let totalTrials = 0;
+  let totalMismatches = 0;
+  let totalErrors = 0;
+
+  for (const prob of problems) {
+    let teamBuild: TeamBuild;
+    try {
+      teamBuild = new TeamBuild(
+        prob.configs,
+        prob.combatOpts,
+        prob.enemyElementAura as import("@/data/types").Element | undefined
+      );
+    } catch (e) {
+      console.log(
+        `  ${C.yellow}SKIP${C.reset} ${prob.key} — TeamBuild error: ${e instanceof Error ? e.message : e}`
+      );
+      continue;
+    }
+
+    const calcContext = prob.calcContext;
+    const carryCharId = prob.carryCharId;
+    const formulaId = prob.formulaId;
+    const charIds = prob.characters;
+
+    // Build base sheets (empty — we supply all artifacts in the tuple)
+    const baseSheets: Record<string, StatSheet> = {};
+    for (const cid of charIds) {
+      baseSheets[cid] = new StatSheet([]);
+    }
+
+    // Create optimizer context
+    let optCtx;
+    try {
+      optCtx = teamBuild.createOptimizerContext(
+        baseSheets,
+        carryCharId,
+        carryCharId,
+        calcContext
+      );
+    } catch (e) {
+      console.log(
+        `  ${C.yellow}SKIP${C.reset} ${prob.key} — OptCtx error: ${e instanceof Error ? e.message : e}`
+      );
+      continue;
+    }
+
+    // Compile AST
+    let compiled;
+    try {
+      compiled = compileTeamDamage(
+        teamBuild,
+        carryCharId,
+        formulaId,
+        calcContext,
+        optCtx
+      );
+    } catch (e) {
+      console.log(
+        `  ${C.red}ERROR${C.reset} ${prob.key} — Compile error: ${e instanceof Error ? e.message : e}`
+      );
+      totalErrors++;
+      continue;
+    }
+
+    const compiledVars = new Float64Array(compiled.numVars);
+    const charIdx = optCtx.charBuildOrder.findIndex(
+      ([id]) => id === carryCharId
+    );
+
+    // Run trials with random artifact tuples
+    let mismatches = 0;
+    for (let t = 0; t < opts.trials; t++) {
+      // Pick one random artifact per slot
+      const pieces: [
+        ArtifactData | null,
+        ArtifactData | null,
+        ArtifactData | null,
+        ArtifactData | null,
+        ArtifactData | null,
+      ] = [null, null, null, null, null];
+
+      for (let s = 0; s < 5; s++) {
+        const pool = bySlot[slotKeys[s]];
+        if (pool && pool.length > 0) {
+          pieces[s] = pool[Math.floor(Math.random() * pool.length)]!;
+        }
+      }
+
+      // Old path: getTeamStatsFast → getDamageResult
+      const charSheet = StatSheet.fromArtifacts(pieces);
+      const postStats = teamBuild.getTeamStatsFast(charSheet, optCtx);
+      const oldDamage = teamBuild.getDamageResult(
+        carryCharId,
+        formulaId,
+        postStats,
+        calcContext
+      ).totalDamage;
+
+      // New path: compiled AST
+      compiledVars.fill(0);
+      fillVarsFromArtifacts(pieces, compiled.varMapping, charIdx, compiledVars);
+      const newDamage = compiled.evaluate(compiledVars);
+
+      // Compare with relative tolerance
+      const relErr =
+        oldDamage === 0
+          ? newDamage === 0
+            ? 0
+            : Number.POSITIVE_INFINITY
+          : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+
+      if (relErr > 1e-9) {
+        mismatches++;
+        if (mismatches <= 3) {
+          console.log(
+            `  ${C.red}MISMATCH${C.reset} ${prob.key} trial ${t}: ` +
+              `old=${oldDamage.toFixed(2)} new=${newDamage.toFixed(2)} ` +
+              `relErr=${(relErr * 100).toFixed(6)}%`
+          );
+          // Print artifact main stats for debugging
+          const artDesc = pieces
+            .map((a) => (a ? `${a.slotKey}:${a.mainStatKey}` : "null"))
+            .join(", ");
+          console.log(`    artifacts: [${artDesc}]`);
+        }
+      }
+      totalTrials++;
+    }
+
+    totalMismatches += mismatches;
+    const status =
+      mismatches === 0
+        ? `${C.green}✓${C.reset}`
+        : `${C.red}✗ ${mismatches} mismatches${C.reset}`;
+    console.log(
+      `  ${status} ${prob.key} (${opts.trials} trials, ${compiled.numVars} vars)`
+    );
+  }
+
+  console.log(
+    `\n${C.bold}═══ Fuzz Summary ═══${C.reset}\n` +
+      `  Total trials:     ${totalTrials}\n` +
+      `  Mismatches:       ${totalMismatches === 0 ? `${C.green}0${C.reset}` : `${C.red}${totalMismatches}${C.reset}`}\n` +
+      `  Compile errors:   ${totalErrors === 0 ? "0" : `${C.red}${totalErrors}${C.reset}`}`
+  );
+
+  process.exit(totalMismatches > 0 || totalErrors > 0 ? 1 : 0);
+}
+
+// ─── Fuzz-Combo: AST Combo vs evaluateCombo Equivalence ──────────────────────
+
+type MainStat = import("@/data/types").MainStat;
+type Slot = import("@/data/types").Slot;
+
+const MAIN_STAT_POOLS: Record<Slot, readonly MainStat[]> = {
+  flower: ["hp"],
+  plume: ["atk"],
+  sands: ["atk%", "hp%", "def%", "em", "er"],
+  goblet: [
+    "atk%",
+    "hp%",
+    "def%",
+    "em",
+    "pyro%",
+    "hydro%",
+    "electro%",
+    "cryo%",
+    "dendro%",
+    "anemo%",
+    "geo%",
+    "phys%",
+  ],
+  circlet: ["atk%", "hp%", "def%", "em", "cr", "cd"],
+};
+
+const ALL_SUBSTATS: SubStat[] = [
+  "hp",
+  "hp%",
+  "atk",
+  "atk%",
+  "def",
+  "def%",
+  "em",
+  "er",
+  "cr",
+  "cd",
+];
+
+function randomMainStats(): Record<Slot, MainStat> {
+  const pick = <T>(arr: readonly T[]): T =>
+    arr[Math.floor(Math.random() * arr.length)];
+  return {
+    flower: "hp",
+    plume: "atk",
+    sands: pick(MAIN_STAT_POOLS.sands),
+    goblet: pick(MAIN_STAT_POOLS.goblet),
+    circlet: pick(MAIN_STAT_POOLS.circlet),
+  };
+}
+
+function randomSubRolls(): Record<Slot, Partial<Record<SubStat, number>>> {
+  const result = {} as Record<Slot, Partial<Record<SubStat, number>>>;
+  for (const slot of allSlots) {
+    result[slot] = {};
+    const shuffled = [...ALL_SUBSTATS].sort(() => Math.random() - 0.5);
+    for (const sub of shuffled.slice(0, 4)) {
+      result[slot][sub] = Math.floor(Math.random() * 6) + 1;
+    }
+  }
+  return result;
+}
+
+async function cmdFuzzCombo(opts: {
+  filter?: string;
+  problemKey?: string;
+  trials: number;
+}): Promise<void> {
+  await preloadGameStats();
+  const problemCache = loadProblemCache();
+
+  if (!problemCache) {
+    console.error("No problem cache. Run: benchmark refresh");
+    process.exit(1);
+  }
+
+  // Deduplicate teams (multiple problems can share the same team)
+  const teamMap = new Map<
+    string,
+    {
+      configs: CharCompConfig[];
+      charIds: string[];
+      calcContext: CalcContext;
+      teamName: string;
+      combatOpts: Record<string, string>;
+      enemyElementAura?: string;
+    }
+  >();
+  for (const prob of problemCache.problems) {
+    if (teamMap.has(prob.teamId)) continue;
+    if (
+      opts.problemKey &&
+      !prob.key.toLowerCase().includes(opts.problemKey.toLowerCase())
+    )
+      continue;
+    if (opts.filter) {
+      const f = opts.filter.toLowerCase();
+      if (
+        !prob.teamName.toLowerCase().includes(f) &&
+        !prob.characters.some((c) => c.toLowerCase().includes(f))
+      )
+        continue;
+    }
+    teamMap.set(prob.teamId, {
+      configs: prob.configs,
+      charIds: prob.characters,
+      calcContext: prob.calcContext,
+      teamName: prob.teamName,
+      combatOpts: prob.combatOpts,
+      enemyElementAura: prob.enemyElementAura,
+    });
+  }
+
+  const teams = [...teamMap.entries()];
+  if (teams.length === 0) {
+    console.error("No teams matched filter.");
+    process.exit(1);
+  }
+
+  console.log(
+    `${C.bold}═══ Fuzz-Combo: AST Combo vs evaluateCombo on ${teams.length} teams × ${opts.trials} trials ═══${C.reset}\n`
+  );
+
+  const rv = getRollValues();
+  let totalTrials = 0;
+  let totalMismatches = 0;
+  let totalErrors = 0;
+  let totalTeamsOk = 0;
+
+  for (const [teamId, team] of teams) {
+    let teamBuild: TeamBuild;
+    try {
+      teamBuild = new TeamBuild(
+        team.configs,
+        team.combatOpts,
+        team.enemyElementAura as import("@/data/types").Element | undefined
+      );
+    } catch (e) {
+      console.log(
+        `  ${C.yellow}SKIP${C.reset} ${team.teamName} — TeamBuild error: ${e instanceof Error ? e.message : e}`
+      );
+      continue;
+    }
+
+    // Build combo with ALL formulas from ALL characters
+    const allFormulas = teamBuild.getFormulaIds();
+    const comboLines: ComboFormula["lines"] = [];
+    for (const [charId, formulas] of Object.entries(allFormulas)) {
+      for (const formulaId of Object.keys(formulas)) {
+        comboLines.push({ charId, formulaId, count: 1 });
+      }
+    }
+
+    if (comboLines.length === 0) {
+      console.log(`  ${C.yellow}SKIP${C.reset} ${team.teamName} — no formulas`);
+      continue;
+    }
+
+    const combo: ComboFormula = {
+      id: `fuzz-${teamId}`,
+      label: { zh: team.teamName, en: team.teamName },
+      lines: comboLines,
+    };
+
+    let teamMismatches = 0;
+    let teamErrors = 0;
+
+    // Test with each character as the swap char
+    for (const swapCharId of team.charIds) {
+      // Compile once per swapChar
+      let compiled;
+      try {
+        // Build baseline sheets for supports (random) baked into the compiled form
+        const baseSheets: Record<string, StatSheet> = {};
+        for (const cid of team.charIds) {
+          if (cid === swapCharId) {
+            baseSheets[cid] = new StatSheet([]);
+          } else {
+            baseSheets[cid] = buildSheetFromMainAndSubs(
+              randomMainStats(),
+              randomSubRolls(),
+              rv
+            );
+          }
+        }
+
+        compiled = compileComboTeamDamage(
+          teamBuild,
+          combo,
+          swapCharId,
+          baseSheets,
+          team.calcContext
+        );
+
+        const optCtx = teamBuild.createOptimizerContext(
+          baseSheets,
+          swapCharId,
+          team.charIds[0],
+          team.calcContext
+        );
+        const charIdx = optCtx.charBuildOrder.findIndex(
+          ([id]) => id === swapCharId
+        );
+
+        // Run trials with random artifact sheets for the swap char
+        for (let t = 0; t < opts.trials; t++) {
+          const swapSheet = buildSheetFromMainAndSubs(
+            randomMainStats(),
+            randomSubRolls(),
+            rv
+          );
+
+          // Old path: evaluateCombo
+          const sheets = { ...baseSheets, [swapCharId]: swapSheet };
+          const oldDamage = evaluateCombo(
+            teamBuild,
+            combo,
+            sheets,
+            team.calcContext
+          ).totalDamage;
+
+          // New path: compiled AST
+          const vars = new Float64Array(compiled.numVars);
+          vars.fill(0);
+          fillVarsFromSheet(swapSheet, compiled.varMapping, charIdx, vars);
+          const newDamage = compiled.evaluate(vars);
+
+          const relErr =
+            oldDamage === 0
+              ? newDamage === 0
+                ? 0
+                : Number.POSITIVE_INFINITY
+              : Math.abs(newDamage - oldDamage) / Math.abs(oldDamage);
+
+          if (relErr > 1e-9) {
+            teamMismatches++;
+            if (teamMismatches <= 3) {
+              console.log(
+                `  ${C.red}MISMATCH${C.reset} ${team.teamName} swap=${swapCharId} trial=${t}: ` +
+                  `old=${oldDamage.toFixed(2)} new=${newDamage.toFixed(2)} ` +
+                  `relErr=${(relErr * 100).toFixed(6)}%`
+              );
+            }
+          }
+          totalTrials++;
+        }
+      } catch (e) {
+        teamErrors++;
+        totalErrors++;
+        console.log(
+          `  ${C.red}ERROR${C.reset} ${team.teamName} swap=${swapCharId}: ${e instanceof Error ? e.message : e}`
+        );
+      }
+    }
+
+    totalMismatches += teamMismatches;
+    const status =
+      teamMismatches === 0 && teamErrors === 0
+        ? `${C.green}✓${C.reset}`
+        : teamMismatches > 0
+          ? `${C.red}✗ ${teamMismatches} mismatches${C.reset}`
+          : `${C.red}✗ ${teamErrors} errors${C.reset}`;
+    console.log(
+      `  ${status} ${team.teamName} (${comboLines.length} formulas, ${team.charIds.length} swap chars × ${opts.trials} trials)`
+    );
+    if (teamMismatches === 0 && teamErrors === 0) totalTeamsOk++;
+  }
+
+  console.log(
+    `\n${C.bold}═══ Fuzz-Combo Summary ═══${C.reset}\n` +
+      `  Teams:            ${totalTeamsOk}/${teams.length} OK\n` +
+      `  Total trials:     ${totalTrials}\n` +
+      `  Mismatches:       ${totalMismatches === 0 ? `${C.green}0${C.reset}` : `${C.red}${totalMismatches}${C.reset}`}\n` +
+      `  Compile errors:   ${totalErrors === 0 ? "0" : `${C.red}${totalErrors}${C.reset}`}`
+  );
+
+  process.exit(totalMismatches > 0 || totalErrors > 0 ? 1 : 0);
+}
+
 // ─── CLI Argument Parsing ────────────────────────────────────────────────────
 
 function parseFlag(args: string[], flag: string): string | undefined {
@@ -2208,6 +2696,24 @@ async function main(): Promise<void> {
       await cmdDiagnose({
         problemKey,
         timeoutSec: parseFlagInt(args, "--timeout", 120),
+      });
+      break;
+    }
+
+    case "fuzz": {
+      await cmdFuzz({
+        filter: parseFlag(args, "--filter"),
+        problemKey: parseFlag(args, "--problem"),
+        trials: parseFlagInt(args, "--trials", 200),
+      });
+      break;
+    }
+
+    case "fuzz-combo": {
+      await cmdFuzzCombo({
+        filter: parseFlag(args, "--filter"),
+        problemKey: parseFlag(args, "--problem"),
+        trials: parseFlagInt(args, "--trials", 50),
       });
       break;
     }

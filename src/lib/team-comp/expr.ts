@@ -206,7 +206,9 @@ function factorCommon(children: Expr[]): Expr | null {
 
   // Result: commonExprs * sum(remainders)
   const sum =
-    remainders.length === 1 ? remainders[0] : { tag: "add" as const, children: remainders };
+    remainders.length === 1
+      ? remainders[0]
+      : { tag: "add" as const, children: remainders };
   return simplify(E.mul(...commonExprs, sum));
 }
 
@@ -314,7 +316,9 @@ export function differentiate(e: Expr, varIdx: number): Expr {
       return E.const(e.idx === varIdx ? 1 : 0);
 
     case "add":
-      return simplify(E.add(...e.children.map((c) => differentiate(c, varIdx))));
+      return simplify(
+        E.add(...e.children.map((c) => differentiate(c, varIdx)))
+      );
 
     case "mul": {
       // Product rule generalized: d/dx (a*b*c*...) = sum_i (prod_{j!=i} x_j) * dx_i
@@ -369,7 +373,7 @@ export function differentiate(e: Expr, varIdx: number): Expr {
  * straight-line arithmetic with no virtual dispatch or object allocation.
  */
 export function compileExpr(e: Expr): (vars: Float64Array) => number {
-  const body = "return " + emitJs(e) + ";";
+  const body = `return ${emitJs(e)};`;
   return new Function("v", body) as (vars: Float64Array) => number;
 }
 

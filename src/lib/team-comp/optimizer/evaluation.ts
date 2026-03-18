@@ -8,6 +8,11 @@
 import type { ArtifactData } from "@/data/types";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import type { CompiledTeamDamage } from "../formulaCompiler";
+import {
+  fillVarsFromArtifacts,
+  fillVarsFromRawStats,
+} from "../formulaCompiler";
 import type {
   CalcContext,
   DamageResult,
@@ -31,8 +36,8 @@ export function evaluateBuild(
     calcTargetId,
     calcContext,
     erCheckCharId,
-    targetEr,
-    targetCr,
+    minEr,
+    minCr,
     reactionOverride,
     scoreFn,
     optCtx,
@@ -53,13 +58,13 @@ export function evaluateBuild(
         calcContext
       );
 
-  if (targetEr > 0) {
+  if (minEr > 0) {
     const er = postStats[erCheckCharId]?.get("er") ?? 0;
-    if (er < targetEr) return { damage: -1, result: null };
+    if (er < minEr) return { damage: -1, result: null };
   }
-  if (targetCr > 0) {
+  if (minCr > 0) {
     const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
-    if (cr < targetCr) return { damage: -1, result: null };
+    if (cr < minCr) return { damage: -1, result: null };
   }
 
   const dmgRes = teamBuild.getDamageResult(
@@ -70,6 +75,46 @@ export function evaluateBuild(
     reactionOverride
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
+}
+
+// ─── Compiled Evaluation ───
+
+/**
+ * Evaluate a build using the compiled damage expression.
+ * Much faster than evaluateBuild: ~20-50 arithmetic ops, zero allocations.
+ *
+ * @param pieces - The 5-piece artifact tuple
+ * @param compiled - Pre-compiled damage expression
+ * @param charIdx - The character index in the team (for VarMapping)
+ * @param reusableVars - Pre-allocated Float64Array (reused across calls)
+ */
+export function evaluateBuildCompiled(
+  pieces: ArtifactTuple,
+  compiled: CompiledTeamDamage,
+  charIdx: number,
+  reusableVars: Float64Array
+): { damage: number } {
+  // Zero the vars array
+  reusableVars.fill(0);
+
+  // Fill vars from artifacts
+  fillVarsFromArtifacts(pieces, compiled.varMapping, charIdx, reusableVars);
+
+  // Check ER constraint
+  if (compiled.evaluateEr) {
+    const er = compiled.evaluateEr(reusableVars);
+    if (er < 0) return { damage: -1 }; // ER check encoded as threshold in the expr
+  }
+
+  // Check CR constraint
+  if (compiled.evaluateCr) {
+    const cr = compiled.evaluateCr(reusableVars);
+    if (cr < 0) return { damage: -1 };
+  }
+
+  // Evaluate damage
+  const damage = compiled.evaluate(reusableVars);
+  return { damage };
 }
 
 export function evaluateUpperBound(
@@ -115,4 +160,27 @@ export function evaluateUpperBound(
     calcContext,
     reactionOverride
   ).totalDamage;
+}
+
+/**
+ * Evaluate upper bound using the compiled damage expression.
+ * Fills vars from real pieces + super-artifact raw stats.
+ */
+export function evaluateUpperBoundCompiled(
+  realPieces: (ArtifactData | null)[],
+  superStatsRemaining: Partial<Record<StatKey, number>>[],
+  compiled: CompiledTeamDamage,
+  charIdx: number,
+  reusableVars: Float64Array
+): number {
+  reusableVars.fill(0);
+  fillVarsFromArtifacts(realPieces, compiled.varMapping, charIdx, reusableVars);
+  fillVarsFromRawStats(
+    superStatsRemaining,
+    compiled.varMapping,
+    charIdx,
+    reusableVars
+  );
+  // Skip ER/CR constraint checks for upper bound (optimistic)
+  return compiled.evaluate(reusableVars);
 }

@@ -6,6 +6,7 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "../../account-data/artifactScore";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import type { StatSheet } from "../damageModels";
+import type { CompiledTeamDamage } from "../formulaCompiler";
 import type {
   CalcContext,
   DamageResult,
@@ -77,8 +78,8 @@ export interface BnBContext {
   calcTargetId: string;
   calcContext: CalcContext;
   erCheckCharId: string;
-  targetEr: number;
-  targetCr: number;
+  minEr: number;
+  minCr: number;
   erFloor: number;
   crFloor: number;
   reactionOverride?: ReactionOverride;
@@ -87,6 +88,9 @@ export interface BnBContext {
   evaluations: number;
   sinceLastYield: number;
   optCtx?: OptimizerContext;
+  compiled?: CompiledTeamDamage;
+  compiledVars?: Float64Array;
+  compiledCharIdx?: number;
   deadline?: number;
   aborted?: boolean;
 }

@@ -10,6 +10,7 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import { type CompiledTeamDamage, compileTeamDamage } from "../formulaCompiler";
 import type {
   CalcContext,
   DamageResult,
@@ -26,7 +27,12 @@ import {
   prepareSlotData,
   withResortedSlotData,
 } from "./artifactScoring";
-import { evaluateBuild, evaluateUpperBound } from "./evaluation";
+import {
+  evaluateBuild,
+  evaluateBuildCompiled,
+  evaluateUpperBound,
+  evaluateUpperBoundCompiled,
+} from "./evaluation";
 import { computeMarginalWeights } from "./marginalWeights";
 import { TopKCollector } from "./topKCollector";
 import type {
@@ -74,9 +80,9 @@ function bnbDfs(
   slotSupers: SuperArtifact[],
   ctx: BnBContext
 ): void {
-  const { targetEr, targetCr, erFloor, crFloor, collector } = ctx;
-  const needEr = targetEr > 0;
-  const needCr = targetCr > 0;
+  const { minEr, minCr, erFloor, crFloor, collector } = ctx;
+  const needEr = minEr > 0;
+  const needCr = minCr > 0;
 
   const suffixMaxEr = new Float64Array(6);
   const suffixMaxCr = new Float64Array(6);
@@ -96,8 +102,18 @@ function bnbDfs(
       }
     }
     if (depth === 5) {
-      const { damage, result } = evaluateBuild(pieces, ctx);
-      collector.add(damage, result, pieces);
+      if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+        const { damage } = evaluateBuildCompiled(
+          pieces,
+          ctx.compiled,
+          ctx.compiledCharIdx,
+          ctx.compiledVars
+        );
+        collector.add(damage, null, pieces);
+      } else {
+        const { damage, result } = evaluateBuild(pieces, ctx);
+        collector.add(damage, result, pieces);
+      }
       ctx.evaluations++;
       ctx.sinceLastYield++;
       return;
@@ -118,18 +134,25 @@ function bnbDfs(
       const newCumEr = cumEr + artEr;
       const newCumCr = cumCr + artCr;
 
-      if (needEr && erFloor + newCumEr + sfxEr < targetEr) continue;
-      if (needCr && crFloor + newCumCr + sfxCr < targetCr) continue;
+      if (needEr && erFloor + newCumEr + sfxEr < minEr) continue;
+      if (needCr && crFloor + newCumCr + sfxCr < minCr) continue;
 
       pieces[depth] = art;
       if (collector.threshold > 0 && depth < 4) {
         const remaining: Partial<Record<StatKey, number>>[] = [];
         for (let s = depth + 1; s < 5; s++) remaining.push(superStatsBySlot[s]);
-        const ub = evaluateUpperBound(
-          pieces.slice(0, depth + 1),
-          remaining,
-          ctx
-        );
+        let ub: number;
+        if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+          ub = evaluateUpperBoundCompiled(
+            pieces.slice(0, depth + 1),
+            remaining,
+            ctx.compiled,
+            ctx.compiledCharIdx,
+            ctx.compiledVars
+          );
+        } else {
+          ub = evaluateUpperBound(pieces.slice(0, depth + 1), remaining, ctx);
+        }
         ctx.evaluations++;
         ctx.sinceLastYield++;
         if (ub <= collector.threshold) continue;
@@ -324,13 +347,11 @@ export function runCharacterBnB(
   // Baseline ER/CR
   let erFloor = 0;
   let crFloor = 0;
-  if (charConfig.targetEr > 0 || charConfig.targetCr > 0) {
+  if (charConfig.minEr > 0 || charConfig.minCr > 0) {
     const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-    if (charConfig.targetEr > 0)
-      erFloor = blStats[erCheckCharId]?.get("er") ?? 0;
-    if (charConfig.targetCr > 0)
-      crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
+    if (charConfig.minEr > 0) erFloor = blStats[erCheckCharId]?.get("er") ?? 0;
+    if (charConfig.minCr > 0) crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
   }
 
   // Precompute optimizer context for fast getTeamStats (caches support preStats)
@@ -343,6 +364,33 @@ export function runCharacterBnB(
         calcContext
       );
 
+  // Try to compile the damage formula for fast evaluation in DFS
+  let compiled: CompiledTeamDamage | undefined;
+  let compiledVars: Float64Array | undefined;
+  let compiledCharIdx: number | undefined;
+  if (optCtx && swapCharId === formulaCharId && !scoreFn) {
+    try {
+      compiled = compileTeamDamage(
+        teamBuild,
+        formulaCharId,
+        formulaId,
+        calcContext,
+        optCtx,
+        reactionOverride,
+        charConfig.minEr > 0 || charConfig.minCr > 0
+          ? erCheckCharId
+          : undefined,
+        charConfig.minEr,
+        charConfig.minCr
+      );
+      compiledVars = new Float64Array(compiled.numVars);
+      compiledCharIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);
+    } catch {
+      // Compilation failed — fall back to standard evaluation
+      compiled = undefined;
+    }
+  }
+
   const collector = new TopKCollector(topK, warmStartThreshold);
   const ctx: BnBContext = {
     teamBuild,
@@ -353,8 +401,8 @@ export function runCharacterBnB(
     calcTargetId,
     calcContext,
     erCheckCharId,
-    targetEr: charConfig.targetEr,
-    targetCr: charConfig.targetCr,
+    minEr: charConfig.minEr,
+    minCr: charConfig.minCr,
     erFloor,
     crFloor,
     reactionOverride,
@@ -363,6 +411,9 @@ export function runCharacterBnB(
     evaluations: 0,
     sinceLastYield: 0,
     optCtx,
+    compiled,
+    compiledVars,
+    compiledCharIdx,
     deadline,
   };
 
@@ -551,6 +602,15 @@ export function runCharacterBnB(
   }
 
   function computePatternUpperBound(supers: SuperArtifact[]): number {
+    if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+      return evaluateUpperBoundCompiled(
+        [],
+        supers.map((s) => s.stats),
+        ctx.compiled,
+        ctx.compiledCharIdx,
+        ctx.compiledVars
+      );
+    }
     return evaluateUpperBound(
       [],
       supers.map((s) => s.stats),
@@ -691,26 +751,23 @@ export function runCharacterBnB(
   // Diagnose failure
   let failReason: OptFailReason | undefined;
   if (collector.best == null || collector.best.damage <= 0) {
-    if (charConfig.targetEr > 0 || charConfig.targetCr > 0) {
+    if (charConfig.minEr > 0 || charConfig.minCr > 0) {
       let maxEr = 0;
       let maxCr = 0;
       for (let s = 0; s < 5; s++) {
         maxEr += slotData[s].slotSuperArtifact.maxEr;
         maxCr += slotData[s].slotSuperArtifact.maxCr;
       }
-      if (charConfig.targetEr > 0 && erFloor + maxEr < charConfig.targetEr) {
+      if (charConfig.minEr > 0 && erFloor + maxEr < charConfig.minEr) {
         failReason = {
           kind: "er-unmet",
-          targetEr: charConfig.targetEr,
+          minEr: charConfig.minEr,
           bestEr: erFloor + maxEr,
         };
-      } else if (
-        charConfig.targetCr > 0 &&
-        crFloor + maxCr < charConfig.targetCr
-      ) {
+      } else if (charConfig.minCr > 0 && crFloor + maxCr < charConfig.minCr) {
         failReason = {
           kind: "cr-unmet",
-          targetCr: charConfig.targetCr,
+          minCr: charConfig.minCr,
           bestCr: crFloor + maxCr,
         };
       } else {

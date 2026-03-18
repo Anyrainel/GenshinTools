@@ -1,6 +1,5 @@
 #!/usr/bin/env sh
 # Per-file lint & format (Biome for TS, Ruff for Python)
-# --no-stash: don't stash unstaged changes (avoids race conditions with concurrent writers)
 npx lint-staged --no-stash
 
 # Run tests related to staged TS/TSX files

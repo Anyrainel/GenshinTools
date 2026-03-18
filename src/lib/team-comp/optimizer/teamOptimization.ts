@@ -85,8 +85,8 @@ export function evaluateBuildDirect(
   calcTargetId: string,
   calcContext: CalcContext,
   erCheckCharId: string,
-  targetEr: number,
-  targetCr: number,
+  minEr: number,
+  minCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
@@ -99,8 +99,8 @@ export function evaluateBuildDirect(
     calcTargetId,
     calcContext,
     erCheckCharId,
-    targetEr,
-    targetCr,
+    minEr,
+    minCr,
     erFloor: 0,
     crFloor: 0,
     reactionOverride,
@@ -1341,8 +1341,8 @@ export async function* runTeamOptimization(
       carryCharId,
       calcContext,
       carryId,
-      carryConfig.targetEr,
-      carryConfig.targetCr,
+      carryConfig.minEr,
+      carryConfig.minCr,
       reactionOverride,
       comboScoreFn
     );
@@ -1432,8 +1432,8 @@ export async function* runTeamOptimization(
         carryCharId,
         calcContext,
         charId,
-        charConfig.targetEr,
-        charConfig.targetCr,
+        charConfig.minEr,
+        charConfig.minCr,
         reactionOverride,
         comboScoreFn
       );
