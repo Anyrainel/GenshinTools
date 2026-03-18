@@ -10,7 +10,7 @@ import {
 } from "@/data/constants";
 import type { AccountData, Rarity } from "@/data/types";
 import type { Team } from "@/stores/useTeamStore";
-import { buildTeamLabel } from "./AutoTuneDialog";
+import { buildTeamLabel } from "./teamLabel";
 
 interface AutoTuneTeamRowProps {
   team: Team;

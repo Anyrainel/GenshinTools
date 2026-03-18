@@ -6,13 +6,13 @@
  * Results display in V2-style cards with shared AutoTuneResults sub-components.
  */
 
-import { buildTeamLabel } from "@/components/artifact-builds/AutoTuneDialog";
 import {
   ComboTable,
   MainStatColumn,
   SubstatPills,
 } from "@/components/artifact-builds/AutoTuneResults";
 import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
+import { buildTeamLabel } from "@/components/artifact-builds/teamLabel";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { buildTeamConfigs } from "@/components/team-comp/teamOptUtils";

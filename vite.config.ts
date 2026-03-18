@@ -24,6 +24,9 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  worker: {
+    format: "es",
+  },
   server: {
     port: 5173,
     strictPort: true,

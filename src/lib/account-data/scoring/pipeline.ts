@@ -1,17 +1,16 @@
 /**
- * Build Weight Generation Pipeline
+ * Auto-Tune Pipeline
  *
  * Uses the real TeamBuild damage calculator from src/lib/team-comp/ to
  * compute auto-tuned substat weights via marginal damage analysis.
  *
  * Data flow:
- * 1. Load Flagship Teams preset → full 4-member team compositions
- * 2. For each DPS character, construct TeamBuild with real buff resolution
- * 3. Enumerate all main stat combos (sands × goblet × circlet)
- * 4. Pre-filter by baseline damage, then run full greedy allocation
- * 5. Keep combos achieving ≥95% of best damage
- * 6. Average midpoint weights across qualifying combos and team contexts
- * 7. Derive main stat weights from damage ratios
+ * 1. For each DPS character, construct TeamBuild with real buff resolution
+ * 2. Enumerate all main stat combos (sands × goblet × circlet)
+ * 3. Pre-filter by baseline damage, then run full greedy allocation
+ * 4. Keep combos achieving ≥95% of best damage
+ * 5. Average midpoint weights across qualifying combos and team contexts
+ * 6. Derive main stat weights from damage ratios
  */
 
 // Ensure all character/weapon/artifact implementations are registered
@@ -38,7 +37,6 @@ import type {
   CalcContext,
   CharCompConfig,
   I18nLabel,
-  ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
 import {
@@ -51,45 +49,7 @@ import {
   evalBaselineDamage,
   toWeightedFormulas,
 } from "./autoTune";
-import {
-  CHARACTER_BUILD_PROFILES,
-  type CharacterBuildProfile,
-  getFlagshipTeamsForChar,
-  teamEntryToConfigs,
-} from "./teamDatabase";
 import type { AutoTuneResult } from "./utils";
-
-/** Pipeline-specific metadata for display (WeightsView). Not part of Build. */
-export type PipelineBuildMeta = {
-  characterId: string;
-  scalingStat: "atk" | "hp" | "def" | "em";
-  element: string;
-  /** Ideal greedy roll allocation averaged across team contexts */
-  idealRolls: Record<SubStat, number>;
-  reaction: string;
-  artifactSet?: string;
-  /** Substat weights as Record (convenient for display iteration) */
-  substats: Record<SubStat, number>;
-  /** Main stat weights per slot (typed with cdEquiv for display) */
-  sandsWeights: WeightedMainStat[];
-  gobletWeights: WeightedMainStat[];
-  circletWeights: WeightedMainStat[];
-  normalizer: number;
-  meta: {
-    method: "auto" | "manual";
-    weaponId: string;
-    teamContexts: string[];
-    generatedAt: number;
-  };
-};
-
-export type PipelineResult = {
-  builds: PipelineBuildMeta[];
-  /** Profiles indexed by characterId — contains team display data */
-  profiles: Record<string, CharacterBuildProfile>;
-  errors: { characterId: string; error: string }[];
-  generatedAt: number;
-};
 
 // ─── Main stat candidates per slot (from canonical statPools) ───
 
@@ -170,38 +130,6 @@ type ComboResult = {
   /** normalizedDamage = finalDamage / bestFinalDamage within this team context */
   normalizedDamage: number;
 };
-
-/**
- * Run the full V2 weight generation pipeline for all profiled characters.
- * Requires game stats to be preloaded via preloadGameStats() or useGameStats().
- */
-export function runPipeline(): PipelineResult {
-  const builds: PipelineBuildMeta[] = [];
-  const errors: { characterId: string; error: string }[] = [];
-  const generatedAt = Date.now();
-
-  for (const profile of CHARACTER_BUILD_PROFILES) {
-    try {
-      const build = generateBuildWeights(profile, generatedAt);
-      builds.push(build);
-    } catch (err) {
-      errors.push({
-        characterId: profile.characterId,
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
-  }
-
-  const profiles: Record<string, CharacterBuildProfile> = {};
-  for (const build of builds) {
-    const profile = CHARACTER_BUILD_PROFILES.find(
-      (p) => p.characterId === build.characterId
-    );
-    if (profile) profiles[build.characterId] = profile;
-  }
-
-  return { builds, profiles, errors, generatedAt };
-}
 
 // ─── Shared pipeline types ───
 
@@ -440,93 +368,6 @@ function runComboEnumerationPipeline(
     idealScore,
     normalizer,
     teamBreakdowns,
-  };
-}
-
-/**
- * Generate V2 weights for a single character build profile.
- *
- * For each team context:
- * 1. Enumerate all sands × goblet × circlet main stat combos
- * 2. Quick baseline eval → pre-filter to ≥50% of best baseline damage
- * 3. Full greedy allocation for viable combos
- * 4. Keep combos achieving ≥95% of best post-greedy damage
- * 5. Average midpoint marginals across qualifying combos
- *
- * Then across team contexts:
- * 6. Average substat weights (re-normalize to 100)
- * 7. Main stat weight per slot = best damage with that stat / overall best × 100
- */
-export function generateBuildWeights(
-  profile: CharacterBuildProfile,
-  generatedAt: number = Date.now()
-): PipelineBuildMeta {
-  const { characterId } = profile;
-  const teamEntries = getFlagshipTeamsForChar(characterId);
-
-  if (teamEntries.length === 0) {
-    throw new Error(`No Flagship Team data for ${characterId}`);
-  }
-
-  const element = resolveElement(characterId) || profile.element;
-  const gobletCandidates = getGobletPool(element as Element);
-
-  // Build team tune contexts
-  const teamContexts: TeamTuneContext[] = [];
-  const teamNames: string[] = [];
-
-  for (const { team } of teamEntries) {
-    try {
-      const configs = teamEntryToConfigs(team) as CharCompConfig[];
-      const teamBuild = new TeamBuild(configs, team.opts ?? {});
-
-      const reaction = team.reactions[0];
-      const reactionOverride: ReactionOverride | undefined =
-        reaction && reaction !== "none"
-          ? { reaction: reaction as ReactionOverride["reaction"] }
-          : undefined;
-
-      const formulaIds = findAllFormulaIds(teamBuild, characterId);
-      if (formulaIds.length === 0) continue;
-
-      const label = team.name || `Team ${team.id.slice(-4)}`;
-      teamContexts.push({
-        configs,
-        teamBuild,
-        formulas: toWeightedFormulas(formulaIds, reactionOverride),
-        label,
-      });
-      teamNames.push(label);
-    } catch {}
-  }
-
-  const result = runComboEnumerationPipeline(
-    characterId,
-    gobletCandidates,
-    teamContexts
-  );
-
-  const scalingStat = inferScalingStatFromWeights(result.avgWeights);
-  const primaryReaction = teamEntries[0]?.team.reactions[0] ?? "none";
-
-  return {
-    characterId,
-    scalingStat,
-    element,
-    artifactSet: profile.defaultArtifactSet,
-    substats: result.avgWeights,
-    idealRolls: result.idealRolls,
-    sandsWeights: result.sandsWeights,
-    gobletWeights: result.gobletWeights,
-    circletWeights: result.circletWeights,
-    reaction: primaryReaction,
-    normalizer: result.normalizer,
-    meta: {
-      method: "auto",
-      weaponId: profile.weapons[0] ?? "",
-      teamContexts: teamNames,
-      generatedAt,
-    },
   };
 }
 
@@ -1030,69 +871,4 @@ function computeMainStatWeightsFromDamage(
     weight,
     ...(penalty !== undefined && { penalty }),
   }));
-}
-
-/** Infer scaling stat from substat weight distribution. */
-function inferScalingStatFromWeights(
-  weights: Record<SubStat, number>
-): "atk" | "hp" | "def" | "em" {
-  const atkW = weights["atk%"] ?? 0;
-  const hpW = weights["hp%"] ?? 0;
-  const defW = weights["def%"] ?? 0;
-  const emW = weights.em ?? 0;
-
-  if (hpW > atkW && hpW > defW && hpW > emW) return "hp";
-  if (defW > atkW && defW > hpW && defW > emW) return "def";
-  if (emW > atkW && emW > hpW && emW > defW) return "em";
-  return "atk";
-}
-
-/**
- * Pretty-print a PipelineBuildMeta for debugging.
- */
-export function formatPipelineBuild(build: PipelineBuildMeta): string {
-  const lines: string[] = [];
-  lines.push(
-    `═══ ${build.characterId} (${build.element} ${build.scalingStat}) ═══`
-  );
-  lines.push(`Artifact: ${build.artifactSet ?? "any"}`);
-  lines.push(`Reaction: ${build.reaction}`);
-  lines.push(`Weapon: ${build.meta.weaponId}`);
-  lines.push(`Teams: ${build.meta.teamContexts.join(", ")}`);
-  lines.push("");
-
-  lines.push("Substat Weights:");
-  const sorted = Object.entries(build.substats)
-    .filter(([, w]) => w > 0)
-    .sort(([, a], [, b]) => b - a);
-  for (const [stat, weight] of sorted) {
-    lines.push(`  ${stat.padEnd(6)} ${weight}`);
-  }
-
-  lines.push("");
-  lines.push("Ideal Rolls:");
-  const rollsSorted = Object.entries(build.idealRolls)
-    .filter(([, v]) => v > 0)
-    .sort(([, a], [, b]) => b - a);
-  for (const [stat, rolls] of rollsSorted) {
-    lines.push(`  ${stat.padEnd(6)} ${rolls}`);
-  }
-
-  lines.push("");
-  lines.push("Main Stats:");
-  lines.push(
-    `  Sands:   ${build.sandsWeights.map((s) => `${s.stat}(${s.weight}%)`).join(", ")}`
-  );
-  lines.push(
-    `  Goblet:  ${build.gobletWeights.map((s) => `${s.stat}(${s.weight}%)`).join(", ")}`
-  );
-  lines.push(
-    `  Circlet: ${build.circletWeights.map((s) => `${s.stat}(${s.weight}%)`).join(", ")}`
-  );
-
-  lines.push("");
-  lines.push(`Normalizer:  ${build.normalizer.toFixed(4)}`);
-  lines.push("Max Score:   300");
-
-  return lines.join("\n");
 }
