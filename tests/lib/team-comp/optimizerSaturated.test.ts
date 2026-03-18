@@ -168,14 +168,14 @@ describe("Saturated character handling", () => {
       baseSheets,
       perChar: {
         hu_tao: {
-          targetEr: 0,
-          targetCr: 0,
+          minEr: 0,
+          minCr: 0,
           artifactSetId: "crimson_witch_of_flames",
           artifactHalfSetIds: ["pyro%-15"],
         },
         bennett: {
-          targetEr: 0,
-          targetCr: 0,
+          minEr: 0,
+          minCr: 0,
         },
       },
     });

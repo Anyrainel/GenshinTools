@@ -15,6 +15,7 @@ import {
   type IdealGenOptions,
   runIdealArtifactGen,
 } from "@/lib/team-comp/idealArtifactGen";
+import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
 import type {
   PerCharConfig,
   TeamOptimizerOptions,
@@ -26,7 +27,6 @@ import type {
   ReactionOverride,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
 
 import "@/lib/team-comp/index";
 import {
@@ -404,8 +404,8 @@ describe("getComboDisplayResult", () => {
 
 describe("runTeamOptimization — combo mode", () => {
   const perChar: Record<string, PerCharConfig> = {
-    diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
-    xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
+    diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
+    xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
   };
 
   it("combo mode yields result with mode='combo' and bestComboResult", async () => {
@@ -492,8 +492,8 @@ describe("runTeamOptimization — combo mode", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: dilucEmptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
-        xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
+        diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
+        xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -541,7 +541,7 @@ describe("runTeamOptimization — combo mode", () => {
         diluc: StatSheet.fromArtifacts(inventory),
       },
       perChar: {
-        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+        diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -573,7 +573,7 @@ describe("runTeamOptimization — combo mode", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: dilucEmptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+        diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };
@@ -718,9 +718,9 @@ describe("combo edge cases", () => {
       globalConfig: GLOBAL_CONFIG,
       baseSheets: dilucEmptySheets(),
       perChar: {
-        diluc: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
-        xingqiu: { targetEr: 1.4, targetCr: 0, buildMatch: makeBuildMatch() },
-        bennett: { targetEr: 1.0, targetCr: 0, buildMatch: makeBuildMatch() },
+        diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
+        xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
+        bennett: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       },
       combo,
     };

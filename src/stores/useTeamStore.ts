@@ -10,6 +10,7 @@ import type {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { charSortKey, encodeTeamId } from "./teamCompCodec";
 
 export interface OptimizationResult {
   artifacts: Record<string, ArtifactData>;
@@ -25,8 +26,8 @@ export interface Team {
   artifacts: (ArtifactConfig | null)[];
   reactions: ReactionType[];
   opts: CombatOpts;
-  targetEr: Record<string, number>;
-  targetCr?: Record<string, number>;
+  minEr: Record<string, number>;
+  minCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;
   optimizationResult: OptimizationResult | null;
   calcContext?: Partial<CalcContext>;
@@ -42,9 +43,27 @@ export interface Team {
   enemyElementAura?: Element;
 }
 
+/** Exported artifact — `type` discriminator omitted since field names differ. */
+export type ExportedArtifact =
+  | { setId: string }
+  | { id1: string | number; id2: string | number };
+
+/** Exported team shape — only composition metadata, no user/account state. */
+export interface ExportedTeam {
+  /** Stable base64 ID derived from the team composition. */
+  id: string;
+  name: string;
+  characters: (string | null)[];
+  weapons: (string | null)[];
+  artifacts: (ExportedArtifact | null)[];
+  reactions?: ReactionType[];
+  minEr?: Record<string, number>;
+  minCr?: Record<string, number>;
+}
+
 /** Importable/exportable team composition envelope. Backwards-compatible with raw Team[]. */
 export interface TeamCompData {
-  teams: Team[];
+  teams: ExportedTeam[];
   author?: string;
   description?: string;
 }
@@ -86,8 +105,8 @@ export const useTeamStore = create<TeamState>()(
           artifacts: [null, null, null, null],
           reactions: [],
           opts: {},
-          targetEr: {},
-          targetCr: {},
+          minEr: {},
+          minCr: {},
           selectedFormula: null,
           optimizationResult: null,
           reactionOverrides: {},
@@ -173,25 +192,41 @@ export const useTeamStore = create<TeamState>()(
         // Accept both envelope { teams, author?, description? } and legacy raw Team[]
         const teamsArr = Array.isArray(data) ? data : data.teams;
         const validTeams: Team[] = teamsArr
-          .filter((t: Partial<Team>) => t.id && Array.isArray(t.characters))
-          .map((t: Partial<Team>) => ({
-            id: t.id!,
-            name: t.name ?? "",
-            characters: t.characters!,
-            weapons: t.weapons ?? [null, null, null, null],
-            artifacts: t.artifacts ?? [null, null, null, null],
-            reactions: t.reactions ?? [],
-            opts: t.opts ?? {},
-            targetEr: t.targetEr ?? {},
-            targetCr: (t as Team).targetCr ?? {},
-            selectedFormula: t.selectedFormula ?? null,
-            optimizationResult: null,
-            calcContext: t.calcContext,
-            reactionOverrides: t.reactionOverrides ?? {},
-            formulaMode: (t as Team).formulaMode ?? "single",
-            combos: t.combos ?? [],
-            selectedCombo: t.selectedCombo ?? null,
-          }));
+          .filter(
+            // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
+            (t: any) => t.id && Array.isArray(t.characters)
+          )
+          // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
+          .map((t: any) => {
+            return {
+              id: t.id,
+              name: t.name ?? "",
+              characters: t.characters,
+              weapons: t.weapons ?? [null, null, null, null],
+              artifacts: (t.artifacts ?? [null, null, null, null]).map(
+                // biome-ignore lint/suspicious/noExplicitAny: imported JSON has unknown shape
+                (a: any): ArtifactConfig | null => {
+                  if (!a) return null;
+                  if ("setId" in a) return { type: "4pc", setId: a.setId };
+                  if ("id1" in a)
+                    return { type: "2pc+2pc", id1: a.id1, id2: a.id2 };
+                  return a; // already has type discriminator
+                }
+              ),
+              reactions: t.reactions ?? [],
+              opts: t.opts ?? {},
+              // Support both new (minEr/minCr) and legacy (targetEr/targetCr) formats
+              minEr: t.minEr ?? t.targetEr ?? {},
+              minCr: t.minCr ?? t.targetCr ?? {},
+              selectedFormula: t.selectedFormula ?? null,
+              optimizationResult: null,
+              calcContext: t.calcContext,
+              reactionOverrides: t.reactionOverrides ?? {},
+              formulaMode: t.formulaMode ?? "single",
+              combos: t.combos ?? [],
+              selectedCombo: t.selectedCombo ?? null,
+            };
+          });
 
         set((state) => {
           state.teams = validTeams;
@@ -205,17 +240,64 @@ export const useTeamStore = create<TeamState>()(
 
       exportTeams: (author, description) => {
         const { teams } = get();
-        // Drop optimization results to save space
-        const exportable = teams.map((t) => ({
-          ...t,
-          optimizationResult: null,
-        }));
+        // First, normalize teammate order (slots 1-3) by release date desc
+        const normalized = teams.map((t) => {
+          const indices = [1, 2, 3].sort(
+            (a, b) =>
+              charSortKey(t.characters[a]) - charSortKey(t.characters[b])
+          );
+          return {
+            ...t,
+            characters: [
+              t.characters[0],
+              ...indices.map((i) => t.characters[i]),
+            ],
+            weapons: [t.weapons[0], ...indices.map((i) => t.weapons[i])],
+            artifacts: [t.artifacts[0], ...indices.map((i) => t.artifacts[i])],
+          };
+        });
+        // Sort teams by carry release date, then group by carry ID, then teammates
+        const sorted = normalized.sort((a, b) => {
+          // Primary: carry release date (newest first)
+          const carryDiff =
+            charSortKey(a.characters[0]) - charSortKey(b.characters[0]);
+          if (carryDiff !== 0) return carryDiff;
+          // Secondary: group same-date carries by ID so they stay together
+          const idA = a.characters[0] ?? "";
+          const idB = b.characters[0] ?? "";
+          if (idA !== idB) return idA < idB ? -1 : 1;
+          // Tertiary: teammates 1-3
+          for (let i = 1; i < 4; i++) {
+            const diff =
+              charSortKey(a.characters[i]) - charSortKey(b.characters[i]);
+            if (diff !== 0) return diff;
+          }
+          return 0;
+        });
+        // Export composition metadata with stable content-based IDs
+        const exportable: ExportedTeam[] = sorted.map((t) => {
+          const entry: ExportedTeam = {
+            id: encodeTeamId(t.characters, t.weapons, t.artifacts),
+            name: t.name,
+            characters: t.characters,
+            weapons: t.weapons,
+            artifacts: t.artifacts.map((a) => {
+              if (!a) return null;
+              if (a.type === "4pc") return { setId: a.setId };
+              return { id1: a.id1, id2: a.id2 };
+            }),
+          };
+          if (t.reactions.length > 0) entry.reactions = t.reactions;
+          if (t.minEr && Object.keys(t.minEr).length > 0) entry.minEr = t.minEr;
+          if (t.minCr && Object.keys(t.minCr).length > 0) entry.minCr = t.minCr;
+          return entry;
+        });
         return { teams: exportable, author, description };
       },
     })),
     {
       name: "team-builder-storage",
-      version: 3,
+      version: 4,
       migrate: (persisted, version) => {
         const state = persisted as TeamState;
         if (version < 1) {
@@ -237,6 +319,18 @@ export const useTeamStore = create<TeamState>()(
             ...t,
             formulaMode: (t as Team).formulaMode ?? "single",
           }));
+        }
+        if (version < 4) {
+          // Rename targetEr/targetCr → minEr/minCr
+          // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
+          state.teams = state.teams.map((t: any) => {
+            const { targetEr, targetCr, ...rest } = t;
+            return {
+              ...rest,
+              minEr: t.minEr ?? targetEr ?? {},
+              minCr: t.minCr ?? targetCr ?? {},
+            };
+          });
         }
         return persisted as TeamState;
       },

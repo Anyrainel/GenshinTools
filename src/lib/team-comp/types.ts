@@ -416,8 +416,8 @@ export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
 export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 
 export interface PerCharConfig {
-  targetEr: number;
-  targetCr: number;
+  minEr: number;
+  minCr: number;
   buildMatch?: BuildMatchResult | null;
   artifactSetId?: string | null;
   artifactHalfSetIds?: string[];

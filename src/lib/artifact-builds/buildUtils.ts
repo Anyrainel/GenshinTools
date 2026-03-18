@@ -1,3 +1,4 @@
+import { toBase64 } from "@/lib/base64";
 import { artifacts, characters } from "../../data/resources";
 import type {
   Build,
@@ -77,20 +78,6 @@ export function areBuildsEqual(b1: Build, b2: Build): boolean {
 // ---------------------------------------------------------------------------
 // Export Payload Generation (V5)
 // ---------------------------------------------------------------------------
-
-// Base64 conversion for BigInt (URL-safe alphabet)
-const BASE64_CHARS =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
-const toBase64 = (num: bigint): string => {
-  if (num === 0n) return "0";
-  let result = "";
-  let n = num;
-  while (n > 0n) {
-    result = BASE64_CHARS[Number(n % 64n)] + result;
-    n /= 64n;
-  }
-  return result;
-};
 
 const getStylesMask = (styles: string[] | undefined): number => {
   if (!styles) return 0;

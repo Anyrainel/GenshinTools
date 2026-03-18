@@ -363,8 +363,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     ]
   );
 
-  const targetErRaw =
-    (resolvedFormula && team.targetEr?.[resolvedFormula.charId]) ?? 1.0;
+  const minErRaw =
+    (resolvedFormula && team.minEr?.[resolvedFormula.charId]) ?? 1.0;
 
   const getGoalSets = (charId: string) => {
     const charIdx = effectiveTeam.characters.indexOf(charId);
@@ -422,8 +422,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     const perChar: Record<
       string,
       {
-        targetEr: number;
-        targetCr: number;
+        minEr: number;
+        minCr: number;
         buildMatch?:
           | import("@/lib/account-data/artifactScore").BuildMatchResult
           | null;
@@ -440,8 +440,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       const bm = optimizerBuildMatchByChar[cid];
       const { goalSetId, goalHalfSetIds } = getGoalSets(cid);
       perChar[cid] = {
-        targetEr: team.targetEr?.[cid] ?? 1.0,
-        targetCr: team.targetCr?.[cid] ?? 0,
+        minEr: team.minEr?.[cid] ?? 1.0,
+        minCr: team.minCr?.[cid] ?? 0,
         buildMatch: bm ?? undefined,
         artifactSetId: goalSetId,
         artifactHalfSetIds: goalHalfSetIds,
@@ -1009,7 +1009,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             ? optimizedComboDisplayResult
             : optimizedDisplayResult
         }
-        targetErRaw={targetErRaw}
+        minErRaw={minErRaw}
         idealComputing={idealComputing}
         idealResult={idealResult}
         idealError={idealError}

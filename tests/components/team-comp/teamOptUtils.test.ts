@@ -219,7 +219,7 @@ describe("buildTeamConfigs", () => {
     ],
     reactions: [] as ReactionType[],
     opts: {} as CombatOpts,
-    targetEr: {},
+    minEr: {},
     selectedFormula: null,
     optimizationResult: null,
     reactionOverrides: {},

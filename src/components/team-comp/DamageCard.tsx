@@ -297,8 +297,7 @@ function ComboBreakdown({
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
   // Filter to active lines whose formula still exists (matches evaluateCombo's filtering)
   const activeLines = comboLines.filter(
-    (l) =>
-      l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
+    (l) => l.count > 0 && allFormulaIds[l.charId]?.[l.formulaId] !== undefined
   );
 
   // Build per-line damage lookup (matches evaluateCombo's activeLines order)
@@ -605,7 +604,7 @@ interface DamageCardProps {
   handleOptimize: () => void;
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   optimizedDisplayResult: DisplayResult | null | undefined;
-  targetErRaw: number;
+  minErRaw: number;
   // Ideal gen (dev only)
   idealComputing: boolean;
   idealResult: IdealGenResult | null;
@@ -896,7 +895,7 @@ export function DamageCard({
   handleOptimize,
   optimizedArtifactsByChar,
   optimizedDisplayResult,
-  targetErRaw,
+  minErRaw,
   idealComputing,
   idealResult,
   idealError,
@@ -1288,7 +1287,7 @@ export function DamageCard({
                 <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
                   {t
                     .ui("teamComp.noValidCombinations")
-                    .replace("{0}", String(Math.round(targetErRaw * 100)))}
+                    .replace("{0}", String(Math.round(minErRaw * 100)))}
                 </div>
               )}
           </CardContent>

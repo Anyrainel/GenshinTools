@@ -134,7 +134,7 @@ describe("Integration: Team Builder Flow", () => {
       artifacts: [null, null, null, null],
       reactions: [],
       opts: {},
-      targetEr: {},
+      minEr: {},
       selectedFormula: null,
       optimizationResult: null,
       reactionOverrides: {},

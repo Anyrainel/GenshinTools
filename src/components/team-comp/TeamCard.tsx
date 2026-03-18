@@ -275,38 +275,15 @@ export function TeamCard({
                     (c) => c.key === val
                   );
                   if (acctChar) {
-                    // Prefill weapon if slot is empty or weapon type is incompatible
+                    // Always prefill weapon from equipped data
                     if (
                       acctChar.weapon?.key &&
                       weaponsById[acctChar.weapon.key]
                     ) {
-                      const existingWeapon = newWeapons[idx];
-                      const shouldPrefillWeapon =
-                        !existingWeapon ||
-                        (() => {
-                          if (!char) return true;
-                          const curWeapon = weaponsById[existingWeapon];
-                          if (!curWeapon) return true;
-                          const charMeta = getCharacterDisplayMeta(
-                            char,
-                            characterStats?.[val]
-                          );
-                          const wMeta = getWeaponDisplayMeta(
-                            curWeapon,
-                            weaponStats?.[existingWeapon]
-                          );
-                          return (
-                            charMeta.weaponType != null &&
-                            wMeta.type != null &&
-                            charMeta.weaponType !== wMeta.type
-                          );
-                        })();
-                      if (shouldPrefillWeapon) {
-                        newWeapons[idx] = acctChar.weapon.key;
-                      }
+                      newWeapons[idx] = acctChar.weapon.key;
                     }
 
-                    // Prefill artifact set from equipped artifacts
+                    // Always prefill artifact set from equipped artifacts
                     const equipped = Object.values(acctChar.artifacts || {});
                     if (equipped.length > 0) {
                       const detected = detectEquippedSets(equipped);
@@ -324,7 +301,7 @@ export function TeamCard({
                       }
                     }
                   } else {
-                    // No account data for this character — clear incompatible weapon
+                    // No account data — clear incompatible weapon
                     const weaponId = newWeapons[idx];
                     if (weaponId && char) {
                       const weapon = weaponsById[weaponId];

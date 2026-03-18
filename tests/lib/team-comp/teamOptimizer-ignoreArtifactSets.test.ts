@@ -153,8 +153,8 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
-          targetEr: 5.0, // impossibly high ER to force failure
-          targetCr: 0,
+          minEr: 5.0, // impossibly high ER to force failure
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
@@ -183,8 +183,8 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
@@ -216,8 +216,8 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
@@ -250,15 +250,15 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
-          targetEr: 5.0, // impossibly high ER to force failure
-          targetCr: 0,
+          minEr: 5.0, // impossibly high ER to force failure
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
         },
         xingqiu: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           artifactSetId: ESF,
           artifactHalfSetIds: [],
         },
@@ -289,15 +289,15 @@ describe("runTeamOptimization — ignoreArtifactSets", () => {
       baseSheets: emptySheets(),
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
         },
         xingqiu: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           artifactSetId: ESF,
           artifactHalfSetIds: [],
         },
@@ -351,8 +351,8 @@ describe("runTeamOptimization — accidental set detection", () => {
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: null,
           artifactHalfSetIds: [],
@@ -398,8 +398,8 @@ describe("runTeamOptimization — accidental set detection", () => {
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],
@@ -448,8 +448,8 @@ describe("runTeamOptimization — accidental set detection", () => {
       baseSheets: { hu_tao: new StatSheet([]) },
       perChar: {
         hu_tao: {
-          targetEr: 1.0,
-          targetCr: 0,
+          minEr: 1.0,
+          minCr: 0,
           buildMatch: makeBuildMatch(),
           artifactSetId: CW,
           artifactHalfSetIds: [],

@@ -178,12 +178,12 @@ function formatFailReason(
     case "er-unmet":
       return t
         .ui("teamComp.failErUnmet")
-        .replace("{0}", String(Math.round(reason.targetEr * 100)))
+        .replace("{0}", String(Math.round(reason.minEr * 100)))
         .replace("{1}", String(Math.round(reason.bestEr * 100)));
     case "cr-unmet":
       return t
         .ui("teamComp.failCrUnmet")
-        .replace("{0}", String(Math.round(reason.targetCr * 100)))
+        .replace("{0}", String(Math.round(reason.minCr * 100)))
         .replace("{1}", String(Math.round(reason.bestCr * 100)));
     case "set-impossible": {
       const name = reason.setId

@@ -232,7 +232,7 @@ export default function TeamCompPage() {
         artifacts: [null, null, null, null],
         opts: {},
         selectedFormula: null,
-        targetEr: {},
+        minEr: {},
       });
     };
 

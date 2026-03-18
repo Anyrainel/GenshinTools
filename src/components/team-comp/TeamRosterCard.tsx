@@ -384,34 +384,12 @@ export function TeamRosterCard({
                         (c: CharacterData) => c.key === newCharId
                       );
                       if (acctChar) {
+                        // Always prefill weapon from equipped data
                         if (
                           acctChar.weapon?.key &&
                           weaponsById[acctChar.weapon.key]
                         ) {
-                          const existingWeapon = newWeapons[i];
-                          const shouldPrefill =
-                            !existingWeapon ||
-                            (() => {
-                              if (!newChar) return true;
-                              const curWeapon = weaponsById[existingWeapon];
-                              if (!curWeapon) return true;
-                              const cMeta = getCharacterDisplayMeta(
-                                newChar,
-                                characterStats?.[newCharId]
-                              );
-                              const wMeta = getWeaponDisplayMeta(
-                                curWeapon,
-                                weaponStats?.[existingWeapon]
-                              );
-                              return (
-                                cMeta.weaponType != null &&
-                                wMeta.type != null &&
-                                cMeta.weaponType !== wMeta.type
-                              );
-                            })();
-                          if (shouldPrefill) {
-                            newWeapons[i] = acctChar.weapon.key;
-                          }
+                          newWeapons[i] = acctChar.weapon.key;
                         }
                         const equipped = Object.values(
                           acctChar.artifacts || {}
@@ -556,13 +534,13 @@ export function TeamRosterCard({
                       min={0}
                       max={100}
                       step={5}
-                      value={Math.round((team.targetCr?.[charId] ?? 0) * 100)}
+                      value={Math.round((team.minCr?.[charId] ?? 0) * 100)}
                       onChange={(e) => {
                         const val = Number(e.target.value) / 100;
                         if (!Number.isNaN(val)) {
                           updateTeam(team.id, {
-                            targetCr: {
-                              ...(team.targetCr ?? {}),
+                            minCr: {
+                              ...(team.minCr ?? {}),
                               [charId]: val,
                             },
                           });
@@ -601,13 +579,13 @@ export function TeamRosterCard({
                       min={100}
                       max={400}
                       step={5}
-                      value={Math.round((team.targetEr[charId] ?? 1.0) * 100)}
+                      value={Math.round((team.minEr[charId] ?? 1.0) * 100)}
                       onChange={(e) => {
                         const val = Number(e.target.value) / 100;
                         if (!Number.isNaN(val)) {
                           updateTeam(team.id, {
-                            targetEr: {
-                              ...team.targetEr,
+                            minEr: {
+                              ...team.minEr,
                               [charId]: val,
                             },
                           });
@@ -758,11 +736,9 @@ export function TeamRosterCard({
                 {(() => {
                   const hasSet =
                     artConfig?.type === "4pc" || artConfig?.type === "2pc+2pc";
-                  const erPct = Math.round(
-                    (team.targetEr?.[charId] ?? 1.0) * 100
-                  );
+                  const erPct = Math.round((team.minEr?.[charId] ?? 1.0) * 100);
                   const crPct = Math.round(
-                    (team.targetCr?.[charId] ?? 0.05) * 100
+                    (team.minCr?.[charId] ?? 0.05) * 100
                   );
                   const hasFavonius =
                     team.weapons[i]?.startsWith("favonius_") ?? false;
