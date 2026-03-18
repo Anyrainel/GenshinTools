@@ -15,12 +15,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { type Slot, allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
-import { Check, CircleAlert, Info, TriangleAlert } from "lucide-react";
+import { CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 interface ArtifactScoreHoverCardProps {
-  score: ArtifactScoreResult;
+  score: ArtifactScoreResult | null;
   characterId: string;
   className?: string;
   compact?: boolean;
@@ -91,10 +91,10 @@ export function ArtifactScoreHoverCard({
 
   const { t } = useLanguage();
 
-  const noBuild = score.buildMatch == null;
+  const noBuild = score == null;
 
   // Show warning icon when scored using a genuinely different artifact set
-  const hasSetMismatch = score.buildMatch?.setDifferent;
+  const hasSetMismatch = score?.buildMatch?.setDifferent;
 
   const labelCn = cn(
     "text-muted-foreground font-bold leading-none not-italic",
@@ -134,15 +134,11 @@ export function ArtifactScoreHoverCard({
             compact ? "text-xl" : "text-2xl"
           )}
         >
-          {score.normalized
-            ? score.normalized.normalizedScore.toFixed(0)
-            : score.substatScore.subScore.toFixed(0)}
+          {score.normalized.normalizedScore.toFixed(0)}
         </span>
       </div>
     </div>
   );
-
-  const ContentComponent = noBuild ? NoBuildContent : ArtifactScoreContent;
 
   if (compact) {
     return (
@@ -165,7 +161,14 @@ export function ArtifactScoreHoverCard({
             Artifact score breakdown by stat
           </DrawerDescription>
           <div className="p-4 pt-0 safe-area-bottom">
-            <ContentComponent artifactScore={score} characterId={characterId} />
+            {score ? (
+              <ArtifactScoreContent
+                artifactScore={score}
+                characterId={characterId}
+              />
+            ) : (
+              <NoBuildContent characterId={characterId} />
+            )}
           </div>
         </DrawerContent>
       </Drawer>
@@ -193,7 +196,14 @@ export function ArtifactScoreHoverCard({
         ref={contentRef}
         className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl"
       >
-        <ContentComponent artifactScore={score} characterId={characterId} />
+        {score ? (
+          <ArtifactScoreContent
+            artifactScore={score}
+            characterId={characterId}
+          />
+        ) : (
+          <NoBuildContent characterId={characterId} />
+        )}
       </HoverCardContent>
     </HoverCard>
   );
@@ -223,14 +233,8 @@ function useBuildSetLabel(score: ArtifactScoreResult): string | null {
   return build.name;
 }
 
-function NoBuildContent({
-  artifactScore,
-  characterId,
-}: ArtifactScoreContentProps) {
+function NoBuildContent({ characterId }: { characterId: string }) {
   const { t } = useLanguage();
-
-  const crData = artifactScore.substatScore.statScores.cr;
-  const cdData = artifactScore.substatScore.statScores.cd;
 
   return (
     <div className="flex flex-col gap-3">
@@ -247,53 +251,6 @@ function NoBuildContent({
       >
         {t.ui("accountData.viewBuilds")}
       </Link>
-
-      {/* Fallback CR/CD values */}
-      {(crData.subValue > 0 || cdData.subValue > 0) && (
-        <table className="w-full text-base border-collapse">
-          <thead>
-            <tr className="text-sm text-slate-400 border-b border-white/5">
-              <th className="text-left font-normal pb-2">
-                {t.ui("accountData.breakdownByStat")}
-              </th>
-              <th className="text-right font-normal pb-2">
-                {t.ui("accountData.valOverScore")}
-              </th>
-              <th className="text-right font-normal pb-2">
-                {t.ui("accountData.score")}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { key: "cr", data: crData },
-              { key: "cd", data: cdData },
-            ]
-              .filter(({ data }) => data.subValue > 0)
-              .map(({ key, data }) => (
-                <tr key={key}>
-                  <td className="py-1 text-gray-300 whitespace-nowrap">
-                    {t.statShort(key)}
-                  </td>
-                  <td className="text-right py-1 font-mono text-gray-400 whitespace-nowrap">
-                    <span className="text-gray-300">
-                      {data.subValue.toFixed(1)}%
-                    </span>
-                    <span className="text-muted-foreground mx-1.5">/</span>
-                    <span className="text-sky-300">
-                      {data.subCount.toFixed(1)}
-                    </span>
-                  </td>
-                  <td className="text-right py-1 font-mono whitespace-nowrap">
-                    <span className="text-amber-200">
-                      {data.subScore.toFixed(1)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      )}
     </div>
   );
 }
@@ -304,15 +261,13 @@ function ArtifactScoreContent({
 }: ArtifactScoreContentProps) {
   const { t } = useLanguage();
   const buildSetLabel = useBuildSetLabel(artifactScore);
-  const hasSetMismatch = artifactScore.buildMatch?.setDifferent;
+  const hasSetMismatch = artifactScore.buildMatch.setDifferent;
   const norm = artifactScore.normalized;
-  const normalizer = norm?.normalizer ?? 0;
+  const normalizer = norm.normalizer;
 
   // Compute normalized main/sub totals for the summary bar
-  const normMainTotal = norm ? norm.rawMainStatScore * normalizer : 0;
-  const normSubTotal = norm
-    ? artifactScore.substatScore.subScore * normalizer
-    : 0;
+  const normMainTotal = norm.rawMainStatScore * normalizer;
+  const normSubTotal = artifactScore.substatScore.subScore * normalizer;
 
   return (
     <div className="flex flex-col gap-4">
@@ -339,44 +294,38 @@ function ArtifactScoreContent({
         </span>
         <div className="flex items-baseline gap-1 font-mono">
           <span className="text-2xl font-black text-amber-200">
-            {norm
-              ? norm.normalizedScore.toFixed(1)
-              : artifactScore.substatScore.subScore.toFixed(1)}
+            {norm.normalizedScore.toFixed(1)}
           </span>
-          {norm && (
-            <span className="text-sm text-slate-400">
-              {t.ui("accountData.outOf300")}
-            </span>
-          )}
+          <span className="text-sm text-slate-400">
+            {t.ui("accountData.outOf300")}
+          </span>
         </div>
       </div>
 
       {/* Main + Sub score summary bar */}
-      {norm && (
-        <div className="flex items-center gap-3 text-sm font-mono">
-          <span className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-sans">
-              {t.ui("accountData.mainStatContrib")}:
-            </span>
-            <span className="text-emerald-300">{normMainTotal.toFixed(1)}</span>
+      <div className="flex items-center gap-3 text-sm font-mono">
+        <span className="flex items-center gap-1.5">
+          <span className="text-slate-400 font-sans">
+            {t.ui("accountData.mainStatContrib")}:
           </span>
-          <span className="text-slate-600">+</span>
-          <span className="flex items-center gap-1.5">
-            <span className="text-slate-400 font-sans">
-              {t.ui("accountData.subStatContrib")}:
-            </span>
-            <span className="text-amber-200">{normSubTotal.toFixed(1)}</span>
+          <span className="text-emerald-300">{normMainTotal.toFixed(1)}</span>
+        </span>
+        <span className="text-slate-600">+</span>
+        <span className="flex items-center gap-1.5">
+          <span className="text-slate-400 font-sans">
+            {t.ui("accountData.subStatContrib")}:
           </span>
-          <span className="ml-auto flex items-center gap-1.5">
-            <span className="text-slate-400 font-sans">
-              {t.ui("accountData.statCount")}:
-            </span>
-            <span className="text-sky-300">
-              {artifactScore.substatScore.statCount.toFixed(1)}
-            </span>
+          <span className="text-amber-200">{normSubTotal.toFixed(1)}</span>
+        </span>
+        <span className="ml-auto flex items-center gap-1.5">
+          <span className="text-slate-400 font-sans">
+            {t.ui("accountData.statCount")}:
           </span>
-        </div>
-      )}
+          <span className="text-sky-300">
+            {artifactScore.substatScore.statCount.toFixed(1)}
+          </span>
+        </span>
+      </div>
 
       {/* Breakdown by Slot */}
       <div className="grid grid-cols-[auto_repeat(5,auto)] gap-y-2 gap-x-4 text-base">
@@ -400,7 +349,7 @@ function ArtifactScoreContent({
           const isEquipped =
             artifactScore.substatScore.slotMaxSubScores[slot as Slot] > 0;
 
-          if (!isMainStat || !isEquipped || !artifactScore.buildMatch) {
+          if (!isMainStat || !isEquipped) {
             return (
               <div key={slot} className="text-center text-slate-600">
                 -
@@ -411,7 +360,7 @@ function ArtifactScoreContent({
           const hasMismatch = artifactScore.buildMatch.mainStatMismatches.some(
             (m) => m.slot === slot
           );
-          const mainScore = norm?.slotMainStatScores[slot as Slot] ?? 0;
+          const mainScore = norm.slotMainStatScores[slot as Slot] ?? 0;
           const normMainSlot = mainScore * normalizer;
 
           if (hasMismatch) {
@@ -452,9 +401,7 @@ function ArtifactScoreContent({
           else if (percent >= 0.8) fontWeight = "font-semibold";
           else if (percent >= 0.6) fontWeight = "font-medium";
 
-          // Show in normalized space when available
-          const displayScore =
-            normalizer > 0 ? (subScore ?? 0) * normalizer : subScore;
+          const displayScore = (subScore ?? 0) * normalizer;
 
           return (
             <div
@@ -529,10 +476,7 @@ function ArtifactScoreContent({
                       </span>
                       {data.subScore > 0 ? (
                         <span className="text-amber-200">
-                          {(normalizer > 0
-                            ? data.subScore * normalizer
-                            : data.subScore
-                          ).toFixed(1)}
+                          {(data.subScore * normalizer).toFixed(1)}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">-</span>

@@ -739,16 +739,21 @@ describe("buildToWeightMap", () => {
   });
 });
 
+/** scoreWithBuilds wrapper that asserts non-null for test convenience */
+function score(
+  ...args: Parameters<typeof scoreWithBuilds>
+): ArtifactScoreResult {
+  const r = scoreWithBuilds(...args);
+  expect(r).not.toBeNull();
+  return r!;
+}
+
 describe("scoreWithMatchedBuild", () => {
   describe("Arlecchino — perfect build match", () => {
     let result: ArtifactScoreResult;
 
     it("matches the correct build with set+main stat match", () => {
-      result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.buildMatch).toBeDefined();
       expect(result.buildMatch!.build.id).toBe("CRMaUWu");
       expect(result.buildMatch!.setMatched).toBe(true);
@@ -756,41 +761,25 @@ describe("scoreWithMatchedBuild", () => {
     });
 
     it("reports isComplete = true with 5 artifacts", () => {
-      result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.substatScore.isComplete).toBe(true);
     });
 
     it("generates positive sub scores for weighted stats", () => {
-      result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.substatScore.subScore).toBeGreaterThan(0);
       expect(result.substatScore.statScores.cr.subScore).toBeGreaterThan(0);
       expect(result.substatScore.statScores.cd.subScore).toBeGreaterThan(0);
     });
 
     it("gives zero sub score for unweighted stats", () => {
-      result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.substatScore.statScores["def%"].subScore).toBe(0);
       expect(result.substatScore.statScores["hp%"].subScore).toBe(0);
     });
 
     it("populates slot-level scores", () => {
-      result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const slots = ["flower", "plume", "sands", "goblet", "circlet"] as const;
       for (const slot of slots) {
         expect(result.substatScore.slotSubScores[slot]).toBeGreaterThanOrEqual(
@@ -803,7 +792,7 @@ describe("scoreWithMatchedBuild", () => {
 
   describe("Citlali — EM stacking build", () => {
     it("matches the set-matched build over non-set-matched", () => {
-      const result = scoreWithBuilds(
+      const result = score(
         citlaliChar,
         [citlaliBuild2, citlaliBuild1], // build2 is tenacity (no match), build1 is scroll (4pc)
         GLOBAL_CONFIG
@@ -813,36 +802,24 @@ describe("scoreWithMatchedBuild", () => {
     });
 
     it("scores EM substats highly", () => {
-      const result = scoreWithBuilds(
-        citlaliChar,
-        [citlaliBuild1],
-        GLOBAL_CONFIG
-      );
+      const result = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       expect(result.substatScore.statScores.em.subScore).toBeGreaterThan(0);
       expect(result.substatScore.statScores.em.subValue).toBeGreaterThan(0);
     });
 
     it("scores ER substats (weight 100 in build1)", () => {
-      const result = scoreWithBuilds(
-        citlaliChar,
-        [citlaliBuild1],
-        GLOBAL_CONFIG
-      );
+      const result = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       expect(result.substatScore.statScores.er.subScore).toBeGreaterThan(0);
     });
 
     it("gives zero score for CR/CD (not weighted in build1)", () => {
-      const result = scoreWithBuilds(
-        citlaliChar,
-        [citlaliBuild1],
-        GLOBAL_CONFIG
-      );
+      const result = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       expect(result.substatScore.statScores.cr.subScore).toBe(0);
       expect(result.substatScore.statScores.cd.subScore).toBe(0);
     });
 
     it("scores CR/CD when using C6 build (build3)", () => {
-      const result = scoreWithBuilds(
+      const result = score(
         citlaliChar,
         [citlaliBuild3], // cd(50), cr(50)
         GLOBAL_CONFIG
@@ -864,11 +841,7 @@ describe("scoreWithMatchedBuild", () => {
           circlet: arlecchinoArtifacts.circlet,
         },
       };
-      const result = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.buildMatch).not.toBeNull();
       expect(result.buildMatch!.build.id).toBe("CRMaUWu");
       expect(result.buildMatch!.setMatched).toBe(true);
@@ -884,11 +857,7 @@ describe("scoreWithMatchedBuild", () => {
           circlet: arlecchinoArtifacts.circlet,
         },
       };
-      const result = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       // All equipped slots should have positive sub scores and max scores
       for (const slot of ["flower", "plume", "sands", "circlet"] as const) {
         expect(result.substatScore.slotSubScores[slot]).toBeGreaterThan(0);
@@ -914,7 +883,7 @@ describe("scoreWithMatchedBuild", () => {
         ...xilonenBuild,
         id: "alt-def-build",
       };
-      const result = scoreWithBuilds(
+      const result = score(
         partialChar,
         [altBuild, arlecchinoBuild],
         GLOBAL_CONFIG
@@ -927,33 +896,16 @@ describe("scoreWithMatchedBuild", () => {
     });
   });
 
-  describe("fallback — no builds", () => {
-    it("returns null buildMatch when no builds provided", () => {
+  describe("no builds", () => {
+    it("returns null when no builds provided", () => {
       const result = scoreWithBuilds(arlecchinoChar, [], GLOBAL_CONFIG);
-      expect(result.buildMatch).toBeNull();
-    });
-
-    it("scores with fallback weights (cr/cd 100%)", () => {
-      const result = scoreWithBuilds(arlecchinoChar, [], GLOBAL_CONFIG);
-      expect(result.substatScore.subScore).toBeGreaterThan(0);
-    });
-
-    it("still reports isComplete correctly", () => {
-      const result = scoreWithBuilds(arlecchinoChar, [], GLOBAL_CONFIG);
-      expect(result.substatScore.isComplete).toBe(true);
-
-      const barResult = scoreWithBuilds(bareChar, [], GLOBAL_CONFIG);
-      expect(barResult.substatScore.isComplete).toBe(false);
+      expect(result).toBeNull();
     });
   });
 
   describe("score consistency", () => {
     it("total subScore equals sum of slot sub scores", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const slotSubSum = Object.values(
         result.substatScore.slotSubScores
       ).reduce((s, v) => s + v, 0);
@@ -961,11 +913,7 @@ describe("scoreWithMatchedBuild", () => {
     });
 
     it("stat sub values sum is consistent across slots", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       // CR subValue should equal sum of all CR substat values across artifacts
       // flower: 6.2, plume: 14.4, goblet: 3.1, circlet: 17.1 = 40.8
       expect(result.substatScore.statScores.cr.subValue).toBeCloseTo(40.8, 1);
@@ -980,20 +928,12 @@ describe("scoreWithMatchedBuild", () => {
 describe("normalizedScore", () => {
   describe("full character — all main stats correct", () => {
     it("returns normalized info when build is matched", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.normalized).not.toBeNull();
     });
 
     it("normalizedScore = (rawMainStatScore + subScore) × normalizer", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       const expected =
         (n.rawMainStatScore + result.substatScore.subScore) * n.normalizer;
@@ -1001,21 +941,13 @@ describe("normalizedScore", () => {
     });
 
     it("normalizer = 300 / idealScore", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.normalizer).toBeCloseTo(300 / n.idealScore, 5);
     });
 
     it("awards CD-equiv per correct 5★ main stat slot", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       // Arlecchino: sands=atk%(✓), goblet=pyro%(✓), circlet=cd(✓) → 3 × 62.1
       expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR * 3, 1);
@@ -1034,22 +966,14 @@ describe("normalizedScore", () => {
     });
 
     it("flower and plume main stat scores are always 0", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.slotMainStatScores.flower).toBe(0);
       expect(n.slotMainStatScores.plume).toBe(0);
     });
 
     it("normalizedScore is below 300 for non-perfect artifacts", () => {
-      const result = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(result.normalized!.normalizedScore).toBeLessThan(300);
       expect(result.normalized!.normalizedScore).toBeGreaterThan(0);
     });
@@ -1057,11 +981,7 @@ describe("normalizedScore", () => {
 
   describe("all main stats wrong", () => {
     it("rawMainStatScore is 0 when all main stats mismatch", () => {
-      const result = scoreWithBuilds(
-        mismatchedChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(mismatchedChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.rawMainStatScore).toBe(0);
       expect(n.slotMainStatScores.sands).toBe(0);
@@ -1070,16 +990,8 @@ describe("normalizedScore", () => {
     });
 
     it("normalizedScore is much lower than with correct main stats", () => {
-      const correct = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
-      const wrong = scoreWithBuilds(
-        mismatchedChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const correct = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
+      const wrong = score(mismatchedChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(wrong.normalized!.normalizedScore).toBeLessThan(
         correct.normalized!.normalizedScore
       );
@@ -1098,11 +1010,7 @@ describe("normalizedScore", () => {
           // goblet, circlet missing
         },
       };
-      const result = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       // Only sands contributes main stat score
       expect(n.slotMainStatScores.sands).toBeCloseTo(
@@ -1123,16 +1031,8 @@ describe("normalizedScore", () => {
           sands: arlecchinoArtifacts.sands,
         },
       };
-      const full = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
-      const partial = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const full = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
+      const partial = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       expect(partial.normalized!.normalizedScore).toBeLessThan(
         full.normalized!.normalizedScore
       );
@@ -1146,16 +1046,8 @@ describe("normalizedScore", () => {
           sands: arlecchinoArtifacts.sands,
         },
       };
-      const full = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
-      const partial = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const full = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
+      const partial = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       // Normalizer depends only on build weights, not on what's equipped
       expect(partial.normalized!.normalizer).toBeCloseTo(
         full.normalized!.normalizer,
@@ -1173,11 +1065,7 @@ describe("normalizedScore", () => {
           plume: arlecchinoArtifacts.plume,
         },
       };
-      const result = scoreWithBuilds(
-        partialChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(partialChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.rawMainStatScore).toBe(0);
       // But substats still contribute
@@ -1185,20 +1073,16 @@ describe("normalizedScore", () => {
     });
   });
 
-  describe("no build — fallback", () => {
-    it("normalized is null when no builds provided", () => {
+  describe("no build", () => {
+    it("returns null when no builds provided", () => {
       const result = scoreWithBuilds(arlecchinoChar, [], GLOBAL_CONFIG);
-      expect(result.normalized).toBeNull();
+      expect(result).toBeNull();
     });
   });
 
   describe("empty character — no artifacts", () => {
     it("normalized score is 0 with no artifacts", () => {
-      const result = scoreWithBuilds(
-        bareChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(bareChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.normalizedScore).toBe(0);
       expect(n.rawMainStatScore).toBe(0);
@@ -1225,7 +1109,7 @@ describe("normalizedScore", () => {
           },
         },
       };
-      const result = scoreWithBuilds(char4Star, [citlaliBuild1], GLOBAL_CONFIG);
+      const result = score(char4Star, [citlaliBuild1], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.slotMainStatScores.sands).toBeCloseTo(46.4, 1);
     });
@@ -1253,11 +1137,7 @@ describe("normalizedScore", () => {
           circlet: arlecchinoArtifacts.circlet, // cd ✓
         },
       };
-      const result = scoreWithBuilds(
-        mixedChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
+      const result = score(mixedChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.slotMainStatScores.sands).toBeCloseTo(
         MAIN_STAT_CD_EQUIV_5STAR,
@@ -1274,16 +1154,8 @@ describe("normalizedScore", () => {
 
   describe("Citlali EM build — normalizer differs by build weights", () => {
     it("produces different normalizer than Arlecchino build", () => {
-      const arlResult = scoreWithBuilds(
-        arlecchinoChar,
-        [arlecchinoBuild],
-        GLOBAL_CONFIG
-      );
-      const citResult = scoreWithBuilds(
-        citlaliChar,
-        [citlaliBuild1],
-        GLOBAL_CONFIG
-      );
+      const arlResult = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
+      const citResult = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       // Different weight distributions → different ideal scores → different normalizers
       expect(arlResult.normalized!.normalizer).not.toBeCloseTo(
         citResult.normalized!.normalizer,
@@ -1292,11 +1164,7 @@ describe("normalizedScore", () => {
     });
 
     it("all 3 main stats scored for Citlali EM build", () => {
-      const result = scoreWithBuilds(
-        citlaliChar,
-        [citlaliBuild1],
-        GLOBAL_CONFIG
-      );
+      const result = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       const n = result.normalized!;
       // Citlali: sands=em(✓), goblet=em(✓), circlet=em(✓)
       expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR * 3, 1);

@@ -8,7 +8,7 @@ export type AccountState = {
   id: string;
   name: string;
   data: AccountData;
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, ArtifactScoreResult | null>;
   lastUpdate: number;
 };
 
@@ -27,7 +27,7 @@ interface AccountStore {
   deleteAccount: (id: string) => void;
   clearAccounts: () => void;
 
-  setScores: (scores: Record<string, ArtifactScoreResult>) => void;
+  setScores: (scores: Record<string, ArtifactScoreResult | null>) => void;
   invalidateScores: () => void;
 }
 

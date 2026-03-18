@@ -2,6 +2,8 @@ import { StatDisplay } from "@/components/account-data/StatDisplay";
 import type { ArtifactData, SubStat } from "@/data/types";
 import type {
   ArtifactScoreResult,
+  BuildMatchResult,
+  NormalizedScoreInfo,
   StatScoreBreakdown,
 } from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
@@ -46,8 +48,27 @@ const mockScoreResult: ArtifactScoreResult = {
       "hp%": { weight: 0.5, subValue: 9.3, subScore: 2.0, subCount: 0 },
     } as Record<SubStat, StatScoreBreakdown>,
   },
-  buildMatch: null,
-  normalized: null,
+  buildMatch: {
+    build: { name: "Test" },
+    buildIndex: 0,
+    statWeights: { cr: 100, cd: 100 },
+    setMatched: true,
+    mainStatMatches: 3,
+    mainStatMismatches: [],
+  } as unknown as BuildMatchResult,
+  normalized: {
+    normalizedScore: 150,
+    rawMainStatScore: 30,
+    slotMainStatScores: {
+      flower: 0,
+      plume: 0,
+      sands: 0,
+      goblet: 0,
+      circlet: 0,
+    },
+    idealScore: 100,
+    normalizer: 3,
+  } as NormalizedScoreInfo,
 };
 
 describe("StatDisplay", () => {

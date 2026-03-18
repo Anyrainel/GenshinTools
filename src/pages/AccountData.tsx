@@ -220,7 +220,7 @@ export default function AccountDataPage() {
   useEffect(() => {
     if (accountData && accountData.characters.length > 0) {
       const timer = setTimeout(() => {
-        const results: Record<string, ArtifactScoreResult> = {};
+        const results: Record<string, ArtifactScoreResult | null> = {};
         for (const char of accountData.characters) {
           const builds = resolvedBuildsMap[char.key] ?? [];
           results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);

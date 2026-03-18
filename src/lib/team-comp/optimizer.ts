@@ -79,19 +79,14 @@ export interface OptimizationResult {
   failReason?: OptFailReason;
 }
 
-/** Fallback stat weights when no build recommendation exists. */
-const OPTIMIZER_FALLBACK_WEIGHTS: Record<string, number> = {
-  cr: 100,
-  cd: 100,
-};
-
 function scorePiece(
   art: ArtifactData,
   buildMatch: BuildMatchResult | null | undefined,
   globalConfig: GlobalStatWeights,
   crDiscount = 1
 ): number {
-  const baseWeights = buildMatch?.statWeights ?? OPTIMIZER_FALLBACK_WEIGHTS;
+  if (!buildMatch) return 0;
+  const baseWeights = buildMatch.statWeights;
   const weights =
     crDiscount < 1
       ? { ...baseWeights, cr: (baseWeights.cr ?? 0) * crDiscount }

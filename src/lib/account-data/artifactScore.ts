@@ -113,9 +113,9 @@ export interface NormalizedScoreInfo {
 
 export interface ArtifactScoreResult {
   substatScore: SubstatScoreResult;
-  buildMatch: BuildMatchResult | null;
-  /** Normalized scoring (main stat + 300-scale). Null when no build is matched. */
-  normalized: NormalizedScoreInfo | null;
+  buildMatch: BuildMatchResult;
+  /** Normalized scoring (main stat + 300-scale). */
+  normalized: NormalizedScoreInfo;
 }
 
 // ----------------------------------------------------------------------------
@@ -398,8 +398,6 @@ export function getTargetMainStatsForSlot(
   return fallback.size > 0 ? fallback : new Set();
 }
 
-const FALLBACK_WEIGHTS: StatWeightMap = { cr: 100, cd: 100 };
-
 export function scoreSlot(
   artifact: ArtifactData,
   weights: StatWeightMap,
@@ -508,21 +506,11 @@ export function scoreAllSlots(
 
     slotSubScores[slot] = slotSub;
     if (artifact.rarity === 5 || artifact.rarity === 4) {
-      let maxScore = calculateMaxSlotSubScore(
+      slotMaxSubScores[slot] = calculateMaxSlotSubScore(
         artifact.mainStatKey,
         weights,
         artifact.rarity
       );
-      // If the build's weights produce 0 (e.g. no weighted substats in pool),
-      // fall back to cr/cd weights so the progress bar still renders.
-      if (maxScore === 0) {
-        maxScore = calculateMaxSlotSubScore(
-          artifact.mainStatKey,
-          FALLBACK_WEIGHTS,
-          artifact.rarity
-        );
-      }
-      slotMaxSubScores[slot] = maxScore;
     }
   }
 
@@ -615,27 +603,25 @@ export function scoreWithBuilds(
   builds: Build[],
   globalConfig: GlobalStatWeights,
   nonArtifactCr?: number
-): ArtifactScoreResult {
+): ArtifactScoreResult | null {
   const buildMatch = matchBuild(
     char.artifacts,
     builds,
     char.constellation,
     globalConfig
   );
+  if (!buildMatch) return null;
   const substatScore = scoreAllSlots(
     char,
-    buildMatch?.statWeights ?? FALLBACK_WEIGHTS,
+    buildMatch.statWeights,
     globalConfig,
     nonArtifactCr
   );
-  const normalized =
-    buildMatch != null
-      ? computeNormalizedScore(
-          char.artifacts,
-          buildMatch,
-          substatScore.subScore
-        )
-      : null;
+  const normalized = computeNormalizedScore(
+    char.artifacts,
+    buildMatch,
+    substatScore.subScore
+  );
   return { substatScore, buildMatch, normalized };
 }
 

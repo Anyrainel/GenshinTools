@@ -68,7 +68,7 @@ function computeMasonryColumns<T>(
 }
 
 interface RecommendationViewProps {
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, ArtifactScoreResult | null>;
 }
 
 export function RecommendationView({ scores }: RecommendationViewProps) {

@@ -260,7 +260,7 @@ function optimizeWithInvestmentConstraints(
 
 export function generateAllRecommendations(
   accountData: AccountData,
-  scores: Record<string, ArtifactScoreResult>,
+  scores: Record<string, ArtifactScoreResult | null>,
   globalConfig: GlobalStatWeights,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {},

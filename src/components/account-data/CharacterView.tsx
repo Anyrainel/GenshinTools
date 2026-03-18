@@ -26,7 +26,7 @@ import { Pencil } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 export interface CharacterViewProps {
-  scores: Record<string, ArtifactScoreResult>;
+  scores: Record<string, ArtifactScoreResult | null>;
   isEditMode?: boolean;
 }
 

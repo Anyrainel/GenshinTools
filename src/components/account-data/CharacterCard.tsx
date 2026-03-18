@@ -24,7 +24,7 @@ import { StatDisplay } from "./StatDisplay";
 
 interface CharacterCardProps {
   char: CharacterData;
-  score: ArtifactScoreResult;
+  score?: ArtifactScoreResult | null;
   onEdit?: () => void;
 }
 
@@ -43,9 +43,7 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
   const weapon = char.weapon;
   const weaponInfo = weapon ? weaponsById[weapon.key] : null;
 
-  // Score must be pre-calculated
-  const artifactScore = score;
-  if (!artifactScore) return null;
+  const artifactScore = score ?? null;
 
   // Set Bonus Logic
   const setCounts: Record<string, number> = {};
@@ -241,7 +239,7 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
         </div>
 
         {/* Artifact Score */}
-        {artifactScore.substatScore.subScore > 0 && (
+        {(artifactScore == null || artifactScore.substatScore.subScore > 0) && (
           <ArtifactScoreHoverCard
             score={artifactScore}
             characterId={char.key}
@@ -261,14 +259,11 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
             // Uses build match result for accurate detection
             const isMainStatWrong =
               art &&
+              artifactScore &&
               ["sands", "goblet", "circlet"].includes(slot) &&
-              (artifactScore.buildMatch
-                ? artifactScore.buildMatch.mainStatMismatches.some(
-                    (m) => m.slot === (slot as MainStatSlot)
-                  )
-                : (artifactScore.substatScore.statScores[
-                    art.mainStatKey as SubStat
-                  ]?.weight ?? 0) === 0);
+              artifactScore.buildMatch.mainStatMismatches.some(
+                (m) => m.slot === (slot as MainStatSlot)
+              );
 
             const content = (
               <div
@@ -281,14 +276,14 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
                 {art ? (
                   <StatDisplay
                     artifact={art}
-                    scoreResult={artifactScore}
+                    scoreResult={artifactScore ?? undefined}
                     slotSubScore={
-                      artifactScore.substatScore.slotSubScores[slot as Slot]
+                      artifactScore?.substatScore.slotSubScores[slot as Slot]
                     }
                     slotMaxSubScore={
-                      artifactScore.substatScore.slotMaxSubScores[slot as Slot]
+                      artifactScore?.substatScore.slotMaxSubScores[slot as Slot]
                     }
-                    isMainStatWrong={isMainStatWrong}
+                    isMainStatWrong={isMainStatWrong ?? undefined}
                     compact={isArtifactCompact}
                   />
                 ) : (

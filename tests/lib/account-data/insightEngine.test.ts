@@ -10,6 +10,7 @@ import type {
 import { allSlots } from "@/data/types";
 import type {
   ArtifactScoreResult,
+  NormalizedScoreInfo,
   StatScoreBreakdown,
   StatWeightMap,
 } from "@/lib/account-data/artifactScore";
@@ -64,7 +65,13 @@ function makeScoreResultFromWeights(
       mainStatMatches: 3,
       mainStatMismatches: [],
     },
-    normalized: null,
+    normalized: {
+      normalizedScore: 0,
+      rawMainStatScore: 0,
+      slotMainStatScores: emptySlotScores(),
+      idealScore: 100,
+      normalizer: 3,
+    } as NormalizedScoreInfo,
   };
 }
 

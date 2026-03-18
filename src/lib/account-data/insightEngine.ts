@@ -439,7 +439,7 @@ function selectInsights(
 export function generateCharacterInsights(
   char: CharacterData,
   allArtifacts: CandidateArtifact[],
-  scoreResult: ArtifactScoreResult | undefined,
+  scoreResult: ArtifactScoreResult | null | undefined,
   globalConfig: GlobalStatWeights,
   tierAssignments: TierAssignment,
   quality: LuckExpectation = "balanced"
@@ -515,7 +515,7 @@ export function generateCharacterInsights(
 
 export function generateAllInsights(
   accountData: AccountData,
-  scores: Record<string, ArtifactScoreResult>,
+  scores: Record<string, ArtifactScoreResult | null>,
   globalConfig: GlobalStatWeights,
   tierAssignments: TierAssignment,
   tierCustomization: TierCustomization = {}

@@ -125,10 +125,8 @@ describe("Integration: Data Import to Character Display Flow", () => {
     // Calculate score (no builds available — scores will be 0 without weight data)
     const score = scoreWithBuilds(character, [], scoreConfig.global);
 
-    // Verify score structure
-    expect(score).toBeDefined();
-    expect(score.substatScore.isComplete).toBe(false); // Only 2 of 5 artifacts
-    expect(score.buildMatch).toBeNull(); // No builds → no match
+    // No builds → returns null
+    expect(score).toBeNull();
   });
 
   it("renders CharacterCard with imported and scored data", () => {

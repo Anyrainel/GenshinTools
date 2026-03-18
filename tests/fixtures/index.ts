@@ -14,6 +14,8 @@ import type {
 import { allSlots } from "@/data/types";
 import type {
   ArtifactScoreResult,
+  BuildMatchResult,
+  NormalizedScoreInfo,
   StatScoreBreakdown,
   SubstatScoreResult,
 } from "@/lib/account-data/artifactScore";
@@ -186,9 +188,28 @@ export const MOCK_ACCOUNT_DATA = {
 // Artifact Score Fixtures
 // ============================================================================
 
+const DEFAULT_BUILD_MATCH: BuildMatchResult = {
+  build: { name: "Test Build" },
+  buildIndex: 0,
+  statWeights: { cr: 100, cd: 100 },
+  setMatched: true,
+  setDifferent: false,
+  mainStatMatches: 3,
+  mainStatMismatches: [],
+} as unknown as BuildMatchResult;
+
+const DEFAULT_NORMALIZED: NormalizedScoreInfo = {
+  normalizedScore: 150,
+  rawMainStatScore: 30,
+  slotMainStatScores: emptySlotScores(),
+  idealScore: 100,
+  normalizer: 3,
+};
+
 type ArtifactScoreResultOverrides = {
   substatScore?: Partial<SubstatScoreResult>;
-  buildMatch?: ArtifactScoreResult["buildMatch"];
+  buildMatch?: Partial<BuildMatchResult>;
+  normalized?: Partial<NormalizedScoreInfo>;
 };
 
 export const createArtifactScoreResult = (
@@ -206,8 +227,8 @@ export const createArtifactScoreResult = (
   };
   return {
     substatScore: substat,
-    buildMatch: overrides.buildMatch ?? null,
-    normalized: null,
+    buildMatch: { ...DEFAULT_BUILD_MATCH, ...overrides.buildMatch },
+    normalized: { ...DEFAULT_NORMALIZED, ...overrides.normalized },
   };
 };
 

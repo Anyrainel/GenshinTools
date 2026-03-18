@@ -3,6 +3,7 @@ import type { SubStat } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
+  NormalizedScoreInfo,
   StatScoreBreakdown,
 } from "@/lib/account-data/artifactScore";
 import { render, screen } from "../../utils/render";
@@ -44,13 +45,19 @@ const mockScoreWithBuild: ArtifactScoreResult = {
     mainStatMatches: 3,
     mainStatMismatches: [],
   } as unknown as BuildMatchResult,
-  normalized: null,
-};
-
-const mockScoreNoBuild: ArtifactScoreResult = {
-  substatScore: baseMockSubstatScore,
-  buildMatch: null,
-  normalized: null,
+  normalized: {
+    normalizedScore: 180,
+    rawMainStatScore: 50,
+    slotMainStatScores: {
+      flower: 0,
+      plume: 0,
+      sands: 20,
+      goblet: 20,
+      circlet: 10,
+    },
+    idealScore: 100,
+    normalizer: 3,
+  } as NormalizedScoreInfo,
 };
 
 describe("ArtifactScoreHoverCard", () => {
@@ -67,21 +74,19 @@ describe("ArtifactScoreHoverCard", () => {
     }));
   });
 
-  it("displays stat count and sub score in trigger when build exists", () => {
+  it("displays stat count and normalized score in trigger when build exists", () => {
     render(
       <ArtifactScoreHoverCard score={mockScoreWithBuild} characterId="test" />
     );
-    // Trigger shows two rows: label + statCount, label + subScore
+    // Trigger shows two rows: label + statCount, label + normalizedScore
     expect(screen.getByText("12.3")).toBeInTheDocument();
-    expect(screen.getByText("36")).toBeInTheDocument();
+    expect(screen.getByText("180")).toBeInTheDocument();
   });
 
   it("displays warning icon instead of scores when no build configured", () => {
-    render(
-      <ArtifactScoreHoverCard score={mockScoreNoBuild} characterId="test" />
-    );
+    render(<ArtifactScoreHoverCard score={null} characterId="test" />);
     // Should NOT show the score numbers in the trigger
     expect(screen.queryByText("12.3")).not.toBeInTheDocument();
-    expect(screen.queryByText("36")).not.toBeInTheDocument();
+    expect(screen.queryByText("180")).not.toBeInTheDocument();
   });
 });
