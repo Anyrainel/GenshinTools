@@ -1451,7 +1451,7 @@ export function evaluateCombo(
   const allFormulas = teamBuild.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
     const charFormulas = allFormulas[line.charId];
-    return charFormulas && charFormulas[line.formulaId];
+    return charFormulas?.[line.formulaId];
   });
 
   // Cache stat resolution per unique on-field character
@@ -1540,7 +1540,7 @@ export function getComboDisplayResult(
   const activeLines = combo.lines.filter((l) => {
     if (l.count <= 0) return false;
     const charFormulas = allFormulas[l.charId];
-    return charFormulas && charFormulas[l.formulaId];
+    return charFormulas?.[l.formulaId];
   });
 
   // Determine unique on-field characters and which chars have active lines

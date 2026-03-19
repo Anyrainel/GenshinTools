@@ -9,8 +9,13 @@
  */
 
 import { StatSheet } from "./damageModels";
-import { type Expr, E, simplify } from "./expr";
-import type { DamageTag, DamageTagFilter, ElementalOrPhysical, StatKey } from "./types";
+import { E, type Expr, simplify } from "./expr";
+import type {
+  DamageTag,
+  DamageTagFilter,
+  ElementalOrPhysical,
+  StatKey,
+} from "./types";
 import { filterMatchesTag } from "./types";
 
 // ─── Variable Mapping ───
@@ -93,8 +98,7 @@ function serializeFilter(filter: DamageTagFilter): string {
   const parts: string[] = [];
   if (filter.abilities)
     parts.push(`a:${[...filter.abilities].sort().join(",")}`);
-  if (filter.elements)
-    parts.push(`e:${[...filter.elements].sort().join(",")}`);
+  if (filter.elements) parts.push(`e:${[...filter.elements].sort().join(",")}`);
   if (filter.reactions)
     parts.push(`r:${[...filter.reactions].sort().join(",")}`);
   return parts.join("|");
@@ -122,7 +126,11 @@ export class ExprStats {
      * Expr-valued overrides from dynamic buffs (ScalingBuff/CrossScalingBuff).
      * These are added alongside baseline + variable contributions in get()/getRaw().
      */
-    private readonly exprOverrides: { key: StatKey; filterKey: string; expr: Expr }[] = []
+    private readonly exprOverrides: {
+      key: StatKey;
+      filterKey: string;
+      expr: Expr;
+    }[] = []
   ) {}
 
   /** Like StatSheet.get() but returns Expr. */
@@ -304,8 +312,15 @@ export class ExprStats {
       // Normalize elemental DMG keys (pyro%, hydro%, etc.) → dmg% with element filter
       const element = ELEMENTAL_DMG_KEY_TO_ELEMENT[e.key];
       if (element) {
-        const mergedFilter: DamageTagFilter = { ...filter, elements: [element] };
-        newOverrides.push({ key: "dmg%" as StatKey, filterKey: serializeFilter(mergedFilter), expr: e.expr });
+        const mergedFilter: DamageTagFilter = {
+          ...filter,
+          elements: [element],
+        };
+        newOverrides.push({
+          key: "dmg%" as StatKey,
+          filterKey: serializeFilter(mergedFilter),
+          expr: e.expr,
+        });
       } else {
         const filterKey = filter ? serializeFilter(filter) : "";
         newOverrides.push({ key: e.key, filterKey, expr: e.expr });

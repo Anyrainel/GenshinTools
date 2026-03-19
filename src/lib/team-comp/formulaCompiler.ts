@@ -256,7 +256,7 @@ export function compileComboTeamDamage(
   const allFormulas = teamBuild.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
     const charFormulas = allFormulas[line.charId];
-    return charFormulas && charFormulas[line.formulaId];
+    return charFormulas?.[line.formulaId];
   });
 
   if (validLines.length === 0) {

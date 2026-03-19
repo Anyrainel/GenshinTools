@@ -1,11 +1,11 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula, TransformFormula } from "../damageFormulas";
-import { type Expr, E, simplify } from "../expr";
-import type { ExprStats } from "../exprStats";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import type { StatSheet } from "../damageModels";
+import { E, type Expr, simplify } from "../expr";
+import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
 import type { StatEntry, StatKey } from "../types";
 
@@ -413,7 +413,12 @@ class Nahida extends CharacterBase {
         for (let i = 1; i < teamExprStats.length; i++) {
           maxEm = E.max(maxEm, teamExprStats[i]!.get("em"));
         }
-        return [{ key: "em", expr: simplify(E.min(E.mul(maxEm, E.const(0.25)), E.const(250))) }];
+        return [
+          {
+            key: "em",
+            expr: simplify(E.min(E.mul(maxEm, E.const(0.25)), E.const(250))),
+          },
+        ];
       }
     })(cbs(this, "P1", ["Q"]), { receiver: "onField" }, []),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)

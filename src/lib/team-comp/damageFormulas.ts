@@ -1,5 +1,5 @@
 import type { StatSheet } from "./damageModels";
-import { type Expr, E, simplify } from "./expr";
+import { E, type Expr, simplify } from "./expr";
 import type { ExprStats } from "./exprStats";
 import type {
   CalcContext,
@@ -227,7 +227,10 @@ export abstract class DamageFormula {
     }
     // Variable case (rare): build piecewise with min/max
     // effectiveRes = enemyRes - resReduction
-    const effRes = E.add(E.const(ctx.enemyRes), E.mul(E.const(-1), resReduction));
+    const effRes = E.add(
+      E.const(ctx.enemyRes),
+      E.mul(E.const(-1), resReduction)
+    );
     // Use the middle branch (1 - effectiveRes) as the most common case
     // This is a simplification; for full piecewise we'd need conditional nodes.
     // In practice, resReduction is always constant.
@@ -248,10 +251,7 @@ export abstract class DamageFormula {
     }
     // 1 + clamp(cr, 0, 1) * cd
     return simplify(
-      E.add(
-        E.const(1),
-        E.mul(E.clamp(cr, E.const(0), E.const(1)), cd)
-      )
+      E.add(E.const(1), E.mul(E.clamp(cr, E.const(0), E.const(1)), cd))
     );
   }
 
@@ -274,10 +274,7 @@ export abstract class DamageFormula {
     const flatBaseDmg = stats.get("baseDmg", this.tag);
     // talentDmg × (1 + baseDmg%) + flatBaseDmg
     return simplify(
-      E.add(
-        E.mul(talentDmg, E.add(E.const(1), baseDmgPct)),
-        flatBaseDmg
-      )
+      E.add(E.mul(talentDmg, E.add(E.const(1), baseDmgPct)), flatBaseDmg)
     );
   }
 
@@ -343,7 +340,14 @@ export class DirectFormula extends DamageFormula {
     const critMult = this.computeCritMultExpr(stats, ctx);
     const elevated = stats.get("elevated%", this.tag);
     return simplify(
-      E.mul(baseDmg, dmgBonusMult, defMult, resMult, critMult, E.add(E.const(1), elevated))
+      E.mul(
+        baseDmg,
+        dmgBonusMult,
+        defMult,
+        resMult,
+        critMult,
+        E.add(E.const(1), elevated)
+      )
     );
   }
 
@@ -405,16 +409,17 @@ export class AmplifyFormula extends DirectFormula {
     }
   }
 
-  override buildExpr(stats: ExprStats, charLevel: number, ctx: CalcContext): Expr {
+  override buildExpr(
+    stats: ExprStats,
+    charLevel: number,
+    ctx: CalcContext
+  ): Expr {
     const directExpr = super.buildExpr(stats, charLevel, ctx);
     const reactionBase =
       AMPLIFYING_BASES[this.tag.reaction]?.[this.tag.element] ?? 1.0;
     const em = stats.get("em");
     // emBonus = 2.78 * em / (1400 + em)
-    const emBonus = E.div(
-      E.mul(E.const(2.78), em),
-      E.add(E.const(1400), em)
-    );
+    const emBonus = E.div(E.mul(E.const(2.78), em), E.add(E.const(1400), em));
     const reactionDmgBonus = stats.get("reactionDmg%", this.tag);
     // ampMult = reactionBase * (1 + emBonus + reactionDmgBonus)
     const ampMult = E.mul(
@@ -516,7 +521,14 @@ export class CatalyzeFormula extends DamageFormula {
     const elevated = stats.get("elevated%", this.tag);
 
     return simplify(
-      E.mul(baseDmg, dmgBonusMult, defMult, resMult, critMult, E.add(E.const(1), elevated))
+      E.mul(
+        baseDmg,
+        dmgBonusMult,
+        defMult,
+        resMult,
+        critMult,
+        E.add(E.const(1), elevated)
+      )
     );
   }
 

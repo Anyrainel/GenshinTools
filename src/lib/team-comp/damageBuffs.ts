@@ -1,5 +1,5 @@
 import type { StatSheet } from "./damageModels";
-import { type Expr, E, simplify } from "./expr";
+import { E, type Expr, simplify } from "./expr";
 import type { ExprStats } from "./exprStats";
 import type { BuffSource, BuffTarget, StatEntry, StatKey } from "./types";
 
@@ -321,16 +321,11 @@ export class ScalingBuff extends StatBuff {
     return [{ key: this.outputKey, value }];
   }
 
-  dynamicBuffsExpr(
-    selfStats: ExprStats
-  ): { key: StatKey; expr: Expr }[] {
+  dynamicBuffsExpr(selfStats: ExprStats): { key: StatKey; expr: Expr }[] {
     let input: Expr = selfStats.get(this.inputKey);
     if (this.threshold) {
       // max(0, input - threshold)
-      input = E.max(
-        E.const(0),
-        E.add(input, E.const(-this.threshold))
-      );
+      input = E.max(E.const(0), E.add(input, E.const(-this.threshold)));
     }
     let result: Expr = E.mul(input, E.const(this.scale));
     if (this.cap !== undefined) {
@@ -368,9 +363,7 @@ export class CrossScalingBuff extends StatBuff {
     return [{ key: this.outputKey, value: capped * selfStats.get(this.statB) }];
   }
 
-  dynamicBuffsExpr(
-    selfStats: ExprStats
-  ): { key: StatKey; expr: Expr }[] {
+  dynamicBuffsExpr(selfStats: ExprStats): { key: StatKey; expr: Expr }[] {
     let a: Expr = E.mul(selfStats.get(this.statA), E.const(this.scaleA));
     if (this.capA !== undefined) {
       a = E.min(a, E.const(this.capA));
