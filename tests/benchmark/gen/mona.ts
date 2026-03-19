@@ -1495,6 +1495,7 @@ export async function* runTeamOptimization(
       passPhase: "pruning",
       passProgress: 0,
       overallProgress: ci / totalPhases,
+      phase: "phase1",
       passResults: [...passResults],
       done: false,
     } satisfies TeamOptimizationProgress;
@@ -1612,6 +1613,7 @@ export async function* runTeamOptimization(
       passPhase: "evaluating",
       passProgress: 1,
       overallProgress: (ci + 1) / totalPhases,
+      phase: "phase1",
       passResults: [...passResults],
       done: false,
     } satisfies TeamOptimizationProgress;
@@ -1744,6 +1746,7 @@ export async function* runTeamOptimization(
     passPhase: "evaluating",
     passProgress: 0,
     overallProgress: allCharIds.length / totalPhases,
+    phase: "phase2",
     passResults: [...passResults],
     done: false,
   } satisfies TeamOptimizationProgress;
@@ -1924,6 +1927,7 @@ export async function* runTeamOptimization(
       passPhase: "evaluating",
       passProgress: 0,
       overallProgress: (allCharIds.length + 1) / (totalPhases + 1),
+      phase: "phase3",
       passResults: [...passResults],
       done: false,
     } satisfies TeamOptimizationProgress;

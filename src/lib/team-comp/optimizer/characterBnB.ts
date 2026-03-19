@@ -46,6 +46,7 @@ import { TopKCollector } from "./topKCollector";
 import type {
   ArtifactTuple,
   BnBContext,
+  CharacterBnBResult,
   MarginalWeights,
   PreparedSlotData,
   SuperArtifact,
@@ -408,11 +409,7 @@ export function runCharacterBnB(
   /** @internal For benchmarking only — disable AST compilation */
   _noCompile = false,
   onProgress?: (bestDamage: number, evaluations: number) => void
-): {
-  collector: TopKCollector;
-  evaluations: number;
-  failReason?: OptFailReason;
-} {
+): CharacterBnBResult {
   const swapCharId = charId;
   const calcTargetId = carryCharId;
   const formulaCharId = carryCharId;

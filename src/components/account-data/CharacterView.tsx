@@ -181,7 +181,7 @@ export function CharacterView({
             <p className="text-muted-foreground mb-4 max-w-md">
               {t.ui("accountData.noCharactersMatchFiltersDescription")}
             </p>
-            {activeFilters && (
+            {activeFilterCount > 0 && (
               <button
                 type="button"
                 onClick={() =>

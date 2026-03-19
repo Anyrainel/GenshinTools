@@ -327,6 +327,7 @@ export async function* runTeamOptimization(
         passPhase: res.phase,
         passProgress: res.progress,
         overallProgress,
+        phase: "phase1",
         passResults: [...passResults],
         done: false,
       } satisfies TeamOptimizationProgress;

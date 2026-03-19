@@ -122,9 +122,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         owned={owned}
-        onToggleOwned={() => toggleOwned("weapon", weapon.id)}
         refinement={refinement}
-        onSetRefinement={(level) => setRefinement(weapon.id, level)}
       />
     </>
   );
