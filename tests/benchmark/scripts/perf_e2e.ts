@@ -61,7 +61,7 @@ async function main() {
   const accountData = loadAccountData(ACCOUNT_PATH);
   const inventory = getAllArtifacts(accountData);
 
-  const globalConfig: GlobalStatWeights = {};
+  const globalConfig: GlobalStatWeights = { flatAtk: 0, flatHp: 0, flatDef: 0 };
   const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1, assumeCrit: false };
   const TIMEOUT_SEC = 5;
 
