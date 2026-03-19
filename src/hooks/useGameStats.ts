@@ -20,7 +20,10 @@ export interface GameStatsState {
  * team-comp or archive content that needs base stats.
  */
 export function useGameStats(): GameStatsState {
-  const [ready, setReady] = useState(false);
+  // Start ready if data is already cached (e.g. navigating back to this page)
+  const [ready, setReady] = useState(
+    () => getCharacterStatsSync() != null && getWeaponStatsSync() != null
+  );
 
   useEffect(() => {
     let cancelled = false;

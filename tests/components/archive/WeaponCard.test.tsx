@@ -1,7 +1,6 @@
 import { WeaponCard } from "@/components/archive/WeaponCard";
 import type { WeaponResource } from "@/data/types";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "../../utils/render";
 
@@ -13,13 +12,49 @@ const MOCK_WEAPON: WeaponResource = {
 
 const TEST_PROFILE = "test_profile";
 
+function setAccountWithWeapon(weaponKey?: string) {
+  useAccountStore.setState({
+    activeAccountId: TEST_PROFILE,
+    accounts: {
+      [TEST_PROFILE]: {
+        id: TEST_PROFILE,
+        name: "Test",
+        data: {
+          characters: weaponKey
+            ? [
+                {
+                  key: "hu_tao",
+                  constellation: 0,
+                  level: 90,
+                  talent: { auto: 1, skill: 1, burst: 1 },
+                  weapon: {
+                    id: "w1",
+                    key: weaponKey,
+                    level: 90,
+                    refinement: 1,
+                    lock: false,
+                  },
+                  artifacts: {},
+                },
+              ]
+            : [],
+          extraArtifacts: [],
+          extraWeapons: [],
+        },
+        scores: {},
+        lastUpdate: Date.now(),
+      },
+    },
+  });
+}
+
 beforeEach(() => {
-  useOwnershipStore.getState().clearAll();
-  useAccountStore.setState({ activeAccountId: TEST_PROFILE });
+  useAccountStore.setState({ activeAccountId: TEST_PROFILE, accounts: {} });
 });
 
 describe("WeaponCard", () => {
   it("renders without opacity when weapon is owned", () => {
+    setAccountWithWeapon("staff_of_homa");
     const { container } = render(<WeaponCard weapon={MOCK_WEAPON} />);
 
     const cardDiv = container.querySelector("button > div");
@@ -27,10 +62,7 @@ describe("WeaponCard", () => {
   });
 
   it("renders with opacity-40 when weapon is unowned", () => {
-    useOwnershipStore
-      .getState()
-      .setOwned(TEST_PROFILE, "weapon", "staff_of_homa", false);
-
+    setAccountWithWeapon(); // no weapon in account data
     const { container } = render(<WeaponCard weapon={MOCK_WEAPON} />);
 
     const cardDiv = container.querySelector("button > div");

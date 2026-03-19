@@ -9,7 +9,7 @@ import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl, getElementColor, getRarityColor } from "@/lib/utils";
-import { memo, useMemo } from "react";
+import { memo } from "react";
 
 interface CharacterInfoProps {
   character: CharacterResource;
@@ -29,49 +29,25 @@ export const CharacterInfo = memo(
   }: CharacterInfoProps) => {
     const { t } = useLanguage();
     const { characterStats } = useGameStats();
-    const meta = useMemo(
-      () => getCharacterDisplayMeta(character, characterStats?.[character.id]),
-      [character, characterStats]
+    const meta = getCharacterDisplayMeta(
+      character,
+      characterStats?.[character.id]
     );
-
-    const displayName = useMemo(
-      () => t.character(character.id),
-      [t, character.id]
-    );
-
-    const elementImagePath = useMemo(() => {
-      return meta.element
-        ? (elementResourcesByName[meta.element]?.imagePath ?? "")
-        : "";
-    }, [meta.element]);
-
-    const weaponImagePath = useMemo(() => {
-      return meta.weaponType
-        ? (weaponResourcesByName[meta.weaponType]?.imagePath ?? "")
-        : "";
-    }, [meta.weaponType]);
-
+    const displayName = t.character(character.id);
+    const elementImagePath = meta.element
+      ? (elementResourcesByName[meta.element]?.imagePath ?? "")
+      : "";
+    const weaponImagePath = meta.weaponType
+      ? (weaponResourcesByName[meta.weaponType]?.imagePath ?? "")
+      : "";
     const rarityTextColor = getRarityColor(meta.rarity, "text");
     const elementTextColor = meta.element
       ? getElementColor(meta.element, "text")
       : "";
-
-    const elementName = useMemo(
-      () => (meta.element ? t.element(meta.element) : ""),
-      [t, meta.element]
-    );
-    const weaponName = useMemo(
-      () => (meta.weaponType ? t.weaponType(meta.weaponType) : ""),
-      [t, meta.weaponType]
-    );
-    const regionName = useMemo(
-      () => (meta.region ? t.region(meta.region) : ""),
-      [t, meta.region]
-    );
-    const formattedDate = useMemo(
-      () => t.formatDate(meta.releaseDate ?? null),
-      [t, meta.releaseDate]
-    );
+    const elementName = meta.element ? t.element(meta.element) : "";
+    const weaponName = meta.weaponType ? t.weaponType(meta.weaponType) : "";
+    const regionName = meta.region ? t.region(meta.region) : "";
+    const formattedDate = t.formatDate(meta.releaseDate ?? null);
 
     const isMobile = !useMediaQuery("(min-width: 768px)");
 

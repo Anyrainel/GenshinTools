@@ -16,11 +16,7 @@ import {
   type LuckExpectation,
   allSlots,
 } from "@/data/types";
-import type {
-  ArtifactScoreResult,
-  BuildMatchResult,
-  StatWeightMap,
-} from "./artifactScore";
+import type { ArtifactScoreResult, BuildMatchResult } from "./artifactScore";
 import {
   getTargetMainStatsForSlot,
   scoreSlotWithMainStat,
@@ -28,8 +24,6 @@ import {
 import {
   type BuildOptimizerConfig,
   type BuildOptimizerResult,
-  type OptimizedBuild,
-  optimizeBuild,
   optimizeBuildWithCrCdExploration,
 } from "./buildOptimizer";
 import { type CandidateArtifact, buildCandidatePool } from "./candidatePool";
@@ -43,8 +37,12 @@ export interface Recommendation {
   actionType: ActionType;
   characterId: string;
   slot: Slot;
-  optimalArtifact: CandidateArtifact;
-  currentArtifact: ArtifactData | null;
+  /** ID of the source artifact to act on (swap in, upgrade, etc.). Null for farm. */
+  sourceArtifactId: string | null;
+  /** ID of the currently equipped artifact in this slot. */
+  currentArtifactId: string | null;
+  /** Artifact set key (for display — always available, even for farm candidates). */
+  setKey: string;
   slotScoreDiff: number;
   buildScoreDiff: number;
   maxPotentialScore: number;
@@ -105,8 +103,9 @@ function generateRecommendations(
             actionType: "upgrade",
             characterId: char.key,
             slot,
-            optimalArtifact: optimal,
-            currentArtifact: current,
+            sourceArtifactId: optimal.sourceArtifactId ?? null,
+            currentArtifactId: current.id,
+            setKey: optimal.setKey,
             slotScoreDiff: diff,
             buildScoreDiff,
             maxPotentialScore: optimalScore,
@@ -152,8 +151,9 @@ function generateRecommendations(
       actionType,
       characterId: char.key,
       slot,
-      optimalArtifact: optimal,
-      currentArtifact: current,
+      sourceArtifactId: optimal.sourceArtifactId ?? null,
+      currentArtifactId: current?.id ?? null,
+      setKey: optimal.setKey,
       slotScoreDiff,
       buildScoreDiff,
       maxPotentialScore: topBuild.slotScores[slot],
@@ -403,4 +403,20 @@ export function generateAllRecommendations(
   }
 
   return { byActionType, perCharacter };
+}
+
+/** Build a flat artifact lookup map from account data (keyed by artifact ID). */
+export function buildArtifactLookup(
+  accountData: AccountData
+): Map<string, ArtifactData> {
+  const map = new Map<string, ArtifactData>();
+  for (const art of accountData.extraArtifacts) {
+    map.set(art.id, art);
+  }
+  for (const char of accountData.characters) {
+    for (const art of Object.values(char.artifacts)) {
+      if (art) map.set(art.id, art);
+    }
+  }
+  return map;
 }

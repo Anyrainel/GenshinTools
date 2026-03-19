@@ -1051,6 +1051,35 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
       expect(illugaP1.active).toBe(false);
     }
   });
+
+  it("Illuga Q baseDmg is either/or: Geo-only for non-LC, LC-only for lunarCrystallize", () => {
+    const tb = new TeamBuild(configs);
+    const stats = tb.getTeamStats(emptySheets, "zibai");
+    const zibaiSheet = stats.zibai!;
+
+    // Non-reaction Geo: should see Q Geo buff (0.605 * EM), NOT the LC buff
+    const geoBaseDmg = zibaiSheet.get("baseDmg", {
+      element: "Geo",
+      ability: "burst",
+      reaction: "none",
+    });
+
+    // LunarCrystallize: should see Q LC buff (4.067 * EM), NOT the Geo buff
+    const lcBaseDmg = zibaiSheet.get("baseDmg", {
+      element: "Geo",
+      ability: "burst",
+      reaction: "lunarCrystallize",
+    });
+
+    // LC buff should be strictly larger than Geo buff (not additive)
+    expect(lcBaseDmg).toBeGreaterThan(geoBaseDmg);
+    // If they were stacking, LC would be ≈(0.605+4.067)*EM ≈ 7.7× the Geo value
+    // With either/or, LC is ≈4.067/0.605 ≈ 6.7× the Geo value
+    // The ratio should be close to 4.067/0.605 ≈ 6.72, NOT (4.067+0.605)/0.605 ≈ 7.72
+    const ratio = lcBaseDmg / geoBaseDmg;
+    expect(ratio).toBeCloseTo(4.067 / 0.605, 0);
+    expect(ratio).toBeLessThan(7); // Would be ~7.7 if stacking
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════

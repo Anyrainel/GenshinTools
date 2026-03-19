@@ -14,6 +14,8 @@ interface SidebarLayoutProps {
   sidebar: React.ReactNode;
   triggerIcon?: LucideIcon;
   triggerLabel?: string;
+  /** Number of active filters to display as a badge on the mobile trigger button. */
+  activeFilterCount?: number;
   children: React.ReactNode;
   /**
    * Optional ref for the main scrollable content area.
@@ -41,6 +43,7 @@ export function SidebarLayout({
   sidebar,
   triggerIcon: TriggerIcon = Filter,
   triggerLabel = "Filters",
+  activeFilterCount = 0,
   children,
   contentScrollRef,
   contentScrollsInternally = false,
@@ -60,6 +63,11 @@ export function SidebarLayout({
             <Button variant="outline" className="gap-2">
               <TriggerIcon className="h-4 w-4" />
               {triggerLabel}
+              {activeFilterCount > 0 && (
+                <span className="inline-flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-primary/50 text-primary-foreground text-xs font-medium">
+                  {activeFilterCount}
+                </span>
+              )}
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-80 p-0">

@@ -66,6 +66,9 @@ export const i18nAppData = {
     "resReduction%": { en: "RES Reduction", zh: "减抗" },
   },
   statsShort: {
+    baseHp: { en: "b.HP", zh: "生命值" },
+    baseAtk: { en: "b.ATK", zh: "攻击力" },
+    baseDef: { en: "b.DEF", zh: "防御力" },
     hp: { en: "HP", zh: "生命" },
     atk: { en: "ATK", zh: "攻击" },
     def: { en: "DEF", zh: "防御" },

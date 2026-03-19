@@ -25,7 +25,7 @@ import type {
   PresetOption,
 } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
+import { resolveAllBuildsSnapshot } from "@/hooks/useResolvedBuilds";
 import { loadPreset as loadPresetFromRegistry } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
   createBuildExportPayloadV5,
@@ -99,12 +99,6 @@ export default function ArtifactBuildsPage() {
   const author = useBuildsStore((state) => state.author);
   const description = useBuildsStore((state) => state.description);
   const computeOptions = useBuildsStore((state) => state.computeOptions);
-  // Get all resolved builds for export
-  const allResolvedBuilds = useAllResolvedBuilds();
-  const allResolvedBuildsRef = useRef(allResolvedBuilds);
-  useEffect(() => {
-    allResolvedBuildsRef.current = allResolvedBuilds;
-  }, [allResolvedBuilds]);
 
   const [presetOptions, setPresetOptions] = useState<PresetOption[]>([]);
 
@@ -120,7 +114,7 @@ export default function ArtifactBuildsPage() {
   const handleExport = useCallback(
     async (exportAuthor: string, exportDescription: string) => {
       const payload = createBuildExportPayloadV5(
-        allResolvedBuildsRef.current,
+        resolveAllBuildsSnapshot(),
         computeOptions,
         exportAuthor,
         exportDescription

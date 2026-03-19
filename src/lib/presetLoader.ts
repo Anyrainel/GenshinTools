@@ -5,11 +5,21 @@ import type { PresetOption } from "@/data/types";
  * @param presetModules - Glob pattern result from import.meta.glob
  * @returns Array of preset options with metadata
  */
+// Cache preset metadata to avoid re-loading on every page mount
+let cachedMetadata: PresetOption[] | null = null;
+let cachedModulesRef: unknown = null;
+
 export async function loadPresetMetadata<
   T extends { author?: string; description?: string },
 >(
   presetModules: Record<string, () => Promise<{ default: T }>>
 ): Promise<PresetOption[]> {
+  // Return cached result if same modules object
+  if (cachedMetadata && cachedModulesRef === presetModules) {
+    return cachedMetadata;
+  }
+  cachedModulesRef = presetModules;
+
   const options = await Promise.all(
     Object.keys(presetModules).map(async (path) => {
       try {
@@ -38,7 +48,8 @@ export async function loadPresetMetadata<
     })
   );
 
-  return options.sort((a, b) => a.label.localeCompare(b.label));
+  cachedMetadata = options.sort((a, b) => a.label.localeCompare(b.label));
+  return cachedMetadata;
 }
 
 /**

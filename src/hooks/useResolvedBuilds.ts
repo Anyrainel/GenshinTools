@@ -10,6 +10,7 @@ import {
 } from "@/lib/artifact-builds/buildPresetRegistry";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useEffect, useMemo, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 const EMPTY_ARRAY: string[] = [];
 
@@ -45,7 +46,17 @@ export function useResolvedBuilds(characterId: string): Build[] {
     (s) => s.characterToBuildIds[characterId] || EMPTY_ARRAY
   );
   const presetDeletedIds = useBuildsStore((s) => s.presetDeletedBuildIds);
-  const buildsMap = useBuildsStore((s) => s.builds);
+  // Only subscribe to builds relevant to this character (shallow-compare the subset)
+  const relevantBuilds = useBuildsStore(
+    useShallow((s) => {
+      const ids = s.characterToBuildIds[characterId] || EMPTY_ARRAY;
+      const result: Record<string, Build> = {};
+      for (const id of ids) {
+        if (s.builds[id]) result[id] = s.builds[id];
+      }
+      return result;
+    })
+  );
 
   const [preset, setPreset] = useState<BuildPayloadV5 | null>(() =>
     getCachedPreset(activePresetId)
@@ -74,18 +85,76 @@ export function useResolvedBuilds(characterId: string): Build[] {
     return allIds
       .filter((id) => !presetDeletedIds.includes(id))
       .map((id): Build | null => {
-        const source = deriveBuildSource(id, buildsMap, preset);
+        const source = deriveBuildSource(id, relevantBuilds, preset);
 
         // Priority 1: Local Overrides / New Builds
-        if (buildsMap[id]) return { ...buildsMap[id], source };
+        if (relevantBuilds[id]) {
+          const local = relevantBuilds[id];
+          // Avoid spread when source is already correct (preserves reference stability)
+          return local.source === source ? local : { ...local, source };
+        }
 
         // Priority 2: Preset Reference
-        if (preset?.builds[id]) return { ...preset.builds[id], source };
+        if (preset?.builds[id]) {
+          const presetBuild = preset.builds[id];
+          return presetBuild.source === source
+            ? presetBuild
+            : { ...presetBuild, source };
+        }
 
         return null;
       })
       .filter((b): b is Build => b !== null);
-  }, [characterId, localBuildIds, presetDeletedIds, buildsMap, preset]);
+  }, [characterId, localBuildIds, presetDeletedIds, relevantBuilds, preset]);
+}
+
+/**
+ * Core resolution logic: reads store state + cached preset to produce BuildGroup[].
+ * Used by the hook (reactive) and the standalone resolver (on-demand).
+ */
+function resolveAllBuilds(
+  state: {
+    characterToBuildIds: Record<string, string[]>;
+    builds: Record<string, Build>;
+    presetDeletedBuildIds: string[];
+    hiddenCharacters: Record<string, boolean>;
+    characterWeapons: Record<string, string[]>;
+  },
+  preset: BuildPayloadV5 | null
+): BuildGroup[] {
+  const allCharIds = new Set([
+    ...Object.keys(state.characterToBuildIds),
+    ...Object.keys(preset?.characterBuilds ?? {}),
+  ]);
+
+  const result: BuildGroup[] = [];
+
+  for (const charId of allCharIds) {
+    if (state.hiddenCharacters[charId]) continue;
+
+    const combinedIds = resolveIds(state.characterToBuildIds, preset, charId);
+
+    const builds = combinedIds
+      .filter((id) => !state.presetDeletedBuildIds.includes(id))
+      .map((id) => {
+        if (state.builds[id]) return state.builds[id];
+        const presetBuild = preset?.builds[id];
+        return presetBuild ?? null;
+      })
+      .filter((b): b is Build => b !== null);
+
+    const resolvedWeapons = state.characterWeapons[charId] ?? [];
+
+    if (builds.length > 0) {
+      result.push({
+        characterId: charId,
+        builds,
+        hidden: false,
+        weapons: resolvedWeapons,
+      });
+    }
+  }
+  return result;
 }
 
 export function useAllResolvedBuilds() {
@@ -113,48 +182,35 @@ export function useAllResolvedBuilds() {
     }
   }, [activePresetId]);
 
-  return useMemo(() => {
-    const allCharIds = new Set([
-      ...Object.keys(characterToBuildIds),
-      ...Object.keys(preset?.characterBuilds ?? {}),
-    ]);
+  return useMemo(
+    () =>
+      resolveAllBuilds(
+        {
+          characterToBuildIds,
+          builds: buildsMap,
+          presetDeletedBuildIds: presetDeletedIds,
+          hiddenCharacters,
+          characterWeapons,
+        },
+        preset
+      ),
+    [
+      characterToBuildIds,
+      buildsMap,
+      presetDeletedIds,
+      hiddenCharacters,
+      preset,
+      characterWeapons,
+    ]
+  );
+}
 
-    const result: BuildGroup[] = [];
-
-    for (const charId of allCharIds) {
-      // Respect local hidden state (skip computation for hidden chars)
-      if (hiddenCharacters[charId]) continue;
-
-      const combinedIds = resolveIds(characterToBuildIds, preset, charId);
-
-      const builds = combinedIds
-        .filter((id) => !presetDeletedIds.includes(id))
-        .map((id) => {
-          if (buildsMap[id]) return buildsMap[id];
-          const presetBuild = preset?.builds[id];
-          return presetBuild ?? null;
-        })
-        .filter((b): b is Build => b !== null);
-
-      // Weapons are always materialized in zustand during import/subscribe
-      const resolvedWeapons = characterWeapons[charId] ?? [];
-
-      if (builds.length > 0) {
-        result.push({
-          characterId: charId,
-          builds,
-          hidden: false,
-          weapons: resolvedWeapons,
-        });
-      }
-    }
-    return result;
-  }, [
-    characterToBuildIds,
-    buildsMap,
-    presetDeletedIds,
-    hiddenCharacters,
-    preset,
-    characterWeapons,
-  ]);
+/**
+ * Resolve all builds on demand (no hook). Reads current store state + cached preset.
+ * Use for actions like export where you don't need reactive updates.
+ */
+export function resolveAllBuildsSnapshot(): BuildGroup[] {
+  const state = useBuildsStore.getState();
+  const preset = getCachedPreset(state.activePresetId);
+  return resolveAllBuilds(state, preset);
 }

@@ -48,7 +48,7 @@ export function ArtifactDataContent({
   return (
     <div
       className={cn(
-        "bg-slate-900 border border-slate-700 rounded-lg overflow-hidden text-slate-100 shadow-xl",
+        "bg-slate-900 border-2 border-amber-500/50 rounded-lg overflow-hidden text-slate-100 shadow-xl",
         fillWidth
           ? "flex-1 basis-0"
           : compact
@@ -61,7 +61,7 @@ export function ArtifactDataContent({
       {/* Header with optional icon */}
       <div
         className={cn(
-          "border-b border-slate-700",
+          "border-b-2 border-amber-500/50",
           compact ? "p-2" : "p-3",
           showIcon && "flex items-center gap-3"
         )}
@@ -135,7 +135,7 @@ function ArtifactPlaceholder({
   return (
     <div
       className={cn(
-        "bg-slate-900 border border-slate-700 rounded-lg overflow-hidden text-slate-100 shadow-xl flex flex-col items-center justify-center",
+        "bg-slate-900 border-2 border-amber-500/50 rounded-lg overflow-hidden text-slate-100 shadow-xl flex flex-col items-center justify-center",
         fillWidth
           ? "flex-1 basis-0"
           : compact

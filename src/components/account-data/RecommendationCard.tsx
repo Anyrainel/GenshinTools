@@ -15,7 +15,7 @@ import {
   artifactsById,
   charactersById,
 } from "@/data/constants";
-import type { CharacterData, Tier } from "@/data/types";
+import type { ArtifactData, CharacterData, Tier } from "@/data/types";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import type { Recommendation } from "@/lib/account-data/recommendationEngine";
@@ -28,6 +28,7 @@ interface RecommendationCardProps {
   tier?: Tier;
   recommendations?: Recommendation[];
   score?: ArtifactScoreResult;
+  artifactLookup: Map<string, ArtifactData>;
 }
 
 function RecommendationCardComponent({
@@ -35,6 +36,7 @@ function RecommendationCardComponent({
   tier,
   recommendations,
   score,
+  artifactLookup,
 }: RecommendationCardProps) {
   const { t } = useLanguage();
   const isCompact = !useMediaQuery("(min-width: 768px)");
@@ -194,6 +196,7 @@ function RecommendationCardComponent({
                   <ActionRecommendationCard
                     key={`${rec.slot}-${rec.actionType}`}
                     recommendation={rec}
+                    artifactLookup={artifactLookup}
                     inline
                   />
                 ))}

@@ -139,7 +139,7 @@ function BuffChip({
               {source.triggers?.map((trig) => (
                 <span
                   key={trig}
-                  className="bg-primary/10 text-primary text-xs px-1 md:px-1.5 py-0.5 rounded font-black uppercase tracking-wider leading-none"
+                  className="bg-primary/10 text-primary text-xs p-1 rounded font-medium tracking-tight leading-none"
                 >
                   {trig}
                 </span>
@@ -150,7 +150,7 @@ function BuffChip({
 
         <span
           className={cn(
-            "text-xs md:text-sm font-bold uppercase tracking-widest px-1 md:px-1.5 py-0.5 rounded shrink-0",
+            "text-xs md:text-sm font-bold uppercase px-1 md:px-1.5 py-0.5 rounded shrink-0",
             target.charId
               ? "text-sky-300 bg-sky-500/15"
               : target.receiver === "team"
@@ -186,7 +186,7 @@ function BuffChip({
           return (
             <div
               key={idx}
-              className="flex items-center flex-wrap gap-x-1.5 md:gap-x-2 gap-y-0.5 md:gap-y-1 text-xs md:text-sm bg-black/5 px-1.5 md:px-2 py-1 md:py-1.5 rounded-md"
+              className="flex items-center flex-wrap gap-x-1 md:gap-x-2 text-xs md:text-sm bg-black/5 px-1 md:px-2 rounded-md"
             >
               <span className="font-semibold text-foreground/80">
                 {t.statShort(e.key as StatKey)}

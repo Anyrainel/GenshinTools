@@ -377,7 +377,11 @@ export interface TeamOptPassResult {
   bestDamage: number;
   bestArtifacts: Record<Slot, ArtifactData | null>;
   failReason?: OptFailReason;
+  /** Per-substat weights used for artifact ranking (debug display). */
+  substatWeights?: Record<string, number>;
 }
+
+export type OptPhase = "init" | "phase1" | "phase2" | "phase3";
 
 export interface TeamOptimizationProgress {
   currentPass: TeamOptPassId;
@@ -387,7 +391,11 @@ export interface TeamOptimizationProgress {
   passPhase: "pruning" | "evaluating";
   passProgress: number;
   overallProgress: number;
+  /** Current optimizer phase for display. */
+  phase: OptPhase;
   passResults: TeamOptPassResult[];
+  /** Live per-character best damage from in-progress Phase 1 workers. */
+  workerBestDamage?: Record<string, number>;
   done: false;
 }
 

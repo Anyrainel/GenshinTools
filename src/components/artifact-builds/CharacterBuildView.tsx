@@ -6,11 +6,11 @@ import { characters } from "@/data/resources";
 import type { CharacterFilters } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
-  hasActiveFilters,
 } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
@@ -24,7 +24,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { CharacterBuildCard } from "./CharacterBuildCard";
+import { type BuildCardLayout, CharacterBuildCard } from "./CharacterBuildCard";
 
 interface CharacterBuildViewProps {
   /** When set, filters will be configured to show this character */
@@ -136,6 +136,15 @@ export function CharacterBuildView({
     onTargetProcessed?.();
   }, [targetCharacterId, characterStats, onTargetProcessed]);
 
+  // Compute layout flags once and pass to all CharacterBuildCards
+  const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
+  const buildCardLayout: BuildCardLayout = useMemo(
+    () => ({ isMobile, isDesktop, isVeryNarrow }),
+    [isMobile, isDesktop, isVeryNarrow]
+  );
+
   // Use custom hook for scroll forwarding from margin areas to main content
   useGlobalScroll(containerRef, mainScrollRef);
 
@@ -153,19 +162,12 @@ export function CharacterBuildView({
   // Defer the list to allow UI to stay responsive
   const deferredCharacters = useDeferredValue(filteredAndSortedCharacters);
 
-  const activeFilters = hasActiveFilters(filters);
-
-  // Build trigger label with filter count
-  const triggerLabel = activeFilters
-    ? `${t.ui("filters.title")} (${
-        [
-          filters.elements,
-          filters.weaponTypes,
-          filters.regions,
-          filters.rarities,
-        ].flat().length
-      })`
-    : t.ui("filters.title");
+  const activeFilterCount = [
+    filters.elements,
+    filters.weaponTypes,
+    filters.regions,
+    filters.rarities,
+  ].flat().length;
 
   return (
     <div ref={containerRef} className="h-full">
@@ -177,7 +179,8 @@ export function CharacterBuildView({
             hasTierData={hasTierData}
           />
         }
-        triggerLabel={triggerLabel}
+        triggerLabel={t.ui("filters.title")}
+        activeFilterCount={activeFilterCount}
         contentScrollRef={mainScrollRef}
         contentScrollsInternally
       >
@@ -201,6 +204,7 @@ export function CharacterBuildView({
           <VirtualizedCharacterList
             characters={deferredCharacters}
             scrollRef={mainScrollRef}
+            layout={buildCardLayout}
           />
         )}
       </SidebarLayout>
@@ -211,11 +215,13 @@ export function CharacterBuildView({
 interface CharacterListProps {
   characters: typeof characters;
   scrollRef: React.RefObject<HTMLDivElement>;
+  layout: BuildCardLayout;
 }
 
 function VirtualizedCharacterList({
   characters,
   scrollRef,
+  layout,
 }: CharacterListProps) {
   const virtualizer = useVirtualizer({
     count: characters.length,
@@ -256,6 +262,7 @@ function VirtualizedCharacterList({
                 tourStepId={
                   virtualItem.index === 0 ? "af-build-card" : undefined
                 }
+                layout={layout}
               />
             </div>
           </div>

@@ -19,7 +19,7 @@ import type {
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { Minus, Plus, Swords } from "lucide-react";
+import { Minus, Plus, RotateCcw, Swords } from "lucide-react";
 import { ReactionSelector } from "./ReactionSelector";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
@@ -27,7 +27,7 @@ const CARD_HEADER_CLS =
   "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
 const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1.5 md:p-3 bg-black/10";
+const CARD_BODY_CLS = "p-1 md:p-2 bg-black/10";
 
 interface FormulaSelectorCardProps {
   team: Team;
@@ -48,6 +48,7 @@ interface FormulaSelectorCardProps {
     reaction: string,
     count: number
   ) => void;
+  onResetCombo?: () => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
 }
@@ -73,7 +74,7 @@ function EnemyAuraSelect({
       >
         <SelectTrigger
           className={cn(
-            "h-auto rounded-lg border-2 px-3 py-2.5 shadow-none border-border/30 bg-black/5",
+            "h-auto rounded-lg border-2 px-3 py-2 shadow-none border-border/30 bg-black/5",
             value && "ring-2 ring-primary/50"
           )}
         >
@@ -140,6 +141,7 @@ export function FormulaSelectorCard({
   handleReactionChange,
   comboLineMap,
   setComboLineCount,
+  onResetCombo,
   isMobile,
   t,
 }: FormulaSelectorCardProps) {
@@ -173,7 +175,7 @@ export function FormulaSelectorCard({
                 type="button"
                 onClick={() => updateTeam(team.id, { formulaMode: mode })}
                 className={cn(
-                  "flex-1 flex items-start gap-2.5 rounded-lg border-2 px-3 py-2.5 text-left transition-all",
+                  "flex-1 flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
                   selected
                     ? "border-primary bg-primary/10 shadow-sm"
                     : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
@@ -224,22 +226,27 @@ export function FormulaSelectorCard({
         </div>
       )}
       {formulaMode === "combo" && (
-        <p className="text-xs text-muted-foreground px-2 md:px-4 py-1.5 border-b border-border/20">
-          {t.ui("teamComp.comboDisclaimer")}
-        </p>
+        <div className="flex items-center justify-between px-2 md:px-4 pt-0.5 pb-1.5 border-b border-border/20">
+          <p className="text-xs text-foreground/80 italic">
+            {t.ui("teamComp.comboDisclaimer")}
+          </p>
+          {onResetCombo && (
+            <button
+              type="button"
+              onClick={onResetCombo}
+              className="flex items-center gap-1 text-xs font-semibold text-foreground/80 bg-secondary hover:bg-secondary/80 px-2 py-1 rounded-md border border-border/30 transition-colors shrink-0 ml-2"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>{t.ui("common.reset")}</span>
+            </button>
+          )}
+        </div>
       )}
       <CardContent className={CARD_BODY_CLS}>
         {allFormulas.length > 0 ? (
           <div className="flex flex-col gap-2">
             {/* ── Unified grid: one column per character ── */}
-            <div
-              className={cn(
-                "grid",
-                isMobile
-                  ? "grid-cols-2 gap-1.5"
-                  : "grid-cols-2 lg:grid-cols-4 gap-2"
-              )}
-            >
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
               {effectiveTeam.characters.map((cid, idx) => {
                 if (!cid) return <div key={idx} />;
                 const charRes = charactersById[cid];
@@ -276,7 +283,7 @@ export function FormulaSelectorCard({
                   >
                     {/* Formula buttons/labels */}
                     {formulaMode === "single" ? (
-                      <div className="p-1.5 flex flex-wrap items-start gap-1">
+                      <div className="px-2 py-1 flex flex-wrap items-start gap-1">
                         {Object.entries(charFormulas).map(
                           ([formulaId, label]) => {
                             const isSelected =
@@ -287,7 +294,7 @@ export function FormulaSelectorCard({
                                 <button
                                   type="button"
                                   className={cn(
-                                    "flex items-center gap-2 px-2.5 py-2 rounded-lg border-2 transition-colors font-bold text-sm",
+                                    "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-sm",
                                     isSelected
                                       ? "bg-primary/15 text-foreground border-primary/40 shadow-md"
                                       : "bg-card/40 text-foreground hover:bg-card/60 border-border/20"
@@ -342,14 +349,14 @@ export function FormulaSelectorCard({
                         )}
                       </div>
                     ) : (
-                      <div className="p-1.5 flex flex-col">
+                      <div className="px-2 py-1 flex flex-col 2xl:grid 2xl:grid-cols-2 2xl:gap-x-2">
                         {Object.entries(charFormulas).map(
                           ([formulaId, label]) => {
                             const isSelected =
                               resolvedFormula?.charId === cid &&
                               resolvedFormula?.formulaId === formulaId;
                             return (
-                              <div key={formulaId} className="px-1 py-1.5">
+                              <div key={formulaId} className="px-2 py-0.5">
                                 <div className="flex items-center gap-2">
                                   {charRes && (
                                     <img
@@ -364,7 +371,7 @@ export function FormulaSelectorCard({
                                 </div>
 
                                 {/* Combo mode: per-reaction steppers */}
-                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-1">
+                                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
                                   {hasReactions ? (
                                     reactions.map((rx) => {
                                       const lineKey = `${cid}.${formulaId}.${rx}`;

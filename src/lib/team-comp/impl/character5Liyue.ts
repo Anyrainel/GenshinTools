@@ -299,7 +299,12 @@ class Zibai extends CharacterBase {
 
   // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
   protected override get defaultRotation() {
-    return { "zibai-e-combo": 3, "zibai-steed": 3, "zibai-steed-c1": 1, "zibai-burst": 1 };
+    return {
+      "zibai-e-combo": 3,
+      "zibai-steed": 3,
+      "zibai-steed-c1": 1,
+      "zibai-burst": 1,
+    };
   }
 }
 
@@ -959,7 +964,13 @@ class Shenhe extends CharacterBase {
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
     new ScalingBuff(
       cbs(this, "E", ["E"]),
-      { receiver: "team", filter: { elements: ["Cryo"] } },
+      {
+        receiver: "team",
+        filter: {
+          elements: ["Cryo"],
+          abilities: ["normal", "charge", "plunge", "skill", "burst"],
+        },
+      },
       [],
       "atk",
       "baseDmg",

@@ -133,6 +133,8 @@ export interface ConstrainedGreedyOptions {
   rv: Record<SubStat, number>;
   /** Artifact rarity (default: 5) */
   rarity?: 4 | 5;
+  /** Pre-allocated substat rolls (e.g. to meet ER/CR constraints before greedy). */
+  preFill?: Record<Slot, Partial<Record<SubStat, number>>>;
 }
 
 /**
@@ -150,12 +152,12 @@ export interface ConstrainedGreedyOptions {
 export function constrainedGreedyAllocate(
   opts: ConstrainedGreedyOptions
 ): Record<Slot, Partial<Record<SubStat, number>>> {
-  const { charId, mainStats, currentSheets, evalDamage, rv } = opts;
+  const { charId, mainStats, currentSheets, evalDamage, rv, preFill } = opts;
   const rarity = opts.rarity ?? 5;
 
   const subRolls = emptySubRolls();
   const maxRolls = rollsPerArtifact(rarity);
-  const totalRolls = maxRolls * 5;
+  let totalRolls = maxRolls * 5;
   const statCap = maxRollsPerStat(rarity);
 
   // Per-slot tracking
@@ -173,6 +175,19 @@ export function constrainedGreedyAllocate(
     goblet: new Set(),
     circlet: new Set(),
   };
+
+  // Apply pre-fill (e.g. ER/CR constraint rolls)
+  if (preFill) {
+    for (const slot of allSlots) {
+      for (const [stat, rolls] of Object.entries(preFill[slot])) {
+        if (!rolls) continue;
+        subRolls[slot][stat as SubStat] = rolls;
+        slotTotalRolls[slot] += rolls;
+        chosenPerSlot[slot].add(stat as SubStat);
+        totalRolls -= rolls;
+      }
+    }
+  }
 
   const getSheet = () =>
     buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);

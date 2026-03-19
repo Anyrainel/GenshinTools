@@ -697,11 +697,62 @@ function ValidationPopover({
   );
 }
 
+/**
+ * All Build keys checked in the memo comparator below.
+ * When adding a field to Build, add it here and to the comparator — the
+ * `satisfies` check will fail at compile time if a key is missing.
+ */
+const _BUILD_MEMO_KEYS = [
+  "id",
+  "source",
+  "characterId",
+  "visible",
+  "styles",
+  "roles",
+  "minCons",
+  "name",
+  "composition",
+  "artifactSet",
+  "halfSet1",
+  "halfSet2",
+  "substats",
+  "sandsWeights",
+  "gobletWeights",
+  "circletWeights",
+  "normalizer",
+] as const satisfies readonly (keyof Build)[];
+
+// Compile-time: ensures every Build key is listed above
+type _AssertExhaustive = Exclude<
+  keyof Build,
+  (typeof _BUILD_MEMO_KEYS)[number]
+> extends never
+  ? true
+  : {
+      error: "BuildCard memo comparator is missing Build keys";
+      missing: Exclude<keyof Build, (typeof _BUILD_MEMO_KEYS)[number]>;
+    };
+const _exhaustiveCheck: _AssertExhaustive = true;
+
 export const BuildCard = memo(BuildCardComponent, (prevProps, nextProps) => {
   return (
     prevProps.buildId === nextProps.buildId &&
     prevProps.element === nextProps.element &&
-    prevProps.build === nextProps.build &&
+    (prevProps.build === nextProps.build ||
+      (prevProps.build.id === nextProps.build.id &&
+        prevProps.build.name === nextProps.build.name &&
+        prevProps.build.visible === nextProps.build.visible &&
+        prevProps.build.source === nextProps.build.source &&
+        prevProps.build.normalizer === nextProps.build.normalizer &&
+        prevProps.build.composition === nextProps.build.composition &&
+        prevProps.build.artifactSet === nextProps.build.artifactSet &&
+        prevProps.build.halfSet1 === nextProps.build.halfSet1 &&
+        prevProps.build.halfSet2 === nextProps.build.halfSet2 &&
+        prevProps.build.minCons === nextProps.build.minCons &&
+        prevProps.build.substats === nextProps.build.substats &&
+        prevProps.build.sandsWeights === nextProps.build.sandsWeights &&
+        prevProps.build.gobletWeights === nextProps.build.gobletWeights &&
+        prevProps.build.circletWeights === nextProps.build.circletWeights)) &&
     prevProps.onMoveUp === nextProps.onMoveUp &&
     prevProps.onMoveDown === nextProps.onMoveDown
   );

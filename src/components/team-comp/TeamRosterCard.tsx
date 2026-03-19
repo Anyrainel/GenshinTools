@@ -4,6 +4,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
+  LightweightSelect,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -28,6 +35,7 @@ import {
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Users } from "lucide-react";
+import { useEffect, useMemo } from "react";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
 const CARD_HEADER_CLS =
@@ -95,72 +103,45 @@ export function TeamRosterCard({
     return (
       <div
         key={entityId}
-        className={cn(
-          "flex items-center w-full rounded-md bg-black/10 border border-border/30",
-          isMobile ? "gap-1.5 px-1.5 py-1.5" : "gap-2.5 px-2.5 py-2"
-        )}
+        className="flex items-center flex-wrap min-w-0 gap-1 p-1 lg:gap-2 lg:p-2 rounded-md bg-black/10 border border-border/30"
       >
-        <div
-          className={cn(
-            "rounded-full bg-secondary/40 overflow-hidden shrink-0 border border-border/30",
-            isMobile ? "w-5 h-5" : "w-7 h-7"
-          )}
-        >
-          <img
-            src={getAssetUrl(imagePath)}
-            alt={entityId}
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <span
-          className={cn(
-            "font-bold text-foreground/80 min-w-0 truncate",
-            isMobile ? "text-xs flex-1" : "text-sm shrink-0 max-w-[120px]"
-          )}
-        >
+        <img
+          src={getAssetUrl(imagePath)}
+          alt={entityId}
+          className="w-5 h-5 lg:w-7 lg:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-border/30"
+        />
+        <span className="font-bold text-foreground/80 text-xs lg:text-sm min-w-0 truncate">
           {t.resolveLabel(schema.label)}
         </span>
 
-        <div className={cn(isMobile ? "shrink-0" : "ml-auto shrink-0")}>
+        <div className="ml-auto shrink-0">
           {allDisabled ? (
-            <span
-              className={cn(
-                "font-bold text-foreground/40",
-                isMobile ? "text-xs" : "text-sm"
-              )}
-            >
+            <span className="font-bold text-foreground/40 text-xs lg:text-sm">
               --
             </span>
           ) : (
-            <Select
+            <LightweightSelect
               value={value}
               onValueChange={(v) => handleOptionChange(entityId, v)}
             >
-              <SelectTrigger
-                className={cn(
-                  "font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30",
-                  isMobile
-                    ? "w-[90px] h-6 text-[10px] !px-1 py-0 [&>svg]:w-3 [&>svg]:h-3 [&>svg]:ml-0"
-                    : "w-[150px] h-8 text-sm"
-                )}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
+              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-black/20 border-border/30 w-[90px] lg:w-[150px] h-6 lg:h-8 text-[10px] lg:text-sm">
+                <LightweightSelectValue />
+              </LightweightSelectTrigger>
+              <LightweightSelectContent>
                 {schema.choices.map((c) => {
                   const disabled = !isChoiceEnabled(c, teamMeta);
                   return (
-                    <SelectItem
+                    <LightweightSelectItem
                       key={c.value}
                       value={c.value}
                       disabled={disabled}
                     >
                       {t.resolveLabel(c.label)}
-                    </SelectItem>
+                    </LightweightSelectItem>
                   );
                 })}
-              </SelectContent>
-            </Select>
+              </LightweightSelectContent>
+            </LightweightSelect>
           )}
         </div>
       </div>
@@ -185,12 +166,58 @@ export function TeamRosterCard({
     const art = team.artifacts[i];
     if (cid && art?.type === "4pc") artSets[cid] = art.setId;
   }
-  const teamMeta = new TeamMeta(
-    charIds,
-    constellations,
-    artSets,
-    team.enemyElementAura
+  // biome-ignore lint/correctness/useExhaustiveDependencies: stable serialized deps
+  const teamMeta = useMemo(
+    () => new TeamMeta(charIds, constellations, artSets, team.enemyElementAura),
+    [
+      charIds.join(),
+      JSON.stringify(constellations),
+      JSON.stringify(artSets),
+      team.enemyElementAura,
+    ]
   );
+
+  // Sync effective option values back to team.opts so the calculation library
+  // always receives the same value that the UI dropdown displays.
+  useEffect(() => {
+    const entityIds: string[] = [...charIds];
+    for (let i = 0; i < team.characters.length; i++) {
+      const wid = team.weapons[i];
+      if (wid && getEntityOption(wid)) entityIds.push(wid);
+      const art = team.artifacts[i];
+      const artSetId = art?.type === "4pc" ? art.setId : null;
+      if (artSetId && getEntityOption(artSetId)) entityIds.push(artSetId);
+    }
+
+    const updates: Record<string, string> = {};
+    for (const eid of entityIds) {
+      const schema = getEntityOption(eid);
+      if (!schema) continue;
+      const enabledChoices = schema.choices.filter((c) =>
+        isChoiceEnabled(c, teamMeta)
+      );
+      if (enabledChoices.length === 0) continue;
+      const raw = team.opts?.[eid] || schema.default;
+      const effective = enabledChoices.some((c) => c.value === raw)
+        ? raw
+        : enabledChoices[0].value;
+      if (effective !== (team.opts?.[eid] ?? "")) {
+        updates[eid] = effective;
+      }
+    }
+    if (Object.keys(updates).length > 0) {
+      updateTeam(team.id, { opts: { ...(team.opts || {}), ...updates } });
+    }
+  }, [
+    team.id,
+    team.characters,
+    team.weapons,
+    team.artifacts,
+    team.opts,
+    teamMeta,
+    updateTeam,
+    charIds,
+  ]);
 
   const hasFrozenChars = frozenCharIds != null && frozenCharIds.size > 0;
 
@@ -209,12 +236,7 @@ export function TeamRosterCard({
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
         <div
-          className={cn(
-            "grid",
-            isMobile
-              ? "grid-cols-2 gap-1.5"
-              : "grid-cols-2 lg:grid-cols-4 gap-3"
-          )}
+          className={cn("grid", "grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2")}
         >
           {team.characters.map((charId, i) => {
             if (!charId) {
@@ -530,18 +552,28 @@ export function TeamRosterCard({
                       {t.ui("teamComp.minCr")}
                     </span>
                     <Input
-                      type="number"
-                      min={0}
-                      max={100}
-                      step={5}
-                      value={Math.round((team.minCr?.[charId] ?? 0) * 100)}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="--"
+                      value={
+                        team.minCr?.[charId] != null
+                          ? String(Math.round(team.minCr[charId] * 100))
+                          : ""
+                      }
                       onChange={(e) => {
-                        const val = Number(e.target.value) / 100;
+                        const raw = e.target.value.trim();
+                        if (raw === "") {
+                          const next = { ...(team.minCr ?? {}) };
+                          delete next[charId];
+                          updateTeam(team.id, { minCr: next });
+                          return;
+                        }
+                        const val = Number(raw) / 100;
                         if (!Number.isNaN(val)) {
                           updateTeam(team.id, {
                             minCr: {
                               ...(team.minCr ?? {}),
-                              [charId]: val,
+                              [charId]: Math.max(0, Math.min(1, val)),
                             },
                           });
                         }
@@ -737,9 +769,7 @@ export function TeamRosterCard({
                   const hasSet =
                     artConfig?.type === "4pc" || artConfig?.type === "2pc+2pc";
                   const erPct = Math.round((team.minEr?.[charId] ?? 1.0) * 100);
-                  const crPct = Math.round(
-                    (team.minCr?.[charId] ?? 0.05) * 100
-                  );
+                  const crPct = Math.round((team.minCr?.[charId] ?? 0) * 100);
                   const hasFavonius =
                     team.weapons[i]?.startsWith("favonius_") ?? false;
                   const showCheckbox =

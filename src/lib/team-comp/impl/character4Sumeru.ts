@@ -158,7 +158,13 @@ class Faruzan extends CharacterBase {
     // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Anemo"] } },
+      {
+        receiver: "onField",
+        filter: {
+          elements: ["Anemo"],
+          abilities: ["normal", "charge", "plunge", "skill", "burst"],
+        },
+      },
       [],
       "baseAtk",
       "baseDmg",

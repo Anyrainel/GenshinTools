@@ -2,6 +2,16 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { DirectFormula } from "../damageFormulas";
 import { CharacterBase, RegisterCharacter } from "../damageModels";
 import { cbs } from "../helpers";
+import type { AbilityType } from "../types";
+
+/** NA/CA/PA/E/Q — excludes "special" and "sprint" */
+const COMBAT_ABILITIES: AbilityType[] = [
+  "normal",
+  "charge",
+  "plunge",
+  "skill",
+  "burst",
+];
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Nod-Krai Characters
@@ -33,28 +43,42 @@ class Illuga extends CharacterBase {
           ? [{ key: "em", value: isC6 ? 80 : 50 }]
           : []
       ),
-      // Q: Nightingale's Song — EM → Geo baseDmg
+      // Q: Nightingale's Song — EM → Geo baseDmg (either/or with LC tier below)
+      // Buffs NA/CA/PA/E/Q only (excludes special)
       // Lv10: 60.5% EM, Lv13 (C3+): 71.4% EM
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
-        { receiver: "onField", filter: { elements: ["Geo"] } },
+        {
+          receiver: "onField",
+          filter: {
+            elements: ["Geo"],
+            reactions: ["none"],
+            abilities: COMBAT_ABILITIES,
+          },
+        },
         [],
         "em",
         "baseDmg",
         this.constellation >= 3 ? 0.714 : 0.605
       ),
-      // Q: Nightingale's Song — LunarCrystallize tier EM → additional baseDmg
-      // Lv10: 406.7% EM, Lv13 (C3+): 480.1% EM (on top of base Geo bonus above)
+      // Q: Nightingale's Song — LunarCrystallize tier EM → baseDmg (replaces Geo tier above)
+      // Lv10: 406.7% EM, Lv13 (C3+): 480.1% EM
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
-        { receiver: "onField", filter: { reactions: ["lunarCrystallize"] } },
+        {
+          receiver: "onField",
+          filter: {
+            reactions: ["lunarCrystallize"],
+            abilities: COMBAT_ABILITIES,
+          },
+        },
         [],
         "em",
         "baseDmg",
         this.constellation >= 3 ? 4.801 : 4.067
       ),
     ];
-    // P2: Hydro/Geo count enhances Nightingale's Song
+    // P2: Hydro/Geo count enhances Nightingale's Song (either/or with LC tier below)
     // 1/2/3 → +7%/14%/24% EM as additional Geo baseDmg
     const p2Tiers = [0, 0.07, 0.14, 0.24] as const;
     const p2Scale = p2Tiers[Math.min(this.hydroGeo, 3)];
@@ -62,7 +86,14 @@ class Illuga extends CharacterBase {
       buffs.push(
         new ScalingBuff(
           cbs(this, "P2", ["Q"]),
-          { receiver: "onField", filter: { elements: ["Geo"] } },
+          {
+            receiver: "onField",
+            filter: {
+              elements: ["Geo"],
+              reactions: ["none"],
+              abilities: COMBAT_ABILITIES,
+            },
+          },
           [],
           "em",
           "baseDmg",
@@ -70,14 +101,20 @@ class Illuga extends CharacterBase {
         )
       );
     }
-    // P2: LunarCrystallize tier — 48%/96%/160% EM total; model as delta over Geo (41%/82%/136%)
-    const p2LunarTiers = [0, 0.41, 0.82, 1.36] as const;
+    // P2: LunarCrystallize tier — 48%/96%/160% EM (replaces Geo tier above, not additive)
+    const p2LunarTiers = [0, 0.48, 0.96, 1.6] as const;
     const p2LunarScale = p2LunarTiers[Math.min(this.hydroGeo, 3)];
     if (p2LunarScale > 0) {
       buffs.push(
         new ScalingBuff(
           cbs(this, "P2", ["Q"]),
-          { receiver: "onField", filter: { reactions: ["lunarCrystallize"] } },
+          {
+            receiver: "onField",
+            filter: {
+              reactions: ["lunarCrystallize"],
+              abilities: COMBAT_ABILITIES,
+            },
+          },
           [],
           "em",
           "baseDmg",

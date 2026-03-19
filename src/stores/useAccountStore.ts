@@ -125,9 +125,13 @@ export const useAccountStore = create<AccountStore>()(
             lastUpdate: payload.lastUpdate ?? Date.now(),
           };
 
+          // Mark stale when account data changes so scores are recomputed
+          const dataChanged = !existing || existing.data !== payload.data;
+
           return {
             accounts: { ...state.accounts, [id]: updated },
             activeAccountId: state.activeAccountId || id, // auto-switch if none active
+            ...(dataChanged && { isScoresStale: true }),
           };
         }),
 

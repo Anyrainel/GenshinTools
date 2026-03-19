@@ -8,13 +8,17 @@
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
+import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
+import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import { computeErCrGap } from "../erCrConstraints";
 import {
   type ArtifactVarLookup,
   type CompiledTeamDamage,
   buildArtifactVarLookup,
   compileTeamDamage,
+  fillVarsFromRawStats,
 } from "../formulaCompiler";
 import type {
   CalcContext,
@@ -34,7 +38,6 @@ import {
 } from "./artifactScoring";
 import {
   evaluateBuild,
-  evaluateBuildCompiled,
   evaluateUpperBound,
   evaluateUpperBoundCompiled,
 } from "./evaluation";
@@ -80,6 +83,7 @@ const SET22_PATTERNS: number[][] = (() => {
 
 // ─── Core B&B DFS ───
 
+/** Standard (non-compiled) B&B DFS. */
 function bnbDfs(
   slotGroups: ArtifactData[][],
   slotSupers: SuperArtifact[],
@@ -97,8 +101,6 @@ function bnbDfs(
   }
   const superStatsBySlot = slotSupers.map((s) => s.stats);
   const pieces: ArtifactTuple = [null, null, null, null, null];
-  // Pre-allocated array for upper bound remaining stats (reused to avoid allocation in hot loop)
-  const ubRemaining: Partial<Record<StatKey, number>>[] = new Array(4);
 
   function dfs(depth: number, cumEr: number, cumCr: number): void {
     if (ctx.aborted) return;
@@ -109,20 +111,14 @@ function bnbDfs(
       }
     }
     if (depth === 5) {
-      if (ctx.compiled && ctx.compiledVars && ctx.compiledLookup) {
-        const { damage } = evaluateBuildCompiled(
-          pieces,
-          ctx.compiled,
-          ctx.compiledLookup,
-          ctx.compiledVars
-        );
-        collector.add(damage, null, pieces);
-      } else {
-        const { damage, result } = evaluateBuild(pieces, ctx);
-        collector.add(damage, result, pieces);
-      }
+      const { damage, result } = evaluateBuild(pieces, ctx);
+      collector.add(damage, result, pieces);
       ctx.evaluations++;
       ctx.sinceLastYield++;
+      if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
+        ctx.sinceLastYield = 0;
+        ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
+      }
       return;
     }
     const group = slotGroups[depth];
@@ -146,38 +142,213 @@ function bnbDfs(
 
       pieces[depth] = art;
       if (collector.threshold > 0 && depth < 4) {
-        let ub: number;
-        if (
-          ctx.compiled &&
-          ctx.compiledVars &&
-          ctx.compiledLookup &&
-          ctx.compiledCharIdx != null
-        ) {
-          // Reuse pre-allocated remaining array (avoids allocation in hot loop)
-          const remainingCount = 4 - depth;
-          for (let r = 0; r < remainingCount; r++)
-            ubRemaining[r] = superStatsBySlot[depth + 1 + r];
-          ub = evaluateUpperBoundCompiled(
-            pieces,
-            depth + 1,
-            ubRemaining,
-            remainingCount,
-            ctx.compiled,
-            ctx.compiledLookup,
-            ctx.compiledCharIdx,
-            ctx.compiledVars
-          );
-        } else {
-          const remaining: Partial<Record<StatKey, number>>[] = [];
-          for (let s = depth + 1; s < 5; s++)
-            remaining.push(superStatsBySlot[s]);
-          ub = evaluateUpperBound(pieces.slice(0, depth + 1), remaining, ctx);
-        }
+        const remaining: Partial<Record<StatKey, number>>[] = [];
+        for (let s = depth + 1; s < 5; s++) remaining.push(superStatsBySlot[s]);
+        const ub = evaluateUpperBound(
+          pieces.slice(0, depth + 1),
+          remaining,
+          ctx
+        );
         ctx.evaluations++;
         ctx.sinceLastYield++;
+        if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
+          ctx.sinceLastYield = 0;
+          ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
+        }
         if (ub <= collector.threshold) continue;
       }
       dfs(depth + 1, newCumEr, newCumCr);
+    }
+    pieces[depth] = null;
+  }
+  dfs(0, 0, 0);
+}
+
+// ─── Compiled B&B DFS (incremental vars, pre-computed deltas) ───
+
+/**
+ * Specialized DFS for the compiled path. Key optimizations:
+ * 1. Incremental variable accumulation — maintains a stack of Float64Arrays,
+ *    only adds one artifact's delta per DFS step instead of re-filling from scratch.
+ * 2. Pre-computed suffix super-artifact vars — UB = cur + suffix, a single vector add.
+ * 3. Pre-baked per-artifact delta arrays — zero map lookups in the hot loop.
+ * 4. Leaf evaluation is zero-copy — evaluates directly on the accumulated stack.
+ */
+function bnbDfsCompiled(
+  slotGroups: ArtifactData[][],
+  slotSupers: SuperArtifact[],
+  ctx: BnBContext
+): void {
+  const compiled = ctx.compiled!;
+  const lookup = ctx.compiledLookup!;
+  const charIdx = ctx.compiledCharIdx!;
+  const { minEr, minCr, erFloor, crFloor, collector } = ctx;
+  const needEr = minEr > 0;
+  const needCr = minCr > 0;
+  const numVars = compiled.numVars;
+
+  // ─── ER/CR suffix sums for feasibility pruning ───
+  const suffixMaxEr = new Float64Array(6);
+  const suffixMaxCr = new Float64Array(6);
+  for (let s = 4; s >= 0; s--) {
+    suffixMaxEr[s] = suffixMaxEr[s + 1] + slotSupers[s].maxEr;
+    suffixMaxCr[s] = suffixMaxCr[s + 1] + slotSupers[s].maxCr;
+  }
+
+  // ─── Pre-compute per-artifact var deltas + ER/CR values (parallel to slotGroups) ───
+  const slotDeltas: Float64Array[][] = new Array(5);
+  const slotEr: Float64Array[] = new Array(5);
+  const slotCr: Float64Array[] = new Array(5);
+  for (let s = 0; s < 5; s++) {
+    const group = slotGroups[s];
+    const deltas: Float64Array[] = new Array(group.length);
+    const erVals = new Float64Array(group.length);
+    const crVals = new Float64Array(group.length);
+    for (let gi = 0; gi < group.length; gi++) {
+      const art = group[gi];
+      const delta = new Float64Array(numVars);
+      const mainKey = art.mainStatKey;
+      if (mainKey) {
+        const idx = lookup.keyToIdx.get(mainKey);
+        if (idx !== undefined) {
+          const displayVal = getMainStatValueAtLevel(
+            mainKey as import("@/data/types").MainStat,
+            art.rarity,
+            art.level
+          );
+          delta[idx] += lookup.keyIsPct.get(mainKey)
+            ? displayVal / 100
+            : displayVal;
+        }
+      }
+      if (art.substats) {
+        for (const subKey of Object.keys(art.substats)) {
+          const subVal = art.substats[subKey as keyof typeof art.substats];
+          if (!subVal) continue;
+          const idx = lookup.keyToIdx.get(subKey);
+          if (idx !== undefined) {
+            delta[idx] += lookup.keyIsPct.get(subKey) ? subVal / 100 : subVal;
+          }
+        }
+      }
+      deltas[gi] = delta;
+      if (needEr) erVals[gi] = getArtifactEr(art);
+      if (needCr) crVals[gi] = getArtifactCr(art);
+    }
+    slotDeltas[s] = deltas;
+    slotEr[s] = erVals;
+    slotCr[s] = crVals;
+  }
+
+  // ─── Pre-compute suffix super-artifact var sums ───
+  // suffixSuperVars[d] = sum of super stats for slots d..4
+  const suffixSuperVars: Float64Array[] = new Array(6);
+  for (let i = 0; i <= 5; i++) suffixSuperVars[i] = new Float64Array(numVars);
+  for (let s = 4; s >= 0; s--) {
+    suffixSuperVars[s].set(suffixSuperVars[s + 1]);
+    fillVarsFromRawStats(
+      [slotSupers[s].stats],
+      1,
+      compiled.varMapping,
+      charIdx,
+      suffixSuperVars[s]
+    );
+  }
+
+  // ─── Incremental var stack + temporaries ───
+  const varStack: Float64Array[] = new Array(5);
+  for (let i = 0; i < 5; i++) varStack[i] = new Float64Array(numVars);
+  const zeroVars = new Float64Array(numVars);
+  const ubVars = new Float64Array(numVars);
+  const pieces: ArtifactTuple = [null, null, null, null, null];
+
+  function dfs(depth: number, cumEr: number, cumCr: number): void {
+    if (ctx.aborted) return;
+    if (ctx.deadline && ctx.evaluations % 1000 === 0) {
+      if (performance.now() > ctx.deadline) {
+        ctx.aborted = true;
+        return;
+      }
+    }
+    if (depth === 5) {
+      // Leaf: varStack[4] has all 5 artifacts' var contributions
+      const leafVars = varStack[4];
+      if (compiled.evaluateEr) {
+        if (compiled.evaluateEr(leafVars) < 0) {
+          ctx.evaluations++;
+          ctx.sinceLastYield++;
+          return;
+        }
+      }
+      if (compiled.evaluateCr) {
+        if (compiled.evaluateCr(leafVars) < 0) {
+          ctx.evaluations++;
+          ctx.sinceLastYield++;
+          return;
+        }
+      }
+      const damage = compiled.evaluate(leafVars);
+      collector.add(damage, null, pieces);
+      ctx.evaluations++;
+      ctx.sinceLastYield++;
+      if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
+        ctx.sinceLastYield = 0;
+        ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
+      }
+      return;
+    }
+    const group = slotGroups[depth];
+    const deltas = slotDeltas[depth];
+    if (group.length === 0) {
+      pieces[depth] = null;
+      const parent = depth === 0 ? zeroVars : varStack[depth - 1];
+      varStack[depth].set(parent);
+      dfs(depth + 1, cumEr, cumCr);
+      return;
+    }
+
+    const sfxEr = suffixMaxEr[depth + 1];
+    const sfxCr = suffixMaxCr[depth + 1];
+    const parent = depth === 0 ? zeroVars : varStack[depth - 1];
+    const cur = varStack[depth];
+    const suffix = suffixSuperVars[depth + 1];
+    const erVals = slotEr[depth];
+    const crVals = slotCr[depth];
+
+    for (let gi = 0; gi < group.length; gi++) {
+      // ER/CR feasibility check BEFORE the vector add (avoid wasted work)
+      if (needEr) {
+        const newCumEr = cumEr + erVals[gi];
+        if (erFloor + newCumEr + sfxEr < minEr) continue;
+      }
+      if (needCr) {
+        const newCumCr = cumCr + crVals[gi];
+        if (crFloor + newCumCr + sfxCr < minCr) continue;
+      }
+
+      // Incremental: cur = parent + artifact delta
+      const delta = deltas[gi];
+      for (let i = 0; i < numVars; i++) cur[i] = parent[i] + delta[i];
+
+      pieces[depth] = group[gi];
+      if (collector.threshold > 0 && depth < 4) {
+        // Upper bound: cur vars + suffix super vars
+        for (let i = 0; i < numVars; i++) ubVars[i] = cur[i] + suffix[i];
+        const ub = compiled.evaluate(ubVars);
+        ctx.evaluations++;
+        ctx.sinceLastYield++;
+        if (ctx.sinceLastYield >= 50_000 && ctx.onProgress) {
+          ctx.sinceLastYield = 0;
+          ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
+        }
+        if (ub <= collector.threshold) continue;
+      }
+
+      dfs(
+        depth + 1,
+        needEr ? cumEr + erVals[gi] : 0,
+        needCr ? cumCr + crVals[gi] : 0
+      );
     }
     pieces[depth] = null;
   }
@@ -235,7 +406,8 @@ export function runCharacterBnB(
   warmStartThreshold?: number,
   maxArtsPerSlot = 0,
   /** @internal For benchmarking only — disable AST compilation */
-  _noCompile = false
+  _noCompile = false,
+  onProgress?: (bestDamage: number, evaluations: number) => void
 ): {
   collector: TopKCollector;
   evaluations: number;
@@ -279,20 +451,93 @@ export function runCharacterBnB(
       formulaId,
       baseSheets,
       calcContext,
-      charConfig.buildMatch,
+      charConfig.buildMatch, // use original buildMatch for marginal computation (damage-based)
       reactionOverride
     );
+  }
+
+  // ER/CR weight injection: boost ER/CR weights proportionally to the gap
+  // so that high-ER/CR artifacts rank higher and survive pool truncation.
+  let effectiveBuildMatch = charConfig.buildMatch;
+  let effectiveMarginals = marginals;
+  if (charConfig.minEr > 0 || charConfig.minCr > 0) {
+    const gap = computeErCrGap(
+      teamBuild,
+      charId,
+      baseSheets,
+      calcTargetId,
+      calcContext,
+      charConfig.minEr,
+      charConfig.minCr
+    );
+    const baseWeights = charConfig.buildMatch?.statWeights ?? {
+      cr: 100,
+      cd: 100,
+    };
+    const maxWeight = Math.max(
+      0,
+      ...Object.values(baseWeights).map((v) => Math.abs(v ?? 0))
+    );
+
+    if (maxWeight > 0 && (gap.erGap > 0 || gap.crGap > 0)) {
+      const boosted = { ...baseWeights };
+      // ER: gap fraction × maxWeight, capped at 150% of maxWeight
+      if (gap.erGap > 0) {
+        const syntheticEr = Math.min(gap.erGap, 1.5) * maxWeight;
+        boosted.er = Math.max(boosted.er ?? 0, syntheticEr);
+      }
+      // CR: gap fraction × maxWeight (no cap — CR gap is naturally small)
+      if (gap.crGap > 0) {
+        const syntheticCr = gap.crGap * maxWeight;
+        boosted.cr = Math.max(boosted.cr ?? 0, syntheticCr);
+      }
+
+      if (charConfig.buildMatch) {
+        effectiveBuildMatch = {
+          ...charConfig.buildMatch,
+          statWeights: boosted,
+        };
+      } else {
+        effectiveBuildMatch = {
+          build: {} as BuildMatchResult["build"],
+          buildIndex: 0,
+          statWeights: boosted,
+          setMatched: false,
+          setDifferent: false,
+          mainStatMatches: 0,
+          mainStatMismatches: [],
+        };
+      }
+
+      // Also boost marginal substat weights so the marginal scoring path
+      // doesn't undo the ER/CR promotion.
+      if (effectiveMarginals) {
+        const boostedSub = { ...effectiveMarginals.substatWeights };
+        if (gap.erGap > 0) {
+          const syntheticEr = Math.min(gap.erGap, 1.5) * maxWeight;
+          boostedSub.er = Math.max(boostedSub.er ?? 0, syntheticEr);
+        }
+        if (gap.crGap > 0) {
+          const syntheticCr = gap.crGap * maxWeight;
+          boostedSub.cr = Math.max(boostedSub.cr ?? 0, syntheticCr);
+        }
+        effectiveMarginals = {
+          ...effectiveMarginals,
+          substatWeights: boostedSub,
+        };
+      }
+    }
   }
 
   const isCarry = swapCharId === carryCharId;
   const slotData = prepareSlotData(
     inventory,
     excludedIds,
-    charConfig.buildMatch,
+    effectiveBuildMatch,
     globalConfig,
     crDiscount,
     maxArtsPerSlot,
-    marginals,
+    effectiveMarginals,
     isCarry
   );
 
@@ -443,6 +688,7 @@ export function runCharacterBnB(
     compiledCharIdx,
     compiledLookup,
     deadline,
+    onProgress,
   };
 
   // ── Helper: Collect pattern tasks, sort by upper bound, run B&B with pruning ──
@@ -516,6 +762,8 @@ export function runCharacterBnB(
         let bestDamage = evaluateBuild(pieces, ctx).damage;
         collector.add(bestDamage, null, pieces);
         ctx.evaluations++;
+        if (ctx.onProgress)
+          ctx.onProgress(collector.best?.damage ?? 0, ctx.evaluations);
 
         let improved = true;
         while (improved) {
@@ -579,7 +827,7 @@ export function runCharacterBnB(
         formulaId,
         baseSheets,
         calcContext,
-        charConfig.buildMatch,
+        effectiveBuildMatch,
         reactionOverride,
         StatSheet.fromArtifacts(warmArts)
       );
@@ -592,14 +840,14 @@ export function runCharacterBnB(
         const marginalSortFn = (a: ArtifactData, b: ArtifactData) =>
           computeMarginalScore(
             b,
-            charConfig.buildMatch,
+            effectiveBuildMatch,
             globalConfig,
             crDiscount,
             fullMarginals
           ) -
           computeMarginalScore(
             a,
-            charConfig.buildMatch,
+            effectiveBuildMatch,
             globalConfig,
             crDiscount,
             fullMarginals
@@ -621,6 +869,11 @@ export function runCharacterBnB(
 
     // Sort by upper bound descending — explore most promising patterns first
     tasks.sort((a, b) => b.upperBound - a.upperBound);
+    const useCompiled =
+      ctx.compiled &&
+      ctx.compiledVars &&
+      ctx.compiledLookup &&
+      ctx.compiledCharIdx != null;
     for (const task of tasks) {
       if (ctx.aborted) break;
       if (
@@ -629,7 +882,11 @@ export function runCharacterBnB(
       ) {
         continue;
       }
-      bnbDfs(task.groups, task.supers, ctx);
+      if (useCompiled) {
+        bnbDfsCompiled(task.groups, task.supers, ctx);
+      } else {
+        bnbDfs(task.groups, task.supers, ctx);
+      }
     }
 
     // Merge HC2 results into main collector after DFS
@@ -829,5 +1086,23 @@ export function runCharacterBnB(
     }
   }
 
-  return { collector, evaluations: ctx.evaluations, failReason };
+  // Return marginal weights (carry) or buildMatch statWeights (support) for debug display
+  const returnWeights =
+    effectiveMarginals ??
+    (effectiveBuildMatch?.statWeights
+      ? {
+          substatWeights: effectiveBuildMatch.statWeights as Record<
+            string,
+            number
+          >,
+          mainStatMarginals: {},
+          hasMainStatDisagreement: false,
+        }
+      : null);
+  return {
+    collector,
+    evaluations: ctx.evaluations,
+    failReason,
+    marginalWeights: returnWeights,
+  };
 }

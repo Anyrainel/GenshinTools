@@ -17,7 +17,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { Build, CharacterResource } from "@/data/types";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import {
@@ -125,15 +124,30 @@ const CompactAddWeapon = memo(
 );
 CompactAddWeapon.displayName = "CompactAddWeapon";
 
+/** Pre-computed layout flags, hoisted to the parent to avoid per-card useMediaQuery hooks. */
+export interface BuildCardLayout {
+  isMobile: boolean;
+  isDesktop: boolean;
+  isVeryNarrow: boolean;
+}
+
 interface CharacterBuildCardProps {
   character: CharacterResource;
   /** Optional tour step ID for onboarding */
   tourStepId?: string;
+  layout?: BuildCardLayout;
 }
+
+const DEFAULT_BUILD_LAYOUT: BuildCardLayout = {
+  isMobile: false,
+  isDesktop: true,
+  isVeryNarrow: false,
+};
 
 function CharacterBuildCardComponent({
   character,
   tourStepId,
+  layout = DEFAULT_BUILD_LAYOUT,
 }: CharacterBuildCardProps) {
   const { t } = useLanguage();
   const isHidden = useBuildsStore(
@@ -227,9 +241,7 @@ function CharacterBuildCardComponent({
   );
 
   /* Responsive weapon caps: mobile=1, tablet=3, desktop=5 */
-  const isMobile = !useMediaQuery("(min-width: 768px)");
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
+  const { isMobile, isDesktop, isVeryNarrow } = layout;
   const maxWeapons = isMobile ? 1 : isDesktop ? 5 : 3;
   const visibleWeapons = characterWeapons.slice(0, maxWeapons);
   const iconSize = isVeryNarrow ? "md" : "lg";
@@ -474,10 +486,4 @@ function CharacterBuildCardComponent({
   );
 }
 
-export const CharacterBuildCard = memo(
-  CharacterBuildCardComponent,
-  (prev, next) => {
-    // Only re-render if character ID changes (character object should be stable from resources array)
-    return prev.character.id === next.character.id;
-  }
-);
+export const CharacterBuildCard = memo(CharacterBuildCardComponent);

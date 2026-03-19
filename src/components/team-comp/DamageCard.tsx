@@ -46,7 +46,7 @@ import {
   Swords,
   Undo2,
 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown } from "./FormulaBreakdown";
@@ -341,7 +341,7 @@ function ComboBreakdown({
   const [expanded, setExpanded] = useSessionState("comboExpanded", true);
 
   return (
-    <div className={cn(isMobile ? "space-y-2" : "space-y-4")}>
+    <div className={cn(isMobile ? "space-y-1" : "space-y-2")}>
       <Collapsible open={expanded} onOpenChange={setExpanded}>
         <div
           className={cn(
@@ -400,8 +400,7 @@ function ComboBreakdown({
           <CollapsibleContent>
             <div
               className={cn(
-                "grid gap-2 mt-3",
-                isMobile ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"
+                "grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2 mt-3"
               )}
             >
               {teamCharIds.map((charId) => {
@@ -415,7 +414,7 @@ function ComboBreakdown({
                     className="rounded-lg border border-border/30 bg-black/5 overflow-hidden"
                   >
                     {/* Character header */}
-                    <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/20 bg-black/10">
+                    <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
                       {charRes && (
                         <img
                           src={getAssetUrl(charRes.imagePath)}
@@ -423,13 +422,13 @@ function ComboBreakdown({
                           className="w-7 h-7 object-contain rounded-full bg-secondary/40 shrink-0"
                         />
                       )}
-                      <span className="text-base font-bold text-foreground truncate">
+                      <span className="text-sm font-bold text-foreground/80 truncate">
                         {t.character(charId)}
                       </span>
                     </div>
 
                     {/* Formula lines */}
-                    <div className="p-3 flex flex-col gap-2">
+                    <div className="p-1 flex flex-col 2xl:grid 2xl:grid-cols-2 gap-2">
                       {lines && lines.length > 0 ? (
                         lines.map(({ line, perHit, total, isPartial }, idx) => {
                           const label = charFormulas?.[line.formulaId];
@@ -925,6 +924,31 @@ export function DamageCard({
     "current" | "optimize" | "generate"
   >("resultsTab", "current");
 
+  // Keep progress bar visible for 1s after optimization completes
+  const [showProgress, setShowProgress] = useState(false);
+  const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wasComputing = useRef(false);
+  useEffect(() => {
+    if (isComputing) {
+      wasComputing.current = true;
+      if (progressTimerRef.current) {
+        clearTimeout(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+      setShowProgress(true);
+    } else if (wasComputing.current) {
+      // Just finished computing — delay hide by 1s
+      wasComputing.current = false;
+      progressTimerRef.current = setTimeout(() => setShowProgress(false), 2000);
+    }
+    return () => {
+      if (progressTimerRef.current) {
+        clearTimeout(progressTimerRef.current);
+        progressTimerRef.current = null;
+      }
+    };
+  }, [isComputing]);
+
   const ctxProps: CtxProps = { team, activeContext, updateTeam, isMobile, t };
 
   const hasActiveFormula =
@@ -982,7 +1006,7 @@ export function DamageCard({
               type="button"
               onClick={() => setResultsTab(key)}
               className={cn(
-                "flex-1 flex items-start gap-2.5 rounded-lg border-2 px-3 py-2.5 text-left transition-all",
+                "flex-1 flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
                 selected
                   ? "border-primary bg-primary/10 shadow-sm"
                   : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
@@ -1167,56 +1191,126 @@ export function DamageCard({
             )}
 
             {/* Progress */}
-            {isComputing && (
-              <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="font-semibold">
-                    {teamProgress
-                      ? t
-                          .ui("teamComp.passLabel")
-                          .replace("{0}", String(teamProgress.passIndex + 1))
-                          .replace("{1}", String(teamProgress.totalPasses))
-                          .replace(
-                            "{2}",
-                            `${t.character(teamProgress.currentPassCharId)} — ${
-                              teamProgress.currentPass === "carry-1"
-                                ? t.ui("teamComp.passCarryInitial")
-                                : teamProgress.currentPass === "carry-2"
-                                  ? t.ui("teamComp.passCarryRefine")
-                                  : t.ui("teamComp.passSupport")
-                            }`
-                          )
-                      : t.ui("teamComp.preparingOptimizer")}
-                  </span>
-                  <span className="font-mono font-bold">
-                    {Math.round((teamProgress?.overallProgress ?? 0) * 100)}%
-                  </span>
-                </div>
-                <Progress
-                  value={(teamProgress?.overallProgress ?? 0) * 100}
-                  className="h-1.5 bg-black/40"
-                />
-                {teamProgress && teamProgress.passResults.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {teamProgress.passResults.map((pr, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
-                      >
-                        <Check className="w-2.5 h-2.5" />
-                        {t.character(pr.charId)}
-                        {" — "}
-                        {pr.passId === "carry-1"
-                          ? t.ui("teamComp.passCarryInitial")
-                          : pr.passId === "carry-2"
-                            ? t.ui("teamComp.passCarryRefine")
-                            : t.ui("teamComp.passSupport")}
+            {showProgress &&
+              (() => {
+                // When done (lingering), snap to 100%
+                const progressPct = !isComputing
+                  ? 100
+                  : Math.round((teamProgress?.overallProgress ?? 0) * 100);
+                return (
+                  <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span className="font-semibold">
+                        {!isComputing
+                          ? `✓ ${t.ui("teamComp.optimizationComplete")}`
+                          : teamProgress?.phase
+                            ? {
+                                init: t.ui("teamComp.phaseInit"),
+                                phase1: t.ui("teamComp.phasePerChar"),
+                                phase2: t.ui("teamComp.phaseTeamAlloc"),
+                                phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
+                              }[teamProgress.phase]
+                            : t.ui("teamComp.preparingOptimizer")}
                       </span>
-                    ))}
+                      <span className="font-mono font-bold">
+                        {progressPct}%
+                      </span>
+                    </div>
+                    <Progress
+                      value={progressPct}
+                      className="h-1.5 bg-black/40"
+                    />
+                    {/* Per-character substat weights (debug) */}
+                    {teamProgress?.passResults?.some(
+                      (pr) => pr.substatWeights
+                    ) && (
+                      <div className="space-y-1">
+                        {teamProgress.passResults
+                          .filter(
+                            (pr) =>
+                              pr.substatWeights &&
+                              Object.keys(pr.substatWeights).length > 0
+                          )
+                          .map((pr) => (
+                            <div
+                              key={pr.charId}
+                              className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground"
+                            >
+                              <span className="font-semibold text-foreground/70 w-16 shrink-0 truncate">
+                                {t.character(pr.charId)}
+                              </span>
+                              <span className="truncate">
+                                {Object.entries(pr.substatWeights!)
+                                  .filter(([, v]) => Math.abs(v) > 0.01)
+                                  .sort(([, a], [, b]) => b - a)
+                                  .map(
+                                    ([k, v]) =>
+                                      `${t.statShort(k)}:${v.toFixed(1)}`
+                                  )
+                                  .join("  ")}
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                    {/* Per-character status badges — always visible during optimization */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {effectiveTeam.characters
+                        .filter((id): id is string => id != null)
+                        .map((charId) => {
+                          const pr = teamProgress?.passResults.find(
+                            (r) => r.charId === charId
+                          );
+                          const liveDmg =
+                            teamProgress?.workerBestDamage?.[charId];
+                          if (pr) {
+                            // Completed
+                            return (
+                              <span
+                                key={charId}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold"
+                              >
+                                <Check className="w-2.5 h-2.5" />
+                                {t.character(charId)}
+                                {pr.bestDamage > 0 && (
+                                  <span className="font-mono">
+                                    {Math.round(pr.bestDamage).toLocaleString()}
+                                  </span>
+                                )}
+                              </span>
+                            );
+                          }
+                          if (liveDmg != null) {
+                            // In progress (worker running)
+                            return (
+                              <span
+                                key={charId}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold"
+                              >
+                                <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                                {t.character(charId)}
+                                {liveDmg > 0 && (
+                                  <span className="font-mono">
+                                    {Math.round(liveDmg).toLocaleString()}
+                                  </span>
+                                )}
+                              </span>
+                            );
+                          }
+                          // Pending (not yet started)
+                          return (
+                            <span
+                              key={charId}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold"
+                            >
+                              {t.character(charId)}
+                            </span>
+                          );
+                        })}
+                    </div>
                   </div>
-                )}
-              </div>
-            )}
+                );
+              })()}
 
             {/* Results */}
             {/* Combo mode with no active lines — show hint */}

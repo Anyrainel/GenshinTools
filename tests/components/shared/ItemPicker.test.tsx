@@ -1,7 +1,6 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { characters } from "@/data/resources";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import userEvent from "@testing-library/user-event";
 import { render, screen, waitFor } from "../../utils/render";
 
@@ -11,7 +10,6 @@ describe("ItemPicker", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useAccountStore.setState({ activeAccountId: null, accounts: {} });
-    useOwnershipStore.setState({ profiles: {} });
   });
 
   describe("character picker", () => {
@@ -153,21 +151,32 @@ describe("ItemPicker", () => {
 
   describe("owned only filter", () => {
     const PROFILE_ID = "test-profile";
-    const unownedIds = characters.slice(0, 5).map((c) => c.id);
+    // Pick 5 characters to be "owned" (in account data)
+    const ownedIds = characters.slice(5, 10).map((c) => c.id);
+    const unownedIds = characters
+      .filter((c) => !ownedIds.includes(c.id))
+      .map((c) => c.id);
 
     beforeEach(() => {
-      useAccountStore.setState({ activeAccountId: PROFILE_ID, accounts: {} });
-      const unownedCharacters: Record<string, true> = {};
-      for (const id of unownedIds) {
-        unownedCharacters[id] = true;
-      }
-      useOwnershipStore.setState({
-        profiles: {
+      useAccountStore.setState({
+        activeAccountId: PROFILE_ID,
+        accounts: {
           [PROFILE_ID]: {
-            unownedCharacters,
-            unownedWeapons: {},
-            characterConstellations: {},
-            weaponRefinements: {},
+            id: PROFILE_ID,
+            name: "Test",
+            data: {
+              characters: ownedIds.map((key) => ({
+                key,
+                constellation: 0,
+                level: 90,
+                talent: { auto: 1, skill: 1, burst: 1 },
+                artifacts: {},
+              })),
+              extraArtifacts: [],
+              extraWeapons: [],
+            },
+            scores: {},
+            lastUpdate: Date.now(),
           },
         },
       });
@@ -176,18 +185,9 @@ describe("ItemPicker", () => {
     it("filters out unowned characters when toggled", async () => {
       const { getIsOwned } = await import("@/hooks/useOwnership");
 
-      // Verify store state is set up correctly
-      const storeState = useOwnershipStore.getState();
-      expect(storeState.profiles[PROFILE_ID]).toBeDefined();
-      expect(
-        storeState.profiles[PROFILE_ID].unownedCharacters[unownedIds[0]]
-      ).toBe(true);
-
       // Verify getIsOwned returns expected values
+      expect(getIsOwned("character", ownedIds[0])).toBe(true);
       expect(getIsOwned("character", unownedIds[0])).toBe(false);
-      // Pick a character NOT in unownedIds
-      const ownedChar = characters.find((c) => !unownedIds.includes(c.id));
-      expect(getIsOwned("character", ownedChar!.id)).toBe(true);
 
       const user = userEvent.setup();
       const { container } = render(
@@ -220,7 +220,10 @@ describe("ItemPicker", () => {
       await user.click(ownedOnlyBtn);
 
       await waitFor(() => {
-        expect(getGridChildren().length).toBe(initialCount - unownedIds.length);
+        // Should show only owned characters (+ always-owned like Traveler/Manekin)
+        const filteredCount = getGridChildren().length;
+        expect(filteredCount).toBeLessThan(initialCount);
+        expect(filteredCount).toBeGreaterThanOrEqual(ownedIds.length);
       });
     });
 
@@ -264,56 +267,15 @@ describe("ItemPicker", () => {
       });
     });
 
-    it("works when activeAccountId is null (uses default profile)", async () => {
-      // Set up ownership under "default" profile but leave activeAccountId null
-      useAccountStore.setState({ activeAccountId: null });
-      useOwnershipStore.setState({
-        profiles: {
-          default: {
-            unownedCharacters: Object.fromEntries(
-              unownedIds.map((id) => [id, true])
-            ) as Record<string, true>,
-            unownedWeapons: {},
-            characterConstellations: {},
-            weaponRefinements: {},
-          },
-        },
-      });
+    it("works when activeAccountId is null (no account data = no owned)", async () => {
+      useAccountStore.setState({ activeAccountId: null, accounts: {} });
 
       const { getIsOwned } = await import("@/hooks/useOwnership");
-      // getIsOwned should fall back to "default" profile
-      expect(getIsOwned("character", unownedIds[0])).toBe(false);
-
-      const user = userEvent.setup();
-      render(
-        <ItemPicker
-          type="character"
-          value={null}
-          onChange={mockOnChange}
-          defaultOpen
-        />
-      );
-
-      const getGridChildren = () => {
-        const gridEl = document.querySelector(".grid");
-        return gridEl
-          ? Array.from(gridEl.children).filter(
-              (el) => !el.textContent?.includes("noResults")
-            )
-          : [];
-      };
-
-      await waitFor(() => {
-        expect(getGridChildren().length).toBeGreaterThan(0);
-      });
-      const initialCount = getGridChildren().length;
-
-      const ownedOnlyBtn = screen.getByText("Owned Only");
-      await user.click(ownedOnlyBtn);
-
-      await waitFor(() => {
-        expect(getGridChildren().length).toBe(initialCount - unownedIds.length);
-      });
+      // With no account data, non-always-owned characters are not owned
+      const nonAlwaysOwned = characters.find(
+        (c) => !/^(traveler|manekin|manekina)_/.test(c.id)
+      )!;
+      expect(getIsOwned("character", nonAlwaysOwned.id)).toBe(false);
     });
   });
 

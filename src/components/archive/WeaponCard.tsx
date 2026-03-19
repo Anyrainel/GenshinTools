@@ -1,6 +1,5 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
-import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
@@ -16,11 +15,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import {
-  useIsOwned,
-  useOwnershipActions,
-  useRefinement,
-} from "@/hooks/useOwnership";
+import { useIsOwned, useRefinement } from "@/hooks/useOwnership";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
@@ -46,7 +41,6 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const isOwned = useIsOwned();
   const owned = isOwned("weapon", weapon.id);
   const refinement = useRefinement(weapon.id);
-  const { toggleOwned, setRefinement } = useOwnershipActions();
 
   const card = (
     <div
@@ -106,9 +100,7 @@ export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
           open={drawerOpen}
           onOpenChange={setDrawerOpen}
           owned={owned}
-          onToggleOwned={() => toggleOwned("weapon", weapon.id)}
           refinement={refinement}
-          onSetRefinement={(level) => setRefinement(weapon.id, level)}
         />
       </>
     );
@@ -146,9 +138,7 @@ function WeaponDetailDrawer({
   open,
   onOpenChange,
   owned,
-  onToggleOwned,
   refinement,
-  onSetRefinement,
 }: {
   weapon: WeaponResource;
   weaponMeta: ReturnType<typeof getWeaponDisplayMeta>;
@@ -156,9 +146,7 @@ function WeaponDetailDrawer({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   owned: boolean;
-  onToggleOwned: () => void;
   refinement: number;
-  onSetRefinement: (level: number) => void;
 }) {
   const { t } = useLanguage();
   const name = t.weaponName(weapon.id);
@@ -194,40 +182,21 @@ function WeaponDetailDrawer({
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onToggleOwned}
+              <span
                 className={cn(
-                  "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
-                  owned
-                    ? "text-amber-400 hover:text-amber-300"
-                    : "text-muted-foreground hover:text-foreground"
+                  "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
+                  owned ? "text-amber-400" : "text-muted-foreground"
                 )}
               >
                 <Bookmark className={cn("h-4 w-4", owned && "fill-current")} />
                 <span className="text-xs font-medium">
                   {owned ? t.ui("archive.owned") : t.ui("archive.notOwned")}
                 </span>
-              </Button>
-              {owned && (
-                <div className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => onSetRefinement(i + 1)}
-                      className={cn(
-                        "w-6 h-6 rounded-md text-xs font-semibold transition-colors",
-                        refinement === i + 1
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                      )}
-                    >
-                      {t.format("common.refinementFormat", i + 1)}
-                    </button>
-                  ))}
-                </div>
+              </span>
+              {owned && refinement > 1 && (
+                <span className="text-xs font-medium text-muted-foreground">
+                  {t.format("common.refinementFormat", refinement)}
+                </span>
               )}
             </div>
           </div>

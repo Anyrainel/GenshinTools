@@ -4,6 +4,8 @@ import type { ArtifactData, Element, GlobalStatWeights } from "@/data/types";
  * Each worker handles one character's B&B search independently.
  */
 import { preloadGameStats } from "@/lib/gameStatsLoader";
+// Side-effect: register all character/weapon/artifact implementations
+import "./index";
 import { TeamBuild, evaluateCombo } from "./damageCalc";
 import type { CombatOpts } from "./damageModels";
 import { StatSheet } from "./damageModels";
@@ -60,11 +62,20 @@ export type SerializedTopKEntry = {
 export type BnBWorkerResponse =
   | {
       id: number;
+      type: "progress";
+      charId: string;
+      bestDamage: number;
+      evaluations: number;
+    }
+  | {
+      id: number;
+      type: "done";
       entries: SerializedTopKEntry[];
       evaluations: number;
       failReason?: OptFailReason;
+      substatWeights?: Record<string, number>;
     }
-  | { id: number; error: string };
+  | { id: number; type: "error"; error: string };
 
 const warnedCalcErrors = new Set<string>();
 
@@ -113,6 +124,17 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       ? performance.now() + req.deadlineMs
       : undefined;
 
+    // Progress callback: send intermediate best damage to main thread
+    const onProgress = (bestDamage: number, evaluations: number) => {
+      self.postMessage({
+        id: req.id,
+        type: "progress",
+        charId: req.charId,
+        bestDamage,
+        evaluations,
+      } satisfies BnBWorkerResponse);
+    };
+
     // Run B&B
     const result = runCharacterBnB(
       req.charId,
@@ -130,7 +152,9 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.topK,
       deadline,
       req.warmStartThreshold,
-      req.maxArtsPerSlot
+      req.maxArtsPerSlot,
+      false, // _noCompile
+      onProgress
     );
 
     // Serialize TopKEntry[] (convert Set to string[])
@@ -145,13 +169,16 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
 
     self.postMessage({
       id: req.id,
+      type: "done",
       entries,
       evaluations: result.evaluations,
       failReason: result.failReason,
+      substatWeights: result.marginalWeights?.substatWeights,
     } satisfies BnBWorkerResponse);
   } catch (err) {
     self.postMessage({
       id: req.id,
+      type: "error",
       error: err instanceof Error ? err.message : String(err),
     } satisfies BnBWorkerResponse);
   }

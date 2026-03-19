@@ -677,8 +677,17 @@ class Flins extends CharacterBase {
             : []),
         ],
       },
+      "flins-thunderous": {
+        label: { zh: "Q雷霆交响", en: "Q Thunderous Symphony" },
+        parts: [
+          { formula: new LunarDirectFormula(tsMainMult, lunarTag) },
+          ...(hasExtraHits
+            ? [{ formula: new LunarDirectFormula(tsExtraMult, lunarTag) }]
+            : []),
+        ],
+      },
       "flins-burst-total": {
-        label: { zh: "小Q", en: "Q Special" },
+        label: { zh: "大Q", en: "Q Full" },
         parts: [
           // Initial Electro DMG (regular, not lunar)
           { formula: new DirectFormula(qInitMult, burstTag) },
@@ -689,15 +698,6 @@ class Flins extends CharacterBase {
           },
           // Final phase Lunar-Charged hit
           { formula: new LunarDirectFormula(qFinalMult, lunarTag) },
-        ],
-      },
-      "flins-thunderous": {
-        label: { zh: "Q雷霆交响", en: "Q Thunderous Symphony" },
-        parts: [
-          { formula: new LunarDirectFormula(tsMainMult, lunarTag) },
-          ...(hasExtraHits
-            ? [{ formula: new LunarDirectFormula(tsExtraMult, lunarTag) }]
-            : []),
         ],
       },
     };

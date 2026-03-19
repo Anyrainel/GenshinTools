@@ -1,15 +1,39 @@
 import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { sortedArtifacts } from "@/data/constants";
+import { artifactIdToHalfSetId, sortedArtifacts } from "@/data/constants";
+import { artifactHalfSets } from "@/data/resources";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArchiveToolbar } from "./ArchiveToolbar";
 import { ArtifactCard } from "./ArtifactCard";
+import { FilterChip } from "./FilterChip";
+
+const ALL_HALF_SET_IDS = artifactHalfSets.map((hs) => hs.id);
 
 export function ArtifactArchiveView() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
+  const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(
+    () => new Set()
+  );
+
+  const sortedHalfSetIds = useMemo(
+    () =>
+      [...ALL_HALF_SET_IDS].sort((a, b) =>
+        t.halfSetShort(a).localeCompare(t.halfSetShort(b))
+      ),
+    [t]
+  );
+
+  const toggleHalfSet = useCallback((id: string) => {
+    setHalfSetFilter((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   // Determine grid column count to match CSS breakpoints
   const isXl = useMediaQuery("(min-width: 1280px)");
@@ -36,27 +60,38 @@ export function ArtifactArchiveView() {
   }, []);
 
   const artifacts = useMemo(() => {
+    let result = sortedArtifacts;
+
+    // Half-set filter
+    if (halfSetFilter.size > 0) {
+      result = result.filter((artifact) => {
+        const halfSetId = artifactIdToHalfSetId[artifact.id];
+        return halfSetId && halfSetFilter.has(halfSetId);
+      });
+    }
+
+    // Search filter
     const query = searchQuery.trim();
-    if (!query) return sortedArtifacts;
+    if (query) {
+      result = result.filter((artifact) => {
+        const name = t.artifact(artifact.id);
+        const effects = t.artifactEffects(artifact.id);
 
-    return sortedArtifacts.filter((artifact) => {
-      const name = t.artifact(artifact.id);
-      const effects = t.artifactEffects(artifact.id);
+        if (fuzzyMatch(query, name) || fuzzyMatch(query, artifact.id)) {
+          return true;
+        }
 
-      // Search by ID or Name
-      if (fuzzyMatch(query, name) || fuzzyMatch(query, artifact.id)) {
-        return true;
-      }
+        const q = query.toLowerCase();
+        for (const effect of effects) {
+          if (effect.toLowerCase().includes(q)) return true;
+        }
 
-      // Search by effect texts
-      const q = query.toLowerCase();
-      for (const effect of effects) {
-        if (effect.toLowerCase().includes(q)) return true;
-      }
+        return false;
+      });
+    }
 
-      return false;
-    });
-  }, [searchQuery, t]);
+    return result;
+  }, [searchQuery, halfSetFilter, t]);
 
   return (
     <HeaderScrollLayout
@@ -68,7 +103,17 @@ export function ArtifactArchiveView() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           searchPlaceholder={t.ui("archive.searchItemPlaceholder")}
-        />
+        >
+          {sortedHalfSetIds.map((hsId) => (
+            <FilterChip
+              key={hsId}
+              active={halfSetFilter.size === 0 || halfSetFilter.has(hsId)}
+              onClick={() => toggleHalfSet(hsId)}
+            >
+              {t.halfSetShort(hsId)}
+            </FilterChip>
+          ))}
+        </ArchiveToolbar>
       }
     >
       {artifacts.length === 0 ? (

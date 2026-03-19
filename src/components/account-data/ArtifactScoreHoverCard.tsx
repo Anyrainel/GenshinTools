@@ -194,7 +194,7 @@ export function ArtifactScoreHoverCard({
       </HoverCardTrigger>
       <HoverCardContent
         ref={contentRef}
-        className="w-auto bg-black/95 border-border/50 text-gray-200 p-5 shadow-xl"
+        className="w-auto bg-black/95 border-2 border-amber-500/50 text-gray-200 p-5 shadow-xl"
       >
         {score ? (
           <ArtifactScoreContent
@@ -261,7 +261,7 @@ function ArtifactScoreContent({
 }: ArtifactScoreContentProps) {
   const { t } = useLanguage();
   const buildSetLabel = useBuildSetLabel(artifactScore);
-  const hasSetMismatch = artifactScore.buildMatch.setDifferent;
+  const hasSetMismatch = artifactScore.buildMatch?.setDifferent;
   const norm = artifactScore.normalized;
   const normalizer = norm.normalizer;
 
@@ -288,7 +288,7 @@ function ArtifactScoreContent({
       )}
 
       {/* Header: title + score summary */}
-      <div className="flex justify-between items-end border-b border-white/10 pb-2">
+      <div className="flex justify-between items-end pb-2">
         <span className="text-lg font-bold text-amber-200 uppercase tracking-wider">
           {t.ui("accountData.artifactScore")}
         </span>
@@ -301,6 +301,7 @@ function ArtifactScoreContent({
           </span>
         </div>
       </div>
+      <div className="-mx-5 border-t border-amber-500/50" />
 
       {/* Main + Sub score summary bar */}
       <div className="flex items-center gap-3 text-sm font-mono">
@@ -357,9 +358,10 @@ function ArtifactScoreContent({
             );
           }
 
-          const hasMismatch = artifactScore.buildMatch.mainStatMismatches.some(
-            (m) => m.slot === slot
-          );
+          const hasMismatch =
+            artifactScore.buildMatch?.mainStatMismatches?.some(
+              (m) => m.slot === slot
+            );
           const mainScore = norm.slotMainStatScores[slot as Slot] ?? 0;
           const normMainSlot = mainScore * normalizer;
 
@@ -417,8 +419,11 @@ function ArtifactScoreContent({
         })}
       </div>
 
+      {/* Divider between slot and stat breakdowns */}
+      <div className="-my-1 -mx-5 border-t border-amber-500/50" />
+
       {/* Breakdown by Stat */}
-      <table className="w-full text-base mt-1 border-collapse">
+      <table className="w-full text-base border-collapse">
         <thead>
           <tr className="text-sm text-slate-400 border-b border-white/5">
             <th className="text-left font-normal pb-2 w-0">

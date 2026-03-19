@@ -3,6 +3,7 @@ import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById } from "@/data/constants";
+import type { ArtifactData } from "@/data/types";
 import type { Recommendation } from "@/lib/account-data/recommendationEngine";
 import { cn } from "@/lib/utils";
 import {
@@ -20,6 +21,8 @@ import { memo } from "react";
 
 interface ActionRecommendationCardProps {
   recommendation: Recommendation;
+  /** Lookup map to resolve artifact IDs to real artifact data */
+  artifactLookup: Map<string, ArtifactData>;
   tierColor?: string;
   /** When true, renders without character icon (used inside per-character cards) */
   inline?: boolean;
@@ -64,6 +67,7 @@ function getBorderColor(scoreDiff: number): string {
 
 function ActionRecommendationCardComponent({
   recommendation: rec,
+  artifactLookup,
   tierColor,
   inline,
 }: ActionRecommendationCardProps) {
@@ -74,11 +78,19 @@ function ActionRecommendationCardComponent({
   const { icon: Icon, color, bg } = getActionIcon(rec.actionType);
   const borderClass = tierColor ?? getBorderColor(rec.slotScoreDiff);
 
+  // Resolve artifacts by ID
+  const currentArtifact = rec.currentArtifactId
+    ? (artifactLookup.get(rec.currentArtifactId) ?? null)
+    : null;
+  const sourceArtifact = rec.sourceArtifactId
+    ? (artifactLookup.get(rec.sourceArtifactId) ?? null)
+    : null;
+
   const isSwapLike =
     rec.actionType === "swap" ||
     rec.actionType === "equip" ||
     rec.actionType === "upgrade";
-  const afterArtInfo = artifactsById[rec.optimalArtifact.setKey];
+  const afterArtInfo = artifactsById[rec.setKey];
 
   const getPlaceholderIcon = () => {
     switch (rec.actionType) {
@@ -94,14 +106,17 @@ function ActionRecommendationCardComponent({
   };
   const PlaceholderIcon = getPlaceholderIcon();
 
+  const isUpgradeInPlace =
+    rec.actionType === "upgrade" &&
+    rec.sourceArtifactId === rec.currentArtifactId;
+
   const subtitle =
     rec.isSteal && rec.donorCharacterId
       ? t.format(
           "accountData.insights.fromCharacter",
           t.character(rec.donorCharacterId)
         )
-      : rec.actionType === "upgrade" &&
-          rec.optimalArtifact.sourceArtifactId === rec.currentArtifact?.id
+      : isUpgradeInPlace
         ? t.ui("accountData.equipped")
         : (rec.actionType === "swap" || rec.actionType === "equip") &&
             !rec.donorCharacterId
@@ -189,35 +204,37 @@ function ActionRecommendationCardComponent({
           <div className="flex items-center justify-center rounded-sm border-2 border-dashed border-white/10 w-12 h-12">
             <CirclePlus className="w-4 h-4 text-muted-foreground" />
           </div>
-        ) : isSwapLike && rec.currentArtifact ? (
+        ) : isSwapLike && currentArtifact ? (
           <ArtifactIcon
-            artifact={rec.currentArtifact}
-            artInfo={artifactsById[rec.currentArtifact.setKey]}
+            artifact={currentArtifact}
+            artInfo={artifactsById[currentArtifact.setKey]}
+            slot={rec.slot}
+            size="sm"
+          />
+        ) : currentArtifact ? (
+          <ArtifactIcon
+            artifact={currentArtifact}
+            artInfo={artifactsById[currentArtifact.setKey]}
             slot={rec.slot}
             size="sm"
           />
         ) : (
-          <ArtifactIcon
-            artifact={rec.currentArtifact ?? rec.optimalArtifact}
-            artInfo={
-              artifactsById[(rec.currentArtifact ?? rec.optimalArtifact).setKey]
-            }
-            slot={rec.slot}
-            size="sm"
-          />
+          <div className="flex items-center justify-center rounded-sm border-2 border-dashed border-white/10 w-12 h-12">
+            <CircleHelp className="w-4 h-4 text-muted-foreground" />
+          </div>
         )}
         <ArrowRight className="w-3 h-3 text-muted-foreground" />
-        {isSwapLike || rec.actionType === "equip" ? (
+        {isSwapLike && sourceArtifact ? (
           <ArtifactIcon
-            artifact={
-              rec.actionType === "upgrade" && rec.optimalArtifact.sourceArtifact
-                ? rec.optimalArtifact.sourceArtifact
-                : rec.optimalArtifact
-            }
+            artifact={sourceArtifact}
             artInfo={afterArtInfo}
             slot={rec.slot}
             size="sm"
           />
+        ) : isSwapLike || rec.actionType === "equip" ? (
+          <div className="flex items-center justify-center w-12 h-12">
+            <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
+          </div>
         ) : (
           <div className="flex items-center justify-center w-12 h-12">
             <PlaceholderIcon className="w-7 h-7 text-muted-foreground" />
@@ -227,11 +244,11 @@ function ActionRecommendationCardComponent({
     </div>
   );
 
-  // Wrap with hover card
-  if (rec.actionType === "equip") {
+  // Wrap with hover card — only show real artifacts, never projected/synthetic data
+  if (rec.actionType === "equip" && sourceArtifact) {
     return (
       <ArtifactComparisonHoverCard
-        afterArtifact={rec.optimalArtifact}
+        afterArtifact={sourceArtifact}
         slot={rec.slot}
       >
         {cardContent}
@@ -239,15 +256,31 @@ function ActionRecommendationCardComponent({
     );
   }
 
-  return (
-    <ArtifactComparisonHoverCard
-      beforeArtifact={rec.currentArtifact ?? rec.optimalArtifact}
-      afterArtifact={isSwapLike ? rec.optimalArtifact : undefined}
-      slot={rec.slot}
-    >
-      {cardContent}
-    </ArtifactComparisonHoverCard>
-  );
+  if (isSwapLike && sourceArtifact) {
+    return (
+      <ArtifactComparisonHoverCard
+        beforeArtifact={currentArtifact ?? undefined}
+        afterArtifact={sourceArtifact}
+        slot={rec.slot}
+      >
+        {cardContent}
+      </ArtifactComparisonHoverCard>
+    );
+  }
+
+  // Farm/reroll or missing source — show only the current artifact
+  if (currentArtifact) {
+    return (
+      <ArtifactComparisonHoverCard
+        beforeArtifact={currentArtifact}
+        slot={rec.slot}
+      >
+        {cardContent}
+      </ArtifactComparisonHoverCard>
+    );
+  }
+
+  return cardContent;
 }
 
 export const ActionRecommendationCard = memo(ActionRecommendationCardComponent);

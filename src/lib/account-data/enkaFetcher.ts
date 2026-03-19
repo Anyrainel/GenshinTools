@@ -228,7 +228,21 @@ export async function fetchEnkaData(uid: string): Promise<EnkaResponse> {
     if (response.status === 404) {
       throw new Error("UID not found or player has not enabled details.");
     }
-    throw new Error(`Enka API Error: ${response.statusText}`);
+    // HTTP/2 omits statusText; read the body for a useful message
+    let detail = response.statusText;
+    try {
+      const body = await response.text();
+      if (body) {
+        const json = JSON.parse(body);
+        if (json.message) detail = json.message;
+        else detail = body.slice(0, 200);
+      }
+    } catch {
+      // ignore parse errors
+    }
+    throw new Error(
+      `Enka API Error (${response.status}): ${detail || "unknown error"}`
+    );
   }
 
   const data = (await response.json()) as EnkaResponse;
@@ -316,8 +330,7 @@ export async function convertEnkaToGOOD(
         ascension: Number(avatar.propMap?.["1002"]?.ival ?? 0),
         ...(elementMatch && {
           element:
-            elementMatch[1].charAt(0).toUpperCase() +
-            elementMatch[1].slice(1),
+            elementMatch[1].charAt(0).toUpperCase() + elementMatch[1].slice(1),
         }),
         talent: {
           auto:

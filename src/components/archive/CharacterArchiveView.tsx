@@ -5,9 +5,9 @@ import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   elementResourcesByName,
-  getSortedCharacters,
   weaponResourcesByName,
 } from "@/data/constants";
+import { characters } from "@/data/resources";
 import type {
   CharacterResource,
   Element,
@@ -253,10 +253,31 @@ function CharacterFilterChips({
 export function CharacterArchiveView() {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
-  const sortedCharacters = useMemo(
-    () => getSortedCharacters(characterStats ?? null),
-    [characterStats]
-  );
+  const sortedCharacters = useMemo(() => {
+    const list = [...characters];
+    if (!characterStats) return list;
+    return list.sort((a, b) => {
+      // Traveler at the end, manekin/manekina after traveler
+      const rankA = a.id.startsWith("manekin")
+        ? 2
+        : a.id.startsWith("traveler")
+          ? 1
+          : 0;
+      const rankB = b.id.startsWith("manekin")
+        ? 2
+        : b.id.startsWith("traveler")
+          ? 1
+          : 0;
+      if (rankA !== rankB) return rankA - rankB;
+      // Release date descending, no release date first
+      const dateA = characterStats[a.id]?.releaseDate ?? "";
+      const dateB = characterStats[b.id]?.releaseDate ?? "";
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return -1;
+      if (!dateB) return 1;
+      return dateB.localeCompare(dateA);
+    });
+  }, [characterStats]);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("character");
@@ -269,8 +290,6 @@ export function CharacterArchiveView() {
   const filteredCharacters = useMemo(() => {
     const hasSearch = searchQuery.trim().length > 0;
     return sortedCharacters.filter((c) => {
-      // Hide manekin characters unless actively searching
-      if (!hasSearch && c.id.startsWith("manekin")) return false;
       const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
       if (
         elementFilter.length > 0 &&

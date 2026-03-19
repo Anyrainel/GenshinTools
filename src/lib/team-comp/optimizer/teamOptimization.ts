@@ -708,7 +708,19 @@ export async function* runTeamOptimization(
   const topKByChar: Record<string, TopKEntry[]> = {};
   const failReasons: Record<string, OptFailReason> = {};
   const passResults: TeamOptPassResult[] = [];
-  const totalPhases = allCharIds.length + 1; // +1 for team allocation phase
+
+  // ── Weighted phase boundaries for smooth progress bar ──
+  // Phase 1 (parallel B&B):  0% → 30%
+  // Phase 2 (team alloc):   30% → 45%
+  // Init (setup + heuristics):       0% → 10%
+  // Phase 1 (per-char B&B):         10% → 40%
+  // Phase 2 (team alloc):           40% → 60%
+  // Phase 3 (ranked team refine):   60% → 100%
+  const INIT_WEIGHT = 0.1;
+  const PHASE1_WEIGHT = 0.3;
+  const PHASE2_WEIGHT = 0.2;
+  const PHASE3_WEIGHT = 0.4;
+  const totalPhases = allCharIds.length + 1; // kept for passIndex display
 
   // Build heuristic baseSheets with set-valid artifacts for realistic team context
   const heuristicSheets = buildHeuristicBaseSheets(
@@ -729,6 +741,7 @@ export async function* runTeamOptimization(
     passPhase: "pruning",
     passProgress: 0,
     overallProgress: 0,
+    phase: "init",
     passResults: [],
     done: false,
   } satisfies TeamOptimizationProgress;
@@ -768,33 +781,61 @@ export async function* runTeamOptimization(
     typeof Worker !== "undefined" && charsToOptimize.length > 1;
 
   if (useWorkers) {
-    // Spawn one worker per character
+    // Spawn one worker per character, poll for progress
     type WorkerResult = {
       charId: string;
       entries: TopKEntry[];
       evaluations: number;
       failReason?: OptFailReason;
+      substatWeights?: Record<string, number>;
     };
 
-    const workerPromises: Promise<WorkerResult>[] = charsToOptimize.map(
+    // Initialize all chars with 0 so in-progress badges show immediately
+    const workerBestByChar: Record<string, number> = {};
+    for (const cid of charsToOptimize) workerBestByChar[cid] = 0;
+    const workerResults: Record<string, WorkerResult> = {};
+    let completedWorkers = 0;
+    const totalWorkers = charsToOptimize.length;
+
+    const workerDonePromises: Promise<void>[] = charsToOptimize.map(
       (charId) => {
         const charConfig = effectivePerChar[charId];
-        return new Promise<WorkerResult>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
           const worker = new Worker(
             new URL("../optimizerV2.worker.ts", import.meta.url),
             { type: "module" }
           );
 
+          const addPassResult = (wr: WorkerResult) => {
+            const pid: TeamOptPassId = carryCharIds.includes(charId)
+              ? "carry-1"
+              : "support";
+            const best = wr.entries[0];
+            passResults.push({
+              passId: pid,
+              charId,
+              bestDamage: best?.damage ?? -1,
+              bestArtifacts: best
+                ? artsTupleToRecord(best.artifacts)
+                : { ...emptyArtifacts },
+              failReason: wr.failReason,
+              substatWeights: wr.substatWeights,
+            });
+          };
+
           const timeoutId = setTimeout(
             () => {
               worker.terminate();
-              // Timeout is not fatal — return empty results
-              resolve({
+              const wr: WorkerResult = {
                 charId,
                 entries: [],
                 evaluations: 0,
                 failReason: { kind: "empty-pool", emptySlots: [] },
-              });
+              };
+              workerResults[charId] = wr;
+              addPassResult(wr);
+              completedWorkers++;
+              resolve();
             },
             (phase1BudgetMs ?? 30_000) * 1.5
           );
@@ -802,45 +843,71 @@ export async function* runTeamOptimization(
           worker.onmessage = (
             e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
           ) => {
+            const resp = e.data;
+            if (resp.type === "progress") {
+              // Update mutable map — read during polling yield
+              workerBestByChar[resp.charId] = resp.bestDamage;
+              return;
+            }
             clearTimeout(timeoutId);
             worker.terminate();
-            const resp = e.data;
-            if ("error" in resp) {
+            if (resp.type === "error") {
               console.warn(
                 `[optimizerV2] Worker error for ${charId}:`,
                 resp.error
               );
-              resolve({
+              const wr: WorkerResult = {
                 charId,
                 entries: [],
                 evaluations: 0,
-              });
+              };
+              workerResults[charId] = wr;
+              addPassResult(wr);
+              completedWorkers++;
+              resolve();
               return;
             }
-            // Deserialize: convert artifactIds string[] back to Set<string>
+            // type === "done"
             const entries: TopKEntry[] = resp.entries.map((entry) => ({
               damage: entry.damage,
               result: entry.result,
               artifacts: entry.artifacts as ArtifactTuple,
               artifactIds: new Set(entry.artifactIds),
             }));
-            resolve({
+            const wr: WorkerResult = {
               charId,
               entries,
               evaluations: resp.evaluations,
               failReason: resp.failReason,
-            });
+              substatWeights: resp.substatWeights,
+            };
+            workerResults[charId] = wr;
+            addPassResult(wr);
+            if (import.meta.env?.DEV) {
+              console.log(
+                `[teamOpt] Worker done: ${charId}, weights:`,
+                resp.substatWeights
+                  ? Object.keys(resp.substatWeights).join(",")
+                  : "none"
+              );
+            }
+            completedWorkers++;
+            resolve();
           };
 
           worker.onerror = (e) => {
             clearTimeout(timeoutId);
             worker.terminate();
             console.warn(`[optimizerV2] Worker crashed for ${charId}:`, e);
-            resolve({
+            const wr: WorkerResult = {
               charId,
               entries: [],
               evaluations: 0,
-            });
+            };
+            workerResults[charId] = wr;
+            addPassResult(wr);
+            completedWorkers++;
+            resolve();
           };
 
           const request: import("../optimizerV2.worker").BnBWorkerRequest = {
@@ -870,27 +937,57 @@ export async function* runTeamOptimization(
       }
     );
 
-    // Await all workers
-    const workerResults = await Promise.all(workerPromises);
+    // Polling loop: yield progress with live best damage
+    const allDonePromise = Promise.all(workerDonePromises);
+    let allDone = false;
+    allDonePromise.then(() => {
+      allDone = true;
+    });
 
-    // Collect results
-    for (const wr of workerResults) {
+    // Yield immediately so the UI shows in-progress badges right away
+    yield {
+      currentPass: "carry-1",
+      currentPassCharId: carryCharIds[0] ?? allCharIds[0],
+      passIndex: 0,
+      totalPasses: totalPhases,
+      passPhase: "evaluating" as const,
+      passProgress: 0,
+      overallProgress: INIT_WEIGHT,
+      phase: "phase1",
+      passResults: [...passResults],
+      workerBestDamage: { ...workerBestByChar },
+      done: false,
+    } satisfies TeamOptimizationProgress;
+
+    while (!allDone) {
+      await new Promise((r) => setTimeout(r, 100));
+      // Remove completed chars from workerBestDamage (they'll appear in passResults)
+      const liveWorkerBest: Record<string, number> = {};
+      for (const [cid, dmg] of Object.entries(workerBestByChar)) {
+        if (!workerResults[cid]) liveWorkerBest[cid] = dmg;
+      }
+      yield {
+        currentPass: "carry-1",
+        currentPassCharId: carryCharIds[0] ?? allCharIds[0],
+        passIndex: 0,
+        totalPasses: totalPhases,
+        passPhase: "evaluating" as const,
+        passProgress: completedWorkers / totalWorkers,
+        overallProgress:
+          INIT_WEIGHT + PHASE1_WEIGHT * (completedWorkers / totalWorkers),
+        phase: "phase1",
+        passResults: [...passResults],
+        workerBestDamage: liveWorkerBest,
+        done: false,
+      } satisfies TeamOptimizationProgress;
+    }
+
+    // Collect final results (passResults already populated in onmessage)
+    for (const charId of charsToOptimize) {
+      const wr = workerResults[charId];
+      if (!wr) continue;
       topKByChar[wr.charId] = wr.entries;
       if (wr.failReason) failReasons[wr.charId] = wr.failReason;
-
-      const passId: TeamOptPassId = carryCharIds.includes(wr.charId)
-        ? "carry-1"
-        : "support";
-      const best = wr.entries[0];
-      passResults.push({
-        passId,
-        charId: wr.charId,
-        bestDamage: best?.damage ?? -1,
-        bestArtifacts: best
-          ? artsTupleToRecord(best.artifacts)
-          : { ...emptyArtifacts },
-        failReason: wr.failReason,
-      });
     }
   } else {
     // Fallback: sequential execution on main thread (no Worker support or single char)
@@ -935,6 +1032,7 @@ export async function* runTeamOptimization(
           ? artsTupleToRecord(best.artifacts)
           : { ...emptyArtifacts },
         failReason: result.failReason,
+        substatWeights: result.marginalWeights?.substatWeights,
       });
     }
   }
@@ -1007,7 +1105,8 @@ export async function* runTeamOptimization(
     totalPasses: totalPhases,
     passPhase: "evaluating",
     passProgress: 1,
-    overallProgress: allCharIds.length / totalPhases,
+    overallProgress: INIT_WEIGHT + PHASE1_WEIGHT,
+    phase: "phase1",
     passResults: [...passResults],
     done: false,
   } satisfies TeamOptimizationProgress;
@@ -1147,7 +1246,8 @@ export async function* runTeamOptimization(
     totalPasses: totalPhases,
     passPhase: "evaluating",
     passProgress: 0,
-    overallProgress: allCharIds.length / totalPhases,
+    overallProgress: INIT_WEIGHT + PHASE1_WEIGHT,
+    phase: "phase2",
     passResults: [...passResults],
     done: false,
   } satisfies TeamOptimizationProgress;
@@ -1286,120 +1386,59 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Phase 3: Formula-target Re-optimization
+  // Phase 3: Team Refinement (ranked budget)
   //
-  // Phase 1 B&B ran all characters with heuristic base sheets. After
-  // Phase 2 allocated real artifacts to teammates, re-run the formula-
-  // target characters with actual teammate context. This is valuable
-  // regardless of character role — the formula-target's optimal build
-  // depends on the actual team stats (buffs, reactions, etc.).
-  // ════════════════════════════════════════════════════════════════════
-
-  for (const carryId of carryCharIds) {
-    const carryConfig = effectivePerChar[carryId];
-    if (!carryConfig) continue;
-
-    const refinedBaseSheets: Record<string, StatSheet> = { ...baseSheets };
-    const excludedIds = new Set<string>();
-
-    for (const otherId of allCharIds) {
-      if (otherId === carryId) continue;
-      const otherArts = bestArtifactsByChar[otherId];
-      if (!otherArts) continue;
-      const pieces = allSlots
-        .map((s) => otherArts[s])
-        .filter((a): a is ArtifactData => a != null);
-      if (pieces.length > 0) {
-        refinedBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
-      }
-      for (const art of pieces) excludedIds.add(art.id);
-    }
-
-    yield {
-      currentPass: "carry-2",
-      currentPassCharId: carryId,
-      passIndex: allCharIds.length + 1,
-      totalPasses: totalPhases + 1,
-      passPhase: "evaluating",
-      passProgress: 0,
-      overallProgress: (allCharIds.length + 1) / (totalPhases + 1),
-      passResults: [...passResults],
-      done: false,
-    } satisfies TeamOptimizationProgress;
-    await new Promise((r) => setTimeout(r, 0));
-
-    const phase2Pieces = allSlots.map(
-      (s) => bestArtifactsByChar[carryId]?.[s] ?? null
-    ) as ArtifactTuple;
-    const phase2Eval = evaluateBuildDirect(
-      phase2Pieces,
-      effectiveTeamBuild,
-      carryId,
-      carryCharId,
-      formulaId,
-      refinedBaseSheets,
-      carryCharId,
-      calcContext,
-      carryId,
-      carryConfig.minEr,
-      carryConfig.minCr,
-      reactionOverride,
-      comboScoreFn
-    );
-    const phase2Damage = phase2Eval.damage;
-
-    const refineDeadline = perCharDeadlineMs
-      ? performance.now() + perCharDeadlineMs
-      : undefined;
-    const refineResult = runCharacterBnB(
-      carryId,
-      carryConfig,
-      effectiveTeamBuild,
-      carryCharId,
-      formulaId,
-      inventory,
-      globalConfig,
-      refinedBaseSheets,
-      calcContext,
-      excludedIds,
-      reactionOverride,
-      comboScoreFn,
-      TOP_K,
-      refineDeadline,
-      phase2Damage > 0 ? phase2Damage : undefined,
-      maxArtsPerSlot ?? 0
-    );
-
-    if (
-      refineResult.collector.best &&
-      refineResult.collector.best.damage > phase2Damage
-    ) {
-      bestArtifactsByChar[carryId] = artsTupleToRecord(
-        refineResult.collector.best.artifacts
-      );
-    }
-  }
-
-  // ════════════════════════════════════════════════════════════════════
-  // Phase 3b: Full Team Re-optimization
-  //
-  // Sequentially re-optimize each character with all other characters'
-  // artifacts locked/excluded. Each character gets a fresh B&B search
-  // tailored to the remaining artifact pool after teammates have been
-  // assigned, evaluated using the team optimization goal.
+  // Re-optimize all characters with real teammate artifacts (from Phase 2).
+  // Characters are ranked by importance (carries first, then by Phase 1
+  // best damage). Budget scales by rank: 1×, 0.75×, 0.5×, 0.25×.
+  // Up to MAX_REOPT_PASSES iterations, stopping early if no improvement.
   // ════════════════════════════════════════════════════════════════════
 
   const MAX_REOPT_PASSES = 3;
+  const BUDGET_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
+
+  // Rank characters: carries first, then supports, sorted by Phase 1 best damage
+  const reoptChars = allCharIds
+    .filter((id) => effectivePerChar[id] && !saturatedCharIds.has(id))
+    .sort((a, b) => {
+      const aIsCarry = carryCharIds.includes(a);
+      const bIsCarry = carryCharIds.includes(b);
+      if (aIsCarry !== bIsCarry) return aIsCarry ? -1 : 1;
+      const aDmg = passResults.find((r) => r.charId === a)?.bestDamage ?? 0;
+      const bDmg = passResults.find((r) => r.charId === b)?.bestDamage ?? 0;
+      return bDmg - aDmg;
+    });
+
+  const reoptTotalSteps = MAX_REOPT_PASSES * reoptChars.length;
   for (let reoptPass = 0; reoptPass < MAX_REOPT_PASSES; reoptPass++) {
     // If team deadline is set and remaining time < 1s, skip further passes
     if (teamDeadlineMs && teamDeadlineMs - performance.now() < 1000) break;
 
     let anyImproved = false;
 
-    for (const charId of allCharIds) {
-      const charConfig = effectivePerChar[charId];
-      if (!charConfig) continue;
-      if (saturatedCharIds.has(charId)) continue;
+    for (let rankIdx = 0; rankIdx < reoptChars.length; rankIdx++) {
+      const charId = reoptChars[rankIdx];
+      const charConfig = effectivePerChar[charId]!;
+
+      // Yield Phase 3 progress
+      const reoptStep = reoptPass * reoptChars.length + rankIdx;
+      yield {
+        currentPass: "carry-2",
+        currentPassCharId: charId,
+        passIndex: allCharIds.length + 1,
+        totalPasses: totalPhases + 1,
+        passPhase: "evaluating",
+        passProgress: reoptStep / reoptTotalSteps,
+        overallProgress:
+          INIT_WEIGHT +
+          PHASE1_WEIGHT +
+          PHASE2_WEIGHT +
+          PHASE3_WEIGHT * (reoptStep / reoptTotalSteps),
+        phase: "phase3",
+        passResults: [...passResults],
+        done: false,
+      } satisfies TeamOptimizationProgress;
+      await new Promise((r) => setTimeout(r, 0));
 
       // Build base sheets from current team assignment (all other chars)
       const reoptBaseSheets: Record<string, StatSheet> = { ...baseSheets };
@@ -1438,9 +1477,11 @@ export async function* runTeamOptimization(
         comboScoreFn
       );
 
-      // Phase 3b uses half the per-char budget (refinement, not discovery)
+      // Budget scales by rank: rank 0 = full, rank 1 = 75%, rank 2 = 50%, rank 3 = 25%
+      const budgetMultiplier =
+        BUDGET_MULTIPLIERS[Math.min(rankIdx, BUDGET_MULTIPLIERS.length - 1)];
       const reoptDeadline = perCharDeadlineMs
-        ? performance.now() + perCharDeadlineMs * 0.5
+        ? performance.now() + perCharDeadlineMs * budgetMultiplier
         : undefined;
       const reoptResult = runCharacterBnB(
         charId,
@@ -1476,7 +1517,7 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Phase 4: Heuristic Fill for Saturated Characters
+  // Heuristic Fill for Saturated Characters
   //
   // Saturated characters' artifacts don't affect team damage, so B&B
   // was skipped. Fill them from the remaining pool using build-page

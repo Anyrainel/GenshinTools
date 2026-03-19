@@ -54,14 +54,13 @@ import type {
 import type { TierAssignment } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useIsOwned } from "@/hooks/useOwnership";
+import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Check, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
@@ -474,9 +473,7 @@ function PickerContent({
 }: PickerContentProps) {
   const { t } = useLanguage();
   const isOwned = useIsOwned();
-  const hasOwnershipData = useOwnershipStore(
-    (s) => !!s.profiles[useAccountStore.getState().activeAccountId ?? "default"]
-  );
+  const hasOwnershipData = useHasAccountData();
   const [search, setSearch] = useState("");
   const [activeFilters, setActiveFilters] = useState<
     Record<string, string | number>

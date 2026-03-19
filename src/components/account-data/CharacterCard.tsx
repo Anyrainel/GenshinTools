@@ -14,7 +14,6 @@ import { charInfo as charInfoData } from "@/data/charInfo";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { CharacterData, MainStatSlot, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { cn } from "@/lib/utils";
 import { Pencil, Sword } from "lucide-react";
@@ -22,21 +21,36 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { StatDisplay } from "./StatDisplay";
 
+/** Pre-computed layout flags, hoisted to the parent to avoid per-card useMediaQuery hooks. */
+export interface CardLayout {
+  isMobile: boolean;
+  isVeryNarrow: boolean;
+  isArtifactCompact: boolean;
+}
+
+/** Default layout for single-card usage (e.g. archive detail panel). */
+const DEFAULT_LAYOUT: CardLayout = {
+  isMobile: false,
+  isVeryNarrow: false,
+  isArtifactCompact: false,
+};
+
 interface CharacterCardProps {
   char: CharacterData;
   score?: ArtifactScoreResult | null;
   onEdit?: () => void;
+  /** Pass pre-computed layout to avoid per-card useMediaQuery overhead in lists. */
+  layout?: CardLayout;
 }
 
-function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
+function CharacterCardComponent({
+  char,
+  score,
+  onEdit,
+  layout = DEFAULT_LAYOUT,
+}: CharacterCardProps) {
   const { t } = useLanguage();
-  const isMobile = !useMediaQuery("(min-width: 768px)");
-  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
-  // At 2xl (1536–2047px), cards are in 2 columns and ~514px wide — use compact artifacts
-  const is2xlCompact = useMediaQuery(
-    "(min-width: 1536px) and (max-width: 2047px)"
-  );
-  const isArtifactCompact = isVeryNarrow || is2xlCompact;
+  const { isMobile, isVeryNarrow, isArtifactCompact } = layout;
   const charInfo = charactersById[char.key];
   if (!charInfo) return null;
 
@@ -261,7 +275,7 @@ function CharacterCardComponent({ char, score, onEdit }: CharacterCardProps) {
               art &&
               artifactScore &&
               ["sands", "goblet", "circlet"].includes(slot) &&
-              artifactScore.buildMatch.mainStatMismatches.some(
+              artifactScore.buildMatch?.mainStatMismatches?.some(
                 (m) => m.slot === (slot as MainStatSlot)
               );
 

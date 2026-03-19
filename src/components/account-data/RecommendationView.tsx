@@ -16,6 +16,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   type Recommendation,
+  buildArtifactLookup,
   generateAllRecommendations,
 } from "@/lib/account-data/recommendationEngine";
 import { cn } from "@/lib/utils";
@@ -108,6 +109,12 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
     tierCustomization,
     investmentThresholds,
   ]);
+
+  // Build artifact lookup for resolving recommendation artifact IDs
+  const artifactLookup = useMemo(
+    () => (accountData ? buildArtifactLookup(accountData) : new Map()),
+    [accountData]
+  );
 
   // Group characters by tier, sorted by max recommendation impact
   const charactersByTier = useMemo(() => {
@@ -333,6 +340,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
                           tier={tier}
                           recommendations={recommendations}
                           score={scoreResult}
+                          artifactLookup={artifactLookup}
                         />
                       ))}
                     </div>

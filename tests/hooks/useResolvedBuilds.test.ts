@@ -43,6 +43,50 @@ describe("useResolvedBuilds", () => {
   });
 });
 
+describe("useResolvedBuilds reference stability", () => {
+  it("preserves build reference when an unrelated character is edited", () => {
+    const state = useBuildsStore.getState();
+    state.newBuild("hu_tao");
+    state.newBuild("xiangling");
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const before = result.current[0];
+    expect(before).toBeDefined();
+
+    // Edit xiangling's build — should NOT affect hu_tao's references
+    act(() => {
+      const s = useBuildsStore.getState();
+      const xlBuildId = s.characterToBuildIds.xiangling[0];
+      s.setBuild(xlBuildId, { name: "New XL Build" }, s.builds[xlBuildId]);
+    });
+
+    const after = result.current[0];
+    expect(after).toBeDefined();
+    // hu_tao's build object should be the exact same reference
+    expect(after).toBe(before);
+  });
+
+  it("returns new reference when the character's own build is edited", () => {
+    const state = useBuildsStore.getState();
+    state.newBuild("hu_tao");
+
+    const { result } = renderHook(() => useResolvedBuilds("hu_tao"));
+    const before = result.current[0];
+
+    act(() => {
+      const s = useBuildsStore.getState();
+      const buildId = s.characterToBuildIds.hu_tao[0];
+      s.setBuild(buildId, { name: "Updated" }, s.builds[buildId]);
+    });
+
+    const after = result.current[0];
+    expect(after).toBeDefined();
+    expect(after!.name).toBe("Updated");
+    // Reference should have changed
+    expect(after).not.toBe(before);
+  });
+});
+
 describe("useAllResolvedBuilds", () => {
   it("returns empty array when no characters", () => {
     const { result } = renderHook(() => useAllResolvedBuilds());

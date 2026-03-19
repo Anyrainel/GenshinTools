@@ -1,5 +1,8 @@
 import { ArtifactScoreGlobalSettings } from "@/components/account-data/ArtifactScoreGlobalSettings";
-import { CharacterCard } from "@/components/account-data/CharacterCard";
+import {
+  type CardLayout,
+  CharacterCard,
+} from "@/components/account-data/CharacterCard";
 import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
@@ -16,14 +19,12 @@ import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import {
   defaultCharacterFilters,
   filterAndSortCharacterData,
-  hasActiveFilters,
 } from "@/lib/characterFilters";
-import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { Pencil } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface CharacterViewProps {
   scores: Record<string, ArtifactScoreResult | null>;
@@ -45,6 +46,21 @@ export function CharacterView({
 
   // 640px is a safe breakpoint where 35rem (560px) fits comfortably with margins
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
+
+  // Compute layout flags once and pass to all CharacterCards (avoids 3× useMediaQuery per card)
+  const isMobile = !useMediaQuery("(min-width: 768px)");
+  const isVeryNarrow = useMediaQuery("(max-width: 560px)");
+  const is2xlCompact = useMediaQuery(
+    "(min-width: 1536px) and (max-width: 2047px)"
+  );
+  const cardLayout: CardLayout = useMemo(
+    () => ({
+      isMobile,
+      isVeryNarrow,
+      isArtifactCompact: isVeryNarrow || is2xlCompact,
+    }),
+    [isMobile, isVeryNarrow, is2xlCompact]
+  );
 
   // Edit mode
   const [editingChar, setEditingChar] = useState<CharacterData | null>(null);
@@ -125,22 +141,12 @@ export function CharacterView({
     });
   }, [accountData, filters, tierAssignments, isCharacterOwned, characterStats]);
 
-  const activeFilters = hasActiveFilters(filters);
-
-  // Tier data exists if there are any tier assignments
-  const activeFilterCount = activeFilters
-    ? [
-        filters.elements,
-        filters.weaponTypes,
-        filters.regions,
-        filters.rarities,
-      ].flat().length
-    : 0;
-
-  const triggerLabel =
-    activeFilterCount > 0
-      ? `${t.ui("filters.title")} (${activeFilterCount})`
-      : t.ui("filters.title");
+  const activeFilterCount = [
+    filters.elements,
+    filters.weaponTypes,
+    filters.regions,
+    filters.rarities,
+  ].flat().length;
 
   const handleSaveEdit = useCallback(
     (newData: AccountData) => {
@@ -161,11 +167,12 @@ export function CharacterView({
           hasTierData={hasTierData}
         />
       }
-      triggerLabel={triggerLabel}
+      triggerLabel={t.ui("filters.title")}
+      activeFilterCount={activeFilterCount}
+      contentScrollsInternally
     >
-      <div className="h-full overflow-y-auto space-y-3">
-        <ArtifactScoreGlobalSettings />
-        {filteredCharacters.length === 0 ? (
+      {filteredCharacters.length === 0 ? (
+        <div className="flex-1 overflow-y-auto">
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -193,27 +200,17 @@ export function CharacterView({
               </button>
             )}
           </div>
-        ) : (
-          <div
-            className="grid gap-3 pb-4"
-            style={{
-              gridTemplateColumns: isSmallScreen
-                ? "1fr"
-                : "repeat(auto-fit, minmax(32rem, 1fr))",
-            }}
-          >
-            {filteredCharacters.map((char) => (
-              <div key={char.key}>
-                <CharacterCard
-                  char={char}
-                  score={scores[char.key]}
-                  onEdit={isEditMode ? () => setEditingChar(char) : undefined}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <VirtualizedCharacterGrid
+          characters={filteredCharacters}
+          scores={scores}
+          isEditMode={isEditMode}
+          cardLayout={cardLayout}
+          isSmallScreen={isSmallScreen}
+          onEdit={setEditingChar}
+        />
+      )}
 
       {/* Edit dialog */}
       {editingChar && accountData && (
@@ -228,5 +225,141 @@ export function CharacterView({
         />
       )}
     </SidebarLayout>
+  );
+}
+
+// ─── Virtualized grid ────────────────────────────────────────────
+
+interface VirtualGridProps {
+  characters: CharacterData[];
+  scores: Record<string, ArtifactScoreResult | null>;
+  isEditMode: boolean;
+  cardLayout: CardLayout;
+  isSmallScreen: boolean;
+  onEdit: (char: CharacterData) => void;
+}
+
+/** Card min-width in px — matches CSS minmax(32rem, 1fr) = 512px */
+const CARD_MIN_WIDTH = 512;
+/** Grid gap in px — matches gap-3 = 0.75rem = 12px */
+const GRID_GAP = 12;
+
+function VirtualizedCharacterGrid({
+  characters,
+  scores,
+  isEditMode,
+  cardLayout,
+  isSmallScreen,
+  onEdit,
+}: VirtualGridProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [numColumns, setNumColumns] = useState(() => {
+    if (isSmallScreen) return 1;
+    // Best-guess from window width (sidebar ~240px, gap ~12px)
+    const approxWidth = window.innerWidth - 280;
+    return Math.max(
+      1,
+      Math.floor((approxWidth + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP))
+    );
+  });
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  // Observe container width → derive column count
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (isSmallScreen) {
+      setNumColumns(1);
+      return;
+    }
+    const observer = new ResizeObserver(([entry]) => {
+      // Match CSS auto-fit: n columns fit when (width - (n-1)*gap) / n >= minWidth
+      // Solving: n <= (width + gap) / (minWidth + gap)
+      const w = entry.contentRect.width;
+      setNumColumns(
+        Math.max(1, Math.floor((w + GRID_GAP) / (CARD_MIN_WIDTH + GRID_GAP)))
+      );
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isSmallScreen]);
+
+  // Observe header height for virtualizer scrollMargin
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      setHeaderHeight(Math.ceil(entry.borderBoxSize[0].blockSize));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Chunk characters into rows based on column count
+  const rows = useMemo(() => {
+    const result: CharacterData[][] = [];
+    for (let i = 0; i < characters.length; i += numColumns) {
+      result.push(characters.slice(i, i + numColumns));
+    }
+    return result;
+  }, [characters, numColumns]);
+
+  const virtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => scrollRef.current,
+    estimateSize: () => 280,
+    overscan: 3,
+    scrollMargin: headerHeight,
+  });
+
+  return (
+    <div
+      ref={scrollRef}
+      className="flex-1 overflow-y-auto"
+      style={{ scrollBehavior: "auto" }}
+    >
+      {/* Non-virtual header — scrolls with the list, mb-3 matches old space-y-3 */}
+      <div ref={headerRef} className="space-y-3 mb-3">
+        <ArtifactScoreGlobalSettings />
+      </div>
+
+      {/* Virtual rows */}
+      <div
+        className="relative w-full pb-1"
+        style={{ height: virtualizer.getTotalSize() }}
+      >
+        {virtualizer.getVirtualItems().map((virtualRow) => (
+          <div
+            key={virtualRow.key}
+            data-index={virtualRow.index}
+            ref={virtualizer.measureElement}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)`,
+            }}
+          >
+            <div
+              className="grid gap-3 pb-3"
+              style={{ gridTemplateColumns: `repeat(${numColumns}, 1fr)` }}
+            >
+              {rows[virtualRow.index].map((char) => (
+                <div key={char.key}>
+                  <CharacterCard
+                    char={char}
+                    score={scores[char.key]}
+                    onEdit={isEditMode ? () => onEdit(char) : undefined}
+                    layout={cardLayout}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

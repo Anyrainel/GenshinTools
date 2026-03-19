@@ -16,6 +16,15 @@ import {
 import type { TeamBuild } from "./damageCalc";
 import { evaluateCombo } from "./damageCalc";
 import { StatSheet } from "./damageModels";
+import {
+  ER_20_HALF_SET_ID,
+  type ErCrGap,
+  computeErCrGap,
+  computeSubstatPreFill,
+  crMainStatInternal,
+  erCrGapAfterMainStats,
+  erMainStatInternal,
+} from "./erCrConstraints";
 import type { CompiledTeamDamage } from "./formulaCompiler";
 import {
   compileComboTeamDamage,
@@ -48,6 +57,10 @@ export interface IdealGenOptions {
   combo?: ComboFormula;
   /** Per-formula reaction overrides for combo mode */
   reactionOverrides?: Record<string, ReactionOverride>;
+  /** Per-character ER/CR thresholds (internal format, e.g. 1.6 = 160% ER). */
+  perChar?: Record<string, { minEr: number; minCr: number }>;
+  /** Per-character "ignore artifact sets when ER/CR unmet" flag. */
+  ignoreArtifactSets?: Record<string, boolean>;
 }
 
 export interface IdealGenResult {
@@ -397,7 +410,8 @@ function fillSubstats(
   rarity: 4 | 5 = 5,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  preFill?: Record<Slot, Partial<Record<SubStat, number>>>
 ): Record<Slot, Partial<Record<SubStat, number>>> {
   const compiledCtx = tryCompileEval(
     teamBuild,
@@ -438,7 +452,289 @@ function fillSubstats(
           ),
     rv,
     rarity,
+    preFill,
   });
+}
+
+// ─── Constraint-aware main stat + substat generation ───
+
+interface ConstraintAwareResult {
+  mainStats: Record<Slot, MainStat>;
+  subRolls: Record<Slot, Partial<Record<SubStat, number>>>;
+  sheet: StatSheet;
+  damage: number;
+}
+
+/**
+ * Generate main stats and substats with ER/CR constraint awareness.
+ *
+ * Strategy:
+ * 1. Find best main stats by pure damage (normal path)
+ * 2. If erGap >= ER sands value → also try forced ER sands
+ * 3. If crGap >= CR circlet value → also try forced CR circlet
+ * 4. If both → try both forced
+ * 5. For each variant, pre-fill minimum ER/CR substats, then greedy the rest
+ * 6. Return the best valid combo by damage
+ */
+function constraintAwareGenerate(
+  teamBuild: TeamBuild,
+  charId: string,
+  carryCharId: string,
+  formulaId: string,
+  currentSheets: Record<string, StatSheet>,
+  ctx: CalcContext,
+  rv: Record<SubStat, number>,
+  gap: ErCrGap,
+  rarity: 4 | 5 = 5,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
+): ConstraintAwareResult {
+  const needForceEr = gap.erGap >= erMainStatInternal(rarity);
+  const needForceCr = gap.crGap >= crMainStatInternal(rarity);
+
+  // Build list of main stat variants to try
+  const variants: {
+    label: string;
+    forceSands?: MainStat;
+    forceCirclet?: MainStat;
+  }[] = [{ label: "normal" }];
+  if (needForceEr) {
+    variants.push({ label: "force-er", forceSands: "er" });
+  }
+  if (needForceCr) {
+    variants.push({ label: "force-cr", forceCirclet: "cr" });
+  }
+  if (needForceEr && needForceCr) {
+    variants.push({
+      label: "force-er-cr",
+      forceSands: "er",
+      forceCirclet: "cr",
+    });
+  }
+
+  let best: ConstraintAwareResult | null = null;
+
+  for (const variant of variants) {
+    // Find best main stats with optional forcing
+    const mainStats = findBestMainStatsConstrained(
+      teamBuild,
+      charId,
+      carryCharId,
+      formulaId,
+      currentSheets,
+      ctx,
+      rv,
+      gap,
+      rarity,
+      variant.forceSands,
+      variant.forceCirclet,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    if (!mainStats) continue; // no feasible combo found
+
+    // Compute remaining gap after main stats and build pre-fill
+    const { erRemaining, crRemaining } = erCrGapAfterMainStats(
+      gap,
+      mainStats,
+      rarity
+    );
+    const preFill =
+      erRemaining > 0 || crRemaining > 0
+        ? computeSubstatPreFill(erRemaining, crRemaining, mainStats, rarity, rv)
+        : undefined;
+    if (preFill === null) continue; // infeasible even with max substats
+
+    // Fill substats
+    const subRolls = fillSubstats(
+      teamBuild,
+      charId,
+      carryCharId,
+      formulaId,
+      mainStats,
+      currentSheets,
+      ctx,
+      rv,
+      rarity,
+      reactionOverride,
+      combo,
+      reactionOverrides,
+      preFill
+    );
+    const sheet = buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
+    const sheets = { ...currentSheets, [charId]: sheet };
+    const damage = evaluateDamage(
+      teamBuild,
+      sheets,
+      carryCharId,
+      formulaId,
+      ctx,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+
+    if (!best || damage > best.damage) {
+      best = { mainStats, subRolls, sheet, damage };
+    }
+  }
+
+  // Fallback: if no variant produced a result, run unconstrained
+  if (!best) {
+    const mainStats = findBestMainStats(
+      teamBuild,
+      charId,
+      carryCharId,
+      formulaId,
+      currentSheets,
+      ctx,
+      rv,
+      rarity,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    const subRolls = fillSubstats(
+      teamBuild,
+      charId,
+      carryCharId,
+      formulaId,
+      mainStats,
+      currentSheets,
+      ctx,
+      rv,
+      rarity,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    const sheet = buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
+    const sheets = { ...currentSheets, [charId]: sheet };
+    const damage = evaluateDamage(
+      teamBuild,
+      sheets,
+      carryCharId,
+      formulaId,
+      ctx,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    best = { mainStats, subRolls, sheet, damage };
+  }
+
+  return best;
+}
+
+/**
+ * Find best main stats with optional forced sands/circlet and feasibility filtering.
+ * Returns null if no feasible main stat combo exists.
+ */
+function findBestMainStatsConstrained(
+  teamBuild: TeamBuild,
+  charId: string,
+  carryCharId: string,
+  formulaId: string,
+  currentSheets: Record<string, StatSheet>,
+  ctx: CalcContext,
+  rv: Record<SubStat, number>,
+  gap: ErCrGap,
+  rarity: 4 | 5 = 5,
+  forceSands?: MainStat,
+  forceCirclet?: MainStat,
+  reactionOverride?: ReactionOverride,
+  combo?: ComboFormula,
+  reactionOverrides?: Record<string, ReactionOverride>
+): Record<Slot, MainStat> | null {
+  const compiledCtx = tryCompileEval(
+    teamBuild,
+    charId,
+    carryCharId,
+    formulaId,
+    currentSheets,
+    ctx,
+    reactionOverride,
+    combo,
+    reactionOverrides
+  );
+  const fastEval = compiledCtx
+    ? makeCompiledEvalDamage(
+        charId,
+        compiledCtx.compiled,
+        compiledCtx.charIdx,
+        compiledCtx.vars
+      )
+    : null;
+
+  let bestDamage = -1;
+  let bestMainStats: Record<Slot, MainStat> | null = null;
+
+  const sandsCandidates = forceSands ? [forceSands] : mainStatPools.sands;
+  const circletCandidates = forceCirclet
+    ? [forceCirclet]
+    : mainStatPools.circlet;
+
+  for (const sands of sandsCandidates) {
+    for (const goblet of mainStatPools.goblet) {
+      for (const circlet of circletCandidates) {
+        const mainStats: Record<Slot, MainStat> = {
+          flower: "hp",
+          plume: "atk",
+          sands,
+          goblet,
+          circlet,
+        };
+
+        // Early reject: check if substats can fill the remaining gap
+        if (gap.erGap > 0 || gap.crGap > 0) {
+          const { erRemaining, crRemaining } = erCrGapAfterMainStats(
+            gap,
+            mainStats,
+            rarity
+          );
+          if (erRemaining > 0 || crRemaining > 0) {
+            const preFill = computeSubstatPreFill(
+              erRemaining,
+              crRemaining,
+              mainStats,
+              rarity,
+              rv
+            );
+            if (preFill === null) continue; // infeasible
+          }
+        }
+
+        const sheet = buildSheetFromMainAndSubs(
+          mainStats,
+          emptySubRolls(),
+          rv,
+          rarity
+        );
+        const sheets = { ...currentSheets, [charId]: sheet };
+        const dmg = fastEval
+          ? fastEval(sheets)
+          : evaluateDamage(
+              teamBuild,
+              sheets,
+              carryCharId,
+              formulaId,
+              ctx,
+              reactionOverride,
+              combo,
+              reactionOverrides
+            );
+
+        if (dmg > bestDamage) {
+          bestDamage = dmg;
+          bestMainStats = mainStats;
+        }
+      }
+    }
+  }
+
+  return bestMainStats;
 }
 
 // ─── Phase 1b: Find best main stats ignoring main/sub conflicts ───
@@ -576,7 +872,7 @@ export async function* runIdealArtifactGen(
   const rv = getRollValues(rollMult);
   const supportCharIds = allCharIds.filter((id) => id !== carryCharId);
 
-  // Total steps: main(1+N) + sub(1+N) + reroll(1) + resub(1) + crcd(1) = 2N+5
+  // Total steps: carry(2) + supports(2*N) + reroll(1) + resub(1) + crcd(1) = 2N+5
   const totalSteps = 2 * supportCharIds.length + 5;
   let step = 0;
 
@@ -610,112 +906,182 @@ export async function* runIdealArtifactGen(
       reactionOverrides
     );
 
-  // ── Step 1: Main stats for carry ──
+  // ── Helper: compute ER/CR gap for a character ──
+  const getCharGap = (cid: string): ErCrGap => {
+    const pc = opts.perChar?.[cid];
+    if (!pc || (pc.minEr <= 0 && pc.minCr <= 0)) return { erGap: 0, crGap: 0 };
+    return computeErCrGap(
+      teamBuild,
+      cid,
+      currentSheets,
+      carryCharId,
+      calcContext,
+      pc.minEr,
+      pc.minCr
+    );
+  };
+
+  // ── Helper: get pre-fill for a character's chosen main stats ──
+  const getPreFill = (
+    cid: string,
+    gap: ErCrGap,
+    mainStats: Record<Slot, MainStat>,
+    r: 4 | 5,
+    cRv: Record<SubStat, number>
+  ) => {
+    if (gap.erGap <= 0 && gap.crGap <= 0) return undefined;
+    const { erRemaining, crRemaining } = erCrGapAfterMainStats(
+      gap,
+      mainStats,
+      r
+    );
+    if (erRemaining <= 0 && crRemaining <= 0) return undefined;
+    return (
+      computeSubstatPreFill(erRemaining, crRemaining, mainStats, r, cRv) ??
+      undefined
+    );
+  };
+
+  // ── Steps 1-2: Main stats + substats for carry, then supports ──
+  // When ER/CR constraints exist, use constraint-aware generation that
+  // tries forced main stat variants and pre-fills substats.
   const carryR = charRarity[carryCharId] ?? 5;
   const carryRv = charRv[carryCharId] ?? rv;
-  yield yieldProgress("carry: main stats");
-  await yieldFrame();
-  allMainStats[carryCharId] = findBestMainStats(
-    teamBuild,
-    carryCharId,
-    carryCharId,
-    formulaId,
-    currentSheets,
-    calcContext,
-    carryRv,
-    carryR,
-    reactionOverride,
-    combo,
-    reactionOverrides
-  );
-  currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-    allMainStats[carryCharId],
-    emptySubRolls(),
-    carryRv,
-    carryR
-  );
-  step++;
+  const carryGap = getCharGap(carryCharId);
 
-  // ── Step 2: Main stats for each support ──
-  for (const sid of supportCharIds) {
-    const sR = charRarity[sid] ?? 5;
-    const sRv = charRv[sid] ?? rv;
-    yield yieldProgress(`${sid}: main stats`);
-    await yieldFrame();
-    allMainStats[sid] = findBestMainStats(
+  yield yieldProgress("carry: main stats + substats");
+  await yieldFrame();
+
+  if (carryGap.erGap > 0 || carryGap.crGap > 0) {
+    const result = constraintAwareGenerate(
       teamBuild,
-      sid,
+      carryCharId,
       carryCharId,
       formulaId,
       currentSheets,
       calcContext,
-      sRv,
-      sR,
+      carryRv,
+      carryGap,
+      carryR,
       reactionOverride,
       combo,
       reactionOverrides
     );
-    currentSheets[sid] = buildSheetFromMainAndSubs(
-      allMainStats[sid],
+    allMainStats[carryCharId] = result.mainStats;
+    allSubRolls[carryCharId] = result.subRolls;
+    currentSheets[carryCharId] = result.sheet;
+  } else {
+    allMainStats[carryCharId] = findBestMainStats(
+      teamBuild,
+      carryCharId,
+      carryCharId,
+      formulaId,
+      currentSheets,
+      calcContext,
+      carryRv,
+      carryR,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    currentSheets[carryCharId] = buildSheetFromMainAndSubs(
+      allMainStats[carryCharId],
       emptySubRolls(),
-      sRv,
-      sR
+      carryRv,
+      carryR
     );
-    step++;
-  }
-
-  // ── Step 3: Substats for carry ──
-  yield yieldProgress("carry: substats");
-  await yieldFrame();
-  allSubRolls[carryCharId] = fillSubstats(
-    teamBuild,
-    carryCharId,
-    carryCharId,
-    formulaId,
-    allMainStats[carryCharId],
-    currentSheets,
-    calcContext,
-    carryRv,
-    carryR,
-    reactionOverride,
-    combo,
-    reactionOverrides
-  );
-  currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-    allMainStats[carryCharId],
-    allSubRolls[carryCharId],
-    carryRv,
-    carryR
-  );
-  step++;
-
-  // ── Step 4: Substats for each support ──
-  for (const sid of supportCharIds) {
-    const sR = charRarity[sid] ?? 5;
-    const sRv = charRv[sid] ?? rv;
-    yield yieldProgress(`${sid}: substats`);
-    await yieldFrame();
-    allSubRolls[sid] = fillSubstats(
+    allSubRolls[carryCharId] = fillSubstats(
       teamBuild,
-      sid,
+      carryCharId,
       carryCharId,
       formulaId,
-      allMainStats[sid],
+      allMainStats[carryCharId],
       currentSheets,
       calcContext,
-      sRv,
-      sR,
+      carryRv,
+      carryR,
       reactionOverride,
       combo,
       reactionOverrides
     );
-    currentSheets[sid] = buildSheetFromMainAndSubs(
-      allMainStats[sid],
-      allSubRolls[sid],
-      sRv,
-      sR
+    currentSheets[carryCharId] = buildSheetFromMainAndSubs(
+      allMainStats[carryCharId],
+      allSubRolls[carryCharId],
+      carryRv,
+      carryR
     );
-    step++;
+  }
+  step += 2; // combined main+sub steps
+
+  // ── Steps 3-4: Main stats + substats for each support ──
+  for (const sid of supportCharIds) {
+    const sR = charRarity[sid] ?? 5;
+    const sRv = charRv[sid] ?? rv;
+    const sGap = getCharGap(sid);
+
+    yield yieldProgress(`${sid}: main stats + substats`);
+    await yieldFrame();
+
+    if (sGap.erGap > 0 || sGap.crGap > 0) {
+      const result = constraintAwareGenerate(
+        teamBuild,
+        sid,
+        carryCharId,
+        formulaId,
+        currentSheets,
+        calcContext,
+        sRv,
+        sGap,
+        sR,
+        reactionOverride,
+        combo,
+        reactionOverrides
+      );
+      allMainStats[sid] = result.mainStats;
+      allSubRolls[sid] = result.subRolls;
+      currentSheets[sid] = result.sheet;
+    } else {
+      allMainStats[sid] = findBestMainStats(
+        teamBuild,
+        sid,
+        carryCharId,
+        formulaId,
+        currentSheets,
+        calcContext,
+        sRv,
+        sR,
+        reactionOverride,
+        combo,
+        reactionOverrides
+      );
+      currentSheets[sid] = buildSheetFromMainAndSubs(
+        allMainStats[sid],
+        emptySubRolls(),
+        sRv,
+        sR
+      );
+      allSubRolls[sid] = fillSubstats(
+        teamBuild,
+        sid,
+        carryCharId,
+        formulaId,
+        allMainStats[sid],
+        currentSheets,
+        calcContext,
+        sRv,
+        sR,
+        reactionOverride,
+        combo,
+        reactionOverrides
+      );
+      currentSheets[sid] = buildSheetFromMainAndSubs(
+        allMainStats[sid],
+        allSubRolls[sid],
+        sRv,
+        sR
+      );
+    }
+    step += 2; // combined main+sub steps
   }
 
   // ── Step 5: Re-roll main stats for carry (ignore main/sub conflicts) ──
@@ -746,20 +1112,30 @@ export async function* runIdealArtifactGen(
   // ── Step 6: Clear & regenerate substats for carry ──
   yield yieldProgress("carry: refine substats");
   await yieldFrame();
-  allSubRolls[carryCharId] = fillSubstats(
-    teamBuild,
-    carryCharId,
-    carryCharId,
-    formulaId,
-    allMainStats[carryCharId],
-    currentSheets,
-    calcContext,
-    carryRv,
-    carryR,
-    reactionOverride,
-    combo,
-    reactionOverrides
-  );
+  {
+    const refinedPreFill = getPreFill(
+      carryCharId,
+      carryGap,
+      allMainStats[carryCharId],
+      carryR,
+      carryRv
+    );
+    allSubRolls[carryCharId] = fillSubstats(
+      teamBuild,
+      carryCharId,
+      carryCharId,
+      formulaId,
+      allMainStats[carryCharId],
+      currentSheets,
+      calcContext,
+      carryRv,
+      carryR,
+      reactionOverride,
+      combo,
+      reactionOverrides,
+      refinedPreFill
+    );
+  }
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
@@ -793,6 +1169,13 @@ export async function* runIdealArtifactGen(
 
     // Try the alternative circlet with fresh substats
     const altMainStats = { ...allMainStats[carryCharId], circlet: altCirclet };
+    const altPreFill = getPreFill(
+      carryCharId,
+      carryGap,
+      altMainStats,
+      carryR,
+      carryRv
+    );
     const altSubRolls = fillSubstats(
       teamBuild,
       carryCharId,
@@ -805,7 +1188,8 @@ export async function* runIdealArtifactGen(
       carryR,
       reactionOverride,
       combo,
-      reactionOverrides
+      reactionOverrides,
+      altPreFill
     );
     const altSheet = buildSheetFromMainAndSubs(
       altMainStats,

@@ -39,7 +39,13 @@ class Escoffier extends CharacterBase {
       buffs.push(
         new ScalingBuff(
           cbs(this, "C2", ["E"]),
-          { receiver: "otherOnField", filter: { elements: ["Cryo"] } },
+          {
+            receiver: "otherOnField",
+            filter: {
+              elements: ["Cryo"],
+              abilities: ["normal", "charge", "plunge", "skill", "burst"],
+            },
+          },
           [],
           "atk",
           "baseDmg",

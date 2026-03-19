@@ -10,7 +10,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { PendingImport } from "@/lib/account-data/importRouting";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import { Check, Download, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -73,7 +72,6 @@ export function AccountManagerDialog({
     if (trimmed && isValidUid(trimmed) && id === "default") {
       // Rename the storage key from "default" to the UID, keeping id === uid
       promoteToUid("default", trimmed);
-      useOwnershipStore.getState().promoteProfile("default", trimmed);
     }
     setEditingId(null);
   };
@@ -283,7 +281,6 @@ export function AccountManagerDialog({
                           e.stopPropagation();
                           if (confirm(t.ui("common.confirmDelete"))) {
                             deleteAccount(acc.id);
-                            useOwnershipStore.getState().deleteProfile(acc.id);
                           }
                         }}
                       >

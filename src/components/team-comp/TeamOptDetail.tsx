@@ -555,6 +555,17 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         if (frozenData?.frozenCharIds.includes(charId)) continue;
         map[charId] = { ...(arts as Record<string, ArtifactData>) };
       }
+    } else if (teamProgress?.passResults) {
+      // During optimization: show intermediate best artifacts from completed phases
+      for (const pr of teamProgress.passResults) {
+        if (frozenData?.frozenCharIds.includes(pr.charId)) continue;
+        if (pr.bestDamage <= 0) continue; // skip failed/empty results
+        const arts: Record<string, ArtifactData> = {};
+        for (const [slot, art] of Object.entries(pr.bestArtifacts)) {
+          if (art) arts[slot] = art;
+        }
+        if (Object.keys(arts).length > 0) map[pr.charId] = arts;
+      }
     }
 
     // Layer 3: Apply ephemeral swap overrides on top
@@ -567,6 +578,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return map;
   }, [
     teamResult,
+    teamProgress,
     equippedArtifactsByChar,
     freezeStore,
     team.id,
@@ -583,7 +595,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const hasCachedArtifacts =
     Object.keys(cachedFreezeArtifacts.current).length > 0;
   const hasOptResult =
-    teamResult?.done || hasFrozenResult || hasCachedArtifacts;
+    teamResult?.done || hasFrozenResult || hasCachedArtifacts || isComputing;
   const hasAnyResult = hasOptResult;
 
   // Use rebuilt TeamBuild from optimizer result if sets were adjusted
@@ -708,6 +720,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         ] ?? {})
       : {};
 
+    // Build per-char ER/CR constraints for ideal gen
+    const idealPerChar: Record<string, { minEr: number; minCr: number }> = {};
+    for (const cid of effectiveTeam.characters) {
+      if (!cid) continue;
+      idealPerChar[cid] = {
+        minEr: team.minEr?.[cid] ?? 1.0,
+        minCr: team.minCr?.[cid] ?? 0,
+      };
+    }
+
     startIdealGen({
       teamBuild,
       carryCharId,
@@ -716,6 +738,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       setKeysByChar,
       rollMultiplier: activeContext.rollMultiplier,
       reactionOverride: idealReactionOverride,
+      perChar: idealPerChar,
+      ignoreArtifactSets: ignoreArtifactSets ?? undefined,
       ...(formulaMode === "combo" && {
         combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
         reactionOverrides: team.reactionOverrides,
@@ -871,7 +895,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           variant="ghost"
           size="icon"
           onClick={onBack}
-          className="shrink-0 h-9 w-9 hover:bg-white/10"
+          className="shrink-0 h-10 w-10 -ml-2 hover:bg-white/10"
         >
           <ArrowLeft className="w-5 h-5 text-foreground/70" />
         </Button>
@@ -909,6 +933,22 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         handleReactionChange={handleReactionChange}
         comboLineMap={comboLineMap}
         setComboLineCount={setComboLineCount}
+        onResetCombo={() => {
+          if (!teamBuild) return;
+          const lines: ComboLine[] = [];
+          for (const charId of team.characters) {
+            if (!charId) continue;
+            const rotation = teamBuild.getRotation(charId);
+            for (const [formulaId, count] of Object.entries(rotation)) {
+              if (count > 0) {
+                lines.push({ charId, formulaId, count });
+              }
+            }
+          }
+          updateTeam(team.id, {
+            combos: [{ id: combo.id, label: combo.label, lines }],
+          });
+        }}
         isMobile={isMobile}
         t={t}
       />

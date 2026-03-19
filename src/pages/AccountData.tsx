@@ -48,17 +48,11 @@ import {
 } from "@/lib/account-data/importRouting";
 import { mergeAccountData } from "@/lib/account-data/mergeAccountData";
 import { mergeMonaWithExisting } from "@/lib/account-data/monaConversion";
-import {
-  syncOwnershipAdditive,
-  syncOwnershipExhaustive,
-  syncWeaponOwnershipExhaustive,
-} from "@/lib/account-data/ownershipSync";
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { useOwnershipStore } from "@/stores/useOwnershipStore";
 import {
   AlertTriangle,
   Database,
@@ -200,9 +194,6 @@ export default function AccountDataPage() {
   const buildsMap = useBuildsStore((s) => s.builds);
   const characterToBuildIds = useBuildsStore((s) => s.characterToBuildIds);
 
-  // When scores are stale (e.g. weights changed) OR missing (migration), recalculate them asynchronously
-  // to avoid blocking the UI thread during interaction or navigation.
-
   // Use the hook to get all resolved builds efficiently
   const buildGroups = useAllResolvedBuilds();
 
@@ -217,19 +208,34 @@ export default function AccountDataPage() {
     return map;
   }, [buildGroups]);
 
+  // Recompute scores when stale, missing, or when builds become available
+  // for characters that previously scored null (async preset loading).
+  const needsScoring = useMemo(() => {
+    if (!accountData || accountData.characters.length === 0) return false;
+    if (isScoresStale) return true;
+    return accountData.characters.some((c) => {
+      if (!(c.key in scores)) return true;
+      // Rescore null entries when builds are now available
+      if (scores[c.key] === null && (resolvedBuildsMap[c.key]?.length ?? 0) > 0)
+        return true;
+      return false;
+    });
+  }, [accountData, isScoresStale, scores, resolvedBuildsMap]);
+
   useEffect(() => {
-    if (accountData && accountData.characters.length > 0) {
-      const timer = setTimeout(() => {
-        const results: Record<string, ArtifactScoreResult | null> = {};
-        for (const char of accountData.characters) {
-          const builds = resolvedBuildsMap[char.key] ?? [];
-          results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
-        }
-        setScores(results);
-      }, 50); // Short delay to yield to main thread (click/nav animations)
-      return () => clearTimeout(timer);
-    }
-  }, [accountData, scoreConfig, setScores, resolvedBuildsMap]);
+    if (!needsScoring || !accountData) return;
+
+    // Short delay to let dependencies (e.g. preset loading) stabilize
+    const timer = setTimeout(() => {
+      const results: Record<string, ArtifactScoreResult | null> = {};
+      for (const char of accountData.characters) {
+        const builds = resolvedBuildsMap[char.key] ?? [];
+        results[char.key] = scoreWithBuilds(char, builds, scoreConfig.global);
+      }
+      setScores(results);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [needsScoring, accountData, scoreConfig, setScores, resolvedBuildsMap]);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -297,19 +303,6 @@ export default function AccountDataPage() {
           name: routing.name,
         });
         setActiveAccount(routing.activeId);
-        syncOwnershipExhaustive(
-          routing.activeId,
-          routing.data.characters.map((c) => c.key)
-        );
-        const weaponKeys = [
-          ...routing.data.characters
-            .filter((c) => c.weapon)
-            .map((c) => c.weapon!.key),
-          ...routing.data.extraWeapons.map((w) => w.key),
-        ];
-        if (weaponKeys.length > 0) {
-          syncWeaponOwnershipExhaustive(routing.activeId, weaponKeys);
-        }
         toast.success(t.ui("accountData.importSuccess"));
       } else {
         setPendingImport(routing.pendingImport);
@@ -414,29 +407,8 @@ export default function AccountDataPage() {
     });
     if (result.promoteToId) {
       promoteToUid(result.id, result.promoteToId);
-      useOwnershipStore
-        .getState()
-        .promoteProfile(result.id, result.promoteToId);
     }
     setActiveAccount(result.activeId);
-
-    // Sync ownership based on import type
-    const charKeys = result.data.characters.map((c) => c.key);
-    if (pendingImport.type === "json") {
-      syncOwnershipExhaustive(result.activeId, charKeys);
-      const weaponKeys = [
-        ...result.data.characters
-          .filter((c) => c.weapon)
-          .map((c) => c.weapon!.key),
-        ...result.data.extraWeapons.map((w) => w.key),
-      ];
-      if (weaponKeys.length > 0) {
-        syncWeaponOwnershipExhaustive(result.activeId, weaponKeys);
-      }
-    } else if (pendingImport.type === "mona") {
-      syncOwnershipAdditive(result.activeId, charKeys);
-    }
-    // "uid" imports: no ownership sync (showcase ≠ full roster)
 
     toast.success(t.ui("accountData.importSuccess"));
     setPendingImport(null);
@@ -494,7 +466,6 @@ export default function AccountDataPage() {
       onTabChange={setActiveTab}
       onClearData={() => {
         clearAccounts();
-        useOwnershipStore.getState().clearAll();
       }}
       clearLabel={t.ui("common.clearAccountData")}
     >

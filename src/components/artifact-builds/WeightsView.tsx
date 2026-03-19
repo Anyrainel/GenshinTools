@@ -42,7 +42,7 @@ import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 // ── Constants ──
@@ -357,6 +357,7 @@ function SelectionCard({
     <div className="relative group">
       <button
         type="button"
+        tabIndex={noTeams ? -1 : 0}
         onClick={noTeams ? undefined : onToggle}
         disabled={noTeams}
         className={cn(
@@ -365,8 +366,8 @@ function SelectionCard({
           noTeams
             ? "border-transparent bg-muted/5 opacity-30 cursor-not-allowed"
             : entry.selected
-              ? "border-border bg-gradient-card"
-              : "border-transparent bg-muted/5 opacity-40 hover:opacity-65"
+              ? "border-border bg-gradient-card cursor-pointer"
+              : "border-transparent bg-muted/5 opacity-40 hover:opacity-65 cursor-pointer"
         )}
       >
         {/* Element accent — left edge */}
@@ -697,7 +698,7 @@ export function WeightsView() {
   const abortRef = useRef(false);
 
   // Initialize entries when groups or filter change (only in selection phase)
-  useMemo(() => {
+  useEffect(() => {
     if (phase === "selection") {
       setEntries(
         collectEntries(groups, allUserTeams, viewFilter, characterStats)

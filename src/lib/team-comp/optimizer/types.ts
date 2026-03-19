@@ -94,6 +94,8 @@ export interface BnBContext {
   compiledLookup?: import("../formulaCompiler").ArtifactVarLookup;
   deadline?: number;
   aborted?: boolean;
+  /** Called periodically from DFS/HC with current best damage and evaluation count. */
+  onProgress?: (bestDamage: number, evaluations: number) => void;
 }
 
 /** Minimal interface for the top-K collector, enabling alternate implementations. */
@@ -136,6 +138,7 @@ export interface CharacterBnBResult {
   collector: TopKCollectorLike;
   evaluations: number;
   failReason?: OptFailReason;
+  marginalWeights?: MarginalWeights | null;
 }
 
 // ─── Scoring Strategy ───

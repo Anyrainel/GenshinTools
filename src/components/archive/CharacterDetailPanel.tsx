@@ -9,11 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { CharacterResource } from "@/data/types";
 import type { useGameStats } from "@/hooks/useGameStats";
-import {
-  useConstellation,
-  useIsOwned,
-  useOwnershipActions,
-} from "@/hooks/useOwnership";
+import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
 import { useResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { cn } from "@/lib/utils";
@@ -181,7 +177,6 @@ export function CharacterDetailPanel({
   const owned = isOwned("character", characterId);
   const effectiveOwned = !unreleased && owned;
   const constellation = useConstellation(characterId);
-  const { toggleOwned } = useOwnershipActions();
 
   const [unlockClicks, setUnlockClicks] = useState(0);
 
@@ -201,16 +196,12 @@ export function CharacterDetailPanel({
               />
               <CharacterInfo character={character} showDate>
                 <div className="flex items-center gap-1.5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleOwned("character", characterId)}
-                    disabled={unreleased}
+                  <span
                     className={cn(
-                      "gap-1.5 shrink-0 rounded-full h-8 px-3 transition-colors",
+                      "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
                       effectiveOwned
-                        ? "text-amber-400 hover:text-amber-300"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "text-amber-400"
+                        : "text-muted-foreground"
                     )}
                   >
                     <Bookmark
@@ -224,7 +215,7 @@ export function CharacterDetailPanel({
                         ? t.ui("archive.owned")
                         : t.ui("archive.notOwned")}
                     </span>
-                  </Button>
+                  </span>
                   {effectiveOwned && constellation > 0 && (
                     <span className="text-xs font-medium text-muted-foreground">
                       {t.format("common.constellationFormat", constellation)}
