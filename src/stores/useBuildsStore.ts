@@ -2,6 +2,11 @@ import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { create } from "zustand";
+
+let _buildIdSeq = 0;
+function nextBuildId(): string {
+  return `b${Date.now()}${_buildIdSeq++}`;
+}
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type {
@@ -150,7 +155,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       // Create a new build for a character
       newBuild: (characterId: string) => {
-        const buildId = `b${Date.now()}`;
+        const buildId = nextBuildId();
         const newBuild: Build = {
           id: buildId,
           characterId,
@@ -186,7 +191,7 @@ export const useBuildsStore = create<BuildsState>()(
           throw new Error(`Build ${buildId} not found`);
         }
 
-        const newBuildId = `b${Date.now()}`;
+        const newBuildId = nextBuildId();
         const copiedBuild: Build = {
           ...originalBuild,
           id: newBuildId,
