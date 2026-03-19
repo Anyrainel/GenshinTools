@@ -14,6 +14,7 @@
  * the inner loop, leaving ~20-50 arithmetic ops per evaluation.
  */
 
+import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import { CrossScalingBuff, ScalingBuff } from "./damageBuffs";
 import {
@@ -683,11 +684,88 @@ function buildTotalDamageExpr(
   return E.add(...partExprs);
 }
 
-// ─── Evaluation Helper for Optimizer ───
+// ─── Evaluation Helpers for Optimizer ───
+
+// Elemental DMG stat keys → normalized key + filterKey
+const ELEMENTAL_DMG_FILTER: Record<string, string> = {
+  "pyro%": "e:Pyro",
+  "hydro%": "e:Hydro",
+  "electro%": "e:Electro",
+  "cryo%": "e:Cryo",
+  "dendro%": "e:Dendro",
+  "anemo%": "e:Anemo",
+  "geo%": "e:Geo",
+  "phys%": "e:Physical",
+};
+
+const FLAT_STAT_SET = new Set(["hp", "atk", "def", "em"]);
 
 /**
- * Fill the Float64Array vars from an artifact tuple using the VarMapping.
- * Each artifact's stats are added to the appropriate variable indices.
+ * Pre-computed lookup table for fast artifact stat → var index mapping.
+ * Avoids Map.get() calls and stat key normalization in the hot loop.
+ */
+export interface ArtifactVarLookup {
+  /** Map from raw stat key (e.g. "atk%", "pyro%") → var index. -1 if unmapped. */
+  keyToIdx: Map<string, number>;
+  /** Map from raw stat key → true if it's a percentage stat (needs /100 conversion). */
+  keyIsPct: Map<string, boolean>;
+}
+
+/**
+ * Build a fast lookup table for a character's artifact stat → var index mapping.
+ * Call once per compiled formula; reuse across all evaluations.
+ */
+export function buildArtifactVarLookup(
+  varMapping: VarMapping,
+  charIdx: number
+): ArtifactVarLookup {
+  const keyToIdx = new Map<string, number>();
+  const keyIsPct = new Map<string, boolean>();
+
+  // All possible artifact stat keys (main + sub)
+  const allStatKeys = [
+    "hp",
+    "atk",
+    "def",
+    "em",
+    "er",
+    "hp%",
+    "atk%",
+    "def%",
+    "cr",
+    "cd",
+    "pyro%",
+    "hydro%",
+    "electro%",
+    "cryo%",
+    "dendro%",
+    "anemo%",
+    "geo%",
+    "phys%",
+    "heal%",
+  ];
+
+  for (const rawKey of allStatKeys) {
+    const elFilter = ELEMENTAL_DMG_FILTER[rawKey];
+    const normalizedKey = elFilter ? "dmg%" : rawKey;
+    const filterKey = elFilter ?? "";
+    const idx = varMapping.getVarIdx(
+      charIdx,
+      normalizedKey as StatKey,
+      filterKey
+    );
+    if (idx !== undefined) {
+      keyToIdx.set(rawKey, idx);
+      keyIsPct.set(rawKey, !FLAT_STAT_SET.has(rawKey));
+    }
+  }
+
+  return { keyToIdx, keyIsPct };
+}
+
+/**
+ * Fill the Float64Array vars from an artifact tuple using a pre-built lookup.
+ * Zero allocations, no Map construction — directly reads artifact stats.
  */
 export function fillVarsFromArtifacts(
   artifacts: (import("@/data/types").ArtifactData | null)[],
@@ -697,14 +775,84 @@ export function fillVarsFromArtifacts(
 ): void {
   for (const art of artifacts) {
     if (!art) continue;
-    // Add each stat contribution from the artifact
-    for (const entry of StatSheet.fromArtifacts([art]).dump()) {
-      const idx = varMapping.getVarIdx(charIdx, entry.key, entry.filterKey);
+    // Main stat
+    const mainKey = art.mainStatKey;
+    if (mainKey) {
+      const idx = lookupVarIdx(varMapping, charIdx, mainKey);
       if (idx !== undefined) {
-        vars[idx] += entry.value;
+        const displayVal = getMainStatValueAtLevel(
+          mainKey as import("@/data/types").MainStat,
+          art.rarity,
+          art.level
+        );
+        vars[idx] += FLAT_STAT_SET.has(mainKey) ? displayVal : displayVal / 100;
+      }
+    }
+    // Substats
+    if (art.substats) {
+      for (const subKey of Object.keys(art.substats)) {
+        const subVal = art.substats[subKey as keyof typeof art.substats];
+        if (!subVal) continue;
+        const idx = lookupVarIdx(varMapping, charIdx, subKey);
+        if (idx !== undefined) {
+          vars[idx] += FLAT_STAT_SET.has(subKey) ? subVal : subVal / 100;
+        }
       }
     }
   }
+}
+
+/**
+ * Fill vars from artifacts using a pre-built ArtifactVarLookup.
+ * Even faster than fillVarsFromArtifacts — avoids VarMapping.getVarIdx() calls.
+ */
+export function fillVarsFromArtifactsFast(
+  artifacts: (import("@/data/types").ArtifactData | null)[],
+  lookup: ArtifactVarLookup,
+  vars: Float64Array
+): void {
+  for (const art of artifacts) {
+    if (!art) continue;
+    // Main stat
+    const mainKey = art.mainStatKey;
+    if (mainKey) {
+      const idx = lookup.keyToIdx.get(mainKey);
+      if (idx !== undefined) {
+        const displayVal = getMainStatValueAtLevel(
+          mainKey as import("@/data/types").MainStat,
+          art.rarity,
+          art.level
+        );
+        vars[idx] += lookup.keyIsPct.get(mainKey)
+          ? displayVal / 100
+          : displayVal;
+      }
+    }
+    // Substats
+    if (art.substats) {
+      for (const subKey of Object.keys(art.substats)) {
+        const subVal = art.substats[subKey as keyof typeof art.substats];
+        if (!subVal) continue;
+        const idx = lookup.keyToIdx.get(subKey);
+        if (idx !== undefined) {
+          vars[idx] += lookup.keyIsPct.get(subKey) ? subVal / 100 : subVal;
+        }
+      }
+    }
+  }
+}
+
+/** Look up a var index for an artifact stat key, handling elemental DMG normalization. */
+function lookupVarIdx(
+  varMapping: VarMapping,
+  charIdx: number,
+  rawKey: string
+): number | undefined {
+  const elFilter = ELEMENTAL_DMG_FILTER[rawKey];
+  if (elFilter) {
+    return varMapping.getVarIdx(charIdx, "dmg%" as StatKey, elFilter);
+  }
+  return varMapping.getVarIdx(charIdx, rawKey as StatKey, "");
 }
 
 /**
@@ -731,16 +879,20 @@ export function fillVarsFromSheet(
  */
 export function fillVarsFromRawStats(
   rawStats: Partial<Record<import("./types").StatKey, number>>[],
+  /** Number of entries to read from rawStats. If undefined, reads all. */
+  count: number | undefined,
   varMapping: VarMapping,
   charIdx: number,
   vars: Float64Array
 ): void {
-  for (const ss of rawStats) {
-    const sheet = StatSheet.fromRaw(ss);
-    for (const entry of sheet.dump()) {
-      const idx = varMapping.getVarIdx(charIdx, entry.key, entry.filterKey);
+  const len = count ?? rawStats.length;
+  for (let i = 0; i < len; i++) {
+    const ss = rawStats[i];
+    for (const [key, value] of Object.entries(ss)) {
+      if (!value) continue;
+      const idx = lookupVarIdx(varMapping, charIdx, key);
       if (idx !== undefined) {
-        vars[idx] += entry.value;
+        vars[idx] += value;
       }
     }
   }

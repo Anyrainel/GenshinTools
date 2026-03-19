@@ -6,11 +6,12 @@
  */
 
 import type { ArtifactData } from "@/data/types";
+import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
-import type { CompiledTeamDamage } from "../formulaCompiler";
+import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
 import {
-  fillVarsFromArtifacts,
+  fillVarsFromArtifactsFast,
   fillVarsFromRawStats,
 } from "../formulaCompiler";
 import type {
@@ -91,14 +92,14 @@ export function evaluateBuild(
 export function evaluateBuildCompiled(
   pieces: ArtifactTuple,
   compiled: CompiledTeamDamage,
-  charIdx: number,
+  lookup: ArtifactVarLookup,
   reusableVars: Float64Array
 ): { damage: number } {
   // Zero the vars array
   reusableVars.fill(0);
 
-  // Fill vars from artifacts
-  fillVarsFromArtifacts(pieces, compiled.varMapping, charIdx, reusableVars);
+  // Fill vars from artifacts (fast path — no StatSheet construction)
+  fillVarsFromArtifactsFast(pieces, lookup, reusableVars);
 
   // Check ER constraint
   if (compiled.evaluateEr) {
@@ -167,16 +168,53 @@ export function evaluateUpperBound(
  * Fills vars from real pieces + super-artifact raw stats.
  */
 export function evaluateUpperBoundCompiled(
-  realPieces: (ArtifactData | null)[],
+  /** Full 5-element pieces array; only elements [0..piecesCount) are used. */
+  pieces: (ArtifactData | null)[],
+  /** Number of real pieces to read from the start of pieces array. */
+  piecesCount: number,
   superStatsRemaining: Partial<Record<StatKey, number>>[],
+  /** Number of entries to read from superStatsRemaining (avoids .slice() allocation). */
+  remainingCount: number,
   compiled: CompiledTeamDamage,
+  lookup: ArtifactVarLookup,
   charIdx: number,
   reusableVars: Float64Array
 ): number {
   reusableVars.fill(0);
-  fillVarsFromArtifacts(realPieces, compiled.varMapping, charIdx, reusableVars);
+  // Fill vars from first piecesCount real pieces (avoids pieces.slice() allocation)
+  for (let i = 0; i < piecesCount; i++) {
+    const art = pieces[i];
+    if (!art) continue;
+    const mainKey = art.mainStatKey;
+    if (mainKey) {
+      const idx = lookup.keyToIdx.get(mainKey);
+      if (idx !== undefined) {
+        const displayVal = getMainStatValueAtLevel(
+          mainKey as import("@/data/types").MainStat,
+          art.rarity,
+          art.level
+        );
+        reusableVars[idx] += lookup.keyIsPct.get(mainKey)
+          ? displayVal / 100
+          : displayVal;
+      }
+    }
+    if (art.substats) {
+      for (const subKey of Object.keys(art.substats)) {
+        const subVal = art.substats[subKey as keyof typeof art.substats];
+        if (!subVal) continue;
+        const idx = lookup.keyToIdx.get(subKey);
+        if (idx !== undefined) {
+          reusableVars[idx] += lookup.keyIsPct.get(subKey)
+            ? subVal / 100
+            : subVal;
+        }
+      }
+    }
+  }
   fillVarsFromRawStats(
     superStatsRemaining,
+    remainingCount,
     compiled.varMapping,
     charIdx,
     reusableVars

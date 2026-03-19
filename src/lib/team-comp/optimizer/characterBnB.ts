@@ -10,7 +10,12 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
-import { type CompiledTeamDamage, compileTeamDamage } from "../formulaCompiler";
+import {
+  type ArtifactVarLookup,
+  type CompiledTeamDamage,
+  buildArtifactVarLookup,
+  compileTeamDamage,
+} from "../formulaCompiler";
 import type {
   CalcContext,
   DamageResult,
@@ -92,6 +97,8 @@ function bnbDfs(
   }
   const superStatsBySlot = slotSupers.map((s) => s.stats);
   const pieces: ArtifactTuple = [null, null, null, null, null];
+  // Pre-allocated array for upper bound remaining stats (reused to avoid allocation in hot loop)
+  const ubRemaining: Partial<Record<StatKey, number>>[] = new Array(4);
 
   function dfs(depth: number, cumEr: number, cumCr: number): void {
     if (ctx.aborted) return;
@@ -102,11 +109,11 @@ function bnbDfs(
       }
     }
     if (depth === 5) {
-      if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+      if (ctx.compiled && ctx.compiledVars && ctx.compiledLookup) {
         const { damage } = evaluateBuildCompiled(
           pieces,
           ctx.compiled,
-          ctx.compiledCharIdx,
+          ctx.compiledLookup,
           ctx.compiledVars
         );
         collector.add(damage, null, pieces);
@@ -139,18 +146,31 @@ function bnbDfs(
 
       pieces[depth] = art;
       if (collector.threshold > 0 && depth < 4) {
-        const remaining: Partial<Record<StatKey, number>>[] = [];
-        for (let s = depth + 1; s < 5; s++) remaining.push(superStatsBySlot[s]);
         let ub: number;
-        if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+        if (
+          ctx.compiled &&
+          ctx.compiledVars &&
+          ctx.compiledLookup &&
+          ctx.compiledCharIdx != null
+        ) {
+          // Reuse pre-allocated remaining array (avoids allocation in hot loop)
+          const remainingCount = 4 - depth;
+          for (let r = 0; r < remainingCount; r++)
+            ubRemaining[r] = superStatsBySlot[depth + 1 + r];
           ub = evaluateUpperBoundCompiled(
-            pieces.slice(0, depth + 1),
-            remaining,
+            pieces,
+            depth + 1,
+            ubRemaining,
+            remainingCount,
             ctx.compiled,
+            ctx.compiledLookup,
             ctx.compiledCharIdx,
             ctx.compiledVars
           );
         } else {
+          const remaining: Partial<Record<StatKey, number>>[] = [];
+          for (let s = depth + 1; s < 5; s++)
+            remaining.push(superStatsBySlot[s]);
           ub = evaluateUpperBound(pieces.slice(0, depth + 1), remaining, ctx);
         }
         ctx.evaluations++;
@@ -213,7 +233,9 @@ export function runCharacterBnB(
   topK: number,
   deadline?: number,
   warmStartThreshold?: number,
-  maxArtsPerSlot = 0
+  maxArtsPerSlot = 0,
+  /** @internal For benchmarking only — disable AST compilation */
+  _noCompile = false
 ): {
   collector: TopKCollector;
   evaluations: number;
@@ -368,7 +390,8 @@ export function runCharacterBnB(
   let compiled: CompiledTeamDamage | undefined;
   let compiledVars: Float64Array | undefined;
   let compiledCharIdx: number | undefined;
-  if (optCtx && swapCharId === formulaCharId && !scoreFn) {
+  let compiledLookup: ArtifactVarLookup | undefined;
+  if (optCtx && swapCharId === formulaCharId && !scoreFn && !_noCompile) {
     try {
       compiled = compileTeamDamage(
         teamBuild,
@@ -385,6 +408,10 @@ export function runCharacterBnB(
       );
       compiledVars = new Float64Array(compiled.numVars);
       compiledCharIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);
+      compiledLookup = buildArtifactVarLookup(
+        compiled.varMapping,
+        compiledCharIdx
+      );
     } catch {
       // Compilation failed — fall back to standard evaluation
       compiled = undefined;
@@ -414,6 +441,7 @@ export function runCharacterBnB(
     compiled,
     compiledVars,
     compiledCharIdx,
+    compiledLookup,
     deadline,
   };
 
@@ -483,6 +511,7 @@ export function runCharacterBnB(
 
       // Run HC from each seed
       for (const seed of seeds) {
+        if (ctx.aborted) break;
         const pieces: ArtifactTuple = [...seed] as ArtifactTuple;
         let bestDamage = evaluateBuild(pieces, ctx).damage;
         collector.add(bestDamage, null, pieces);
@@ -490,6 +519,10 @@ export function runCharacterBnB(
 
         let improved = true;
         while (improved) {
+          if (ctx.deadline && performance.now() > ctx.deadline) {
+            ctx.aborted = true;
+            break;
+          }
           improved = false;
           for (let s = 0; s < 5; s++) {
             const group = task.groups[s];
@@ -530,7 +563,13 @@ export function runCharacterBnB(
     // upper bounds underestimate due to missing set bonuses in super-artifacts).
     const HC2_MAX_PATTERNS = 5;
     let hc2Collector: TopKCollector | null = null;
-    if (isCarry && !scoreFn && collector.best && collector.best.damage > 0) {
+    if (
+      isCarry &&
+      !scoreFn &&
+      !ctx.aborted &&
+      collector.best &&
+      collector.best.damage > 0
+    ) {
       const warmArts = collector.best.artifacts.filter(
         (a): a is ArtifactData => a != null
       );
@@ -602,11 +641,20 @@ export function runCharacterBnB(
   }
 
   function computePatternUpperBound(supers: SuperArtifact[]): number {
-    if (ctx.compiled && ctx.compiledVars && ctx.compiledCharIdx != null) {
+    if (
+      ctx.compiled &&
+      ctx.compiledVars &&
+      ctx.compiledLookup &&
+      ctx.compiledCharIdx != null
+    ) {
+      const superStats = supers.map((s) => s.stats);
       return evaluateUpperBoundCompiled(
         [],
-        supers.map((s) => s.stats),
+        0,
+        superStats,
+        superStats.length,
         ctx.compiled,
+        ctx.compiledLookup,
         ctx.compiledCharIdx,
         ctx.compiledVars
       );

@@ -32,14 +32,16 @@ export function HeaderScrollLayout({
   return (
     <div className={cn("h-full w-full flex flex-col", className)}>
       {/* Fixed header - not scrollable */}
-      <div
-        className={cn(
-          "flex-shrink-0 border-b border-border/30",
-          headerClassName
-        )}
-      >
-        {header}
-      </div>
+      {header && (
+        <div
+          className={cn(
+            "flex-shrink-0 border-b border-border/30",
+            headerClassName
+          )}
+        >
+          {header}
+        </div>
+      )}
       {/* Scrollable body */}
       <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto">
         <div className={cn("container min-h-full", bodyClassName)}>

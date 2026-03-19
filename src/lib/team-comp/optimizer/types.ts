@@ -91,6 +91,7 @@ export interface BnBContext {
   compiled?: CompiledTeamDamage;
   compiledVars?: Float64Array;
   compiledCharIdx?: number;
+  compiledLookup?: import("../formulaCompiler").ArtifactVarLookup;
   deadline?: number;
   aborted?: boolean;
 }

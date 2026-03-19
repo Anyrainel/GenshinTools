@@ -162,6 +162,8 @@ export default function TeamCompPage() {
   const isTeamEmpty = (t: { characters: (string | null)[] }) =>
     t.characters.every((c) => c == null);
 
+  const isEmptyState = teams.length <= 1 && teams.every(isTeamEmpty);
+
   const handleAddTeam = (position: "start" | "end") => {
     // Don't create a new empty team if one already exists at that edge
     if (teams.length > 0) {
@@ -310,94 +312,102 @@ export default function TeamCompPage() {
       <HeaderScrollLayout
         bodyRef={scrollRef}
         header={
-          <div className="container flex items-center gap-1 2xl:gap-2 flex-wrap py-2">
-            {/* Element chips */}
-            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-              {elements.map((el) => {
-                const active =
-                  elementFilter.length === 0 || elementFilter.includes(el);
-                const res = elementResourcesByName[el];
-                return (
-                  <FilterChip
-                    key={el}
-                    active={active}
-                    onClick={() => toggleElement(el)}
+          isEmptyState ? null : (
+            <div className="container flex items-center gap-1 2xl:gap-2 flex-wrap py-2">
+              {/* Element chips */}
+              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+                {elements.map((el) => {
+                  const active =
+                    elementFilter.length === 0 || elementFilter.includes(el);
+                  const res = elementResourcesByName[el];
+                  return (
+                    <FilterChip
+                      key={el}
+                      active={active}
+                      onClick={() => toggleElement(el)}
+                    >
+                      <img
+                        src={getAssetUrl(res.imagePath)}
+                        alt={el}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-xs">{t.element(el)}</span>
+                    </FilterChip>
+                  );
+                })}
+              </div>
+
+              <div className="h-5 w-px bg-border/50 mx-1" />
+
+              {/* Region chips */}
+              <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
+                {displayRegions.map((r) => {
+                  const active =
+                    regionFilter.length === 0 || regionFilter.includes(r);
+                  return (
+                    <FilterChip
+                      key={r}
+                      active={active}
+                      onClick={() => toggleRegion(r)}
+                    >
+                      <span className="text-xs">{t.region(r)}</span>
+                    </FilterChip>
+                  );
+                })}
+              </div>
+
+              {/* Spacer */}
+              <div className="flex-1" />
+
+              {/* Add team / unfreeze buttons */}
+              <div className="flex items-center gap-1 2xl:gap-2">
+                {Object.keys(freezeStore.frozenTeams).length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                    onClick={() => freezeStore.clearAll()}
                   >
-                    <img
-                      src={getAssetUrl(res.imagePath)}
-                      alt={el}
-                      className="w-4 h-4"
-                    />
-                    <span className="text-xs">{t.element(el)}</span>
-                  </FilterChip>
-                );
-              })}
-            </div>
-
-            <div className="h-5 w-px bg-border/50 mx-1" />
-
-            {/* Region chips */}
-            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
-              {displayRegions.map((r) => {
-                const active =
-                  regionFilter.length === 0 || regionFilter.includes(r);
-                return (
-                  <FilterChip
-                    key={r}
-                    active={active}
-                    onClick={() => toggleRegion(r)}
-                  >
-                    <span className="text-xs">{t.region(r)}</span>
-                  </FilterChip>
-                );
-              })}
-            </div>
-
-            {/* Spacer */}
-            <div className="flex-1" />
-
-            {/* Add team / unfreeze buttons */}
-            <div className="flex items-center gap-1 2xl:gap-2">
-              {Object.keys(freezeStore.frozenTeams).length > 0 && (
+                    <Flame className="w-3 h-3" />
+                    <span>{t.ui("teamComp.unfreezeAll")}</span>
+                  </Button>
+                )}
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 text-sm leading-none h-8 border-red-500/40 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                  onClick={() => freezeStore.clearAll()}
+                  className="gap-1.5 text-sm leading-none h-8"
+                  onClick={() => handleAddTeam("start")}
                 >
-                  <Flame className="w-3 h-3" />
-                  <span>{t.ui("teamComp.unfreezeAll")}</span>
+                  <Plus className="w-3 h-3" />
+                  <span>{t.ui("teamComp.newTeamStart")}</span>
+                  <span className="text-muted-foreground">↑</span>
                 </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 text-sm leading-none h-8"
-                onClick={() => handleAddTeam("start")}
-              >
-                <Plus className="w-3 h-3" />
-                <span>{t.ui("teamComp.newTeamStart")}</span>
-                <span className="text-muted-foreground">↑</span>
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                className="gap-1.5 text-sm leading-none h-8"
-                onClick={() => handleAddTeam("end")}
-              >
-                <Plus className="w-3 h-3" />
-                <span>{t.ui("teamComp.newTeamEnd")}</span>
-                <span className="opacity-60">↓</span>
-              </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="gap-1.5 text-sm leading-none h-8"
+                  onClick={() => handleAddTeam("end")}
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{t.ui("teamComp.newTeamEnd")}</span>
+                  <span className="opacity-60">↓</span>
+                </Button>
+              </div>
             </div>
-          </div>
+          )
         }
       >
-        <div className="py-6">
+        <div
+          className={cn(
+            "py-6",
+            isEmptyState &&
+              "min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center"
+          )}
+        >
           {/* Empty state welcome — shown when all teams are unconfigured */}
-          {teams.length <= 1 && teams.every(isTeamEmpty) && (
-            <div className="flex flex-col items-center text-center px-4 pt-8 pb-4 max-w-md mx-auto">
-              <div className="relative mb-5">
+          {isEmptyState && (
+            <div className="flex flex-col items-center text-center px-4 pt-4 sm:pt-8 pb-4 max-w-md mx-auto">
+              <div className="relative mb-3 sm:mb-5">
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
                 <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
                   <Swords className="w-10 h-10 text-primary opacity-80" />
@@ -414,10 +424,11 @@ export default function TeamCompPage() {
               </p>
               <Button
                 variant="outline"
-                className="gap-2"
+                size="lg"
+                className="gap-2 text-base px-6"
                 onClick={() => importRef.current?.open()}
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-5 h-5" />
                 {t.ui("import.action")}
               </Button>
             </div>

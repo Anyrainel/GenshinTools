@@ -1364,8 +1364,8 @@ export const i18nUiData = {
     noTeams: { en: "No teams available", zh: "没有可用的队伍" },
     done: { en: "Done ({0}/{1} succeeded)", zh: "完成（{0}/{1} 成功）" },
     noBuild: {
-      en: "No builds to tune. Import or create builds first.",
-      zh: "没有可调整的配装。请先导入或创建配装。",
+      en: "No builds and teams to tune. Import or create builds and teams first.",
+      zh: "没有可调整的配装和配队。请先导入或创建配装和配队。",
     },
     mainStatCombos: {
       en: "{0} main stat combo{1}",
