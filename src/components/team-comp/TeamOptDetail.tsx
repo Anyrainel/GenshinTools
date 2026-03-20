@@ -772,7 +772,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             teamBuild,
             resolvedFormula,
             idealArtifactSheets,
-            displayContext
+            displayContext,
+            currentReactionOverride
           )
         : null,
     [
@@ -781,6 +782,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       idealArtifactSheets,
       idealResult?.done,
       displayContext,
+      currentReactionOverride,
     ]
   );
 

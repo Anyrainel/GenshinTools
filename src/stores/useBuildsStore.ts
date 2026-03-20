@@ -519,11 +519,22 @@ export const useBuildsStore = create<BuildsState>()(
       name: "artifact-filter-builds",
       version: BUILD_DATA_VERSION,
       migrate: (persistedState: unknown, version: number) => {
+        // biome-ignore lint/suspicious/noExplicitAny: Migration handling for old data shape
+        const state = persistedState as any;
+
+        // Guard against missing builds map (corrupted or very old data)
+        if (!state.builds || typeof state.builds !== "object") {
+          state.builds = {};
+        }
+
+        // Ensure required state-level fields exist
+        if (!state.validationErrors) {
+          state.validationErrors = {};
+        }
+
         if (version < 5) {
           // Migration from version < 5 (SubStat[] -> WeightedSubStat[])
-          const state = persistedState as BuildsState;
-
-          for (const build of Object.values(state.builds)) {
+          for (const build of Object.values(state.builds) as Build[]) {
             // biome-ignore lint/suspicious/noExplicitAny: Migration handling for old data shape
             const buildAny = build as any;
             if (
@@ -540,23 +551,15 @@ export const useBuildsStore = create<BuildsState>()(
             delete buildAny.kOverride;
           }
         }
-        return persistedState as BuildsState;
-      },
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          // Ensure validationErrors are populated
-          if (!state.validationErrors) {
-            state.validationErrors = {};
-          }
-          // Normalize halfSet IDs (legacy number → new string)
-          for (const build of Object.values(state.builds)) {
-            migrateBuild(build);
-          }
-          // Re-validate all builds to be safe (cheap operation)
-          for (const build of Object.values(state.builds)) {
-            state.validationErrors[build.id] = getBuildValidationErrors(build);
-          }
+
+        // Run idempotent build-level migrations (halfSet IDs, weights, normalizer)
+        // on every version so persisted data always has required fields.
+        for (const build of Object.values(state.builds) as Build[]) {
+          migrateBuild(build);
+          state.validationErrors[build.id] = getBuildValidationErrors(build);
         }
+
+        return state as BuildsState;
       },
     }
   )

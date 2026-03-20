@@ -43,7 +43,7 @@ import type {
 } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { Loader2, Play, TrendingUp } from "lucide-react";
+import { AlertTriangle, Loader2, Play, TrendingUp } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { InvestmentChart } from "./InvestmentChart";
 import { InvestmentSequence } from "./InvestmentSequence";
@@ -220,6 +220,12 @@ export function InvestmentDialog({
             </span>
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
+
+        {/* Buff stack warning */}
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+          {t.ui("teamComp.investmentBuffStackWarning")}
+        </div>
 
         {/* Combo formula summary + Team config */}
         <div className="flex items-center justify-center gap-x-3 gap-y-1 flex-wrap py-1">

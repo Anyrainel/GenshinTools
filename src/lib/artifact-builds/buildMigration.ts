@@ -74,26 +74,27 @@ function migrateWeightsAndNormalizer(build: Build): void {
     build.sandsWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
+    // Only delete legacy field after successful migration
+    delete legacy.sands;
   }
   if (!build.gobletWeights || build.gobletWeights.length === 0) {
     const old = (legacy.goblet ?? []) as MainStat[];
     build.gobletWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
+    delete legacy.goblet;
   }
   if (!build.circletWeights || build.circletWeights.length === 0) {
     const old = (legacy.circlet ?? []) as MainStat[];
     build.circletWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
+    delete legacy.circlet;
   }
-  // Remove legacy fields
-  legacy.sands = undefined;
-  legacy.goblet = undefined;
-  legacy.circlet = undefined;
 
-  // Normalizer: compute from substat weights + best main stat weights
-  if (build.normalizer == null || build.normalizer === 0) {
+  // Normalizer: compute from substat weights + best main stat weights.
+  // Only recompute when truly missing (null/undefined), not when intentionally 0.
+  if (build.normalizer == null) {
     const weights = {} as Record<SubStat, number>;
     for (const { stat, weight } of build.substats ?? []) {
       weights[stat] = weight;

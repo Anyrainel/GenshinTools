@@ -283,7 +283,7 @@ describe("buildTeamConfigs", () => {
     expect(configs[1].artifactHalfSetIds).toEqual(["er-20", "atk%-18"]);
   });
 
-  it("detects equipped artifact sets from account data", () => {
+  it("uses team roster 4pc config even when equipped artifacts differ", () => {
     const acct = createAccountData({
       characters: [
         createCharacterData({
@@ -299,6 +299,7 @@ describe("buildTeamConfigs", () => {
       ],
     });
     const configs = buildTeamConfigs(baseTeam, acct);
+    // Team roster says 4pc CW — that's the source of truth
     expect(configs[0].artifactSetId).toBe(CW);
   });
 
@@ -420,7 +421,7 @@ describe("buildTeamConfigs", () => {
     expect(configs[0].artifactHalfSetIds).toEqual([]);
   });
 
-  it("uses detected 2+2pc when equipped artifacts form a complete 2+2", () => {
+  it("uses team roster artifact config regardless of equipped artifacts", () => {
     const acct = createAccountData({
       characters: [
         createCharacterData({
@@ -436,9 +437,9 @@ describe("buildTeamConfigs", () => {
       ],
     });
     const configs = buildTeamConfigs(baseTeam, acct);
-    // Should detect equipped 2+2pc, NOT fall back to goal 4pc CW
-    expect(configs[0].artifactSetId).toBeNull();
-    expect(configs[0].artifactHalfSetIds).toHaveLength(2);
+    // Team roster says 4pc CW — equipped artifacts are irrelevant
+    expect(configs[0].artifactSetId).toBe(CW);
+    expect(configs[0].artifactHalfSetIds).toEqual([]);
   });
 });
 

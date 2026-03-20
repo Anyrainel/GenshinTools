@@ -463,7 +463,7 @@ function ComboBreakdown({
                                 )}
                               </div>
                               <div className="flex items-baseline gap-1 text-lg font-mono tabular-nums">
-                                <span className="text-foreground font-bold">
+                                <span className="text-foreground">
                                   {fmtDamage(perHit)}
                                 </span>
                                 {line.count > 1 && (
@@ -772,7 +772,10 @@ function CritRateTargetInput({
 }: CtxProps) {
   return (
     <div className="flex items-center gap-1 shrink-0">
-      <span className={LABEL_CLS(isMobile)}>
+      <span
+        className={LABEL_CLS(isMobile)}
+        title={t.ui("teamComp.critRateTargetTooltip")}
+      >
         {t.ui("teamComp.critRateTarget")}
       </span>
       <Input

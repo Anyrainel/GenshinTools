@@ -541,29 +541,6 @@ export async function runOptimizerOnTeam(
       calcContext
     );
 
-    // DEBUG: log ER/CR values
-    if ((globalThis as Record<string, unknown>).__TEAM_OPT_DIAG__) {
-      console.log(
-        `  [DIAG] failReasons: ${JSON.stringify(result.failReasons)}`
-      );
-      for (const cid of Object.keys(perChar)) {
-        const er = postStats[cid]?.get("er", null) ?? 0;
-        const cr = postStats[cid]?.get("cr", null) ?? 0;
-        const cfg = perChar[cid];
-        console.log(
-          `  [DIAG] ${cid}: ER=${(er * 100).toFixed(1)}% (req ${(cfg.minEr * 100).toFixed(1)}%), CR=${(cr * 100).toFixed(1)}% (req ${(cfg.minCr * 100).toFixed(1)}%)`
-        );
-        const slotArts = finalResult.bestArtifactsByChar[cid];
-        if (slotArts) {
-          for (const [slot, art] of Object.entries(slotArts)) {
-            if (art) {
-              console.log(`    ${slot}: ${art.setKey} main=${art.mainStatKey}`);
-            }
-          }
-        }
-      }
-    }
-
     // ── Validate minEr / minCr constraints on the final solution ──
     const violations: ConstraintViolation[] = [];
     for (const [cid, charConfig] of Object.entries(perChar)) {
