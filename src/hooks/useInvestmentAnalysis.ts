@@ -37,7 +37,7 @@ export interface UseInvestmentAnalysisState {
   result: InvestmentResult | null;
   isComputing: boolean;
   error: Error | null;
-  start: (opts: InvestmentOptions) => void;
+  start: (opts: InvestmentOptions, force?: boolean) => void;
   stop: () => void;
 }
 
@@ -66,18 +66,20 @@ export function useInvestmentAnalysis(): UseInvestmentAnalysisState {
   }, []);
 
   const start = useCallback(
-    async (opts: InvestmentOptions) => {
+    async (opts: InvestmentOptions, force?: boolean) => {
       stop();
       abortRef.current = false;
       setProgress(null);
       setError(null);
 
-      // Check cache first
+      // Check cache first (skip if force recompute)
       const key = buildCacheKey(opts);
-      const cached = cacheGet(key);
-      if (cached) {
-        setResult(cached);
-        return;
+      if (!force) {
+        const cached = cacheGet(key);
+        if (cached) {
+          setResult(cached);
+          return;
+        }
       }
 
       setResult(null);

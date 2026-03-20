@@ -95,10 +95,17 @@ export type InvestmentStep = {
   gainVsPrevPct: number;
 };
 
+export type CachedNodeRef = {
+  id: string;
+  allocation: TeamInvestment;
+  damage: number;
+};
+
 export type InvestmentResult = {
   dag: InvestmentDAG;
   bestAtTier: Map<number, InvestmentNode>;
   sequence: InvestmentStep[];
+  nodesByJin: Map<number, CachedNodeRef[]>;
 };
 
 export type InvestmentPhase = "phase1" | "phase2" | "phase3" | "done";
@@ -138,17 +145,17 @@ const TIER_SNAPSHOTS: TierSnapshot[] = [
   { id: "C1R1", constellation: 1, is5StarWeapon: true, refinement: 1 },
   { id: "C2R1", constellation: 2, is5StarWeapon: true, refinement: 1 },
   { id: "C6R1", constellation: 6, is5StarWeapon: true, refinement: 1 },
+  { id: "C0R5", constellation: 0, is5StarWeapon: true, refinement: 5 },
+  { id: "C1R5", constellation: 1, is5StarWeapon: true, refinement: 5 },
+  { id: "C2R5", constellation: 2, is5StarWeapon: true, refinement: 5 },
   { id: "C6R5", constellation: 6, is5StarWeapon: true, refinement: 5 },
 ];
 
 /**
  * Map a character's investment state to the nearest tier snapshot for artifact reuse.
- * C3-C5 → C2 artifacts, R2-R4 → R1 artifacts, only C6R5 gets its own snapshot.
+ * C3-C5 → C2 artifacts, R2-R4 → R1 artifacts, R5 → R5 snapshots.
  */
 function getNearestSnapshot(inv: CharInvestment): string {
-  if (inv.is5StarWeapon && inv.refinement >= 5 && inv.constellation >= 6) {
-    return "C6R5";
-  }
   const consTier =
     inv.constellation <= 0
       ? 0
@@ -157,8 +164,9 @@ function getNearestSnapshot(inv: CharInvestment): string {
         : inv.constellation <= 2
           ? 2
           : 6;
-  const weaponSuffix = inv.is5StarWeapon ? "R1" : "R0";
-  return `C${consTier}${weaponSuffix}`;
+  if (!inv.is5StarWeapon) return `C${consTier}R0`;
+  const refTier = inv.refinement >= 5 ? 5 : 1;
+  return `C${consTier}R${refTier}`;
 }
 
 // ─── Breakpoint State ───
@@ -235,7 +243,23 @@ function investmentToConfig(
   };
 }
 
-function allocationNodeId(allocation: TeamInvestment): string {
+export function isAllocationReachable(
+  from: TeamInvestment,
+  to: TeamInvestment
+): boolean {
+  for (const cid of Object.keys(from)) {
+    const f = from[cid];
+    const t = to[cid];
+    if (!f || !t) continue;
+    if (t.constellation < f.constellation) return false;
+    if (f.is5StarWeapon && !t.is5StarWeapon) return false;
+    if (f.is5StarWeapon && t.is5StarWeapon && t.refinement < f.refinement)
+      return false;
+  }
+  return true;
+}
+
+export function allocationNodeId(allocation: TeamInvestment): string {
   return Object.entries(allocation)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(
@@ -369,6 +393,9 @@ class InvestmentCache {
   }
   get size(): number {
     return this.nodes.size;
+  }
+  allNodes(): CachedNode[] {
+    return [...this.nodes.values()];
   }
 }
 
@@ -708,7 +735,16 @@ function computePhase2(
   });
 }
 
-// ─── Phase 3: BFS expansion from best-at-M seeds ───
+// ─── Phase 3: Constrained greedy along bestAtM parent→child edges ───
+//
+// Instead of unconstrained BFS, we:
+// 1. Build a DAG among bestAtJin nodes via parent/child reachability
+//    (parent = closest lower-金 node where all C/R ≤ current;
+//     child  = closest higher-金 node where all C/R ≥ current)
+// 2. Run greedy +1M fill along each edge, constrained to not exceed
+//    the child's allocation. This prevents greedy from wandering into
+//    tiny support refinements when it should be building toward a
+//    character's next breakpoint.
 
 function computePhase3(
   cache: InvestmentCache,
@@ -731,77 +767,128 @@ function computePhase3(
     lines: combo.lines.filter((l) => l.count > 0),
   };
 
-  const edges: InvestmentEdge[] = [];
-  const visited = new Set<string>();
-  const queue: string[] = [];
+  // 1. Collect bestAtJin nodes sorted by 金
+  const bestNodes = [...cache.bestAtJin.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([, node]) => node);
 
-  // Seed with all best-at-M nodes
-  for (const node of cache.bestAtJin.values()) {
-    queue.push(node.id);
+  if (bestNodes.length < 2) return [];
+
+  // 2. Build parent→child edges among bestAtJin nodes.
+  //    For each node, find closest reachable child (smallest 金 diff).
+  type BestEdge = { from: CachedNode; to: CachedNode };
+  const bestEdges: BestEdge[] = [];
+  const hasIncoming = new Set<string>();
+
+  for (let i = 0; i < bestNodes.length; i++) {
+    const node = bestNodes[i];
+    let closestChild: CachedNode | null = null;
+    let closestDiff = Number.POSITIVE_INFINITY;
+
+    for (let j = i + 1; j < bestNodes.length; j++) {
+      const cand = bestNodes[j];
+      const diff = cand.jin - node.jin;
+      if (diff >= closestDiff) continue;
+      if (!isAllocationReachable(node.allocation, cand.allocation)) continue;
+      closestDiff = diff;
+      closestChild = cand;
+    }
+
+    if (closestChild) {
+      bestEdges.push({ from: node, to: closestChild });
+      hasIncoming.add(closestChild.id);
+    }
+  }
+
+  // Connect orphan nodes (no incoming edge except baseline) to closest parent
+  for (let i = 1; i < bestNodes.length; i++) {
+    const node = bestNodes[i];
+    if (hasIncoming.has(node.id)) continue;
+
+    let closestParent: CachedNode | null = null;
+    let closestDiff = Number.POSITIVE_INFINITY;
+
+    for (let j = i - 1; j >= 0; j--) {
+      const cand = bestNodes[j];
+      const diff = node.jin - cand.jin;
+      if (diff >= closestDiff) continue;
+      if (!isAllocationReachable(cand.allocation, node.allocation)) continue;
+      closestDiff = diff;
+      closestParent = cand;
+    }
+
+    if (closestParent) {
+      bestEdges.push({ from: closestParent, to: node });
+      hasIncoming.add(node.id);
+    }
   }
 
   onProgress({
     phase: "phase3",
     phaseProgress: 0,
     overallProgress: 0.8,
-    message: `BFS from ${queue.length} seeds...`,
+    message: `Filling ${bestEdges.length} paths between optimal tiers...`,
   });
 
-  let expanded = 0;
+  // 3. Constrained greedy along each bestEdge.
+  //    At each step, only pick +1M upgrades where the resulting allocation
+  //    stays ≤ the target child's allocation (isAllocationReachable).
+  //    This guarantees convergence to the child after exactly (to.jin - from.jin) steps.
+  const edges: InvestmentEdge[] = [];
 
-  while (queue.length > 0) {
-    const nodeId = queue.shift()!;
-    if (visited.has(nodeId)) continue;
-    visited.add(nodeId);
+  for (const { from, to } of bestEdges) {
+    let current: CachedNode = from;
 
-    const node = cache.get(nodeId)!;
-    const upgrades = getSingleStepUpgrades(node.allocation, configs);
+    while (current.jin < to.jin) {
+      const upgrades = getSingleStepUpgrades(
+        current.allocation,
+        configs
+      ).filter((up) => isAllocationReachable(up.allocation, to.allocation));
 
-    // Eval all +1M neighbors (cached automatically)
-    const neighbors: { cached: CachedNode; charId: string; upgrade: string }[] =
-      [];
-    for (const up of upgrades) {
-      const cached = evalAndCache(
-        up.allocation,
-        cache,
-        configs,
-        snapshotCache,
-        baseConfigs,
-        combatOpts,
-        enemyAura,
-        activeCombo,
-        calcContext,
-        reactionOverrides
-      );
-      neighbors.push({ cached, charId: up.charId, upgrade: up.upgrade });
-    }
+      if (upgrades.length === 0) break;
 
-    // Pick best unvisited neighbor
-    let best: (typeof neighbors)[0] | null = null;
-    for (const n of neighbors) {
-      if (visited.has(n.cached.id)) continue;
-      if (!best || n.cached.damage > best.cached.damage) best = n;
-    }
+      let bestUp: {
+        cached: CachedNode;
+        charId: string;
+        upgrade: string;
+      } | null = null;
+      for (const up of upgrades) {
+        const cached = evalAndCache(
+          up.allocation,
+          cache,
+          configs,
+          snapshotCache,
+          baseConfigs,
+          combatOpts,
+          enemyAura,
+          activeCombo,
+          calcContext,
+          reactionOverrides
+        );
+        if (!bestUp || cached.damage > bestUp.cached.damage) {
+          bestUp = { cached, charId: up.charId, upgrade: up.upgrade };
+        }
+      }
 
-    if (best) {
+      if (!bestUp) break;
+
       edges.push({
-        fromId: nodeId,
-        toId: best.cached.id,
-        charId: best.charId,
-        upgrade: best.upgrade,
-        marginalDamage: best.cached.damage - node.damage,
+        fromId: current.id,
+        toId: bestUp.cached.id,
+        charId: bestUp.charId,
+        upgrade: bestUp.upgrade,
+        marginalDamage: bestUp.cached.damage - current.damage,
       });
-      queue.push(best.cached.id);
-    }
 
-    expanded++;
+      current = bestUp.cached;
+    }
   }
 
   onProgress({
     phase: "phase3",
     phaseProgress: 1,
     overallProgress: 0.95,
-    message: `BFS expanded ${expanded} nodes, ${cache.size} total cached`,
+    message: `Filled ${edges.length} steps across ${bestEdges.length} paths`,
   });
   return edges;
 }
@@ -969,13 +1056,24 @@ export async function* runInvestmentAnalysis(
 
   const { sequence, bestAtTier } = deriveSequence(dag);
 
+  // Build nodesByJin from all cached evaluations
+  const nodesByJin = new Map<number, CachedNodeRef[]>();
+  for (const cn of cache.allNodes()) {
+    let list = nodesByJin.get(cn.jin);
+    if (!list) {
+      list = [];
+      nodesByJin.set(cn.jin, list);
+    }
+    list.push({ id: cn.id, allocation: cn.allocation, damage: cn.damage });
+  }
+
   yield {
     phase: "done" as const,
     phaseProgress: 1,
     overallProgress: 1,
     message: "Done",
   };
-  yield { dag, bestAtTier, sequence } satisfies InvestmentResult;
+  yield { dag, bestAtTier, sequence, nodesByJin } satisfies InvestmentResult;
 }
 
 export function isInvestmentResult(
