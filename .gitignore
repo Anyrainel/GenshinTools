@@ -39,6 +39,9 @@ blob-report/
 
 .claude/
 
+# Worktrees
+beta/
+
 coverage/
 temp/
 scripts/data/*.txt
