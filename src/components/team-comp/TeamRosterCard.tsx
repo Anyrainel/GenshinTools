@@ -20,6 +20,7 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById, charactersById, weaponsById } from "@/data/constants";
 import type { AccountData, CharacterData, WeaponResource } from "@/data/types";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { CharacterStats, WeaponStats } from "@/lib/gameStatsLoader";
 import {
   CHARACTER_LEVEL_TIERS,
@@ -69,6 +70,11 @@ export function TeamRosterCard({
   ignoreArtifactSets,
   onIgnoreArtifactSetsChange,
 }: TeamRosterCardProps) {
+  // 3-tier icon sizing: narrow (<560px) → mid (560-1023px) → desktop (≥1024px)
+  const isNarrow = useMediaQuery("(max-width: 559px)");
+  const charIconSize = isNarrow ? "sm" : isMobile ? "md" : "xl";
+  const subIconSize = isNarrow ? "xs" : isMobile ? "sm" : "lg";
+
   const handleOptionChange = (entityId: string, val: string) => {
     updateTeam(team.id, { opts: { ...(team.opts || {}), [entityId]: val } });
   };
@@ -268,7 +274,7 @@ export function TeamRosterCard({
                   <ItemPicker
                     type="character"
                     value={null}
-                    triggerSize={isMobile ? "sm" : "xl"}
+                    triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
                       return !team.characters.some(
@@ -387,7 +393,7 @@ export function TeamRosterCard({
                   <ItemPicker
                     type="character"
                     value={charId}
-                    triggerSize={isMobile ? "sm" : "xl"}
+                    triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
                       return !team.characters.some(
@@ -483,7 +489,7 @@ export function TeamRosterCard({
                   <ItemPicker
                     type="weapon"
                     value={team.weapons[i]}
-                    triggerSize={isMobile ? "xs" : "lg"}
+                    triggerSize={subIconSize}
                     disabled={!charId}
                     filter={(() => {
                       if (!char) return undefined;
@@ -511,7 +517,7 @@ export function TeamRosterCard({
                   <ItemPicker
                     type="artifact"
                     value={team.artifacts[i]}
-                    triggerSize={isMobile ? "xs" : "lg"}
+                    triggerSize={subIconSize}
                     disabled={!charId}
                     onChange={(newArtifact) => {
                       const newArts = [...team.artifacts];

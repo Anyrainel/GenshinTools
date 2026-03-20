@@ -277,12 +277,12 @@ export function InvestmentDialog({
         </div>
 
         {/* Toolbar: analyze button | tabs */}
-        <div className="flex items-center gap-2 py-0.5">
+        <div className="relative flex items-center py-0.5">
           <Button
             onClick={isComputing ? stop : handleRun}
             variant={isComputing ? "destructive" : "default"}
             size="sm"
-            className="shrink-0"
+            className="shrink-0 z-10"
           >
             {isComputing ? (
               <>
@@ -298,37 +298,41 @@ export function InvestmentDialog({
           </Button>
 
           {isComputing && progress ? (
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 ml-2 space-y-1">
               <Progress value={overallPct} className="h-2" />
               <p className="text-xs text-muted-foreground">
                 {progress.message}
               </p>
             </div>
           ) : result ? (
-            <div className="flex gap-1 flex-1 justify-center">
-              {(["chart", "table", "sequence"] as const).map((tab) => (
-                <Button
-                  key={tab}
-                  variant={activeTab === tab ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setActiveTab(tab)}
-                  className="text-xs h-7 px-2.5"
-                >
-                  {tab === "chart"
-                    ? t.ui("teamComp.investChart")
-                    : tab === "table"
-                      ? t.ui("teamComp.investTable")
-                      : t.ui("teamComp.investSequence")}
-                </Button>
-              ))}
+            <div className="absolute inset-0 flex items-center justify-center gap-1 pointer-events-none">
+              <div className="flex gap-1 pointer-events-auto">
+                {(["chart", "table", "sequence"] as const).map((tab) => (
+                  <Button
+                    key={tab}
+                    variant={activeTab === tab ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setActiveTab(tab)}
+                    className="text-sm h-8 px-3"
+                  >
+                    {tab === "chart"
+                      ? t.ui("teamComp.investChart")
+                      : tab === "table"
+                        ? t.ui("teamComp.investTable")
+                        : t.ui("teamComp.investSequence")}
+                  </Button>
+                ))}
+              </div>
             </div>
           ) : null}
-          {error && <p className="text-sm text-destructive">{error.message}</p>}
+          {error && (
+            <p className="text-sm text-destructive z-10">{error.message}</p>
+          )}
         </div>
 
         {/* Results */}
         {result && (
-          <div className="space-y-3 overflow-x-auto">
+          <div className="space-y-3">
             {activeTab === "chart" && (
               <InvestmentChart
                 result={result}

@@ -205,7 +205,7 @@ export function InvestmentSequence({
   const fmtR = (n: number) => t.format("common.refinementFormat", n);
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative overflow-x-auto">
       {/* SVG edge overlay */}
       <svg
         className="absolute inset-0 pointer-events-none"
@@ -256,19 +256,13 @@ export function InvestmentSequence({
                       });
                     });
 
-              const hiddenCids = charIds.filter(
-                (cid) => !changedCids.includes(cid) && node.allocation[cid]
-              );
-              const tooltip =
-                hiddenCids.length > 0
-                  ? hiddenCids
-                      .map((cid) => {
-                        const inv = node.allocation[cid]!;
-                        const cr = `${fmtC(inv.constellation)}${inv.is5StarWeapon ? fmtR(inv.refinement) : ""}`;
-                        return `${t.character(cid)} ${cr}`;
-                      })
-                      .join("\n")
-                  : undefined;
+              const tooltip = charIds
+                .filter((cid) => node.allocation[cid])
+                .map((cid) => {
+                  const inv = node.allocation[cid]!;
+                  return `${t.character(cid)} ${fmtC(inv.constellation)} ${inv.is5StarWeapon ? fmtR(inv.refinement) : ""}`.trim();
+                })
+                .join("\n");
 
               return (
                 <div

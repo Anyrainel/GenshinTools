@@ -87,7 +87,7 @@ const CARD_HEADER_CLS =
   "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
 const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1.5 md:p-3 bg-black/10";
+const CARD_BODY_CLS = "p-1 2xl:p-2 bg-black/10";
 
 /** Shared body for current / optimized / ideal tabs. */
 function DamageBody({
@@ -1024,7 +1024,7 @@ export function DamageCard({
       </CardHeader>
 
       {/* Radio-button selector */}
-      <div className="flex gap-2 px-2 md:px-4 py-2 border-b border-border/20">
+      <div className="flex gap-2 px-2 2xl:px-4 py-2 border-b border-border/20">
         {(
           [
             {

@@ -57,7 +57,7 @@ const getReactionKey = (charId: string, formulaId: string) =>
 
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
-  const isMobile = useMediaQuery("(max-width: 767px)");
+  const isMobile = useMediaQuery("(max-width: 1023px)");
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const updateTeam = useTeamStore((state) => state.updateTeam);

@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
 import { filterMatchesTag } from "@/lib/team-comp/types";
@@ -358,10 +359,21 @@ export function StatSheetPanel({
     }));
   };
 
+  // Compact mode: shrink artifact icons when cards are narrow
+  // Activates below 650px (2x2 cramped) and between 1024-1279px (4x1 cramped)
+  const isNarrow = useMediaQuery("(max-width: 649px)");
+  const isMidCramped = useMediaQuery(
+    "(min-width: 1024px) and (max-width: 1279px)"
+  );
+  const compact = isNarrow || isMidCramped;
+
+  // Hide chevrons on view-mode bar when below desktop width
+  const showChevrons = useMediaQuery("(min-width: 1280px)");
+
   const hasStatSheets = result?.statSheets != null;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2">
       {team.characters.map((charId, i) => {
         if (!charId) return <div key={i} />;
 
@@ -444,18 +456,18 @@ export function StatSheetPanel({
                 <button
                   type="button"
                   onClick={() => onUnfreezeChar(charId)}
-                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-red-400/40 bg-red-500/10 text-red-300 ring-1 ring-red-400/20 hover:bg-red-500/15 hover:text-red-200 hover:ring-red-400/40 transition-colors"
+                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-red-400/40 bg-red-500/10 text-red-300 ring-1 ring-red-400/20 hover:bg-red-500/15 hover:text-red-200 hover:ring-red-400/40 transition-colors whitespace-nowrap"
                 >
-                  <Flame className="w-3 h-3" />
+                  <Flame className="w-3 h-3 shrink-0" />
                   {t.ui("teamComp.unfreezeChar")}
                 </button>
               ) : onFreezeChar && result && hasArtifacts ? (
                 <button
                   type="button"
                   onClick={() => onFreezeChar(charId)}
-                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors"
+                  className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors whitespace-nowrap"
                 >
-                  <Snowflake className="w-3 h-3" />
+                  <Snowflake className="w-3 h-3 shrink-0" />
                   {t.ui("teamComp.freezeChar")}
                 </button>
               ) : null}
@@ -478,6 +490,7 @@ export function StatSheetPanel({
                   charId={charId}
                   artifactsObj={artifactsObj}
                   t={t}
+                  compact={compact}
                   onSwap={
                     onArtifactSwap && !isFrozen
                       ? (slot, art) => onArtifactSwap(charId, slot, art)
@@ -508,18 +521,20 @@ export function StatSheetPanel({
                     type="button"
                     onClick={() => toggleView(charId, mode)}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-0.5 text-[10px] xl:text-xs font-bold px-2.5 py-1 rounded-full transition-all leading-relaxed",
+                      "flex-1 flex items-center justify-center text-[10px] xl:text-xs font-bold px-2.5 py-1 rounded-full transition-all leading-relaxed",
+                      showChevrons && "gap-0.5",
                       activeView === mode
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground/80 hover:bg-white/5"
                     )}
                   >
                     {t.ui(label)}
-                    {activeView === mode ? (
-                      <ChevronUp className="w-3 h-3" />
-                    ) : (
-                      <ChevronDown className="w-3 h-3 opacity-50" />
-                    )}
+                    {showChevrons &&
+                      (activeView === mode ? (
+                        <ChevronUp className="w-3 h-3" />
+                      ) : (
+                        <ChevronDown className="w-3 h-3 opacity-50" />
+                      ))}
                   </button>
                 ))}
               </div>

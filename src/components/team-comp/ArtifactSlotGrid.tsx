@@ -19,12 +19,15 @@ export function ArtifactSlotGrid({
   artifactsObj,
   t,
   onSwap,
+  compact,
 }: {
   charId: string;
   artifactsObj: Record<string, ArtifactData>;
   t: ReturnType<typeof useLanguage>["t"];
   /** When provided, artifacts become clickable to trigger a swap */
   onSwap?: (slot: Slot, artifact: ArtifactData) => void;
+  /** When true, use smaller icon size */
+  compact?: boolean;
 }) {
   return (
     <div className="grid grid-cols-5 gap-1.5">
@@ -62,7 +65,7 @@ export function ArtifactSlotGrid({
                   artifact={art}
                   artInfo={artifactsById[art.setKey]}
                   slot={slot}
-                  size="md"
+                  size={compact ? "xs" : "md"}
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
                   <ArrowRightLeft className="w-4 h-4 text-primary" />
@@ -84,7 +87,7 @@ export function ArtifactSlotGrid({
                 artifact={art}
                 artInfo={artifactsById[art.setKey]}
                 slot={slot}
-                size="md"
+                size={compact ? "xs" : "md"}
               />
             </div>
           </ArtifactDataHoverCard>
