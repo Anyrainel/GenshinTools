@@ -239,9 +239,15 @@ class Citlali extends CharacterBase {
     };
     // E Obsidian Tzitzimitl initial hit: Lv10 131.3%, Lv13 (C3+) 155%
     const eInitMult = this.constellation >= 3 ? 1.55 : 1.313;
+    const c4Skulls = this.constellation >= 6 ? 3 : 2;
+    const c4Prefix = this.constellation >= 4 ? "C4 " : "";
+    const c4Zh = this.constellation >= 4 ? "4命 " : "";
     return {
       "citlali-e-total": {
-        label: { zh: "E总伤害", en: "E Total" },
+        label: {
+          zh: `${c4Zh}E+风暴×${eHits}`,
+          en: `${c4Prefix}E + Storm ×${eHits}`,
+        },
         parts: [
           { formula: new DirectFormula(eInitMult, skillTag) },
           {
@@ -254,7 +260,7 @@ class Citlali extends CharacterBase {
             ? [
                 {
                   formula: new DirectFormula(18.0, skillTag, "em"),
-                  hits: this.constellation >= 6 ? 3 : 2,
+                  hits: c4Skulls,
                   offField: true,
                 },
               ]
@@ -262,7 +268,7 @@ class Citlali extends CharacterBase {
         ],
       },
       "citlali-burst-total": {
-        label: { zh: "Q总伤害(后台)", en: "Q Total" },
+        label: { zh: "Q+骷髅爆炸", en: "Q + Skull" },
         parts: [
           { formula: new DirectFormula(qMult, burstTag) },
           {

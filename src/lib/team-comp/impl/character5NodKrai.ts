@@ -25,7 +25,7 @@ import type { ReactionType } from "../types";
 // ═══════════════════════════════════════════════════════════════
 
 const columbinaOption = {
-  label: { zh: "主要月曜反应", en: "Dominant Lunar Reaction" },
+  label: { zh: "主要月曜反应", en: "Dominant Reaction" },
   choices: [
     {
       value: "lunarBloom",
