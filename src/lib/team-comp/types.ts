@@ -10,6 +10,7 @@ import type {
 } from "@/data/types";
 
 import type { StatSheet } from "./damageModels";
+import type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
 
 /**
  * All stat keys the engine tracks.
@@ -196,6 +197,7 @@ export type DisplayPart = {
   scalingMulti: number[];
   damage: number;
   hits?: number;
+  offField?: boolean;
   tag?: DamageTag;
 };
 
@@ -275,6 +277,8 @@ export type CalcContext = {
   assumeCrit: boolean;
   critRateTarget?: number; // 0–100 integer; undefined = disabled
   rollMultiplier?: number; // ideal-gen only; 0.7–1.0, default 0.85
+  /** ideal-gen only; per-slot substat roll totals; default 8_6 */
+  idealSubstatBudget?: IdealSubstatBudgetPreset;
 };
 
 // ─── Reaction Override (Formula v2) ───

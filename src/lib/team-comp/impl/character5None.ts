@@ -408,7 +408,13 @@ class TravelerAnemo extends CharacterBase {
     const formulas: Record<string, FormulaEntry> = {
       "traveler-anemo-burst": {
         label: { zh: "Q伤害×8", en: "Q (×8)" },
-        parts: [{ formula: new DirectFormula(qTick, anemoBurst), hits: 8 }],
+        parts: [
+          {
+            formula: new DirectFormula(qTick, anemoBurst),
+            hits: 8,
+            offField: true,
+          },
+        ],
       },
     };
     // Add absorbed-element variant formulas (S10 pattern)
@@ -422,7 +428,11 @@ class TravelerAnemo extends CharacterBase {
           en: `Q (×8) + Absorbed (${el})`,
         },
         parts: [
-          { formula: new DirectFormula(qTick, anemoBurst), hits: 8 },
+          {
+            formula: new DirectFormula(qTick, anemoBurst),
+            hits: 8,
+            offField: true,
+          },
           {
             formula: new DirectFormula(absorbTick, {
               element: el,
@@ -430,6 +440,7 @@ class TravelerAnemo extends CharacterBase {
               reaction: "none",
             }),
             hits: 8,
+            offField: true,
           },
         ],
       };
@@ -572,7 +583,11 @@ class TravelerElectro extends CharacterBase {
         },
         parts: [
           { formula: new DirectFormula(qInitial, electroBurst) },
-          { formula: new DirectFormula(qTick, electroBurst), hits: 12 },
+          {
+            formula: new DirectFormula(qTick, electroBurst),
+            hits: 12,
+            offField: true,
+          },
         ],
       },
     };
@@ -678,6 +693,7 @@ class TravelerDendro extends CharacterBase {
               reaction: "none",
             }),
             hits: 12,
+            offField: true,
           },
         ],
       },
@@ -731,6 +747,7 @@ class TravelerHydro extends CharacterBase {
               reaction: "none",
             }),
             hits: 4,
+            offField: true,
           },
         ],
       },
@@ -817,6 +834,7 @@ class TravelerPyro extends CharacterBase {
               reaction: "none",
             }),
             hits: 12,
+            offField: true,
           },
         ],
       },
@@ -859,13 +877,19 @@ function manekinFormulas(element: Element) {
       label: { zh: "Q生成+踏入×16", en: "Q Summon + Trespass ×16" },
       parts: [
         { formula: new DirectFormula(5.832, tag("burst")) },
-        { formula: new DirectFormula(0.504, tag("burst")), hits: 16 },
+        {
+          formula: new DirectFormula(0.504, tag("burst")),
+          hits: 16,
+          offField: true,
+        },
       ],
     },
     // - P1: When leaving field with Q active, Restricted Area explodes for 200% ATK
     "manekin-p1-explosion": {
       label: { zh: "P1 Q爆炸", en: "P1 Q Explosion" },
-      parts: [{ formula: new DirectFormula(2.0, tag("burst")) }],
+      parts: [
+        { formula: new DirectFormula(2.0, tag("burst")), offField: true },
+      ],
     },
   };
 }

@@ -329,10 +329,20 @@ class Fischl extends CharacterBase {
       "fischl-oz-total": {
         label: { zh: "E奥兹连击", en: "E Oz Combo" },
         parts: [
-          { formula: new DirectFormula(ozTickMult, tag), hits: ozHits },
+          {
+            formula: new DirectFormula(ozTickMult, tag),
+            hits: ozHits,
+            offField: true,
+          },
           // C6: Oz coordinated attack, 30% ATK Electro per active character hit
           ...(this.constellation >= 6
-            ? [{ formula: new DirectFormula(0.3, tag), hits: ozHits }]
+            ? [
+                {
+                  formula: new DirectFormula(0.3, tag),
+                  hits: ozHits,
+                  offField: true,
+                },
+              ]
             : []),
         ],
       },
@@ -430,6 +440,7 @@ class Rosaria extends CharacterBase {
           {
             formula: new DirectFormula(tickMult, cryoBurst),
             hits: tickCount,
+            offField: true,
           },
         ],
       },
@@ -546,6 +557,7 @@ class Sucrose extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -709,6 +721,7 @@ class Kaeya extends CharacterBase {
               reaction: "none",
             }),
             hits: qHits,
+            offField: true,
           },
         ],
       },
@@ -763,6 +776,7 @@ class Lisa extends CharacterBase {
               reaction: "none",
             }),
             hits: qHitCount,
+            offField: true,
           },
         ],
       },

@@ -14,7 +14,7 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
-import { TeamBuild, evaluateCombo } from "../damageCalc";
+import { TeamBuild, evaluateCombo, hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type {
   CalcContext,
@@ -593,6 +593,19 @@ export async function* runTeamOptimization(
       }
     : undefined;
 
+  // Helper: compute off-field stats for a given team build and sheets
+  const getOffFieldStatsFor = (
+    tb: TeamBuild,
+    sheets: Record<string, StatSheet>
+  ): Record<string, StatSheet> | undefined => {
+    if (!hasOffFieldParts(tb, carryCharId, formulaId)) return undefined;
+    const otherCharId = Object.keys(tb.charBuilds).find(
+      (id) => id !== carryCharId
+    );
+    if (!otherCharId) return undefined;
+    return tb.getTeamStats(sheets, otherCharId, calcContext);
+  };
+
   const allCharIds = Object.keys(perChar);
   const carryCharIds = isComboMode
     ? allCharIds.filter((id) =>
@@ -628,7 +641,8 @@ export async function* runTeamOptimization(
             formulaId,
             ps,
             calcContext,
-            reactionOverride
+            reactionOverride,
+            getOffFieldStatsFor(teamBuild, emptySheets)
           ).totalDamage;
         }
 
@@ -660,7 +674,8 @@ export async function* runTeamOptimization(
             formulaId,
             ps,
             calcContext,
-            reactionOverride
+            reactionOverride,
+            getOffFieldStatsFor(teamBuild, superSheets)
           ).totalDamage;
         }
 
@@ -1282,7 +1297,8 @@ export async function* runTeamOptimization(
         formulaId,
         postStats,
         calcContext,
-        reactionOverride
+        reactionOverride,
+        getOffFieldStatsFor(effectiveTeamBuild, sheets)
       ).totalDamage;
     } catch {
       return 0;
@@ -1386,19 +1402,20 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Phase 3: Team Refinement (ranked budget)
+  // Phase 3: Parallel Best-First Team Refinement
   //
-  // Re-optimize all characters with real teammate artifacts (from Phase 2).
-  // Characters are ranked by importance (carries first, then by Phase 1
-  // best damage). Budget scales by rank: 1×, 0.75×, 0.5×, 0.25×.
-  // Up to MAX_REOPT_PASSES iterations, stopping early if no improvement.
+  // Run ALL non-saturated characters' B&B in parallel via web workers.
+  // Each round: all characters get B&B with current teammates' artifacts
+  // excluded. Only the single best improvement is committed per round.
+  // Repeat until no character improves (or team deadline hit).
+  // Budget scales by rank: 1×, 0.75×, 0.5×, 0.25×.
   // ════════════════════════════════════════════════════════════════════
 
-  const MAX_REOPT_PASSES = 3;
+  const MAX_PHASE3_ROUNDS = 6;
   const BUDGET_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
 
   // Rank characters: carries first, then supports, sorted by Phase 1 best damage
-  const reoptChars = allCharIds
+  const phase3Chars = allCharIds
     .filter((id) => effectivePerChar[id] && !saturatedCharIds.has(id))
     .sort((a, b) => {
       const aIsCarry = carryCharIds.includes(a);
@@ -1409,40 +1426,76 @@ export async function* runTeamOptimization(
       return bDmg - aDmg;
     });
 
-  const reoptTotalSteps = MAX_REOPT_PASSES * reoptChars.length;
-  for (let reoptPass = 0; reoptPass < MAX_REOPT_PASSES; reoptPass++) {
-    // If team deadline is set and remaining time < 1s, skip further passes
+  const usePhase3Workers =
+    typeof Worker !== "undefined" && phase3Chars.length > 1;
+
+  for (let round = 0; round < MAX_PHASE3_ROUNDS; round++) {
     if (teamDeadlineMs && teamDeadlineMs - performance.now() < 1000) break;
 
-    let anyImproved = false;
+    // Yield Phase 3 progress
+    yield {
+      currentPass: "carry-2",
+      currentPassCharId: carryCharId,
+      passIndex: allCharIds.length + 1,
+      totalPasses: totalPhases + 1,
+      passPhase: "evaluating",
+      passProgress: round / MAX_PHASE3_ROUNDS,
+      overallProgress:
+        INIT_WEIGHT +
+        PHASE1_WEIGHT +
+        PHASE2_WEIGHT +
+        PHASE3_WEIGHT * (round / MAX_PHASE3_ROUNDS),
+      phase: "phase3",
+      passResults: [...passResults],
+      done: false,
+    } satisfies TeamOptimizationProgress;
+    await new Promise((r) => setTimeout(r, 0));
 
-    for (let rankIdx = 0; rankIdx < reoptChars.length; rankIdx++) {
-      const charId = reoptChars[rankIdx];
+    // Compute current team damage baseline
+    const currentTeamDamage = (() => {
+      const sheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
+      if (comboScoreFn) return comboScoreFn(sheets, carryCharId);
+      try {
+        const ps = effectiveTeamBuild.getTeamStats(
+          sheets,
+          carryCharId,
+          calcContext
+        );
+        return effectiveTeamBuild.getDamageResult(
+          carryCharId,
+          formulaId,
+          ps,
+          calcContext,
+          reactionOverride,
+          getOffFieldStatsFor(effectiveTeamBuild, sheets)
+        ).totalDamage;
+      } catch {
+        return 0;
+      }
+    })();
+
+    // Build per-character inputs (base sheets + exclusions)
+    type Phase3CharInput = {
+      charId: string;
+      charConfig: PerCharConfig;
+      rankIdx: number;
+      refinedBaseSheets: Record<string, StatSheet>;
+      refinedSheetsDump: Record<
+        string,
+        { key: StatKey; filterKey: string; value: number }[]
+      >;
+      excludedIds: string[];
+      currentDamage: number;
+    };
+
+    const charInputs: Phase3CharInput[] = [];
+
+    for (let rankIdx = 0; rankIdx < phase3Chars.length; rankIdx++) {
+      const charId = phase3Chars[rankIdx];
       const charConfig = effectivePerChar[charId]!;
 
-      // Yield Phase 3 progress
-      const reoptStep = reoptPass * reoptChars.length + rankIdx;
-      yield {
-        currentPass: "carry-2",
-        currentPassCharId: charId,
-        passIndex: allCharIds.length + 1,
-        totalPasses: totalPhases + 1,
-        passPhase: "evaluating",
-        passProgress: reoptStep / reoptTotalSteps,
-        overallProgress:
-          INIT_WEIGHT +
-          PHASE1_WEIGHT +
-          PHASE2_WEIGHT +
-          PHASE3_WEIGHT * (reoptStep / reoptTotalSteps),
-        phase: "phase3",
-        passResults: [...passResults],
-        done: false,
-      } satisfies TeamOptimizationProgress;
-      await new Promise((r) => setTimeout(r, 0));
-
-      // Build base sheets from current team assignment (all other chars)
-      const reoptBaseSheets: Record<string, StatSheet> = { ...baseSheets };
-      const reoptExcluded = new Set<string>();
+      const refinedBaseSheets: Record<string, StatSheet> = { ...baseSheets };
+      const excludedIdSet = new Set<string>();
 
       for (const otherId of allCharIds) {
         if (otherId === charId) continue;
@@ -1452,12 +1505,12 @@ export async function* runTeamOptimization(
           .map((s) => otherArts[s])
           .filter((a): a is ArtifactData => a != null);
         if (pieces.length > 0) {
-          reoptBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
+          refinedBaseSheets[otherId] = StatSheet.fromArtifacts(pieces);
         }
-        for (const art of pieces) reoptExcluded.add(art.id);
+        for (const art of pieces) excludedIdSet.add(art.id);
       }
 
-      // Evaluate current assignment in this context
+      // Evaluate current assignment
       const currentPieces = allSlots.map(
         (s) => bestArtifactsByChar[charId]?.[s] ?? null
       ) as ArtifactTuple;
@@ -1467,7 +1520,7 @@ export async function* runTeamOptimization(
         charId,
         carryCharId,
         formulaId,
-        reoptBaseSheets,
+        refinedBaseSheets,
         carryCharId,
         calcContext,
         charId,
@@ -1477,43 +1530,239 @@ export async function* runTeamOptimization(
         comboScoreFn
       );
 
-      // Budget scales by rank: rank 0 = full, rank 1 = 75%, rank 2 = 50%, rank 3 = 25%
-      const budgetMultiplier =
-        BUDGET_MULTIPLIERS[Math.min(rankIdx, BUDGET_MULTIPLIERS.length - 1)];
-      const reoptDeadline = perCharDeadlineMs
-        ? performance.now() + perCharDeadlineMs * budgetMultiplier
-        : undefined;
-      const reoptResult = runCharacterBnB(
+      // Serialize sheets for worker
+      const sheetsDump: Record<
+        string,
+        { key: StatKey; filterKey: string; value: number }[]
+      > = {};
+      for (const [cid, sheet] of Object.entries(refinedBaseSheets)) {
+        sheetsDump[cid] = sheet.toSerializable();
+      }
+
+      charInputs.push({
         charId,
         charConfig,
-        effectiveTeamBuild,
-        carryCharId,
-        formulaId,
-        inventory,
-        globalConfig,
-        reoptBaseSheets,
-        calcContext,
-        reoptExcluded,
-        reactionOverride,
-        comboScoreFn,
-        TOP_K,
-        reoptDeadline,
-        currentEval.damage > 0 ? currentEval.damage : undefined,
-        maxArtsPerSlot ?? 0
+        rankIdx,
+        refinedBaseSheets,
+        refinedSheetsDump: sheetsDump,
+        excludedIds: [...excludedIdSet],
+        currentDamage: currentEval.damage,
+      });
+    }
+
+    // Run all characters' B&B in parallel (or sequential fallback)
+    type Phase3Result = {
+      charId: string;
+      bestArtifacts: ArtifactTuple | null;
+      bestDamage: number;
+      currentDamage: number;
+    };
+
+    let phase3Results: Phase3Result[];
+
+    if (usePhase3Workers) {
+      // Parallel via web workers
+      const workerPromises = charInputs.map(
+        (input) =>
+          new Promise<Phase3Result>((resolve) => {
+            const worker = new Worker(
+              new URL("../optimizerV2.worker.ts", import.meta.url),
+              { type: "module" }
+            );
+
+            const budgetMultiplier =
+              BUDGET_MULTIPLIERS[
+                Math.min(input.rankIdx, BUDGET_MULTIPLIERS.length - 1)
+              ];
+            const budgetMs = perCharDeadlineMs
+              ? perCharDeadlineMs * budgetMultiplier
+              : undefined;
+            const timeoutMs = (budgetMs ?? 15_000) * 1.5;
+            const timeoutId = setTimeout(() => {
+              worker.terminate();
+              resolve({
+                charId: input.charId,
+                bestArtifacts: null,
+                bestDamage: input.currentDamage,
+                currentDamage: input.currentDamage,
+              });
+            }, timeoutMs);
+
+            worker.onmessage = (
+              e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
+            ) => {
+              const resp = e.data;
+              if (resp.type === "progress") return; // ignore progress in Phase 3
+              clearTimeout(timeoutId);
+              worker.terminate();
+              if (resp.type === "error") {
+                resolve({
+                  charId: input.charId,
+                  bestArtifacts: null,
+                  bestDamage: input.currentDamage,
+                  currentDamage: input.currentDamage,
+                });
+                return;
+              }
+              const best = resp.entries[0];
+              if (best && best.damage > input.currentDamage) {
+                resolve({
+                  charId: input.charId,
+                  bestArtifacts: best.artifacts as ArtifactTuple,
+                  bestDamage: best.damage,
+                  currentDamage: input.currentDamage,
+                });
+              } else {
+                resolve({
+                  charId: input.charId,
+                  bestArtifacts: null,
+                  bestDamage: input.currentDamage,
+                  currentDamage: input.currentDamage,
+                });
+              }
+            };
+
+            worker.onerror = () => {
+              clearTimeout(timeoutId);
+              worker.terminate();
+              resolve({
+                charId: input.charId,
+                bestArtifacts: null,
+                bestDamage: input.currentDamage,
+                currentDamage: input.currentDamage,
+              });
+            };
+
+            const request: import("../optimizerV2.worker").BnBWorkerRequest = {
+              id: 0,
+              charId: input.charId,
+              charConfig: input.charConfig,
+              configs: teamBuild.configs,
+              combatOpts: teamBuild.combatOpts,
+              enemyElementAura: teamBuild.enemyElementAura,
+              carryCharId,
+              formulaId,
+              inventory,
+              globalConfig,
+              baseSheetsDump: input.refinedSheetsDump,
+              calcContext,
+              reactionOverride,
+              topK: TOP_K,
+              deadlineMs: budgetMs,
+              warmStartThreshold:
+                input.currentDamage > 0 ? input.currentDamage : undefined,
+              maxArtsPerSlot: maxArtsPerSlot ?? 0,
+              excludedIds: input.excludedIds,
+              isComboMode,
+              combo: isComboMode ? combo : undefined,
+              reactionOverrides: isComboMode ? reactionOverrides : undefined,
+            };
+
+            worker.postMessage(request);
+          })
       );
 
-      if (
-        reoptResult.collector.best &&
-        reoptResult.collector.best.damage > currentEval.damage
-      ) {
-        bestArtifactsByChar[charId] = artsTupleToRecord(
-          reoptResult.collector.best.artifacts
+      phase3Results = await Promise.all(workerPromises);
+    } else {
+      // Sequential fallback (single char or no Worker support)
+      phase3Results = charInputs.map((input) => {
+        const budgetMultiplier =
+          BUDGET_MULTIPLIERS[
+            Math.min(input.rankIdx, BUDGET_MULTIPLIERS.length - 1)
+          ];
+        const reoptDeadline = perCharDeadlineMs
+          ? performance.now() + perCharDeadlineMs * budgetMultiplier
+          : undefined;
+
+        const reoptResult = runCharacterBnB(
+          input.charId,
+          input.charConfig,
+          effectiveTeamBuild,
+          carryCharId,
+          formulaId,
+          inventory,
+          globalConfig,
+          input.refinedBaseSheets,
+          calcContext,
+          new Set(input.excludedIds),
+          reactionOverride,
+          comboScoreFn,
+          TOP_K,
+          reoptDeadline,
+          input.currentDamage > 0 ? input.currentDamage : undefined,
+          maxArtsPerSlot ?? 0
         );
-        anyImproved = true;
+
+        if (
+          reoptResult.collector.best &&
+          reoptResult.collector.best.damage > input.currentDamage
+        ) {
+          return {
+            charId: input.charId,
+            bestArtifacts: reoptResult.collector.best
+              .artifacts as ArtifactTuple,
+            bestDamage: reoptResult.collector.best.damage,
+            currentDamage: input.currentDamage,
+          };
+        }
+        return {
+          charId: input.charId,
+          bestArtifacts: null,
+          bestDamage: input.currentDamage,
+          currentDamage: input.currentDamage,
+        };
+      });
+    }
+
+    // Pick best improvement: tentatively apply each candidate and measure team damage
+    let bestImprovement = 0;
+    let bestCharId: string | null = null;
+    let bestNewArtifacts: ArtifactTuple | null = null;
+
+    for (const result of phase3Results) {
+      if (!result.bestArtifacts) continue;
+      const tentativeArts = { ...bestArtifactsByChar };
+      tentativeArts[result.charId] = artsTupleToRecord(result.bestArtifacts);
+      const tentativeSheets = buildSheetsFromArtifacts(
+        baseSheets,
+        tentativeArts
+      );
+      let tentativeDamage: number;
+      if (comboScoreFn) {
+        tentativeDamage = comboScoreFn(tentativeSheets, carryCharId);
+      } else {
+        try {
+          const ps = effectiveTeamBuild.getTeamStats(
+            tentativeSheets,
+            carryCharId,
+            calcContext
+          );
+          tentativeDamage = effectiveTeamBuild.getDamageResult(
+            carryCharId,
+            formulaId,
+            ps,
+            calcContext,
+            reactionOverride,
+            getOffFieldStatsFor(effectiveTeamBuild, tentativeSheets)
+          ).totalDamage;
+        } catch {
+          tentativeDamage = 0;
+        }
+      }
+
+      const improvement = tentativeDamage - currentTeamDamage;
+      if (improvement > bestImprovement) {
+        bestImprovement = improvement;
+        bestCharId = result.charId;
+        bestNewArtifacts = result.bestArtifacts;
       }
     }
 
-    if (!anyImproved) break;
+    // No improvement → stop
+    if (!bestCharId || !bestNewArtifacts) break;
+
+    // Commit the best character's new artifacts
+    bestArtifactsByChar[bestCharId] = artsTupleToRecord(bestNewArtifacts);
   }
 
   // ════════════════════════════════════════════════════════════════════
@@ -1752,7 +2001,8 @@ export async function* runTeamOptimization(
       formulaId,
       finalPostStats,
       calcContext,
-      reactionOverride
+      reactionOverride,
+      getOffFieldStatsFor(effectiveTeamBuild, finalSheets)
     );
     yield {
       ...resultBase,

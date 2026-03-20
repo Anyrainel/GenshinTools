@@ -173,6 +173,8 @@ export type OptimizerContext = {
   targetDependent: Record<string, StatBuff[]>;
   supportPreStats: Record<string, StatSheet>;
   charBuildOrder: [string, CharBuild][];
+  /** Original artifact stat sheets (needed for off-field stat recomputation). */
+  baseSheets: Record<string, StatSheet>;
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -402,14 +404,16 @@ export class CharBuild {
     selfPostStats: StatSheet,
     teamPostStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    offFieldSelfPostStats?: StatSheet
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
       selfPostStats,
       teamPostStats,
       ctx,
-      reactionOverride
+      reactionOverride,
+      offFieldSelfPostStats
     );
   }
 
@@ -418,28 +422,40 @@ export class CharBuild {
     formulaId: string,
     selfPostStats: StatSheet,
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    offFieldSelfPostStats?: StatSheet
   ): { parts: DisplayPart[]; totalDamage: number } {
     const entry = this.charBase.getFormulaEntry(formulaId);
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const displayParts: DisplayPart[] = [];
     let totalDamage = 0;
     for (let i = 0; i < entry.parts.length; i++) {
-      const { formula, hits: totalHits, bespokeBuff } = entry.parts[i];
+      const {
+        formula,
+        hits: totalHits,
+        bespokeBuff,
+        offField,
+      } = entry.parts[i];
       const h = totalHits ?? 1;
+
+      // Use off-field stats when the part deals damage while the character is off-field
+      const baseSelfStats =
+        offField && offFieldSelfPostStats
+          ? offFieldSelfPostStats
+          : selfPostStats;
 
       // Apply per-part stat overlay if present
       const stats = bespokeBuff
-        ? selfPostStats.merge(
+        ? baseSelfStats.merge(
             StatSheet.fromEntries(
               [
                 ...bespokeBuff.staticBuffs,
-                ...bespokeBuff.dynamicBuffs(selfPostStats, []),
+                ...bespokeBuff.dynamicBuffs(baseSelfStats, []),
               ],
               bespokeBuff.target.filter
             )
           )
-        : selfPostStats;
+        : baseSelfStats;
 
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
@@ -449,6 +465,7 @@ export class CharBuild {
       if (!hasReaction || formula.tag.reaction !== "none") {
         const dp = formula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = h;
+        if (offField) dp.offField = true;
         totalDamage += dp.damage * h;
         displayParts.push(dp);
         continue;
@@ -481,12 +498,14 @@ export class CharBuild {
           ctx
         );
         dp.hits = reactingHits;
+        if (offField) dp.offField = true;
         totalDamage += dp.damage * reactingHits;
         displayParts.push(dp);
       }
       if (nonReactingHits > 0) {
         const dp = formula.display(stats, this.charBase.charLevel, ctx);
         dp.hits = nonReactingHits;
+        if (offField) dp.offField = true;
         totalDamage += dp.damage * nonReactingHits;
         displayParts.push(dp);
       }
@@ -771,6 +790,7 @@ export class TeamBuild {
       targetDependent,
       supportPreStats,
       charBuildOrder,
+      baseSheets,
     };
   }
 
@@ -850,7 +870,8 @@ export class TeamBuild {
     formulaId: string,
     teamStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    offFieldTeamStats?: Record<string, StatSheet>
   ): DamageResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -860,7 +881,8 @@ export class TeamBuild {
       teamStats[charId]!,
       teamStatsArr,
       ctx,
-      reactionOverride
+      reactionOverride,
+      offFieldTeamStats?.[charId]
     );
   }
 
@@ -940,11 +962,29 @@ export class TeamBuild {
       }
     }
 
+    // Compute off-field stats for display if the formula has off-field parts
+    const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
+    let offFieldPostStats: StatSheet | undefined;
+    if (formulaHasOffField) {
+      const otherCharId = Object.keys(this.charBuilds).find(
+        (id) => id !== charId
+      );
+      if (otherCharId) {
+        const offFieldTeamStats = this.getTeamStats(
+          artifactStats,
+          otherCharId,
+          ctx
+        );
+        offFieldPostStats = offFieldTeamStats[charId];
+      }
+    }
+
     const { parts, totalDamage } = build.getDisplayParts(
       formulaId,
       postStats[charId]!,
       ctx,
-      reactionOverride
+      reactionOverride,
+      offFieldPostStats
     );
 
     // ── Buff resolution ──
@@ -1429,6 +1469,56 @@ export class TeamBuild {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// Off-Field Helpers
+// ═══════════════════════════════════════════════════════════════
+
+/** Check if a formula has any off-field parts. */
+export function hasOffFieldParts(
+  teamBuild: TeamBuild,
+  charId: string,
+  formulaId: string
+): boolean {
+  const entry =
+    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+  return entry?.parts.some((p) => p.offField) ?? false;
+}
+
+/** Check if ALL parts of a formula are off-field. */
+export function isFullyOffField(
+  teamBuild: TeamBuild,
+  charId: string,
+  formulaId: string
+): boolean {
+  const entry =
+    teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+  return (
+    (entry?.parts.length ?? 0) > 0 && entry!.parts.every((p) => p.offField)
+  );
+}
+
+/**
+ * Compute off-field stats for a formula character.
+ * Returns stats where calcTargetId is NOT the formula character,
+ * so onField/selfOnField buffs don't apply to them.
+ */
+function getOffFieldStats(
+  teamBuild: TeamBuild,
+  artifactStats: Record<string, StatSheet>,
+  formulaCharId: string,
+  ctx: CalcContext
+): Record<string, StatSheet> {
+  // Pick any other team member as the on-field character
+  const otherCharId = Object.keys(teamBuild.charBuilds).find(
+    (id) => id !== formulaCharId
+  );
+  if (!otherCharId) {
+    // Solo team — no off-field distinction possible
+    return teamBuild.getTeamStats(artifactStats, formulaCharId, ctx);
+  }
+  return teamBuild.getTeamStats(artifactStats, otherCharId, ctx);
+}
+
+// ═══════════════════════════════════════════════════════════════
 // Combo Evaluation
 // ═══════════════════════════════════════════════════════════════
 
@@ -1468,6 +1558,18 @@ export function evaluateCombo(
 
   const lineDamages = validLines.map((line) => {
     const teamStats = getStats(line.charId);
+
+    // Compute off-field stats if the formula has off-field parts
+    let offFieldTeamStats: Record<string, StatSheet> | undefined;
+    if (hasOffFieldParts(teamBuild, line.charId, line.formulaId)) {
+      // Pick any other team member as on-field to get stats without onField buffs
+      const otherCharId = Object.keys(teamBuild.charBuilds).find(
+        (id) => id !== line.charId
+      );
+      if (otherCharId) {
+        offFieldTeamStats = getStats(otherCharId);
+      }
+    }
 
     // Merge: single-mode per-part config as defaults, combo line overrides on top
     let effectiveReaction = line.reaction;
@@ -1510,7 +1612,8 @@ export function evaluateCombo(
       line.formulaId,
       teamStats,
       ctx,
-      effectiveReaction
+      effectiveReaction,
+      offFieldTeamStats
     );
     return {
       perHit: result.totalDamage,

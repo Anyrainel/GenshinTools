@@ -147,6 +147,7 @@ class Charlotte extends CharacterBase {
                   ability: "burst",
                   reaction: "none",
                 }),
+                offField: true,
               },
             ],
           },

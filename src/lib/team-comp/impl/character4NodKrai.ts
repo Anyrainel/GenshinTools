@@ -153,6 +153,7 @@ class Illuga extends CharacterBase {
                   "em",
                   { key: "def", multiplier: 2.0 }
                 ),
+                offField: true,
               },
             ],
           },
@@ -279,6 +280,7 @@ class Aino extends CharacterBase {
               reaction: "none",
             }),
             hits: 14,
+            offField: true,
           },
         ],
       },
@@ -299,6 +301,7 @@ class Aino extends CharacterBase {
                     { key: "em", multiplier: 1.0 }
                   ),
                   hits: 3,
+                  offField: true,
                 },
               ],
             },

@@ -255,6 +255,7 @@ class Ororon extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
           // C6: Q use triggers one Hypersense-equivalent hit (200% of Hypersense DMG)
           ...(this.constellation >= 6
@@ -265,6 +266,7 @@ class Ororon extends CharacterBase {
                     ability: "special",
                     reaction: "none",
                   }),
+                  offField: true,
                 },
               ]
             : []),
@@ -283,6 +285,7 @@ class Ororon extends CharacterBase {
               reaction: "none",
             }),
             hits: 8,
+            offField: true,
           },
         ],
       },
@@ -345,6 +348,7 @@ class Kachina extends CharacterBase {
               },
               "def"
             ),
+            offField: true,
           },
         ],
       },

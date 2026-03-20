@@ -430,7 +430,7 @@ export function runCharacterBnB(
         calcTargetId,
         calcContext
       );
-      const effectiveCr = blStats[formulaCharId]?.get("cr") ?? 0;
+      const effectiveCr = blStats[formulaCharId]?.get("cr", null) ?? 0;
       crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
     }
   }
@@ -614,8 +614,10 @@ export function runCharacterBnB(
   if (charConfig.minEr > 0 || charConfig.minCr > 0) {
     const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-    if (charConfig.minEr > 0) erFloor = blStats[erCheckCharId]?.get("er") ?? 0;
-    if (charConfig.minCr > 0) crFloor = blStats[erCheckCharId]?.get("cr") ?? 0;
+    if (charConfig.minEr > 0)
+      erFloor = blStats[erCheckCharId]?.get("er", null) ?? 0;
+    if (charConfig.minCr > 0)
+      crFloor = blStats[erCheckCharId]?.get("cr", null) ?? 0;
   }
 
   // Precompute optimizer context for fast getTeamStats (caches support preStats)

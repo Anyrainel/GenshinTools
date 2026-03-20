@@ -244,23 +244,31 @@ class Citlali extends CharacterBase {
         label: { zh: "E总伤害", en: "E Total" },
         parts: [
           { formula: new DirectFormula(eInitMult, skillTag) },
-          { formula: new DirectFormula(eStormMult, skillTag), hits: eHits },
+          {
+            formula: new DirectFormula(eStormMult, skillTag),
+            hits: eHits,
+            offField: true,
+          },
           // C4: Obsidian Spiritvessel Skull (1800% EM, once per 8s)
           ...(this.constellation >= 4
             ? [
                 {
                   formula: new DirectFormula(18.0, skillTag, "em"),
                   hits: this.constellation >= 6 ? 3 : 2,
+                  offField: true,
                 },
               ]
             : []),
         ],
       },
       "citlali-burst-total": {
-        label: { zh: "Q总伤害", en: "Q Total" },
+        label: { zh: "Q总伤害(后台)", en: "Q Total" },
         parts: [
           { formula: new DirectFormula(qMult, burstTag) },
-          { formula: new DirectFormula(qSkullMult, burstTag) },
+          {
+            formula: new DirectFormula(qSkullMult, burstTag),
+            offField: true,
+          },
         ],
       },
     };
@@ -630,6 +638,7 @@ class Chasca extends CharacterBase {
               nElems > 0 ? shiningMult * 1.5 : shellMult * 1.5,
               nElems > 0 ? chargeTagFor(elems[0]) : anemoChargeTag
             ),
+            offField: true,
           },
         ],
       },
@@ -1100,6 +1109,7 @@ class Kinich extends CharacterBase {
               reaction: "none",
             }),
             hits: 5,
+            // This can be off-field, but kinich play style usually interleave Q and E, so on-field is more common.
           },
         ],
       },

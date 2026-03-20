@@ -234,6 +234,7 @@ class Columbina extends CharacterBase {
               "hp"
             ),
             hits: eInterferenceHits,
+            offField: true,
           },
         ],
       },
@@ -247,6 +248,7 @@ class Columbina extends CharacterBase {
               { element: "Hydro", ability: "skill", reaction: "none" },
               "hp"
             ),
+            offField: true,
           },
         ],
       },
@@ -846,6 +848,7 @@ class Lauma extends CharacterBase {
               "atk",
               { key: "em", multiplier: sanctEmMult }
             ),
+            offField: true,
           },
         ],
       },
@@ -919,6 +922,7 @@ class Lauma extends CharacterBase {
                     "em"
                   ),
                   hits: 8,
+                  offField: true,
                 },
               ],
             },
@@ -994,6 +998,7 @@ class Ineffa extends CharacterBase {
               reaction: "none",
             }),
             hits: 10,
+            offField: true,
           },
           ...(hasHydro
             ? [
@@ -1006,6 +1011,7 @@ class Ineffa extends CharacterBase {
                     reaction: "lunarCharged",
                   }),
                   hits: 10,
+                  offField: true,
                 },
               ]
             : []),
@@ -1033,6 +1039,7 @@ class Ineffa extends CharacterBase {
                     ability: "burst",
                     reaction: "lunarCharged",
                   }),
+                  offField: true,
                 },
               ]
             : []),
@@ -1051,6 +1058,7 @@ class Ineffa extends CharacterBase {
                     ability: "skill",
                     reaction: "lunarCharged",
                   }),
+                  offField: true,
                 },
               ],
             },

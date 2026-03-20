@@ -103,6 +103,7 @@ class Dehya extends CharacterBase {
               multiplier: fieldHp,
             }),
             hits: 4,
+            offField: true,
           },
         ],
       },
@@ -401,7 +402,7 @@ class Nahida extends CharacterBase {
         _selfStats: StatSheet,
         teamStats: StatSheet[]
       ): StatEntry[] {
-        const maxEm = Math.max(...teamStats.map((s) => s.get("em")));
+        const maxEm = Math.max(...teamStats.map((s) => s.get("em", null)));
         return [{ key: "em", value: Math.min(maxEm * 0.25, 250) }];
       }
       override dynamicBuffsExprTeam(
@@ -409,9 +410,9 @@ class Nahida extends CharacterBase {
         teamExprStats: ExprStats[]
       ): { key: StatKey; expr: Expr }[] {
         // max(team_em_1, ..., team_em_n) × 0.25, capped at 250
-        let maxEm: Expr = teamExprStats[0]!.get("em");
+        let maxEm: Expr = teamExprStats[0]!.get("em", null);
         for (let i = 1; i < teamExprStats.length; i++) {
-          maxEm = E.max(maxEm, teamExprStats[i]!.get("em"));
+          maxEm = E.max(maxEm, teamExprStats[i]!.get("em", null));
         }
         return [
           {
@@ -529,6 +530,7 @@ class Nahida extends CharacterBase {
               "atk",
               { key: "em", multiplier: emMult }
             ),
+            offField: true,
           },
         ],
       },
@@ -809,6 +811,7 @@ class Nilou extends CharacterBase {
                     ability: "special",
                     reaction: "bloom",
                   }),
+                  offField: true,
                 },
               ],
             },

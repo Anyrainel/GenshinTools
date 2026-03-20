@@ -8,6 +8,7 @@
 import type { ArtifactData } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
+import { hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
 import {
@@ -60,12 +61,27 @@ export function evaluateBuild(
       );
 
   if (minEr > 0) {
-    const er = postStats[erCheckCharId]?.get("er") ?? 0;
+    const er = postStats[erCheckCharId]?.get("er", null) ?? 0;
     if (er < minEr) return { damage: -1, result: null };
   }
   if (minCr > 0) {
-    const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
+    const cr = postStats[erCheckCharId]?.get("cr", null) ?? 0;
     if (cr < minCr) return { damage: -1, result: null };
+  }
+
+  // Compute off-field stats if the formula has off-field parts
+  let offFieldStats: Record<string, StatSheet> | undefined;
+  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+    const otherCharId = Object.keys(teamBuild.charBuilds).find(
+      (id) => id !== formulaCharId
+    );
+    if (otherCharId) {
+      offFieldStats = teamBuild.getTeamStats(
+        { ...baseSheets, [swapCharId]: charSheet },
+        otherCharId,
+        calcContext
+      );
+    }
   }
 
   const dmgRes = teamBuild.getDamageResult(
@@ -73,7 +89,8 @@ export function evaluateBuild(
     formulaId,
     postStats,
     calcContext,
-    reactionOverride
+    reactionOverride,
+    offFieldStats
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
 }
@@ -154,12 +171,28 @@ export function evaluateUpperBound(
         calcTargetId,
         calcContext
       );
+  // Compute off-field stats if the formula has off-field parts
+  let offFieldStats: Record<string, StatSheet> | undefined;
+  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+    const otherCharId = Object.keys(teamBuild.charBuilds).find(
+      (id) => id !== formulaCharId
+    );
+    if (otherCharId) {
+      offFieldStats = teamBuild.getTeamStats(
+        { ...baseSheets, [swapCharId]: sheet },
+        otherCharId,
+        calcContext
+      );
+    }
+  }
+
   return teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
     postStats,
     calcContext,
-    reactionOverride
+    reactionOverride,
+    offFieldStats
   ).totalDamage;
 }
 

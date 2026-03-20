@@ -314,15 +314,15 @@ export class ScalingBuff extends StatBuff {
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
     const input = this.threshold
-      ? Math.max(0, selfStats.get(this.inputKey) - this.threshold)
-      : selfStats.get(this.inputKey);
+      ? Math.max(0, selfStats.get(this.inputKey, null) - this.threshold)
+      : selfStats.get(this.inputKey, null);
     const raw = input * this.scale;
     const value = this.cap !== undefined ? Math.min(raw, this.cap) : raw;
     return [{ key: this.outputKey, value }];
   }
 
   dynamicBuffsExpr(selfStats: ExprStats): { key: StatKey; expr: Expr }[] {
-    let input: Expr = selfStats.get(this.inputKey);
+    let input: Expr = selfStats.get(this.inputKey, null);
     if (this.threshold) {
       // max(0, input - threshold)
       input = E.max(E.const(0), E.add(input, E.const(-this.threshold)));
@@ -358,17 +358,19 @@ export class CrossScalingBuff extends StatBuff {
   }
 
   override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
-    const a = selfStats.get(this.statA) * this.scaleA;
+    const a = selfStats.get(this.statA, null) * this.scaleA;
     const capped = this.capA !== undefined ? Math.min(a, this.capA) : a;
-    return [{ key: this.outputKey, value: capped * selfStats.get(this.statB) }];
+    return [
+      { key: this.outputKey, value: capped * selfStats.get(this.statB, null) },
+    ];
   }
 
   dynamicBuffsExpr(selfStats: ExprStats): { key: StatKey; expr: Expr }[] {
-    let a: Expr = E.mul(selfStats.get(this.statA), E.const(this.scaleA));
+    let a: Expr = E.mul(selfStats.get(this.statA, null), E.const(this.scaleA));
     if (this.capA !== undefined) {
       a = E.min(a, E.const(this.capA));
     }
-    const result = E.mul(a, selfStats.get(this.statB));
+    const result = E.mul(a, selfStats.get(this.statB, null));
     return [{ key: this.outputKey, expr: simplify(result) }];
   }
 }

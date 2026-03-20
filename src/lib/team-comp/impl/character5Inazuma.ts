@@ -145,7 +145,12 @@ class Chiori extends CharacterBase {
 
   // Rotation: EE (Tapestry swap) > Q; off-field Tamoto + Kinu procs per window
   protected override get defaultRotation() {
-    return { "chiori-e-combo": 1, "chiori-burst": 1, "chiori-na": 1 };
+    return {
+      "chiori-e-combo": 1,
+      "chiori-burst": 1,
+      ...(this.constellation >= 2 ? { "chiori-burst-kinu": 1 } : {}),
+      "chiori-na": 1,
+    };
   }
 
   protected readonly formulaMap = (() => {
@@ -214,6 +219,7 @@ class Chiori extends CharacterBase {
               multiplier: tDef,
             }),
             hits: 5 * numPets,
+            offField: true,
           },
           ...(this.constellation >= 4
             ? [
@@ -223,13 +229,13 @@ class Chiori extends CharacterBase {
                     multiplier: kinuDef,
                   }),
                   hits: 3,
+                  offField: true,
                 },
               ]
             : []),
         ],
       },
       // Q Hiyoku: Twin Blades — Lv10 461% ATK + 577% DEF, Lv13 (C5+) 544% ATK + 681% DEF
-      // C2: triggers 4 Kinu attacks (170% of Tamoto DMG, skill DMG)
       "chiori-burst": {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
@@ -244,14 +250,75 @@ class Chiori extends CharacterBase {
               }
             ),
           },
-          ...(this.constellation >= 2
-            ? [
+        ],
+      },
+      // C2: Q triggers 4 Kinu attacks (170% of Tamoto DMG, skill DMG, off-field)
+      ...(this.constellation >= 2
+        ? {
+            "chiori-burst-kinu": {
+              label: { zh: "Q犬奴×4", en: "Q Kinu (×4)" },
+              parts: [
                 {
                   formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
                     key: "def",
                     multiplier: kinuDef,
                   }),
                   hits: 4,
+                  offField: true,
+                },
+              ],
+            },
+          }
+        : {}),
+      // Pet attacks only (on-field) — Tamoto procs + C4 Kinu, on-field stats
+      "chiori-pets-onfield": {
+        label: {
+          zh: `人偶×${numPets}(前台)`,
+
+          en: `Pets (on-field, ${numPets})`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(tAtk, geoSkill, "atk", {
+              key: "def",
+              multiplier: tDef,
+            }),
+            hits: 5 * numPets,
+          },
+          ...(this.constellation >= 4
+            ? [
+                {
+                  formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
+                    key: "def",
+                    multiplier: kinuDef,
+                  }),
+                  hits: 3,
+                },
+              ]
+            : []),
+        ],
+      },
+      // Pet attacks only (off-field) — Tamoto procs + C4 Kinu, off-field stats
+      "chiori-pets-offfield": {
+        label: { zh: `人偶×${numPets}`, en: `Pets (${numPets})` },
+        parts: [
+          {
+            formula: new DirectFormula(tAtk, geoSkill, "atk", {
+              key: "def",
+              multiplier: tDef,
+            }),
+            hits: 5 * numPets,
+            offField: true,
+          },
+          ...(this.constellation >= 4
+            ? [
+                {
+                  formula: new DirectFormula(kinuAtk, geoSkill, "atk", {
+                    key: "def",
+                    multiplier: kinuDef,
+                  }),
+                  hits: 3,
+                  offField: true,
                 },
               ]
             : []),
@@ -373,6 +440,7 @@ class RaidenShogun extends CharacterBase {
           {
             formula: new DirectFormula(coordMult, electroSkill),
             hits: 27,
+            offField: true,
           },
         ],
       },
@@ -580,6 +648,17 @@ class KamisatoAyaka extends CharacterBase {
           { formula: new DirectFormula(bloomMult, cryoBurst) },
         ],
       },
+      "ayaka-burst-offfield": {
+        label: { zh: "Q(19切+绽)", en: "Q (19 slashes + Bloom)" },
+        parts: [
+          {
+            formula: new DirectFormula(cutMult, cryoBurst),
+            hits: 19,
+            offField: true,
+          },
+          { formula: new DirectFormula(bloomMult, cryoBurst), offField: true },
+        ],
+      },
     };
   })();
 }
@@ -694,6 +773,20 @@ class KamisatoAyato extends CharacterBase {
       },
       "ayato-bloomwater": {
         label: { zh: "Q伤害×30", en: "Q (×30)" },
+        parts: [
+          {
+            formula: new DirectFormula(qMult, {
+              element: "Hydro",
+              ability: "burst",
+              reaction: "none",
+            }),
+            hits: 30,
+            offField: true,
+          },
+        ],
+      },
+      "ayato-bloomwater-onfield": {
+        label: { zh: "Q(前台)×30", en: "Q (on-field, ×30)" },
         parts: [
           {
             formula: new DirectFormula(qMult, {
@@ -930,6 +1023,7 @@ class KaedeharaKazuha extends CharacterBase {
               reaction: "none",
             }),
             hits: 5,
+            offField: true,
           },
         ],
       },
@@ -1092,6 +1186,7 @@ class YaeMiko extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },

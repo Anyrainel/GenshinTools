@@ -20,6 +20,7 @@ import { CrossScalingBuff, ScalingBuff } from "./damageBuffs";
 import {
   type OptimizerContext,
   type TeamBuild,
+  hasOffFieldParts,
   isBuffApplicable,
 } from "./damageCalc";
 import { createReactionVariant } from "./damageFormulas";
@@ -201,12 +202,38 @@ export function compileTeamDamage(
   if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
 
   const formulaStats = postExprStats[formulaCharId]!;
+
+  // Compute off-field ExprStats if the formula has off-field parts
+  let offFieldFormulaStats: ExprStats | undefined;
+  if (entry.parts.some((p) => p.offField)) {
+    const otherCharId = optCtx.charBuildOrder
+      .map(([id]) => id)
+      .find((id) => id !== formulaCharId);
+    if (otherCharId) {
+      const offFieldOptCtx = teamBuild.createOptimizerContext(
+        optCtx.baseSheets,
+        optCtx.swapCharId,
+        otherCharId,
+        calcContext
+      );
+      const offFieldPostExprStats = buildPostExprStatsForContext(
+        teamBuild,
+        offFieldOptCtx,
+        varMapping,
+        charIdx,
+        calcContext
+      );
+      offFieldFormulaStats = offFieldPostExprStats[formulaCharId];
+    }
+  }
+
   const damageExpr = buildTotalDamageExpr(
     entry.parts,
     formulaStats,
     charBase,
     calcContext,
-    reactionOverride
+    reactionOverride,
+    offFieldFormulaStats
   );
 
   const simplified = simplify(damageExpr);
@@ -220,11 +247,15 @@ export function compileTeamDamage(
     const erStats = postExprStats[erCheckCharId];
     if (erStats) {
       if (minEr && minEr > 0) {
-        const erExpr = simplify(E.add(erStats.get("er"), E.const(-minEr)));
+        const erExpr = simplify(
+          E.add(erStats.get("er", null), E.const(-minEr))
+        );
         evaluateEr = compileExpr(erExpr);
       }
       if (minCr && minCr > 0) {
-        const crExpr = simplify(E.add(erStats.get("cr"), E.const(-minCr)));
+        const crExpr = simplify(
+          E.add(erStats.get("cr", null), E.const(-minCr))
+        );
         evaluateCr = compileExpr(crExpr);
       }
     }
@@ -345,12 +376,38 @@ export function compileComboTeamDamage(
       }
 
       const formulaStats = postExprStats[line.charId]!;
+
+      // Compute off-field ExprStats if the formula has off-field parts
+      let offFieldFormulaStats: ExprStats | undefined;
+      if (entry.parts.some((p) => p.offField)) {
+        const otherCharId = optCtx.charBuildOrder
+          .map(([id]) => id)
+          .find((id) => id !== line.charId);
+        if (otherCharId) {
+          const offFieldOptCtx = teamBuild.createOptimizerContext(
+            baseSheets,
+            swapCharId,
+            otherCharId,
+            calcContext
+          );
+          const offFieldPostExprStats = buildPostExprStatsForContext(
+            teamBuild,
+            offFieldOptCtx,
+            varMapping,
+            charIdx,
+            calcContext
+          );
+          offFieldFormulaStats = offFieldPostExprStats[line.charId];
+        }
+      }
+
       const lineExpr = buildTotalDamageExpr(
         entry.parts,
         formulaStats,
         charBase,
         calcContext,
-        effectiveReaction
+        effectiveReaction,
+        offFieldFormulaStats
       );
       allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
     }
@@ -598,16 +655,21 @@ function buildTotalDamageExpr(
   formulaStats: ExprStats,
   charBase: CharacterBase,
   ctx: CalcContext,
-  reactionOverride?: ReactionOverride
+  reactionOverride?: ReactionOverride,
+  offFieldFormulaStats?: ExprStats
 ): Expr {
   const partExprs: Expr[] = [];
 
   for (let idx = 0; idx < parts.length; idx++) {
-    const { formula, hits: totalHits, bespokeBuff } = parts[idx];
+    const { formula, hits: totalHits, bespokeBuff, offField } = parts[idx];
     const h = totalHits ?? 1;
 
+    // Use off-field stats when the part deals damage while the character is off-field
+    const baseStats =
+      offField && offFieldFormulaStats ? offFieldFormulaStats : formulaStats;
+
     // Apply bespoke buff overlay
-    let stats = formulaStats;
+    let stats = baseStats;
     if (bespokeBuff) {
       // Merge static entries from bespoke buff
       stats = stats.withMergedConst(

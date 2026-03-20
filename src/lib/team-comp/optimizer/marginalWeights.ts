@@ -16,6 +16,7 @@ import {
   getTargetMainStatsForSlot,
 } from "../../account-data/artifactScore";
 import type { TeamBuild } from "../damageCalc";
+import { hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type { CalcContext, ReactionOverride, StatKey } from "../types";
 import type { MarginalWeights } from "./types";
@@ -74,6 +75,17 @@ export function computeMarginalWeights(
 
   const sheets = { ...baseSheets, [charId]: baseSheet };
 
+  // Precompute off-field target (if needed)
+  const needsOffField = hasOffFieldParts(teamBuild, charId, formulaId);
+  const offFieldCalcTarget = needsOffField
+    ? Object.keys(teamBuild.charBuilds).find((id) => id !== charId)
+    : undefined;
+
+  const getOffField = (s: Record<string, StatSheet>) =>
+    offFieldCalcTarget
+      ? teamBuild.getTeamStats(s, offFieldCalcTarget, calcContext)
+      : undefined;
+
   // Baseline damage at the operating point
   const teamStats = teamBuild.getTeamStats(sheets, charId, calcContext);
   let baseDamage: number;
@@ -83,7 +95,8 @@ export function computeMarginalWeights(
       formulaId,
       teamStats,
       calcContext,
-      reactionOverride
+      reactionOverride,
+      getOffField(sheets)
     );
     baseDamage = result.totalDamage;
   } catch {
@@ -109,7 +122,8 @@ export function computeMarginalWeights(
         formulaId,
         ts,
         calcContext,
-        reactionOverride
+        reactionOverride,
+        getOffField(tweakedSheets)
       );
       subMarginals[stat] = Math.max(0, r.totalDamage - baseDamage);
     } catch {
@@ -148,7 +162,8 @@ export function computeMarginalWeights(
           formulaId,
           ts,
           calcContext,
-          reactionOverride
+          reactionOverride,
+          getOffField(msSheets)
         );
         slotMarginals[mainStat] = Math.max(0, r.totalDamage - baseDamage);
       } catch {

@@ -11,6 +11,7 @@ import {
   scoreSlot,
 } from "../account-data/artifactScore";
 import type { TeamBuild } from "./damageCalc";
+import { hasOffFieldParts } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import type {
   CalcContext,
@@ -293,16 +294,27 @@ export function computeMarginalGainsForOptimizer(
   const currentSheet = StatSheet.fromArtifacts(currentArtifacts);
   const sheets = { ...baseSheets, [swapCharId]: currentSheet };
 
+  // Check if we need off-field stats
+  const needsOffField =
+    !scoreFn && hasOffFieldParts(teamBuild, formulaCharId, formulaId);
+  const offFieldCalcTarget = needsOffField
+    ? Object.keys(teamBuild.charBuilds).find((id) => id !== formulaCharId)
+    : undefined;
+
   const baseDamage = scoreFn
     ? scoreFn(sheets, calcTargetId)
     : (() => {
         const stats = teamBuild.getTeamStats(sheets, calcTargetId, calcContext);
+        const offFieldStats = offFieldCalcTarget
+          ? teamBuild.getTeamStats(sheets, offFieldCalcTarget, calcContext)
+          : undefined;
         return teamBuild.getDamageResult(
           formulaCharId,
           formulaId,
           stats,
           calcContext,
-          reactionOverride
+          reactionOverride,
+          offFieldStats
         ).totalDamage;
       })();
   if (baseDamage === 0) return {};
@@ -324,12 +336,20 @@ export function computeMarginalGainsForOptimizer(
             calcTargetId,
             calcContext
           );
+          const offFieldStats = offFieldCalcTarget
+            ? teamBuild.getTeamStats(
+                tweakedSheets,
+                offFieldCalcTarget,
+                calcContext
+              )
+            : undefined;
           return teamBuild.getDamageResult(
             formulaCharId,
             formulaId,
             newStats,
             calcContext,
-            reactionOverride
+            reactionOverride,
+            offFieldStats
           ).totalDamage;
         })();
     const gain = newDamage - baseDamage;
@@ -364,12 +384,12 @@ function evaluateBuild(
   );
 
   if (minEr > 0) {
-    const er = postStats[erCheckCharId]?.get("er") ?? 0;
+    const er = postStats[erCheckCharId]?.get("er", null) ?? 0;
     if (er < minEr) return { damage: -1, result: null };
   }
 
   if (minCr > 0) {
-    const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
+    const cr = postStats[erCheckCharId]?.get("cr", null) ?? 0;
     if (cr < minCr) return { damage: -1, result: null };
   }
 
@@ -377,12 +397,28 @@ function evaluateBuild(
     return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
   }
 
+  // Compute off-field stats if the formula has off-field parts
+  let offFieldStats: Record<string, StatSheet> | undefined;
+  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
+    const otherCharId = Object.keys(teamBuild.charBuilds).find(
+      (id) => id !== formulaCharId
+    );
+    if (otherCharId) {
+      offFieldStats = teamBuild.getTeamStats(
+        updatedSheets,
+        otherCharId,
+        calcContext
+      );
+    }
+  }
+
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
     formulaId,
     postStats,
     calcContext,
-    reactionOverride
+    reactionOverride,
+    offFieldStats
   );
   return { damage: dmgRes.totalDamage, result: dmgRes };
 }
@@ -665,7 +701,7 @@ export async function* runOptimization(
         calcContext
       );
       // CR already includes the critRateTarget bonus from getTeamStats
-      const effectiveCr = baselineStats[formulaCharId]?.get("cr") ?? 0;
+      const effectiveCr = baselineStats[formulaCharId]?.get("cr", null) ?? 0;
       crDiscount = effectiveCr >= 1.0 ? 0 : Math.max(0, 1 - effectiveCr);
     }
   }
@@ -706,7 +742,7 @@ export async function* runOptimization(
   if (minEr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
-    erFloor = baselineStats[erCheckCharId]?.get("er") ?? 0;
+    erFloor = baselineStats[erCheckCharId]?.get("er", null) ?? 0;
   }
   const minArtifactEr = Math.max(0, minEr - erFloor);
 
@@ -749,7 +785,7 @@ export async function* runOptimization(
   if (minCr > 0) {
     const baselineSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
     const baselineStats = teamBuild.getTeamStats(baselineSheets, calcTargetId);
-    crFloor = baselineStats[erCheckCharId]?.get("cr") ?? 0;
+    crFloor = baselineStats[erCheckCharId]?.get("cr", null) ?? 0;
   }
   const minArtifactCr = Math.max(0, minCr - crFloor);
   const effectiveMinArtifactCr = Math.max(0, minArtifactCr);
@@ -1151,7 +1187,7 @@ export async function* runOptimization(
           );
           const rampMultiplier = step + 1;
           if (minEr > 0) {
-            const currentEr = postStats[erCheckCharId]?.get("er") ?? 0;
+            const currentEr = postStats[erCheckCharId]?.get("er", null) ?? 0;
             if (currentEr < minEr) {
               marginalGains.er = Math.max(
                 marginalGains.er ?? 0,
@@ -1160,7 +1196,7 @@ export async function* runOptimization(
             }
           }
           if (minCr > 0) {
-            const currentCr = postStats[erCheckCharId]?.get("cr") ?? 0;
+            const currentCr = postStats[erCheckCharId]?.get("cr", null) ?? 0;
             if (currentCr < minCr) {
               marginalGains.cr = Math.max(
                 marginalGains.cr ?? 0,
@@ -1287,9 +1323,9 @@ export async function* runOptimization(
           calcTargetId,
           calcContext
         );
-        const er = postStats[erCheckCharId]?.get("er") ?? 0;
+        const er = postStats[erCheckCharId]?.get("er", null) ?? 0;
         if (er > bestErSeen) bestErSeen = er;
-        const cr = postStats[erCheckCharId]?.get("cr") ?? 0;
+        const cr = postStats[erCheckCharId]?.get("cr", null) ?? 0;
         if (cr > bestCrSeen) bestCrSeen = cr;
       }
       if (minEr > 0 && bestErSeen < minEr) {

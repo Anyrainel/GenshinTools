@@ -36,8 +36,10 @@ class ArlecchinoNormalFormula extends DirectFormula {
 
   protected override getBaseDmg(stats: StatSheet): number {
     const currentBol = this.getBol();
-    const talentDmg = stats.get(this.scalingKey) * this.talentMultiplier;
-    const extraBaseDmg = stats.get("atk") * currentBol * this.masqueScale;
+    const talentDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
+    const extraBaseDmg =
+      stats.get("atk", this.tag) * currentBol * this.masqueScale;
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
@@ -46,11 +48,11 @@ class ArlecchinoNormalFormula extends DirectFormula {
   protected override getBaseDmgExpr(stats: ExprStats): Expr {
     const currentBol = this.getBol();
     const talentDmg = E.mul(
-      stats.get(this.scalingKey),
+      stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
     );
     const extraBaseDmg = E.mul(
-      stats.get("atk"),
+      stats.get("atk", this.tag),
       E.const(currentBol * this.masqueScale)
     );
     const baseDmgPct = stats.get("baseDmg%", this.tag);
@@ -77,7 +79,8 @@ class ArlecchinoNormalFormula extends DirectFormula {
   ): DisplayPart {
     const part = super.display(stats, charLevel, ctx);
     const currentBol = this.getBol();
-    const extraBaseDmg = stats.get("atk") * currentBol * this.masqueScale;
+    const extraBaseDmg =
+      stats.get("atk", this.tag) * currentBol * this.masqueScale;
     part.statValues = {
       ...part.statValues,
       baseDmg: (part.statValues.baseDmg || 0) + extraBaseDmg,
@@ -103,8 +106,10 @@ class ArlecchinoNormalAmplifyFormula extends AmplifyFormula {
 
   protected override getBaseDmg(stats: StatSheet): number {
     const currentBol = this.getBol();
-    const talentDmg = stats.get(this.scalingKey) * this.talentMultiplier;
-    const extraBaseDmg = stats.get("atk") * currentBol * this.masqueScale;
+    const talentDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
+    const extraBaseDmg =
+      stats.get("atk", this.tag) * currentBol * this.masqueScale;
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
     return talentDmg * (1 + baseDmgPct) + flatBaseDmg;
@@ -113,11 +118,11 @@ class ArlecchinoNormalAmplifyFormula extends AmplifyFormula {
   protected override getBaseDmgExpr(stats: ExprStats): Expr {
     const currentBol = this.getBol();
     const talentDmg = E.mul(
-      stats.get(this.scalingKey),
+      stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
     );
     const extraBaseDmg = E.mul(
-      stats.get("atk"),
+      stats.get("atk", this.tag),
       E.const(currentBol * this.masqueScale)
     );
     const baseDmgPct = stats.get("baseDmg%", this.tag);
@@ -134,7 +139,8 @@ class ArlecchinoNormalAmplifyFormula extends AmplifyFormula {
   ): DisplayPart {
     const part = super.display(stats, charLevel, ctx);
     const currentBol = this.getBol();
-    const extraBaseDmg = stats.get("atk") * currentBol * this.masqueScale;
+    const extraBaseDmg =
+      stats.get("atk", this.tag) * currentBol * this.masqueScale;
     part.statValues = {
       ...part.statValues,
       baseDmg: (part.statValues.baseDmg || 0) + extraBaseDmg,
@@ -154,9 +160,10 @@ class ArlecchinoBurstFormula extends DirectFormula {
   }
 
   protected override getBaseDmg(stats: StatSheet): number {
-    const talentDmg = stats.get(this.scalingKey) * this.talentMultiplier;
+    const talentDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
     const extraBaseDmg = this.hasC6
-      ? stats.get("atk") * this.initialBol * 7.0
+      ? stats.get("atk", this.tag) * this.initialBol * 7.0
       : 0;
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
@@ -165,11 +172,11 @@ class ArlecchinoBurstFormula extends DirectFormula {
 
   protected override getBaseDmgExpr(stats: ExprStats): Expr {
     const talentDmg = E.mul(
-      stats.get(this.scalingKey),
+      stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
     );
     const extraBaseDmg = this.hasC6
-      ? E.mul(stats.get("atk"), E.const(this.initialBol * 7.0))
+      ? E.mul(stats.get("atk", this.tag), E.const(this.initialBol * 7.0))
       : E.const(0);
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
@@ -194,7 +201,7 @@ class ArlecchinoBurstFormula extends DirectFormula {
   ): DisplayPart {
     const part = super.display(stats, charLevel, ctx);
     const extraBaseDmg = this.hasC6
-      ? stats.get("atk") * this.initialBol * 7.0
+      ? stats.get("atk", this.tag) * this.initialBol * 7.0
       : 0;
     part.statValues = {
       ...part.statValues,
@@ -215,9 +222,10 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
   }
 
   protected override getBaseDmg(stats: StatSheet): number {
-    const talentDmg = stats.get(this.scalingKey) * this.talentMultiplier;
+    const talentDmg =
+      stats.get(this.scalingKey, this.tag) * this.talentMultiplier;
     const extraBaseDmg = this.hasC6
-      ? stats.get("atk") * this.initialBol * 7.0
+      ? stats.get("atk", this.tag) * this.initialBol * 7.0
       : 0;
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = stats.get("baseDmg", this.tag) + extraBaseDmg;
@@ -226,11 +234,11 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
 
   protected override getBaseDmgExpr(stats: ExprStats): Expr {
     const talentDmg = E.mul(
-      stats.get(this.scalingKey),
+      stats.get(this.scalingKey, this.tag),
       E.const(this.talentMultiplier)
     );
     const extraBaseDmg = this.hasC6
-      ? E.mul(stats.get("atk"), E.const(this.initialBol * 7.0))
+      ? E.mul(stats.get("atk", this.tag), E.const(this.initialBol * 7.0))
       : E.const(0);
     const baseDmgPct = stats.get("baseDmg%", this.tag);
     const flatBaseDmg = E.add(stats.get("baseDmg", this.tag), extraBaseDmg);
@@ -246,7 +254,7 @@ class ArlecchinoBurstAmplifyFormula extends AmplifyFormula {
   ): DisplayPart {
     const part = super.display(stats, charLevel, ctx);
     const extraBaseDmg = this.hasC6
-      ? stats.get("atk") * this.initialBol * 7.0
+      ? stats.get("atk", this.tag) * this.initialBol * 7.0
       : 0;
     part.statValues = {
       ...part.statValues,

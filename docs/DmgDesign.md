@@ -442,6 +442,24 @@ class Bennett extends CharacterBase {
 }
 ```
 
+### 5.3.1 Off-Field Damage (`offField`)
+
+Many characters deal damage while off-field (deployable skills, persistent bursts, coordinated attacks). These hits should NOT benefit from on-field buffs (`onField`, `selfOnField` receivers).
+
+Mark formula parts with `offField: true` to exclude on-field buffs from stat resolution:
+
+```typescript
+"pyronado": {
+  label: { zh: "旋火轮", en: "Pyronado" },
+  parts: [{ formula: new DirectFormula(2.24,
+    { element: "Pyro", ability: "burst", reaction: "none" }), offField: true }],
+},
+```
+
+**How it works**: When `offField: true`, the damage calc uses a stat sheet computed with `calcTargetId` set to a different team member, so `onField`/`selfOnField` buffs are excluded. Only `self`, `selfOffField`, and `team`-scoped buffs apply.
+
+**Default behavior** (no `offField` flag or `offField: false`) is unchanged — all buffs including on-field buffs apply.
+
 ### 5.4 Reaction Conditions → Team Composition
 
 Many buff texts contain "when X reaction is triggered". Since we don't simulate real-time gameplay, these are translated into **team composition requirements** via `teamMeta.hasReaction()`.

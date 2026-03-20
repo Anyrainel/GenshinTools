@@ -239,7 +239,11 @@ class Durin extends CharacterBase {
             { formula: new DirectFormula(qW1, burstTag) },
             { formula: new DirectFormula(qW2, burstTag) },
             { formula: new DirectFormula(qW3, burstTag) },
-            { formula: new DirectFormula(dragonWhiteMult, burstTag), hits: 10 },
+            {
+              formula: new DirectFormula(dragonWhiteMult, burstTag),
+              hits: 10,
+              offField: true,
+            },
           ],
         },
       };
@@ -251,7 +255,11 @@ class Durin extends CharacterBase {
           { formula: new DirectFormula(qD1, burstTag) },
           { formula: new DirectFormula(qD2, burstTag) },
           { formula: new DirectFormula(qD3, burstTag) },
-          { formula: new DirectFormula(dragonDarkMult, burstTag), hits: 10 },
+          {
+            formula: new DirectFormula(dragonDarkMult, burstTag),
+            hits: 10,
+            offField: true,
+          },
         ],
       },
     };
@@ -407,6 +415,7 @@ class Albedo extends CharacterBase {
               { element: "Geo", ability: "skill", reaction: "none" },
               "def"
             ),
+            offField: true,
           },
         ],
       },
@@ -703,6 +712,7 @@ class Mona extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -941,6 +951,7 @@ class Venti extends CharacterBase {
               reaction: "none",
             }),
             hits: 20,
+            offField: true,
           },
         ],
       },

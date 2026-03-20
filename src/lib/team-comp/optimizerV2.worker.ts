@@ -43,6 +43,8 @@ export type BnBWorkerRequest = {
   deadlineMs?: number;
   warmStartThreshold?: number;
   maxArtsPerSlot: number;
+  /** Artifact IDs to exclude from search (Phase 3: teammates' locked artifacts). */
+  excludedIds?: string[];
   // Combo mode (replaces scoreFn closure)
   isComboMode: boolean;
   combo?: ComboFormula;
@@ -146,7 +148,7 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.globalConfig,
       baseSheets,
       req.calcContext,
-      undefined, // no exclusions in Phase 1
+      req.excludedIds ? new Set(req.excludedIds) : undefined,
       req.reactionOverride,
       scoreFn,
       req.topK,

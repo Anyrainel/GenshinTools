@@ -4,8 +4,8 @@
  * Shared greedy hill-climbing algorithm that respects real artifact constraints:
  * - Each artifact has at most 4 distinct substats
  * - Substats cannot match the slot's main stat
- * - Per-stat roll cap per artifact (5★: 6, 4★: 4)
- * - Per-artifact total roll cap (5★: 9, 4★: 7)
+ * - Per-stat roll cap per artifact (defaults: 5★: 6, 4★: 4)
+ * - Per-artifact total roll cap (defaults: 5★: 9, 4★: 7)
  *
  * Used by both idealArtifactGen (full ideal artifact generation) and
  * autoTune (scoring weight generation).
@@ -135,6 +135,10 @@ export interface ConstrainedGreedyOptions {
   rarity?: 4 | 5;
   /** Pre-allocated substat rolls (e.g. to meet ER/CR constraints before greedy). */
   preFill?: Record<Slot, Partial<Record<SubStat, number>>>;
+  /** Override per-slot max substat rolls (default: 9 for 5★, 7 for 4★). */
+  maxRollsPerSlot?: number;
+  /** Override max rolls on one substat line (default: 6 for 5★, 4 for 4★). */
+  maxRollsPerStat?: number;
 }
 
 /**
@@ -156,9 +160,9 @@ export function constrainedGreedyAllocate(
   const rarity = opts.rarity ?? 5;
 
   const subRolls = emptySubRolls();
-  const maxRolls = rollsPerArtifact(rarity);
+  const maxRolls = opts.maxRollsPerSlot ?? rollsPerArtifact(rarity);
   let totalRolls = maxRolls * 5;
-  const statCap = maxRollsPerStat(rarity);
+  const statCap = opts.maxRollsPerStat ?? maxRollsPerStat(rarity);
 
   // Per-slot tracking
   const slotTotalRolls: Record<Slot, number> = {

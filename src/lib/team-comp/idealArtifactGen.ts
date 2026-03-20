@@ -14,7 +14,7 @@ import {
   rollToInternal,
 } from "./constrainedGreedy";
 import type { TeamBuild } from "./damageCalc";
-import { evaluateCombo } from "./damageCalc";
+import { evaluateCombo, hasOffFieldParts } from "./damageCalc";
 import { StatSheet } from "./damageModels";
 import {
   ER_20_HALF_SET_ID,
@@ -31,6 +31,12 @@ import {
   compileTeamDamage,
   fillVarsFromSheet,
 } from "./formulaCompiler";
+import type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
+import {
+  maxRollsPerStatForPreset,
+  resolveIdealSubstatBudgetPreset,
+  rollsPerSlotForPreset,
+} from "./idealSubstatBudget";
 import type {
   CalcContext,
   ComboFormula,
@@ -39,6 +45,8 @@ import type {
   ReactionOverride,
   StatKey,
 } from "./types";
+
+export type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
 
 // ─── Types ───
 
@@ -51,6 +59,11 @@ export interface IdealGenOptions {
   setKeysByChar?: Record<string, Record<Slot, string>>;
   /** Substat roll magnitude multiplier (0.7–1.0, default 0.85) */
   rollMultiplier?: number;
+  /**
+   * Per-slot substat roll budget preset. Overrides `calcContext.idealSubstatBudget`
+   * when set (e.g. investment passes the default preset to ignore calcContext).
+   */
+  idealSubstatBudget?: IdealSubstatBudgetPreset;
   /** Override reaction types for the damage formula */
   reactionOverride?: ReactionOverride;
   /** Combo formula for combo mode */
@@ -117,12 +130,23 @@ function evaluateDamage(
         .totalDamage;
     }
     const teamStats = teamBuild.getTeamStats(sheets, carryCharId, ctx);
+    // Compute off-field stats if the formula has off-field parts
+    let offFieldStats: Record<string, StatSheet> | undefined;
+    if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
+      const otherCharId = Object.keys(teamBuild.charBuilds).find(
+        (id) => id !== carryCharId
+      );
+      if (otherCharId) {
+        offFieldStats = teamBuild.getTeamStats(sheets, otherCharId, ctx);
+      }
+    }
     const result = teamBuild.getDamageResult(
       carryCharId,
       formulaId,
       teamStats,
       ctx,
-      reactionOverride
+      reactionOverride,
+      offFieldStats
     );
     return result.totalDamage;
   } catch (e) {
@@ -407,12 +431,15 @@ function fillSubstats(
   currentSheets: Record<string, StatSheet>,
   ctx: CalcContext,
   rv: Record<SubStat, number>,
-  rarity: 4 | 5 = 5,
+  rarity: 4 | 5,
+  budgetPreset: IdealSubstatBudgetPreset,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
   preFill?: Record<Slot, Partial<Record<SubStat, number>>>
 ): Record<Slot, Partial<Record<SubStat, number>>> {
+  const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
+  const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
   const compiledCtx = tryCompileEval(
     teamBuild,
     charId,
@@ -453,6 +480,8 @@ function fillSubstats(
     rv,
     rarity,
     preFill,
+    maxRollsPerSlot: maxSlot,
+    maxRollsPerStat: maxStat,
   });
 }
 
@@ -485,11 +514,14 @@ function constraintAwareGenerate(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   gap: ErCrGap,
-  rarity: 4 | 5 = 5,
+  rarity: 4 | 5,
+  budgetPreset: IdealSubstatBudgetPreset,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
 ): ConstraintAwareResult {
+  const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
+  const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
   const needForceEr = gap.erGap >= erMainStatInternal(rarity);
   const needForceCr = gap.crGap >= crMainStatInternal(rarity);
 
@@ -527,6 +559,7 @@ function constraintAwareGenerate(
       rv,
       gap,
       rarity,
+      budgetPreset,
       variant.forceSands,
       variant.forceCirclet,
       reactionOverride,
@@ -543,7 +576,15 @@ function constraintAwareGenerate(
     );
     const preFill =
       erRemaining > 0 || crRemaining > 0
-        ? computeSubstatPreFill(erRemaining, crRemaining, mainStats, rarity, rv)
+        ? computeSubstatPreFill(
+            erRemaining,
+            crRemaining,
+            mainStats,
+            rarity,
+            rv,
+            maxSlot,
+            maxStat
+          )
         : undefined;
     if (preFill === null) continue; // infeasible even with max substats
 
@@ -558,6 +599,7 @@ function constraintAwareGenerate(
       ctx,
       rv,
       rarity,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides,
@@ -606,6 +648,7 @@ function constraintAwareGenerate(
       ctx,
       rv,
       rarity,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides
@@ -641,13 +684,16 @@ function findBestMainStatsConstrained(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   gap: ErCrGap,
-  rarity: 4 | 5 = 5,
+  rarity: 4 | 5,
+  budgetPreset: IdealSubstatBudgetPreset,
   forceSands?: MainStat,
   forceCirclet?: MainStat,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
 ): Record<Slot, MainStat> | null {
+  const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
+  const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
   const compiledCtx = tryCompileEval(
     teamBuild,
     charId,
@@ -700,7 +746,9 @@ function findBestMainStatsConstrained(
               crRemaining,
               mainStats,
               rarity,
-              rv
+              rv,
+              maxSlot,
+              maxStat
             );
             if (preFill === null) continue; // infeasible
           }
@@ -849,6 +897,10 @@ export async function* runIdealArtifactGen(
     combo,
     reactionOverrides,
   } = opts;
+  const budgetPreset = resolveIdealSubstatBudgetPreset(
+    opts.idealSubstatBudget,
+    calcContext
+  );
   // Derive slot→set mapping from TeamBuild configs; caller entries override
   const derived = deriveSetKeysByChar(teamBuild);
   const setKeysByChar: Record<string, Record<Slot, string>> = { ...derived };
@@ -937,8 +989,15 @@ export async function* runIdealArtifactGen(
     );
     if (erRemaining <= 0 && crRemaining <= 0) return undefined;
     return (
-      computeSubstatPreFill(erRemaining, crRemaining, mainStats, r, cRv) ??
-      undefined
+      computeSubstatPreFill(
+        erRemaining,
+        crRemaining,
+        mainStats,
+        r,
+        cRv,
+        rollsPerSlotForPreset(budgetPreset, r),
+        maxRollsPerStatForPreset(budgetPreset, r)
+      ) ?? undefined
     );
   };
 
@@ -963,6 +1022,7 @@ export async function* runIdealArtifactGen(
       carryRv,
       carryGap,
       carryR,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides
@@ -1000,6 +1060,7 @@ export async function* runIdealArtifactGen(
       calcContext,
       carryRv,
       carryR,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides
@@ -1033,6 +1094,7 @@ export async function* runIdealArtifactGen(
         sRv,
         sGap,
         sR,
+        budgetPreset,
         reactionOverride,
         combo,
         reactionOverrides
@@ -1070,6 +1132,7 @@ export async function* runIdealArtifactGen(
         calcContext,
         sRv,
         sR,
+        budgetPreset,
         reactionOverride,
         combo,
         reactionOverrides
@@ -1130,6 +1193,7 @@ export async function* runIdealArtifactGen(
       calcContext,
       carryRv,
       carryR,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides,
@@ -1186,6 +1250,7 @@ export async function* runIdealArtifactGen(
       calcContext,
       carryRv,
       carryR,
+      budgetPreset,
       reactionOverride,
       combo,
       reactionOverrides,

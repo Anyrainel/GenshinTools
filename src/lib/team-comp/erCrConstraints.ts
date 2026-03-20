@@ -42,8 +42,8 @@ export function computeErCrGap(
 
   const blSheets = { ...baseSheets, [charId]: new StatSheet([]) };
   const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-  const baseEr = blStats[charId]?.get("er") ?? 0;
-  const baseCr = blStats[charId]?.get("cr") ?? 0;
+  const baseEr = blStats[charId]?.get("er", null) ?? 0;
+  const baseCr = blStats[charId]?.get("cr", null) ?? 0;
 
   return {
     erGap: minEr > 0 ? Math.max(0, minEr - baseEr) : 0,
@@ -73,6 +73,8 @@ export function crMainStatInternal(rarity: 4 | 5 = 5): number {
  * @param mainStats - chosen main stats (to exclude ER/CR substats from slots with matching mains)
  * @param rarity - artifact rarity
  * @param rv - roll values in display format
+ * @param maxRollsPerSlot - per-artifact substat roll budget for this rarity
+ * @param maxRollsPerStat - max rolls on one substat line for this rarity
  * @returns `null` if infeasible, otherwise per-slot pre-fill rolls
  */
 export function computeSubstatPreFill(
@@ -80,11 +82,10 @@ export function computeSubstatPreFill(
   crGapAfterMain: number,
   mainStats: Record<Slot, MainStat>,
   rarity: 4 | 5,
-  rv: Record<SubStat, number>
+  rv: Record<SubStat, number>,
+  maxRollsPerSlot: number,
+  maxRollsPerStat: number
 ): Record<Slot, Partial<Record<SubStat, number>>> | null {
-  const maxRollsPerSlot = rarity === 5 ? 9 : 7;
-  const maxRollsPerStat = rarity === 5 ? 6 : 4;
-
   const result: Record<Slot, Partial<Record<SubStat, number>>> = {
     flower: {},
     plume: {},

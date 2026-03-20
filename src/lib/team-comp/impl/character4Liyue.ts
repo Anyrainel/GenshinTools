@@ -241,9 +241,16 @@ class Yaoyao extends CharacterBase {
           {
             formula: new DirectFormula(eMult, dendroSkill),
             hits: this.constellation >= 6 ? 8 : 10,
+            offField: true,
           },
           ...(this.constellation >= 6
-            ? [{ formula: new DirectFormula(0.75, dendroSkill), hits: 2 }]
+            ? [
+                {
+                  formula: new DirectFormula(0.75, dendroSkill),
+                  hits: 2,
+                  offField: true,
+                },
+              ]
             : []),
         ],
       },
@@ -252,7 +259,11 @@ class Yaoyao extends CharacterBase {
         label: { zh: "Q伤害", en: "Q Burst" },
         parts: [
           { formula: new DirectFormula(qInitialMult, dendroBurst) },
-          { formula: new DirectFormula(qRadishMult, dendroBurst), hits: 5 },
+          {
+            formula: new DirectFormula(qRadishMult, dendroBurst),
+            hits: 5,
+            offField: true,
+          },
         ],
       },
     };
@@ -320,7 +331,11 @@ class Xiangling extends CharacterBase {
           { formula: new DirectFormula(swing1, pyroTag) },
           { formula: new DirectFormula(swing2, pyroTag) },
           { formula: new DirectFormula(swing3, pyroTag) },
-          { formula: new DirectFormula(tickMult, pyroTag), hits: ticks },
+          {
+            formula: new DirectFormula(tickMult, pyroTag),
+            hits: ticks,
+            offField: true,
+          },
         ],
       },
     };
@@ -388,6 +403,7 @@ class Chongyun extends CharacterBase {
               ability: "skill",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -610,6 +626,7 @@ class Xingqiu extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -788,6 +805,7 @@ class Beidou extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },

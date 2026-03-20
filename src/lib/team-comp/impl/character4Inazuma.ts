@@ -58,6 +58,7 @@ class Kirara extends CharacterBase {
                   ability: "burst",
                   reaction: "none",
                 }),
+                offField: true,
               },
             ],
           },
@@ -213,6 +214,7 @@ class KukiShinobu extends CharacterBase {
               "hp"
             ),
             hits: qHits,
+            offField: true,
           },
         ],
       },
@@ -227,6 +229,7 @@ class KukiShinobu extends CharacterBase {
                     ability: "skill",
                     reaction: "hyperbloom",
                   }),
+                  offField: true,
                 },
               ],
             },
@@ -244,6 +247,7 @@ class KukiShinobu extends CharacterBase {
                     { element: "Electro", ability: "skill", reaction: "none" },
                     "hp"
                   ),
+                  offField: true,
                 },
               ],
             },
@@ -297,6 +301,7 @@ class Sayu extends CharacterBase {
               ability: "burst",
               reaction: "none",
             }),
+            offField: true,
           },
         ],
       },
@@ -343,6 +348,7 @@ class Thoma extends CharacterBase {
               "atk",
               { key: "hp", multiplier: 0.022 }
             ),
+            offField: true,
           },
         ],
       },
@@ -462,6 +468,7 @@ class Gorou extends CharacterBase {
               "baseDmg",
               0.156
             ),
+            offField: true,
           },
         ],
       },

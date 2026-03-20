@@ -86,6 +86,7 @@ class Escoffier extends CharacterBase {
           {
             formula: new DirectFormula(parfaitMult, skillTag),
             hits: 21,
+            offField: true,
           },
         ],
       },
@@ -112,6 +113,7 @@ class Escoffier extends CharacterBase {
                 {
                   formula: new DirectFormula(5.0, skillTag),
                   hits: 6,
+                  offField: true,
                 },
               ],
             },
@@ -248,6 +250,7 @@ class Emilie extends CharacterBase {
                     reaction: "none",
                   }),
                   hits: 28,
+                  offField: true,
                 },
                 {
                   formula: new DirectFormula(6.0, {
@@ -256,6 +259,7 @@ class Emilie extends CharacterBase {
                     reaction: "none",
                   }),
                   hits: 5,
+                  offField: true,
                 },
               ],
             },
@@ -271,6 +275,7 @@ class Emilie extends CharacterBase {
               reaction: "none",
             }),
             hits: 9,
+            offField: true,
           },
         ],
       },
@@ -714,14 +719,17 @@ class Furina extends CharacterBase {
           {
             formula: new DirectFormula(chevalmarinMult, hydroTag, "hp"),
             hits: 18,
+            offField: true,
           },
           {
             formula: new DirectFormula(usherMult, hydroTag, "hp"),
             hits: 9,
+            offField: true,
           },
           {
             formula: new DirectFormula(crabalettaMult, hydroTag, "hp"),
             hits: 5,
+            offField: true,
           },
         ],
       },

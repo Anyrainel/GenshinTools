@@ -134,7 +134,7 @@ export class ExprStats {
   ) {}
 
   /** Like StatSheet.get() but returns Expr. */
-  get(key: StatKey, tag?: DamageTag): Expr {
+  get(key: StatKey, tag: DamageTag | null): Expr {
     if (SCALED_PERCENT_KEYS.has(key)) {
       throw new Error(
         `ExprStats.get('${key}') not allowed — use getRaw('${key}')`
@@ -145,8 +145,35 @@ export class ExprStats {
     const baseKey = SCALED_STAT_BASES[key];
     if (baseKey) {
       const base = this.getUniversalExpr(baseKey);
-      const pct = this.getUniversalExpr(`${key}%` as StatKey);
-      const flat = this.getUniversalExpr(key);
+      let pct = this.getUniversalExpr(`${key}%` as StatKey);
+      let flat = this.getUniversalExpr(key);
+      // Include tag-matching filtered contributions (e.g. Skirk C2: +70% ATK% for normal/charge)
+      if (tag) {
+        const pctKey = `${key}%` as StatKey;
+        const taggedPctConst = this.getTaggedConstValue(pctKey, tag);
+        const taggedPctVar = this.getTaggedVarExpr(pctKey, tag);
+        const pctParts: Expr[] = [pct];
+        if (taggedPctConst !== 0) pctParts.push(E.const(taggedPctConst));
+        if (taggedPctVar) pctParts.push(taggedPctVar);
+        for (const ov of this.exprOverrides) {
+          if (ov.key !== pctKey || ov.filterKey === "") continue;
+          const filter = StatSheet.parseFilterKey(ov.filterKey);
+          if (filterMatchesTag(filter, tag)) pctParts.push(ov.expr);
+        }
+        if (pctParts.length > 1) pct = simplify(E.add(...pctParts));
+
+        const taggedFlatConst = this.getTaggedConstValue(key, tag);
+        const taggedFlatVar = this.getTaggedVarExpr(key, tag);
+        const flatParts: Expr[] = [flat];
+        if (taggedFlatConst !== 0) flatParts.push(E.const(taggedFlatConst));
+        if (taggedFlatVar) flatParts.push(taggedFlatVar);
+        for (const ov of this.exprOverrides) {
+          if (ov.key !== key || ov.filterKey === "") continue;
+          const filter = StatSheet.parseFilterKey(ov.filterKey);
+          if (filterMatchesTag(filter, tag)) flatParts.push(ov.expr);
+        }
+        if (flatParts.length > 1) flat = simplify(E.add(...flatParts));
+      }
       return simplify(E.add(E.mul(base, E.add(E.const(1), pct)), flat));
     }
 

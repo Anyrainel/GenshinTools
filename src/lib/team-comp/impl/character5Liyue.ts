@@ -496,6 +496,7 @@ class Baizhu extends CharacterBase {
               reaction: "none",
             }),
             hits: 6,
+            offField: true,
           },
         ],
       },
@@ -511,6 +512,7 @@ class Baizhu extends CharacterBase {
                     reaction: "none",
                   }),
                   hits: 3,
+                  offField: true,
                 },
               ],
             },
@@ -594,6 +596,23 @@ class Yelan extends CharacterBase {
               "hp"
             ),
             hits: 3,
+            offField: true,
+          },
+        ],
+      },
+      "yelan-burst-throw-onfield": {
+        label: {
+          zh: "Q(前台)×3",
+          en: "Q Throw (on-field, 3 Arrows)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(
+              qThrowMult,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+            hits: 3,
           },
         ],
       },
@@ -605,6 +624,23 @@ class Yelan extends CharacterBase {
         label: {
           zh: "2命额外水箭×8",
           en: "C2 Extra Arrow (x8)",
+        },
+        parts: [
+          {
+            formula: new DirectFormula(
+              0.14,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+            hits: 8,
+            offField: true,
+          },
+        ],
+      };
+      formulas["yelan-c2-arrow-onfield"] = {
+        label: {
+          zh: "2命水箭(前台)×8",
+          en: "C2 Arrow (on-field, ×8)",
         },
         parts: [
           {
@@ -782,6 +818,7 @@ class Zhongli extends CharacterBase {
                     "atk",
                     eHpExtra
                   ),
+                  offField: true,
                 },
               ],
             },
@@ -909,7 +946,10 @@ class HuTao extends CharacterBase {
       "hutao-blood-blossom": {
         label: { zh: "E血梅香(单次)", en: "E Blood Blossom (x1)" },
         parts: [
-          { formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra) },
+          {
+            formula: new DirectFormula(bbMult, pyroSkillTag, "atk", bbExtra),
+            offField: true,
+          },
         ],
       },
       // blood blossom is hard to predict timing, so omit the vape version
@@ -1106,7 +1146,20 @@ class Ganyu extends CharacterBase {
       },
       "ganyu-q-shard": {
         label: { zh: "Q伤害", en: "Q" },
-        parts: [{ formula: new DirectFormula(qShardMult, cryoBurstTag) }],
+        parts: [
+          {
+            formula: new DirectFormula(qShardMult, cryoBurstTag),
+            offField: true,
+          },
+        ],
+      },
+      "ganyu-q-shard-onfield": {
+        label: { zh: "Q(前台)", en: "Q (on-field)" },
+        parts: [
+          {
+            formula: new DirectFormula(qShardMult, cryoBurstTag),
+          },
+        ],
       },
     };
   })();
@@ -1254,6 +1307,7 @@ class Qiqi extends CharacterBase {
               reaction: "none",
             }),
             hits: 8,
+            offField: true,
           },
         ],
       },

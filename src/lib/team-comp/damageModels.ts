@@ -45,6 +45,9 @@ export type FormulaPart = {
   /** Per-part buff applied only when computing this part (selfOnField scope).
    *  Accepts any StatBuff subclass (StatBuff, ScalingBuff, CrossScalingBuff). */
   bespokeBuff?: StatBuff;
+  /** If true, damage is dealt while the character is off-field.
+   *  On-field buffs (onField, selfOnField) will NOT apply. */
+  offField?: boolean;
 };
 
 /** Declarative entry in a character's formulaMap. */
@@ -255,17 +258,19 @@ export class StatSheet {
   /**
    * Computed stat value.
    *
-   * Without tag: returns ONLY the universal (unfiltered) value.
-   *   Used for inherently-scoped keys (e.g., `pyro%`) and base stats.
+   * @param tag  Required. Pass `null` for universal-only (off-field supports,
+   *   constraint checks like ER/CR). Pass the formula's `DamageTag` to include
+   *   ability/element-filtered contributions (e.g. Skirk C2: +70% ATK for NA/CA).
    *
-   * With tag: returns universal + all matching filtered entries.
-   *   Used for universal keys that can be conditionally scoped
-   *   (e.g., `cr`, `cd`, `dmg%`, `reactionDmg%`, `baseDmg`, etc.).
+   * - `null`: returns ONLY the universal (unfiltered) value.
+   * - tag:  returns universal + all matching filtered entries.
    *
-   * For ATK/HP/DEF: base × (1 + sum(%)) + sum(flat).
+   * For ATK/HP/DEF: base × (1 + sum(%)) + sum(flat), where sums include
+   * tag-matching filtered entries when a tag is provided.
+   *
    * **Throws** for atk%/hp%/def% — use getRaw().
    */
-  get(key: StatKey, tag?: DamageTag): number {
+  get(key: StatKey, tag: DamageTag | null): number {
     if (SCALED_PERCENT_KEYS.has(key)) {
       throw new Error(
         `StatSheet.get('${key}') is not allowed — it's an intermediate value. ` +
@@ -274,12 +279,37 @@ export class StatSheet {
       );
     }
 
-    // Scaled stats (ATK, HP, DEF): always universal, no tag
+    // Scaled stats (ATK, HP, DEF): base × (1 + %) + flat
     const baseKey = SCALED_STAT_BASES[key as keyof typeof SCALED_STAT_BASES];
     if (baseKey) {
       const base = this.getUniversal(baseKey);
-      const pct = this.getUniversal(`${key}%` as StatKey);
-      const flat = this.getUniversal(key);
+      let pct = this.getUniversal(`${key}%` as StatKey);
+      let flat = this.getUniversal(key);
+      // Include tag-matching filtered contributions (e.g. Skirk C2: +70% ATK% for normal/charge)
+      if (tag) {
+        const pctBucket = this.data.get(`${key}%` as StatKey);
+        if (pctBucket) {
+          for (const [fk, fv] of pctBucket) {
+            if (
+              fk !== EMPTY_FILTER_KEY &&
+              filterMatchesTag(deserializeFilter(fk), tag)
+            ) {
+              pct += fv;
+            }
+          }
+        }
+        const flatBucket = this.data.get(key);
+        if (flatBucket) {
+          for (const [fk, fv] of flatBucket) {
+            if (
+              fk !== EMPTY_FILTER_KEY &&
+              filterMatchesTag(deserializeFilter(fk), tag)
+            ) {
+              flat += fv;
+            }
+          }
+        }
+      }
       return base * (1 + pct) + flat;
     }
 
@@ -390,7 +420,7 @@ export class StatSheet {
    * Scaled stats (ATK/HP/DEF) are returned as computed totals.
    * Intermediate % keys (atk%, hp%, def%) are excluded.
    */
-  getAll(tag?: DamageTag): Partial<Record<StatKey, number>> {
+  getAll(tag: DamageTag | null = null): Partial<Record<StatKey, number>> {
     const result: Partial<Record<StatKey, number>> = {};
     const evalKeys = new Set(this.data.keys());
     evalKeys.add("atk" as StatKey);
@@ -718,27 +748,37 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     selfStats: StatSheet,
     teamStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    offFieldSelfStats?: StatSheet
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
     const parts: { damage: number; hits: number }[] = [];
     for (let idx = 0; idx < entry.parts.length; idx++) {
-      const { formula, hits: totalHits, bespokeBuff } = entry.parts[idx];
+      const {
+        formula,
+        hits: totalHits,
+        bespokeBuff,
+        offField,
+      } = entry.parts[idx];
       const h = totalHits ?? 1;
+
+      // Use off-field stats when the part deals damage while the character is off-field
+      const baseSelfStats =
+        offField && offFieldSelfStats ? offFieldSelfStats : selfStats;
 
       // Apply per-part stat overlay if present
       const stats = bespokeBuff
-        ? selfStats.merge(
+        ? baseSelfStats.merge(
             StatSheet.fromEntries(
               [
                 ...bespokeBuff.staticBuffs,
-                ...bespokeBuff.dynamicBuffs(selfStats, teamStats),
+                ...bespokeBuff.dynamicBuffs(baseSelfStats, teamStats),
               ],
               bespokeBuff.target.filter
             )
           )
-        : selfStats;
+        : baseSelfStats;
 
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
