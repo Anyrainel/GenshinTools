@@ -16,7 +16,6 @@ function makePart(
     params: { charLevel: 90, enemyLevel: 100, enemyRes: 0.1 },
     scalingKeys: [],
     scalingMulti: [],
-    damage: overrides.damage,
     tag: {
       element: "pyro",
       ability: "normal",
