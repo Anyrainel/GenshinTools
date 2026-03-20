@@ -8,7 +8,11 @@ import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
-import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
+import {
+  TeamBuild,
+  evaluateCombo,
+  hasOffFieldParts,
+} from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type OptFailReason,
@@ -134,12 +138,25 @@ function computeFinalScore(
     }
   }
   const postStats = teamBuild.getTeamStats(sheets, carryCharId, calcContext);
+
+  // Compute off-field stats if the formula has off-field parts
+  let offFieldStats: Record<string, StatSheet> | undefined;
+  if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
+    const otherCharId = Object.keys(teamBuild.charBuilds).find(
+      (id) => id !== carryCharId
+    );
+    if (otherCharId) {
+      offFieldStats = teamBuild.getTeamStats(sheets, otherCharId, calcContext);
+    }
+  }
+
   return teamBuild.getDamageResult(
     carryCharId,
     formulaId,
     postStats,
     calcContext,
-    reactionOverride
+    reactionOverride,
+    offFieldStats
   ).totalDamage;
 }
 
@@ -1014,12 +1031,26 @@ export async function* runTeamOptimization(
       carryCharId,
       calcContext
     );
+    let finalOffFieldStats: Record<string, StatSheet> | undefined;
+    if (hasOffFieldParts(effectiveTeamBuild, carryCharId, formulaId)) {
+      const otherCharId = Object.keys(effectiveTeamBuild.charBuilds).find(
+        (id) => id !== carryCharId
+      );
+      if (otherCharId) {
+        finalOffFieldStats = effectiveTeamBuild.getTeamStats(
+          finalSheets,
+          otherCharId,
+          calcContext
+        );
+      }
+    }
     const finalDmg = effectiveTeamBuild.getDamageResult(
       carryCharId,
       formulaId,
       finalPostStats,
       calcContext,
-      reactionOverride
+      reactionOverride,
+      finalOffFieldStats
     );
     yield {
       ...resultBase,

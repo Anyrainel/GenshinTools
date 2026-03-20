@@ -388,7 +388,7 @@ export function FormulaSelectorCard({
                                       className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
-                                  <span className="text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
+                                  <span className="text-sm xl:text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
                                     <span className="truncate">
                                       {t.resolveLabel(label)}
                                     </span>

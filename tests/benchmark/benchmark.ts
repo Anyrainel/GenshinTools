@@ -63,6 +63,7 @@ import {
   type OptimizerContext,
   TeamBuild,
   evaluateCombo,
+  hasOffFieldParts,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
@@ -249,11 +250,29 @@ function evaluateAssignment(
       carryCharId,
       calcContext
     );
+
+    // Compute off-field stats if the formula has off-field parts
+    let offFieldStats: Record<string, StatSheet> | undefined;
+    if (hasOffFieldParts(teamBuild, carryCharId, formulaId)) {
+      const otherCharId = Object.keys(teamBuild.charBuilds).find(
+        (id) => id !== carryCharId
+      );
+      if (otherCharId) {
+        offFieldStats = teamBuild.getTeamStats(
+          artifactStats,
+          otherCharId,
+          calcContext
+        );
+      }
+    }
+
     const dmg = teamBuild.getDamageResult(
       carryCharId,
       formulaId,
       postStats,
-      calcContext
+      calcContext,
+      undefined,
+      offFieldStats
     );
     return dmg.totalDamage;
   } catch {

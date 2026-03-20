@@ -537,7 +537,7 @@ export function TeamRosterCard({
                   <span
                     className={cn(
                       "font-bold text-foreground/90",
-                      isMobile ? "text-xs ml-0.5 truncate" : "text-lg ml-2"
+                      isMobile ? "text-xs ml-0.5 truncate" : "text-base ml-1"
                     )}
                   >
                     {t.character(charId)}

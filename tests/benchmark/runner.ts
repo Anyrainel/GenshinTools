@@ -31,7 +31,7 @@ import {
   convertGOODToAccountData,
 } from "@/lib/account-data/goodConversion";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { TeamBuild, hasOffFieldParts } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizerV2";
 import type {
@@ -535,11 +535,27 @@ export async function runOptimizerOnTeam(
 
     for (const [formulaId, label] of formulaEntries) {
       try {
+        // Compute off-field stats if the formula has off-field parts
+        let offFieldStats: Record<string, StatSheet> | undefined;
+        if (hasOffFieldParts(optTeamBuild, carryCharId, formulaId)) {
+          const otherCharId = Object.keys(optTeamBuild.charBuilds).find(
+            (id) => id !== carryCharId
+          );
+          if (otherCharId) {
+            offFieldStats = optTeamBuild.getTeamStats(
+              artifactStats,
+              otherCharId,
+              calcContext
+            );
+          }
+        }
         const dmg = optTeamBuild.getDamageResult(
           carryCharId,
           formulaId,
           postStats,
-          calcContext
+          calcContext,
+          undefined,
+          offFieldStats
         );
         result.formulaResults.push({
           formulaId,
