@@ -34,7 +34,6 @@ await preloadGameStats();
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
-  assumeCrit: false,
 };
 
 const GLOBAL_CONFIG: GlobalStatWeights = {

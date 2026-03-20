@@ -132,12 +132,7 @@ class Durin extends CharacterBase {
 
     // C2: After burst, Pyro DMG +50% for team + corresponding reaction element DMG +50%
     if (this.constellation >= 2) {
-      buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
-          { key: "pyro%", value: 0.5 },
-        ])
-      );
-      // Add corresponding reaction element DMG bonus (Varka C4 pattern)
+      const c2Elements: Element[] = ["Pyro"];
       const teamEls = Object.values(this.teamMeta.elements);
       for (const el of [
         "Hydro",
@@ -147,20 +142,15 @@ class Durin extends CharacterBase {
         "Anemo",
         "Geo",
       ] as const) {
-        if (!teamEls.includes(el)) continue;
-        const elKey = `${el.toLowerCase()}%` as
-          | "hydro%"
-          | "cryo%"
-          | "electro%"
-          | "dendro%"
-          | "anemo%"
-          | "geo%";
-        buffs.push(
-          new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
-            { key: elKey, value: 0.5 },
-          ])
-        );
+        if (teamEls.includes(el)) c2Elements.push(el);
       }
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["Q"]),
+          { receiver: "team", filter: { elements: c2Elements.sort() } },
+          [{ key: "dmg%", value: 0.5 }]
+        )
+      );
     }
 
     // C4: Burst DMG +40% — dragon fires off-field, use "self"
@@ -1242,29 +1232,16 @@ class Varka extends CharacterBase {
     // Only activates when PHEC characters are in the team (i.e., priorityElement exists)
     const pe = this.priorityElement;
     if (pe) {
-      const peKey = `${pe.toLowerCase()}%` as
-        | "pyro%"
-        | "hydro%"
-        | "electro%"
-        | "cryo%";
       buffs.push(
         new ScalingBuff(
           cbs(this, "P1", []),
-          { receiver: "selfOnField" },
+          {
+            receiver: "selfOnField",
+            filter: { elements: (["Anemo", pe] as Element[]).sort() },
+          },
           [],
           "atk",
-          "anemo%",
-          0.0001,
-          0.25
-        )
-      );
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "P1", []),
-          { receiver: "selfOnField" },
-          [],
-          "atk",
-          peKey,
+          "dmg%",
           0.0001,
           0.25
         )
@@ -1311,26 +1288,18 @@ class Varka extends CharacterBase {
     // C4: Swirl triggers 20% Anemo DMG bonus + corresponding element DMG bonus for all nearby party members
     // Swirl requires Anemo + one of {Pyro, Hydro, Electro, Cryo}; Varka is Anemo, so just needs a teammate
     if (this.constellation >= 4 && this.teamMeta.hasReaction("swirl")) {
-      buffs.push(
-        new StatBuff(cbs(this, "C4", ["swirl"]), { receiver: "team" }, [
-          { key: "anemo%", value: 0.2 },
-        ])
-      );
-      // Add corresponding element DMG bonus for each element that can participate in Swirl
+      const c4Elements: Element[] = ["Anemo"];
       const teamEls = Object.values(this.teamMeta.elements);
       for (const el of ["Pyro", "Hydro", "Electro", "Cryo"] as const) {
-        if (!teamEls.includes(el)) continue;
-        const elKey = `${el.toLowerCase()}%` as
-          | "pyro%"
-          | "hydro%"
-          | "electro%"
-          | "cryo%";
-        buffs.push(
-          new StatBuff(cbs(this, "C4", ["swirl"]), { receiver: "team" }, [
-            { key: elKey, value: 0.2 },
-          ])
-        );
+        if (teamEls.includes(el)) c4Elements.push(el);
       }
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C4", ["swirl"]),
+          { receiver: "team", filter: { elements: c4Elements.sort() } },
+          [{ key: "dmg%", value: 0.2 }]
+        )
+      );
     }
 
     // C6: Azure Fang's Oath stacks increase CRIT DMG by 20% per stack, max 4 = 80%

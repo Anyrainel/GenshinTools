@@ -714,7 +714,10 @@ export const i18nUiData = {
     setupError: { en: "Setup Error:", zh: "设置错误：" },
     equipAndDamage: { en: "Artifacts & Damage", zh: "圣遗物 & 伤害" },
     optimizing: { en: "Optimizing…", zh: "正在优化…" },
-    totalExpectedDamage: { en: "Total Expected Damage:", zh: "总伤害期望：" },
+    totalDamage: { en: "Total Damage:", zh: "总伤害：" },
+    critModeExpected: { en: "Expected", zh: "期望" },
+    critModeCrit: { en: "CRIT", zh: "暴击" },
+    critModeNoCrit: { en: "Non-CRIT", zh: "非暴击" },
     pending: { en: "Pending", zh: "等待计算" },
     emptyDamageMessage: {
       en: "Configure characters and weapons to see damage metrics.",
@@ -760,7 +763,6 @@ export const i18nUiData = {
     overrideRefine: { en: "Refine", zh: "精炼" },
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
-    assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
     critRateTarget: { en: "DPS CR Target", zh: "(凹分)主C暴击目标" },
     critRateTargetTooltip: {
       en: "Adds a (100−x)% CR buff to the main DPS during calculation. In rotation mode, any character with a damage formula is treated as main DPS.",

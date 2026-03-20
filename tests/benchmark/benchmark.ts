@@ -230,8 +230,6 @@ function evaluateAssignment(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
     };
 
     const carryCharId = team.characters[0]!;
@@ -318,8 +316,6 @@ function checkConstraints(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
     };
 
     const carryCharId = team.characters[0]!;
@@ -1234,8 +1230,6 @@ async function cmdRefresh(): Promise<void> {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
     };
 
     const perChar = buildPerChar(team, carryCharId, accountData);
@@ -1700,8 +1694,6 @@ async function cmdCompare(opts: {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
     };
 
     // ── 1) Artifact stat diff per character ──
@@ -2061,8 +2053,6 @@ async function cmdDiagnose(opts: {
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
       critRateTarget: (team.calcContext as Record<string, unknown>)
         ?.critRateTarget as number | undefined,
     };

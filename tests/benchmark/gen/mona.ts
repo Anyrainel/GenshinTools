@@ -786,9 +786,7 @@ function runCharacterAStar(
   // CR discount
   let crDiscount = 1;
   if (swapCharId === formulaCharId) {
-    if (calcContext.assumeCrit) {
-      crDiscount = 0;
-    } else if (calcContext.critRateTarget != null) {
+    if (calcContext.critRateTarget != null) {
       const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,

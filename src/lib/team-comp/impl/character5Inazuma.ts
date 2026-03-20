@@ -1031,28 +1031,47 @@ class KaedeharaKazuha extends CharacterBase {
   })();
 }
 
-@RegisterCharacter("yoimiya")
+const yoimiyaOption = {
+  label: { zh: "施放Q", en: "Cast Q" },
+  choices: [
+    { value: "yes", label: { zh: "施放Q", en: "Cast Q" } },
+    { value: "no", label: { zh: "不施放Q", en: "Skip Q" } },
+  ] as const,
+  default: "yes",
+} satisfies OptionDef;
+
+@RegisterCharacter("yoimiya", yoimiyaOption)
 class Yoimiya extends CharacterBase {
+  private readonly castQ = resolveOption(yoimiyaOption, this.option);
+
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P1: During E, Pyro DMG +2% per Normal ATK hit (max 10 stacks = 20%)
       new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "selfOnField" }, [
         { key: "pyro%", value: 0.2 },
       ]),
-      // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
-      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "otherOnField" }, [
-        { key: "atk%", value: 0.2 },
-      ]),
     ];
 
-    if (this.constellation >= 1) {
-      // C1: Defeating Aurous Blaze marked enemy -> +20% ATK
+    if (this.castQ === "yes") {
+      // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
       buffs.push(
-        new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.2 },
-        ])
+        new StatBuff(
+          cbs(this, "P2", ["A4", "Q"]),
+          { receiver: "otherOnField" },
+          [{ key: "atk%", value: 0.2 }]
+        )
       );
+
+      if (this.constellation >= 1) {
+        // C1: Defeating Aurous Blaze marked enemy -> +20% ATK
+        buffs.push(
+          new StatBuff(cbs(this, "C1", ["Q"]), { receiver: "selfOnField" }, [
+            { key: "atk%", value: 0.2 },
+          ])
+        );
+      }
     }
+
     if (this.constellation >= 2) {
       // C2: CRIT Hit -> +25% Pyro DMG (works off-field per game text)
       buffs.push(
@@ -1069,7 +1088,9 @@ class Yoimiya extends CharacterBase {
 
   // Rotation: supports > E > 3×N1-N5 string (~20s, Pyro carry)
   protected override get defaultRotation() {
-    return { "yoimiya-normal": 3 };
+    const rot: Record<string, number> = { "yoimiya-normal": 3 };
+    if (this.constellation >= 6) rot["yoimiya-c6-arrow"] = 0;
+    return rot;
   }
 
   protected readonly formulaMap = (() => {
@@ -1083,8 +1104,6 @@ class Yoimiya extends CharacterBase {
     const n5 = 1.889;
 
     const eMult = this.constellation >= 3 ? 1.706 : 1.617;
-    // C6: 50% chance of an extra blazing arrow dealing 60% DMG = average ×1.3 per hit
-    const c6 = this.constellation >= 6 ? 1.3 : 1.0;
 
     const pyroNormal = {
       element: "Pyro" as const,
@@ -1092,33 +1111,47 @@ class Yoimiya extends CharacterBase {
       reaction: "none" as const,
     };
 
-    // Helper: per-hit talentMult = baseNA × eMult × c6Avg
-    const m = (base: number) => base * eMult * c6;
+    // Helper: per-hit talentMult = baseNA × eMult
+    const m = (base: number) => base * eMult;
 
-    return {
+    const formulas: Record<string, FormulaEntry> = {
       "yoimiya-normal": {
         label: {
           zh: "E普攻一套",
           en: "Normal N1-N5 (E active)",
         },
         parts: [
-          // N1a, N3, N5 can vaporize/melt (ICD allows every 3rd hit)
-          {
-            formula: new DirectFormula(m(n1a), pyroNormal),
-          },
+          { formula: new DirectFormula(m(n1a), pyroNormal) },
           { formula: new DirectFormula(m(n1b), pyroNormal) },
           { formula: new DirectFormula(m(n2), pyroNormal) },
-          {
-            formula: new DirectFormula(m(n3), pyroNormal),
-          },
+          { formula: new DirectFormula(m(n3), pyroNormal) },
           { formula: new DirectFormula(m(n4a), pyroNormal) },
           { formula: new DirectFormula(m(n4b), pyroNormal) },
-          {
-            formula: new DirectFormula(m(n5), pyroNormal),
-          },
+          { formula: new DirectFormula(m(n5), pyroNormal) },
         ],
       },
     };
+
+    if (this.constellation >= 6) {
+      // C6: 50% chance of firing an extra blazing arrow dealing 60% of original DMG per hit
+      formulas["yoimiya-c6-arrow"] = {
+        label: {
+          zh: "C6 额外炽焰箭一套",
+          en: "C6 Extra Blazing Arrow N1-N5",
+        },
+        parts: [
+          { formula: new DirectFormula(m(n1a) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n1b) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n2) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n3) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n4a) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n4b) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n5) * 0.6, pyroNormal) },
+        ],
+      };
+    }
+
+    return formulas;
   })();
 }
 

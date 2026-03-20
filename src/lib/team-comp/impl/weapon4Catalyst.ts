@@ -2,7 +2,7 @@ import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase, resolveOption } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
-import type { StatKey } from "../types";
+import type { ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Catalysts
@@ -317,18 +317,21 @@ class HakushinRing extends WeaponBase {
       return [];
     }
 
-    const statEntries = Array.from(buffedElements).map((el) => {
-      return {
-        key: `${el.toLowerCase()}%` as StatKey,
-        value: r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
-      };
-    });
-
     return [
       new StatBuff(
         wbs(this, ["electro-reaction"], "hakushin-ring"),
-        { receiver: "team" },
-        statEntries
+        {
+          receiver: "team",
+          filter: {
+            elements: [...buffedElements].sort() as ElementalOrPhysical[],
+          },
+        },
+        [
+          {
+            key: "dmg%",
+            value: r(this.refinement, [0.1, 0.125, 0.15, 0.175, 0.2]),
+          },
+        ]
       ),
     ];
   }

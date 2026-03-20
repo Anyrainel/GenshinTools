@@ -29,6 +29,8 @@ import type {
   CalcContext,
   ComboLine,
   ComboResult,
+  CritMode,
+  DisplayPart,
   DisplayResult,
   ReactionOverride,
   StatKey,
@@ -40,6 +42,7 @@ import {
   AlertTriangle,
   Check,
   ChevronDown,
+  ChevronsUpDown,
   Eye,
   Flame,
   Loader2,
@@ -51,7 +54,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BuffLedger } from "./BuffLedger";
-import { FormulaBreakdown } from "./FormulaBreakdown";
+import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { fmtDamage } from "./displayFormatters";
 
@@ -87,7 +90,7 @@ const CARD_HEADER_CLS =
   "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
 const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1 2xl:p-2 bg-black/10";
+const CARD_BODY_CLS = "p-1 2xl:p-2";
 
 /** Shared body for current / optimized / ideal tabs. */
 function DamageBody({
@@ -97,6 +100,8 @@ function DamageBody({
   artifactsByChar,
   targetCharId,
   displayResult,
+  critMode,
+  setCritMode,
   isMobile,
   t,
   failReasons,
@@ -112,6 +117,8 @@ function DamageBody({
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId?: string;
   displayResult?: DisplayResult | null;
+  critMode: CritMode;
+  setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   failReasons?: Record<
@@ -178,17 +185,26 @@ function DamageBody({
                     className={cn(
                       "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
                       isMobile ? "gap-1.5 px-2 py-1.5" : "gap-2.5 px-4 py-2",
-                      "bg-primary/10 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
+                      "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                       "hover:bg-primary/15"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "text-primary/80 font-semibold tracking-wide whitespace-nowrap",
-                        isMobile ? "text-xs" : "text-sm md:text-base"
-                      )}
-                    >
-                      {t.ui("teamComp.totalExpectedDamage")}
+                    <div className="flex items-center gap-0">
+                      <CritModeDropdown
+                        critMode={critMode}
+                        setCritMode={setCritMode}
+                        isMobile={isMobile}
+                        {...getCritDisableFlags(displayResult?.parts)}
+                        t={t}
+                      />
+                      <div
+                        className={cn(
+                          "text-primary font-semibold tracking-wide whitespace-nowrap leading-none",
+                          isMobile ? "text-xs" : "text-sm"
+                        )}
+                      >
+                        {t.ui("teamComp.totalDamage")}
+                      </div>
                     </div>
                     <div
                       className={cn(
@@ -196,7 +212,13 @@ function DamageBody({
                         isMobile ? "text-2xl" : "text-3xl md:text-4xl"
                       )}
                     >
-                      {fmtDamage(displayResult.totalDamage)}
+                      {fmtDamage(
+                        displayResult.parts.reduce(
+                          (sum, p) =>
+                            sum + adjustPartDamage(p, critMode) * (p.hits ?? 1),
+                          0
+                        )
+                      )}
                     </div>
                     <span
                       className={cn(
@@ -231,6 +253,7 @@ function DamageBody({
                       ? highlightedStat?.key
                       : null
                   }
+                  critMode={critMode}
                   t={t}
                 />
               )}
@@ -283,6 +306,10 @@ function ComboBreakdown({
   comboLines,
   teamBuild,
   damageValue,
+  critMode,
+  setCritMode,
+  disableCrit,
+  disableNoCrit,
   reactionOverrides,
   isMobile,
   t,
@@ -292,6 +319,10 @@ function ComboBreakdown({
   comboLines: ComboLine[];
   teamBuild: TeamBuild;
   damageValue: number;
+  critMode: CritMode;
+  setCritMode: (mode: CritMode) => void;
+  disableCrit?: boolean;
+  disableNoCrit?: boolean;
   reactionOverrides: Record<string, ReactionOverride>;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
@@ -358,17 +389,27 @@ function ComboBreakdown({
                 className={cn(
                   "flex items-center justify-center rounded-xl transition-colors cursor-pointer select-none",
                   isMobile ? "gap-1.5 px-2 py-1.5" : "gap-2.5 px-4 py-2",
-                  "bg-primary/10 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
+                  "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]",
                   "hover:bg-primary/15"
                 )}
               >
-                <div
-                  className={cn(
-                    "text-primary/80 font-semibold tracking-wide whitespace-nowrap",
-                    isMobile ? "text-xs" : "text-sm md:text-base"
-                  )}
-                >
-                  {t.ui("teamComp.totalExpectedDamage")}
+                <div className="flex items-center gap-0">
+                  <CritModeDropdown
+                    critMode={critMode}
+                    setCritMode={setCritMode}
+                    isMobile={isMobile}
+                    disableCrit={disableCrit}
+                    disableNoCrit={disableNoCrit}
+                    t={t}
+                  />
+                  <div
+                    className={cn(
+                      "text-primary font-semibold tracking-wide whitespace-nowrap leading-none",
+                      isMobile ? "text-xs" : "text-sm"
+                    )}
+                  >
+                    {t.ui("teamComp.totalDamage")}
+                  </div>
                 </div>
                 <div
                   className={cn(
@@ -513,6 +554,8 @@ function ComboResultView({
   teamBuild,
   team,
   artifactsByChar,
+  critMode,
+  setCritMode,
   isMobile,
   t,
   reactionOverrides,
@@ -529,6 +572,8 @@ function ComboResultView({
   teamBuild: TeamBuild;
   team: Team;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
+  critMode: CritMode;
+  setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   reactionOverrides: Record<string, ReactionOverride>;
@@ -574,6 +619,9 @@ function ComboResultView({
         comboLines={comboLines}
         teamBuild={teamBuild}
         damageValue={displayResult?.totalDamage ?? comboResult.totalDamage}
+        critMode={critMode}
+        setCritMode={setCritMode}
+        {...getCritDisableFlags(displayResult?.parts)}
         reactionOverrides={reactionOverrides}
         isMobile={isMobile}
         t={t}
@@ -686,6 +734,72 @@ function EnemyLevelInput({
   );
 }
 
+function CritModeDropdown({
+  critMode,
+  setCritMode,
+  isMobile,
+  disableCrit,
+  disableNoCrit,
+  t,
+}: {
+  critMode: CritMode;
+  setCritMode: (mode: CritMode) => void;
+  isMobile: boolean;
+  disableCrit?: boolean;
+  disableNoCrit?: boolean;
+  t: ReturnType<typeof useLanguage>["t"];
+}) {
+  return (
+    <Select value={critMode} onValueChange={(v) => setCritMode(v as CritMode)}>
+      <SelectTrigger
+        className={cn(
+          "w-auto font-semibold border-none bg-transparent shadow-none focus:ring-0 text-amber-400 px-1 py-0 gap-0.5 shrink-0 [&>svg:last-child]:hidden",
+          isMobile ? "h-5 text-xs" : "h-6 text-sm"
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SelectValue />
+        <ChevronsUpDown
+          className={cn(
+            "opacity-60 shrink-0",
+            isMobile ? "w-3 h-3" : "w-3.5 h-3.5"
+          )}
+        />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="expected">
+          {t.ui("teamComp.critModeExpected")}
+        </SelectItem>
+        <SelectItem value="crit" disabled={disableCrit}>
+          {t.ui("teamComp.critModeCrit")}
+        </SelectItem>
+        <SelectItem value="noCrit" disabled={disableNoCrit}>
+          {t.ui("teamComp.critModeNoCrit")}
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
+/** Derive crit-mode disable flags from display parts. */
+function getCritDisableFlags(parts?: DisplayPart[]): {
+  disableCrit: boolean;
+  disableNoCrit: boolean;
+} {
+  if (!parts || parts.length === 0)
+    return { disableCrit: false, disableNoCrit: false };
+  const crs = parts.map((p) =>
+    p.template === "transform"
+      ? p.statValues.reactionCr || 0
+      : p.statValues.cr || 0
+  );
+  // Disable CRIT if all parts have cr <= 0 (never crits)
+  const disableCrit = crs.every((cr) => cr <= 0);
+  // Disable Non-CRIT if all parts have cr >= 1 (always crits)
+  const disableNoCrit = crs.every((cr) => cr >= 1);
+  return { disableCrit, disableNoCrit };
+}
+
 function EnemyResInput({
   team,
   activeContext,
@@ -715,50 +829,6 @@ function EnemyResInput({
         />
         <span className="text-xs font-bold text-muted-foreground">%</span>
       </div>
-    </div>
-  );
-}
-
-function AssumeCritToggle({
-  team,
-  activeContext,
-  updateTeam,
-  isMobile,
-  t,
-}: CtxProps) {
-  return (
-    <div
-      className={cn(
-        "flex items-center cursor-pointer select-none",
-        isMobile ? "gap-1" : "gap-2"
-      )}
-      onClick={() =>
-        updateTeam(team.id, {
-          calcContext: {
-            ...team.calcContext,
-            assumeCrit: !activeContext.assumeCrit,
-          },
-        })
-      }
-    >
-      <div
-        className={cn(
-          "w-4 h-4 rounded border border-border/30 flex items-center justify-center transition-colors shadow-sm cursor-pointer",
-          activeContext.assumeCrit
-            ? "bg-primary border-primary text-primary-foreground"
-            : "bg-background/50"
-        )}
-      >
-        {activeContext.assumeCrit && <Check className="w-3 h-3" />}
-      </div>
-      <span
-        className={cn(
-          "font-semibold text-foreground/80",
-          isMobile ? "text-xs" : "text-sm"
-        )}
-      >
-        {t.ui("teamComp.assumeCrit")}
-      </span>
     </div>
   );
 }
@@ -971,6 +1041,10 @@ export function DamageCard({
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
   >("resultsTab", "current");
+  const [critMode, setCritMode] = useSessionState<CritMode>(
+    "critMode",
+    "expected"
+  );
 
   // Keep progress bar visible for 1s after optimization completes
   const [showProgress, setShowProgress] = useState(false);
@@ -1099,7 +1173,6 @@ export function DamageCard({
           <div className={CONTROLS_CLS(isMobile)}>
             <EnemyLevelInput {...ctxProps} />
             <EnemyResInput {...ctxProps} />
-            <AssumeCritToggle {...ctxProps} />
           </div>
           {formulaMode === "combo" && comboResult && comboLines && teamBuild ? (
             <ComboResultView
@@ -1109,6 +1182,8 @@ export function DamageCard({
               teamBuild={teamBuild}
               team={effectiveTeam}
               artifactsByChar={equippedArtifactsByChar}
+              critMode={critMode}
+              setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
               reactionOverrides={team.reactionOverrides}
@@ -1126,6 +1201,8 @@ export function DamageCard({
               artifactsByChar={equippedArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
               displayResult={currentDisplayResult}
+              critMode={critMode}
+              setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
             />
@@ -1384,6 +1461,8 @@ export function DamageCard({
                 teamBuild={teamBuild}
                 team={effectiveTeam}
                 artifactsByChar={optimizedArtifactsByChar}
+                critMode={critMode}
+                setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
                 reactionOverrides={team.reactionOverrides}
@@ -1407,6 +1486,8 @@ export function DamageCard({
                 artifactsByChar={optimizedArtifactsByChar}
                 targetCharId={resolvedFormula?.charId}
                 displayResult={optimizedDisplayResult}
+                critMode={critMode}
+                setCritMode={setCritMode}
                 isMobile={isMobile}
                 t={t}
                 failReasons={
@@ -1500,6 +1581,8 @@ export function DamageCard({
               teamBuild={teamBuild}
               team={effectiveTeam}
               artifactsByChar={idealArtifactsByChar}
+              critMode={critMode}
+              setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
               reactionOverrides={team.reactionOverrides}
@@ -1512,6 +1595,8 @@ export function DamageCard({
               artifactsByChar={idealArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
               displayResult={idealDisplayResult}
+              critMode={critMode}
+              setCritMode={setCritMode}
               isMobile={isMobile}
               t={t}
             />

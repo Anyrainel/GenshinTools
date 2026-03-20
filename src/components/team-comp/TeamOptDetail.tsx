@@ -205,7 +205,6 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     return {
       enemyLevel: team.calcContext?.enemyLevel ?? 110,
       enemyRes: team.calcContext?.enemyRes ?? 0.1,
-      assumeCrit: team.calcContext?.assumeCrit ?? false,
       critRateTarget: team.calcContext?.critRateTarget,
       rollMultiplier: team.calcContext?.rollMultiplier,
       idealSubstatBudget: team.calcContext?.idealSubstatBudget,

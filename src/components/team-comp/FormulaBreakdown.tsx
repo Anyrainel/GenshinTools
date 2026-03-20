@@ -1,5 +1,6 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type {
+  CritMode,
   DisplayPart,
   FormulaTemplate,
   StatKey,
@@ -13,6 +14,7 @@ type HlKey = StatKey | "charLevel" | null;
 type Props = {
   parts: DisplayPart[];
   highlightedStat: HlKey;
+  critMode: CritMode;
   t: ReturnType<typeof useLanguage>["t"];
 };
 
@@ -540,11 +542,13 @@ function DmgBonusZone({
 function CommonMultipliers({
   p,
   hl,
+  critMode,
   t,
   showDef = true,
 }: {
   p: DisplayPart;
   hl: HlKey;
+  critMode: CritMode;
   t: ReturnType<typeof useLanguage>["t"];
   showDef?: boolean;
 }) {
@@ -577,12 +581,13 @@ function CommonMultipliers({
       ? p.statValues.reactionCd || 0
       : p.statValues.cd || 0;
 
-  const assumeCrit = p.params.assumeCrit === 1;
   const critMult =
     cr > 0 || cd > 0
-      ? assumeCrit
+      ? critMode === "crit"
         ? 1 + cd
-        : 1 + Math.max(0, Math.min(cr, 1)) * cd
+        : critMode === "noCrit"
+          ? 1
+          : 1 + Math.max(0, Math.min(cr, 1)) * cd
       : 1;
 
   const hasCrit = critMult !== 1;
@@ -604,7 +609,7 @@ function CommonMultipliers({
               <span className="flex items-center">
                 <MathVar val={1} label="" />
                 <MathOp char="+" />
-                {!assumeCrit && (
+                {critMode === "expected" && (
                   <>
                     <Paren char="(" />
                     <MathVar
@@ -620,7 +625,7 @@ function CommonMultipliers({
                   label={t.statShort("cd")}
                   highlight={hl === "cd" || hl === "reactionCd"}
                 />
-                {!assumeCrit && <Paren char=")" />}
+                {critMode === "expected" && <Paren char=")" />}
               </span>
             }
           />
@@ -704,35 +709,26 @@ function CommonMultipliers({
 
 // ─── Renderers by Template ───
 
-function DirectEq({
-  p,
-  hl,
-  t,
-}: {
+type RendererProps = {
   p: DisplayPart;
   hl: HlKey;
+  critMode: CritMode;
   t: ReturnType<typeof useLanguage>["t"];
-}) {
+};
+
+function DirectEq({ p, hl, critMode, t }: RendererProps) {
   return (
     <>
       <BaseGroup p={p} hl={hl} t={t} />
       <Op />
       <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} />
+      <CommonMultipliers p={p} hl={hl} critMode={critMode} t={t} />
     </>
   );
 }
 
-function AmplifyEq({
-  p,
-  hl,
-  t,
-}: {
-  p: DisplayPart;
-  hl: HlKey;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
+function AmplifyEq({ p, hl, critMode, t }: RendererProps) {
   const reactBase = p.params.reactionCoeff || 1;
   return (
     <>
@@ -748,40 +744,24 @@ function AmplifyEq({
       <Op />
       <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} />
+      <CommonMultipliers p={p} hl={hl} critMode={critMode} t={t} />
     </>
   );
 }
 
-function CatalyzeEq({
-  p,
-  hl,
-  t,
-}: {
-  p: DisplayPart;
-  hl: HlKey;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
+function CatalyzeEq({ p, hl, critMode, t }: RendererProps) {
   return (
     <>
       <BaseGroup p={p} hl={hl} t={t} isCatalyze />
       <Op />
       <DmgBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} />
+      <CommonMultipliers p={p} hl={hl} critMode={critMode} t={t} />
     </>
   );
 }
 
-function TransformEq({
-  p,
-  hl,
-  t,
-}: {
-  p: DisplayPart;
-  hl: HlKey;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
+function TransformEq({ p, hl, critMode, t }: RendererProps) {
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
 
@@ -797,20 +777,18 @@ function TransformEq({
       <Op />
       <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
+      <CommonMultipliers
+        p={p}
+        hl={hl}
+        critMode={critMode}
+        t={t}
+        showDef={false}
+      />
     </>
   );
 }
 
-function LunarEq({
-  p,
-  hl,
-  t,
-}: {
-  p: DisplayPart;
-  hl: HlKey;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
+function LunarEq({ p, hl, critMode, t }: RendererProps) {
   const levelMult = p.params.levelCoeff || 0;
   const reactBase = p.params.reactionCoeff || 0;
   const baseDmg = levelMult * reactBase;
@@ -855,7 +833,13 @@ function LunarEq({
       <Op />
       <ReactionBonusZone p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
+      <CommonMultipliers
+        p={p}
+        hl={hl}
+        critMode={critMode}
+        t={t}
+        showDef={false}
+      />
     </>
   );
 }
@@ -903,32 +887,23 @@ function LunarDirectGroup({
   );
 }
 
-function LunarDirectEq({
-  p,
-  hl,
-  t,
-}: {
-  p: DisplayPart;
-  hl: HlKey;
-  t: ReturnType<typeof useLanguage>["t"];
-}) {
+function LunarDirectEq({ p, hl, critMode, t }: RendererProps) {
   return (
     <>
       <LunarDirectGroup p={p} hl={hl} t={t} />
       <Op />
-      <CommonMultipliers p={p} hl={hl} t={t} showDef={false} />
+      <CommonMultipliers
+        p={p}
+        hl={hl}
+        critMode={critMode}
+        t={t}
+        showDef={false}
+      />
     </>
   );
 }
 
-const RENDERERS: Record<
-  FormulaTemplate,
-  React.FC<{
-    p: DisplayPart;
-    hl: HlKey;
-    t: ReturnType<typeof useLanguage>["t"];
-  }>
-> = {
+const RENDERERS: Record<FormulaTemplate, React.FC<RendererProps>> = {
   direct: DirectEq,
   amplify: AmplifyEq,
   catalyze: CatalyzeEq,
@@ -965,15 +940,44 @@ function getTemplateName(
   return abilityPrefix + elName + t.formula(TEMPLATE_KEYS[p.template]);
 }
 
-export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
+/**
+ * Adjust a DisplayPart's damage for the selected critMode.
+ * DisplayPart always stores expected damage; this derives crit/noCrit variants.
+ */
+export function adjustPartDamage(p: DisplayPart, critMode: CritMode): number {
+  if (critMode === "expected") return p.damage;
+
+  const cr =
+    p.template === "transform"
+      ? p.statValues.reactionCr || 0
+      : p.statValues.cr || 0;
+  const cd =
+    p.template === "transform"
+      ? p.statValues.reactionCd || 0
+      : p.statValues.cd || 0;
+
+  const expectedMult = 1 + Math.max(0, Math.min(cr, 1)) * cd;
+  if (expectedMult <= 0) return 0;
+
+  const targetMult = critMode === "crit" ? 1 + cd : 1;
+  return (p.damage / expectedMult) * targetMult;
+}
+
+export function FormulaBreakdown({
+  parts,
+  highlightedStat,
+  critMode,
+  t,
+}: Props) {
   return (
     <div className="w-full overflow-x-auto pt-3 px-1">
       <div className="w-max mx-auto flex flex-col items-center gap-2 md:gap-4">
         {parts.map((p, idx) => {
           const Renderer = RENDERERS[p.template];
+          const displayDamage = adjustPartDamage(p, critMode);
           return (
             <div key={idx} className="flex items-center pt-2">
-              <Renderer p={p} hl={highlightedStat} t={t} />
+              <Renderer p={p} hl={highlightedStat} critMode={critMode} t={t} />
               <div className="flex px-1 md:px-2 shrink-0 h-10 md:h-16 items-center">
                 <Op char="=" />
               </div>
@@ -991,13 +995,13 @@ export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
                 <span className="font-[math] text-base md:text-xl font-black text-foreground flex items-center justify-center gap-x-1">
                   {p.hits && p.hits !== 1 ? (
                     <>
-                      <span>{fmtDamage(p.damage)}</span>
+                      <span>{fmtDamage(displayDamage)}</span>
                       <span className="text-primary bg-primary/10 rounded-full px-2 text-xs font-semibold ml-1 tracking-wider">
                         × {p.hits}
                       </span>
                     </>
                   ) : (
-                    <span>{fmtDamage(p.damage)}</span>
+                    <span>{fmtDamage(displayDamage)}</span>
                   )}
                 </span>
               </div>

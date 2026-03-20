@@ -94,7 +94,6 @@ describe("per-part reaction override — damage calc", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -233,7 +232,6 @@ describe("partHits — multi-hit split", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -430,7 +428,6 @@ describe("getDamageResult matches getDisplayResult total damage", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   const emptySheets: Record<string, StatSheet> = {

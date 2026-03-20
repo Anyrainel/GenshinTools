@@ -62,7 +62,7 @@ async function main() {
   const inventory = getAllArtifacts(accountData);
 
   const globalConfig: GlobalStatWeights = { flatAtk: 0, flatHp: 0, flatDef: 0 };
-  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1, assumeCrit: false };
+  const ctx: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
   const TIMEOUT_SEC = 5;
 
   console.log(`Inventory: ${inventory.length} artifacts, timeout: ${TIMEOUT_SEC}s per run\n`);

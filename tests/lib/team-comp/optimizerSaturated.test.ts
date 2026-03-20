@@ -104,7 +104,7 @@ describe("Saturated character handling", () => {
   }
 
   it("saturation detection: Bennett empty vs super produce same damage", () => {
-    const calcContext = { enemyLevel: 90, enemyRes: 10, assumeCrit: false };
+    const calcContext = { enemyLevel: 90, enemyRes: 10 };
 
     // Empty sheet for Bennett
     const emptySheets = {
@@ -163,7 +163,7 @@ describe("Saturated character handling", () => {
       carryCharId: "hu_tao",
       formulaId,
       inventory,
-      calcContext: { enemyLevel: 90, enemyRes: 10, assumeCrit: false },
+      calcContext: { enemyLevel: 90, enemyRes: 10 },
       globalConfig: { flatHp: 0, flatAtk: 50, flatDef: 0 },
       baseSheets,
       perChar: {

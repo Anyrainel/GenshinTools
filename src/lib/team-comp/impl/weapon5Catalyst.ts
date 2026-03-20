@@ -1,7 +1,6 @@
 import { ScalingBuff, StatBuff } from "../damageBuffs";
 import { RegisterWeapon, WeaponBase } from "../damageModels";
 import { allElementalDmg, r, wbs } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
 
 // ══════════════════════════
 // 5★ Catalysts
@@ -211,14 +210,13 @@ class JadefallsSplendor extends WeaponBase {
   get buffs() {
     const wielderElement = this.teamMeta.elements[this.charId];
     if (wielderElement === undefined) return [];
-    const outKey = `${wielderElement.toLowerCase()}%` as StatKey;
     return [
       new ScalingBuff(
         wbs(this, ["Q", "shield"]),
-        { receiver: "self" },
+        { receiver: "self", filter: { elements: [wielderElement] } },
         [],
         "hp",
-        outKey,
+        "dmg%",
         r(this.refinement, [0.003, 0.005, 0.007, 0.009, 0.011]) / 1000,
         r(this.refinement, [0.12, 0.2, 0.28, 0.36, 0.44])
       ),
@@ -326,24 +324,31 @@ class AThousandFloatingDreams extends WeaponBase {
     sameCount = Math.min(sameCount, 3);
     diffCount = Math.min(diffCount, 3);
 
-    const selfBuffs: StatEntry[] = [];
+    const buffs: import("../damageBuffs").StatBuff[] = [];
     if (diffCount > 0 && wielderElement) {
-      const elKey = `${wielderElement.toLowerCase()}%` as StatKey;
-      selfBuffs.push({
-        key: elKey,
-        value: diffCount * r(this.refinement, [0.1, 0.14, 0.18, 0.22, 0.26]),
-      });
+      buffs.push(
+        new StatBuff(
+          wbs(this),
+          { receiver: "self", filter: { elements: [wielderElement] } },
+          [
+            {
+              key: "dmg%",
+              value:
+                diffCount * r(this.refinement, [0.1, 0.14, 0.18, 0.22, 0.26]),
+            },
+          ]
+        )
+      );
     }
     if (sameCount > 0) {
-      selfBuffs.push({
-        key: "em",
-        value: sameCount * r(this.refinement, [32, 40, 48, 56, 64]),
-      });
-    }
-
-    const buffs: import("../damageBuffs").StatBuff[] = [];
-    if (selfBuffs.length > 0) {
-      buffs.push(new StatBuff(wbs(this), { receiver: "self" }, selfBuffs));
+      buffs.push(
+        new StatBuff(wbs(this), { receiver: "self" }, [
+          {
+            key: "em",
+            value: sameCount * r(this.refinement, [32, 40, 48, 56, 64]),
+          },
+        ])
+      );
     }
     buffs.push(
       new StatBuff(wbs(this), { receiver: "team" }, [

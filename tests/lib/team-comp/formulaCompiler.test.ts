@@ -40,12 +40,6 @@ import { getFirstFormulaId } from "../../fixtures/optimizerHelpers";
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
-  assumeCrit: false,
-};
-
-const CTX_ASSUME_CRIT: CalcContext = {
-  ...CTX,
-  assumeCrit: true,
 };
 
 // ─── Helpers ───
@@ -160,29 +154,6 @@ describe("DirectFormula buildExpr parity", () => {
 
       expect(exprResult).toBeCloseTo(calcResult, 4);
     }
-  });
-
-  it("matches with assumeCrit", () => {
-    const artValues: [StatKey, number][] = [
-      ["atk%", 0.5],
-      ["atk", 300],
-      ["cr", 0.6],
-      ["cd", 1.7],
-      ["pyro%", 0.466],
-    ];
-
-    const { varMapping, exprStats } = makeStatsAndExpr(
-      baseStats,
-      artifactStatKeys
-    );
-    const expr = formula.buildExpr(exprStats, 90, CTX_ASSUME_CRIT);
-    const vars = fillVars(varMapping, artValues);
-    const exprResult = evaluate(simplify(expr), vars);
-
-    const fullSheet = makeFullSheet(baseStats, artValues);
-    const calcResult = formula.calc(fullSheet, 90, CTX_ASSUME_CRIT);
-
-    expect(exprResult).toBeCloseTo(calcResult, 4);
   });
 
   it("matches with extra scaling term", () => {
@@ -897,7 +868,6 @@ const CLORINDE_TEAM: CharCompConfig[] = [
 const FUZZ_CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
-  assumeCrit: false,
 };
 
 // ─── Single-formula compiled pipeline fuzz ───

@@ -14,7 +14,6 @@ import type { CalcContext } from "@/lib/team-comp/types";
 const CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 0.1,
-  assumeCrit: false,
 };
 
 describe("DirectFormula", () => {
@@ -74,7 +73,6 @@ describe("DirectFormula", () => {
 
   it("display() assumes correct crit context", () => {
     const dp = formula.display(stats, 90, CTX);
-    expect(dp.params.assumeCrit).toBe(0);
   });
 });
 
@@ -363,86 +361,6 @@ describe("display() ↔ calc() consistency", () => {
   }
 });
 
-describe("assumeCrit branch", () => {
-  const CRIT_CTX: CalcContext = {
-    enemyLevel: 100,
-    enemyRes: 0.1,
-    assumeCrit: true,
-  };
-
-  const stats = new StatSheet([
-    { key: "baseAtk", value: 1000 },
-    { key: "cr", value: 0.7 },
-    { key: "cd", value: 1.5 },
-  ]);
-
-  it("DirectFormula: critMult = 1 + cd (ignores cr)", () => {
-    const formula = new DirectFormula(1.0, {
-      element: "Pyro",
-      ability: "normal",
-      reaction: "none",
-    });
-
-    const result = formula.calc(stats, 90, CRIT_CTX);
-    // assumeCrit damage > expected-crit damage
-    const regular = formula.calc(stats, 90, CTX);
-    expect(result).toBeGreaterThan(regular);
-  });
-
-  it("AmplifyFormula: assumeCrit applies to amplified result", () => {
-    const formula = new AmplifyFormula(1.0, {
-      element: "Pyro",
-      ability: "normal",
-      reaction: "vaporize",
-    });
-
-    const result = formula.calc(stats, 90, CRIT_CTX);
-    const regular = formula.calc(stats, 90, CTX);
-    expect(result).toBeGreaterThan(regular);
-  });
-
-  it("LunarFormula: assumeCrit applies to lunar reaction", () => {
-    const lunarStats = new StatSheet([
-      { key: "em", value: 200 },
-      { key: "cr", value: 0.6 },
-      { key: "cd", value: 1.2 },
-    ]);
-
-    const formula = new LunarFormula(0, {
-      element: "Electro",
-      ability: "skill",
-      reaction: "lunarCharged",
-    });
-
-    const result = formula.calc(lunarStats, 90, CRIT_CTX);
-    // assumeCrit: 1 + 1.2 = 2.2
-    expect(result).toBeGreaterThan(0);
-  });
-
-  it("LunarDirectFormula: assumeCrit applies", () => {
-    const formula = new LunarDirectFormula(1.0, {
-      element: "Hydro",
-      ability: "skill",
-      reaction: "lunarCharged",
-    });
-
-    const result = formula.calc(stats, 90, CRIT_CTX);
-    expect(result).toBeGreaterThan(0);
-  });
-
-  it("display() ↔ calc() consistency under assumeCrit", () => {
-    const formula = new DirectFormula(2.0, {
-      element: "Pyro",
-      ability: "normal",
-      reaction: "none",
-    });
-    const c = formula.calc(stats, 90, CRIT_CTX);
-    const d = formula.display(stats, 90, CRIT_CTX);
-    expect(d.damage).toBeCloseTo(c, 2);
-    expect(d.params.assumeCrit).toBe(1);
-  });
-});
-
 describe("computeResMult branches", () => {
   const formula = new DirectFormula(1.0, {
     element: "Pyro",
@@ -461,7 +379,6 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
-      assumeCrit: false,
     };
 
     const resMult = (
@@ -478,7 +395,6 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.9, // 90% base RES
-      assumeCrit: false,
     };
 
     const resMult = (
@@ -495,7 +411,6 @@ describe("computeResMult branches", () => {
     const ctx: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.5,
-      assumeCrit: false,
     };
 
     const resMult = (

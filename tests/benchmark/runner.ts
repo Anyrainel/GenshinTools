@@ -122,7 +122,6 @@ export interface TeamResult {
 export const DEFAULT_CALC_CONTEXT: CalcContext = {
   enemyLevel: 110,
   enemyRes: 0.1,
-  assumeCrit: false,
 };
 
 export const DEFAULT_GLOBAL_CONFIG: GlobalStatWeights = {
@@ -441,8 +440,6 @@ export async function runOptimizerOnTeam(
       enemyLevel:
         team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
       enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
-      assumeCrit:
-        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
     };
 
     const baseSheets = buildBaseSheets(team, accountData);

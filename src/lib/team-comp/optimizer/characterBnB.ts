@@ -421,9 +421,7 @@ export function runCharacterBnB(
   // diminishing value as total CR approaches the cap.
   let crDiscount = 1;
   if (swapCharId === formulaCharId) {
-    if (calcContext.assumeCrit) {
-      crDiscount = 0;
-    } else {
+    {
       const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
       const blStats = teamBuild.getTeamStats(
         blSheets,

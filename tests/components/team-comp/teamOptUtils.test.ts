@@ -491,7 +491,6 @@ describe("calcDisplayResult", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
-        assumeCrit: false,
       }
     );
     expect(result).toBeNull();
@@ -505,7 +504,6 @@ describe("calcDisplayResult", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
-        assumeCrit: false,
       }
     );
     expect(result).toBeNull();
@@ -528,7 +526,6 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
-        assumeCrit: false,
       }
     );
     expect(result.comboResult).toBeNull();
@@ -548,7 +545,6 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
-        assumeCrit: false,
       }
     );
     expect(result.comboResult).toBeNull();
@@ -564,7 +560,6 @@ describe("calcComboResults", () => {
       {
         enemyLevel: 100,
         enemyRes: 0.1,
-        assumeCrit: false,
       }
     );
     expect(result.comboResult).toBeNull();

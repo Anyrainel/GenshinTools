@@ -535,7 +535,6 @@ describe("CharacterBase via createCharacter", () => {
     const result = char.getDamageResult("diluc-skill", stats, [stats], {
       enemyLevel: 100,
       enemyRes: 0.1,
-      assumeCrit: false,
     });
 
     expect(result.totalDamage).toBeGreaterThan(0);

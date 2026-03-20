@@ -146,16 +146,14 @@ export abstract class DamageFormula {
     return 1 / (1 + 4 * effectiveRes);
   }
 
-  protected computeCritMult(stats: StatSheet, ctx: CalcContext): number {
+  protected computeCritMult(stats: StatSheet, _ctx: CalcContext): number {
     const cr = stats.get("cr", this.tag) + stats.get("reactionCr", this.tag);
     const cd = stats.get("cd", this.tag) + stats.get("reactionCd", this.tag);
 
     // critRateTarget bonus is applied to all team members' stats in
     // TeamBuild.getTeamStats / getDisplayResult, so it's already in `cr`.
+    // Always uses expected-value formula; display-layer critMode adjusts UI numbers.
 
-    if (ctx.assumeCrit) {
-      return 1 + cd;
-    }
     return 1 + Math.max(0, Math.min(cr, 1.0)) * cd;
   }
 
@@ -239,7 +237,7 @@ export abstract class DamageFormula {
     return simplify(E.add(E.const(1), E.mul(E.const(-1), effRes)));
   }
 
-  protected computeCritMultExpr(stats: ExprStats, ctx: CalcContext): Expr {
+  protected computeCritMultExpr(stats: ExprStats, _ctx: CalcContext): Expr {
     const cr = E.add(
       stats.get("cr", this.tag),
       stats.get("reactionCr", this.tag)
@@ -248,9 +246,7 @@ export abstract class DamageFormula {
       stats.get("cd", this.tag),
       stats.get("reactionCd", this.tag)
     );
-    if (ctx.assumeCrit) {
-      return simplify(E.add(E.const(1), cd));
-    }
+    // Always expected-value formula; display-layer critMode adjusts UI numbers.
     // 1 + clamp(cr, 0, 1) * cd
     return simplify(
       E.add(E.const(1), E.mul(E.clamp(cr, E.const(0), E.const(1)), cd))
@@ -394,7 +390,6 @@ export class DirectFormula extends DamageFormula {
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
-        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
       scalingKeys: keys,
       scalingMulti: multi,
@@ -625,7 +620,6 @@ export class CatalyzeFormula extends DamageFormula {
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
-        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
       scalingKeys: keys,
       scalingMulti: multi,
@@ -659,8 +653,6 @@ export class TransformFormula extends DamageFormula {
     let critMult: Expr;
     if (reactionCr.tag === "const" && reactionCr.value === 0) {
       critMult = E.const(1);
-    } else if (ctx.assumeCrit) {
-      critMult = E.add(E.const(1), reactionCd);
     } else {
       critMult = E.add(
         E.const(1),
@@ -693,9 +685,7 @@ export class TransformFormula extends DamageFormula {
     const reactionCd = stats.get("reactionCd", this.tag);
     const critMult =
       reactionCr > 0
-        ? ctx.assumeCrit
-          ? 1 + reactionCd
-          : 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
+        ? 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
         : 1;
 
     const baseDmg = levelMult * reactionCoeff;
@@ -714,9 +704,7 @@ export class TransformFormula extends DamageFormula {
     const reactionCd = stats.get("reactionCd", this.tag);
     const critMult =
       reactionCr > 0
-        ? ctx.assumeCrit
-          ? 1 + reactionCd
-          : 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
+        ? 1 + Math.max(0, Math.min(reactionCr, 1)) * reactionCd
         : 1;
 
     const baseDmg = levelCoeff * reactionCoeff;
@@ -739,7 +727,6 @@ export class TransformFormula extends DamageFormula {
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
-        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
       scalingKeys: [],
       scalingMulti: [],
@@ -857,7 +844,6 @@ export class LunarFormula extends DamageFormula {
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
-        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
       scalingKeys: [],
       scalingMulti: [],
@@ -1009,7 +995,6 @@ export class LunarDirectFormula extends DamageFormula {
         charLevel,
         enemyLevel: ctx.enemyLevel,
         enemyRes: ctx.enemyRes,
-        assumeCrit: ctx.assumeCrit ? 1 : 0,
       },
       scalingKeys: keys,
       scalingMulti: multi,

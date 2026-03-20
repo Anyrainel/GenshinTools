@@ -275,10 +275,12 @@ export type DisplayResult = {
  * Per-character `charLevel` lives on CharCompConfig and is threaded
  * separately through the formula pipeline.
  */
+/** How the crit multiplier is displayed (display-only, not used in optimizer). */
+export type CritMode = "expected" | "crit" | "noCrit";
+
 export type CalcContext = {
   enemyLevel: number;
   enemyRes: number;
-  assumeCrit: boolean;
   critRateTarget?: number; // 0–100 integer; undefined = disabled
   rollMultiplier?: number; // ideal-gen only; 0.7–1.0, default 0.85
   /** ideal-gen only; per-slot substat roll totals; default 8_6 */

@@ -52,7 +52,6 @@ export const TUNABLE_SUBSTATS: SubStat[] = [
 export const DEFAULT_CALC_CTX: CalcContext = {
   enemyLevel: 100,
   enemyRes: 10,
-  assumeCrit: false,
 };
 
 /** A formula with an optional weight (count in the rotation) and per-formula reaction. */

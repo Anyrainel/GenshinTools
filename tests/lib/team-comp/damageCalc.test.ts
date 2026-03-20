@@ -505,7 +505,6 @@ describe("TeamBuild lifecycle", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   // Empty artifact sheets — pure base stat calculation
@@ -940,7 +939,6 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   const emptySheets: Record<string, StatSheet> = {
@@ -1129,7 +1127,6 @@ describe("levelUpGains", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   it("computes level-up gain for Lv90 calc target (both 90→95 and 90→100)", () => {
@@ -1300,7 +1297,6 @@ describe("marginalGains — ER with ER-scaling weapon", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   it("includes ER marginal gain for a character with Engulfing Lightning", () => {
@@ -1382,7 +1378,6 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   it("emits separate E burst DMG buffs with correct per-character energy scaling", () => {
@@ -1507,7 +1502,6 @@ describe("bespoke buffs appear in resolveBuffs output", () => {
   const ctx: CalcContext = {
     enemyLevel: 100,
     enemyRes: 0.1,
-    assumeCrit: false,
   };
 
   const emptySheets: Record<string, StatSheet> = {

@@ -10,7 +10,7 @@ import {
 } from "../damageModels";
 import type { OptionDef, TeamMeta } from "../damageModels";
 import { getReactionAuraElements } from "../helpers";
-import type { StatEntry, StatKey } from "../types";
+import type { ElementalOrPhysical, StatEntry } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // Artifact 4-Piece Set Bonuses
@@ -203,14 +203,9 @@ class ArchaicPetra4pc extends ArtifactSetBase {
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
     const elements = new Set(Object.values(teamMeta.elements));
-    const entries: StatEntry[] = [];
-    for (const el of PHEC_ELEMENTS) {
-      if (elements.has(el)) {
-        entries.push({ key: `${el.toLowerCase()}%` as StatKey, value: 0.35 });
-      }
-    }
+    const presentElements = PHEC_ELEMENTS.filter((el) => elements.has(el));
     this.buffs =
-      entries.length > 0
+      presentElements.length > 0
         ? [
             new StatBuff(
               {
@@ -219,8 +214,15 @@ class ArchaicPetra4pc extends ArtifactSetBase {
                 triggers: ["crystallize"],
                 noStackId: this.artifactSetId,
               },
-              { receiver: "team" },
-              entries
+              {
+                receiver: "team",
+                filter: {
+                  elements: [
+                    ...presentElements,
+                  ].sort() as ElementalOrPhysical[],
+                },
+              },
+              [{ key: "dmg%", value: 0.35 }]
             ),
           ]
         : [];
@@ -922,11 +924,6 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
     // Else also add self element
     buffedElements.add(wearerElement);
 
-    const entries: StatEntry[] = [...buffedElements].map((el) => ({
-      key: `${el.toLowerCase()}%` as StatKey,
-      value: bonus,
-    }));
-
     this.buffs = [
       new StatBuff(
         {
@@ -935,8 +932,13 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
           triggers: ["elemental-reaction"],
           noStackId: this.artifactSetId,
         },
-        { receiver: "team" },
-        entries
+        {
+          receiver: "team",
+          filter: {
+            elements: [...buffedElements].sort() as ElementalOrPhysical[],
+          },
+        },
+        [{ key: "dmg%", value: bonus }]
       ),
     ];
   }
