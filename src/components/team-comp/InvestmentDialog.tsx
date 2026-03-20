@@ -85,12 +85,21 @@ export function InvestmentDialog({
 
   const [activeTab, setActiveTab] = useState<ViewTab>("sequence");
 
-  // Per-character investment configs — initialize from store or defaults
+  // Per-character investment configs — initialize from store or defaults,
+  // then reconcile with current baseConfigs (team roster may have changed)
   const [charConfigs, setCharConfigs] = useState<InvestmentCharConfig[]>(() =>
-    storedConfigs && storedConfigs.length > 0
-      ? storedConfigs
-      : buildDefaultCharConfigs(baseConfigs)
+    reconcileConfigs(
+      storedConfigs && storedConfigs.length > 0 ? storedConfigs : [],
+      baseConfigs
+    )
   );
+
+  // Re-reconcile when baseConfigs change (character added/removed/swapped)
+  const baseCharIds = baseConfigs.map((b) => b.charId).join(",");
+  useEffect(() => {
+    setCharConfigs((prev) => reconcileConfigs(prev, baseConfigs));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseCharIds]);
 
   // Persist to store whenever charConfigs change
   useEffect(() => {
@@ -245,7 +254,8 @@ export function InvestmentDialog({
 
         <div className="flex items-start justify-center gap-4 py-2 flex-wrap">
           {charConfigs.map((cfg) => {
-            const bc = baseConfigs.find((b) => b.charId === cfg.charId)!;
+            const bc = baseConfigs.find((b) => b.charId === cfg.charId);
+            if (!bc) return null;
             return (
               <div
                 key={cfg.charId}
@@ -384,7 +394,17 @@ function CharConfigGroup({
     [weaponStats, charWeaponType]
   );
 
-  const filter4Star = useMemo(() => makeFilter(4), [makeFilter]);
+  const filterLowStar = useMemo(() => {
+    return (item: unknown) => {
+      const w = item as WeaponResource;
+      if (!weaponStats) return w.rarity === 3 || w.rarity === 4;
+      const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
+      if (meta.rarity !== 3 && meta.rarity !== 4) return false;
+      if (charWeaponType && meta.type && meta.type !== charWeaponType)
+        return false;
+      return true;
+    };
+  }, [weaponStats, charWeaponType]);
   const filter5Star = useMemo(() => makeFilter(5), [makeFilter]);
   const artifactIcon = useMemo(
     () => getArtifactIconProps(baseConfig),
@@ -414,15 +434,15 @@ function CharConfigGroup({
         rarity={artifactIcon.rarity}
         size="sm"
       />
-      {/* 4★ weapon */}
+      {/* 3/4★ weapon */}
       <div className="flex flex-col items-center gap-1">
-        <span className="text-sm">4★</span>
+        <span className="text-sm">3/4★</span>
         <ItemPicker
           type="weapon"
           value={config.weapon4Star?.id ?? null}
           onChange={(id) => onUpdateWeapon(config.charId, "4", id as string)}
           onClear={() => onUpdateWeapon(config.charId, "4", null)}
-          filter={filter4Star}
+          filter={filterLowStar}
           triggerSize="sm"
           menuSize="sm"
         />
@@ -519,7 +539,7 @@ function CharStartSelectors({
             onUpdateStart(config.charId, "startRefinement", Number(v))
           }
         >
-          <LightweightSelectTrigger className="h-6 w-[4.5rem] text-xs font-mono px-1.5">
+          <LightweightSelectTrigger className="h-6 w-[5rem] text-xs font-mono px-1.5">
             <LightweightSelectValue />
           </LightweightSelectTrigger>
           <LightweightSelectContent>
@@ -594,7 +614,7 @@ function CharMaxSelectors({
             onUpdateMax(config.charId, "maxRefinement", Number(v))
           }
         >
-          <LightweightSelectTrigger className="h-6 w-[4.5rem] text-xs font-mono px-1.5">
+          <LightweightSelectTrigger className="h-6 w-[5rem] text-xs font-mono px-1.5">
             <LightweightSelectValue />
           </LightweightSelectTrigger>
           <LightweightSelectContent>
@@ -648,6 +668,25 @@ function getArtifactIconProps(bc: CharCompConfig): {
   return { imagePath: "", rarity: 5 };
 }
 
+// ─── Reconcile stored configs with current team roster ───
+
+function reconcileConfigs(
+  stored: InvestmentCharConfig[],
+  baseConfigs: CharCompConfig[]
+): InvestmentCharConfig[] {
+  const baseIds = new Set(baseConfigs.map((b) => b.charId));
+  // Keep stored configs that still exist in the team
+  const kept = stored.filter((c) => baseIds.has(c.charId));
+  const keptIds = new Set(kept.map((c) => c.charId));
+  // Add defaults for new team members
+  const added = buildDefaultCharConfigs(
+    baseConfigs.filter((b) => !keptIds.has(b.charId))
+  );
+  // Return in baseConfigs order
+  const byId = new Map([...kept, ...added].map((c) => [c.charId, c]));
+  return baseConfigs.map((b) => byId.get(b.charId)!);
+}
+
 // ─── Default config builder ───
 
 function buildDefaultCharConfigs(
@@ -662,7 +701,7 @@ function buildDefaultCharConfigs(
     return {
       charId: bc.charId,
       rarity,
-      // If the base weapon is 4★, use it as the 4★ weapon
+      // If the base weapon is 3★ or 4★, use it as the low-star weapon
       weapon4Star: !is5StarWeapon
         ? { id: bc.weaponId, refinement: bc.refinement }
         : undefined,

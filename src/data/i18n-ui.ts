@@ -950,12 +950,8 @@ export const i18nUiData = {
       zh: "最高",
     },
     investWeapon4StarR0: {
-      en: "4★R5",
-      zh: "4★精5",
-    },
-    investUpgrade: {
-      en: "Upgrade",
-      zh: "升级",
+      en: "3/4★R5",
+      zh: "3/4★精5",
     },
     investChar: {
       en: "Character",
@@ -965,10 +961,6 @@ export const i18nUiData = {
       en: "5★",
       zh: "金",
     },
-    investVsBase: {
-      en: "vs Base",
-      zh: "vs 基准",
-    },
     investVsPrev: {
       en: "vs Prev",
       zh: "vs 前者",
@@ -976,10 +968,6 @@ export const i18nUiData = {
     investDiff: {
       en: "Change",
       zh: "变化",
-    },
-    investBaseline: {
-      en: "Baseline",
-      zh: "基准",
     },
     investNoSteps: {
       en: "No investment steps found.",
