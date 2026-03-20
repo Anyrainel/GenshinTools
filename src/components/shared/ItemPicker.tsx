@@ -532,17 +532,23 @@ function PickerContent({
   // Unified Item Mapping (use stats-based rarity when from stats list)
   const items: PickerItem[] = useMemo(() => {
     if (type === "character") {
-      return sortedCharacters.map((c) => {
-        const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
-        return {
-          id: c.id,
-          imagePath: c.imagePath,
-          rarity: meta.rarity,
-          name: t.character(c.id).toLowerCase(),
-          meta,
-          original: c,
-        };
-      });
+      return sortedCharacters
+        .filter((c) => {
+          // Hide unreleased characters (no release date in stats)
+          const stats = characterStats?.[c.id];
+          return stats?.releaseDate != null;
+        })
+        .map((c) => {
+          const meta = getCharacterDisplayMeta(c, characterStats?.[c.id]);
+          return {
+            id: c.id,
+            imagePath: c.imagePath,
+            rarity: meta.rarity,
+            name: t.character(c.id).toLowerCase(),
+            meta,
+            original: c,
+          };
+        });
     }
     if (type === "weapon") {
       return sortedWeapons.map((w) => {
