@@ -1483,17 +1483,19 @@ export function hasOffFieldParts(
   return entry?.parts.some((p) => p.offField) ?? false;
 }
 
-/** Check if ALL parts of a formula are off-field. */
-export function isFullyOffField(
+/** Check off-field status of a formula's parts. */
+export function offFieldStatus(
   teamBuild: TeamBuild,
   charId: string,
   formulaId: string
-): boolean {
+): "full" | "partial" | "none" {
   const entry =
     teamBuild.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
-  return (
-    (entry?.parts.length ?? 0) > 0 && entry!.parts.every((p) => p.offField)
-  );
+  if (!entry || entry.parts.length === 0) return "none";
+  const offCount = entry.parts.filter((p) => p.offField).length;
+  if (offCount === entry.parts.length) return "full";
+  if (offCount > 0) return "partial";
+  return "none";
 }
 
 /**

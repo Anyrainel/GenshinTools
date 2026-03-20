@@ -84,7 +84,6 @@ export function InvestmentDialog({
   const { progress, result, isComputing, error, start, stop } = analysis;
 
   const [activeTab, setActiveTab] = useState<ViewTab>("sequence");
-  const [valueMode, setValueMode] = useState<"abs" | "pct">("pct");
 
   // Per-character investment configs — initialize from store or defaults
   const [charConfigs, setCharConfigs] = useState<InvestmentCharConfig[]>(() =>
@@ -104,22 +103,42 @@ export function InvestmentDialog({
         prev.map((c) => {
           if (c.charId !== charId) return c;
           if (star === "4") {
+            if (!weaponId) {
+              // 4★ cleared — if startRefinement was 0 (="use 4★"), bump to R1
+              return {
+                ...c,
+                weapon4Star: undefined,
+                startRefinement:
+                  c.startRefinement === 0 && c.weapon5Star
+                    ? 1
+                    : c.startRefinement,
+              };
+            }
+            // 4★ set — if startRefinement was R1 (default for 5★-only), switch to 0 (="4★ R5")
             return {
               ...c,
-              weapon4Star: weaponId
-                ? { id: weaponId, refinement: 5 }
-                : undefined,
+              weapon4Star: { id: weaponId, refinement: 5 },
+              startRefinement:
+                c.startRefinement === 1 && c.weapon5Star
+                  ? 0
+                  : c.startRefinement,
             };
           }
           if (!weaponId) {
             // 5★ weapon cleared — reset to 0
-            return { ...c, weapon5Star: undefined, startRefinement: 0 };
+            return {
+              ...c,
+              weapon5Star: undefined,
+              startRefinement: 0,
+              maxRefinement: 0,
+            };
           }
           // 5★ weapon set — default to lowest: 0 if has 4★ (="4★ R0"), 1 if no 4★ (=R1)
           return {
             ...c,
             weapon5Star: { id: weaponId },
             startRefinement: c.weapon4Star ? 0 : 1,
+            maxRefinement: 5,
           };
         })
       );
@@ -131,6 +150,19 @@ export function InvestmentDialog({
     (
       charId: string,
       field: "startConstellation" | "startRefinement",
+      value: number
+    ) => {
+      setCharConfigs((prev) =>
+        prev.map((c) => (c.charId === charId ? { ...c, [field]: value } : c))
+      );
+    },
+    []
+  );
+
+  const updateMaxValues = useCallback(
+    (
+      charId: string,
+      field: "maxConstellation" | "maxRefinement",
       value: number
     ) => {
       setCharConfigs((prev) =>
@@ -166,7 +198,7 @@ export function InvestmentDialog({
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <ResponsiveDialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
@@ -227,17 +259,19 @@ export function InvestmentDialog({
                   config={cfg}
                   onUpdateStart={updateStartValues}
                 />
+                <CharMaxSelectors config={cfg} onUpdateMax={updateMaxValues} />
               </div>
             );
           })}
         </div>
 
-        {/* Run button + progress */}
-        <div className="flex items-center gap-3 py-2">
+        {/* Toolbar: analyze button | tabs */}
+        <div className="flex items-center gap-2 py-0.5">
           <Button
             onClick={isComputing ? stop : handleRun}
             variant={isComputing ? "destructive" : "default"}
             size="sm"
+            className="shrink-0"
           >
             {isComputing ? (
               <>
@@ -251,23 +285,17 @@ export function InvestmentDialog({
               </>
             )}
           </Button>
-          {isComputing && progress && (
+
+          {isComputing && progress ? (
             <div className="flex-1 space-y-1">
               <Progress value={overallPct} className="h-2" />
               <p className="text-xs text-muted-foreground">
                 {progress.message}
               </p>
             </div>
-          )}
-          {error && <p className="text-sm text-destructive">{error.message}</p>}
-        </div>
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-3 pt-2">
-            {/* Tab switcher + value mode */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex gap-1">
+          ) : (
+            <>
+              <div className="flex gap-1 flex-1 justify-center">
                 {(["chart", "table", "sequence"] as const).map((tab) => (
                   <Button
                     key={tab}
@@ -275,6 +303,7 @@ export function InvestmentDialog({
                     size="sm"
                     onClick={() => setActiveTab(tab)}
                     className="text-xs h-7 px-2.5"
+                    disabled={!result}
                   >
                     {tab === "chart"
                       ? t.ui("teamComp.investChart")
@@ -284,34 +313,23 @@ export function InvestmentDialog({
                   </Button>
                 ))}
               </div>
-              <div className="flex gap-1 text-xs">
-                <Button
-                  variant={valueMode === "abs" ? "secondary" : "ghost"}
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={() => setValueMode("abs")}
-                >
-                  Abs
-                </Button>
-                <Button
-                  variant={valueMode === "pct" ? "secondary" : "ghost"}
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={() => setValueMode("pct")}
-                >
-                  %
-                </Button>
-              </div>
-            </div>
+            </>
+          )}
+          {error && <p className="text-sm text-destructive">{error.message}</p>}
+        </div>
 
-            {/* Active tab content */}
+        {/* Results */}
+        {result && (
+          <div className="space-y-3">
             {activeTab === "chart" && (
-              <InvestmentChart result={result} valueMode={valueMode} />
+              <InvestmentChart
+                result={result}
+                charIds={charConfigs.map((c) => c.charId)}
+              />
             )}
             {activeTab === "table" && (
               <InvestmentTable
                 result={result}
-                valueMode={valueMode}
                 charIds={charConfigs.map((c) => c.charId)}
               />
             )}
@@ -518,6 +536,83 @@ function CharStartSelectors({
   );
 }
 
+// ─── Per-character max C/R selectors ───
+
+function CharMaxSelectors({
+  config,
+  onUpdateMax,
+}: {
+  config: InvestmentCharConfig;
+  onUpdateMax: (
+    charId: string,
+    field: "maxConstellation" | "maxRefinement",
+    value: number
+  ) => void;
+}) {
+  const { t } = useLanguage();
+  const is5Star = config.rarity >= 5;
+  const has5Wep = !!config.weapon5Star;
+  const hasAnySelector = is5Star || has5Wep;
+
+  if (!hasAnySelector) return null;
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+        {t.ui("teamComp.investMaxConfig")}
+      </span>
+      {is5Star && (
+        <LightweightSelect
+          value={String(config.maxConstellation)}
+          onValueChange={(v) =>
+            onUpdateMax(config.charId, "maxConstellation", Number(v))
+          }
+        >
+          <LightweightSelectTrigger className="h-6 w-[3.5rem] text-xs font-mono px-1.5">
+            <LightweightSelectValue />
+          </LightweightSelectTrigger>
+          <LightweightSelectContent>
+            {Array.from({ length: 7 }, (_, i) => (
+              <LightweightSelectItem
+                key={i}
+                value={String(i)}
+                className="text-xs font-mono"
+              >
+                {t.format("common.constellationFormat", i)}
+              </LightweightSelectItem>
+            ))}
+          </LightweightSelectContent>
+        </LightweightSelect>
+      )}
+      {has5Wep && (
+        <LightweightSelect
+          value={String(config.maxRefinement)}
+          onValueChange={(v) =>
+            onUpdateMax(config.charId, "maxRefinement", Number(v))
+          }
+        >
+          <LightweightSelectTrigger className="h-6 w-[4.5rem] text-xs font-mono px-1.5">
+            <LightweightSelectValue />
+          </LightweightSelectTrigger>
+          <LightweightSelectContent>
+            {Array.from({ length: 6 }, (_, i) => (
+              <LightweightSelectItem
+                key={i}
+                value={String(i)}
+                className="text-xs font-mono"
+              >
+                {i === 0
+                  ? t.ui("teamComp.noWeapon5Star")
+                  : t.format("common.refinementFormat", i)}
+              </LightweightSelectItem>
+            ))}
+          </LightweightSelectContent>
+        </LightweightSelect>
+      )}
+    </div>
+  );
+}
+
 // ─── Artifact icon helper ───
 
 function getArtifactIconProps(bc: CharCompConfig): {
@@ -573,6 +668,8 @@ function buildDefaultCharConfigs(
       startConstellation: rarity >= 5 ? 0 : bc.constellation,
       // Default to lowest: 0 (= "4★") if no 5★ weapon, 1 (= R1) if only 5★
       startRefinement: is5StarWeapon ? 1 : 0,
+      maxConstellation: rarity >= 5 ? 6 : bc.constellation,
+      maxRefinement: is5StarWeapon ? 5 : 0,
     };
   });
 }

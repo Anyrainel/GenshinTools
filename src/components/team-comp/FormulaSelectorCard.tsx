@@ -12,7 +12,7 @@ import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
 import { elements } from "@/data/types";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import { type TeamBuild, isFullyOffField } from "@/lib/team-comp/damageCalc";
+import { type TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type {
   ComboLine,
   I18nLabel,
@@ -320,16 +320,24 @@ export function FormulaSelectorCard({
                                   )}
                                   <span className="truncate">
                                     {t.resolveLabel(label)}
-                                    {teamBuild &&
-                                      isFullyOffField(
+                                    {(() => {
+                                      if (!teamBuild) return null;
+                                      const s = offFieldStatus(
                                         teamBuild,
                                         cid,
                                         formulaId
-                                      ) && (
+                                      );
+                                      if (s === "none") return null;
+                                      return (
                                         <span className="text-muted-foreground font-normal ml-1">
-                                          {t.ui("common.offFieldSuffix")}
+                                          {t.ui(
+                                            s === "full"
+                                              ? "common.offFieldSuffix"
+                                              : "common.partialOffFieldSuffix"
+                                          )}
                                         </span>
-                                      )}
+                                      );
+                                    })()}
                                   </span>
                                 </button>
                                 {isSelected &&
@@ -380,16 +388,24 @@ export function FormulaSelectorCard({
                                   )}
                                   <span className="text-base font-bold text-foreground truncate">
                                     {t.resolveLabel(label)}
-                                    {teamBuild &&
-                                      isFullyOffField(
+                                    {(() => {
+                                      if (!teamBuild) return null;
+                                      const s = offFieldStatus(
                                         teamBuild,
                                         cid,
                                         formulaId
-                                      ) && (
+                                      );
+                                      if (s === "none") return null;
+                                      return (
                                         <span className="text-muted-foreground font-normal ml-1">
-                                          {t.ui("common.offFieldSuffix")}
+                                          {t.ui(
+                                            s === "full"
+                                              ? "common.offFieldSuffix"
+                                              : "common.partialOffFieldSuffix"
+                                          )}
                                         </span>
-                                      )}
+                                      );
+                                    })()}
                                   </span>
                                 </div>
 

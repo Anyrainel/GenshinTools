@@ -8,7 +8,6 @@ import { getAssetUrl } from "@/lib/utils";
 
 interface InvestmentTableProps {
   result: InvestmentResult;
-  valueMode: "abs" | "pct";
   /** Character IDs in team order (slot 0-3) */
   charIds: string[];
 }
@@ -17,6 +16,8 @@ type DiffEntry = {
   iconPath: string;
   name: string;
   label: string;
+  /** "up" = increase (green), "down" = decrease (red) */
+  direction: "up" | "down";
 };
 
 /** Compute structured diffs between two allocations */
@@ -44,6 +45,7 @@ function allocationDiffs(
         iconPath: char?.imagePath ?? "",
         name: fmt.charName(cid),
         label: `${fmt.c(p.constellation)}→${fmt.c(c.constellation)}`,
+        direction: c.constellation > p.constellation ? "up" : "down",
       });
     }
 
@@ -56,6 +58,8 @@ function allocationDiffs(
         iconPath: wep?.imagePath ?? "",
         name: fmt.weaponName(c.weaponId),
         label: `${fromR}→${toR}`,
+        // Switching from 4★ to 5★ is an upgrade
+        direction: c.is5StarWeapon ? "up" : "down",
       });
     } else if (c.is5StarWeapon && c.refinement !== p.refinement) {
       // Same 5★ weapon, refinement change → show weapon icon + name
@@ -64,17 +68,14 @@ function allocationDiffs(
         iconPath: wep?.imagePath ?? "",
         name: fmt.weaponName(c.weaponId),
         label: `${fmt.r(p.refinement)}→${fmt.r(c.refinement)}`,
+        direction: c.refinement > p.refinement ? "up" : "down",
       });
     }
   }
   return entries;
 }
 
-export function InvestmentTable({
-  result,
-  valueMode,
-  charIds,
-}: InvestmentTableProps) {
+export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
   const { t } = useLanguage();
   const { sequence } = result;
 
@@ -97,14 +98,16 @@ export function InvestmentTable({
             <th className="py-1.5 px-2 font-medium">
               {t.ui("teamComp.investJin")}
             </th>
-            <th className="py-1.5 px-2 font-medium">
-              {t.ui("teamComp.investAllocation")}
-            </th>
+            {charIds.map((cid) => (
+              <th key={cid} className="py-1.5 px-1 font-medium text-center">
+                {t.character(cid)}
+              </th>
+            ))}
             <th className="py-1.5 px-2 font-medium">
               {t.ui("teamComp.investDiff")}
             </th>
             <th className="py-1.5 px-2 font-medium text-right">
-              {t.ui("buildCard.autoTuneDamageRatio")}
+              {t.ui("common.damage")}
             </th>
             <th className="py-1.5 px-2 font-medium text-right">
               {t.ui("teamComp.investVsBase")}
@@ -128,6 +131,12 @@ export function InvestmentTable({
                       c: fmtC,
                       r: fmtR,
                     }
+                  ).sort((a, b) =>
+                    a.direction === b.direction
+                      ? 0
+                      : a.direction === "down"
+                        ? -1
+                        : 1
                   )
                 : [];
             return (
@@ -135,42 +144,40 @@ export function InvestmentTable({
                 key={i}
                 className="border-b border-border/50 hover:bg-muted/30"
               >
-                <td className="py-1.5 px-2 font-mono text-xs">{step.jin}</td>
-                <td className="py-1.5 px-2">
-                  <div className="flex items-center gap-2">
-                    {charIds.map((cid) => {
-                      const inv = step.allocation[cid];
-                      if (!inv) return null;
-                      const char = charactersById[cid];
-                      return (
-                        <div key={cid} className="flex items-center gap-0.5">
-                          {char && (
-                            <img
-                              src={char.imagePath}
-                              alt={cid}
-                              className="w-5 h-5 rounded-full"
-                              style={{ imageRendering: "auto" }}
-                            />
-                          )}
-                          <span
-                            className="text-xs font-mono"
-                            title={
-                              inv.is5StarWeapon
-                                ? undefined
-                                : t.ui("teamComp.noWeapon5Star")
-                            }
-                          >
-                            {fmtC(inv.constellation)}
-                            {inv.is5StarWeapon ? fmtR(inv.refinement) : ""}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </td>
+                <td className="py-1.5 px-2 font-mono text-sm">{step.jin}</td>
+                {charIds.map((cid) => {
+                  const inv = step.allocation[cid];
+                  if (!inv) return <td key={cid} />;
+                  const char = charactersById[cid];
+                  return (
+                    <td key={cid} className="py-1.5 px-1">
+                      <div className="flex items-center justify-start gap-0.5">
+                        {char && (
+                          <img
+                            src={char.imagePath}
+                            alt={cid}
+                            className="w-5 h-5 rounded-full"
+                            style={{ imageRendering: "auto" }}
+                          />
+                        )}
+                        <span
+                          className="text-sm font-mono"
+                          title={
+                            inv.is5StarWeapon
+                              ? undefined
+                              : t.ui("teamComp.noWeapon5Star")
+                          }
+                        >
+                          {fmtC(inv.constellation)}
+                          {inv.is5StarWeapon ? fmtR(inv.refinement) : ""}
+                        </span>
+                      </div>
+                    </td>
+                  );
+                })}
                 <td className="py-1.5 px-2 text-xs">
                   {diffs.length > 0 ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                       {diffs.map((d, j) => (
                         <div key={j} className="flex items-center gap-1">
                           {d.iconPath && (
@@ -182,7 +189,9 @@ export function InvestmentTable({
                             />
                           )}
                           <span className="whitespace-nowrap">{d.name}</span>
-                          <span className="font-mono whitespace-nowrap">
+                          <span
+                            className={`font-mono whitespace-nowrap ${d.direction === "up" ? "text-emerald-400" : "text-red-400"}`}
+                          >
                             {d.label}
                           </span>
                         </div>
@@ -198,10 +207,6 @@ export function InvestmentTable({
                 <td className="py-1.5 px-2 text-right font-mono text-xs">
                   {i === 0 ? (
                     <span className="text-muted-foreground">&mdash;</span>
-                  ) : valueMode === "abs" ? (
-                    <span className="text-emerald-400">
-                      +{Math.round(step.gainVsBaseline).toLocaleString()}
-                    </span>
                   ) : (
                     <span className="text-emerald-400">
                       +{step.gainVsBaselinePct.toFixed(1)}%
@@ -211,10 +216,6 @@ export function InvestmentTable({
                 <td className="py-1.5 px-2 text-right font-mono text-xs">
                   {i === 0 ? (
                     <span className="text-muted-foreground">&mdash;</span>
-                  ) : valueMode === "abs" ? (
-                    <span className="text-emerald-400">
-                      +{Math.round(step.gainVsPrev).toLocaleString()}
-                    </span>
                   ) : (
                     <span className="text-emerald-400">
                       +{step.gainVsPrevPct.toFixed(1)}%

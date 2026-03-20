@@ -57,6 +57,8 @@ export type InvestmentCharConfig = {
   weapon5Star?: { id: string };
   startConstellation: number;
   startRefinement: number; // 0 = no 5★ weapon yet, 1-5 = current 5★ refinement
+  maxConstellation: number; // upper bound for constellation (default 6)
+  maxRefinement: number; // upper bound for refinement (default 5), 0 = no 5★ weapon
 };
 
 export type InvestmentNode = {
@@ -252,11 +254,13 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
   const owns5Star = sr > 0 && has5Wep;
   const states: BreakpointState[] = [];
 
-  // Standard constellation breakpoints: {0, 1, 2, 6} filtered by startConstellation
+  // Standard constellation breakpoints: {0, 1, 2, 6} filtered by start/max constellation
   const CONS_BREAKPOINTS = [0, 1, 2, 6];
+  const maxC = cfg.maxConstellation;
+  const maxR = cfg.maxRefinement;
 
   if (is5Star) {
-    const consBPs = CONS_BREAKPOINTS.filter((c) => c >= sc);
+    const consBPs = CONS_BREAKPOINTS.filter((c) => c >= sc && c <= maxC);
 
     if (!owns5Star && has4Wep) {
       // 4★ weapon path: all constellation breakpoints with 4★ weapon
@@ -272,26 +276,30 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
       }
     }
 
-    if (has5Wep) {
+    if (has5Wep && maxR > 0) {
       const w5 = cfg.weapon5Star!.id;
       // 5★ weapon R1 path (or startRefinement if already owned)
       const baseR = owns5Star ? sr : 1;
-      for (const c of consBPs) {
-        states.push({
-          constellation: c,
-          weaponId: w5,
-          refinement: baseR,
-          is5StarWeapon: true,
-        });
-      }
-      // C6R5 final breakpoint (skip if already at R5)
-      if (baseR < 5) {
-        states.push({
-          constellation: 6,
-          weaponId: w5,
-          refinement: 5,
-          is5StarWeapon: true,
-        });
+      if (baseR <= maxR) {
+        for (const c of consBPs) {
+          states.push({
+            constellation: c,
+            weaponId: w5,
+            refinement: baseR,
+            is5StarWeapon: true,
+          });
+        }
+        // Max-R final breakpoint (skip if already at maxR)
+        if (baseR < maxR) {
+          const maxConsBP =
+            consBPs.length > 0 ? consBPs[consBPs.length - 1] : maxC;
+          states.push({
+            constellation: maxConsBP,
+            weaponId: w5,
+            refinement: maxR,
+            is5StarWeapon: true,
+          });
+        }
       }
     }
   } else {
@@ -306,22 +314,24 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
         is5StarWeapon: false,
       });
     }
-    if (has5Wep) {
+    if (has5Wep && maxR > 0) {
       const w5 = cfg.weapon5Star!.id;
       const baseR = owns5Star ? sr : 1;
-      states.push({
-        constellation: sc,
-        weaponId: w5,
-        refinement: baseR,
-        is5StarWeapon: true,
-      });
-      if (baseR < 5) {
+      if (baseR <= maxR) {
         states.push({
           constellation: sc,
           weaponId: w5,
-          refinement: 5,
+          refinement: baseR,
           is5StarWeapon: true,
         });
+        if (baseR < maxR) {
+          states.push({
+            constellation: sc,
+            weaponId: w5,
+            refinement: maxR,
+            is5StarWeapon: true,
+          });
+        }
       }
     }
   }
@@ -807,7 +817,7 @@ function getSingleStepUpgrades(
   for (const cfg of cfgs) {
     const inv = alloc[cfg.charId];
     if (!inv) continue;
-    if (cfg.rarity >= 5 && inv.constellation < 6) {
+    if (cfg.rarity >= 5 && inv.constellation < cfg.maxConstellation) {
       const nc = inv.constellation + 1;
       ups.push({
         allocation: { ...alloc, [cfg.charId]: { ...inv, constellation: nc } },
@@ -815,7 +825,7 @@ function getSingleStepUpgrades(
         upgrade: `C${inv.constellation}→C${nc}`,
       });
     }
-    if (inv.is5StarWeapon && inv.refinement < 5) {
+    if (inv.is5StarWeapon && inv.refinement < cfg.maxRefinement) {
       const nr = inv.refinement + 1;
       ups.push({
         allocation: { ...alloc, [cfg.charId]: { ...inv, refinement: nr } },
@@ -823,7 +833,7 @@ function getSingleStepUpgrades(
         upgrade: `R${inv.refinement}→R${nr}`,
       });
     }
-    if (!inv.is5StarWeapon && cfg.weapon5Star) {
+    if (!inv.is5StarWeapon && cfg.weapon5Star && cfg.maxRefinement > 0) {
       ups.push({
         allocation: {
           ...alloc,

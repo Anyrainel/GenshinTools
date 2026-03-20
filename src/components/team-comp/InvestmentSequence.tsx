@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/constants";
+import { charactersById, weaponsById } from "@/data/constants";
 import type {
   CharInvestment,
   InvestmentResult,
@@ -11,118 +11,66 @@ interface InvestmentSequenceProps {
   result: InvestmentResult;
 }
 
-/** Check if two CharInvestment states differ */
-function investmentChanged(a: CharInvestment, b: CharInvestment): boolean {
-  return (
-    a.constellation !== b.constellation ||
-    a.is5StarWeapon !== b.is5StarWeapon ||
-    (a.is5StarWeapon && b.is5StarWeapon && a.refinement !== b.refinement)
-  );
-}
-
-/** Diff two allocations to find which characters changed */
-function diffAllocation(
+/** Diff two allocations to find individual changes (constellation and refinement separately) */
+function diffAllocationDetailed(
   from: Record<string, CharInvestment>,
   to: Record<string, CharInvestment>
-): { charId: string; from: CharInvestment; to: CharInvestment }[] {
-  const diffs: { charId: string; from: CharInvestment; to: CharInvestment }[] =
-    [];
+): {
+  charId: string;
+  type: "constellation" | "weapon-switch" | "refinement";
+  fromLabel: string;
+  toLabel: string;
+  /** Icon entity: charId for constellation, weaponId for weapon changes */
+  iconCharId?: string;
+  iconWeaponId?: string;
+}[] {
+  const entries: {
+    charId: string;
+    type: "constellation" | "weapon-switch" | "refinement";
+    fromLabel: string;
+    toLabel: string;
+    iconCharId?: string;
+    iconWeaponId?: string;
+  }[] = [];
+
   for (const cid of Object.keys(to)) {
     const f = from[cid];
     const t = to[cid];
     if (!f || !t) continue;
-    if (investmentChanged(f, t)) {
-      diffs.push({ charId: cid, from: f, to: t });
-    }
-  }
-  return diffs;
-}
 
-type Edge = {
-  fromJin: number;
-  toJin: number;
-  charId: string;
-  from: CharInvestment;
-  to: CharInvestment;
-  damage: number;
-  gainPct: number;
-};
-
-/** Collapse consecutive steps that only upgrade one character into a single edge */
-function collapseSequence(sequence: InvestmentResult["sequence"]): Edge[] {
-  if (sequence.length < 2) return [];
-
-  const edges: Edge[] = [];
-  let i = 1;
-
-  while (i < sequence.length) {
-    const prev = sequence[i - 1];
-    const cur = sequence[i];
-    const diffs = diffAllocation(prev.allocation, cur.allocation);
-
-    if (diffs.length === 1) {
-      // Single character changed -- try to collapse consecutive same-char upgrades
-      const runCharId = diffs[0].charId;
-      const runStart = i - 1;
-      let runEnd = i;
-
-      while (runEnd + 1 < sequence.length) {
-        const nextDiffs = diffAllocation(
-          sequence[runEnd].allocation,
-          sequence[runEnd + 1].allocation
-        );
-        if (nextDiffs.length === 1 && nextDiffs[0].charId === runCharId) {
-          runEnd++;
-        } else {
-          break;
-        }
-      }
-
-      const baseDmg = sequence[runStart].damage;
-      const endDmg = sequence[runEnd].damage;
-
-      edges.push({
-        fromJin: sequence[runStart].jin,
-        toJin: sequence[runEnd].jin,
-        charId: runCharId,
-        from: sequence[runStart].allocation[runCharId],
-        to: sequence[runEnd].allocation[runCharId],
-        damage: endDmg,
-        gainPct: baseDmg > 0 ? ((endDmg - baseDmg) / baseDmg) * 100 : 0,
+    // Constellation change
+    if (t.constellation !== f.constellation) {
+      entries.push({
+        charId: cid,
+        type: "constellation",
+        fromLabel: `C${f.constellation}`,
+        toLabel: `C${t.constellation}`,
+        iconCharId: cid,
       });
+    }
 
-      i = runEnd + 1;
-    } else {
-      // Multiple characters changed or complex step
-      for (const d of diffs) {
-        edges.push({
-          fromJin: prev.jin,
-          toJin: cur.jin,
-          charId: d.charId,
-          from: d.from,
-          to: d.to,
-          damage: cur.damage,
-          gainPct:
-            prev.damage > 0
-              ? ((cur.damage - prev.damage) / prev.damage) * 100
-              : 0,
-        });
-      }
-      i++;
+    // Weapon switch (4★↔5★)
+    if (t.is5StarWeapon !== f.is5StarWeapon) {
+      entries.push({
+        charId: cid,
+        type: "weapon-switch",
+        fromLabel: f.is5StarWeapon ? `R${f.refinement}` : "4★",
+        toLabel: t.is5StarWeapon ? `R${t.refinement}` : "4★",
+        iconWeaponId: t.weaponId,
+      });
+    } else if (t.is5StarWeapon && t.refinement !== f.refinement) {
+      // Same 5★ weapon, refinement change
+      entries.push({
+        charId: cid,
+        type: "refinement",
+        fromLabel: `R${f.refinement}`,
+        toLabel: `R${t.refinement}`,
+        iconWeaponId: t.weaponId,
+      });
     }
   }
 
-  return edges;
-}
-
-/** Format a CharInvestment as a localized label */
-function formatInvestment(
-  inv: CharInvestment,
-  fmtC: (n: number) => string,
-  fmtR: (n: number) => string
-): string {
-  const c = fmtC(inv.constellation);
-  return inv.is5StarWeapon ? `${c}${fmtR(inv.refinement)}` : c;
+  return entries;
 }
 
 export function InvestmentSequence({ result }: InvestmentSequenceProps) {
@@ -137,9 +85,65 @@ export function InvestmentSequence({ result }: InvestmentSequenceProps) {
     );
   }
 
-  const edges = collapseSequence(sequence);
   const fmtC = (n: number) => t.format("common.constellationFormat", n);
   const fmtR = (n: number) => t.format("common.refinementFormat", n);
+
+  // Build edges: one per step, each change as a separate entry
+  type Edge = {
+    jin: number;
+    charId: string;
+    type: "constellation" | "weapon-switch" | "refinement";
+    fromLabel: string;
+    toLabel: string;
+    iconCharId?: string;
+    iconWeaponId?: string;
+    damage: number;
+    gainPct: number;
+  };
+
+  const edges: Edge[] = [];
+  for (let i = 1; i < sequence.length; i++) {
+    const prev = sequence[i - 1];
+    const cur = sequence[i];
+    const diffs = diffAllocationDetailed(prev.allocation, cur.allocation);
+
+    for (const d of diffs) {
+      // Localize the labels
+      let fromLabel: string;
+      let toLabel: string;
+      if (d.type === "constellation") {
+        const fromC = Number.parseInt(d.fromLabel.slice(1));
+        const toC = Number.parseInt(d.toLabel.slice(1));
+        fromLabel = fmtC(fromC);
+        toLabel = fmtC(toC);
+      } else if (d.type === "weapon-switch") {
+        fromLabel =
+          d.fromLabel === "4★"
+            ? "4★"
+            : fmtR(Number.parseInt(d.fromLabel.slice(1)));
+        toLabel =
+          d.toLabel === "4★" ? "4★" : fmtR(Number.parseInt(d.toLabel.slice(1)));
+      } else {
+        fromLabel = fmtR(Number.parseInt(d.fromLabel.slice(1)));
+        toLabel = fmtR(Number.parseInt(d.toLabel.slice(1)));
+      }
+
+      edges.push({
+        jin: cur.jin,
+        charId: d.charId,
+        type: d.type,
+        fromLabel,
+        toLabel,
+        iconCharId: d.iconCharId,
+        iconWeaponId: d.iconWeaponId,
+        damage: cur.damage,
+        gainPct:
+          prev.damage > 0
+            ? ((cur.damage - prev.damage) / prev.damage) * 100
+            : 0,
+      });
+    }
+  }
 
   return (
     <div className="space-y-1">
@@ -160,27 +164,45 @@ export function InvestmentSequence({ result }: InvestmentSequenceProps) {
 
       {/* Edges */}
       {edges.map((edge, i) => {
-        const char = charactersById[edge.charId];
+        // Resolve icon
+        let iconSrc: string | undefined;
+        let iconAlt = "";
+        if (edge.iconCharId) {
+          const char = charactersById[edge.iconCharId];
+          iconSrc = char ? getAssetUrl(char.imagePath) : undefined;
+          iconAlt = edge.iconCharId;
+        } else if (edge.iconWeaponId) {
+          const wep = weaponsById[edge.iconWeaponId];
+          iconSrc = wep ? getAssetUrl(wep.imagePath) : undefined;
+          iconAlt = edge.iconWeaponId;
+        }
+
+        // Display name
+        const displayName =
+          edge.type === "constellation"
+            ? t.character(edge.charId)
+            : edge.iconWeaponId
+              ? t.weaponName(edge.iconWeaponId)
+              : t.character(edge.charId);
+
         return (
           <div
             key={i}
             className="flex items-center gap-3 px-3 py-2 rounded-lg border border-border/50 bg-card/30"
           >
-            {/* Jin range */}
+            {/* Jin */}
             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center">
               <span className="text-sm font-bold text-amber-400">
-                {edge.fromJin === edge.toJin - 1
-                  ? edge.toJin
-                  : `${edge.fromJin + 1}-${edge.toJin}`}
+                {edge.jin}
               </span>
             </div>
 
-            {/* Character icon */}
+            {/* Icon */}
             <div className="flex-shrink-0">
-              {char ? (
+              {iconSrc ? (
                 <img
-                  src={getAssetUrl(char.imagePath)}
-                  alt={edge.charId}
+                  src={iconSrc}
+                  alt={iconAlt}
                   className="w-9 h-9 rounded-full border border-border"
                 />
               ) : (
@@ -195,11 +217,10 @@ export function InvestmentSequence({ result }: InvestmentSequenceProps) {
                   {t.ui("teamComp.investUpgrade")}:{" "}
                 </span>
                 <span className="text-sm font-medium truncate">
-                  {t.character(edge.charId)}
+                  {displayName}
                 </span>
                 <span className="text-xs font-mono">
-                  {formatInvestment(edge.from, fmtC, fmtR)} →{" "}
-                  {formatInvestment(edge.to, fmtC, fmtR)}
+                  {edge.fromLabel} → {edge.toLabel}
                 </span>
               </div>
             </div>

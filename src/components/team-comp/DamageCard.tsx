@@ -652,7 +652,7 @@ type CtxProps = {
 
 const LABEL_CLS = (mobile: boolean) =>
   cn(
-    "font-semibold text-foreground/80 select-none",
+    "font-semibold text-foreground/80 select-none whitespace-nowrap",
     mobile ? "text-xs" : "text-sm"
   );
 
@@ -876,9 +876,9 @@ function IdealSubstatBudgetSelect({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="8_6">8 (5*) / 6 (4*)</SelectItem>
-          <SelectItem value="8_7">8 (5*) / 7 (4*)</SelectItem>
-          <SelectItem value="9_7">9 (5*) / 7 (4*)</SelectItem>
+          <SelectItem value="8_6">8/6 (5/4★)</SelectItem>
+          <SelectItem value="8_7">8/7 (5/4★)</SelectItem>
+          <SelectItem value="9_7">9/7 (5/4★)</SelectItem>
         </SelectContent>
       </Select>
     </div>

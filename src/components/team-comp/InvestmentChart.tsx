@@ -1,5 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { InvestmentResult } from "@/lib/team-comp/investmentOptimizer";
+import { charactersById } from "@/data/constants";
+import type {
+  InvestmentResult,
+  InvestmentStep,
+} from "@/lib/team-comp/investmentOptimizer";
 import { useMemo } from "react";
 import {
   CartesianGrid,
@@ -13,33 +17,40 @@ import {
 
 interface InvestmentChartProps {
   result: InvestmentResult;
-  valueMode: "abs" | "pct";
+  charIds: string[];
 }
 
-export function InvestmentChart({ result, valueMode }: InvestmentChartProps) {
+export function InvestmentChart({ result, charIds }: InvestmentChartProps) {
   const { t } = useLanguage();
 
   const chartData = useMemo(() => {
-    return result.sequence.map((step) => ({
+    return result.sequence.map((step, i) => ({
       jin: step.jin,
-      damage: Math.round(step.damage),
       pct: +(100 + step.gainVsBaselinePct).toFixed(1),
+      _idx: i,
     }));
   }, [result.sequence]);
 
-  const dataKey = valueMode === "abs" ? "damage" : "pct";
-  const yLabel =
-    valueMode === "abs"
-      ? t.ui("buildCard.autoTuneDamageRatio")
-      : t.ui("teamComp.investPctGain");
   const jinLabel = t.ui("teamComp.investJin");
+  const damageLabel = t.ui("common.damage");
+  const yMax = useMemo(() => {
+    const maxPct = Math.max(...chartData.map((d) => d.pct));
+    return Math.ceil(maxPct / 100) * 100;
+  }, [chartData]);
+  const yTicks = useMemo(() => {
+    const ticks: number[] = [];
+    for (let v = 0; v <= yMax; v += 100) ticks.push(v);
+    return ticks;
+  }, [yMax]);
+  const fmtC = (n: number) => t.format("common.constellationFormat", n);
+  const fmtR = (n: number) => t.format("common.refinementFormat", n);
 
   return (
     <div className="w-full h-[280px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={chartData}
-          margin={{ top: 5, right: 20, bottom: 5, left: 10 }}
+          margin={{ top: 30, right: 30, bottom: 25, left: 0 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis
@@ -48,43 +59,42 @@ export function InvestmentChart({ result, valueMode }: InvestmentChartProps) {
               value: jinLabel,
               position: "insideBottomRight",
               offset: -5,
+              dy: 5,
+              style: { fontSize: 14 },
             }}
             tick={{ fontSize: 12 }}
             stroke="hsl(var(--muted-foreground))"
           />
           <YAxis
+            width={45}
+            domain={[0, yMax]}
+            ticks={yTicks}
             tick={{ fontSize: 11 }}
             stroke="hsl(var(--muted-foreground))"
+            tickFormatter={(v: number) => `${v}%`}
             label={{
-              value: yLabel,
-              angle: -90,
-              position: "insideLeft",
-              style: { fontSize: 11 },
+              value: damageLabel,
+              position: "top",
+              offset: 10,
+              style: { fontSize: 14, textAnchor: "start" },
             }}
-            tickFormatter={(v: number) =>
-              valueMode === "abs"
-                ? v >= 1000
-                  ? `${(v / 1000).toFixed(0)}K`
-                  : String(v)
-                : `${v}%`
-            }
           />
           <Tooltip
-            contentStyle={{
-              backgroundColor: "hsl(var(--card))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
-              fontSize: 12,
-            }}
-            formatter={(value: number) => [
-              valueMode === "abs" ? value.toLocaleString() : `${value}%`,
-              yLabel,
-            ]}
-            labelFormatter={(label: number) => `${jinLabel} ${label}`}
+            content={
+              <CustomTooltip
+                sequence={result.sequence}
+                charIds={charIds}
+                jinLabel={jinLabel}
+                fmtC={fmtC}
+                fmtR={fmtR}
+                t={t}
+              />
+            }
+            wrapperStyle={{ pointerEvents: "none", zIndex: 50 }}
           />
           <Line
             type="monotone"
-            dataKey={dataKey}
+            dataKey="pct"
             stroke="hsl(var(--primary))"
             strokeWidth={2}
             dot={{ fill: "hsl(var(--primary))", r: 4 }}
@@ -92,6 +102,79 @@ export function InvestmentChart({ result, valueMode }: InvestmentChartProps) {
           />
         </LineChart>
       </ResponsiveContainer>
+    </div>
+  );
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: Recharts tooltip payload type
+function CustomTooltip({
+  active,
+  payload,
+  sequence,
+  charIds,
+  jinLabel,
+  fmtC,
+  fmtR,
+  t,
+}: {
+  active?: boolean;
+  // biome-ignore lint/suspicious/noExplicitAny: Recharts payload
+  payload?: any[];
+  sequence: InvestmentStep[];
+  charIds: string[];
+  jinLabel: string;
+  fmtC: (n: number) => string;
+  fmtR: (n: number) => string;
+  // biome-ignore lint/suspicious/noExplicitAny: i18n context
+  t: any;
+}) {
+  if (!active || !payload?.length) return null;
+  const idx: number = payload[0]?.payload?._idx ?? 0;
+  const step = sequence[idx];
+  if (!step) return null;
+
+  return (
+    <div
+      className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-md"
+      style={{ minWidth: 140 }}
+    >
+      <div className="font-medium mb-1">
+        {step.jin}
+        {jinLabel}
+      </div>
+      <div className="font-mono">
+        {Math.round(step.damage).toLocaleString()} (
+        {(100 + step.gainVsBaselinePct).toFixed(1)}%)
+      </div>
+      {idx > 0 && (
+        <div className="text-emerald-400 font-mono">
+          {t.ui("teamComp.investVsPrev")}: +{step.gainVsPrevPct.toFixed(1)}%
+        </div>
+      )}
+      <div className="mt-1.5 space-y-0.5">
+        {charIds.map((cid) => {
+          const inv = step.allocation[cid];
+          if (!inv) return null;
+          const char = charactersById[cid];
+          return (
+            <div key={cid} className="flex items-center gap-1">
+              {char && (
+                <img
+                  src={char.imagePath}
+                  alt={cid}
+                  className="w-4 h-4 rounded-full"
+                  style={{ imageRendering: "auto" }}
+                />
+              )}
+              <span>{t.character(cid)}</span>
+              <span className="font-mono ml-auto">
+                {fmtC(inv.constellation)}
+                {inv.is5StarWeapon ? fmtR(inv.refinement) : ""}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

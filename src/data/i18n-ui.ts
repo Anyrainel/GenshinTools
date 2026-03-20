@@ -29,6 +29,8 @@ export const i18nUiData = {
     gotIt: { en: "Got it", zh: "知道了" },
     save: { en: "Save", zh: "保存" },
     offFieldSuffix: { en: "(off-field)", zh: "(后台)" },
+    partialOffFieldSuffix: { en: "(partial off-field)", zh: "(部分后台)" },
+    damage: { en: "Damage", zh: "伤害" },
     stop: { en: "Stop", zh: "停止" },
     equip: { en: "Equip", zh: "装备" },
     level: { en: "Level", zh: "等级" },
@@ -761,8 +763,8 @@ export const i18nUiData = {
     critRateTarget: { en: "DPS CR Target", zh: "主C暴击目标" },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
     idealSubstatBudget: {
-      en: "Substat rolls / piece",
-      zh: "每件副词条条数",
+      en: "Rolls Count",
+      zh: "词条数",
     },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
@@ -940,8 +942,12 @@ export const i18nUiData = {
       zh: "顺序",
     },
     investMinConfig: {
-      en: "Min. Config",
-      zh: "最低配置",
+      en: "Min",
+      zh: "最低",
+    },
+    investMaxConfig: {
+      en: "Max",
+      zh: "最高",
     },
     investWeapon4StarR0: {
       en: "4★R5",
@@ -959,25 +965,17 @@ export const i18nUiData = {
       en: "5★",
       zh: "金",
     },
-    investAllocation: {
-      en: "Allocation",
-      zh: "配置",
-    },
     investVsBase: {
       en: "vs Base",
       zh: "vs 基准",
     },
     investVsPrev: {
       en: "vs Prev",
-      zh: "vs 上一步",
+      zh: "vs 前者",
     },
     investDiff: {
       en: "Change",
       zh: "变化",
-    },
-    investPctGain: {
-      en: "% Gain",
-      zh: "% 增幅",
     },
     investBaseline: {
       en: "Baseline",
@@ -1227,7 +1225,6 @@ export const i18nUiData = {
     autoTuneSubstats: { en: "Substat Weights", zh: "副词条权重" },
     autoTuneMainStats: { en: "Main Stat Weights", zh: "主词条权重" },
     autoTuneIdealRolls: { en: "Ideal Rolls", zh: "理想词条数" },
-    autoTuneDamageRatio: { en: "Damage", zh: "伤害" },
     autoTuneLopsidedPenalty: {
       en: "Lopsided allocation: the highest substat has ≥15 more rolls than the 2nd highest, suggesting this main stat forces an unbalanced build. −2% penalty applied.",
       zh: "词条分配不均：最多的副词条比第二多的多出≥15条，说明该主词条迫使副词条严重倾斜。已扣除2%伤害惩罚。",

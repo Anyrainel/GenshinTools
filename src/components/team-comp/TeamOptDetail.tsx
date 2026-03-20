@@ -208,6 +208,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       assumeCrit: team.calcContext?.assumeCrit ?? false,
       critRateTarget: team.calcContext?.critRateTarget,
       rollMultiplier: team.calcContext?.rollMultiplier,
+      idealSubstatBudget: team.calcContext?.idealSubstatBudget,
     };
   }, [team.calcContext]);
 

@@ -18,7 +18,7 @@ import type {
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import { TeamBuild, isFullyOffField } from "@/lib/team-comp/damageCalc";
+import { TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
@@ -198,7 +198,7 @@ export function AutoTuneDialog({
       const formulas: {
         formulaId: string;
         label: I18nLabel;
-        offField: boolean;
+        offField: "full" | "partial" | "none";
       }[] = [];
       let reactions: ReactionType[] = ["none"];
       let rotation: Record<string, number> = {};
@@ -221,7 +221,7 @@ export function AutoTuneDialog({
             formulas.push({
               formulaId: fid,
               label,
-              offField: isFullyOffField(tb, characterId, fid),
+              offField: offFieldStatus(tb, characterId, fid),
             });
           }
           rotation = tb.getRotation(characterId);
@@ -521,7 +521,7 @@ function ConfigPhase({
   discoveredFormulas: {
     formulaId: string;
     label: I18nLabel;
-    offField: boolean;
+    offField: "full" | "partial" | "none";
   }[];
   comboLines: ComboLine[];
   eligibleReactions: ReactionType[];
@@ -584,9 +584,13 @@ function ConfigPhase({
               >
                 <span className="text-sm font-medium">
                   {t.resolveLabel(formula.label)}
-                  {formula.offField && (
+                  {formula.offField !== "none" && (
                     <span className="text-muted-foreground font-normal ml-1">
-                      {t.ui("common.offFieldSuffix")}
+                      {t.ui(
+                        formula.offField === "full"
+                          ? "common.offFieldSuffix"
+                          : "common.partialOffFieldSuffix"
+                      )}
                     </span>
                   )}
                 </span>

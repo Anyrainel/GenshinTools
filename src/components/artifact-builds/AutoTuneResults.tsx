@@ -276,7 +276,7 @@ function ComboTable({
             {t.slot("sands")} / {t.slot("goblet")} / {t.slot("circlet")}
           </th>
           <th className="text-right py-1 font-medium w-16">
-            {t.ui("buildCard.autoTuneDamageRatio")}
+            {t.ui("common.damage")}
           </th>
           <th className="text-left py-1 pl-3 font-medium">
             {t.ui("buildCard.autoTuneIdealRolls")}
