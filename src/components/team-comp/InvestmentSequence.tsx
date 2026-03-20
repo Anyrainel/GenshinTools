@@ -256,6 +256,20 @@ export function InvestmentSequence({
                       });
                     });
 
+              const hiddenCids = charIds.filter(
+                (cid) => !changedCids.includes(cid) && node.allocation[cid]
+              );
+              const tooltip =
+                hiddenCids.length > 0
+                  ? hiddenCids
+                      .map((cid) => {
+                        const inv = node.allocation[cid]!;
+                        const cr = `${fmtC(inv.constellation)}${inv.is5StarWeapon ? fmtR(inv.refinement) : ""}`;
+                        return `${t.character(cid)} ${cr}`;
+                      })
+                      .join("\n")
+                  : undefined;
+
               return (
                 <div
                   key={node.id}
@@ -263,6 +277,7 @@ export function InvestmentSequence({
                     if (el) nodeRefs.current.set(node.id, el);
                     else nodeRefs.current.delete(node.id);
                   }}
+                  title={tooltip}
                   className={cn(
                     "flex items-center gap-1 p-1 rounded border text-xs leading-none whitespace-nowrap",
                     node.isBest
