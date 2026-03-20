@@ -6,7 +6,11 @@ import {
   charactersById,
   weaponsById,
 } from "@/data/constants";
-import { preloadGameStats } from "@/lib/gameStatsLoader";
+import {
+  getCharacterStatsSync,
+  getWeaponStatsSync,
+  preloadGameStats,
+} from "@/lib/gameStatsLoader";
 import {
   TeamMeta,
   createArtifactHalfSet,
@@ -15,7 +19,7 @@ import {
   createWeapon,
   getEntityOption,
 } from "@/lib/team-comp/damageModels";
-import { beforeAll, describe, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import "@/lib/team-comp/index";
 
 beforeAll(async () => {
@@ -40,6 +44,7 @@ const presetPath = resolve(
 const presetData = JSON.parse(readFileSync(presetPath, "utf-8")) as {
   teams: {
     characters: string[];
+    weapons: string[];
     artifacts: ({ type: "4pc"; setId: string } | { type: string })[];
     opts: Record<string, string>;
   }[];
@@ -100,6 +105,57 @@ const nonPresetCharIds = Object.keys(charactersById).filter(
 );
 
 // ─── Tests ───
+
+describe("Preset Validation", () => {
+  it("every weapon should match the character's weaponType", () => {
+    const charStats = getCharacterStatsSync()!;
+    const weaponStats = getWeaponStatsSync()!;
+    const violations: string[] = [];
+
+    for (const team of presetData.teams) {
+      const characters = team.characters.filter(Boolean);
+      const weapons = team.weapons?.filter(Boolean) ?? [];
+      const teamLabel = characters.join("+");
+
+      for (let i = 0; i < characters.length; i++) {
+        const charId = characters[i];
+        const weaponId = weapons[i];
+        if (!weaponId) continue;
+
+        const charType = charStats[charId]?.weaponType;
+        const weapType = weaponStats[weaponId]?.type;
+        if (!charType || !weapType) continue;
+
+        if (charType !== weapType) {
+          violations.push(
+            `[${teamLabel}] ${charId} (${charType}) has weapon ${weaponId} (${weapType})`
+          );
+        }
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+
+  it("no duplicate characters in a team", () => {
+    const violations: string[] = [];
+
+    for (const team of presetData.teams) {
+      const characters = team.characters.filter(Boolean);
+      const seen = new Set<string>();
+      for (const charId of characters) {
+        if (seen.has(charId)) {
+          violations.push(
+            `[${characters.join("+")}] duplicate character: ${charId}`
+          );
+        }
+        seen.add(charId);
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+});
 
 describe("Entity Instantiation", () => {
   describe("Characters (preset teams)", () => {
