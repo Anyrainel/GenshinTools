@@ -1458,3 +1458,123 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
     expect(activeBuffs[0]!.target.charId).toBe("raiden_shogun");
   });
 });
+
+// ═══════════════════════════════════════════════════════════════
+// bespoke buff display in resolveBuffs
+// ═══════════════════════════════════════════════════════════════
+
+describe("bespoke buffs appear in resolveBuffs output", () => {
+  // Gorou has P2 bespoke ScalingBuff (+1.56×DEF as baseDmg) on E and Q parts
+  const configs: CharCompConfig[] = [
+    {
+      charId: "gorou",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "favonius_warbow",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "noelle",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "whiteblind",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "yun_jin",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "favonius_lance",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+    {
+      charId: "zhongli",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "black_tassel",
+      refinement: 1,
+      artifactSetId: null,
+      artifactHalfSetIds: [],
+    },
+  ];
+
+  const ctx: CalcContext = {
+    enemyLevel: 100,
+    enemyRes: 0.1,
+    assumeCrit: false,
+  };
+
+  const emptySheets: Record<string, StatSheet> = {
+    gorou: new StatSheet([]),
+    noelle: new StatSheet([]),
+    yun_jin: new StatSheet([]),
+    zhongli: new StatSheet([]),
+  };
+
+  it("bespoke buffs have bespokeLabel and are active for matching formula", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "gorou",
+      "gorou-skill",
+      emptySheets,
+      ctx
+    );
+
+    // Find all bespoke buffs (those with bespokeLabel)
+    const bespokeBuffs = display.buffs.filter((b) => b.bespokeLabel);
+    expect(bespokeBuffs.length).toBeGreaterThanOrEqual(1);
+
+    // The E skill bespoke buff should be active when viewing gorou-skill
+    const activeBespoke = bespokeBuffs.filter((b) => b.active);
+    expect(activeBespoke.length).toBeGreaterThanOrEqual(1);
+    // Its label should match the E Skill formula
+    expect(activeBespoke[0]!.bespokeLabel!.en).toBe("E Skill");
+
+    // Bespoke buffs for the burst formula should be inactive
+    const inactiveBespoke = bespokeBuffs.filter(
+      (b) => !b.active && b.bespokeLabel!.en === "Q + Crystal Collapse"
+    );
+    expect(inactiveBespoke.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("bespoke buffs have dynamic entries with scaling info", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "gorou",
+      "gorou-skill",
+      emptySheets,
+      ctx
+    );
+
+    const activeBespoke = display.buffs.find((b) => b.bespokeLabel && b.active);
+    expect(activeBespoke).toBeDefined();
+    // Gorou P2 is a ScalingBuff with DEF→baseDmg, so dynamicEntries should be populated
+    expect(activeBespoke!.dynamicEntries.length).toBeGreaterThanOrEqual(1);
+    expect(activeBespoke!.dynamicEntries[0]!.key).toBe("baseDmg");
+    expect(activeBespoke!.dynamicEntries[0]!.inputKey).toBe("def");
+  });
+
+  it("non-bespoke buffs are unaffected (no bespokeLabel)", () => {
+    const tb = new TeamBuild(configs);
+    const display = tb.getDisplayResult(
+      "gorou",
+      "gorou-skill",
+      emptySheets,
+      ctx
+    );
+
+    const regularBuffs = display.buffs.filter((b) => !b.bespokeLabel);
+    // Should still have regular buffs (character passives, weapon, resonance, etc.)
+    expect(regularBuffs.length).toBeGreaterThanOrEqual(1);
+    // None of them should have bespokeLabel
+    for (const b of regularBuffs) {
+      expect(b.bespokeLabel).toBeUndefined();
+    }
+  });
+});

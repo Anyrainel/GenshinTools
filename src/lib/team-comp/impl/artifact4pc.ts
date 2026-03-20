@@ -901,10 +901,18 @@ class ScrollOfTheHero4pc extends ArtifactSetBase {
     }
     const attachEls = getReactionAuraElements(wearerElement);
 
-    // Find all possible reaction elements
+    // Find all possible reaction elements.
+    // When enemy aura is set, it fixes the aura side — only that element can
+    // participate (even if no team member has it).
     const buffedElements = new Set<Element>();
-    for (const el of attachEls) {
-      if (teamMeta.countByElement(el) > 0) buffedElements.add(el);
+    if (teamMeta.enemyElementAura) {
+      if (attachEls.includes(teamMeta.enemyElementAura)) {
+        buffedElements.add(teamMeta.enemyElementAura);
+      }
+    } else {
+      for (const el of attachEls) {
+        if (teamMeta.countByElement(el) > 0) buffedElements.add(el);
+      }
     }
     // If no member can trigger reaction, no buffs
     if (buffedElements.size === 0) {

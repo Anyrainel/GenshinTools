@@ -748,6 +748,7 @@ export const i18nUiData = {
     receiverSelf: { en: "Self", zh: "自身" },
     receiverSelfOnField: { en: "Self (On-Field)", zh: "自身（前台）" },
     receiverSelfOffField: { en: "Self (Off-Field)", zh: "自身（后台）" },
+    receiverOther: { en: "Others", zh: "他人" },
     receiverOtherOnField: { en: "Other (On-Field)", zh: "他人（前台）" },
     receiverOnField: { en: "On-Field", zh: "前台角色" },
     receiverTeam: { en: "Team", zh: "全队" },
@@ -760,7 +761,11 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
-    critRateTarget: { en: "DPS CR Target", zh: "主C暴击目标" },
+    critRateTarget: { en: "DPS CR Target", zh: "(凹分)主C暴击目标" },
+    critRateTargetTooltip: {
+      en: "Adds a (100−x)% CR buff to the main DPS during calculation. In rotation mode, any character with a damage formula is treated as main DPS.",
+      zh: "计算时会给主C添加一个(100-x)%的暴击率buff。循环模式下带有伤害公式的角色均视为主C。",
+    },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
     idealSubstatBudget: {
       en: "Rolls Count",
@@ -924,6 +929,10 @@ export const i18nUiData = {
     investmentDesc: {
       en: "Find the most cost-efficient order to invest constellations and weapon refinements.",
       zh: "找到最高性价比的命座和精炼投资顺序。",
+    },
+    investmentBuffStackWarning: {
+      en: "Buff stack limits are not yet calculated. Some constellation values may be inaccurate, e.g. Clorinde C2, Xianyun C4, Shenhe C6.",
+      zh: "目前还不能计算buff的层数限制，个别命座价值会被误算：如爱可菲2命，希诺宁4命，申鹤6命等。",
     },
     runAnalysis: {
       en: "Run Analysis",

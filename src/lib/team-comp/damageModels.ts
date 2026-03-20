@@ -19,6 +19,7 @@ import {
 
 import {
   ELEMENT_ELIGIBLE_REACTIONS,
+  REACTION_AURA_TRIGGER,
   REACTION_ELEMENT_REQUIREMENTS,
 } from "./constants";
 import type { DamageFormula } from "./damageFormulas";
@@ -583,17 +584,35 @@ export class TeamMeta {
     const charEl = charId ? this.elements[charId] : undefined;
     if (charId && !charEl) return false;
 
-    // Check basic element requirements for the team and char participant
     const teamElements = Object.values(this.elements).filter(
       (e): e is Element => e != null
     );
+
+    // For reactions with aura/trigger semantics, when enemy aura is set it
+    // fixes the aura side — the character must supply the trigger element.
+    const auraTrigger = REACTION_AURA_TRIGGER[reaction];
+    if (auraTrigger && this.enemyElementAura) {
+      // Find pairings where the enemy aura matches the aura side
+      const matchingPairs = auraTrigger.filter(
+        (p) => p.aura === this.enemyElementAura
+      );
+      if (matchingPairs.length === 0) return false;
+
+      if (charEl) {
+        // Character's element must be the trigger
+        return matchingPairs.some((p) => p.trigger === charEl);
+      }
+      // No charId — check if any team member can be the trigger
+      return matchingPairs.some((p) => teamElements.includes(p.trigger));
+    }
+
+    // Fallback: check basic element requirements for the team
     if (
       this.enemyElementAura &&
       !teamElements.includes(this.enemyElementAura)
     ) {
       teamElements.push(this.enemyElementAura);
     }
-    // Initialize to true if charId is undefined
     let charParticipates = !charId;
     const hasElements = req.requiredElements.every((group) => {
       if (charEl && group.includes(charEl)) {
@@ -740,6 +759,28 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Public accessor for a single formula entry (used by display path). */
   getFormulaEntry(formulaId: string): FormulaEntry | undefined {
     return this.formulaMap[formulaId];
+  }
+
+  /** Returns all bespoke buffs across all formula parts, for display in BuffLedger. */
+  getBespokeBuffs(): {
+    formulaId: string;
+    label: I18nLabel;
+    buff: StatBuff;
+  }[] {
+    const result: { formulaId: string; label: I18nLabel; buff: StatBuff }[] =
+      [];
+    for (const [id, entry] of Object.entries(this.formulaMap)) {
+      for (const part of entry.parts) {
+        if (part.bespokeBuff) {
+          result.push({
+            formulaId: id,
+            label: entry.label,
+            buff: part.bespokeBuff,
+          });
+        }
+      }
+    }
+    return result;
   }
 
   /** Iterates the formulaMap entry's parts, calls .calc() on each, and aggregates. */

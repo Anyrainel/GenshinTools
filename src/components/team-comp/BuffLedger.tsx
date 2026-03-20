@@ -78,6 +78,7 @@ const RECEIVER_I18N: Record<string, string> = {
   self: "teamComp.receiverSelf",
   selfOnField: "teamComp.receiverSelfOnField",
   selfOffField: "teamComp.receiverSelfOffField",
+  other: "teamComp.receiverOther",
   otherOnField: "teamComp.receiverOtherOnField",
   onField: "teamComp.receiverOnField",
   team: "teamComp.receiverTeam",
@@ -136,6 +137,11 @@ function BuffChip({
                   ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
                   : source.origin || t.ui("teamComp.base")}
               </span>
+              {buff.bespokeLabel && (
+                <span className="bg-violet-500/15 text-violet-300 text-[10px] md:text-xs px-1 rounded font-medium leading-none">
+                  {t.resolveLabel(buff.bespokeLabel)}
+                </span>
+              )}
               {source.triggers?.map((trig) => (
                 <span
                   key={trig}
@@ -157,15 +163,17 @@ function BuffChip({
                 ? "text-rose-300 bg-rose-500/15"
                 : target.receiver === "onField"
                   ? "text-orange-300 bg-orange-500/15"
-                  : target.receiver === "otherOnField"
-                    ? "text-yellow-300 bg-yellow-500/15"
-                    : target.receiver === "self"
-                      ? "text-zinc-400 bg-zinc-500/15"
-                      : target.receiver === "selfOnField"
-                        ? "text-slate-400 bg-slate-500/10"
-                        : target.receiver === "selfOffField"
-                          ? "text-stone-400 bg-stone-500/10"
-                          : "text-muted-foreground bg-black/10"
+                  : target.receiver === "other"
+                    ? "text-amber-300 bg-amber-500/15"
+                    : target.receiver === "otherOnField"
+                      ? "text-yellow-300 bg-yellow-500/15"
+                      : target.receiver === "self"
+                        ? "text-zinc-400 bg-zinc-500/15"
+                        : target.receiver === "selfOnField"
+                          ? "text-slate-400 bg-slate-500/10"
+                          : target.receiver === "selfOffField"
+                            ? "text-stone-400 bg-stone-500/10"
+                            : "text-muted-foreground bg-black/10"
           )}
         >
           {target.charId

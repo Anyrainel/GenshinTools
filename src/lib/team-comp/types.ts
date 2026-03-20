@@ -74,6 +74,7 @@ export type BuffReceiverType =
   | "self"
   | "selfOnField"
   | "selfOffField"
+  | "other"
   | "otherOnField"
   | "onField"
   | "team";
@@ -129,6 +130,7 @@ export function filterMatchesTag(
  * - 'selfOnField':  Applies to the provider ONLY when provider IS the calcTarget.
  * - 'selfOffField': Applies to the provider ONLY when provider is NOT the calcTarget.
  *                   In single-target optimization, equivalent to 'self' (easy to achieve off-field).
+ * - 'other':        Applies to all party members except the provider (e.g., Sucrose EM sharing).
  * - 'onField':      Applies to the calcTarget's stat sheet (transfers from support to DPS).
  * - 'team':         Applies to all 4 party members.
  *
@@ -222,6 +224,8 @@ export type ResolvedBuff = {
   staticEntries: StatEntry[];
   /** Entries evaluated at post-stats time, with per-entry caps. Empty for non-scaling buffs. */
   dynamicEntries: ResolvedStatEntry[];
+  /** If this is a bespoke (per-formula-part) buff, the label of the formula it applies to. */
+  bespokeLabel?: I18nLabel;
 };
 
 /**

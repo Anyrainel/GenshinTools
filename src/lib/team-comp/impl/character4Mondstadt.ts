@@ -6,7 +6,7 @@ import {
   RegisterCharacter,
 } from "../damageModels";
 import { cbs } from "../helpers";
-import type { StatKey } from "../types";
+import type { ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Mondstadt Characters
@@ -470,21 +470,21 @@ class Sucrose extends CharacterBase {
       teamElements.has(el)
     );
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P2: E or Q hit → Team EM +20% of Sucrose's EM
+      // P2: E or Q hit → Others EM +20% of Sucrose's EM (excludes Sucrose)
       new ScalingBuff(
         cbs(this, "P2", ["E", "Q"]),
-        { receiver: "team" },
+        { receiver: "other" },
         [],
         "em",
         "em",
         0.2
       ),
     ];
-    // P1: Swirl element → matching-element party members EM +50
+    // P1: Swirl element → matching-element party members EM +50 (excludes Sucrose)
     // Requires team to have a swirlable element (Pyro/Hydro/Cryo/Electro)
     if (this.teamMeta.hasReaction("swirl")) {
       buffs.push(
-        new StatBuff(cbs(this, "P1", ["swirl"]), { receiver: "team" }, [
+        new StatBuff(cbs(this, "P1", ["swirl"]), { receiver: "other" }, [
           { key: "em", value: 50 },
         ])
       );
@@ -493,21 +493,35 @@ class Sucrose extends CharacterBase {
     // + Hexerei characters gain additional +8.57142% (approximated as "team", faction filter not supported)
     // Absorption can only be Pyro/Hydro/Cryo/Electro; model for each present in team
     if (this.constellation >= 6 && presentAbsorbElements.length > 0) {
-      for (const el of presentAbsorbElements) {
-        buffs.push(
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
-            { key: `${el.toLowerCase()}%` as StatKey, value: 0.2 },
-          ])
-        );
-      }
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["Q"]),
+          {
+            receiver: "team",
+            filter: {
+              elements: [
+                ...presentAbsorbElements,
+              ].sort() as ElementalOrPhysical[],
+            },
+          },
+          [{ key: "dmg%", value: 0.2 }]
+        )
+      );
       if (isHexerei) {
-        for (const el of presentAbsorbElements) {
-          buffs.push(
-            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
-              { key: `${el.toLowerCase()}%` as StatKey, value: 0.0857142 },
-            ])
-          );
-        }
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C6", ["Q"]),
+            {
+              receiver: "team",
+              filter: {
+                elements: [
+                  ...presentAbsorbElements,
+                ].sort() as ElementalOrPhysical[],
+              },
+            },
+            [{ key: "dmg%", value: 0.0857142 }]
+          )
+        );
       }
     }
     if (isHexerei) {

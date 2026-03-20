@@ -74,6 +74,26 @@ export const REACTION_ELEMENT_REQUIREMENTS: Record<
   },
 };
 
+/**
+ * Reactions that have aura/trigger semantics: the enemy must have a specific
+ * aura element for the character's trigger element to produce the reaction.
+ * When enemyElementAura is set, it fixes the aura side.
+ */
+export const REACTION_AURA_TRIGGER: Partial<
+  Record<ReactionType, { aura: Element; trigger: Element }[]>
+> = {
+  melt: [
+    { aura: "Cryo", trigger: "Pyro" },
+    { aura: "Pyro", trigger: "Cryo" },
+  ],
+  vaporize: [
+    { aura: "Pyro", trigger: "Hydro" },
+    { aura: "Hydro", trigger: "Pyro" },
+  ],
+  spread: [{ aura: "Electro", trigger: "Dendro" }],
+  aggravate: [{ aura: "Dendro", trigger: "Electro" }],
+};
+
 /** Eligible amplifying/catalyze reactions per element for the reaction selector UI. */
 export const ELEMENT_ELIGIBLE_REACTIONS: Record<
   Element | "Physical",

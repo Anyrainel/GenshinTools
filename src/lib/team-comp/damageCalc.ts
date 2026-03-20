@@ -526,6 +526,7 @@ const RECEIVER_RULES: Record<string, ReceiverRule> = {
   selfOnField: (owner, self, target) =>
     target !== null && owner === self && self === target,
   onField: (_, self, target) => target !== null && self === target,
+  other: (owner, self) => owner !== self,
   otherOnField: (owner, self, target) =>
     target !== null && self !== owner && self === target,
   team: () => true,
@@ -992,7 +993,8 @@ export class TeamBuild {
       charId,
       preStats,
       teamPreStatsArr,
-      formulaTags
+      formulaTags,
+      formulaId
     );
 
     // ── Stats (full team) — deprecated flat projections ──
@@ -1092,7 +1094,8 @@ export class TeamBuild {
     calcTargetId: string,
     preStats: Record<string, StatSheet>,
     teamPreStatsArr: StatSheet[],
-    formulaTags: DamageTag[]
+    formulaTags: DamageTag[],
+    formulaId?: string
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
 
@@ -1253,6 +1256,42 @@ export class TeamBuild {
         active,
         staticEntries: buff.staticBuffs,
         dynamicEntries: [],
+      });
+    }
+
+    // ── Bespoke buffs (per-formula-part) ──
+    const calcBuild = this.charBuilds[calcTargetId];
+    const bespokeRaw = calcBuild.charBase.getBespokeBuffs();
+    // Deduplicate by buff identity (same buff object on multiple parts)
+    const seenBespokeBuffs = new Set<StatBuff>();
+    for (const { formulaId: fId, label, buff } of bespokeRaw) {
+      if (seenBespokeBuffs.has(buff)) continue;
+      seenBespokeBuffs.add(buff);
+
+      const ownerStats = preStats[calcTargetId]!;
+      const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+      const active = formulaId === fId;
+
+      let dynamicEntries: ResolvedStatEntry[] = [];
+      if (raw.length > 0) {
+        dynamicEntries = raw.map((entry) => {
+          const resolved: ResolvedStatEntry = { ...entry };
+          if (buff instanceof ScalingBuff) {
+            if (buff.cap !== undefined) resolved.cap = buff.cap;
+            resolved.inputKey = buff.inputKey;
+          }
+          return resolved;
+        });
+      }
+
+      result.push({
+        source: buff.source,
+        providerCharId: calcTargetId,
+        target: buff.target,
+        active,
+        staticEntries: buff.staticBuffs,
+        dynamicEntries,
+        bespokeLabel: label,
       });
     }
 
