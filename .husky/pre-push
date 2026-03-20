@@ -1,6 +1,17 @@
 #!/usr/bin/env sh
 # Project-level checks before pushing
 
+# Block pushing beta content to main/master
+current_branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$current_branch" = "master" ] || [ "$current_branch" = "main" ]; then
+  if git ls-tree -r --name-only HEAD | grep -qE '_beta[_.]|resources_beta'; then
+    echo "ERROR: Pushing beta content to '$current_branch' is forbidden."
+    echo "Beta files detected in tree:"
+    git ls-tree -r --name-only HEAD | grep -E '_beta[_.]|resources_beta'
+    exit 1
+  fi
+fi
+
 # TypeScript type check + tests
 STAGED_TS_FILES=$(git diff --name-only HEAD@{1}..HEAD 2>/dev/null | grep -E '\.(ts|tsx)$' || true)
 if [ -n "$STAGED_TS_FILES" ]; then
