@@ -95,6 +95,13 @@ export interface FormulaResult {
   damage: number;
 }
 
+export interface ConstraintViolation {
+  charId: string;
+  kind: "er" | "cr";
+  required: number;
+  actual: number;
+}
+
 export interface TeamResult {
   teamId: string;
   teamName: string;
@@ -107,6 +114,7 @@ export interface TeamResult {
   error?: string;
   artifactAssignment: Record<string, Record<string, string>>;
   failReasons: Record<string, string>;
+  constraintViolations?: ConstraintViolation[];
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -532,6 +540,59 @@ export async function runOptimizerOnTeam(
       carryCharId,
       calcContext
     );
+
+    // DEBUG: log ER/CR values
+    if ((globalThis as Record<string, unknown>).__TEAM_OPT_DIAG__) {
+      console.log(
+        `  [DIAG] failReasons: ${JSON.stringify(result.failReasons)}`
+      );
+      for (const cid of Object.keys(perChar)) {
+        const er = postStats[cid]?.get("er", null) ?? 0;
+        const cr = postStats[cid]?.get("cr", null) ?? 0;
+        const cfg = perChar[cid];
+        console.log(
+          `  [DIAG] ${cid}: ER=${(er * 100).toFixed(1)}% (req ${(cfg.minEr * 100).toFixed(1)}%), CR=${(cr * 100).toFixed(1)}% (req ${(cfg.minCr * 100).toFixed(1)}%)`
+        );
+        const slotArts = finalResult.bestArtifactsByChar[cid];
+        if (slotArts) {
+          for (const [slot, art] of Object.entries(slotArts)) {
+            if (art) {
+              console.log(`    ${slot}: ${art.setKey} main=${art.mainStatKey}`);
+            }
+          }
+        }
+      }
+    }
+
+    // ── Validate minEr / minCr constraints on the final solution ──
+    const violations: ConstraintViolation[] = [];
+    for (const [cid, charConfig] of Object.entries(perChar)) {
+      if (charConfig.minEr > 0) {
+        const er = postStats[cid]?.get("er", null) ?? 0;
+        if (er < charConfig.minEr - 1e-6) {
+          violations.push({
+            charId: cid,
+            kind: "er",
+            required: charConfig.minEr,
+            actual: er,
+          });
+        }
+      }
+      if (charConfig.minCr > 0) {
+        const cr = postStats[cid]?.get("cr", null) ?? 0;
+        if (cr < charConfig.minCr - 1e-6) {
+          violations.push({
+            charId: cid,
+            kind: "cr",
+            required: charConfig.minCr,
+            actual: cr,
+          });
+        }
+      }
+    }
+    if (violations.length > 0) {
+      result.constraintViolations = violations;
+    }
 
     for (const [formulaId, label] of formulaEntries) {
       try {

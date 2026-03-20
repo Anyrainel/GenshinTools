@@ -84,6 +84,7 @@ import type { PerCharConfig } from "@/lib/team-comp/types";
 
 import {
   C,
+  type ConstraintViolation,
   DEFAULT_CALC_CONTEXT,
   DEFAULT_GLOBAL_CONFIG,
   type Team,
@@ -277,6 +278,99 @@ function evaluateAssignment(
     return dmg.totalDamage;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Check whether an artifact assignment meets the team's minEr/minCr constraints.
+ * Returns an array of violations (empty = all constraints met).
+ */
+function checkConstraints(
+  team: Team,
+  assignment: Record<string, Record<string, string>>,
+  accountData: AccountData,
+  inventory: ArtifactData[]
+): ConstraintViolation[] {
+  const artById = new Map<string, ArtifactData>();
+  for (const a of inventory) artById.set(a.id, a);
+
+  for (const slots of Object.values(assignment)) {
+    for (const artId of Object.values(slots)) {
+      if (!artById.has(artId)) return []; // can't check, treat as ok
+    }
+  }
+
+  try {
+    const configs: CharCompConfig[] = [];
+    for (let i = 0; i < team.characters.length; i++) {
+      const cfg = buildCharCompConfig(team, i, accountData);
+      if (cfg) configs.push(cfg);
+    }
+    if (configs.length === 0) return [];
+
+    const teamBuild = new TeamBuild(
+      configs,
+      team.opts || {},
+      team.enemyElementAura as import("@/data/types").Element | undefined
+    );
+
+    const calcContext: CalcContext = {
+      enemyLevel:
+        team.calcContext?.enemyLevel ?? DEFAULT_CALC_CONTEXT.enemyLevel,
+      enemyRes: team.calcContext?.enemyRes ?? DEFAULT_CALC_CONTEXT.enemyRes,
+      assumeCrit:
+        team.calcContext?.assumeCrit ?? DEFAULT_CALC_CONTEXT.assumeCrit,
+    };
+
+    const carryCharId = team.characters[0]!;
+
+    const artifactStats: Record<string, StatSheet> = {};
+    for (const [cid, slots] of Object.entries(assignment)) {
+      const pieces: ArtifactData[] = [];
+      for (const artId of Object.values(slots)) {
+        const art = artById.get(artId);
+        if (art) pieces.push(art);
+      }
+      artifactStats[cid] = StatSheet.fromArtifacts(pieces);
+    }
+
+    const postStats = teamBuild.getTeamStats(
+      artifactStats,
+      carryCharId,
+      calcContext
+    );
+
+    const perChar = buildPerChar(team, carryCharId, accountData);
+    const violations: ConstraintViolation[] = [];
+
+    for (const [cid, charConfig] of Object.entries(perChar)) {
+      if (charConfig.minEr > 0) {
+        const er = postStats[cid]?.get("er", null) ?? 0;
+        if (er < charConfig.minEr - 1e-6) {
+          violations.push({
+            charId: cid,
+            kind: "er",
+            required: charConfig.minEr,
+            actual: er,
+          });
+        }
+      }
+      if (charConfig.minCr > 0) {
+        const cr = postStats[cid]?.get("cr", null) ?? 0;
+        if (cr < charConfig.minCr - 1e-6) {
+          violations.push({
+            charId: cid,
+            kind: "cr",
+            required: charConfig.minCr,
+            actual: cr,
+          });
+        }
+      }
+    }
+
+    return violations;
+  } catch {
+    return [];
   }
 }
 
@@ -655,6 +749,94 @@ async function cmdVerify(): Promise<void> {
   }
 }
 
+async function cmdPurgeInvalid(): Promise<void> {
+  const store = loadStore();
+  if (!existsSync(ACCOUNT_PATH)) {
+    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
+    process.exit(1);
+  }
+
+  await preloadGameStats();
+  const accountData = loadAccountData(ACCOUNT_PATH);
+  const inventory = getAllArtifacts(accountData);
+  const teamPreset = loadTeamPreset();
+  const teamById = new Map<string, Team>();
+  for (const t of teamPreset.teams) teamById.set(t.id, t);
+
+  let totalSolutions = 0;
+  let purged = 0;
+  let kept = 0;
+  let skipped = 0;
+  const purgedList: {
+    key: string;
+    idx: number;
+    algorithm: string;
+    violations: ConstraintViolation[];
+  }[] = [];
+
+  const problemKeys = Object.keys(store.problems).sort();
+  console.log(
+    `\n${C.bold}═══ Purging solutions that violate minEr/minCr ═══${C.reset}\n`
+  );
+  console.log(`Checking ${problemKeys.length} problems...\n`);
+
+  for (const key of problemKeys) {
+    const problem = store.problems[key];
+    const team = teamById.get(problem.teamId);
+    if (!team) {
+      skipped += problem.solutions.length;
+      continue;
+    }
+
+    const validSolutions: Solution[] = [];
+    for (let si = 0; si < problem.solutions.length; si++) {
+      totalSolutions++;
+      const sol = problem.solutions[si];
+      const violations = checkConstraints(
+        team,
+        sol.artifactAssignment,
+        accountData,
+        inventory
+      );
+
+      if (violations.length > 0) {
+        purged++;
+        purgedList.push({
+          key,
+          idx: si,
+          algorithm: sol.algorithm,
+          violations,
+        });
+        for (const v of violations) {
+          const label = v.kind === "er" ? "ER" : "CR";
+          console.log(
+            `  ${C.red}PURGE${C.reset} ${key} [${si}] (${sol.algorithm}): ` +
+              `${v.charId} ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
+          );
+        }
+      } else {
+        kept++;
+        validSolutions.push(sol);
+      }
+    }
+    problem.solutions = validSolutions;
+  }
+
+  if (purged > 0) {
+    saveStore(store);
+  }
+
+  console.log(`\n${C.bold}═══ Purge Summary ═══${C.reset}\n`);
+  console.log(`  Total solutions:  ${totalSolutions}`);
+  console.log(`  Kept:             ${C.green}${kept}${C.reset}`);
+  console.log(
+    `  Purged:           ${purged > 0 ? C.red : ""}${purged}${purged > 0 ? C.reset : ""}`
+  );
+  if (skipped > 0) {
+    console.log(`  Skipped (no team): ${skipped}`);
+  }
+}
+
 async function cmdRun(opts: {
   filter?: string;
   problemKey?: string;
@@ -763,6 +945,7 @@ async function cmdRun(opts: {
   let regressions = 0;
   let noSolutions = 0;
   let errors = 0;
+  let constraintFails = 0;
   const regList: {
     key: string;
     comp: RunComparison & { status: "regression" };
@@ -866,6 +1049,18 @@ async function cmdRun(opts: {
         break;
     }
 
+    // Reject solutions that violate minEr/minCr constraints
+    if (result.constraintViolations && result.constraintViolations.length > 0) {
+      for (const v of result.constraintViolations) {
+        const label = v.kind === "er" ? "ER" : "CR";
+        console.log(
+          `    ${C.red}[CONSTRAINT FAIL]${C.reset} ${v.charId}: ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
+        );
+      }
+      constraintFails++;
+      return;
+    }
+
     // Add solution to store if assignment differs
     if (
       result.artifactAssignment &&
@@ -948,6 +1143,9 @@ async function cmdRun(opts: {
   console.log(`  No prior:      ${noSolutions}`);
   console.log(
     `  Errors:        ${errors > 0 ? C.red : ""}${errors}${errors > 0 ? C.reset : ""}`
+  );
+  console.log(
+    `  Constraint fails: ${constraintFails > 0 ? C.red : ""}${constraintFails}${constraintFails > 0 ? C.reset : ""}`
   );
 
   if (regList.length > 0) {
@@ -2651,6 +2849,11 @@ async function main(): Promise<void> {
 
     case "verify": {
       await cmdVerify();
+      break;
+    }
+
+    case "purge-invalid": {
+      await cmdPurgeInvalid();
       break;
     }
 

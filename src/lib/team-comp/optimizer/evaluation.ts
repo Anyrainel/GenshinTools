@@ -21,6 +21,7 @@ import type {
   ReactionOverride,
   StatKey,
 } from "../types";
+import { getArtifactCr, getArtifactEr } from "./artifactScoring";
 import type { ArtifactTuple, BnBContext, SuperArtifact } from "./types";
 
 // ─── Core Evaluation ───
@@ -40,6 +41,8 @@ export function evaluateBuild(
     erCheckCharId,
     minEr,
     minCr,
+    erFloor,
+    crFloor,
     reactionOverride,
     scoreFn,
     optCtx,
@@ -48,6 +51,18 @@ export function evaluateBuild(
   const charSheet = StatSheet.fromArtifacts(pieces);
 
   if (scoreFn) {
+    // Check ER/CR constraints even in combo/scoreFn mode.
+    // Uses the same erFloor + artifactEr arithmetic as DFS feasibility pruning.
+    if (minEr > 0) {
+      let artEr = 0;
+      for (const p of pieces) artEr += getArtifactEr(p);
+      if (erFloor + artEr < minEr) return { damage: -1, result: null };
+    }
+    if (minCr > 0) {
+      let artCr = 0;
+      for (const p of pieces) artCr += getArtifactCr(p);
+      if (crFloor + artCr < minCr) return { damage: -1, result: null };
+    }
     const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
     return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
   }

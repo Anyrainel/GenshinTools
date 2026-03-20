@@ -32,7 +32,11 @@ import type {
   TeamOptimizationProgress,
   TeamOptimizerOptions,
 } from "../types";
-import { buildSuperArtifact, computeWeightScore } from "./artifactScoring";
+import {
+  buildSuperArtifact,
+  computeWeightScore,
+  getArtifactEr,
+} from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
 import { evaluateBuild } from "./evaluation";
 import { TopKCollector } from "./topKCollector";
@@ -90,6 +94,15 @@ export function evaluateBuildDirect(
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
+  // Compute erFloor/crFloor so the scoreFn constraint check works correctly
+  let erFloor = 0;
+  let crFloor = 0;
+  if (minEr > 0 || minCr > 0) {
+    const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
+    const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
+    if (minEr > 0) erFloor = blStats[erCheckCharId]?.get("er", null) ?? 0;
+    if (minCr > 0) crFloor = blStats[erCheckCharId]?.get("cr", null) ?? 0;
+  }
   const tempCtx: BnBContext = {
     teamBuild,
     swapCharId,
@@ -101,8 +114,8 @@ export function evaluateBuildDirect(
     erCheckCharId,
     minEr,
     minCr,
-    erFloor: 0,
-    crFloor: 0,
+    erFloor,
+    crFloor,
     reactionOverride,
     scoreFn,
     collector: new TopKCollector(1),
@@ -1914,6 +1927,125 @@ export async function* runTeamOptimization(
 
         picked[slot] = candidates[0];
         pickedIds.add(candidates[0].id);
+      }
+
+      // ── ER/CR constraint enforcement for saturated chars ──
+      // The greedy pick above optimizes for build weights but ignores ER/CR.
+      // Check if the assignment meets minEr/minCr; if not, re-pick slots
+      // prioritizing ER (force ER% sands, then re-sort by ER substats).
+      const { minEr, minCr } = charConfig;
+      if (minEr > 0 || minCr > 0) {
+        // Compute baseline ER/CR (with empty sheet for this char)
+        const blSheets = {
+          ...baseSheets,
+          [charId]: new StatSheet([]),
+        };
+        const blStats = effectiveTeamBuild.getTeamStats(
+          blSheets,
+          carryCharId,
+          calcContext
+        );
+        const erFloor = minEr > 0 ? (blStats[charId]?.get("er", null) ?? 0) : 0;
+
+        // Sum ER from picked artifacts
+        let pickedEr = 0;
+        for (const slot of allSlots) {
+          pickedEr += getArtifactEr(picked[slot]);
+        }
+
+        if (erFloor + pickedEr < minEr - 1e-6) {
+          // ER is insufficient. Re-pick: try ER% sands first, then re-sort
+          // remaining slots by ER substat contribution.
+          const erNeeded = minEr - erFloor;
+
+          // Clear current picks
+          for (const slot of allSlots) {
+            const art = picked[slot];
+            if (art) pickedIds.delete(art.id);
+            picked[slot] = null;
+          }
+
+          // Pass 1: Pick sands with ER% main stat if available
+          const sandsSlot = allSlots[2]; // sands
+          const sandsCandidates = inventory.filter(
+            (a) =>
+              a.slotKey === sandsSlot &&
+              !assignedIds.has(a.id) &&
+              a.mainStatKey === "er"
+          );
+          // Apply set constraint for sands slot
+          const sandsSetReq = slotSetAssignment[2];
+          let filteredSands = sandsCandidates;
+          if (sandsSetReq) {
+            const halfSet = artifactHalfSetsById[sandsSetReq];
+            if (halfSet) {
+              const validSets = new Set(halfSet.setIds);
+              const f = sandsCandidates.filter((a) => validSets.has(a.setKey));
+              if (f.length > 0) filteredSands = f;
+            } else {
+              const f = sandsCandidates.filter((a) => a.setKey === sandsSetReq);
+              if (f.length > 0) filteredSands = f;
+            }
+          }
+          // Sort by total ER contribution (mainstat + substats)
+          filteredSands.sort((a, b) => getArtifactEr(b) - getArtifactEr(a));
+          if (filteredSands.length > 0) {
+            picked[sandsSlot] = filteredSands[0];
+            pickedIds.add(filteredSands[0].id);
+          }
+
+          // Pass 2: Fill remaining slots, sorting by ER substat first
+          for (let si = 0; si < 5; si++) {
+            const slot = allSlots[si];
+            if (picked[slot]) continue; // already picked (e.g. ER sands)
+
+            const requiredSetOrHalf = slotSetAssignment[si];
+            let candidates = inventory.filter(
+              (a) =>
+                a.slotKey === slot &&
+                !assignedIds.has(a.id) &&
+                !pickedIds.has(a.id)
+            );
+            if (requiredSetOrHalf) {
+              const halfSet = artifactHalfSetsById[requiredSetOrHalf];
+              if (halfSet) {
+                const validSets = new Set(halfSet.setIds);
+                const f = candidates.filter((a) => validSets.has(a.setKey));
+                if (f.length > 0) candidates = f;
+              } else {
+                const f = candidates.filter(
+                  (a) => a.setKey === requiredSetOrHalf
+                );
+                if (f.length > 0) candidates = f;
+              }
+            }
+            if (candidates.length === 0) continue;
+
+            // Sort by ER contribution (descending), then by build score
+            candidates.sort((a, b) => {
+              const erDiff = getArtifactEr(b) - getArtifactEr(a);
+              if (Math.abs(erDiff) > 0.001) return erDiff;
+              const sa = buildMatch
+                ? computeWeightScore(a, buildMatch, globalConfig, 1)
+                : scoreSlot(
+                    a,
+                    { er: 100 } as Record<string, number>,
+                    globalConfig
+                  );
+              const sb = buildMatch
+                ? computeWeightScore(b, buildMatch, globalConfig, 1)
+                : scoreSlot(
+                    b,
+                    { er: 100 } as Record<string, number>,
+                    globalConfig
+                  );
+              return sb - sa;
+            });
+
+            picked[slot] = candidates[0];
+            pickedIds.add(candidates[0].id);
+          }
+        }
       }
 
       bestArtifactsByChar[charId] = picked;
