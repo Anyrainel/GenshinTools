@@ -7,7 +7,11 @@ import {
   getRollValues,
 } from "@/lib/team-comp/constrainedGreedy";
 import { CrossScalingBuff, ScalingBuff } from "@/lib/team-comp/damageBuffs";
-import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
+import {
+  TeamBuild,
+  evaluateCombo,
+  hasOffFieldParts,
+} from "@/lib/team-comp/damageCalc";
 import {
   AmplifyFormula,
   CatalyzeFormula,
@@ -925,11 +929,21 @@ describe("compileTeamDamage full pipeline fuzz", () => {
 
         // Old path
         const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
+        // Compute off-field stats if the formula has off-field parts
+        let offFieldTeamStats: Record<string, StatSheet> | undefined;
+        if (hasOffFieldParts(tb, carryId, formulaId)) {
+          const otherCharId = charIds.find((id) => id !== carryId);
+          if (otherCharId) {
+            offFieldTeamStats = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
+          }
+        }
         const oldDamage = tb.getDamageResult(
           carryId,
           formulaId,
           teamStats,
-          FUZZ_CTX
+          FUZZ_CTX,
+          undefined,
+          offFieldTeamStats
         ).totalDamage;
 
         // New path: compile with one char as swap, rest as support
@@ -1016,11 +1030,21 @@ describe("compileTeamDamage full pipeline fuzz", () => {
       const newDamage = compiled.evaluate(vars);
 
       const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
+      // Compute off-field stats if the formula has off-field parts
+      let offFieldTeamStats2: Record<string, StatSheet> | undefined;
+      if (hasOffFieldParts(tb, carryId, formulaId)) {
+        const otherCharId = charIds.find((id) => id !== carryId);
+        if (otherCharId) {
+          offFieldTeamStats2 = tb.getTeamStats(sheets, otherCharId, FUZZ_CTX);
+        }
+      }
       const oldDamage = tb.getDamageResult(
         carryId,
         formulaId,
         teamStats,
-        FUZZ_CTX
+        FUZZ_CTX,
+        undefined,
+        offFieldTeamStats2
       ).totalDamage;
 
       const relErr =
@@ -1271,11 +1295,18 @@ describe("marginal gain parity (compiled vs standard)", () => {
         const compiledBase = compiled.evaluate(baseVars);
 
         const baseTeamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
+        let offFieldBase: Record<string, StatSheet> | undefined;
+        if (hasOffFieldParts(tb, carryId, formulaId)) {
+          const oc = charIds.find((id) => id !== carryId);
+          if (oc) offFieldBase = tb.getTeamStats(sheets, oc, FUZZ_CTX);
+        }
         const standardBase = tb.getDamageResult(
           carryId,
           formulaId,
           baseTeamStats,
-          FUZZ_CTX
+          FUZZ_CTX,
+          undefined,
+          offFieldBase
         ).totalDamage;
 
         // Test marginal gain for each stat key
@@ -1292,11 +1323,19 @@ describe("marginal gain parity (compiled vs standard)", () => {
             carryId,
             FUZZ_CTX
           );
+          let offFieldBumped: Record<string, StatSheet> | undefined;
+          if (hasOffFieldParts(tb, carryId, formulaId)) {
+            const oc = charIds.find((id) => id !== carryId);
+            if (oc)
+              offFieldBumped = tb.getTeamStats(bumpedSheets, oc, FUZZ_CTX);
+          }
           const standardBumped = tb.getDamageResult(
             carryId,
             formulaId,
             bumpedTeamStats,
-            FUZZ_CTX
+            FUZZ_CTX,
+            undefined,
+            offFieldBumped
           ).totalDamage;
           const standardMarginal = standardBumped - standardBase;
 
@@ -1450,11 +1489,25 @@ describe("random team fuzz (compiled vs standard)", () => {
 
         try {
           const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
+          // Compute off-field stats if the formula has off-field parts
+          let offFieldTeamStats: Record<string, StatSheet> | undefined;
+          if (hasOffFieldParts(tb, carryId, formulaId)) {
+            const otherCharId = charIds.find((id) => id !== carryId);
+            if (otherCharId) {
+              offFieldTeamStats = tb.getTeamStats(
+                sheets,
+                otherCharId,
+                FUZZ_CTX
+              );
+            }
+          }
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
             teamStats,
-            FUZZ_CTX
+            FUZZ_CTX,
+            undefined,
+            offFieldTeamStats
           ).totalDamage;
 
           const optCtx = tb.createOptimizerContext(
@@ -1498,7 +1551,7 @@ describe("random team fuzz (compiled vs standard)", () => {
             }
           }
         } catch {
-          continue;
+          // skip trial
         }
       }
 
@@ -1556,11 +1609,25 @@ describe("random team fuzz (compiled vs standard)", () => {
 
         try {
           const teamStats = tb.getTeamStats(sheets, carryId, FUZZ_CTX);
+          // Compute off-field stats if the formula has off-field parts
+          let offFieldTeamStats: Record<string, StatSheet> | undefined;
+          if (hasOffFieldParts(tb, carryId, formulaId)) {
+            const otherCharId = charIds.find((id) => id !== carryId);
+            if (otherCharId) {
+              offFieldTeamStats = tb.getTeamStats(
+                sheets,
+                otherCharId,
+                FUZZ_CTX
+              );
+            }
+          }
           const oldDamage = tb.getDamageResult(
             carryId,
             formulaId,
             teamStats,
-            FUZZ_CTX
+            FUZZ_CTX,
+            undefined,
+            offFieldTeamStats
           ).totalDamage;
 
           const optCtx = tb.createOptimizerContext(
@@ -1599,7 +1666,7 @@ describe("random team fuzz (compiled vs standard)", () => {
             }
           }
         } catch {
-          continue;
+          // skip trial
         }
       }
 

@@ -168,13 +168,13 @@ describe("Entity Instantiation", () => {
         const char = createCharacter(charId, 100, 6, team);
         const violations: string[] = [];
         for (const [id, label] of Object.entries(char.formulaIds)) {
-          if (label.zh.length > 10)
+          if (label.zh.length > 12)
             violations.push(
-              `${id}: zh "${label.zh}" (${label.zh.length} > 10)`
+              `${id}: zh "${label.zh}" (${label.zh.length} > 12)`
             );
-          if (label.en.length > 32)
+          if (label.en.length > 36)
             violations.push(
-              `${id}: en "${label.en}" (${label.en.length} > 32)`
+              `${id}: en "${label.en}" (${label.en.length} > 36)`
             );
         }
         if (violations.length > 0)

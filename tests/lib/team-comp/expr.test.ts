@@ -2,13 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import {
   E,
+  type Expr,
   compileExpr,
   countVars,
   differentiate,
   evaluate,
   isConst,
   simplify,
-  type Expr,
 } from "@/lib/team-comp/expr";
 
 // ─── Helpers ───
@@ -415,10 +415,7 @@ describe("factoring", () => {
     const baseDmg2 = E.var(1, "baseDmg2");
     const defMult = E.div(E.const(190), E.add(E.const(190), E.const(200)));
     const resMult = E.const(0.9);
-    const critMult = E.add(
-      E.const(1),
-      E.mul(E.var(2, "cr"), E.var(3, "cd"))
-    );
+    const critMult = E.add(E.const(1), E.mul(E.var(2, "cr"), E.var(3, "cd")));
 
     const part1 = E.mul(baseDmg1, defMult, resMult, critMult);
     const part2 = E.mul(baseDmg2, defMult, resMult, critMult);
@@ -433,7 +430,10 @@ describe("factoring", () => {
   });
 
   it("does not factor when no common sub-expression", () => {
-    const e = E.add(E.mul(E.var(0, "x"), E.var(1, "y")), E.mul(E.var(2, "z"), E.var(3, "w")));
+    const e = E.add(
+      E.mul(E.var(0, "x"), E.var(1, "y")),
+      E.mul(E.var(2, "z"), E.var(3, "w"))
+    );
     const s = simplify(e);
     // Should remain as add of two muls
     expect(s.tag).toBe("add");

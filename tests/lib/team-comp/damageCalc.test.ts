@@ -553,7 +553,7 @@ describe("TeamBuild lifecycle", () => {
 
     it("calc target's stats include base ATK from character + weapon", () => {
       const stats = tb.getTeamStats(emptySheets, "diluc");
-      const dilucAtk = stats.diluc!.get("atk");
+      const dilucAtk = stats.diluc!.get("atk", null);
       // Diluc base ATK + Wolf's Gravestone base ATK + any static buffs
       // Should be > 0 and reasonable (at least 500)
       expect(dilucAtk).toBeGreaterThan(500);
@@ -562,9 +562,9 @@ describe("TeamBuild lifecycle", () => {
     it("base stats include CR/CD/ER baselines", () => {
       const stats = tb.getTeamStats(emptySheets, "diluc");
       // Characters get 5% CR, 50% CD, 100% ER as baselines
-      expect(stats.diluc!.get("cr")).toBeGreaterThanOrEqual(0.05);
-      expect(stats.diluc!.get("cd")).toBeGreaterThanOrEqual(0.5);
-      expect(stats.diluc!.get("er")).toBeGreaterThanOrEqual(1.0);
+      expect(stats.diluc!.get("cr", null)).toBeGreaterThanOrEqual(0.05);
+      expect(stats.diluc!.get("cd", null)).toBeGreaterThanOrEqual(0.5);
+      expect(stats.diluc!.get("er", null)).toBeGreaterThanOrEqual(1.0);
     });
 
     it("team buffs apply to all members including provider", () => {
@@ -574,15 +574,15 @@ describe("TeamBuild lifecycle", () => {
 
       // Mona's Omen should appear on diluc's dmg% when diluc is target
       // and on jean's dmg% when jean is target
-      const dilucDmg = statsWithDiluc.diluc!.get("dmg%");
-      const jeanDmg = statsWithJean.jean!.get("dmg%");
+      const dilucDmg = statsWithDiluc.diluc!.get("dmg%", null);
+      const jeanDmg = statsWithJean.jean!.get("dmg%", null);
 
       // Both should have Mona's Omen (+0.6), so both > 0
       expect(dilucDmg).toBeGreaterThanOrEqual(0.6);
       expect(jeanDmg).toBeGreaterThanOrEqual(0.6);
 
       // Mona also receives her own team buff (receiver: "team" applies to all)
-      const monaDmg = statsWithDiluc.mona!.get("dmg%");
+      const monaDmg = statsWithDiluc.mona!.get("dmg%", null);
       expect(monaDmg).toBeGreaterThanOrEqual(0.6);
     });
   });

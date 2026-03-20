@@ -59,9 +59,14 @@ import {
   buildSheetFromMainAndSubs,
   getRollValues,
 } from "@/lib/team-comp/constrainedGreedy";
-import { TeamBuild, evaluateCombo } from "@/lib/team-comp/damageCalc";
+import {
+  type OptimizerContext,
+  TeamBuild,
+  evaluateCombo,
+} from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
+  type CompiledTeamDamage,
   compileComboTeamDamage,
   compileTeamDamage,
   fillVarsFromArtifacts,
@@ -2095,7 +2100,13 @@ async function cmdFuzz(opts: {
   // Group inventory by slot
   const bySlot: Record<string, ArtifactData[]> = {};
   for (const art of inventory) {
-    (bySlot[art.slotKey] ??= []).push(art);
+    const sk = art.slotKey;
+    const bucket = bySlot[sk];
+    if (bucket) {
+      bucket.push(art);
+    } else {
+      bySlot[sk] = [art];
+    }
   }
   const slotKeys = allSlots;
 
@@ -2154,7 +2165,7 @@ async function cmdFuzz(opts: {
     }
 
     // Create optimizer context
-    let optCtx;
+    let optCtx: OptimizerContext;
     try {
       optCtx = teamBuild.createOptimizerContext(
         baseSheets,
@@ -2170,7 +2181,7 @@ async function cmdFuzz(opts: {
     }
 
     // Compile AST
-    let compiled;
+    let compiled: CompiledTeamDamage;
     try {
       compiled = compileTeamDamage(
         teamBuild,
@@ -2442,7 +2453,7 @@ async function cmdFuzzCombo(opts: {
     // Test with each character as the swap char
     for (const swapCharId of team.charIds) {
       // Compile once per swapChar
-      let compiled;
+      let compiled: CompiledTeamDamage;
       try {
         // Build baseline sheets for supports (random) baked into the compiled form
         const baseSheets: Record<string, StatSheet> = {};

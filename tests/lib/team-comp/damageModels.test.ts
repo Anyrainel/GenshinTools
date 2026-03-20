@@ -33,7 +33,7 @@ describe("StatSheet", () => {
     ]);
 
     // 800 × (1 + 0.5) + 100 = 1300
-    expect(sheet.get("atk")).toBeCloseTo(1300);
+    expect(sheet.get("atk", null)).toBeCloseTo(1300);
   });
 
   it("get(hp) applies base × (1 + %) + flat formula", () => {
@@ -44,32 +44,32 @@ describe("StatSheet", () => {
     ]);
 
     // 15000 × (1 + 0.466) + 4780 = 26770
-    expect(sheet.get("hp")).toBeCloseTo(26770);
+    expect(sheet.get("hp", null)).toBeCloseTo(26770);
   });
 
   it("get(cr) returns raw value (no baseline — baselines are in character stats)", () => {
     const sheet = new StatSheet([{ key: "cr", value: 0.3 }]);
-    expect(sheet.get("cr")).toBeCloseTo(0.3);
+    expect(sheet.get("cr", null)).toBeCloseTo(0.3);
   });
 
   it("get(cd) returns raw value (no baseline)", () => {
     const sheet = new StatSheet([{ key: "cd", value: 0.622 }]);
-    expect(sheet.get("cd")).toBeCloseTo(0.622);
+    expect(sheet.get("cd", null)).toBeCloseTo(0.622);
   });
 
   it("get(er) returns raw value (no baseline)", () => {
     const sheet = new StatSheet([{ key: "er", value: 0.2 }]);
-    expect(sheet.get("er")).toBeCloseTo(0.2);
+    expect(sheet.get("er", null)).toBeCloseTo(0.2);
   });
 
   it("get(em) returns raw value", () => {
     const sheet = new StatSheet([{ key: "em", value: 187 }]);
-    expect(sheet.get("em")).toBe(187);
+    expect(sheet.get("em", null)).toBe(187);
   });
 
   it("get(atk%) throws — use getRaw for intermediate % values", () => {
     const sheet = new StatSheet([{ key: "atk%", value: 0.5 }]);
-    expect(() => sheet.get("atk%")).toThrow("not allowed");
+    expect(() => sheet.get("atk%", null)).toThrow("not allowed");
   });
 
   it("aggregates duplicate keys", () => {
@@ -126,7 +126,7 @@ describe("StatSheet", () => {
   it("apply with empty buffs returns same sheet", () => {
     const sheet = new StatSheet([{ key: "em", value: 100 }]);
     const result = sheet.apply([]);
-    expect(result.get("em")).toBe(100);
+    expect(result.get("em", null)).toBe(100);
   });
 
   it("normalizes elemental DMG keys (pyro%, phys%, etc.) to dmg% with element filter", () => {
@@ -192,16 +192,16 @@ describe("StatSheet.withDelta", () => {
     const original = new StatSheet([{ key: "cr", value: 0.5 }]);
     const bumped = original.withDelta("cr", 0.033);
 
-    expect(bumped.get("cr")).toBeCloseTo(0.533);
-    expect(original.get("cr")).toBeCloseTo(0.5); // immutable
+    expect(bumped.get("cr", null)).toBeCloseTo(0.533);
+    expect(original.get("cr", null)).toBeCloseTo(0.5); // immutable
   });
 
   it("handles bumping a new key", () => {
     const original = new StatSheet([]);
     const bumped = original.withDelta("em", 20);
 
-    expect(bumped.get("em")).toBe(20);
-    expect(original.get("em")).toBe(0);
+    expect(bumped.get("em", null)).toBe(20);
+    expect(original.get("em", null)).toBe(0);
   });
 
   it("handles bumping a scaled stat intermediate (%)", () => {
@@ -213,8 +213,8 @@ describe("StatSheet.withDelta", () => {
 
     // Original: 800 × (1 + 0.5) = 1200
     // Bumped:   800 × (1 + 0.55) = 1240
-    expect(original.get("atk")).toBeCloseTo(1200);
-    expect(bumped.get("atk")).toBeCloseTo(1240);
+    expect(original.get("atk", null)).toBeCloseTo(1200);
+    expect(bumped.get("atk", null)).toBeCloseTo(1240);
   });
 });
 
@@ -230,7 +230,7 @@ describe("StatSheet.get with DamageTag", () => {
     const applied = sheet.apply([buff]);
 
     // Without tag: only universal
-    expect(applied.get("cr")).toBeCloseTo(0.5);
+    expect(applied.get("cr", null)).toBeCloseTo(0.5);
   });
 
   it("includes matching tagged entries with tag", () => {
@@ -281,7 +281,7 @@ describe("StatSheet.get with DamageTag", () => {
     const applied = sheet.apply([buff]);
 
     // Without tag: 0
-    expect(applied.get("dmg%")).toBe(0);
+    expect(applied.get("dmg%", null)).toBe(0);
 
     // With burst tag: 0.2
     expect(
@@ -298,12 +298,12 @@ describe("StatSheet.fromRaw", () => {
   it("constructs from a plain stats record", () => {
     const sheet = StatSheet.fromRaw({ "hp%": 0.466, cr: 0.311 });
     expect(sheet.getRaw("hp%")).toBeCloseTo(0.466);
-    expect(sheet.get("cr")).toBeCloseTo(0.311);
+    expect(sheet.get("cr", null)).toBeCloseTo(0.311);
   });
 
   it("handles empty record", () => {
     const sheet = StatSheet.fromRaw({});
-    expect(sheet.get("em")).toBe(0);
+    expect(sheet.get("em", null)).toBe(0);
   });
 });
 
@@ -325,9 +325,9 @@ describe("StatSheet.fromArtifacts", () => {
     // Main stat: plume = flat ATK (fixed at 311 for 5★)
     expect(sheet.getRaw("atk")).toBeCloseTo(311);
     // Substats aggregated
-    expect(sheet.get("cr")).toBeCloseTo(0.07);
-    expect(sheet.get("cd")).toBeCloseTo(0.14);
-    expect(sheet.get("em")).toBeCloseTo(40);
+    expect(sheet.get("cr", null)).toBeCloseTo(0.07);
+    expect(sheet.get("cd", null)).toBeCloseTo(0.14);
+    expect(sheet.get("em", null)).toBeCloseTo(40);
     expect(sheet.getRaw("atk%")).toBeCloseTo(0.058);
   });
 
@@ -375,7 +375,7 @@ describe("StatSheet.fromArtifacts", () => {
     ]);
 
     // CR from both: 0.07 + 0.035 = 0.105
-    expect(sheet.get("cr")).toBeCloseTo(0.105);
+    expect(sheet.get("cr", null)).toBeCloseTo(0.105);
   });
 });
 
