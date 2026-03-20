@@ -94,7 +94,7 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-border text-left">
+          <tr className="border-b border-border text-left whitespace-nowrap">
             <th className="py-1.5 px-2 font-medium">
               {t.ui("teamComp.investJin")}
             </th>
@@ -108,9 +108,6 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
             </th>
             <th className="py-1.5 px-2 font-medium text-right">
               {t.ui("common.damage")}
-            </th>
-            <th className="py-1.5 px-2 font-medium text-right">
-              {t.ui("teamComp.investVsBase")}
             </th>
             <th className="py-1.5 px-2 font-medium text-right">
               {t.ui("teamComp.investVsPrev")}
@@ -144,7 +141,9 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                 key={i}
                 className="border-b border-border/50 hover:bg-muted/30"
               >
-                <td className="py-1.5 px-2 font-mono text-sm">{step.jin}</td>
+                <td className="py-1.5 px-2 font-mono text-sm text-amber-400">
+                  {step.jin}
+                </td>
                 {charIds.map((cid) => {
                   const inv = step.allocation[cid];
                   if (!inv) return <td key={cid} />;
@@ -161,7 +160,7 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                           />
                         )}
                         <span
-                          className="text-sm font-mono"
+                          className="text-sm font-mono whitespace-nowrap text-slate-400"
                           title={
                             inv.is5StarWeapon
                               ? undefined
@@ -201,17 +200,9 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                     <span className="text-muted-foreground">&mdash;</span>
                   )}
                 </td>
-                <td className="py-1.5 px-2 text-right font-mono text-xs">
-                  {Math.round(step.damage).toLocaleString()}
-                </td>
-                <td className="py-1.5 px-2 text-right font-mono text-xs">
-                  {i === 0 ? (
-                    <span className="text-muted-foreground">&mdash;</span>
-                  ) : (
-                    <span className="text-emerald-400">
-                      +{step.gainVsBaselinePct.toFixed(1)}%
-                    </span>
-                  )}
+                <td className="py-1.5 px-2 text-right font-mono text-xs whitespace-nowrap">
+                  {Math.round(step.damage).toLocaleString()} (
+                  {(100 + step.gainVsBaselinePct).toFixed(1)}%)
                 </td>
                 <td className="py-1.5 px-2 text-right font-mono text-xs">
                   {i === 0 ? (

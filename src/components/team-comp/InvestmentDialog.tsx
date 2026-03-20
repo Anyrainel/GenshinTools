@@ -182,10 +182,11 @@ export function InvestmentDialog({
       reactionOverrides,
       perChar,
     };
-    start(opts);
+    start(opts, !!result);
   }, [
     charConfigs,
     baseConfigs,
+    result,
     teamBuild,
     combo,
     calcContext,
@@ -293,34 +294,31 @@ export function InvestmentDialog({
                 {progress.message}
               </p>
             </div>
-          ) : (
-            <>
-              <div className="flex gap-1 flex-1 justify-center">
-                {(["chart", "table", "sequence"] as const).map((tab) => (
-                  <Button
-                    key={tab}
-                    variant={activeTab === tab ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setActiveTab(tab)}
-                    className="text-xs h-7 px-2.5"
-                    disabled={!result}
-                  >
-                    {tab === "chart"
-                      ? t.ui("teamComp.investChart")
-                      : tab === "table"
-                        ? t.ui("teamComp.investTable")
-                        : t.ui("teamComp.investSequence")}
-                  </Button>
-                ))}
-              </div>
-            </>
-          )}
+          ) : result ? (
+            <div className="flex gap-1 flex-1 justify-center">
+              {(["chart", "table", "sequence"] as const).map((tab) => (
+                <Button
+                  key={tab}
+                  variant={activeTab === tab ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setActiveTab(tab)}
+                  className="text-xs h-7 px-2.5"
+                >
+                  {tab === "chart"
+                    ? t.ui("teamComp.investChart")
+                    : tab === "table"
+                      ? t.ui("teamComp.investTable")
+                      : t.ui("teamComp.investSequence")}
+                </Button>
+              ))}
+            </div>
+          ) : null}
           {error && <p className="text-sm text-destructive">{error.message}</p>}
         </div>
 
         {/* Results */}
         {result && (
-          <div className="space-y-3">
+          <div className="space-y-3 overflow-x-auto">
             {activeTab === "chart" && (
               <InvestmentChart
                 result={result}
@@ -333,7 +331,12 @@ export function InvestmentDialog({
                 charIds={charConfigs.map((c) => c.charId)}
               />
             )}
-            {activeTab === "sequence" && <InvestmentSequence result={result} />}
+            {activeTab === "sequence" && (
+              <InvestmentSequence
+                result={result}
+                charIds={charConfigs.map((c) => c.charId)}
+              />
+            )}
           </div>
         )}
       </ResponsiveDialogContent>

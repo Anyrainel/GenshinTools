@@ -140,15 +140,15 @@ function CustomTooltip({
     >
       <div className="font-medium mb-1">
         {step.jin}
-        {jinLabel}
+        {jinLabel} ({(100 + step.gainVsBaselinePct).toFixed(1)}%)
       </div>
       <div className="font-mono">
-        {Math.round(step.damage).toLocaleString()} (
-        {(100 + step.gainVsBaselinePct).toFixed(1)}%)
+        {t.ui("common.damage")}: {Math.round(step.damage).toLocaleString()}
       </div>
       {idx > 0 && (
         <div className="text-emerald-400 font-mono">
-          {t.ui("teamComp.investVsPrev")}: +{step.gainVsPrevPct.toFixed(1)}%
+          vs {sequence[idx - 1].jin}
+          {jinLabel}: +{step.gainVsPrevPct.toFixed(1)}%
         </div>
       )}
       <div className="mt-1.5 space-y-0.5">

@@ -1,83 +1,199 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById, weaponsById } from "@/data/constants";
+import { charactersById } from "@/data/constants";
 import type {
   CharInvestment,
   InvestmentResult,
+  TeamInvestment,
 } from "@/lib/team-comp/investmentOptimizer";
 import { getAssetUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
-interface InvestmentSequenceProps {
-  result: InvestmentResult;
+// ─── Types ───
+
+type GraphNode = {
+  id: string;
+  jin: number;
+  allocation: TeamInvestment;
+  damage: number;
+  damagePct: number;
+  isBest: boolean;
+};
+
+type GraphEdge = {
+  from: string;
+  to: string;
+  isBest: boolean;
+};
+
+type Row = {
+  jin: number;
+  nodes: GraphNode[];
+};
+
+type EdgeLine = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  isBest: boolean;
+};
+
+// ─── Build graph from optimizer DAG ───
+
+function buildGraph(result: InvestmentResult): {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+} {
+  const { dag, bestAtTier } = result;
+  if (dag.nodes.length === 0) return { nodes: [], edges: [] };
+
+  const baseDmg = bestAtTier.get(dag.baselineJin)?.damage ?? 1;
+  const pct = (d: number) => (baseDmg > 0 ? (d / baseDmg) * 100 : 100);
+  const bestIds = new Set<string>();
+  for (const n of bestAtTier.values()) bestIds.add(n.id);
+
+  const nodes = dag.nodes.map((n) => ({
+    id: n.id,
+    jin: n.jin,
+    allocation: n.allocation,
+    damage: n.damage,
+    damagePct: pct(n.damage),
+    isBest: bestIds.has(n.id),
+  }));
+
+  const edges = dag.edges.map((e) => ({
+    from: e.fromId,
+    to: e.toId,
+    isBest: bestIds.has(e.fromId) && bestIds.has(e.toId),
+  }));
+
+  return { nodes, edges };
 }
 
-/** Diff two allocations to find individual changes (constellation and refinement separately) */
-function diffAllocationDetailed(
-  from: Record<string, CharInvestment>,
-  to: Record<string, CharInvestment>
-): {
-  charId: string;
-  type: "constellation" | "weapon-switch" | "refinement";
-  fromLabel: string;
-  toLabel: string;
-  /** Icon entity: charId for constellation, weaponId for weapon changes */
-  iconCharId?: string;
-  iconWeaponId?: string;
-}[] {
-  const entries: {
-    charId: string;
-    type: "constellation" | "weapon-switch" | "refinement";
-    fromLabel: string;
-    toLabel: string;
-    iconCharId?: string;
-    iconWeaponId?: string;
-  }[] = [];
+// ─── Row layout with barycenter crossing minimization ───
 
-  for (const cid of Object.keys(to)) {
-    const f = from[cid];
-    const t = to[cid];
-    if (!f || !t) continue;
+function computeRows(nodes: GraphNode[], edges: GraphEdge[]): Row[] {
+  // Group nodes by 金
+  const byJin = new Map<number, GraphNode[]>();
+  for (const n of nodes) {
+    const list = byJin.get(n.jin) ?? [];
+    list.push(n);
+    byJin.set(n.jin, list);
+  }
 
-    // Constellation change
-    if (t.constellation !== f.constellation) {
-      entries.push({
-        charId: cid,
-        type: "constellation",
-        fromLabel: `C${f.constellation}`,
-        toLabel: `C${t.constellation}`,
-        iconCharId: cid,
-      });
-    }
+  const jins = [...byJin.keys()].sort((a, b) => a - b);
+  const rows: Row[] = jins.map((jin) => ({ jin, nodes: byJin.get(jin)! }));
 
-    // Weapon switch (4★↔5★)
-    if (t.is5StarWeapon !== f.is5StarWeapon) {
-      entries.push({
-        charId: cid,
-        type: "weapon-switch",
-        fromLabel: f.is5StarWeapon ? `R${f.refinement}` : "4★",
-        toLabel: t.is5StarWeapon ? `R${t.refinement}` : "4★",
-        iconWeaponId: t.weaponId,
-      });
-    } else if (t.is5StarWeapon && t.refinement !== f.refinement) {
-      // Same 5★ weapon, refinement change
-      entries.push({
-        charId: cid,
-        type: "refinement",
-        fromLabel: `R${f.refinement}`,
-        toLabel: `R${t.refinement}`,
-        iconWeaponId: t.weaponId,
-      });
+  if (rows.length <= 1) return rows;
+
+  // Parent lookup: childId → parentIds
+  const parentIds = new Map<string, string[]>();
+  for (const e of edges) {
+    const list = parentIds.get(e.to) ?? [];
+    list.push(e.from);
+    parentIds.set(e.to, list);
+  }
+
+  // Track each node's index within its row
+  const nodeIdx = new Map<string, number>();
+  for (let i = 0; i < rows[0].nodes.length; i++) {
+    nodeIdx.set(rows[0].nodes[i].id, i);
+  }
+
+  // Barycenter heuristic: sort each row by average parent position in prev row
+  for (let ri = 1; ri < rows.length; ri++) {
+    const row = rows[ri];
+    const scored = row.nodes.map((node) => {
+      const pids = parentIds.get(node.id) ?? [];
+      const positions = pids
+        .map((pid) => nodeIdx.get(pid))
+        .filter((idx): idx is number => idx !== undefined);
+      const bary =
+        positions.length > 0
+          ? positions.reduce((a, b) => a + b, 0) / positions.length
+          : Number.POSITIVE_INFINITY;
+      return { node, bary };
+    });
+
+    scored.sort((a, b) => a.bary - b.bary);
+    rows[ri].nodes = scored.map((s) => s.node);
+    for (let i = 0; i < rows[ri].nodes.length; i++) {
+      nodeIdx.set(rows[ri].nodes[i].id, i);
     }
   }
 
-  return entries;
+  return rows;
 }
 
-export function InvestmentSequence({ result }: InvestmentSequenceProps) {
-  const { t } = useLanguage();
-  const { sequence } = result;
+// ─── Component ───
 
-  if (sequence.length < 2) {
+const NODE_GAP = 8;
+
+interface InvestmentSequenceProps {
+  result: InvestmentResult;
+  charIds: string[];
+}
+
+export function InvestmentSequence({
+  result,
+  charIds,
+}: InvestmentSequenceProps) {
+  const { t } = useLanguage();
+
+  const { nodes: graphNodes, edges: graphEdges } = useMemo(
+    () => buildGraph(result),
+    [result]
+  );
+  const rows = useMemo(
+    () => computeRows(graphNodes, graphEdges),
+    [graphNodes, graphEdges]
+  );
+
+  // Parent lookup for diff display
+  const parentMap = useMemo(() => {
+    const map = new Map<string, GraphNode[]>();
+    const nodeById = new Map<string, GraphNode>();
+    for (const n of graphNodes) nodeById.set(n.id, n);
+    for (const e of graphEdges) {
+      const parent = nodeById.get(e.from);
+      if (!parent) continue;
+      const list = map.get(e.to) ?? [];
+      list.push(parent);
+      map.set(e.to, list);
+    }
+    return map;
+  }, [graphNodes, graphEdges]);
+
+  // Measure node positions for edges
+  const containerRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef(new Map<string, HTMLDivElement>());
+  const [edgeLines, setEdgeLines] = useState<EdgeLine[]>([]);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+
+    const lines: EdgeLine[] = [];
+    for (const edge of graphEdges) {
+      const fromEl = nodeRefs.current.get(edge.from);
+      const toEl = nodeRefs.current.get(edge.to);
+      if (!fromEl || !toEl) continue;
+      const fR = fromEl.getBoundingClientRect();
+      const tR = toEl.getBoundingClientRect();
+      lines.push({
+        x1: fR.left + fR.width / 2 - cRect.left,
+        y1: fR.bottom - cRect.top,
+        x2: tR.left + tR.width / 2 - cRect.left,
+        y2: tR.top - cRect.top,
+        isBest: edge.isBest,
+      });
+    }
+    setEdgeLines(lines);
+  }, [rows, graphEdges]);
+
+  if (rows.length === 0) {
     return (
       <p className="text-sm text-muted-foreground py-4 text-center">
         {t.ui("teamComp.investNoSteps")}
@@ -88,159 +204,135 @@ export function InvestmentSequence({ result }: InvestmentSequenceProps) {
   const fmtC = (n: number) => t.format("common.constellationFormat", n);
   const fmtR = (n: number) => t.format("common.refinementFormat", n);
 
-  // Build edges: one per step, each change as a separate entry
-  type Edge = {
-    jin: number;
-    charId: string;
-    type: "constellation" | "weapon-switch" | "refinement";
-    fromLabel: string;
-    toLabel: string;
-    iconCharId?: string;
-    iconWeaponId?: string;
-    damage: number;
-    gainPct: number;
-  };
+  return (
+    <div ref={containerRef} className="relative">
+      {/* SVG edge overlay */}
+      <svg
+        className="absolute inset-0 pointer-events-none"
+        style={{ width: "100%", height: "100%", zIndex: 0 }}
+      >
+        {edgeLines.map((line, i) => (
+          <line
+            key={`e${i}`}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke={
+              line.isBest ? "rgb(217 119 6)" : "hsl(var(--muted-foreground))"
+            }
+            strokeWidth={1.5}
+            strokeDasharray={line.isBest ? undefined : "4 2"}
+          />
+        ))}
+      </svg>
 
-  const edges: Edge[] = [];
-  for (let i = 1; i < sequence.length; i++) {
-    const prev = sequence[i - 1];
-    const cur = sequence[i];
-    const diffs = diffAllocationDetailed(prev.allocation, cur.allocation);
+      {/* Rows */}
+      <div className="relative" style={{ zIndex: 1 }}>
+        {rows.map((row) => (
+          <div
+            key={row.jin}
+            className="flex justify-center items-center py-1.5"
+            style={{ gap: NODE_GAP }}
+          >
+            {row.nodes.map((node) => {
+              const parents = parentMap.get(node.id) ?? [];
+              const changedCids =
+                parents.length === 0
+                  ? charIds
+                  : charIds.filter((cid) => {
+                      const cur = node.allocation[cid];
+                      if (!cur) return false;
+                      return parents.some((p) => {
+                        const pi = p.allocation[cid];
+                        if (!pi) return true;
+                        return (
+                          pi.constellation !== cur.constellation ||
+                          pi.is5StarWeapon !== cur.is5StarWeapon ||
+                          (pi.is5StarWeapon &&
+                            cur.is5StarWeapon &&
+                            pi.refinement !== cur.refinement)
+                        );
+                      });
+                    });
 
-    for (const d of diffs) {
-      // Localize the labels
-      let fromLabel: string;
-      let toLabel: string;
-      if (d.type === "constellation") {
-        const fromC = Number.parseInt(d.fromLabel.slice(1));
-        const toC = Number.parseInt(d.toLabel.slice(1));
-        fromLabel = fmtC(fromC);
-        toLabel = fmtC(toC);
-      } else if (d.type === "weapon-switch") {
-        fromLabel =
-          d.fromLabel === "4★"
-            ? "4★"
-            : fmtR(Number.parseInt(d.fromLabel.slice(1)));
-        toLabel =
-          d.toLabel === "4★" ? "4★" : fmtR(Number.parseInt(d.toLabel.slice(1)));
-      } else {
-        fromLabel = fmtR(Number.parseInt(d.fromLabel.slice(1)));
-        toLabel = fmtR(Number.parseInt(d.toLabel.slice(1)));
-      }
+              return (
+                <div
+                  key={node.id}
+                  ref={(el) => {
+                    if (el) nodeRefs.current.set(node.id, el);
+                    else nodeRefs.current.delete(node.id);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1 p-1 rounded border text-xs leading-none whitespace-nowrap",
+                    node.isBest
+                      ? "border-amber-600 bg-card"
+                      : "border-muted-foreground bg-card"
+                  )}
+                >
+                  <span className="font-mono font-bold text-amber-400 shrink-0">
+                    {node.jin}
+                  </span>
+                  {changedCids.map((cid) => {
+                    const inv = node.allocation[cid];
+                    if (!inv) return null;
+                    return (
+                      <CharState
+                        key={cid}
+                        charId={cid}
+                        inv={inv}
+                        fmtC={fmtC}
+                        fmtR={fmtR}
+                      />
+                    );
+                  })}
+                  <span
+                    className={cn(
+                      "font-mono shrink-0",
+                      node.isBest ? "text-emerald-400" : "text-slate-400"
+                    )}
+                  >
+                    {node.damagePct.toFixed(1)}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-      edges.push({
-        jin: cur.jin,
-        charId: d.charId,
-        type: d.type,
-        fromLabel,
-        toLabel,
-        iconCharId: d.iconCharId,
-        iconWeaponId: d.iconWeaponId,
-        damage: cur.damage,
-        gainPct:
-          prev.damage > 0
-            ? ((cur.damage - prev.damage) / prev.damage) * 100
-            : 0,
-      });
-    }
-  }
+// ─── Per-character state chip: [icon] C2R1 ───
+
+function CharState({
+  charId,
+  inv,
+  fmtC,
+  fmtR,
+}: {
+  charId: string;
+  inv: CharInvestment;
+  fmtC: (n: number) => string;
+  fmtR: (n: number) => string;
+}) {
+  const char = charactersById[charId];
 
   return (
-    <div className="space-y-1">
-      {/* Baseline node */}
-      <div className="flex items-center gap-3 px-3 py-2 rounded-lg border border-border/50 bg-card/30">
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center">
-          <span className="text-sm font-bold text-amber-400">
-            {sequence[0].jin}
-          </span>
-        </div>
-        <span className="text-sm font-medium">
-          {t.ui("teamComp.investBaseline")}
-        </span>
-        <span className="text-xs font-mono ml-auto">
-          {Math.round(sequence[0].damage).toLocaleString()}
-        </span>
-      </div>
-
-      {/* Edges */}
-      {edges.map((edge, i) => {
-        // Resolve icon
-        let iconSrc: string | undefined;
-        let iconAlt = "";
-        if (edge.iconCharId) {
-          const char = charactersById[edge.iconCharId];
-          iconSrc = char ? getAssetUrl(char.imagePath) : undefined;
-          iconAlt = edge.iconCharId;
-        } else if (edge.iconWeaponId) {
-          const wep = weaponsById[edge.iconWeaponId];
-          iconSrc = wep ? getAssetUrl(wep.imagePath) : undefined;
-          iconAlt = edge.iconWeaponId;
-        }
-
-        // Display name
-        const displayName =
-          edge.type === "constellation"
-            ? t.character(edge.charId)
-            : edge.iconWeaponId
-              ? t.weaponName(edge.iconWeaponId)
-              : t.character(edge.charId);
-
-        return (
-          <div
-            key={i}
-            className="flex items-center gap-3 px-3 py-2 rounded-lg border border-border/50 bg-card/30"
-          >
-            {/* Jin */}
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center">
-              <span className="text-sm font-bold text-amber-400">
-                {edge.jin}
-              </span>
-            </div>
-
-            {/* Icon */}
-            <div className="flex-shrink-0">
-              {iconSrc ? (
-                <img
-                  src={iconSrc}
-                  alt={iconAlt}
-                  className="w-9 h-9 rounded-full border border-border"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-muted" />
-              )}
-            </div>
-
-            {/* Upgrade info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="sr-only">
-                  {t.ui("teamComp.investUpgrade")}:{" "}
-                </span>
-                <span className="text-sm font-medium truncate">
-                  {displayName}
-                </span>
-                <span className="text-xs font-mono">
-                  {edge.fromLabel} → {edge.toLabel}
-                </span>
-              </div>
-            </div>
-
-            {/* Damage + gain */}
-            <div className="flex flex-col items-end text-xs font-mono">
-              <span>{Math.round(edge.damage).toLocaleString()}</span>
-              <span
-                className={cn(
-                  edge.gainPct > 0
-                    ? "text-emerald-400"
-                    : "text-muted-foreground"
-                )}
-              >
-                +{edge.gainPct.toFixed(1)}%
-              </span>
-            </div>
-          </div>
-        );
-      })}
+    <div className="flex items-center gap-0.5 shrink-0">
+      {char && (
+        <img
+          src={getAssetUrl(char.imagePath)}
+          alt={charId}
+          className="w-6 h-6 rounded-full"
+          style={{ imageRendering: "auto" }}
+        />
+      )}
+      <span className="font-mono text-[11px]">
+        {fmtC(inv.constellation)}
+        {inv.is5StarWeapon && fmtR(inv.refinement)}
+      </span>
     </div>
   );
 }
