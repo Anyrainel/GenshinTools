@@ -582,10 +582,10 @@ function ConfigPhase({
                 key={formula.formulaId}
                 className="px-2 py-1.5 rounded bg-muted/30"
               >
-                <span className="text-sm font-medium">
-                  {t.resolveLabel(formula.label)}
+                <span className="text-sm font-medium flex flex-wrap items-baseline gap-x-1">
+                  <span>{t.resolveLabel(formula.label)}</span>
                   {formula.offField !== "none" && (
-                    <span className="text-muted-foreground font-normal ml-1">
+                    <span className="text-muted-foreground font-normal whitespace-nowrap">
                       {t.ui(
                         formula.offField === "full"
                           ? "common.offFieldSuffix"

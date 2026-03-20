@@ -318,8 +318,10 @@ export function FormulaSelectorCard({
                                       className="w-6 h-6 object-contain rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
-                                  <span className="truncate">
-                                    {t.resolveLabel(label)}
+                                  <span className="flex flex-wrap items-baseline gap-x-1">
+                                    <span className="truncate">
+                                      {t.resolveLabel(label)}
+                                    </span>
                                     {(() => {
                                       if (!teamBuild) return null;
                                       const s = offFieldStatus(
@@ -329,7 +331,7 @@ export function FormulaSelectorCard({
                                       );
                                       if (s === "none") return null;
                                       return (
-                                        <span className="text-muted-foreground font-normal ml-1">
+                                        <span className="text-muted-foreground font-normal whitespace-nowrap">
                                           {t.ui(
                                             s === "full"
                                               ? "common.offFieldSuffix"
@@ -386,8 +388,10 @@ export function FormulaSelectorCard({
                                       className="w-5 h-5 rounded-full bg-secondary/40 shrink-0"
                                     />
                                   )}
-                                  <span className="text-base font-bold text-foreground truncate">
-                                    {t.resolveLabel(label)}
+                                  <span className="text-base font-bold text-foreground flex flex-wrap items-baseline gap-x-1">
+                                    <span className="truncate">
+                                      {t.resolveLabel(label)}
+                                    </span>
                                     {(() => {
                                       if (!teamBuild) return null;
                                       const s = offFieldStatus(
@@ -397,7 +401,7 @@ export function FormulaSelectorCard({
                                       );
                                       if (s === "none") return null;
                                       return (
-                                        <span className="text-muted-foreground font-normal ml-1">
+                                        <span className="text-muted-foreground font-normal whitespace-nowrap">
                                           {t.ui(
                                             s === "full"
                                               ? "common.offFieldSuffix"
