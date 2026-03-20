@@ -28,7 +28,7 @@ export const DEFAULT_COMPUTE_OPTIONS: ComputeOptions = {
   expandCritCirclet: true,
   mergeAlgorithm: "smartMerge",
   normalizeFlatStats: true,
-  substatWeightThreshold: 70,
+  substatWeightThreshold: 60,
   mustPresentWeightThreshold: 90,
 };
 

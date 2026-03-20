@@ -18,7 +18,7 @@ import type {
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { TeamBuild, isFullyOffField } from "@/lib/team-comp/damageCalc";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
@@ -195,7 +195,11 @@ export function AutoTuneDialog({
   // and eligible reactions per the character's element and team composition
   const { discoveredFormulas, eligibleReactions, defaultRotation } =
     useMemo(() => {
-      const formulas: { formulaId: string; label: I18nLabel }[] = [];
+      const formulas: {
+        formulaId: string;
+        label: I18nLabel;
+        offField: boolean;
+      }[] = [];
       let reactions: ReactionType[] = ["none"];
       let rotation: Record<string, number> = {};
       for (const team of enabledTeams) {
@@ -214,7 +218,11 @@ export function AutoTuneDialog({
           const charFormulas = allFormulas[characterId];
           if (!charFormulas || Object.keys(charFormulas).length === 0) continue;
           for (const [fid, label] of Object.entries(charFormulas)) {
-            formulas.push({ formulaId: fid, label });
+            formulas.push({
+              formulaId: fid,
+              label,
+              offField: isFullyOffField(tb, characterId, fid),
+            });
           }
           rotation = tb.getRotation(characterId);
           // Determine eligible reactions for this element + team
@@ -510,7 +518,11 @@ function ConfigPhase({
   characterId: string;
   relevantTeams: Team[];
   enabledTeamIds: Set<string>;
-  discoveredFormulas: { formulaId: string; label: I18nLabel }[];
+  discoveredFormulas: {
+    formulaId: string;
+    label: I18nLabel;
+    offField: boolean;
+  }[];
   comboLines: ComboLine[];
   eligibleReactions: ReactionType[];
   hasReactions: boolean;
@@ -572,6 +584,11 @@ function ConfigPhase({
               >
                 <span className="text-sm font-medium">
                   {t.resolveLabel(formula.label)}
+                  {formula.offField && (
+                    <span className="text-muted-foreground font-normal ml-1">
+                      {t.ui("common.offFieldSuffix")}
+                    </span>
+                  )}
                 </span>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
                   {hasReactions

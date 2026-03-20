@@ -980,6 +980,11 @@ export function FormulaBreakdown({ parts, highlightedStat, t }: Props) {
               <div className="flex flex-col items-center justify-between gap-1 md:gap-2 bg-primary/5 border border-primary/20 px-2 md:px-4 py-1.5 md:py-2 rounded-lg">
                 <span className="text-[10px] md:text-sm text-primary tracking-wide leading-none whitespace-nowrap">
                   {getTemplateName(p, t)}
+                  {p.offField && (
+                    <span className="text-muted-foreground font-normal ml-1">
+                      {t.ui("common.offFieldSuffix")}
+                    </span>
+                  )}
                 </span>
                 <span className="font-[math] text-base md:text-xl font-black text-foreground flex items-center justify-center gap-x-1">
                   {p.hits && p.hits !== 1 ? (

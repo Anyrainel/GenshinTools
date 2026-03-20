@@ -15,6 +15,7 @@ import type {
 import { useAsyncIdealGen } from "@/hooks/useAsyncIdealGen";
 import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
+import { useInvestmentAnalysis } from "@/hooks/useInvestmentAnalysis";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
@@ -40,6 +41,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
+import { InvestmentDialog } from "./InvestmentDialog";
 import { TeamRosterCard } from "./TeamRosterCard";
 import {
   buildTeamConfigs,
@@ -880,6 +882,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       freezeStore.getFrozenTeam(team.id)?.artifactsByChar != null ||
       Object.keys(cachedFreezeArtifacts.current).length > 0);
 
+  // ─── Investment Analysis Dialog ───
+  const [investmentOpen, setInvestmentOpen] = useState(false);
+  const investmentAnalysis = useInvestmentAnalysis();
+
   return (
     <div
       className={cn(
@@ -899,7 +905,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         >
           <ArrowLeft className="w-5 h-5 text-foreground/70" />
         </Button>
-        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate">
+        <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
           {team.name || t.ui("teamComp.teamOptimization")}
         </h2>
       </div>
@@ -949,6 +955,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combos: [{ id: combo.id, label: combo.label, lines }],
           });
         }}
+        onInvestmentClick={
+          teamBuild && formulaMode === "combo"
+            ? () => setInvestmentOpen(true)
+            : undefined
+        }
         isMobile={isMobile}
         t={t}
       />
@@ -1080,6 +1091,32 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           matchingSetIds={swapMatchingSetIds}
           onSwap={handleSwapConfirm}
           t={t}
+        />
+      )}
+
+      {/* Investment Analysis Dialog */}
+      {teamBuild && (
+        <InvestmentDialog
+          open={investmentOpen}
+          onOpenChange={setInvestmentOpen}
+          teamId={team.id}
+          teamBuild={teamBuild}
+          baseConfigs={configs}
+          combo={combo}
+          analysis={investmentAnalysis}
+          calcContext={activeContext}
+          reactionOverrides={team.reactionOverrides}
+          perChar={Object.fromEntries(
+            effectiveTeam.characters
+              .filter((c): c is string => c != null)
+              .map((cid) => [
+                cid,
+                {
+                  minEr: team.minEr?.[cid] ?? 1.0,
+                  minCr: team.minCr?.[cid] ?? 0,
+                },
+              ])
+          )}
         />
       )}
     </div>

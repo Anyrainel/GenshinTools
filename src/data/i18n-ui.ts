@@ -28,6 +28,8 @@ export const i18nUiData = {
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
     save: { en: "Save", zh: "保存" },
+    offFieldSuffix: { en: "(off-field)", zh: "(后台)" },
+    stop: { en: "Stop", zh: "停止" },
     equip: { en: "Equip", zh: "装备" },
     level: { en: "Level", zh: "等级" },
     previous: { en: "Previous", zh: "上一步" },
@@ -758,6 +760,10 @@ export const i18nUiData = {
     assumeCrit: { en: "Assume CRIT", zh: "默认暴击" },
     critRateTarget: { en: "DPS CR Target", zh: "主C暴击目标" },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
+    idealSubstatBudget: {
+      en: "Substat rolls / piece",
+      zh: "每件副词条条数",
+    },
     emptyOptMessage: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
@@ -892,10 +898,10 @@ export const i18nUiData = {
       zh: "所有角色已冻结——解冻后可重新优化。",
     },
     frozenBadge: { en: "Frozen", zh: "已冻结" },
-    singleFormula: { en: "Single Formula", zh: "单公式" },
+    singleFormula: { en: "Single Skill", zh: "单技能" },
     comboFormula: {
-      en: "Combo Formula",
-      zh: "组合公式",
+      en: "Rotation Total",
+      zh: "循环总伤",
     },
     singleFormulaDesc: {
       en: "Evaluate one formula at a time",
@@ -908,6 +914,82 @@ export const i18nUiData = {
     comboDisclaimer: {
       en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
       zh: "组合模式不追踪Buff持续时间和层数，长轴循环的结果可能不准确。",
+    },
+    investmentAnalysis: {
+      en: "Investment Analysis",
+      zh: "补金分析",
+    },
+    investmentDesc: {
+      en: "Find the most cost-efficient order to invest constellations and weapon refinements.",
+      zh: "找到最高性价比的命座和精炼投资顺序。",
+    },
+    runAnalysis: {
+      en: "Run Analysis",
+      zh: "开始分析",
+    },
+    investChart: {
+      en: "Chart",
+      zh: "图表",
+    },
+    investTable: {
+      en: "Table",
+      zh: "表格",
+    },
+    investSequence: {
+      en: "Sequence",
+      zh: "顺序",
+    },
+    investMinConfig: {
+      en: "Min. Config",
+      zh: "最低配置",
+    },
+    investWeapon4StarR0: {
+      en: "4★R5",
+      zh: "4★精5",
+    },
+    investUpgrade: {
+      en: "Upgrade",
+      zh: "升级",
+    },
+    investChar: {
+      en: "Character",
+      zh: "角色",
+    },
+    investJin: {
+      en: "5★",
+      zh: "金",
+    },
+    investAllocation: {
+      en: "Allocation",
+      zh: "配置",
+    },
+    investVsBase: {
+      en: "vs Base",
+      zh: "vs 基准",
+    },
+    investVsPrev: {
+      en: "vs Prev",
+      zh: "vs 上一步",
+    },
+    investDiff: {
+      en: "Change",
+      zh: "变化",
+    },
+    investPctGain: {
+      en: "% Gain",
+      zh: "% 增幅",
+    },
+    investBaseline: {
+      en: "Baseline",
+      zh: "基准",
+    },
+    investNoSteps: {
+      en: "No investment steps found.",
+      zh: "未找到投资步骤。",
+    },
+    noWeapon5Star: {
+      en: "No 5★ Weapon",
+      zh: "无5★武器",
     },
   },
   filters: {

@@ -164,3 +164,21 @@
     is not worth the engine complexity.
   created: "2026-02-26"
   resolved: "2026-02-26"
+
+- id: xiangling-kqm-swing-offfield
+  entity: xiangling
+  rule: S12
+  status: open
+  category: approximation
+  summary: >
+    Pyronado's 3 initial swing hits are marked offField: true, but they occur during the
+    Q cast animation while Xiangling is on-field. Per S12, initial burst hits cast while
+    on-field should not have offField: true.
+  detail: >
+    KQM source: https://keqingmains.com/xiangling/.
+    KQM confirms the 3 swing hits occur during the casting animation. The Pyronado DoT
+    ticks (the main damage source) correctly persist off-field, but the swings are initial
+    hits. Current implementation bundles swings and ticks into one formula entry
+    "xiangling-pyronado" with all parts marked offField: true.
+  created: "2026-03-19"
+  resolved: null

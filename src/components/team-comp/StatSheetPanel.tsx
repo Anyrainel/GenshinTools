@@ -226,8 +226,8 @@ function useMaxViewData(
       let maxOff: number;
 
       try {
-        maxOn = onField.get(key);
-        maxOff = offField.get(key);
+        maxOn = onField.get(key, null);
+        maxOff = offField.get(key, null);
       } catch {
         continue;
       }

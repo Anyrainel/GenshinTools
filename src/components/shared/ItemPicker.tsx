@@ -2,6 +2,7 @@ import { ArtifactMixedBuilder } from "@/components/shared/ArtifactMixedBuilder";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import {
+  ICON_CONFIG,
   ItemIcon,
   type ItemIconSize,
   SIZE_CLASSES,
@@ -336,15 +337,20 @@ function PickerTrigger({
   characterStats: ReturnType<typeof useGameStats>["characterStats"];
   frozen?: boolean;
 }) {
-  const baseClasses = cn(
-    SIZE_CLASSES[size],
-    "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-sm relative overflow-hidden",
-    disabled ? "bg-muted opacity-70" : "bg-gradient-select hover:shadow-md"
-  );
+  const iconSize = ICON_CONFIG[size]?.icon ?? ICON_CONFIG.lg.icon;
+  const borderRadius = ICON_CONFIG[size]?.radius ?? ICON_CONFIG.lg.radius;
 
   if (!value) {
     return (
-      <div className={cn(baseClasses, "ring-1 ring-inset ring-foreground/20")}>
+      <div
+        className={cn(
+          "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-sm relative overflow-hidden ring-1 ring-inset ring-foreground/20",
+          disabled
+            ? "bg-muted opacity-70"
+            : "bg-gradient-select hover:shadow-md"
+        )}
+        style={{ width: iconSize, height: iconSize, borderRadius }}
+      >
         <span className="text-4xl text-muted-foreground select-none pb-1 group-hover:text-primary transition-colors">
           +
         </span>

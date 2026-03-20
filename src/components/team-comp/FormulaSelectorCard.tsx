@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
@@ -11,7 +12,7 @@ import { charactersById, elementResourcesByName } from "@/data/constants";
 import type { Element, ReactionType } from "@/data/types";
 import { elements } from "@/data/types";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
-import type { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { type TeamBuild, isFullyOffField } from "@/lib/team-comp/damageCalc";
 import type {
   ComboLine,
   I18nLabel,
@@ -19,7 +20,7 @@ import type {
 } from "@/lib/team-comp/types";
 import { cn, getAssetUrl, getElementColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
-import { Minus, Plus, RotateCcw, Swords } from "lucide-react";
+import { Minus, Plus, RotateCcw, Swords, TrendingUp } from "lucide-react";
 import { ReactionSelector } from "./ReactionSelector";
 
 const CARD_CLS = "bg-gradient-card border-border/50 overflow-hidden shadow-lg";
@@ -49,6 +50,7 @@ interface FormulaSelectorCardProps {
     count: number
   ) => void;
   onResetCombo?: () => void;
+  onInvestmentClick?: () => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
 }
@@ -142,6 +144,7 @@ export function FormulaSelectorCard({
   comboLineMap,
   setComboLineCount,
   onResetCombo,
+  onInvestmentClick,
   isMobile,
   t,
 }: FormulaSelectorCardProps) {
@@ -317,6 +320,16 @@ export function FormulaSelectorCard({
                                   )}
                                   <span className="truncate">
                                     {t.resolveLabel(label)}
+                                    {teamBuild &&
+                                      isFullyOffField(
+                                        teamBuild,
+                                        cid,
+                                        formulaId
+                                      ) && (
+                                        <span className="text-muted-foreground font-normal ml-1">
+                                          {t.ui("common.offFieldSuffix")}
+                                        </span>
+                                      )}
                                   </span>
                                 </button>
                                 {isSelected &&
@@ -367,6 +380,16 @@ export function FormulaSelectorCard({
                                   )}
                                   <span className="text-base font-bold text-foreground truncate">
                                     {t.resolveLabel(label)}
+                                    {teamBuild &&
+                                      isFullyOffField(
+                                        teamBuild,
+                                        cid,
+                                        formulaId
+                                      ) && (
+                                        <span className="text-muted-foreground font-normal ml-1">
+                                          {t.ui("common.offFieldSuffix")}
+                                        </span>
+                                      )}
                                   </span>
                                 </div>
 
@@ -507,6 +530,18 @@ export function FormulaSelectorCard({
               {buildError}
             </div>
           )
+        )}
+        {onInvestmentClick && (
+          <div className="mx-2 mt-2">
+            <Button
+              variant="outline"
+              className="w-full gap-2 border-amber-600/50 bg-amber-700/30 hover:bg-amber-600/40 text-amber-100"
+              onClick={onInvestmentClick}
+            >
+              <TrendingUp className="w-4 h-4" />
+              {t.ui("teamComp.investmentAnalysis")}
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>

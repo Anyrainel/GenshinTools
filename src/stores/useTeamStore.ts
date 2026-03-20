@@ -1,6 +1,7 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, Element, ReactionType } from "@/data/types";
 import type { CombatOpts } from "@/lib/team-comp/damageModels";
+import type { InvestmentCharConfig } from "@/lib/team-comp/investmentOptimizer";
 import type {
   CalcContext,
   ComboFormula,
@@ -41,6 +42,8 @@ export interface Team {
   selectedCombo: string | null;
   /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
   enemyElementAura?: Element;
+  /** Per-character investment analysis configs (weapon choices, start C/R). Separate from roster settings. */
+  investmentConfigs?: InvestmentCharConfig[];
 }
 
 /** Exported artifact — `type` discriminator omitted since field names differ. */

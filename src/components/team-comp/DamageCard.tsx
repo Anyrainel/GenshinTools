@@ -19,6 +19,8 @@ import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { IdealGenResult } from "@/lib/team-comp/idealArtifactGen";
+import type { IdealSubstatBudgetPreset } from "@/lib/team-comp/idealSubstatBudget";
+import { IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/idealSubstatBudget";
 import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
@@ -840,6 +842,49 @@ function RollMultSelect({
   );
 }
 
+function IdealSubstatBudgetSelect({
+  team,
+  activeContext,
+  updateTeam,
+  isMobile,
+  t,
+}: CtxProps) {
+  const value =
+    activeContext.idealSubstatBudget ?? IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET;
+  return (
+    <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
+      <span className={LABEL_CLS(isMobile)}>
+        {t.ui("teamComp.idealSubstatBudget")}
+      </span>
+      <Select
+        value={value}
+        onValueChange={(v) =>
+          updateTeam(team.id, {
+            calcContext: {
+              ...team.calcContext,
+              idealSubstatBudget: v as IdealSubstatBudgetPreset,
+            },
+          })
+        }
+      >
+        <SelectTrigger
+          className={cn(
+            "text-sm font-bold border-border/20 bg-background/50 min-w-0 max-w-[10.5rem]",
+            isMobile ? "h-7" : "h-8"
+          )}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="8_6">8 (5*) / 6 (4*)</SelectItem>
+          <SelectItem value="8_7">8 (5*) / 7 (4*)</SelectItem>
+          <SelectItem value="9_7">9 (5*) / 7 (4*)</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 function ActionButton({
   onClick,
   disabled,
@@ -1396,6 +1441,7 @@ export function DamageCard({
             <EnemyResInput {...ctxProps} />
             <CritRateTargetInput {...ctxProps} />
             <RollMultSelect {...ctxProps} />
+            <IdealSubstatBudgetSelect {...ctxProps} />
             <ActionButton
               onClick={handleGenerateIdeal}
               disabled={idealComputing || !hasActiveFormula}

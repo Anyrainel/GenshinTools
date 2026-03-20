@@ -33,15 +33,20 @@ export function useIsOwned() {
     return { ownedCharacters: chars, ownedWeapons: weapons };
   }, [accountData]);
 
+  const hasAccountData = ownedCharacters != null;
+
   return useCallback(
     (type: "character" | "weapon", id: string) => {
       if (type === "character") {
-        if (ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
+        // Only treat travelers as always-owned when account data exists,
+        // so that empty-state screens (e.g. CharacterBuildView) still appear
+        // for users who haven't imported any data yet.
+        if (hasAccountData && ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
         return ownedCharacters?.has(id) ?? false;
       }
       return ownedWeapons?.has(id) ?? false;
     },
-    [ownedCharacters, ownedWeapons]
+    [ownedCharacters, ownedWeapons, hasAccountData]
   );
 }
 
@@ -94,11 +99,11 @@ export function useHasAccountData(): boolean {
  * Reads current state at call time — do NOT use in render paths that need reactivity.
  */
 export function getIsOwned(type: "character" | "weapon", id: string): boolean {
-  if (type === "character" && ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
   const state = useAccountStore.getState();
   const acc = state.activeAccountId
     ? state.accounts[state.activeAccountId]
     : null;
+  if (type === "character" && ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
   if (!acc) return false;
   if (type === "character") {
     return acc.data.characters.some((c) => c.key === id);
