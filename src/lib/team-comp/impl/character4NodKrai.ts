@@ -46,8 +46,9 @@ class Illuga extends CharacterBase {
       // Q: Nightingale's Song — EM → Geo baseDmg (either/or with LC tier below)
       // Buffs NA/CA/PA/E/Q only (excludes special)
       // Lv10: 60.5% EM, Lv13 (C3+): 71.4% EM
+      // 21 base stacks + up to 15 from Geo Constructs (3×5) = 36 max
       new ScalingBuff(
-        cbs(this, "Q", ["Q"]),
+        { ...cbs(this, "Q", ["Q"]), maxStacks: 36 },
         {
           receiver: "onField",
           filter: {
@@ -63,8 +64,9 @@ class Illuga extends CharacterBase {
       ),
       // Q: Nightingale's Song — LunarCrystallize tier EM → baseDmg (replaces Geo tier above)
       // Lv10: 406.7% EM, Lv13 (C3+): 480.1% EM
+      // Shares Nightingale's Song stack pool (36 max)
       new ScalingBuff(
-        cbs(this, "Q", ["Q"]),
+        { ...cbs(this, "Q", ["Q"]), maxStacks: 36 },
         {
           receiver: "onField",
           filter: {
@@ -85,7 +87,7 @@ class Illuga extends CharacterBase {
     if (p2Scale > 0) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "P2", ["Q"]),
+          { ...cbs(this, "P2", ["Q"]), maxStacks: 36 },
           {
             receiver: "onField",
             filter: {
@@ -107,7 +109,7 @@ class Illuga extends CharacterBase {
     if (p2LunarScale > 0) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "P2", ["Q"]),
+          { ...cbs(this, "P2", ["Q"]), maxStacks: 36 },
           {
             receiver: "onField",
             filter: {

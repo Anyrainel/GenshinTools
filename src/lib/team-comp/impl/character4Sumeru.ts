@@ -11,6 +11,8 @@ import { cbs } from "../helpers";
 class Sethos extends CharacterBase {
   readonly buffs = [
     // P2: EM × 700% → baseDmg for Shadowpiercing Shot
+    // "4枚贯影箭命中敌人后" → removed after 4 hits.
+    // Self buff → modeled as formula nuance (formula already has ≤4 shots).
     new ScalingBuff(
       cbs(this, "P2", ["charge"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
@@ -156,6 +158,8 @@ class Faruzan extends CharacterBase {
     ),
     // P2: Under Q, Anemo DMG gets flat baseDmg from 32% of Faruzan's BASE ATK (not total ATK)
     // Game text: "基于珐露珊基础攻击力的32%，提高造成的伤害"
+    // "每0.8秒至多产生一次…生效1次后消失" — each 烈风护持 fires once then disappears,
+    // but regenerates every 0.8s during Q. Effectively unlimited over a rotation.
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
@@ -212,10 +216,11 @@ class Layla extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
     // C4: Team Normal/Charged baseDmg + 5% of Layla's HP
+    // "将在造成普通攻击或重击伤害后的0.05秒后移除" → maxStacks: 1
     if (this.constellation >= 4) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "C4", ["E"]),
+          { ...cbs(this, "C4", ["E"]), maxStacks: 1 },
           { receiver: "team", filter: { abilities: ["normal", "charge"] } },
           [],
           "hp",

@@ -35,10 +35,11 @@ class Escoffier extends CharacterBase {
       );
     }
     // C2: Cold Storage → on-field (others) Cryo DMG gets baseDmg from Escoffier's ATK ×240%
+    // Max 5 triggers per Skill cast
     if (this.constellation >= 2) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "C2", ["E"]),
+          { ...cbs(this, "C2", ["E"]), maxStacks: 5 },
           {
             receiver: "otherOnField",
             filter: {
@@ -176,6 +177,8 @@ class Emilie extends CharacterBase {
           ]
         : []),
       // C6: After E/Q, Normal/Charged become Dendro + flat baseDmg from ATK ×300%
+      // "通过这种方式产生4枚香韵" → 4 procs per activation.
+      // Self buff → modeled via formula hit counts, not maxStacks.
       ...(this.constellation >= 6
         ? [
             new ScalingBuff(
@@ -308,8 +311,9 @@ class Sigewinne extends CharacterBase {
       // P1: HP > 30k → E baseDmg +80 (C1: 100) per 1000 HP. Max 2800 (C1: 3500)
       // Game text: off-field party members only, excluding Sigewinne.
       // Approximated as otherOnField — see DmgTODO.
+      // "10层静养计数" → maxStacks: 10 (C1: +8 bounces = 18)
       new ScalingBuff(
-        cbs(this, "P1", ["E"]),
+        { ...cbs(this, "P1", ["E"]), maxStacks: isC1 ? 18 : 10 },
         { receiver: "otherOnField", filter: { abilities: ["skill"] } },
         [],
         "hp",
@@ -639,6 +643,7 @@ class Furina extends CharacterBase {
     if (this.constellation >= 6) {
       // C6: Center of Attention — all NA/CA/Plunge converted to Hydro DMG
       // Universal part: +18% Max HP as flat baseDmg on each hit (both Arkhe alignments)
+      // "上述效果至多触发6次" → self buff, modeled via C6 formula hit count (6 hits).
       buffs.push(
         new ScalingBuff(
           cbs(this, "C6", ["E"]),

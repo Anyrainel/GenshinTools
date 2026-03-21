@@ -177,7 +177,7 @@ class KukiShinobu extends CharacterBase {
     // Works off-field → receiver: "self"
     ...(this.constellation >= 6 && this.hpState === "critical"
       ? [
-          new StatBuff(cbs(this, "C6", []), { receiver: "self" }, [
+          new StatBuff(cbs(this, "C6", ["low-hp"]), { receiver: "self" }, [
             { key: "em", value: 150 },
           ]),
         ]

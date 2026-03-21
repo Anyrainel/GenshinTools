@@ -82,6 +82,7 @@ class Durin extends CharacterBase {
     // P2: After Q, per 100 ATK → burst tick DMG +3% (cap 75%) — modeled as baseDmg%
     // baseDmg% is the correct key for "deal X% of original damage"
     // Dragon fires off-field; receiver is "self" not "selfOnField"
+    // Self buff → modeled via formula hit counts, not maxStacks.
     buffs.push(
       new ScalingBuff(
         cbs(this, "P2", ["Q"]),
@@ -102,7 +103,7 @@ class Durin extends CharacterBase {
         // C1 White Flame: "all other nearby party members" → otherOnField
         buffs.push(
           new ScalingBuff(
-            cbs(this, "C1", ["Q"]),
+            { ...cbs(this, "C1", ["Q"]), maxStacks: 20 },
             {
               receiver: "otherOnField",
               filter: {
@@ -116,7 +117,8 @@ class Durin extends CharacterBase {
           )
         );
       } else {
-        // C1 Dark Decay: Durin gains stacks; dragon fires off-field → "self"
+        // C1 Dark Decay: Durin gains stacks (20, consumed 2 per hit = 10 triggers).
+        // Self buff → modeled via formula hit counts, not maxStacks.
         buffs.push(
           new ScalingBuff(
             cbs(this, "C1", ["Q"]),
@@ -496,6 +498,7 @@ class Diluc extends CharacterBase {
     }
     if (this.constellation >= 6) {
       // C6: After E, next 2 normals DMG +30% and ATK SPD +30%
+      // Self buff → modeled via formula hit counts, not maxStacks.
       buffs.push(
         new StatBuff(
           cbs(this, "C6", ["E"]),

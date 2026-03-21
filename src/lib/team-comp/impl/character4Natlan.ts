@@ -78,7 +78,8 @@ class Iansan extends CharacterBase {
       new StatBuff(cbs(this, "P1", ["E", "charge"]), { receiver: "self" }, [
         { key: "atk%", value: 0.2 },
       ]),
-      // Q: Kinetic Energy Scale — 0.5% ATK per Nightsoul pt (max 27% at 54 pts)
+      // Q: Kinetic Energy Scale — high: 27% ATK, low (~27 pts): 13.5% ATK
+      // Max ATK Bonus is always 690 (Lv10) / 810 (Lv13 C5+) regardless of mode
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
         { receiver: "onField" },
@@ -86,13 +87,7 @@ class Iansan extends CharacterBase {
         "atk",
         "atk",
         this.nightsoulLevel === "high" ? 0.27 : 0.135,
-        this.nightsoulLevel === "high"
-          ? this.constellation >= 5
-            ? 810
-            : 690
-          : this.constellation >= 5
-            ? 405
-            : 345
+        this.constellation >= 5 ? 810 : 690
       ),
     ];
     // C2: While off-field with Precise Movement, on-field character (not Iansan) ATK +30%
@@ -329,10 +324,10 @@ class Kachina extends CharacterBase {
     return buffs;
   })();
 
-  // Turbo Twirly Mounted: Lv10 158.0% DEF, Lv13 (C3+) 186.5% DEF
+  // Turbo Twirly Independent: Lv10 114.8% DEF, Lv13 (C3+) 135.5% DEF
   // Q: Lv10 692.6% DEF, Lv13 (C5+) 817.7% DEF
   protected readonly formulaMap = (() => {
-    const mountMult = this.constellation >= 3 ? 1.865 : 1.58;
+    const independentMult = this.constellation >= 3 ? 1.355 : 1.148;
     const qMult = this.constellation >= 5 ? 8.177 : 6.926;
     return {
       "kachina-twirly": {
@@ -340,7 +335,7 @@ class Kachina extends CharacterBase {
         parts: [
           {
             formula: new DirectFormula(
-              mountMult,
+              independentMult,
               {
                 element: "Geo",
                 ability: "skill",

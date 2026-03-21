@@ -550,6 +550,7 @@ class Nahida extends CharacterBase {
                     "atk",
                     { key: "em", multiplier: 4.0 }
                   ),
+                  hits: 6,
                 },
               ],
             },
@@ -593,14 +594,7 @@ class Cyno extends CharacterBase {
       1.5
     ),
     // P2: Duststalker Bolt DMG += 250% EM as baseDmg
-    new ScalingBuff(
-      cbs(this, "P2", ["E"]),
-      { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      [],
-      "em",
-      "baseDmg",
-      2.5
-    ),
+    // Applied via bespokeBuff on C6 bolts to avoid leaking to Mortuary Rite (also ability: "skill")
     // P1: Mortuary Rite (Judication) +35% DMG — applied via bespokeBuff on formula part
     // C2: Normal ATK hit → Electro DMG +10% × 5 stacks = +50%
     ...(this.constellation >= 2
@@ -671,6 +665,18 @@ class Cyno extends CharacterBase {
                 {
                   formula: new DirectFormula(1.0, eBaseTag),
                   hits: 5,
+                  // P2: Duststalker Bolt DMG += 250% EM as baseDmg
+                  bespokeBuff: new ScalingBuff(
+                    cbs(this, "P2", ["E"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["skill"] },
+                    },
+                    [],
+                    "em",
+                    "baseDmg",
+                    2.5
+                  ),
                 },
               ],
             },

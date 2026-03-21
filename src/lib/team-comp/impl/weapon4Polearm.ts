@@ -157,7 +157,7 @@ class Moonpiercer extends WeaponBase {
     return [
       new StatBuff(
         wbs(this, ["dendro-reaction"], "leaf-of-revival-atk"),
-        { receiver: "self" },
+        { receiver: "onField" },
         [
           {
             key: "atk%",

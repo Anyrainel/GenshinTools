@@ -48,7 +48,7 @@ class SequenceOfSolitude extends WeaponBase {
 
 @RegisterWeapon("flowerwreathed_feathers")
 class FlowerWreathedFeathers extends WeaponBase {
-  // 3-stack CA DMG from aimed shots
+  // 6-stack (max) CA DMG from aimed shots
   readonly buffs = [
     new StatBuff(
       wbs(this, ["aim"]),
@@ -56,7 +56,7 @@ class FlowerWreathedFeathers extends WeaponBase {
       [
         {
           key: "dmg%",
-          value: 3 * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+          value: 6 * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
         },
       ]
     ),

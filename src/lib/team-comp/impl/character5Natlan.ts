@@ -9,7 +9,9 @@ import {
 import {
   CharacterBase,
   type FormulaEntry,
+  type OptionDef,
   RegisterCharacter,
+  resolveOption,
 } from "../damageModels";
 import { cbs } from "../helpers";
 import type { ElementalOrPhysical, StatKey } from "../types";
@@ -22,6 +24,8 @@ import type { ElementalOrPhysical, StatKey } from "../types";
 class Varesa extends CharacterBase {
   readonly buffs = [
     // P1: Fiery Passion Tag-Team Triple Jump → Plunge ground impact +180% ATK
+    // Consumed after 1 plunge hit per E, but rotation is E→plunge so every plunge has P1.
+    // Modeled as always-active self buff (no maxStacks on self buffs).
     new ScalingBuff(
       cbs(this, "P1", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["plunge"] } },
@@ -127,8 +131,37 @@ class Varesa extends CharacterBase {
   }
 }
 
-@RegisterCharacter("citlali")
+const citlaliOption = {
+  label: { zh: "C1星刃层数", en: "C1 Stellar Blade Stacks" },
+  choices: [
+    {
+      value: "unlimited",
+      label: { zh: "无限", en: "Unlimited" },
+      when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
+    },
+    {
+      value: "16",
+      label: { zh: "16层", en: "16 stacks" },
+      when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
+    },
+    {
+      value: "13",
+      label: { zh: "13层", en: "13 stacks" },
+      when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
+    },
+    {
+      value: "10",
+      label: { zh: "10层", en: "10 stacks" },
+      when: (tm) => (tm.constellations.citlali ?? 0) >= 1,
+    },
+  ] as const,
+  default: "unlimited",
+} satisfies OptionDef;
+
+@RegisterCharacter("citlali", citlaliOption)
 class Citlali extends CharacterBase {
+  private readonly c1Stacks = resolveOption(citlaliOption, this.option);
+
   // P1 requires Frozen or Melt — team needs Hydro or Pyro alongside Citlali's Cryo
   private readonly canTriggerP1 =
     this.teamMeta.hasReaction("frozen") || this.teamMeta.hasReaction("melt");
@@ -159,23 +192,21 @@ class Citlali extends CharacterBase {
       "baseDmg",
       0.9
     ),
-    // P2: EM → baseDmg for Q Ice Storm (burst, 1200% EM)
-    // Ice Storm fires when Q is cast (Citlali is on-field at that moment),
-    // but we use "self" so this also covers off-field Skull explosions.
-    new ScalingBuff(
-      cbs(this, "P2", ["Q"]),
-      { receiver: "self", filter: { abilities: ["burst"] } },
-      [],
-      "em",
-      "baseDmg",
-      12.0
-    ),
+    // P2: EM → baseDmg for Q Ice Storm only (1200% EM)
+    // Applied as bespokeBuff on Ice Storm part, not as a global burst buff,
+    // because the Q Skull should NOT receive this bonus.
+    // (see formulaMap "citlali-burst-total" Ice Storm part)
     // C1: Stellar Blade — on-field active character (not Citlali) gains +200% EM as baseDmg
-    // 10 base stacks (+3 per Frozen/Melt every 8s) — forgiving stacks, assume always active
+    // 10 base stacks (+3 per Frozen/Melt every 8s). CombatOpts: 10/13/16/unlimited.
     ...(this.constellation >= 1
       ? [
           new ScalingBuff(
-            cbs(this, "C1", ["E"]),
+            {
+              ...cbs(this, "C1", ["E"]),
+              ...(this.c1Stacks !== "unlimited" && {
+                maxStacks: Number(this.c1Stacks),
+              }),
+            },
             {
               receiver: "otherOnField",
               filter: {
@@ -271,7 +302,18 @@ class Citlali extends CharacterBase {
       "citlali-burst-total": {
         label: { zh: "Q+骷髅爆炸", en: "Q + Skull" },
         parts: [
-          { formula: new DirectFormula(qMult, burstTag) },
+          {
+            formula: new DirectFormula(qMult, burstTag),
+            // P2: Ice Storm only — +1200% EM as baseDmg (Skull does NOT get this)
+            bespokeBuff: new ScalingBuff(
+              cbs(this, "P2", ["Q"]),
+              { receiver: "self", filter: { abilities: ["burst"] } },
+              [],
+              "em",
+              "baseDmg",
+              12.0
+            ),
+          },
           {
             formula: new DirectFormula(qSkullMult, burstTag),
             offField: true,
@@ -814,11 +856,11 @@ class Xilonen extends CharacterBase {
     }
 
     // C4: Blooming Blessing — all party members gain +65% Xilonen DEF as Base DMG
-    // for Normal/Charged/Plunging Attacks. Buff applies to whoever is on field.
+    // for Normal/Charged/Plunging Attacks. "该效果将在生效6次...时解除" → maxStacks: 6
     if (this.constellation >= 4) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "C4", ["E"]),
+          { ...cbs(this, "C4", ["E"]), maxStacks: 6 },
           {
             receiver: "onField",
             filter: { abilities: ["normal", "charge", "plunge"] },
@@ -940,21 +982,6 @@ class Mualani extends CharacterBase {
         : []),
     ];
 
-    // C1: First Surging Bite after entering Nightsoul's Blessing +66% Max HP
-    // We model the single Surging Bite (the peak hit) — C1 applies to that first bite
-    if (this.constellation >= 1) {
-      buffs.push(
-        new ScalingBuff(
-          cbs(this, "C1", ["E"]),
-          { receiver: "selfOnField", filter: { abilities: ["normal"] } },
-          [],
-          "hp",
-          "baseDmg",
-          0.66
-        )
-      );
-    }
-
     return buffs;
   })();
 
@@ -978,9 +1005,48 @@ class Mualani extends CharacterBase {
               },
               "hp"
             ),
+            // C1/C6: First Bite gets +66% HP baseDmg (baked into formula as bespokeBuff)
+            // C6 removes the once-per-blessing limit → every bite gets it
+            ...(this.constellation >= 1
+              ? {
+                  bespokeBuff: new ScalingBuff(
+                    cbs(this, "C1", ["E"]),
+                    {
+                      receiver: "selfOnField",
+                      filter: { abilities: ["normal"] },
+                    },
+                    [],
+                    "hp",
+                    "baseDmg",
+                    0.66
+                  ),
+                }
+              : {}),
           },
         ],
       },
+      // C1: Separate "Normal Bite" without C1 bonus (for subsequent bites in rotation)
+      // At C6 all bites get the bonus, so this is only needed at C1-C5
+      ...(this.constellation >= 1 && this.constellation < 6
+        ? {
+            "mualani-bite-normal": {
+              label: { zh: "普攻(后续)", en: "NA (Subsequent)" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    biteMult,
+                    {
+                      element: "Hydro",
+                      ability: "normal",
+                      reaction: "none",
+                    },
+                    "hp"
+                  ),
+                },
+              ],
+            },
+          }
+        : {}),
       "mualani-burst": {
         label: { zh: "Q伤害", en: "Q" },
         parts: [
@@ -1116,7 +1182,8 @@ class Kinich extends CharacterBase {
               reaction: "none",
             }),
             hits: 5,
-            // This can be off-field, but kinich play style usually interleave Q and E, so on-field is more common.
+            // Ajaw CAN fire off-field, but Kinich stays on-field after Q in practice.
+            // Do NOT add offField here — intentional on-field modeling.
           },
         ],
       },

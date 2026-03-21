@@ -821,10 +821,10 @@ class Beidou extends CharacterBase {
 @RegisterCharacter("ningguang")
 class Ningguang extends CharacterBase {
   readonly buffs = [
-    // P2: Passing through Jade Screen → Geo DMG +12% ("12%岩元素伤害加成")
+    // P2: Passing through Jade Screen → Geo DMG +12% (only on-field character walks through)
     new StatBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "team", filter: { elements: ["Geo"] } },
+      { receiver: "onField", filter: { elements: ["Geo"] } },
       [{ key: "geo%", value: 0.12 }]
     ),
   ];
@@ -884,8 +884,9 @@ class YunJin extends CharacterBase {
 
     const buffs: StatBuff[] = [
       // Q + P2: Adds Base DMG based on Yun Jin's DEF to team's Normal Attacks
+      // Trigger Quota: 30 per character ("生效一定次数后消失")
       new ScalingBuff(
-        cbs(this, "P2", ["A4", "Q"]),
+        { ...cbs(this, "P2", ["A4", "Q"]), maxStacks: 30 },
         { receiver: "team", filter: { abilities: ["normal"] } },
         [],
         "def",

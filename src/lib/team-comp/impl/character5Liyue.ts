@@ -349,8 +349,9 @@ class Xianyun extends CharacterBase {
       ),
       // P2: Q Starwicker → Plunge Base DMG +200% ATK (max 9000)
       // C2: Enhances to 400% ATK (max 18000)
+      // Q starts with 8 Adeptal Assistance stacks, consumed 1 per plunge
       new ScalingBuff(
-        cbs(this, "P2/C2", ["Q"]),
+        { ...cbs(this, "P2/C2", ["Q"]), maxStacks: 8 },
         { receiver: "onField", filter: { abilities: ["plunge"] } },
         [],
         "atk",
@@ -979,6 +980,14 @@ const shenheOption = {
   label: { zh: "E技能类型", en: "E Skill Type" },
   choices: [
     {
+      value: "both",
+      label: {
+        zh: "点按+长按 (全+15%)",
+        en: "Press+Hold (All +15%)",
+      },
+      when: (tm) => (tm.constellations.shenhe ?? 0) >= 1,
+    },
+    {
       value: "press",
       label: {
         zh: "点按 (技能/爆发+15%)",
@@ -993,7 +1002,7 @@ const shenheOption = {
       },
     },
   ] as const,
-  default: "press",
+  default: "both",
 } satisfies OptionDef;
 
 @RegisterCharacter("shenhe", shenheOption)
@@ -1003,8 +1012,15 @@ class Shenhe extends CharacterBase {
   readonly buffs = [
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
+    // Quota: press 5 / hold 7 per character. "Both" uses hold quota (last cast refreshes).
+    // C6: Normal+Charged don't consume → effectively unlimited.
     new ScalingBuff(
-      cbs(this, "E", ["E"]),
+      {
+        ...cbs(this, "E", ["E"]),
+        ...(this.constellation < 6 && {
+          maxStacks: this.eType === "press" ? 5 : 7,
+        }),
+      },
       {
         receiver: "team",
         filter: {
@@ -1024,19 +1040,41 @@ class Shenhe extends CharacterBase {
       [{ key: "cryo%", value: 0.15 }]
     ),
     // P2: Press E → team Skill/Burst DMG +15%; Hold E → team Normal/Charged/Plunge DMG +15%
-    new StatBuff(
-      cbs(this, "P2", ["E"]),
-      {
-        receiver: "team",
-        filter: {
-          abilities:
-            this.eType === "hold"
-              ? ["normal", "charge", "plunge"]
-              : ["skill", "burst"],
-        },
-      },
-      [{ key: "dmg%", value: 0.15 }]
-    ),
+    // C1+ "both" mode: both effects active (press+hold in same rotation)
+    ...(this.eType === "both"
+      ? [
+          new StatBuff(
+            cbs(this, "P2", ["E"]),
+            {
+              receiver: "team",
+              filter: { abilities: ["skill", "burst"] },
+            },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+          new StatBuff(
+            cbs(this, "P2", ["E"]),
+            {
+              receiver: "team",
+              filter: { abilities: ["normal", "charge", "plunge"] },
+            },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]
+      : [
+          new StatBuff(
+            cbs(this, "P2", ["E"]),
+            {
+              receiver: "team",
+              filter: {
+                abilities:
+                  this.eType === "hold"
+                    ? ["normal", "charge", "plunge"]
+                    : ["skill", "burst"],
+              },
+            },
+            [{ key: "dmg%", value: 0.15 }]
+          ),
+        ]),
     // Q: Enemies in field lose 15% Cryo RES and Physical RES
     new StatBuff(
       cbs(this, "Q", ["Q"]),

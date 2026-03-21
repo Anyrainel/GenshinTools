@@ -768,8 +768,12 @@ class Lauma extends CharacterBase {
     ),
     // Q Pale Hymn: Bloom/Hyperbloom/Burgeon DMG + EM×500%/590.2%
     // C2: +500% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
+    // 18 base stacks + up to 18 from Moon Song (3×6) = 36 max
     new ScalingBuff(
-      cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
+      {
+        ...cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
+        maxStacks: 36,
+      },
       {
         receiver: "team",
         filter: { reactions: ["bloom", "hyperbloom", "burgeon"] },
@@ -782,8 +786,12 @@ class Lauma extends CharacterBase {
     ),
     // Q Pale Hymn: Lunar-Bloom DMG + EM×400%/472.3%
     // C2: +400% EM on top (non-Ascendant-Gleam extra Pale Hymn enhancement)
+    // Shares Pale Hymn stack pool (36 max)
     new ScalingBuff(
-      cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
+      {
+        ...cbs(this, this.constellation >= 2 ? "Q/C2" : "Q", ["Q"]),
+        maxStacks: 36,
+      },
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",

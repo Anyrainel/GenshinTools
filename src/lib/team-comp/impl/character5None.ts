@@ -108,6 +108,8 @@ class Skirk extends CharacterBase {
     const witherPct = hasC3
       ? [0.095, 0.138, 0.184, 0.23][riftCount]
       : [0.08, 0.12, 0.16, 0.2][riftCount];
+    // "All Shall Wither" fires on each NA hit, canceled after 10 triggers
+    // Self buff → modeled via formula hit counts, not maxStacks.
     buffs.push(
       new StatBuff(
         cbs(this, "Q", ["Q"]),
@@ -139,17 +141,12 @@ class Skirk extends CharacterBase {
       );
     }
 
-    // C2: After 极恶技·尽 (Extinction), ATK +70% — only NA/CA mode
+    // C2: After 极恶技·尽 (Extinction), ATK +70% for 12.5s (all abilities)
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(
-          cbs(this, "C2", ["Q"]),
-          {
-            receiver: "selfOnField",
-            filter: { abilities: ["normal", "charge"] },
-          },
-          [{ key: "atk%", value: 0.7 }]
-        )
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "selfOnField" }, [
+          { key: "atk%", value: 0.7 },
+        ])
       );
     }
 
@@ -880,7 +877,6 @@ function manekinFormulas(element: Element) {
         {
           formula: new DirectFormula(0.504, tag("burst")),
           hits: 16,
-          offField: true,
         },
       ],
     },

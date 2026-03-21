@@ -1100,12 +1100,10 @@ class Yoimiya extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     // Per-hit NA multipliers at Lv10
-    const n1a = 0.636;
-    const n1b = 0.636;
+    const n1 = 0.636; // ×2
     const n2 = 1.22;
     const n3 = 1.586;
-    const n4a = 0.828;
-    const n4b = 0.828;
+    const n4 = 0.828; // ×2
     const n5 = 1.889;
 
     const eMult = this.constellation >= 3 ? 1.706 : 1.617;
@@ -1126,12 +1124,10 @@ class Yoimiya extends CharacterBase {
           en: "Normal N1-N5 (E active)",
         },
         parts: [
-          { formula: new DirectFormula(m(n1a), pyroNormal) },
-          { formula: new DirectFormula(m(n1b), pyroNormal) },
+          { formula: new DirectFormula(m(n1), pyroNormal), hits: 2 },
           { formula: new DirectFormula(m(n2), pyroNormal) },
           { formula: new DirectFormula(m(n3), pyroNormal) },
-          { formula: new DirectFormula(m(n4a), pyroNormal) },
-          { formula: new DirectFormula(m(n4b), pyroNormal) },
+          { formula: new DirectFormula(m(n4), pyroNormal), hits: 2 },
           { formula: new DirectFormula(m(n5), pyroNormal) },
         ],
       },
@@ -1145,12 +1141,10 @@ class Yoimiya extends CharacterBase {
           en: "C6 Extra Blazing Arrow N1-N5",
         },
         parts: [
-          { formula: new DirectFormula(m(n1a) * 0.6, pyroNormal) },
-          { formula: new DirectFormula(m(n1b) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n1) * 0.6, pyroNormal), hits: 2 },
           { formula: new DirectFormula(m(n2) * 0.6, pyroNormal) },
           { formula: new DirectFormula(m(n3) * 0.6, pyroNormal) },
-          { formula: new DirectFormula(m(n4a) * 0.6, pyroNormal) },
-          { formula: new DirectFormula(m(n4b) * 0.6, pyroNormal) },
+          { formula: new DirectFormula(m(n4) * 0.6, pyroNormal), hits: 2 },
           { formula: new DirectFormula(m(n5) * 0.6, pyroNormal) },
         ],
       };

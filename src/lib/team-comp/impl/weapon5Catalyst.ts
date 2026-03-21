@@ -95,52 +95,65 @@ class NightweaversLookingGlass extends WeaponBase {
       wielderElement === "Hydro" || wielderElement === "Dendro";
     const emVal = r(this.refinement, [60, 75, 90, 105, 120]);
     if (!isHydroDendro) return [];
-    return [
+    const canLunarBloom = this.teamMeta.hasReaction("lunarBloom", this.charId);
+    const buffs: import("../damageBuffs").StatBuff[] = [
       // Prayer of the Far North: EM after E hit (requires Hydro/Dendro E)
       new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
         { key: "em", value: emVal },
       ]),
-      // New Moon Verse: EM after lunarBloom
-      new StatBuff(wbs(this, ["lunarBloom"]), { receiver: "self" }, [
-        { key: "em", value: emVal },
-      ]),
-      // Bloom DMG +120%/150%/180%/210%/240%
-      new StatBuff(
-        wbs(this, ["E"], "nightweavers-looking-glass-bloom"),
-        { receiver: "team", filter: { reactions: ["bloom"] } },
-        [
-          {
-            key: "reactionDmg%",
-            value: r(this.refinement, [1.2, 1.5, 1.8, 2.1, 2.4]),
-          },
-        ]
-      ),
-      // Hyperbloom + Burgeon DMG +80%/100%/120%/140%/160%
-      new StatBuff(
-        wbs(this, ["E"], "nightweavers-looking-glass-hyper"),
-        {
-          receiver: "team",
-          filter: { reactions: ["hyperbloom", "burgeon"] },
-        },
-        [
-          {
-            key: "reactionDmg%",
-            value: r(this.refinement, [0.8, 1.0, 1.2, 1.4, 1.6]),
-          },
-        ]
-      ),
-      // Lunar-Bloom DMG +40%/50%/60%/70%/80%
-      new StatBuff(
-        wbs(this, ["E"], "nightweavers-looking-glass-lunar"),
-        { receiver: "team", filter: { reactions: ["lunarBloom"] } },
-        [
-          {
-            key: "reactionDmg%",
-            value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
-          },
-        ]
-      ),
     ];
+    if (canLunarBloom) {
+      // New Moon Verse: EM after lunarBloom
+      buffs.push(
+        new StatBuff(wbs(this, ["lunarBloom"]), { receiver: "self" }, [
+          { key: "em", value: emVal },
+        ])
+      );
+      // Both effects active: team reaction DMG buffs
+      // Bloom DMG +120%/150%/180%/210%/240%
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E"], "nightweavers-looking-glass-bloom"),
+          { receiver: "team", filter: { reactions: ["bloom"] } },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [1.2, 1.5, 1.8, 2.1, 2.4]),
+            },
+          ]
+        )
+      );
+      // Hyperbloom + Burgeon DMG +80%/100%/120%/140%/160%
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E"], "nightweavers-looking-glass-hyper"),
+          {
+            receiver: "team",
+            filter: { reactions: ["hyperbloom", "burgeon"] },
+          },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.8, 1.0, 1.2, 1.4, 1.6]),
+            },
+          ]
+        )
+      );
+      // Lunar-Bloom DMG +40%/50%/60%/70%/80%
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E"], "nightweavers-looking-glass-lunar"),
+          { receiver: "team", filter: { reactions: ["lunarBloom"] } },
+          [
+            {
+              key: "reactionDmg%",
+              value: r(this.refinement, [0.4, 0.5, 0.6, 0.7, 0.8]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
   }
 }
 
