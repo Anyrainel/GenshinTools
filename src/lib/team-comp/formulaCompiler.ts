@@ -28,7 +28,9 @@ import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
+import type { PartialBuffSpec } from "./stackAllocation";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   DamageTag,
@@ -175,7 +177,8 @@ export function compileTeamDamage(
   reactionOverride?: ReactionOverride,
   erCheckCharId?: string,
   minEr?: number,
-  minCr?: number
+  minCr?: number,
+  partialBuffs?: PartialBuffSpec[]
 ): CompiledTeamDamage {
   const varMapping = new VarMapping();
   const charIdx = optCtx.charBuildOrder.findIndex(
@@ -233,7 +236,8 @@ export function compileTeamDamage(
     charBase,
     calcContext,
     reactionOverride,
-    offFieldFormulaStats
+    offFieldFormulaStats,
+    partialBuffs
   );
 
   const simplified = simplify(damageExpr);
@@ -282,7 +286,8 @@ export function compileComboTeamDamage(
   swapCharId: string,
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
-  singleModeOverrides?: Record<string, ReactionOverride>
+  singleModeOverrides?: Record<string, ReactionOverride>,
+  buffOverrides?: Record<string, PartialBuffSpec[]>
 ): CompiledTeamDamage {
   const allFormulas = teamBuild.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
@@ -401,13 +406,20 @@ export function compileComboTeamDamage(
         }
       }
 
+      // Look up by line index first (for per-line combo overrides), then formula key
+      const lineIdx = validLines.indexOf(line);
+      const lineKey = `${line.charId}.${line.formulaId}`;
+      const linePartialBuffs =
+        buffOverrides?.[`line:${lineIdx}`] ?? buffOverrides?.[lineKey];
+
       const lineExpr = buildTotalDamageExpr(
         entry.parts,
         formulaStats,
         charBase,
         calcContext,
         effectiveReaction,
-        offFieldFormulaStats
+        offFieldFormulaStats,
+        linePartialBuffs
       );
       allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
     }
@@ -656,7 +668,8 @@ function buildTotalDamageExpr(
   charBase: CharacterBase,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
-  offFieldFormulaStats?: ExprStats
+  offFieldFormulaStats?: ExprStats,
+  partialBuffs?: PartialBuffSpec[]
 ): Expr {
   const partExprs: Expr[] = [];
 
@@ -700,10 +713,30 @@ function buildTotalDamageExpr(
     const hasReaction =
       reactionOverride?.reaction && reactionOverride.reaction !== "none";
 
+    // Collect partial buffs affecting this part
+    const partPartials = partialBuffs?.filter((pb) => {
+      const activated = pb.partActivation[idx];
+      return activated !== undefined && activated < h;
+    });
+
     if (!hasReaction || formula.tag.reaction !== "none") {
       // No reaction override or formula has built-in reaction
-      const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-      partExprs.push(E.mul(partExpr, E.const(h)));
+      if (partPartials && partPartials.length > 0) {
+        // Build blended expression for partial buff activation
+        emitBlendedPartExprs(
+          partExprs,
+          formula,
+          stats,
+          charBase,
+          ctx,
+          h,
+          idx,
+          partPartials
+        );
+      } else {
+        const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
+        partExprs.push(E.mul(partExpr, E.const(h)));
+      }
       continue;
     }
 
@@ -729,21 +762,115 @@ function buildTotalDamageExpr(
         targetReaction !== formula.tag.reaction
           ? createReactionVariant(formula, targetReaction)
           : formula;
-      const partExpr = effectiveFormula.buildExpr(
-        stats,
-        charBase.charLevel,
-        ctx
-      );
-      partExprs.push(E.mul(partExpr, E.const(reactingHits)));
+      if (partPartials && partPartials.length > 0) {
+        emitBlendedPartExprs(
+          partExprs,
+          effectiveFormula,
+          stats,
+          charBase,
+          ctx,
+          reactingHits,
+          idx,
+          partPartials
+        );
+      } else {
+        const partExpr = effectiveFormula.buildExpr(
+          stats,
+          charBase.charLevel,
+          ctx
+        );
+        partExprs.push(E.mul(partExpr, E.const(reactingHits)));
+      }
     }
     if (nonReactingHits > 0) {
-      const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
-      partExprs.push(E.mul(partExpr, E.const(nonReactingHits)));
+      if (partPartials && partPartials.length > 0) {
+        emitBlendedPartExprs(
+          partExprs,
+          formula,
+          stats,
+          charBase,
+          ctx,
+          nonReactingHits,
+          idx,
+          partPartials
+        );
+      } else {
+        const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
+        partExprs.push(E.mul(partExpr, E.const(nonReactingHits)));
+      }
     }
   }
 
   if (partExprs.length === 0) return E.const(0);
   return E.add(...partExprs);
+}
+
+/**
+ * Emit blended damage expressions for a part with partial buff activation.
+ *
+ * Uses interval-based blending: sorts buff cutoff points to create intervals
+ * where different combinations of buffs are active, then emits a weighted
+ * sum of expressions for each interval.
+ *
+ * Example with buff1 (3/5 hits) and buff2 (2/5 hits) on a 5-hit part:
+ *   2 × expr(b1,b2) + 1 × expr(b1) + 2 × expr()
+ */
+function emitBlendedPartExprs(
+  partExprs: Expr[],
+  formula: {
+    buildExpr: (stats: ExprStats, charLevel: number, ctx: CalcContext) => Expr;
+    tag: DamageTag;
+  },
+  stats: ExprStats,
+  charBase: CharacterBase,
+  ctx: CalcContext,
+  totalHits: number,
+  partIdx: number,
+  partials: PartialBuffSpec[]
+): void {
+  // Collect affecting partials
+  const affecting = partials.filter((pb) => {
+    const activated = pb.partActivation[partIdx] ?? totalHits;
+    return activated < totalHits;
+  });
+
+  if (affecting.length === 0) {
+    const expr = formula.buildExpr(stats, charBase.charLevel, ctx);
+    partExprs.push(E.mul(expr, E.const(totalHits)));
+    return;
+  }
+
+  // Build interval cutpoints from activation counts
+  const cutpointSet = new Set<number>([0, totalHits]);
+  for (const pb of affecting) {
+    const activated = pb.partActivation[partIdx] ?? totalHits;
+    if (activated > 0 && activated < totalHits) cutpointSet.add(activated);
+  }
+  const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+
+  // Emit one expression per interval
+  for (let i = 0; i < cutpoints.length - 1; i++) {
+    const start = cutpoints[i];
+    const end = cutpoints[i + 1];
+    const width = end - start;
+    if (width <= 0) continue;
+
+    // Build stats: negate buffs inactive in interval (start, end]
+    // A buff is active iff activatedHits >= end
+    let intervalStats = stats;
+    for (const pb of affecting) {
+      const activated = pb.partActivation[partIdx] ?? totalHits;
+      if (activated < end) {
+        intervalStats = intervalStats.withMergedConst(
+          pb.negatedEntries,
+          pb.filter
+        );
+      }
+    }
+
+    const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
+    partExprs.push(E.mul(expr, E.const(width)));
+  }
 }
 
 // ─── Evaluation Helpers for Optimizer ───

@@ -408,7 +408,8 @@ export function runCharacterBnB(
   maxArtsPerSlot = 0,
   /** @internal For benchmarking only — disable AST compilation */
   _noCompile = false,
-  onProgress?: (bestDamage: number, evaluations: number) => void
+  onProgress?: (bestDamage: number, evaluations: number) => void,
+  partialBuffs?: import("../stackAllocation").PartialBuffSpec[]
 ): CharacterBnBResult {
   const swapCharId = charId;
   const calcTargetId = carryCharId;
@@ -646,7 +647,8 @@ export function runCharacterBnB(
           ? erCheckCharId
           : undefined,
         charConfig.minEr,
-        charConfig.minCr
+        charConfig.minCr,
+        partialBuffs
       );
       compiledVars = new Float64Array(compiled.numVars);
       compiledCharIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);

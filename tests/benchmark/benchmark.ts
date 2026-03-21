@@ -1971,7 +1971,7 @@ async function cmdReverseWeights(filter?: string): Promise<void> {
  * Diagnose WHY V2 can't find the optimal solution for a specific problem.
  * Traces the carry character's artifact pool, slot rankings, and B&B results.
  */
-async function cmdDiagnose(opts: {
+async function cmdCarryDiagnose(opts: {
   problemKey: string;
   timeoutSec: number;
 }): Promise<void> {
@@ -2908,15 +2908,15 @@ async function main(): Promise<void> {
       break;
     }
 
-    case "diagnose": {
+    case "carry-diagnose": {
       const problemKey = parseFlag(args, "--problem");
       if (!problemKey) {
         console.error(
-          "Usage: benchmark diagnose --problem KEY [--timeout SECS]"
+          "Usage: benchmark carry-diagnose --problem KEY [--timeout SECS]"
         );
         process.exit(1);
       }
-      await cmdDiagnose({
+      await cmdCarryDiagnose({
         problemKey,
         timeoutSec: parseFlagInt(args, "--timeout", 120),
       });

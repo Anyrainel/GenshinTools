@@ -64,7 +64,9 @@ export type OptFailReason =
       halfSetIds?: string[];
       slotCounts: Record<string, number>;
     }
-  | { kind: "all-filtered"; combinationsTotal: number };
+  | { kind: "all-filtered"; combinationsTotal: number }
+  | { kind: "timeout" }
+  | { kind: "worker-error"; message: string };
 
 export interface OptimizationResult {
   bestDamage: number;

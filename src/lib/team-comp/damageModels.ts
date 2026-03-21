@@ -33,6 +33,7 @@ import type {
   DamageTagFilter,
   ElementalOrPhysical,
   I18nLabel,
+  PartialBuffSpec,
   ReactionOverride,
   ReactionType,
   StatEntry,
@@ -482,7 +483,9 @@ export abstract class IDamageProvider {
     selfStats: StatSheet,
     teamStats: StatSheet[],
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    offFieldSelfStats?: StatSheet,
+    partialBuffs?: PartialBuffSpec[]
   ): DamageResult;
 }
 
@@ -790,7 +793,8 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     teamStats: StatSheet[],
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
-    offFieldSelfStats?: StatSheet
+    offFieldSelfStats?: StatSheet,
+    partialBuffs?: PartialBuffSpec[]
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
@@ -827,10 +831,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       // Skip reaction override if the formula already has a built-in reaction
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
       if (!hasReaction || formula.tag.reaction !== "none") {
-        parts.push({
-          damage: formula.calc(stats, this.charLevel, ctx),
-          hits: h,
-        });
+        parts.push(
+          this._calcPartBlended(formula, stats, ctx, h, idx, h, partialBuffs)
+        );
         continue;
       }
 
@@ -856,16 +859,30 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
           targetReaction !== formula.tag.reaction
             ? createReactionVariant(formula, targetReaction)
             : formula;
-        parts.push({
-          damage: effectiveFormula.calc(stats, this.charLevel, ctx),
-          hits: reactingHits,
-        });
+        parts.push(
+          this._calcPartBlended(
+            effectiveFormula,
+            stats,
+            ctx,
+            reactingHits,
+            idx,
+            h,
+            partialBuffs
+          )
+        );
       }
       if (nonReactingHits > 0) {
-        parts.push({
-          damage: formula.calc(stats, this.charLevel, ctx),
-          hits: nonReactingHits,
-        });
+        parts.push(
+          this._calcPartBlended(
+            formula,
+            stats,
+            ctx,
+            nonReactingHits,
+            idx,
+            h,
+            partialBuffs
+          )
+        );
       }
     }
     const totalDamage = parts.reduce(
@@ -873,6 +890,69 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       0
     );
     return { parts, totalDamage };
+  }
+
+  /**
+   * Compute blended damage for a sub-part (possibly a reaction split).
+   * If partialBuffs affect this part, uses interval-based blending.
+   * The activation is scaled proportionally when hits < originalPartHits
+   * (i.e., this is a reacting/non-reacting sub-part).
+   */
+  private _calcPartBlended(
+    formula: DamageFormula,
+    stats: StatSheet,
+    ctx: CalcContext,
+    hits: number,
+    partIdx: number,
+    originalPartHits: number,
+    partialBuffs?: PartialBuffSpec[]
+  ): { damage: number; hits: number } {
+    if (!partialBuffs || partialBuffs.length === 0) {
+      return { damage: formula.calc(stats, this.charLevel, ctx), hits };
+    }
+
+    // Scale activation proportionally for sub-parts (reacting/non-reacting split)
+    const scale = hits / originalPartHits;
+    const affecting = partialBuffs.filter((pb) => {
+      const activated =
+        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+      return activated < hits;
+    });
+
+    if (affecting.length === 0) {
+      return { damage: formula.calc(stats, this.charLevel, ctx), hits };
+    }
+
+    // Build interval cutpoints
+    const cutpointSet = new Set<number>([0, hits]);
+    for (const pb of affecting) {
+      const activated =
+        (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+      if (activated > 0 && activated < hits) cutpointSet.add(activated);
+    }
+    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+
+    let total = 0;
+    for (let i = 0; i < cutpoints.length - 1; i++) {
+      const start = cutpoints[i];
+      const end = cutpoints[i + 1];
+      const width = end - start;
+      if (width <= 0) continue;
+
+      let intervalStats = stats;
+      for (const pb of affecting) {
+        const activated =
+          (pb.partActivation[partIdx] ?? originalPartHits) * scale;
+        if (activated < end) {
+          intervalStats = intervalStats.merge(
+            StatSheet.fromEntries(pb.negatedEntries, pb.filter)
+          );
+        }
+      }
+
+      total += width * formula.calc(intervalStats, this.charLevel, ctx);
+    }
+    return { damage: total / hits, hits };
   }
 }
 

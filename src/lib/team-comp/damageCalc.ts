@@ -23,7 +23,16 @@ import {
 
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import type { CombatOpts } from "./damageModels";
+import {
+  buildPartialBuffSpecs,
+  buildUserOverrideSpecs,
+  collectStackLimitedBuffs,
+  computeBlendedDamage,
+  computeDefaultActivation,
+} from "./stackAllocation";
+import type { PartialBuffSpec } from "./stackAllocation";
 import type {
+  BuffActivationMap,
   BuffSource,
   BuffTarget,
   CalcContext,
@@ -41,7 +50,7 @@ import type {
   StatEntry,
   StatKey,
 } from "./types";
-import { filterMatchesTag, resolvePartReaction } from "./types";
+import { buffSourceKey, filterMatchesTag, resolvePartReaction } from "./types";
 
 export { TeamMeta };
 
@@ -405,7 +414,8 @@ export class CharBuild {
     teamPostStats: StatSheet[],
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
-    offFieldSelfPostStats?: StatSheet
+    offFieldSelfPostStats?: StatSheet,
+    partialBuffs?: PartialBuffSpec[]
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
@@ -413,7 +423,8 @@ export class CharBuild {
       teamPostStats,
       ctx,
       reactionOverride,
-      offFieldSelfPostStats
+      offFieldSelfPostStats,
+      partialBuffs
     );
   }
 
@@ -872,7 +883,8 @@ export class TeamBuild {
     teamStats: Record<string, StatSheet>,
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
-    offFieldTeamStats?: Record<string, StatSheet>
+    offFieldTeamStats?: Record<string, StatSheet>,
+    partialBuffs?: PartialBuffSpec[]
   ): DamageResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -883,7 +895,8 @@ export class TeamBuild {
       teamStatsArr,
       ctx,
       reactionOverride,
-      offFieldTeamStats?.[charId]
+      offFieldTeamStats?.[charId],
+      partialBuffs
     );
   }
 
@@ -896,7 +909,8 @@ export class TeamBuild {
     formulaId: string,
     artifactStats: Record<string, StatSheet>,
     ctx: CalcContext,
-    reactionOverride?: ReactionOverride
+    reactionOverride?: ReactionOverride,
+    userBuffOverrides?: BuffActivationMap
   ): DisplayResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -980,13 +994,107 @@ export class TeamBuild {
       }
     }
 
-    const { parts, totalDamage } = build.getDisplayParts(
+    let { parts, totalDamage } = build.getDisplayParts(
       formulaId,
       postStats[charId]!,
       ctx,
       reactionOverride,
       offFieldPostStats
     );
+
+    // ── Stack allocation + buff activation ──
+    const stackLimited = collectStackLimitedBuffs(
+      this.allStaticBuffs,
+      preStats,
+      teamPreStatsArr
+    );
+    let buffActivation: BuffActivationMap | undefined;
+
+    if (entry) {
+      // 1. Greedy allocation for stack-limited buffs
+      let mergedActivation: BuffActivationMap = {};
+      if (stackLimited.length > 0) {
+        const defaultActivation = computeDefaultActivation(
+          entry.parts,
+          stackLimited,
+          postStats[charId]!,
+          build.charBase.charLevel,
+          ctx,
+          reactionOverride,
+          offFieldPostStats
+        );
+        mergedActivation = { ...defaultActivation };
+      }
+
+      // 2. Merge user overrides on top
+      if (userBuffOverrides) {
+        for (const [bKey, partMap] of Object.entries(userBuffOverrides)) {
+          if (!mergedActivation[bKey]) mergedActivation[bKey] = {};
+          for (const [pidx, hits] of Object.entries(partMap)) {
+            mergedActivation[bKey][Number(pidx)] = hits;
+          }
+        }
+      }
+
+      // 3. Build PartialBuffSpec[] from both stack-limited and user-overridden buffs
+      const stackSpecs =
+        stackLimited.length > 0
+          ? buildPartialBuffSpecs(mergedActivation, stackLimited, entry.parts)
+          : [];
+      const userSpecs = userBuffOverrides
+        ? buildUserOverrideSpecs(
+            userBuffOverrides,
+            this.allStaticBuffs,
+            preStats,
+            teamPreStatsArr,
+            entry.parts
+          )
+        : [];
+      const allSpecs = [...stackSpecs, ...userSpecs];
+
+      if (allSpecs.length > 0) {
+        buffActivation = mergedActivation;
+        const blended = computeBlendedDamage(
+          entry.parts,
+          allSpecs,
+          postStats[charId]!,
+          build.charBase.charLevel,
+          ctx,
+          offFieldPostStats
+        );
+        totalDamage = blended.totalDamage;
+        // Annotate display parts with partial buff info and update damage
+        for (let i = 0; i < parts.length; i++) {
+          if (blended.partDamages[i]) {
+            parts[i] = {
+              ...parts[i],
+              damage: blended.partDamages[i].damage,
+              sourcePartIndex: i,
+            };
+          }
+        }
+        // Add partialBuffs annotations from merged activation
+        for (const [bKey, partMap] of Object.entries(mergedActivation)) {
+          for (const [pidxStr, activated] of Object.entries(partMap)) {
+            const pidx = Number(pidxStr);
+            if (pidx >= parts.length) continue;
+            const h = entry.parts[pidx]?.hits ?? 1;
+            if (activated < h) {
+              if (!parts[pidx].partialBuffs) parts[pidx].partialBuffs = [];
+              parts[pidx].partialBuffs!.push({
+                buffKey: bKey,
+                activatedHits: activated,
+                totalHits: h,
+              });
+              if (parts[pidx].sourcePartIndex === undefined)
+                parts[pidx].sourcePartIndex = pidx;
+            }
+          }
+        }
+      } else if (Object.keys(mergedActivation).length > 0) {
+        buffActivation = mergedActivation;
+      }
+    }
 
     // ── Buff resolution ──
     const buffs = this.resolveBuffs(
@@ -1080,6 +1188,7 @@ export class TeamBuild {
       parts,
       totalDamage,
       buffs,
+      buffActivation,
       statSheets,
       charFormulaTags,
       marginalGains,
@@ -1505,6 +1614,129 @@ export class TeamBuild {
 
     return gains;
   }
+
+  /**
+   * Convert a BuffActivationMap (from the override store) into PartialBuffSpec[]
+   * suitable for the optimizer's AST compiler. Handles both stack-limited buffs
+   * (greedy allocation + user overrides) and non-stack-limited user overrides.
+   */
+  computePartialBuffSpecs(
+    carryCharId: string,
+    formulaId: string,
+    sheets: Record<string, StatSheet>,
+    ctx: CalcContext,
+    reactionOverride?: ReactionOverride,
+    userOverrides?: BuffActivationMap
+  ): PartialBuffSpec[] {
+    const build = this.charBuilds[carryCharId];
+    if (!build) return [];
+    const entry = build.charBase.getFormulaEntry(formulaId);
+    if (!entry) return [];
+
+    // Compute pre/post stats (mirrors getTeamStats but captures intermediates)
+    const targetDependent: Record<string, StatBuff[]> = {};
+    for (const cid of Object.keys(this.charBuilds)) {
+      targetDependent[cid] = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            cid,
+            carryCharId,
+            this.teamMeta.regions[cid],
+            this.teamMeta.factions[cid]
+          );
+        })
+        .map((b) => b.buff);
+    }
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      preStats[id] = cb.getPreStats(
+        sheets[id] ?? new StatSheet([]),
+        targetDependent[id]!
+      );
+    }
+    const teamPreStatsArr = Object.values(preStats);
+    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
+    const postStats: Record<string, StatSheet> = {};
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      postStats[id] = cb.getPostStats(
+        preStats[id]!,
+        allDynamicBuffs,
+        id,
+        carryCharId,
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+    if (ctx?.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id].withDelta("cr", crDelta);
+      }
+    }
+
+    let offFieldPostStats: StatSheet | undefined;
+    if (entry.parts.some((p) => p.offField)) {
+      const otherCharId = Object.keys(this.charBuilds).find(
+        (id) => id !== carryCharId
+      );
+      if (otherCharId) {
+        const offFieldTeamStats = this.getTeamStats(sheets, otherCharId, ctx);
+        offFieldPostStats = offFieldTeamStats[carryCharId];
+      }
+    }
+
+    // Stack-limited buffs
+    const stackLimited = collectStackLimitedBuffs(
+      this.allStaticBuffs,
+      preStats,
+      teamPreStatsArr
+    );
+
+    const specs: PartialBuffSpec[] = [];
+
+    if (stackLimited.length > 0) {
+      const defaultActivation = computeDefaultActivation(
+        entry.parts,
+        stackLimited,
+        postStats[carryCharId]!,
+        build.charBase.charLevel,
+        ctx,
+        reactionOverride,
+        offFieldPostStats
+      );
+      // Merge user overrides on top of greedy defaults
+      const merged: BuffActivationMap = { ...defaultActivation };
+      if (userOverrides) {
+        for (const [bKey, partMap] of Object.entries(userOverrides)) {
+          if (!merged[bKey]) merged[bKey] = {};
+          for (const [pidx, hits] of Object.entries(partMap)) {
+            merged[bKey][Number(pidx)] = hits;
+          }
+        }
+      }
+      specs.push(...buildPartialBuffSpecs(merged, stackLimited, entry.parts));
+    }
+
+    // Non-stack-limited user overrides
+    if (userOverrides && Object.keys(userOverrides).length > 0) {
+      specs.push(
+        ...buildUserOverrideSpecs(
+          userOverrides,
+          this.allStaticBuffs,
+          preStats,
+          teamPreStatsArr,
+          entry.parts
+        )
+      );
+    }
+
+    return specs;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1576,7 +1808,9 @@ export function evaluateCombo(
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
   /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
-  singleModeOverrides?: Record<string, ReactionOverride>
+  singleModeOverrides?: Record<string, ReactionOverride>,
+  /** Per-line PartialBuffSpec[], keyed by line index in validLines. */
+  linePartialBuffs?: Record<number, PartialBuffSpec[]>
 ): ComboResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
@@ -1597,7 +1831,7 @@ export function evaluateCombo(
     return statsCache.get(onFieldCharId)!;
   };
 
-  const lineDamages = validLines.map((line) => {
+  const lineDamages = validLines.map((line, lineIdx) => {
     const teamStats = getStats(line.charId);
 
     // Compute off-field stats if the formula has off-field parts
@@ -1654,7 +1888,8 @@ export function evaluateCombo(
       teamStats,
       ctx,
       effectiveReaction,
-      offFieldTeamStats
+      offFieldTeamStats,
+      linePartialBuffs?.[lineIdx]
     );
     return {
       perHit: result.totalDamage,
@@ -1677,7 +1912,8 @@ export function getComboDisplayResult(
   combo: ComboFormula,
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
-  singleModeOverrides?: Record<string, ReactionOverride>
+  singleModeOverrides?: Record<string, ReactionOverride>,
+  linePartialBuffs?: Record<number, PartialBuffSpec[]>
 ): DisplayResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
@@ -1782,7 +2018,8 @@ export function getComboDisplayResult(
     { ...combo, lines: activeLines },
     artifactStats,
     ctx,
-    singleModeOverrides
+    singleModeOverrides,
+    linePartialBuffs
   );
   const baseDamage = baseResult.totalDamage;
 

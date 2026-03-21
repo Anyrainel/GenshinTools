@@ -49,6 +49,13 @@ export type BnBWorkerRequest = {
   isComboMode: boolean;
   combo?: ComboFormula;
   reactionOverrides?: Record<string, ReactionOverride>;
+  /** Pre-computed partial buff specs for stack-limited / user-overridden buffs. */
+  partialBuffs?: import("./stackAllocation").PartialBuffSpec[];
+  /** Per-line PartialBuffSpec[] for combo mode. */
+  comboLinePartialBuffs?: Record<
+    number,
+    import("./stackAllocation").PartialBuffSpec[]
+  >;
 };
 
 export type SerializedTopKEntry = {
@@ -77,7 +84,8 @@ export type BnBWorkerResponse =
       failReason?: OptFailReason;
       substatWeights?: Record<string, number>;
     }
-  | { id: number; type: "error"; error: string };
+  | { id: number; type: "error"; error: string }
+  | { id: number; type: "ready" };
 
 const warnedCalcErrors = new Set<string>();
 
@@ -108,7 +116,8 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
               req.combo!,
               sheets,
               req.calcContext,
-              req.reactionOverrides
+              req.reactionOverrides,
+              req.comboLinePartialBuffs
             ).totalDamage;
           } catch (err) {
             const key = `comboScoreFn:${_calcTargetId}`;
@@ -137,6 +146,9 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       } satisfies BnBWorkerResponse);
     };
 
+    // Signal that setup is done and search is about to start
+    self.postMessage({ id: req.id, type: "ready" } satisfies BnBWorkerResponse);
+
     // Run B&B
     const result = runCharacterBnB(
       req.charId,
@@ -156,7 +168,8 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
       req.warmStartThreshold,
       req.maxArtsPerSlot,
       false, // _noCompile
-      onProgress
+      onProgress,
+      req.partialBuffs
     );
 
     // Serialize TopKEntry[] (convert Set to string[])

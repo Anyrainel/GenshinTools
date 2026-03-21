@@ -68,6 +68,31 @@ export type BuffSource = {
    * E.g. Millennial Movement weapons share `"millennial-movement-atk"` on their ATK% entries.
    */
   noStackId?: string;
+  /** Max activation count per rotation. Greedy allocation distributes stacks
+   *  across formula parts to maximize total damage. */
+  maxStacks?: number;
+};
+
+/** buffKey → { partIndex → activatedHits } */
+export type BuffActivationMap = Record<string, Record<number, number>>;
+
+/** Canonical key for a BuffSource, used in BuffActivationMap and override store. */
+export function buffSourceKey(source: BuffSource): string {
+  return `${source.type}:${source.id}:${source.origin ?? ""}`;
+}
+
+/**
+ * A partial buff specification for interval-based blending.
+ * Contains the buff's stat entries, filter, and per-part activation counts.
+ * Used by both the cold path (getDamageResult) and hot path (AST compiler).
+ */
+export type PartialBuffSpec = {
+  /** Negated stat entries for this buff (value already negated). */
+  negatedEntries: StatEntry[];
+  /** Tag filter for this buff's entries. */
+  filter?: DamageTagFilter;
+  /** Part index → activated hits. Missing = fully active (no blending). */
+  partActivation: Record<number, number>;
 };
 
 export type BuffReceiverType =
@@ -201,6 +226,14 @@ export type DisplayPart = {
   hits?: number;
   offField?: boolean;
   tag?: DamageTag;
+  /** Annotation when a buff is partially active on this part */
+  partialBuffs?: {
+    buffKey: string;
+    activatedHits: number;
+    totalHits: number;
+  }[];
+  /** Original part index (stable across reaction-split sub-parts) */
+  sourcePartIndex?: number;
 };
 
 /** StatEntry augmented with an optional cap for scaling buff display. */
@@ -239,6 +272,8 @@ export type DisplayResult = {
 
   // ── Buffs ──
   buffs: ResolvedBuff[];
+  /** Default buff activation from greedy stack allocation. */
+  buffActivation?: BuffActivationMap;
 
   // ── Stats (all keyed by charId, full team) ──
 
@@ -458,4 +493,8 @@ export interface TeamOptimizerOptions {
   perCharDeadlineMs?: number;
   teamDeadlineMs?: number;
   maxArtsPerSlot?: number;
+  /** Pre-computed partial buff specs for stack-limited / user-overridden buffs (single mode). */
+  partialBuffs?: import("./stackAllocation").PartialBuffSpec[];
+  /** Per-line PartialBuffSpec[] for combo mode. Keyed by line index in validLines. */
+  comboLinePartialBuffs?: Record<number, PartialBuffSpec[]>;
 }

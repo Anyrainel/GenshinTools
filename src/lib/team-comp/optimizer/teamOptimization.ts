@@ -562,6 +562,8 @@ export async function* runTeamOptimization(
     perCharDeadlineMs: rawPerCharDeadlineMs,
     teamDeadlineMs,
     maxArtsPerSlot,
+    partialBuffs,
+    comboLinePartialBuffs,
   } = opts;
 
   // ── Dynamic hyperparameters based on inventory size ──
@@ -593,7 +595,8 @@ export async function* runTeamOptimization(
             combo,
             sheets,
             calcContext,
-            reactionOverrides
+            reactionOverrides,
+            comboLinePartialBuffs
           ).totalDamage;
         } catch (e) {
           const key = `comboScoreFn:${_calcTargetId}`;
@@ -851,27 +854,40 @@ export async function* runTeamOptimization(
             });
           };
 
-          const timeoutId = setTimeout(
-            () => {
-              worker.terminate();
-              const wr: WorkerResult = {
-                charId,
-                entries: [],
-                evaluations: 0,
-                failReason: { kind: "empty-pool", emptySlots: [] },
-              };
-              workerResults[charId] = wr;
-              addPassResult(wr);
-              completedWorkers++;
-              resolve();
-            },
-            (phase1BudgetMs ?? 30_000) * 1.5
-          );
+          const onTimeout = () => {
+            worker.terminate();
+            console.warn(
+              `[optimizerV2] Worker timed out for ${charId} (ready=${workerReady})`
+            );
+            const wr: WorkerResult = {
+              charId,
+              entries: [],
+              evaluations: 0,
+              failReason: { kind: "timeout" },
+            };
+            workerResults[charId] = wr;
+            addPassResult(wr);
+            completedWorkers++;
+            resolve();
+          };
+          let workerReady = false;
+          // Short setup timeout (10s) — if the worker can't even start, fail fast
+          let timeoutId = setTimeout(onTimeout, 10_000);
 
           worker.onmessage = (
             e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
           ) => {
             const resp = e.data;
+            if (resp.type === "ready") {
+              // Worker setup done — switch to the full search budget
+              workerReady = true;
+              clearTimeout(timeoutId);
+              timeoutId = setTimeout(
+                onTimeout,
+                (phase1BudgetMs ?? 30_000) * 1.5
+              );
+              return;
+            }
             if (resp.type === "progress") {
               // Update mutable map — read during polling yield
               workerBestByChar[resp.charId] = resp.bestDamage;
@@ -888,6 +904,7 @@ export async function* runTeamOptimization(
                 charId,
                 entries: [],
                 evaluations: 0,
+                failReason: { kind: "worker-error", message: resp.error },
               };
               workerResults[charId] = wr;
               addPassResult(wr);
@@ -931,6 +948,10 @@ export async function* runTeamOptimization(
               charId,
               entries: [],
               evaluations: 0,
+              failReason: {
+                kind: "worker-error",
+                message: e.message || "Worker crashed",
+              },
             };
             workerResults[charId] = wr;
             addPassResult(wr);
@@ -958,6 +979,10 @@ export async function* runTeamOptimization(
             isComboMode,
             combo: isComboMode ? combo : undefined,
             reactionOverrides: isComboMode ? reactionOverrides : undefined,
+            partialBuffs,
+            comboLinePartialBuffs: isComboMode
+              ? comboLinePartialBuffs
+              : undefined,
           };
 
           worker.postMessage(request);
@@ -1042,7 +1067,10 @@ export async function* runTeamOptimization(
         TOP_K,
         charDeadline,
         undefined,
-        maxArtsPerSlot ?? 0
+        maxArtsPerSlot ?? 0,
+        false,
+        undefined,
+        partialBuffs
       );
 
       topKByChar[charId] = result.collector.results;
@@ -1100,7 +1128,10 @@ export async function* runTeamOptimization(
         TOP_K,
         charDeadline,
         undefined,
-        maxArtsPerSlot ?? 0
+        maxArtsPerSlot ?? 0,
+        false,
+        undefined,
+        partialBuffs
       );
       topKByChar[charId] = result.collector.results;
       if (result.failReason) {
@@ -1234,7 +1265,10 @@ export async function* runTeamOptimization(
           TOP_K,
           altDeadline,
           undefined,
-          maxArtsPerSlot ?? 0
+          maxArtsPerSlot ?? 0,
+          false,
+          undefined,
+          partialBuffs
         );
 
         // Merge alternative results into the existing top-K
@@ -1376,7 +1410,10 @@ export async function* runTeamOptimization(
           1, // only need the best result
           altDeadline,
           undefined,
-          maxArtsPerSlot ?? 0
+          maxArtsPerSlot ?? 0,
+          false,
+          undefined,
+          partialBuffs
         );
         const best = altResult.collector.best;
         if (best) {
@@ -1605,7 +1642,7 @@ export async function* runTeamOptimization(
               e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
             ) => {
               const resp = e.data;
-              if (resp.type === "progress") return; // ignore progress in Phase 3
+              if (resp.type === "progress" || resp.type === "ready") return; // ignore progress/ready in Phase 3
               clearTimeout(timeoutId);
               worker.terminate();
               if (resp.type === "error") {
@@ -1669,6 +1706,10 @@ export async function* runTeamOptimization(
               isComboMode,
               combo: isComboMode ? combo : undefined,
               reactionOverrides: isComboMode ? reactionOverrides : undefined,
+              partialBuffs,
+              comboLinePartialBuffs: isComboMode
+                ? comboLinePartialBuffs
+                : undefined,
             };
 
             worker.postMessage(request);
@@ -1703,7 +1744,10 @@ export async function* runTeamOptimization(
           TOP_K,
           reoptDeadline,
           input.currentDamage > 0 ? input.currentDamage : undefined,
-          maxArtsPerSlot ?? 0
+          maxArtsPerSlot ?? 0,
+          false,
+          undefined,
+          partialBuffs
         );
 
         if (
@@ -2111,7 +2155,8 @@ export async function* runTeamOptimization(
         combo,
         finalSheets,
         calcContext,
-        reactionOverrides
+        reactionOverrides,
+        comboLinePartialBuffs
       );
     } catch {
       comboRes = { lineDamages: [], totalDamage: 0 };

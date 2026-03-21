@@ -172,7 +172,12 @@ function tryCompileEval(
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  partialBuffs?: import("./stackAllocation").PartialBuffSpec[],
+  comboBuffOverrides?: Record<
+    string,
+    import("./stackAllocation").PartialBuffSpec[]
+  >
 ): {
   compiled: CompiledTeamDamage;
   charIdx: number;
@@ -187,7 +192,8 @@ function tryCompileEval(
         swapCharId,
         currentSheets,
         ctx,
-        reactionOverrides
+        reactionOverrides,
+        comboBuffOverrides
       );
       // charIdx must match the ordering used inside compileComboTeamDamage,
       // which uses createOptimizerContext → charBuildOrder = Object.entries(charBuilds).
@@ -218,7 +224,11 @@ function tryCompileEval(
       formulaId,
       ctx,
       optCtx,
-      reactionOverride
+      reactionOverride,
+      undefined, // erCheckCharId
+      undefined, // minEr
+      undefined, // minCr
+      partialBuffs
     );
     const charIdx = optCtx.charBuildOrder.findIndex(
       ([id]) => id === swapCharId
