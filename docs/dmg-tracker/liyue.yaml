@@ -57,15 +57,17 @@
 - id: shenhe-e-quill-quota
   entity: shenhe
   rule: S6
-  status: wont-do
+  status: completed
   category: approximation
   summary: >
-    Icy Quill trigger quota (5 press / 7 hold) not enforced; modeled as unlimited.
+    Icy Quill trigger quota (5 press / 7 hold) now enforced via maxStacks.
   detail: >
-    Quota enforcement would require per-hit tracking across the team. Modeled as unlimited
-    for simplicity.
+    Added maxStacks: 5 (press) / 7 (hold) to Icy Quill ScalingBuff. C6 removes
+    the limit (Normal+Charged don't consume stacks → effectively unlimited).
+    Per-character independence is handled naturally since receiver: "team" evaluates
+    per character in the optimizer.
   created: "2026-02-25"
-  resolved: "2026-02-25"
+  resolved: "2026-03-21"
 
 - id: xiao-p1-ramp
   entity: xiao
@@ -152,21 +154,3 @@
     is not worth the engine complexity.
   created: "2026-02-26"
   resolved: "2026-02-26"
-
-- id: xiangling-kqm-swing-offfield
-  entity: xiangling
-  rule: S12
-  status: open
-  category: approximation
-  summary: >
-    Pyronado's 3 initial swing hits are marked offField: true, but they occur during the
-    Q cast animation while Xiangling is on-field. Per S12, initial burst hits cast while
-    on-field should not have offField: true.
-  detail: >
-    KQM source: https://keqingmains.com/xiangling/.
-    KQM confirms the 3 swing hits occur during the casting animation. The Pyronado DoT
-    ticks (the main damage source) correctly persist off-field, but the swings are initial
-    hits. Current implementation bundles swings and ticks into one formula entry
-    "xiangling-pyronado" with all parts marked offField: true.
-  created: "2026-03-19"
-  resolved: null

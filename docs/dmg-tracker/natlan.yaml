@@ -38,51 +38,6 @@
   created: "2026-02-25"
   resolved: "2026-02-25"
 
-- id: varesa-c4-mutual-exclusivity
-  entity: varesa
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    C4 mutual exclusivity between Fiery Passion (+100% burst dmg%) and Diligent
-    Refinement (+5xATK plunge baseDmg) cannot be cleanly modeled.
-  detail: >
-    Added CombatOpts with "fiery"/"diligent" choices (both gated behind C4+ via
-    when). "fiery" applies +100% burst/plunge dmg%, "diligent" applies +500% ATK
-    baseDmg for plunge (cap 20000). Default is "fiery". The two C4 buffs are now
-    mutually exclusive instead of both applying simultaneously.
-  created: "2026-02-25"
-  resolved: "2026-03-08"
-
-- id: chasca-p2-burning-shadowhunt
-  entity: chasca
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    P2 Burning Shadowhunt Shot triggered per-Nightsoul-Burst not modeled.
-  detail: >
-    Added DirectFormula "chasca-p2-burning" in character5Natlan.ts. Uses
-    shiningMult * 1.5 with first eligible element tag when eligible elements
-    exist, otherwise shellMult * 1.5 with Anemo charge tag. 1 proc per rotation.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
-- id: chasca-c2-c4-aoe-burst
-  entity: chasca
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C2/C4 AoE burst on Shining Shell / Radiant Soulseeker Shell hit not modeled.
-  detail: >
-    Added C2 DirectFormula(4.0, Anemo/charge/none) as extra part in
-    "chasca-shining-volley", gated behind constellation >= 2. Added C4
-    DirectFormula(4.0, Anemo/charge/none) as extra part in "chasca-burst",
-    gated behind constellation >= 4. Both use ability: "charge" per game text.
-  created: "2026-02-25"
-  resolved: "2026-03-08"
-
 - id: mavuika-c6-scorching-ring
   entity: mavuika
   rule: S8
@@ -98,17 +53,16 @@
   created: "2026-02-25"
   resolved: "2026-03-14"
 
-- id: ororon-p1-hypersense
+- id: ororon-q-soundwave-hits
   entity: ororon
   rule: S8
-  status: completed
-  category: missing-formula
+  status: open
+  category: needs-data
   summary: >
-    P1 Hypersense (160% ATK Electro DMG per trigger, once per 1.8s) not modeled.
-  detail: >
-    Added DirectFormula "ororon-hypersense" in character4Natlan.ts with
-    hypersenseBase=1.6, hits=8 (full 80 Nightsoul dump), tag
-    Electro/special/none. Replaced the TODO comment. C1 +50% dmg% buff was
-    already implemented via StatBuff scoped to ability: "special".
-  created: "2026-03-14"
-  resolved: "2026-03-14"
+    Q Supersonic Oculus soundwave modeled as 1 hit over 9s duration. Likely
+    fires multiple times (~6 hits at ~1.5s interval). Hit count needs in-game
+    verification. C4 increases rotation speed by 25%.
+  detail: ""
+  created: "2026-03-21"
+  resolved: null
+

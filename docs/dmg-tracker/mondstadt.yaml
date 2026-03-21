@@ -75,16 +75,3 @@
     complexity.
   created: "2026-03-08"
   resolved: "2026-03-08"
-
-- id: razor-c6-lightning
-  entity: razor
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C6 Lupus Fulguris lightning (100% ATK Electro DMG, once per 10s during Q) not modeled.
-  detail: >
-    Added DirectFormula(1.0, Electro/normal/none) as "razor-c6-lightning" entry in
-    formulaMap, gated behind constellation >= 6. Label: C6狼魂落雷 / C6 Lupus Lightning.
-  created: "2026-03-14"
-  resolved: "2026-03-14"

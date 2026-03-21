@@ -245,6 +245,37 @@ describe("Entity Instantiation", () => {
     });
   });
 
+  describe("Self buffs must not have maxStacks", () => {
+    it.each(Object.keys(charactersById))("%s", (charId) => {
+      try {
+        const team = new TeamMeta([charId]);
+        const char = createCharacter(charId, 100, 6, team);
+        const violations: string[] = [];
+        for (const buff of char.buffs) {
+          const receiver = buff.target.receiver;
+          if (
+            (receiver === "self" || receiver === "selfOnField") &&
+            buff.source.maxStacks != null
+          ) {
+            violations.push(
+              `${buff.source.id} ${buff.source.origin ?? ""}: self buff with maxStacks=${buff.source.maxStacks}`
+            );
+          }
+        }
+        if (violations.length > 0)
+          throw new Error(
+            `Self buffs must not use maxStacks (use formula nuances instead):\n${violations.join("\n")}`
+          );
+      } catch (e) {
+        rethrowIfUnexpected(
+          e,
+          "No character registered",
+          "No character stats for"
+        );
+      }
+    });
+  });
+
   describe("Weapons", () => {
     it.each(Object.keys(weaponsById))("%s", (weaponId) => {
       try {

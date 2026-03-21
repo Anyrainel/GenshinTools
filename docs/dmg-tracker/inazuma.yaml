@@ -1,45 +1,4 @@
 # Inazuma Damage Tracker
-- id: gorou-p2-def-scaling
-  entity: gorou
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    DEF-based E/Q DMG scaling not modeled (pure support).
-  detail: >
-    Added DirectFormula for E Skill (1.931 DEF Lv10, 2.281 Lv13 C3+) Geo/skill/none
-    and Q + Crystal Collapse (1.770+1.104 DEF Lv10, 2.089+1.303 Lv13 C5+) Geo/burst/none.
-    P2 bespokeBuff: ScalingBuff(def->baseDmg, 1.56) on E, ScalingBuff(def->baseDmg, 0.156)
-    on Q parts (per game text: E +156% DEF, Q +15.6% DEF).
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
-- id: kokomi-c1-extra-fish
-  entity: sangonomiya_kokomi
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C1 extra fish on last Normal combo hit (doesn't count as Normal ATK).
-  detail: >
-    Added DirectFormula(0.3, Hydro/special/none, "hp") for C1 Swimming Fish,
-    gated behind constellation >= 1. Ability set to "special" per game text.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
-- id: shinobu-c4-thundergrass
-  entity: kuki_shinobu
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C4 Thundergrass Mark on-field NA/CA/Plunge hit (every 5s, 9.7% HP).
-  detail: >
-    Added DirectFormula(0.097, Electro/skill/none, "hp") for C4 Thundergrass Mark,
-    gated behind constellation >= 4.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
 - id: sayu-e-hold-absorption
   entity: sayu
   rule: S8
@@ -67,18 +26,5 @@
     5 ticks). Element absorption requires a CombatOpt to select which element is absorbed,
     and different element tags per formula part. This pattern is not currently supported
     cleanly. Kazuha's primary value is P2 team elemental DMG% buff, not personal damage.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
-- id: kirara-c4-shield-coordinated
-  entity: kirara
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C4 shield-triggered coordinated attack (periodic, every ~5s) not modeled.
-  detail: >
-    Added DirectFormula(2.0, Dendro/burst/none) for C4 Steed of Skanda, gated behind
-    constellation >= 4. Used ability "burst" per game text ("considered Elemental Burst DMG").
   created: "2026-02-25"
   resolved: "2026-03-14"
