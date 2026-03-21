@@ -45,7 +45,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   };
 
   private handleHome = () => {
-    window.location.href = "/";
+    window.location.href = import.meta.env.BASE_URL || "/";
   };
 
   public render() {

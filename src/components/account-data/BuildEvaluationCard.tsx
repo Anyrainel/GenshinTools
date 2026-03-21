@@ -15,7 +15,7 @@ import {
   getBarColor,
   getTier,
 } from "@/lib/account-data/buildEvaluation";
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import { Clock, Crown, Wine } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
@@ -92,7 +92,7 @@ function BuildEvaluationCardComponent({
                     className="hover:ring-1 hover:ring-white/40 rounded-full transition-shadow"
                   >
                     <img
-                      src={charInfo.imagePath}
+                      src={getAssetUrl(charInfo.imagePath)}
                       alt={t.character(charId)}
                       className="w-5 h-5 2xl:w-6 2xl:h-6 rounded-full bg-black/30 object-cover"
                     />

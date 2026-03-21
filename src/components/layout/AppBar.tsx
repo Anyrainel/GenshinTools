@@ -21,7 +21,7 @@ import { getNavigationConfig } from "@/config/appNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { THEME_IDS, type ThemeId, useTheme } from "@/contexts/ThemeContext";
 
-import { cn } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 import {
   Check,
   Languages,
@@ -208,7 +208,11 @@ export function AppBar({
               <SheetContent side="left" className="w-[280px] flex flex-col">
                 <SheetHeader>
                   <SheetTitle className="text-left flex items-center gap-2">
-                    <img src="/logo_gt.svg" className="w-6 h-6" alt="Logo" />
+                    <img
+                      src={getAssetUrl("/logo_gt.svg")}
+                      className="w-6 h-6"
+                      alt="Logo"
+                    />
                     {t.ui("app.title")}
                   </SheetTitle>
                 </SheetHeader>
@@ -292,7 +296,11 @@ export function AppBar({
               to="/"
               className="flex items-center 2xl:pl-4 gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
-              <img src="/logo_gt.svg" className="w-8 h-8" alt="Logo" />
+              <img
+                src={getAssetUrl("/logo_gt.svg")}
+                className="w-8 h-8"
+                alt="Logo"
+              />
               <span className="font-semibold text-lg whitespace-nowrap">
                 {t.ui("app.title")}
               </span>

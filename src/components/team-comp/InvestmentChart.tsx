@@ -4,6 +4,7 @@ import type {
   InvestmentResult,
   InvestmentStep,
 } from "@/lib/team-comp/investmentOptimizer";
+import { getAssetUrl } from "@/lib/utils";
 import { useMemo } from "react";
 import {
   CartesianGrid,
@@ -160,7 +161,7 @@ function CustomTooltip({
             <div key={cid} className="flex items-center gap-1">
               {char && (
                 <img
-                  src={char.imagePath}
+                  src={getAssetUrl(char.imagePath)}
                   alt={cid}
                   className="w-4 h-4 rounded-full"
                   style={{ imageRendering: "auto" }}

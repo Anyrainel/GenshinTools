@@ -153,7 +153,7 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                       <div className="flex items-center justify-start gap-0.5">
                         {char && (
                           <img
-                            src={char.imagePath}
+                            src={getAssetUrl(char.imagePath)}
                             alt={cid}
                             className="w-5 h-5 rounded-full"
                             style={{ imageRendering: "auto" }}
