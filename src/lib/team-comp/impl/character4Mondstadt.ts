@@ -380,10 +380,11 @@ class Rosaria extends CharacterBase {
     new StatBuff(cbs(this, "P1", ["E"]), { receiver: "selfOnField" }, [
       { key: "cr", value: 0.12 },
     ]),
-    // P2: Q → team CR = 15% of Rosaria's CR (cap 15%)
+    // P2: Q → other party members CR = 15% of Rosaria's CR (cap 15%)
+    // ZH: "队伍中所有角色（不包括罗莎莉亚自己）" → excludes Rosaria → "other"
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "team" },
+      { receiver: "other" },
       [],
       "cr",
       "cr",

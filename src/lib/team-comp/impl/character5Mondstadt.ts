@@ -1006,13 +1006,14 @@ class Klee extends CharacterBase {
           ]
         : []),
       // C6: Q active → other party members +10% Pyro DMG, Klee +50% Pyro DMG
+      // ZH: "队伍中所有其他角色获得10%火元素伤害加成" → excludes Klee → "other"
       ...(this.constellation >= 6
         ? [
-            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "team" }, [
+            new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "other" }, [
               { key: "pyro%", value: 0.1 },
             ]),
             new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "selfOnField" }, [
-              { key: "pyro%", value: 0.4 },
+              { key: "pyro%", value: 0.5 },
             ]),
           ]
         : []),

@@ -195,7 +195,8 @@ class Citlali extends CharacterBase {
           new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
             { key: "em", value: 125 },
           ]),
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "otherOnField" }, [
+          // "其他角色的元素精通提升250" → other (no on-field restriction)
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "other" }, [
             { key: "em", value: 250 },
           ]),
         ]

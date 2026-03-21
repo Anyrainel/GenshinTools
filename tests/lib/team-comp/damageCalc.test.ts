@@ -891,11 +891,11 @@ describe("TeamBuild lifecycle", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// otherOnField buff routing — regression test for Illuga P1
+// "other" buff routing — regression test for Illuga P1
 // ═══════════════════════════════════════════════════════════════
 
-describe("otherOnField buffs apply to calc target stats and display", () => {
-  // Team: Zibai (Geo, calc target), Illuga (Geo, provides otherOnField CR/CD),
+describe("other buffs apply to teammates' stats and display", () => {
+  // Team: Zibai (Geo, calc target), Illuga (Geo, provides "other" CR/CD),
   //        Xingqiu (Hydro), Gorou (Geo)
   const configs: CharCompConfig[] = [
     {
@@ -948,11 +948,11 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
     gorou: new StatSheet([]),
   };
 
-  it("Illuga P1 otherOnField CR/CD is applied to Zibai's stat sheet", () => {
+  it("Illuga P1 other CR/CD is applied to Zibai's stat sheet", () => {
     const tb = new TeamBuild(configs);
 
     // Without Illuga, Zibai would have baseline 5% CR
-    // Illuga P1 adds +5% CR (Geo-filtered, otherOnField)
+    // Illuga P1 adds +5% CR (Geo-filtered, other)
     const statsWithIlluga = tb.getTeamStats(emptySheets, "zibai");
     const zibaiCr = statsWithIlluga.zibai!.get("cr", {
       element: "Geo",
@@ -964,13 +964,13 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
     // (Zibai may also have CR from ascension stat or other sources)
     expect(zibaiCr).toBeGreaterThanOrEqual(0.1);
 
-    // Verify the buff does NOT apply to Illuga's own sheet (otherOnField excludes owner)
+    // Verify the buff does NOT apply to Illuga's own sheet (other excludes owner)
     const illugaCr = statsWithIlluga.illuga!.get("cr", {
       element: "Geo",
       ability: "skill",
       reaction: "none",
     });
-    // Illuga should only have baseline 5% CR (no self-buff from otherOnField)
+    // Illuga should only have baseline 5% CR (no self-buff from other)
     expect(illugaCr).toBeLessThan(zibaiCr);
   });
 
@@ -986,14 +986,14 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
     const illugaP1 = display.buffs.find(
       (b) =>
         b.source.id === "illuga" &&
-        b.target.receiver === "otherOnField" &&
+        b.target.receiver === "other" &&
         b.staticEntries.some((e) => e.key === "cr")
     );
     expect(illugaP1).toBeDefined();
     expect(illugaP1!.active).toBe(true);
   });
 
-  it("combatStats for calc target include otherOnField Geo-filtered CR", () => {
+  it("combatStats for calc target include other Geo-filtered CR", () => {
     const tb = new TeamBuild(configs);
     const display = tb.getDisplayResult(
       "zibai",
@@ -1007,7 +1007,7 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
     expect(zibaiCombatCr).toBeGreaterThanOrEqual(0.1);
   });
 
-  it("combo mode combatStats include otherOnField Geo-filtered CR", () => {
+  it("combo mode combatStats include other Geo-filtered CR", () => {
     const tb = new TeamBuild(configs);
     const combo: ComboFormula = {
       id: "test-combo",
@@ -1041,7 +1041,7 @@ describe("otherOnField buffs apply to calc target stats and display", () => {
     const illugaP1 = display.buffs.find(
       (b) =>
         b.source.id === "illuga" &&
-        b.target.receiver === "otherOnField" &&
+        b.target.receiver === "other" &&
         b.staticEntries.some((e) => e.key === "cr")
     );
     // The buff exists but should be inactive for Hydro formulas

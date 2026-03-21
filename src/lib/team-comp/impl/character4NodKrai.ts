@@ -26,10 +26,10 @@ class Illuga extends CharacterBase {
     const isC6 = this.constellation >= 6;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1 (C6 enhanced): After E/Q, other party members Geo CR/CD + EM
-      // "队伍中附近的其他角色" → otherOnField (excludes Illuga himself)
+      // "队伍中附近的其他角色" → other (excludes Illuga himself, no on-field restriction)
       new StatBuff(
         cbs(this, isC6 ? "P1/C6" : "P1", ["E", "Q"]),
-        { receiver: "otherOnField", filter: { elements: ["Geo"] } },
+        { receiver: "other", filter: { elements: ["Geo"] } },
         [
           { key: "cr", value: isC6 ? 0.1 : 0.05 },
           { key: "cd", value: isC6 ? 0.3 : 0.1 },
@@ -38,7 +38,7 @@ class Illuga extends CharacterBase {
       // P1 EM only active at Moonsign Ascendant Gleam (≥2 Nod-Krai)
       new StatBuff(
         cbs(this, isC6 ? "P1/C6" : "P1", ["E", "Q"]),
-        { receiver: "otherOnField" },
+        { receiver: "other" },
         this.teamMeta.countByFaction("Moonsign") >= 2
           ? [{ key: "em", value: isC6 ? 80 : 50 }]
           : []

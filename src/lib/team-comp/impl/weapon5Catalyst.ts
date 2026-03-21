@@ -351,7 +351,7 @@ class AThousandFloatingDreams extends WeaponBase {
       );
     }
     buffs.push(
-      new StatBuff(wbs(this), { receiver: "team" }, [
+      new StatBuff(wbs(this), { receiver: "other" }, [
         { key: "em", value: r(this.refinement, [40, 42, 44, 46, 48]) },
       ])
     );

@@ -54,11 +54,12 @@ class YumemizukiMizuki extends CharacterBase {
 
     if (this.constellation >= 2) {
       // C2: per EM point → 0.04% Pyro/Hydro/Cryo/Electro DMG to party (excl Mizuki)
+      // "队伍中所有其他角色" → other (no on-field restriction)
       buffs.push(
         new ScalingBuff(
           cbs(this, "C2", ["E"]),
           {
-            receiver: "otherOnField",
+            receiver: "other",
             filter: { elements: ["Pyro", "Hydro", "Cryo", "Electro"] },
           },
           [],
@@ -389,9 +390,10 @@ class RaidenShogun extends CharacterBase {
       );
     }
     // C4: After Q, all party members (excl Raiden) ATK +30%
+    // "队伍中所有角色（不包括雷电将军自己）" → other (no on-field restriction)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "otherOnField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "other" }, [
           { key: "atk%", value: 0.3 },
         ])
       );
@@ -935,10 +937,14 @@ class KaedeharaKazuha extends CharacterBase {
       ...p2Buffs,
     ];
 
-    // C2: Q field grants 200 EM to the party
+    // C2: Q field — Kazuha's own EM +200 + on-field character EM +200 (don't stack)
+    // "枫原万叶自己的元素精通提升200点" + "其中的场上角色的元素精通提升200点"
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "self" }, [
+          { key: "em", value: 200 },
+        ]),
+        new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "otherOnField" }, [
           { key: "em", value: 200 },
         ])
       );
@@ -1054,12 +1060,11 @@ class Yoimiya extends CharacterBase {
 
     if (this.castQ === "yes") {
       // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
+      // "队伍中所有其他角色" → other (no on-field restriction)
       buffs.push(
-        new StatBuff(
-          cbs(this, "P2", ["A4", "Q"]),
-          { receiver: "otherOnField" },
-          [{ key: "atk%", value: 0.2 }]
-        )
+        new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "other" }, [
+          { key: "atk%", value: 0.2 },
+        ])
       );
 
       if (this.constellation >= 1) {

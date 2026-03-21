@@ -873,7 +873,8 @@ class HuTao extends CharacterBase {
 
     const buffs: StatBuff[] = [
       // P1: After E ends, all party members except Hu Tao get CR +12%
-      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "otherOnField" }, [
+      // "队伍中所有角色（不包括胡桃自己）" = all party members excluding self → "other"
+      new StatBuff(cbs(this, "P1", ["E"]), { receiver: "other" }, [
         { key: "cr", value: 0.12 },
       ]),
       // E: Guide to Afterlife — HP → ATK conversion

@@ -171,11 +171,12 @@ class Faruzan extends CharacterBase {
       0.32
     ),
     // C6: Under Q, Anemo CRIT DMG +40%
+    // Game text: "处于...效果影响下的角色" = all characters under Q buff (team-wide)
     ...(this.constellation >= 6
       ? [
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "onField", filter: { elements: ["Anemo"] } },
+            { receiver: "team", filter: { elements: ["Anemo"] } },
             [{ key: "cd", value: 0.4 }]
           ),
         ]
@@ -288,11 +289,10 @@ class Collei extends CharacterBase {
   readonly buffs = [
     // C4: After Q, all nearby characters (not Collei) EM +60 for 12s
     // Game text: "队伍中附近的所有角色（不包括柯莱自己）的元素精通提升60点"
-    // Use "team" — closest receiver for "all nearby party members"; minor inaccuracy is
-    // that Collei herself receives it, but she is always off-field when relevant.
+    // "all nearby party members excluding self" → receiver: "other"
     ...(this.constellation >= 4
       ? [
-          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "team" }, [
+          new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "other" }, [
             { key: "em", value: 60 },
           ]),
         ]

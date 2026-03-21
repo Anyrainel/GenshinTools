@@ -71,7 +71,8 @@ class Kirara extends CharacterBase {
 class ShikanoinHeizou extends CharacterBase {
   readonly buffs = [
     // P2: E hit → party (excl Heizou) EM +80 for 10s
-    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "otherOnField" }, [
+    // "队伍中所有角色（不包括鹿野院平藏自己）" → all party members, not just active
+    new StatBuff(cbs(this, "P2", ["E"]), { receiver: "other" }, [
       { key: "em", value: 80 },
     ]),
     // C1: After taking field, Normal ATK SPD +15% for 5s

@@ -163,7 +163,8 @@ class Alhaitham extends CharacterBase {
     ...(() => {
       if (this.constellation < 4) return [];
       return [
-        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "otherOnField" }, [
+        // Game text: "队伍中附近的其他角色" → other (all teammates, not just on-field)
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "other" }, [
           { key: "em", value: 90 },
         ]),
         new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "selfOnField" }, [

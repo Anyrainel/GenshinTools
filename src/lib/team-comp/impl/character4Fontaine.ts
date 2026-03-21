@@ -196,22 +196,24 @@ class Freminet extends CharacterBase {
 
     if (canC4C6) {
       // C4: After Frozen/Shatter/Superconduct, ATK +9% ×2 stacks
+      // Game text: "攻击力提升9%" — generic personal buff, no on-field qualifier
       if (this.constellation >= 4) {
         buffs.push(
           new StatBuff(
             cbs(this, "C4", ["frozen", "shatter", "superconduct"]),
-            { receiver: "selfOnField" },
+            { receiver: "self" },
             [{ key: "atk%", value: 0.18 }]
           )
         );
       }
 
       // C6: After Frozen/Shatter/Superconduct, CD +12% ×3 stacks
+      // Game text: "暴击伤害提升12%" — generic personal buff, no on-field qualifier
       if (this.constellation >= 6) {
         buffs.push(
           new StatBuff(
             cbs(this, "C6", ["frozen", "shatter", "superconduct"]),
-            { receiver: "selfOnField" },
+            { receiver: "self" },
             [{ key: "cd", value: 0.36 }]
           )
         );

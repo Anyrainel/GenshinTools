@@ -307,11 +307,11 @@ class Aloy extends CharacterBase {
   // No constellations available — collab-exclusive character
   readonly buffs = [
     // P1: Self ATK +16% when gaining Coil, other party members ATK +8% (10s)
-    // Team-wide +8%, then self gets additional +8% (delta) = 16% total for Aloy
+    // "队伍中附近的其他角色" → receiver: "other"
     new StatBuff(cbs(this, "P1", ["E"]), { receiver: "self" }, [
-      { key: "atk%", value: 0.08 },
+      { key: "atk%", value: 0.16 },
     ]),
-    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
+    new StatBuff(cbs(this, "P1", ["E"]), { receiver: "other" }, [
       { key: "atk%", value: 0.08 },
     ]),
     // P2: During Rushing Ice, Cryo DMG +3.5%/s for max 10s = +35%

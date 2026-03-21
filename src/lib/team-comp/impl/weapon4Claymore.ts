@@ -181,10 +181,11 @@ class MakhairaAquamarine extends WeaponBase {
       "atk",
       r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48])
     ),
-    // Game text: "多件同名武器产生的此效果可以叠加" — stacks from multiple copies, no noStackId
+    // Game text: "队伍中附近的其他角色" → other (all teammates, not just on-field)
+    // "多件同名武器产生的此效果可以叠加" — stacks from multiple copies, no noStackId
     new ScalingBuff(
       wbs(this),
-      { receiver: "otherOnField" },
+      { receiver: "other" },
       [],
       "em",
       "atk",
