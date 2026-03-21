@@ -38,3 +38,15 @@ export function fmtDamage(value: number | null | undefined): string {
   if (value == null) return "0";
   return Math.round(value).toLocaleString();
 }
+
+/** Localize buff origin strings like C1, P2, R4, E, Q for zh display. */
+export function fmtOrigin(origin: string, lang: string): string {
+  if (lang !== "zh") return origin;
+  const m = origin.match(/^([CPR])(\d+)$/);
+  if (m) {
+    if (m[1] === "C") return `${m[2]}命`;
+    if (m[1] === "P") return `被动${m[2]}`;
+    if (m[1] === "R") return `精${m[2]}`;
+  }
+  return origin;
+}

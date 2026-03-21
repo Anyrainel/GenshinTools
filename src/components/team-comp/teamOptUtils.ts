@@ -7,12 +7,16 @@ import {
   getComboDisplayResult,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { distributeComboHits } from "@/lib/team-comp/stackAllocation";
 import type {
+  BuffActivationMap,
   CalcContext,
   CharCompConfig,
   ComboFormula,
+  ComboLine,
   ComboResult,
   DisplayResult,
+  PartialBuffSpec,
   ReactionOverride,
 } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
@@ -190,13 +194,21 @@ export function calcDisplayResult(
   formula: { charId: string; formulaId: string } | null,
   sheets: Record<string, StatSheet>,
   context: CalcContext,
-  override?: ReactionOverride
+  override?: ReactionOverride,
+  userBuffOverrides?: import("@/lib/team-comp/types").BuffActivationMap
 ): DisplayResult | null {
   if (!build || !formula) return null;
   const { charId, formulaId } = formula;
   const formulas = build.getFormulaIds()[charId];
   if (!formulas || !formulas[formulaId]) return null;
-  return build.getDisplayResult(charId, formulaId, sheets, context, override);
+  return build.getDisplayResult(
+    charId,
+    formulaId,
+    sheets,
+    context,
+    override,
+    userBuffOverrides
+  );
 }
 
 /**
@@ -208,7 +220,8 @@ export function calcComboResults(
   combo: ComboFormula,
   sheets: Record<string, StatSheet>,
   context: CalcContext,
-  overrides?: Record<string, ReactionOverride>
+  overrides?: Record<string, ReactionOverride>,
+  linePartialBuffs?: Record<number, PartialBuffSpec[]>
 ): { comboResult: ComboResult | null; comboDisplay: DisplayResult | null } {
   if (!build) return { comboResult: null, comboDisplay: null };
   const activeLines = combo.lines.filter((l) => l.count > 0);
@@ -220,14 +233,116 @@ export function calcComboResults(
     activeCombo,
     sheets,
     context,
-    overrides
+    overrides,
+    linePartialBuffs
   );
   const comboDisplay = getComboDisplayResult(
     build,
     activeCombo,
     sheets,
     context,
-    overrides
+    overrides,
+    linePartialBuffs
   );
   return { comboResult, comboDisplay };
+}
+
+/**
+ * Build per-line PartialBuffSpec[] from combo store overrides.
+ *
+ * Combo overrides are keyed by formula (buffKey → partIndex → totalActivatedHits
+ * across ALL repetitions). This function distributes those totals across individual
+ * combo lines and calls computePartialBuffSpecs per line to produce per-line specs.
+ *
+ * @param comboOverrides - From useBuffOverrideStore.comboOverrides[comboKey] per formula key
+ * @param activeLines - The active combo lines (count > 0, formula exists)
+ * @param build - The TeamBuild for computing partial buff specs
+ * @param sheets - Artifact stat sheets per character
+ * @param ctx - Calc context
+ * @param rxnOverrides - Per-formula reaction overrides
+ */
+export function buildComboLinePartialBuffs(
+  comboOverrides: Record<string, BuffActivationMap>,
+  activeLines: ComboLine[],
+  build: TeamBuild,
+  sheets: Record<string, StatSheet>,
+  ctx: CalcContext,
+  rxnOverrides?: Record<string, ReactionOverride>
+): Record<number, PartialBuffSpec[]> | undefined {
+  // Group active lines by formula key, preserving line index
+  const formulaLineIndices = new Map<string, number[]>();
+  for (let i = 0; i < activeLines.length; i++) {
+    const line = activeLines[i];
+    const fKey = `${line.charId}.${line.formulaId}`;
+    const arr = formulaLineIndices.get(fKey) ?? [];
+    arr.push(i);
+    formulaLineIndices.set(fKey, arr);
+  }
+
+  // For each formula with combo overrides, distribute hits across lines
+  const perLineUserOverrides = new Map<number, BuffActivationMap>();
+
+  for (const [formulaKey, comboActivation] of Object.entries(comboOverrides)) {
+    const lineIndices = formulaLineIndices.get(formulaKey);
+    if (!lineIndices || lineIndices.length === 0) continue;
+
+    const lineCounts = lineIndices.map((i) => activeLines[i].count);
+
+    // Get parts for this formula to know hitsPerCast per part
+    const [charId, formulaId] = formulaKey.split(".");
+    const entry = build.charBuilds[charId]?.charBase.getFormulaEntry(formulaId);
+    if (!entry) continue;
+
+    for (const [buffKey, partMap] of Object.entries(comboActivation)) {
+      for (const [partIdxStr, totalActivated] of Object.entries(partMap)) {
+        const partIdx = Number(partIdxStr);
+        const partHits = entry.parts[partIdx]?.hits ?? 1;
+
+        // Distribute totalActivated across lines
+        const distributed = distributeComboHits(
+          totalActivated,
+          partHits,
+          lineCounts
+        );
+
+        // Convert to per-cast activation per line
+        for (let j = 0; j < lineIndices.length; j++) {
+          const lineIdx = lineIndices[j];
+          const lineCount = lineCounts[j];
+          if (lineCount === 0) continue;
+          const perCast = distributed[j] / lineCount;
+
+          let lineMap = perLineUserOverrides.get(lineIdx);
+          if (!lineMap) {
+            lineMap = {};
+            perLineUserOverrides.set(lineIdx, lineMap);
+          }
+          if (!lineMap[buffKey]) lineMap[buffKey] = {};
+          lineMap[buffKey][partIdx] = perCast;
+        }
+      }
+    }
+  }
+
+  if (perLineUserOverrides.size === 0) return undefined;
+
+  // Now call computePartialBuffSpecs per line with its user overrides
+  const result: Record<number, PartialBuffSpec[]> = {};
+  for (const [lineIdx, userOverrides] of perLineUserOverrides) {
+    const line = activeLines[lineIdx];
+    const rxnKey = `${line.charId}.${line.formulaId}`;
+    const specs = build.computePartialBuffSpecs(
+      line.charId,
+      line.formulaId,
+      sheets,
+      ctx,
+      rxnOverrides?.[rxnKey],
+      userOverrides
+    );
+    if (specs.length > 0) {
+      result[lineIdx] = specs;
+    }
+  }
+
+  return Object.keys(result).length > 0 ? result : undefined;
 }

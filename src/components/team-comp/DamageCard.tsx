@@ -40,8 +40,10 @@ import { getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
+  ArrowLeft,
   Check,
   ChevronDown,
+  ChevronRight,
   ChevronsUpDown,
   Eye,
   Flame,
@@ -57,6 +59,7 @@ import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { fmtDamage } from "./displayFormatters";
+import { calcDisplayResult, toStatSheets } from "./teamOptUtils";
 
 const SESSION_PREFIX = "dmgCard.";
 
@@ -100,6 +103,7 @@ function DamageBody({
   artifactsByChar,
   targetCharId,
   displayResult,
+  formulaKey,
   critMode,
   setCritMode,
   isMobile,
@@ -117,6 +121,8 @@ function DamageBody({
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
   targetCharId?: string;
   displayResult?: DisplayResult | null;
+  /** Formula key for scoping buff overrides (e.g. "ganyu.charged"). */
+  formulaKey?: string;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
@@ -255,6 +261,9 @@ function DamageBody({
                   }
                   critMode={critMode}
                   t={t}
+                  buffs={displayResult.buffs}
+                  defaultActivation={displayResult.buffActivation}
+                  formulaKey={formulaKey}
                 />
               )}
             </CollapsibleContent>
@@ -299,11 +308,12 @@ function hasPartialReaction(
   );
 }
 
-/** Combo mode breakdown: 4-column grid grouped by character. */
+/** Combo mode breakdown: 4-column grid grouped by character, with drill-down. */
 function ComboBreakdown({
   team,
   comboResult,
   comboLines,
+  comboId,
   teamBuild,
   damageValue,
   critMode,
@@ -313,10 +323,13 @@ function ComboBreakdown({
   reactionOverrides,
   isMobile,
   t,
+  artifactsByChar,
+  calcContext,
 }: {
   team: Team;
   comboResult: ComboResult;
   comboLines: ComboLine[];
+  comboId?: string;
   teamBuild: TeamBuild;
   damageValue: number;
   critMode: CritMode;
@@ -326,6 +339,8 @@ function ComboBreakdown({
   reactionOverrides: Record<string, ReactionOverride>;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
+  artifactsByChar: Record<string, Record<string, ArtifactData>>;
+  calcContext: CalcContext;
 }) {
   const allFormulaIds = useMemo(() => teamBuild.getFormulaIds(), [teamBuild]);
   // Filter to active lines whose formula still exists (matches evaluateCombo's filtering)
@@ -372,6 +387,50 @@ function ComboBreakdown({
   const teamCharIds = team.characters.filter((id): id is string => id != null);
 
   const [expanded, setExpanded] = useSessionState("comboExpanded", true);
+
+  // Drill-down: when a formula name is clicked, show its FormulaBreakdown
+  const [focusedLine, setFocusedLine] = useState<{
+    charId: string;
+    formulaId: string;
+  } | null>(null);
+
+  // Compute DisplayResult lazily for the focused formula
+  const focusedDisplayResult = useMemo(() => {
+    if (!focusedLine) return null;
+    const sheets = toStatSheets(teamCharIds, artifactsByChar);
+    const rxnKey = `${focusedLine.charId}.${focusedLine.formulaId}`;
+    return calcDisplayResult(
+      teamBuild,
+      focusedLine,
+      sheets,
+      calcContext,
+      reactionOverrides[rxnKey]
+    );
+  }, [
+    focusedLine,
+    teamCharIds,
+    artifactsByChar,
+    teamBuild,
+    calcContext,
+    reactionOverrides,
+  ]);
+
+  // Combo count for focused formula (total repetitions across all combo lines)
+  const focusedComboInfo = useMemo(() => {
+    if (!focusedLine || !comboId) return undefined;
+    const formulaKey = `${focusedLine.charId}.${focusedLine.formulaId}`;
+    const count = activeLines
+      .filter(
+        (l) =>
+          l.charId === focusedLine.charId &&
+          l.formulaId === focusedLine.formulaId
+      )
+      .reduce((sum, l) => sum + l.count, 0);
+    return {
+      comboCount: count,
+      comboKey: `combo:${comboId}:${formulaKey}`,
+    };
+  }, [focusedLine, comboId, activeLines]);
 
   return (
     <div className={cn(isMobile ? "space-y-1" : "space-y-2")}>
@@ -439,105 +498,171 @@ function ComboBreakdown({
             </CollapsibleTrigger>
           </div>
 
-          {/* Per-character breakdown grid */}
+          {/* Below total: either combo grid or focused formula breakdown */}
           <CollapsibleContent>
-            <div
-              className={cn(
-                "grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2 mt-3"
-              )}
-            >
-              {teamCharIds.map((charId) => {
-                const charRes = charactersById[charId];
-                const lines = byChar.get(charId);
-                const charFormulas = allFormulaIds[charId];
-
-                return (
-                  <div
-                    key={charId}
-                    className="rounded-lg border border-border/30 bg-black/5 overflow-hidden"
-                  >
-                    {/* Character header */}
-                    <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
-                      {charRes && (
-                        <img
-                          src={getAssetUrl(charRes.imagePath)}
-                          alt={charId}
-                          className="w-7 h-7 object-contain rounded-full bg-secondary/40 shrink-0"
-                        />
+            {focusedLine && focusedDisplayResult ? (
+              /* ── Focused formula drill-down ── */
+              <div className="mt-3">
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors cursor-pointer mb-2 px-1"
+                  onClick={() => setFocusedLine(null)}
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t.ui("teamComp.backToCombo")}
+                </button>
+                <div className="flex items-center gap-2 px-2 py-1 mb-1">
+                  {charactersById[focusedLine.charId] && (
+                    <img
+                      src={getAssetUrl(
+                        charactersById[focusedLine.charId]!.imagePath
                       )}
-                      <span className="text-sm font-bold text-foreground/80 truncate">
-                        {t.character(charId)}
-                      </span>
-                    </div>
+                      alt={focusedLine.charId}
+                      className="w-6 h-6 object-contain rounded-full bg-secondary/40 shrink-0"
+                    />
+                  )}
+                  <span className="text-sm font-semibold text-foreground/80">
+                    {t.character(focusedLine.charId)}
+                    {" — "}
+                    {(() => {
+                      const label =
+                        allFormulaIds[focusedLine.charId]?.[
+                          focusedLine.formulaId
+                        ];
+                      return label
+                        ? t.resolveLabel(label)
+                        : focusedLine.formulaId;
+                    })()}
+                  </span>
+                </div>
+                <FormulaBreakdown
+                  parts={focusedDisplayResult.parts}
+                  highlightedStat={null}
+                  critMode={critMode}
+                  t={t}
+                  buffs={focusedDisplayResult.buffs}
+                  defaultActivation={focusedDisplayResult.buffActivation}
+                  formulaKey={`${focusedLine.charId}.${focusedLine.formulaId}`}
+                  comboCount={focusedComboInfo?.comboCount}
+                  comboKey={focusedComboInfo?.comboKey}
+                />
+              </div>
+            ) : (
+              /* ── Per-character combo grid ── */
+              <>
+                <div
+                  className={cn(
+                    "grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2 mt-3"
+                  )}
+                >
+                  {teamCharIds.map((charId) => {
+                    const charRes = charactersById[charId];
+                    const lines = byChar.get(charId);
+                    const charFormulas = allFormulaIds[charId];
 
-                    {/* Formula lines */}
-                    <div className="p-1 flex flex-col 2xl:grid 2xl:grid-cols-2 gap-2">
-                      {lines && lines.length > 0 ? (
-                        lines.map(({ line, perHit, total, isPartial }, idx) => {
-                          const label = charFormulas?.[line.formulaId];
-                          const rxn = line.reaction?.reaction;
-                          return (
-                            <div
-                              key={idx}
-                              className="flex flex-col gap-0.5 px-1 py-1"
-                            >
-                              <div className="flex items-baseline gap-1 min-w-0">
-                                <span className="text-base font-semibold text-foreground truncate">
-                                  {label
-                                    ? t.resolveLabel(label)
-                                    : line.formulaId}
-                                  {isPartial && (
-                                    <span
-                                      className="text-amber-400 text-xl font-bold leading-none ml-0.5"
-                                      title={t.ui(
-                                        "teamComp.partialReactionNote"
+                    return (
+                      <div
+                        key={charId}
+                        className="rounded-lg border border-border/30 bg-black/5 overflow-hidden"
+                      >
+                        {/* Character header */}
+                        <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
+                          {charRes && (
+                            <img
+                              src={getAssetUrl(charRes.imagePath)}
+                              alt={charId}
+                              className="w-7 h-7 object-contain rounded-full bg-secondary/40 shrink-0"
+                            />
+                          )}
+                          <span className="text-sm font-bold text-foreground/80 truncate">
+                            {t.character(charId)}
+                          </span>
+                        </div>
+
+                        {/* Formula lines — name is clickable to drill down */}
+                        <div className="p-1 flex flex-col 2xl:grid 2xl:grid-cols-2 gap-2">
+                          {lines && lines.length > 0 ? (
+                            lines.map(
+                              ({ line, perHit, total, isPartial }, idx) => {
+                                const label = charFormulas?.[line.formulaId];
+                                const rxn = line.reaction?.reaction;
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex flex-col gap-0.5 px-1 py-1"
+                                  >
+                                    <div className="flex items-center gap-1 min-w-0">
+                                      <button
+                                        type="button"
+                                        className="flex items-center gap-0.5 text-base font-semibold text-foreground hover:text-primary transition-colors truncate cursor-pointer"
+                                        onClick={() =>
+                                          setFocusedLine({
+                                            charId: line.charId,
+                                            formulaId: line.formulaId,
+                                          })
+                                        }
+                                      >
+                                        <span className="truncate">
+                                          {label
+                                            ? t.resolveLabel(label)
+                                            : line.formulaId}
+                                        </span>
+                                        <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+                                      </button>
+                                      {isPartial && (
+                                        <span
+                                          className="text-amber-400 text-xl font-bold leading-none"
+                                          title={t.ui(
+                                            "teamComp.partialReactionNote"
+                                          )}
+                                        >
+                                          *
+                                        </span>
                                       )}
-                                    >
-                                      *
-                                    </span>
-                                  )}
-                                </span>
-                                {rxn && rxn !== "none" && (
-                                  <span className="text-base text-primary font-semibold shrink-0">
-                                    [{t.reaction(rxn)}]
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-baseline gap-1 text-lg font-mono tabular-nums">
-                                <span className="text-foreground">
-                                  {fmtDamage(perHit)}
-                                </span>
-                                {line.count > 1 && (
-                                  <>
-                                    <span className="text-muted-foreground">
-                                      ×
-                                    </span>
-                                    <span className="text-muted-foreground">
-                                      {line.count}
-                                    </span>
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <span className="text-sm text-muted-foreground px-1 py-1">
-                          —
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                                      {rxn && rxn !== "none" && (
+                                        <span className="text-base text-primary font-semibold shrink-0">
+                                          [{t.reaction(rxn)}]
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="flex items-baseline gap-1 text-lg font-mono tabular-nums">
+                                      <span className="text-foreground">
+                                        {fmtDamage(perHit)}
+                                      </span>
+                                      {line.count > 1 && (
+                                        <>
+                                          <span className="text-muted-foreground">
+                                            ×
+                                          </span>
+                                          <span className="text-muted-foreground">
+                                            {line.count}
+                                          </span>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )
+                          ) : (
+                            <span className="text-sm text-muted-foreground px-1 py-1">
+                              —
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
-            {/* Partial reaction footnote */}
-            {anyPartial && (
-              <p className="text-xs text-amber-400/80 px-1">
-                <span className="text-xl font-bold leading-none">*</span>{" "}
-                {t.ui("teamComp.partialReactionNote")}
-              </p>
+                {/* Partial reaction footnote */}
+                {anyPartial && (
+                  <p className="text-xs text-amber-400/80 px-1">
+                    <span className="text-xl font-bold leading-none">*</span>{" "}
+                    {t.ui("teamComp.partialReactionNote")}
+                  </p>
+                )}
+              </>
             )}
           </CollapsibleContent>
         </div>
@@ -551,9 +676,11 @@ function ComboResultView({
   displayResult,
   comboResult,
   comboLines,
+  comboId,
   teamBuild,
   team,
   artifactsByChar,
+  calcContext,
   critMode,
   setCritMode,
   isMobile,
@@ -569,9 +696,11 @@ function ComboResultView({
   displayResult: DisplayResult | null | undefined;
   comboResult: ComboResult;
   comboLines: ComboLine[];
+  comboId?: string;
   teamBuild: TeamBuild;
   team: Team;
   artifactsByChar: Record<string, Record<string, ArtifactData>>;
+  calcContext: CalcContext;
   critMode: CritMode;
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
@@ -617,6 +746,7 @@ function ComboResultView({
         team={team}
         comboResult={comboResult}
         comboLines={comboLines}
+        comboId={comboId}
         teamBuild={teamBuild}
         damageValue={displayResult?.totalDamage ?? comboResult.totalDamage}
         critMode={critMode}
@@ -625,6 +755,8 @@ function ComboResultView({
         reactionOverrides={reactionOverrides}
         isMobile={isMobile}
         t={t}
+        artifactsByChar={artifactsByChar}
+        calcContext={calcContext}
       />
       {displayResult && (
         <BuffLedger buffs={displayResult.buffs} team={team} t={t} />
@@ -664,6 +796,7 @@ interface DamageCardProps {
   // Combo mode
   comboResult?: ComboResult | null;
   comboLines?: ComboLine[] | null;
+  comboId?: string;
   teamBuild?: TeamBuild | null;
   formulaMode?: "single" | "combo";
   optimizedComboResult?: ComboResult | null;
@@ -1021,6 +1154,7 @@ export function DamageCard({
   idealDisplayResult,
   comboResult,
   comboLines,
+  comboId,
   teamBuild,
   formulaMode = "single",
   optimizedComboResult,
@@ -1179,9 +1313,11 @@ export function DamageCard({
               displayResult={currentDisplayResult}
               comboResult={comboResult}
               comboLines={comboLines}
+              comboId={comboId}
               teamBuild={teamBuild}
               team={effectiveTeam}
               artifactsByChar={equippedArtifactsByChar}
+              calcContext={activeContext}
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}
@@ -1201,6 +1337,11 @@ export function DamageCard({
               artifactsByChar={equippedArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
               displayResult={currentDisplayResult}
+              formulaKey={
+                resolvedFormula
+                  ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
+                  : undefined
+              }
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}
@@ -1458,9 +1599,11 @@ export function DamageCard({
                 displayResult={optimizedDisplayResult}
                 comboResult={optimizedComboResult}
                 comboLines={comboLines}
+                comboId={comboId}
                 teamBuild={teamBuild}
                 team={effectiveTeam}
                 artifactsByChar={optimizedArtifactsByChar}
+                calcContext={activeContext}
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}
@@ -1486,6 +1629,11 @@ export function DamageCard({
                 artifactsByChar={optimizedArtifactsByChar}
                 targetCharId={resolvedFormula?.charId}
                 displayResult={optimizedDisplayResult}
+                formulaKey={
+                  resolvedFormula
+                    ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
+                    : undefined
+                }
                 critMode={critMode}
                 setCritMode={setCritMode}
                 isMobile={isMobile}
@@ -1578,9 +1726,11 @@ export function DamageCard({
               displayResult={idealDisplayResult}
               comboResult={idealComboResult}
               comboLines={comboLines}
+              comboId={comboId}
               teamBuild={teamBuild}
               team={effectiveTeam}
               artifactsByChar={idealArtifactsByChar}
+              calcContext={activeContext}
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}
@@ -1595,6 +1745,11 @@ export function DamageCard({
               artifactsByChar={idealArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
               displayResult={idealDisplayResult}
+              formulaKey={
+                resolvedFormula
+                  ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
+                  : undefined
+              }
               critMode={critMode}
               setCritMode={setCritMode}
               isMobile={isMobile}

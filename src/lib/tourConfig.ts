@@ -19,7 +19,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "af-build-card",
-        title: t.ui("tour.artifactFilter.buildCardTitle"),
+        title: t.ui("evaluation.goToBuilds"),
         content: t.ui("tour.artifactFilter.buildCardContent"),
         side: "right",
       },

@@ -72,10 +72,12 @@ function isKeyHighlighted(
   return hl.key === key;
 }
 
-const REQUIRED_STATS: StatKey[] = ["atk", "hp", "def", "em", "cr", "cd", "er"];
+const REQUIRED_STATS: StatKey[] = ["atk", "hp", "def", "em", "er", "cr", "cd"];
 
 const STAT_ORDER: StatKey[] = [
   ...REQUIRED_STATS,
+  "reactionCr",
+  "reactionCd",
   "pyro%",
   "hydro%",
   "anemo%",
@@ -86,16 +88,14 @@ const STAT_ORDER: StatKey[] = [
   "phys%",
   "heal%",
   "dmg%",
-  "baseDmg",
+  "reactionDmg%",
   "baseDmg%",
   "reactionBaseDmg%",
   "elevated%",
-  "reactionDmg%",
-  "reactionCr",
-  "reactionCd",
   "defReduction%",
   "defIgnore%",
   "resReduction%",
+  "baseDmg",
 ];
 
 function getSortedKeys(keys: Set<StatKey>): StatKey[] {
@@ -198,6 +198,10 @@ function formatFailReason(
       return t
         .ui("teamComp.failAllFiltered")
         .replace("{0}", String(reason.combinationsTotal));
+    case "timeout":
+      return t.ui("teamComp.failTimeout");
+    case "worker-error":
+      return t.ui("teamComp.failWorkerError").replace("{0}", reason.message);
   }
 }
 

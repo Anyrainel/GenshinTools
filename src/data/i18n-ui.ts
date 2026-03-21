@@ -805,6 +805,14 @@ export const i18nUiData = {
       en: "All {0} combos failed constraints",
       zh: "全部 {0} 个组合均不满足约束",
     },
+    failTimeout: {
+      en: "Optimization timed out",
+      zh: "优化超时",
+    },
+    failWorkerError: {
+      en: "Optimizer error: {0}",
+      zh: "优化器错误：{0}",
+    },
     preparingOptimizer: {
       en: "Preparing optimizer…",
       zh: "正在准备优化器…",
@@ -816,6 +824,16 @@ export const i18nUiData = {
     },
     expandFormula: { en: "Expand", zh: "展开" },
     collapseFormula: { en: "Collapse", zh: "收起" },
+    backToCombo: { en: "Back to combo", zh: "返回连招" },
+    buffActivation: { en: "Buff Activation", zh: "增益激活" },
+    buffActivationDesc: {
+      en: "Control how many hits each buff is active for",
+      zh: "控制每个增益生效的命中次数",
+    },
+    emptyBuffMessage: {
+      en: "No applicable buffs for this part.",
+      zh: "此部分没有可用的增益。",
+    },
     inventoryWarning: {
       en: "Only equipped artifacts detected. Import full inventory for accurate results.",
       zh: "仅检测到已装备的圣遗物。导入完整背包数据以获得准确结果。",
@@ -1324,7 +1342,6 @@ export const i18nUiData = {
         en: "Start by importing community presets for quick setup, or create custom builds for each character.",
         zh: "从社区预设快速开始，或为每个角色创建自定义配装。",
       },
-      buildCardTitle: { en: "Configure Builds", zh: "配置配装" },
       buildCardContent: {
         en: "Select artifact sets and substats for each character. The filter will keep artifacts that match your criteria.",
         zh: "为每个角色选择圣遗物套装和副词条。过滤器会保留符合条件的圣遗物。",
@@ -1411,12 +1428,17 @@ export const i18nUiData = {
     subtitle: { en: "{0} builds · Avg {1}%", zh: "{0} 个配装 · 均值 {1}%" },
     noBuilds: { en: "No builds to evaluate", zh: "无配装可评估" },
     noBuildsDesc: {
-      en: "Import account data and configure artifact builds to see evaluations.",
-      zh: "导入账号数据并配置圣遗物配装方案后可查看评估。",
+      en: "Configure artifact builds to see how well your artifacts match each character's needs.",
+      zh: "配置圣遗物配装方案后可查看各角色的圣遗物匹配评估。",
+    },
+    goToBuilds: {
+      en: "Configure Builds",
+      zh: "配置配装",
     },
     sortAsc: { en: "Weakest first", zh: "最弱优先" },
     sortDesc: { en: "Strongest first", zh: "最强优先" },
     all: { en: "All", zh: "全部" },
+    ownedOnly: { en: "Owned characters", zh: "仅已拥有角色" },
   },
   v2Weights: {
     loading: {
@@ -1445,6 +1467,18 @@ export const i18nUiData = {
     noBuild: {
       en: "No builds and teams to tune. Import or create builds and teams first.",
       zh: "没有可调整的配装和配队。请先导入或创建配装和配队。",
+    },
+    noBuildTitle: {
+      en: "No DPS builds to tune",
+      zh: "没有可调整的 DPS 配装",
+    },
+    noBuildDesc: {
+      en: "AutoTune needs DPS builds paired with teams to generate optimal substat weights.",
+      zh: "自动调参需要已配对队伍的 DPS 配装来生成最优副词条权重。",
+    },
+    goToTeams: {
+      en: "Create Teams",
+      zh: "创建配队",
     },
     mainStatCombos: {
       en: "{0} main stat combo{1}",
@@ -1505,8 +1539,12 @@ export const i18nUiData = {
       zh: "此类别中没有圣遗物",
     },
     noData: {
-      en: "Import account data and configure artifact builds to use triage.",
-      zh: "导入账号数据并配置圣遗物配装后可使用去留分析。",
+      en: "No builds configured",
+      zh: "未配置配装",
+    },
+    noDataDesc: {
+      en: "Configure artifact builds so triage can recommend which artifacts to lock, unlock, or fodder.",
+      zh: "配置圣遗物配装方案后，锁定分析可为你推荐锁定、解锁或分解的圣遗物。",
     },
     // Decision labels (lock / unlock)
     label: {
@@ -1577,6 +1615,8 @@ export const i18nUiData = {
       en: "Quality surplus margin",
       zh: "精良装余量数（超过需求后多留几个）",
     },
+    sortByTier: { en: "Tier", zh: "品质" },
+    sortByName: { en: "Name", zh: "名称" },
     setSlotKeep: {
       en: "Min keep per set+slot",
       zh: "每套装每部位最少保留",
@@ -1603,7 +1643,7 @@ export const i18nUiData = {
       title: { en: "How does this work?", zh: "这是怎么运作的？" },
       desc: {
         en: "Compares every artifact's substats against your builds to decide what to keep.",
-        zh: "将每件圣遗物的副词条与你的配装需求进行比对，决定去留。",
+        zh: "将每件圣遗物的副词条与你的配装需求进行比对，决定保留还是分解。",
       },
       howTitle: { en: "How it decides", zh: "决策方式" },
       howMatch: {

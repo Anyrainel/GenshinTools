@@ -1,12 +1,15 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type {
+  BuffActivationMap,
   CritMode,
   DisplayPart,
   FormulaTemplate,
+  ResolvedBuff,
   StatKey,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import type React from "react";
+import { PartBuffDialog } from "./PartBuffDialog";
 import { fmtDamage, fmtPercent, fmtStat } from "./displayFormatters";
 
 type HlKey = StatKey | "charLevel" | null;
@@ -16,6 +19,16 @@ type Props = {
   highlightedStat: HlKey;
   critMode: CritMode;
   t: ReturnType<typeof useLanguage>["t"];
+  /** All resolved buffs for this formula (used by per-part buff dialog). */
+  buffs?: ResolvedBuff[];
+  /** Default activation from greedy stack allocation. */
+  defaultActivation?: BuffActivationMap;
+  /** Formula key for scoping buff overrides (e.g. "ganyu.charged"). */
+  formulaKey?: string;
+  /** Combo mode: total repetitions of this formula across all combo lines. */
+  comboCount?: number;
+  /** Combo store key (e.g. "combo:myCombo:ganyu.charged"). */
+  comboKey?: string;
 };
 
 function MathZone({
@@ -923,7 +936,7 @@ const TEMPLATE_KEYS: Record<FormulaTemplate, string> = {
 
 // ─── Main Component ───
 
-function getTemplateName(
+export function getTemplateName(
   p: DisplayPart,
   t: ReturnType<typeof useLanguage>["t"]
 ) {
@@ -968,6 +981,11 @@ export function FormulaBreakdown({
   highlightedStat,
   critMode,
   t,
+  buffs,
+  defaultActivation,
+  formulaKey,
+  comboCount,
+  comboKey,
 }: Props) {
   return (
     <div className="w-full overflow-x-auto pt-3 px-1">
@@ -1003,7 +1021,32 @@ export function FormulaBreakdown({
                   ) : (
                     <span>{fmtDamage(displayDamage)}</span>
                   )}
+                  {formulaKey && buffs && (
+                    <PartBuffDialog
+                      parts={parts}
+                      formulaKey={formulaKey}
+                      buffs={buffs}
+                      defaultActivation={defaultActivation}
+                      t={t}
+                      initialTab={idx}
+                      comboCount={comboCount}
+                      comboKey={comboKey}
+                    />
+                  )}
                 </span>
+                {/* Partial buff annotations */}
+                {p.partialBuffs && p.partialBuffs.length > 0 && (
+                  <div className="flex flex-wrap gap-1 justify-center">
+                    {p.partialBuffs.map((pb) => (
+                      <span
+                        key={pb.buffKey}
+                        className="text-[9px] md:text-[10px] text-muted-foreground bg-muted/50 rounded px-1"
+                      >
+                        {pb.activatedHits}/{pb.totalHits}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           );

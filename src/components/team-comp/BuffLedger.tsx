@@ -23,7 +23,7 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
-import { fmtStat } from "./displayFormatters";
+import { fmtOrigin, fmtStat } from "./displayFormatters";
 
 type Props = {
   buffs: ResolvedBuff[];
@@ -135,13 +135,10 @@ function BuffChip({
               <span className="font-bold text-xs md:text-sm text-foreground/90 truncate">
                 {source.type === "teamResonance"
                   ? t.resonance(source.id) || t.ui("teamComp.teamResonance")
-                  : source.origin || t.ui("teamComp.base")}
+                  : source.origin
+                    ? fmtOrigin(source.origin, t.lang)
+                    : t.ui("teamComp.base")}
               </span>
-              {buff.bespokeLabel && (
-                <span className="bg-violet-500/15 text-violet-300 text-[10px] md:text-xs px-1 rounded font-medium leading-none">
-                  {t.resolveLabel(buff.bespokeLabel)}
-                </span>
-              )}
               {source.triggers?.map((trig) => (
                 <span
                   key={trig}
@@ -196,6 +193,11 @@ function BuffChip({
               key={idx}
               className="flex items-center flex-wrap gap-x-1 md:gap-x-2 text-xs md:text-sm bg-black/5 px-1 md:px-2 rounded-md"
             >
+              {buff.bespokeLabel && (
+                <span className="bg-violet-500/15 text-violet-300 text-[10px] md:text-xs px-1 rounded font-medium leading-none">
+                  {t.resolveLabel(buff.bespokeLabel)}
+                </span>
+              )}
               <span className="font-semibold text-foreground/80">
                 {t.statShort(e.key as StatKey)}
               </span>

@@ -34,6 +34,7 @@ import type {
 import { cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
+import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
 import { ArrowLeft } from "lucide-react";
@@ -44,6 +45,7 @@ import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { InvestmentDialog } from "./InvestmentDialog";
 import { TeamRosterCard } from "./TeamRosterCard";
 import {
+  buildComboLinePartialBuffs,
   buildTeamConfigs,
   calcComboResults,
   calcDisplayResult,
@@ -241,6 +243,16 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     });
   };
 
+  // ─── Buff Overrides ───
+
+  const formulaKey = resolvedFormula
+    ? `${resolvedFormula.charId}.${resolvedFormula.formulaId}`
+    : undefined;
+  const userBuffOverrides = useBuffOverrideStore((s) =>
+    formulaKey ? s.overrides[formulaKey] : undefined
+  );
+  const comboStoreOverrides = useBuffOverrideStore((s) => s.comboOverrides);
+
   // ─── Combo Management ───
 
   const formulaMode = team.formulaMode ?? "single";
@@ -324,6 +336,45 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
+  // Build per-line PartialBuffSpec[] from combo overrides
+  const comboLinePartialBuffs = useMemo(() => {
+    if (formulaMode !== "combo" || !teamBuild) return undefined;
+    // Collect combo overrides for formulas in this combo
+    const activeLines = combo.lines.filter((l) => l.count > 0);
+    if (activeLines.length === 0) return undefined;
+
+    // Gather overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
+    const formulaOverrides: Record<
+      string,
+      import("@/lib/team-comp/types").BuffActivationMap
+    > = {};
+    for (const key of Object.keys(comboStoreOverrides)) {
+      const prefix = `combo:${combo.id}:`;
+      if (key.startsWith(prefix)) {
+        const formulaKey = key.slice(prefix.length);
+        formulaOverrides[formulaKey] = comboStoreOverrides[key];
+      }
+    }
+    if (Object.keys(formulaOverrides).length === 0) return undefined;
+
+    return buildComboLinePartialBuffs(
+      formulaOverrides,
+      activeLines,
+      teamBuild,
+      artifactSheets,
+      displayContext,
+      team.reactionOverrides
+    );
+  }, [
+    formulaMode,
+    combo,
+    teamBuild,
+    artifactSheets,
+    displayContext,
+    team.reactionOverrides,
+    comboStoreOverrides,
+  ]);
+
   const { comboResult, comboDisplay: comboDisplayResult } = useMemo(
     () =>
       formulaMode === "combo"
@@ -332,7 +383,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combo,
             artifactSheets,
             displayContext,
-            team.reactionOverrides
+            team.reactionOverrides,
+            comboLinePartialBuffs
           )
         : { comboResult: null, comboDisplay: null },
     [
@@ -342,6 +394,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       artifactSheets,
       displayContext,
       team.reactionOverrides,
+      comboLinePartialBuffs,
     ]
   );
 
@@ -354,7 +407,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         resolvedFormula,
         artifactSheets,
         displayContext,
-        currentReactionOverride
+        currentReactionOverride,
+        userBuffOverrides
       ),
     [
       teamBuild,
@@ -362,6 +416,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       artifactSheets,
       displayContext,
       currentReactionOverride,
+      userBuffOverrides,
     ]
   );
 
@@ -494,6 +549,19 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       }
     }
 
+    // Compute partial buff specs from user overrides for the optimizer
+    const optPartialBuffs =
+      userBuffOverrides && Object.keys(userBuffOverrides).length > 0
+        ? optTeamBuild.computePartialBuffSpecs(
+            carryCharId,
+            formulaId,
+            optBaseSheets,
+            activeContext,
+            currentReactionOverride,
+            userBuffOverrides
+          )
+        : undefined;
+
     startTeamOpt({
       teamBuild: optTeamBuild,
       carryCharId,
@@ -509,8 +577,10 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       ...(formulaMode === "combo" && {
         combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
         reactionOverrides: team.reactionOverrides,
+        comboLinePartialBuffs,
       }),
       ignoreArtifactSets,
+      partialBuffs: optPartialBuffs,
     });
   };
 
@@ -611,7 +681,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             resolvedFormula,
             optArtifactSheets,
             displayContext,
-            currentReactionOverride
+            currentReactionOverride,
+            userBuffOverrides
           )
         : null,
     [
@@ -621,6 +692,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       hasOptResult,
       displayContext,
       currentReactionOverride,
+      userBuffOverrides,
     ]
   );
 
@@ -632,7 +704,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combo,
             optArtifactSheets,
             displayContext,
-            team.reactionOverrides
+            team.reactionOverrides,
+            comboLinePartialBuffs
           )
         : { comboResult: null, comboDisplay: null },
     [
@@ -643,6 +716,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       hasOptResult,
       displayContext,
       team.reactionOverrides,
+      comboLinePartialBuffs,
     ]
   );
 
@@ -772,7 +846,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             resolvedFormula,
             idealArtifactSheets,
             displayContext,
-            currentReactionOverride
+            currentReactionOverride,
+            userBuffOverrides
           )
         : null,
     [
@@ -782,6 +857,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       idealResult?.done,
       displayContext,
       currentReactionOverride,
+      userBuffOverrides,
     ]
   );
 
@@ -796,7 +872,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
             combo,
             idealArtifactSheets,
             displayContext,
-            team.reactionOverrides
+            team.reactionOverrides,
+            comboLinePartialBuffs
           )
         : { comboResult: null, comboDisplay: null },
     [
@@ -807,6 +884,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       idealResult?.done,
       displayContext,
       team.reactionOverrides,
+      comboLinePartialBuffs,
     ]
   );
 
@@ -1044,6 +1122,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         }
         comboResult={formulaMode === "combo" ? comboResult : null}
         comboLines={formulaMode === "combo" ? combo.lines : null}
+        comboId={formulaMode === "combo" ? combo.id : undefined}
         teamBuild={teamBuild}
         formulaMode={formulaMode}
         accountData={accountData}
