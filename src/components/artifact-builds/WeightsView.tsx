@@ -41,8 +41,16 @@ import { cn, getElementColor } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
-import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Loader2,
+  Scale,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 // ── Constants ──
@@ -885,10 +893,60 @@ export function WeightsView() {
   }
 
   if (entries.length === 0) {
+    const hasBuilds = groups.length > 0;
+    const hasTeams = allUserTeams.length > 0;
     return (
-      <ScrollLayout>
-        <div className="flex items-center justify-center h-64 text-muted-foreground text-sm">
-          {t.ui("batchAutoTune.noBuild")}
+      <ScrollLayout className="pb-10 pt-2">
+        <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
+          <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+              <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
+                <Scale className="w-12 h-12 text-primary opacity-80" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                {t.ui("batchAutoTune.noBuildTitle")}
+              </h3>
+              <p className="text-muted-foreground text-base max-w-md mx-auto">
+                {t.ui("batchAutoTune.noBuildDesc")}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {!hasBuilds && (
+                <Button asChild variant="default" size="lg" className="gap-2">
+                  <Link to="/artifact-filter?tab=configure">
+                    <ExternalLink className="w-4 h-4" />
+                    {t.ui("evaluation.goToBuilds")}
+                  </Link>
+                </Button>
+              )}
+              {!hasTeams && (
+                <Button
+                  asChild
+                  variant={hasBuilds ? "default" : "outline"}
+                  size="lg"
+                  className="gap-2"
+                >
+                  <Link to="/team-comp">
+                    <ExternalLink className="w-4 h-4" />
+                    {t.ui("batchAutoTune.goToTeams")}
+                  </Link>
+                </Button>
+              )}
+              {hasBuilds && hasTeams && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="gap-2"
+                  onClick={() => setViewFilter("all")}
+                >
+                  {t.ui("batchAutoTune.allBuilds")}
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </ScrollLayout>
     );

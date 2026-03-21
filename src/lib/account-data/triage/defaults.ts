@@ -12,4 +12,5 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   levelProtection: 12,
   equippedProtection: true,
   disabledFlexPatterns: [],
+  enabledFlexPatterns: [],
 };

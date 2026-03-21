@@ -95,6 +95,7 @@ export type TriageSettings = {
   levelProtection: number; // default 12 (artifacts >= this level are protected)
   equippedProtection: boolean; // default true
   disabledFlexPatterns: string[];
+  enabledFlexPatterns: string[];
 };
 
 // ---------------------------------------------------------------------------
@@ -135,4 +136,6 @@ export type FlexPattern = {
   requiredSubs: SubStat[];
   /** E2E rarity probability */
   rarity: number;
+  /** If true, this pattern is off by default and must be explicitly enabled */
+  defaultOff?: boolean;
 };

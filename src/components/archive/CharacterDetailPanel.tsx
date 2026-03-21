@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { BaseStatsTable } from "./BaseStatsTable";
 import { EffectCard } from "./EffectCard";
@@ -178,8 +178,6 @@ export function CharacterDetailPanel({
   const effectiveOwned = !unreleased && owned;
   const constellation = useConstellation(characterId);
 
-  const [unlockClicks, setUnlockClicks] = useState(0);
-
   if (!character) return null;
 
   return (
@@ -225,12 +223,10 @@ export function CharacterDetailPanel({
               </CharacterInfo>
             </div>
             {/* Base Stats — top-right on wide screens */}
-            {(!unreleased || unlockClicks >= 7) && (
-              <BaseStatsTable characterId={characterId} />
-            )}
+            {!unreleased && <BaseStatsTable characterId={characterId} />}
           </div>
 
-          {!unreleased || unlockClicks >= 7 ? (
+          {!unreleased ? (
             <>
               {/* Skills */}
               {skills && skills.length > 0 && (
@@ -277,10 +273,7 @@ export function CharacterDetailPanel({
               )}
             </>
           ) : (
-            <div
-              onClick={() => setUnlockClicks((c) => c + 1)}
-              className="flex flex-col items-center justify-center py-12 text-muted-foreground select-none cursor-default"
-            >
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground select-none">
               <Info className="h-12 w-12 mb-4 opacity-50" />
               <p className="text-lg font-medium">
                 {t.ui("archive.notReleased")}

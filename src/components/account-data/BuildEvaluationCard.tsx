@@ -1,4 +1,5 @@
 import { ArtifactDataHoverCard } from "@/components/account-data/ArtifactDataHoverCard";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import {
   Tooltip,
   TooltipContent,
@@ -120,7 +121,7 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Main stats row — icons instead of text labels */}
-      <div className="px-2.5 2xl:px-3 flex items-center gap-2 text-xs 2xl:text-sm text-foreground">
+      <div className="px-2.5 2xl:px-3 flex items-center gap-2 text-[11px] 2xl:text-xs text-foreground">
         {mainStatSlots.map((slot, i) => {
           const Icon = slotIcons[slot];
           return (
@@ -142,7 +143,7 @@ function BuildEvaluationCardComponent({
           <span
             key={stat}
             className={cn(
-              "inline-flex items-center px-1 2xl:px-1.5 py-0 rounded text-xs 2xl:text-sm font-medium leading-relaxed",
+              "inline-flex items-center px-1 2xl:px-1.5 py-0 rounded text-[11px] 2xl:text-xs font-medium leading-relaxed",
               weight >= 100
                 ? "bg-amber-500/20 text-amber-300"
                 : weight >= 75
@@ -176,27 +177,27 @@ function BuildEvaluationCardComponent({
                   slot={slot}
                   side="top"
                 >
-                  <img
-                    src={
+                  <ItemIcon
+                    imagePath={
                       artifactsById[slotEval.artifact!.setKey]?.imagePaths[
                         slot
                       ] || ""
                     }
-                    alt=""
-                    className={cn(
-                      "w-11 h-11 2xl:w-14 2xl:h-14 rounded object-cover",
-                      isOffSet && "ring-1 ring-amber-500/60"
-                    )}
+                    rarity={
+                      artifactsById[slotEval.artifact!.setKey]?.rarity ?? 5
+                    }
+                    size="sm"
+                    className={cn(isOffSet && "ring-1 ring-amber-500/60")}
                   />
                 </ArtifactDataHoverCard>
               ) : (
-                <div className="w-11 h-11 2xl:w-14 2xl:h-14 rounded border border-dashed border-border flex items-center justify-center">
+                <div className="w-12 h-12 rounded border border-dashed border-border flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">--</span>
                 </div>
               )}
 
               {/* Mini bar */}
-              <div className="w-11 h-1 2xl:w-14 2xl:h-1.5 bg-black/40 rounded-full overflow-hidden">
+              <div className="w-12 h-1 bg-black/40 rounded-full overflow-hidden">
                 <div
                   className={cn(
                     "h-full rounded-full",

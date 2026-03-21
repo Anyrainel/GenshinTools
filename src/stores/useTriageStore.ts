@@ -26,6 +26,17 @@ export const useTriageStore = create<TriageState>()(
       partialize: (state) => ({
         settings: state.settings,
       }),
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<TriageState>;
+        return {
+          ...currentState,
+          ...(persisted ?? {}),
+          settings: {
+            ...currentState.settings,
+            ...(persisted?.settings ?? {}),
+          },
+        };
+      },
     }
   )
 );

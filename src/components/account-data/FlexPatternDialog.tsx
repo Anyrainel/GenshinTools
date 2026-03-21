@@ -25,12 +25,25 @@ export function FlexPatternDialog({
   onSettingsChange: (s: TriageSettings) => void;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
+  const isPatternEnabled = (fp: FlexPattern) =>
+    fp.defaultOff
+      ? settings.enabledFlexPatterns.includes(fp.key)
+      : !settings.disabledFlexPatterns.includes(fp.key);
+
   const togglePattern = (fp: FlexPattern) => {
-    const disabled = settings.disabledFlexPatterns;
-    const next = disabled.includes(fp.key)
-      ? disabled.filter((k) => k !== fp.key)
-      : [...disabled, fp.key];
-    onSettingsChange({ ...settings, disabledFlexPatterns: next });
+    if (fp.defaultOff) {
+      const enabled = settings.enabledFlexPatterns;
+      const next = enabled.includes(fp.key)
+        ? enabled.filter((k) => k !== fp.key)
+        : [...enabled, fp.key];
+      onSettingsChange({ ...settings, enabledFlexPatterns: next });
+    } else {
+      const disabled = settings.disabledFlexPatterns;
+      const next = disabled.includes(fp.key)
+        ? disabled.filter((k) => k !== fp.key)
+        : [...disabled, fp.key];
+      onSettingsChange({ ...settings, disabledFlexPatterns: next });
+    }
   };
 
   return (
@@ -79,7 +92,7 @@ export function FlexPatternDialog({
 
           {/* Flex patterns */}
           {flexPatterns.map((fp) => {
-            const enabled = !settings.disabledFlexPatterns.includes(fp.key);
+            const enabled = isPatternEnabled(fp);
             return (
               <div
                 key={fp.key}

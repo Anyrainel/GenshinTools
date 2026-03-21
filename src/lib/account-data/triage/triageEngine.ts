@@ -86,8 +86,10 @@ export function runTriage(
 
   // 2. Build flex patterns
   const allFlex = buildFlexPatterns(rules);
-  const enabledFlex = allFlex.filter(
-    (fp) => !settings.disabledFlexPatterns.includes(fp.key)
+  const enabledFlex = allFlex.filter((fp) =>
+    fp.defaultOff
+      ? settings.enabledFlexPatterns.includes(fp.key)
+      : !settings.disabledFlexPatterns.includes(fp.key)
   );
 
   // 3. Count demand per embryoKey (unique characters)

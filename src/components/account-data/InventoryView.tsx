@@ -657,7 +657,7 @@ function WeaponGrid({
   onWeaponClick: (w: WeaponData & { equipped: boolean }) => void;
 }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-3 px-2">
+    <div className="flex flex-wrap gap-3 px-2">
       {weapons.map((w) => {
         const weaponInfo = weaponsById[w.key];
         const name = t.weaponName(w.key);
@@ -729,7 +729,7 @@ function ArtifactGrid({
   onArtifactClick: (a: ArtifactData & { equipped: boolean }) => void;
 }) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(72px,1fr))] gap-3 px-2">
+    <div className="flex flex-wrap gap-3 px-2">
       {artifacts.map((a) => {
         const artInfo = artifactsById[a.setKey];
         const badge = a.astralMark ? "⭐" : undefined;

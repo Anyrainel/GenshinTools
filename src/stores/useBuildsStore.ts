@@ -561,6 +561,20 @@ export const useBuildsStore = create<BuildsState>()(
 
         return state as BuildsState;
       },
+      // migrate() only runs on version mismatch. merge() runs on EVERY
+      // rehydration, ensuring idempotent build-level migrations
+      // (sandsWeights, normalizer, etc.) are applied even when the stored
+      // version already matches the configured version.
+      merge: (persistedState, currentState) => {
+        const merged = {
+          ...currentState,
+          ...(persistedState as object),
+        } as BuildsState;
+        for (const build of Object.values(merged.builds)) {
+          migrateBuild(build);
+        }
+        return merged;
+      },
     }
   )
 );

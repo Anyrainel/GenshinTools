@@ -36,12 +36,33 @@ export function sortSubs(subs: SubStat[]): SubStat[] {
 // ---------------------------------------------------------------------------
 
 type FlexSub = SubStat | "flat";
-type RawFlex = [Slot, (MainStat | "elemental%")[], FlexSub[]];
+type RawFlex = [Slot, (MainStat | "elemental%")[], FlexSub[], boolean?];
 
 const CURATED: RawFlex[] = [
+  // ── Flower ──────────────────────────────────────────────────────────────
+  ["flower", ["hp"], ["cr", "cd", "atk%", "atk"]],
+  ["flower", ["hp"], ["cr", "cd", "def%", "def"]],
+  ["flower", ["hp"], ["cr", "cd", "atk%", "er"]],
+  ["flower", ["hp"], ["cr", "cd", "hp%", "er"]],
+  ["flower", ["hp"], ["cr", "cd", "def%", "er"]],
+  ["flower", ["hp"], ["cr", "cd", "atk%", "em"]],
+  ["flower", ["hp"], ["cr", "cd", "hp%", "em"]],
+  ["flower", ["hp"], ["cr", "cd", "def%", "em"]],
+
+  // ── Plume ──────────────────────────────────────────────────────────────
+  ["plume", ["atk"], ["cr", "cd", "hp%", "hp"]],
+  ["plume", ["atk"], ["cr", "cd", "def%", "def"]],
+  ["plume", ["atk"], ["cr", "cd", "atk%", "er"]],
+  ["plume", ["atk"], ["cr", "cd", "hp%", "er"]],
+  ["plume", ["atk"], ["cr", "cd", "def%", "er"]],
+  ["plume", ["atk"], ["cr", "cd", "atk%", "em"]],
+  ["plume", ["atk"], ["cr", "cd", "hp%", "em"]],
+  ["plume", ["atk"], ["cr", "cd", "def%", "em"]],
+
   // ── Sands ──────────────────────────────────────────────────────────────
   ["sands", ["em"], ["cr", "cd"]],
   ["sands", ["er"], ["cr", "cd"]],
+  ["sands", ["atk%", "hp%", "def%"], ["cr", "cd"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "flat"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
@@ -53,6 +74,7 @@ const CURATED: RawFlex[] = [
   ["goblet", ["elemental%"], ["cr", "cd"]],
   ["goblet", ["phys%"], ["cr", "cd"]],
   ["goblet", ["em"], ["cr", "cd"]],
+  ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd"]],
   ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd", "flat"]],
   ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
   ["goblet", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
@@ -68,9 +90,14 @@ const CURATED: RawFlex[] = [
   ["circlet", ["cd"], ["cr", "def%"]],
   ["circlet", ["cd"], ["cr", "hp%"]],
   ["circlet", ["cd"], ["cr", "em"]],
+  ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd"], true],
+  ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "flat"]],
+  ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
+  ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
   ["circlet", ["heal%"], ["atk%", "er"]],
   ["circlet", ["heal%"], ["hp%", "er"]],
   ["circlet", ["heal%"], ["def%", "er"]],
+  ["circlet", ["heal%"], ["cr", "cd"], true],
   ["circlet", ["atk%"], ["cr", "er", "atk"]],
 ];
 
@@ -154,7 +181,7 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
   const slotOrder = Object.fromEntries(allSlots.map((s, i) => [s, i]));
   const results: FlexPattern[] = [];
 
-  for (const [slot, mainStats, subs] of CURATED) {
+  for (const [slot, mainStats, subs, defaultOff] of CURATED) {
     for (const ms of expandMainStats(mainStats)) {
       const resolved = resolveSubs(subs, ms);
       if (!resolved) continue;
@@ -164,7 +191,15 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
       if (rarity < 0) continue;
 
       const key = `flex:${slot}:${ms}:${sorted.join(",")}`;
-      results.push({ key, slot, mainStat: ms, requiredSubs: sorted, rarity });
+      const pattern: FlexPattern = {
+        key,
+        slot,
+        mainStat: ms,
+        requiredSubs: sorted,
+        rarity,
+      };
+      if (defaultOff) pattern.defaultOff = true;
+      results.push(pattern);
     }
   }
 

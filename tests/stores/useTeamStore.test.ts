@@ -1,4 +1,9 @@
-import { useTeamStore } from "@/stores/useTeamStore";
+import {
+  mergeTeamStore,
+  migrateTeamStore,
+  useTeamStore,
+} from "@/stores/useTeamStore";
+import type { Team } from "@/stores/useTeamStore";
 import { beforeEach, describe, expect, it } from "vitest";
 
 // Reset store before each test
@@ -238,5 +243,287 @@ describe("useTeamStore", () => {
 
       expect(useTeamStore.getState().teams).toEqual([]);
     });
+  });
+});
+
+// ─── Migration & Merge Tests ───
+
+/** Minimal v0 team shape — only the fields that existed in the original format. */
+function makeV0Team(overrides?: Record<string, unknown>) {
+  return {
+    id: "team-1",
+    name: "Test",
+    characters: ["hu_tao", "xingqiu", "zhongli", "yelan"],
+    weapons: ["staff_of_homa", null, null, null],
+    artifacts: [null, null, null, null],
+    opts: {},
+    minEr: {},
+    selectedFormula: null,
+    optimizationResult: null,
+    ...overrides,
+  };
+}
+
+describe("migrateTeamStore", () => {
+  it("migrates v0 → current: adds reactions", () => {
+    const state = {
+      teams: [makeV0Team()],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 0);
+
+    expect(result.teams[0].reactions).toEqual([]);
+  });
+
+  it("migrates v1 → current: adds combos, reactionOverrides, selectedCombo", () => {
+    const state = {
+      teams: [makeV0Team({ reactions: ["vaporize"] })],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 1);
+    const team = result.teams[0] as Team;
+
+    expect(team.combos).toEqual([]);
+    expect(team.reactionOverrides).toEqual({});
+    expect(team.selectedCombo).toBeNull();
+    // reactions should be preserved
+    expect(team.reactions).toEqual(["vaporize"]);
+  });
+
+  it("migrates v2 → current: adds formulaMode", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 2);
+    const team = result.teams[0] as Team;
+
+    expect(team.formulaMode).toBe("single");
+  });
+
+  it("migrates v3 → current: renames targetEr/targetCr to minEr/minCr", () => {
+    const state = {
+      teams: [
+        makeV0Team({
+          reactions: [],
+          combos: [],
+          reactionOverrides: {},
+          selectedCombo: null,
+          formulaMode: "single",
+          targetEr: { hu_tao: 120 },
+          targetCr: { hu_tao: 70 },
+        }),
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    // Remove the default minEr so the legacy fields are picked up
+    // biome-ignore lint/performance/noDelete: test cleanup
+    delete (state.teams[0] as Record<string, unknown>).minEr;
+    const result = migrateTeamStore(state, 3);
+    const team = result.teams[0] as Team;
+
+    expect(team.minEr).toEqual({ hu_tao: 120 });
+    expect(team.minCr).toEqual({ hu_tao: 70 });
+    // Legacy fields should be removed
+    expect(
+      (team as unknown as Record<string, unknown>).targetEr
+    ).toBeUndefined();
+    expect(
+      (team as unknown as Record<string, unknown>).targetCr
+    ).toBeUndefined();
+  });
+
+  it("full migration from v0 applies all steps", () => {
+    const state = {
+      teams: [
+        {
+          id: "old-team",
+          name: "Legacy",
+          characters: ["ganyu", null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          opts: {},
+          selectedFormula: null,
+          optimizationResult: null,
+          targetEr: { ganyu: 130 },
+          targetCr: {},
+        },
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = migrateTeamStore(state, 0);
+    const team = result.teams[0] as Team;
+
+    // v0→v1: reactions
+    expect(team.reactions).toEqual([]);
+    // v1→v2: combos, reactionOverrides
+    expect(team.combos).toEqual([]);
+    expect(team.reactionOverrides).toEqual({});
+    expect(team.selectedCombo).toBeNull();
+    // v2→v3: formulaMode
+    expect(team.formulaMode).toBe("single");
+    // v3→v4: targetEr → minEr
+    expect(team.minEr).toEqual({ ganyu: 130 });
+    expect(team.minCr).toEqual({});
+  });
+});
+
+describe("mergeTeamStore", () => {
+  /** Simulate the current store default state (as if the store just initialized). */
+  const defaultState = useTeamStore.getState();
+
+  it("defaults missing array/object fields on persisted teams", () => {
+    // Simulate persisted data from before combos/reactionOverrides/formulaMode were added
+    const persisted = {
+      teams: [
+        {
+          id: "team-old",
+          name: "OldTeam",
+          characters: ["hu_tao", "xingqiu", null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          selectedFormula: null,
+          optimizationResult: null,
+          // Missing: reactions, reactionOverrides, combos, selectedCombo,
+          //          formulaMode, minEr, minCr, opts
+        },
+      ],
+      activeTeamId: "team-old",
+      author: "",
+      description: "",
+    };
+
+    const result = mergeTeamStore(persisted, defaultState);
+    const team = result.teams[0];
+
+    expect(team.reactions).toEqual([]);
+    expect(team.reactionOverrides).toEqual({});
+    expect(team.combos).toEqual([]);
+    expect(team.selectedCombo).toBeNull();
+    expect(team.formulaMode).toBe("single");
+    expect(team.minEr).toEqual({});
+    expect(team.minCr).toEqual({});
+    expect(team.opts).toEqual({});
+
+    // team.combos.map() should not throw
+    expect(() => team.combos.map((c) => c.id)).not.toThrow();
+  });
+
+  it("preserves existing fields when they are already set", () => {
+    const persisted = {
+      teams: [
+        {
+          id: "team-full",
+          name: "Full",
+          characters: ["ganyu", null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          reactions: ["melt"] as string[],
+          reactionOverrides: { "ganyu.charged": { reaction: "melt" } },
+          combos: [{ id: "c1", label: { zh: "测试", en: "test" }, lines: [] }],
+          selectedCombo: "c1",
+          formulaMode: "combo" as const,
+          minEr: { ganyu: 100 },
+          minCr: { ganyu: 60 },
+          opts: { someOpt: true },
+          selectedFormula: null,
+          optimizationResult: null,
+        },
+      ],
+      activeTeamId: "team-full",
+      author: "tester",
+      description: "desc",
+    };
+
+    const result = mergeTeamStore(persisted, defaultState);
+    const team = result.teams[0];
+
+    expect(team.reactions).toEqual(["melt"]);
+    expect(team.combos).toHaveLength(1);
+    expect(team.combos[0].id).toBe("c1");
+    expect(team.selectedCombo).toBe("c1");
+    expect(team.formulaMode).toBe("combo");
+    expect(team.minEr).toEqual({ ganyu: 100 });
+    expect(result.author).toBe("tester");
+  });
+
+  it("handles empty teams array", () => {
+    const persisted = {
+      teams: [],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+    const result = mergeTeamStore(persisted, defaultState);
+    expect(result.teams).toEqual([]);
+  });
+
+  it("handles multiple teams with mixed field presence", () => {
+    const persisted = {
+      teams: [
+        // Team with all fields
+        {
+          id: "t1",
+          name: "Complete",
+          characters: [null, null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          reactions: [],
+          reactionOverrides: {},
+          combos: [],
+          selectedCombo: null,
+          formulaMode: "single" as const,
+          minEr: {},
+          minCr: {},
+          opts: {},
+          selectedFormula: null,
+          optimizationResult: null,
+        },
+        // Team missing most fields (pre-migration data)
+        {
+          id: "t2",
+          name: "Incomplete",
+          characters: ["diluc", null, null, null],
+          weapons: [null, null, null, null],
+          artifacts: [null, null, null, null],
+          selectedFormula: null,
+          optimizationResult: null,
+        },
+      ],
+      activeTeamId: null,
+      author: "",
+      description: "",
+    };
+
+    const result = mergeTeamStore(persisted, defaultState);
+
+    // First team: fields preserved
+    expect(result.teams[0].combos).toEqual([]);
+    // Second team: fields defaulted
+    expect(result.teams[1].combos).toEqual([]);
+    expect(result.teams[1].reactions).toEqual([]);
+    expect(result.teams[1].formulaMode).toBe("single");
+    expect(result.teams[1].opts).toEqual({});
+
+    // Both should be safe to call .map() on combos
+    expect(() => result.teams[0].combos.map((c) => c)).not.toThrow();
+    expect(() => result.teams[1].combos.map((c) => c)).not.toThrow();
   });
 });

@@ -67,29 +67,39 @@ function normalizeHalfSetId(
  * Idempotent — skips fields already present.
  */
 function migrateWeightsAndNormalizer(build: Build): void {
-  // Migrate legacy sands/goblet/circlet arrays → weighted main stats
+  // Migrate legacy sands/goblet/circlet arrays → weighted main stats.
+  // Use Array.isArray to guard against non-array values from old persisted data
+  // (zustand persist only calls migrate on version change, so builds persisted
+  // at the current version may lack these fields entirely).
   const legacy = build as Record<string, unknown>;
-  if (!build.sandsWeights || build.sandsWeights.length === 0) {
-    const old = (legacy.sands ?? []) as MainStat[];
+  if (!Array.isArray(build.sandsWeights) || build.sandsWeights.length === 0) {
+    const old = Array.isArray(legacy.sands) ? (legacy.sands as MainStat[]) : [];
     build.sandsWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
     // Only delete legacy field after successful migration
-    delete legacy.sands;
+    legacy.sands = undefined;
   }
-  if (!build.gobletWeights || build.gobletWeights.length === 0) {
-    const old = (legacy.goblet ?? []) as MainStat[];
+  if (!Array.isArray(build.gobletWeights) || build.gobletWeights.length === 0) {
+    const old = Array.isArray(legacy.goblet)
+      ? (legacy.goblet as MainStat[])
+      : [];
     build.gobletWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
-    delete legacy.goblet;
+    legacy.goblet = undefined;
   }
-  if (!build.circletWeights || build.circletWeights.length === 0) {
-    const old = (legacy.circlet ?? []) as MainStat[];
+  if (
+    !Array.isArray(build.circletWeights) ||
+    build.circletWeights.length === 0
+  ) {
+    const old = Array.isArray(legacy.circlet)
+      ? (legacy.circlet as MainStat[])
+      : [];
     build.circletWeights = old.map(
       (stat): WeightedMainStat => ({ stat, weight: 100 })
     );
-    delete legacy.circlet;
+    legacy.circlet = undefined;
   }
 
   // Normalizer: compute from substat weights + best main stat weights.

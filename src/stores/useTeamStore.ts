@@ -13,6 +13,80 @@ import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 
+/**
+ * Migrate persisted TeamState from an older version to the current format.
+ * Exported for testability — called by zustand persist's `migrate` option.
+ */
+export function migrateTeamStore(
+  persistedState: unknown,
+  version: number
+): TeamState {
+  const state = persistedState as TeamState;
+  if (version < 1) {
+    state.teams = state.teams.map((t) => ({
+      ...t,
+      reactions: (t as Team).reactions || [],
+    }));
+  }
+  if (version < 2) {
+    state.teams = state.teams.map((t) => ({
+      ...t,
+      reactionOverrides: (t as Team).reactionOverrides ?? {},
+      combos: (t as Team).combos ?? [],
+      selectedCombo: (t as Team).selectedCombo ?? null,
+    }));
+  }
+  if (version < 3) {
+    state.teams = state.teams.map((t) => ({
+      ...t,
+      formulaMode: (t as Team).formulaMode ?? "single",
+    }));
+  }
+  if (version < 4) {
+    // Rename targetEr/targetCr → minEr/minCr
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
+    state.teams = state.teams.map((t: any) => {
+      const { targetEr, targetCr, ...rest } = t;
+      return {
+        ...rest,
+        minEr: t.minEr ?? targetEr ?? {},
+        minCr: t.minCr ?? targetCr ?? {},
+      };
+    });
+  }
+  return state;
+}
+
+/**
+ * Merge persisted state with current defaults on EVERY rehydration.
+ * Ensures all teams have required fields that may be missing from
+ * persisted data stored before the field was added.
+ * Exported for testability — called by zustand persist's `merge` option.
+ */
+export function mergeTeamStore(
+  persistedState: unknown,
+  currentState: TeamState
+): TeamState {
+  const merged = {
+    ...currentState,
+    ...(persistedState as object),
+  } as TeamState;
+  if (Array.isArray(merged.teams)) {
+    merged.teams = merged.teams.map((t) => ({
+      ...t,
+      reactions: t.reactions ?? [],
+      reactionOverrides: t.reactionOverrides ?? {},
+      combos: t.combos ?? [],
+      selectedCombo: t.selectedCombo ?? null,
+      formulaMode: t.formulaMode ?? "single",
+      minEr: t.minEr ?? {},
+      minCr: t.minCr ?? {},
+      opts: t.opts ?? {},
+    }));
+  }
+  return merged;
+}
+
 export interface OptimizationResult {
   artifacts: Record<string, ArtifactData>;
   damage: DamageResult;
@@ -301,42 +375,8 @@ export const useTeamStore = create<TeamState>()(
     {
       name: "team-builder-storage",
       version: 4,
-      migrate: (persisted, version) => {
-        const state = persisted as TeamState;
-        if (version < 1) {
-          state.teams = state.teams.map((t) => ({
-            ...t,
-            reactions: (t as Team).reactions || [],
-          }));
-        }
-        if (version < 2) {
-          state.teams = state.teams.map((t) => ({
-            ...t,
-            reactionOverrides: (t as Team).reactionOverrides ?? {},
-            combos: (t as Team).combos ?? [],
-            selectedCombo: (t as Team).selectedCombo ?? null,
-          }));
-        }
-        if (version < 3) {
-          state.teams = state.teams.map((t) => ({
-            ...t,
-            formulaMode: (t as Team).formulaMode ?? "single",
-          }));
-        }
-        if (version < 4) {
-          // Rename targetEr/targetCr → minEr/minCr
-          // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
-          state.teams = state.teams.map((t: any) => {
-            const { targetEr, targetCr, ...rest } = t;
-            return {
-              ...rest,
-              minEr: t.minEr ?? targetEr ?? {},
-              minCr: t.minCr ?? targetCr ?? {},
-            };
-          });
-        }
-        return persisted as TeamState;
-      },
+      migrate: migrateTeamStore,
+      merge: mergeTeamStore,
     }
   )
 );
