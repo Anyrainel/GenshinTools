@@ -366,14 +366,14 @@ class Gorou extends CharacterBase {
     // E/Q: flat DEF — Lv10 371, Lv13 (C3+) 438
     const defFlat = this.constellation >= 3 ? 438 : 371;
     buffs.push(
-      new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "teamOnField" }, [
         { key: "def", value: defFlat },
       ])
     );
     // E/Q: 3+ Geo → Geo DMG +15%
     if (this.geoCount >= 3) {
       buffs.push(
-        new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "E", ["E", "Q"]), { receiver: "teamOnField" }, [
           { key: "geo%", value: 0.15 },
         ])
       );
@@ -484,7 +484,7 @@ class KujouSara extends CharacterBase {
     // C5 boosts E talent → Lv13 ratio 91%
     new ScalingBuff(
       cbs(this, "E", ["E", "Q"]),
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "baseAtk",
       "atk",
@@ -495,7 +495,7 @@ class KujouSara extends CharacterBase {
       ? [
           new StatBuff(
             cbs(this, "C6", ["E", "Q"]),
-            { receiver: "onField", filter: { elements: ["Electro"] } },
+            { receiver: "teamOnField", filter: { elements: ["Electro"] } },
             [{ key: "cd", value: 0.6 }]
           ),
         ]

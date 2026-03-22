@@ -154,7 +154,7 @@ describe("isBuffApplicable — buff routing", () => {
   // Helper: create a buff from a given owner with a given receiver
   const makeBuff = (
     ownerId: string,
-    receiver: "self" | "selfOffField" | "selfOnField" | "onField" | "team"
+    receiver: "self" | "selfOffField" | "selfOnField" | "teamOnField" | "team"
   ) =>
     new StatBuff(
       { type: "character", id: ownerId, origin: "C1" },
@@ -165,34 +165,19 @@ describe("isBuffApplicable — buff routing", () => {
   describe('receiver: "self"', () => {
     it("applies to buff owner's own sheet", () => {
       expect(
-        isBuffApplicable(
-          makeBuff("hu_tao", "self"),
-          "hu_tao",
-          "hu_tao",
-          "hu_tao"
-        )
+        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", true)
       ).toBe(true);
     });
 
     it("does not apply to another character's sheet", () => {
       expect(
-        isBuffApplicable(
-          makeBuff("hu_tao", "self"),
-          "hu_tao",
-          "xingqiu",
-          "hu_tao"
-        )
+        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "xingqiu", false)
       ).toBe(false);
     });
 
-    it("applies regardless of calcTarget", () => {
+    it("applies regardless of field state", () => {
       expect(
-        isBuffApplicable(
-          makeBuff("hu_tao", "self"),
-          "hu_tao",
-          "hu_tao",
-          "xingqiu"
-        )
+        isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", false)
       ).toBe(true);
       expect(
         isBuffApplicable(makeBuff("hu_tao", "self"), "hu_tao", "hu_tao", null)
@@ -201,15 +186,26 @@ describe("isBuffApplicable — buff routing", () => {
   });
 
   describe('receiver: "selfOffField"', () => {
-    it("applies to buff owner's own sheet (treated as self)", () => {
+    it("applies to owner when off-field", () => {
       expect(
         isBuffApplicable(
           makeBuff("xingqiu", "selfOffField"),
           "xingqiu",
           "xingqiu",
-          "hu_tao"
+          false
         )
       ).toBe(true);
+    });
+
+    it("does not apply to owner when on-field", () => {
+      expect(
+        isBuffApplicable(
+          makeBuff("xingqiu", "selfOffField"),
+          "xingqiu",
+          "xingqiu",
+          true
+        )
+      ).toBe(false);
     });
 
     it("does not apply to others", () => {
@@ -218,47 +214,58 @@ describe("isBuffApplicable — buff routing", () => {
           makeBuff("xingqiu", "selfOffField"),
           "xingqiu",
           "hu_tao",
-          "hu_tao"
+          true
+        )
+      ).toBe(false);
+    });
+
+    it("is skipped during construction (selfIsOnField=null)", () => {
+      expect(
+        isBuffApplicable(
+          makeBuff("xingqiu", "selfOffField"),
+          "xingqiu",
+          "xingqiu",
+          null
         )
       ).toBe(false);
     });
   });
 
   describe('receiver: "selfOnField"', () => {
-    it("applies when the buff owner IS the calc target", () => {
+    it("applies when the buff owner is on-field", () => {
       expect(
         isBuffApplicable(
           makeBuff("hu_tao", "selfOnField"),
           "hu_tao",
           "hu_tao",
-          "hu_tao"
+          true
         )
       ).toBe(true);
     });
 
-    it("does not apply when buff owner is NOT the calc target", () => {
+    it("does not apply when buff owner is off-field", () => {
       expect(
         isBuffApplicable(
           makeBuff("hu_tao", "selfOnField"),
           "hu_tao",
           "hu_tao",
-          "xingqiu"
+          false
         )
       ).toBe(false);
     });
 
-    it("does not apply to another character's sheet even when owner is calc target", () => {
+    it("does not apply to another character's sheet even when on-field", () => {
       expect(
         isBuffApplicable(
           makeBuff("hu_tao", "selfOnField"),
           "hu_tao",
           "xingqiu",
-          "hu_tao"
+          true
         )
       ).toBe(false);
     });
 
-    it("is skipped during construction (calcTarget=null)", () => {
+    it("is skipped during construction (selfIsOnField=null)", () => {
       expect(
         isBuffApplicable(
           makeBuff("hu_tao", "selfOnField"),
@@ -270,35 +277,34 @@ describe("isBuffApplicable — buff routing", () => {
     });
   });
 
-  describe('receiver: "onField"', () => {
-    it("applies to the calc target regardless of buff owner", () => {
-      // Bennett buff → applies to hu_tao who is calc target
+  describe('receiver: "teamOnField"', () => {
+    it("applies when character is on-field regardless of buff owner", () => {
+      // Bennett buff → applies to hu_tao who is on-field
       expect(
         isBuffApplicable(
-          makeBuff("bennett", "onField"),
+          makeBuff("bennett", "teamOnField"),
           "bennett",
           "hu_tao",
-          "hu_tao"
+          true
         )
       ).toBe(true);
     });
 
-    it("does not apply to non-calc-target characters", () => {
-      // Bennett buff → does not apply to xingqiu's sheet when hu_tao is calc target
+    it("does not apply when character is off-field", () => {
       expect(
         isBuffApplicable(
-          makeBuff("bennett", "onField"),
+          makeBuff("bennett", "teamOnField"),
           "bennett",
           "xingqiu",
-          "hu_tao"
+          false
         )
       ).toBe(false);
     });
 
-    it("is skipped during construction (calcTarget=null)", () => {
+    it("is skipped during construction (selfIsOnField=null)", () => {
       expect(
         isBuffApplicable(
-          makeBuff("bennett", "onField"),
+          makeBuff("bennett", "teamOnField"),
           "bennett",
           "hu_tao",
           null
@@ -308,21 +314,16 @@ describe("isBuffApplicable — buff routing", () => {
   });
 
   describe('receiver: "team"', () => {
-    it("always applies regardless of owner/self/target", () => {
+    it("always applies regardless of owner/self/field state", () => {
       expect(
-        isBuffApplicable(
-          makeBuff("zhongli", "team"),
-          "zhongli",
-          "hu_tao",
-          "hu_tao"
-        )
+        isBuffApplicable(makeBuff("zhongli", "team"), "zhongli", "hu_tao", true)
       ).toBe(true);
       expect(
         isBuffApplicable(
           makeBuff("zhongli", "team"),
           "zhongli",
           "xingqiu",
-          "hu_tao"
+          false
         )
       ).toBe(true);
       expect(
@@ -351,7 +352,7 @@ describe("isBuffApplicable — faction scoping", () => {
         makeBuffWithFactions("clorinde", "team", ["Hexerei"]),
         "clorinde",
         "clorinde",
-        "clorinde",
+        true,
         undefined,
         "Hexerei"
       )
@@ -364,7 +365,7 @@ describe("isBuffApplicable — faction scoping", () => {
         makeBuffWithFactions("clorinde", "team", ["Hexerei"]),
         "clorinde",
         "hu_tao",
-        "hu_tao",
+        true,
         undefined,
         "None"
       )
@@ -378,7 +379,7 @@ describe("isBuffApplicable — faction scoping", () => {
       [{ key: "atk%", value: 0.1 }]
     );
     expect(
-      isBuffApplicable(buff, "clorinde", "hu_tao", "hu_tao", undefined, "None")
+      isBuffApplicable(buff, "clorinde", "hu_tao", true, undefined, "None")
     ).toBe(true);
   });
 });
@@ -386,7 +387,7 @@ describe("isBuffApplicable — faction scoping", () => {
 describe("isBuffApplicable — charId scoping", () => {
   const makeBuffWithCharId = (
     ownerId: string,
-    receiver: "onField" | "team",
+    receiver: "teamOnField" | "team",
     charId: string
   ) =>
     new StatBuff(
@@ -398,10 +399,10 @@ describe("isBuffApplicable — charId scoping", () => {
   it("charId-scoped onField buff applies only to matching character", () => {
     expect(
       isBuffApplicable(
-        makeBuffWithCharId("raiden_shogun", "onField", "hu_tao"),
+        makeBuffWithCharId("raiden_shogun", "teamOnField", "hu_tao"),
         "raiden_shogun",
         "hu_tao",
-        "hu_tao"
+        true
       )
     ).toBe(true);
   });
@@ -409,10 +410,10 @@ describe("isBuffApplicable — charId scoping", () => {
   it("charId-scoped onField buff does NOT apply to non-matching character", () => {
     expect(
       isBuffApplicable(
-        makeBuffWithCharId("raiden_shogun", "onField", "hu_tao"),
+        makeBuffWithCharId("raiden_shogun", "teamOnField", "hu_tao"),
         "raiden_shogun",
         "xingqiu",
-        "xingqiu"
+        true
       )
     ).toBe(false);
   });
@@ -423,7 +424,7 @@ describe("isBuffApplicable — charId scoping", () => {
         makeBuffWithCharId("raiden_shogun", "team", "xingqiu"),
         "raiden_shogun",
         "xingqiu",
-        "hu_tao"
+        false
       )
     ).toBe(true);
   });
@@ -434,7 +435,7 @@ describe("isBuffApplicable — charId scoping", () => {
         makeBuffWithCharId("raiden_shogun", "team", "xingqiu"),
         "raiden_shogun",
         "hu_tao",
-        "hu_tao"
+        true
       )
     ).toBe(false);
   });
@@ -442,12 +443,10 @@ describe("isBuffApplicable — charId scoping", () => {
   it("buff without charId applies regardless of target", () => {
     const buff = new StatBuff(
       { type: "character", id: "raiden_shogun", origin: "E" },
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [{ key: "dmg%", value: 0.27 }]
     );
-    expect(isBuffApplicable(buff, "raiden_shogun", "hu_tao", "hu_tao")).toBe(
-      true
-    );
+    expect(isBuffApplicable(buff, "raiden_shogun", "hu_tao", true)).toBe(true);
   });
 });
 

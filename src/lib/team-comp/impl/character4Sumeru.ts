@@ -52,6 +52,8 @@ class Sethos extends CharacterBase {
   protected readonly formulaMap = (() => {
     const atkMult = this.constellation >= 3 ? 2.975 : 2.52;
     const emMult = this.constellation >= 3 ? 2.859 : 2.422;
+    // Q Dusk Bolt: DMG increase based on EM, considered Charged ATK DMG
+    const duskBoltEmMult = this.constellation >= 5 ? 4.168 : 3.531;
     return {
       "sethos-shadowpiercer": {
         label: { zh: "重击", en: "CA" },
@@ -66,12 +68,24 @@ class Sethos extends CharacterBase {
           },
         ],
       },
+      "sethos-dusk-bolt": {
+        label: { zh: "Q瞑弦矢", en: "Q Dusk Bolt" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              duskBoltEmMult,
+              { element: "Electro", ability: "charge", reaction: "none" },
+              "em"
+            ),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: C E 3[C] — 4 Shadowpiercing Shots per 15s cycle (KQM)
   protected override get defaultCombo() {
-    return { "sethos-shadowpiercer": 4 };
+    return { "sethos-shadowpiercer": 4, "sethos-dusk-bolt": 0 };
   }
 }
 
@@ -132,12 +146,32 @@ class Kaveh extends CharacterBase {
           },
         ],
       },
+      // C6: Pairidaeza's Light — 61.8% ATK as Dendro DMG every 3s during Q
+      ...(this.constellation >= 6
+        ? {
+            "kaveh-c6-pairidaeza": {
+              label: { zh: "6命天园之光", en: "C6 Pairidaeza's Light" },
+              parts: [
+                {
+                  formula: new DirectFormula(0.618, {
+                    element: "Dendro",
+                    ability: "burst",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 
   // Rotation: Q E N# E N# E — on-field Bloom driver, ~5 cores detonated (KQM)
   protected override get defaultCombo() {
-    return { "kaveh-core": 5 };
+    return {
+      "kaveh-core": 5,
+      ...(this.constellation >= 6 ? { "kaveh-c6-pairidaeza": 0 } : {}),
+    };
   }
 }
 
@@ -163,7 +197,7 @@ class Faruzan extends CharacterBase {
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
-        receiver: "onField",
+        receiver: "teamOnField",
         filter: {
           elements: ["Anemo"],
           abilities: ["normal", "charge", "plunge", "skill", "burst"],
@@ -189,16 +223,26 @@ class Faruzan extends CharacterBase {
 
   protected readonly formulaMap = (() => {
     const vortexMult = this.constellation >= 3 ? 2.295 : 1.944;
+    const polyhedronMult = this.constellation >= 3 ? 3.162 : 2.678;
+    const eTag = {
+      element: "Anemo" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
     return {
       "faruzan-vortex": {
-        label: { zh: "E伤害", en: "E Skill" },
+        label: { zh: "E风压坍陷风涡", en: "E Collapse Vortex" },
         parts: [
           {
-            formula: new DirectFormula(vortexMult, {
-              element: "Anemo",
-              ability: "skill",
-              reaction: "none",
-            }),
+            formula: new DirectFormula(vortexMult, eTag),
+          },
+        ],
+      },
+      "faruzan-polyhedron": {
+        label: { zh: "E多方面体", en: "E Polyhedron" },
+        parts: [
+          {
+            formula: new DirectFormula(polyhedronMult, eTag),
           },
         ],
       },
@@ -257,13 +301,13 @@ class Candace extends CharacterBase {
     // Q: Prayer of Crimson Crown — on-field Normal ATK Elemental DMG +20%
     new StatBuff(
       cbs(this, "Q", ["Q"]),
-      { receiver: "onField", filter: { abilities: ["normal"] } },
+      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
       [{ key: "dmg%", value: 0.2 }]
     ),
     // P2: Per 1000 Max HP, Normal ATK Elemental DMG +0.5%
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "onField", filter: { abilities: ["normal"] } },
+      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
       [],
       "hp",
       "dmg%",
@@ -304,5 +348,23 @@ class Collei extends CharacterBase {
       : []),
   ];
 
-  protected readonly formulaMap = {};
+  protected readonly formulaMap = {
+    // P1: Sprout — 40% ATK Dendro DMG per second for 3s, considered Elemental Skill DMG
+    "collei-sprout": {
+      label: { zh: "P1新叶", en: "P1 Sprout" },
+      parts: [
+        {
+          formula: new DirectFormula(0.4, {
+            element: "Dendro",
+            ability: "skill",
+            reaction: "none",
+          }),
+        },
+      ],
+    },
+  };
+
+  protected override get defaultCombo() {
+    return { "collei-sprout": 0 };
+  }
 }

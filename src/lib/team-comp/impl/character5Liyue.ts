@@ -355,7 +355,7 @@ class Xianyun extends CharacterBase {
       // Q starts with 8 Adeptal Assistance stacks, consumed 1 per plunge
       new ScalingBuff(
         { ...cbs(this, "P2/C2", ["Q"]), maxStacks: 8 },
-        { receiver: "onField", filter: { abilities: ["plunge"] } },
+        { receiver: "teamOnField", filter: { abilities: ["plunge"] } },
         [],
         "atk",
         "baseDmg",
@@ -429,7 +429,7 @@ class Baizhu extends CharacterBase {
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
-        receiver: "onField",
+        receiver: "teamOnField",
         filter: {
           reactions: ["burning", "bloom", "hyperbloom", "burgeon"],
         },
@@ -444,7 +444,7 @@ class Baizhu extends CharacterBase {
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
-        receiver: "onField",
+        receiver: "teamOnField",
         filter: { reactions: ["aggravate", "spread"] },
       },
       [],
@@ -457,7 +457,7 @@ class Baizhu extends CharacterBase {
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
       {
-        receiver: "onField",
+        receiver: "teamOnField",
         filter: { reactions: ["lunarBloom"] },
       },
       [],
@@ -544,7 +544,7 @@ class Yelan extends CharacterBase {
         { key: "hp%", value: p1Bonus },
       ]),
       // P2: Q ramps DMG% for on-field, avg 25% (up to 50%)
-      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "teamOnField" }, [
         { key: "dmg%", value: 0.25 },
       ]),
     ];
@@ -687,19 +687,36 @@ class Yelan extends CharacterBase {
   }
 }
 
-@RegisterCharacter("xiao")
+const xiaoOption = {
+  label: { zh: "固有天赋2：E叠层数", en: "P2: E DMG Stacks" },
+  choices: [
+    {
+      value: "2",
+      label: { zh: "2层（30%）", en: "2 stacks (30%)" },
+    },
+    {
+      value: "3",
+      label: { zh: "3层（45%）", en: "3 stacks (45%)" },
+    },
+  ] as const,
+  default: "2",
+} satisfies OptionDef;
+
+@RegisterCharacter("xiao", xiaoOption)
 class Xiao extends CharacterBase {
+  private readonly p2Stacks = Number(resolveOption(xiaoOption, this.option));
+
   readonly buffs = [
     // P1: During Q, all DMG +5%, +5% per 3s, max 25%
     // Average over 15s duration ≈ 15%
     new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "selfOnField" }, [
       { key: "dmg%", value: 0.15 },
     ]),
-    // P2: Using E increases E DMG by 15% (max 3 stacks). Average assumption: 30%
+    // P2: Using E increases E DMG by 15% per stack (max 3 stacks)
     new StatBuff(
       cbs(this, "P2", ["E"]),
       { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-      [{ key: "dmg%", value: 0.3 }]
+      [{ key: "dmg%", value: 0.15 * this.p2Stacks }]
     ),
     // Q: Bane of All Evil — Normal/Charged/Plunge DMG Bonus
     // Lv10: 95.2%, Lv13 (C5+): 108.9%
@@ -1055,7 +1072,7 @@ class Shenhe extends CharacterBase {
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(
       cbs(this, "P1", ["Q"]),
-      { receiver: "onField", filter: { elements: ["Cryo"] } },
+      { receiver: "teamOnField", filter: { elements: ["Cryo"] } },
       [{ key: "cryo%", value: 0.15 }]
     ),
     // P2: Press E → team Skill/Burst DMG +15%; Hold E → team Normal/Charged/Plunge DMG +15%
@@ -1105,7 +1122,7 @@ class Shenhe extends CharacterBase {
       ? [
           new StatBuff(
             cbs(this, "C2", ["Q"]),
-            { receiver: "onField", filter: { elements: ["Cryo"] } },
+            { receiver: "teamOnField", filter: { elements: ["Cryo"] } },
             [{ key: "cd", value: 0.15 }]
           ),
         ]
@@ -1161,7 +1178,7 @@ class Ganyu extends CharacterBase {
       [{ key: "cr", value: 0.2 }]
     ),
     // P2: Q field: +20% Cryo DMG to active members
-    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "teamOnField" }, [
       { key: "cryo%", value: 0.2 },
     ]),
     // C1: Cryo RES -15% on Frostflake hit for 6s (enemy debuff — benefits whole team)

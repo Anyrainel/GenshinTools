@@ -1,7 +1,13 @@
 import type { StatSheet } from "./damageModels";
 import { E, type Expr, simplify } from "./expr";
 import type { ExprStats } from "./exprStats";
-import type { BuffSource, BuffTarget, StatEntry, StatKey } from "./types";
+import {
+  type BuffSource,
+  type BuffTarget,
+  type StatEntry,
+  type StatKey,
+  isSelfReceiver,
+} from "./types";
 
 /**
  * Throws if any StatKey appears more than once in the given entry list.
@@ -160,12 +166,7 @@ function validateStatBuff(
     }
   }
 
-  if (
-    target.charId &&
-    (target.receiver === "self" ||
-      target.receiver === "selfOnField" ||
-      target.receiver === "selfOffField")
-  ) {
+  if (target.charId && isSelfReceiver(target.receiver)) {
     throw new Error(
       `${label} charId must not be combined with receiver "${target.receiver}" — self* receivers already imply the provider character`
     );

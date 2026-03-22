@@ -38,19 +38,6 @@
   created: "2026-02-25"
   resolved: "2026-02-25"
 
-- id: mavuika-c6-scorching-ring
-  entity: mavuika
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C6 Scorching Ring periodic damage not modeled.
-  detail: >
-    Added DirectFormula(5.0, Pyro/skill/none) for C6 Scorching Ring, gated
-    behind constellation >= 6. Fires every 3s in Flamestrider mode.
-  created: "2026-02-25"
-  resolved: "2026-03-22"
-
 - id: ororon-q-soundwave-hits
   entity: ororon
   rule: S8
@@ -64,52 +51,20 @@
   created: "2026-03-21"
   resolved: null
 
-- id: kachina-excel-c6-damage
-  entity: kachina
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Excel shows C6 damage formula (200% DEF as AoE Geo DMG, once per 5s when
-    shield is replaced/destroyed). TS has no C6 damage formula. Verify whether
-    this is a significant damage source in shield-heavy team compositions.
-  detail: >
-    Added DirectFormula(2.0, Geo/skill/none, "def") for C6 shield shatter,
-    gated behind constellation >= 6. Marked offField: true. Once per 5s.
-  created: "2026-03-22"
-  resolved: "2026-03-22"
-
-- id: iansan-excel-swift-stormflight
-  entity: iansan
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Excel shows Swift Stormflight (Nightsoul charged attack) as a separate
-    Electro charged damage formula at 166.4% ATK. TS has no formula for it.
-    E grants one free Swift Stormflight per cast -- verify its contribution
-    to Iansan's rotation damage.
-  detail: >
-    Added DirectFormula(1.664, Electro/charge/none) for Swift Stormflight
-    (A talent Lv10 166.4%). Added to default combo with count 1 (one free
-    per E cast).
-  created: "2026-03-22"
-  resolved: "2026-03-22"
-
 - id: ifa-excel-missing-q
   entity: ifa
   rule: S8
-  status: open
+  status: completed
   category: missing-formula
   summary: >
     Excel shows Q burst damage at 915.3% ATK (Anemo) plus Sedation Mark hits
     at 196.1% per element. TS has no damage formulas at all (labeled as pure
-    healer/support). Verify whether Q damage is significant enough to model.
+    healer/support).
   detail: >
-    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: C风元素角色模块2.bas).
-    Excel Q burst: dmg(anemo, burst) at 915.3%/1080.5%.
-    Excel Sedation Marks: dmg({element}, burst) at 196.1%/231.5% per mark (up to 4).
-    TS implementation: formulaMap is empty.
+    Added Q burst DirectFormula (915.3% Lv10, 1080.5% Lv13 C5+) with
+    Anemo/burst/none tag. Added per-element Sedation Mark DirectFormulas
+    (196.1% Lv10, 231.5% Lv13 C5+) for each unique team element
+    (Pyro/Hydro/Cryo/Electro), combined into a single formula entry.
   created: "2026-03-22"
-  resolved: null
+  resolved: "2026-03-22"
 

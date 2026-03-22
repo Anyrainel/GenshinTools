@@ -245,7 +245,7 @@ class StarcallersWatch extends WeaponBase {
       buffs.push(
         new StatBuff(
           wbs(this, ["shield"], "starcallers-watch"),
-          { receiver: "onField" },
+          { receiver: "teamOnField" },
           [
             {
               key: "dmg%",

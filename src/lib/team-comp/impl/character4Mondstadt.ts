@@ -20,7 +20,7 @@ class Dahlia extends CharacterBase {
     // P2: Q active field ATK SPD based on max HP (up to 20%)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "hp",
       "atkSpd%",
@@ -30,7 +30,7 @@ class Dahlia extends CharacterBase {
     // C6: Active character under Favonian Favor → additional ATK SPD +10%
     ...(this.constellation >= 6
       ? [
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "atkSpd%", value: 0.1 },
           ]),
         ]
@@ -80,14 +80,14 @@ class Dahlia extends CharacterBase {
 class Mika extends CharacterBase {
   readonly buffs = [
     // E: Soulwind -> active character ATK SPD (Lv10: 22%, Lv13: 25%)
-    new StatBuff(cbs(this, "E", ["E"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "E", ["E"]), { receiver: "teamOnField" }, [
       { key: "atkSpd%", value: this.constellation >= 5 ? 0.25 : 0.22 },
     ]),
     // P1+P2: E Soulwind Detector → on-field Physical DMG +10% per stack
     // Max 3 (P1) + 1 (P2) = 4 stacks; C6 adds 1 more → 5 stacks at C6
     new StatBuff(
       cbs(this, "P1", ["E"]),
-      { receiver: "onField", filter: { elements: ["Physical"] } },
+      { receiver: "teamOnField", filter: { elements: ["Physical"] } },
       [{ key: "dmg%", value: this.constellation >= 6 ? 0.5 : 0.4 }]
     ),
     // C6: Soulwind → Physical CD +60%
@@ -95,7 +95,7 @@ class Mika extends CharacterBase {
       ? [
           new StatBuff(
             cbs(this, "C6", ["E"]),
-            { receiver: "onField", filter: { elements: ["Physical"] } },
+            { receiver: "teamOnField", filter: { elements: ["Physical"] } },
             [{ key: "cd", value: 0.6 }]
           ),
         ]
@@ -279,7 +279,7 @@ class Diona extends CharacterBase {
     // C6: In Q field, HP > 50% → EM +200 (assume active)
     ...(this.constellation >= 6
       ? [
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "em", value: 200 },
           ]),
         ]
@@ -337,7 +337,7 @@ class Fischl extends CharacterBase {
               "E",
               "overloaded",
             ]),
-            { receiver: "onField" },
+            { receiver: "teamOnField" },
             [{ key: "atk%", value: 0.225 * c6Mult }]
           )
         );
@@ -353,7 +353,7 @@ class Fischl extends CharacterBase {
               "electroCharged",
               "lunarCharged",
             ]),
-            { receiver: "onField" },
+            { receiver: "teamOnField" },
             [{ key: "em", value: 90 * c6Mult }]
           )
         );
@@ -408,7 +408,7 @@ class Barbara extends CharacterBase {
     // C2: During E, active character gains Hydro DMG +15%
     ...(this.constellation >= 2
       ? [
-          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C2", ["E"]), { receiver: "teamOnField" }, [
             { key: "hydro%", value: 0.15 },
           ]),
         ]
@@ -639,7 +639,7 @@ class Bennett extends CharacterBase {
     // Lv10: 101%, Lv13 (C5+): 119%; C1 adds +20% base ATK bonus
     new ScalingBuff(
       cbs(this, "Q", ["Q"]),
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "baseAtk",
       "atk",
@@ -651,7 +651,7 @@ class Bennett extends CharacterBase {
     // C6: Pyro DMG +15% within Q field (sword/claymore/polearm only — no filter)
     ...(this.constellation >= 6
       ? [
-          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "pyro%", value: 0.15 },
           ]),
         ]

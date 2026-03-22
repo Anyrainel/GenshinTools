@@ -362,6 +362,18 @@ class Arlecchino extends CharacterBase {
           },
         ],
       },
+      "arlecchino-e-cleave": {
+        label: { zh: "E切斩", en: "E Cleave" },
+        parts: [
+          {
+            formula: new DirectFormula(c3Plus ? 2.838 : 2.404, {
+              element: "Pyro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       ...(this.constellation >= 2
         ? {
             "arlecchino-c2-bloodfire": {
@@ -392,7 +404,12 @@ class Tartaglia extends CharacterBase {
 
   // Rotation: rQ > E > 4[N3C] (~9s melee, International team, KQM)
   protected override get defaultCombo() {
-    return { "tartaglia-melee-combo": 4, "tartaglia-burst-melee": 1 };
+    return {
+      "tartaglia-melee-combo": 4,
+      "tartaglia-burst-melee": 1,
+      "tartaglia-riptide-slash": 6,
+      "tartaglia-stance-change": 1,
+    };
   }
 
   // Burst Melee (Lv10): 835.0%
@@ -413,6 +430,13 @@ class Tartaglia extends CharacterBase {
       ability: "charge" as const,
       reaction: "none" as const,
     };
+    const meleeSkillTag = {
+      element: "Hydro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+    const riptideSlashMult = c3Plus ? 1.44 : 1.19;
+    const stanceChangeMult = c3Plus ? 1.53 : 1.3;
     return {
       "tartaglia-melee-combo": {
         label: { zh: "E普攻+重击", en: "E Melee N3C Combo" },
@@ -444,6 +468,18 @@ class Tartaglia extends CharacterBase {
               reaction: "none",
             }),
           },
+        ],
+      },
+      "tartaglia-riptide-slash": {
+        label: { zh: "断流·斩", en: "Riptide Slash" },
+        parts: [
+          { formula: new DirectFormula(riptideSlashMult, meleeSkillTag) },
+        ],
+      },
+      "tartaglia-stance-change": {
+        label: { zh: "E状态激发", en: "E Stance Change" },
+        parts: [
+          { formula: new DirectFormula(stanceChangeMult, meleeSkillTag) },
         ],
       },
     };

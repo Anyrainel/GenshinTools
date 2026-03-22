@@ -371,7 +371,7 @@ class RaidenShogun extends CharacterBase {
           new StatBuff(
             cbs(this, "E", ["E"]),
             {
-              receiver: "onField",
+              receiver: "teamOnField",
               charId,
               filter: { abilities: ["burst"] },
             },
@@ -683,7 +683,7 @@ class KamisatoAyato extends CharacterBase {
       // Q: Normal ATK DMG +20% for characters in field
       new StatBuff(
         cbs(this, "Q", ["Q"]),
-        { receiver: "onField", filter: { abilities: ["normal"] } },
+        { receiver: "teamOnField", filter: { abilities: ["normal"] } },
         [{ key: "dmg%", value: 0.2 }]
       ),
     ];

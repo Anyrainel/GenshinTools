@@ -50,7 +50,7 @@ class Illuga extends CharacterBase {
       new ScalingBuff(
         { ...cbs(this, "Q", ["Q"]), maxStacks: 36 },
         {
-          receiver: "onField",
+          receiver: "teamOnField",
           filter: {
             elements: ["Geo"],
             reactions: ["none"],
@@ -68,7 +68,7 @@ class Illuga extends CharacterBase {
       new ScalingBuff(
         { ...cbs(this, "Q", ["Q"]), maxStacks: 36 },
         {
-          receiver: "onField",
+          receiver: "teamOnField",
           filter: {
             reactions: ["lunarCrystallize"],
             abilities: COMBAT_ABILITIES,
@@ -89,7 +89,7 @@ class Illuga extends CharacterBase {
         new ScalingBuff(
           { ...cbs(this, "P2", ["Q"]), maxStacks: 36 },
           {
-            receiver: "onField",
+            receiver: "teamOnField",
             filter: {
               elements: ["Geo"],
               reactions: ["none"],
@@ -111,7 +111,7 @@ class Illuga extends CharacterBase {
         new ScalingBuff(
           { ...cbs(this, "P2", ["Q"]), maxStacks: 36 },
           {
-            receiver: "onField",
+            receiver: "teamOnField",
             filter: {
               reactions: ["lunarCrystallize"],
               abilities: COMBAT_ABILITIES,
@@ -127,7 +127,7 @@ class Illuga extends CharacterBase {
     // C4: During Q, on-field DEF +200
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "teamOnField" }, [
           { key: "def", value: 200 },
         ])
       );
@@ -220,7 +220,7 @@ class Illuga extends CharacterBase {
 class Jahoda extends CharacterBase {
   readonly buffs = [
     // P2: After Q heals at >70% HP, on-field EM +100
-    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
+    new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "teamOnField" }, [
       { key: "em", value: 100 },
     ]),
     // C6 (Moonsign Ascendant Gleam): After E flask full, Moonsign characters CR +5%, CD +40%
@@ -283,7 +283,7 @@ class Aino extends CharacterBase {
       return [
         new StatBuff(
           cbs(this, "C6", ["Q"]),
-          { receiver: "onField", filter: { reactions } },
+          { receiver: "teamOnField", filter: { reactions } },
           [{ key: "reactionDmg%", value: bonus }]
         ),
       ];

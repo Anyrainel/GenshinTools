@@ -109,8 +109,22 @@ export type BuffReceiverType =
   | "selfOffField"
   | "other"
   | "otherOnField"
-  | "onField"
+  | "otherOffField"
+  | "teamOnField"
+  | "teamOffField"
   | "team";
+
+// ─── Receiver classification helpers ────────────────────────────────────────
+
+/** Receiver targets the provider's own stat sheet (vs. reaching other characters). */
+export function isSelfReceiver(r: BuffReceiverType): boolean {
+  return r === "self" || r === "selfOnField" || r === "selfOffField";
+}
+
+/** Receiver depends on field state (on-field / off-field) to resolve. */
+export function isFieldDependentReceiver(r: BuffReceiverType): boolean {
+  return r !== "self" && r !== "other" && r !== "team";
+}
 
 export type AbilityType =
   | "normal"
@@ -158,14 +172,21 @@ export function filterMatchesTag(
 /**
  * Buff receiver scope + dimensional scoping (via DamageTagFilter).
  *
- * Receiver semantics (where calcTarget = the character whose damage we optimize):
- * - 'self':         Always applies to the provider's own stat sheet.
- * - 'selfOnField':  Applies to the provider ONLY when provider IS the calcTarget.
- * - 'selfOffField': Applies to the provider ONLY when provider is NOT the calcTarget.
- *                   In single-target optimization, equivalent to 'self' (easy to achieve off-field).
- * - 'other':        Applies to all party members except the provider (e.g., Sucrose EM sharing).
- * - 'onField':      Applies to the calcTarget's stat sheet (transfers from support to DPS).
- * - 'team':         Applies to all 4 party members.
+ * Receiver semantics — "on-field" means selfIsOnField=true for the character
+ * whose stat sheet we build (derived from formula part field state):
+ *
+ * Field-independent (always resolved at construction):
+ * - 'self':           Always applies to the provider's own stat sheet.
+ * - 'other':          Applies to all party members except the provider.
+ * - 'team':           Applies to all 4 party members.
+ *
+ * Field-dependent (deferred until field state is known):
+ * - 'selfOnField':    Provider's sheet, only when provider is on-field.
+ * - 'selfOffField':   Provider's sheet, only when provider is off-field.
+ * - 'otherOnField':   Non-provider sheets, only when receiver is on-field.
+ * - 'otherOffField':  Non-provider sheets, only when receiver is off-field.
+ * - 'teamOnField':    Any sheet, only when receiver is on-field.
+ * - 'teamOffField':   Any sheet, only when receiver is off-field.
  *
  * Filter dimensions scope which damage formulas see this buff's stat entries.
  * See DmgDesign.md §1.2–1.4.

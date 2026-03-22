@@ -740,9 +740,12 @@ export const i18nUiData = {
     receiverSelfOffField: { en: "Self (Off-Field)", zh: "自身-后台" },
     receiverOther: { en: "Others", zh: "仅队友" },
     receiverOtherOnField: { en: "Other (On-Field)", zh: "仅队友-前台" },
+    receiverOtherOffField: { en: "Other (Off-Field)", zh: "仅队友-后台" },
     receiverTeam: { en: "Team", zh: "全队" },
-    receiverOnField: { en: "On-Field", zh: "全队-前台" },
+    receiverTeamOnField: { en: "Team (On-Field)", zh: "全队-前台" },
+    receiverTeamOffField: { en: "Team (Off-Field)", zh: "全队-后台" },
     receiverCharOnField: { en: " (On-Field)", zh: "-前台" },
+    receiverCharOffField: { en: " (Off-Field)", zh: "-后台" },
     setMismatch: {
       en: "Equipped set differs from Team Roster goal",
       zh: "已装备的套装与队伍配置目标不一致",

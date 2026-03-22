@@ -1,125 +1,52 @@
 # Mondstadt Damage Tracker
 
-- id: albedo-p1-enemy-hp-combatopt
-  entity: albedo
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    P1 Transient Blossom +25% DMG vs enemies HP <50% is modeled as always-active.
-    Per rule S6, enemy HP conditions should use OptionMap. Low priority since Albedo
-    is typically not the damage focus character.
-  detail: >
-    Added OptionDef (albedoOption) with below50/above50 choices. P1 +25% dmg% buff
-    is now gated on enemyHp === "below50". Default is below50 (P1 active).
-  created: "2026-02-26"
-  resolved: "2026-03-22"
-
-- id: razor-c2-enemy-hp-combatopt
-  entity: razor
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    C2 CRIT Rate +10% vs enemies <30% HP is not modeled. Per rule S6, enemy HP
-    conditions should use OptionMap. Currently omitted entirely.
-  detail: >
-    Added OptionDef (razorOption) with below30/above30 choices. C2 CR +10% buff
-    is now gated on constellation >= 2 && enemyHp === "below30". Default is
-    below30 (C2 active). Added resolveOption and OptionDef imports.
-  created: "2026-02-26"
-  resolved: "2026-03-22"
-
-- id: razor-p4-hexerei-lightning
-  entity: razor
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    P4 Hexerei: Secret Rite lightning strike (150% ATK Electro AoE, once per 1s
-    when sigils overflow during Q) is not modeled. Potentially significant damage
-    source over 15s Q duration, especially at C6 where every E triggers overflow.
-  detail: >
-    Added DirectFormula(1.5, Electro/skill/none) as "razor-p4-lightning", gated
-    on Hexerei >= 2. Default combo count: 5 procs per rotation. Formula entry
-    labeled "P4秘仪落雷" / "P4 Secret Rite Lightning".
-  created: "2026-02-26"
-  resolved: "2026-03-22"
-
 - id: mona-c1-offfield-enhancement
   entity: mona
   rule: S6
-  status: wont-do
+  status: completed
   category: approximation
   summary: >
     C1 off-field party members get 160% of the reaction DMG bonus (24% instead
     of 15%), but the implementation uses a flat 15% for all team members.
   detail: >
-    Approximation is within acceptable range. The delta is 9pp reactionDmg%
-    (24% vs 15%) for off-field party members only. In Mona teams, the calcTarget
-    (optimization target) is typically the on-field DPS who correctly receives
-    15%. Off-field characters' reaction damage is not being optimized and
-    contributes minimally to total team DPS. No existing receiver type cleanly
-    models "other off-field party members" for differential bonus, and the
-    accuracy impact on the optimization target is zero. Not worth the
-    complexity.
+    Added a second C1 StatBuff with receiver otherOffField and reactionDmg% 0.09
+    (the delta between 24% and 15%) for the same five hydro reactions. Off-field
+    teammates now correctly receive 24% total reactionDmg% (15% base + 9% extra).
   created: "2026-03-08"
-  resolved: "2026-03-08"
+  resolved: "2026-03-22"
 
 - id: durin-kqm-dragon-tick-count
   entity: durin
   rule: S8
-  status: open
+  status: completed
   category: needs-data
   summary: >
     Dragon tick count may be underestimated. Implementation models 10 ticks for
-    both White Flame and Dark Decay, but KQM documents tick intervals of 1.25s
-    (White) and 1.0s (Dark) over 20s duration, suggesting 16 and 20 total ticks
+    both White Flame and Dark Decay, but KQM documents tick intervals of 1s
+    (White) and 1.25s (Dark) over 20s duration, suggesting 20 and 16 total ticks
     respectively.
   detail: >
-    KQM source: https://keqingmains.com/q/durin-quickguide/.
-    KQM quick guide states White Flame ticks every 1.25s and Dark Decay every
-    1.0s, both over a 20s duration. This implies up to 16 (White) or 20 (Dark)
-    total ticks. The implementation uses 10 ticks for both forms, matching the
-    P2 Primordial Fusion stack count. Ticks beyond the 10th would still deal
-    damage but without the P2 baseDmg% buff. Needs in-game verification of
-    actual tick counts to determine if additional unbuffed ticks should be
-    modeled.
-  created: "2026-03-22"
-  resolved: null
-
-- id: albedo-excel-c2-offfield-blossom
-  entity: albedo
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    C2 Fatal Blossom auto-trigger during Q: 300% DEF Geo burst damage per blossom
-  combo: "7 blossoms per Q (matching existing burst formula)"
-  detail: >
-    Added DirectFormula for C2 off-field Fatal Blossom (300% DEF, Geo/burst/none,
-    hits: 3, offField: true). Gated on constellation >= 2. Formula entry:
-    "albedo-c2-offfield". The existing C2 ScalingBuff (+120% DEF baseDmg) for
-    the on-field Q cast remains unchanged.
+    Updated dragon tick counts: White Flame 10→20, Dark Decay 10→16. Moved P2
+    buff (Primordial Fusion, 10 stacks) from global buffs array to bespokeBuff
+    on the first 10 dragon tick hits, with remaining ticks (10 White, 6 Dark)
+    as unbuffed parts.
   created: "2026-03-22"
   resolved: "2026-03-22"
 
 - id: durin-kqm-c4-stack-preservation
   entity: durin
   rule: S5
-  status: open
+  status: completed
   category: approximation
   summary: >
     C4 30% chance to not consume Cycle of Enlightenment stacks (from C1) is not
     modeled. This effectively increases the number of buffed hits by ~43%
     (from 20 to ~28.6 expected triggers for White, 10 to ~14.3 for Dark).
   detail: >
-    KQM source: https://keqingmains.com/q/durin-quickguide/.
-    C4 text: "there is a 30% chance that no Cycle of Enlightenment stacks will
-    be consumed." With 30% preservation rate, expected triggers = stacks / (1 -
-    0.3). For White form (20 stacks, 1 per hit): ~28.6 triggers. For Dark form
-    (20 stacks, 2 per hit = 10 triggers): ~14.3 triggers. The implementation
-    does not adjust C1 stack usage for C4. Could be modeled as increasing
-    maxStacks (White) or effective hit count (Dark) by the expected factor.
+    Added two C4-gated option choices ("C4 White unlimited", "C4 Dark 14 stacks").
+    C1 White maxStacks updated to 28 for C4 form (vs 20 base). C1 Dark moved from
+    global self buff to bespokeBuff on dragon tick formula parts, with 10 effective
+    triggers (14 at C4). Combined P2+C1 bespokeBuff via anonymous ScalingBuff
+    subclass that merges both dynamicBuffs and dynamicBuffsExpr outputs.
   created: "2026-03-22"
-  resolved: null
+  resolved: "2026-03-22"

@@ -54,7 +54,7 @@ class ThrillingTalesOfDragonSlayers extends WeaponBase {
   readonly buffs = [
     new StatBuff(
       wbs(this, ["swap"], "thrilling-tales"),
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [
         {
           key: "atk%",

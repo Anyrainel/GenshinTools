@@ -7,6 +7,7 @@ import {
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
+import type { ElementalOrPhysical } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 4★ Natlan Characters
@@ -46,8 +47,51 @@ class Ifa extends CharacterBase {
       : []),
   ];
 
-  // Pure healer/support — no damage formulas modeled
-  protected readonly formulaMap = {};
+  // Q Skill DMG: Lv10 915.3%, Lv13 (C5+) 1080.5%
+  // Q Sedation Mark DMG: Lv10 196.1%, Lv13 (C5+) 231.5% per mark (up to 4)
+  protected readonly formulaMap = (() => {
+    const qMult = this.constellation >= 5 ? 10.805 : 9.153;
+    const markMult = this.constellation >= 5 ? 2.315 : 1.961;
+
+    // Sedation Marks: one per unique team element (Pyro/Hydro/Cryo/Electro)
+    const markElements: ElementalOrPhysical[] = [];
+    for (const [id, el] of Object.entries(this.teamMeta.elements)) {
+      if (
+        el != null &&
+        id !== this.charId &&
+        ["Pyro", "Hydro", "Cryo", "Electro"].includes(el) &&
+        !markElements.includes(el)
+      )
+        markElements.push(el);
+    }
+
+    const markParts = markElements.map((el) => ({
+      formula: new DirectFormula(markMult, {
+        element: el,
+        ability: "burst" as const,
+        reaction: "none" as const,
+      }),
+    }));
+
+    return {
+      "ifa-burst": {
+        label: {
+          zh: `Q伤害${markParts.length > 0 ? `+${markParts.length}镇静标记` : ""}`,
+          en: `Q Burst${markParts.length > 0 ? ` + ${markParts.length} Sedation Mark${markParts.length > 1 ? "s" : ""}` : ""}`,
+        },
+        parts: [
+          {
+            formula: new DirectFormula(qMult, {
+              element: "Anemo",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+          ...markParts,
+        ],
+      },
+    };
+  })();
 }
 
 const iansanOption = {
@@ -82,7 +126,7 @@ class Iansan extends CharacterBase {
       // Max ATK Bonus is always 690 (Lv10) / 810 (Lv13 C5+) regardless of mode
       new ScalingBuff(
         cbs(this, "Q", ["Q"]),
-        { receiver: "onField" },
+        { receiver: "teamOnField" },
         [],
         "atk",
         "atk",
@@ -101,7 +145,7 @@ class Iansan extends CharacterBase {
     // C6: Extreme Force — on-field DMG +25%
     if (this.constellation >= 6) {
       buffs.push(
-        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
           { key: "dmg%", value: 0.25 },
         ])
       );
@@ -173,7 +217,7 @@ class Ororon extends CharacterBase {
       // C6: After Hypersense, on-field ATK +30% (3 stacks × 10%)
       ...(this.constellation >= 6
         ? [
-            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "onField" }, [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "teamOnField" }, [
               { key: "atk%", value: 0.3 },
             ]),
           ]
@@ -334,7 +378,7 @@ class Kachina extends CharacterBase {
     // C4: In Q field, on-field DEF% +8/12/16/20% (by enemy count, assume 2 → 12%)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C4", ["Q"]), { receiver: "teamOnField" }, [
           { key: "def%", value: 0.12 },
         ])
       );

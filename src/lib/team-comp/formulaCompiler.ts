@@ -870,7 +870,7 @@ function applyDynamicBuffExprs(
         { target: dbExpr.target, source: dbExpr.source } as StatBuff,
         dbExpr.providerCharId,
         id,
-        optCtx.calcTargetId,
+        id === optCtx.calcTargetId,
         teamBuild.teamMeta.regions[id],
         teamBuild.teamMeta.factions[id]
       )

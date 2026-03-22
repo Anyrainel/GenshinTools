@@ -354,7 +354,7 @@ class Mavuika extends CharacterBase {
       ]),
       // P2 "Kiongozi": After Q, on-field DMG +0.2% per Spirit (max 200 = 40%)
       // Assume full 200 Spirit → 40%. C4 adds +10% and removes decay.
-      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "teamOnField" }, [
         {
           key: "dmg%",
           value: this.constellation >= 4 ? 0.5 : 0.4,
@@ -896,7 +896,7 @@ class Xilonen extends CharacterBase {
           new ScalingBuff(
             { ...cbs(this, "C4", ["E"]), maxStacks: 6 },
             {
-              receiver: "onField",
+              receiver: "teamOnField",
               charId,
               filter: { abilities: ["normal", "charge", "plunge"] },
             },

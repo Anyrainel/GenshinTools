@@ -879,7 +879,7 @@ class SongOfDaysPast4pc extends ArtifactSetBase {
             maxStacks: 5,
           },
           {
-            receiver: "onField",
+            receiver: "teamOnField",
             filter: {
               abilities: ["normal", "charge", "plunge", "skill", "burst"],
             },

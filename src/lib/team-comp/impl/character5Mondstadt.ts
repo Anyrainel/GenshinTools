@@ -5,10 +5,14 @@ import {
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
+  type StatSheet,
   resolveOption,
 } from "../damageModels";
 import type { OptionDef } from "../damageModels";
+import { E, type Expr, simplify } from "../expr";
+import type { ExprStats } from "../exprStats";
 import { cbs } from "../helpers";
+import type { StatEntry, StatKey } from "../types";
 
 // ═══════════════════════════════════════════════════════════════
 // 5★ Mondstadt Characters
@@ -18,7 +22,17 @@ const durinOption = {
   label: { zh: "形态", en: "Form" },
   choices: [
     { value: "white", label: { zh: "白焰之龙", en: "White Flame" } },
+    {
+      value: "white-c4",
+      label: { zh: "C4白焰(无限层)", en: "C4 White (unlimited)" },
+      when: (tm) => (tm.constellations.durin ?? 0) >= 4,
+    },
     { value: "dark", label: { zh: "黑蚀之龙", en: "Dark Decay" } },
+    {
+      value: "dark-c4",
+      label: { zh: "C4黑蚀(14层)", en: "C4 Dark (14 stacks)" },
+      when: (tm) => (tm.constellations.durin ?? 0) >= 4,
+    },
   ] as const,
   default: "white",
 } satisfies OptionDef;
@@ -26,12 +40,15 @@ const durinOption = {
 @RegisterCharacter("durin", durinOption)
 class Durin extends CharacterBase {
   private readonly form = resolveOption(durinOption, this.option);
+  private readonly isWhite = this.form === "white" || this.form === "white-c4";
+  private readonly isC4Form =
+    this.form === "white-c4" || this.form === "dark-c4";
 
   readonly buffs = (() => {
     const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
     // P4: Hexerei Secret Rite enhances P1 effects by 75%
     const hexMult = isHexerei ? 1.75 : 1.0;
-    const isWhite = this.form === "white";
+    const { isWhite, isC4Form } = this;
 
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
@@ -79,60 +96,35 @@ class Durin extends CharacterBase {
       );
     }
 
-    // P2: After Q, per 100 ATK → burst tick DMG +3% (cap 75%) — modeled as baseDmg%
-    // baseDmg% is the correct key for "deal X% of original damage"
-    // Dragon fires off-field; receiver is "self" not "selfOnField"
-    // Self buff → modeled via formula hit counts, not maxStacks.
-    buffs.push(
-      new ScalingBuff(
-        cbs(this, "P2", ["Q"]),
-        { receiver: "self", filter: { abilities: ["burst"] } },
-        [],
-        "atk",
-        "baseDmg%",
-        0.0003,
-        0.75
-      )
-    );
+    // P2: After Q, 10 stacks of Primordial Fusion. Dragon ticks consume 1 stack,
+    // boosting DMG by 3% per 100 ATK (cap 75%). Only dragon ticks consume stacks,
+    // not the initial Q hits. Modeled via bespokeBuff on the buffed-tick formula parts.
+    // (P2 buff instance stored for use in formulaMap below.)
 
-    // C1 (White Flame): On-field team baseDmg from ATK ×60% per stack, 20 stacks
-    // C1 (Dark Decay): Self baseDmg from ATK ×150% per stack, 20 stacks (consumes 2)
-    // Modeled as flat baseDmg scaling from ATK — 20 triggers for White, 10 for Dark
-    if (this.constellation >= 1) {
-      if (isWhite) {
-        // C1 White Flame: each other party member gets their own 20 stacks
-        // ("Stack counts for characters in the party who have Cycle of Enlightenment
-        //  are managed individually.")
-        for (const cid of Object.keys(this.teamMeta.elements)) {
-          if (cid === this.charId) continue;
-          buffs.push(
-            new ScalingBuff(
-              { ...cbs(this, "C1", ["Q"]), maxStacks: 20 },
-              {
-                receiver: "otherOnField",
-                charId: cid,
-                filter: {
-                  abilities: ["normal", "charge", "plunge", "skill", "burst"],
-                },
-              },
-              [],
-              "atk",
-              "baseDmg",
-              0.6
-            )
-          );
-        }
-      } else {
-        // C1 Dark Decay: Durin gains stacks (20, consumed 2 per hit = 10 triggers).
-        // Self buff → modeled via formula hit counts, not maxStacks.
+    // C1 (White Flame): On-field team baseDmg from ATK ×60% per stack, 20 stacks (28 at C4)
+    // ("Stack counts for characters in the party who have Cycle of Enlightenment
+    //  are managed individually.")
+    // C1 (Dark Decay): Self baseDmg from ATK ×150% per stack, 20 stacks consumed 2
+    //  per hit = 10 effective triggers (14 at C4). Self buff → modeled via bespokeBuff
+    //  on dragon tick formula parts in formulaMap.
+    if (this.constellation >= 1 && isWhite) {
+      const c1Stacks = isC4Form ? 28 : 20;
+      for (const cid of Object.keys(this.teamMeta.elements)) {
+        if (cid === this.charId) continue;
         buffs.push(
           new ScalingBuff(
-            cbs(this, "C1", ["Q"]),
-            { receiver: "self", filter: { abilities: ["burst"] } },
+            { ...cbs(this, "C1", ["Q"]), maxStacks: c1Stacks },
+            {
+              receiver: "otherOnField",
+              charId: cid,
+              filter: {
+                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+              },
+            },
             [],
             "atk",
             "baseDmg",
-            1.5
+            0.6
           )
         );
       }
@@ -201,12 +193,16 @@ class Durin extends CharacterBase {
     return buffs;
   })();
 
-  // Q: Burst initial (3 hits) + Dragon ticks (10 hits over 20s)
+  // Q: Burst initial (3 hits) + Dragon ticks over 20s
+  // White: 1s interval → 20 ticks; Dark: 1.25s interval → 16 ticks
+  // P2: 10 stacks of Primordial Fusion consumed by dragon ticks (not initial hits)
+  // C1 Dark: 10 effective triggers (14 at C4), modeled via bespokeBuff
+  // Split dragon ticks into buffed (P2, and C1 for dark) + unbuffed parts
   protected readonly formulaMap: Record<string, FormulaEntry> = ((): Record<
     string,
     FormulaEntry
   > => {
-    const isWhite = this.form === "white";
+    const { isWhite, isC4Form } = this;
     // Q initial — 3 separate hits with different multipliers, must NOT be summed (S3)
     // White Lv10: 214.1%, 173.5%, 201.3%; Lv13 (C3+): 252.8%, 204.9%, 237.7%
     // Dark  Lv10: 225.8%, 183.2%, 201.3%; Lv13 (C3+): 266.6%, 216.2%, 237.7%
@@ -218,10 +214,36 @@ class Durin extends CharacterBase {
     const qD2 = hasC3 ? 2.162 : 1.832;
     const qD3 = hasC3 ? 2.377 : 2.013;
 
-    // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, 10 ticks over 20s
-    // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, 10 ticks over 20s
+    // Dragon ticks (White): Lv10 170.4%, Lv13 (C3+) 201.1%, 20 ticks over 20s (1s interval)
+    // Dragon ticks (Dark): Lv10 233.7%, Lv13 (C3+) 275.9%, 16 ticks over 20s (1.25s interval)
     const dragonWhiteMult = hasC3 ? 2.011 : 1.704;
     const dragonDarkMult = hasC3 ? 2.759 : 2.337;
+
+    // P2 bespokeBuff: per 100 ATK → +3% baseDmg% (cap 75%), only on P2-buffed ticks
+    const p2Buff = new ScalingBuff(
+      cbs(this, "P2", ["Q"]),
+      { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+      [],
+      "atk",
+      "baseDmg%",
+      0.0003,
+      0.75
+    );
+
+    // C1 Dark bespokeBuff: ATK ×150% as baseDmg per trigger
+    // 20 stacks consumed 2 per hit = 10 triggers; C4 → 14 triggers
+    const c1DarkBuff =
+      this.constellation >= 1 && !isWhite
+        ? new ScalingBuff(
+            cbs(this, "C1", ["Q"]),
+            { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+            [],
+            "atk",
+            "baseDmg",
+            1.5
+          )
+        : null;
+    const c1DarkTriggers = isC4Form ? 14 : 10;
 
     const burstTag = {
       element: "Pyro" as const,
@@ -229,33 +251,129 @@ class Durin extends CharacterBase {
       reaction: "none" as const,
     };
 
+    const p2Stacks = 10;
+    const whiteTotalTicks = 20;
+    const darkTotalTicks = 16;
+
     if (isWhite) {
       return {
         "durin-burst-white": {
-          label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
+          label: { zh: "Q初段+龙息×20", en: "Q Initial+Breath×20" },
           parts: [
             { formula: new DirectFormula(qW1, burstTag) },
             { formula: new DirectFormula(qW2, burstTag) },
             { formula: new DirectFormula(qW3, burstTag) },
             {
               formula: new DirectFormula(dragonWhiteMult, burstTag),
-              hits: 10,
+              hits: p2Stacks,
+              offField: true,
+              bespokeBuff: p2Buff,
+            },
+            {
+              formula: new DirectFormula(dragonWhiteMult, burstTag),
+              hits: whiteTotalTicks - p2Stacks,
               offField: true,
             },
           ],
         },
       };
     }
+
+    // Dark mode: P2 and C1 both apply to dragon ticks.
+    // P2 has 10 stacks; C1 has 10 triggers (14 at C4).
+    // Both P2 and C1 apply to the first 10 ticks. C1 may apply to up to 4 more at C4.
+    if (c1DarkBuff) {
+      // Both P2 (10 stacks) and C1 share the first min(p2Stacks, c1DarkTriggers) ticks
+      const bothBuffedTicks = Math.min(p2Stacks, c1DarkTriggers);
+      const c1OnlyTicks = c1DarkTriggers - bothBuffedTicks;
+      const unbuffedTicks = darkTotalTicks - c1DarkTriggers;
+
+      const parts: FormulaEntry["parts"] = [
+        { formula: new DirectFormula(qD1, burstTag) },
+        { formula: new DirectFormula(qD2, burstTag) },
+        { formula: new DirectFormula(qD3, burstTag) },
+      ];
+
+      // Ticks with both P2 and C1 buffs
+      if (bothBuffedTicks > 0) {
+        // bespokeBuff only supports a single buff instance. Combine P2 + C1 via
+        // anonymous subclass that merges both dynamicBuffs and dynamicBuffsExpr.
+        const combinedBuff = new (class extends ScalingBuff {
+          private readonly p2 = p2Buff;
+          override dynamicBuffs(selfStats: StatSheet): StatEntry[] {
+            return [
+              ...super.dynamicBuffs(selfStats),
+              ...this.p2.dynamicBuffs(selfStats),
+            ];
+          }
+          override dynamicBuffsExpr(
+            selfStats: ExprStats
+          ): { key: StatKey; expr: Expr }[] {
+            return [
+              ...super.dynamicBuffsExpr(selfStats),
+              ...this.p2.dynamicBuffsExpr(selfStats),
+            ];
+          }
+        })(
+          cbs(this, "C1/P2", ["Q"]),
+          { receiver: "selfOnField", filter: { abilities: ["burst"] } },
+          [],
+          "atk",
+          "baseDmg",
+          1.5
+        );
+        parts.push({
+          formula: new DirectFormula(dragonDarkMult, burstTag),
+          hits: bothBuffedTicks,
+          offField: true,
+          bespokeBuff: combinedBuff,
+        });
+      }
+
+      // C4: extra ticks with only C1 buff (no P2 stacks left)
+      if (c1OnlyTicks > 0) {
+        parts.push({
+          formula: new DirectFormula(dragonDarkMult, burstTag),
+          hits: c1OnlyTicks,
+          offField: true,
+          bespokeBuff: c1DarkBuff,
+        });
+      }
+
+      // Remaining ticks with no P2 or C1 buff
+      if (unbuffedTicks > 0) {
+        parts.push({
+          formula: new DirectFormula(dragonDarkMult, burstTag),
+          hits: unbuffedTicks,
+          offField: true,
+        });
+      }
+
+      return {
+        "durin-burst-dark": {
+          label: { zh: "Q初段+龙息×16", en: "Q Initial+Breath×16" },
+          parts,
+        },
+      };
+    }
+
+    // Dark mode without C1: just P2 stacks on first 10 ticks
     return {
       "durin-burst-dark": {
-        label: { zh: "Q初段+龙息×10", en: "Q Initial+Breath×10" },
+        label: { zh: "Q初段+龙息×16", en: "Q Initial+Breath×16" },
         parts: [
           { formula: new DirectFormula(qD1, burstTag) },
           { formula: new DirectFormula(qD2, burstTag) },
           { formula: new DirectFormula(qD3, burstTag) },
           {
             formula: new DirectFormula(dragonDarkMult, burstTag),
-            hits: 10,
+            hits: p2Stacks,
+            offField: true,
+            bespokeBuff: p2Buff,
+          },
+          {
+            formula: new DirectFormula(dragonDarkMult, burstTag),
+            hits: darkTotalTicks - p2Stacks,
             offField: true,
           },
         ],
@@ -263,9 +381,9 @@ class Durin extends CharacterBase {
     };
   })();
 
-  // Rotation: E > Q (off-field burst DPS, 3 initial hits + 10 dragon ticks baked in)
+  // Rotation: E > Q (off-field burst DPS, 3 initial hits + dragon ticks baked in)
   protected override get defaultCombo(): Record<string, number> {
-    return this.form === "white"
+    return this.isWhite
       ? { "durin-burst-white": 1 }
       : { "durin-burst-dark": 1 };
   }
@@ -369,7 +487,7 @@ class Albedo extends CharacterBase {
         ? [
             new StatBuff(
               cbs(this, "C4", ["E"]),
-              { receiver: "onField", filter: { abilities: ["plunge"] } },
+              { receiver: "teamOnField", filter: { abilities: ["plunge"] } },
               [{ key: "dmg%", value: 0.3 }]
             ),
           ]
@@ -379,7 +497,7 @@ class Albedo extends CharacterBase {
       // (Moondrifts branch requires Nod-Krai characters, modeled separately as TODO)
       ...(this.constellation >= 6 && this.teamMeta.hasShielder()
         ? [
-            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "onField" }, [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "teamOnField" }, [
               { key: "dmg%", value: 0.17 },
             ]),
           ]
@@ -664,6 +782,7 @@ class Mona extends CharacterBase {
       ]),
       // C1: Hydro reaction effects +15% (EC, Lunar-Charged, Vaporize, Hydro Swirl, Lunar-Crystallize)
       // "When any of your own party members hits an opponent affected by an Omen" → team-wide
+      // Off-field party members get 160% of the bonus (24% instead of 15%), modeled as base 15% + extra 9%
       ...(this.constellation >= 1
         ? [
             new StatBuff(
@@ -681,6 +800,23 @@ class Mona extends CharacterBase {
                 },
               },
               [{ key: "reactionDmg%", value: 0.15 }]
+            ),
+            // C1 off-field enhancement: 160% of 15% = 24%, extra 9% for off-field teammates
+            new StatBuff(
+              cbs(this, "C1", ["Q"]),
+              {
+                receiver: "otherOffField",
+                filter: {
+                  reactions: [
+                    "electroCharged",
+                    "lunarCharged",
+                    "vaporize",
+                    "swirl",
+                    "lunarCrystallize",
+                  ],
+                },
+              },
+              [{ key: "reactionDmg%", value: 0.09 }]
             ),
           ]
         : []),
@@ -869,7 +1005,7 @@ class Venti extends CharacterBase {
     // "温迪与队伍中自己的当前场上其他角色" → onField (provider + active)
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C4", ["E", "Q"]), { receiver: "teamOnField" }, [
           { key: "anemo%", value: 0.25 },
         ])
       );
@@ -912,9 +1048,11 @@ class Venti extends CharacterBase {
       this.teamMeta.hasReaction("swirl")
     ) {
       buffs.push(
-        new StatBuff(cbs(this, "P4", ["Q", "swirl"]), { receiver: "onField" }, [
-          { key: "dmg%", value: 0.5 },
-        ])
+        new StatBuff(
+          cbs(this, "P4", ["Q", "swirl"]),
+          { receiver: "teamOnField" },
+          [{ key: "dmg%", value: 0.5 }]
+        )
       );
       buffs.push(
         new StatBuff(

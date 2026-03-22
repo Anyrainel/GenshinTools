@@ -71,7 +71,9 @@ const RECEIVER_I18N: Record<string, string> = {
   selfOffField: "teamComp.receiverSelfOffField",
   other: "teamComp.receiverOther",
   otherOnField: "teamComp.receiverOtherOnField",
-  onField: "teamComp.receiverOnField",
+  otherOffField: "teamComp.receiverOtherOffField",
+  teamOnField: "teamComp.receiverTeamOnField",
+  teamOffField: "teamComp.receiverTeamOffField",
   team: "teamComp.receiverTeam",
 };
 
@@ -79,8 +81,10 @@ export function formatReceiverLabel(target: BuffTarget, t: T): string {
   if (target.charId) {
     const name = t.character(target.charId);
     const r = target.receiver;
-    if (r === "onField" || r === "otherOnField")
+    if (r === "teamOnField" || r === "otherOnField")
       return `${name}${t.ui("teamComp.receiverCharOnField")}`;
+    if (r === "teamOffField" || r === "otherOffField")
+      return `${name}${t.ui("teamComp.receiverCharOffField")}`;
     return name;
   }
   return t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf");

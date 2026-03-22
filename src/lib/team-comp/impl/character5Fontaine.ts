@@ -310,11 +310,10 @@ class Sigewinne extends CharacterBase {
     const buffs: StatBuff[] = [
       // P1: HP > 30k → E baseDmg +80 (C1: 100) per 1000 HP. Max 2800 (C1: 3500)
       // Game text: off-field party members only, excluding Sigewinne.
-      // Approximated as otherOnField — see DmgTODO.
       // "10层静养计数" → maxStacks: 10 (C1: +8 bounces = 18)
       new ScalingBuff(
         { ...cbs(this, "P1", ["E"]), maxStacks: isC1 ? 18 : 10 },
-        { receiver: "otherOnField", filter: { abilities: ["skill"] } },
+        { receiver: "otherOffField", filter: { abilities: ["skill"] } },
         [],
         "hp",
         "baseDmg",

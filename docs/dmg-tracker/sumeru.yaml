@@ -2,61 +2,54 @@
 - id: faruzan-e-polyhedron
   entity: faruzan
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     E polyhedron hit (267.8%) not modeled (only Collapse Vortex in runbook).
   detail: >
-    Not in DmgRunbook. Faruzan's runbook formula is "E风压坍陷风涡伤害" (Collapse
-    Vortex, 194.4%), which is already modeled. The polyhedron deployment hit
-    (267.8% ATK) is a one-time cast proc. Faruzan is an Anemo support whose value
-    is her team buffs (Anemo RES shred, DMG%, baseDmg, C6 CD). The one-time
-    deployment hit is <5% of team DPS contribution. Periodic/minor proc,
-    estimated <5% DPS contribution.
+    Added DirectFormula for E Polyhedron (2.678 Lv10, 3.162 Lv13) with Anemo/skill/none tag.
+    Renamed existing vortex entry label to "E Collapse Vortex" for clarity.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: sethos-q-dusk-bolt
   entity: sethos
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     Q Dusk Bolt (353.1% EM) not modeled.
   detail: >
-    Not in DmgRunbook. Sethos's primary DPS loop is Shadowpiercing Shot with P2
-    Scorching Sandshade (700% EM baseDmg), which far outscales Q Dusk Bolts.
-    Periodic/minor proc, estimated <5% DPS contribution.
+    Added DirectFormula for Q Dusk Bolt (3.531 Lv10, 4.168 Lv13) scaling off EM with
+    Electro/charge/none tag. Set to 0 in default combo.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: kaveh-c6-pairidaeza
   entity: kaveh
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     C6 Pairidaeza's Light (61.8% ATK Dendro) not modeled.
   detail: >
-    Not in DmgRunbook. Kaveh builds EM for Bloom reactions; a 61.8% ATK proc
-    every 3s is negligible compared to Bloom core damage. Periodic/minor proc,
-    estimated <5% DPS contribution.
+    Added C6-gated DirectFormula for Pairidaeza's Light (0.618 ATK) with Dendro/burst/none tag.
+    Set to 0 in default combo.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: collei-p1-sprout
   entity: collei
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with kaveh P1).
   detail: >
-    No runbook formulas for Collei. She is a 4-star Dendro support whose value is
-    off-field Dendro application. P1 Sprout is a minor periodic proc. Estimated
-    <5% DPS contribution.
+    Added DirectFormula for P1 Sprout (0.4 ATK) with Dendro/skill/none tag.
+    Set to 0 in default combo.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: kaveh-p1-sprout
   entity: kaveh
@@ -66,24 +59,25 @@
   summary: >
     P1 Sprout effect (40% ATK x 3s) not modeled (shared mechanic with collei P1).
   detail: >
-    Not in DmgRunbook. Kaveh builds EM for Bloom; ATK-scaling procs are
-    negligible. Periodic/minor proc, estimated <5% DPS contribution.
+    Kaveh's P1 "An Architect's Undertaking" is an HP recovery passive (300% EM),
+    not a Sprout damage effect. No damage formula to implement. Tracker item is
+    based on incorrect data — Kaveh does not have the Sprout mechanic.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: nilou-e-dance-hits
   entity: nilou
   rule: S8
-  status: wont-do
+  status: completed
   category: missing-formula
   summary: >
     E Dance of Haftkarsvar multi-step hits not modeled (only Q + Bountiful Core).
   detail: >
-    Not in DmgRunbook. Nilou's core DPS is Bloom/Bountiful Core reactions, not
-    direct E hits. The E dance hits are transition damage with low total
-    multipliers. Periodic/minor proc, estimated <5% DPS contribution.
+    Added E Sword Dance formula with 4 parts (initial 6.01%/7.1%, 1st 8.19%/9.67%,
+    2nd 9.26%/10.93%, Luminous Illusion 12.9%/15.23% HP, C1 +65% on Illusion).
+    Set E and Q to 0 in default combo, kept Bountiful Core at 5.
   created: "2026-02-25"
-  resolved: "2026-03-14"
+  resolved: "2026-03-22"
 
 - id: candace-c6-overflow
   entity: candace

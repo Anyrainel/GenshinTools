@@ -19,6 +19,7 @@ import {
   createWeapon,
   getEntityOption,
 } from "@/lib/team-comp/damageModels";
+import { isSelfReceiver } from "@/lib/team-comp/types";
 import { beforeAll, describe, expect, it } from "vitest";
 import "@/lib/team-comp/index";
 
@@ -253,10 +254,7 @@ describe("Entity Instantiation", () => {
         const violations: string[] = [];
         for (const buff of char.buffs) {
           const receiver = buff.target.receiver;
-          if (
-            (receiver === "self" || receiver === "selfOnField") &&
-            buff.source.maxStacks != null
-          ) {
+          if (isSelfReceiver(receiver) && buff.source.maxStacks != null) {
             violations.push(
               `${buff.source.id} ${buff.source.origin ?? ""}: self buff with maxStacks=${buff.source.maxStacks}`
             );

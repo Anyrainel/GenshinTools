@@ -422,7 +422,7 @@ class Nahida extends CharacterBase {
           },
         ];
       }
-    })(cbs(this, "P1", ["Q"]), { receiver: "onField" }, []),
+    })(cbs(this, "P1", ["Q"]), { receiver: "teamOnField" }, []),
     // P2: EM above 200 → Tri-Karma DMG +0.1%/EM (cap 80%)
     // Tri-Karma fires off-field, so use "self" not "selfOnField"
     new ScalingBuff(
@@ -799,7 +799,31 @@ class Nilou extends CharacterBase {
       ability: "burst" as const,
       reaction: "none" as const,
     };
+    const eTag = {
+      element: "Hydro" as const,
+      ability: "skill" as const,
+      reaction: "none" as const,
+    };
+
+    // E Sword Dance: initial + 1st + 2nd + Luminous Illusion (all HP% scaling, Skill DMG)
+    const eInit = this.constellation >= 5 ? 0.071 : 0.0601;
+    const e1 = this.constellation >= 5 ? 0.0967 : 0.0819;
+    const e2 = this.constellation >= 5 ? 0.1093 : 0.0926;
+    // C1: Luminous Illusion DMG +65%
+    const eLumin =
+      (this.constellation >= 5 ? 0.1523 : 0.129) *
+      (this.constellation >= 1 ? 1.65 : 1);
+
     return {
+      "nilou-e-dance": {
+        label: { zh: "E剑舞步", en: "E Sword Dance" },
+        parts: [
+          { formula: new DirectFormula(eInit, eTag, "hp") },
+          { formula: new DirectFormula(e1, eTag, "hp") },
+          { formula: new DirectFormula(e2, eTag, "hp") },
+          { formula: new DirectFormula(eLumin, eTag, "hp") },
+        ],
+      },
       "nilou-burst": {
         label: { zh: "Q 2段", en: "Q 2-hit" },
         parts: [
@@ -830,7 +854,8 @@ class Nilou extends CharacterBase {
   // Rotation: Q E E E E — off-field Bloom support, 1 Q + ~5 Bountiful Cores (KQM)
   protected override get defaultCombo() {
     return {
-      "nilou-burst": 1,
+      "nilou-e-dance": 0,
+      "nilou-burst": 0,
       "nilou-bountiful-core": 5,
     };
   }

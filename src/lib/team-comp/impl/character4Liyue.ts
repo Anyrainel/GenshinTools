@@ -189,7 +189,7 @@ class Yaoyao extends CharacterBase {
     if (this.constellation >= 1) {
       // C1: Active characters in radish AoE gain 15% Dendro DMG Bonus
       buffs.push(
-        new StatBuff(cbs(this, "C1", ["E"]), { receiver: "onField" }, [
+        new StatBuff(cbs(this, "C1", ["E"]), { receiver: "teamOnField" }, [
           { key: "dendro%", value: 0.15 },
         ])
       );
@@ -280,7 +280,7 @@ class Xiangling extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Pick up chili pepper → +10% ATK
-      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "teamOnField" }, [
         { key: "atk%", value: 0.1 },
       ]),
     ];
@@ -353,7 +353,7 @@ class Chongyun extends CharacterBase {
     // P1: Sword, Claymore, Polearm chars in E field get Normal ATK SPD +8%
     new StatBuff(
       cbs(this, "P1", ["E"]),
-      { receiver: "onField", filter: { abilities: ["normal"] } },
+      { receiver: "teamOnField", filter: { abilities: ["normal"] } },
       [{ key: "atkSpd%", value: 0.08 }]
     ),
     // P2: After E field disappears, enemies' Cryo RES -10% for 8s
@@ -452,7 +452,7 @@ class Xinyan extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Shield grants Physical DMG +15%
-      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "teamOnField" }, [
         { key: "phys%", value: 0.15 },
       ]),
     ];
@@ -824,7 +824,7 @@ class Ningguang extends CharacterBase {
     // P2: Passing through Jade Screen → Geo DMG +12% (only on-field character walks through)
     new StatBuff(
       cbs(this, "P2", ["E"]),
-      { receiver: "onField", filter: { elements: ["Geo"] } },
+      { receiver: "teamOnField", filter: { elements: ["Geo"] } },
       [{ key: "geo%", value: 0.12 }]
     ),
   ];

@@ -11750,6 +11750,42 @@
           "foundAt": "2026-03-22T16:08:41.701Z",
           "algorithm": "v2",
           "solveTimeSec": 46.9908949999999
+        },
+        {
+          "artifactAssignment": {
+            "freminet": {
+              "flower": "artifact-26",
+              "plume": "artifact-25",
+              "sands": "artifact-98",
+              "goblet": "artifact-100",
+              "circlet": "artifact-127"
+            },
+            "escoffier": {
+              "flower": "artifact-919",
+              "plume": "artifact-317",
+              "sands": "artifact-777",
+              "goblet": "artifact-1013",
+              "circlet": "artifact-1326"
+            },
+            "furina": {
+              "flower": "artifact-729",
+              "plume": "artifact-1085",
+              "sands": "artifact-470",
+              "goblet": "artifact-500",
+              "circlet": "artifact-697"
+            },
+            "shenhe": {
+              "flower": "artifact-29",
+              "plume": "artifact-318",
+              "sands": "artifact-375",
+              "goblet": "artifact-1012",
+              "circlet": "artifact-899"
+            }
+          },
+          "recordedDamage": 235313.87330998562,
+          "foundAt": "2026-03-22T17:28:50.064Z",
+          "algorithm": "v2",
+          "solveTimeSec": 99.27515090000001
         }
       ]
     },

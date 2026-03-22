@@ -145,9 +145,11 @@ export function getValueColor(value: number): string {
 const RECEIVER_BADGE_COLORS: Record<string, string> = {
   charId: "text-sky-300 bg-sky-500/15",
   team: "text-yellow-300 bg-yellow-500/15",
-  onField: "text-orange-300 bg-orange-500/15",
+  teamOnField: "text-orange-300 bg-orange-500/15",
+  teamOffField: "text-amber-300 bg-amber-500/15",
   other: "text-rose-300 bg-rose-500/15",
   otherOnField: "text-pink-300 bg-pink-500/15",
+  otherOffField: "text-fuchsia-300 bg-fuchsia-500/15",
   self: "text-zinc-400 bg-zinc-500/15",
   selfOnField: "text-slate-400 bg-slate-500/15",
   selfOffField: "text-stone-400 bg-stone-500/15",

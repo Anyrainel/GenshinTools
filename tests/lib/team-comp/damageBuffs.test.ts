@@ -19,7 +19,7 @@ describe("ScalingBuff", () => {
   it("computes dynamic buff from input stat", () => {
     const buff = new ScalingBuff(
       { type: "character", id: "test", origin: "C1" },
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "em",
       "pyro%",
@@ -37,7 +37,7 @@ describe("ScalingBuff", () => {
   it("respects cap", () => {
     const buff = new ScalingBuff(
       { type: "character", id: "test", origin: "C1" },
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "em",
       "pyro%",
@@ -54,7 +54,7 @@ describe("ScalingBuff", () => {
   it("exposes inputKey, outputKey, cap as readonly", () => {
     const buff = new ScalingBuff(
       { type: "character", id: "test", origin: "C1" },
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "em",
       "pyro%",

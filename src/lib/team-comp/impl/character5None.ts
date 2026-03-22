@@ -606,7 +606,7 @@ class TravelerDendro extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P1: Lea Lotus Lamp - Overflowing Lotuslight (max 10 stacks) -> on-field char +60 EM
-      new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "onField" }, [
+      new StatBuff(cbs(this, "P1", ["Q"]), { receiver: "teamOnField" }, [
         { key: "em", value: 60 },
       ]),
       // P2: Verdant Luxury — Traveler's own EM boosts E DMG by 0.15% per EM point
@@ -635,7 +635,7 @@ class TravelerDendro extends CharacterBase {
         ? [
             new StatBuff(
               cbs(this, "C6", ["Q"]),
-              { receiver: "onField", filter: { elements: ["Dendro"] } },
+              { receiver: "teamOnField", filter: { elements: ["Dendro"] } },
               [{ key: "dmg%", value: 0.12 }]
             ),
           ]
@@ -650,7 +650,7 @@ class TravelerDendro extends CharacterBase {
         buffs.push(
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "onField", filter: { elements: [el] } },
+            { receiver: "teamOnField", filter: { elements: [el] } },
             [{ key: "dmg%", value: 0.12 }]
           )
         );
@@ -770,7 +770,7 @@ class TravelerPyro extends CharacterBase {
     // C1: While Threshold active, on-field character deals +6% DMG
     ...(this.constellation >= 1
       ? [
-          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "onField" }, [
+          new StatBuff(cbs(this, "C1", ["E"]), { receiver: "teamOnField" }, [
             { key: "dmg%", value: 0.06 },
           ]),
         ]
@@ -784,7 +784,7 @@ class TravelerPyro extends CharacterBase {
           ]),
           new StatBuff(
             cbs(this, "C1", ["E"]),
-            { receiver: "onField", regions: ["Natlan"] },
+            { receiver: "teamOnField", regions: ["Natlan"] },
             [{ key: "dmg%", value: 0.09 }]
           ),
         ]

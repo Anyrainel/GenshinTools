@@ -1,29 +1,4 @@
 # Liyue Damage Tracker
-- id: shenhe-q-dot
-  entity: shenhe
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Q field DoT ticks (59.6% / 70.4%) not modeled.
-  detail: >
-    Added DirectFormula for Q DoT (0.596 Lv10, 0.704 Lv13/C5+) with
-    Cryo/burst/none tag. Single tick; user sets count via combo.
-  created: "2026-02-25"
-  resolved: "2026-03-22"
-
-- id: qiqi-q-talisman
-  entity: qiqi
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    Q talisman DMG not modeled (pure healer).
-  detail: >
-    Added DirectFormula for Q (5.13 Lv10, 6.05 Lv13/C3+) with
-    Cryo/burst/none tag. Single burst hit.
-  created: "2026-02-25"
-  resolved: "2026-03-22"
 
 - id: xinyan-e-q-dot
   entity: xinyan
@@ -109,15 +84,16 @@
 - id: xiao-p2-stacks
   entity: xiao
   rule: S6
-  status: wont-do
+  status: completed
   category: approximation
   summary: >
     P2 E DMG stacks (max 3x15%=45%) approximated as 2 stacks (30%).
   detail: >
-    In a typical rotation, 2 E casts before Q. Third stack would require a third E during Q
-    which is situational.
+    Added OptionDef (xiaoOption) with choices for 2 stacks (30%) and 3 stacks
+    (45%). P2 buff now uses 0.15 * stacks instead of hardcoded 0.3. Default
+    remains 2 stacks.
   created: "2026-02-26"
-  resolved: "2026-02-26"
+  resolved: "2026-03-22"
 
 - id: shenhe-c4-skyfrost
   entity: shenhe

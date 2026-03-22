@@ -120,7 +120,7 @@ class Columbina extends CharacterBase {
         buffs.push(
           new ScalingBuff(
             cbs(this, "C2", ["E"]),
-            { receiver: "onField" },
+            { receiver: "teamOnField" },
             [],
             "hp",
             c2.stat,
@@ -1003,7 +1003,7 @@ class Ineffa extends CharacterBase {
     // "提升伊涅芙与队伍中自己当前场上角色的元素精通" → onField (closest approximation per U1)
     new ScalingBuff(
       cbs(this, "P2", ["Q"]),
-      { receiver: "onField" },
+      { receiver: "teamOnField" },
       [],
       "atk",
       "em",
