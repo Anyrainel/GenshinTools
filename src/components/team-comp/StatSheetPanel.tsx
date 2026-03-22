@@ -548,7 +548,7 @@ export function StatSheetPanel({
             {hasMismatch && activeView != null && (
               <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                <span>{t.ui("teamComp.equippedSetDiffers")}</span>
+                <span>{t.ui("teamComp.setMismatch")}</span>
               </div>
             )}
 

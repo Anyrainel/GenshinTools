@@ -99,10 +99,10 @@ export function ArtifactBuildsView({
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {t.ui("computeFilters.noConfigurations")}
+                {t.ui("computeFilters.noConfig")}
               </h3>
               <p className="text-sm text-muted-foreground max-w-sm mb-6">
-                {t.ui("computeFilters.noConfigurationsDesc")}
+                {t.ui("computeFilters.noConfigDesc")}
               </p>
               <div className="flex flex-col items-center gap-3 w-full max-w-xs">
                 {onGoToConfigure && (
@@ -111,13 +111,13 @@ export function ArtifactBuildsView({
                     className="w-full gap-2 shadow-lg shadow-primary/10"
                   >
                     <ArrowRight className="w-4 h-4" />
-                    {t.ui("computeFilters.noConfigurationsCta")}
+                    {t.ui("computeFilters.noConfigCta")}
                   </Button>
                 )}
                 {onOpenImport && (
                   <>
                     <p className="text-xs text-muted-foreground">
-                      {t.ui("computeFilters.noConfigurationsOrPreset")}
+                      {t.ui("computeFilters.noConfigOrPreset")}
                     </p>
                     <Button
                       variant="outline"
@@ -125,7 +125,7 @@ export function ArtifactBuildsView({
                       className="w-full gap-2"
                     >
                       <Download className="w-4 h-4" />
-                      {t.ui("computeFilters.noConfigurationsImportPreset")}
+                      {t.ui("computeFilters.importPreset")}
                     </Button>
                   </>
                 )}

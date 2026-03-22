@@ -180,10 +180,10 @@ export function ComputeSidebar({
             htmlFor={`${isInSidePanel ? "mobile-" : ""}substat-weight`}
             className="text-foreground text-sm font-medium"
           >
-            {t.ui("computeFilters.substatWeightThreshold")}
+            {t.ui("computeFilters.subThreshold")}
           </Label>
           <p className="text-xs text-muted-foreground leading-snug">
-            {t.ui("computeFilters.substatWeightThresholdDesc")}
+            {t.ui("computeFilters.subThresholdDesc")}
           </p>
           <Input
             id={`${isInSidePanel ? "mobile-" : ""}substat-weight`}
@@ -207,10 +207,10 @@ export function ComputeSidebar({
             htmlFor={`${isInSidePanel ? "mobile-" : ""}must-present-weight`}
             className="text-foreground text-sm font-medium"
           >
-            {t.ui("computeFilters.mustPresentWeightThreshold")}
+            {t.ui("computeFilters.mustPresentThreshold")}
           </Label>
           <p className="text-xs text-muted-foreground leading-snug">
-            {t.ui("computeFilters.mustPresentWeightThresholdDesc")}
+            {t.ui("computeFilters.mustPresentDesc")}
           </p>
           <Input
             id={`${isInSidePanel ? "mobile-" : ""}must-present-weight`}

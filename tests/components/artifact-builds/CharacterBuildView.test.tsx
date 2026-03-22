@@ -129,6 +129,6 @@ describe("CharacterBuildView", () => {
 
     render(<CharacterBuildView />);
 
-    expect(screen.getByText("configure.noCharactersFound")).toBeInTheDocument();
+    expect(screen.getByText("configure.noChars")).toBeInTheDocument();
   });
 });

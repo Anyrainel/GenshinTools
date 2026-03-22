@@ -156,78 +156,76 @@ export function FormulaSelectorCard({
             className="inline-flex items-center gap-2"
           >
             <Swords className="w-4 h-4 opacity-70" />
-            <span>{t.ui("teamComp.formulaSelection")}</span>
+            <span>{t.ui("teamComp.formulaSelect")}</span>
           </span>
         </h3>
       </CardHeader>
-      {allFormulas.length > 0 && (
-        <div className="flex flex-col md:flex-row gap-2 px-2 2xl:px-4 py-2 border-b border-border/20">
-          {/* Enemy Element Aura — dropdown select */}
-          <EnemyAuraSelect
-            value={team.enemyElementAura}
-            onChange={(el) => updateTeam(team.id, { enemyElementAura: el })}
-            label={t.ui("teamComp.enemyAura")}
-            t={t}
-          />
-          {(["single", "combo"] as const).map((mode) => {
-            const selected = formulaMode === mode;
-            return (
-              <div key={mode} className="flex-1 min-w-0">
-                <button
-                  type="button"
-                  onClick={() => updateTeam(team.id, { formulaMode: mode })}
+      <div className="flex flex-col md:flex-row gap-2 px-2 2xl:px-4 py-2 border-b border-border/20">
+        {/* Enemy Element Aura — dropdown select */}
+        <EnemyAuraSelect
+          value={team.enemyElementAura}
+          onChange={(el) => updateTeam(team.id, { enemyElementAura: el })}
+          label={t.ui("teamComp.enemyAura")}
+          t={t}
+        />
+        {(["single", "combo"] as const).map((mode) => {
+          const selected = formulaMode === mode;
+          return (
+            <div key={mode} className="flex-1 min-w-0">
+              <button
+                type="button"
+                onClick={() => updateTeam(team.id, { formulaMode: mode })}
+                className={cn(
+                  "w-full flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
+                  selected
+                    ? "border-primary bg-primary/10 shadow-sm"
+                    : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
+                )}
+              >
+                {/* Radio circle */}
+                <div
                   className={cn(
-                    "w-full flex items-start gap-2.5 rounded-lg border-2 px-3 py-2 text-left transition-all",
-                    selected
-                      ? "border-primary bg-primary/10 shadow-sm"
-                      : "border-border/30 bg-black/5 hover:border-border/50 hover:bg-black/10"
+                    "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
+                    selected ? "border-primary" : "border-border"
                   )}
                 >
-                  {/* Radio circle */}
-                  <div
+                  {selected && (
+                    <div className="w-2 h-2 rounded-full bg-primary" />
+                  )}
+                </div>
+                <div className="flex flex-wrap items-baseline gap-x-1.5 min-w-0">
+                  <span
                     className={cn(
-                      "mt-0.5 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors",
-                      selected ? "border-primary" : "border-border"
+                      "text-base md:text-lg font-bold",
+                      selected ? "text-foreground" : "text-foreground/70"
                     )}
                   >
-                    {selected && (
-                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    {t.ui(
+                      mode === "single"
+                        ? "teamComp.singleFormula"
+                        : "teamComp.comboFormula"
                     )}
-                  </div>
-                  <div className="flex flex-wrap items-baseline gap-x-1.5 min-w-0">
-                    <span
-                      className={cn(
-                        "text-base md:text-lg font-bold",
-                        selected ? "text-foreground" : "text-foreground/70"
-                      )}
-                    >
-                      {t.ui(
-                        mode === "single"
-                          ? "teamComp.singleFormula"
-                          : "teamComp.comboFormula"
-                      )}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs leading-snug",
-                        selected
-                          ? "text-muted-foreground"
-                          : "text-muted-foreground"
-                      )}
-                    >
-                      {t.ui(
-                        mode === "single"
-                          ? "teamComp.singleFormulaDesc"
-                          : "teamComp.comboFormulaDesc"
-                      )}
-                    </span>
-                  </div>
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-xs leading-snug",
+                      selected
+                        ? "text-muted-foreground"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {t.ui(
+                      mode === "single"
+                        ? "teamComp.singleFormulaDesc"
+                        : "teamComp.comboFormulaDesc"
+                    )}
+                  </span>
+                </div>
+              </button>
+            </div>
+          );
+        })}
+      </div>
       {formulaMode === "combo" && (
         <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-border/20">
           <p className="text-xs text-foreground/80 italic">
@@ -560,7 +558,7 @@ export function FormulaSelectorCard({
               onClick={onInvestmentClick}
             >
               <TrendingUp className="w-4 h-4" />
-              {t.ui("teamComp.investmentAnalysis")}
+              {t.ui("teamComp.investment")}
             </Button>
           </div>
         )}

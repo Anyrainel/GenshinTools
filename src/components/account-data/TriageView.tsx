@@ -548,7 +548,7 @@ export function TriageView() {
                     className={cn(
                       "inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium transition-colors border min-w-[4.5rem]",
                       isActive
-                        ? "bg-primary text-primary-foreground border-primary"
+                        ? "bg-primary/40 text-primary-foreground border-primary/40"
                         : "bg-secondary text-secondary-foreground border-primary/40 hover:bg-secondary/80"
                     )}
                   >
@@ -628,12 +628,12 @@ export function TriageView() {
           ] as const;
           const colorClass = {
             green:
-              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-green-500/15 data-[state=active]:text-green-400 data-[state=active]:border-green-500/30",
-            red: "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-red-500/15 data-[state=active]:text-red-400 data-[state=active]:border-red-500/30",
+              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-green-500/30 data-[state=active]:text-green-400 data-[state=active]:border-green-500/30",
+            red: "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-red-500/30 data-[state=active]:text-red-400 data-[state=active]:border-red-500/30",
             amber:
-              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/30",
+              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-amber-500/30 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/30",
             slate:
-              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-sky-500/15 data-[state=active]:text-sky-400 data-[state=active]:border-sky-500/30",
+              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-sky-500/30 data-[state=active]:text-sky-400 data-[state=active]:border-sky-500/30",
           };
           return (
             <>

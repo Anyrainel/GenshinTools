@@ -13,7 +13,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
     steps: [
       {
         id: "af-presets",
-        title: t.ui("computeFilters.noConfigurationsImportPreset"),
+        title: t.ui("computeFilters.importPreset"),
         content: t.ui("tour.artifactFilter.presetsContent"),
         side: "bottom",
       },
@@ -79,7 +79,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "tc-import",
-        title: t.ui("computeFilters.noConfigurationsImportPreset"),
+        title: t.ui("computeFilters.importPreset"),
         content: t.ui("tour.teamComp.importContent"),
         side: "bottom",
       },
@@ -97,7 +97,7 @@ export const getTours = (t: ReturnType<typeof useLanguage>["t"]): Tour[] => [
       },
       {
         id: "tod-formula",
-        title: t.ui("teamComp.formulaSelection"),
+        title: t.ui("teamComp.formulaSelect"),
         content: t.ui("tour.teamOptDetail.formulaContent"),
         side: "bottom",
       },

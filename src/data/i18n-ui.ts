@@ -61,23 +61,23 @@ export const i18nUiData = {
   },
   import: {
     action: { en: "Import", zh: "导入" },
-    dialogDescription: {
+    dialogDesc: {
       en: "Choose from built-in presets or import from a local file.",
       zh: "从内置预设中选择，或从本地文件导入。",
     },
     fromFile: { en: "Import from File", zh: "从文件导入" },
-    presetConfirmTitle: { en: "Apply preset?", zh: "应用预设？" },
-    presetConfirmAction: { en: "Apply preset", zh: "应用预设" },
+    confirmTitle: { en: "Apply preset?", zh: "应用预设？" },
+    confirmAction: { en: "Apply preset", zh: "应用预设" },
     fileLoadError: { en: "Failed to import file", zh: "文件导入失败" },
     clearBeforeImport: { en: "Clear existing data", zh: "清除现有数据" },
     titleBuilds: { en: "Import builds", zh: "导入配装" },
     titleTierList: { en: "Import Tier List", zh: "导入榜单" },
     titleAccountData: { en: "Import Account Data", zh: "导入账号数据" },
-    confirmDescBuilds: {
+    confirmBuilds: {
       en: "This will replace current builds with the selected preset.",
       zh: "此操作会用所选预设替换当前配装。",
     },
-    confirmDescTierList: {
+    confirmTierList: {
       en: "This will replace your current tier list with the selected preset.",
       zh: "此操作会用所选预设替换当前榜单。",
     },
@@ -87,7 +87,7 @@ export const i18nUiData = {
       zh: "榜单加载失败",
     },
     titleTeamComp: { en: "Import Team Comp", zh: "导入队伍配队" },
-    confirmDescTeamComp: {
+    confirmTeamComp: {
       en: "This will replace your current teams with the selected preset.",
       zh: "此操作会用所选预设替换当前队伍。",
     },
@@ -96,7 +96,7 @@ export const i18nUiData = {
       zh: "队伍配队加载失败",
     },
     presetEmpty: { en: "No presets found", zh: "未找到预设" },
-    presetEmptyBuilds: {
+    emptyBuildsHint: {
       en: "No presets found. Add preset JSON files to the presets folder.",
       zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
     },
@@ -117,12 +117,12 @@ export const i18nUiData = {
     },
     goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
     goodTitle: { en: "Full Data Import", zh: "完整数据导入" },
-    badgeRecommended: { en: "Recommended", zh: "推荐" },
+    recommended: { en: "Recommended", zh: "推荐" },
     goodBenefit: {
       en: "Full artifact inventory with swap, upgrade, and reroll recommendations.",
       zh: "完整背包数据，获取替换、强化和洗练建议。",
     },
-    goodRequiresPC: {
+    goodPcHint: {
       en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
     },
@@ -134,7 +134,7 @@ export const i18nUiData = {
       en: "GOODScanner (OCR, 16:9 Chinese client)",
       zh: "GOODScanner (扫图, 16:9)",
     },
-    wrongFormatGOOD: {
+    wrongFormat: {
       en: "This file is not in GOOD format. Please export using a supported scanner tool.",
       zh: "该文件不是 GOOD 格式，请使用支持的扫描工具导出。",
     },
@@ -147,8 +147,8 @@ export const i18nUiData = {
       en: "Enter UID (e.g. 800000000)",
       zh: "输入 UID (如 100000000)",
     },
-    optionalUidPlaceholder: { en: "Optional UID", zh: "UID（选填）" },
-    uidRequiredForNewProfile: {
+    optionalUid: { en: "Optional UID", zh: "UID（选填）" },
+    uidRequired: {
       en: "UID required for new profile",
       zh: "新建配置需要填写 UID",
     },
@@ -161,13 +161,13 @@ export const i18nUiData = {
     action: { en: "Export", zh: "导出" },
     authorLabel: { en: "Author", zh: "作者" },
     authorPlaceholder: { en: "Enter your name...", zh: "输入您的名字..." },
-    descriptionLabel: { en: "Description", zh: "描述" },
-    descriptionPlaceholder: {
+    descLabel: { en: "Description", zh: "描述" },
+    descPlaceholder: {
       en: "Enter a description...",
       zh: "输入描述...",
     },
     authorRequired: { en: "Author is required", zh: "需要填写作者" },
-    descriptionRequired: {
+    descRequired: {
       en: "Description is required",
       zh: "需要填写描述",
     },
@@ -200,7 +200,7 @@ export const i18nUiData = {
     other: { en: "Other Level", zh: "未满级" },
     sameSet: { en: "Same Set", zh: "同套装" },
     allOther: { en: "All Other", zh: "其他套装" },
-    noAccountDataLoaded: {
+    noData: {
       en: "No account data loaded.",
       zh: "未加载账号数据。",
     },
@@ -208,29 +208,29 @@ export const i18nUiData = {
       en: "Import your data to unlock character builds, artifact scoring, and inventory insights.",
       zh: "导入数据以解锁角色配装、圣遗物评分和库存分析。",
     },
-    emptyStateEnkaTitle: {
+    enkaTitle: {
       en: "Enka UID",
       zh: "Enka UID",
     },
-    emptyStateEnkaDesc: {
+    enkaDesc: {
       en: "Paste your UID to fetch your showcase characters instantly.",
       zh: "粘贴 UID 即可即时获取你的展示角色。",
     },
-    emptyStateGoodTitle: {
+    goodTitle: {
       en: "GOOD JSON",
       zh: "GOOD JSON",
     },
-    emptyStateGoodDesc: {
+    goodDesc: {
       en: "Upload a full artifact scanner export for complete analysis.",
       zh: "上传完整的圣遗物扫描导出文件以获得全面分析。",
     },
-    emptyStateAfterImport: {
+    afterImportHint: {
       en: "After importing, you'll see build scores, upgrade recommendations, and inventory insights.",
       zh: "导入后，你将看到配装评分、升级建议和库存分析。",
     },
-    importProfileSelect: { en: "Select Profile", zh: "选择账号配置" },
+    profileSelect: { en: "Select Profile", zh: "选择账号配置" },
     manageProfiles: { en: "Manage Profiles", zh: "管理账号配置" },
-    importProfileDesc: {
+    profileSelectDesc: {
       en: "Choose a profile to import into, or create a new one.",
       zh: "选择要导入的账号配置，或新建一个。",
     },
@@ -248,11 +248,11 @@ export const i18nUiData = {
     defaultAccount: { en: "Default Account", zh: "默认账号" },
     accounts: { en: "Accounts", zh: "账号管理" },
     account: { en: "Account", zh: "账号" },
-    noCharactersMatchFilters: {
+    noFilterMatch: {
       en: "No characters match your filters",
       zh: "没有角色匹配当前过滤条件",
     },
-    noCharactersMatchFiltersDescription: {
+    noFilterMatchDesc: {
       en: "Try adjusting your filter settings or clear all filters to see your characters.",
       zh: "尝试调整过滤设置或清除所有过滤条件以查看角色。",
     },
@@ -268,7 +268,7 @@ export const i18nUiData = {
       en: "Some items could not be imported",
       zh: "部分条目无法导入",
     },
-    conversionWarningSkipped: {
+    conversionSkipped: {
       en: "skipped",
       zh: "已跳过",
     },
@@ -316,7 +316,7 @@ export const i18nUiData = {
     mainStatContrib: { en: "Main", zh: "主属性" },
     subStatContrib: { en: "Sub", zh: "副属性" },
     outOf300: { en: "/ 300", zh: "/ 300" },
-    scoreChangeAnnouncement: {
+    scoreRevamp: {
       title: {
         en: "Scoring Revamped",
         zh: "评分系统已升级",
@@ -373,7 +373,7 @@ export const i18nUiData = {
       showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
       showLess: { en: "Show less", zh: "收起" },
     },
-    recNoRecommendations: {
+    allOptimal: {
       en: "No recommendations — all builds are optimal!",
       zh: "无推荐 — 所有配装已最优！",
     },
@@ -718,11 +718,11 @@ export const i18nUiData = {
     critModeCrit: { en: "CRIT", zh: "暴击" },
     critModeNoCrit: { en: "Non-CRIT", zh: "非暴击" },
     pending: { en: "Pending", zh: "等待计算" },
-    emptyDamageMessage: {
+    emptyDamageMsg: {
       en: "Configure characters and weapons to see damage metrics.",
       zh: "配置队伍成员以查看伤害期望。",
     },
-    emptyComboMessage: {
+    emptyComboMsg: {
       en: "Add formula counts in the combo tab to see total rotation damage.",
       zh: "在循环公式面板中添加公式次数以查看循环总伤害。",
     },
@@ -755,7 +755,7 @@ export const i18nUiData = {
     receiverOtherOnField: { en: "Other (On-Field)", zh: "仅队友-前台" },
     receiverTeam: { en: "Team", zh: "全队" },
     receiverOnField: { en: "On-Field", zh: "全队-前台" },
-    equippedSetDiffers: {
+    setMismatch: {
       en: "Equipped set differs from Team Roster goal",
       zh: "已装备的套装与队伍配置目标不一致",
     },
@@ -764,20 +764,20 @@ export const i18nUiData = {
     enemyLevel: { en: "Enemy Lv.", zh: "怪物等级" },
     enemyRes: { en: "Enemy RES", zh: "怪物抗性" },
     critRateTarget: { en: "DPS CR Target", zh: "(凹分)主C暴击目标" },
-    critRateTargetTooltip: {
+    critRateTargetTip: {
       en: "Adds a (100−x)% CR buff to the main DPS during calculation. In rotation mode, any character with a damage formula is treated as main DPS.",
       zh: "计算时会给主C添加一个(100-x)%的暴击率buff。循环模式下带有伤害公式的角色均视为主C。",
     },
     rollMultiplier: { en: "Roll Growth", zh: "词条成长" },
-    idealSubstatBudget: {
+    substatBudget: {
       en: "Rolls Count",
       zh: "词条数",
     },
-    emptyOptMessage: {
+    emptyOptMsg: {
       en: "Press Run Optimization to find the best artifact loadout.",
       zh: "点击「开始优化」寻找最优圣遗物配装。",
     },
-    noValidCombinations: {
+    noValidCombos: {
       en: "No valid combinations found for ER {0}%.",
       zh: "未找到满足 {0}% 充能要求的配装组合。",
     },
@@ -813,12 +813,12 @@ export const i18nUiData = {
       en: "Optimizer error: {0}",
       zh: "优化器错误：{0}",
     },
-    preparingOptimizer: {
+    preparingOpt: {
       en: "Preparing optimizer…",
       zh: "正在准备优化器…",
     },
-    optimizerError: { en: "Optimization Error:", zh: "优化错误：" },
-    ignoreArtifactSets: {
+    optError: { en: "Optimization Error:", zh: "优化错误：" },
+    ignoreSets: {
       en: "Ignore sets when Min. ER/CR cannot be met",
       zh: "充能、暴击无法达到要求时忽略套装",
     },
@@ -830,7 +830,7 @@ export const i18nUiData = {
       en: "Control how many hits each buff is active for",
       zh: "控制每个增益生效的命中次数",
     },
-    emptyBuffMessage: {
+    emptyBuffMsg: {
       en: "No applicable buffs for this part.",
       zh: "此部分没有可用的增益。",
     },
@@ -842,7 +842,7 @@ export const i18nUiData = {
       en: "Import data",
       zh: "导入数据",
     },
-    optimizationComplete: { en: "Complete", zh: "完成" },
+    optComplete: { en: "Complete", zh: "完成" },
     phaseInit: { en: "Initializing", zh: "初始化" },
     phasePerChar: { en: "Per-character search", zh: "单角色搜索" },
     phaseTeamAlloc: { en: "Team allocation", zh: "队伍分配" },
@@ -856,15 +856,15 @@ export const i18nUiData = {
     reaction: { en: "Reaction", zh: "元素反应" },
     combo: { en: "Combo", zh: "连招" },
     totalRotation: { en: "Total Rotation Damage", zh: "循环总伤害" },
-    formulaSelection: {
+    formulaSelect: {
       en: "Formula Selection",
       zh: "公式选择",
     },
-    tabCurrentEquipped: {
+    tabCurrent: {
       en: "Current",
       zh: "当前",
     },
-    tabCurrentEquippedDesc: {
+    tabCurrentDesc: {
       en: "Equipped in account",
       zh: "账号已装备的",
     },
@@ -876,11 +876,11 @@ export const i18nUiData = {
       en: "Best from inventory",
       zh: "背包中最佳",
     },
-    tabGenerateIdeal: {
+    tabGenerate: {
       en: "Generate",
       zh: "生成",
     },
-    tabGenerateIdealDesc: {
+    tabGenerateDesc: {
       en: "Theoretical best stats",
       zh: "理论最佳词条",
     },
@@ -902,7 +902,7 @@ export const i18nUiData = {
     unfreezeAll: { en: "Thaw All", zh: "全部解冻" },
     unfreezeChar: { en: "Thaw", zh: "解冻" },
     optimizeRest: { en: "Optimize Rest", zh: "优化其余" },
-    partiallyFrozenTooltip: {
+    partialFrozenTip: {
       en: "Some characters are frozen — only unfrozen ones will be re-optimized.",
       zh: "部分角色已冻结——仅对未冻结角色重新优化。",
     },
@@ -919,7 +919,7 @@ export const i18nUiData = {
     },
     swapSortBy: { en: "Sort by", zh: "排序" },
     swapSortPlaceholder: { en: "Not set", zh: "未选择" },
-    swapRestoreOriginal: { en: "Restore Original", zh: "恢复原始结果" },
+    swapRestore: { en: "Restore Original", zh: "恢复原始结果" },
     swapGuide: { en: "Swap Guide", zh: "换装指南" },
     swapGuideChange: { en: "change", zh: "处变更" },
     swapGuideChanges: { en: "changes", zh: "处变更" },
@@ -946,15 +946,15 @@ export const i18nUiData = {
       en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
       zh: "组合模式不追踪Buff持续时间和层数，长轴循环的结果可能不准确。",
     },
-    investmentAnalysis: {
+    investment: {
       en: "Investment Analysis",
       zh: "补金分析",
     },
-    investmentDesc: {
+    investDesc: {
       en: "Find the most cost-efficient order to invest constellations and weapon refinements.",
       zh: "找到最高性价比的命座和精炼投资顺序。",
     },
-    investmentBuffStackWarning: {
+    investBuffWarn: {
       en: "Buff stack limits are not yet calculated. Some constellation values may be inaccurate, e.g. Clorinde C2, Xianyun C4, Shenhe C6.",
       zh: "目前还不能计算buff的层数限制，个别命座价值会被误算：如爱可菲2命，希诺宁4命，申鹤6命等。",
     },
@@ -1036,27 +1036,26 @@ export const i18nUiData = {
   computeFilters: {
     searchSets: { en: "Search Sets", zh: "搜索套装" },
     searchPlaceholder: { en: "Enter set name...", zh: "输入套装名称..." },
-    noConfigurations: {
+    noConfig: {
       en: "No Artifact Set Found",
       zh: "没有找到圣遗物套装",
     },
-    noConfigurationsDesc: {
+    noConfigDesc: {
       en: "Configure builds for your characters first, then switch here to see which artifacts to keep or trash.",
       zh: "请先为角色配置配装，然后切换到这里查看哪些圣遗物该保留或丢弃。",
     },
-    noConfigurationsCta: {
+    noConfigCta: {
       en: "Go to Configure",
       zh: "前往配置",
     },
-    noConfigurationsOrPreset: {
+    noConfigOrPreset: {
       en: "Or import a community preset to get started in seconds.",
       zh: "或者导入社区预设，几秒钟即可开始。",
     },
-    noConfigurationsImportPreset: {
+    importPreset: {
       en: "Import Presets",
       zh: "导入预设",
     },
-    configuration: { en: "Configuration", zh: "配置" },
     mainStat: { en: "Main Stat", zh: "主词条" },
     subStat: { en: "Substat", zh: "副词条" },
     atLeast: { en: "at least", zh: "至少" },
@@ -1064,7 +1063,7 @@ export const i18nUiData = {
     for: { en: "For", zh: "适用角色" },
     fourPc: { en: "4pc", zh: "四件套" },
     twoPc: { en: "2pc", zh: "两件套" },
-    configurationNumber: { en: "Config", zh: "配置" },
+    configNum: { en: "Config", zh: "配置" },
     computeOptions: { en: "Compute Options", zh: "计算选项" },
     mergeAlgorithm: { en: "Merge Algorithm", zh: "合并算法" },
     algorithmBruteForce: {
@@ -1103,19 +1102,19 @@ export const i18nUiData = {
       en: "In 4pc builds, treat CR or CD circlet as both CR/CD (recommended)",
       zh: "4件套配装中，将暴击或暴伤理之冠视为两者皆可（推荐）",
     },
-    substatWeightThreshold: {
+    subThreshold: {
       en: "Included substat weight threshold",
       zh: "副词条纳入权重阈值",
     },
-    substatWeightThresholdDesc: {
+    subThresholdDesc: {
       en: "Substats with weight ≥ this value are included in the filter pool.",
       zh: "权重 ≥ 此值的副词条会被纳入过滤池。",
     },
-    mustPresentWeightThreshold: {
+    mustPresentThreshold: {
       en: "Must-present substat weight threshold",
       zh: "必须存在副词条权重阈值",
     },
-    mustPresentWeightThresholdDesc: {
+    mustPresentDesc: {
       en: "Substats with weight ≥ this value must appear on every artifact.",
       zh: "权重 ≥ 此值的副词条必须出现在每件圣遗物上。",
     },
@@ -1130,21 +1129,20 @@ export const i18nUiData = {
     passChance: { en: "Pass chance", zh: "达标概率" },
   },
   configure: {
-    noCharactersFound: { en: "No characters found", zh: "没有找到角色" },
-    noCharactersDescription: {
+    noChars: { en: "No characters found", zh: "没有找到角色" },
+    noCharsDesc: {
       en: "Try adjusting your filters to see more characters",
       zh: "尝试调整您的过滤条件以查看更多角色",
     },
-    clearAll: { en: "Clear all data", zh: "清除所有数据" },
-    clearAllConfirmTitle: {
+    clearConfirmTitle: {
       en: "Clear all saved data?",
       zh: "清除所有保存的数据？",
     },
-    clearAllConfirmDescription: {
+    clearConfirmDesc: {
       en: "This removes every build and visibility setting. This cannot be undone.",
       zh: "此操作会移除所有配装和隐藏设置，且无法撤销。",
     },
-    clearAllConfirmAction: { en: "Yes, clear everything", zh: "确认清除" },
+    clearConfirmAction: { en: "Yes, clear everything", zh: "确认清除" },
   },
   navigation: {
     configure: { en: "Character Builds", zh: "角色配装" },
@@ -1175,38 +1173,38 @@ export const i18nUiData = {
     "4pc": { en: "4pc", zh: "4件套" },
     "2pc+2pc": { en: "2pc+2pc", zh: "2+2件套" },
     buildComplete: { en: "Build is complete", zh: "配装已完成" },
-    sandsMainStat: { en: "Sands Main Stat", zh: "时之沙主词条" },
-    gobletMainStat: { en: "Goblet Main Stat", zh: "空之杯主词条" },
-    circletMainStat: { en: "Circlet Main Stat", zh: "理之冠主词条" },
-    missing4pcSet: {
+    sandsMain: { en: "Sands Main Stat", zh: "时之沙主词条" },
+    gobletMain: { en: "Goblet Main Stat", zh: "空之杯主词条" },
+    circletMain: { en: "Circlet Main Stat", zh: "理之冠主词条" },
+    missing4pc: {
       en: "Missing 4-piece artifact set",
       zh: "缺少4件套圣遗物套装",
     },
-    missing2pcSets: {
+    missing2pc: {
       en: "Missing 2-piece artifact sets",
       zh: "缺少2件套圣遗物套装",
     },
-    select2pcPrompt: {
+    select2pc: {
       en: "Select two different 2-piece Set Effects",
       zh: "选择两个不同的2件套效果",
     },
-    select2pcPromptHint: {
+    select2pcHint: {
       en: "You can combine any set that gives the same stat bonus.",
       zh: "您可以组合任意提供相同属性加成的套装。",
     },
-    notEnoughSame2pcSets: {
+    notEnough2pc: {
       en: "Not enough artifact sets with the same 2-piece effect",
       zh: "相同2件套效果的圣遗物套装数量不足",
     },
-    missingSandsMainStat: {
+    missingSands: {
       en: "Need at least 1 sands main stat",
       zh: "需要至少1个时之沙主词条",
     },
-    missingGobletMainStat: {
+    missingGoblet: {
       en: "Need at least 1 goblet main stat",
       zh: "需要至少1个空之杯主词条",
     },
-    missingCircletMainStat: {
+    missingCirclet: {
       en: "Need at least 1 circlet main stat",
       zh: "需要至少1个理之冠主词条",
     },
@@ -1242,11 +1240,11 @@ export const i18nUiData = {
     autoTuneCalculate: { en: "Calculate", zh: "计算" },
     autoTuneComputing: { en: "Computing weights...", zh: "正在计算权重..." },
     autoTuneApply: { en: "Apply Weights", zh: "应用权重" },
-    autoTuneTeamBreakdown: { en: "Per-Team Breakdown", zh: "分队伍详情" },
+    autoTuneBreakdown: { en: "Per-Team Breakdown", zh: "分队伍详情" },
     autoTuneSubstats: { en: "Substat Weights", zh: "副词条权重" },
     autoTuneMainStats: { en: "Main Stat Weights", zh: "主词条权重" },
     autoTuneIdealRolls: { en: "Ideal Rolls", zh: "理想词条数" },
-    autoTuneLopsidedPenalty: {
+    autoTuneLopsided: {
       en: "Lopsided allocation: the highest substat has ≥15 more rolls than the 2nd highest, suggesting this main stat forces an unbalanced build. −2% penalty applied.",
       zh: "词条分配不均：最多的副词条比第二多的多出≥15条，说明该主词条迫使副词条严重倾斜。已扣除2%伤害惩罚。",
     },
@@ -1258,7 +1256,7 @@ export const i18nUiData = {
       zh: "未考虑循环充能需求。如有需要，请手动添加充能效率权重。",
     },
     autoTuneEditTeam: { en: "Edit Team", zh: "编辑队伍" },
-    autoTuneEditTeamDesc: {
+    autoTuneEditDesc: {
       en: "Configure team members, weapons, and artifact sets.",
       zh: "配置队伍成员、武器和圣遗物套装。",
     },
@@ -1575,7 +1573,7 @@ export const i18nUiData = {
       SP4: { en: "Equipped protected", zh: "已装备保护" },
       SP5: { en: "4-liner CR+CD", zh: "4初始双暴" },
       SP6: { en: "Set+slot keep", zh: "套装部位最低保留" },
-      FLEX: { en: "Flex match", zh: "散件匹配保留（可控制每种开关）" },
+      FLEX: { en: "Flex match", zh: "散件匹配保留" },
     },
     // Detail panel labels
     detail: {

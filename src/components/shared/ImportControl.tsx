@@ -86,10 +86,10 @@ function ImportControlInner<T>(
     if (variant === "tier-list") {
       return {
         dialogTitle: t.ui("import.titleTierList"),
-        dialogDescription: t.ui("import.dialogDescription"),
-        confirmTitle: t.ui("import.presetConfirmTitle"),
-        confirmDescription: t.ui("import.confirmDescTierList"),
-        confirmAction: t.ui("import.presetConfirmAction"),
+        dialogDescription: t.ui("import.dialogDesc"),
+        confirmTitle: t.ui("import.confirmTitle"),
+        confirmDescription: t.ui("import.confirmTierList"),
+        confirmAction: t.ui("import.confirmAction"),
         loadError: t.ui("import.loadErrorTierList"),
         emptyList: t.ui("import.presetEmpty"),
         importFromFile: t.ui("import.fromFile"),
@@ -99,10 +99,10 @@ function ImportControlInner<T>(
     if (variant === "team-comp") {
       return {
         dialogTitle: t.ui("import.titleTeamComp"),
-        dialogDescription: t.ui("import.dialogDescription"),
-        confirmTitle: t.ui("import.presetConfirmTitle"),
-        confirmDescription: t.ui("import.confirmDescTeamComp"),
-        confirmAction: t.ui("import.presetConfirmAction"),
+        dialogDescription: t.ui("import.dialogDesc"),
+        confirmTitle: t.ui("import.confirmTitle"),
+        confirmDescription: t.ui("import.confirmTeamComp"),
+        confirmAction: t.ui("import.confirmAction"),
         loadError: t.ui("import.loadErrorTeamComp"),
         emptyList: t.ui("import.presetEmpty"),
         importFromFile: t.ui("import.fromFile"),
@@ -112,12 +112,12 @@ function ImportControlInner<T>(
     // Default variant (configure/builds)
     return {
       dialogTitle: t.ui("import.titleBuilds"),
-      dialogDescription: t.ui("import.dialogDescription"),
-      confirmTitle: t.ui("import.presetConfirmTitle"),
-      confirmDescription: t.ui("import.confirmDescBuilds"),
-      confirmAction: t.ui("import.presetConfirmAction"),
+      dialogDescription: t.ui("import.dialogDesc"),
+      confirmTitle: t.ui("import.confirmTitle"),
+      confirmDescription: t.ui("import.confirmBuilds"),
+      confirmAction: t.ui("import.confirmAction"),
       loadError: t.ui("import.presetLoadError"),
-      emptyList: t.ui("import.presetEmptyBuilds"),
+      emptyList: t.ui("import.emptyBuildsHint"),
       importFromFile: t.ui("import.fromFile"),
     };
   }, [variant, t]);

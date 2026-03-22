@@ -102,7 +102,7 @@ export const AccountImportControl = forwardRef<
       try {
         const imported = JSON.parse(e.target?.result as string);
         if (!isGOODFormat(imported)) {
-          setErrorMessage(t.ui("import.wrongFormatGOOD"));
+          setErrorMessage(t.ui("import.wrongFormat"));
           return;
         }
         if (localUidInput) {
@@ -178,7 +178,7 @@ export const AccountImportControl = forwardRef<
               )}
             >
               <Star className="w-3 h-3" />
-              {t.ui("import.badgeRecommended")}
+              {t.ui("import.recommended")}
             </span>
 
             {/* Header row */}
@@ -201,7 +201,7 @@ export const AccountImportControl = forwardRef<
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-yellow-500 shrink-0" />
                 <span className="text-sm text-yellow-500">
-                  {t.ui("import.goodRequiresPC")}
+                  {t.ui("import.goodPcHint")}
                 </span>
               </div>
               <div className="flex flex-wrap gap-2 mt-2 lg:ml-6">
@@ -231,9 +231,7 @@ export const AccountImportControl = forwardRef<
               <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="text"
-                  placeholder={
-                    t.ui("import.optionalUidPlaceholder") || "Optional UID"
-                  }
+                  placeholder={t.ui("import.optionalUid") || "Optional UID"}
                   value={localUidInput}
                   onChange={(e) => setLocalUidInput(e.target.value)}
                   className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"

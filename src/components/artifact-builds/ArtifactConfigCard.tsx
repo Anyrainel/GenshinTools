@@ -252,7 +252,7 @@ export function ArtifactConfigCard({
             isMobile && "text-sm"
           )}
         >
-          {t.ui("computeFilters.configurationNumber")} {configNumber}
+          {t.ui("computeFilters.configNum")} {configNumber}
         </h4>
 
         {/* Character groups */}

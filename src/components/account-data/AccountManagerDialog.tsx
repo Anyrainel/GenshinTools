@@ -135,12 +135,12 @@ export function AccountManagerDialog({
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {isImportMode
-              ? t.ui("accountData.importProfileSelect")
+              ? t.ui("accountData.profileSelect")
               : t.ui("accountData.manageProfiles")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
             {isImportMode
-              ? t.ui("accountData.importProfileDesc")
+              ? t.ui("accountData.profileSelectDesc")
               : t.ui("accountData.manageProfilesDesc")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
@@ -263,7 +263,7 @@ export function AccountManagerDialog({
                           size="icon"
                           variant="ghost"
                           className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                          title={t.ui("import.optionalUidPlaceholder")}
+                          title={t.ui("import.optionalUid")}
                           onClick={(e) => {
                             e.stopPropagation();
                             setEditUid("");
@@ -334,7 +334,7 @@ export function AccountManagerDialog({
                   onClick={(e) => e.stopPropagation()}
                 >
                   <span className="text-xs text-muted-foreground">
-                    {t.ui("import.uidRequiredForNewProfile")}
+                    {t.ui("import.uidRequired")}
                   </span>
                   <input
                     // biome-ignore lint/a11y/noAutofocus: UID entry needed to proceed

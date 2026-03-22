@@ -256,11 +256,11 @@ function BuildCardComponent({
     }
     switch (slot) {
       case "sands":
-        return t.ui("buildCard.sandsMainStat");
+        return t.ui("buildCard.sandsMain");
       case "goblet":
-        return t.ui("buildCard.gobletMainStat");
+        return t.ui("buildCard.gobletMain");
       case "circlet":
-        return t.ui("buildCard.circletMainStat");
+        return t.ui("buildCard.circletMain");
     }
   };
 

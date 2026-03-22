@@ -19,18 +19,18 @@ export function getBuildValidationErrors(build: Build): string[] {
   // Check artifact set configuration
   if (build.composition === "4pc") {
     if (!build.artifactSet) {
-      errors.push("buildCard.missing4pcSet");
+      errors.push("buildCard.missing4pc");
     }
   } else {
     // 2pc+2pc
     if (!build.halfSet1 || !build.halfSet2) {
-      errors.push("buildCard.missing2pcSets");
+      errors.push("buildCard.missing2pc");
     } else {
       // Check if halfSet1 and halfSet2 are the same
       if (build.halfSet1 === build.halfSet2) {
         const halfSet = artifactHalfSetsById[build.halfSet1];
         if (!halfSet || halfSet.setIds.length <= 1) {
-          errors.push("buildCard.notEnoughSame2pcSets");
+          errors.push("buildCard.notEnough2pc");
         }
       }
     }
@@ -38,13 +38,13 @@ export function getBuildValidationErrors(build: Build): string[] {
 
   // Check main stats
   if (build.sandsWeights.length === 0) {
-    errors.push("buildCard.missingSandsMainStat");
+    errors.push("buildCard.missingSands");
   }
   if (build.gobletWeights.length === 0) {
-    errors.push("buildCard.missingGobletMainStat");
+    errors.push("buildCard.missingGoblet");
   }
   if (build.circletWeights.length === 0) {
-    errors.push("buildCard.missingCircletMainStat");
+    errors.push("buildCard.missingCirclet");
   }
 
   // Check substats

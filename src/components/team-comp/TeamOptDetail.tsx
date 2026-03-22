@@ -155,7 +155,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         buildError: e instanceof Error ? e.message : String(e),
       };
     }
-  }, [configs, team.opts, team.enemyElementAura]);
+  }, [configs, team.opts, team.enemyElementAura, characterStats, weaponStats]);
 
   const availableFormulas = useMemo(() => {
     return teamBuild ? teamBuild.getFormulaIds() : {};

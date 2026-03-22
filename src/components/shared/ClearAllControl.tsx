@@ -55,9 +55,9 @@ export const ClearAllControl = forwardRef<ControlHandle, ClearAllControlProps>(
             action: t.ui("common.reset"),
           }
         : {
-            title: t.ui("configure.clearAllConfirmTitle"),
-            description: t.ui("configure.clearAllConfirmDescription"),
-            action: t.ui("configure.clearAllConfirmAction"),
+            title: t.ui("configure.clearConfirmTitle"),
+            description: t.ui("configure.clearConfirmDesc"),
+            action: t.ui("configure.clearConfirmAction"),
           };
 
     const handleConfirm = () => {

@@ -57,7 +57,7 @@ describe("getBuildValidationErrors", () => {
       composition: "4pc",
       artifactSet: undefined,
     });
-    expect(errors).toContain("buildCard.missing4pcSet");
+    expect(errors).toContain("buildCard.missing4pc");
   });
 
   // --- 2pc+2pc Artifact ---
@@ -70,7 +70,7 @@ describe("getBuildValidationErrors", () => {
       halfSet1: undefined,
       halfSet2: undefined,
     });
-    expect(errors).toContain("buildCard.missing2pcSets");
+    expect(errors).toContain("buildCard.missing2pc");
   });
 
   it("reports missing halfSet2 for 2pc+2pc composition", () => {
@@ -81,7 +81,7 @@ describe("getBuildValidationErrors", () => {
       halfSet1: 1,
       halfSet2: undefined,
     });
-    expect(errors).toContain("buildCard.missing2pcSets");
+    expect(errors).toContain("buildCard.missing2pc");
   });
 
   it("reports same halfSet IDs with insufficient backing sets", () => {
@@ -93,7 +93,7 @@ describe("getBuildValidationErrors", () => {
       halfSet1: 999,
       halfSet2: 999,
     });
-    expect(errors).toContain("buildCard.notEnoughSame2pcSets");
+    expect(errors).toContain("buildCard.notEnough2pc");
   });
 
   // --- Main Stats ---
@@ -103,7 +103,7 @@ describe("getBuildValidationErrors", () => {
       ...validBuild,
       sandsWeights: [],
     });
-    expect(errors).toContain("buildCard.missingSandsMainStat");
+    expect(errors).toContain("buildCard.missingSands");
   });
 
   it("reports missing goblet main stat", () => {
@@ -111,7 +111,7 @@ describe("getBuildValidationErrors", () => {
       ...validBuild,
       gobletWeights: [],
     });
-    expect(errors).toContain("buildCard.missingGobletMainStat");
+    expect(errors).toContain("buildCard.missingGoblet");
   });
 
   it("reports missing circlet main stat", () => {
@@ -119,7 +119,7 @@ describe("getBuildValidationErrors", () => {
       ...validBuild,
       circletWeights: [],
     });
-    expect(errors).toContain("buildCard.missingCircletMainStat");
+    expect(errors).toContain("buildCard.missingCirclet");
   });
 
   // --- Substats ---
@@ -172,10 +172,10 @@ describe("getBuildValidationErrors", () => {
     expect(errors).toHaveLength(7);
     expect(errors).toContain("buildCard.missingStyle");
     expect(errors).toContain("buildCard.missingRole");
-    expect(errors).toContain("buildCard.missing4pcSet");
-    expect(errors).toContain("buildCard.missingSandsMainStat");
-    expect(errors).toContain("buildCard.missingGobletMainStat");
-    expect(errors).toContain("buildCard.missingCircletMainStat");
+    expect(errors).toContain("buildCard.missing4pc");
+    expect(errors).toContain("buildCard.missingSands");
+    expect(errors).toContain("buildCard.missingGoblet");
+    expect(errors).toContain("buildCard.missingCirclet");
     expect(errors).toContain("buildCard.missingSubstat");
   });
 });

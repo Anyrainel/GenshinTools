@@ -137,7 +137,7 @@ describe("AccountImportControl", () => {
       uploadFile(input, badContent);
 
       await waitFor(() => {
-        expect(screen.getByText("import.wrongFormatGOOD")).toBeInTheDocument();
+        expect(screen.getByText("import.wrongFormat")).toBeInTheDocument();
       });
       expect(onLocalImport).not.toHaveBeenCalled();
     });

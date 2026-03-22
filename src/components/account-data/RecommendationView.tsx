@@ -245,7 +245,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
             <PartyPopper className="w-5 h-5 text-primary" />
           </div>
           <div className="text-foreground font-medium">
-            {t.ui("accountData.recNoRecommendations")}
+            {t.ui("accountData.allOptimal")}
           </div>
         </div>
       )}

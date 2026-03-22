@@ -806,7 +806,7 @@ export function TeamRosterCard({
                           isMobile ? "text-[10px]" : "text-xs"
                         )}
                       >
-                        {t.ui("teamComp.ignoreArtifactSets")}
+                        {t.ui("teamComp.ignoreSets")}
                       </span>
                     </label>
                   );

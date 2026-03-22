@@ -104,10 +104,10 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
     const shared = {
       authorLabel: t.ui("export.authorLabel"),
       authorPlaceholder: t.ui("export.authorPlaceholder"),
-      descriptionLabel: t.ui("export.descriptionLabel"),
-      descriptionPlaceholder: t.ui("export.descriptionPlaceholder"),
+      descriptionLabel: t.ui("export.descLabel"),
+      descriptionPlaceholder: t.ui("export.descPlaceholder"),
       authorRequiredError: t.ui("export.authorRequired"),
-      descriptionRequiredError: t.ui("export.descriptionRequired"),
+      descriptionRequiredError: t.ui("export.descRequired"),
       confirmAction: t.ui("export.action"),
     };
 

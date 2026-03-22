@@ -101,10 +101,10 @@ export function CharacterView({
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="text-6xl mb-4">🔍</div>
             <h3 className="text-xl font-semibold text-foreground mb-2">
-              {t.ui("accountData.noCharactersMatchFilters")}
+              {t.ui("accountData.noFilterMatch")}
             </h3>
             <p className="text-muted-foreground mb-4 max-w-md">
-              {t.ui("accountData.noCharactersMatchFiltersDescription")}
+              {t.ui("accountData.noFilterMatchDesc")}
             </p>
             {activeFilterCount > 0 && (
               <button

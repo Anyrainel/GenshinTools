@@ -182,7 +182,7 @@ function PartTab({
   if (applicableBuffs.length === 0) {
     return (
       <div className="py-6 text-center text-sm text-muted-foreground">
-        {t.ui("teamComp.emptyBuffMessage")}
+        {t.ui("teamComp.emptyBuffMsg")}
       </div>
     );
   }

@@ -978,7 +978,7 @@ function CritRateTargetInput({
     <div className="flex items-center gap-1 shrink-0">
       <span
         className={LABEL_CLS(isMobile)}
-        title={t.ui("teamComp.critRateTargetTooltip")}
+        title={t.ui("teamComp.critRateTargetTip")}
       >
         {t.ui("teamComp.critRateTarget")}
       </span>
@@ -1061,7 +1061,7 @@ function IdealSubstatBudgetSelect({
   return (
     <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
       <span className={LABEL_CLS(isMobile)}>
-        {t.ui("teamComp.idealSubstatBudget")}
+        {t.ui("teamComp.substatBudget")}
       </span>
       <Select
         value={value}
@@ -1241,8 +1241,8 @@ export function DamageCard({
           [
             {
               key: "current" as const,
-              label: "teamComp.tabCurrentEquipped" as const,
-              desc: "teamComp.tabCurrentEquippedDesc" as const,
+              label: "teamComp.tabCurrent" as const,
+              desc: "teamComp.tabCurrentDesc" as const,
             },
             {
               key: "optimize" as const,
@@ -1251,8 +1251,8 @@ export function DamageCard({
             },
             {
               key: "generate" as const,
-              label: "teamComp.tabGenerateIdeal" as const,
-              desc: "teamComp.tabGenerateIdealDesc" as const,
+              label: "teamComp.tabGenerate" as const,
+              desc: "teamComp.tabGenerateDesc" as const,
             },
           ] as const
         ).map(({ key, label, desc }) => {
@@ -1328,13 +1328,13 @@ export function DamageCard({
           ) : formulaMode === "combo" && comboLines && !comboResult ? (
             <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
-              <p>{t.ui("teamComp.emptyComboMessage")}</p>
+              <p>{t.ui("teamComp.emptyComboMsg")}</p>
             </div>
           ) : (
             <DamageBody
               team={effectiveTeam}
               hasFormula={resolvedFormula != null}
-              emptyMessage={t.ui("teamComp.emptyDamageMessage")}
+              emptyMessage={t.ui("teamComp.emptyDamageMsg")}
               artifactsByChar={equippedArtifactsByChar}
               targetCharId={resolvedFormula?.charId}
               displayResult={currentDisplayResult}
@@ -1381,7 +1381,7 @@ export function DamageCard({
                   isFullyFrozen
                     ? t.ui("teamComp.frozenTooltip")
                     : isPartiallyFrozen
-                      ? t.ui("teamComp.partiallyFrozenTooltip")
+                      ? t.ui("teamComp.partialFrozenTip")
                       : undefined
                 }
               >
@@ -1407,7 +1407,7 @@ export function DamageCard({
                   className="gap-1.5 font-bold px-4 text-xs shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
                 >
                   <Undo2 className="w-3.5 h-3.5" />
-                  {t.ui("teamComp.swapRestoreOriginal")}
+                  {t.ui("teamComp.swapRestore")}
                 </Button>
               )}
               {onFreezeAll && !isFullyFrozen && (
@@ -1443,16 +1443,14 @@ export function DamageCard({
             {!isComputing && !teamResult && !teamError && !isFrozen && (
               <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                 <Swords className="w-8 h-8 opacity-15" />
-                <p>{t.ui("teamComp.emptyOptMessage")}</p>
+                <p>{t.ui("teamComp.emptyOptMsg")}</p>
               </div>
             )}
 
             {/* Error state */}
             {teamError && (
               <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
-                <span className="font-bold">
-                  {t.ui("teamComp.optimizerError")}
-                </span>{" "}
+                <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
                 {teamError.message}
               </div>
             )}
@@ -1469,7 +1467,7 @@ export function DamageCard({
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                       <span className="font-semibold">
                         {!isComputing
-                          ? `✓ ${t.ui("teamComp.optimizationComplete")}`
+                          ? `✓ ${t.ui("teamComp.optComplete")}`
                           : teamProgress?.phase
                             ? {
                                 init: t.ui("teamComp.phaseInit"),
@@ -1477,7 +1475,7 @@ export function DamageCard({
                                 phase2: t.ui("teamComp.phaseTeamAlloc"),
                                 phase3: `${t.ui("teamComp.phaseTeamRefine")} — ${t.character(teamProgress.currentPassCharId)}`,
                               }[teamProgress.phase]
-                            : t.ui("teamComp.preparingOptimizer")}
+                            : t.ui("teamComp.preparingOpt")}
                       </span>
                       <span className="font-mono font-bold">
                         {progressPct}%
@@ -1588,7 +1586,7 @@ export function DamageCard({
               !teamResult && (
                 <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                   <Swords className="w-8 h-8 opacity-15" />
-                  <p>{t.ui("teamComp.emptyComboMessage")}</p>
+                  <p>{t.ui("teamComp.emptyComboMsg")}</p>
                 </div>
               )}
 
@@ -1658,7 +1656,7 @@ export function DamageCard({
               teamResult.bestDamage === 0 && (
                 <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
                   {t
-                    .ui("teamComp.noValidCombinations")
+                    .ui("teamComp.noValidCombos")
                     .replace("{0}", String(Math.round(minErRaw * 100)))}
                 </div>
               )}
@@ -1692,7 +1690,7 @@ export function DamageCard({
               onClick={handleGenerateIdeal}
               disabled={idealComputing || !hasActiveFormula}
               computing={idealComputing}
-              labelIdle={t.ui("teamComp.tabGenerateIdeal")}
+              labelIdle={t.ui("teamComp.tabGenerate")}
               labelBusy={t.ui("teamComp.generatingIdeal")}
             />
           </div>
@@ -1708,9 +1706,7 @@ export function DamageCard({
           {/* Error state */}
           {idealError && (
             <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
-              <span className="font-bold">
-                {t.ui("teamComp.optimizerError")}
-              </span>{" "}
+              <span className="font-bold">{t.ui("teamComp.optError")}</span>{" "}
               {idealError.message}
             </div>
           )}

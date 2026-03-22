@@ -881,9 +881,9 @@ function PickerContent({
       >
         {type === "artifact" && artifactTab === "2pc" && !pickingSlot ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm text-center px-4 space-y-4">
-            <p>{t.ui("buildCard.select2pcPrompt")}</p>
+            <p>{t.ui("buildCard.select2pc")}</p>
             <div className="text-xs opacity-70">
-              {t.ui("buildCard.select2pcPromptHint")}
+              {t.ui("buildCard.select2pcHint")}
             </div>
           </div>
         ) : (

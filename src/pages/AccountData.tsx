@@ -86,7 +86,7 @@ const NoDataPlaceholder = ({
 
       <div className="space-y-2">
         <h3 className="text-2xl font-bold tracking-tight text-foreground">
-          {t.ui("accountData.noAccountDataLoaded")}
+          {t.ui("accountData.noData")}
         </h3>
         <p className="text-muted-foreground text-base max-w-md mx-auto">
           {t.ui("accountData.importPrompt")}
@@ -112,10 +112,10 @@ const NoDataPlaceholder = ({
           </div>
           <div className="space-y-0.5 min-w-0">
             <span className="text-sm font-medium text-foreground">
-              {t.ui("accountData.emptyStateEnkaTitle")}
+              {t.ui("accountData.enkaTitle")}
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {t.ui("accountData.emptyStateEnkaDesc")}
+              {t.ui("accountData.enkaDesc")}
             </p>
           </div>
         </div>
@@ -125,17 +125,17 @@ const NoDataPlaceholder = ({
           </div>
           <div className="space-y-0.5 min-w-0">
             <span className="text-sm font-medium text-foreground">
-              {t.ui("accountData.emptyStateGoodTitle")}
+              {t.ui("accountData.goodTitle")}
             </span>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              {t.ui("accountData.emptyStateGoodDesc")}
+              {t.ui("accountData.goodDesc")}
             </p>
           </div>
         </div>
       </div>
 
       <p className="text-xs text-muted-foreground max-w-sm">
-        {t.ui("accountData.emptyStateAfterImport")}
+        {t.ui("accountData.afterImportHint")}
       </p>
     </div>
   </div>
@@ -277,7 +277,7 @@ export default function AccountDataPage() {
     if (weaponCount > 0) parts.push(`${weaponCount} weapon(s)`);
     if (artifactCount > 0) parts.push(`${artifactCount} artifact set(s)`);
 
-    const message = `${t.ui("accountData.conversionWarning")}: ${parts.join(", ")} ${t.ui("accountData.conversionWarningSkipped")}`;
+    const message = `${t.ui("accountData.conversionWarning")}: ${parts.join(", ")} ${t.ui("accountData.conversionSkipped")}`;
     toast.warning(message, { duration: 6000 });
   };
 

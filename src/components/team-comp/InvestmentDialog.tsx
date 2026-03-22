@@ -212,11 +212,11 @@ export function InvestmentDialog({
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            {t.ui("teamComp.investmentAnalysis")}
+            {t.ui("teamComp.investment")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription asChild>
             <span className="text-sm text-muted-foreground">
-              {t.ui("teamComp.investmentDesc")}
+              {t.ui("teamComp.investDesc")}
             </span>
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
@@ -224,7 +224,7 @@ export function InvestmentDialog({
         {/* Buff stack warning */}
         <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          {t.ui("teamComp.investmentBuffStackWarning")}
+          {t.ui("teamComp.investBuffWarn")}
         </div>
 
         {/* Combo formula summary + Team config */}

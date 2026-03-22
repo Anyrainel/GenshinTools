@@ -149,9 +149,7 @@ function BuildImportControlInner(
         <DialogContent className="overflow-x-hidden">
           <DialogHeader>
             <DialogTitle>{t.ui("import.titleBuilds")}</DialogTitle>
-            <DialogDescription>
-              {t.ui("import.dialogDescription")}
-            </DialogDescription>
+            <DialogDescription>{t.ui("import.dialogDesc")}</DialogDescription>
           </DialogHeader>
 
           {sortedOptions.length > 0 ? (
@@ -173,7 +171,7 @@ function BuildImportControlInner(
             </div>
           ) : (
             <div className="py-4 text-sm text-muted-foreground">
-              {t.ui("import.presetEmptyBuilds")}
+              {t.ui("import.emptyBuildsHint")}
             </div>
           )}
 
@@ -208,7 +206,7 @@ function BuildImportControlInner(
           <AlertDialogHeader>
             <AlertDialogTitle>
               {selectedOption
-                ? t.ui("import.presetConfirmTitle")
+                ? t.ui("import.confirmTitle")
                 : t.ui("import.fileTitle") || "Import File"}
             </AlertDialogTitle>
             <AlertDialogDescription>

@@ -52,7 +52,7 @@ export function TeamEditDialog({
             {t.ui("buildCard.autoTuneEditTeam")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription asChild>
-            <span>{t.ui("buildCard.autoTuneEditTeamDesc")}</span>
+            <span>{t.ui("buildCard.autoTuneEditDesc")}</span>
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 

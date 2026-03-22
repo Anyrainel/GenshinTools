@@ -24,21 +24,21 @@ function ScoreChangeDialog({
       <ResponsiveDialogContent className="sm:max-w-sm p-0 gap-0 overflow-hidden">
         <ResponsiveDialogHeader className="sr-only">
           <ResponsiveDialogTitle>
-            {t.ui("accountData.scoreChangeAnnouncement.title")}
+            {t.ui("accountData.scoreRevamp.title")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
-            {t.ui("accountData.scoreChangeAnnouncement.detail")}
+            {t.ui("accountData.scoreRevamp.detail")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
         <div className="flex flex-col items-center text-center px-6 pt-8 pb-4 gap-5">
           <span className="text-lg font-bold tracking-wide text-amber-400">
-            {t.ui("accountData.scoreChangeAnnouncement.title")}
+            {t.ui("accountData.scoreRevamp.title")}
           </span>
 
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-sm text-foreground">
-              {t.ui("accountData.scoreChangeAnnouncement.headline")}
+              {t.ui("accountData.scoreRevamp.headline")}
             </span>
             <span className="text-4xl font-black tracking-tighter bg-gradient-to-b from-amber-200 via-orange-300 to-amber-500 bg-clip-text text-transparent leading-none select-none">
               300
@@ -46,11 +46,11 @@ function ScoreChangeDialog({
           </div>
 
           <p className="text-sm text-foreground leading-relaxed max-w-[260px]">
-            {t.ui("accountData.scoreChangeAnnouncement.detail")}
+            {t.ui("accountData.scoreRevamp.detail")}
           </p>
 
           <p className="text-xs text-muted-foreground">
-            {t.ui("accountData.scoreChangeAnnouncement.note")}
+            {t.ui("accountData.scoreRevamp.note")}
           </p>
         </div>
 
@@ -99,7 +99,7 @@ export function ScoreChangeDialogTrigger() {
         onClick={() => setOpen(true)}
         className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors"
       >
-        {t.ui("accountData.scoreChangeAnnouncement.title")}
+        {t.ui("accountData.scoreRevamp.title")}
       </button>
       <ScoreChangeDialog open={open} onClose={() => setOpen(false)} />
     </>

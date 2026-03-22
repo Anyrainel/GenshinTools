@@ -115,10 +115,10 @@ export function CharacterBuildView({
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔍</div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {t.ui("configure.noCharactersFound")}
+                {t.ui("configure.noChars")}
               </h3>
               <p className="text-muted-foreground">
-                {t.ui("configure.noCharactersDescription")}
+                {t.ui("configure.noCharsDesc")}
               </p>
             </div>
           </div>

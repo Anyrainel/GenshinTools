@@ -168,7 +168,7 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
       {result.teamBreakdowns.length > 0 && (
         <section>
           <h4 className="text-sm font-medium mb-2">
-            {t.ui("buildCard.autoTuneTeamBreakdown")}
+            {t.ui("buildCard.autoTuneBreakdown")}
           </h4>
           <div className="space-y-1">
             {result.teamBreakdowns.map((tb) => (
@@ -364,7 +364,7 @@ function ComboRow({
               <span className="text-red-400 ml-0.5 cursor-help">(-2)</span>
             </TooltipTrigger>
             <TooltipContent className="max-w-64">
-              {t.ui("buildCard.autoTuneLopsidedPenalty")}
+              {t.ui("buildCard.autoTuneLopsided")}
             </TooltipContent>
           </Tooltip>
         )}
