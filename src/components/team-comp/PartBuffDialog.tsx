@@ -415,10 +415,6 @@ export function PartBuffDialog({
     return partOverrides && Object.keys(partOverrides).length > 0;
   });
 
-  const hasPartialBuffs = parts.some(
-    (p) => p.partialBuffs && p.partialBuffs.length > 0
-  );
-
   return (
     <>
       <button
@@ -431,7 +427,7 @@ export function PartBuffDialog({
         }}
       >
         <Settings2 className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
-        {(hasOverrides || hasPartialBuffs) && (
+        {hasOverrides && (
           <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
         )}
       </button>

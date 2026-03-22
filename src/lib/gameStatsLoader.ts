@@ -139,6 +139,18 @@ export function getWeaponStatsAt90(
 
 // ─── Display meta (merge stats + resource; use stats when present, resource.rarity as fallback) ───
 
+/**
+ * Fallback metadata for unreleased characters not yet in character_stats.json.
+ * Provides element/weaponType/region so they can appear in tier lists and filters.
+ * Remove entries once the character's stats are added to the game data.
+ */
+const UNRELEASED_OVERRIDES: Record<
+  string,
+  Partial<Pick<CharacterStats, "element" | "weaponType" | "region">>
+> = {
+  linnea: { element: "Geo" },
+};
+
 export type CharacterDisplayMeta = {
   element: Element | undefined;
   weaponType: WeaponType | undefined;
@@ -151,10 +163,11 @@ export function getCharacterDisplayMeta(
   character: CharacterResource,
   stats: CharacterStats | undefined
 ): CharacterDisplayMeta {
+  const overrides = UNRELEASED_OVERRIDES[character.id];
   return {
-    element: stats?.element,
-    weaponType: stats?.weaponType,
-    region: stats?.region,
+    element: stats?.element ?? overrides?.element,
+    weaponType: stats?.weaponType ?? overrides?.weaponType,
+    region: stats?.region ?? overrides?.region,
     releaseDate: stats?.releaseDate,
     rarity: (stats?.rarity ?? character.rarity) as Rarity,
   };

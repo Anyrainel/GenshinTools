@@ -112,7 +112,14 @@ export function computeDefaultActivation(
       remaining -= assign;
     }
 
-    // Parts not in partAlloc get 0 (no stacks)
+    // Explicitly fill 0 for unallocated parts so downstream consumers
+    // (e.g. PartBuffDialog) don't default to "fully active"
+    for (let idx = 0; idx < parts.length; idx++) {
+      if (!(idx in partAlloc)) {
+        partAlloc[idx] = 0;
+      }
+    }
+
     // Only add to activation if this buff doesn't cover all hits on all parts
     const totalHits = parts.reduce((s, p) => s + (p.hits ?? 1), 0);
     if (buffInfo.maxStacks < totalHits) {
