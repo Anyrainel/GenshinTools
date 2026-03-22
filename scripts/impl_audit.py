@@ -681,6 +681,137 @@ def cmd_check(modes_to_test: list[Mode]) -> None:
                         print(f"    - {item}")
 
 
+EXCEL_EXTRACTED_DIR = ROOT / "docs" / "formulas" / "extracted"
+
+# Element Chinese → file name mapping
+_ELEMENT_FILE_MAP = {
+    "pyro": "角色-火元素.md",
+    "hydro": "角色-水元素.md",
+    "anemo": "角色-风元素.md",
+    "electro": "角色-雷元素.md",
+    "dendro": "角色-草元素.md",
+    "cryo": "角色-冰元素.md",
+    "geo": "角色-岩元素.md",
+}
+
+
+def _parse_excel_char_from_md(zh_name: str) -> str | None:
+    """Find a character's Excel extraction block from the pre-generated .md files.
+
+    Searches all element .md files for a `### {zh_name}` header and returns
+    everything from that header to the next `### ` header (or end of file).
+    Returns None if not found.
+    """
+    for filename in _ELEMENT_FILE_MAP.values():
+        filepath = EXCEL_EXTRACTED_DIR / filename
+        if not filepath.exists():
+            continue
+        content = filepath.read_text(encoding="utf-8")
+        # Find the header for this character
+        marker = f"### {zh_name}\n"
+        idx = content.find(marker)
+        if idx == -1:
+            continue
+        # Find the next ### header (next character) or end of file
+        next_header = content.find("\n### ", idx + len(marker))
+        if next_header == -1:
+            block = content[idx:]
+        else:
+            block = content[idx:next_header]
+        return block.strip()
+    return None
+
+
+def _list_all_excel_chars() -> list[str]:
+    """List all Chinese character names found in the extracted .md files."""
+    names: list[str] = []
+    for filename in _ELEMENT_FILE_MAP.values():
+        filepath = EXCEL_EXTRACTED_DIR / filename
+        if not filepath.exists():
+            continue
+        content = filepath.read_text(encoding="utf-8")
+        for m in re.finditer(r"^### (.+)$", content, re.MULTILINE):
+            names.append(m.group(1))
+    return names
+
+
+def _build_zh_to_id_map() -> dict[str, str]:
+    """Build Chinese name → project ID mapping from i18n data."""
+    i18n = load_i18n_names("C")
+    zh_to_id: dict[str, str] = {}
+    for eid, entry in i18n.items():
+        zh = entry.get("zh", "")
+        if zh:
+            zh_to_id[zh] = eid
+    return zh_to_id
+
+
+def cmd_excel(entity_id: str) -> None:
+    """Print the Excel VBA damage logic extraction for a character."""
+    i18n = load_i18n_names("C")
+    i18n_entry = i18n.get(entity_id, {})
+    zh_name = i18n_entry.get("zh")
+
+    if not zh_name:
+        print(f"No Chinese name found for '{entity_id}'.", file=sys.stderr)
+        all_names = _list_all_excel_chars()
+        if entity_id in all_names:
+            print(f"Hint: '{entity_id}' exists as a Chinese name in Excel.", file=sys.stderr)
+            print("Use --list to find the project ID.", file=sys.stderr)
+        return
+
+    block = _parse_excel_char_from_md(zh_name)
+
+    if not block:
+        en_name = i18n_entry.get("en", entity_id)
+        print(
+            f"'{zh_name}' ({en_name} / {entity_id}) not found in Excel extractions.",
+            file=sys.stderr,
+        )
+        all_names = _list_all_excel_chars()
+        partial = [n for n in all_names if zh_name[0] in n or n[0] in zh_name]
+        if partial:
+            print(f"Similar: {', '.join(partial[:5])}", file=sys.stderr)
+        return
+
+    print(block)
+
+
+def cmd_excel_list() -> None:
+    """List all Excel characters with matched project IDs."""
+    all_names = _list_all_excel_chars()
+    zh_to_id = _build_zh_to_id_map()
+
+    matched = []
+    unmatched_excel = []
+
+    for zh_name in sorted(all_names):
+        pid = zh_to_id.get(zh_name)
+        if pid:
+            matched.append((zh_name, pid))
+        else:
+            unmatched_excel.append(zh_name)
+
+    print(f"=== Matched ({len(matched)}) ===")
+    for zh, pid in matched:
+        print(f"  {pid:<30s} ← {zh}")
+
+    if unmatched_excel:
+        print(f"\n=== In Excel but not in project ({len(unmatched_excel)}) ===")
+        for zh in unmatched_excel:
+            print(f"  {zh}")
+
+    i18n = load_i18n_names("C")
+    all_project_ids = set(i18n.keys())
+    matched_ids = {pid for _, pid in matched}
+    missing_from_excel = all_project_ids - matched_ids
+    if missing_from_excel:
+        print(f"\n=== In project but not in Excel ({len(missing_from_excel)}) ===")
+        for pid in sorted(missing_from_excel):
+            zh = i18n[pid].get("zh", "")
+            print(f"  {pid:<30s}   {zh}")
+
+
 USAGE = """\\
 Unified Audit & Implementation Script
 ──────────────────────────────────────
@@ -697,12 +828,14 @@ Commands:
   list <C|W|A>        List all registered IDs grouped by categories.
   check [C|W|A]       Find missing and misplaced implementations.
                         If no mode is provided, checks all modes.
+  excel C <id>        Print Excel VBA damage logic for a character (to stdout).
+  excel C --list      List all Excel characters with matched project IDs.
 """
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("command", nargs="?", choices=["show", "list", "check", "help"])
+    parser.add_argument("command", nargs="?", choices=["show", "list", "check", "excel", "help"])
     parser.add_argument("args", nargs=argparse.REMAINDER)
 
     parsed = parser.parse_args()
@@ -755,6 +888,19 @@ def main() -> None:
             if mode not in ["C", "W", "A"]:
                 sys.exit(1)
             cmd_list(mode)
+
+        elif cmd == "excel":
+            if not args or args[0].upper() != "C":
+                print("Usage: impl_audit.py excel C <id>")
+                print("       impl_audit.py excel C --list")
+                sys.exit(1)
+            if len(args) < 2:
+                print("Usage: impl_audit.py excel C <id>")
+                sys.exit(1)
+            if args[1] == "--list":
+                cmd_excel_list()
+            else:
+                cmd_excel(args[1])
 
         elif cmd == "check":
             modes: list[Mode] = ["C", "W", "A"]
