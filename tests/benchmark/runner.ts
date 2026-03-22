@@ -131,7 +131,7 @@ export const DEFAULT_GLOBAL_CONFIG: GlobalStatWeights = {
 };
 
 export const DPS_TARGET_ER = 1.0;
-export const TEAMMATE_TARGET_ER_5STAR = 1.5;
+export const TEAMMATE_TARGET_ER_5STAR = 2.0;
 export const TEAMMATE_TARGET_ER_4STAR = 1.0;
 
 // ─── Formatting ──────────────────────────────────────────────────────────────
