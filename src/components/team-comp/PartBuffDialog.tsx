@@ -17,15 +17,17 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
-import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
+  type StatEntryData,
+  StatEntryRow,
+  formatFilter,
+  formatReceiverLabel,
+  getReceiverBadgeClasses,
+  getSourceIcon,
+  getSourceName,
+} from "@/lib/team-comp/buffDisplayUtils";
+import { fmtOrigin } from "@/lib/team-comp/displayFormatters";
 import type {
   BuffActivationMap,
-  BuffTarget,
   DisplayPart,
   ResolvedBuff,
   ResolvedStatEntry,
@@ -34,7 +36,7 @@ import type {
 import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
-import { ArrowUpRight, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { getTemplateName } from "./FormulaBreakdown";
 
@@ -55,89 +57,6 @@ type Props = {
   /** Combo store key (e.g. "combo:myCombo:ganyu.charged"). Required when comboCount is set. */
   comboKey?: string;
 };
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function getSourceIcon(source: ResolvedBuff["source"]): string | undefined {
-  if (source.type === "character") return charactersById[source.id]?.imagePath;
-  if (source.type === "weapon") return weaponsById[source.id]?.imagePath;
-  if (source.type === "artifactSet")
-    return artifactsById[source.id]?.imagePaths?.flower;
-  if (source.type === "artifactHalfSet")
-    return artifactsById[artifactHalfSetsById[source.id]?.setIds[0] ?? ""]
-      ?.imagePaths?.flower;
-  return undefined;
-}
-
-function getSourceName(
-  source: ResolvedBuff["source"],
-  t: ReturnType<typeof useLanguage>["t"]
-): string {
-  switch (source.type) {
-    case "character":
-      return t.character(source.id);
-    case "weapon":
-      return t.weaponName(source.id);
-    case "artifactSet":
-      return t.artifact(source.id);
-    case "artifactHalfSet": {
-      const setId = artifactHalfSetsById[source.id]?.setIds[0];
-      return setId ? t.artifact(setId) : source.id;
-    }
-    case "teamResonance":
-      return t.resonance(source.id) || t.ui("teamComp.teamResonance");
-    default:
-      return source.id;
-  }
-}
-
-const RECEIVER_I18N: Record<string, string> = {
-  self: "teamComp.receiverSelf",
-  selfOnField: "teamComp.receiverSelfOnField",
-  selfOffField: "teamComp.receiverSelfOffField",
-  other: "teamComp.receiverOther",
-  otherOnField: "teamComp.receiverOtherOnField",
-  onField: "teamComp.receiverOnField",
-  team: "teamComp.receiverTeam",
-};
-
-/** When a buff has target.charId, show the character name + field context. */
-function formatReceiverLabel(
-  target: BuffTarget,
-  t: ReturnType<typeof useLanguage>["t"]
-): string {
-  if (target.charId) {
-    const name = t.character(target.charId);
-    const r = target.receiver;
-    if (r === "selfOnField" || r === "onField" || r === "otherOnField")
-      return `${name} ${t.ui("teamComp.receiverOnField")}`;
-    if (r === "selfOffField")
-      return `${name} ${t.ui("teamComp.receiverSelfOffField")}`;
-    return name;
-  }
-  return t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf");
-}
-
-function formatFilter(
-  target: BuffTarget,
-  t: ReturnType<typeof useLanguage>["t"]
-): string | null {
-  const filter = target.filter;
-  const parts: string[] = [];
-  if (filter) {
-    if (filter.abilities?.length)
-      parts.push(...filter.abilities.map((a) => t.ability(a)));
-    if (filter.elements?.length)
-      parts.push(...filter.elements.map((e) => t.element(e)));
-    if (filter.reactions?.length)
-      parts.push(...filter.reactions.map((r) => t.reaction(r)));
-  }
-  if (target.regions?.length)
-    parts.push(...target.regions.map((r) => t.region(r)));
-  if (target.factions?.length)
-    parts.push(...target.factions.map((f) => t.faction(f)));
-  return parts.length > 0 ? parts.join(" / ") : null;
-}
 
 // ─── Tab Content (per part) ──────────────────────────────────────────────────
 
@@ -227,12 +146,7 @@ function PartTab({
             const icon = getSourceIcon(buff.source);
             const name = getSourceName(buff.source, t);
             const filterDesc = formatFilter(buff.target, t);
-            const allEntries: {
-              key: string;
-              value: number;
-              inputKey?: StatKey;
-              cap?: number;
-            }[] = [
+            const allEntries: StatEntryData[] = [
               ...buff.staticEntries.map((e) => ({
                 key: e.key,
                 value: e.value,
@@ -283,23 +197,7 @@ function PartTab({
                   <span
                     className={cn(
                       "ml-auto text-xs font-bold uppercase px-1.5 py-0.5 rounded shrink-0",
-                      buff.target.charId
-                        ? "text-sky-300 bg-sky-500/15"
-                        : buff.target.receiver === "team"
-                          ? "text-rose-300 bg-rose-500/15"
-                          : buff.target.receiver === "onField"
-                            ? "text-orange-300 bg-orange-500/15"
-                            : buff.target.receiver === "other"
-                              ? "text-amber-300 bg-amber-500/15"
-                              : buff.target.receiver === "otherOnField"
-                                ? "text-yellow-300 bg-yellow-500/15"
-                                : buff.target.receiver === "self"
-                                  ? "text-zinc-400 bg-zinc-500/15"
-                                  : buff.target.receiver === "selfOnField"
-                                    ? "text-slate-400 bg-slate-500/10"
-                                    : buff.target.receiver === "selfOffField"
-                                      ? "text-stone-400 bg-stone-500/10"
-                                      : "text-muted-foreground bg-black/10"
+                      getReceiverBadgeClasses(buff.target)
                     )}
                   >
                     {receiverLabel}
@@ -318,35 +216,11 @@ function PartTab({
                   {/* Stat entries */}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0 flex-1">
                     {allEntries.map((entry, i) => (
-                      <div
+                      <StatEntryRow
                         key={`${entry.key}-${i}`}
-                        className="flex items-center gap-1 text-xs bg-black/5 px-1 rounded"
-                      >
-                        <span className="font-semibold text-foreground/80">
-                          {t.statShort(entry.key as StatKey)}
-                        </span>
-                        {entry.inputKey && (
-                          <span className="flex items-center text-muted-foreground text-[10px]">
-                            <ArrowUpRight className="w-3 h-3 opacity-70" />
-                            {t.statShort(entry.inputKey as StatKey)}
-                          </span>
-                        )}
-                        <span
-                          className={cn(
-                            "font-mono font-bold tabular-nums",
-                            entry.value > 0
-                              ? "text-green-500 dark:text-green-400"
-                              : "text-red-500 dark:text-red-400"
-                          )}
-                        >
-                          {fmtStat(entry.key, entry.value, true)}
-                        </span>
-                        {entry.cap !== undefined && (
-                          <span className="font-mono font-bold text-[10px] text-orange-500 dark:text-orange-400">
-                            / {fmtStat(entry.key, entry.cap)}
-                          </span>
-                        )}
-                      </div>
+                        entry={entry}
+                        t={t}
+                      />
                     ))}
                   </div>
 

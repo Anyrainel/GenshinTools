@@ -3,19 +3,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Switch } from "@/components/ui/switch";
 import type { useLanguage } from "@/contexts/LanguageContext";
+import { charactersById } from "@/data/constants";
 import {
-  artifactHalfSetsById,
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/constants";
-import { elementResourcesByName } from "@/data/constants";
-import type { Element } from "@/data/types";
+  formatFilter,
+  formatReceiverLabel,
+  getReceiverBadgeClasses,
+  getSourceIcon,
+} from "@/lib/team-comp/buffDisplayUtils";
 import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
 import type {
-  BuffTarget,
-  DamageTagFilter,
   ResolvedBuff,
   ResolvedStatEntry,
   StatKey,
@@ -23,83 +21,13 @@ import type {
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 type Props = {
   buffs: ResolvedBuff[];
   team: Team;
   t: ReturnType<typeof useLanguage>["t"];
 };
-
-function formatFilter(
-  target: BuffTarget,
-  t: ReturnType<typeof useLanguage>["t"]
-): string | null {
-  const filter = target.filter;
-  const parts: string[] = [];
-  if (filter) {
-    if (filter.abilities?.length) {
-      parts.push(...filter.abilities.map((a) => t.ability(a)));
-    }
-    if (filter.elements?.length) {
-      parts.push(...filter.elements.map((e) => t.element(e)));
-    }
-    if (filter.reactions?.length) {
-      parts.push(...filter.reactions.map((r) => t.reaction(r)));
-    }
-  }
-  if (target.regions?.length) {
-    parts.push(...target.regions.map((r) => t.region(r)));
-  }
-  if (target.factions?.length) {
-    parts.push(...target.factions.map((f) => t.faction(f)));
-  }
-  return parts.length > 0 ? parts.join("/") : null;
-}
-
-function getSourceIcon(source: ResolvedBuff["source"]): string | undefined {
-  if (source.type === "character") return charactersById[source.id]?.imagePath;
-  if (source.type === "weapon") return weaponsById[source.id]?.imagePath;
-  if (source.type === "artifactSet")
-    return artifactsById[source.id as string]?.imagePaths?.flower;
-  if (source.type === "artifactHalfSet")
-    return artifactsById[artifactHalfSetsById[source.id]?.setIds[0] ?? ""]
-      ?.imagePaths?.flower;
-  if (source.type === "teamResonance") {
-    if (source.id !== "unique" && source.id !== "gleam") {
-      const el = source.id.charAt(0).toUpperCase() + source.id.slice(1);
-      return elementResourcesByName[el as Element]?.imagePath;
-    }
-  }
-  return undefined;
-}
-
-const RECEIVER_I18N: Record<string, string> = {
-  self: "teamComp.receiverSelf",
-  selfOnField: "teamComp.receiverSelfOnField",
-  selfOffField: "teamComp.receiverSelfOffField",
-  other: "teamComp.receiverOther",
-  otherOnField: "teamComp.receiverOtherOnField",
-  onField: "teamComp.receiverOnField",
-  team: "teamComp.receiverTeam",
-};
-
-/** When a buff has target.charId, show the character name + field context. */
-function formatReceiverLabel(
-  target: BuffTarget,
-  t: ReturnType<typeof useLanguage>["t"]
-): string {
-  if (target.charId) {
-    const name = t.character(target.charId);
-    const r = target.receiver;
-    if (r === "selfOnField" || r === "onField" || r === "otherOnField")
-      return `${name} ${t.ui("teamComp.receiverOnField")}`;
-    if (r === "selfOffField")
-      return `${name} ${t.ui("teamComp.receiverSelfOffField")}`;
-    return name;
-  }
-  return t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf");
-}
 
 function BuffChip({
   buff,
@@ -115,8 +43,8 @@ function BuffChip({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-lg border shadow-sm transition-all bg-card/50",
-        "gap-1 p-1 md:gap-1.5 md:p-2",
+        "flex flex-col rounded-lg border bg-card/50",
+        "gap-1 p-1 lg:p-2",
         active
           ? "border-border/40 hover:border-border/60"
           : "border-border/10 opacity-60 grayscale"
@@ -171,32 +99,16 @@ function BuffChip({
         <span
           className={cn(
             "text-[10px] lg:text-xs font-bold uppercase px-1 md:px-1.5 py-0.5 rounded shrink-0",
-            target.charId
-              ? "text-sky-300 bg-sky-500/15"
-              : target.receiver === "team"
-                ? "text-rose-300 bg-rose-500/15"
-                : target.receiver === "onField"
-                  ? "text-orange-300 bg-orange-500/15"
-                  : target.receiver === "other"
-                    ? "text-amber-300 bg-amber-500/15"
-                    : target.receiver === "otherOnField"
-                      ? "text-yellow-300 bg-yellow-500/15"
-                      : target.receiver === "self"
-                        ? "text-zinc-400 bg-zinc-500/15"
-                        : target.receiver === "selfOnField"
-                          ? "text-slate-400 bg-slate-500/10"
-                          : target.receiver === "selfOffField"
-                            ? "text-stone-400 bg-stone-500/10"
-                            : "text-muted-foreground bg-black/10"
+            getReceiverBadgeClasses(target)
           )}
         >
           {formatReceiverLabel(target, t)}
         </span>
       </div>
 
-      <div className="flex flex-col gap-0.5 md:gap-1 pt-0.5 md:pt-1 mt-0.5 border-t border-border/10">
+      <div className="flex flex-col gap-0.5 md:gap-1 pt-1">
         {filterDesc && (
-          <span className="text-[10px] md:text-xs text-foreground italic truncate pl-1">
+          <span className="text-[10px] md:text-xs text-foreground italic pl-1">
             [{filterDesc}]
           </span>
         )}
@@ -268,12 +180,30 @@ export function BuffLedger({ buffs, team, t }: Props) {
       onOpenChange={setOpen}
       className="bg-black/15 border border-border/20 rounded-lg overflow-hidden"
     >
-      <CollapsibleTrigger className="flex justify-between items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors">
-        <div className="text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2">
-          {t.ui("teamComp.buffsLedger")}
+      <CollapsibleTrigger className="flex items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors">
+        <div className="flex flex-1 items-center gap-1.5 md:gap-2">
+          <span className="text-xs md:text-sm font-bold">
+            {t.ui("teamComp.buffsLedger")}
+          </span>
           <span className="bg-black/20 font-mono px-1.5 md:px-2 py-0.5 rounded text-[10px] md:text-xs text-muted-foreground">
             {activeCount} / {buffs.length}
           </span>
+          <div
+            className="flex items-center gap-1.5 cursor-pointer select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Switch
+              checked={showAll}
+              onCheckedChange={setShowAll}
+              className="h-4 w-7 data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/50 [&>span]:h-3 [&>span]:w-3 [&>span]:data-[state=checked]:translate-x-3"
+            />
+            <span
+              className="text-[10px] md:text-xs text-muted-foreground"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t.ui("teamComp.showAllBuffs")}
+            </span>
+          </div>
         </div>
         <ChevronDown
           className={cn(
@@ -284,48 +214,34 @@ export function BuffLedger({ buffs, team, t }: Props) {
       </CollapsibleTrigger>
 
       <CollapsibleContent>
-        <div className="p-1 md:p-2 border-t border-border/10 flex flex-col gap-2 md:gap-3 bg-black/5">
-          {/* Top Actions: Show All Toggles & Team Resonance Row */}
-          <div className="flex flex-col gap-2 md:gap-4">
-            <div className="flex justify-between items-center">
-              {resonanceBuffs.length > 0 ? (
-                <div className="flex items-center gap-1.5 md:gap-2">
-                  <div className="w-1.5 h-4 bg-primary/50 rounded-full" />
-                  <span className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                    {t.ui("teamComp.teamResonance")}
-                  </span>
-                </div>
-              ) : (
-                <div />
-              )}
-
-              <button
-                type="button"
-                onClick={() => setShowAll((s) => !s)}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-              >
-                {showAll
-                  ? t.ui("teamComp.hideTrivial")
-                  : t.ui("teamComp.showAllBuffs")}
-              </button>
-            </div>
-
-            {resonanceBuffs.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-1.5 md:gap-3 bg-black/10 p-1.5 md:p-3 rounded-xl border border-border/5">
+        <div className="p-1 md:p-2 border-t border-border/10 flex flex-col gap-1 lg:gap-2 bg-black/5">
+          {resonanceBuffs.length > 0 && (
+            <div className="flex flex-col gap-1 lg:gap-2">
+              <div className="flex items-center gap-1.5 md:gap-2 border-b border-border/10">
+                <div className="w-1.5 h-4 bg-primary/50 rounded-full" />
+                <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-widest">
+                  {t.ui("teamComp.teamResonance")}
+                </span>
+                <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
+                  {resonanceBuffs.filter((b) => b.active).length}/
+                  {buffs.filter((b) => !b.providerCharId).length}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
                 {resonanceBuffs.map((b, i) => (
                   <BuffChip key={i} buff={b} t={t} />
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-2 md:gap-4 xl:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
             {team.characters.map((charId, i) => {
               if (!charId)
                 return (
                   <div
                     key={i}
-                    className="hidden xl:block border border-dashed border-border/10 rounded-xl bg-black/5"
+                    className="hidden lg:block border border-dashed border-border/10 rounded-xl bg-black/5"
                   />
                 );
               const charBuffs = visibleBuffs.filter(
@@ -335,9 +251,9 @@ export function BuffLedger({ buffs, team, t }: Props) {
               return (
                 <div
                   key={charId}
-                  className="flex flex-col gap-1.5 md:gap-3 min-w-0"
+                  className="flex flex-col gap-1 lg:gap-2 min-w-0"
                 >
-                  <div className="flex items-center gap-1.5 md:gap-2 pb-1 md:pb-2 border-b border-border/10">
+                  <div className="flex items-center gap-1.5 md:gap-2 border-b border-border/10">
                     <img
                       src={getAssetUrl(charactersById[charId]?.imagePath)}
                       alt={charId}
@@ -346,12 +262,13 @@ export function BuffLedger({ buffs, team, t }: Props) {
                     <span className="text-xs md:text-sm font-bold text-foreground truncate">
                       {t.character(charId)}
                     </span>
-                    <span className="ml-auto text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
-                      {charBuffs.length}
+                    <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
+                      {charBuffs.filter((b) => b.active).length}/
+                      {buffs.filter((b) => b.providerCharId === charId).length}
                     </span>
                   </div>
 
-                  <div className="flex flex-col gap-1 md:gap-2">
+                  <div className="flex flex-col gap-1 lg:gap-1.5">
                     {charBuffs.map((b, i2) => (
                       <BuffChip key={i2} buff={b} t={t} />
                     ))}
