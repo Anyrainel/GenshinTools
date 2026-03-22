@@ -58,6 +58,7 @@ import { Link } from "react-router-dom";
 import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
+import { SwapGuide } from "./SwapGuide";
 import { fmtDamage } from "./displayFormatters";
 import { calcDisplayResult, toStatSheets } from "./teamOptUtils";
 
@@ -1660,6 +1661,19 @@ export function DamageCard({
                     .ui("teamComp.noValidCombinations")
                     .replace("{0}", String(Math.round(minErRaw * 100)))}
                 </div>
+              )}
+
+            {/* Swap Guide — diff view of optimized vs equipped */}
+            {hasActiveFormula &&
+              (teamResult?.done || hasOptResult) &&
+              teamResult?.bestDamage !== 0 && (
+                <SwapGuide
+                  team={effectiveTeam}
+                  equippedArtifactsByChar={equippedArtifactsByChar}
+                  optimizedArtifactsByChar={optimizedArtifactsByChar}
+                  accountData={accountData}
+                  t={t}
+                />
               )}
           </CardContent>
         </>
