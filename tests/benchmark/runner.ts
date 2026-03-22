@@ -35,12 +35,12 @@ import { TeamBuild, hasOffFieldParts } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
-  PerCharConfig,
+  CharOptConfig,
   TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { runTeamOptimization as runMona } from "./gen/mona";
 import { runTeamOptimization as runV1 } from "./gen/v1";
 
@@ -222,11 +222,11 @@ export function getTeammateTargetEr(
     : TEAMMATE_TARGET_ER_4STAR;
 }
 
-export function buildCharCompConfig(
+export function buildTeamSlotConfig(
   team: Team,
   index: number,
   accountData: AccountData
-): CharCompConfig | null {
+): TeamSlotConfig | null {
   const charId = team.characters[index];
   const weaponId = team.weapons[index];
   if (!charId || !weaponId) return null;
@@ -285,8 +285,8 @@ export function buildPerChar(
   team: Team,
   carryCharId: string,
   accountData: AccountData
-): Record<string, PerCharConfig> {
-  const perChar: Record<string, PerCharConfig> = {};
+): Record<string, CharOptConfig> {
+  const perChar: Record<string, CharOptConfig> = {};
   for (let ci = 0; ci < team.characters.length; ci++) {
     const cid = team.characters[ci];
     if (!cid) continue;
@@ -354,7 +354,7 @@ function buildBaseSheets(
 export function getCarryFormulaIds(
   team: Team
 ): { formulaId: string; label: string }[] {
-  const configs: CharCompConfig[] = [];
+  const configs: TeamSlotConfig[] = [];
   for (let i = 0; i < team.characters.length; i++) {
     const charId = team.characters[i];
     const weaponId = team.weapons[i];
@@ -419,9 +419,9 @@ export async function runOptimizerOnTeam(
   };
 
   try {
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
 

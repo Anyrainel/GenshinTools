@@ -9,10 +9,10 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
-  PerCharConfig,
+  CharOptConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import { type OptimizerOptions, runOptimization } from "./optimizerV1";
 
@@ -42,7 +42,7 @@ const GLOBAL_CONFIG: GlobalStatWeights = {
 // ── Team setup ──────────────────────────────────────────────────────────────
 
 // Hu Tao + Xingqiu + Zhongli + Kazuha
-const CONFIGS: CharCompConfig[] = [
+const CONFIGS: TeamSlotConfig[] = [
   {
     charId: "hu_tao",
     charLevel: 90,
@@ -289,7 +289,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
   it("completes with an empty inventory", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "hu_tao");
-    const perChar: Record<string, PerCharConfig> = {
+    const perChar: Record<string, CharOptConfig> = {
       hu_tao: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
       zhongli: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
@@ -332,7 +332,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const supportArtifacts = makeFullInventory();
     const inventory = [...carryArtifacts, ...supportArtifacts];
 
-    const perChar: Record<string, PerCharConfig> = {
+    const perChar: Record<string, CharOptConfig> = {
       hu_tao: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       xingqiu: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
     };
@@ -364,7 +364,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const formulaId = getFirstFormulaId(tb, "hu_tao");
     const carryArtifacts = makeFullInventory();
 
-    const perChar: Record<string, PerCharConfig> = {
+    const perChar: Record<string, CharOptConfig> = {
       hu_tao: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
       xingqiu: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
     };
@@ -396,7 +396,7 @@ describe("runTeamOptimization — partial artifact inventory", () => {
     const formulaId = getFirstFormulaId(tb, "hu_tao");
     const inventory = makeFullInventory();
 
-    const perChar: Record<string, PerCharConfig> = {
+    const perChar: Record<string, CharOptConfig> = {
       hu_tao: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
     };
 

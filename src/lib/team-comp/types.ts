@@ -229,6 +229,8 @@ export type DisplayPart = {
   hits?: number;
   offField?: boolean;
   tag?: DamageTag;
+  /** All StatKeys this formula part reads from the StatSheet during evaluation. */
+  readKeys?: ReadonlySet<StatKey>;
   /** Annotation when a buff is partially active on this part */
   partialBuffs?: {
     buffKey: string;
@@ -316,7 +318,7 @@ export type DisplayResult = {
  * Constant for the entire team — individual character implementations
  * never need to know or set these values.
  *
- * Per-character `charLevel` lives on CharCompConfig and is threaded
+ * Per-character `charLevel` lives on TeamSlotConfig and is threaded
  * separately through the formula pipeline.
  */
 /** How the crit multiplier is displayed (display-only, not used in optimizer). */
@@ -401,7 +403,7 @@ export type ComboResult = {
 
 // ─── Char Build Config ───
 
-export type CharCompConfig = {
+export type TeamSlotConfig = {
   charId: string;
   charLevel: number;
   constellation: number;
@@ -490,7 +492,7 @@ export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
 
 export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 
-export interface PerCharConfig {
+export interface CharOptConfig {
   minEr: number;
   minCr: number;
   buildMatch?: BuildMatchResult | null;
@@ -506,7 +508,7 @@ export interface TeamOptimizerOptions {
   calcContext: CalcContext;
   globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>;
-  perChar: Record<string, PerCharConfig>;
+  perChar: Record<string, CharOptConfig>;
   reactionOverride?: ReactionOverride;
   altCount?: number;
   combo?: ComboFormula;

@@ -32,7 +32,7 @@ import {
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import type { StatSheet } from "@/lib/team-comp/damageModels";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -114,7 +114,7 @@ function loadPresetBuilds(): Record<string, PresetBuildEntry> {
 
 // ─── Config Builders ──────────────────────────────────────────────────────────
 
-function toCharCompConfig(entry: RosterEntry): CharCompConfig {
+function toTeamSlotConfig(entry: RosterEntry): TeamSlotConfig {
   let artifactSetId: string | null = null;
   let artifactHalfSetIds: string[] = [];
 
@@ -186,7 +186,7 @@ async function runTestCase(
   };
 
   try {
-    const configs = testCase.roster.map(toCharCompConfig);
+    const configs = testCase.roster.map(toTeamSlotConfig);
 
     // Generate representative artifact stats for every roster member
     const artifactStats: Record<string, StatSheet> = {};

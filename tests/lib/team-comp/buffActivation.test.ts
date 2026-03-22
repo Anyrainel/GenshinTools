@@ -26,9 +26,9 @@ import type { PartialBuffInfo } from "@/lib/team-comp/stackAllocation";
 import type {
   BuffActivationMap,
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   TeamOptimizerOptions,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { buffSourceKey } from "@/lib/team-comp/types";
 import {
@@ -44,7 +44,7 @@ await preloadGameStats();
 const CTX: CalcContext = { enemyLevel: 100, enemyRes: 0.1 };
 
 // Diluc + XQ + Bennett + Kazuha — Bennett Q gives ATK buff to on-field carry
-const DILUC_TEAM: CharCompConfig[] = [
+const DILUC_TEAM: TeamSlotConfig[] = [
   {
     charId: "diluc",
     charLevel: 90,

@@ -8,7 +8,7 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runCharacterBnB } from "@/lib/team-comp/optimizer/characterBnB";
 import type { GlobalStatWeights } from "@/data/types";
-import type { CalcContext, CharCompConfig, PerCharConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig, CharOptConfig } from "@/lib/team-comp/types";
 import { loadAccountData, getAllArtifacts } from "../runner";
 
 const ACCOUNT_PATH = "tests/benchmark/data/account.json";
@@ -17,7 +17,7 @@ function fmt(n: number) {
   return n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 }
 
-const TEAMS: { label: string; configs: CharCompConfig[] }[] = [
+const TEAMS: { label: string; configs: TeamSlotConfig[] }[] = [
   {
     label: "clorinde",
     configs: [
@@ -87,7 +87,7 @@ async function main() {
     const baseSheets: Record<string, StatSheet> = {};
     for (const cid of charIds) baseSheets[cid] = new StatSheet([]);
 
-    const charConfig: PerCharConfig = { minEr: 0, minCr: 0 };
+    const charConfig: CharOptConfig = { minEr: 0, minCr: 0 };
 
     for (const formulaId of formulaIds.slice(0, 1)) {
       // Run 1: Standard (no AST)

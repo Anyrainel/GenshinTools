@@ -39,7 +39,6 @@ import type {
   BuffSource,
   BuffTarget,
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ComboLine,
   ComboResult,
@@ -53,6 +52,7 @@ import type {
   ResolvedStatEntry,
   StatEntry,
   StatKey,
+  TeamSlotConfig,
 } from "./types";
 import {
   buffSourceKey,
@@ -220,7 +220,7 @@ export class CharBuild {
   private innerStatSheet: StatSheet;
 
   constructor(
-    config: CharCompConfig,
+    config: TeamSlotConfig,
     teamMeta: TeamMeta,
     combatOpts: OptionMap = {}
   ) {
@@ -537,7 +537,7 @@ export class CharBuild {
       // Skip reaction override if the formula already has a built-in reaction
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
       if (!hasReaction || formula.tag.reaction !== "none") {
-        const dp = formula.display(stats, this.charBase.charLevel, ctx);
+        const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
         dp.hits = h;
         if (offField) dp.offField = true;
         totalDamage += dp.damage * h;
@@ -566,7 +566,7 @@ export class CharBuild {
           targetReaction !== formula.tag.reaction
             ? createReactionVariant(formula, targetReaction)
             : formula;
-        const dp = effectiveFormula.display(
+        const dp = effectiveFormula.displayFull(
           stats,
           this.charBase.charLevel,
           ctx
@@ -577,7 +577,7 @@ export class CharBuild {
         displayParts.push(dp);
       }
       if (nonReactingHits > 0) {
-        const dp = formula.display(stats, this.charBase.charLevel, ctx);
+        const dp = formula.displayFull(stats, this.charBase.charLevel, ctx);
         dp.hits = nonReactingHits;
         if (offField) dp.offField = true;
         totalDamage += dp.damage * nonReactingHits;
@@ -658,14 +658,14 @@ export class TeamBuild {
   readonly teamResonance: TeamResonance;
   readonly allStaticBuffs: ProvidedStaticBuff[];
   /** Original configs used to construct this TeamBuild (for reconstruction). */
-  readonly configs: CharCompConfig[];
+  readonly configs: TeamSlotConfig[];
   /** Original combat opts used to construct this TeamBuild (for reconstruction). */
   readonly combatOpts: OptionMap;
   /** Enemy persistent element aura (for reconstruction). */
   readonly enemyElementAura?: Element;
 
   constructor(
-    configs: CharCompConfig[],
+    configs: TeamSlotConfig[],
     combatOpts: OptionMap = {},
     enemyElementAura?: Element
   ) {
@@ -1335,11 +1335,13 @@ export class TeamBuild {
     }
 
     // ── Buff resolution ──
+    const partReadKeys = parts.map((p) => p.readKeys);
     const buffs = this.resolveBuffs(
       charId,
       preStats,
       teamPreStatsArr,
       partTags,
+      partReadKeys,
       formulaId
     );
 
@@ -1442,6 +1444,7 @@ export class TeamBuild {
     preStats: Record<string, StatSheet>,
     teamPreStatsArr: StatSheet[],
     partTags: (DamageTag | undefined)[],
+    partReadKeys: (ReadonlySet<StatKey> | undefined)[],
     formulaId?: string
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
@@ -1520,6 +1523,48 @@ export class TeamBuild {
       applicableDynamic.map((e) => e.buff)
     );
 
+    // ── Scaling bridge: inputKey → outputKeys reaching calcTarget ──
+    // Enables indirect relevance: a buff giving +ER% is relevant if a scaling
+    // buff reads ER and outputs something the formula reads (e.g. ER → DMG%).
+    // Keyed by (providerCharId, inputKey) — where providerCharId is the scaling
+    // buff's owner who reads inputKey from their own stats.
+    // Scaled stat implicit deps: atk% and baseAtk both feed into atk
+    const SCALED_DEPS: Record<string, string[]> = {
+      atk: ["atk%", "baseAtk"],
+      hp: ["hp%", "baseHp"],
+      def: ["def%", "baseDef"],
+    };
+
+    const scalingBridge = new Map<string, Set<StatKey>>();
+    for (const { buff, providerCharId } of charBuffEntries) {
+      if (!(buff instanceof ScalingBuff)) continue;
+      // Only care about scaling buffs whose output reaches the calc target
+      if (
+        !isBuffApplicable(
+          buff,
+          providerCharId,
+          calcTargetId,
+          calcTargetId,
+          calcTargetRegion,
+          calcTargetFaction
+        )
+      )
+        continue;
+      if (!activeDynamicSet.has(buff)) continue;
+
+      // Register the bridge for the inputKey and all its implicit dependencies
+      const inputKeys = [buff.inputKey, ...(SCALED_DEPS[buff.inputKey] ?? [])];
+      for (const iKey of inputKeys) {
+        const bridgeKey = `${providerCharId}\0${iKey}`;
+        let outputs = scalingBridge.get(bridgeKey);
+        if (!outputs) {
+          outputs = new Set();
+          scalingBridge.set(bridgeKey, outputs);
+        }
+        outputs.add(buff.outputKey);
+      }
+    }
+
     // ── Display loop ──
     // Iterate charBuffEntries (not cb.getAllBuffs()) so Set.has() matches.
     for (const { buff, providerCharId: ownerId } of charBuffEntries) {
@@ -1556,18 +1601,81 @@ export class TeamBuild {
         } else {
           active = activeStaticSet.has(buff);
         }
-        // Per-part tag filter: compute which parts this buff applies to
-        if (active && partTags.length > 0 && buff.target.filter) {
+        if (active && partTags.length > 0) {
+          // Collect the buff's output stat keys
+          const rawOutputKeys = new Set<StatKey>();
+          for (const e of buff.staticBuffs) rawOutputKeys.add(e.key);
+          for (const e of raw) rawOutputKeys.add(e.key);
+
+          // Determine the effective output keys that reach the damage formula.
+          // A buff can reach the formula in two ways:
+          // 1. Direct: outputs land on the calc target's stat sheet
+          // 2. Indirect: outputs land on a teammate's sheet and feed a scaling
+          //    buff whose output reaches the calc target
+          const effectiveKeys = new Set<StatKey>();
+
+          // Check if this buff directly affects the calc target's stat sheet
+          const reachesCalcTarget = isBuffApplicable(
+            buff,
+            ownerId,
+            calcTargetId,
+            calcTargetId,
+            calcTargetRegion,
+            calcTargetFaction
+          );
+          if (reachesCalcTarget) {
+            for (const k of rawOutputKeys) effectiveKeys.add(k);
+          }
+
+          // Check indirect path via scaling bridge for all characters
+          // the buff applies to (including calc target — their stats may
+          // also feed their own scaling buffs)
+          for (const cid of Object.keys(this.charBuilds)) {
+            const buffApplies = isBuffApplicable(
+              buff,
+              ownerId,
+              cid,
+              calcTargetId,
+              this.teamMeta.regions[cid],
+              this.teamMeta.factions[cid]
+            );
+            if (!buffApplies) continue;
+            for (const outKey of rawOutputKeys) {
+              const bridged = scalingBridge.get(`${cid}\0${outKey}`);
+              if (bridged) for (const k of bridged) effectiveKeys.add(k);
+            }
+          }
+
           activePartIndices = [];
-          for (let pi = 0; pi < partTags.length; pi++) {
-            const tag = partTags[pi];
-            if (tag && filterMatchesTag(buff.target.filter!, tag)) {
+          // If no effective keys reach the formula at all, buff is irrelevant
+          if (effectiveKeys.size > 0) {
+            for (let pi = 0; pi < partTags.length; pi++) {
+              const tag = partTags[pi];
+              // Layer 3: DamageTagFilter
+              if (tag && buff.target.filter) {
+                if (!filterMatchesTag(buff.target.filter!, tag)) continue;
+              }
+              // Layer 4: Stat relevance
+              const rk = partReadKeys[pi];
+              if (rk) {
+                let relevant = false;
+                for (const k of effectiveKeys) {
+                  if (rk.has(k)) {
+                    relevant = true;
+                    break;
+                  }
+                }
+                if (!relevant) continue;
+              }
               activePartIndices.push(pi);
             }
           }
           active = activePartIndices.length > 0;
+          // If active for all parts, omit the array (= universal)
+          if (activePartIndices.length === partTags.length) {
+            activePartIndices = undefined;
+          }
         }
-        // No filter → activePartIndices stays undefined (= all parts)
       }
 
       // Always populate dynamic entries for display, even when inactive
@@ -1597,15 +1705,39 @@ export class TeamBuild {
     for (const buff of this.teamResonance.buffs) {
       let active = true;
       let activePartIndicesRes: number[] | undefined;
-      if (partTags.length > 0 && buff.target.filter) {
+      if (partTags.length > 0) {
+        const outputKeys = new Set<StatKey>(buff.staticBuffs.map((e) => e.key));
+        // Resonance buffs apply to all team members — expand via bridge
+        for (const charId of Object.keys(this.charBuilds)) {
+          for (const outKey of [...outputKeys]) {
+            const bridged = scalingBridge.get(`${charId}\0${outKey}`);
+            if (bridged) for (const k of bridged) outputKeys.add(k);
+          }
+        }
+
         activePartIndicesRes = [];
         for (let pi = 0; pi < partTags.length; pi++) {
           const tag = partTags[pi];
-          if (tag && filterMatchesTag(buff.target.filter!, tag)) {
-            activePartIndicesRes.push(pi);
+          if (tag && buff.target.filter) {
+            if (!filterMatchesTag(buff.target.filter!, tag)) continue;
           }
+          const rk = partReadKeys[pi];
+          if (rk && outputKeys.size > 0) {
+            let relevant = false;
+            for (const k of outputKeys) {
+              if (rk.has(k)) {
+                relevant = true;
+                break;
+              }
+            }
+            if (!relevant) continue;
+          }
+          activePartIndicesRes.push(pi);
         }
         active = activePartIndicesRes.length > 0;
+        if (activePartIndicesRes.length === partTags.length) {
+          activePartIndicesRes = undefined;
+        }
       }
       result.push({
         source: buff.source,

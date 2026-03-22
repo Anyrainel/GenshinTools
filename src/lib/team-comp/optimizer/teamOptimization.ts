@@ -18,10 +18,10 @@ import { TeamBuild, evaluateCombo, hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type {
   CalcContext,
+  CharOptConfig,
   ComboResult,
   DamageResult,
   OptFailReason,
-  PerCharConfig,
   ReactionOverride,
   StatKey,
   TeamOptComboResult,
@@ -376,7 +376,7 @@ function buildSheetsFromArtifacts(
  * team context without sequential dependency.
  */
 function buildHeuristicAssignment(
-  charConfig: PerCharConfig,
+  charConfig: CharOptConfig,
   inventory: ArtifactData[],
   globalConfig: GlobalStatWeights,
   assignedIds: Set<string>
@@ -508,7 +508,7 @@ function buildHeuristicAssignment(
 function buildHeuristicBaseSheets(
   allCharIds: string[],
   carryCharIds: string[],
-  perChar: Record<string, PerCharConfig>,
+  perChar: Record<string, CharOptConfig>,
   inventory: ArtifactData[],
   globalConfig: GlobalStatWeights,
   baseSheets: Record<string, StatSheet>
@@ -1660,7 +1660,7 @@ export async function* runTeamOptimization(
     // Build per-character inputs (base sheets + exclusions)
     type Phase3CharInput = {
       charId: string;
-      charConfig: PerCharConfig;
+      charConfig: CharOptConfig;
       rankIdx: number;
       refinedBaseSheets: Record<string, StatSheet>;
       refinedSheetsDump: Record<

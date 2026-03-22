@@ -511,9 +511,9 @@ Phase 4 — Post-Stats (called per artifact roll):
   → final stat sheet used for formula evaluation
 ```
 
-### 6.2 CharCompConfig
+### 6.2 TeamSlotConfig
 
-See `CharCompConfig` in [`types.ts`](../src/lib/team-comp/types.ts). Fields: `charId`, `charLevel` (90 or 100), `constellation` (0–6), `weaponId`, `refinement` (1–5), `artifactSetId` (null if 2+2), `artifactHalfSetIds` (1 entry for 4pc, 2 for 2+2).
+See `TeamSlotConfig` in [`types.ts`](../src/lib/team-comp/types.ts). Fields: `charId`, `charLevel` (90 or 100), `constellation` (0–6), `weaponId`, `refinement` (1–5), `artifactSetId` (null if 2+2), `artifactHalfSetIds` (1 entry for 4pc, 2 for 2+2).
 
 ### 6.3 TeamBuild (`damageCalc.ts`)
 

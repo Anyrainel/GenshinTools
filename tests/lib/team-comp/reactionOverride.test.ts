@@ -7,8 +7,8 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import {
   type CalcContext,
-  type CharCompConfig,
   type ReactionOverride,
+  type TeamSlotConfig,
   resolvePartReaction,
 } from "@/lib/team-comp/types";
 
@@ -69,7 +69,7 @@ describe("resolvePartReaction", () => {
 
 describe("per-part reaction override — damage calc", () => {
   // Use Diluc (Pyro) with 3-part E skill for multi-part testing
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "diluc",
       charLevel: 90,
@@ -207,7 +207,7 @@ describe("per-part reaction override — damage calc", () => {
 describe("partHits — multi-hit split", () => {
   // Use Yae Miko: burst has 2 parts: initial (1 hit) + thunderbolts (3 hits)
   // Both Electro → eligible for aggravate
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "yae_miko",
       charLevel: 90,
@@ -404,7 +404,7 @@ describe("partHits — multi-hit split", () => {
 // ─── getDamageResult consistency with getDisplayResult ───
 
 describe("getDamageResult matches getDisplayResult total damage", () => {
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "yae_miko",
       charLevel: 90,

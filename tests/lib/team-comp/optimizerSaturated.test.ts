@@ -16,7 +16,7 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
-import type { CharCompConfig } from "@/lib/team-comp/types";
+import type { TeamSlotConfig } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
 
 await preloadGameStats();
@@ -63,7 +63,7 @@ describe("Saturated character handling", () => {
   // Half-set IDs from resources.ts (not the same as set IDs)
   // crimson_witch_of_flames → "pyro%-15"
   // noblesse_oblige → "burst-dmg%-20"
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "hu_tao",
       charLevel: 90,

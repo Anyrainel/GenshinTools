@@ -12,19 +12,19 @@ import { StatSheet } from "./damageModels";
 import { runCharacterBnB } from "./optimizer";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ReactionOverride,
   StatKey,
+  TeamSlotConfig,
 } from "./types";
-import type { OptFailReason, PerCharConfig } from "./types";
+import type { CharOptConfig, OptFailReason } from "./types";
 
 export type BnBWorkerRequest = {
   id: number;
   charId: string;
-  charConfig: PerCharConfig;
+  charConfig: CharOptConfig;
   // TeamBuild reconstruction
-  configs: CharCompConfig[];
+  configs: TeamSlotConfig[];
   combatOpts: OptionMap;
   enemyElementAura?: Element;
   // B&B parameters

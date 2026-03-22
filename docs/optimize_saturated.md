@@ -75,7 +75,7 @@ For each saturated charId:
 
 **Set constraint handling**: Saturated characters may have artifact set requirements (e.g., Noblesse 4pc on Bennett). If the set buff is assumed active (i.e., the damage formula already accounts for it), all 4pc Noblesse builds produce equal damage, and the heuristic fill just needs to pick 4 Noblesse pieces from the remaining pool. If the set buff actually changes damage (the 4pc bonus IS conditional), the saturation check would detect a damage difference and the character would NOT be flagged as saturated — they'd go through normal B&B.
 
-**ER/CR enforcement**: Even though artifacts don't affect damage, the user may need ER for burst uptime or CR for Favonius procs. The heuristic fill respects the existing `targetEr` and `targetCr` from `PerCharConfig`. Implementation approach:
+**ER/CR enforcement**: Even though artifacts don't affect damage, the user may need ER for burst uptime or CR for Favonius procs. The heuristic fill respects the existing `targetEr` and `targetCr` from `CharOptConfig`. Implementation approach:
 - For sands/goblet/circlet: strongly prefer main stats that help meet ER/CR targets
 - For substats: score ER/CR contributions additively when below target
 - If targets cannot be met from remaining pool, assign best-effort and report a fail reason

@@ -14,7 +14,7 @@ export type {
   TeamOptComboResult,
   TeamOptYield,
   TeamOptimizerOptions,
-  PerCharConfig,
+  CharOptConfig,
   TeamOptPassId,
 } from "./types";
 

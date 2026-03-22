@@ -30,9 +30,9 @@ import {
 } from "@/lib/team-comp/formulaCompiler";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   StatKey,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
 import { getFirstFormulaId } from "../../fixtures/optimizerHelpers";
@@ -630,7 +630,7 @@ function randomSubRolls(): Record<Slot, Partial<Record<SubStat, number>>> {
 
 // ─── Team configs for fuzz testing ───
 
-const DILUC_TEAM: CharCompConfig[] = [
+const DILUC_TEAM: TeamSlotConfig[] = [
   {
     charId: "diluc",
     charLevel: 90,
@@ -669,7 +669,7 @@ const DILUC_TEAM: CharCompConfig[] = [
   },
 ];
 
-const RAIDEN_TEAM: CharCompConfig[] = [
+const RAIDEN_TEAM: TeamSlotConfig[] = [
   {
     charId: "raiden_shogun",
     charLevel: 90,
@@ -709,7 +709,7 @@ const RAIDEN_TEAM: CharCompConfig[] = [
 ];
 
 // Teams with artifact sets — exercises the full buff pipeline including noStackId deduplication
-const VARKA_TEAM: CharCompConfig[] = [
+const VARKA_TEAM: TeamSlotConfig[] = [
   {
     charId: "varka",
     charLevel: 90,
@@ -748,7 +748,7 @@ const VARKA_TEAM: CharCompConfig[] = [
   },
 ];
 
-const CHASCA_TEAM: CharCompConfig[] = [
+const CHASCA_TEAM: TeamSlotConfig[] = [
   {
     charId: "chasca",
     charLevel: 90,
@@ -787,7 +787,7 @@ const CHASCA_TEAM: CharCompConfig[] = [
   },
 ];
 
-const EULA_TEAM: CharCompConfig[] = [
+const EULA_TEAM: TeamSlotConfig[] = [
   {
     charId: "eula",
     charLevel: 90,
@@ -826,7 +826,7 @@ const EULA_TEAM: CharCompConfig[] = [
   },
 ];
 
-const CLORINDE_TEAM: CharCompConfig[] = [
+const CLORINDE_TEAM: TeamSlotConfig[] = [
   {
     charId: "clorinde",
     charLevel: 90,
@@ -877,7 +877,7 @@ describe("compileTeamDamage full pipeline fuzz", () => {
 
   function fuzzTeam(
     label: string,
-    configs: CharCompConfig[],
+    configs: TeamSlotConfig[],
     swapCharId?: string
   ) {
     it(`${label}: compiled matches standard for random artifacts`, () => {
@@ -1049,7 +1049,7 @@ describe("compileComboTeamDamage fuzz", () => {
     return { id: "fuzz-combo", label: { zh: "测试", en: "test" }, lines };
   }
 
-  function fuzzComboTeam(label: string, configs: CharCompConfig[]) {
+  function fuzzComboTeam(label: string, configs: TeamSlotConfig[]) {
     it(`${label}: compiled combo matches evaluateCombo for random artifacts`, () => {
       const tb = new TeamBuild(configs);
       const charIds = configs.map((c) => c.charId);
@@ -1224,7 +1224,7 @@ describe("marginal gain parity (compiled vs standard)", () => {
 
   function testMarginalGains(
     label: string,
-    configs: CharCompConfig[],
+    configs: TeamSlotConfig[],
     swapCharId?: string
   ) {
     it(`${label}: marginal gains match for all stat keys`, () => {
@@ -1391,11 +1391,11 @@ describe("random team fuzz (compiled vs standard)", () => {
     .filter((a) => a.rarity === 5)
     .map((a) => a.id);
 
-  function tryRandomTeam(): CharCompConfig[] | null {
+  function tryRandomTeam(): TeamSlotConfig[] | null {
     const charStats = getCharacterStatsSync()!;
     const weaponsByType = buildWeaponsByType();
     const shuffled = [...characters].sort(() => Math.random() - 0.5);
-    const picked: CharCompConfig[] = [];
+    const picked: TeamSlotConfig[] = [];
 
     for (const c of shuffled) {
       if (picked.length >= 4) break;

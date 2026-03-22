@@ -35,9 +35,9 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
-  CharCompConfig,
   I18nLabel,
   StatKey,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import {
   DEFAULT_CALC_CTX,
@@ -88,7 +88,7 @@ const FLOWER_PLUME_SHEET = new StatSheet([
  * DPS gets the specified sheet; teammates get flower+plume only.
  */
 function buildTeamArtifactStats(
-  configs: CharCompConfig[],
+  configs: TeamSlotConfig[],
   dpsCharId: string,
   dpsSheet: StatSheet
 ): Record<string, StatSheet> {
@@ -134,7 +134,7 @@ type ComboResult = {
 // ─── Shared pipeline types ───
 
 type TeamTuneContext = {
-  configs: CharCompConfig[];
+  configs: TeamSlotConfig[];
   teamBuild: TeamBuild;
   formulas: WeightedFormula[];
   label: string;
@@ -376,8 +376,8 @@ function runComboEnumerationPipeline(
 export type AutoTuneInput = {
   /** The character to optimize */
   characterId: string;
-  /** Team setups — each is a full 4-member CharCompConfig[] with variable C/R */
-  teamSetups: CharCompConfig[][];
+  /** Team setups — each is a full 4-member TeamSlotConfig[] with variable C/R */
+  teamSetups: TeamSlotConfig[][];
   /** Team build options per team (for buff resolution) */
   teamOpts?: Record<string, unknown>[];
   /** Weighted formulas (formulaId + count + per-formula reaction). If omitted, uses all formulas with count=1. */
@@ -423,7 +423,7 @@ export type AutoTuneOutput = {
  */
 export type AutoTuneTeamInput = {
   characterId: string;
-  configs: CharCompConfig[];
+  configs: TeamSlotConfig[];
   opts: Record<string, string>;
   formulas?: WeightedFormula[];
   label: string;
@@ -695,7 +695,7 @@ export function aggregateTeamResults(
  *
  * Unlike `generateBuildWeights` which reads from the preset database,
  * this function accepts team configs directly — constellation/refinement
- * come from the CharCompConfig, enabling variable C/R.
+ * come from the TeamSlotConfig, enabling variable C/R.
  */
 export function autoTuneBuild(input: AutoTuneInput): AutoTuneOutput {
   const { characterId, teamSetups, element } = input;

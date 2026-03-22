@@ -189,7 +189,7 @@ For builds tagged as DPS with existing damage formula implementations, weights c
 Auto-tuning uses the full `TeamBuild` damage calculator from `src/lib/team-comp/`, not a simplified proxy. This ensures that all buff interactions — character passives, weapon passives, artifact set bonuses (e.g., Blizzard Strayer's +40% CR), elemental resonances, and cross-character scaling buffs — are properly accounted for when computing marginal gains.
 
 **Key APIs:**
-- `TeamBuild(configs: CharCompConfig[])` — Constructs a full team with all buff resolution
+- `TeamBuild(configs: TeamSlotConfig[])` — Constructs a full team with all buff resolution
 - `TeamBuild.getTeamStats(artifactStats, calcTargetId)` — Computes final stat sheets for all members
 - `TeamBuild.getDamageResult(charId, formulaId, teamStats, ctx)` — Evaluates damage for a formula
 - `StatSheet.withDelta(key, delta)` — Creates a tweaked stat sheet for marginal analysis

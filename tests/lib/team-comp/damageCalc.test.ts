@@ -457,13 +457,13 @@ import { TeamBuild, getComboDisplayResult } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 
 describe("TeamBuild lifecycle", () => {
   // Diluc (Pyro, Claymore), Mona (Hydro, Catalyst), Jean (Anemo, Sword), Eula (Cryo, Claymore)
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "diluc",
       charLevel: 90,
@@ -746,10 +746,9 @@ describe("TeamBuild lifecycle", () => {
       expect(monaScaling!.dynamicEntries.length).toBeGreaterThan(0);
     });
 
-    it("teammate self weapon buffs are active", () => {
-      // When Diluc is calc target, Mona/Jean/Eula's receiver:"self" weapon
-      // buffs should still be marked active (they apply to their owner's
-      // stat sheet). Only selfOnField should be inactive for non-targets.
+    it("teammate self weapon buffs are inactive when irrelevant to formula", () => {
+      // When Diluc is calc target, teammate self buffs that don't feed a
+      // scaling buff reaching Diluc's formula are correctly marked inactive.
       const display = tb.getDisplayResult(
         "diluc",
         "diluc-skill",
@@ -757,7 +756,7 @@ describe("TeamBuild lifecycle", () => {
         ctx
       );
 
-      // Jean's Aquila Favonia: self ATK% buff
+      // Jean's Aquila Favonia: self ATK% buff — doesn't reach Diluc's formula
       const jeanWeaponSelf = display.buffs.find(
         (b) =>
           b.source.type === "weapon" &&
@@ -765,9 +764,9 @@ describe("TeamBuild lifecycle", () => {
           b.target.receiver === "self"
       );
       expect(jeanWeaponSelf).toBeDefined();
-      expect(jeanWeaponSelf!.active).toBe(true);
+      expect(jeanWeaponSelf!.active).toBe(false);
 
-      // Eula's Skyward Pride: self DMG% buff
+      // Eula's Skyward Pride: self DMG% buff — doesn't reach Diluc's formula
       const eulaWeaponSelf = display.buffs.find(
         (b) =>
           b.source.type === "weapon" &&
@@ -775,7 +774,7 @@ describe("TeamBuild lifecycle", () => {
           b.target.receiver === "self"
       );
       expect(eulaWeaponSelf).toBeDefined();
-      expect(eulaWeaponSelf!.active).toBe(true);
+      expect(eulaWeaponSelf!.active).toBe(false);
     });
 
     it("getter-based weapon buffs are active (reference identity)", () => {
@@ -897,7 +896,7 @@ describe("TeamBuild lifecycle", () => {
 describe("other buffs apply to teammates' stats and display", () => {
   // Team: Zibai (Geo, calc target), Illuga (Geo, provides "other" CR/CD),
   //        Xingqiu (Hydro), Gorou (Geo)
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "zibai",
       charLevel: 90,
@@ -1130,7 +1129,7 @@ describe("levelUpGains", () => {
   };
 
   it("computes level-up gain for Lv90 calc target (both 90→95 and 90→100)", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "diluc",
         charLevel: 90,
@@ -1165,7 +1164,7 @@ describe("levelUpGains", () => {
   });
 
   it("computes level-up gain for Lv80 calc target (80→90 only)", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "diluc",
         charLevel: 80,
@@ -1194,7 +1193,7 @@ describe("levelUpGains", () => {
 
   it("Lv80→90 gain is larger than Lv95→100 gain", () => {
     const makeTeam = (level: number) => {
-      const configs: CharCompConfig[] = [
+      const configs: TeamSlotConfig[] = [
         {
           charId: "diluc",
           charLevel: level,
@@ -1219,7 +1218,7 @@ describe("levelUpGains", () => {
   });
 
   it("no level-up gain for Lv100 (already max)", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "diluc",
         charLevel: 100,
@@ -1243,7 +1242,7 @@ describe("levelUpGains", () => {
   });
 
   it("computes level-up gains for teammates too", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "diluc",
         charLevel: 90,
@@ -1300,7 +1299,7 @@ describe("marginalGains — ER with ER-scaling weapon", () => {
   };
 
   it("includes ER marginal gain for a character with Engulfing Lightning", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "raiden_shogun",
         charLevel: 90,
@@ -1332,7 +1331,7 @@ describe("marginalGains — ER with ER-scaling weapon", () => {
 
 describe("Raiden E — per-character burst DMG bonus via charId", () => {
   // Team: Raiden (90 energy), Bennett (60 energy), Xingqiu (80 energy), Kazuha (60 energy)
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "raiden_shogun",
       charLevel: 90,
@@ -1460,7 +1459,7 @@ describe("Raiden E — per-character burst DMG bonus via charId", () => {
 
 describe("bespoke buffs appear in resolveBuffs output", () => {
   // Gorou has P2 bespoke ScalingBuff (+1.56×DEF as baseDmg) on E and Q parts
-  const configs: CharCompConfig[] = [
+  const configs: TeamSlotConfig[] = [
     {
       charId: "gorou",
       charLevel: 90,

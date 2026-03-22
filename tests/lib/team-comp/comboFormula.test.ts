@@ -14,14 +14,14 @@ import { StatSheet } from "@/lib/team-comp/damageModels";
 import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
-  PerCharConfig,
+  CharOptConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ReactionOverride,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
@@ -43,7 +43,7 @@ const CTX: CalcContext = {
   enemyRes: 0.1,
 };
 
-const CONFIGS: CharCompConfig[] = [
+const CONFIGS: TeamSlotConfig[] = [
   {
     charId: "diluc",
     charLevel: 90,
@@ -399,7 +399,7 @@ describe("getComboDisplayResult", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("runTeamOptimization — combo mode", () => {
-  const perChar: Record<string, PerCharConfig> = {
+  const perChar: Record<string, CharOptConfig> = {
     diluc: { minEr: 1.0, minCr: 0, buildMatch: makeBuildMatch() },
     xingqiu: { minEr: 1.4, minCr: 0, buildMatch: makeBuildMatch() },
   };

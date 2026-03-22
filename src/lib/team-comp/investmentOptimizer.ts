@@ -34,9 +34,9 @@ import { runGenerator } from "./generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "./substatBudget";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ReactionOverride,
+  TeamSlotConfig,
 } from "./types";
 
 // ─── Types ───
@@ -119,7 +119,7 @@ export type InvestmentProgress = {
 
 export type InvestmentOptions = {
   configs: InvestmentCharConfig[];
-  baseConfigs: CharCompConfig[];
+  baseConfigs: TeamSlotConfig[];
   teamBuild: TeamBuild;
   combo: ComboFormula;
   calcContext: CalcContext;
@@ -204,7 +204,7 @@ function computeM(
 
 function getBaselineState(
   cfg: InvestmentCharConfig,
-  base: CharCompConfig
+  base: TeamSlotConfig
 ): CharInvestment {
   // If player already owns the 5★ weapon (startRefinement > 0), baseline uses it
   if (cfg.startRefinement > 0 && cfg.weapon5Star) {
@@ -233,8 +233,8 @@ function getBaselineState(
 
 function investmentToConfig(
   inv: CharInvestment,
-  base: CharCompConfig
-): CharCompConfig {
+  base: TeamSlotConfig
+): TeamSlotConfig {
   return {
     ...base,
     constellation: inv.constellation,
@@ -405,7 +405,7 @@ type CharOption = { inv: CharInvestment; perCharM: number };
 
 function getCharOptions(
   cfg: InvestmentCharConfig,
-  base: CharCompConfig
+  base: TeamSlotConfig
 ): CharOption[] {
   const baseline = getBaselineState(cfg, base);
   const baseM = charM(baseline, cfg.rarity);
@@ -458,7 +458,7 @@ function assembleSheets(
 function evalWithCachedArtifacts(
   allocation: TeamInvestment,
   sheets: Record<string, StatSheet>,
-  baseConfigs: CharCompConfig[],
+  baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
   enemyElementAura: Element | undefined,
   combo: ComboFormula,
@@ -484,7 +484,7 @@ function evalAndCache(
   cache: InvestmentCache,
   configs: InvestmentCharConfig[],
   snapshotCache: SnapshotCache,
-  baseConfigs: CharCompConfig[],
+  baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
   enemyAura: Element | undefined,
   combo: ComboFormula,
@@ -516,7 +516,7 @@ function evalAndCache(
 
 async function runIdealGen(
   allocation: TeamInvestment,
-  baseConfigs: CharCompConfig[],
+  baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
   enemyElementAura: Element | undefined,
   combo: ComboFormula,

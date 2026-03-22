@@ -22,9 +22,9 @@ import {
 } from "../formulaCompiler";
 import type {
   CalcContext,
+  CharOptConfig,
   DamageResult,
   OptFailReason,
-  PerCharConfig,
   ReactionOverride,
   StatKey,
 } from "../types";
@@ -389,7 +389,7 @@ function buildSlotGroupsForPattern(
  */
 export function runCharacterBnB(
   charId: string,
-  charConfig: PerCharConfig,
+  charConfig: CharOptConfig,
   teamBuild: TeamBuild,
   carryCharId: string,
   formulaId: string,

@@ -16,12 +16,12 @@ import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
-  PerCharConfig,
+  CharOptConfig,
   TeamOptYield,
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
@@ -64,7 +64,7 @@ const WT = "wanderers_troupe";
 const OFF = "thundering_fury";
 
 // Hu Tao (carry, CW 4pc) + Xingqiu (support, ESF 4pc)
-const CONFIGS: CharCompConfig[] = [
+const CONFIGS: TeamSlotConfig[] = [
   {
     charId: "hu_tao",
     charLevel: 90,
@@ -317,7 +317,7 @@ describe("runTeamOptimization — accidental set detection", () => {
   it("detects accidental 4pc bonus and rebuilds TeamBuild", async () => {
     // Config has NO set requirement, but inventory is all GL → optimizer picks GL pieces
     // → detectEquippedSets finds 4pc GL → teamBuild rebuilt with GL 4pc
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -372,7 +372,7 @@ describe("runTeamOptimization — accidental set detection", () => {
 
   it("no accidental bonus → no teamBuild on result", async () => {
     // Config requests CW 4pc, inventory has CW 4pc → sets match, no rebuild
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -467,7 +467,7 @@ describe("runTeamOptimization — accidental set detection", () => {
 
 describe("TeamBuild — configs and combatOpts stored", () => {
   it("stores configs on TeamBuild for reconstruction", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -484,7 +484,7 @@ describe("TeamBuild — configs and combatOpts stored", () => {
   });
 
   it("configs are the original array, not mutated", () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,

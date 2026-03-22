@@ -16,11 +16,10 @@ import {
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
-  CharCompConfig,
+  CharOptConfig,
   ComboFormula,
   ComboResult,
   DamageResult,
-  PerCharConfig,
   ReactionOverride,
   TeamOptComboResult,
   TeamOptPassId,
@@ -30,6 +29,7 @@ import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import {
   type OptFailReason,
@@ -267,7 +267,7 @@ export async function* runTeamOptimization(
     totalPasses: number,
     passResults: TeamOptPassResult[],
     overrideTeamBuild?: TeamBuild,
-    overrideCharConfig?: PerCharConfig
+    overrideCharConfig?: CharOptConfig
   ): AsyncGenerator<
     TeamOptimizationProgress,
     OptimizationResult | null,

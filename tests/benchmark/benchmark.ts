@@ -76,11 +76,11 @@ import {
 import { runCharacterBnB } from "@/lib/team-comp/optimizer";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   StatKey,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
-import type { PerCharConfig } from "@/lib/team-comp/types";
+import type { CharOptConfig } from "@/lib/team-comp/types";
 
 import {
   C,
@@ -89,8 +89,8 @@ import {
   DEFAULT_GLOBAL_CONFIG,
   type Team,
   type TeamResult,
-  buildCharCompConfig,
   buildPerChar,
+  buildTeamSlotConfig,
   fmt,
   getAllArtifacts,
   getArtifactSetRarity,
@@ -158,11 +158,11 @@ interface CachedProblem {
   carryCharId: string;
   formulaId: string;
   formulaLabel: string;
-  configs: CharCompConfig[];
+  configs: TeamSlotConfig[];
   combatOpts: Record<string, string>;
   enemyElementAura?: string;
   calcContext: CalcContext;
-  perChar: Record<string, PerCharConfig>;
+  perChar: Record<string, CharOptConfig>;
 }
 
 interface ProblemCache {
@@ -215,9 +215,9 @@ function evaluateAssignment(
   }
 
   try {
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
     if (configs.length === 0) return null;
@@ -301,9 +301,9 @@ function checkConstraints(
   }
 
   try {
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
     if (configs.length === 0) return [];
@@ -1233,9 +1233,9 @@ async function cmdRefresh(): Promise<void> {
     const carryCharId = team.characters[0];
     if (!carryCharId) continue;
 
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
     if (configs.length === 0) {
@@ -1695,9 +1695,9 @@ async function cmdCompare(opts: {
     if (!currentAssignment) continue;
 
     // Build TeamBuild for stat comparison
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
     if (configs.length === 0) continue;
@@ -2054,9 +2054,9 @@ async function cmdCarryDiagnose(opts: {
     );
 
     // Set up V2 context
-    const configs: CharCompConfig[] = [];
+    const configs: TeamSlotConfig[] = [];
     for (let i = 0; i < team.characters.length; i++) {
-      const cfg = buildCharCompConfig(team, i, accountData);
+      const cfg = buildTeamSlotConfig(team, i, accountData);
       if (cfg) configs.push(cfg);
     }
     if (configs.length === 0) continue;
@@ -2587,7 +2587,7 @@ async function cmdFuzzCombo(opts: {
   const teamMap = new Map<
     string,
     {
-      configs: CharCompConfig[];
+      configs: TeamSlotConfig[];
       charIds: string[];
       calcContext: CalcContext;
       teamName: string;

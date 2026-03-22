@@ -5,7 +5,7 @@ import { artifactHalfSetsById, artifactsById } from "@/data/constants";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
 import "@/lib/team-comp/index";
@@ -34,7 +34,7 @@ describe("generator — 2+2pc set assignment", () => {
       (id) => artifactsById[id]?.rarity === 5
     ) ?? "";
 
-  function make2pc2pcConfigs(): CharCompConfig[] {
+  function make2pc2pcConfigs(): TeamSlotConfig[] {
     return [
       {
         charId: "diluc",
@@ -172,7 +172,7 @@ describe("generator — 2+2pc set assignment", () => {
 
   it("same half-set for both 2pc slots still produces distinct concrete sets", async () => {
     // Both 2pc slots use "atk%-18" — sk1 and sk2 must still differ
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "diluc",
         charLevel: 90,

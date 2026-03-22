@@ -9,9 +9,9 @@ import type { StatSheet } from "../damageModels";
 import type { CompiledTeamDamage } from "../formulaCompiler";
 import type {
   CalcContext,
+  CharOptConfig,
   DamageResult,
   OptFailReason,
-  PerCharConfig,
   ReactionOverride,
   StatKey,
 } from "../types";
@@ -115,7 +115,7 @@ export interface TopKCollectorLike {
 
 export interface CharacterBnBParams {
   charId: string;
-  charConfig: PerCharConfig;
+  charConfig: CharOptConfig;
   teamBuild: TeamBuild;
   carryCharId: string;
   formulaId: string;

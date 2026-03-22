@@ -18,7 +18,7 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
-import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
+import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 import { type OptimizationResult, runOptimization } from "./optimizerV1";
 
@@ -79,7 +79,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
   it("3-character team: no artifact assigned to multiple characters", async () => {
     // Hu Tao (carry, no set) + Xingqiu (support, no set) + Zhongli (support, no set)
     // Use no-set to simplify, with a constrained inventory so conflicts are likely.
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -188,7 +188,7 @@ describe("runTeamOptimization — no duplicate artifacts", () => {
     "4-character team with tight inventory: no duplicates",
     { timeout: 30000 },
     async () => {
-      const configs: CharCompConfig[] = [
+      const configs: TeamSlotConfig[] = [
         {
           charId: "hu_tao",
           charLevel: 90,
@@ -326,7 +326,7 @@ describe("runOptimization — set-infeasible early exit", () => {
     // Goblet and circlet have no CW pieces.
     // With ER target set, the old code would retry with widening altCount.
     // The fix should exit immediately with set-impossible.
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -377,7 +377,7 @@ describe("runOptimization — set-infeasible early exit", () => {
   });
 
   it("4pc set feasible (4 slots covered): does NOT early-exit", async () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,
@@ -423,7 +423,7 @@ describe("runOptimization — set-infeasible early exit", () => {
   });
 
   it("2+2 set impossible (half-set has pieces in only 1 slot): exits with set-impossible", async () => {
-    const configs: CharCompConfig[] = [
+    const configs: TeamSlotConfig[] = [
       {
         charId: "hu_tao",
         charLevel: 90,

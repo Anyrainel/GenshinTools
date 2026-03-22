@@ -37,9 +37,9 @@ import type {
 } from "@/lib/team-comp/investmentOptimizer";
 import type {
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ReactionOverride,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
@@ -54,7 +54,7 @@ interface InvestmentDialogProps {
   onOpenChange: (open: boolean) => void;
   teamId: string;
   teamBuild: TeamBuild;
-  baseConfigs: CharCompConfig[];
+  baseConfigs: TeamSlotConfig[];
   combo: ComboFormula;
   calcContext: CalcContext;
   analysis: UseInvestmentAnalysisState;
@@ -372,7 +372,7 @@ function CharConfigGroup({
   onUpdateWeapon,
 }: {
   config: InvestmentCharConfig;
-  baseConfig: CharCompConfig;
+  baseConfig: TeamSlotConfig;
   onUpdateWeapon: (
     charId: string,
     star: "4" | "5",
@@ -648,7 +648,7 @@ function CharMaxSelectors({
 
 // ─── Artifact icon helper ───
 
-function getArtifactIconProps(bc: CharCompConfig): {
+function getArtifactIconProps(bc: TeamSlotConfig): {
   imagePath: string;
   imagePath2?: string;
   rarity: Rarity;
@@ -682,7 +682,7 @@ function getArtifactIconProps(bc: CharCompConfig): {
 
 function reconcileConfigs(
   stored: InvestmentCharConfig[],
-  baseConfigs: CharCompConfig[]
+  baseConfigs: TeamSlotConfig[]
 ): InvestmentCharConfig[] {
   const baseIds = new Set(baseConfigs.map((b) => b.charId));
   // Keep stored configs that still exist in the team
@@ -700,7 +700,7 @@ function reconcileConfigs(
 // ─── Default config builder ───
 
 function buildDefaultCharConfigs(
-  baseConfigs: CharCompConfig[]
+  baseConfigs: TeamSlotConfig[]
 ): InvestmentCharConfig[] {
   return baseConfigs.map((bc) => {
     const charRes = charactersById[bc.charId];

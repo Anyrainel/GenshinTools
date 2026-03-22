@@ -11,13 +11,13 @@ import { distributeComboHits } from "@/lib/team-comp/stackAllocation";
 import type {
   BuffActivationMap,
   CalcContext,
-  CharCompConfig,
   ComboFormula,
   ComboLine,
   ComboResult,
   DisplayResult,
   PartialBuffInfo,
   ReactionOverride,
+  TeamSlotConfig,
 } from "@/lib/team-comp/types";
 import type { Team } from "@/stores/useTeamStore";
 
@@ -100,8 +100,8 @@ export function setsMatch(
 export function buildTeamConfigs(
   team: Team,
   accountData: AccountData | null
-): CharCompConfig[] {
-  const configs: CharCompConfig[] = [];
+): TeamSlotConfig[] {
+  const configs: TeamSlotConfig[] = [];
   for (let i = 0; i < 4; i++) {
     const charId = team.characters[i];
     if (!charId) continue;

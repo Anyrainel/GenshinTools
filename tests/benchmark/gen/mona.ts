@@ -36,11 +36,11 @@ import {
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
   CalcContext,
+  CharOptConfig,
   ComboFormula,
   ComboResult,
   DamageResult,
   OptFailReason,
-  PerCharConfig,
   ReactionOverride,
   StatKey,
   TeamOptComboResult,
@@ -756,7 +756,7 @@ function buildSlotGroupsForPattern(
 
 function runCharacterAStar(
   charId: string,
-  charConfig: PerCharConfig,
+  charConfig: CharOptConfig,
   teamBuild: TeamBuild,
   carryCharId: string,
   formulaId: string,
