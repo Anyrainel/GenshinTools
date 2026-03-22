@@ -9,8 +9,8 @@ import {
   weaponsById,
 } from "@/data/constants";
 import type { AccountData, Rarity } from "@/data/types";
+import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import type { Team } from "@/stores/useTeamStore";
-import { buildTeamLabel } from "./teamLabel";
 
 interface AutoTuneTeamRowProps {
   team: Team;

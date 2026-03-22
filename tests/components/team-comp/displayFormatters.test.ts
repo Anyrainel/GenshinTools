@@ -4,7 +4,7 @@ import {
   fmtPercent,
   fmtStat,
   isPctStat,
-} from "@/components/team-comp/displayFormatters";
+} from "@/lib/team-comp/displayFormatters";
 import { describe, expect, it } from "vitest";
 
 describe("fmtStat", () => {

@@ -4,6 +4,7 @@ import { charactersById } from "@/data/constants";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { evaluateCombo } from "@/lib/team-comp/damageCalc";
 import type { StatSheet } from "@/lib/team-comp/damageModels";
+import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type {
   CalcContext,
   ComboFormula,
@@ -15,7 +16,6 @@ import type { Team } from "@/stores/useTeamStore";
 import { Minus, Plus } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { ReactionSelector } from "./ReactionSelector";
-import { fmtDamage } from "./displayFormatters";
 
 // ─── Props ───
 

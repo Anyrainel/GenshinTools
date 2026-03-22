@@ -1,6 +1,5 @@
 import { ArtifactDataContent } from "@/components/account-data/ArtifactDataHoverCard";
 import { ArtifactIcon } from "@/components/shared/ArtifactIcon";
-import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   LightweightSelect,
   LightweightSelectContent,
@@ -19,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactHalfSetsById, artifactsById } from "@/data/constants";
 import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
+import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
 import { ArrowRightLeft, Check } from "lucide-react";
 import { useMemo, useState } from "react";

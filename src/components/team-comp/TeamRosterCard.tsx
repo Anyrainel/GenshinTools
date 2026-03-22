@@ -1,5 +1,4 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -33,6 +32,7 @@ import {
   getEntityOption,
   isChoiceEnabled,
 } from "@/lib/team-comp/damageModels";
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { Users } from "lucide-react";

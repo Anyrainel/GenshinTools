@@ -2,7 +2,6 @@ import {
   type ArtifactConfig,
   ItemPicker,
 } from "@/components/shared/ItemPicker";
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { charactersById, weaponsById } from "@/data/constants";
 import type { AccountData, WeaponResource } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
@@ -10,6 +9,7 @@ import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import { Diamond, Swords, User } from "lucide-react";
 import { useCallback } from "react";
 

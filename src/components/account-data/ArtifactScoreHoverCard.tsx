@@ -1,4 +1,3 @@
-import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   Drawer,
   DrawerContent,
@@ -14,6 +13,7 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { type Slot, allSlots } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
+import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn } from "@/lib/utils";
 import { CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

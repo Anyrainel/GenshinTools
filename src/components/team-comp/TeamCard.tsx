@@ -1,5 +1,4 @@
 import { ItemPicker } from "@/components/shared/ItemPicker";
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +26,7 @@ import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import {

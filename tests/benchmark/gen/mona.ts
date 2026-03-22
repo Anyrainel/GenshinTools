@@ -16,8 +16,6 @@
  * - Memory-bounded: trims queue when it exceeds 500K entries
  */
 
-import { isPctStat } from "@/components/team-comp/displayFormatters";
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
@@ -34,6 +32,8 @@ import {
   hasOffFieldParts,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { isPctStat } from "@/lib/team-comp/displayFormatters";
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   CharOptConfig,

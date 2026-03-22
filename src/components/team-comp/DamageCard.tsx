@@ -18,6 +18,7 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
 import type {
   TeamOptimizationProgress,
@@ -25,6 +26,7 @@ import type {
 } from "@/lib/team-comp/optimizer";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
+import { calcDisplayResult, toStatSheets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   ComboLine,
@@ -59,8 +61,6 @@ import { BuffLedger } from "./BuffLedger";
 import { FormulaBreakdown, adjustPartDamage } from "./FormulaBreakdown";
 import { StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
-import { fmtDamage } from "./displayFormatters";
-import { calcDisplayResult, toStatSheets } from "./teamOptUtils";
 
 const SESSION_PREFIX = "dmgCard.";
 

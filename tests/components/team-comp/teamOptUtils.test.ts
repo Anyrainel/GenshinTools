@@ -1,3 +1,6 @@
+import type { ArtifactData, ReactionType } from "@/data/types";
+import { StatSheet } from "@/lib/team-comp/damageModels";
+import type { OptionMap } from "@/lib/team-comp/damageModels";
 import {
   buildTeamConfigs,
   calcComboResults,
@@ -5,10 +8,7 @@ import {
   detectEquippedSets,
   setsMatch,
   toStatSheets,
-} from "@/components/team-comp/teamOptUtils";
-import type { ArtifactData, ReactionType } from "@/data/types";
-import { StatSheet } from "@/lib/team-comp/damageModels";
-import type { OptionMap } from "@/lib/team-comp/damageModels";
+} from "@/lib/team-comp/teamOptUtils";
 import { describe, expect, it } from "vitest";
 import {
   createAccountData,

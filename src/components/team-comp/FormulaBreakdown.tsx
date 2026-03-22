@@ -1,4 +1,9 @@
 import type { useLanguage } from "@/contexts/LanguageContext";
+import {
+  fmtDamage,
+  fmtPercent,
+  fmtStat,
+} from "@/lib/team-comp/displayFormatters";
 import type {
   BuffActivationMap,
   CritMode,
@@ -10,7 +15,6 @@ import type {
 import { cn } from "@/lib/utils";
 import type React from "react";
 import { PartBuffDialog } from "./PartBuffDialog";
-import { fmtDamage, fmtPercent, fmtStat } from "./displayFormatters";
 
 type HlKey = StatKey | "charLevel" | null;
 

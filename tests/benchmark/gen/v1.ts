@@ -1,10 +1,3 @@
-/**
- * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
- *
- * Backup algorithm for benchmark solution generation.
- * Moved from src/lib/team-comp/teamOptimizer.ts.
- */
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
@@ -14,6 +7,13 @@ import {
   hasOffFieldParts,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+/**
+ * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
+ *
+ * Backup algorithm for benchmark solution generation.
+ * Moved from src/lib/team-comp/teamOptimizer.ts.
+ */
+import { detectEquippedSets } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   CharOptConfig,

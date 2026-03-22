@@ -1,5 +1,4 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
-import { buildTeamConfigs } from "@/components/team-comp/teamOptUtils";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -19,6 +18,7 @@ import type {
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "@/lib/team-comp/constants";
 import { TeamBuild, offFieldStatus } from "@/lib/team-comp/damageCalc";
+import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import type { ComboLine, I18nLabel, ReactionType } from "@/lib/team-comp/types";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";

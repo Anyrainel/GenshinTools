@@ -24,6 +24,14 @@ import {
 } from "@/lib/account-data/artifactScore";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import {
+  buildComboLinePartialBuffs,
+  buildTeamConfigs,
+  calcComboResults,
+  calcDisplayResult,
+  toStatSheets,
+} from "@/lib/team-comp/teamOptUtils";
+import type { TeamOptDetailProps } from "@/lib/team-comp/teamOptUtils";
 import type {
   CalcContext,
   ComboFormula,
@@ -44,14 +52,6 @@ import { DamageCard } from "./DamageCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
 import { InvestmentDialog } from "./InvestmentDialog";
 import { TeamRosterCard } from "./TeamRosterCard";
-import {
-  buildComboLinePartialBuffs,
-  buildTeamConfigs,
-  calcComboResults,
-  calcDisplayResult,
-  toStatSheets,
-} from "./teamOptUtils";
-import type { TeamOptDetailProps } from "./teamOptUtils";
 
 /** Get the reaction override key for a charId + formulaId pair */
 const getReactionKey = (charId: string, formulaId: string) =>

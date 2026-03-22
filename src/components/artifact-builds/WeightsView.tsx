@@ -12,10 +12,8 @@ import {
   SubstatPills,
 } from "@/components/artifact-builds/AutoTuneResults";
 import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
-import { buildTeamLabel } from "@/components/artifact-builds/teamLabel";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { buildTeamConfigs } from "@/components/team-comp/teamOptUtils";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -36,7 +34,9 @@ import type {
   TeamBreakdown,
 } from "@/lib/account-data/scoring/pipeline";
 import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
+import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
+import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
 import { cn, getElementColor } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";

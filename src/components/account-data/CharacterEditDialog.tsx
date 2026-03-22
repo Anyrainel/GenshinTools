@@ -1,6 +1,5 @@
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
-import { isPctStat } from "@/components/team-comp/displayFormatters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -50,6 +49,7 @@ import {
   updateCharacterStats,
   updateWeaponStats,
 } from "@/lib/account-data/characterEditor";
+import { isPctStat } from "@/lib/team-comp/displayFormatters";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
 import {

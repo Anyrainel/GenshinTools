@@ -9,13 +9,13 @@
  * - runTeamOptimization async generator (main entry point)
  */
 
-import { detectEquippedSets } from "@/components/team-comp/teamOptUtils";
 import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
 import { TeamBuild, evaluateCombo, hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import { detectEquippedSets } from "../teamOptUtils";
 import type {
   CalcContext,
   CharOptConfig,

@@ -7,15 +7,16 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { StatSheet } from "@/lib/team-comp/damageModels";
+import { fmtPercent, fmtStat } from "@/lib/team-comp/displayFormatters";
 import type { DisplayResult, StatKey } from "@/lib/team-comp/types";
 import { filterMatchesTag } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
-import { fmtPercent, fmtStat } from "./displayFormatters";
 
 import type { ArtifactData } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
+import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamOptUtils";
 import type { OptFailReason } from "@/lib/team-comp/types";
 import {
   AlertTriangle,
@@ -25,7 +26,6 @@ import {
   Snowflake,
 } from "lucide-react";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
-import { detectEquippedSets, setsMatch } from "./teamOptUtils";
 
 type HlKey = StatKey | "charLevel";
 type HighlightedStat = { key: HlKey; charId: string } | null;

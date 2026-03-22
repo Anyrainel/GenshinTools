@@ -1,10 +1,10 @@
-import { fmtStat } from "@/components/team-comp/displayFormatters";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactData, Rarity, SubStat } from "@/data/types";
 import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
 } from "@/lib/account-data/scoring/utils";
+import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getRarityColor } from "@/lib/utils";
 
 function getRollCount(statKey: SubStat, value: number, rarity: Rarity): number {

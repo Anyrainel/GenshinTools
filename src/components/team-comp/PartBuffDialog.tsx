@@ -22,6 +22,7 @@ import {
   charactersById,
   weaponsById,
 } from "@/data/constants";
+import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
 import type {
   BuffActivationMap,
   BuffTarget,
@@ -36,7 +37,6 @@ import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { ArrowUpRight, Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { getTemplateName } from "./FormulaBreakdown";
-import { fmtOrigin, fmtStat } from "./displayFormatters";
 
 type Props = {
   parts: DisplayPart[];
@@ -100,6 +100,23 @@ const RECEIVER_I18N: Record<string, string> = {
   onField: "teamComp.receiverOnField",
   team: "teamComp.receiverTeam",
 };
+
+/** When a buff has target.charId, show the character name + field context. */
+function formatReceiverLabel(
+  target: BuffTarget,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  if (target.charId) {
+    const name = t.character(target.charId);
+    const r = target.receiver;
+    if (r === "selfOnField" || r === "onField" || r === "otherOnField")
+      return `${name} ${t.ui("teamComp.receiverOnField")}`;
+    if (r === "selfOffField")
+      return `${name} ${t.ui("teamComp.receiverSelfOffField")}`;
+    return name;
+  }
+  return t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf");
+}
 
 function formatFilter(
   target: BuffTarget,
@@ -228,11 +245,7 @@ function PartTab({
               })),
             ];
 
-            const receiverLabel = buff.target.charId
-              ? t.character(buff.target.charId)
-              : t.ui(
-                  RECEIVER_I18N[buff.target.receiver] ?? "teamComp.receiverSelf"
-                );
+            const receiverLabel = formatReceiverLabel(buff.target, t);
 
             return (
               <div

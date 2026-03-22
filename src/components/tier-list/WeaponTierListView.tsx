@@ -31,7 +31,7 @@ import { weaponTypes } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { getWeaponDisplayMeta } from "@/lib/gameStatsLoader";
 
-import { downloadTierListImage } from "@/lib/downloadTierListImage";
+import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 
 import { useIsOwned } from "@/hooks/useOwnership";

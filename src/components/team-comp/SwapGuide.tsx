@@ -1,4 +1,3 @@
-import { fmtStat } from "@/components/team-comp/displayFormatters";
 import {
   Collapsible,
   CollapsibleContent,
@@ -11,6 +10,7 @@ import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
 } from "@/lib/account-data/scoring/utils";
+import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import { cn, getAssetUrl, getRarityColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowRightLeft, Check, ChevronDown, Package } from "lucide-react";

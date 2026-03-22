@@ -6,6 +6,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
 import { TierTable } from "@/components/tier-list/TierTable";
+import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import type { TierGroupConfig } from "@/components/tier-list/tierTableTypes";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -28,7 +29,6 @@ import type {
 } from "@/data/types";
 import { elements } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
-import { downloadTierListImage } from "@/lib/downloadTierListImage";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
 import { loadPresetMetadata, loadPresetPayload } from "@/lib/presetLoader";
 import { isTourCompleted, markTourCompleted } from "@/lib/tourConfig";

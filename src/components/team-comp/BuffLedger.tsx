@@ -12,6 +12,7 @@ import {
 } from "@/data/constants";
 import { elementResourcesByName } from "@/data/constants";
 import type { Element } from "@/data/types";
+import { fmtOrigin, fmtStat } from "@/lib/team-comp/displayFormatters";
 import type {
   BuffTarget,
   DamageTagFilter,
@@ -23,7 +24,6 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
-import { fmtOrigin, fmtStat } from "./displayFormatters";
 
 type Props = {
   buffs: ResolvedBuff[];
@@ -83,6 +83,23 @@ const RECEIVER_I18N: Record<string, string> = {
   onField: "teamComp.receiverOnField",
   team: "teamComp.receiverTeam",
 };
+
+/** When a buff has target.charId, show the character name + field context. */
+function formatReceiverLabel(
+  target: BuffTarget,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  if (target.charId) {
+    const name = t.character(target.charId);
+    const r = target.receiver;
+    if (r === "selfOnField" || r === "onField" || r === "otherOnField")
+      return `${name} ${t.ui("teamComp.receiverOnField")}`;
+    if (r === "selfOffField")
+      return `${name} ${t.ui("teamComp.receiverSelfOffField")}`;
+    return name;
+  }
+  return t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf");
+}
 
 function BuffChip({
   buff,
@@ -173,9 +190,7 @@ function BuffChip({
                             : "text-muted-foreground bg-black/10"
           )}
         >
-          {target.charId
-            ? t.character(target.charId)
-            : t.ui(RECEIVER_I18N[target.receiver] ?? "teamComp.receiverSelf")}
+          {formatReceiverLabel(target, t)}
         </span>
       </div>
 
