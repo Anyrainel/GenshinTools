@@ -75,3 +75,45 @@
     complexity.
   created: "2026-03-08"
   resolved: "2026-03-08"
+
+- id: durin-kqm-dragon-tick-count
+  entity: durin
+  rule: S8
+  status: open
+  category: needs-data
+  summary: >
+    Dragon tick count may be underestimated. Implementation models 10 ticks for
+    both White Flame and Dark Decay, but KQM documents tick intervals of 1.25s
+    (White) and 1.0s (Dark) over 20s duration, suggesting 16 and 20 total ticks
+    respectively.
+  detail: >
+    KQM source: https://keqingmains.com/q/durin-quickguide/.
+    KQM quick guide states White Flame ticks every 1.25s and Dark Decay every
+    1.0s, both over a 20s duration. This implies up to 16 (White) or 20 (Dark)
+    total ticks. The implementation uses 10 ticks for both forms, matching the
+    P2 Primordial Fusion stack count. Ticks beyond the 10th would still deal
+    damage but without the P2 baseDmg% buff. Needs in-game verification of
+    actual tick counts to determine if additional unbuffed ticks should be
+    modeled.
+  created: "2026-03-22"
+  resolved: null
+
+- id: durin-kqm-c4-stack-preservation
+  entity: durin
+  rule: S5
+  status: open
+  category: approximation
+  summary: >
+    C4 30% chance to not consume Cycle of Enlightenment stacks (from C1) is not
+    modeled. This effectively increases the number of buffed hits by ~43%
+    (from 20 to ~28.6 expected triggers for White, 10 to ~14.3 for Dark).
+  detail: >
+    KQM source: https://keqingmains.com/q/durin-quickguide/.
+    C4 text: "there is a 30% chance that no Cycle of Enlightenment stacks will
+    be consumed." With 30% preservation rate, expected triggers = stacks / (1 -
+    0.3). For White form (20 stacks, 1 per hit): ~28.6 triggers. For Dark form
+    (20 stacks, 2 per hit = 10 triggers): ~14.3 triggers. The implementation
+    does not adjust C1 stack usage for C4. Could be modeled as increasing
+    maxStacks (White) or effective hit count (Dark) by the expected factor.
+  created: "2026-03-22"
+  resolved: null
