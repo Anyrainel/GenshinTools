@@ -25,7 +25,7 @@ import {
   runIdealArtifactGen,
 } from "@/lib/team-comp/idealArtifactGen";
 import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
-import type { PartialBuffSpec } from "@/lib/team-comp/stackAllocation";
+import type { PartialBuffInfo } from "@/lib/team-comp/stackAllocation";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -151,7 +151,7 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
     expect(specs).toHaveLength(0);
   });
 
-  it("returns PartialBuffSpec when user override reduces hits on a part", () => {
+  it("returns PartialBuffInfo when user override reduces hits on a part", () => {
     const tb = makeDilucTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
     const sheets = emptySheets(
@@ -176,13 +176,9 @@ describe("TeamBuild.computePartialBuffSpecs", () => {
     );
 
     expect(specs.length).toBeGreaterThan(0);
-    // Should contain negated entries for Bennett Q
     const spec = specs[0];
-    expect(spec.negatedEntries.length).toBeGreaterThan(0);
-    // Negated entries should have negative values
-    for (const e of spec.negatedEntries) {
-      expect(e.value).toBeLessThan(0);
-    }
+    // Should have a buffKey identifying the buff
+    expect(spec.buffKey).toBeTruthy();
     // partActivation should show 0 for part 0
     expect(spec.partActivation[0]).toBe(0);
   });
@@ -364,7 +360,7 @@ describe("compileTeamDamage with partialBuffs (hot path)", () => {
     );
     const dmgBase = compiledBase.evaluate(varsBase);
 
-    // Build PartialBuffSpec that disables Bennett Q on all parts
+    // Build PartialBuffInfo that disables Bennett Q on all parts
     const specs = tb.computePartialBuffSpecs(
       carryId,
       formulaId,
@@ -621,7 +617,7 @@ describe("runTeamOptimization with partialBuffs", () => {
       // partialBuffs in combo mode — should not crash
       partialBuffs: [
         {
-          negatedEntries: [{ key: "atk", value: -500 }],
+          buffKey: "character:bennett:Q",
           partActivation: { 0: 0 },
         },
       ],
@@ -725,7 +721,7 @@ describe("compileComboTeamDamage with buffOverrides", () => {
 
     // Key format for combo line: "diluc.dilucFormula" → index into combo lines
     const lineKey = `${carryId}.${dilucFormula}`;
-    const buffOverrides: Record<string, PartialBuffSpec[]> = {
+    const buffOverrides: Record<string, PartialBuffInfo[]> = {
       [lineKey]: dilucSpecs,
     };
 

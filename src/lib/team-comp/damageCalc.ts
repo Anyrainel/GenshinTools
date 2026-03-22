@@ -24,13 +24,16 @@ import {
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import type { CombatOpts } from "./damageModels";
 import {
-  buildPartialBuffSpecs,
-  buildUserOverrideSpecs,
+  type ComboLineContext,
+  buildPartialBuffInfos,
+  buildStatVariants,
+  buildUserOverrideInfos,
   collectStackLimitedBuffs,
   computeBlendedDamage,
+  computeComboDefaultActivation,
   computeDefaultActivation,
 } from "./stackAllocation";
-import type { PartialBuffSpec } from "./stackAllocation";
+import type { PartialBuffInfo } from "./stackAllocation";
 import type {
   BuffActivationMap,
   BuffSource,
@@ -38,6 +41,7 @@ import type {
   CalcContext,
   CharCompConfig,
   ComboFormula,
+  ComboLine,
   ComboResult,
   DamageResult,
   DamageTag,
@@ -50,7 +54,12 @@ import type {
   StatEntry,
   StatKey,
 } from "./types";
-import { buffSourceKey, filterMatchesTag, resolvePartReaction } from "./types";
+import {
+  buffSourceKey,
+  exclusionKey,
+  filterMatchesTag,
+  resolvePartReaction,
+} from "./types";
 
 export { TeamMeta };
 
@@ -206,6 +215,8 @@ export class CharBuild {
   readonly artifactSetBase: ArtifactSetBase | null;
   readonly artifactHalfSetBases: ArtifactHalfSetBase[];
   private readonly resonanceBuffs: StatBuff[] = [];
+  /** Phase 1 baseline: character + weapon + artifact set bonuses, BEFORE static buffs. */
+  private readonly baseStatSheet: StatSheet;
   private innerStatSheet: StatSheet;
 
   constructor(
@@ -309,6 +320,7 @@ export class CharBuild {
       ...this.artifactHalfSetBases.flatMap((h) => h.stats),
     ];
     this.innerStatSheet = new StatSheet(baseEntries);
+    this.baseStatSheet = this.innerStatSheet;
   }
 
   /**
@@ -375,6 +387,53 @@ export class CharBuild {
   }
 
   /**
+   * Rebuild pre-stats from Phase 1 baseline, excluding buffs with matching keys.
+   * Used by the exclusion-based blending system to produce stat variants.
+   */
+  getPreStatsExcluding(
+    artifactStats: StatSheet,
+    targetDependentBuffs: StatBuff[],
+    allStaticBuffs: ProvidedStaticBuff[],
+    excludeKeys: Set<string>,
+    selfCharId: string,
+    selfRegion?: Region,
+    selfFaction?: Faction
+  ): StatSheet {
+    // Re-apply target-independent static buffs excluding the specified buff keys
+    let applicable = allStaticBuffs
+      .filter((b) => {
+        if (excludeKeys.has(buffSourceKey(b.buff.source))) return false;
+        return isBuffApplicable(
+          b.buff,
+          b.providerCharId,
+          selfCharId,
+          null,
+          selfRegion,
+          selfFaction
+        );
+      })
+      .map((b) => b.buff);
+    applicable = deduplicateBuffs(applicable, (b) => b.staticBuffs);
+    let sheet = this.baseStatSheet.apply(applicable);
+
+    // Merge artifact stats
+    sheet = sheet.merge(artifactStats);
+
+    // Apply target-dependent buffs (also excluding)
+    if (targetDependentBuffs.length > 0) {
+      const filteredTD = targetDependentBuffs.filter(
+        (b) => !excludeKeys.has(buffSourceKey(b.source))
+      );
+      if (filteredTD.length > 0) {
+        const deduped = deduplicateBuffs(filteredTD, (b) => b.staticBuffs);
+        sheet = sheet.apply(deduped);
+      }
+    }
+
+    return sheet;
+  }
+
+  /**
    * Apply dynamic buffs to pre-stats → post-stats.
    * Evaluates all applicable dynamic buffs.
    */
@@ -415,7 +474,9 @@ export class CharBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldSelfPostStats?: StatSheet,
-    partialBuffs?: PartialBuffSpec[]
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    offFieldVariants?: Map<string, StatSheet>
   ): DamageResult {
     return this.charBase.getDamageResult(
       formulaId,
@@ -424,7 +485,9 @@ export class CharBuild {
       ctx,
       reactionOverride,
       offFieldSelfPostStats,
-      partialBuffs
+      partialBuffs,
+      statsVariants,
+      offFieldVariants
     );
   }
 
@@ -751,6 +814,102 @@ export class TeamBuild {
   }
 
   /**
+   * Compute final stat sheets excluding the specified buffs.
+   * Rebuilds from Phase 1 baseline for each character, skipping excluded buffs
+   * in both the static and dynamic buff application phases.
+   */
+  getTeamStatsExcluding(
+    artifactStats: Record<string, StatSheet>,
+    calcTargetId: string,
+    ctx: CalcContext | undefined,
+    excludeKeys: Set<string>
+  ): Record<string, StatSheet> {
+    // Collect target-dependent static buffs (onField, selfOnField)
+    const targetDependent: Record<string, StatBuff[]> = {};
+    for (const charId of Object.keys(this.charBuilds)) {
+      targetDependent[charId] = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            charId,
+            calcTargetId,
+            this.teamMeta.regions[charId],
+            this.teamMeta.factions[charId]
+          );
+        })
+        .map((b) => b.buff);
+    }
+
+    // Phase 2: Pre-stats (rebuilt from baseStatSheet excluding specified buffs)
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      preStats[id] = build.getPreStatsExcluding(
+        artifactStats[id] ?? new StatSheet([]),
+        targetDependent[id]!,
+        this.allStaticBuffs,
+        excludeKeys,
+        id,
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+
+    // Phase 3: Collect dynamic buffs, excluding specified buff keys
+    const teamPreStatsArr = Object.values(preStats);
+    const allDynamicBuffs = this.collectDynamicBuffsExcluding(
+      preStats,
+      teamPreStatsArr,
+      excludeKeys
+    );
+
+    // Phase 4: Apply dynamic buffs → post-stats
+    const postStats: Record<string, StatSheet> = {};
+    for (const [id, build] of Object.entries(this.charBuilds)) {
+      postStats[id] = build.getPostStats(
+        preStats[id]!,
+        allDynamicBuffs,
+        id,
+        calcTargetId,
+        this.teamMeta.regions[id],
+        this.teamMeta.factions[id]
+      );
+    }
+
+    // Phase 5: Apply critRateTarget bonus
+    if (ctx?.critRateTarget != null) {
+      const crDelta = (100 - ctx.critRateTarget) / 100;
+      for (const id of Object.keys(postStats)) {
+        postStats[id] = postStats[id].withDelta("cr", crDelta);
+      }
+    }
+
+    return postStats;
+  }
+
+  /** Like collectDynamicBuffs but skips buffs with matching source keys. */
+  private collectDynamicBuffsExcluding(
+    preStats: Record<string, StatSheet>,
+    teamPreStatsArr: StatSheet[],
+    excludeKeys: Set<string>
+  ): EvaluatedDynamicBuff[] {
+    const results: EvaluatedDynamicBuff[] = [];
+    for (const { buff, providerCharId } of this.allStaticBuffs) {
+      if (providerCharId === "resonance") continue;
+      if (excludeKeys.has(buffSourceKey(buff.source))) continue;
+      const ownerStats = preStats[providerCharId]!;
+      const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
+      if (entries.length > 0) {
+        results.push({ buff, source: buff.source, providerCharId, entries });
+      }
+    }
+    return results;
+  }
+
+  /**
    * Create a reusable context for repeated getTeamStats calls where only one
    * character's artifact sheet changes.  Caches target-dependent buff filtering
    * and support characters' preStats so the hot loop only recomputes the
@@ -884,7 +1043,9 @@ export class TeamBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldTeamStats?: Record<string, StatSheet>,
-    partialBuffs?: PartialBuffSpec[]
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    offFieldVariants?: Map<string, StatSheet>
   ): DamageResult {
     const build = this.charBuilds[charId];
     if (!build) throw new Error(`No CharBuild for character: ${charId}`);
@@ -896,7 +1057,9 @@ export class TeamBuild {
       ctx,
       reactionOverride,
       offFieldTeamStats?.[charId],
-      partialBuffs
+      partialBuffs,
+      statsVariants,
+      offFieldVariants
     );
   }
 
@@ -1011,7 +1174,42 @@ export class TeamBuild {
     let buffActivation: BuffActivationMap | undefined;
 
     if (entry) {
-      // 1. Greedy allocation for stack-limited buffs
+      // 1. Pre-build sans-buff stats for greedy allocation
+      let sansBuffStats: Map<string, StatSheet> | undefined;
+      let offFieldSansBuffStats: Map<string, StatSheet> | undefined;
+      if (stackLimited.length > 0) {
+        sansBuffStats = new Map();
+        for (const buffInfo of stackLimited) {
+          const bKey = buffSourceKey(buffInfo.source);
+          const excluded = this.getTeamStatsExcluding(
+            artifactStats,
+            charId,
+            ctx,
+            new Set([bKey])
+          );
+          sansBuffStats.set(bKey, excluded[charId]!);
+        }
+        if (offFieldPostStats) {
+          offFieldSansBuffStats = new Map();
+          const otherCharId = Object.keys(this.charBuilds).find(
+            (id) => id !== charId
+          );
+          if (otherCharId) {
+            for (const buffInfo of stackLimited) {
+              const bKey = buffSourceKey(buffInfo.source);
+              const excluded = this.getTeamStatsExcluding(
+                artifactStats,
+                otherCharId,
+                ctx,
+                new Set([bKey])
+              );
+              offFieldSansBuffStats.set(bKey, excluded[charId]!);
+            }
+          }
+        }
+      }
+
+      // 2. Greedy allocation for stack-limited buffs
       let mergedActivation: BuffActivationMap = {};
       if (stackLimited.length > 0) {
         const defaultActivation = computeDefaultActivation(
@@ -1021,12 +1219,14 @@ export class TeamBuild {
           build.charBase.charLevel,
           ctx,
           reactionOverride,
-          offFieldPostStats
+          offFieldPostStats,
+          sansBuffStats,
+          offFieldSansBuffStats
         );
         mergedActivation = { ...defaultActivation };
       }
 
-      // 2. Merge user overrides on top
+      // 3. Merge user overrides on top
       if (userBuffOverrides) {
         for (const [bKey, partMap] of Object.entries(userBuffOverrides)) {
           if (!mergedActivation[bKey]) mergedActivation[bKey] = {};
@@ -1036,31 +1236,70 @@ export class TeamBuild {
         }
       }
 
-      // 3. Build PartialBuffSpec[] from both stack-limited and user-overridden buffs
-      const stackSpecs =
+      // 4. Build PartialBuffInfo[] from both stack-limited and user-overridden buffs
+      const stackInfos =
         stackLimited.length > 0
-          ? buildPartialBuffSpecs(mergedActivation, stackLimited, entry.parts)
+          ? buildPartialBuffInfos(mergedActivation, stackLimited, entry.parts)
           : [];
-      const userSpecs = userBuffOverrides
-        ? buildUserOverrideSpecs(
+      const userInfos = userBuffOverrides
+        ? buildUserOverrideInfos(
             userBuffOverrides,
             this.allStaticBuffs,
-            preStats,
-            teamPreStatsArr,
-            entry.parts
+            entry.parts,
+            (buff, providerId) =>
+              isBuffApplicable(
+                buff,
+                providerId,
+                charId,
+                charId,
+                this.teamMeta.regions[charId],
+                this.teamMeta.factions[charId]
+              )
           )
         : [];
-      const allSpecs = [...stackSpecs, ...userSpecs];
+      const allInfos = [...stackInfos, ...userInfos];
 
-      if (allSpecs.length > 0) {
+      if (allInfos.length > 0) {
         buffActivation = mergedActivation;
+
+        // 5. Pre-build stat variants for all exclusion combinations
+        const statsVariants = buildStatVariants(
+          allInfos,
+          entry.parts,
+          (excludeSet) =>
+            this.getTeamStatsExcluding(artifactStats, charId, ctx, excludeSet)[
+              charId
+            ]!
+        );
+        let offFieldVariantsMap: Map<string, StatSheet> | undefined;
+        if (offFieldPostStats) {
+          const otherCharId = Object.keys(this.charBuilds).find(
+            (id) => id !== charId
+          );
+          if (otherCharId) {
+            offFieldVariantsMap = buildStatVariants(
+              allInfos,
+              entry.parts,
+              (excludeSet) =>
+                this.getTeamStatsExcluding(
+                  artifactStats,
+                  otherCharId,
+                  ctx,
+                  excludeSet
+                )[charId]!
+            );
+          }
+        }
+
         const blended = computeBlendedDamage(
           entry.parts,
-          allSpecs,
+          allInfos,
           postStats[charId]!,
+          statsVariants,
           build.charBase.charLevel,
           ctx,
-          offFieldPostStats
+          offFieldPostStats,
+          offFieldVariantsMap
         );
         totalDamage = blended.totalDamage;
         // Annotate display parts with partial buff info and update damage
@@ -1616,7 +1855,7 @@ export class TeamBuild {
   }
 
   /**
-   * Convert a BuffActivationMap (from the override store) into PartialBuffSpec[]
+   * Convert a BuffActivationMap (from the override store) into PartialBuffInfo[]
    * suitable for the optimizer's AST compiler. Handles both stack-limited buffs
    * (greedy allocation + user overrides) and non-stack-limited user overrides.
    */
@@ -1627,13 +1866,155 @@ export class TeamBuild {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     userOverrides?: BuffActivationMap
-  ): PartialBuffSpec[] {
+  ): PartialBuffInfo[] {
     const build = this.charBuilds[carryCharId];
     if (!build) return [];
     const entry = build.charBase.getFormulaEntry(formulaId);
     if (!entry) return [];
 
-    // Compute pre/post stats (mirrors getTeamStats but captures intermediates)
+    // Compute post stats
+    const postStats = this.getTeamStats(sheets, carryCharId, ctx);
+
+    let offFieldPostStats: StatSheet | undefined;
+    if (entry.parts.some((p) => p.offField)) {
+      const otherCharId = Object.keys(this.charBuilds).find(
+        (id) => id !== carryCharId
+      );
+      if (otherCharId) {
+        const offFieldTeamStats = this.getTeamStats(sheets, otherCharId, ctx);
+        offFieldPostStats = offFieldTeamStats[carryCharId];
+      }
+    }
+
+    // Compute pre-stats for collectStackLimitedBuffs
+    const preStats: Record<string, StatSheet> = {};
+    for (const [id, cb] of Object.entries(this.charBuilds)) {
+      const targetDep = this.allStaticBuffs
+        .filter((b) => {
+          const r = b.buff.target.receiver;
+          if (r !== "onField" && r !== "selfOnField" && r !== "otherOnField")
+            return false;
+          return isBuffApplicable(
+            b.buff,
+            b.providerCharId,
+            id,
+            carryCharId,
+            this.teamMeta.regions[id],
+            this.teamMeta.factions[id]
+          );
+        })
+        .map((b) => b.buff);
+      preStats[id] = cb.getPreStats(sheets[id] ?? new StatSheet([]), targetDep);
+    }
+    const teamPreStatsArr = Object.values(preStats);
+
+    // Stack-limited buffs
+    const stackLimited = collectStackLimitedBuffs(
+      this.allStaticBuffs,
+      preStats,
+      teamPreStatsArr
+    );
+
+    const infos: PartialBuffInfo[] = [];
+
+    if (stackLimited.length > 0) {
+      // Pre-build sans-buff stats for greedy allocation
+      const sansBuffStats = new Map<string, StatSheet>();
+      let offFieldSansBuffStats: Map<string, StatSheet> | undefined;
+      for (const buffInfo of stackLimited) {
+        const bKey = buffSourceKey(buffInfo.source);
+        const excluded = this.getTeamStatsExcluding(
+          sheets,
+          carryCharId,
+          ctx,
+          new Set([bKey])
+        );
+        sansBuffStats.set(bKey, excluded[carryCharId]!);
+      }
+      if (offFieldPostStats) {
+        offFieldSansBuffStats = new Map();
+        const otherCharId = Object.keys(this.charBuilds).find(
+          (id) => id !== carryCharId
+        );
+        if (otherCharId) {
+          for (const buffInfo of stackLimited) {
+            const bKey = buffSourceKey(buffInfo.source);
+            const excluded = this.getTeamStatsExcluding(
+              sheets,
+              otherCharId,
+              ctx,
+              new Set([bKey])
+            );
+            offFieldSansBuffStats.set(bKey, excluded[carryCharId]!);
+          }
+        }
+      }
+
+      const defaultActivation = computeDefaultActivation(
+        entry.parts,
+        stackLimited,
+        postStats[carryCharId]!,
+        build.charBase.charLevel,
+        ctx,
+        reactionOverride,
+        offFieldPostStats,
+        sansBuffStats,
+        offFieldSansBuffStats
+      );
+      // Merge user overrides on top of greedy defaults
+      const merged: BuffActivationMap = { ...defaultActivation };
+      if (userOverrides) {
+        for (const [bKey, partMap] of Object.entries(userOverrides)) {
+          if (!merged[bKey]) merged[bKey] = {};
+          for (const [pidx, hits] of Object.entries(partMap)) {
+            merged[bKey][Number(pidx)] = hits;
+          }
+        }
+      }
+      infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
+    }
+
+    // Non-stack-limited user overrides
+    if (userOverrides && Object.keys(userOverrides).length > 0) {
+      infos.push(
+        ...buildUserOverrideInfos(
+          userOverrides,
+          this.allStaticBuffs,
+          entry.parts,
+          (buff, providerId) =>
+            isBuffApplicable(
+              buff,
+              providerId,
+              carryCharId,
+              carryCharId,
+              this.teamMeta.regions[carryCharId],
+              this.teamMeta.factions[carryCharId]
+            )
+        )
+      );
+    }
+
+    return infos;
+  }
+
+  /**
+   * Compute per-line PartialBuffInfo[] for a combo rotation.
+   *
+   * Shares the maxStack budget across ALL combo lines (unlike the per-formula
+   * computePartialBuffSpecs which gives each formula the full budget).
+   * Also merges per-line user overrides on top of the combo-wide defaults.
+   */
+  computeComboPartialBuffSpecs(
+    activeLines: ComboLine[],
+    sheets: Record<string, StatSheet>,
+    ctx: CalcContext,
+    rxnOverrides?: Record<string, ReactionOverride>,
+    perLineUserOverrides?: Map<number, BuffActivationMap>
+  ): Record<number, PartialBuffInfo[]> | undefined {
+    if (activeLines.length === 0) return undefined;
+
+    // ── Resolve pre/post stats using first on-field char for buff collection ──
+    const firstCharId = activeLines[0].charId;
     const targetDependent: Record<string, StatBuff[]> = {};
     for (const cid of Object.keys(this.charBuilds)) {
       targetDependent[cid] = this.allStaticBuffs
@@ -1645,7 +2026,7 @@ export class TeamBuild {
             b.buff,
             b.providerCharId,
             cid,
-            carryCharId,
+            firstCharId,
             this.teamMeta.regions[cid],
             this.teamMeta.factions[cid]
           );
@@ -1660,82 +2041,160 @@ export class TeamBuild {
       );
     }
     const teamPreStatsArr = Object.values(preStats);
-    const allDynamicBuffs = this.collectDynamicBuffs(preStats, teamPreStatsArr);
-    const postStats: Record<string, StatSheet> = {};
-    for (const [id, cb] of Object.entries(this.charBuilds)) {
-      postStats[id] = cb.getPostStats(
-        preStats[id]!,
-        allDynamicBuffs,
-        id,
-        carryCharId,
-        this.teamMeta.regions[id],
-        this.teamMeta.factions[id]
-      );
-    }
-    if (ctx?.critRateTarget != null) {
-      const crDelta = (100 - ctx.critRateTarget) / 100;
-      for (const id of Object.keys(postStats)) {
-        postStats[id] = postStats[id].withDelta("cr", crDelta);
-      }
-    }
 
-    let offFieldPostStats: StatSheet | undefined;
-    if (entry.parts.some((p) => p.offField)) {
-      const otherCharId = Object.keys(this.charBuilds).find(
-        (id) => id !== carryCharId
-      );
-      if (otherCharId) {
-        const offFieldTeamStats = this.getTeamStats(sheets, otherCharId, ctx);
-        offFieldPostStats = offFieldTeamStats[carryCharId];
-      }
-    }
-
-    // Stack-limited buffs
+    // ── Collect stack-limited buffs ──
     const stackLimited = collectStackLimitedBuffs(
       this.allStaticBuffs,
       preStats,
       teamPreStatsArr
     );
 
-    const specs: PartialBuffSpec[] = [];
+    // ── Build per-line contexts with correct postStats ──
+    const statsCache = new Map<string, Record<string, StatSheet>>();
+    const getStats = (onFieldCharId: string) => {
+      if (!statsCache.has(onFieldCharId)) {
+        statsCache.set(
+          onFieldCharId,
+          this.getTeamStats(sheets, onFieldCharId, ctx)
+        );
+      }
+      return statsCache.get(onFieldCharId)!;
+    };
 
-    if (stackLimited.length > 0) {
-      const defaultActivation = computeDefaultActivation(
-        entry.parts,
-        stackLimited,
-        postStats[carryCharId]!,
-        build.charBase.charLevel,
-        ctx,
-        reactionOverride,
-        offFieldPostStats
-      );
-      // Merge user overrides on top of greedy defaults
-      const merged: BuffActivationMap = { ...defaultActivation };
-      if (userOverrides) {
-        for (const [bKey, partMap] of Object.entries(userOverrides)) {
+    const lineContexts: ComboLineContext[] = [];
+    const lineEntries: (ReturnType<CharacterBase["getFormulaEntry"]> | null)[] =
+      [];
+
+    for (const line of activeLines) {
+      const cb = this.charBuilds[line.charId];
+      const entry = cb?.charBase.getFormulaEntry(line.formulaId);
+      lineEntries.push(entry ?? null);
+      if (!entry || !cb) {
+        lineContexts.push({
+          parts: [],
+          lineCount: line.count,
+          postStats: new StatSheet([]),
+          charLevel: 0,
+        });
+        continue;
+      }
+
+      const teamStats = getStats(line.charId);
+      const linePostStats = teamStats[line.charId]!;
+
+      let offFieldPostStats: StatSheet | undefined;
+      if (entry.parts.some((p) => p.offField)) {
+        const otherCharId = Object.keys(this.charBuilds).find(
+          (id) => id !== line.charId
+        );
+        if (otherCharId) {
+          offFieldPostStats = getStats(otherCharId)[line.charId];
+        }
+      }
+
+      // Pre-build sans-buff stats for each stack-limited buff on this line
+      let lineSansBuff: Map<string, StatSheet> | undefined;
+      let lineOffFieldSansBuff: Map<string, StatSheet> | undefined;
+      if (stackLimited.length > 0) {
+        lineSansBuff = new Map();
+        for (const buffInfo of stackLimited) {
+          const bKey = buffSourceKey(buffInfo.source);
+          const excluded = this.getTeamStatsExcluding(
+            sheets,
+            line.charId,
+            ctx,
+            new Set([bKey])
+          );
+          lineSansBuff.set(bKey, excluded[line.charId]!);
+        }
+        if (offFieldPostStats) {
+          lineOffFieldSansBuff = new Map();
+          const otherCharId = Object.keys(this.charBuilds).find(
+            (id) => id !== line.charId
+          );
+          if (otherCharId) {
+            for (const buffInfo of stackLimited) {
+              const bKey = buffSourceKey(buffInfo.source);
+              const excluded = this.getTeamStatsExcluding(
+                sheets,
+                otherCharId,
+                ctx,
+                new Set([bKey])
+              );
+              lineOffFieldSansBuff.set(bKey, excluded[line.charId]!);
+            }
+          }
+        }
+      }
+
+      lineContexts.push({
+        parts: entry.parts,
+        lineCount: line.count,
+        postStats: linePostStats,
+        charLevel: cb.charBase.charLevel,
+        offFieldPostStats,
+        sansBuffStats: lineSansBuff,
+        offFieldSansBuffStats: lineOffFieldSansBuff,
+      });
+    }
+
+    // ── Combo-wide default activation (shared maxStack budget) ──
+    const defaultActivations = computeComboDefaultActivation(
+      lineContexts,
+      stackLimited,
+      ctx
+    );
+
+    // ── Merge defaults + user overrides → PartialBuffInfo[] per line ──
+    const result: Record<number, PartialBuffInfo[]> = {};
+
+    for (let lineIdx = 0; lineIdx < activeLines.length; lineIdx++) {
+      const entry = lineEntries[lineIdx];
+      if (!entry) continue;
+
+      const merged: BuffActivationMap = { ...defaultActivations[lineIdx] };
+      const userOv = perLineUserOverrides?.get(lineIdx);
+      if (userOv) {
+        for (const [bKey, partMap] of Object.entries(userOv)) {
           if (!merged[bKey]) merged[bKey] = {};
           for (const [pidx, hits] of Object.entries(partMap)) {
             merged[bKey][Number(pidx)] = hits;
           }
         }
       }
-      specs.push(...buildPartialBuffSpecs(merged, stackLimited, entry.parts));
+
+      const infos: PartialBuffInfo[] = [];
+
+      if (stackLimited.length > 0) {
+        infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
+      }
+
+      if (userOv && Object.keys(userOv).length > 0) {
+        const lineCharId = activeLines[lineIdx].charId;
+        infos.push(
+          ...buildUserOverrideInfos(
+            userOv,
+            this.allStaticBuffs,
+            entry.parts,
+            (buff, providerId) =>
+              isBuffApplicable(
+                buff,
+                providerId,
+                lineCharId,
+                lineCharId,
+                this.teamMeta.regions[lineCharId],
+                this.teamMeta.factions[lineCharId]
+              )
+          )
+        );
+      }
+
+      if (infos.length > 0) {
+        result[lineIdx] = infos;
+      }
     }
 
-    // Non-stack-limited user overrides
-    if (userOverrides && Object.keys(userOverrides).length > 0) {
-      specs.push(
-        ...buildUserOverrideSpecs(
-          userOverrides,
-          this.allStaticBuffs,
-          preStats,
-          teamPreStatsArr,
-          entry.parts
-        )
-      );
-    }
-
-    return specs;
+    return Object.keys(result).length > 0 ? result : undefined;
   }
 }
 
@@ -1809,8 +2268,8 @@ export function evaluateCombo(
   ctx: CalcContext,
   /** Single-mode per-formula reaction overrides — used as defaults for per-part config. */
   singleModeOverrides?: Record<string, ReactionOverride>,
-  /** Per-line PartialBuffSpec[], keyed by line index in validLines. */
-  linePartialBuffs?: Record<number, PartialBuffSpec[]>
+  /** Per-line PartialBuffInfo[], keyed by line index in validLines. */
+  linePartialBuffs?: Record<number, PartialBuffInfo[]>
 ): ComboResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();
@@ -1882,6 +2341,47 @@ export function evaluateCombo(
       }
     }
 
+    // Build stat variants if this line has partial buffs
+    const lineInfos = linePartialBuffs?.[lineIdx];
+    let lineVariants: Map<string, StatSheet> | undefined;
+    let lineOffFieldVariants: Map<string, StatSheet> | undefined;
+    if (lineInfos && lineInfos.length > 0) {
+      const lineEntry = teamBuild.charBuilds[
+        line.charId
+      ]?.charBase.getFormulaEntry(line.formulaId);
+      if (lineEntry) {
+        lineVariants = buildStatVariants(
+          lineInfos,
+          lineEntry.parts,
+          (excl) =>
+            teamBuild.getTeamStatsExcluding(
+              artifactStats,
+              line.charId,
+              ctx,
+              excl
+            )[line.charId]!
+        );
+        if (offFieldTeamStats) {
+          const otherCharId = Object.keys(teamBuild.charBuilds).find(
+            (id) => id !== line.charId
+          );
+          if (otherCharId) {
+            lineOffFieldVariants = buildStatVariants(
+              lineInfos,
+              lineEntry.parts,
+              (excl) =>
+                teamBuild.getTeamStatsExcluding(
+                  artifactStats,
+                  otherCharId,
+                  ctx,
+                  excl
+                )[line.charId]!
+            );
+          }
+        }
+      }
+    }
+
     const result = teamBuild.getDamageResult(
       line.charId,
       line.formulaId,
@@ -1889,7 +2389,9 @@ export function evaluateCombo(
       ctx,
       effectiveReaction,
       offFieldTeamStats,
-      linePartialBuffs?.[lineIdx]
+      lineInfos,
+      lineVariants,
+      lineOffFieldVariants
     );
     return {
       perHit: result.totalDamage,
@@ -1913,7 +2415,7 @@ export function getComboDisplayResult(
   artifactStats: Record<string, StatSheet>,
   ctx: CalcContext,
   singleModeOverrides?: Record<string, ReactionOverride>,
-  linePartialBuffs?: Record<number, PartialBuffSpec[]>
+  linePartialBuffs?: Record<number, PartialBuffInfo[]>
 ): DisplayResult {
   // Skip lines whose formula no longer exists (e.g. constellation lowered)
   const allFormulas = teamBuild.getFormulaIds();

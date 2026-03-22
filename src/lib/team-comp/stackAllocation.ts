@@ -10,26 +10,21 @@
 
 import type { StatBuff } from "./damageBuffs";
 import type { FormulaPart } from "./damageModels";
-import { StatSheet } from "./damageModels";
+import type { StatSheet } from "./damageModels";
 import type {
   BuffActivationMap,
   BuffSource,
   CalcContext,
-  PartialBuffSpec,
+  PartialBuffInfo,
   ReactionOverride,
-  StatEntry,
 } from "./types";
-import { buffSourceKey } from "./types";
+import { buffSourceKey, exclusionKey } from "./types";
 
-export type { PartialBuffSpec } from "./types";
+export type { PartialBuffInfo } from "./types";
 
 export type StackLimitedBuffInfo = {
   source: BuffSource;
   maxStacks: number;
-  /** Combined static + dynamic entries for this buff (already evaluated). */
-  entries: StatEntry[];
-  /** The buff's target filter (for scoping the stat contribution). */
-  filter?: import("./types").DamageTagFilter;
 };
 
 /**
@@ -39,6 +34,10 @@ export type StackLimitedBuffInfo = {
  * 1. For each part, compute marginal damage gain per hit from this buff
  * 2. Sort parts by marginal gain descending
  * 3. Greedily assign stacks to highest-gain parts until budget exhausted
+ *
+ * @param sansBuffStats  Pre-built stats with each buff excluded (buffKey → StatSheet).
+ *   Built by the caller via getTeamStatsExcluding.
+ * @param offFieldSansBuffStats  Same for off-field context.
  */
 export function computeDefaultActivation(
   parts: FormulaPart[],
@@ -47,7 +46,9 @@ export function computeDefaultActivation(
   charLevel: number,
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
-  offFieldPostStats?: StatSheet
+  offFieldPostStats?: StatSheet,
+  sansBuffStats?: Map<string, StatSheet>,
+  offFieldSansBuffStats?: Map<string, StatSheet>
 ): BuffActivationMap {
   if (stackLimitedBuffs.length === 0) return {};
 
@@ -57,22 +58,11 @@ export function computeDefaultActivation(
     const bKey = buffSourceKey(buffInfo.source);
     const partAlloc: Record<number, number> = {};
 
-    // Build the "sans-buff" stat sheet by negating this buff's entries
-    const negatedEntries: StatEntry[] = buffInfo.entries.map((e) => ({
-      key: e.key,
-      value: -e.value,
-    }));
-    const sansBuff = postStats.merge(
-      StatSheet.fromEntries(negatedEntries, buffInfo.filter)
-    );
+    const sansBuff = sansBuffStats?.get(bKey);
+    const sansBuffOffField = offFieldSansBuffStats?.get(bKey);
 
-    // For off-field parts, also build sans-buff variant
-    let sansBuffOffField: StatSheet | undefined;
-    if (offFieldPostStats) {
-      sansBuffOffField = offFieldPostStats.merge(
-        StatSheet.fromEntries(negatedEntries, buffInfo.filter)
-      );
-    }
+    // If no sans-buff stats provided, skip this buff (caller must provide them)
+    if (!sansBuff) continue;
 
     // Compute marginal gain per hit for each part
     type PartGain = {
@@ -135,22 +125,22 @@ export function computeDefaultActivation(
  *
  * Uses interval-based blending: for each part, sort buff cutoff points to
  * create intervals where different combinations of buffs are active.
+ * Each interval looks up a pre-built stat variant from statsVariants.
  *
  * Example with buff1 (3/5 hits) and buff2 (2/5 hits) on a 5-hit part:
- *   Hits 1-2: both active   → 2 × Dmg(b1, b2)
- *   Hit  3:   b1 only       → 1 × Dmg(b1)
- *   Hits 4-5: none active   → 2 × Dmg()
- *
- * Each buff's "first K hits" semantics means it's active in interval (start, end]
- * iff activatedHits >= end.
+ *   Hits 1-2: both active   → 2 × Dmg(default stats)
+ *   Hit  3:   b1 only       → 1 × Dmg(variant excluding b2)
+ *   Hits 4-5: none active   → 2 × Dmg(variant excluding b1+b2)
  */
 export function computeBlendedDamage(
   parts: FormulaPart[],
-  partialBuffs: PartialBuffSpec[],
+  partialBuffs: PartialBuffInfo[],
   postStats: StatSheet,
+  statsVariants: Map<string, StatSheet>,
   charLevel: number,
   ctx: CalcContext,
-  offFieldPostStats?: StatSheet
+  offFieldPostStats?: StatSheet,
+  offFieldVariants?: Map<string, StatSheet>
 ): { totalDamage: number; partDamages: { damage: number; hits: number }[] } {
   const partDamages: { damage: number; hits: number }[] = [];
   let totalDamage = 0;
@@ -159,8 +149,10 @@ export function computeBlendedDamage(
     const { formula, hits: totalHits, offField } = parts[idx];
     const h = totalHits ?? 1;
 
-    const baseStats =
+    const defaultStats =
       offField && offFieldPostStats ? offFieldPostStats : postStats;
+    const variants =
+      offField && offFieldVariants ? offFieldVariants : statsVariants;
 
     // Collect partial buffs affecting this part
     const affecting = partialBuffs.filter((pb) => {
@@ -170,7 +162,7 @@ export function computeBlendedDamage(
 
     if (affecting.length === 0) {
       // Fully buffed on all hits
-      const dmg = formula.calc(baseStats, charLevel, ctx);
+      const dmg = formula.calc(defaultStats, charLevel, ctx);
       partDamages.push({ damage: dmg, hits: h });
       totalDamage += dmg * h;
       continue;
@@ -192,18 +184,18 @@ export function computeBlendedDamage(
       const width = end - start;
       if (width <= 0) continue;
 
-      // Build stat sheet: negate buffs that are inactive in interval (start, end]
+      // Determine which buffs are inactive in interval (start, end]
       // A buff is active iff activatedHits >= end
-      let intervalStats = baseStats;
+      const excludeSet = new Set<string>();
       for (const pb of affecting) {
         const activated = pb.partActivation[idx] ?? h;
         if (activated < end) {
-          // Buff has fallen off — negate its entries
-          intervalStats = intervalStats.merge(
-            StatSheet.fromEntries(pb.negatedEntries, pb.filter)
-          );
+          excludeSet.add(pb.buffKey);
         }
       }
+
+      const eKey = exclusionKey(excludeSet);
+      const intervalStats = variants.get(eKey) ?? defaultStats;
 
       const dmg = formula.calc(intervalStats, charLevel, ctx);
       partTotal += width * dmg;
@@ -217,15 +209,15 @@ export function computeBlendedDamage(
 }
 
 /**
- * Build PartialBuffSpec[] from a BuffActivationMap and StackLimitedBuffInfo[].
+ * Build PartialBuffInfo[] from a BuffActivationMap and StackLimitedBuffInfo[].
  * Only includes buffs that have at least one partially-active part.
  */
-export function buildPartialBuffSpecs(
+export function buildPartialBuffInfos(
   activation: BuffActivationMap,
   stackLimitedBuffs: StackLimitedBuffInfo[],
   parts: FormulaPart[]
-): PartialBuffSpec[] {
-  const result: PartialBuffSpec[] = [];
+): PartialBuffInfo[] {
+  const result: PartialBuffInfo[] = [];
 
   for (const buffInfo of stackLimitedBuffs) {
     const bKey = buffSourceKey(buffInfo.source);
@@ -245,11 +237,7 @@ export function buildPartialBuffSpecs(
     if (!hasPartial) continue;
 
     result.push({
-      negatedEntries: buffInfo.entries.map((e) => ({
-        key: e.key,
-        value: -e.value,
-      })),
-      filter: buffInfo.filter,
+      buffKey: bKey,
       partActivation: fullPartActivation,
     });
   }
@@ -258,17 +246,21 @@ export function buildPartialBuffSpecs(
 }
 
 /**
- * Build PartialBuffSpec[] from user overrides for non-stack-limited buffs.
- * Resolves buff entries from allStaticBuffs.
+ * Build PartialBuffInfo[] from user overrides for non-stack-limited buffs.
+ *
+ * @param isApplicable Optional predicate to check whether a buff actually
+ *   applies to the formula character. When provided, buffs that fail the
+ *   check are silently skipped — their toggles should have no effect on a
+ *   character they don't target (e.g. a self-buff from character A should
+ *   not affect character B's formula).
  */
-export function buildUserOverrideSpecs(
+export function buildUserOverrideInfos(
   userOverrides: BuffActivationMap,
   allStaticBuffs: { buff: StatBuff; providerCharId: string }[],
-  preStats: Record<string, StatSheet>,
-  teamPreStatsArr: StatSheet[],
-  parts: FormulaPart[]
-): PartialBuffSpec[] {
-  const result: PartialBuffSpec[] = [];
+  parts: FormulaPart[],
+  isApplicable?: (buff: StatBuff, providerCharId: string) => boolean
+): PartialBuffInfo[] {
+  const result: PartialBuffInfo[] = [];
 
   for (const [bKey, partMap] of Object.entries(userOverrides)) {
     // Check if any part is partially active
@@ -286,19 +278,15 @@ export function buildUserOverrideSpecs(
     });
     if (!match) continue;
 
-    // Skip stack-limited buffs (already handled by buildPartialBuffSpecs)
+    // Skip stack-limited buffs (already handled by buildPartialBuffInfos)
     if (match.buff.source.maxStacks != null) continue;
 
-    const ownerStats = preStats[match.providerCharId];
-    if (!ownerStats) continue;
-
-    const dynamicEntries = match.buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-    const entries = [...match.buff.staticBuffs, ...dynamicEntries];
-    if (entries.length === 0) continue;
+    // Skip buffs that don't apply to the formula character
+    if (isApplicable && !isApplicable(match.buff, match.providerCharId))
+      continue;
 
     result.push({
-      negatedEntries: entries.map((e) => ({ key: e.key, value: -e.value })),
-      filter: match.buff.target.filter,
+      buffKey: bKey,
       partActivation: partMap,
     });
   }
@@ -308,7 +296,7 @@ export function buildUserOverrideSpecs(
 
 /**
  * Collect stack-limited buff info from a team's allStaticBuffs.
- * Evaluates dynamic entries at the given preStats.
+ * Evaluates dynamic entries only to check if the buff is non-empty.
  */
 export function collectStackLimitedBuffs(
   allStaticBuffs: { buff: StatBuff; providerCharId: string }[],
@@ -325,16 +313,140 @@ export function collectStackLimitedBuffs(
     if (!ownerStats) continue;
 
     const dynamicEntries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
-    const entries = [...buff.staticBuffs, ...dynamicEntries];
+    const hasEntries = buff.staticBuffs.length > 0 || dynamicEntries.length > 0;
 
-    if (entries.length === 0) continue;
+    if (!hasEntries) continue;
 
     result.push({
       source: buff.source,
       maxStacks: buff.source.maxStacks,
-      entries,
-      filter: buff.target.filter,
     });
+  }
+
+  return result;
+}
+
+/**
+ * Context for one combo line, used by combo-wide default activation.
+ */
+export type ComboLineContext = {
+  parts: FormulaPart[];
+  lineCount: number;
+  postStats: StatSheet;
+  charLevel: number;
+  offFieldPostStats?: StatSheet;
+  /** Pre-built sans-buff stats per buffKey (on-field). */
+  sansBuffStats?: Map<string, StatSheet>;
+  /** Pre-built sans-buff stats per buffKey (off-field). */
+  offFieldSansBuffStats?: Map<string, StatSheet>;
+};
+
+/**
+ * Compute default BuffActivationMap for all stack-limited buffs across an
+ * entire combo rotation.
+ *
+ * Unlike `computeDefaultActivation` (which allocates per-formula), this
+ * function shares the maxStack budget across ALL combo lines. For example,
+ * if a buff has maxStacks=5 and the combo has formulaA (10 hits × 2 reps)
+ * and formulaB (5 hits × 1 rep), the 5 stacks are distributed across all
+ * 25 total hits to maximize total damage.
+ *
+ * Returns one BuffActivationMap per line (per-cast activation values).
+ */
+export function computeComboDefaultActivation(
+  lines: ComboLineContext[],
+  stackLimitedBuffs: StackLimitedBuffInfo[],
+  ctx: CalcContext
+): BuffActivationMap[] {
+  if (stackLimitedBuffs.length === 0) return lines.map(() => ({}));
+
+  const result: BuffActivationMap[] = lines.map(() => ({}));
+
+  for (const buffInfo of stackLimitedBuffs) {
+    const bKey = buffSourceKey(buffInfo.source);
+
+    // Compute marginal gain per hit for each (line, part) across the combo
+    type VirtualPart = {
+      lineIdx: number;
+      partIdx: number;
+      marginalPerHit: number;
+      availableHits: number; // part.hits × lineCount
+    };
+    const gains: VirtualPart[] = [];
+    let totalHitsAllLines = 0;
+
+    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+      const {
+        parts,
+        lineCount,
+        postStats,
+        charLevel,
+        offFieldPostStats,
+        sansBuffStats,
+        offFieldSansBuffStats,
+      } = lines[lineIdx];
+
+      const sansBuff = sansBuffStats?.get(bKey);
+      const sansBuffOffField = offFieldSansBuffStats?.get(bKey);
+
+      if (!sansBuff) continue;
+
+      for (let partIdx = 0; partIdx < parts.length; partIdx++) {
+        const { formula, hits: totalHits, offField } = parts[partIdx];
+        const h = totalHits ?? 1;
+        const totalAvailable = h * lineCount;
+        totalHitsAllLines += totalAvailable;
+
+        const statsWithBuff =
+          offField && offFieldPostStats ? offFieldPostStats : postStats;
+        const statsWithout =
+          offField && sansBuffOffField ? sansBuffOffField : sansBuff;
+
+        const dmgWith = formula.calc(statsWithBuff, charLevel, ctx);
+        const dmgWithout = formula.calc(statsWithout, charLevel, ctx);
+        const marginalPerHit = dmgWith - dmgWithout;
+
+        if (marginalPerHit > 0) {
+          gains.push({
+            lineIdx,
+            partIdx,
+            marginalPerHit,
+            availableHits: totalAvailable,
+          });
+        }
+      }
+    }
+
+    // Sort by marginal gain descending
+    gains.sort((a, b) => b.marginalPerHit - a.marginalPerHit);
+
+    // Greedy allocation across all combo lines
+    let remaining = buffInfo.maxStacks;
+    const linePartAlloc: Record<number, number>[] = lines.map(() => ({}));
+
+    for (const { lineIdx, partIdx, availableHits } of gains) {
+      if (remaining <= 0) break;
+      const assign = Math.min(remaining, availableHits);
+      // Convert to per-cast activation (divide by lineCount)
+      linePartAlloc[lineIdx][partIdx] = assign / lines[lineIdx].lineCount;
+      remaining -= assign;
+    }
+
+    // Fill 0 for unallocated parts
+    for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+      for (let partIdx = 0; partIdx < lines[lineIdx].parts.length; partIdx++) {
+        if (!(partIdx in linePartAlloc[lineIdx])) {
+          linePartAlloc[lineIdx][partIdx] = 0;
+        }
+      }
+    }
+
+    // Only add if budget doesn't cover all hits
+    if (buffInfo.maxStacks < totalHitsAllLines) {
+      for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+        result[lineIdx][bKey] = linePartAlloc[lineIdx];
+      }
+    }
   }
 
   return result;
@@ -367,4 +479,54 @@ export function distributeComboHits(
     remaining -= lineAlloc;
   }
   return result;
+}
+
+/**
+ * Build pre-computed stat variants for all exclusion combinations needed
+ * by a set of PartialBuffInfos across a formula's parts.
+ *
+ * Returns a Map from exclusionKey → StatSheet. The caller should provide
+ * a function that builds stats for a given exclusion set.
+ */
+export function buildStatVariants(
+  partialBuffs: PartialBuffInfo[],
+  parts: FormulaPart[],
+  buildExcluded: (excludeKeys: Set<string>) => StatSheet
+): Map<string, StatSheet> {
+  const variants = new Map<string, StatSheet>();
+  const seen = new Set<string>();
+
+  for (let idx = 0; idx < parts.length; idx++) {
+    const h = parts[idx].hits ?? 1;
+    const affecting = partialBuffs.filter((pb) => {
+      const activated = pb.partActivation[idx] ?? h;
+      return activated < h;
+    });
+    if (affecting.length === 0) continue;
+
+    // Build cutpoints for this part
+    const cutpointSet = new Set<number>([0, h]);
+    for (const pb of affecting) {
+      const activated = pb.partActivation[idx] ?? h;
+      if (activated > 0 && activated < h) cutpointSet.add(activated);
+    }
+    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+
+    // Collect all exclusion sets for this part's intervals
+    for (let i = 0; i < cutpoints.length - 1; i++) {
+      const end = cutpoints[i + 1];
+      const excludeSet = new Set<string>();
+      for (const pb of affecting) {
+        const activated = pb.partActivation[idx] ?? h;
+        if (activated < end) excludeSet.add(pb.buffKey);
+      }
+      if (excludeSet.size === 0) continue;
+      const eKey = exclusionKey(excludeSet);
+      if (seen.has(eKey)) continue;
+      seen.add(eKey);
+      variants.set(eKey, buildExcluded(excludeSet));
+    }
+  }
+
+  return variants;
 }

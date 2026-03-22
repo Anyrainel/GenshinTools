@@ -336,14 +336,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [comboLineMap, updateCombo]
   );
 
-  // Build per-line PartialBuffSpec[] from combo overrides
+  // Build per-line PartialBuffInfo[] for combo (defaults + user overrides)
   const comboLinePartialBuffs = useMemo(() => {
     if (formulaMode !== "combo" || !teamBuild) return undefined;
-    // Collect combo overrides for formulas in this combo
     const activeLines = combo.lines.filter((l) => l.count > 0);
     if (activeLines.length === 0) return undefined;
 
-    // Gather overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
+    // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
     const formulaOverrides: Record<
       string,
       import("@/lib/team-comp/types").BuffActivationMap
@@ -355,15 +354,14 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         formulaOverrides[formulaKey] = comboStoreOverrides[key];
       }
     }
-    if (Object.keys(formulaOverrides).length === 0) return undefined;
 
     return buildComboLinePartialBuffs(
-      formulaOverrides,
       activeLines,
       teamBuild,
       artifactSheets,
       displayContext,
-      team.reactionOverrides
+      team.reactionOverrides,
+      Object.keys(formulaOverrides).length > 0 ? formulaOverrides : undefined
     );
   }, [
     formulaMode,

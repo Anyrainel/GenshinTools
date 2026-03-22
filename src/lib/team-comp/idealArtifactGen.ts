@@ -173,10 +173,10 @@ function tryCompileEval(
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
-  partialBuffs?: import("./stackAllocation").PartialBuffSpec[],
+  partialBuffs?: import("./stackAllocation").PartialBuffInfo[],
   comboBuffOverrides?: Record<
     string,
-    import("./stackAllocation").PartialBuffSpec[]
+    import("./stackAllocation").PartialBuffInfo[]
   >
 ): {
   compiled: CompiledTeamDamage;

@@ -28,7 +28,7 @@ import type { CharacterBase, FormulaPart } from "./damageModels";
 import { StatBuff, StatSheet } from "./damageModels";
 import { E, type Expr, compileExpr, simplify } from "./expr";
 import { type ExprStats, VarMapping, createExprStats } from "./exprStats";
-import type { PartialBuffSpec } from "./stackAllocation";
+import type { PartialBuffInfo } from "./stackAllocation";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -38,7 +38,7 @@ import type {
   ReactionType,
   StatKey,
 } from "./types";
-import { resolvePartReaction } from "./types";
+import { buffSourceKey, exclusionKey, resolvePartReaction } from "./types";
 
 // ─── Public Interface ───
 
@@ -156,6 +156,164 @@ function buildPostExprStatsForContext(
 }
 
 /**
+ * Build postExprStats excluding certain buffs (identified by buffSourceKey).
+ * Used to pre-build stat variants for interval-based blending in the compiler.
+ */
+function buildPostExprStatsExcluding(
+  teamBuild: TeamBuild,
+  optCtx: OptimizerContext,
+  varMapping: VarMapping,
+  charIdx: number,
+  calcContext: CalcContext,
+  excludeKeys: Set<string>
+): Record<string, ExprStats> {
+  const { swapCharId, charBuildOrder, supportPreStats, targetDependent } =
+    optCtx;
+
+  const charBuild =
+    charBuildOrder.find(([id]) => id === swapCharId)?.[1] ?? null;
+  if (!charBuild)
+    throw new Error(`Character ${swapCharId} not found in team build`);
+
+  // Use exclusion-aware preStats for the swap character
+  const emptySheet = new StatSheet([]);
+  const swapBaseline = charBuild.getPreStatsExcluding(
+    emptySheet,
+    targetDependent[swapCharId] ?? [],
+    teamBuild.allStaticBuffs,
+    excludeKeys,
+    swapCharId,
+    teamBuild.teamMeta.regions[swapCharId],
+    teamBuild.teamMeta.factions[swapCharId]
+  );
+
+  const exprStatsMap: Record<string, ExprStats> = {};
+  for (const [id] of charBuildOrder) {
+    if (id === swapCharId) {
+      exprStatsMap[id] = createExprStats(
+        swapBaseline,
+        charIdx,
+        varMapping,
+        new Set(ARTIFACT_STAT_KEYS)
+      );
+    } else {
+      // Support characters also need exclusion-aware preStats
+      const supportBuild = charBuildOrder.find(([cid]) => cid === id)?.[1];
+      if (supportBuild) {
+        const supportExcluded = supportBuild.getPreStatsExcluding(
+          optCtx.baseSheets[id] ?? new StatSheet([]),
+          targetDependent[id] ?? [],
+          teamBuild.allStaticBuffs,
+          excludeKeys,
+          id,
+          teamBuild.teamMeta.regions[id],
+          teamBuild.teamMeta.factions[id]
+        );
+        exprStatsMap[id] = createExprStats(
+          supportExcluded,
+          -1,
+          varMapping,
+          new Set()
+        );
+      } else {
+        exprStatsMap[id] = createExprStats(
+          supportPreStats[id]!,
+          -1,
+          varMapping,
+          new Set()
+        );
+      }
+    }
+  }
+
+  // Collect dynamic buff exprs, filtering out excluded buff keys
+  const dynamicBuffExprs = collectDynamicBuffExprs(
+    teamBuild,
+    exprStatsMap,
+    swapCharId,
+    supportPreStats,
+    swapBaseline
+  ).filter((b) => !excludeKeys.has(buffSourceKey(b.source)));
+
+  const postExprStats = applyDynamicBuffExprs(
+    exprStatsMap,
+    dynamicBuffExprs,
+    teamBuild,
+    swapCharId,
+    optCtx
+  );
+
+  if (calcContext.critRateTarget != null) {
+    const crDelta = (100 - calcContext.critRateTarget) / 100;
+    for (const id of Object.keys(postExprStats)) {
+      postExprStats[id] = postExprStats[id].withMergedConst([
+        { key: "cr", value: crDelta },
+      ]);
+    }
+  }
+
+  return postExprStats;
+}
+
+/**
+ * Build ExprStats variants for all exclusion combinations needed by PartialBuffInfos.
+ * Returns a Map from exclusionKey → ExprStats for the formula character.
+ */
+function buildExprStatVariants(
+  partialBuffs: PartialBuffInfo[],
+  parts: FormulaPart[],
+  formulaCharId: string,
+  teamBuild: TeamBuild,
+  optCtx: OptimizerContext,
+  varMapping: VarMapping,
+  charIdx: number,
+  calcContext: CalcContext
+): Map<string, ExprStats> {
+  const variants = new Map<string, ExprStats>();
+  const seen = new Set<string>();
+
+  for (let idx = 0; idx < parts.length; idx++) {
+    const h = parts[idx].hits ?? 1;
+    const affecting = partialBuffs.filter((pb) => {
+      const activated = pb.partActivation[idx] ?? h;
+      return activated < h;
+    });
+    if (affecting.length === 0) continue;
+
+    const cutpointSet = new Set<number>([0, h]);
+    for (const pb of affecting) {
+      const activated = pb.partActivation[idx] ?? h;
+      if (activated > 0 && activated < h) cutpointSet.add(activated);
+    }
+    const cutpoints = [...cutpointSet].sort((a, b) => a - b);
+
+    for (let i = 0; i < cutpoints.length - 1; i++) {
+      const end = cutpoints[i + 1];
+      const excludeSet = new Set<string>();
+      for (const pb of affecting) {
+        const activated = pb.partActivation[idx] ?? h;
+        if (activated < end) excludeSet.add(pb.buffKey);
+      }
+      if (excludeSet.size === 0) continue;
+      const eKey = exclusionKey(excludeSet);
+      if (seen.has(eKey)) continue;
+      seen.add(eKey);
+      const excludedPostStats = buildPostExprStatsExcluding(
+        teamBuild,
+        optCtx,
+        varMapping,
+        charIdx,
+        calcContext,
+        excludeSet
+      );
+      variants.set(eKey, excludedPostStats[formulaCharId]!);
+    }
+  }
+
+  return variants;
+}
+
+/**
  * Compile a team's damage formula into a single optimized function.
  *
  * @param teamBuild - The team build configuration
@@ -178,7 +336,7 @@ export function compileTeamDamage(
   erCheckCharId?: string,
   minEr?: number,
   minCr?: number,
-  partialBuffs?: PartialBuffSpec[]
+  partialBuffs?: PartialBuffInfo[]
 ): CompiledTeamDamage {
   const varMapping = new VarMapping();
   const charIdx = optCtx.charBuildOrder.findIndex(
@@ -230,6 +388,45 @@ export function compileTeamDamage(
     }
   }
 
+  // Pre-build ExprStats variants for partial buff blending
+  let exprStatVariants: Map<string, ExprStats> | undefined;
+  let offFieldExprVariants: Map<string, ExprStats> | undefined;
+  if (partialBuffs && partialBuffs.length > 0) {
+    exprStatVariants = buildExprStatVariants(
+      partialBuffs,
+      entry.parts,
+      formulaCharId,
+      teamBuild,
+      optCtx,
+      varMapping,
+      charIdx,
+      calcContext
+    );
+    if (offFieldFormulaStats) {
+      const otherCharId = optCtx.charBuildOrder
+        .map(([id]) => id)
+        .find((id) => id !== formulaCharId);
+      if (otherCharId) {
+        const offFieldOptCtx = teamBuild.createOptimizerContext(
+          optCtx.baseSheets,
+          optCtx.swapCharId,
+          otherCharId,
+          calcContext
+        );
+        offFieldExprVariants = buildExprStatVariants(
+          partialBuffs,
+          entry.parts,
+          formulaCharId,
+          teamBuild,
+          offFieldOptCtx,
+          varMapping,
+          charIdx,
+          calcContext
+        );
+      }
+    }
+  }
+
   const damageExpr = buildTotalDamageExpr(
     entry.parts,
     formulaStats,
@@ -237,7 +434,9 @@ export function compileTeamDamage(
     calcContext,
     reactionOverride,
     offFieldFormulaStats,
-    partialBuffs
+    partialBuffs,
+    exprStatVariants,
+    offFieldExprVariants
   );
 
   const simplified = simplify(damageExpr);
@@ -287,7 +486,7 @@ export function compileComboTeamDamage(
   baseSheets: Record<string, StatSheet>,
   calcContext: CalcContext,
   singleModeOverrides?: Record<string, ReactionOverride>,
-  buffOverrides?: Record<string, PartialBuffSpec[]>
+  buffOverrides?: Record<string, PartialBuffInfo[]>
 ): CompiledTeamDamage {
   const allFormulas = teamBuild.getFormulaIds();
   const validLines = combo.lines.filter((line) => {
@@ -412,6 +611,45 @@ export function compileComboTeamDamage(
       const linePartialBuffs =
         buffOverrides?.[`line:${lineIdx}`] ?? buffOverrides?.[lineKey];
 
+      // Pre-build ExprStats variants for partial buff blending
+      let lineExprVariants: Map<string, ExprStats> | undefined;
+      let lineOffFieldVariants: Map<string, ExprStats> | undefined;
+      if (linePartialBuffs && linePartialBuffs.length > 0) {
+        lineExprVariants = buildExprStatVariants(
+          linePartialBuffs,
+          entry.parts,
+          line.charId,
+          teamBuild,
+          optCtx,
+          varMapping,
+          charIdx,
+          calcContext
+        );
+        if (offFieldFormulaStats) {
+          const otherCharId2 = optCtx.charBuildOrder
+            .map(([id]) => id)
+            .find((id) => id !== line.charId);
+          if (otherCharId2) {
+            const offFieldOptCtx2 = teamBuild.createOptimizerContext(
+              baseSheets,
+              swapCharId,
+              otherCharId2,
+              calcContext
+            );
+            lineOffFieldVariants = buildExprStatVariants(
+              linePartialBuffs,
+              entry.parts,
+              line.charId,
+              teamBuild,
+              offFieldOptCtx2,
+              varMapping,
+              charIdx,
+              calcContext
+            );
+          }
+        }
+      }
+
       const lineExpr = buildTotalDamageExpr(
         entry.parts,
         formulaStats,
@@ -419,7 +657,9 @@ export function compileComboTeamDamage(
         calcContext,
         effectiveReaction,
         offFieldFormulaStats,
-        linePartialBuffs
+        linePartialBuffs,
+        lineExprVariants,
+        lineOffFieldVariants
       );
       allPartExprs.push(E.mul(lineExpr, E.const(line.count)));
     }
@@ -669,7 +909,9 @@ function buildTotalDamageExpr(
   ctx: CalcContext,
   reactionOverride?: ReactionOverride,
   offFieldFormulaStats?: ExprStats,
-  partialBuffs?: PartialBuffSpec[]
+  partialBuffs?: PartialBuffInfo[],
+  statsVariants?: Map<string, ExprStats>,
+  offFieldVariants?: Map<string, ExprStats>
 ): Expr {
   const partExprs: Expr[] = [];
 
@@ -680,6 +922,8 @@ function buildTotalDamageExpr(
     // Use off-field stats when the part deals damage while the character is off-field
     const baseStats =
       offField && offFieldFormulaStats ? offFieldFormulaStats : formulaStats;
+    const baseVariants =
+      offField && offFieldVariants ? offFieldVariants : statsVariants;
 
     // Apply bespoke buff overlay
     let stats = baseStats;
@@ -731,7 +975,9 @@ function buildTotalDamageExpr(
           ctx,
           h,
           idx,
-          partPartials
+          partPartials,
+          baseVariants,
+          bespokeBuff
         );
       } else {
         const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
@@ -771,7 +1017,9 @@ function buildTotalDamageExpr(
           ctx,
           reactingHits,
           idx,
-          partPartials
+          partPartials,
+          baseVariants,
+          bespokeBuff
         );
       } else {
         const partExpr = effectiveFormula.buildExpr(
@@ -792,7 +1040,9 @@ function buildTotalDamageExpr(
           ctx,
           nonReactingHits,
           idx,
-          partPartials
+          partPartials,
+          baseVariants,
+          bespokeBuff
         );
       } else {
         const partExpr = formula.buildExpr(stats, charBase.charLevel, ctx);
@@ -812,6 +1062,9 @@ function buildTotalDamageExpr(
  * where different combinations of buffs are active, then emits a weighted
  * sum of expressions for each interval.
  *
+ * Instead of negating buff entries, looks up pre-built ExprStats variants
+ * for each exclusion combination and applies bespoke overlay on top.
+ *
  * Example with buff1 (3/5 hits) and buff2 (2/5 hits) on a 5-hit part:
  *   2 × expr(b1,b2) + 1 × expr(b1) + 2 × expr()
  */
@@ -821,12 +1074,14 @@ function emitBlendedPartExprs(
     buildExpr: (stats: ExprStats, charLevel: number, ctx: CalcContext) => Expr;
     tag: DamageTag;
   },
-  stats: ExprStats,
+  defaultStats: ExprStats,
   charBase: CharacterBase,
   ctx: CalcContext,
   totalHits: number,
   partIdx: number,
-  partials: PartialBuffSpec[]
+  partials: PartialBuffInfo[],
+  statsVariants?: Map<string, ExprStats>,
+  bespokeBuff?: StatBuff
 ): void {
   // Collect affecting partials
   const affecting = partials.filter((pb) => {
@@ -835,7 +1090,7 @@ function emitBlendedPartExprs(
   });
 
   if (affecting.length === 0) {
-    const expr = formula.buildExpr(stats, charBase.charLevel, ctx);
+    const expr = formula.buildExpr(defaultStats, charBase.charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(totalHits)));
     return;
   }
@@ -850,27 +1105,70 @@ function emitBlendedPartExprs(
 
   // Emit one expression per interval
   for (let i = 0; i < cutpoints.length - 1; i++) {
-    const start = cutpoints[i];
     const end = cutpoints[i + 1];
-    const width = end - start;
+    const width = cutpoints[i + 1] - cutpoints[i];
     if (width <= 0) continue;
 
-    // Build stats: negate buffs inactive in interval (start, end]
-    // A buff is active iff activatedHits >= end
-    let intervalStats = stats;
+    // Determine which buffs are inactive in this interval
+    const excludeSet = new Set<string>();
     for (const pb of affecting) {
       const activated = pb.partActivation[partIdx] ?? totalHits;
-      if (activated < end) {
-        intervalStats = intervalStats.withMergedConst(
-          pb.negatedEntries,
-          pb.filter
-        );
+      if (activated < end) excludeSet.add(pb.buffKey);
+    }
+
+    // Look up pre-built variant or use default stats
+    let intervalStats: ExprStats;
+    if (excludeSet.size === 0) {
+      intervalStats = defaultStats;
+    } else {
+      const eKey = exclusionKey(excludeSet);
+      const variant = statsVariants?.get(eKey);
+      if (variant) {
+        // Apply bespoke buff overlay on top of the variant
+        intervalStats = applyBespokeOverlay(variant, bespokeBuff);
+      } else {
+        // Fallback: use default stats (shouldn't happen if variants were pre-built correctly)
+        intervalStats = defaultStats;
       }
     }
 
     const expr = formula.buildExpr(intervalStats, charBase.charLevel, ctx);
     partExprs.push(E.mul(expr, E.const(width)));
   }
+}
+
+/** Apply bespoke buff overlay to ExprStats (static + dynamic parts). */
+function applyBespokeOverlay(
+  stats: ExprStats,
+  bespokeBuff?: StatBuff
+): ExprStats {
+  if (!bespokeBuff) return stats;
+
+  let result = stats.withMergedConst(
+    bespokeBuff.staticBuffs,
+    bespokeBuff.target.filter
+  );
+
+  if (
+    bespokeBuff instanceof ScalingBuff ||
+    bespokeBuff instanceof CrossScalingBuff
+  ) {
+    for (const { key, expr } of bespokeBuff.dynamicBuffsExpr(result)) {
+      if (expr.tag === "const") {
+        result = result.withMergedConst(
+          [{ key, value: expr.value }],
+          bespokeBuff.target.filter
+        );
+      } else {
+        result = result.withMergedExpr(
+          [{ key, expr }],
+          bespokeBuff.target.filter
+        );
+      }
+    }
+  }
+
+  return result;
 }
 
 // ─── Evaluation Helpers for Optimizer ───

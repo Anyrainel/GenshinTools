@@ -82,18 +82,21 @@ export function buffSourceKey(source: BuffSource): string {
 }
 
 /**
- * A partial buff specification for interval-based blending.
- * Contains the buff's stat entries, filter, and per-part activation counts.
- * Used by both the cold path (getDamageResult) and hot path (AST compiler).
+ * Lightweight buff identification for interval-based blending.
+ * Contains only the buff's identity and per-part activation counts.
+ * Stat variants (with/without the buff) are pre-built by the caller.
  */
-export type PartialBuffSpec = {
-  /** Negated stat entries for this buff (value already negated). */
-  negatedEntries: StatEntry[];
-  /** Tag filter for this buff's entries. */
-  filter?: DamageTagFilter;
+export type PartialBuffInfo = {
+  /** Canonical key identifying the buff (from buffSourceKey). */
+  buffKey: string;
   /** Part index → activated hits. Missing = fully active (no blending). */
   partActivation: Record<number, number>;
 };
+
+/** Build a deterministic cache key from a set of excluded buff keys. */
+export function exclusionKey(excludeKeys: Set<string>): string {
+  return [...excludeKeys].sort().join("|");
+}
 
 export type BuffReceiverType =
   | "self"
@@ -493,8 +496,8 @@ export interface TeamOptimizerOptions {
   perCharDeadlineMs?: number;
   teamDeadlineMs?: number;
   maxArtsPerSlot?: number;
-  /** Pre-computed partial buff specs for stack-limited / user-overridden buffs (single mode). */
-  partialBuffs?: import("./stackAllocation").PartialBuffSpec[];
-  /** Per-line PartialBuffSpec[] for combo mode. Keyed by line index in validLines. */
-  comboLinePartialBuffs?: Record<number, PartialBuffSpec[]>;
+  /** Pre-computed partial buff infos for stack-limited / user-overridden buffs (single mode). */
+  partialBuffs?: PartialBuffInfo[];
+  /** Per-line PartialBuffInfo[] for combo mode. Keyed by line index in validLines. */
+  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>;
 }

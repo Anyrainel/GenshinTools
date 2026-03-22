@@ -3,15 +3,17 @@ import { describe, expect, it } from "vitest";
 import { DirectFormula, StatSheet } from "@/lib/team-comp/damageModels";
 import type { FormulaPart } from "@/lib/team-comp/damageModels";
 import {
-  type PartialBuffSpec,
+  type ComboLineContext,
+  type PartialBuffInfo,
   type StackLimitedBuffInfo,
-  buildPartialBuffSpecs,
+  buildPartialBuffInfos,
   computeBlendedDamage,
+  computeComboDefaultActivation,
   computeDefaultActivation,
   distributeComboHits,
 } from "@/lib/team-comp/stackAllocation";
 import type { CalcContext } from "@/lib/team-comp/types";
-import { buffSourceKey } from "@/lib/team-comp/types";
+import { buffSourceKey, exclusionKey } from "@/lib/team-comp/types";
 
 const ctx: CalcContext = { enemyLevel: 90, enemyRes: 0.1 };
 
@@ -38,11 +40,7 @@ function makeParts(
 }
 
 // Helper: create a stack-limited buff info
-function makeBuffInfo(
-  maxStacks: number,
-  entries: { key: string; value: number }[],
-  origin = "C2"
-): StackLimitedBuffInfo {
+function makeBuffInfo(maxStacks: number, origin = "C2"): StackLimitedBuffInfo {
   return {
     source: {
       type: "character",
@@ -51,12 +49,72 @@ function makeBuffInfo(
       maxStacks,
     },
     maxStacks,
-    entries: entries as StackLimitedBuffInfo["entries"],
-    filter: {
-      elements: ["Cryo"],
-      abilities: ["skill"],
-    },
   };
+}
+
+/**
+ * Helper: build sans-buff stats for computeDefaultActivation tests.
+ * Removes the given entries from postStats to simulate excluding the buff.
+ */
+function makeSansBuffStats(
+  postStats: StatSheet,
+  buffs: StackLimitedBuffInfo[],
+  removals: { key: string; value: number }[][]
+): Map<string, StatSheet> {
+  const filter = {
+    elements: ["Cryo" as const],
+    abilities: ["skill" as const],
+  };
+  const result = new Map<string, StatSheet>();
+  for (let i = 0; i < buffs.length; i++) {
+    const bKey = buffSourceKey(buffs[i].source);
+    let sans = postStats;
+    for (const entry of removals[i]) {
+      sans = sans.merge(
+        StatSheet.fromEntries([{ key: entry.key, value: -entry.value }], filter)
+      );
+    }
+    result.set(bKey, sans);
+  }
+  return result;
+}
+
+/**
+ * Helper: build stat variants map for computeBlendedDamage tests.
+ * Each variant entry maps an exclusionKey → StatSheet with those buffs removed.
+ */
+function makeStatVariants(
+  postStats: StatSheet,
+  buffConfigs: { buffKey: string; entries: { key: string; value: number }[] }[]
+): Map<string, StatSheet> {
+  const filter = {
+    elements: ["Cryo" as const],
+    abilities: ["skill" as const],
+  };
+  const variants = new Map<string, StatSheet>();
+
+  // Build variants for all 2^N combinations (excluding empty set)
+  const n = buffConfigs.length;
+  for (let mask = 1; mask < 1 << n; mask++) {
+    const excludeSet = new Set<string>();
+    let stats = postStats;
+    for (let i = 0; i < n; i++) {
+      if (mask & (1 << i)) {
+        excludeSet.add(buffConfigs[i].buffKey);
+        for (const entry of buffConfigs[i].entries) {
+          stats = stats.merge(
+            StatSheet.fromEntries(
+              [{ key: entry.key, value: -entry.value }],
+              filter
+            )
+          );
+        }
+      }
+    }
+    variants.set(exclusionKey(excludeSet), stats);
+  }
+
+  return variants;
 }
 
 describe("computeDefaultActivation", () => {
@@ -75,8 +133,22 @@ describe("computeDefaultActivation", () => {
       { key: "baseDmg", value: 500 }, // buff contribution
     ]);
 
-    const buff = makeBuffInfo(5, [{ key: "baseDmg", value: 500 }]);
-    const result = computeDefaultActivation(parts, [buff], postStats, 90, ctx);
+    const buff = makeBuffInfo(5);
+    const sansBuffStats = makeSansBuffStats(
+      postStats,
+      [buff],
+      [[{ key: "baseDmg", value: 500 }]]
+    );
+    const result = computeDefaultActivation(
+      parts,
+      [buff],
+      postStats,
+      90,
+      ctx,
+      undefined,
+      undefined,
+      sansBuffStats
+    );
 
     const bKey = buffSourceKey(buff.source);
     expect(result[bKey]).toBeDefined();
@@ -99,8 +171,22 @@ describe("computeDefaultActivation", () => {
     ]);
 
     // 5 stacks for 5 total hits = fully active
-    const buff = makeBuffInfo(5, [{ key: "baseDmg", value: 500 }]);
-    const result = computeDefaultActivation(parts, [buff], postStats, 90, ctx);
+    const buff = makeBuffInfo(5);
+    const sansBuffStats = makeSansBuffStats(
+      postStats,
+      [buff],
+      [[{ key: "baseDmg", value: 500 }]]
+    );
+    const result = computeDefaultActivation(
+      parts,
+      [buff],
+      postStats,
+      90,
+      ctx,
+      undefined,
+      undefined,
+      sansBuffStats
+    );
 
     expect(Object.keys(result)).toHaveLength(0);
   });
@@ -113,8 +199,22 @@ describe("computeDefaultActivation", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    const buff = makeBuffInfo(5, [{ key: "baseDmg", value: 500 }]);
-    const result = computeDefaultActivation(parts, [buff], postStats, 90, ctx);
+    const buff = makeBuffInfo(5);
+    const sansBuffStats = makeSansBuffStats(
+      postStats,
+      [buff],
+      [[{ key: "baseDmg", value: 500 }]]
+    );
+    const result = computeDefaultActivation(
+      parts,
+      [buff],
+      postStats,
+      90,
+      ctx,
+      undefined,
+      undefined,
+      sansBuffStats
+    );
 
     const bKey = buffSourceKey(buff.source);
     expect(result[bKey]![0]).toBe(5);
@@ -132,15 +232,24 @@ describe("computeDefaultActivation", () => {
       { key: "dmg%", value: 0.2 },
     ]);
 
-    const buff1 = makeBuffInfo(5, [{ key: "baseDmg", value: 300 }], "C2");
-    const buff2 = makeBuffInfo(3, [{ key: "dmg%", value: 0.2 }], "C4");
+    const buff1 = makeBuffInfo(5, "C2");
+    const buff2 = makeBuffInfo(3, "C4");
+
+    const sansBuffStats = makeSansBuffStats(
+      postStats,
+      [buff1, buff2],
+      [[{ key: "baseDmg", value: 300 }], [{ key: "dmg%", value: 0.2 }]]
+    );
 
     const result = computeDefaultActivation(
       parts,
       [buff1, buff2],
       postStats,
       90,
-      ctx
+      ctx,
+      undefined,
+      undefined,
+      sansBuffStats
     );
 
     const bKey1 = buffSourceKey(buff1.source);
@@ -161,7 +270,7 @@ describe("computeDefaultActivation", () => {
   });
 });
 
-describe("buildPartialBuffSpecs", () => {
+describe("buildPartialBuffInfos", () => {
   it("fills 0 for parts not in greedy allocation (regression)", () => {
     // 3 parts: part 0 (2 hits), part 1 (5 hits), part 2 (3 hits)
     // Budget = 5, greedy gives { 0: 2, 1: 3 } — part 2 missing (= 0 stacks)
@@ -171,13 +280,13 @@ describe("buildPartialBuffSpecs", () => {
       { multi: 1.0, hits: 3 },
     ]);
 
-    const buff = makeBuffInfo(5, [{ key: "baseDmg", value: 500 }]);
+    const buff = makeBuffInfo(5);
     const bKey = buffSourceKey(buff.source);
 
     // Simulate greedy result: part 2 gets 0 (missing from map)
     const activation = { [bKey]: { 0: 2, 1: 3 } };
 
-    const specs = buildPartialBuffSpecs(activation, [buff], parts);
+    const specs = buildPartialBuffInfos(activation, [buff], parts);
     expect(specs).toHaveLength(1);
 
     // Part 2 must have explicit 0, not be missing
@@ -198,7 +307,7 @@ describe("buildPartialBuffSpecs", () => {
       elements: ["Cryo" as const],
       abilities: ["skill" as const],
     };
-    const buff = makeBuffInfo(3, [{ key: "baseDmg", value: 500 }]);
+    const buff = makeBuffInfo(3);
     const bKey = buffSourceKey(buff.source);
 
     const postStats = new StatSheet([
@@ -209,9 +318,19 @@ describe("buildPartialBuffSpecs", () => {
     // Greedy gives all 3 stacks to part 0 (2 hits) + 1 to part 1
     // But simulate: part 1 gets 0 stacks (missing from map)
     const activation = { [bKey]: { 0: 2 } };
-    const specs = buildPartialBuffSpecs(activation, [buff], parts);
+    const specs = buildPartialBuffInfos(activation, [buff], parts);
 
-    const result = computeBlendedDamage(parts, specs, postStats, 90, ctx);
+    const variants = makeStatVariants(postStats, [
+      { buffKey: bKey, entries: [{ key: "baseDmg", value: 500 }] },
+    ]);
+    const result = computeBlendedDamage(
+      parts,
+      specs,
+      postStats,
+      variants,
+      90,
+      ctx
+    );
 
     // Part 0: 2 hits fully buffed
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
@@ -238,8 +357,15 @@ describe("computeBlendedDamage", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    // Empty partials = fully active
-    const result = computeBlendedDamage(parts, [], postStats, 90, ctx);
+    // Empty partials = fully active, empty variants
+    const result = computeBlendedDamage(
+      parts,
+      [],
+      postStats,
+      new Map(),
+      90,
+      ctx
+    );
 
     const dmg0 = parts[0].formula.calc(postStats, 90, ctx);
     const dmg1 = parts[1].formula.calc(postStats, 90, ctx);
@@ -258,13 +384,23 @@ describe("computeBlendedDamage", () => {
       { key: "baseDmg", value: 500 },
     ]);
 
-    const spec: PartialBuffSpec = {
-      negatedEntries: [{ key: "baseDmg", value: -500 }],
-      filter,
+    const buffKey = "character:escoffier:C2";
+    const spec: PartialBuffInfo = {
+      buffKey,
       partActivation: { 0: 5 }, // 5 out of 21 hits
     };
 
-    const result = computeBlendedDamage(parts, [spec], postStats, 90, ctx);
+    const variants = makeStatVariants(postStats, [
+      { buffKey, entries: [{ key: "baseDmg", value: 500 }] },
+    ]);
+    const result = computeBlendedDamage(
+      parts,
+      [spec],
+      postStats,
+      variants,
+      90,
+      ctx
+    );
 
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
     const sansStats = postStats.merge(
@@ -291,16 +427,27 @@ describe("computeBlendedDamage", () => {
       { key: "baseDmg", value: buffValue },
     ]);
 
-    const spec: PartialBuffSpec = {
-      negatedEntries: [{ key: "baseDmg", value: -buffValue }],
-      filter,
+    const buffKey = "character:escoffier:C2";
+    const spec: PartialBuffInfo = {
+      buffKey,
       partActivation: { 0: 5 },
     };
+
+    const variants = makeStatVariants(postStats, [
+      { buffKey, entries: [{ key: "baseDmg", value: buffValue }] },
+    ]);
 
     const dmgWith = parts[0].formula.calc(postStats, 90, ctx);
     const fullDamage = dmgWith * 21;
 
-    const blended = computeBlendedDamage(parts, [spec], postStats, 90, ctx);
+    const blended = computeBlendedDamage(
+      parts,
+      [spec],
+      postStats,
+      variants,
+      90,
+      ctx
+    );
     expect(blended.totalDamage).toBeLessThan(fullDamage);
 
     const sansStats = postStats.merge(
@@ -326,21 +473,28 @@ describe("computeBlendedDamage", () => {
       { key: "dmg%", value: 0.5 },
     ]);
 
-    const spec1: PartialBuffSpec = {
-      negatedEntries: [{ key: "baseDmg", value: -300 }],
-      filter,
+    const buffKey1 = "character:escoffier:C2";
+    const buffKey2 = "character:escoffier:C4";
+
+    const spec1: PartialBuffInfo = {
+      buffKey: buffKey1,
       partActivation: { 0: 3 }, // active for first 3 hits
     };
-    const spec2: PartialBuffSpec = {
-      negatedEntries: [{ key: "dmg%", value: -0.5 }],
-      filter,
+    const spec2: PartialBuffInfo = {
+      buffKey: buffKey2,
       partActivation: { 0: 2 }, // active for first 2 hits
     };
+
+    const variants = makeStatVariants(postStats, [
+      { buffKey: buffKey1, entries: [{ key: "baseDmg", value: 300 }] },
+      { buffKey: buffKey2, entries: [{ key: "dmg%", value: 0.5 }] },
+    ]);
 
     const result = computeBlendedDamage(
       parts,
       [spec1, spec2],
       postStats,
+      variants,
       90,
       ctx
     );
@@ -361,6 +515,155 @@ describe("computeBlendedDamage", () => {
 
     const expected = 2 * dmgBoth + 1 * dmgB1Only + 2 * dmgNone;
     expect(result.totalDamage).toBeCloseTo(expected);
+  });
+});
+
+describe("computeComboDefaultActivation", () => {
+  it("shares maxStack budget across all combo lines", () => {
+    // Two lines: line 0 has high-damage formula (2 hits × 2 reps),
+    // line 1 has low-damage formula (3 hits × 1 rep).
+    // Budget = 5 stacks, total hits = 4 + 3 = 7.
+    // Should allocate to highest marginal gain first (line 0's formula).
+    const postStats = new StatSheet([
+      { key: "baseAtk", value: 800 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    const filter = {
+      elements: ["Cryo" as const],
+      abilities: ["skill" as const],
+    };
+    const sansStats = postStats.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
+    );
+
+    const buff = makeBuffInfo(5);
+    const bKey = buffSourceKey(buff.source);
+    const sansBuffMap = new Map([[bKey, sansStats]]);
+
+    const lines: ComboLineContext[] = [
+      {
+        parts: makeParts([{ multi: 3.0, hits: 2 }]),
+        lineCount: 2,
+        postStats,
+        charLevel: 90,
+        sansBuffStats: sansBuffMap,
+      },
+      {
+        parts: makeParts([{ multi: 1.0, hits: 3 }]),
+        lineCount: 1,
+        postStats,
+        charLevel: 90,
+        sansBuffStats: sansBuffMap,
+      },
+    ];
+
+    const result = computeComboDefaultActivation(lines, [buff], ctx);
+
+    // Line 0: 2 hits × 2 reps = 4 available, high marginal → gets 4 stacks
+    // Line 1: 3 hits × 1 rep = 3 available, low marginal → gets remaining 1 stack
+    // Per-cast: line 0 = 4/2 = 2 (full), line 1 = 1/1 = 1
+    expect(result[0][bKey]![0]).toBe(2); // line 0, part 0: full (2 hits per cast)
+    expect(result[1][bKey]![0]).toBe(1); // line 1, part 0: 1 out of 3 hits
+  });
+
+  it("does not allocate when budget covers all hits", () => {
+    const postStats = new StatSheet([
+      { key: "baseAtk", value: 800 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    const filter = {
+      elements: ["Cryo" as const],
+      abilities: ["skill" as const],
+    };
+    const sansStats = postStats.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
+    );
+
+    // maxStacks=5 covers all 2 hits
+    const buff = makeBuffInfo(5);
+    const bKey = buffSourceKey(buff.source);
+    const sansBuffMap = new Map([[bKey, sansStats]]);
+
+    const lines: ComboLineContext[] = [
+      {
+        parts: makeParts([{ multi: 2.0, hits: 2 }]),
+        lineCount: 1,
+        postStats,
+        charLevel: 90,
+        sansBuffStats: sansBuffMap,
+      },
+    ];
+    const result = computeComboDefaultActivation(lines, [buff], ctx);
+    // No entry: budget covers everything
+    expect(result[0][bKey]).toBeUndefined();
+  });
+
+  it("returns empty maps when no stack-limited buffs", () => {
+    const postStats = new StatSheet([{ key: "baseAtk", value: 800 }]);
+    const lines: ComboLineContext[] = [
+      {
+        parts: makeParts([{ multi: 2.0, hits: 3 }]),
+        lineCount: 1,
+        postStats,
+        charLevel: 90,
+      },
+    ];
+    const result = computeComboDefaultActivation(lines, [], ctx);
+    expect(result[0]).toEqual({});
+  });
+
+  it("fills zeros for unallocated parts across lines", () => {
+    const postStats = new StatSheet([
+      { key: "baseAtk", value: 800 },
+      { key: "baseDmg", value: 500 },
+    ]);
+
+    const filter = {
+      elements: ["Cryo" as const],
+      abilities: ["skill" as const],
+    };
+    const sansStats = postStats.merge(
+      StatSheet.fromEntries([{ key: "baseDmg", value: -500 }], filter)
+    );
+
+    const buff = makeBuffInfo(3);
+    const bKey = buffSourceKey(buff.source);
+    const sansBuffMap = new Map([[bKey, sansStats]]);
+
+    // Two lines, each with 2 parts, budget = 3
+    const lines: ComboLineContext[] = [
+      {
+        parts: makeParts([
+          { multi: 3.0, hits: 5 },
+          { multi: 1.0, hits: 5 },
+        ]),
+        lineCount: 1,
+        postStats,
+        charLevel: 90,
+        sansBuffStats: sansBuffMap,
+      },
+      {
+        parts: makeParts([
+          { multi: 2.0, hits: 5 },
+          { multi: 0.5, hits: 5 },
+        ]),
+        lineCount: 1,
+        postStats,
+        charLevel: 90,
+        sansBuffStats: sansBuffMap,
+      },
+    ];
+    const result = computeComboDefaultActivation(lines, [buff], ctx);
+
+    // Budget = 3 out of 20 total hits.
+    // Highest marginal: line 0 part 0 (multi=3.0), gets min(3, 5) = 3
+    // Remaining 0 for all others → explicit 0
+    expect(result[0][bKey]![0]).toBe(3);
+    expect(result[0][bKey]![1]).toBe(0);
+    expect(result[1][bKey]![0]).toBe(0);
+    expect(result[1][bKey]![1]).toBe(0);
   });
 });
 

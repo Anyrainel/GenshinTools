@@ -33,12 +33,13 @@ import type {
   DamageTagFilter,
   ElementalOrPhysical,
   I18nLabel,
-  PartialBuffSpec,
+  PartialBuffInfo,
   ReactionOverride,
   ReactionType,
   StatEntry,
   StatKey,
 } from "./types";
+import { exclusionKey } from "./types";
 
 /** A single formula with an optional hit count (defaults to 1). */
 export type FormulaPart = {
@@ -485,7 +486,9 @@ export abstract class IDamageProvider {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldSelfStats?: StatSheet,
-    partialBuffs?: PartialBuffSpec[]
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    offFieldVariants?: Map<string, StatSheet>
   ): DamageResult;
 }
 
@@ -794,7 +797,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     ctx: CalcContext,
     reactionOverride?: ReactionOverride,
     offFieldSelfStats?: StatSheet,
-    partialBuffs?: PartialBuffSpec[]
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    offFieldVariants?: Map<string, StatSheet>
   ): DamageResult {
     const entry = this.formulaMap[formulaId];
     if (!entry) throw new Error(`Unknown formula: ${formulaId}`);
@@ -813,17 +818,24 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
         offField && offFieldSelfStats ? offFieldSelfStats : selfStats;
 
       // Apply per-part stat overlay if present
-      const stats = bespokeBuff
-        ? baseSelfStats.merge(
-            StatSheet.fromEntries(
-              [
-                ...bespokeBuff.staticBuffs,
-                ...bespokeBuff.dynamicBuffs(baseSelfStats, teamStats),
-              ],
-              bespokeBuff.target.filter
-            )
-          )
-        : baseSelfStats;
+      let bespokeOverlay: StatSheet | undefined;
+      let stats: StatSheet;
+      if (bespokeBuff) {
+        bespokeOverlay = StatSheet.fromEntries(
+          [
+            ...bespokeBuff.staticBuffs,
+            ...bespokeBuff.dynamicBuffs(baseSelfStats, teamStats),
+          ],
+          bespokeBuff.target.filter
+        );
+        stats = baseSelfStats.merge(bespokeOverlay);
+      } else {
+        stats = baseSelfStats;
+      }
+
+      // Pick the correct variants map for on/off-field
+      const partVariants =
+        offField && offFieldVariants ? offFieldVariants : statsVariants;
 
       const hasReaction =
         reactionOverride?.reaction && reactionOverride.reaction !== "none";
@@ -832,7 +844,17 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       // (e.g., LunarDirectFormula with lunarBloom should not be converted to CatalyzeFormula)
       if (!hasReaction || formula.tag.reaction !== "none") {
         parts.push(
-          this._calcPartBlended(formula, stats, ctx, h, idx, h, partialBuffs)
+          this._calcPartBlended(
+            formula,
+            stats,
+            ctx,
+            h,
+            idx,
+            h,
+            partialBuffs,
+            partVariants,
+            bespokeOverlay
+          )
         );
         continue;
       }
@@ -867,7 +889,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             reactingHits,
             idx,
             h,
-            partialBuffs
+            partialBuffs,
+            partVariants,
+            bespokeOverlay
           )
         );
       }
@@ -880,7 +904,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
             nonReactingHits,
             idx,
             h,
-            partialBuffs
+            partialBuffs,
+            partVariants,
+            bespokeOverlay
           )
         );
       }
@@ -897,6 +923,10 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
    * If partialBuffs affect this part, uses interval-based blending.
    * The activation is scaled proportionally when hits < originalPartHits
    * (i.e., this is a reacting/non-reacting sub-part).
+   *
+   * @param statsVariants Pre-built stat sheets for each exclusion combination
+   *   (without bespoke buffs). When a variant is used, bespokeOverlay is
+   *   merged on top to restore bespoke buff contributions.
    */
   private _calcPartBlended(
     formula: DamageFormula,
@@ -905,7 +935,9 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     hits: number,
     partIdx: number,
     originalPartHits: number,
-    partialBuffs?: PartialBuffSpec[]
+    partialBuffs?: PartialBuffInfo[],
+    statsVariants?: Map<string, StatSheet>,
+    bespokeOverlay?: StatSheet
   ): { damage: number; hits: number } {
     if (!partialBuffs || partialBuffs.length === 0) {
       return { damage: formula.calc(stats, this.charLevel, ctx), hits };
@@ -939,15 +971,27 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
       const width = end - start;
       if (width <= 0) continue;
 
-      let intervalStats = stats;
+      // Determine which buffs are inactive in this interval
+      const excludeSet = new Set<string>();
       for (const pb of affecting) {
         const activated =
           (pb.partActivation[partIdx] ?? originalPartHits) * scale;
         if (activated < end) {
-          intervalStats = intervalStats.merge(
-            StatSheet.fromEntries(pb.negatedEntries, pb.filter)
-          );
+          excludeSet.add(pb.buffKey);
         }
+      }
+
+      // Look up pre-built variant; apply bespoke overlay if needed
+      let intervalStats: StatSheet;
+      if (excludeSet.size > 0 && statsVariants) {
+        const eKey = exclusionKey(excludeSet);
+        const variant = statsVariants.get(eKey) ?? stats;
+        intervalStats =
+          variant !== stats && bespokeOverlay
+            ? variant.merge(bespokeOverlay)
+            : variant;
+      } else {
+        intervalStats = stats;
       }
 
       total += width * formula.calc(intervalStats, this.charLevel, ctx);

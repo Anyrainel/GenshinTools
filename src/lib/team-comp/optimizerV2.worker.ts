@@ -50,11 +50,11 @@ export type BnBWorkerRequest = {
   combo?: ComboFormula;
   reactionOverrides?: Record<string, ReactionOverride>;
   /** Pre-computed partial buff specs for stack-limited / user-overridden buffs. */
-  partialBuffs?: import("./stackAllocation").PartialBuffSpec[];
-  /** Per-line PartialBuffSpec[] for combo mode. */
+  partialBuffs?: import("./stackAllocation").PartialBuffInfo[];
+  /** Per-line PartialBuffInfo[] for combo mode. */
   comboLinePartialBuffs?: Record<
     number,
-    import("./stackAllocation").PartialBuffSpec[]
+    import("./stackAllocation").PartialBuffInfo[]
   >;
 };
 

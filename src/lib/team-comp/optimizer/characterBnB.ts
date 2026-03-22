@@ -409,7 +409,7 @@ export function runCharacterBnB(
   /** @internal For benchmarking only — disable AST compilation */
   _noCompile = false,
   onProgress?: (bestDamage: number, evaluations: number) => void,
-  partialBuffs?: import("../stackAllocation").PartialBuffSpec[]
+  partialBuffs?: import("../stackAllocation").PartialBuffInfo[]
 ): CharacterBnBResult {
   const swapCharId = charId;
   const calcTargetId = carryCharId;
