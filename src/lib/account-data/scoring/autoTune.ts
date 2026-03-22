@@ -123,7 +123,7 @@ function computeMarginals(
 /**
  * Apply a flat roll allocation to a base sheet and return the resulting StatSheet.
  */
-export function applyAllocation(
+function applyAllocation(
   baseSheet: StatSheet,
   allocation: Record<SubStat, number>,
   fraction = 1

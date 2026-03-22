@@ -51,9 +51,7 @@ export function getArtifactCr(art: ArtifactData | null): number {
   return cr;
 }
 
-export function getArtifactStats(
-  art: ArtifactData
-): Partial<Record<StatKey, number>> {
+function getArtifactStats(art: ArtifactData): Partial<Record<StatKey, number>> {
   const stats: Partial<Record<StatKey, number>> = {};
   const mainVal = toInternal(
     art.mainStatKey,

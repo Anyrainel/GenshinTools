@@ -243,7 +243,7 @@ function investmentToConfig(
   };
 }
 
-export function isAllocationReachable(
+function isAllocationReachable(
   from: TeamInvestment,
   to: TeamInvestment
 ): boolean {
@@ -259,7 +259,7 @@ export function isAllocationReachable(
   return true;
 }
 
-export function allocationNodeId(allocation: TeamInvestment): string {
+function allocationNodeId(allocation: TeamInvestment): string {
   return Object.entries(allocation)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(
@@ -941,7 +941,7 @@ function getSingleStepUpgrades(
 
 // ─── Sequence derivation ───
 
-export function deriveSequence(dag: InvestmentDAG): {
+function deriveSequence(dag: InvestmentDAG): {
   sequence: InvestmentStep[];
   bestAtTier: Map<number, InvestmentNode>;
 } {

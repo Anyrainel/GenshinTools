@@ -373,21 +373,6 @@ function runComboEnumerationPipeline(
 
 // ─── Auto-Tune Library Function ───
 
-export type AutoTuneInput = {
-  /** The character to optimize */
-  characterId: string;
-  /** Team setups — each is a full 4-member TeamSlotConfig[] with variable C/R */
-  teamSetups: TeamSlotConfig[][];
-  /** Team build options per team (for buff resolution) */
-  teamOpts?: Record<string, unknown>[];
-  /** Weighted formulas (formulaId + count + per-formula reaction). If omitted, uses all formulas with count=1. */
-  formulas?: WeightedFormula[];
-  /** Team labels for display */
-  teamLabels?: string[];
-  /** Element for goblet candidates */
-  element: string;
-};
-
 export type ComboBreakdown = {
   mainStats: { sands: MainStat; goblet: MainStat; circlet: MainStat };
   rollAllocation: Record<SubStat, number>;
@@ -687,88 +672,6 @@ export function aggregateTeamResults(
     normalizer,
     idealRolls,
     teamBreakdowns,
-  };
-}
-
-/**
- * Compute auto-tuned weights for a single build given explicit inputs.
- *
- * Unlike `generateBuildWeights` which reads from the preset database,
- * this function accepts team configs directly — constellation/refinement
- * come from the TeamSlotConfig, enabling variable C/R.
- */
-export function autoTuneBuild(input: AutoTuneInput): AutoTuneOutput {
-  const { characterId, teamSetups, element } = input;
-
-  const gobletCandidates = getGobletPool(element as Element);
-
-  // Build team tune contexts from explicit configs
-  const teamContexts: TeamTuneContext[] = [];
-
-  for (let i = 0; i < teamSetups.length; i++) {
-    const configs = teamSetups[i];
-    const opts = (input.teamOpts?.[i] ?? {}) as Record<string, string>;
-    const teamBuild = new TeamBuild(configs, opts);
-
-    // Resolve formulas with counts and per-formula reactions
-    let formulas: WeightedFormula[];
-    if (input.formulas && input.formulas.length > 0) {
-      formulas = input.formulas;
-    } else {
-      formulas = toWeightedFormulas(findAllFormulaIds(teamBuild, characterId));
-    }
-    if (formulas.length === 0) continue;
-
-    const label = input.teamLabels?.[i] ?? `Team ${i + 1}`;
-    teamContexts.push({
-      configs,
-      teamBuild,
-      formulas,
-      label,
-    });
-  }
-
-  if (teamContexts.length === 0) {
-    throw new Error(
-      `No valid team contexts for ${characterId}. Check configs and formula IDs.`
-    );
-  }
-
-  const result = runComboEnumerationPipeline(
-    characterId,
-    gobletCandidates,
-    teamContexts
-  );
-
-  // Convert to production Build-compatible format
-  // Normalize: highest non-cr stat → 100, clamp cr to 100
-  const weights = { ...result.avgWeights };
-  const maxNonCr = Math.max(
-    ...Object.entries(weights)
-      .filter(([stat]) => stat !== "cr")
-      .map(([, w]) => w)
-  );
-  if (maxNonCr > 0 && maxNonCr !== 100) {
-    const scale = 100 / maxNonCr;
-    for (const stat of Object.keys(weights) as SubStat[]) {
-      weights[stat] = Math.round(weights[stat] * scale);
-    }
-  }
-  if (weights.cr > 100) weights.cr = 100;
-
-  const substats = Object.entries(weights)
-    .filter(([, weight]) => weight > 20)
-    .map(([stat, weight]) => ({ stat: stat as SubStat, weight }))
-    .sort((a, b) => b.weight - a.weight);
-
-  return {
-    substats,
-    sandsWeights: result.sandsWeights,
-    gobletWeights: result.gobletWeights,
-    circletWeights: result.circletWeights,
-    normalizer: result.normalizer,
-    idealRolls: result.idealRolls,
-    teamBreakdowns: result.teamBreakdowns,
   };
 }
 

@@ -157,8 +157,3 @@ export function markTourCompleted(
 ): void {
   localStorage.setItem(TOUR_STORAGE_KEYS[tourId], "true");
 }
-
-/** Reset a tour so it can be shown again */
-export function resetTour(tourId: keyof typeof TOUR_STORAGE_KEYS): void {
-  localStorage.removeItem(TOUR_STORAGE_KEYS[tourId]);
-}

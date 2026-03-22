@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/lib/team-comp/index.ts",
+    "src/lib/team-comp/optimizer.worker.ts",
+    "src/lib/account-data/scoring/autoTune.worker.ts",
+    "functions/api/**/*.ts",
+    "scripts/buildArtifactStats.ts",
+    "scripts/dev/*.{ts,js}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "tests/**/*.{ts,tsx}",
+    "functions/**/*.ts",
+    "scripts/**/*.{ts,js}"
+  ],
+  "ignore": [
+    "scripts/.venv/**",
+    "src/components/ui/**",
+    "src/data/resources.ts"
+  ],
+  "ignoreDependencies": [
+    "@vitejs/plugin-react",
+    "@radix-ui/react-accordion",
+    "@radix-ui/react-navigation-menu",
+    "@radix-ui/react-radio-group"
+  ]
+}

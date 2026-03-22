@@ -20,7 +20,7 @@ import { Plus } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 
 /** Generic weighted stat item — works for both substats and main stats. */
-export type WeightedItem = { stat: string; weight: number };
+type WeightedItem = { stat: string; weight: number };
 
 interface WeightedStatSelectProps {
   values: WeightedItem[];

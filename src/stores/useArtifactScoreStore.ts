@@ -9,7 +9,7 @@ const DEFAULT_GLOBAL: GlobalStatWeights = {
   flatDef: 30,
 };
 
-export type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
+type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
 
 function migratePersisted(persisted: unknown): ArtifactScoreGlobalConfig {
   const raw = persisted as { config?: { global?: GlobalStatWeights } };

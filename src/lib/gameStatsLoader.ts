@@ -193,7 +193,7 @@ export function getWeaponDisplayMeta(
 // ─── Stat Resolution (moved from damageModels.ts for reuse) ───
 
 /** Parse a charStats string value: strip '%' and divide by 100 for percentages */
-export function parseStatValue(raw: string): number {
+function parseStatValue(raw: string): number {
   if (raw.endsWith("%")) {
     return Number.parseFloat(raw.slice(0, -1)) / 100;
   }
@@ -201,7 +201,7 @@ export function parseStatValue(raw: string): number {
 }
 
 /** Parse weapon secondary stat value string */
-export function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
+function parseWeaponSecondary(stat: MainStat, rawValue: string): number {
   if (rawValue.endsWith("%")) {
     return Number.parseFloat(rawValue.slice(0, -1)) / 100;
   }

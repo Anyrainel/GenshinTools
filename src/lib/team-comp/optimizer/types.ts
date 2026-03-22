@@ -3,10 +3,9 @@
  */
 
 import type { ArtifactData, GlobalStatWeights } from "@/data/types";
-import type { BuildMatchResult } from "../../account-data/artifactScore";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import type { StatSheet } from "../damageModels";
-import type { CompiledTeamDamage } from "../formulaCompiler";
+import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
 import type {
   CalcContext,
   CharOptConfig,
@@ -58,14 +57,6 @@ export interface PreparedSlotData {
   setSuperArtifacts: Map<string, SuperArtifact>;
 }
 
-// ─── Pattern Task ───
-
-export interface PatternTask {
-  groups: ArtifactData[][];
-  supers: SuperArtifact[];
-  upperBound: number;
-}
-
 // ─── B&B Context ───
 
 /** Mutable state shared across the DFS and hill-climbing within a single character B&B run. */
@@ -91,7 +82,7 @@ export interface BnBContext {
   compiled?: CompiledTeamDamage;
   compiledVars?: Float64Array;
   compiledCharIdx?: number;
-  compiledLookup?: import("../formulaCompiler").ArtifactVarLookup;
+  compiledLookup?: ArtifactVarLookup;
   deadline?: number;
   aborted?: boolean;
   /** Called periodically from DFS/HC with current best damage and evaluation count. */
@@ -111,46 +102,9 @@ export interface TopKCollectorLike {
   ): boolean;
 }
 
-// ─── Character B&B Parameters ───
-
-export interface CharacterBnBParams {
-  charId: string;
-  charConfig: CharOptConfig;
-  teamBuild: TeamBuild;
-  carryCharId: string;
-  formulaId: string;
-  inventory: ArtifactData[];
-  globalConfig: GlobalStatWeights;
-  baseSheets: Record<string, StatSheet>;
-  calcContext: CalcContext;
-  excludedIds: Set<string> | undefined;
-  reactionOverride: ReactionOverride | undefined;
-  scoreFn:
-    | ((sheets: Record<string, StatSheet>, calcTargetId: string) => number)
-    | undefined;
-  topK: number;
-  deadline?: number;
-  warmStartThreshold?: number;
-  maxArtsPerSlot?: number;
-}
-
 export interface CharacterBnBResult {
   collector: TopKCollectorLike;
   evaluations: number;
   failReason?: OptFailReason;
   marginalWeights?: MarginalWeights | null;
-}
-
-// ─── Scoring Strategy ───
-
-/** Strategy for scoring/ranking artifacts within a slot. */
-export interface ArtifactScoringStrategy {
-  score(art: ArtifactData): number;
-}
-
-/** Config needed to create scoring strategies. */
-export interface ScoringConfig {
-  buildMatch: BuildMatchResult | null | undefined;
-  globalConfig: GlobalStatWeights;
-  crDiscount: number;
 }

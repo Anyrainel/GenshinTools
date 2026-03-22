@@ -14,6 +14,7 @@
  * the inner loop, leaving ~20-50 arithmetic ops per evaluation.
  */
 
+import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import { ELEMENT_ELIGIBLE_REACTIONS } from "./constants";
 import { CrossScalingBuff, ScalingBuff } from "./damageBuffs";
@@ -1255,7 +1256,7 @@ export function buildArtifactVarLookup(
  * Zero allocations, no Map construction — directly reads artifact stats.
  */
 export function fillVarsFromArtifacts(
-  artifacts: (import("@/data/types").ArtifactData | null)[],
+  artifacts: (ArtifactData | null)[],
   varMapping: VarMapping,
   charIdx: number,
   vars: Float64Array
@@ -1268,7 +1269,7 @@ export function fillVarsFromArtifacts(
       const idx = lookupVarIdx(varMapping, charIdx, mainKey);
       if (idx !== undefined) {
         const displayVal = getMainStatValueAtLevel(
-          mainKey as import("@/data/types").MainStat,
+          mainKey as MainStat,
           art.rarity,
           art.level
         );
@@ -1283,46 +1284,6 @@ export function fillVarsFromArtifacts(
         const idx = lookupVarIdx(varMapping, charIdx, subKey);
         if (idx !== undefined) {
           vars[idx] += FLAT_STAT_SET.has(subKey) ? subVal : subVal / 100;
-        }
-      }
-    }
-  }
-}
-
-/**
- * Fill vars from artifacts using a pre-built ArtifactVarLookup.
- * Even faster than fillVarsFromArtifacts — avoids VarMapping.getVarIdx() calls.
- */
-export function fillVarsFromArtifactsFast(
-  artifacts: (import("@/data/types").ArtifactData | null)[],
-  lookup: ArtifactVarLookup,
-  vars: Float64Array
-): void {
-  for (const art of artifacts) {
-    if (!art) continue;
-    // Main stat
-    const mainKey = art.mainStatKey;
-    if (mainKey) {
-      const idx = lookup.keyToIdx.get(mainKey);
-      if (idx !== undefined) {
-        const displayVal = getMainStatValueAtLevel(
-          mainKey as import("@/data/types").MainStat,
-          art.rarity,
-          art.level
-        );
-        vars[idx] += lookup.keyIsPct.get(mainKey)
-          ? displayVal / 100
-          : displayVal;
-      }
-    }
-    // Substats
-    if (art.substats) {
-      for (const subKey of Object.keys(art.substats)) {
-        const subVal = art.substats[subKey as keyof typeof art.substats];
-        if (!subVal) continue;
-        const idx = lookup.keyToIdx.get(subKey);
-        if (idx !== undefined) {
-          vars[idx] += lookup.keyIsPct.get(subKey) ? subVal / 100 : subVal;
         }
       }
     }
@@ -1365,7 +1326,7 @@ export function fillVarsFromSheet(
  * Used for upper bound evaluation in compiled mode.
  */
 export function fillVarsFromRawStats(
-  rawStats: Partial<Record<import("./types").StatKey, number>>[],
+  rawStats: Partial<Record<StatKey, number>>[],
   /** Number of entries to read from rawStats. If undefined, reads all. */
   count: number | undefined,
   varMapping: VarMapping,

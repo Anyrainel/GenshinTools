@@ -13,7 +13,7 @@ const PRESET_ROLLS: Record<
 };
 
 /** Max rolls on a single subline for a given per-slot total (4 sub lines + upgrades model). */
-export function maxRollsPerStatFromTotal(rollsPerSlot: number): number {
+function maxRollsPerStatFromTotal(rollsPerSlot: number): number {
   return rollsPerSlot - 3;
 }
 

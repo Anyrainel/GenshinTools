@@ -20,21 +20,9 @@ import {
 import type { MainStat, SubStat } from "@/data/types";
 
 // Re-export canonical constants so existing importers don't break
-export {
-  MAIN_STAT_VALUES_4STAR,
-  MAIN_STAT_VALUES_5STAR,
-  SUBSTAT_COEFFICIENTS,
-  getMainStatValue,
-  isFlatStat,
-};
+export { SUBSTAT_COEFFICIENTS, getMainStatValue };
 
 // ─── Substat roll accessors ───
-
-/** Max roll values per substat (5-star), display format. Alias for maxSubstatRolls[5]. */
-export const MAX_ROLLS_5STAR: Record<SubStat, number> = maxSubstatRolls[5];
-
-/** Average roll values per substat (5-star), display format. */
-export const AVG_ROLL_VALUES: Record<SubStat, number> = avgSubstatRolls[5];
 
 /**
  * Average 5★ substat roll values in StatSheet-internal format (pct stats ÷ 100).
@@ -171,29 +159,6 @@ export function computeCrDeduction(
   if (excessCr <= 0) return 0;
   return excessCr * 100 * SUBSTAT_COEFFICIENTS.cr * (crWeight / 100);
 }
-
-// ─── Team Context for Auto-Tuning ───
-
-/** Per-member build info for display purposes */
-export type TeamMemberBuild = {
-  weapon: string;
-  /** Artifact set IDs: 1 entry = 4pc, 2 entries = 2+2 */
-  artifacts: string[];
-};
-
-export type TeamContext = {
-  name: string;
-  /** The 4 character IDs */
-  characters: [string, string, string, string];
-  /** Index of the on-field DPS in the characters array */
-  dpsIndex: number;
-  /** Primary reaction for the team */
-  reaction: string;
-  /** Weapon ID for the DPS character */
-  dpsWeaponId: string;
-  /** Per-member builds: weapons + artifact sets (parallel to characters array) */
-  builds: [TeamMemberBuild, TeamMemberBuild, TeamMemberBuild, TeamMemberBuild];
-};
 
 /** Result of the auto-tuning pipeline for a single main-stat combo + team context */
 export type AutoTuneResult = {

@@ -322,15 +322,6 @@ export type WeightedSubStat = {
   weight: number; // 0 to 100
 };
 
-export type ArtifactPattern = {
-  mainStat: MainStatPlus;
-  substats: SubStat[];
-  set: string;
-  slot: Slot;
-  characters4pc?: string[];
-  characters2pc?: string[];
-};
-
 export type BuildGroup = {
   characterId: string;
   builds: Build[];
@@ -380,11 +371,6 @@ export type BuildPayloadV5 = {
 
   // Compute Options
   computeOptions?: ComputeOptions;
-};
-
-export type CharacterBuilds = {
-  characterId: string;
-  buildIds: string[]; // Ordered list of build IDs for this character
 };
 
 export type CharacterMergeInfo = {

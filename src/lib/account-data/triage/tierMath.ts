@@ -25,7 +25,7 @@ export const SUB_WEIGHTS: Record<SubStat, number> = {
 
 export const P4L = 0.3; // Inflated from true 20% to prevent 4L cheaply jumping tiers
 
-export const TIER_THRESHOLDS = {
+const TIER_THRESHOLDS = {
   flowerFeather: { premium: 0.01, quality: 0.04, neutral: 0.2 },
   sandsGobletCirclet: { premium: 0.005, quality: 0.02, neutral: 0.1 },
 } as const;

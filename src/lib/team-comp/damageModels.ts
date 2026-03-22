@@ -65,10 +65,6 @@ export { StatBuff, ScalingBuff } from "./damageBuffs";
 export {
   DamageFormula,
   DirectFormula,
-  AmplifyFormula,
-  CatalyzeFormula,
-  TransformFormula,
-  LunarFormula,
   createReactionVariant,
 } from "./damageFormulas";
 
@@ -469,14 +465,14 @@ export class StatSheet {
 // ═══════════════════════════════════════════════════════════════
 
 /** Any entity that contributes stats and buffs to a build */
-export abstract class IStatProvider {
+abstract class IStatProvider {
   abstract readonly stats: StatEntry[];
   abstract readonly buffs: StatBuff[];
   abstract get src(): BuffSource;
 }
 
 /** An entity that can produce damage formulas */
-export abstract class IDamageProvider {
+abstract class IDamageProvider {
   /** Public label map — derived from the internal formulaMap */
   abstract get formulaIds(): Record<string, I18nLabel>;
   abstract getDamageResult(

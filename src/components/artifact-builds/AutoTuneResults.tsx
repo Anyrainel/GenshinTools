@@ -16,13 +16,7 @@ import { useState } from "react";
 
 // ── Exported sub-components for reuse (e.g., batch AutoTune view) ──
 
-export {
-  SubstatPills,
-  MainStatColumn,
-  TeamBreakdownSection,
-  ComboTable,
-  formatRolls,
-};
+export { SubstatPills, MainStatColumn, ComboTable };
 
 // Color mapping for stat categories
 const STAT_COLORS: Record<

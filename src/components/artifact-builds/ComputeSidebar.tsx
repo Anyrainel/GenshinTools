@@ -1,18 +1,10 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ComputeOptions } from "@/data/types";
 import { cn } from "@/lib/utils";
-import { Filter } from "lucide-react";
 
 interface ComputeSidebarProps {
   searchQuery: string;
@@ -235,64 +227,5 @@ export function ComputeSidebar({
     <Card className="bg-card/50 border-border/50 h-full flex flex-col overflow-hidden">
       {sidebarContent}
     </Card>
-  );
-}
-
-interface ComputeSidebarMobileProps extends ComputeSidebarProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  hasActiveFilters: boolean;
-}
-
-export function ComputeSidebarMobile({
-  searchQuery,
-  onSearchChange,
-  isOpen,
-  onOpenChange,
-  hasActiveFilters,
-  computeOptions,
-  onComputeOptionChange,
-}: ComputeSidebarMobileProps) {
-  const { t } = useLanguage();
-
-  return (
-    <>
-      {/* Mobile Filter Button */}
-      <div className="lg:hidden flex items-center justify-between mb-4">
-        <Button
-          variant="outline"
-          onClick={() => onOpenChange(true)}
-          className="gap-2"
-        >
-          <Filter className="w-4 h-4" />
-          {t.ui("filters.title")}
-          {hasActiveFilters && (
-            <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-              {searchQuery.length > 0 ? "1" : "0"}
-            </span>
-          )}
-        </Button>
-      </div>
-
-      {/* Mobile Filter Sheet */}
-      <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        <SheetContent side="left" className="w-80 p-0">
-          <SheetHeader className="p-6 pb-4 border-b">
-            <SheetTitle>{t.ui("filters.title")}</SheetTitle>
-          </SheetHeader>
-          <div className="flex-1 overflow-hidden">
-            <div className="h-full">
-              <ComputeSidebar
-                searchQuery={searchQuery}
-                onSearchChange={onSearchChange}
-                computeOptions={computeOptions}
-                onComputeOptionChange={onComputeOptionChange}
-                isInSidePanel={true}
-              />
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
   );
 }

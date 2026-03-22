@@ -122,38 +122,3 @@ export function loadCharacterKits(
   pending.set(lang, promise);
   return promise;
 }
-
-export function getCachedKit(
-  characterId: string,
-  lang: Language
-): CharacterKit | null {
-  return cache.get(lang)?.[characterId] ?? null;
-}
-
-export function getCachedSkills(
-  characterId: string,
-  lang: Language
-): CharacterSkill[] | null {
-  return getCachedKit(characterId, lang)?.skills ?? null;
-}
-
-export function getCachedPassives(
-  characterId: string,
-  lang: Language
-): CharacterEffect[] | null {
-  return getCachedKit(characterId, lang)?.passives ?? null;
-}
-
-export function getCachedConstellations(
-  characterId: string,
-  lang: Language
-): CharacterEffect[] | null {
-  return getCachedKit(characterId, lang)?.constellations ?? null;
-}
-
-export function getCachedGlossary(
-  characterId: string,
-  lang: Language
-): CharacterEffect[] | null {
-  return getCachedKit(characterId, lang)?.glossary ?? null;
-}

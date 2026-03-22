@@ -5,16 +5,13 @@
  * - evaluateUpperBound: compute an optimistic upper bound using super-artifacts
  */
 
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData, MainStat } from "@/data/types";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type { ArtifactVarLookup, CompiledTeamDamage } from "../formulaCompiler";
-import {
-  fillVarsFromArtifactsFast,
-  fillVarsFromRawStats,
-} from "../formulaCompiler";
+import { fillVarsFromRawStats } from "../formulaCompiler";
 import type {
   CalcContext,
   DamageResult,
@@ -112,44 +109,6 @@ export function evaluateBuild(
 
 // ─── Compiled Evaluation ───
 
-/**
- * Evaluate a build using the compiled damage expression.
- * Much faster than evaluateBuild: ~20-50 arithmetic ops, zero allocations.
- *
- * @param pieces - The 5-piece artifact tuple
- * @param compiled - Pre-compiled damage expression
- * @param charIdx - The character index in the team (for VarMapping)
- * @param reusableVars - Pre-allocated Float64Array (reused across calls)
- */
-export function evaluateBuildCompiled(
-  pieces: ArtifactTuple,
-  compiled: CompiledTeamDamage,
-  lookup: ArtifactVarLookup,
-  reusableVars: Float64Array
-): { damage: number } {
-  // Zero the vars array
-  reusableVars.fill(0);
-
-  // Fill vars from artifacts (fast path — no StatSheet construction)
-  fillVarsFromArtifactsFast(pieces, lookup, reusableVars);
-
-  // Check ER constraint
-  if (compiled.evaluateEr) {
-    const er = compiled.evaluateEr(reusableVars);
-    if (er < 0) return { damage: -1 }; // ER check encoded as threshold in the expr
-  }
-
-  // Check CR constraint
-  if (compiled.evaluateCr) {
-    const cr = compiled.evaluateCr(reusableVars);
-    if (cr < 0) return { damage: -1 };
-  }
-
-  // Evaluate damage
-  const damage = compiled.evaluate(reusableVars);
-  return { damage };
-}
-
 export function evaluateUpperBound(
   realPieces: (ArtifactData | null)[],
   superStatsRemaining: Partial<Record<StatKey, number>>[],
@@ -238,7 +197,7 @@ export function evaluateUpperBoundCompiled(
       const idx = lookup.keyToIdx.get(mainKey);
       if (idx !== undefined) {
         const displayVal = getMainStatValueAtLevel(
-          mainKey as import("@/data/types").MainStat,
+          mainKey as MainStat,
           art.rarity,
           art.level
         );

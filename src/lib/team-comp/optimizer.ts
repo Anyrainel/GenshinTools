@@ -7,18 +7,11 @@
 
 // Re-export optimizer types so consumers can import from this module
 export type {
-  TeamOptPassResult,
   TeamOptimizationProgress,
   TeamOptimizationResult,
-  TeamOptSingleResult,
-  TeamOptComboResult,
   TeamOptYield,
   TeamOptimizerOptions,
-  CharOptConfig,
-  TeamOptPassId,
 } from "./types";
-
-export type { TopKEntry } from "./optimizer/types";
 
 export { runCharacterBnB } from "./optimizer/characterBnB";
 export { runTeamOptimization } from "./optimizer/teamOptimization";

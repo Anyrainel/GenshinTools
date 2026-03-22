@@ -344,22 +344,12 @@ export const i18nUiData = {
       zh: "未配置配装，仅基于暴击率和暴击伤害评分。",
     },
     insights: {
-      title: { en: "Recommended Actions", zh: "推荐操作" },
       upgrade: { en: "Upgrade", zh: "强化" },
       swap: { en: "Swap", zh: "替换" },
       reroll: { en: "Reroll", zh: "洗词条" },
       farm: { en: "Farm", zh: "刷取" },
-      fixMain: { en: "Fix Main", zh: "修正主词条" },
       fromInventory: { en: "In Inventory", zh: "背包中" },
       fromCharacter: { en: "from {0}", zh: "取自 {0}" },
-      rerollCost: {
-        en: "{0} Dust",
-        zh: "{0} 启圣之尘",
-      },
-      farmOrCraft: {
-        en: "Or craft: {0} Elixir",
-        zh: "或制作: {0} 祝圣之霜",
-      },
       allGood: { en: "All Good!", zh: "完美!" },
       allGoodDescription: {
         en: "No suggestions for this character.",
@@ -370,8 +360,6 @@ export const i18nUiData = {
         zh: "角色池中的角色不计算推荐操作。他们装备的圣遗物甚至有可能被推荐给其他角色使用。",
       },
       goToTierList: { en: "Manage Tiers", zh: "管理层级" },
-      showMore: { en: "Show {0} more", zh: "展开更多 ({0})" },
-      showLess: { en: "Show less", zh: "收起" },
     },
     allOptimal: {
       en: "No recommendations — all builds are optimal!",
@@ -743,7 +731,6 @@ export const i18nUiData = {
     levelUpGain: { en: "Lv{0} → Lv{1}", zh: "{0}级 → {1}级" },
     base: { en: "Base", zh: "基础" },
     buffsLedger: { en: "Buffs & Effects Ledger", zh: "Buff 效果明细表" },
-    hideTrivial: { en: "Hide trivial/inactive", zh: "隐藏次要/未激活效果" },
     showAllBuffs: { en: "Show all buffs", zh: "显示所有效果" },
     teamResonance: { en: "Team Resonance", zh: "队伍共鸣" },
     nStacks: { en: "{0} stacks", zh: "{0}层" },
@@ -755,6 +742,7 @@ export const i18nUiData = {
     receiverOtherOnField: { en: "Other (On-Field)", zh: "仅队友-前台" },
     receiverTeam: { en: "Team", zh: "全队" },
     receiverOnField: { en: "On-Field", zh: "全队-前台" },
+    receiverCharOnField: { en: " (On-Field)", zh: "-前台" },
     setMismatch: {
       en: "Equipped set differs from Team Roster goal",
       zh: "已装备的套装与队伍配置目标不一致",
@@ -855,7 +843,6 @@ export const i18nUiData = {
     // Formula v2: Reaction Selector + Combo
     reaction: { en: "Reaction", zh: "元素反应" },
     combo: { en: "Combo", zh: "连招" },
-    totalRotation: { en: "Total Rotation Damage", zh: "循环总伤害" },
     formulaSelect: {
       en: "Formula Selection",
       zh: "公式选择",

@@ -34,7 +34,7 @@ export function cbs(
   return { type: "character", id: self.charId, triggers, origin };
 }
 
-export const ELEMENT_DMG_KEYS: StatKey[] = [
+const ELEMENT_DMG_KEYS: StatKey[] = [
   "pyro%",
   "hydro%",
   "electro%",

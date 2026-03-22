@@ -3,7 +3,7 @@
  *
  * Contains the team-level orchestration logic:
  * - Dynamic hyperparameter computation
- * - evaluateBuildDirect helper
+ * - evaluateBuildDirect helper (internal)
  * - findBestTeamAllocation (conflict-aware DFS)
  * - Heuristic artifact assignment helpers
  * - runTeamOptimization async generator (main entry point)
@@ -15,6 +15,7 @@ import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
 import { TeamBuild, evaluateCombo, hasOffFieldParts } from "../damageCalc";
 import { StatSheet } from "../damageModels";
+import type { BnBWorkerRequest, BnBWorkerResponse } from "../optimizer.worker";
 import { detectEquippedSets } from "../teamOptUtils";
 import type {
   CalcContext,
@@ -80,7 +81,7 @@ function computeHyperparams(inventorySize: number): {
 const warnedCalcErrors = new Set<string>();
 
 /** Helper to evaluate a build without a pre-existing BnBContext. */
-export function evaluateBuildDirect(
+function evaluateBuildDirect(
   pieces: ArtifactTuple,
   teamBuild: TeamBuild,
   swapCharId: string,
@@ -875,9 +876,7 @@ export async function* runTeamOptimization(
           // Short setup timeout (10s) — if the worker can't even start, fail fast
           let timeoutId = setTimeout(onTimeout, 10_000);
 
-          worker.onmessage = (
-            e: MessageEvent<import("../optimizer.worker").BnBWorkerResponse>
-          ) => {
+          worker.onmessage = (e: MessageEvent<BnBWorkerResponse>) => {
             const resp = e.data;
             if (resp.type === "ready") {
               // Worker setup done — switch to the full search budget
@@ -960,7 +959,7 @@ export async function* runTeamOptimization(
             resolve();
           };
 
-          const request: import("../optimizer.worker").BnBWorkerRequest = {
+          const request: BnBWorkerRequest = {
             id: 0,
             charId,
             charConfig,
@@ -1771,9 +1770,7 @@ export async function* runTeamOptimization(
               });
             }, timeoutMs);
 
-            worker.onmessage = (
-              e: MessageEvent<import("../optimizer.worker").BnBWorkerResponse>
-            ) => {
+            worker.onmessage = (e: MessageEvent<BnBWorkerResponse>) => {
               const resp = e.data;
               if (resp.type === "progress" || resp.type === "ready") return; // ignore progress/ready in Phase 3
               clearTimeout(timeoutId);
@@ -1816,7 +1813,7 @@ export async function* runTeamOptimization(
               });
             };
 
-            const request: import("../optimizer.worker").BnBWorkerRequest = {
+            const request: BnBWorkerRequest = {
               id: 0,
               charId: input.charId,
               charConfig: input.charConfig,

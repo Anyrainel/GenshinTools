@@ -13,8 +13,6 @@ import { useAccountStore } from "@/stores/useAccountStore";
 import { Check, Download, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export type { PendingImport };
-
 interface AccountManagerDialogProps {
   isOpen: boolean;
   onClose: () => void;

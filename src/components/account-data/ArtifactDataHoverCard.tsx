@@ -163,7 +163,7 @@ function ArtifactPlaceholder({
   );
 }
 
-export function ArtifactComparisonContent({
+function ArtifactComparisonContent({
   beforeArtifact,
   afterArtifact,
   slot,

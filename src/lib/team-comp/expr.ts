@@ -437,7 +437,7 @@ export function isConst(e: Expr): e is { tag: "const"; value: number } {
 }
 
 /** Get the constant value of an expression, or undefined if not constant. */
-export function constValue(e: Expr): number | undefined {
+function constValue(e: Expr): number | undefined {
   if (e.tag === "const") return e.value;
   return undefined;
 }

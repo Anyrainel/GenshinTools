@@ -3,7 +3,6 @@ import type {
   ArtifactData,
   CharacterData,
   Slot,
-  WeaponData,
 } from "@/data/types";
 
 // ─── ID generation ────────────────────────────────────────────────────────────
@@ -61,29 +60,6 @@ function findCharByKey(
   return data.characters.find((c) => c.key === key);
 }
 
-/** Find which character has a specific weapon equipped (by weapon id) */
-function findCharWithWeapon(
-  data: AccountData,
-  weaponId: string
-): CharacterData | undefined {
-  return data.characters.find((c) => c.weapon?.id === weaponId);
-}
-
-/** Find which character has a specific artifact equipped (by artifact id) */
-function findCharWithArtifact(
-  data: AccountData,
-  artifactId: string
-): { char: CharacterData; slot: Slot } | undefined {
-  for (const c of data.characters) {
-    for (const [slot, art] of Object.entries(c.artifacts)) {
-      if (art && art.id === artifactId) {
-        return { char: c, slot: slot as Slot };
-      }
-    }
-  }
-  return undefined;
-}
-
 // ─── Character stats ──────────────────────────────────────────────────────────
 
 export function updateCharacterStats(
@@ -136,63 +112,6 @@ export function unequipWeapon(data: AccountData, charKey: string): AccountData {
   return result;
 }
 
-/** Delete weapon from character (permanently remove) */
-export function deleteWeapon(data: AccountData, charKey: string): AccountData {
-  const result = cloneData(data);
-  const char = findCharByKey(result, charKey);
-  if (!char?.weapon) return result;
-
-  char.weapon = undefined;
-  return result;
-}
-
-/**
- * Equip a weapon from inventory onto a character.
- * If the character already has a weapon, the old one goes to inventory.
- */
-export function equipWeaponFromInventory(
-  data: AccountData,
-  charKey: string,
-  weaponId: string
-): AccountData {
-  const result = cloneData(data);
-  const char = findCharByKey(result, charKey);
-  if (!char) return result;
-
-  const invIdx = result.extraWeapons.findIndex((w) => w.id === weaponId);
-  if (invIdx === -1) return result;
-
-  const weapon = result.extraWeapons.splice(invIdx, 1)[0];
-
-  // Stash old weapon
-  if (char.weapon) {
-    result.extraWeapons.push(char.weapon);
-  }
-
-  char.weapon = weapon;
-  return result;
-}
-
-/**
- * Swap weapons between two characters.
- * If targetChar has no weapon, the weapon is simply moved.
- */
-export function swapWeaponWithCharacter(
-  data: AccountData,
-  charKey: string,
-  otherCharKey: string
-): AccountData {
-  const result = cloneData(data);
-  const char = findCharByKey(result, charKey);
-  const other = findCharByKey(result, otherCharKey);
-  if (!char || !other) return result;
-
-  const temp = char.weapon;
-  char.weapon = other.weapon;
-  other.weapon = temp;
-  return result;
-}
-
 /**
  * Change the weapon type (key) for a character.
  * Picks from inventory if available, or takes from another character (swap).
@@ -234,30 +153,6 @@ export function changeWeapon(
     key: newWeaponKey,
     level: 90,
     refinement: 1,
-    lock: false,
-  };
-  return result;
-}
-
-/** Create a new weapon and equip it */
-export function createAndEquipWeapon(
-  data: AccountData,
-  charKey: string,
-  weaponKey: string,
-  level = 90,
-  refinement = 1
-): AccountData {
-  const result = cloneData(data);
-  const char = findCharByKey(result, charKey);
-  if (!char) return result;
-
-  if (char.weapon) result.extraWeapons.push(char.weapon);
-
-  char.weapon = {
-    id: nextWeaponId(result),
-    key: weaponKey,
-    level,
-    refinement,
     lock: false,
   };
   return result;
@@ -371,49 +266,6 @@ export function updateArtifactStats(
   return result;
 }
 
-/** Change the artifact set for a slot. Tries inventory, then other chars, then creates new. */
-export function changeArtifactSet(
-  data: AccountData,
-  charKey: string,
-  slot: Slot,
-  newSetKey: string
-): AccountData {
-  const result = cloneData(data);
-  const char = findCharByKey(result, charKey);
-  if (!char) return result;
-
-  // Check inventory for matching set + slot
-  const invIdx = result.extraArtifacts.findIndex(
-    (a) => a.setKey === newSetKey && a.slotKey === slot
-  );
-  if (invIdx >= 0) {
-    const art = result.extraArtifacts.splice(invIdx, 1)[0];
-    const oldArt = char.artifacts[slot];
-    if (oldArt) result.extraArtifacts.push(oldArt);
-    char.artifacts[slot] = art;
-    return result;
-  }
-
-  // Stash old, create new
-  const oldArt = char.artifacts[slot];
-  if (oldArt) result.extraArtifacts.push(oldArt);
-
-  const mainStatKey =
-    slot === "flower" ? "hp" : slot === "plume" ? "atk" : "atk%";
-
-  char.artifacts[slot] = {
-    id: nextArtifactId(result),
-    setKey: newSetKey,
-    slotKey: slot,
-    level: 20,
-    rarity: 5,
-    mainStatKey,
-    lock: false,
-    substats: {},
-  };
-  return result;
-}
-
 /** Create a new artifact and equip it in a slot */
 export function createAndEquipArtifact(
   data: AccountData,
@@ -469,47 +321,10 @@ export function deleteInventoryArtifact(
 
 // ─── Query helpers ────────────────────────────────────────────────────────────
 
-/** Get all inventory weapons */
-export function getInventoryWeapons(data: AccountData): WeaponData[] {
-  return data.extraWeapons;
-}
-
 /** Get all inventory artifacts for a specific slot */
 export function getInventoryArtifactsForSlot(
   data: AccountData,
   slot: Slot
 ): ArtifactData[] {
   return data.extraArtifacts.filter((a) => a.slotKey === slot);
-}
-
-/** Get all equipped artifacts on other characters for a specific slot */
-export function getEquippedArtifactsOnOthers(
-  data: AccountData,
-  charKey: string,
-  slot: Slot
-): { artifact: ArtifactData; ownerKey: string }[] {
-  const results: { artifact: ArtifactData; ownerKey: string }[] = [];
-  for (const c of data.characters) {
-    if (c.key === charKey) continue;
-    const art = c.artifacts[slot];
-    if (art) {
-      results.push({ artifact: art, ownerKey: c.key });
-    }
-  }
-  return results;
-}
-
-/** Get all equipped weapons on other characters */
-export function getEquippedWeaponsOnOthers(
-  data: AccountData,
-  charKey: string
-): { weapon: WeaponData; ownerKey: string }[] {
-  const results: { weapon: WeaponData; ownerKey: string }[] = [];
-  for (const c of data.characters) {
-    if (c.key === charKey) continue;
-    if (c.weapon) {
-      results.push({ weapon: c.weapon, ownerKey: c.key });
-    }
-  }
-  return results;
 }

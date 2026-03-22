@@ -75,7 +75,7 @@ function spName(sp: string, t: T): string {
 // Tier Badge
 // ---------------------------------------------------------------------------
 
-export const TIER_BADGE_COLORS: Record<string, string> = {
+const TIER_BADGE_COLORS: Record<string, string> = {
   P: "bg-amber-500/20 text-amber-300 border-amber-500/30",
   Q: "bg-purple-500/20 text-purple-300 border-purple-500/30",
   N: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -92,7 +92,7 @@ export const TIER_TEXT_COLORS: Record<string, string> = {
 export const BADGE_GREEN = "bg-green-500/20 text-green-300 border-green-500/30";
 export const BADGE_RED = "bg-red-500/20 text-red-300 border-red-500/30";
 
-export function TierBadge({ tier, t }: { tier: string; t: T }) {
+function TierBadge({ tier, t }: { tier: string; t: T }) {
   return (
     <span
       className={cn(

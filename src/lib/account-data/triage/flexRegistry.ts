@@ -3,7 +3,7 @@ import { SUB_WEIGHTS, pJoint } from "./tierMath";
 import { getMainProb } from "./tierTableBuilder";
 import type { FlexPattern, TriageRule } from "./types";
 
-export const ELEMENT_MAINS = new Set<MainStat>([
+const ELEMENT_MAINS = new Set<MainStat>([
   "pyro%",
   "hydro%",
   "anemo%",
@@ -26,7 +26,7 @@ const SUB_ORDER: Record<SubStat, number> = {
   def: 9,
 };
 
-export function sortSubs(subs: SubStat[]): SubStat[] {
+function sortSubs(subs: SubStat[]): SubStat[] {
   return [...subs].sort((a, b) => (SUB_ORDER[a] ?? 99) - (SUB_ORDER[b] ?? 99));
 }
 

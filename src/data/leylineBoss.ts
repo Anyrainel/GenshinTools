@@ -79,7 +79,7 @@ export interface BossDescription {
   describe_names?: BossDescribeName[];
 }
 
-export interface ScheduleName {
+interface ScheduleName {
   id: number;
   name: string;
 }

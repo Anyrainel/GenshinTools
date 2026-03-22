@@ -128,7 +128,7 @@ export function slotFingerprint(slot: SlotConfig): string {
 }
 
 /** Full config fingerprint across all slots (ignores mainStats and servedCharacters). */
-export function configFingerprint(config: SetConfig): string {
+function configFingerprint(config: SetConfig): string {
   return SLOT_KEYS.map((key) => slotFingerprint(config[key])).join("|");
 }
 

@@ -1,8 +1,4 @@
-import {
-  artifactHalfSetsById,
-  statPoolWithWeights,
-  statPools,
-} from "@/data/constants";
+import { artifactHalfSetsById, statPools } from "@/data/constants";
 import type { Build, MainStat, Slot } from "@/data/types";
 
 /**
@@ -34,14 +30,4 @@ export function getAcceptedMainStats(
  */
 export function getEligibleSetsForHalfSet(halfSetId: string): string[] {
   return artifactHalfSetsById[halfSetId]?.setIds ?? [];
-}
-
-/**
- * Get the main stat drop rate for a given slot + mainStat combination.
- * Returns a percentage (e.g., 26.66 for ATK% sands).
- */
-export function getMainStatDropRate(slot: Slot, mainStat: MainStat): number {
-  const weights = statPoolWithWeights[slot as keyof typeof statPoolWithWeights];
-  if (!weights) return 100; // flower/plume have fixed main stats
-  return (weights as Record<string, number>)[mainStat] ?? 0;
 }

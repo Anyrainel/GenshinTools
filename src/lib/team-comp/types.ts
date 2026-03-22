@@ -71,6 +71,8 @@ export type BuffSource = {
   /** Max activation count per rotation. Greedy allocation distributes stacks
    *  across formula parts to maximize total damage. */
   maxStacks?: number;
+  /** Display-only element hint (e.g. for gleam resonance icon). */
+  element?: Element;
 };
 
 /** buffKey → { partIndex → activatedHits } */
@@ -336,9 +338,6 @@ export type CalcContext = {
 // ─── Reaction Override (Formula v2) ───
 
 /** Which reactions a formula part can participate in. */
-export type AmplifyReaction = "vaporize" | "melt";
-export type CatalyzeReaction = "spread" | "aggravate";
-
 /** Per-formula reaction override (gate + per-part).
  *  Default: all parts inherit the gate reaction.
  *  partReactions stores explicit overrides (typically "none" to disable a part).
@@ -349,14 +348,6 @@ export type ReactionOverride = {
   partReactions?: Record<number, ReactionType>; // per-part overrides (sparse: only non-default)
   partHits?: Record<number, number>; // per-part reacting hit count (for multi-hit parts)
 };
-
-export function isAmplifying(r: ReactionType): r is AmplifyReaction {
-  return r === "vaporize" || r === "melt";
-}
-
-export function isCatalyze(r: ReactionType): r is CatalyzeReaction {
-  return r === "spread" || r === "aggravate";
-}
 
 /** Resolve the effective reaction for a formula part given overrides.
  *  Default behavior: ALL parts inherit the gate reaction (if element-eligible).

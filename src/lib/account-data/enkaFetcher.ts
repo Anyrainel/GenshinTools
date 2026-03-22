@@ -56,9 +56,9 @@ async function ensureReverseMaps(): Promise<void> {
   );
 }
 
-export type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
-export type StatKey = string;
-export type SetKey = string;
+type SlotKey = "flower" | "plume" | "sands" | "goblet" | "circlet";
+type StatKey = string;
+type SetKey = string;
 
 // --- Enka API Types ---
 

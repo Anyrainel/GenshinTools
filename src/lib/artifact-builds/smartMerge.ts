@@ -45,12 +45,7 @@ const SCALING_STATS: ReadonlySet<SubStat> = new Set([
  * ATK% first (ATK buffs are most common), DEF% (rare scaling supports),
  * HP%, EM last.
  */
-export const SCALING_PRIORITY: readonly SubStat[] = [
-  "atk%",
-  "def%",
-  "hp%",
-  "em",
-];
+const SCALING_PRIORITY: readonly SubStat[] = ["atk%", "def%", "hp%", "em"];
 
 /** Max non-CR+CD config slots. */
 const CONFIG_BUDGET = 2;

@@ -66,7 +66,7 @@ import { useTierStore } from "@/stores/useTierStore";
 import { Ban, Bookmark, Check, Search, Trophy, X } from "lucide-react";
 import { memo, useCallback, useMemo, useState } from "react";
 
-export type ItemPickerType = "character" | "weapon" | "artifact";
+type ItemPickerType = "character" | "weapon" | "artifact";
 
 export type ArtifactConfig =
   | { type: "4pc"; setId: string }

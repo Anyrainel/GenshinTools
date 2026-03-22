@@ -18,7 +18,7 @@ import {
   Users,
 } from "lucide-react";
 
-export interface NavTab {
+interface NavTab {
   label: string;
   href: string;
   icon?: LucideIcon;
@@ -26,7 +26,7 @@ export interface NavTab {
   tourStepId?: string; // Tour step ID for onboarding spotlight
 }
 
-export interface NavItem {
+interface NavItem {
   label: string;
   href: string;
   children?: NavTab[];
