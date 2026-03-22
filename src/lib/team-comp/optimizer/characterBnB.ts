@@ -13,8 +13,6 @@ import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import {
-  type ArtifactVarLookup,
-  type CompiledTeamDamage,
   buildArtifactVarLookup,
   compileTeamDamage,
   fillVarsFromRawStats,
@@ -51,6 +49,7 @@ import type {
   ArtifactTuple,
   BnBContext,
   CharacterBnBResult,
+  CompiledContext,
   MarginalWeights,
   PreparedSlotData,
   SuperArtifact,
@@ -182,9 +181,7 @@ function bnbDfsCompiled(
   slotSupers: SuperArtifact[],
   ctx: BnBContext
 ): void {
-  const compiled = ctx.compiled!;
-  const lookup = ctx.compiledLookup!;
-  const charIdx = ctx.compiledCharIdx!;
+  const { compiled, lookup, charIdx } = ctx.compiledCtx!;
   const { constraints, collector } = ctx;
   const { hasEr, hasCr } = constraints;
   const numVars = compiled.numVars;
@@ -592,13 +589,10 @@ export function runCharacterBnB(
       );
 
   // Try to compile the damage formula for fast evaluation in DFS
-  let compiled: CompiledTeamDamage | undefined;
-  let compiledVars: Float64Array | undefined;
-  let compiledCharIdx: number | undefined;
-  let compiledLookup: ArtifactVarLookup | undefined;
+  let compiledCtx: CompiledContext | undefined;
   if (optCtx && swapCharId === formulaCharId && !scoreFn && !_noCompile) {
     try {
-      compiled = compileTeamDamage(
+      const compiled = compileTeamDamage(
         teamBuild,
         formulaCharId,
         formulaId,
@@ -610,15 +604,15 @@ export function runCharacterBnB(
         constraints.minCr,
         partialBuffs
       );
-      compiledVars = new Float64Array(compiled.numVars);
-      compiledCharIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);
-      compiledLookup = buildArtifactVarLookup(
-        compiled.varMapping,
-        compiledCharIdx
-      );
+      const charIdx = Object.keys(teamBuild.charBuilds).indexOf(swapCharId);
+      compiledCtx = {
+        compiled,
+        vars: new Float64Array(compiled.numVars),
+        charIdx,
+        lookup: buildArtifactVarLookup(compiled.varMapping, charIdx),
+      };
     } catch {
       // Compilation failed — fall back to standard evaluation
-      compiled = undefined;
     }
   }
 
@@ -638,10 +632,7 @@ export function runCharacterBnB(
     evaluations: 0,
     sinceLastYield: 0,
     optCtx,
-    compiled,
-    compiledVars,
-    compiledCharIdx,
-    compiledLookup,
+    compiledCtx,
     deadline,
     onProgress,
   };
@@ -824,11 +815,7 @@ export function runCharacterBnB(
 
     // Sort by upper bound descending — explore most promising patterns first
     tasks.sort((a, b) => b.upperBound - a.upperBound);
-    const useCompiled =
-      ctx.compiled &&
-      ctx.compiledVars &&
-      ctx.compiledLookup &&
-      ctx.compiledCharIdx != null;
+    const useCompiled = !!ctx.compiledCtx;
     for (const task of tasks) {
       if (ctx.aborted) break;
       if (
@@ -853,22 +840,18 @@ export function runCharacterBnB(
   }
 
   function computePatternUpperBound(supers: SuperArtifact[]): number {
-    if (
-      ctx.compiled &&
-      ctx.compiledVars &&
-      ctx.compiledLookup &&
-      ctx.compiledCharIdx != null
-    ) {
+    if (ctx.compiledCtx) {
+      const { compiled, lookup, charIdx, vars } = ctx.compiledCtx;
       const superStats = supers.map((s) => s.stats);
       return evaluateUpperBoundCompiled(
         [],
         0,
         superStats,
         superStats.length,
-        ctx.compiled,
-        ctx.compiledLookup,
-        ctx.compiledCharIdx,
-        ctx.compiledVars
+        compiled,
+        lookup,
+        charIdx,
+        vars
       );
     }
     return evaluateUpperBound(

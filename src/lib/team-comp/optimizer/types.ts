@@ -58,6 +58,16 @@ export interface PreparedSlotData {
   setSuperArtifacts: Map<string, SuperArtifact>;
 }
 
+// ─── Compiled Evaluation Context ───
+
+/** Pre-compiled damage expression for fast DFS evaluation. */
+export interface CompiledContext {
+  compiled: CompiledTeamDamage;
+  vars: Float64Array;
+  charIdx: number;
+  lookup: ArtifactVarLookup;
+}
+
 // ─── B&B Context ───
 
 /** Mutable state shared across the DFS and hill-climbing within a single character B&B run. */
@@ -76,10 +86,7 @@ export interface BnBContext {
   evaluations: number;
   sinceLastYield: number;
   optCtx?: OptimizerContext;
-  compiled?: CompiledTeamDamage;
-  compiledVars?: Float64Array;
-  compiledCharIdx?: number;
-  compiledLookup?: ArtifactVarLookup;
+  compiledCtx?: CompiledContext;
   deadline?: number;
   aborted?: boolean;
   onProgress?: (bestDamage: number, evaluations: number) => void;

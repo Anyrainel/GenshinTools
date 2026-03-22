@@ -20,6 +20,24 @@ import type {
 } from "../types";
 import type { ArtifactTuple, BnBContext, SuperArtifact } from "./types";
 
+// ─── Off-Field Stats ───
+
+/** Compute team stats with a non-formula character on-field (for off-field formula parts). */
+export function getOffFieldStats(
+  teamBuild: TeamBuild,
+  formulaCharId: string,
+  formulaId: string,
+  sheets: Record<string, StatSheet>,
+  calcContext: CalcContext
+): Record<string, StatSheet> | undefined {
+  if (!hasOffFieldParts(teamBuild, formulaCharId, formulaId)) return undefined;
+  const otherCharId = Object.keys(teamBuild.charBuilds).find(
+    (id) => id !== formulaCharId
+  );
+  if (!otherCharId) return undefined;
+  return teamBuild.getTeamStats(sheets, otherCharId, calcContext);
+}
+
 // ─── Core Evaluation ───
 
 export function evaluateBuild(
@@ -66,20 +84,14 @@ export function evaluateBuild(
     return { damage: -1, result: null };
   }
 
-  // Compute off-field stats if the formula has off-field parts
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        { ...baseSheets, [swapCharId]: charSheet },
-        otherCharId,
-        calcContext
-      );
-    }
-  }
+  const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
+  const offFieldStats = getOffFieldStats(
+    teamBuild,
+    formulaCharId,
+    formulaId,
+    updatedSheets,
+    calcContext
+  );
 
   const dmgRes = teamBuild.getDamageResult(
     formulaCharId,
@@ -130,20 +142,14 @@ export function evaluateUpperBound(
         calcTargetId,
         calcContext
       );
-  // Compute off-field stats if the formula has off-field parts
-  let offFieldStats: Record<string, StatSheet> | undefined;
-  if (hasOffFieldParts(teamBuild, formulaCharId, formulaId)) {
-    const otherCharId = Object.keys(teamBuild.charBuilds).find(
-      (id) => id !== formulaCharId
-    );
-    if (otherCharId) {
-      offFieldStats = teamBuild.getTeamStats(
-        { ...baseSheets, [swapCharId]: sheet },
-        otherCharId,
-        calcContext
-      );
-    }
-  }
+  const updatedSheets = { ...baseSheets, [swapCharId]: sheet };
+  const offFieldStats = getOffFieldStats(
+    teamBuild,
+    formulaCharId,
+    formulaId,
+    updatedSheets,
+    calcContext
+  );
 
   return teamBuild.getDamageResult(
     formulaCharId,

@@ -13,7 +13,7 @@ import { artifactHalfSetsById } from "@/data/constants";
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { scoreSlot } from "../../account-data/artifactScore";
-import { TeamBuild, evaluateCombo, hasOffFieldParts } from "../damageCalc";
+import { TeamBuild, evaluateCombo } from "../damageCalc";
 import { StatSheet } from "../damageModels";
 import type { BnBWorkerRequest, BnBWorkerResponse } from "../optimizer.worker";
 import { detectEquippedSets } from "../teamOptUtils";
@@ -41,7 +41,7 @@ import {
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
 import { ConstraintChecker } from "./constraintChecker";
-import { evaluateBuild } from "./evaluation";
+import { evaluateBuild, getOffFieldStats } from "./evaluation";
 import { TopKCollector } from "./topKCollector";
 import type { ArtifactTuple, BnBContext, TopKEntry } from "./types";
 
@@ -597,18 +597,11 @@ export async function* runTeamOptimization(
       }
     : undefined;
 
-  // Helper: compute off-field stats for a given team build and sheets
   const getOffFieldStatsFor = (
     tb: TeamBuild,
     sheets: Record<string, StatSheet>
-  ): Record<string, StatSheet> | undefined => {
-    if (!hasOffFieldParts(tb, carryCharId, formulaId)) return undefined;
-    const otherCharId = Object.keys(tb.charBuilds).find(
-      (id) => id !== carryCharId
-    );
-    if (!otherCharId) return undefined;
-    return tb.getTeamStats(sheets, otherCharId, calcContext);
-  };
+  ): Record<string, StatSheet> | undefined =>
+    getOffFieldStats(tb, carryCharId, formulaId, sheets, calcContext);
 
   const allCharIds = Object.keys(perChar);
   const carryCharIds = isComboMode
