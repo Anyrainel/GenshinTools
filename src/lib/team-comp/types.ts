@@ -39,7 +39,10 @@ export type StatKey =
   // Enemy debuff / modifier stats
   | "defReduction%"
   | "defIgnore%"
-  | "resReduction%";
+  | "resReduction%"
+  // Non-artifact element DMG bonus keys (used in formula DMG% alias expansion)
+  | "pneuma%"
+  | "lunar%";
 
 export type StatEntry = {
   key: StatKey;

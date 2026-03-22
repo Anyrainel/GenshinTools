@@ -12,9 +12,37 @@ if [ "$current_branch" = "master" ] || [ "$current_branch" = "main" ]; then
   fi
 fi
 
-# TypeScript type check + tests
-STAGED_TS_FILES=$(git diff --name-only HEAD@{1}..HEAD 2>/dev/null | grep -E '\.(ts|tsx)$' || true)
-if [ -n "$STAGED_TS_FILES" ]; then
+# Read push info from stdin (format: <local ref> <local sha> <remote ref> <remote sha>)
+# Determine the range of commits being pushed.
+has_ts=false
+has_py=false
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Skip delete pushes
+  if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue
+  fi
+  # If remote sha is all zeros, this is a new branch — compare against merge-base with origin/master
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    merge_base=$(git merge-base origin/master "$local_sha" 2>/dev/null || echo "")
+    if [ -z "$merge_base" ]; then
+      # Can't determine base — run all checks to be safe
+      has_ts=true
+      has_py=true
+      continue
+    fi
+    remote_sha="$merge_base"
+  fi
+  changed_files=$(git diff --name-only "$remote_sha".."$local_sha" 2>/dev/null || echo "")
+  if echo "$changed_files" | grep -qE '\.(ts|tsx)$'; then
+    has_ts=true
+  fi
+  if echo "$changed_files" | grep -qE 'scripts/.*\.py$'; then
+    has_py=true
+  fi
+done
+
+# TypeScript type check + tests (always run full type-check when any TS file changed)
+if [ "$has_ts" = true ]; then
   echo "Running TypeScript type check..."
   npm run type-check || exit 1
 
@@ -23,8 +51,7 @@ if [ -n "$STAGED_TS_FILES" ]; then
 fi
 
 # Python checks
-STAGED_PY_FILES=$(git diff --name-only HEAD@{1}..HEAD 2>/dev/null | grep -E 'scripts/.*\.py$' || true)
-if [ -n "$STAGED_PY_FILES" ]; then
+if [ "$has_py" = true ]; then
   echo "Running ty check..."
   cd scripts || exit 1
   uv run ty check . || exit 1

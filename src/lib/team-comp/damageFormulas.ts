@@ -119,7 +119,7 @@ const DMG_PERCENT_ALIASES: StatKey[] = [
   "geo%",
   "dendro%",
   "pneuma%",
-  "physical%",
+  "phys%",
   "lunar%",
 ];
 

@@ -20,14 +20,14 @@ import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
+import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
+import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
+import { calcDisplayResult, toStatSheets } from "@/lib/team-comp/teamOptUtils";
 import type {
   OptFailReason,
   TeamOptimizationProgress,
   TeamOptimizationResult,
-} from "@/lib/team-comp/optimizer";
-import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
-import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
-import { calcDisplayResult, toStatSheets } from "@/lib/team-comp/teamOptUtils";
+} from "@/lib/team-comp/types";
 import type {
   CalcContext,
   ComboLine,

@@ -12,7 +12,7 @@ import {
   computeDefaultActivation,
   distributeComboHits,
 } from "@/lib/team-comp/stackAllocation";
-import type { CalcContext } from "@/lib/team-comp/types";
+import type { CalcContext, StatKey } from "@/lib/team-comp/types";
 import { buffSourceKey, exclusionKey } from "@/lib/team-comp/types";
 
 const ctx: CalcContext = { enemyLevel: 90, enemyRes: 0.1 };
@@ -59,7 +59,7 @@ function makeBuffInfo(maxStacks: number, origin = "C2"): StackLimitedBuffInfo {
 function makeSansBuffStats(
   postStats: StatSheet,
   buffs: StackLimitedBuffInfo[],
-  removals: { key: string; value: number }[][]
+  removals: { key: StatKey; value: number }[][]
 ): Map<string, StatSheet> {
   const filter = {
     elements: ["Cryo" as const],
@@ -85,7 +85,7 @@ function makeSansBuffStats(
  */
 function makeStatVariants(
   postStats: StatSheet,
-  buffConfigs: { buffKey: string; entries: { key: string; value: number }[] }[]
+  buffConfigs: { buffKey: string; entries: { key: StatKey; value: number }[] }[]
 ): Map<string, StatSheet> {
   const filter = {
     elements: ["Cryo" as const],
