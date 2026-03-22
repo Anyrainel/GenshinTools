@@ -86,6 +86,56 @@ type ScalingKey = "atk" | "hp" | "def" | "em";
 /** Additional stat term for talents that scale off two stats (e.g., X% ATK + Y% EM). */
 type ExtraScalingTerm = { key: ScalingKey; multiplier: number };
 
+// ─── Shared stat key sets for getReadKeys() ─────────────────────────────────
+
+/** Keys from the CRIT zone. */
+const CRIT_KEYS: StatKey[] = ["cr", "cd", "reactionCr", "reactionCd"];
+/** Keys from the DEF zone. */
+const DEF_KEYS: StatKey[] = ["defReduction%", "defIgnore%"];
+/** Keys from the RES zone. */
+const RES_KEYS: StatKey[] = ["resReduction%"];
+/** Keys from the base-damage zone (baseDmg% layer + flat). */
+const BASE_DMG_KEYS: StatKey[] = ["baseDmg%", "baseDmg"];
+/** Keys from the reaction zone (amplify/catalyze/transform). */
+const REACTION_KEYS: StatKey[] = ["em", "reactionDmg%"];
+
+/**
+ * Expand read keys to include implicit dependencies.
+ * Reading "atk" also depends on "atk%", "baseAtk", and per-element DMG keys
+ * that are normalized to "dmg%" by StatSheet.
+ */
+const SCALED_STAT_DEPS: Record<string, StatKey[]> = {
+  atk: ["atk%", "baseAtk"],
+  hp: ["hp%", "baseHp"],
+  def: ["def%", "baseDef"],
+};
+/** Element-specific DMG keys that get normalized to "dmg%" in StatSheet. */
+const DMG_PERCENT_ALIASES: StatKey[] = [
+  "pyro%",
+  "hydro%",
+  "electro%",
+  "cryo%",
+  "anemo%",
+  "geo%",
+  "dendro%",
+  "pneuma%",
+  "physical%",
+  "lunar%",
+];
+
+function expandReadKeys(keys: Set<StatKey>): ReadonlySet<StatKey> {
+  const expanded = new Set(keys);
+  for (const k of keys) {
+    const deps = SCALED_STAT_DEPS[k];
+    if (deps) for (const d of deps) expanded.add(d);
+  }
+  // If formula reads dmg%, it also reads per-element DMG aliases
+  if (expanded.has("dmg%")) {
+    for (const alias of DMG_PERCENT_ALIASES) expanded.add(alias);
+  }
+  return expanded;
+}
+
 export abstract class DamageFormula {
   constructor(
     readonly talentMultiplier: number,
@@ -96,6 +146,19 @@ export abstract class DamageFormula {
     this.validateReaction();
   }
 
+  /**
+   * All StatKeys this formula reads from the StatSheet during evaluation.
+   * Used by the display layer to determine which buffs are relevant to each part.
+   */
+  abstract getReadKeys(): ReadonlySet<StatKey>;
+
+  /** Common keys read by zone helpers shared across formula types. */
+  protected baseScalingKeys(): StatKey[] {
+    const keys: StatKey[] = [this.scalingKey];
+    if (this.extraTerm) keys.push(this.extraTerm.key);
+    return keys;
+  }
+
   abstract calc(stats: StatSheet, charLevel: number, ctx: CalcContext): number;
 
   abstract display(
@@ -103,6 +166,17 @@ export abstract class DamageFormula {
     charLevel: number,
     ctx: CalcContext
   ): DisplayPart;
+
+  /** display() + attach readKeys for per-part buff relevance. */
+  displayFull(
+    stats: StatSheet,
+    charLevel: number,
+    ctx: CalcContext
+  ): DisplayPart {
+    const dp = this.display(stats, charLevel, ctx);
+    dp.readKeys = expandReadKeys(new Set(this.getReadKeys()));
+    return dp;
+  }
 
   /** Subclasses override to restrict which reaction types are valid. */
   protected validateReaction(): void {}
@@ -312,6 +386,18 @@ export abstract class DamageFormula {
 
 /** Direct damage: BaseDmg × DmgBonus × DEFMult × RESMult × CritMult */
 export class DirectFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...this.baseScalingKeys(),
+      "dmg%",
+      ...BASE_DMG_KEYS,
+      ...CRIT_KEYS,
+      ...DEF_KEYS,
+      ...RES_KEYS,
+      "elevated%",
+    ]);
+  }
+
   protected override validateReaction(): void {
     if (this.tag.reaction !== "none") {
       throw new Error(
@@ -401,6 +487,11 @@ export class DirectFormula extends DamageFormula {
 
 /** Amplifying reactions: Direct × ReactionBase × (1 + EMBonus + ReactionDmgBonus%) */
 export class AmplifyFormula extends DirectFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    const base = super.getReadKeys();
+    return new Set<StatKey>([...base, ...REACTION_KEYS]);
+  }
+
   protected override validateReaction(): void {
     if (this.tag.reaction !== "melt" && this.tag.reaction !== "vaporize") {
       throw new Error(
@@ -476,6 +567,19 @@ export class AmplifyFormula extends DirectFormula {
 
 /** Additive reactions (Spread/Aggravate): BaseDmg + FlatAdditive, then normal multipliers */
 export class CatalyzeFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...this.baseScalingKeys(),
+      ...REACTION_KEYS,
+      "dmg%",
+      ...BASE_DMG_KEYS,
+      ...CRIT_KEYS,
+      ...DEF_KEYS,
+      ...RES_KEYS,
+      "elevated%",
+    ]);
+  }
+
   protected override validateReaction(): void {
     if (this.tag.reaction !== "spread" && this.tag.reaction !== "aggravate") {
       throw new Error(
@@ -631,6 +735,15 @@ export class CatalyzeFormula extends DamageFormula {
 
 /** Transformative reactions: LevelMult × ReactionCoeff × (1 + EMBonus + ReactionDmgBonus%) × RESMult. No DEF. Optional CRIT via reaction-specific CR/CD. */
 export class TransformFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...REACTION_KEYS,
+      ...RES_KEYS,
+      "reactionCr",
+      "reactionCd",
+    ]);
+  }
+
   protected override validateReaction(): void {
     if (!(this.tag.reaction in TRANSFORMATIVE_COEFFICIENTS)) {
       throw new Error(
@@ -741,6 +854,17 @@ export class TransformFormula extends DamageFormula {
  * Has separate multiplicative layers: BaseDmgBonus (§8.7) and Elevation (§4).
  */
 export class LunarFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...REACTION_KEYS,
+      "baseDmg%",
+      "reactionBaseDmg%",
+      "elevated%",
+      ...CRIT_KEYS,
+      ...RES_KEYS,
+    ]);
+  }
+
   protected override validateReaction(): void {
     if (!(this.tag.reaction in LUNAR_REACTION_COEFFICIENTS)) {
       throw new Error(
@@ -863,6 +987,18 @@ export class LunarFormula extends DamageFormula {
  *     × (1+elevated%) × CritMult × RESMult
  */
 export class LunarDirectFormula extends DamageFormula {
+  override getReadKeys(): ReadonlySet<StatKey> {
+    return new Set<StatKey>([
+      ...this.baseScalingKeys(),
+      ...REACTION_KEYS,
+      ...BASE_DMG_KEYS,
+      "reactionBaseDmg%",
+      "elevated%",
+      ...CRIT_KEYS,
+      ...RES_KEYS,
+    ]);
+  }
+
   protected override validateReaction(): void {
     if (!(this.tag.reaction in LUNAR_DIRECT_COEFFICIENTS)) {
       throw new Error(
