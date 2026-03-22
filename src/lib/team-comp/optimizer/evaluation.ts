@@ -18,7 +18,6 @@ import type {
   ReactionOverride,
   StatKey,
 } from "../types";
-import { getArtifactCr, getArtifactEr } from "./artifactScoring";
 import type { ArtifactTuple, BnBContext, SuperArtifact } from "./types";
 
 // ─── Core Evaluation ───
@@ -35,11 +34,7 @@ export function evaluateBuild(
     baseSheets,
     calcTargetId,
     calcContext,
-    erCheckCharId,
-    minEr,
-    minCr,
-    erFloor,
-    crFloor,
+    constraints,
     reactionOverride,
     scoreFn,
     optCtx,
@@ -48,18 +43,8 @@ export function evaluateBuild(
   const charSheet = StatSheet.fromArtifacts(pieces);
 
   if (scoreFn) {
-    // Check ER/CR constraints even in combo/scoreFn mode.
-    // Uses the same erFloor + artifactEr arithmetic as DFS feasibility pruning.
-    if (minEr > 0) {
-      let artEr = 0;
-      for (const p of pieces) artEr += getArtifactEr(p);
-      if (erFloor + artEr < minEr) return { damage: -1, result: null };
-    }
-    if (minCr > 0) {
-      let artCr = 0;
-      for (const p of pieces) artCr += getArtifactCr(p);
-      if (crFloor + artCr < minCr) return { damage: -1, result: null };
-    }
+    if (!constraints.isFeasibleByArtifacts(pieces))
+      return { damage: -1, result: null };
     const updatedSheets = { ...baseSheets, [swapCharId]: charSheet };
     return { damage: scoreFn(updatedSheets, calcTargetId), result: null };
   }
@@ -72,13 +57,13 @@ export function evaluateBuild(
         calcContext
       );
 
-  if (minEr > 0) {
-    const er = postStats[erCheckCharId]?.get("er", null) ?? 0;
-    if (er < minEr) return { damage: -1, result: null };
-  }
-  if (minCr > 0) {
-    const cr = postStats[erCheckCharId]?.get("cr", null) ?? 0;
-    if (cr < minCr) return { damage: -1, result: null };
+  if (
+    !constraints.isFeasibleByStats(
+      postStats[constraints.charId]?.get("er", null) ?? 0,
+      postStats[constraints.charId]?.get("cr", null) ?? 0
+    )
+  ) {
+    return { damage: -1, result: null };
   }
 
   // Compute off-field stats if the formula has off-field parts

@@ -40,6 +40,7 @@ import {
   getArtifactEr,
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
+import { ConstraintChecker } from "./constraintChecker";
 import { evaluateBuild } from "./evaluation";
 import { TopKCollector } from "./topKCollector";
 import type { ArtifactTuple, BnBContext, TopKEntry } from "./types";
@@ -90,21 +91,10 @@ function evaluateBuildDirect(
   baseSheets: Record<string, StatSheet>,
   calcTargetId: string,
   calcContext: CalcContext,
-  erCheckCharId: string,
-  minEr: number,
-  minCr: number,
+  constraints: ConstraintChecker,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): { damage: number; result: DamageResult | null } {
-  // Compute erFloor/crFloor so the scoreFn constraint check works correctly
-  let erFloor = 0;
-  let crFloor = 0;
-  if (minEr > 0 || minCr > 0) {
-    const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-    const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-    if (minEr > 0) erFloor = blStats[erCheckCharId]?.get("er", null) ?? 0;
-    if (minCr > 0) crFloor = blStats[erCheckCharId]?.get("cr", null) ?? 0;
-  }
   const tempCtx: BnBContext = {
     teamBuild,
     swapCharId,
@@ -113,11 +103,7 @@ function evaluateBuildDirect(
     baseSheets,
     calcTargetId,
     calcContext,
-    erCheckCharId,
-    minEr,
-    minCr,
-    erFloor,
-    crFloor,
+    constraints,
     reactionOverride,
     scoreFn,
     collector: new TopKCollector(1),
@@ -1696,6 +1682,15 @@ export async function* runTeamOptimization(
       const currentPieces = allSlots.map(
         (s) => bestArtifactsByChar[charId]?.[s] ?? null
       ) as ArtifactTuple;
+      const phase3Constraints = new ConstraintChecker(
+        effectiveTeamBuild,
+        charId,
+        refinedBaseSheets,
+        carryCharId,
+        calcContext,
+        charConfig.minEr,
+        charConfig.minCr
+      );
       const currentEval = evaluateBuildDirect(
         currentPieces,
         effectiveTeamBuild,
@@ -1705,9 +1700,7 @@ export async function* runTeamOptimization(
         refinedBaseSheets,
         carryCharId,
         calcContext,
-        charId,
-        charConfig.minEr,
-        charConfig.minCr,
+        phase3Constraints,
         reactionOverride,
         comboScoreFn
       );
@@ -2120,20 +2113,16 @@ export async function* runTeamOptimization(
       // prioritizing the violated stat (force mainstat pieces, then re-sort).
       const { minEr, minCr } = charConfig;
       if (minEr > 0 || minCr > 0) {
-        // Compute baseline ER/CR (with empty sheet for this char)
-        const blSheets = {
-          ...baseSheets,
-          [charId]: new StatSheet([]),
-        };
-        const blStats = effectiveTeamBuild.getTeamStats(
-          blSheets,
+        const checker = new ConstraintChecker(
+          effectiveTeamBuild,
+          charId,
+          baseSheets,
           carryCharId,
-          calcContext
+          calcContext,
+          minEr,
+          minCr
         );
-        const erFloor = minEr > 0 ? (blStats[charId]?.get("er", null) ?? 0) : 0;
-        const crFloor = minCr > 0 ? (blStats[charId]?.get("cr", null) ?? 0) : 0;
 
-        // Sum ER/CR from picked artifacts
         let pickedEr = 0;
         let pickedCr = 0;
         for (const slot of allSlots) {
@@ -2141,8 +2130,10 @@ export async function* runTeamOptimization(
           pickedCr += getArtifactCr(picked[slot]);
         }
 
-        const erViolated = minEr > 0 && erFloor + pickedEr < minEr - 1e-6;
-        const crViolated = minCr > 0 && crFloor + pickedCr < minCr - 1e-6;
+        const erViolated =
+          checker.hasEr && checker.erFloor + pickedEr < checker.minEr - 1e-6;
+        const crViolated =
+          checker.hasCr && checker.crFloor + pickedCr < checker.minCr - 1e-6;
 
         if (erViolated || crViolated) {
           // Constraint violated. Re-pick: force mainstat pieces for the

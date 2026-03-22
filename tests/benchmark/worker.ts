@@ -17,7 +17,7 @@ import type { Team } from "./runner";
 interface RunMessage {
   type: "run";
   team: Team;
-  algorithm: "v1" | "v2" | "mona";
+  algorithm: "v1" | "v2" | "astar" | "mona" | "monaV2";
   timeoutMs: number;
   perCharMs?: number;
   maxArtsPerSlot?: number;

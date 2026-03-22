@@ -14,6 +14,7 @@ import type {
   ReactionOverride,
   StatKey,
 } from "../types";
+import type { ConstraintChecker } from "./constraintChecker";
 
 // ─── Artifact Types ───
 
@@ -68,11 +69,7 @@ export interface BnBContext {
   baseSheets: Record<string, StatSheet>;
   calcTargetId: string;
   calcContext: CalcContext;
-  erCheckCharId: string;
-  minEr: number;
-  minCr: number;
-  erFloor: number;
-  crFloor: number;
+  constraints: ConstraintChecker;
   reactionOverride?: ReactionOverride;
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
   collector: TopKCollectorLike;
@@ -85,7 +82,6 @@ export interface BnBContext {
   compiledLookup?: ArtifactVarLookup;
   deadline?: number;
   aborted?: boolean;
-  /** Called periodically from DFS/HC with current best damage and evaluation count. */
   onProgress?: (bestDamage: number, evaluations: number) => void;
 }
 

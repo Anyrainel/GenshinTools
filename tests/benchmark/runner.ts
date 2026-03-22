@@ -41,7 +41,9 @@ import type {
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import type { CalcContext, TeamSlotConfig } from "@/lib/team-comp/types";
+import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
+import { runTeamOptimization as runMonaV2 } from "./gen/monaV2";
 import { runTeamOptimization as runV1 } from "./gen/v1";
 
 // ─── Build preset import ─────────────────────────────────────────────────────
@@ -130,9 +132,9 @@ export const DEFAULT_GLOBAL_CONFIG: GlobalStatWeights = {
   flatDef: 30,
 };
 
-export const DPS_TARGET_ER = 1.0;
-export const TEAMMATE_TARGET_ER_5STAR = 2.0;
-export const TEAMMATE_TARGET_ER_4STAR = 1.0;
+const DPS_TARGET_ER = 1.0;
+const TEAMMATE_TARGET_ER_5STAR = 2.0;
+const TEAMMATE_TARGET_ER_4STAR = 1.0;
 
 // ─── Formatting ──────────────────────────────────────────────────────────────
 
@@ -188,7 +190,7 @@ export function getAllArtifacts(accountData: AccountData): ArtifactData[] {
 
 // ─── Config Builders ─────────────────────────────────────────────────────────
 
-export function getBuildsForChar(charId: string): Build[] {
+function getBuildsForChar(charId: string): Build[] {
   const ids = characterBuildIds[charId];
   if (!ids) return [];
   return ids.map((id) => presetBuilds[id]).filter((b): b is Build => !!b);
@@ -211,7 +213,7 @@ export function getArtifactSetRarity(
   return 5;
 }
 
-export function getTeammateTargetEr(
+function getTeammateTargetEr(
   goalArt:
     | { type: string; setId?: string; id1?: string | number }
     | null
@@ -396,7 +398,7 @@ export async function runOptimizerOnTeam(
   team: Team,
   accountData: AccountData,
   inventory: ArtifactData[],
-  algorithm: "v1" | "v2" | "mona",
+  algorithm: "v1" | "v2" | "astar" | "mona" | "monaV2",
   timeoutMs = 120_000,
   perCharDeadlineMs?: number,
   formulaIdOverride?: string,
@@ -470,14 +472,21 @@ export async function runOptimizerOnTeam(
       globalConfig: DEFAULT_GLOBAL_CONFIG,
       baseSheets,
       perChar,
-      ...((algorithm === "v2" || algorithm === "mona") && timeoutMs > 0
+      ...(algorithm !== "v1" && timeoutMs > 0
         ? { teamDeadlineMs: performance.now() + timeoutMs }
         : {}),
+      ...(perCharDeadlineMs ? { perCharDeadlineMs } : {}),
       ...(maxArtsPerSlot ? { maxArtsPerSlot } : {}),
     };
 
-    const runFn =
-      algorithm === "v1" ? runV1 : algorithm === "mona" ? runMona : runV2;
+    const algoFns: Record<string, typeof runV2> = {
+      v1: runV1,
+      v2: runV2,
+      astar: runAStar,
+      mona: runMona,
+      monaV2: runMonaV2,
+    };
+    const runFn = algoFns[algorithm] ?? runV2;
     const startTime = performance.now();
 
     let finalResult: TeamOptimizationResult | null = null;

@@ -12,7 +12,6 @@ import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
 import type { OptimizerContext, TeamBuild } from "../damageCalc";
 import { StatSheet } from "../damageModels";
-import { computeErCrGap } from "../erCrConstraints";
 import {
   type ArtifactVarLookup,
   type CompiledTeamDamage,
@@ -37,6 +36,10 @@ import {
   prepareSlotData,
   withResortedSlotData,
 } from "./artifactScoring";
+import {
+  ConstraintChecker,
+  boostWeightsForConstraints,
+} from "./constraintChecker";
 import {
   evaluateBuild,
   evaluateUpperBound,
@@ -91,9 +94,8 @@ function bnbDfs(
   slotSupers: SuperArtifact[],
   ctx: BnBContext
 ): void {
-  const { minEr, minCr, erFloor, crFloor, collector } = ctx;
-  const needEr = minEr > 0;
-  const needCr = minCr > 0;
+  const { constraints, collector } = ctx;
+  const { hasEr, hasCr } = constraints;
 
   const suffixMaxEr = new Float64Array(6);
   const suffixMaxCr = new Float64Array(6);
@@ -134,13 +136,12 @@ function bnbDfs(
 
     for (let gi = 0; gi < group.length; gi++) {
       const art = group[gi];
-      const artEr = needEr ? getArtifactEr(art) : 0;
-      const artCr = needCr ? getArtifactCr(art) : 0;
+      const artEr = hasEr ? getArtifactEr(art) : 0;
+      const artCr = hasCr ? getArtifactCr(art) : 0;
       const newCumEr = cumEr + artEr;
       const newCumCr = cumCr + artCr;
 
-      if (needEr && erFloor + newCumEr + sfxEr < minEr) continue;
-      if (needCr && crFloor + newCumCr + sfxCr < minCr) continue;
+      if (!constraints.canMeet(newCumEr, newCumCr, sfxEr, sfxCr)) continue;
 
       pieces[depth] = art;
       if (collector.threshold > 0 && depth < 4) {
@@ -184,9 +185,8 @@ function bnbDfsCompiled(
   const compiled = ctx.compiled!;
   const lookup = ctx.compiledLookup!;
   const charIdx = ctx.compiledCharIdx!;
-  const { minEr, minCr, erFloor, crFloor, collector } = ctx;
-  const needEr = minEr > 0;
-  const needCr = minCr > 0;
+  const { constraints, collector } = ctx;
+  const { hasEr, hasCr } = constraints;
   const numVars = compiled.numVars;
 
   // ─── ER/CR suffix sums for feasibility pruning ───
@@ -234,8 +234,8 @@ function bnbDfsCompiled(
         }
       }
       deltas[gi] = delta;
-      if (needEr) erVals[gi] = getArtifactEr(art);
-      if (needCr) crVals[gi] = getArtifactCr(art);
+      if (hasEr) erVals[gi] = getArtifactEr(art);
+      if (hasCr) crVals[gi] = getArtifactCr(art);
     }
     slotDeltas[s] = deltas;
     slotEr[s] = erVals;
@@ -273,21 +273,11 @@ function bnbDfsCompiled(
       }
     }
     if (depth === 5) {
-      // Leaf: varStack[4] has all 5 artifacts' var contributions
       const leafVars = varStack[4];
-      if (compiled.evaluateEr) {
-        if (compiled.evaluateEr(leafVars) < 0) {
-          ctx.evaluations++;
-          ctx.sinceLastYield++;
-          return;
-        }
-      }
-      if (compiled.evaluateCr) {
-        if (compiled.evaluateCr(leafVars) < 0) {
-          ctx.evaluations++;
-          ctx.sinceLastYield++;
-          return;
-        }
+      if (!constraints.isFeasibleCompiled(compiled, leafVars)) {
+        ctx.evaluations++;
+        ctx.sinceLastYield++;
+        return;
       }
       const damage = compiled.evaluate(leafVars);
       collector.add(damage, null, pieces);
@@ -318,15 +308,15 @@ function bnbDfsCompiled(
     const crVals = slotCr[depth];
 
     for (let gi = 0; gi < group.length; gi++) {
-      // ER/CR feasibility check BEFORE the vector add (avoid wasted work)
-      if (needEr) {
-        const newCumEr = cumEr + erVals[gi];
-        if (erFloor + newCumEr + sfxEr < minEr) continue;
-      }
-      if (needCr) {
-        const newCumCr = cumCr + crVals[gi];
-        if (crFloor + newCumCr + sfxCr < minCr) continue;
-      }
+      if (
+        !constraints.canMeet(
+          cumEr + erVals[gi],
+          cumCr + crVals[gi],
+          sfxEr,
+          sfxCr
+        )
+      )
+        continue;
 
       // Incremental: cur = parent + artifact delta
       const delta = deltas[gi];
@@ -348,8 +338,8 @@ function bnbDfsCompiled(
 
       dfs(
         depth + 1,
-        needEr ? cumEr + erVals[gi] : 0,
-        needCr ? cumCr + crVals[gi] : 0
+        hasEr ? cumEr + erVals[gi] : 0,
+        hasCr ? cumCr + crVals[gi] : 0
       );
     }
     pieces[depth] = null;
@@ -415,7 +405,6 @@ export function runCharacterBnB(
   const swapCharId = charId;
   const calcTargetId = carryCharId;
   const formulaCharId = carryCharId;
-  const erCheckCharId = charId;
 
   // CR discount: reduce CR weight in artifact ranking when the character
   // already has high base CR (from character stats, weapon, team buffs).
@@ -453,20 +442,21 @@ export function runCharacterBnB(
     );
   }
 
-  // ER/CR weight injection: boost ER/CR weights proportionally to the gap
-  // so that high-ER/CR artifacts rank higher and survive pool truncation.
+  // ── Constraints: single source of truth for ER/CR checking ──
+  const constraints = new ConstraintChecker(
+    teamBuild,
+    charId,
+    baseSheets,
+    calcTargetId,
+    calcContext,
+    charConfig.minEr,
+    charConfig.minCr
+  );
+
+  // Boost ER/CR artifact weights so high-ER/CR artifacts survive pool truncation.
   let effectiveBuildMatch = charConfig.buildMatch;
   let effectiveMarginals = marginals;
-  if (charConfig.minEr > 0 || charConfig.minCr > 0) {
-    const gap = computeErCrGap(
-      teamBuild,
-      charId,
-      baseSheets,
-      calcTargetId,
-      calcContext,
-      charConfig.minEr,
-      charConfig.minCr
-    );
+  {
     const baseWeights = charConfig.buildMatch?.statWeights ?? {
       cr: 100,
       cd: 100,
@@ -475,20 +465,8 @@ export function runCharacterBnB(
       0,
       ...Object.values(baseWeights).map((v) => Math.abs(v ?? 0))
     );
-
-    if (maxWeight > 0 && (gap.erGap > 0 || gap.crGap > 0)) {
-      const boosted = { ...baseWeights };
-      // ER: gap fraction × maxWeight, capped at 150% of maxWeight
-      if (gap.erGap > 0) {
-        const syntheticEr = Math.min(gap.erGap, 1.5) * maxWeight;
-        boosted.er = Math.max(boosted.er ?? 0, syntheticEr);
-      }
-      // CR: gap fraction × maxWeight (no cap — CR gap is naturally small)
-      if (gap.crGap > 0) {
-        const syntheticCr = gap.crGap * maxWeight;
-        boosted.cr = Math.max(boosted.cr ?? 0, syntheticCr);
-      }
-
+    const boosted = boostWeightsForConstraints(constraints, baseWeights);
+    if (boosted) {
       if (charConfig.buildMatch) {
         effectiveBuildMatch = {
           ...charConfig.buildMatch,
@@ -505,23 +483,18 @@ export function runCharacterBnB(
           mainStatMismatches: [],
         };
       }
-
-      // Also boost marginal substat weights so the marginal scoring path
-      // doesn't undo the ER/CR promotion.
       if (effectiveMarginals) {
-        const boostedSub = { ...effectiveMarginals.substatWeights };
-        if (gap.erGap > 0) {
-          const syntheticEr = Math.min(gap.erGap, 1.5) * maxWeight;
-          boostedSub.er = Math.max(boostedSub.er ?? 0, syntheticEr);
+        const boostedSub = boostWeightsForConstraints(
+          constraints,
+          effectiveMarginals.substatWeights,
+          maxWeight
+        );
+        if (boostedSub) {
+          effectiveMarginals = {
+            ...effectiveMarginals,
+            substatWeights: boostedSub,
+          };
         }
-        if (gap.crGap > 0) {
-          const syntheticCr = gap.crGap * maxWeight;
-          boostedSub.cr = Math.max(boostedSub.cr ?? 0, syntheticCr);
-        }
-        effectiveMarginals = {
-          ...effectiveMarginals,
-          substatWeights: boostedSub,
-        };
       }
     }
   }
@@ -608,18 +581,6 @@ export function runCharacterBnB(
     }
   }
 
-  // Baseline ER/CR
-  let erFloor = 0;
-  let crFloor = 0;
-  if (charConfig.minEr > 0 || charConfig.minCr > 0) {
-    const blSheets = { ...baseSheets, [swapCharId]: new StatSheet([]) };
-    const blStats = teamBuild.getTeamStats(blSheets, calcTargetId, calcContext);
-    if (charConfig.minEr > 0)
-      erFloor = blStats[erCheckCharId]?.get("er", null) ?? 0;
-    if (charConfig.minCr > 0)
-      crFloor = blStats[erCheckCharId]?.get("cr", null) ?? 0;
-  }
-
   // Precompute optimizer context for fast getTeamStats (caches support preStats)
   const optCtx = scoreFn
     ? undefined
@@ -644,11 +605,9 @@ export function runCharacterBnB(
         calcContext,
         optCtx,
         reactionOverride,
-        charConfig.minEr > 0 || charConfig.minCr > 0
-          ? erCheckCharId
-          : undefined,
-        charConfig.minEr,
-        charConfig.minCr,
+        constraints.active ? constraints.charId : undefined,
+        constraints.minEr,
+        constraints.minCr,
         partialBuffs
       );
       compiledVars = new Float64Array(compiled.numVars);
@@ -672,11 +631,7 @@ export function runCharacterBnB(
     baseSheets,
     calcTargetId,
     calcContext,
-    erCheckCharId,
-    minEr: charConfig.minEr,
-    minCr: charConfig.minCr,
-    erFloor,
-    crFloor,
+    constraints,
     reactionOverride,
     scoreFn,
     collector,
@@ -1056,34 +1011,9 @@ export function runCharacterBnB(
   // Diagnose failure
   let failReason: OptFailReason | undefined;
   if (collector.best == null || collector.best.damage <= 0) {
-    if (charConfig.minEr > 0 || charConfig.minCr > 0) {
-      let maxEr = 0;
-      let maxCr = 0;
-      for (let s = 0; s < 5; s++) {
-        maxEr += slotData[s].slotSuperArtifact.maxEr;
-        maxCr += slotData[s].slotSuperArtifact.maxCr;
-      }
-      if (charConfig.minEr > 0 && erFloor + maxEr < charConfig.minEr) {
-        failReason = {
-          kind: "er-unmet",
-          minEr: charConfig.minEr,
-          bestEr: erFloor + maxEr,
-        };
-      } else if (charConfig.minCr > 0 && crFloor + maxCr < charConfig.minCr) {
-        failReason = {
-          kind: "cr-unmet",
-          minCr: charConfig.minCr,
-          bestCr: crFloor + maxCr,
-        };
-      } else {
-        failReason = {
-          kind: "all-filtered",
-          combinationsTotal: ctx.evaluations,
-        };
-      }
-    } else {
-      failReason = { kind: "all-filtered", combinationsTotal: ctx.evaluations };
-    }
+    failReason =
+      constraints.diagnoseFailure(slotData) ??
+      ({ kind: "all-filtered", combinationsTotal: ctx.evaluations } as const);
   }
 
   // Return marginal weights (carry) or buildMatch statWeights (support) for debug display

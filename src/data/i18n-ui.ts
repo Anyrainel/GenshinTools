@@ -550,8 +550,8 @@ export const i18nUiData = {
       zh: "《原神》为米哈游/HoYoverse的商标，本项目与其无关联。",
     },
     dataAttribution: {
-      en: "Game data sourced from HoYoWiki.",
-      zh: "游戏数据来源于 HoYoWiki。",
+      en: "Thanks to HoYoWiki for the game data.",
+      zh: "感谢HoYoWiki的游戏数据。",
     },
     presetPromptTitle: {
       en: "Get Started with Presets",

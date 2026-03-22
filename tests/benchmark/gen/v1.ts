@@ -943,6 +943,90 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════════
+  // Phase 5: Constraint repair — re-validate minEr/minCr after carry-2
+  // ════════════════════════════════════════════════════════════════════════
+  // Carry-2 re-optimization changes carry artifacts, which can shift team
+  // buffs and cause support ER/CR to drift below thresholds. Re-optimize
+  // any violating character with all other characters locked.
+
+  {
+    const repairSheets = buildSheetsFromArtifacts(
+      baseSheets,
+      bestR1ArtifactsByChar
+    );
+    const repairStats = effectiveTeamBuild.getTeamStats(
+      repairSheets,
+      carryCharId,
+      calcContext
+    );
+
+    const violatingChars: { charId: string; kind: "er" | "cr" }[] = [];
+    for (const charId of allCharIds) {
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+      if (charConfig.minEr > 0) {
+        const er = repairStats[charId]?.get("er", null) ?? 0;
+        if (er < charConfig.minEr - 1e-6) {
+          violatingChars.push({ charId, kind: "er" });
+        }
+      }
+      if (charConfig.minCr > 0) {
+        const cr = repairStats[charId]?.get("cr", null) ?? 0;
+        if (cr < charConfig.minCr - 1e-6) {
+          violatingChars.push({ charId, kind: "cr" });
+        }
+      }
+    }
+
+    for (const { charId } of violatingChars) {
+      // Lock all other characters' artifacts
+      const repairExcluded = new Set<string>();
+      for (const [cid, arts] of Object.entries(bestR1ArtifactsByChar)) {
+        if (cid !== charId) {
+          for (const id of collectArtifactIds(arts)) {
+            repairExcluded.add(id);
+          }
+        }
+      }
+
+      const repairBaseSheets = buildSheetsFromArtifacts(
+        baseSheets,
+        bestR1ArtifactsByChar
+      );
+      const gen = runCharPass(
+        charId,
+        "carry-2", // reuse pass id — this is a constraint repair sub-pass
+        repairBaseSheets,
+        repairExcluded.size > 0 ? repairExcluded : undefined,
+        estimatedTotal, // passIdx doesn't matter for final result
+        estimatedTotal + 1,
+        passResults
+      );
+
+      let lastResult: OptimizationResult | null = null;
+      for (;;) {
+        const { value, done } = await gen.next();
+        if (done) {
+          lastResult = value;
+          break;
+        }
+        yield value;
+      }
+
+      if (lastResult && lastResult.bestDamage > 0) {
+        bestR1ArtifactsByChar[charId] = lastResult.bestArtifacts;
+        passResults.push({
+          passId: "carry-2",
+          charId,
+          bestDamage: lastResult.bestDamage,
+          bestArtifacts: lastResult.bestArtifacts,
+          failReason: lastResult.failReason,
+        });
+      }
+    }
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
   // Final result — detect accidental set bonuses and rebuild if needed
   // ════════════════════════════════════════════════════════════════════════
 

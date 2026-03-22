@@ -20,8 +20,9 @@
  *   --filter PATTERN          Filter problems by team/char name
  *   --problem KEY             Run a single problem by key (teamId::formulaId)
  *   --timeout SECS            Per-team timeout (default: 30)
- *   --algo v1|v2|mona              Algorithm to run (default: v2)
- *   --parallel N              Run N problems in parallel via child_process.fork
+ *   --algo v1|v2|astar|mona|monaV2  Algorithm to run (default: v2)
+ *   --parallel N              Run N problems in parallel (default: CPU cores - 2)
+ *   --sequential              Disable parallelism (requires --filter or --problem)
  *   --max-arts N              Max artifacts per slot for B&B pre-filtering
  *   --diag                    Enable diagnostic logging
  *
@@ -40,6 +41,7 @@ import {
   readFileSync,
   writeFileSync,
 } from "node:fs";
+import { availableParallelism } from "node:os";
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -394,11 +396,148 @@ function assignmentsEqual(
   return true;
 }
 
+// ─── Shared Helpers ──────────────────────────────────────────────────────────
+
+interface BenchmarkContext {
+  store: SolutionStore;
+  accountData: AccountData;
+  inventory: ArtifactData[];
+  artById: Map<string, ArtifactData>;
+  teams: Team[];
+  teamById: Map<string, Team>;
+}
+
+async function loadContext(): Promise<BenchmarkContext> {
+  if (!existsSync(ACCOUNT_PATH)) {
+    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
+    process.exit(1);
+  }
+  await preloadGameStats();
+  const store = loadStore();
+  const accountData = loadAccountData(ACCOUNT_PATH);
+  const inventory = getAllArtifacts(accountData);
+  const artById = new Map<string, ArtifactData>();
+  for (const a of inventory) artById.set(a.id, a);
+  const teamPreset = loadTeamPreset();
+  const teams = teamPreset.teams;
+  const teamById = new Map<string, Team>();
+  for (const t of teams) teamById.set(t.id, t);
+  return { store, accountData, inventory, artById, teams, teamById };
+}
+
+function findBestSolution(
+  problem: Problem,
+  team: Team,
+  accountData: AccountData,
+  inventory: ArtifactData[]
+): { bestSol: Solution | null; bestDamage: number } {
+  let bestSol: Solution | null = null;
+  let bestDamage = Number.NEGATIVE_INFINITY;
+  for (const sol of problem.solutions) {
+    const dmg = evaluateAssignment(
+      team,
+      problem.formulaId,
+      sol.artifactAssignment,
+      accountData,
+      inventory
+    );
+    if (dmg !== null && dmg > bestDamage) {
+      bestDamage = dmg;
+      bestSol = sol;
+    }
+  }
+  return { bestSol, bestDamage };
+}
+
+interface StoreSolutionResult {
+  stored: boolean;
+  duplicate: boolean;
+  constraintViolations: ConstraintViolation[];
+}
+
+/**
+ * Validate constraints and store a solution if it passes.
+ * All code paths that store solutions MUST use this function to ensure
+ * consistent constraint enforcement across all algorithms.
+ */
+function tryStoreSolution(
+  store: SolutionStore,
+  key: string,
+  team: Team,
+  formulaId: string,
+  assignment: Record<string, Record<string, string>>,
+  damage: number,
+  algorithm: string,
+  accountData: AccountData,
+  inventory: ArtifactData[],
+  opts?: {
+    solveTimeSec?: number;
+    foundAt?: string;
+    teamName?: string;
+  }
+): StoreSolutionResult {
+  if (!assignment || Object.keys(assignment).length === 0 || damage <= 0) {
+    return { stored: false, duplicate: false, constraintViolations: [] };
+  }
+
+  const violations = checkConstraints(team, assignment, accountData, inventory);
+  if (violations.length > 0) {
+    return {
+      stored: false,
+      duplicate: false,
+      constraintViolations: violations,
+    };
+  }
+
+  if (!store.problems[key]) {
+    const charIds = team.characters.filter((c): c is string => !!c);
+    store.problems[key] = {
+      teamId: team.id,
+      teamName: opts?.teamName ?? charIds.join("/"),
+      characters: charIds,
+      carryCharId: team.characters[0]!,
+      formulaId,
+      solutions: [],
+    };
+  }
+
+  const existing = store.problems[key].solutions;
+  if (
+    existing.some((s) => assignmentsEqual(s.artifactAssignment, assignment))
+  ) {
+    return { stored: false, duplicate: true, constraintViolations: [] };
+  }
+
+  const sol: Solution = {
+    artifactAssignment: assignment,
+    recordedDamage: damage,
+    foundAt: opts?.foundAt ?? new Date().toISOString(),
+    algorithm,
+  };
+  if (opts?.solveTimeSec !== undefined) {
+    sol.solveTimeSec = opts.solveTimeSec;
+  }
+  existing.push(sol);
+  return { stored: true, duplicate: false, constraintViolations: [] };
+}
+
+function logConstraintViolations(
+  violations: ConstraintViolation[],
+  indent = "    "
+): void {
+  for (const v of violations) {
+    const label = v.kind === "er" ? "ER" : "CR";
+    console.log(
+      `${indent}${C.red}[CONSTRAINT FAIL]${C.reset} ${v.charId}: ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
+    );
+  }
+}
+
 // ─── Parallel Worker Pool ────────────────────────────────────────────────────
 
 async function runParallel(
   tasks: { team: Team; formulaId: string; key: string }[],
-  algorithm: "v1" | "v2" | "mona",
+  algorithm: "v1" | "v2" | "astar" | "mona" | "monaV2",
   timeoutSec: number,
   workerCount: number,
   maxArtsPerSlot: number,
@@ -554,23 +693,12 @@ async function cmdInit(accountFile: string): Promise<void> {
 }
 
 async function cmdSeed(resultFiles: string[]): Promise<void> {
-  const store = loadStore();
-
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(
-      `${C.red}No account fixture found. Run 'init' first.${C.reset}`
-    );
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, teamById } = await loadContext();
 
   let imported = 0;
   let skipped = 0;
   let duplicates = 0;
+  let constraintFails = 0;
 
   for (const file of resultFiles) {
     console.log(`Reading ${basename(file)}...`);
@@ -591,54 +719,51 @@ async function cmdSeed(resultFiles: string[]): Promise<void> {
       }
 
       const problemKey = `${baseTeamId}::${formulaId}`;
-
-      if (
-        !r.artifactAssignment ||
-        Object.keys(r.artifactAssignment).length === 0
-      ) {
-        skipped++;
-        continue;
-      }
-      if (r.optimizedDamage <= 0) {
+      const team = teamById.get(baseTeamId);
+      if (!team) {
         skipped++;
         continue;
       }
 
-      if (!store.problems[problemKey]) {
-        store.problems[problemKey] = {
-          teamId: baseTeamId,
+      const result = tryStoreSolution(
+        store,
+        problemKey,
+        team,
+        formulaId,
+        r.artifactAssignment,
+        r.optimizedDamage,
+        algo,
+        accountData,
+        inventory,
+        {
+          foundAt: data.timestamp ?? new Date().toISOString(),
           teamName:
             r.teamName?.replace(/ \[.*\]$/, "") ?? r.characters.join("/"),
-          characters: r.characters,
-          carryCharId: r.carryCharId,
-          formulaId,
-          solutions: [],
-        };
-      }
-
-      const problem = store.problems[problemKey];
-      const isDuplicate = problem.solutions.some((s) =>
-        assignmentsEqual(s.artifactAssignment, r.artifactAssignment)
+        }
       );
 
-      if (isDuplicate) {
+      if (result.duplicate) {
         duplicates++;
-        continue;
+      } else if (result.constraintViolations.length > 0) {
+        constraintFails++;
+        for (const v of result.constraintViolations) {
+          const label = v.kind === "er" ? "ER" : "CR";
+          console.log(
+            `  ${C.red}[CONSTRAINT]${C.reset} ${problemKey}: ${v.charId} ${label} = ${(v.actual * 100).toFixed(1)}% < ${(v.required * 100).toFixed(1)}%`
+          );
+        }
+      } else if (result.stored) {
+        imported++;
+      } else {
+        skipped++;
       }
-
-      problem.solutions.push({
-        artifactAssignment: r.artifactAssignment,
-        recordedDamage: r.optimizedDamage,
-        foundAt: data.timestamp ?? new Date().toISOString(),
-        algorithm: algo,
-      });
-      imported++;
     }
   }
 
   saveStore(store);
   console.log(
-    `\n${C.green}Imported ${imported} solutions${C.reset} (${duplicates} duplicates, ${skipped} skipped)`
+    `\n${C.green}Imported ${imported} solutions${C.reset} (${duplicates} duplicates, ${skipped} skipped` +
+      `${constraintFails > 0 ? `, ${C.red}${constraintFails} constraint violations rejected${C.reset}` : ""})`
   );
   console.log(
     `Solution store: ${Object.keys(store.problems).length} problems, ` +
@@ -647,18 +772,7 @@ async function cmdSeed(resultFiles: string[]): Promise<void> {
 }
 
 async function cmdVerify(): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, teamById } = await loadContext();
 
   let totalSolutions = 0;
   let verified = 0;
@@ -748,18 +862,7 @@ async function cmdVerify(): Promise<void> {
 }
 
 async function cmdPurgeInvalid(): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, teamById } = await loadContext();
 
   let totalSolutions = 0;
   let purged = 0;
@@ -839,27 +942,17 @@ async function cmdRun(opts: {
   filter?: string;
   problemKey?: string;
   timeoutSec: number;
-  algo: "v1" | "v2" | "mona";
+  algo: "v1" | "v2" | "astar" | "mona" | "monaV2";
   parallel: number;
   maxArtsPerSlot: number;
   diag: boolean;
 }): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
   if (opts.diag) {
     (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
   }
 
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, teams, teamById } =
+    await loadContext();
 
   // Build problem list
   type ProblemRun = {
@@ -914,7 +1007,7 @@ async function cmdRun(opts: {
       });
     }
   } else {
-    for (const team of teamPreset.teams) {
+    for (const team of teams) {
       const formulas = getCarryFormulaIds(team);
       for (const { formulaId, label } of formulas) {
         const key = `${team.id}::${formulaId}`;
@@ -974,17 +1067,12 @@ async function cmdRun(opts: {
     if (!problem || problem.solutions.length === 0) {
       comp = { status: "no_solutions", damage: result.optimizedDamage };
     } else {
-      let bestDamage = Number.NEGATIVE_INFINITY;
-      for (const sol of problem.solutions) {
-        const dmg = evaluateAssignment(
-          team,
-          formulaId,
-          sol.artifactAssignment,
-          accountData,
-          inventory
-        );
-        if (dmg !== null && dmg > bestDamage) bestDamage = dmg;
-      }
+      const { bestDamage } = findBestSolution(
+        problem,
+        team,
+        accountData,
+        inventory
+      );
 
       if (bestDamage <= 0) {
         comp = { status: "no_solutions", damage: result.optimizedDamage };
@@ -1061,50 +1149,23 @@ async function cmdRun(opts: {
         break;
     }
 
-    // Reject solutions that violate minEr/minCr constraints
-    if (result.constraintViolations && result.constraintViolations.length > 0) {
-      for (const v of result.constraintViolations) {
-        const label = v.kind === "er" ? "ER" : "CR";
-        console.log(
-          `    ${C.red}[CONSTRAINT FAIL]${C.reset} ${v.charId}: ${label} = ${(v.actual * 100).toFixed(1)}% < required ${(v.required * 100).toFixed(1)}%`
-        );
-      }
+    // Validate constraints and store solution (uniform across all algorithms)
+    const storeResult = tryStoreSolution(
+      store,
+      key,
+      team,
+      formulaId,
+      result.artifactAssignment,
+      result.optimizedDamage,
+      opts.algo,
+      accountData,
+      inventory,
+      { solveTimeSec: result.optimizeTimeSec }
+    );
+
+    if (storeResult.constraintViolations.length > 0) {
+      logConstraintViolations(storeResult.constraintViolations);
       constraintFails++;
-      return;
-    }
-
-    // Add solution to store if assignment differs
-    if (
-      result.artifactAssignment &&
-      Object.keys(result.artifactAssignment).length > 0 &&
-      result.optimizedDamage > 0
-    ) {
-      if (!store.problems[key]) {
-        const charIds = team.characters.filter((c): c is string => !!c);
-        store.problems[key] = {
-          teamId: team.id,
-          teamName: charIds.join("/"),
-          characters: charIds,
-          carryCharId: team.characters[0]!,
-          formulaId,
-          solutions: [],
-        };
-      }
-
-      const existing = store.problems[key].solutions;
-      const isDuplicate = existing.some((s) =>
-        assignmentsEqual(s.artifactAssignment, result.artifactAssignment)
-      );
-
-      if (!isDuplicate) {
-        existing.push({
-          artifactAssignment: result.artifactAssignment,
-          recordedDamage: result.optimizedDamage,
-          foundAt: new Date().toISOString(),
-          algorithm: opts.algo,
-          solveTimeSec: result.optimizeTimeSec,
-        });
-      }
     }
   }
 
@@ -1146,6 +1207,116 @@ async function cmdRun(opts: {
   }
 
   saveStore(store);
+
+  // ── Retry regressions sequentially with 2× timeout ──
+  // Parallel runs can miss optimal solutions due to CPU contention.
+  // Retry each regression with dedicated CPU time before reporting failure.
+  if (regList.length > 0 && opts.parallel > 0) {
+    const retryTimeout = opts.timeoutSec * 2;
+    console.log(
+      `\n${C.bold}═══ Retrying ${regList.length} regression(s) sequentially (${retryTimeout}s timeout) ═══${C.reset}\n`
+    );
+
+    const confirmedRegs: typeof regList = [];
+    for (const reg of regList) {
+      const { key } = reg;
+      const problem = store.problems[key];
+      const team = teamById.get(problem.teamId);
+      if (!team) {
+        confirmedRegs.push(reg);
+        continue;
+      }
+      const retryResult = await runOptimizerOnTeam(
+        team,
+        accountData,
+        inventory,
+        opts.algo,
+        retryTimeout * 1000,
+        opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
+        problem.formulaId,
+        opts.maxArtsPerSlot || undefined
+      );
+
+      const { bestDamage } = findBestSolution(
+        problem,
+        team,
+        accountData,
+        inventory
+      );
+      if (retryResult.optimizedDamage >= bestDamage - 0.5) {
+        console.log(
+          `  ${C.green}ok${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ` +
+            `(was ${fmt(reg.comp.damage)}, recovered in ${retryResult.optimizeTimeSec.toFixed(1)}s)`
+        );
+        matched++;
+        regressions--;
+
+        const storeResult = tryStoreSolution(
+          store,
+          key,
+          team,
+          problem.formulaId,
+          retryResult.artifactAssignment,
+          retryResult.optimizedDamage,
+          opts.algo,
+          accountData,
+          inventory,
+          { solveTimeSec: retryResult.optimizeTimeSec }
+        );
+        if (storeResult.constraintViolations.length > 0) {
+          logConstraintViolations(storeResult.constraintViolations);
+        }
+      } else if (retryResult.optimizedDamage > bestDamage) {
+        console.log(
+          `  ${C.green}*${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ${C.green}NEW BEST${C.reset}`
+        );
+        newBests++;
+        regressions--;
+        newBestList.push({
+          key,
+          comp: {
+            status: "new_best" as const,
+            damage: retryResult.optimizedDamage,
+          },
+        });
+
+        const storeResult = tryStoreSolution(
+          store,
+          key,
+          team,
+          problem.formulaId,
+          retryResult.artifactAssignment,
+          retryResult.optimizedDamage,
+          opts.algo,
+          accountData,
+          inventory,
+          { solveTimeSec: retryResult.optimizeTimeSec }
+        );
+        if (storeResult.constraintViolations.length > 0) {
+          logConstraintViolations(storeResult.constraintViolations);
+        }
+      } else {
+        const pct =
+          ((retryResult.optimizedDamage - bestDamage) / bestDamage) * 100;
+        console.log(
+          `  ${C.red}X${C.reset} ${key} → ${fmt(retryResult.optimizedDamage)} ` +
+            `(${pct.toFixed(2)}% vs best ${fmt(bestDamage)}, confirmed)`
+        );
+        confirmedRegs.push({
+          key,
+          comp: {
+            status: "regression" as const,
+            damage: retryResult.optimizedDamage,
+            bestDamage,
+            pct,
+          },
+        });
+      }
+    }
+    regList.length = 0;
+    regList.push(...confirmedRegs);
+    saveStore(store);
+  }
 
   console.log(`\n${C.bold}═══ Benchmark Summary ═══${C.reset}\n`);
   console.log(`  New bests:     ${C.green}${newBests}${C.reset}`);
@@ -1216,20 +1387,12 @@ async function cmdStatus(): Promise<void> {
 // ─── Refresh ─────────────────────────────────────────────────────────────────
 
 async function cmdRefresh(): Promise<void> {
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const teamPreset = loadTeamPreset();
-  const store = loadStore();
+  const { store, accountData, teams } = await loadContext();
 
   const cached: CachedProblem[] = [];
   let skipped = 0;
 
-  for (const team of teamPreset.teams) {
+  for (const team of teams) {
     const carryCharId = team.characters[0];
     if (!carryCharId) continue;
 
@@ -1306,28 +1469,17 @@ async function cmdRefresh(): Promise<void> {
 async function cmdEnrich(opts: {
   filter?: string;
   problemKey?: string;
-  algo: "v1" | "v2" | "mona";
+  algo: "v1" | "v2" | "astar" | "mona" | "monaV2";
   timeoutSec: number;
   parallel: number;
   maxArtsPerSlot: number;
   diag: boolean;
 }): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
   if (opts.diag) {
     (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
   }
 
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, teamById } = await loadContext();
 
   const problemKeys = Object.keys(store.problems).sort();
   const toRun: { key: string; team: Team; formulaId: string }[] = [];
@@ -1358,6 +1510,7 @@ async function cmdEnrich(opts: {
 
   let added = 0;
   let duplicates = 0;
+  let constraintFails = 0;
   let errors = 0;
 
   function processEnrichResult(
@@ -1367,7 +1520,6 @@ async function cmdEnrich(opts: {
     formulaId: string,
     result: TeamResult
   ): void {
-    const problem = store.problems[key];
     const charNames = team.characters.filter(Boolean).join("/");
 
     if (result.error) {
@@ -1389,24 +1541,32 @@ async function cmdEnrich(opts: {
       return;
     }
 
-    const isDuplicate = problem.solutions.some((s) =>
-      assignmentsEqual(s.artifactAssignment, result.artifactAssignment)
+    const storeResult = tryStoreSolution(
+      store,
+      key,
+      team,
+      formulaId,
+      result.artifactAssignment,
+      result.optimizedDamage,
+      opts.algo,
+      accountData,
+      inventory
     );
 
-    if (isDuplicate) {
+    if (storeResult.constraintViolations.length > 0) {
+      constraintFails++;
+      console.log(
+        `  ${C.red}[CONSTRAINT]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}`
+      );
+      logConstraintViolations(storeResult.constraintViolations, "    ");
+    } else if (storeResult.duplicate) {
       duplicates++;
       console.log(
         `  ${C.dim}[DUP]${C.reset} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}`
       );
-    } else {
+    } else if (storeResult.stored) {
       added++;
-      problem.solutions.push({
-        artifactAssignment: result.artifactAssignment,
-        recordedDamage: result.optimizedDamage,
-        foundAt: new Date().toISOString(),
-        algorithm: opts.algo,
-      });
-
+      const problem = store.problems[key];
       const bestDmg = Math.max(
         ...problem.solutions.map((s) => s.recordedDamage)
       );
@@ -1455,7 +1615,8 @@ async function cmdEnrich(opts: {
 
   saveStore(store);
   console.log(
-    `\n${C.green}Enriched: ${added} new solutions${C.reset} (${duplicates} duplicates, ${errors} errors)`
+    `\n${C.green}Enriched: ${added} new solutions${C.reset} (${duplicates} duplicates, ${errors} errors` +
+      `${constraintFails > 0 ? `, ${C.red}${constraintFails} constraint violations rejected${C.reset}` : ""})`
   );
 }
 
@@ -1570,30 +1731,17 @@ function printStatDiff(label: string, diffs: StatDiffEntry[]): void {
 
 async function cmdCompare(opts: {
   problemKey: string;
-  algo?: "v1" | "v2" | "mona";
+  algo?: "v1" | "v2" | "astar" | "mona" | "monaV2";
   timeoutSec: number;
   maxArtsPerSlot: number;
   diag: boolean;
 }): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture. Run 'init' first.${C.reset}`);
-    process.exit(1);
-  }
-
   if (opts.diag) {
     (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
   }
 
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const artById = new Map<string, ArtifactData>();
-  for (const a of inventory) artById.set(a.id, a);
-
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, artById, teamById } =
+    await loadContext();
 
   const matches = Object.keys(store.problems).filter((k) =>
     k.includes(opts.problemKey)
@@ -1617,22 +1765,12 @@ async function cmdCompare(opts: {
       `\n${C.bold}═══ ${problem.teamName} → ${problem.formulaId} ═══${C.reset}\n`
     );
 
-    // Find best stored solution
-    let bestSol: Solution | null = null;
-    let bestDamage = Number.NEGATIVE_INFINITY;
-    for (const sol of problem.solutions) {
-      const dmg = evaluateAssignment(
-        team,
-        problem.formulaId,
-        sol.artifactAssignment,
-        accountData,
-        inventory
-      );
-      if (dmg !== null && dmg > bestDamage) {
-        bestDamage = dmg;
-        bestSol = sol;
-      }
-    }
+    const { bestSol, bestDamage } = findBestSolution(
+      problem,
+      team,
+      accountData,
+      inventory
+    );
 
     if (!bestSol) {
       console.log(`  ${C.yellow}No valid stored solutions${C.reset}`);
@@ -1786,22 +1924,28 @@ async function cmdCompare(opts: {
       }
     }
 
-    // Auto-add current solution if it's new
-    if (
-      currentDamage > 0 &&
-      currentAssignment &&
-      !problem.solutions.some((s) =>
-        assignmentsEqual(s.artifactAssignment, currentAssignment!)
-      )
-    ) {
-      problem.solutions.push({
-        artifactAssignment: currentAssignment,
-        recordedDamage: currentDamage,
-        foundAt: new Date().toISOString(),
-        algorithm: opts.algo ?? "compare",
-      });
-      saveStore(store);
-      console.log(`\n  ${C.cyan}Added as new solution${C.reset}`);
+    // Auto-add current solution if it passes constraints
+    if (currentDamage > 0 && currentAssignment) {
+      const storeResult = tryStoreSolution(
+        store,
+        key,
+        team,
+        problem.formulaId,
+        currentAssignment,
+        currentDamage,
+        opts.algo ?? "compare",
+        accountData,
+        inventory
+      );
+      if (storeResult.stored) {
+        saveStore(store);
+        console.log(`\n  ${C.cyan}Added as new solution${C.reset}`);
+      } else if (storeResult.constraintViolations.length > 0) {
+        console.log(
+          `\n  ${C.red}Solution violates constraints — not stored${C.reset}`
+        );
+        logConstraintViolations(storeResult.constraintViolations, "    ");
+      }
     }
   }
 }
@@ -1814,21 +1958,8 @@ async function cmdCompare(opts: {
  * artifacts to identify systematic weight biases.
  */
 async function cmdReverseWeights(filter?: string): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture.${C.reset}`);
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const artById = new Map<string, ArtifactData>();
-  for (const a of inventory) artById.set(a.id, a);
-
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, artById, teamById } =
+    await loadContext();
   const globalConfig = DEFAULT_GLOBAL_CONFIG;
 
   // Accumulate per-stat "rank penalty" across all problems to find systematic biases
@@ -1842,22 +1973,7 @@ async function cmdReverseWeights(filter?: string): Promise<void> {
     const team = teamById.get(problem.teamId);
     if (!team) continue;
 
-    // Find best solution
-    let bestSol: Solution | null = null;
-    let bestDamage = Number.NEGATIVE_INFINITY;
-    for (const sol of problem.solutions) {
-      const dmg = evaluateAssignment(
-        team,
-        problem.formulaId,
-        sol.artifactAssignment,
-        accountData,
-        inventory
-      );
-      if (dmg !== null && dmg > bestDamage) {
-        bestDamage = dmg;
-        bestSol = sol;
-      }
-    }
+    const { bestSol } = findBestSolution(problem, team, accountData, inventory);
     if (!bestSol) continue;
 
     const carryId = problem.carryCharId;
@@ -1992,21 +2108,8 @@ async function cmdCarryDiagnose(opts: {
   problemKey: string;
   timeoutSec: number;
 }): Promise<void> {
-  const store = loadStore();
-  if (!existsSync(ACCOUNT_PATH)) {
-    console.error(`${C.red}No account fixture.${C.reset}`);
-    process.exit(1);
-  }
-
-  await preloadGameStats();
-  const accountData = loadAccountData(ACCOUNT_PATH);
-  const inventory = getAllArtifacts(accountData);
-  const artById = new Map<string, ArtifactData>();
-  for (const a of inventory) artById.set(a.id, a);
-
-  const teamPreset = loadTeamPreset();
-  const teamById = new Map<string, Team>();
-  for (const t of teamPreset.teams) teamById.set(t.id, t);
+  const { store, accountData, inventory, artById, teamById } =
+    await loadContext();
 
   const matches = Object.keys(store.problems).filter((k) =>
     k.includes(opts.problemKey)
@@ -2027,22 +2130,12 @@ async function cmdCarryDiagnose(opts: {
       `\n${C.bold}═══ DIAGNOSE: ${problem.teamName} → ${problem.formulaId} ═══${C.reset}\n`
     );
 
-    // Find best solution
-    let bestSol: Solution | null = null;
-    let bestDamage = Number.NEGATIVE_INFINITY;
-    for (const sol of problem.solutions) {
-      const dmg = evaluateAssignment(
-        team,
-        problem.formulaId,
-        sol.artifactAssignment,
-        accountData,
-        inventory
-      );
-      if (dmg !== null && dmg > bestDamage) {
-        bestDamage = dmg;
-        bestSol = sol;
-      }
-    }
+    const { bestSol, bestDamage } = findBestSolution(
+      problem,
+      team,
+      accountData,
+      inventory
+    );
     if (!bestSol) {
       console.log(`  ${C.yellow}No valid stored solutions${C.reset}`);
       continue;
@@ -2823,8 +2916,9 @@ async function main(): Promise<void> {
         "  --filter PATTERN   Filter by team/char name\n" +
         "  --problem KEY      Run single problem (supports partial match)\n" +
         "  --timeout SECS     Per-team timeout (default: 30)\n" +
-        "  --algo v1|v2|mona       Algorithm (default: v2 for run, v1 for enrich)\n" +
-        "  --parallel N       Run N problems in parallel via child_process.fork\n" +
+        "  --algo v1|v2|astar|mona|monaV2       Algorithm (default: v2 for run, v1 for enrich)\n" +
+        "  --parallel N       Run N problems in parallel (default: CPU cores - 2)\n" +
+        "  --sequential       Disable parallelism (requires --filter or --problem)\n" +
         "  --max-arts N       Max artifacts per slot for B&B pre-filtering\n" +
         "  --diag             Enable diagnostic logging"
     );
@@ -2865,12 +2959,32 @@ async function main(): Promise<void> {
     }
 
     case "run": {
+      const filter = parseFlag(args, "--filter");
+      const problemKey = parseFlag(args, "--problem");
+      if (args.includes("--sequential") && !filter && !problemKey) {
+        console.error(
+          "Error: --sequential requires --filter or --problem to avoid running all problems serially.\n" +
+            "Use --parallel 1 if you really want single-threaded full runs."
+        );
+        process.exit(1);
+      }
       await cmdRun({
-        filter: parseFlag(args, "--filter"),
-        problemKey: parseFlag(args, "--problem"),
+        filter,
+        problemKey,
         timeoutSec: parseFlagInt(args, "--timeout", 30),
-        algo: (parseFlag(args, "--algo") ?? "v2") as "v1" | "v2" | "mona",
-        parallel: parseFlagInt(args, "--parallel", 0),
+        algo: (parseFlag(args, "--algo") ?? "v2") as
+          | "v1"
+          | "v2"
+          | "astar"
+          | "mona"
+          | "monaV2",
+        parallel: args.includes("--sequential")
+          ? 0
+          : parseFlagInt(
+              args,
+              "--parallel",
+              Math.max(1, availableParallelism() - 2)
+            ),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
       });
@@ -2888,12 +3002,32 @@ async function main(): Promise<void> {
     }
 
     case "enrich": {
+      const enrichFilter = parseFlag(args, "--filter");
+      const enrichProblemKey = parseFlag(args, "--problem");
+      if (args.includes("--sequential") && !enrichFilter && !enrichProblemKey) {
+        console.error(
+          "Error: --sequential requires --filter or --problem to avoid running all problems serially.\n" +
+            "Use --parallel 1 if you really want single-threaded full runs."
+        );
+        process.exit(1);
+      }
       await cmdEnrich({
-        filter: parseFlag(args, "--filter"),
-        problemKey: parseFlag(args, "--problem"),
-        algo: (parseFlag(args, "--algo") ?? "v1") as "v1" | "v2" | "mona",
+        filter: enrichFilter,
+        problemKey: enrichProblemKey,
+        algo: (parseFlag(args, "--algo") ?? "v1") as
+          | "v1"
+          | "v2"
+          | "astar"
+          | "mona"
+          | "monaV2",
         timeoutSec: parseFlagInt(args, "--timeout", 30),
-        parallel: parseFlagInt(args, "--parallel", 0),
+        parallel: args.includes("--sequential")
+          ? 0
+          : parseFlagInt(
+              args,
+              "--parallel",
+              Math.max(1, availableParallelism() - 2)
+            ),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
       });
@@ -2904,13 +3038,19 @@ async function main(): Promise<void> {
       const problemKey = parseFlag(args, "--problem");
       if (!problemKey) {
         console.error(
-          "Usage: benchmark compare --problem KEY [--algo v1|v2|mona] [--timeout SECS]"
+          "Usage: benchmark compare --problem KEY [--algo v1|v2|astar|mona|monaV2] [--timeout SECS]"
         );
         process.exit(1);
       }
       await cmdCompare({
         problemKey,
-        algo: parseFlag(args, "--algo") as "v1" | "v2" | "mona" | undefined,
+        algo: parseFlag(args, "--algo") as
+          | "v1"
+          | "v2"
+          | "astar"
+          | "mona"
+          | "monaV2"
+          | undefined,
         timeoutSec: parseFlagInt(args, "--timeout", 30),
         maxArtsPerSlot: parseFlagInt(args, "--max-arts", 0),
         diag: args.includes("--diag"),
