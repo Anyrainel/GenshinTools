@@ -35,6 +35,7 @@ import type {
 import {
   buildSuperArtifact,
   computeWeightScore,
+  getArtifactCr,
   getArtifactEr,
 } from "./artifactScoring";
 import { runCharacterBnB } from "./characterBnB";
@@ -1955,18 +1956,29 @@ export async function* runTeamOptimization(
   }
 
   // ════════════════════════════════════════════════════════════════════
-  // Heuristic Fill for Saturated Characters
+  // Heuristic Fill for Saturated & Failed Characters
   //
   // Saturated characters' artifacts don't affect team damage, so B&B
-  // was skipped. Fill them from the remaining pool using build-page
-  // heuristic weights, respecting set constraints and ER/CR targets.
+  // was skipped. Characters whose B&B failed (e.g. couldn't meet ER/CR)
+  // also need heuristic fill. Fill them from the remaining pool using
+  // build-page heuristic weights, respecting set constraints and ER/CR.
   // ════════════════════════════════════════════════════════════════════
 
-  if (saturatedCharIds.size > 0) {
-    // Collect all artifact IDs already assigned to non-saturated characters
+  // Characters needing heuristic fill: saturated + failed B&B (no artifacts assigned)
+  const needsHeuristicFill = new Set<string>(saturatedCharIds);
+  for (const charId of allCharIds) {
+    if (saturatedCharIds.has(charId)) continue;
+    if (!effectivePerChar[charId]) continue;
+    const arts = bestArtifactsByChar[charId];
+    const hasArtifacts = arts && allSlots.some((s) => arts[s] != null);
+    if (!hasArtifacts) needsHeuristicFill.add(charId);
+  }
+
+  if (needsHeuristicFill.size > 0) {
+    // Collect all artifact IDs already assigned to characters NOT needing fill
     const assignedIds = new Set<string>();
     for (const [cid, arts] of Object.entries(bestArtifactsByChar)) {
-      if (saturatedCharIds.has(cid)) continue;
+      if (needsHeuristicFill.has(cid)) continue;
       for (const slot of allSlots) {
         const a = arts[slot];
         if (a) assignedIds.add(a.id);
@@ -1974,7 +1986,7 @@ export async function* runTeamOptimization(
     }
 
     for (const charId of allCharIds) {
-      if (!saturatedCharIds.has(charId)) continue;
+      if (!needsHeuristicFill.has(charId)) continue;
       const charConfig = effectivePerChar[charId];
       if (!charConfig) continue;
 
@@ -2108,7 +2120,7 @@ export async function* runTeamOptimization(
       // ── ER/CR constraint enforcement for saturated chars ──
       // The greedy pick above optimizes for build weights but ignores ER/CR.
       // Check if the assignment meets minEr/minCr; if not, re-pick slots
-      // prioritizing ER (force ER% sands, then re-sort by ER substats).
+      // prioritizing the violated stat (force mainstat pieces, then re-sort).
       const { minEr, minCr } = charConfig;
       if (minEr > 0 || minCr > 0) {
         // Compute baseline ER/CR (with empty sheet for this char)
@@ -2122,17 +2134,22 @@ export async function* runTeamOptimization(
           calcContext
         );
         const erFloor = minEr > 0 ? (blStats[charId]?.get("er", null) ?? 0) : 0;
+        const crFloor = minCr > 0 ? (blStats[charId]?.get("cr", null) ?? 0) : 0;
 
-        // Sum ER from picked artifacts
+        // Sum ER/CR from picked artifacts
         let pickedEr = 0;
+        let pickedCr = 0;
         for (const slot of allSlots) {
           pickedEr += getArtifactEr(picked[slot]);
+          pickedCr += getArtifactCr(picked[slot]);
         }
 
-        if (erFloor + pickedEr < minEr - 1e-6) {
-          // ER is insufficient. Re-pick: try ER% sands first, then re-sort
-          // remaining slots by ER substat contribution.
-          const erNeeded = minEr - erFloor;
+        const erViolated = minEr > 0 && erFloor + pickedEr < minEr - 1e-6;
+        const crViolated = minCr > 0 && crFloor + pickedCr < minCr - 1e-6;
+
+        if (erViolated || crViolated) {
+          // Constraint violated. Re-pick: force mainstat pieces for the
+          // violated stats, then fill remaining slots sorted by need.
 
           // Clear current picks
           for (const slot of allSlots) {
@@ -2141,39 +2158,51 @@ export async function* runTeamOptimization(
             picked[slot] = null;
           }
 
-          // Pass 1: Pick sands with ER% main stat if available
-          const sandsSlot = allSlots[2]; // sands
-          const sandsCandidates = inventory.filter(
-            (a) =>
-              a.slotKey === sandsSlot &&
-              !assignedIds.has(a.id) &&
-              a.mainStatKey === "er"
-          );
-          // Apply set constraint for sands slot
-          const sandsSetReq = slotSetAssignment[2];
-          let filteredSands = sandsCandidates;
-          if (sandsSetReq) {
-            const halfSet = artifactHalfSetsById[sandsSetReq];
-            if (halfSet) {
-              const validSets = new Set(halfSet.setIds);
-              const f = sandsCandidates.filter((a) => validSets.has(a.setKey));
-              if (f.length > 0) filteredSands = f;
-            } else {
-              const f = sandsCandidates.filter((a) => a.setKey === sandsSetReq);
-              if (f.length > 0) filteredSands = f;
+          // Helper: pick best mainstat candidate for a slot with set constraint
+          const pickMainstat = (slotIdx: number, mainStat: string): boolean => {
+            const slot = allSlots[slotIdx];
+            let candidates = inventory.filter(
+              (a) =>
+                a.slotKey === slot &&
+                !assignedIds.has(a.id) &&
+                !pickedIds.has(a.id) &&
+                a.mainStatKey === mainStat
+            );
+            const setReq = slotSetAssignment[slotIdx];
+            if (setReq) {
+              const halfSet = artifactHalfSetsById[setReq];
+              if (halfSet) {
+                const validSets = new Set(halfSet.setIds);
+                const f = candidates.filter((a) => validSets.has(a.setKey));
+                if (f.length > 0) candidates = f;
+              } else {
+                const f = candidates.filter((a) => a.setKey === setReq);
+                if (f.length > 0) candidates = f;
+              }
             }
-          }
-          // Sort by total ER contribution (mainstat + substats)
-          filteredSands.sort((a, b) => getArtifactEr(b) - getArtifactEr(a));
-          if (filteredSands.length > 0) {
-            picked[sandsSlot] = filteredSands[0];
-            pickedIds.add(filteredSands[0].id);
+            if (candidates.length === 0) return false;
+            // Sort by the stat contribution descending
+            const getFn = mainStat === "er" ? getArtifactEr : getArtifactCr;
+            candidates.sort((a, b) => getFn(b) - getFn(a));
+            picked[slot] = candidates[0];
+            pickedIds.add(candidates[0].id);
+            return true;
+          };
+
+          // Pass 1: Force ER% sands if ER is violated
+          if (erViolated) {
+            pickMainstat(2, "er"); // sands = slot index 2
           }
 
-          // Pass 2: Fill remaining slots, sorting by ER substat first
+          // Pass 1b: Force CR% circlet if CR is violated
+          if (crViolated) {
+            pickMainstat(4, "cr"); // circlet = slot index 4
+          }
+
+          // Pass 2: Fill remaining slots, sorted by constraint need
           for (let si = 0; si < 5; si++) {
             const slot = allSlots[si];
-            if (picked[slot]) continue; // already picked (e.g. ER sands)
+            if (picked[slot]) continue;
 
             const requiredSetOrHalf = slotSetAssignment[si];
             let candidates = inventory.filter(
@@ -2197,22 +2226,30 @@ export async function* runTeamOptimization(
             }
             if (candidates.length === 0) continue;
 
-            // Sort by ER contribution (descending), then by build score
+            // Sort by combined ER+CR contribution for violated stats
             candidates.sort((a, b) => {
-              const erDiff = getArtifactEr(b) - getArtifactEr(a);
-              if (Math.abs(erDiff) > 0.001) return erDiff;
+              let diff = 0;
+              if (erViolated) diff += getArtifactEr(b) - getArtifactEr(a);
+              if (crViolated) diff += getArtifactCr(b) - getArtifactCr(a);
+              if (Math.abs(diff) > 0.001) return diff;
               const sa = buildMatch
                 ? computeWeightScore(a, buildMatch, globalConfig, 1)
                 : scoreSlot(
                     a,
-                    { er: 100 } as Record<string, number>,
+                    {
+                      ...(erViolated ? { er: 100 } : {}),
+                      ...(crViolated ? { cr: 100 } : {}),
+                    } as Record<string, number>,
                     globalConfig
                   );
               const sb = buildMatch
                 ? computeWeightScore(b, buildMatch, globalConfig, 1)
                 : scoreSlot(
                     b,
-                    { er: 100 } as Record<string, number>,
+                    {
+                      ...(erViolated ? { er: 100 } : {}),
+                      ...(crViolated ? { cr: 100 } : {}),
+                    } as Record<string, number>,
                     globalConfig
                   );
               return sb - sa;
@@ -2269,6 +2306,32 @@ export async function* runTeamOptimization(
   if (setsChanged) effectiveTeamBuild = rebuildTeamBuild();
 
   const finalSheets = buildSheetsFromArtifacts(baseSheets, bestArtifactsByChar);
+
+  // ── Final constraint validation using authoritative stat pipeline ──
+  // Catches any ER/CR violations that slipped through earlier phases.
+  {
+    const validationStats = effectiveTeamBuild.getTeamStats(
+      finalSheets,
+      carryCharId,
+      calcContext
+    );
+    for (const charId of allCharIds) {
+      const charConfig = effectivePerChar[charId];
+      if (!charConfig) continue;
+      const { minEr, minCr } = charConfig;
+      if (minEr <= 0 && minCr <= 0) continue;
+      if (failReasons[charId]) continue; // already has a fail reason
+
+      const er = validationStats[charId]?.get("er", null) ?? 0;
+      const cr = validationStats[charId]?.get("cr", null) ?? 0;
+
+      if (minEr > 0 && er < minEr - 1e-6) {
+        failReasons[charId] = { kind: "er-unmet", minEr, bestEr: er };
+      } else if (minCr > 0 && cr < minCr - 1e-6) {
+        failReasons[charId] = { kind: "cr-unmet", minCr, bestCr: cr };
+      }
+    }
+  }
 
   const resultBase = {
     bestArtifactsByChar,
