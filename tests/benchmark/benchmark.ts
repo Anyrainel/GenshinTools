@@ -35,7 +35,9 @@
  */
 
 import {
+  type WriteStream,
   copyFileSync,
+  createWriteStream,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -44,6 +46,7 @@ import {
 import { availableParallelism } from "node:os";
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { stripVTControlCharacters } from "node:util";
 
 import type {
   AccountData,
@@ -106,9 +109,46 @@ import {
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
 const DATA_DIR = resolve("tests/benchmark/data");
+const LOG_DIR = resolve(DATA_DIR, "logs");
 const ACCOUNT_PATH = resolve(DATA_DIR, "account.json");
 const SOLUTIONS_PATH = resolve(DATA_DIR, "solutions.json");
 const PROBLEMS_PATH = resolve(DATA_DIR, "problems.json");
+
+// ─── Log file tee ─────────────────────────────────────────────────────────────
+
+let _logStream: WriteStream | null = null;
+
+/** Start tee-ing console output to a timestamped log file. Returns the path. */
+function startLogFile(command: string): string {
+  mkdirSync(LOG_DIR, { recursive: true });
+  const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  const logPath = resolve(LOG_DIR, `${command}_${ts}.log`);
+  _logStream = createWriteStream(logPath, { flags: "a" });
+
+  const origLog = console.log.bind(console);
+  const origError = console.error.bind(console);
+
+  console.log = (...args: unknown[]) => {
+    origLog(...args);
+    _logStream?.write(
+      `${stripVTControlCharacters(args.map(String).join(" "))}\n`
+    );
+  };
+  console.error = (...args: unknown[]) => {
+    origError(...args);
+    _logStream?.write(
+      `[ERR] ${stripVTControlCharacters(args.map(String).join(" "))}\n`
+    );
+  };
+
+  return logPath;
+}
+
+/** Close the log file stream. */
+function stopLogFile(): void {
+  _logStream?.end();
+  _logStream = null;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -947,6 +987,9 @@ async function cmdRun(opts: {
   maxArtsPerSlot: number;
   diag: boolean;
 }): Promise<void> {
+  const logPath = startLogFile("run");
+  console.log(`Log file: ${logPath}`);
+
   if (opts.diag) {
     (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
   }
@@ -1413,8 +1456,10 @@ async function cmdRun(opts: {
     console.log(
       `\n${C.red}FAIL: ${regressions} regression(s) detected${C.reset}`
     );
+    stopLogFile();
     process.exit(1);
   }
+  stopLogFile();
 }
 
 async function cmdStatus(): Promise<void> {
@@ -1536,6 +1581,9 @@ async function cmdEnrich(opts: {
   maxArtsPerSlot: number;
   diag: boolean;
 }): Promise<void> {
+  const logPath = startLogFile("enrich");
+  console.log(`Log file: ${logPath}`);
+
   if (opts.diag) {
     (globalThis as unknown as Record<string, boolean>).__TEAM_OPT_DIAG__ = true;
   }
@@ -1679,6 +1727,7 @@ async function cmdEnrich(opts: {
     `\n${C.green}Enriched: ${added} new solutions${C.reset} (${duplicates} duplicates, ${errors} errors` +
       `${constraintFails > 0 ? `, ${C.red}${constraintFails} constraint violations rejected${C.reset}` : ""})`
   );
+  stopLogFile();
 }
 
 // ─── Compare ─────────────────────────────────────────────────────────────────
