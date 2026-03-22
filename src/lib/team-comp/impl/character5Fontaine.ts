@@ -7,6 +7,20 @@ import { cbs } from "../helpers";
 // 5★ Fontaine Characters
 // ═══════════════════════════════════════════════════════════════
 
+// Skirk P3 "Mutual Weapons Mentorship": when all party members are Hydro/Cryo
+// (at least 1 Hydro) and Skirk is on the team, E skill level +1 for all members.
+function hasSkirkP3(tm: import("../damageModels").TeamMeta): boolean {
+  if (!tm.characters.includes("skirk")) return false;
+  const elements = Object.values(tm.elements).filter(
+    (e): e is NonNullable<typeof e> => e != null
+  );
+  return (
+    elements.length > 0 &&
+    elements.every((e) => e === "Hydro" || e === "Cryo") &&
+    elements.some((e) => e === "Hydro")
+  );
+}
+
 @RegisterCharacter("escoffier")
 class Escoffier extends CharacterBase {
   private readonly hydroCryo =
@@ -57,17 +71,18 @@ class Escoffier extends CharacterBase {
     return buffs;
   })();
 
-  // E: Skill cast Lv10: 90.7%, Lv13 (C3+): 107.1%
-  // E: Frosty Parfait Lv10: 216.0%, Lv13 (C3+): 255.0%, 21 ticks over 20s
+  // E: Skill cast Lv10: 90.7%, Lv11: 95.8%, Lv13 (C3+): 107.1%, Lv14: 113.4%
+  // E: Parfait Lv10: 216%, Lv11: 228%, Lv13 (C3+): 255%, Lv14: 270%
+  // Skirk P3 gives E+1: Lv10→11, Lv13→14
   // Q: Scoring Cuts Lv10: 1067.0%, Lv13 (C5+): 1259.7%
   // C6: Special-Grade Frosty Parfait 500% ATK, triggered by active NA/CA/Plunge,
-  //     max 6× per Cold Storage mode duration. DmgTODO listed as "per-hit tracking
-  //     limitation" but this is wrong: the per-trigger damage is fixed (500% ATK,
-  //     Skill DMG) and the cap is 6 per duration — modeled identically to Q1/Q5
-  //     "per-rotation counter → add formula with hits:6".
+  //     max 6× per Cold Storage mode duration.
   protected readonly formulaMap = (() => {
-    const skillCastMult = this.constellation >= 3 ? 1.071 : 0.907;
-    const parfaitMult = this.constellation >= 3 ? 2.55 : 2.16;
+    const p3 = hasSkirkP3(this.teamMeta);
+    const skillCastMult =
+      this.constellation >= 3 ? (p3 ? 1.134 : 1.071) : p3 ? 0.958 : 0.907;
+    const parfaitMult =
+      this.constellation >= 3 ? (p3 ? 2.7 : 2.55) : p3 ? 2.28 : 2.16;
     const qMult = this.constellation >= 5 ? 12.597 : 10.67;
     const skillTag = {
       element: "Cryo" as const,
@@ -693,11 +708,25 @@ class Furina extends CharacterBase {
   // Surintendante Chevalmarin (海薇玛夫人): 18 hits
   // Mademoiselle Crabaletta (谢贝蕾妲小姐): 5 hits
   // ×1.4 power bonus (4 healthy members) → baseDmg% +0.4 (in buffs above)
+  // Skirk P3 gives E+1: Lv10→11, Lv13→14
   protected readonly formulaMap = (() => {
     const isE13 = this.constellation >= 5;
-    const usherMult = isE13 ? 0.1267 : 0.1073;
-    const chevalmarinMult = isE13 ? 0.0687 : 0.0582;
-    const crabalettaMult = isE13 ? 0.1761 : 0.1492;
+    const p3 = hasSkirkP3(this.teamMeta);
+    const usherMult = isE13 ? (p3 ? 0.1341 : 0.1267) : p3 ? 0.1132 : 0.1073;
+    const chevalmarinMult = isE13
+      ? p3
+        ? 0.0727
+        : 0.0687
+      : p3
+        ? 0.0614
+        : 0.0582;
+    const crabalettaMult = isE13
+      ? p3
+        ? 0.1865
+        : 0.1761
+      : p3
+        ? 0.1575
+        : 0.1492;
     const hydroTag = {
       element: "Hydro" as const,
       ability: "skill" as const,
