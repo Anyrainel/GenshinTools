@@ -53,7 +53,7 @@ export function SidebarLayout({
   return (
     <div
       className={cn(
-        "h-full overflow-hidden flex flex-col lg:flex-row wide-container gap-2 lg:gap-3 pt-2 lg:pt-4"
+        "h-full overflow-hidden flex flex-col lg:flex-row wide-container gap-2 lg:gap-3"
       )}
     >
       {/* Mobile/Tablet trigger button */}

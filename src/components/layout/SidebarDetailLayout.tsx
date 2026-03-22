@@ -75,7 +75,7 @@ export function SidebarDetailLayout({
     return (
       <div className="flex flex-col h-full overflow-y-auto container mx-auto px-2">
         {banner}
-        {header && <div className="shrink-0 pt-3 pb-4">{header}</div>}
+        {header && <div className="shrink-0 pb-2 2xl:pb-4">{header}</div>}
         {mobileGrid ?? sidebar}
       </div>
     );
@@ -85,13 +85,13 @@ export function SidebarDetailLayout({
   return (
     <div
       className={cn(
-        "h-full overflow-hidden flex flex-col container mx-auto px-2 md:px-4 lg:px-6",
+        "h-full overflow-hidden flex flex-col container mx-auto px-2 md:px-4",
         className
       )}
     >
       {banner}
-      {header && <div className="shrink-0 pt-3 pb-4">{header}</div>}
-      <div className="flex-1 min-h-0 flex flex-row gap-3 pb-3">
+      {header && <div className="shrink-0 pb-2 2xl:pb-4">{header}</div>}
+      <div className="flex-1 min-h-0 flex flex-row gap-2 lg:gap-3 pb-2 lg:pb-3">
         <aside
           className={cn(
             "shrink-0 overflow-y-auto rounded-lg bg-card/50 border border-border/50 p-2 pr-1",

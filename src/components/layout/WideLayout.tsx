@@ -43,7 +43,7 @@ export function WideLayout({
   return (
     <div className={cn("w-full flex-1 min-h-0 flex flex-col", className)}>
       {/* Header - Sticky, uses container for constrained width */}
-      <header className="shrink-0 sticky top-0 z-10 pt-4 pb-3">
+      <header className="shrink-0 sticky top-0 z-10 pb-2 2xl:pb-4">
         <div className="container flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <div className="text-xl md:text-2xl font-bold truncate">

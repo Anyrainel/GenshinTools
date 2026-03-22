@@ -184,7 +184,7 @@ export function AppBar({
     <>
       <header
         className={cn(
-          "border-b border-border/50 bg-card/20 backdrop-blur-sm",
+          "bg-card/20 backdrop-blur-sm",
           "flex-shrink-0 z-50 sticky top-0 transition-transform duration-300",
           // Hide on mobile when scrolling down
           isHidden && "md:translate-y-0 -translate-y-full",
@@ -307,7 +307,7 @@ export function AppBar({
             </Link>
 
             {/* Desktop Nav */}
-            <div className="hidden 2xl:flex items-center gap-1">
+            <div className="hidden 2xl:flex items-center gap-2">
               {navItems.map((item) => {
                 const isActive = location.pathname.startsWith(item.href);
                 return (
@@ -316,7 +316,7 @@ export function AppBar({
                     variant={isActive ? "secondary" : "ghost"}
                     asChild
                     className={cn(
-                      "gap-1 pt-1.5 pb-2.5",
+                      "gap-1 px-3 pt-1.5 pb-2.5",
                       isActive &&
                         "bg-primary/10 text-primary hover:bg-primary/20"
                     )}

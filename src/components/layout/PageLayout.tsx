@@ -32,7 +32,7 @@ export function PageLayout({
       )}
     >
       <AppBar {...appBarProps} />
-      <div className="flex-1 min-h-0 flex flex-col relative w-full">
+      <div className="flex-1 min-h-0 flex flex-col relative w-full pt-2 2xl:pt-4">
         <PageErrorBoundary onClearData={onClearData} clearLabel={clearLabel}>
           {children}
         </PageErrorBoundary>
