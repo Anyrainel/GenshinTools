@@ -1,4 +1,9 @@
 import {
+  BADGE_GREEN,
+  BADGE_RED,
+  TIER_TEXT_COLORS,
+} from "@/components/account-data/TriageCard";
+import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogDescription,
@@ -16,15 +21,7 @@ const TIER_KEY = {
   T: "triage.tier.T",
 } as const;
 
-const TIER_COLOR: Record<string, string> = {
-  P: "text-amber-300",
-  Q: "text-purple-300",
-  N: "text-blue-300",
-  T: "text-zinc-400",
-};
-
-const BADGE_GREEN = "bg-green-500/20 text-green-300 border-green-500/30";
-const BADGE_RED = "bg-red-500/20 text-red-300 border-red-500/30";
+const TIER_COLOR = TIER_TEXT_COLORS;
 
 export function TriageHelpDialog({
   open,

@@ -1,5 +1,8 @@
 import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
-import { TriageCard } from "@/components/account-data/TriageCard";
+import {
+  TIER_TEXT_COLORS,
+  TriageCard,
+} from "@/components/account-data/TriageCard";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -54,12 +57,7 @@ const TIER_KEY = {
   T: "triage.tier.T",
 } as const;
 
-const TIER_COLOR: Record<string, string> = {
-  P: "text-amber-300",
-  Q: "text-purple-300",
-  N: "text-blue-300",
-  T: "text-zinc-400",
-};
+const TIER_COLOR = TIER_TEXT_COLORS;
 
 // ---------------------------------------------------------------------------
 // Grid column count (read from actual DOM grid via ResizeObserver)
@@ -423,7 +421,7 @@ export function TriageView() {
 
   if (!accountData || buildGroups.length === 0) {
     return (
-      <ScrollLayout className="pb-10 mt-2">
+      <ScrollLayout>
         <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
           <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
             <div className="relative">
@@ -460,123 +458,128 @@ export function TriageView() {
   }
 
   return (
-    <ScrollLayout className="px-4 py-4 pb-20 space-y-6">
-      {/* Header */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-semibold">{t.ui("triage.title")}</h2>
-          {/* Settings popover */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <Settings className="w-4 h-4" />
-                {t.ui("triage.settings")}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-auto">
-              <TriageSettingsPanel
-                settings={settings}
-                onChange={setSettings}
-                t={t}
-              />
-            </PopoverContent>
-          </Popover>
-          {/* Flex pattern dialog trigger */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => setFlexOpen(true)}
-          >
-            <Puzzle className="w-4 h-4" />
-            {t.ui("triage.flexPatterns")}
-            {flexPatterns.length > 0 && (
-              <Badge variant="secondary" className="text-xs ml-0.5">
-                {flexPatterns.length}
-              </Badge>
-            )}
-          </Button>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm">
-            {t.ui("triage.subtitle").replace("{0}", totalArtifacts.toString())}
-            <button
-              type="button"
-              onClick={() => setHelpOpen(true)}
-              className="ml-1.5 inline-flex align-text-bottom text-amber-400 hover:text-amber-300 transition-colors"
+    <ScrollLayout
+      header={
+        <div className="px-4 space-y-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <h2 className="text-2xl font-semibold">{t.ui("triage.title")}</h2>
+            {/* Settings popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <Settings className="w-4 h-4" />
+                  {t.ui("triage.settings")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-auto">
+                <TriageSettingsPanel
+                  settings={settings}
+                  onChange={setSettings}
+                  t={t}
+                />
+              </PopoverContent>
+            </Popover>
+            {/* Flex pattern dialog trigger */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setFlexOpen(true)}
             >
-              <CircleHelp className="size-4" />
-            </button>
-          </p>
-          <div className="flex items-center gap-1.5 ml-2">
-            {(["P", "Q", "N", "T"] as const).map((tier) => (
-              <FilterChip
-                key={tier}
-                active={tierFilter.has(tier)}
-                onClick={() => toggleTier(tier)}
+              <Puzzle className="w-4 h-4" />
+              {t.ui("triage.flexPatterns")}
+              {flexPatterns.length > 0 && (
+                <Badge variant="secondary" className="text-xs ml-0.5">
+                  {flexPatterns.length}
+                </Badge>
+              )}
+            </Button>
+            <p className="text-sm italic ml-auto bg-gradient-to-r from-amber-400 to-pink-400 bg-clip-text text-transparent">
+              {t.ui("triage.autoLockWip")}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-sm">
+              {t
+                .ui("triage.subtitle")
+                .replace("{0}", totalArtifacts.toString())}
+              <button
+                type="button"
+                onClick={() => setHelpOpen(true)}
+                className="ml-1.5 inline-flex align-text-bottom text-amber-400 hover:text-amber-300 transition-colors"
               >
-                <span className={cn("text-sm font-semibold", TIER_COLOR[tier])}>
-                  {tierCounts[tier]}
-                </span>
-                <span className="text-sm">{t.ui(TIER_KEY[tier])}</span>
-              </FilterChip>
-            ))}
-          </div>
-          {/* Sort controls */}
-          <div className="flex items-center gap-1.5 ml-auto">
-            <span className="text-sm font-medium text-foreground">
-              {t.ui("filters.sort")}
-            </span>
-            {(
-              [
-                ["name", "triage.sortByName"],
-                ["tier", "triage.sortByTier"],
-                ["level", "common.level"],
-              ] as const
-            ).map(([dim, labelKey]) => {
-              const isActive = activeSortDim === dim;
-              return (
-                <button
-                  key={dim}
-                  type="button"
-                  onClick={() => toggleSort(dim)}
-                  className={cn(
-                    "inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium transition-colors border min-w-[4.5rem]",
-                    isActive
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-secondary text-secondary-foreground border-primary/40 hover:bg-secondary/80"
-                  )}
+                <CircleHelp className="size-4" />
+              </button>
+            </p>
+            <div className="flex items-center gap-1.5 ml-2">
+              {(["P", "Q", "N", "T"] as const).map((tier) => (
+                <FilterChip
+                  key={tier}
+                  active={tierFilter.has(tier)}
+                  onClick={() => toggleTier(tier)}
                 >
-                  {t.ui(labelKey)}
-                  {isActive ? (
-                    activeSortDir === "asc" ? (
-                      <ArrowUp className="h-3.5 w-3.5" />
+                  <span
+                    className={cn("text-sm font-semibold", TIER_COLOR[tier])}
+                  >
+                    {tierCounts[tier]}
+                  </span>
+                  <span className="text-sm">{t.ui(TIER_KEY[tier])}</span>
+                </FilterChip>
+              ))}
+            </div>
+            {/* Sort controls */}
+            <div className="flex items-center gap-1.5 ml-auto">
+              <span className="text-sm font-medium text-foreground">
+                {t.ui("filters.sort")}
+              </span>
+              {(
+                [
+                  ["name", "triage.sortByName"],
+                  ["tier", "triage.sortByTier"],
+                  ["level", "common.level"],
+                ] as const
+              ).map(([dim, labelKey]) => {
+                const isActive = activeSortDim === dim;
+                return (
+                  <button
+                    key={dim}
+                    type="button"
+                    onClick={() => toggleSort(dim)}
+                    className={cn(
+                      "inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-md text-sm font-medium transition-colors border min-w-[4.5rem]",
+                      isActive
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-secondary text-secondary-foreground border-primary/40 hover:bg-secondary/80"
+                    )}
+                  >
+                    {t.ui(labelKey)}
+                    {isActive ? (
+                      activeSortDir === "asc" ? (
+                        <ArrowUp className="h-3.5 w-3.5" />
+                      ) : (
+                        <ArrowDown className="h-3.5 w-3.5" />
+                      )
                     ) : (
-                      <ArrowDown className="h-3.5 w-3.5" />
-                    )
-                  ) : (
-                    <ArrowDown className="h-3.5 w-3.5 opacity-30" />
-                  )}
-                </button>
-              );
-            })}
+                      <ArrowDown className="h-3.5 w-3.5 opacity-30" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
+          {/* Dialogs (portaled, no layout impact) */}
+          <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} t={t} />
+          <FlexPatternDialog
+            open={flexOpen}
+            onOpenChange={setFlexOpen}
+            flexPatterns={flexPatterns}
+            settings={settings}
+            onSettingsChange={setSettings}
+            t={t}
+          />
         </div>
-        <p className="text-sm italic text-right -mt-1 bg-gradient-to-r from-amber-400 to-pink-400 bg-clip-text text-transparent">
-          {t.ui("triage.autoLockWip")}
-        </p>
-        {/* Dialogs (portaled, no layout impact) */}
-        <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} t={t} />
-        <FlexPatternDialog
-          open={flexOpen}
-          onOpenChange={setFlexOpen}
-          flexPatterns={flexPatterns}
-          settings={settings}
-          onSettingsChange={setSettings}
-          t={t}
-        />
-      </div>
-
+      }
+    >
       {/* Tabs */}
       <Tabs
         defaultValue="lock"
@@ -630,11 +633,11 @@ export function TriageView() {
             amber:
               "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/30",
             slate:
-              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-slate-500/15 data-[state=active]:text-slate-300 data-[state=active]:border-slate-500/30",
+              "data-[state=inactive]:text-foreground/70 data-[state=active]:bg-sky-500/15 data-[state=active]:text-sky-400 data-[state=active]:border-sky-500/30",
           };
           return (
             <>
-              <TabsList className="w-full bg-card/50 border border-border p-1 h-auto gap-1 grid grid-cols-2 sm:grid-cols-4">
+              <TabsList className="w-full bg-card/80 backdrop-blur-md h-auto gap-1 grid grid-cols-2 sm:grid-cols-4 sticky top-0 z-20">
                 {tabs.map(
                   ({ value, labelKey, descKey, icon: Icon, color, items }) => (
                     <TabsTrigger

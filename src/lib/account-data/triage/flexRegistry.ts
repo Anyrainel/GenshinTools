@@ -1,5 +1,4 @@
 import type { MainStat, Slot, SubStat } from "@/data/types";
-import { allSlots, mainStatsPlus } from "@/data/types";
 import { SUB_WEIGHTS, pJoint } from "./tierMath";
 import { getMainProb } from "./tierTableBuilder";
 import type { FlexPattern, TriageRule } from "./types";
@@ -42,6 +41,7 @@ const CURATED: RawFlex[] = [
   // ── Flower ──────────────────────────────────────────────────────────────
   ["flower", ["hp"], ["cr", "cd", "atk%", "atk"]],
   ["flower", ["hp"], ["cr", "cd", "def%", "def"]],
+  ["flower", ["hp"], ["cr", "cd", "atk%", "hp%"], true],
   ["flower", ["hp"], ["cr", "cd", "atk%", "er"]],
   ["flower", ["hp"], ["cr", "cd", "hp%", "er"]],
   ["flower", ["hp"], ["cr", "cd", "def%", "er"]],
@@ -52,6 +52,7 @@ const CURATED: RawFlex[] = [
   // ── Plume ──────────────────────────────────────────────────────────────
   ["plume", ["atk"], ["cr", "cd", "hp%", "hp"]],
   ["plume", ["atk"], ["cr", "cd", "def%", "def"]],
+  ["plume", ["atk"], ["cr", "cd", "atk%", "hp%"], true],
   ["plume", ["atk"], ["cr", "cd", "atk%", "er"]],
   ["plume", ["atk"], ["cr", "cd", "hp%", "er"]],
   ["plume", ["atk"], ["cr", "cd", "def%", "er"]],
@@ -66,9 +67,12 @@ const CURATED: RawFlex[] = [
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "flat"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
   ["sands", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
-  ["sands", ["er"], ["cr", "atk%", "atk"]],
-  ["sands", ["er"], ["cr", "def%", "def"]],
-  ["sands", ["er"], ["cr", "hp%", "hp"]],
+  ["sands", ["er"], ["atk%", "atk"], true],
+  ["sands", ["er"], ["atk%", "atk", "cr"]],
+  ["sands", ["er"], ["hp%", "hp"], true],
+  ["sands", ["er"], ["hp%", "hp", "cr"]],
+  ["sands", ["er"], ["def%", "def"], true],
+  ["sands", ["er"], ["def%", "def", "cr"]],
 
   // ── Goblet ─────────────────────────────────────────────────────────────
   ["goblet", ["elemental%"], ["cr", "cd"]],
@@ -94,10 +98,10 @@ const CURATED: RawFlex[] = [
   ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "flat"]],
   ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "er"]],
   ["circlet", ["atk%", "hp%", "def%"], ["cr", "cd", "em"]],
+  ["circlet", ["heal%"], ["cr", "cd"], true],
   ["circlet", ["heal%"], ["atk%", "er"]],
   ["circlet", ["heal%"], ["hp%", "er"]],
   ["circlet", ["heal%"], ["def%", "er"]],
-  ["circlet", ["heal%"], ["cr", "cd"], true],
   ["circlet", ["atk%"], ["cr", "er", "atk"]],
 ];
 
@@ -163,7 +167,7 @@ function computeRarity(
 ): number {
   const pool = makePool(NON_SUB.has(mainStat) ? [] : [mainStat]);
   if (!subs.every((s) => pool[s] != null)) return -1;
-  const p = pJoint(pool, subs, [], subs.length, 0, 3);
+  const p = pJoint(pool, subs, [], subs.length, 0, subs.length);
   if (p <= 0) return -1;
   return getMainProb(slot, mainStat) * p;
 }
@@ -177,8 +181,6 @@ function computeRarity(
  * one per (slot, mainStat, resolvedSubs) combination.
  */
 export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
-  const mainOrder = Object.fromEntries(mainStatsPlus.map((s, i) => [s, i]));
-  const slotOrder = Object.fromEntries(allSlots.map((s, i) => [s, i]));
   const results: FlexPattern[] = [];
 
   for (const [slot, mainStats, subs, defaultOff] of CURATED) {
@@ -202,15 +204,6 @@ export function buildFlexPatterns(_rules: TriageRule[]): FlexPattern[] {
       results.push(pattern);
     }
   }
-
-  // Sort: slot → main stat → substats
-  results.sort((a, b) => {
-    const s = (slotOrder[a.slot] ?? 99) - (slotOrder[b.slot] ?? 99);
-    if (s !== 0) return s;
-    const m = (mainOrder[a.mainStat] ?? 99) - (mainOrder[b.mainStat] ?? 99);
-    if (m !== 0) return m;
-    return a.requiredSubs.join(",").localeCompare(b.requiredSubs.join(","));
-  });
 
   return results;
 }

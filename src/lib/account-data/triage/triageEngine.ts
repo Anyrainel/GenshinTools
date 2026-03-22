@@ -154,6 +154,22 @@ export function runTriage(
       }
     }
 
+    // SP7: ER hoarding (all sets, not just support — off by default)
+    if (
+      settings.erHoardingAllEnabled &&
+      !specialRules.includes("SP1") &&
+      is4L &&
+      artifact.slotKey !== "sands" &&
+      substats.includes("er")
+    ) {
+      const anyRuleNeedsER = rules.some(
+        (r) => r.desired.includes("er") && r.slot === artifact.slotKey
+      );
+      if (anyRuleNeedsER) {
+        specialRules.push("SP7");
+      }
+    }
+
     // SP5: Double crit lock — tag only, normal evaluation continues
     if (
       settings.doubleCritLockEnabled &&
@@ -448,17 +464,24 @@ export function runTriage(
     }
   }
 
-  // --- Special-rule lock promotion (SP1, SP5, FLEX) ---
+  // --- Special-rule lock promotion (SP1, SP7, SP5, FLEX) ---
   // These force lock without changing the tier determined by 4pc/2pc evaluation.
   for (const prelim of prelims) {
     if (prelim.bestLabel === "lock") continue;
     const sp = prelim.specialRules;
-    if (sp.includes("SP1") || sp.includes("SP5") || sp.includes("FLEX")) {
+    if (
+      sp.includes("SP1") ||
+      sp.includes("SP7") ||
+      sp.includes("SP5") ||
+      sp.includes("FLEX")
+    ) {
       const ruleId = sp.includes("SP1")
         ? "SP1"
-        : sp.includes("SP5")
-          ? "SP5"
-          : "FLEX";
+        : sp.includes("SP7")
+          ? "SP7"
+          : sp.includes("SP5")
+            ? "SP5"
+            : "FLEX";
       setLabel(prelim, "lock", ruleId);
     }
   }

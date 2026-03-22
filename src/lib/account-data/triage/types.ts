@@ -91,6 +91,7 @@ export type TriageSettings = {
   setSlotKeep: number; // default 2 (min artifacts to keep per set+slot)
   ownedOnly: boolean; // default true (only consider owned characters' builds)
   erHoardingEnabled: boolean; // default true
+  erHoardingAllEnabled: boolean; // default false (all sets, not just support)
   doubleCritLockEnabled: boolean; // default true
   levelProtection: number; // default 12 (artifacts >= this level are protected)
   equippedProtection: boolean; // default true

@@ -8,6 +8,7 @@ export const DEFAULT_TRIAGE_SETTINGS: TriageSettings = {
   setSlotKeep: 2,
   ownedOnly: true,
   erHoardingEnabled: true,
+  erHoardingAllEnabled: false,
   doubleCritLockEnabled: true,
   levelProtection: 12,
   equippedProtection: true,
