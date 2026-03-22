@@ -259,7 +259,7 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     "destructive-foreground": hslVar(210, 40, 98),
 
     // Borders and inputs
-    border: hslVar(base.h, base.s + 2, base.l + 6),
+    border: hslVar(base.h, base.s + 2, base.l + 16),
     input: hslVar(base.h, base.s, base.l + 2),
     ring: hslVar(glow1.h, primaryS, primaryL),
 
