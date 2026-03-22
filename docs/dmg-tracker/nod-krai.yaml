@@ -16,3 +16,80 @@
     instances. Would require new engine feature (reaction hit-count multiplier).
   created: "2026-02-25"
   resolved: "2026-03-14"
+- id: illuga-excel-missing-eq-formulas
+  entity: illuga
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E press/hold EM+DEF dual scaling Geo skill + Q burst EM+DEF dual scaling Geo burst
+  combo: "E x1, Q x1 per rotation"
+  detail: >
+    Added DirectFormula for E press (8.69 EM + 4.34 DEF Lv10, 10.25 EM + 5.13 DEF C5+),
+    E hold (10.86 EM + 5.43 DEF Lv10, 12.82 EM + 6.41 DEF C5+), and Q burst
+    (14.89 EM + 7.44 DEF Lv10, 17.58 EM + 8.79 DEF C3+) with Geo/skill and Geo/burst
+    tags. All use EM primary + DEF extraTerm dual scaling. Updated defaultCombo.
+  created: "2026-03-22"
+  resolved: "2026-03-22"
+- id: jahoda-excel-missing-eq-formulas
+  entity: jahoda
+  rule: S8
+  status: open
+  category: missing-formula
+  summary: >
+    Excel calculator has E skill (smoke bomb, flask unfilled/filled, meowball
+    in 4 elements) and Q burst (initial hit, robot periodic damage in 4
+    elements) formulas that are absent from TS formulaMap. Jahoda is modeled
+    as a pure healer/support with no damage formulas — verify whether E/Q
+    damage sources are significant enough to warrant modeling.
+  detail: >
+    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: C風元素角色模块2.bas).
+    E has multiple damage modes: Smoke Bomb 286.2%, Unfilled Flask 343.4%,
+    Filled Flask 381.6%, Meowball 230.4% (4 elements). Q initial 373%,
+    Q Robot periodic 31.1% per tick (4 elements), P1 enhances Pyro robot
+    to 130% of original. TS formulaMap is empty. The Q robot periodic
+    damage and E meowball damage may be significant in rotation context.
+  created: "2026-03-22"
+  resolved: null
+- id: columbina-excel-missing-eq-hits
+  entity: columbina
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E initial hit 30.1% Max HP Hydro skill + Q burst 58% Max HP Hydro burst
+  combo: "E x1, Q x1 per rotation"
+  detail: >
+    Added DirectFormula for E initial hit (0.301 HP Lv10, 0.355 C3+) with
+    Hydro/skill/none tag, and Q burst hit (0.58 HP Lv10, 0.685 C5+) with
+    Hydro/burst/none tag. Updated defaultCombo to include both.
+  created: "2026-03-22"
+  resolved: "2026-03-22"
+- id: ineffa-excel-missing-e-initial
+  entity: ineffa
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E initial hit 155.5% ATK Electro skill
+  combo: "E x1 per rotation"
+  detail: >
+    Added DirectFormula for E initial hit (1.555 ATK Lv10, 1.836 C3+) with
+    Electro/skill/none tag. Updated defaultCombo to include skill-initial.
+  created: "2026-03-22"
+  resolved: "2026-03-22"
+- id: nefer-excel-missing-e-initial
+  entity: nefer
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    E initial hit 137.5% ATK + 275% EM dual-scaled Dendro skill. 3 casts per
+    rotation. Also update existing charged attack formula from hits:6 to hits:9.
+  combo: "E x3 per rotation, charged x9 (not x6)"
+  detail: >
+    Added DirectFormula for E initial hit (1.375 ATK + 2.75 EM Lv10, 1.623 ATK +
+    3.246 EM C3+) with Dendro/skill/none tag. Updated defaultCombo from
+    nefer-phantasm:6 to nefer-skill:3 + nefer-phantasm:9.
+  created: "2026-03-22"
+  resolved: "2026-03-22"

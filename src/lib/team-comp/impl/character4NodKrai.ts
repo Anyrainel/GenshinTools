@@ -137,31 +137,83 @@ class Illuga extends CharacterBase {
 
   // Rotation: E > Q > swap (support buffer, C2 Aedon fires per 7 stacks; 21 base stacks ≈ 3 triggers)
   protected override get defaultCombo() {
-    return { "illuga-c2-aedon": 3 };
+    return { "illuga-skill-press": 1, "illuga-burst": 1, "illuga-c2-aedon": 3 };
   }
 
+  // E press: Lv10 869% EM + 434% DEF, Lv13 (C5+) 1025% EM + 513% DEF
+  // E hold: Lv10 1086% EM + 543% DEF, Lv13 (C5+) 1282% EM + 641% DEF
+  // Q burst: Lv10 1489% EM + 744% DEF, Lv13 (C3+) 1758% EM + 879% DEF
   // C2: Aedon summon per 7 Nightingale's Song stacks consumed
   // 400% EM + 200% DEF, Geo Burst DMG
-  protected readonly formulaMap = {
-    ...(this.constellation >= 2
-      ? {
-          "illuga-c2-aedon": {
-            label: { zh: "C2阿咚", en: "C2 Aedon" },
-            parts: [
-              {
-                formula: new DirectFormula(
-                  4.0,
-                  { element: "Geo", ability: "burst", reaction: "none" },
-                  "em",
-                  { key: "def", multiplier: 2.0 }
-                ),
-                offField: true,
-              },
-            ],
+  protected readonly formulaMap = (() => {
+    const isE15 = this.constellation >= 5;
+    const isQ15 = this.constellation >= 3;
+    const ePressEmMult = isE15 ? 10.25 : 8.69;
+    const ePressDefMult = isE15 ? 5.13 : 4.34;
+    const eHoldEmMult = isE15 ? 12.82 : 10.86;
+    const eHoldDefMult = isE15 ? 6.41 : 5.43;
+    const qEmMult = isQ15 ? 17.58 : 14.89;
+    const qDefMult = isQ15 ? 8.79 : 7.44;
+    return {
+      "illuga-skill-press": {
+        label: { zh: "E点按", en: "E Press" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              ePressEmMult,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "em",
+              { key: "def", multiplier: ePressDefMult }
+            ),
           },
-        }
-      : {}),
-  };
+        ],
+      },
+      "illuga-skill-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eHoldEmMult,
+              { element: "Geo", ability: "skill", reaction: "none" },
+              "em",
+              { key: "def", multiplier: eHoldDefMult }
+            ),
+          },
+        ],
+      },
+      "illuga-burst": {
+        label: { zh: "Q", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              qEmMult,
+              { element: "Geo", ability: "burst", reaction: "none" },
+              "em",
+              { key: "def", multiplier: qDefMult }
+            ),
+          },
+        ],
+      },
+      ...(this.constellation >= 2
+        ? {
+            "illuga-c2-aedon": {
+              label: { zh: "C2阿咚", en: "C2 Aedon" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    4.0,
+                    { element: "Geo", ability: "burst", reaction: "none" },
+                    "em",
+                    { key: "def", multiplier: 2.0 }
+                  ),
+                  offField: true,
+                },
+              ],
+            },
+          }
+        : {}),
+    };
+  })();
 }
 
 @RegisterCharacter("jahoda")

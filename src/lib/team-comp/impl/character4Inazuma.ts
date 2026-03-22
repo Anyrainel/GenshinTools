@@ -433,7 +433,7 @@ class Gorou extends CharacterBase {
         label: { zh: "E伤害", en: "E Skill" },
         parts: [
           {
-            formula: new DirectFormula(eMult, eTag, "def"),
+            formula: new DirectFormula(eMult, eTag),
             bespokeBuff: new ScalingBuff(
               cbs(this, "P2", ["E"]),
               eBespokeTarget,

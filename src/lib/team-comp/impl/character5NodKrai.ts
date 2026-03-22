@@ -177,6 +177,8 @@ class Columbina extends CharacterBase {
   // Rotation: E > Q > swap; off-field enabler. Ripple ticks ~12 over 25s, ~2 Gravity Interferences, ~3 CAs if driving
   protected override get defaultCombo() {
     return {
+      "columbina-skill-initial": 1,
+      "columbina-burst": 1,
       "columbina-charge": 0,
       "columbina-skill-interference": 2,
       "columbina-ripple": 12,
@@ -206,7 +208,35 @@ class Columbina extends CharacterBase {
       eInterferenceReaction = "lunarCrystallize";
     }
 
+    // E initial hit: Lv10 30.1% HP, Lv13 (C3+) 35.5% HP
+    const eInitialMult = isE13 ? 0.355 : 0.301;
+    // Q burst hit: Lv10 58% HP, Lv13 (C5+) 68.5% HP
+    const qBurstMult = this.constellation >= 5 ? 0.685 : 0.58;
     return {
+      "columbina-skill-initial": {
+        label: { zh: "E", en: "E" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eInitialMult,
+              { element: "Hydro", ability: "skill", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
+      "columbina-burst": {
+        label: { zh: "Q", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              qBurstMult,
+              { element: "Hydro", ability: "burst", reaction: "none" },
+              "hp"
+            ),
+          },
+        ],
+      },
       "columbina-charge": {
         label: { zh: "重击", en: "CA" },
         parts: [
@@ -387,9 +417,9 @@ class Nefer extends CharacterBase {
   // Q total: Lv10 (404.4%+606.5%) ATK + (808.7%+1213.1%) EM = 1010.9% ATK + 2021.8% EM
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
 
-  // Rotation: E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 6 Phantasm Performances per rotation)
+  // Rotation: E > 3[CA] > E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 9 CAs, 3 E casts per rotation)
   protected override get defaultCombo() {
-    return { "nefer-phantasm": 6, "nefer-burst": 0 };
+    return { "nefer-skill": 3, "nefer-phantasm": 9, "nefer-burst": 0 };
   }
 
   protected readonly formulaMap = (() => {
@@ -449,7 +479,23 @@ class Nefer extends CharacterBase {
             ),
           },
         ];
+    // E initial hit: Lv10 137.5% ATK + 275% EM, Lv13 (C3+) 162.3% ATK + 324.6% EM
+    const eAtkMult = isE13 ? 1.623 : 1.375;
+    const eEmMult = isE13 ? 3.246 : 2.75;
     return {
+      "nefer-skill": {
+        label: { zh: "E", en: "E" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              eAtkMult,
+              { element: "Dendro", ability: "skill", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: eEmMult }
+            ),
+          },
+        ],
+      },
       ...(hasHydro
         ? {
             "nefer-phantasm": {
@@ -982,6 +1028,7 @@ class Ineffa extends CharacterBase {
   // Rotation: E > Q > swap (off-field sub-DPS). Birgitta 10 hits baked in formula. C6 triggers ~6 times over 20s.
   protected override get defaultCombo() {
     return {
+      "ineffa-skill-initial": 1,
       "ineffa-birgitta": 1,
       "ineffa-burst": 1,
       "ineffa-c6-thundercloud": 6,
@@ -992,10 +1039,24 @@ class Ineffa extends CharacterBase {
   // P1: If thunderclouds nearby (from lunarCharged), each discharge also does 65% ATK lunarCharged hit
   // Q: Lv10 1218.2%, Lv13 (C5+) 1438.2%
   protected readonly formulaMap = (() => {
+    // E initial hit: Lv10 155.5%, Lv13 (C3+) 183.6%
+    const eInitialMult = this.constellation >= 3 ? 1.836 : 1.555;
     const dischargeMult = this.constellation >= 3 ? 2.04 : 1.728;
     const qMult = this.constellation >= 5 ? 14.382 : 12.182;
     const hasHydro = this.teamMeta.countByElement("Hydro") > 0;
     return {
+      "ineffa-skill-initial": {
+        label: { zh: "E", en: "E" },
+        parts: [
+          {
+            formula: new DirectFormula(eInitialMult, {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "ineffa-birgitta": {
         label: { zh: "E×10", en: "E×10" },
         parts: [

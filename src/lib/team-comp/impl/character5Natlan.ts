@@ -56,14 +56,28 @@ class Varesa extends CharacterBase {
       : []),
   ];
 
+  // Flying Kick (Lv10): 621.2%  |  (Lv13 C3+): 733.4%
   // Fiery Passion High Plunge (Lv10): 552.0%
   // Fiery Passion High Plunge (Lv13 C5+): 669.0%
   // Volcano Kablam (Lv10): 724.8%
   // Volcano Kablam (Lv13 C3+): 855.6%
   protected readonly formulaMap = (() => {
+    const kickMult = this.constellation >= 3 ? 7.334 : 6.212;
     const naMult = this.constellation >= 5 ? 6.69 : 5.52;
     const qMult = this.constellation >= 3 ? 8.556 : 7.248;
     return {
+      "varesa-kick": {
+        label: { zh: "Q飞踢", en: "Q Flying Kick" },
+        parts: [
+          {
+            formula: new DirectFormula(kickMult, {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
       "varesa-plunge": {
         label: { zh: "下落(高空)", en: "Plunge (High)" },
         parts: [
@@ -127,7 +141,7 @@ class Varesa extends CharacterBase {
 
   // Rotation: Q > ECP ×4 + sQ ×2 (~20s, plunge carry, KQM)
   protected override get defaultCombo() {
-    return { "varesa-plunge": 4, "varesa-kablam": 2 };
+    return { "varesa-kick": 1, "varesa-plunge": 4, "varesa-kablam": 2 };
   }
 }
 

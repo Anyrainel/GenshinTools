@@ -71,20 +71,6 @@
   created: "2026-02-25"
   resolved: "2026-03-14"
 
-- id: dehya-e-molten-inferno
-  entity: dehya
-  rule: S8
-  status: completed
-  category: missing-formula
-  summary: >
-    E Molten Inferno coordinated attack not modeled (only Q).
-  detail: >
-    Added "dehya-molten-inferno" formula with dual ATK+HP scaling (Lv10: 108.4% ATK +
-    1.86% HP, Lv13 C5+: 127.9% ATK + 2.19% HP), hits: 4. Fixed C1/C2 E buff receivers
-    from selfOnField→self. Also fixed dehya-c1c2-e-receiver.
-  created: "2026-02-25"
-  resolved: "2026-03-14"
-
 - id: nilou-e-dance-hits
   entity: nilou
   rule: S8
@@ -110,33 +96,4 @@
     No runbook formulas for Candace. C6-only coordinated attack for a niche
     support character. Periodic/minor proc, estimated <5% team DPS contribution.
   created: "2026-02-25"
-  resolved: "2026-03-14"
-
-
-- id: dehya-c1c2-e-receiver
-  entity: dehya
-  rule: U1
-  status: completed
-  category: approximation
-  summary: >
-    C1 E baseDmg and C2 E dmg% buffs use receiver "selfOnField", but Fiery
-    Sanctum coordinated attacks fire while Dehya is off-field. Fixed to "self".
-  detail: >
-    Fixed C1/C2 buff receivers from selfOnField→self as part of
-    dehya-e-molten-inferno implementation.
-  created: "2026-02-26"
-  resolved: "2026-03-14"
-
-- id: cyno-p1-dmg-leak
-  entity: cyno
-  rule: U5
-  status: completed
-  category: engine-gap
-  summary: >
-    P1 Judication +35% DMG leaked to C6 Duststalker Bolts via ability filter.
-  detail: >
-    Moved P1 +35% dmg% from buffs array to bespokeBuff on Mortuary Rite formula
-    part. Now scoped to that specific formula part only, preventing leak to C6
-    Duststalker Bolts.
-  created: "2026-02-26"
   resolved: "2026-03-14"

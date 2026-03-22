@@ -3,7 +3,7 @@
 - id: albedo-p1-enemy-hp-combatopt
   entity: albedo
   rule: S6
-  status: wont-do
+  status: actionable
   category: approximation
   summary: >
     P1 Transient Blossom +25% DMG vs enemies HP <50% is modeled as always-active.
@@ -12,49 +12,36 @@
   detail: >
     Approximation is within acceptable range. Albedo is a support character whose
     Transient Blossom is not the team's primary damage source. The +25% dmg% only
-    applies to his E skill hits (already scoped with ability filter). In practice,
-    enemies spend a significant portion of the fight below 50% HP. The always-on
-    model overestimates by roughly 12.5pp in the dmg% zone, which is a small
-    fraction of total team DPS. Not worth adding a CombatOpt for a support's
-    off-field proc.
+    applies to his E skill hits (already scoped with ability filter). We should add an OptionMap for this.
   created: "2026-02-26"
-  resolved: "2026-02-26"
+  resolved: null
 
 - id: razor-c2-enemy-hp-combatopt
   entity: razor
   rule: S6
-  status: wont-do
+  status: actionable
   category: approximation
   summary: >
     C2 CRIT Rate +10% vs enemies <30% HP is not modeled. Per rule S6, enemy HP
     conditions should use OptionMap. Currently omitted entirely.
   detail: >
-    Approximation is within acceptable range. The +10% CR only applies during the
-    execute phase (enemy below 30% HP), which is a small fraction of total fight
-    duration. Expected DPS contribution is well under 5%. Razor is a 4-star
-    physical carry whose optimization is not highly sensitive to this minor
-    conditional CR bonus. Omitting entirely (conservative, underestimates) is
-    preferable to always-on (overestimates) and not worth a CombatOpt.
+    Razor is now a formidable DPS, and we should implement this OptionMap.
   created: "2026-02-26"
-  resolved: "2026-02-26"
+  resolved: null
 
 - id: razor-p4-hexerei-lightning
   entity: razor
   rule: S8
-  status: wont-do
+  status: actionable
   category: missing-formula
   summary: >
     P4 Hexerei: Secret Rite lightning strike (150% ATK Electro AoE, once per 1s
     when sigils overflow during Q) is not modeled. Potentially significant damage
     source over 15s Q duration, especially at C6 where every E triggers overflow.
   detail: >
-    Periodic/minor proc, estimated <5% DPS contribution. Not in DmgRunbook.
-    Only active with >=2 Hexerei teammates (niche comp). Over 15s Q, realistically
-    2-3 E presses trigger overflow = 300-450% ATK total. Compare to Q Normal Combo
-    total of ~1124% ATK equivalent per rotation (physical + wolf). Not worth
-    modeling for a niche conditional proc on a 4-star character.
+    We should implement this formula with a guessed default combo count.
   created: "2026-02-26"
-  resolved: "2026-03-14"
+  resolved: null
 
 - id: mona-c1-offfield-enhancement
   entity: mona
@@ -97,6 +84,22 @@
     modeled.
   created: "2026-03-22"
   resolved: null
+
+- id: albedo-excel-c2-offfield-blossom
+  entity: albedo
+  rule: S8
+  status: completed
+  category: missing-formula
+  summary: >
+    C2 Fatal Blossom auto-trigger during Q: 300% DEF Geo burst damage per blossom
+  combo: "7 blossoms per Q (matching existing burst formula)"
+  detail: >
+    Added DirectFormula for C2 off-field Fatal Blossom (300% DEF, Geo/burst/none,
+    hits: 3, offField: true). Gated on constellation >= 2. Formula entry:
+    "albedo-c2-offfield". The existing C2 ScalingBuff (+120% DEF baseDmg) for
+    the on-field Q cast remains unchanged.
+  created: "2026-03-22"
+  resolved: "2026-03-22"
 
 - id: durin-kqm-c4-stack-preservation
   entity: durin

@@ -437,6 +437,29 @@ class Albedo extends CharacterBase {
           },
         ],
       },
+      // C2: Off-field auto-trigger — 3 Fatal Blossoms × 300% DEF (burst-typed)
+      // Triggers when Fatal Reckoning stacks reach 4 while Albedo is off-field
+      ...(this.constellation >= 2
+        ? {
+            "albedo-c2-offfield": {
+              label: {
+                zh: "2命后台生灭之花×3",
+                en: "C2 Off-Field Fatal Blossom ×3",
+              },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    3.0,
+                    { element: "Geo", ability: "burst", reaction: "none" },
+                    "def"
+                  ),
+                  hits: 3,
+                  offField: true,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 
@@ -1043,20 +1066,59 @@ class Klee extends CharacterBase {
   })();
 
   // Charged ATK: Lv10 283% (no constellation boost, C3=E, C5=Q)
-  protected readonly formulaMap = {
-    "klee-charged": {
-      label: { zh: "重击", en: "CA" },
-      parts: [
-        {
-          formula: new DirectFormula(2.83, {
-            element: "Pyro",
-            ability: "charge",
-            reaction: "none",
-          }),
-        },
-      ],
-    },
-  };
+  protected readonly formulaMap = (() => {
+    // C1 proc: 120% of Q Sparks 'n' Splash DMG, considered burst DMG
+    // Q Lv10: 76.8%, Lv13 (C5+): 90.6%  →  ×1.2 = 92.16% / 108.72%
+    const c1ProcMult = (this.constellation >= 5 ? 0.906 : 0.768) * 1.2;
+    return {
+      "klee-charged": {
+        label: { zh: "重击", en: "CA" },
+        parts: [
+          {
+            formula: new DirectFormula(2.83, {
+              element: "Pyro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      // C1: Chained Reactions — proc dealing 120% of Q DMG (burst-typed)
+      ...(this.constellation >= 1
+        ? {
+            "klee-c1-proc": {
+              label: { zh: "1命火花", en: "C1 Spark" },
+              parts: [
+                {
+                  formula: new DirectFormula(c1ProcMult, {
+                    element: "Pyro",
+                    ability: "burst",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
+      // C4: Sparkly Explosion — 555% ATK Pyro burst explosion when leaving field during Q
+      ...(this.constellation >= 4
+        ? {
+            "klee-c4-explosion": {
+              label: { zh: "4命爆炸", en: "C4 Explosion" },
+              parts: [
+                {
+                  formula: new DirectFormula(5.55, {
+                    element: "Pyro",
+                    ability: "burst",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
+    };
+  })();
 
   // Rotation: ~6 Charged Attacks per rotation (N1C or N2C combos during Q window)
   protected override get defaultCombo() {

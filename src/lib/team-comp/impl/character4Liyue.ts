@@ -586,7 +586,7 @@ class Xingqiu extends CharacterBase {
         new StatBuff(
           cbs(this, "C4", ["Q"]),
           { receiver: "selfOnField", filter: { abilities: ["skill"] } },
-          [{ key: "dmg%", value: 0.5 }]
+          [{ key: "baseDmg%", value: 0.5 }]
         )
       );
     }

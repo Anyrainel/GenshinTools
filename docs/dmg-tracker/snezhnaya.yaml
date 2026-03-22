@@ -18,3 +18,57 @@
     increase) but universal across all party members.
   created: "2026-02-25"
   resolved: "2026-02-25"
+- id: arlecchino-excel-bol-zone
+  entity: arlecchino
+  rule: S2
+  status: completed
+  category: needs-data
+  summary: >
+    Excel places Bond of Life bonus damage inside the talentMult zone
+    (multiplied with multZone), while TS places it in the flat baseDmg zone
+    (additive). Verify which zone placement matches the game's actual behavior.
+  detail: >
+    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: A火元素角色模块1.bas).
+    Excel formula: (atk * ((talentMult + hongsizhiyan * BoL) * normalMultZone) + normalBaseZone).
+    TS implementation: BoL bonus is added as flat baseDmg via extraTerm, not multiplied with multZone.
+    Game text uses "提升值相当于" which may suggest flat additive (matching TS), but the distinction
+    affects how倍率区 buffs interact with BoL damage. Needs in-game testing to confirm.
+  note: >
+    Zone naming difference only. Will be refactored to per-hit baseDmg% bespokeBuff in future.
+  created: "2026-03-22"
+  resolved: "2026-03-22"
+- id: arlecchino-excel-e-damage
+  entity: arlecchino
+  rule: S8
+  status: open
+  category: missing-formula
+  summary: >
+    Excel calculator includes E skill damage formulas (spike 26.7% x4, cleave 240.4%,
+    blood-debt directive 57.2%) that are absent from TS formulaMap. The cleave is a
+    meaningful one-time hit per rotation. Verify whether E damage warrants a formula entry.
+  detail: >
+    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: A火元素角色模块1.bas).
+    Excel formula: standard dmg(pyro, skill) for spike/cleave/blood-debt directive entries.
+    TS implementation: formulaMap has no E skill damage entries; only normal combo, burst,
+    and C2 bloodfire are modeled. Runbook does not list E damage as required, but the cleave
+    at 240.4% ATK is a non-trivial single hit per rotation.
+  created: "2026-03-22"
+  resolved: null
+- id: tartaglia-excel-riptide-slash
+  entity: tartaglia
+  rule: S8
+  status: open
+  category: missing-formula
+  summary: >
+    Excel calculator includes Riptide Slash (119%/144% ATK, hydro skill DMG, once per 1.5s)
+    and Stance Change DMG (130%/153% ATK, hydro skill DMG) that are absent from TS formulaMap.
+    Riptide Slash procs repeatedly during melee window and may be a significant damage source.
+  detail: >
+    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: B水元素角色模块1.bas).
+    Excel formula: standard dmg(hydro, skill) for both entries, no special logic.
+    TS implementation: formulaMap only has melee-combo (N3C) and burst-melee (Q + Riptide Blast).
+    Riptide Slash fires roughly every 1.5s during the ~9s melee window (approx 6 procs at 119%
+    each = 714% ATK total), making it a notable damage contribution. Stance Change DMG is a
+    one-time 130% ATK hit per E activation. Runbook only requires "Q近战+断流·爆伤害".
+  created: "2026-03-22"
+  resolved: null

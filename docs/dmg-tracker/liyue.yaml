@@ -2,30 +2,29 @@
 - id: shenhe-q-dot
   entity: shenhe
   rule: S8
-  status: wont-do
+  status: actionable
   category: missing-formula
   summary: >
     Q field DoT ticks (59.6% / 70.4%) not modeled.
   detail: >
-    Shenhe is a Cryo support buffer (not in DmgRunbook). Her Q DoT ticks at 59.6%/70.4% ATK
-    over 12s are minor damage compared to her Icy Quill team buff value. Estimated <5% DPS
-    contribution in any team where she is used.
+    Her Q DoT ticks at 59.6%/70.4% ATK over 12s are minor damage, but with her buff stacks
+    now correctly implemented, we can implement this damage when ready.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: null
 
 - id: qiqi-q-talisman
   entity: qiqi
   rule: S8
-  status: wont-do
+  status: actionable
   category: missing-formula
   summary: >
     Q talisman DMG not modeled (pure healer).
   detail: >
-    Qiqi is a pure healer not listed in DmgRunbook. Her Q (513%/605%) is primarily a healing
+    Her Q (513%/605%) is primarily a healing
     tool (Fortune-Preserving Talisman heals on-hit). The initial Cryo DMG is a one-time
-    instance with no follow-up DPS role. Estimated <5% DPS contribution.
+    instance. Can implement when ready.
   created: "2026-02-25"
-  resolved: "2026-02-26"
+  resolved: null
 
 - id: xinyan-e-q-dot
   entity: xinyan
@@ -53,21 +52,6 @@
     Acceptable approximation. Exact tick count depends on enemy hitbox and positioning.
   created: "2026-02-25"
   resolved: "2026-02-25"
-
-- id: shenhe-e-quill-quota
-  entity: shenhe
-  rule: S6
-  status: completed
-  category: approximation
-  summary: >
-    Icy Quill trigger quota (5 press / 7 hold) now enforced via maxStacks.
-  detail: >
-    Added maxStacks: 5 (press) / 7 (hold) to Icy Quill ScalingBuff. C6 removes
-    the limit (Normal+Charged don't consume stacks → effectively unlimited).
-    Per-character independence is handled naturally since receiver: "team" evaluates
-    per character in the optimizer.
-  created: "2026-02-25"
-  resolved: "2026-03-21"
 
 - id: xiao-p1-ramp
   entity: xiao
@@ -109,7 +93,6 @@
     personal DPS is not a primary concern.
   created: "2026-02-25"
   resolved: "2026-02-26"
-
 
 - id: ganyu-c4-ramp
   entity: ganyu
@@ -172,21 +155,3 @@
     is not worth the engine complexity.
   created: "2026-02-26"
   resolved: "2026-02-26"
-
-- id: xianyun-p2-shared-stacks
-  entity: xianyun
-  rule: U1
-  status: open
-  category: engine-gap
-  summary: >
-    P2 Adeptal Assistance stacks (maxStacks: 8) are a shared pool on Starwicker, but the engine
-    allocates an independent 8-stack budget per character. Over-counts if multiple characters plunge.
-  detail: >
-    KQM source: https://keqingmains.com/q/xianyun-quickguide/.
-    Game text: "初始拥有8层仙力助推...当前场上角色完成下落攻击时，竹星将消耗一层仙力助推" — one
-    Starwicker entity with 8 stacks, any active character's plunge consumes from the shared pool.
-    No "managed individually" or per-character language. Current maxStacks: 8 with receiver: "onField"
-    gives each character an independent 8-stack budget. Low practical impact since typical Xianyun
-    teams have one plunging carry consuming all 8 stacks.
-  created: "2026-03-22"
-  resolved: null
