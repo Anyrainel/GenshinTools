@@ -1,7 +1,7 @@
 import type { AccountData } from "@/data/types";
-import { getIsOwned } from "@/hooks/useOwnership";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { beforeEach, describe, expect, it } from "vitest";
+import { getIsOwned } from "./ownershipUtils";
 
 const PROFILE = "uid_800000000";
 

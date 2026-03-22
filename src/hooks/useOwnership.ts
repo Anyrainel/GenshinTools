@@ -93,23 +93,3 @@ export function useHasAccountData(): boolean {
     return acc != null && acc.data.characters.length > 0;
   });
 }
-
-/**
- * Static (non-reactive) ownership check for filter callbacks.
- * Reads current state at call time — do NOT use in render paths that need reactivity.
- */
-export function getIsOwned(type: "character" | "weapon", id: string): boolean {
-  const state = useAccountStore.getState();
-  const acc = state.activeAccountId
-    ? state.accounts[state.activeAccountId]
-    : null;
-  if (type === "character" && ALWAYS_OWNED_CHARACTER_IDS.has(id)) return true;
-  if (!acc) return false;
-  if (type === "character") {
-    return acc.data.characters.some((c) => c.key === id);
-  }
-  return (
-    acc.data.characters.some((c) => c.weapon?.key === id) ||
-    acc.data.extraWeapons.some((w) => w.key === id)
-  );
-}

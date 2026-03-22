@@ -183,7 +183,7 @@ describe("ItemPicker", () => {
     });
 
     it("filters out unowned characters when toggled", async () => {
-      const { getIsOwned } = await import("@/hooks/useOwnership");
+      const { getIsOwned } = await import("../../hooks/ownershipUtils");
 
       // Verify getIsOwned returns expected values
       expect(getIsOwned("character", ownedIds[0])).toBe(true);
@@ -270,7 +270,7 @@ describe("ItemPicker", () => {
     it("works when activeAccountId is null (no account data = no owned)", async () => {
       useAccountStore.setState({ activeAccountId: null, accounts: {} });
 
-      const { getIsOwned } = await import("@/hooks/useOwnership");
+      const { getIsOwned } = await import("../../hooks/ownershipUtils");
       // With no account data, non-always-owned characters are not owned
       const nonAlwaysOwned = characters.find(
         (c) => !/^(traveler|manekin|manekina)_/.test(c.id)
