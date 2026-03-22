@@ -1,9 +1,4 @@
 import {
-  BADGE_GREEN,
-  BADGE_RED,
-  TIER_TEXT_COLORS,
-} from "@/components/account-data/TriageCard";
-import {
   ResponsiveDialog,
   ResponsiveDialogContent,
   ResponsiveDialogDescription,
@@ -11,7 +6,7 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { cn } from "@/lib/utils";
+import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import { Lock, ShieldAlert, Zap } from "lucide-react";
 
 const TIER_KEY = {
@@ -21,7 +16,7 @@ const TIER_KEY = {
   T: "triage.tier.T",
 } as const;
 
-const TIER_COLOR = TIER_TEXT_COLORS;
+const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 
 export function TriageHelpDialog({
   open,
@@ -37,15 +32,17 @@ export function TriageHelpDialog({
       tier: "P" as const,
       border: "border-amber-500/25",
       descKey: "triage.help.tierPrime",
-      badges: [{ key: "triage.help.badgeAlwaysLock", cls: BADGE_GREEN }],
+      badges: [
+        { key: "triage.help.badgeAlwaysLock", cls: SENTIMENT_BADGE.positive },
+      ],
     },
     {
       tier: "Q" as const,
       border: "border-purple-500/25",
       descKey: "triage.help.tierSolid",
       badges: [
-        { key: "triage.label.lock", cls: BADGE_GREEN },
-        { key: "triage.help.badgeOverSupply", cls: BADGE_RED },
+        { key: "triage.label.lock", cls: SENTIMENT_BADGE.positive },
+        { key: "triage.help.badgeOverSupply", cls: SENTIMENT_BADGE.negative },
       ],
     },
     {
@@ -53,15 +50,17 @@ export function TriageHelpDialog({
       border: "border-blue-500/25",
       descKey: "triage.help.tierFiller",
       badges: [
-        { key: "triage.label.unlock", cls: BADGE_RED },
-        { key: "triage.help.badgeUnderSupply", cls: BADGE_GREEN },
+        { key: "triage.label.unlock", cls: SENTIMENT_BADGE.negative },
+        { key: "triage.help.badgeUnderSupply", cls: SENTIMENT_BADGE.positive },
       ],
     },
     {
       tier: "T" as const,
       border: "border-zinc-500/25",
       descKey: "triage.help.tierFodder",
-      badges: [{ key: "triage.help.badgeAlwaysFodder", cls: BADGE_RED }],
+      badges: [
+        { key: "triage.help.badgeAlwaysFodder", cls: SENTIMENT_BADGE.negative },
+      ],
     },
   ];
 

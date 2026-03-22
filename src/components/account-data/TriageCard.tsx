@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/data/constants";
 import type { TriageDecision, TriageLabel } from "@/lib/account-data/triage";
-import { cn, getRarityColor } from "@/lib/utils";
+import { cn, getRarityColor, getTriageTierColor } from "@/lib/utils";
 import { ChevronDown, ChevronUp, Info, ShieldAlert } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -75,29 +75,12 @@ function spName(sp: string, t: T): string {
 // Tier Badge
 // ---------------------------------------------------------------------------
 
-const TIER_BADGE_COLORS: Record<string, string> = {
-  P: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  Q: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-  N: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  T: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",
-};
-
-export const TIER_TEXT_COLORS: Record<string, string> = {
-  P: "text-amber-300",
-  Q: "text-purple-300",
-  N: "text-blue-300",
-  T: "text-zinc-400",
-};
-
-export const BADGE_GREEN = "bg-green-500/20 text-green-300 border-green-500/30";
-export const BADGE_RED = "bg-red-500/20 text-red-300 border-red-500/30";
-
 function TierBadge({ tier, t }: { tier: string; t: T }) {
   return (
     <span
       className={cn(
         "inline-flex items-center justify-center h-5 px-1 rounded text-[10px] font-bold border shrink-0",
-        TIER_BADGE_COLORS[tier] ?? TIER_BADGE_COLORS.T
+        getTriageTierColor(tier, "badge")
       )}
     >
       {tierName(tier, t)}

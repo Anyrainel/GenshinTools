@@ -22,7 +22,7 @@ import {
   getScheduleName,
   schedules,
 } from "@/data/leylineBoss";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { SENTIMENT_BADGE, cn, getAssetUrl } from "@/lib/utils";
 import {
   HelpCircle,
   Settings,
@@ -489,7 +489,10 @@ function BossDetailPanel({ bossId }: { bossId: number }) {
               {advantage.map((text, i) => (
                 <span
                   key={`a${i}`}
-                  className="inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-md bg-green-500/15 text-green-400 border border-green-500/20"
+                  className={cn(
+                    "inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-md border",
+                    SENTIMENT_BADGE.positive
+                  )}
                 >
                   <ThumbsUp className="h-3.5 w-3.5 shrink-0" />
                   {text}
@@ -498,7 +501,10 @@ function BossDetailPanel({ bossId }: { bossId: number }) {
               {disadvantage.map((text, i) => (
                 <span
                   key={`d${i}`}
-                  className="inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-md bg-red-500/15 text-red-400 border border-red-500/20"
+                  className={cn(
+                    "inline-flex items-center gap-1 text-sm px-2 py-0.5 rounded-md border",
+                    SENTIMENT_BADGE.negative
+                  )}
                 >
                   <ThumbsDown className="h-3.5 w-3.5 shrink-0" />
                   {text}

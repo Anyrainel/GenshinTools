@@ -37,7 +37,7 @@ import { aggregateTeamResults } from "@/lib/account-data/scoring/pipeline";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { buildTeamConfigs } from "@/lib/team-comp/teamOptUtils";
-import { cn, getElementColor } from "@/lib/utils";
+import { ELEMENT_HEX, cn, getElementColor } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
@@ -54,16 +54,6 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 // ── Constants ──
-
-const ELEMENT_HEX: Record<string, string> = {
-  Pyro: "#b8483f",
-  Hydro: "#22728f",
-  Electro: "#8f70aa",
-  Cryo: "#7aa8b8",
-  Anemo: "#3d9b6a",
-  Geo: "#b58f35",
-  Dendro: "#669423",
-};
 
 // ── Types ──
 

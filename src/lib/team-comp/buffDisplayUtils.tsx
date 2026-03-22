@@ -13,7 +13,7 @@ import {
 import type { Element } from "@/data/types";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import type { BuffTarget, ResolvedBuff, StatKey } from "@/lib/team-comp/types";
-import { cn } from "@/lib/utils";
+import { VALUE_COLORS, cn, getReceiverColor, getValueColor } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 
 type T = ReturnType<typeof useLanguage>["t"];
@@ -87,25 +87,7 @@ export function formatReceiverLabel(target: BuffTarget, t: T): string {
 }
 
 export function getReceiverBadgeClasses(target: BuffTarget): string {
-  if (target.charId) return "text-sky-300 bg-sky-500/15";
-  switch (target.receiver) {
-    case "team":
-      return "text-rose-300 bg-rose-500/15";
-    case "onField":
-      return "text-orange-300 bg-orange-500/15";
-    case "other":
-      return "text-amber-300 bg-amber-500/15";
-    case "otherOnField":
-      return "text-yellow-300 bg-yellow-500/15";
-    case "self":
-      return "text-zinc-400 bg-zinc-500/15";
-    case "selfOnField":
-      return "text-slate-400 bg-slate-500/10";
-    case "selfOffField":
-      return "text-stone-400 bg-stone-500/10";
-    default:
-      return "text-muted-foreground bg-black/10";
-  }
+  return getReceiverColor(target.receiver, !!target.charId);
 }
 
 // ─── Filter description ──────────────────────────────────────────────────────
@@ -166,18 +148,13 @@ export function StatEntryRow({
           {t.statShort(entry.inputKey)}
         </span>
       )}
-      <span
-        className={cn(
-          "font-mono font-bold",
-          entry.value > 0
-            ? "text-green-500 dark:text-green-400"
-            : "text-red-500 dark:text-red-400"
-        )}
-      >
+      <span className={cn("font-mono font-bold", getValueColor(entry.value))}>
         {fmtStat(entry.key as StatKey, entry.value, true)}
       </span>
       {entry.cap !== undefined && (
-        <span className="font-mono font-bold text-[10px] text-orange-500 dark:text-orange-400">
+        <span
+          className={cn("font-mono font-bold text-[10px]", VALUE_COLORS.cap)}
+        >
           / {fmtStat(entry.key as StatKey, entry.cap)}
         </span>
       )}

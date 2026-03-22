@@ -1,8 +1,5 @@
 import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
-import {
-  TIER_TEXT_COLORS,
-  TriageCard,
-} from "@/components/account-data/TriageCard";
+import { TriageCard } from "@/components/account-data/TriageCard";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
 import { FilterChip } from "@/components/archive/FilterChip";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -25,7 +22,7 @@ import {
   type TriageSettings,
   runTriage,
 } from "@/lib/account-data/triage";
-import { cn } from "@/lib/utils";
+import { TRIAGE_TIER_COLORS, cn } from "@/lib/utils";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 import {
@@ -57,7 +54,7 @@ const TIER_KEY = {
   T: "triage.tier.T",
 } as const;
 
-const TIER_COLOR = TIER_TEXT_COLORS;
+const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 
 // ---------------------------------------------------------------------------
 // Grid column count (read from actual DOM grid via ResizeObserver)

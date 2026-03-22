@@ -18,7 +18,7 @@ import type {
   ResolvedStatEntry,
   StatKey,
 } from "@/lib/team-comp/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { VALUE_COLORS, cn, getAssetUrl, getValueColor } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -139,15 +139,18 @@ function BuffChip({
                 <span
                   className={cn(
                     "font-mono font-bold text-xs md:text-sm",
-                    e.value > 0
-                      ? "text-green-500 dark:text-green-400"
-                      : "text-red-500 dark:text-red-400"
+                    getValueColor(e.value)
                   )}
                 >
                   {fmtStat(e.key as StatKey, e.value, true)}
                 </span>
                 {isDyn && dynE.cap !== undefined && (
-                  <span className="font-mono font-bold text-[10px] lg:text-xs text-orange-500 dark:text-orange-400 opacity-90">
+                  <span
+                    className={cn(
+                      "font-mono font-bold text-[10px] lg:text-xs opacity-90",
+                      VALUE_COLORS.cap
+                    )}
+                  >
                     / {fmtStat(e.key as StatKey, dynE.cap)}
                   </span>
                 )}

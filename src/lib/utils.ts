@@ -1,4 +1,5 @@
 import type { Element, Rarity, Tier } from "@/data/types";
+import type { BuffReceiverType } from "@/lib/team-comp/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -114,3 +115,79 @@ export function getTierColor(
   const key = tier.toLowerCase() as keyof typeof TIER_COLORS.bg;
   return TIER_COLORS[type][key] || TIER_COLORS[type].pool;
 }
+
+// ── Element hex (for canvas/chart rendering) ──
+
+export const ELEMENT_HEX: Record<string, string> = {
+  Pyro: "#b8483f",
+  Hydro: "#22728f",
+  Electro: "#8f70aa",
+  Cryo: "#7aa8b8",
+  Anemo: "#3d9b6a",
+  Geo: "#b58f35",
+  Dendro: "#669423",
+};
+
+// ── Stat value colors (positive / negative / cap) ──
+
+export const VALUE_COLORS = {
+  positive: "text-green-500 dark:text-green-400",
+  negative: "text-red-500 dark:text-red-400",
+  cap: "text-orange-500 dark:text-orange-400",
+} as const;
+
+export function getValueColor(value: number): string {
+  return value > 0 ? VALUE_COLORS.positive : VALUE_COLORS.negative;
+}
+
+// ── Buff receiver badge colors ──
+
+const RECEIVER_BADGE_COLORS: Record<string, string> = {
+  charId: "text-sky-300 bg-sky-500/15",
+  team: "text-yellow-300 bg-yellow-500/15",
+  onField: "text-orange-300 bg-orange-500/15",
+  other: "text-rose-300 bg-rose-500/15",
+  otherOnField: "text-pink-300 bg-pink-500/15",
+  self: "text-zinc-400 bg-zinc-500/15",
+  selfOnField: "text-slate-400 bg-slate-500/15",
+  selfOffField: "text-stone-400 bg-stone-500/15",
+};
+
+export function getReceiverColor(
+  receiver: BuffReceiverType,
+  hasCharId?: boolean
+): string {
+  if (hasCharId) return RECEIVER_BADGE_COLORS.charId;
+  return RECEIVER_BADGE_COLORS[receiver] ?? "text-muted-foreground bg-black/10";
+}
+
+// ── Triage tier colors ──
+
+export const TRIAGE_TIER_COLORS = {
+  badge: {
+    P: "bg-amber-500/20 text-amber-300 border-amber-500/30",
+    Q: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+    N: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+    T: "bg-zinc-500/20 text-zinc-400 border-zinc-500/30",
+  } as Record<string, string>,
+  text: {
+    P: "text-amber-300",
+    Q: "text-purple-300",
+    N: "text-blue-300",
+    T: "text-zinc-400",
+  } as Record<string, string>,
+} as const;
+
+export function getTriageTierColor(
+  tier: string,
+  type: "badge" | "text"
+): string {
+  return TRIAGE_TIER_COLORS[type][tier] ?? TRIAGE_TIER_COLORS[type].T;
+}
+
+// ── Sentiment badge colors (good/bad indicators) ──
+
+export const SENTIMENT_BADGE = {
+  positive: "bg-green-500/20 text-green-300 border-green-500/30",
+  negative: "bg-red-500/20 text-red-300 border-red-500/30",
+} as const;
