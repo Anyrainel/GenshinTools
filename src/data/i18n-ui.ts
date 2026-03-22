@@ -1,7 +1,6 @@
 export const i18nUiData = {
   common: {
     search: { en: "Search...", zh: "搜索..." },
-    loading: { en: "Loading...", zh: "加载中..." },
     clear: { en: "Clear", zh: "清除" },
     clearAccountData: { en: "Clear Account Data", zh: "清除账号数据" },
     clearBuilds: { en: "Clear Builds", zh: "清除配装" },
@@ -192,7 +191,7 @@ export const i18nUiData = {
   accountData: {
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "库存" },
-    recommendations: { en: "Recommendations", zh: "推荐" },
+    recommendations: { en: "Recommendations", zh: "提分推荐" },
     weapons: { en: "Weapons", zh: "武器" },
     artifacts: { en: "Artifacts", zh: "圣遗物" },
     equipped: { en: "Equipped", zh: "已装备" },
@@ -420,12 +419,12 @@ export const i18nUiData = {
       zh: "角色的圣遗物评分（满分 300）是如何计算的？",
     },
     formula: {
-      en: "Score = ( Main Stat Score + Substat Score ) × Normalizer",
-      zh: "评分 = ( 主属性分 + 副属性分 ) × 归一化系数",
+      en: "Score = ( Main Stat Score + Substat Score ) × 300 / Ideal",
+      zh: "评分 = ( 主属性分 + 副属性分 ) × 300 / 理想分",
     },
     subFormula: {
-      en: "Substat Score = Σ( Value × CD-Equiv Factor × Weight/100 × [Punishment] )",
-      zh: "副属性分 = Σ( 数值 × 暴伤折算系数 × 权重/100 × [惩罚系数] )",
+      en: "Stat Score = Σ( Value × CD-Equiv Factor × Weight/100 )",
+      zh: "属性分 = Σ( 数值 × 暴伤折算系数 × 权重/100 )",
     },
     normalization: {
       title: { en: "Normalization Factor", zh: "折算系数" },
@@ -443,15 +442,15 @@ export const i18nUiData = {
     },
     punishment: {
       description: {
-        en: "Applied only to flat stats (ATK, HP, DEF) to reflect their reduced effectiveness compared to percentage stats. This is usually set between 30% to 40% for Lv.90-100 characters.",
-        zh: "仅适用于固定数值属性（小攻击、小生命、小防御），以反映其相对于百分比属性较低的有效性。对于 90-100 级角色，通常设置为 30% 到 40%。",
+        en: "Used to fill in weights for flat stats (ATK, HP, DEF) when a build does not explicitly define them. The flat stat weight is derived from its percentage counterpart scaled by this factor. If a build already specifies a weight for a flat stat, the punishment factor has no effect on it. This is usually set between 30% to 40% for Lv.90-100 characters.",
+        zh: "当构建未明确定义固定数值属性（小攻击、小生命、小防御）的权重时，用于自动填充其权重。固定属性的权重由对应百分比属性的权重乘以此系数得出。如果构建已为某个固定属性指定了权重，则惩罚系数对其无效。对于 90-100 级角色，通常设置为 30% 到 40%。",
       },
     },
     mainStat: {
       title: { en: "Main Stat Scoring", zh: "主属性评分" },
       description: {
-        en: "The sands, goblet, and circlet main stats are scored when they match the build's recommendation. A correct 5★ main stat is worth 62.1 CD-equivalent points (46.4 for 4★). Wrong main stats contribute 0.",
-        zh: "当沙漏、杯子和头冠的主属性与配装推荐一致时，会计入评分。正确的 5★ 主属性等效 62.1 暴伤点（4★ 为 46.4）。错误的主属性贡献为 0。",
+        en: "Sands, goblet, and circlet main stats are scored using the same weighted formula as substats. Each main stat's weight is defined by the build — for example, an ATK% sands at weight 80 contributes less than an EM sands at weight 100. Wrong main stats (not in the build) contribute 0. Flower and plume main stats are fixed and not scored.",
+        zh: "沙漏、杯子和头冠的主属性使用与副属性相同的加权公式进行评分。每个主属性的权重由配装定义 —— 例如，权重为 80 的攻击力%沙漏贡献低于权重为 100 的精通沙漏。不在配装中的错误主属性贡献为 0。花与羽的主属性固定，不计入评分。",
       },
     },
     scale300: {
@@ -1424,7 +1423,7 @@ export const i18nUiData = {
 
   evaluation: {
     title: { en: "Artifact Evaluation", zh: "圣遗物评估" },
-    tabLabel: { en: "Evaluation", zh: "评估" },
+    tabLabel: { en: "Set Evaluation", zh: "套装评估" },
     subtitle: { en: "{0} builds · Avg {1}%", zh: "{0} 个配装 · 均值 {1}%" },
     noBuilds: { en: "No builds to evaluate", zh: "无配装可评估" },
     noBuildsDesc: {
@@ -1440,12 +1439,7 @@ export const i18nUiData = {
     all: { en: "All", zh: "全部" },
     ownedOnly: { en: "Owned characters", zh: "仅已拥有角色" },
   },
-  v2Weights: {
-    loading: {
-      en: "Loading game data & generating weights...",
-      zh: "正在加载游戏数据并生成权重...",
-    },
-  },
+  v2Weights: {},
   batchAutoTune: {
     title: { en: "Batch AutoTune", zh: "批量自动调参" },
     subtitle: {
@@ -1492,7 +1486,7 @@ export const i18nUiData = {
     fixes: { en: "Fixes", zh: "修复" },
   },
   triage: {
-    tabLabel: { en: "Triage", zh: "锁定" },
+    tabLabel: { en: "Artifact Triage", zh: "锁定助手" },
     title: { en: "Artifact Triage Helper", zh: "圣遗物锁定助手" },
     subtitle: {
       en: "{0} artifacts analyzed:",
@@ -1504,11 +1498,11 @@ export const i18nUiData = {
     },
     recommendLock: {
       en: "Recommend Lock",
-      zh: "建议锁定",
+      zh: "未锁定，建议锁定",
     },
     recommendUnlock: {
       en: "Recommend Unlock",
-      zh: "建议解锁",
+      zh: "已锁定，建议解锁",
     },
     recommendLockDesc: {
       en: "Currently unlocked artifacts worth keeping",
@@ -1520,7 +1514,7 @@ export const i18nUiData = {
     },
     noActionNeeded: {
       en: "Protected",
-      zh: "保护区",
+      zh: "保护区不参与",
     },
     noActionDesc: {
       en: "High-level or equipped artifacts — already protected, no lock change needed",
@@ -1528,7 +1522,7 @@ export const i18nUiData = {
     },
     noChange: {
       en: "No Change",
-      zh: "无变化",
+      zh: "无需改变锁定状态",
     },
     noChangeDesc: {
       en: "Artifacts whose lock status already matches the recommendation",
@@ -1571,6 +1565,7 @@ export const i18nUiData = {
     // Special rule labels (short, for inline display)
     sp: {
       SP1: { en: "4-liner ER (support set)", zh: "4初始充能（辅助套）" },
+      SP7: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
       SP3: { en: "Level protected", zh: "高等级保护" },
       SP4: { en: "Equipped protected", zh: "已装备保护" },
       SP5: { en: "4-liner CR+CD", zh: "4初始双暴" },
@@ -1624,6 +1619,10 @@ export const i18nUiData = {
     erHoarding: {
       en: "ER hoarding (4-liner + ER)",
       zh: "辅助套充能锁定（4初始+充能）",
+    },
+    erHoardingAll: {
+      en: "ER hoarding all sets (4-liner + ER)",
+      zh: "全套装充能锁定（4初始+充能）",
     },
     doubleCritLock: {
       en: "Double crit lock (4-liner + CR+CD)",

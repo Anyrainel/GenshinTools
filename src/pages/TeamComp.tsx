@@ -1,5 +1,4 @@
 import { FilterChip } from "@/components/archive/FilterChip";
-import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { TeamCard } from "@/components/team-comp/TeamCard";
@@ -47,7 +46,7 @@ const presetModules = import.meta.glob<{ default: TeamCompData }>(
 export default function TeamCompPage() {
   const { t } = useLanguage();
   const tour = useTour();
-  const { ready: gameStatsReady, characterStats } = useGameStats();
+  const { characterStats } = useGameStats();
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
   const teams = useTeamStore((state) => state.teams);
@@ -216,17 +215,6 @@ export default function TeamCompPage() {
       setTimeout(() => setActiveTeam(null), 0);
       return null;
     }
-    if (!gameStatsReady) {
-      return (
-        <PageLayout>
-          <ScrollLayout className="py-8 mt-2 flex items-center justify-center">
-            <span className="text-muted-foreground">
-              {t.ui("common.loading")}
-            </span>
-          </ScrollLayout>
-        </PageLayout>
-      );
-    }
     const clearActiveTeam = () => {
       updateTeam(activeTeam.id, {
         characters: [null, null, null, null],
@@ -251,7 +239,7 @@ export default function TeamCompPage() {
           },
         ]}
       >
-        <ScrollLayout className="py-8 mt-2">
+        <ScrollLayout>
           <TeamOptDetail team={activeTeam} onBack={() => setActiveTeam(null)} />
         </ScrollLayout>
       </PageLayout>
@@ -309,11 +297,11 @@ export default function TeamCompPage() {
       />
       <ClearAllControl ref={clearRef} onConfirm={clearTeams} />
 
-      <HeaderScrollLayout
+      <ScrollLayout
         bodyRef={scrollRef}
         header={
           isEmptyState ? null : (
-            <div className="container flex items-center gap-1 2xl:gap-2 flex-wrap py-2">
+            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
               {/* Element chips */}
               <div className="flex items-center gap-1 2xl:gap-2 flex-wrap max-w-full">
                 {elements.map((el) => {
@@ -399,7 +387,7 @@ export default function TeamCompPage() {
       >
         <div
           className={cn(
-            "py-6",
+            "py-2",
             isEmptyState &&
               "min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center"
           )}
@@ -481,7 +469,7 @@ export default function TeamCompPage() {
             })}
           </div>
         </div>
-      </HeaderScrollLayout>
+      </ScrollLayout>
     </PageLayout>
   );
 }

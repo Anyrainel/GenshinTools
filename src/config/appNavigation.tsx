@@ -47,17 +47,17 @@ export const getNavigationConfig = (
         tourStepId: "ad-characters",
       },
       {
+        label: t.ui("accountData.inventory"),
+        href: "/account-data?tab=inventory",
+        value: "inventory",
+        icon: Box,
+      },
+      {
         label: t.ui("accountData.recommendations"),
         href: "/account-data?tab=recommendations",
         value: "recommendations",
         icon: Lightbulb,
         tourStepId: "ad-recommendations",
-      },
-      {
-        label: t.ui("accountData.inventory"),
-        href: "/account-data?tab=inventory",
-        value: "inventory",
-        icon: Box,
       },
       {
         label: t.ui("evaluation.tabLabel"),

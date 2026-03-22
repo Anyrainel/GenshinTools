@@ -564,17 +564,6 @@ export default function AccountDataPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="recommendations" className="mt-0 h-full">
-          {accountData ? (
-            <RecommendationView scores={scores} />
-          ) : (
-            <NoDataPlaceholder
-              t={t}
-              onAction={() => importRef.current?.open()}
-            />
-          )}
-        </TabsContent>
-
         <TabsContent value="inventory" className="mt-0 h-full">
           {accountData ? (
             <InventoryView
@@ -594,6 +583,17 @@ export default function AccountDataPage() {
                 addOrUpdateAccount(activeAccountId, { data: newData });
               }}
             />
+          ) : (
+            <NoDataPlaceholder
+              t={t}
+              onAction={() => importRef.current?.open()}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="recommendations" className="mt-0 h-full">
+          {accountData ? (
+            <RecommendationView scores={scores} />
           ) : (
             <NoDataPlaceholder
               t={t}
