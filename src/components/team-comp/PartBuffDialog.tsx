@@ -408,12 +408,10 @@ export function PartBuffDialog({
 
   if (applicableBuffs.length === 0) return null;
 
-  // Check if any overrides exist (indicator dot)
-  const hasOverrides = applicableBuffs.some((b) => {
-    const bKey = buffSourceKey(b.source);
-    const partOverrides = overrides?.[bKey];
-    return partOverrides && Object.keys(partOverrides).length > 0;
-  });
+  // Show dot when THIS part has a buff not at full activation
+  const thisPart = parts[initialTab ?? 0];
+  const hasOverrides =
+    thisPart?.partialBuffs != null && thisPart.partialBuffs.length > 0;
 
   return (
     <>
@@ -426,7 +424,7 @@ export function PartBuffDialog({
           setOpen(true);
         }}
       >
-        <Settings2 className="w-3.5 h-3.5 text-muted-foreground hover:text-foreground transition-colors" />
+        <Settings2 className="w-4 h-4 text-foreground/60 hover:text-foreground transition-colors" />
         {hasOverrides && (
           <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
         )}
@@ -449,18 +447,12 @@ export function PartBuffDialog({
           {parts.length > 1 && (
             <div className="flex gap-1 overflow-x-auto pb-1 -mx-1 px-1">
               {parts.map((p, idx) => {
-                const partOverrides = applicableBuffs.some((b) => {
-                  const bKey = buffSourceKey(b.source);
-                  return (
-                    overrides?.[bKey]?.[p.sourcePartIndex ?? idx] !== undefined
-                  );
-                });
                 return (
                   <button
                     key={idx}
                     type="button"
                     className={cn(
-                      "text-xs px-2.5 py-1.5 rounded-md border whitespace-nowrap transition-colors relative",
+                      "text-xs px-2.5 py-1.5 rounded-md border whitespace-nowrap transition-colors",
                       activeTab === idx
                         ? "border-primary/40 bg-primary/10 text-primary font-semibold"
                         : "border-border/30 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border/50"
@@ -468,9 +460,6 @@ export function PartBuffDialog({
                     onClick={() => setActiveTab(idx)}
                   >
                     {idx + 1}. {getTemplateName(p, t)}
-                    {partOverrides && (
-                      <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-primary rounded-full" />
-                    )}
                   </button>
                 );
               })}

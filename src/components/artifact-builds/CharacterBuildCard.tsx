@@ -338,7 +338,7 @@ function CharacterBuildCardComponent({
                 )}
               </Button>
               {isHidden && (
-                <span className="text-muted-foreground text-xs md:text-base italic select-none">
+                <span className="text-muted-foreground text-xs md:text-sm xl:text-base italic select-none">
                   {t.ui("characterCard.hiddenNotice")}
                 </span>
               )}

@@ -53,11 +53,11 @@ function MathZone({
       )}
     >
       <div className="flex items-baseline gap-1 md:gap-2">
-        <span className="text-xs md:text-base font-medium text-foreground/70 tracking-wide">
+        <span className="text-xs md:text-sm font-medium text-foreground/70 tracking-wide">
           {label}
         </span>
         {value !== undefined && value !== null && (
-          <span className="font-[math] text-[10px] md:text-sm font-bold text-primary/70">
+          <span className="font-[math] text-[11px] md:text-sm font-bold text-primary/70">
             {value}
           </span>
         )}
@@ -1000,7 +1000,7 @@ export function FormulaBreakdown({
                 <Op char="=" />
               </div>
               <div className="flex flex-col items-center justify-between gap-1 md:gap-2 bg-primary/5 border border-primary/20 px-2 md:px-4 py-1.5 md:py-2 rounded-lg">
-                <span className="text-[10px] md:text-sm text-primary tracking-wide leading-none flex flex-wrap items-baseline justify-center gap-x-1">
+                <span className="text-[11px] md:text-sm text-primary tracking-wide leading-none flex flex-wrap items-baseline justify-center gap-x-1">
                   <span className="whitespace-nowrap">
                     {getTemplateName(p, t)}
                   </span>
@@ -1014,7 +1014,7 @@ export function FormulaBreakdown({
                   {p.hits && p.hits !== 1 ? (
                     <>
                       <span>{fmtDamage(displayDamage)}</span>
-                      <span className="text-primary bg-primary/10 rounded-full px-2 text-xs font-semibold ml-1 tracking-wider">
+                      <span className="text-primary bg-primary/10 rounded-sm px-1 text-xs lg:text-sm font-bold ml-1">
                         × {p.hits}
                       </span>
                     </>

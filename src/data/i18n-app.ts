@@ -104,7 +104,7 @@ export const i18nAppData = {
     "resReduction%": { en: "RESShred", zh: "减抗%" },
   },
   formulas: {
-    Base: { en: "Base Zone", zh: "基础乘区" },
+    Base: { en: "Base Zone", zh: "基础伤害" },
     BaseBonus: { en: "Mult Zone", zh: "倍率乘区" },
     RxnBaseDmgZone: { en: "Rxn Base Zone", zh: "反应基础乘区" },
     Flat: { en: "Flat", zh: "附加伤害" },
