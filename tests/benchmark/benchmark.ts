@@ -119,6 +119,8 @@ interface Solution {
   foundAt: string;
   /** Algorithm that found it */
   algorithm: string;
+  /** Time in seconds the optimizer took to reach this solution */
+  solveTimeSec?: number;
 }
 
 interface Problem {
@@ -1008,11 +1010,11 @@ async function cmdRun(opts: {
     const charNames = team.characters.filter(Boolean).join("/");
     const statusIcon =
       comp.status === "new_best"
-        ? `${C.green}★${C.reset}`
+        ? `${C.green}*${C.reset}`
         : comp.status === "matched_best"
-          ? `${C.green}✓${C.reset}`
+          ? `${C.green}ok${C.reset}`
           : comp.status === "regression"
-            ? `${C.red}✗${C.reset}`
+            ? `${C.red}X${C.reset}`
             : `${C.cyan}+${C.reset}`;
 
     const timeStr = `${result.optimizeTimeSec.toFixed(1)}s`;
@@ -1021,6 +1023,20 @@ async function cmdRun(opts: {
       extraInfo = ` ${C.red}(${comp.pct.toFixed(2)}% vs best ${fmt(comp.bestDamage)})${C.reset}`;
     } else if (comp.status === "new_best") {
       extraInfo = ` ${C.green}NEW BEST${C.reset}`;
+    }
+
+    // Compare solve time against best stored solution's time
+    const existingSolutions = store.problems[key]?.solutions ?? [];
+    const bestTime = existingSolutions.reduce((min, s) => {
+      if (s.solveTimeSec != null && s.solveTimeSec < min) return s.solveTimeSec;
+      return min;
+    }, Number.POSITIVE_INFINITY);
+    if (
+      bestTime < Number.POSITIVE_INFINITY &&
+      result.optimizeTimeSec > bestTime * 1.5
+    ) {
+      const ratio = result.optimizeTimeSec / bestTime;
+      extraInfo += ` ${C.yellow}${ratio.toFixed(1)}x slower${C.reset}`;
     }
 
     console.log(
@@ -1086,6 +1102,7 @@ async function cmdRun(opts: {
           recordedDamage: result.optimizedDamage,
           foundAt: new Date().toISOString(),
           algorithm: opts.algo,
+          solveTimeSec: result.optimizeTimeSec,
         });
       }
     }
@@ -1394,7 +1411,7 @@ async function cmdEnrich(opts: {
         ...problem.solutions.map((s) => s.recordedDamage)
       );
       const isNewBest = result.optimizedDamage >= bestDmg - 0.5;
-      const icon = isNewBest ? `${C.green}★${C.reset}` : `${C.cyan}+${C.reset}`;
+      const icon = isNewBest ? `${C.green}*${C.reset}` : `${C.cyan}+${C.reset}`;
       console.log(
         `  ${icon} ${i + 1}/${toRun.length} ${charNames} → ${formulaId} ${C.cyan}${fmt(result.optimizedDamage)}${C.reset}${isNewBest ? ` ${C.green}NEW BEST${C.reset}` : ""}`
       );
@@ -2473,8 +2490,8 @@ async function cmdFuzz(opts: {
     totalMismatches += mismatches;
     const status =
       mismatches === 0
-        ? `${C.green}✓${C.reset}`
-        : `${C.red}✗ ${mismatches} mismatches${C.reset}`;
+        ? `${C.green}ok${C.reset}`
+        : `${C.red}X ${mismatches} mismatches${C.reset}`;
     console.log(
       `  ${status} ${prob.key} (${opts.trials} trials, ${compiled.numVars} vars)`
     );
@@ -2748,10 +2765,10 @@ async function cmdFuzzCombo(opts: {
     totalMismatches += teamMismatches;
     const status =
       teamMismatches === 0 && teamErrors === 0
-        ? `${C.green}✓${C.reset}`
+        ? `${C.green}ok${C.reset}`
         : teamMismatches > 0
-          ? `${C.red}✗ ${teamMismatches} mismatches${C.reset}`
-          : `${C.red}✗ ${teamErrors} errors${C.reset}`;
+          ? `${C.red}X ${teamMismatches} mismatches${C.reset}`
+          : `${C.red}X ${teamErrors} errors${C.reset}`;
     console.log(
       `  ${status} ${team.teamName} (${comboLines.length} formulas, ${team.charIds.length} swap chars × ${opts.trials} trials)`
     );
