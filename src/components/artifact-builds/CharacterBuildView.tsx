@@ -3,27 +3,14 @@ import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSideb
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import { characters } from "@/data/resources";
-import type { CharacterFilters } from "@/data/types";
+import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useIsOwned } from "@/hooks/useOwnership";
-import {
-  defaultCharacterFilters,
-  filterAndSortCharacters,
-} from "@/lib/characterFilters";
+import { filterAndSortCharacters } from "@/lib/characterFilters";
 import { getCharacterDisplayMeta } from "@/lib/gameStatsLoader";
-import { usePreferencesStore } from "@/stores/usePreferencesStore";
-import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  useCallback,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useDeferredValue, useEffect, useMemo, useRef } from "react";
 import { type BuildCardLayout, CharacterBuildCard } from "./CharacterBuildCard";
 
 interface CharacterBuildViewProps {
@@ -39,76 +26,18 @@ export function CharacterBuildView({
 }: CharacterBuildViewProps) {
   const { t } = useLanguage();
   const { characterStats } = useGameStats();
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
-  const hasTierData = Object.keys(tierAssignments).length > 0;
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Get persisted sort preferences
-  const characterSort = usePreferencesStore((state) => state.characterSort);
-  const setCharacterSort = usePreferencesStore(
-    (state) => state.setCharacterSort
-  );
-
-  // Local state for ephemeral filter checkboxes only
-  const [checkboxFilters, setCheckboxFilters] = useState({
-    elements: defaultCharacterFilters.elements,
-    weaponTypes: defaultCharacterFilters.weaponTypes,
-    regions: defaultCharacterFilters.regions,
-    rarities: defaultCharacterFilters.rarities,
-    ownedOnly: true,
-    showManekin: defaultCharacterFilters.showManekin,
-  });
-
-  // Ownership check callback
-  const isOwned = useIsOwned();
-  const isCharacterOwned = useCallback(
-    (id: string) => isOwned("character", id),
-    [isOwned]
-  );
-
-  // Combine local checkbox state with persisted sort preferences
-  const filters: CharacterFilters = useMemo(
-    () => ({
-      ...checkboxFilters,
-      tierSort: hasTierData ? characterSort.tierSort : "off",
-      releaseSort: characterSort.releaseSort,
-    }),
-    [checkboxFilters, characterSort, hasTierData]
-  );
-
-  // Handler that routes updates to the appropriate store
-  const handleFiltersChange = useCallback(
-    (newFilters: CharacterFilters) => {
-      // Update checkbox filters (local state)
-      setCheckboxFilters({
-        elements: newFilters.elements,
-        weaponTypes: newFilters.weaponTypes,
-        regions: newFilters.regions,
-        rarities: newFilters.rarities,
-        ownedOnly: newFilters.ownedOnly,
-        showManekin: newFilters.showManekin,
-      });
-
-      // Update sort preferences (persisted state)
-      const newTierSort =
-        newFilters.tierSort !== filters.tierSort
-          ? newFilters.tierSort
-          : undefined;
-      const newReleaseSort =
-        newFilters.releaseSort !== filters.releaseSort
-          ? newFilters.releaseSort
-          : undefined;
-
-      if (newTierSort !== undefined || newReleaseSort !== undefined) {
-        setCharacterSort({
-          ...(newTierSort !== undefined && { tierSort: newTierSort }),
-          ...(newReleaseSort !== undefined && { releaseSort: newReleaseSort }),
-        });
-      }
-    },
-    [filters.tierSort, filters.releaseSort, setCharacterSort]
-  );
+  const {
+    filters,
+    handleFiltersChange,
+    setCheckboxFilters,
+    activeFilterCount,
+    tierAssignments,
+    hasTierData,
+    isCharacterOwned,
+  } = useCharacterFilters({ defaultOwnedOnly: true });
 
   // When targetCharacterId is set, configure filters to show that character
   useEffect(() => {
@@ -161,13 +90,6 @@ export function CharacterBuildView({
 
   // Defer the list to allow UI to stay responsive
   const deferredCharacters = useDeferredValue(filteredAndSortedCharacters);
-
-  const activeFilterCount = [
-    filters.elements,
-    filters.weaponTypes,
-    filters.regions,
-    filters.rarities,
-  ].flat().length;
 
   return (
     <div ref={containerRef} className="h-full">

@@ -7,22 +7,13 @@ import { CharacterEditDialog } from "@/components/account-data/CharacterEditDial
 import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type {
-  AccountData,
-  CharacterData,
-  CharacterFilters,
-} from "@/data/types";
+import type { AccountData, CharacterData } from "@/data/types";
+import { useCharacterFilters } from "@/hooks/useCharacterFilters";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useIsOwned } from "@/hooks/useOwnership";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
-import {
-  defaultCharacterFilters,
-  filterAndSortCharacterData,
-} from "@/lib/characterFilters";
+import { filterAndSortCharacterData } from "@/lib/characterFilters";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
-import { usePreferencesStore } from "@/stores/usePreferencesStore";
-import { useTierStore } from "@/stores/useTierStore";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -41,8 +32,15 @@ export function CharacterView({
   const accountData = activeAccount?.data || null;
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);
-  const tierAssignments = useTierStore((state) => state.tierAssignments);
-  const hasTierData = Object.keys(tierAssignments).length > 0;
+  const {
+    filters,
+    handleFiltersChange,
+    setCheckboxFilters,
+    activeFilterCount,
+    tierAssignments,
+    hasTierData,
+    isCharacterOwned,
+  } = useCharacterFilters({ defaultOwnedOnly: false });
 
   // 640px is a safe breakpoint where 35rem (560px) fits comfortably with margins
   const isSmallScreen = useMediaQuery("(max-width: 640px)");
@@ -65,72 +63,6 @@ export function CharacterView({
   // Edit mode
   const [editingChar, setEditingChar] = useState<CharacterData | null>(null);
 
-  // Get persisted sort preferences
-  const characterSort = usePreferencesStore((state) => state.characterSort);
-  const setCharacterSort = usePreferencesStore(
-    (state) => state.setCharacterSort
-  );
-
-  // Local state for ephemeral filter checkboxes only
-  const [checkboxFilters, setCheckboxFilters] = useState({
-    elements: defaultCharacterFilters.elements,
-    weaponTypes: defaultCharacterFilters.weaponTypes,
-    regions: defaultCharacterFilters.regions,
-    rarities: defaultCharacterFilters.rarities,
-    ownedOnly: false,
-    showManekin: defaultCharacterFilters.showManekin,
-  });
-
-  // Ownership check callback
-  const isOwned = useIsOwned();
-  const isCharacterOwned = useCallback(
-    (id: string) => isOwned("character", id),
-    [isOwned]
-  );
-
-  // Combine local checkbox state with persisted sort preferences
-  const filters: CharacterFilters = useMemo(
-    () => ({
-      ...checkboxFilters,
-      tierSort: hasTierData ? characterSort.tierSort : "off",
-      releaseSort: characterSort.releaseSort,
-    }),
-    [checkboxFilters, characterSort, hasTierData]
-  );
-
-  // Handler that routes updates to the appropriate store
-  const handleFiltersChange = useCallback(
-    (newFilters: CharacterFilters) => {
-      // Update checkbox filters (local state)
-      setCheckboxFilters({
-        elements: newFilters.elements,
-        weaponTypes: newFilters.weaponTypes,
-        regions: newFilters.regions,
-        rarities: newFilters.rarities,
-        ownedOnly: newFilters.ownedOnly,
-        showManekin: newFilters.showManekin,
-      });
-
-      // Update sort preferences (persisted state)
-      const newTierSort =
-        newFilters.tierSort !== filters.tierSort
-          ? newFilters.tierSort
-          : undefined;
-      const newReleaseSort =
-        newFilters.releaseSort !== filters.releaseSort
-          ? newFilters.releaseSort
-          : undefined;
-
-      if (newTierSort !== undefined || newReleaseSort !== undefined) {
-        setCharacterSort({
-          ...(newTierSort !== undefined && { tierSort: newTierSort }),
-          ...(newReleaseSort !== undefined && { releaseSort: newReleaseSort }),
-        });
-      }
-    },
-    [filters.tierSort, filters.releaseSort, setCharacterSort]
-  );
-
   // Filter and sort account characters using shared utility
   const filteredCharacters = useMemo(() => {
     if (!accountData) return [];
@@ -140,13 +72,6 @@ export function CharacterView({
       characterStatsMap: characterStats ?? undefined,
     });
   }, [accountData, filters, tierAssignments, isCharacterOwned, characterStats]);
-
-  const activeFilterCount = [
-    filters.elements,
-    filters.weaponTypes,
-    filters.regions,
-    filters.rarities,
-  ].flat().length;
 
   const handleSaveEdit = useCallback(
     (newData: AccountData) => {
