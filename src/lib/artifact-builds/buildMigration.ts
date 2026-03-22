@@ -125,12 +125,29 @@ function migrateWeightsAndNormalizer(build: Build): void {
  * Apply all build-level migrations in-place. Idempotent — safe to call on
  * every load, import, or preset subscription.
  *
+ * Guarantees all required Build fields exist after execution, so consumers
+ * never encounter undefined on typed fields. This is the single validation
+ * gate for Build data deserialized from localStorage or external JSON.
+ *
  * Currently handles:
+ * - substats: ensure always a WeightedSubStat[] (not undefined/null/wrong type)
+ * - visible / composition / name: ensure present with sensible defaults
  * - halfSet1/halfSet2: legacy numeric → stat-derived string IDs
  * - sandsWeights/gobletWeights/circletWeights: populate from sands/goblet/circlet arrays
  * - normalizer: compute from substat weights if missing
  */
 export function migrateBuild(build: Build): void {
+  // ── Required scalar fields ──
+  if (typeof build.name !== "string") build.name = "";
+  if (typeof build.visible !== "boolean") build.visible = true;
+  if (build.composition !== "4pc" && build.composition !== "2pc+2pc")
+    build.composition = "4pc";
+
+  // ── substats: must be WeightedSubStat[] ──
+  if (!Array.isArray(build.substats)) {
+    build.substats = [];
+  }
+
   build.halfSet1 = normalizeHalfSetId(build.halfSet1);
   build.halfSet2 = normalizeHalfSetId(build.halfSet2);
   migrateWeightsAndNormalizer(build);

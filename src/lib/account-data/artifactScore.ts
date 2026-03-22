@@ -1,3 +1,4 @@
+import { charInfo } from "@/data/charInfo";
 import { artifactIdToHalfSetId, statPools } from "@/data/constants";
 import type {
   ArtifactData,
@@ -8,6 +9,7 @@ import type {
   MainStatSlot,
   Slot,
   SubStat,
+  WeightedMainStat,
 } from "@/data/types";
 import { allSlots, mainStatSlots } from "@/data/types";
 import {
@@ -542,50 +544,80 @@ export function scoreAllSlots(
 
 /**
  * Compute ideal score for normalization (delegates to shared computeIdealScore).
- * V1 legacy: all 3 main stat slots at 100% weight.
+ * Uses the best main stat weight per slot from the build.
  */
-function computeIdealScoreV1(weights: StatWeightMap): number {
+function computeIdealScoreForBuild(
+  weights: StatWeightMap,
+  build: Build
+): number {
   const fullWeights = {} as Record<SubStat, number>;
   for (const stat of SUB_STATS) {
     fullWeights[stat] = weights[stat] ?? 0;
   }
-  return computeIdealScoreShared(fullWeights, 100, 100, 100).idealScore;
+  const bestWeight = (ws: WeightedMainStat[]) =>
+    ws.length > 0 ? Math.max(...ws.map((w) => w.weight)) : 100;
+  return computeIdealScoreShared(
+    fullWeights,
+    bestWeight(build.sandsWeights),
+    bestWeight(build.gobletWeights),
+    bestWeight(build.circletWeights)
+  ).idealScore;
 }
 
 /**
  * Compute main stat scores and normalize the total to a 300-point scale.
- * Every recommended main stat is treated as 100% effective (weight = 1.0).
+ * Main stats are scored using their build-defined weight, just like substats.
  */
 function computeNormalizedScore(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   buildMatch: BuildMatchResult,
-  substatRawScore: number
+  substatRawScore: number,
+  characterKey?: string
 ): NormalizedScoreInfo {
   const slotMainStatScores = Object.fromEntries(
     allSlots.map((s) => [s, 0])
   ) as Record<Slot, number>;
 
   let rawMainStatScore = 0;
+  const { build } = buildMatch;
+
+  // Healers: always accept heal% on circlet at weight 100
+  const isHealer =
+    characterKey != null && charInfo[characterKey]?.healerC != null;
 
   for (const slot of mainStatSlots) {
     const artifact = artifacts[slot];
     if (!artifact) continue;
 
+    // Healer fallback: treat heal% circlet as weight 100 even if not in build
+    const healerCircletOverride =
+      isHealer && slot === "circlet" && artifact.mainStatKey === "heal%";
+
     const hasMismatch = buildMatch.mainStatMismatches.some(
       (m) => m.slot === slot
     );
-    if (hasMismatch) continue;
+    if (hasMismatch && !healerCircletOverride) continue;
 
-    // Correct main stat → full CD-equiv
+    // Look up weight for this main stat from the build
+    const weightsKey = SLOT_TO_WEIGHTS_KEY[slot];
+    const mainStatWeights = build[weightsKey];
+    const matched = mainStatWeights.find(
+      (w) => w.stat === artifact.mainStatKey
+    );
+    const weight =
+      healerCircletOverride && !matched ? 100 : (matched?.weight ?? 100);
+
     const cdEquiv =
-      artifact.rarity === 4
+      matched?.cdEquiv ??
+      (artifact.rarity === 4
         ? MAIN_STAT_CD_EQUIV_4STAR
-        : MAIN_STAT_CD_EQUIV_5STAR;
-    slotMainStatScores[slot] = cdEquiv;
-    rawMainStatScore += cdEquiv;
+        : MAIN_STAT_CD_EQUIV_5STAR);
+    const weightedScore = cdEquiv * (weight / 100);
+    slotMainStatScores[slot] = weightedScore;
+    rawMainStatScore += weightedScore;
   }
 
-  const idealScore = computeIdealScoreV1(buildMatch.statWeights);
+  const idealScore = computeIdealScoreForBuild(buildMatch.statWeights, build);
   const normalizer = idealScore > 0 ? 300 / idealScore : 1;
   const normalizedScore = (rawMainStatScore + substatRawScore) * normalizer;
 
@@ -620,7 +652,8 @@ export function scoreWithBuilds(
   const normalized = computeNormalizedScore(
     char.artifacts,
     buildMatch,
-    substatScore.subScore
+    substatScore.subScore,
+    char.key
   );
   return { substatScore, buildMatch, normalized };
 }
