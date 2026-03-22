@@ -14,7 +14,7 @@ import { cn, getAssetUrl } from "@/lib/utils";
 import type { Team } from "@/stores/useTeamStore";
 import React, { useMemo, useState } from "react";
 
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData, Slot } from "@/data/types";
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
 import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamOptUtils";
 import type { OptFailReason } from "@/lib/team-comp/types";
@@ -46,11 +46,7 @@ type Props = {
   /** Per-character frozen state */
   frozenCharIds?: Set<string>;
   /** When provided, artifact icons become clickable to open a swap dialog */
-  onArtifactSwap?: (
-    charId: string,
-    slot: import("@/data/types").Slot,
-    artifact: ArtifactData
-  ) => void;
+  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   /** Callback to freeze a character's artifacts */
   onFreezeChar?: (charId: string) => void;
   /** Callback to unfreeze a character's artifacts */

@@ -6,7 +6,7 @@
  */
 
 import { artifactHalfSetsById, artifactIdToHalfSetId } from "@/data/constants";
-import type { ArtifactData, GlobalStatWeights } from "@/data/types";
+import type { ArtifactData, GlobalStatWeights, MainStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import { getMainStatValueAtLevel } from "@/lib/account-data/scoring/utils";
@@ -25,6 +25,7 @@ import type {
   CharOptConfig,
   DamageResult,
   OptFailReason,
+  PartialBuffInfo,
   ReactionOverride,
   StatKey,
 } from "../types";
@@ -213,7 +214,7 @@ function bnbDfsCompiled(
         const idx = lookup.keyToIdx.get(mainKey);
         if (idx !== undefined) {
           const displayVal = getMainStatValueAtLevel(
-            mainKey as import("@/data/types").MainStat,
+            mainKey as MainStat,
             art.rarity,
             art.level
           );
@@ -409,7 +410,7 @@ export function runCharacterBnB(
   /** @internal For benchmarking only — disable AST compilation */
   _noCompile = false,
   onProgress?: (bestDamage: number, evaluations: number) => void,
-  partialBuffs?: import("../stackAllocation").PartialBuffInfo[]
+  partialBuffs?: PartialBuffInfo[]
 ): CharacterBnBResult {
   const swapCharId = charId;
   const calcTargetId = carryCharId;

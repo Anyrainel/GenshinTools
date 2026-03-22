@@ -195,7 +195,7 @@ export function calcDisplayResult(
   sheets: Record<string, StatSheet>,
   context: CalcContext,
   override?: ReactionOverride,
-  userBuffOverrides?: import("@/lib/team-comp/types").BuffActivationMap
+  userBuffOverrides?: BuffActivationMap
 ): DisplayResult | null {
   if (!build || !formula) return null;
   const { charId, formulaId } = formula;

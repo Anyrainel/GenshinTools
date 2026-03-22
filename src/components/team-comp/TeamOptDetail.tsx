@@ -33,6 +33,7 @@ import {
 } from "@/lib/team-comp/teamOptUtils";
 import type { TeamOptDetailProps } from "@/lib/team-comp/teamOptUtils";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboLine,
@@ -343,10 +344,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     if (activeLines.length === 0) return undefined;
 
     // Gather user overrides from store keyed by "combo:{comboId}:{charId}.{formulaId}"
-    const formulaOverrides: Record<
-      string,
-      import("@/lib/team-comp/types").BuffActivationMap
-    > = {};
+    const formulaOverrides: Record<string, BuffActivationMap> = {};
     for (const key of Object.keys(comboStoreOverrides)) {
       const prefix = `combo:${combo.id}:`;
       if (key.startsWith(prefix)) {
@@ -479,9 +477,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       {
         minEr: number;
         minCr: number;
-        buildMatch?:
-          | import("@/lib/account-data/artifactScore").BuildMatchResult
-          | null;
+        buildMatch?: BuildMatchResult | null;
         artifactSetId?: string | null;
         artifactHalfSetIds?: string[];
       }

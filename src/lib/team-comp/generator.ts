@@ -42,6 +42,7 @@ import type {
   ComboFormula,
   ComboResult,
   DamageResult,
+  PartialBuffInfo,
   ReactionOverride,
   StatKey,
 } from "./types";
@@ -173,11 +174,8 @@ function tryCompileEval(
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
-  partialBuffs?: import("./stackAllocation").PartialBuffInfo[],
-  comboBuffOverrides?: Record<
-    string,
-    import("./stackAllocation").PartialBuffInfo[]
-  >
+  partialBuffs?: PartialBuffInfo[],
+  comboBuffOverrides?: Record<string, PartialBuffInfo[]>
 ): {
   compiled: CompiledTeamDamage;
   charIdx: number;

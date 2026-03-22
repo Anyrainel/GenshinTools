@@ -22,7 +22,7 @@ import {
   artifactsById,
   charactersById,
 } from "@/data/constants";
-import type { Build, BuildGroup, Element } from "@/data/types";
+import type { AccountData, Build, BuildGroup, Element } from "@/data/types";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import type { WeightedFormula } from "@/lib/account-data/scoring/autoTune";
@@ -159,7 +159,7 @@ function buildTeamInputsFromUserTeams(
   teams: Team[],
   characterId: string,
   element: string,
-  accountData: import("@/data/types").AccountData | null,
+  accountData: AccountData | null,
   t: { character: (id: string) => string }
 ): AutoTuneTeamInput[] {
   const inputs: AutoTuneTeamInput[] = [];
@@ -322,7 +322,7 @@ function TeamsTooltip({
 }: {
   teams: Team[];
   characterId: string;
-  accountData: import("@/data/types").AccountData | null;
+  accountData: AccountData | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   if (teams.length === 0) return null;
@@ -353,7 +353,7 @@ function SelectionCard({
   entry: BuildEntry;
   onToggle: () => void;
   element: string;
-  accountData: import("@/data/types").AccountData | null;
+  accountData: AccountData | null;
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
@@ -462,7 +462,7 @@ function TeamResultRow({
   team: Team | null;
   characterId: string;
   breakdown: TeamBreakdown;
-  accountData: import("@/data/types").AccountData | null;
+  accountData: AccountData | null;
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -544,7 +544,7 @@ function ResultCard({
   onApply: () => void;
   onDismiss: () => void;
   element: string;
-  accountData: import("@/data/types").AccountData | null;
+  accountData: AccountData | null;
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];

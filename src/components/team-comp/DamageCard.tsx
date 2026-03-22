@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/select";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type { AccountData, ArtifactData } from "@/data/types";
+import type { AccountData, ArtifactData, Slot } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
 import type {
+  OptFailReason,
   TeamOptimizationProgress,
   TeamOptimizationResult,
 } from "@/lib/team-comp/optimizer";
@@ -94,7 +95,7 @@ const CARD_HEADER_CLS =
   "bg-gradient-select border-b border-border/40 py-3 px-2 md:px-5";
 const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
-const CARD_BODY_CLS = "p-1 2xl:p-2";
+const CARD_BODY_CLS = "p-1 2xl:p-2 space-y-2";
 
 /** Shared body for current / optimized / ideal tabs. */
 function DamageBody({
@@ -128,16 +129,9 @@ function DamageBody({
   setCritMode: (mode: CritMode) => void;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
-  failReasons?: Record<
-    string,
-    import("@/lib/team-comp/optimizer").OptFailReason
-  >;
+  failReasons?: Record<string, OptFailReason>;
   frozenCharIds?: Set<string>;
-  onArtifactSwap?: (
-    charId: string,
-    slot: import("@/data/types").Slot,
-    artifact: ArtifactData
-  ) => void;
+  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   saturatedCharIds?: string[];
@@ -707,16 +701,9 @@ function ComboResultView({
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
   reactionOverrides: Record<string, ReactionOverride>;
-  failReasons?: Record<
-    string,
-    import("@/lib/team-comp/optimizer").OptFailReason
-  >;
+  failReasons?: Record<string, OptFailReason>;
   frozenCharIds?: Set<string>;
-  onArtifactSwap?: (
-    charId: string,
-    slot: import("@/data/types").Slot,
-    artifact: ArtifactData
-  ) => void;
+  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   saturatedCharIds?: string[];
@@ -813,11 +800,7 @@ interface DamageCardProps {
   onFreezeChar?: (charId: string) => void;
   onUnfreezeChar?: (charId: string) => void;
   // Artifact swap (ephemeral editing of optimizer results)
-  onArtifactSwap?: (
-    charId: string,
-    slot: import("@/data/types").Slot,
-    artifact: ArtifactData
-  ) => void;
+  onArtifactSwap?: (charId: string, slot: Slot, artifact: ArtifactData) => void;
   hasSwapOverrides?: boolean;
   onRestoreOriginal?: () => void;
 }

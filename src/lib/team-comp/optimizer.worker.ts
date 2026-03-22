@@ -12,12 +12,14 @@ import { StatSheet } from "./damageModels";
 import { runCharacterBnB } from "./optimizer";
 import type {
   CalcContext,
+  CharOptConfig,
   ComboFormula,
+  OptFailReason,
+  PartialBuffInfo,
   ReactionOverride,
   StatKey,
   TeamSlotConfig,
 } from "./types";
-import type { CharOptConfig, OptFailReason } from "./types";
 
 export type BnBWorkerRequest = {
   id: number;
@@ -50,12 +52,9 @@ export type BnBWorkerRequest = {
   combo?: ComboFormula;
   reactionOverrides?: Record<string, ReactionOverride>;
   /** Pre-computed partial buff specs for stack-limited / user-overridden buffs. */
-  partialBuffs?: import("./stackAllocation").PartialBuffInfo[];
+  partialBuffs?: PartialBuffInfo[];
   /** Per-line PartialBuffInfo[] for combo mode. */
-  comboLinePartialBuffs?: Record<
-    number,
-    import("./stackAllocation").PartialBuffInfo[]
-  >;
+  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>;
 };
 
 export type SerializedTopKEntry = {
