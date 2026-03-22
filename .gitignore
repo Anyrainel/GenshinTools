@@ -54,4 +54,5 @@ tests/benchmark/data/problems.json
 # QA test case data (agent-generated, not for version control)
 docs/DmgQA/
 docs/optimizer-research/
+docs/formulas/
 memory/

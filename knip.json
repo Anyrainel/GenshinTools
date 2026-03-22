@@ -19,6 +19,7 @@
     "src/components/ui/**",
     "src/data/resources.ts"
   ],
+  "ignoreBinaries": ["uvx"],
   "ignoreDependencies": [
     "@vitejs/plugin-react",
     "@radix-ui/react-accordion",
