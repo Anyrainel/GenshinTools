@@ -4,6 +4,21 @@
 - P1: Better graduation celebration effects
 - P2: (Future) One-click full-roster artifact assignment + export + auto-lock script
 
+## 2025-03-21
+
+### features
+- Formulas now account for off-field damage with tag-aware stat resolution
+- Investment analysis: graph view showing optimal upgrade order, with customizable start and end points
+- Buff fine-tuning: manually adjust buff active state and hit counts per damage part
+- AutoTune batch mode: tune sub-stat weights for multiple characters at once using rotation data
+- More character, weapon, and artifact formulas and data updates, with more options
+- New formula compiler: significantly speeds up damage evaluation
+
+### fixes
+- Fixed numerous character and weapon buff implementations
+- Improved team comp page layout on narrow and mid-width screens
+- Fixed build migration issues and improved store robustness
+
 ## 2025-03-16
 
 ### features
