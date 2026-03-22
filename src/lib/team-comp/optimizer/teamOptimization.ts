@@ -1429,6 +1429,138 @@ export async function* runTeamOptimization(
     }
   }
 
+  // ════════════════════════════════════════════════════════════════════
+  // Phase 2b: Same-Set Sequential Partitioning
+  //
+  // When two characters share the same 4pc artifact set, their Phase 1
+  // top-K lists overlap heavily. Phase 2 DFS explores ALLOC_WIDTH entries
+  // per character, but the optimal allocation may require deeper exploration.
+  //
+  // Fix: for each same-set pair, try both orderings — run B&B for A with
+  // A's best entries, then B&B for B with A's artifacts excluded. This
+  // explores the partition space directly instead of relying on Phase 2 DFS.
+  // ════════════════════════════════════════════════════════════════════
+
+  {
+    // Detect same-4pc-set pairs
+    const setToChars = new Map<string, string[]>();
+    for (const cid of allocatableChars) {
+      const setId = effectivePerChar[cid]?.artifactSetId;
+      if (!setId) continue;
+      if (!setToChars.has(setId)) setToChars.set(setId, []);
+      setToChars.get(setId)!.push(cid);
+    }
+
+    const PARTITION_TOP_M = 8; // try top-M entries for the first character
+
+    for (const [, chars] of setToChars) {
+      if (chars.length < 2) continue;
+      if (teamDeadlineMs && performance.now() > teamDeadlineMs) break;
+
+      // For each pair ordering, run sequential partitioning
+      for (const [firstId, secondId] of [
+        [chars[0], chars[1]],
+        [chars[1], chars[0]],
+      ] as [string, string][]) {
+        if (teamDeadlineMs && performance.now() > teamDeadlineMs) break;
+
+        const firstEntries = topKByChar[firstId] ?? [];
+        const secondConfig = effectivePerChar[secondId];
+        if (!secondConfig || firstEntries.length === 0) continue;
+
+        // Collect other characters' best assignments for team evaluation
+        const otherChars = allocatableChars.filter(
+          (id) => id !== firstId && id !== secondId
+        );
+
+        for (
+          let m = 0;
+          m < Math.min(firstEntries.length, PARTITION_TOP_M);
+          m++
+        ) {
+          if (teamDeadlineMs && performance.now() > teamDeadlineMs) break;
+
+          const firstEntry = firstEntries[m];
+          const excludeSet = new Set(firstEntry.artifactIds);
+
+          // Run B&B for second character with first's artifacts excluded
+          const altDeadline = perCharDeadlineMs
+            ? performance.now() + perCharDeadlineMs
+            : undefined;
+
+          const altResult = runCharacterBnB(
+            secondId,
+            secondConfig,
+            effectiveTeamBuild,
+            carryCharId,
+            formulaId,
+            inventory,
+            globalConfig,
+            heuristicSheets,
+            calcContext,
+            excludeSet,
+            reactionOverride,
+            comboScoreFn,
+            1, // only need best result
+            altDeadline,
+            undefined,
+            maxArtsPerSlot ?? 0,
+            false,
+            undefined,
+            partialBuffs
+          );
+
+          const secondBest = altResult.collector.best;
+          if (!secondBest) continue;
+
+          // Build a full team assignment: first + second + others' best conflict-free
+          const assignment: Record<string, TopKEntry> = {
+            [firstId]: firstEntry,
+            [secondId]: secondBest,
+          };
+          const usedArts = new Set([
+            ...firstEntry.artifactIds,
+            ...secondBest.artifactIds,
+          ]);
+
+          // Assign other characters greedily from their top-K
+          let allAssigned = true;
+          for (const otherId of otherChars) {
+            const otherEntries = topKByChar[otherId] ?? [];
+            let found = false;
+            for (const entry of otherEntries) {
+              let conflict = false;
+              for (const artId of entry.artifactIds) {
+                if (usedArts.has(artId)) {
+                  conflict = true;
+                  break;
+                }
+              }
+              if (!conflict) {
+                assignment[otherId] = entry;
+                for (const artId of entry.artifactIds) usedArts.add(artId);
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              allAssigned = false;
+              break;
+            }
+          }
+
+          if (!allAssigned) continue;
+
+          // Evaluate full team damage
+          const teamDamage = teamEvalFn(assignment);
+          if (candidates.length === 0 || teamDamage > candidates[0].score) {
+            candidates = [{ assignment: { ...assignment }, score: teamDamage }];
+          }
+        }
+      }
+    }
+  }
+
   // Candidates are already scored by actual team damage — take the best.
   const bestAllocation: Record<string, TopKEntry> | null =
     candidates.length > 0 ? candidates[0].assignment : null;
