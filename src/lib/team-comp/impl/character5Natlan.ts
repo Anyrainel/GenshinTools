@@ -857,20 +857,25 @@ class Xilonen extends CharacterBase {
 
     // C4: Blooming Blessing — all party members gain +65% Xilonen DEF as Base DMG
     // for Normal/Charged/Plunging Attacks. "该效果将在生效6次...时解除" → maxStacks: 6
+    // "队伍中具有「荣花之赐」的角色，其生效次数单独计算" → per-character independent stacks.
+    // Emit one ScalingBuff per teammate with charId so each gets its own stack pool.
     if (this.constellation >= 4) {
-      buffs.push(
-        new ScalingBuff(
-          { ...cbs(this, "C4", ["E"]), maxStacks: 6 },
-          {
-            receiver: "onField",
-            filter: { abilities: ["normal", "charge", "plunge"] },
-          },
-          [],
-          "def",
-          "baseDmg",
-          0.65
-        )
-      );
+      for (const charId of Object.keys(this.teamMeta.elements)) {
+        buffs.push(
+          new ScalingBuff(
+            { ...cbs(this, "C4", ["E"]), maxStacks: 6 },
+            {
+              receiver: "onField",
+              charId,
+              filter: { abilities: ["normal", "charge", "plunge"] },
+            },
+            [],
+            "def",
+            "baseDmg",
+            0.65
+          )
+        );
+      }
     }
 
     // C6: Imperishable Night's Blessing — Normal/Plunge DMG +300% DEF

@@ -171,14 +171,14 @@ export class TeamResonance {
   }
 }
 
-export type EvaluatedDynamicBuff = {
+type EvaluatedDynamicBuff = {
   buff: StatBuff;
   source: BuffSource;
   providerCharId: string;
   entries: StatEntry[];
 };
 
-export type ProvidedStaticBuff = {
+type ProvidedStaticBuff = {
   buff: StatBuff;
   providerCharId: string;
 };
@@ -264,10 +264,12 @@ export class CharBuild {
       teamMeta.countByFaction("Moonsign") >= 2 &&
       teamMeta.factions[config.charId] !== "Moonsign"
     ) {
+      const el = teamMeta.elements[config.charId];
       const src: BuffSource = {
         type: "teamResonance",
         id: "gleam",
         noStackId: "nk_resonance_reaction_dmg",
+        element: el,
       };
       const tgt: BuffTarget = {
         receiver: "team",
@@ -275,7 +277,6 @@ export class CharBuild {
           reactions: ["lunarBloom", "lunarCharged", "lunarCrystallize"],
         },
       };
-      const el = teamMeta.elements[config.charId];
 
       if (el === "Pyro" || el === "Electro" || el === "Cryo") {
         this.resonanceBuffs.push(

@@ -160,6 +160,17 @@ function validateStatBuff(
     }
   }
 
+  if (
+    target.charId &&
+    (target.receiver === "self" ||
+      target.receiver === "selfOnField" ||
+      target.receiver === "selfOffField")
+  ) {
+    throw new Error(
+      `${label} charId must not be combined with receiver "${target.receiver}" — self* receivers already imply the provider character`
+    );
+  }
+
   for (const { key } of entries) {
     const c = KEY_CONSTRAINTS[key];
     if (c) {

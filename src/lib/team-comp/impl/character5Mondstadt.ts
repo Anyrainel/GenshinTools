@@ -100,22 +100,28 @@ class Durin extends CharacterBase {
     // Modeled as flat baseDmg scaling from ATK — 20 triggers for White, 10 for Dark
     if (this.constellation >= 1) {
       if (isWhite) {
-        // C1 White Flame: "all other nearby party members" → otherOnField
-        buffs.push(
-          new ScalingBuff(
-            { ...cbs(this, "C1", ["Q"]), maxStacks: 20 },
-            {
-              receiver: "otherOnField",
-              filter: {
-                abilities: ["normal", "charge", "plunge", "skill", "burst"],
+        // C1 White Flame: each other party member gets their own 20 stacks
+        // ("Stack counts for characters in the party who have Cycle of Enlightenment
+        //  are managed individually.")
+        for (const cid of Object.keys(this.teamMeta.elements)) {
+          if (cid === this.charId) continue;
+          buffs.push(
+            new ScalingBuff(
+              { ...cbs(this, "C1", ["Q"]), maxStacks: 20 },
+              {
+                receiver: "otherOnField",
+                charId: cid,
+                filter: {
+                  abilities: ["normal", "charge", "plunge", "skill", "burst"],
+                },
               },
-            },
-            [],
-            "atk",
-            "baseDmg",
-            0.6
-          )
-        );
+              [],
+              "atk",
+              "baseDmg",
+              0.6
+            )
+          );
+        }
       } else {
         // C1 Dark Decay: Durin gains stacks (20, consumed 2 per hit = 10 triggers).
         // Self buff → modeled via formula hit counts, not maxStacks.

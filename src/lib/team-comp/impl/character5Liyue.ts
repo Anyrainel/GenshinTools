@@ -1012,26 +1012,30 @@ class Shenhe extends CharacterBase {
   readonly buffs = [
     // E: Icy Quill — ATK-based flat DMG added to Cryo hits
     // Lv10: 82.2% ATK, Lv13 (C3+): 97% ATK
-    // Quota: press 5 / hold 7 per character. "Both" uses hold quota (last cast refreshes).
+    // Quota: press 5 / hold 7 per character (stacks counted independently).
     // C6: Normal+Charged don't consume → effectively unlimited.
-    new ScalingBuff(
-      {
-        ...cbs(this, "E", ["E"]),
-        ...(this.constellation < 6 && {
-          maxStacks: this.eType === "press" ? 5 : 7,
-        }),
-      },
-      {
-        receiver: "team",
-        filter: {
-          elements: ["Cryo"],
-          abilities: ["normal", "charge", "plunge", "skill", "burst"],
-        },
-      },
-      [],
-      "atk",
-      "baseDmg",
-      this.constellation >= 3 ? 0.97 : 0.822
+    ...Object.keys(this.teamMeta.elements).map(
+      (charId) =>
+        new ScalingBuff(
+          {
+            ...cbs(this, "E", ["E"]),
+            ...(this.constellation < 6 && {
+              maxStacks: this.eType === "press" ? 5 : 7,
+            }),
+          },
+          {
+            receiver: "team",
+            charId,
+            filter: {
+              elements: ["Cryo"],
+              abilities: ["normal", "charge", "plunge", "skill", "burst"],
+            },
+          },
+          [],
+          "atk",
+          "baseDmg",
+          this.constellation >= 3 ? 0.97 : 0.822
+        )
     ),
     // P1: Q field → on-field Cryo DMG +15% ("冰元素伤害加成提高15%")
     new StatBuff(

@@ -9,7 +9,7 @@ import { allElementalDmg, r, wbs } from "../helpers";
 @RegisterWeapon("nocturnes_curtain_call")
 class NocturnesCurtainCall extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this), { receiver: "self" }, [
         {
           key: "hp%",
@@ -60,7 +60,7 @@ class NocturnesCurtainCall extends WeaponBase {
 @RegisterWeapon("reliquary_of_truth")
 class ReliquaryOfTruth extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this), { receiver: "self" }, [
         { key: "cr", value: r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]) },
         { key: "em", value: r(this.refinement, [80, 100, 120, 140, 160]) },
@@ -96,7 +96,7 @@ class NightweaversLookingGlass extends WeaponBase {
     const emVal = r(this.refinement, [60, 75, 90, 105, 120]);
     if (!isHydroDendro) return [];
     const canLunarBloom = this.teamMeta.hasReaction("lunarBloom", this.charId);
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       // Prayer of the Far North: EM after E hit (requires Hydro/Dendro E)
       new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
         { key: "em", value: emVal },
@@ -240,7 +240,7 @@ class JadefallsSplendor extends WeaponBase {
 @RegisterWeapon("starcallers_watch")
 class StarcallersWatch extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this), { receiver: "self" }, [
         { key: "em", value: r(this.refinement, [100, 125, 150, 175, 200]) },
       ]),
@@ -337,7 +337,7 @@ class AThousandFloatingDreams extends WeaponBase {
     sameCount = Math.min(sameCount, 3);
     diffCount = Math.min(diffCount, 3);
 
-    const buffs: import("../damageBuffs").StatBuff[] = [];
+    const buffs: StatBuff[] = [];
     if (diffCount > 0 && wielderElement) {
       buffs.push(
         new StatBuff(

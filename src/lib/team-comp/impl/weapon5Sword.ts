@@ -343,7 +343,7 @@ class FreedomSworn extends WeaponBase {
 @RegisterWeapon("lightbearing_moonshard")
 class LightbearingMoonshard extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this), { receiver: "self" }, [
         { key: "def%", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
       ]),

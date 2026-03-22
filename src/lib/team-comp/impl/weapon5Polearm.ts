@@ -51,7 +51,7 @@ class LumidouceElegy extends WeaponBase {
 @RegisterWeapon("bloodsoaked_ruins")
 class BloodsoakedRuins extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [];
+    const buffs: StatBuff[] = [];
     if (this.teamMeta.hasReaction("electroCharged", this.charId)) {
       buffs.push(
         new StatBuff(
@@ -82,7 +82,7 @@ class BloodsoakedRuins extends WeaponBase {
 @RegisterWeapon("fractured_halo")
 class FracturedHalo extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
         {
           key: "atk%",
@@ -114,7 +114,7 @@ class FracturedHalo extends WeaponBase {
 @RegisterWeapon("symphonist_of_scents")
 class SymphonistOfScents extends WeaponBase {
   get buffs() {
-    const buffs: import("../damageBuffs").StatBuff[] = [
+    const buffs: StatBuff[] = [
       new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
         {
           key: "atk%",

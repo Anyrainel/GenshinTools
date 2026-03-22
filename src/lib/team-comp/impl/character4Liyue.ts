@@ -882,18 +882,23 @@ class YunJin extends CharacterBase {
 
     const totalQScale = qBaseScale + p2Scale;
 
-    const buffs: StatBuff[] = [
-      // Q + P2: Adds Base DMG based on Yun Jin's DEF to team's Normal Attacks
-      // Trigger Quota: 30 per character ("生效一定次数后消失")
-      new ScalingBuff(
-        { ...cbs(this, "P2", ["A4", "Q"]), maxStacks: 30 },
-        { receiver: "team", filter: { abilities: ["normal"] } },
-        [],
-        "def",
-        "baseDmg",
-        totalQScale
-      ),
-    ];
+    const buffs: StatBuff[] = [];
+
+    // Q + P2: Adds Base DMG based on Yun Jin's DEF to team's Normal Attacks
+    // Trigger Quota: 30 per character, independently counted
+    // ("队伍中具有「飞云旗阵」的角色，其生效次数单独计算")
+    for (const charId of Object.keys(this.teamMeta.elements)) {
+      buffs.push(
+        new ScalingBuff(
+          { ...cbs(this, "P2", ["A4", "Q"]), maxStacks: 30 },
+          { receiver: "team", charId, filter: { abilities: ["normal"] } },
+          [],
+          "def",
+          "baseDmg",
+          totalQScale
+        )
+      );
+    }
 
     if (this.constellation >= 2) {
       // C2: +15% Normal Attack DMG to team
