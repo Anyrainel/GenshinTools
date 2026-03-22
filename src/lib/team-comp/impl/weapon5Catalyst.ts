@@ -24,20 +24,16 @@ class NocturnesCurtainCall extends WeaponBase {
     ) {
       // Bountiful Sea's Sacred Wine: HP% (general) + reaction CRIT DMG (lunar only)
       buffs.push(
-        new StatBuff(
-          wbs(this, ["lunarCharged", "lunarBloom", "lunarCrystallize"]),
-          { receiver: "self" },
-          [
-            {
-              key: "hp%",
-              value: r(this.refinement, [0.14, 0.16, 0.18, 0.2, 0.22]),
-            },
-          ]
-        )
+        new StatBuff(wbs(this, ["lunar-reaction"]), { receiver: "self" }, [
+          {
+            key: "hp%",
+            value: r(this.refinement, [0.14, 0.16, 0.18, 0.2, 0.22]),
+          },
+        ])
       );
       buffs.push(
         new StatBuff(
-          wbs(this, ["lunarCharged", "lunarBloom", "lunarCrystallize"]),
+          wbs(this, ["lunar-reaction"]),
           {
             receiver: "self",
             filter: {

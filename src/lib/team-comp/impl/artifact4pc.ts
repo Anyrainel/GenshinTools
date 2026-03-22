@@ -1123,7 +1123,7 @@ class SilkenMoonsSerenade4pc extends ArtifactSetBase {
           {
             type: "artifactSet",
             id: this.artifactSetId,
-            triggers: ["elemental-damage"],
+            triggers: ["elemental-dmg"],
             noStackId: this.artifactSetId,
           },
           { receiver: "team" },
