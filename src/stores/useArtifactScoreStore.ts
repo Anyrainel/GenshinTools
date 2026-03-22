@@ -1,7 +1,7 @@
 import type { GlobalStatWeights } from "@/data/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { useAccountStore } from "./useAccountStore";
+import { invalidateScores } from "./useAccountStore";
 
 const DEFAULT_GLOBAL: GlobalStatWeights = {
   flatAtk: 30,
@@ -46,11 +46,11 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
             },
           },
         }));
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
       resetConfig: () => {
         set(() => ({ config: { global: DEFAULT_GLOBAL } }));
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
       resetGlobalConfig: () => {
         set((state) => ({
@@ -59,7 +59,7 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
             global: DEFAULT_GLOBAL,
           },
         }));
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
     }),
     {
@@ -67,6 +67,11 @@ export const useArtifactScoreStore = create<ArtifactScoreState>()(
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted) => ({
         config: migratePersisted(persisted),
+      }),
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...(persistedState as object),
+        config: migratePersisted(persistedState),
       }),
     }
   )

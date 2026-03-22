@@ -1,6 +1,6 @@
 import { getCachedPreset } from "@/lib/artifact-builds/buildPresetRegistry";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
-import { useAccountStore } from "@/stores/useAccountStore";
+import { invalidateScores } from "@/stores/useAccountStore";
 import { create } from "zustand";
 
 let _buildIdSeq = 0;
@@ -253,7 +253,7 @@ export const useBuildsStore = create<BuildsState>()(
             );
           }
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       // Update a build with partial changes
@@ -329,7 +329,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.validationErrors[buildId] =
             getBuildValidationErrors(targetBuild);
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       // Remove a build from a character
@@ -358,7 +358,7 @@ export const useBuildsStore = create<BuildsState>()(
             }
           }
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       deleteBuild: (characterId: string, buildId: string) => {
@@ -384,7 +384,7 @@ export const useBuildsStore = create<BuildsState>()(
             state.presetDeletedBuildIds.push(buildId);
           }
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       revertBuild: (characterId: string, buildId: string) => {
@@ -403,7 +403,7 @@ export const useBuildsStore = create<BuildsState>()(
             state.presetDeletedBuildIds.splice(deletedIndex, 1);
           }
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       // Character visibility
@@ -430,7 +430,7 @@ export const useBuildsStore = create<BuildsState>()(
 
       subscribePreset: (presetId: string, payload: BuildPayloadV5) => {
         set((state) => executeSubscribePreset(state, presetId, payload));
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       moveBuild: (
@@ -466,7 +466,7 @@ export const useBuildsStore = create<BuildsState>()(
       // Import builds from exported data
       importBuilds: (payload: BuildPayload | BuildPayloadV5) => {
         set((state) => executeImportBuilds(state, payload));
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       // Clear all data (useful for testing)
@@ -506,7 +506,7 @@ export const useBuildsStore = create<BuildsState>()(
           state.activePresetId = presetId;
           state.presetDeletedBuildIds = [];
         });
-        useAccountStore.getState().invalidateScores();
+        invalidateScores();
       },
 
       setHasPromptedForPreset: (prompted: boolean) => {

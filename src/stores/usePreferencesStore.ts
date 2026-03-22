@@ -34,6 +34,15 @@ export const usePreferencesStore = create<PreferencesState>()(
       partialize: (state) => ({
         characterSort: state.characterSort,
       }),
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...(persistedState as object),
+        characterSort: {
+          ...defaultCharacterSort,
+          ...((persistedState as Partial<PreferencesState>)?.characterSort ??
+            {}),
+        },
+      }),
     }
   )
 );

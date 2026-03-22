@@ -1,139 +1,66 @@
-import type {
-  InvestmentThresholds,
-  LuckExpectation,
-  TierAssignment,
-  TierCustomization,
-} from "@/data/types";
+import type { InvestmentThresholds, LuckExpectation } from "@/data/types";
 import { DEFAULT_INVESTMENT_THRESHOLDS } from "@/data/types";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { type TierStoreBase, createTierStore } from "./createTierStore";
 
-interface TierListState {
-  tierAssignments: TierAssignment;
-  tierCustomization: TierCustomization;
+interface TierListState extends TierStoreBase {
   investmentThresholds: InvestmentThresholds;
-  customTitle: string;
   showWeapons: boolean;
   showTravelers: boolean;
   showManekin: boolean;
-  author: string;
-  description: string;
 
-  // Actions
-  setTierAssignments: (
-    assignments: TierAssignment | ((prev: TierAssignment) => TierAssignment)
-  ) => void;
-  setTierCustomization: (customization: TierCustomization) => void;
   setTierLuckExpectation: (tier: string, luck: LuckExpectation) => void;
   setInvestmentThreshold: (
     key: keyof InvestmentThresholds,
     value: number
   ) => void;
-  setCustomTitle: (title: string) => void;
   setShowWeapons: (show: boolean) => void;
   setShowTravelers: (show: boolean) => void;
   setShowManekin: (show: boolean) => void;
-  resetTierList: () => void;
-  loadTierListData: (data: {
-    tierAssignments: TierAssignment;
-    tierCustomization: TierCustomization;
-    customTitle?: string;
-    author?: string;
-    description?: string;
-  }) => void;
-  setMetadata: (author: string, description: string) => void;
 }
 
-export const useTierStore = create<TierListState>()(
-  persist(
-    (set) => ({
-      // Initial state
-      tierAssignments: {},
-      tierCustomization: {},
-      investmentThresholds: { ...DEFAULT_INVESTMENT_THRESHOLDS },
-      customTitle: "",
-      showWeapons: true, // Default to true
-      showTravelers: false, // Default to false
-      showManekin: false, // Default to false
-      author: "",
-      description: "",
-
-      // Actions
-      setTierAssignments: (assignments) =>
-        set((state) => ({
-          tierAssignments:
-            typeof assignments === "function"
-              ? assignments(state.tierAssignments)
-              : assignments,
-        })),
-
-      setTierCustomization: (customization) =>
-        set({ tierCustomization: customization }),
-
-      setTierLuckExpectation: (tier, luck) =>
-        set((state) => ({
-          tierCustomization: {
-            ...state.tierCustomization,
-            [tier]: {
-              ...state.tierCustomization[tier],
-              displayName: state.tierCustomization[tier]?.displayName || tier,
-              hidden: state.tierCustomization[tier]?.hidden || false,
-              luckExpectation: luck,
-            },
+export const useTierStore = createTierStore<TierListState>({
+  storageKey: "tierlist-storage",
+  extraState: {
+    investmentThresholds: { ...DEFAULT_INVESTMENT_THRESHOLDS },
+    showWeapons: true,
+    showTravelers: false,
+    showManekin: false,
+  },
+  extraActions: (set) => ({
+    setTierLuckExpectation: (tier, luck) =>
+      set((state) => ({
+        ...state,
+        tierCustomization: {
+          ...state.tierCustomization,
+          [tier]: {
+            ...state.tierCustomization[tier],
+            displayName: state.tierCustomization[tier]?.displayName || tier,
+            hidden: state.tierCustomization[tier]?.hidden || false,
+            luckExpectation: luck,
           },
-        })),
+        },
+      })),
 
-      setInvestmentThreshold: (key, value) =>
-        set((state) => ({
-          investmentThresholds: {
-            ...state.investmentThresholds,
-            [key]: value,
-          },
-        })),
+    setInvestmentThreshold: (key, value) =>
+      set((state) => ({
+        ...state,
+        investmentThresholds: {
+          ...state.investmentThresholds,
+          [key]: value,
+        },
+      })),
 
-      setCustomTitle: (title) => set({ customTitle: title }),
-
-      setShowWeapons: (show) => set({ showWeapons: show }),
-
-      setShowTravelers: (show) => set({ showTravelers: show }),
-
-      setShowManekin: (show) => set({ showManekin: show }),
-
-      resetTierList: () =>
-        set({
-          tierAssignments: {},
-          tierCustomization: {},
-          customTitle: "",
-          author: "",
-          description: "",
-          // Optionally reset visibility settings or keep them? Keeping them seems friendlier.
-        }),
-
-      loadTierListData: (data) =>
-        set({
-          tierAssignments: data.tierAssignments,
-          tierCustomization: data.tierCustomization,
-          customTitle: data.customTitle || "",
-          author: data.author || "",
-          description: data.description || "",
-        }),
-
-      setMetadata: (author, description) => set({ author, description }),
-    }),
-    {
-      name: "tierlist-storage", // localStorage key
-      partialize: (state) => ({
-        // Only persist these fields
-        tierAssignments: state.tierAssignments,
-        tierCustomization: state.tierCustomization,
-        investmentThresholds: state.investmentThresholds,
-        customTitle: state.customTitle,
-        showWeapons: state.showWeapons,
-        showTravelers: state.showTravelers,
-        showManekin: state.showManekin,
-        author: state.author,
-        description: state.description,
-      }),
-    }
-  )
-);
+    setShowWeapons: (show) =>
+      set({ showWeapons: show } as Partial<TierListState>),
+    setShowTravelers: (show) =>
+      set({ showTravelers: show } as Partial<TierListState>),
+    setShowManekin: (show) =>
+      set({ showManekin: show } as Partial<TierListState>),
+  }),
+  extraPartialize: (state) => ({
+    investmentThresholds: state.investmentThresholds,
+    showWeapons: state.showWeapons,
+    showTravelers: state.showTravelers,
+    showManekin: state.showManekin,
+  }),
+});

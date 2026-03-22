@@ -2,6 +2,7 @@ import type { ArtifactData, Slot } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { repairArtifact } from "./storeValidation";
 
 interface FrozenTeam {
   /** Which character IDs have their artifacts frozen */
@@ -175,6 +176,23 @@ export const useFreezeStore = create<FreezeState>()(
       partialize: (state) => ({
         frozenTeams: state.frozenTeams,
       }),
+      merge: (persistedState, currentState) => {
+        const merged = {
+          ...currentState,
+          ...(persistedState as object),
+        } as FreezeState;
+        // Validate all frozen artifacts on every rehydration
+        for (const entry of Object.values(merged.frozenTeams)) {
+          if (!entry?.artifactsByChar) continue;
+          for (const slotMap of Object.values(entry.artifactsByChar)) {
+            for (const slot of allSlots) {
+              const art = slotMap[slot];
+              if (art) repairArtifact(art);
+            }
+          }
+        }
+        return merged;
+      },
     }
   )
 );

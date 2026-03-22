@@ -2,6 +2,7 @@ import type { AccountData } from "@/data/types";
 import type { ArtifactScoreResult } from "@/lib/account-data/artifactScore";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { repairAccountData } from "./storeValidation";
 
 export type AccountState = {
   /** Storage key. Either a Genshin UID string (e.g. "800000000") or the sentinel "default". */
@@ -189,6 +190,22 @@ export const useAccountStore = create<AccountStore>()(
       name: "genshin-account-storage",
       version: 3,
       migrate: migrateAccountStore,
+      merge: (persistedState, currentState) => {
+        const merged = {
+          ...currentState,
+          ...(persistedState as object),
+        } as AccountStore;
+        // Validate every account's data on every rehydration
+        for (const account of Object.values(merged.accounts)) {
+          if (account?.data) repairAccountData(account.data);
+        }
+        return merged;
+      },
     }
   )
 );
+
+/** Convenience helper for cross-store score invalidation. */
+export function invalidateScores(): void {
+  useAccountStore.getState().invalidateScores();
+}

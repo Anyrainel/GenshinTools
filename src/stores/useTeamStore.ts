@@ -73,15 +73,8 @@ export function mergeTeamStore(
   } as TeamState;
   if (Array.isArray(merged.teams)) {
     merged.teams = merged.teams.map((t) => ({
+      ...DEFAULT_TEAM_FIELDS,
       ...t,
-      reactions: t.reactions ?? [],
-      reactionOverrides: t.reactionOverrides ?? {},
-      combos: t.combos ?? [],
-      selectedCombo: t.selectedCombo ?? null,
-      formulaMode: t.formulaMode ?? "single",
-      minEr: t.minEr ?? {},
-      minCr: t.minCr ?? {},
-      opts: t.opts ?? {},
     }));
   }
   return merged;
@@ -92,6 +85,18 @@ export interface OptimizationResult {
   damage: DamageResult;
   erTargets: Record<string, number>;
 }
+
+/** Default values for team fields that may be missing from persisted data. */
+const DEFAULT_TEAM_FIELDS = {
+  reactions: [] as ReactionType[],
+  reactionOverrides: {} as Record<string, ReactionOverride>,
+  combos: [] as ComboFormula[],
+  selectedCombo: null as string | null,
+  formulaMode: "single" as const,
+  minEr: {} as Record<string, number>,
+  minCr: {} as Record<string, number>,
+  opts: {} as CombatOpts,
+} satisfies Partial<Team>;
 
 export interface Team {
   id: string;
@@ -180,16 +185,9 @@ export const useTeamStore = create<TeamState>()(
           characters: [null, null, null, null],
           weapons: [null, null, null, null],
           artifacts: [null, null, null, null],
-          reactions: [],
-          opts: {},
-          minEr: {},
-          minCr: {},
+          ...DEFAULT_TEAM_FIELDS,
           selectedFormula: null,
           optimizationResult: null,
-          reactionOverrides: {},
-          formulaMode: "single",
-          combos: [],
-          selectedCombo: null,
           ...initialData,
         };
         set((state) => {
