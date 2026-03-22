@@ -1,5 +1,5 @@
 /**
- * Optimizer MonaV2: Faithful reimplementation of Mona's A* V2 algorithm.
+ * Optimizer MonaV2: Based on Mona's A* V2 algorithm with ER/CR constraint pruning.
  *
  * Source: github.com/wormtql/genshin_artifact — cutoff_algo2.rs (CutoffAlgo2)
  * This is what the Mona UI labels as "A* V2".
@@ -10,6 +10,12 @@
  *   - Set mask system instead of recursive set iteration
  *   - factor_a accuracy multiplier for aggressive pruning control
  *   - Explicit outer loop over sands/goblet/circlet main stats
+ *
+ * Our additions beyond faithful Mona V2:
+ *   - ER/CR suffix-max pruning at every loop level (avoids wasting time on
+ *     builds that can never meet ER/CR constraints)
+ *   - ER weight forced to 1.0 when minEr is set (so artifacts with ER substats
+ *     sort higher, finding feasible builds faster)
  */
 
 import { artifactHalfSetsById } from "@/data/constants";
@@ -35,6 +41,8 @@ import {
   diagnoseFailure,
   evaluateBuild,
   evaluateUpperBound,
+  getArtifactCr,
+  getArtifactEr,
   getArtifactStats,
   setupCharSearch,
 } from "./teamSearch";
@@ -55,6 +63,8 @@ function computeStatWeights(
   baseSheets: Record<string, StatSheet>,
   calcTargetId: string,
   calcContext: CalcContext,
+  minEr: number,
+  minCr: number,
   reactionOverride?: ReactionOverride,
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number
 ): Map<StatKey, number> {
@@ -91,15 +101,15 @@ function computeStatWeights(
     ["cd", 0.7],
     ["em", 200],
     ["er", 0.55],
-    ["healB", 0.35],
-    ["pyroDB", 0.5],
-    ["hydroDB", 0.5],
-    ["electroDB", 0.5],
-    ["anemoDB", 0.5],
-    ["cryoDB", 0.5],
-    ["geoDB", 0.5],
-    ["dendroDB", 0.5],
-    ["physDB", 0.5],
+    ["heal%", 0.35],
+    ["pyro%", 0.5],
+    ["hydro%", 0.5],
+    ["electro%", 0.5],
+    ["anemo%", 0.5],
+    ["cryo%", 0.5],
+    ["geo%", 0.5],
+    ["dendro%", 0.5],
+    ["phys%", 0.5],
   ];
 
   for (const [stat, testVal] of testStats) {
@@ -125,6 +135,11 @@ function computeStatWeights(
     }
     weights.set(stat, testScore > baseScore ? 1.0 : 0.0);
   }
+
+  // Force ER/CR weights when constraints are active — ensures artifacts
+  // with ER/CR substats sort higher, so the search finds feasible builds faster
+  if (minEr > 0 && (weights.get("er") ?? 0) < 1.0) weights.set("er", 1.0);
+  if (minCr > 0 && (weights.get("cr") ?? 0) < 1.0) weights.set("cr", 1.0);
 
   return weights;
 }
@@ -306,6 +321,8 @@ interface V2Context {
   erCheckCharId: string;
   minEr: number;
   minCr: number;
+  erFloor: number;
+  crFloor: number;
   reactionOverride?: ReactionOverride;
   scoreFn?: (sheets: Record<string, StatSheet>, calcTargetId: string) => number;
   collector: TopKCollector;
@@ -338,6 +355,11 @@ function evalUpperBound(
 /**
  * Unrolled 5-deep nested loop. At each level, replace one super artifact
  * with a real artifact and check if the upper bound beats current_least.
+ *
+ * ER/CR suffix-max pruning: at each level we check if the cumulative ER/CR
+ * from decided artifacts plus the max possible from remaining slots can meet
+ * the constraint. If not, prune the branch immediately (much cheaper than
+ * a full upper-bound evaluation).
  */
 function doIter(
   slot0Arts: ArtifactData[],
@@ -348,8 +370,32 @@ function doIter(
   superStats: Partial<Record<StatKey, number>>[],
   ctx: V2Context
 ): void {
-  const { collector, factorA } = ctx;
+  const { collector, factorA, minEr, minCr, erFloor, crFloor } = ctx;
+  const needEr = minEr > 0;
+  const needCr = minCr > 0;
   const threshold = () => collector.threshold;
+
+  // Pre-compute max ER/CR per slot for suffix-max pruning
+  const slotArts = [slot0Arts, slot1Arts, slot2Arts, slot3Arts, slot4Arts];
+  const maxErPerSlot = new Float64Array(5);
+  const maxCrPerSlot = new Float64Array(5);
+  if (needEr || needCr) {
+    for (let s = 0; s < 5; s++) {
+      for (const art of slotArts[s]) {
+        if (needEr)
+          maxErPerSlot[s] = Math.max(maxErPerSlot[s], getArtifactEr(art));
+        if (needCr)
+          maxCrPerSlot[s] = Math.max(maxCrPerSlot[s], getArtifactCr(art));
+      }
+    }
+  }
+  // sfxEr[s] = max possible ER from slots s..4
+  const sfxEr = new Float64Array(6);
+  const sfxCr = new Float64Array(6);
+  for (let s = 4; s >= 0; s--) {
+    sfxEr[s] = sfxEr[s + 1] + maxErPerSlot[s];
+    sfxCr[s] = sfxCr[s + 1] + maxCrPerSlot[s];
+  }
 
   for (let i0 = 0; i0 < slot0Arts.length; i0++) {
     if (ctx.aborted) return;
@@ -363,7 +409,12 @@ function doIter(
     }
 
     const art0 = slot0Arts[i0];
-    const art0Stats = getArtifactStats(art0);
+    const er0 = needEr ? getArtifactEr(art0) : 0;
+    const cr0 = needCr ? getArtifactCr(art0) : 0;
+
+    // ER/CR pruning: can remaining slots (1..4) make up the deficit?
+    if (needEr && erFloor + er0 + sfxEr[1] < minEr) continue;
+    if (needCr && crFloor + cr0 + sfxCr[1] < minCr) continue;
 
     // Upper bound: [real0, super1, super2, super3, super4]
     ctx.evaluations++;
@@ -378,6 +429,11 @@ function doIter(
       if (ctx.aborted) return;
 
       const art1 = slot1Arts[i1];
+      const er1 = needEr ? er0 + getArtifactEr(art1) : 0;
+      const cr1 = needCr ? cr0 + getArtifactCr(art1) : 0;
+
+      if (needEr && erFloor + er1 + sfxEr[2] < minEr) continue;
+      if (needCr && crFloor + cr1 + sfxCr[2] < minCr) continue;
 
       // Upper bound: [real0, real1, super2, super3, super4]
       ctx.evaluations++;
@@ -400,6 +456,11 @@ function doIter(
         }
 
         const art2 = slot2Arts[i2];
+        const er2 = needEr ? er1 + getArtifactEr(art2) : 0;
+        const cr2 = needCr ? cr1 + getArtifactCr(art2) : 0;
+
+        if (needEr && erFloor + er2 + sfxEr[3] < minEr) continue;
+        if (needCr && crFloor + cr2 + sfxCr[3] < minCr) continue;
 
         // Upper bound: [real0, real1, real2, super3, super4]
         ctx.evaluations++;
@@ -414,6 +475,11 @@ function doIter(
           if (ctx.aborted) return;
 
           const art3 = slot3Arts[i3];
+          const er3 = needEr ? er2 + getArtifactEr(art3) : 0;
+          const cr3 = needCr ? cr2 + getArtifactCr(art3) : 0;
+
+          if (needEr && erFloor + er3 + sfxEr[4] < minEr) continue;
+          if (needCr && crFloor + cr3 + sfxCr[4] < minCr) continue;
 
           // Upper bound: [real0, real1, real2, real3, super4]
           ctx.evaluations++;
@@ -428,6 +494,11 @@ function doIter(
             if (ctx.aborted) return;
 
             const art4 = slot4Arts[i4];
+
+            // ER/CR final check before expensive evaluateBuild
+            if (needEr && erFloor + er3 + getArtifactEr(art4) < minEr) continue;
+            if (needCr && crFloor + cr3 + getArtifactCr(art4) < minCr) continue;
+
             const arts: ArtifactTuple = [art0, art1, art2, art3, art4];
 
             const { damage, result } = evaluateBuild(
@@ -644,6 +715,8 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
     baseSheets,
     carryCharId,
     calcContext,
+    charConfig.minEr,
+    charConfig.minCr,
     reactionOverride,
     scoreFn
   );
@@ -665,6 +738,8 @@ function runCharacterMonaV2(opts: PerCharSearchOpts): PerCharSearchResult {
     erCheckCharId: charId,
     minEr: charConfig.minEr,
     minCr: charConfig.minCr,
+    erFloor,
+    crFloor,
     reactionOverride,
     scoreFn,
     collector,
