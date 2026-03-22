@@ -185,7 +185,7 @@ export function RecommendationView({ scores }: RecommendationViewProps) {
     );
 
   return (
-    <ScrollLayout className="space-y-8 pb-10 mt-2">
+    <ScrollLayout bodyClassName="space-y-4">
       {/* Investment threshold controls */}
       <Card className="bg-gradient-card shrink-0">
         <CardContent className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4">

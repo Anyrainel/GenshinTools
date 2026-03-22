@@ -304,7 +304,7 @@ export function InventoryView({
   }, [selectedArtifact, onDeleteArtifact]);
 
   return (
-    <ScrollLayout className="space-y-6 pb-12 mt-2">
+    <ScrollLayout bodyClassName="space-y-6">
       {/* ══════ WEAPONS ══════ */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-foreground/90 px-2">

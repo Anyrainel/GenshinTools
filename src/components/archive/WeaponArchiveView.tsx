@@ -1,4 +1,4 @@
-import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   getSortedWeaponSecondaryStats,
@@ -289,10 +289,9 @@ export function WeaponArchiveView() {
     weaponTypeFilter.length > 0 ? weaponTypeFilter : weaponTypes;
 
   return (
-    <HeaderScrollLayout
+    <ScrollLayout
       className="h-full"
-      headerClassName="py-4"
-      bodyClassName="space-y-4 pb-8 max-md:!px-2"
+      bodyClassName="space-y-4"
       header={
         <ArchiveToolbar
           searchQuery={searchQuery}
@@ -320,6 +319,6 @@ export function WeaponArchiveView() {
           onToggle={() => toggleSection(type)}
         />
       ))}
-    </HeaderScrollLayout>
+    </ScrollLayout>
   );
 }

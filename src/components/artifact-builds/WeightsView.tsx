@@ -693,7 +693,7 @@ function ResultCard({
 
 export function WeightsView() {
   const { t } = useLanguage();
-  const { ready, characterStats } = useGameStats();
+  const { characterStats } = useGameStats();
   const groups = useAllResolvedBuilds();
   const setBuild = useBuildsStore((s) => s.setBuild);
   const allUserTeams = useTeamStore((s) => s.teams);
@@ -881,22 +881,11 @@ export function WeightsView() {
   const unappliedCount = entries.filter((e) => e.status === "done").length;
 
   // ── Loading ──
-  if (!ready) {
-    return (
-      <ScrollLayout>
-        <div className="flex items-center justify-center h-64 gap-2 text-muted-foreground">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          <span className="text-sm">{t.ui("v2Weights.loading")}</span>
-        </div>
-      </ScrollLayout>
-    );
-  }
-
   if (entries.length === 0) {
     const hasBuilds = groups.length > 0;
     const hasTeams = allUserTeams.length > 0;
     return (
-      <ScrollLayout className="pb-10 pt-2">
+      <ScrollLayout>
         <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
           <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
             <div className="relative">
@@ -953,7 +942,7 @@ export function WeightsView() {
   }
 
   return (
-    <ScrollLayout className="pb-6 pt-2">
+    <ScrollLayout>
       {/* ── Header ── */}
       <div className="mb-4">
         <h2 className="text-xl font-bold">{t.ui("batchAutoTune.title")}</h2>

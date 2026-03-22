@@ -1,4 +1,4 @@
-import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactIdToHalfSetId, sortedArtifacts } from "@/data/constants";
 import { artifactHalfSets } from "@/data/resources";
@@ -94,10 +94,8 @@ export function ArtifactArchiveView() {
   }, [searchQuery, halfSetFilter, t]);
 
   return (
-    <HeaderScrollLayout
+    <ScrollLayout
       className="h-full"
-      headerClassName="py-4"
-      bodyClassName="pb-8"
       header={
         <ArchiveToolbar
           searchQuery={searchQuery}
@@ -137,6 +135,6 @@ export function ArtifactArchiveView() {
             })}
         </div>
       )}
-    </HeaderScrollLayout>
+    </ScrollLayout>
   );
 }

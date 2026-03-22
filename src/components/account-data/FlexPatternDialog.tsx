@@ -64,6 +64,7 @@ export function FlexPatternDialog({
             [
               ["doubleCritLockEnabled", t.ui("triage.doubleCritLock")],
               ["erHoardingEnabled", t.ui("triage.erHoarding")],
+              ["erHoardingAllEnabled", t.ui("triage.erHoardingAll")],
             ] as const
           ).map(([key, label]) => (
             <div
@@ -72,7 +73,7 @@ export function FlexPatternDialog({
                 "flex items-center gap-3 p-3 rounded-lg border",
                 settings[key]
                   ? "border-purple-500/20 bg-purple-500/5"
-                  : "border-border opacity-50"
+                  : "border-border"
               )}
             >
               <Switch
@@ -81,7 +82,14 @@ export function FlexPatternDialog({
                   onSettingsChange({ ...settings, [key]: v })
                 }
               />
-              <span className="text-sm font-medium">{label}</span>
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  !settings[key] && "text-muted-foreground"
+                )}
+              >
+                {label}
+              </span>
             </div>
           ))}
 
@@ -100,7 +108,7 @@ export function FlexPatternDialog({
                   "flex items-center gap-3 p-3 rounded-lg border",
                   enabled
                     ? "border-amber-500/20 bg-amber-500/5"
-                    : "border-border opacity-50"
+                    : "border-border"
                 )}
               >
                 <Switch
@@ -108,7 +116,12 @@ export function FlexPatternDialog({
                   onCheckedChange={() => togglePattern(fp)}
                 />
                 <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center gap-2 text-sm font-medium whitespace-nowrap">
+                  <div
+                    className={cn(
+                      "flex items-center gap-2 text-sm font-medium whitespace-nowrap",
+                      !enabled && "text-muted-foreground"
+                    )}
+                  >
                     <span>{t.slot(fp.slot)}</span>
                     <span className="text-muted-foreground">·</span>
                     <span>{t.statShort(fp.mainStat)}</span>

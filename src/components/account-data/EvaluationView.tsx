@@ -1,5 +1,4 @@
 import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
-import { HeaderScrollLayout } from "@/components/layout/HeaderScrollLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -119,7 +118,7 @@ export function EvaluationView() {
 
   if (setGroups.length === 0) {
     return (
-      <ScrollLayout className="pb-10 mt-2">
+      <ScrollLayout>
         <div className="flex flex-col items-center pt-16 md:pt-24 h-full p-4">
           <div className="flex flex-col items-center text-center space-y-6 max-w-lg">
             <div className="relative">
@@ -149,9 +148,9 @@ export function EvaluationView() {
   }
 
   return (
-    <HeaderScrollLayout
+    <ScrollLayout
       header={
-        <div className="container flex flex-wrap items-center gap-x-3 gap-y-1.5 py-2">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
           {/* Title + stats */}
           <h2 className="text-xl font-bold text-white">
             {t.ui("evaluation.title")}
@@ -247,7 +246,7 @@ export function EvaluationView() {
           </Button>
         </div>
       }
-      bodyClassName="space-y-3 pb-10 pt-3"
+      bodyClassName="space-y-4"
     >
       {/* Set Groups */}
       {filteredGroups.map((group) => (
@@ -257,7 +256,7 @@ export function EvaluationView() {
           isMobile={isMobile}
         />
       ))}
-    </HeaderScrollLayout>
+    </ScrollLayout>
   );
 }
 
