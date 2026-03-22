@@ -2,29 +2,28 @@
 - id: shenhe-q-dot
   entity: shenhe
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Q field DoT ticks (59.6% / 70.4%) not modeled.
   detail: >
-    Her Q DoT ticks at 59.6%/70.4% ATK over 12s are minor damage, but with her buff stacks
-    now correctly implemented, we can implement this damage when ready.
+    Added DirectFormula for Q DoT (0.596 Lv10, 0.704 Lv13/C5+) with
+    Cryo/burst/none tag. Single tick; user sets count via combo.
   created: "2026-02-25"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: qiqi-q-talisman
   entity: qiqi
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Q talisman DMG not modeled (pure healer).
   detail: >
-    Her Q (513%/605%) is primarily a healing
-    tool (Fortune-Preserving Talisman heals on-hit). The initial Cryo DMG is a one-time
-    instance. Can implement when ready.
+    Added DirectFormula for Q (5.13 Lv10, 6.05 Lv13/C3+) with
+    Cryo/burst/none tag. Single burst hit.
   created: "2026-02-25"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: xinyan-e-q-dot
   entity: xinyan

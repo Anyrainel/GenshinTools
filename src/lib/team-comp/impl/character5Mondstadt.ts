@@ -271,8 +271,25 @@ class Durin extends CharacterBase {
   }
 }
 
-@RegisterCharacter("albedo")
+const albedoOption = {
+  label: { zh: "敌人血量", en: "Enemy HP" },
+  choices: [
+    {
+      value: "below50",
+      label: { zh: "HP<50%（P1生效）", en: "HP <50% (P1 active)" },
+    },
+    {
+      value: "above50",
+      label: { zh: "HP≥50%（P1不生效）", en: "HP ≥50% (P1 inactive)" },
+    },
+  ] as const,
+  default: "below50",
+} satisfies OptionDef;
+
+@RegisterCharacter("albedo", albedoOption)
 class Albedo extends CharacterBase {
+  private readonly enemyHp = resolveOption(albedoOption, this.option);
+
   readonly buffs = (() => {
     const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
     const allAbilities = [
@@ -283,13 +300,17 @@ class Albedo extends CharacterBase {
       "burst",
     ] as const;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P1: Transient Blossoms deal +25% DMG vs enemies HP <50% (assume active)
+      // P1: Transient Blossoms deal +25% DMG vs enemies HP <50%
       // Transient Blossoms proc off-field; receiver is "self" not "selfOnField"
-      new StatBuff(
-        cbs(this, "P1", ["enemy-low-hp"]),
-        { receiver: "self", filter: { abilities: ["skill"] } },
-        [{ key: "dmg%", value: 0.25 }]
-      ),
+      ...(this.enemyHp === "below50"
+        ? [
+            new StatBuff(
+              cbs(this, "P1", ["enemy-low-hp"]),
+              { receiver: "self", filter: { abilities: ["skill"] } },
+              [{ key: "dmg%", value: 0.25 }]
+            ),
+          ]
+        : []),
       // P4: Silver Isotoma — Transient Blossom DMG +240% DEF (fixed passive, not talent-dependent)
       // Only when Silver Isotoma exists (Hexerei: Secret Rite)
       // receiver: "self" — Silver Isotoma fires while Albedo is off-field

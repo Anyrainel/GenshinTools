@@ -4,7 +4,9 @@ import {
   CharacterBase,
   type FormulaEntry,
   RegisterCharacter,
+  resolveOption,
 } from "../damageModels";
+import type { OptionDef } from "../damageModels";
 import { cbs } from "../helpers";
 import type { ElementalOrPhysical } from "../types";
 
@@ -104,8 +106,25 @@ class Mika extends CharacterBase {
   protected readonly formulaMap = {};
 }
 
-@RegisterCharacter("razor")
+const razorOption = {
+  label: { zh: "敌人血量", en: "Enemy HP" },
+  choices: [
+    {
+      value: "below30",
+      label: { zh: "HP<30%（C2生效）", en: "HP <30% (C2 active)" },
+    },
+    {
+      value: "above30",
+      label: { zh: "HP≥30%（C2不生效）", en: "HP ≥30% (C2 inactive)" },
+    },
+  ] as const,
+  default: "below30",
+} satisfies OptionDef;
+
+@RegisterCharacter("razor", razorOption)
 class Razor extends CharacterBase {
+  private readonly enemyHp = resolveOption(razorOption, this.option);
+
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // Q: Normal ATK SPD +40% (Lv10/Lv13 is 40%)
@@ -120,6 +139,16 @@ class Razor extends CharacterBase {
             new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
               { key: "dmg%", value: 0.1 },
             ]),
+          ]
+        : []),
+      // C2: CRIT Rate +10% vs enemies <30% HP
+      ...(this.constellation >= 2 && this.enemyHp === "below30"
+        ? [
+            new StatBuff(
+              cbs(this, "C2", ["enemy-low-hp"]),
+              { receiver: "selfOnField" },
+              [{ key: "cr", value: 0.1 }]
+            ),
           ]
         : []),
       // C4: E tap hit → enemy DEF -15%
@@ -203,6 +232,23 @@ class Razor extends CharacterBase {
             } satisfies FormulaEntry,
           }
         : {}),
+      // P4 (Hexerei): Secret Rite lightning — 150% ATK Electro AoE, once per 1s on sigil overflow
+      ...(this.teamMeta.countByFaction("Hexerei") >= 2
+        ? {
+            "razor-p4-lightning": {
+              label: { zh: "P4秘仪落雷", en: "P4 Secret Rite Lightning" },
+              parts: [
+                {
+                  formula: new DirectFormula(1.5, {
+                    element: "Electro" as const,
+                    ability: "skill" as const,
+                    reaction: "none" as const,
+                  }),
+                },
+              ],
+            } satisfies FormulaEntry,
+          }
+        : {}),
     };
   })();
 
@@ -211,6 +257,7 @@ class Razor extends CharacterBase {
     return {
       "razor-burst-na": 4,
       "razor-c6-lightning": 1,
+      "razor-p4-lightning": 5,
     };
   }
 }

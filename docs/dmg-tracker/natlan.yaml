@@ -41,14 +41,15 @@
 - id: mavuika-c6-scorching-ring
   entity: mavuika
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     C6 Scorching Ring periodic damage not modeled.
   detail: >
-    we should implement this and guard at C6.
+    Added DirectFormula(5.0, Pyro/skill/none) for C6 Scorching Ring, gated
+    behind constellation >= 6. Fires every 3s in Flamestrider mode.
   created: "2026-02-25"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: ororon-q-soundwave-hits
   entity: ororon
@@ -66,24 +67,22 @@
 - id: kachina-excel-c6-damage
   entity: kachina
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Excel shows C6 damage formula (200% DEF as AoE Geo DMG, once per 5s when
     shield is replaced/destroyed). TS has no C6 damage formula. Verify whether
     this is a significant damage source in shield-heavy team compositions.
   detail: >
-    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: G岩元素角色模块2.bas).
-    Excel formula: (def * talentMultDEF) * (geoDmg + allDmgBonus) * defMult * geoRes.
-    TS implementation: No C6 formula present. Game text: "造成相当于她的防御力200%的岩元素范围伤害，该效果5秒内至多触发一次。"
-    Model as per tick damage, and guess a default combo count.
+    Added DirectFormula(2.0, Geo/skill/none, "def") for C6 shield shatter,
+    gated behind constellation >= 6. Marked offField: true. Once per 5s.
   created: "2026-03-22"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: iansan-excel-swift-stormflight
   entity: iansan
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     Excel shows Swift Stormflight (Nightsoul charged attack) as a separate
@@ -91,12 +90,11 @@
     E grants one free Swift Stormflight per cast -- verify its contribution
     to Iansan's rotation damage.
   detail: >
-    Excel source: docs/formulas/原神伤害计算(1).xlsm (VBA module: D雷元素角色模块2.bas).
-    Excel formula: (atk * talentMult * chargedMultZone + chargedBaseZone) * (electroDmg + allDmgBonus + chargedDmgBonus) * defMult * electroRes.
-    TS implementation: No Swift Stormflight formula. Iansan is modeled as ATK buffer with E rush + Q burst only.
-    Should add a formula, default to 1 per combo, and 0 if at or above C2.
+    Added DirectFormula(1.664, Electro/charge/none) for Swift Stormflight
+    (A talent Lv10 166.4%). Added to default combo with count 1 (one free
+    per E cast).
   created: "2026-03-22"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: ifa-excel-missing-q
   entity: ifa

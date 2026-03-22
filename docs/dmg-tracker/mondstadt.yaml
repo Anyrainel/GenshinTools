@@ -3,45 +3,48 @@
 - id: albedo-p1-enemy-hp-combatopt
   entity: albedo
   rule: S6
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     P1 Transient Blossom +25% DMG vs enemies HP <50% is modeled as always-active.
     Per rule S6, enemy HP conditions should use OptionMap. Low priority since Albedo
     is typically not the damage focus character.
   detail: >
-    Approximation is within acceptable range. Albedo is a support character whose
-    Transient Blossom is not the team's primary damage source. The +25% dmg% only
-    applies to his E skill hits (already scoped with ability filter). We should add an OptionMap for this.
+    Added OptionDef (albedoOption) with below50/above50 choices. P1 +25% dmg% buff
+    is now gated on enemyHp === "below50". Default is below50 (P1 active).
   created: "2026-02-26"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: razor-c2-enemy-hp-combatopt
   entity: razor
   rule: S6
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     C2 CRIT Rate +10% vs enemies <30% HP is not modeled. Per rule S6, enemy HP
     conditions should use OptionMap. Currently omitted entirely.
   detail: >
-    Razor is now a formidable DPS, and we should implement this OptionMap.
+    Added OptionDef (razorOption) with below30/above30 choices. C2 CR +10% buff
+    is now gated on constellation >= 2 && enemyHp === "below30". Default is
+    below30 (C2 active). Added resolveOption and OptionDef imports.
   created: "2026-02-26"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: razor-p4-hexerei-lightning
   entity: razor
   rule: S8
-  status: actionable
+  status: completed
   category: missing-formula
   summary: >
     P4 Hexerei: Secret Rite lightning strike (150% ATK Electro AoE, once per 1s
     when sigils overflow during Q) is not modeled. Potentially significant damage
     source over 15s Q duration, especially at C6 where every E triggers overflow.
   detail: >
-    We should implement this formula with a guessed default combo count.
+    Added DirectFormula(1.5, Electro/skill/none) as "razor-p4-lightning", gated
+    on Hexerei >= 2. Default combo count: 5 procs per rotation. Formula entry
+    labeled "P4秘仪落雷" / "P4 Secret Rite Lightning".
   created: "2026-02-26"
-  resolved: null
+  resolved: "2026-03-22"
 
 - id: mona-c1-offfield-enhancement
   entity: mona

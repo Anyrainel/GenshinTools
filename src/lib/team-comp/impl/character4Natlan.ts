@@ -139,12 +139,30 @@ class Iansan extends CharacterBase {
           },
         ],
       },
+      // Swift Stormflight: Nightsoul charged attack (A talent Lv10 166.4%)
+      // E grants one free Swift Stormflight per cast
+      "iansan-swift-stormflight": {
+        label: { zh: "雷霆飞缒", en: "Swift Stormflight" },
+        parts: [
+          {
+            formula: new DirectFormula(1.664, {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
     };
   })();
 
   // Rotation: E > N1(Swift Stormflight) > Q (ATK support, KQM)
   protected override get defaultCombo() {
-    return { "iansan-skill": 1, "iansan-burst": 1 };
+    return {
+      "iansan-skill": 1,
+      "iansan-burst": 1,
+      "iansan-swift-stormflight": 1,
+    };
   }
 }
 
@@ -363,6 +381,28 @@ class Kachina extends CharacterBase {
           },
         ],
       },
+      // C6: When shield is replaced/destroyed, deal 200% DEF as AoE Geo DMG (once per 5s)
+      ...(this.constellation >= 6
+        ? {
+            "kachina-c6": {
+              label: { zh: "6命护盾破碎", en: "C6 Shield Shatter" },
+              parts: [
+                {
+                  formula: new DirectFormula(
+                    2.0,
+                    {
+                      element: "Geo",
+                      ability: "skill",
+                      reaction: "none",
+                    },
+                    "def"
+                  ),
+                  offField: true,
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 

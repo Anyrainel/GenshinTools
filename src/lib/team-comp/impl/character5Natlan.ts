@@ -538,6 +538,23 @@ class Mavuika extends CharacterBase {
           },
         ],
       },
+      // C6: Scorching Ring deals 500% ATK as Pyro DMG every 3s (Flamestrider mode)
+      ...(this.constellation >= 6
+        ? {
+            "mavuika-c6-ring": {
+              label: { zh: "6命焚曜之环·灼象", en: "C6 Scorching Ring" },
+              parts: [
+                {
+                  formula: new DirectFormula(5.0, {
+                    element: "Pyro",
+                    ability: "skill",
+                    reaction: "none",
+                  }),
+                },
+              ],
+            },
+          }
+        : {}),
     };
   })();
 

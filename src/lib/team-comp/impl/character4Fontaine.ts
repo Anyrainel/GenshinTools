@@ -17,11 +17,11 @@ class Chevreuse extends CharacterBase {
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];
 
-    if (this.isPyroElectroTeam) {
+    if (this.isPyroElectroTeam && this.teamMeta.hasReaction("overloaded")) {
       // P1: After Overloaded, enemies' Pyro+Electro RES -40% for 6s
       buffs.push(
         new StatBuff(
-          cbs(this, "P1", []),
+          cbs(this, "P1", ["overloaded"]),
           {
             receiver: "team",
             filter: { elements: ["Pyro", "Electro"] },

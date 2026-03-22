@@ -14,7 +14,7 @@
 - id: chevreuse-p1-overloaded-condition
   entity: chevreuse
   rule: S6
-  status: actionable
+  status: completed
   category: approximation
   summary: >
     P1 res shred requires triggering Overloaded, but the buff has no reaction trigger check
@@ -23,8 +23,7 @@
     Since an all-Pyro-Electro team always has Overloaded available, this is technically fine
     but the trigger label in cbs is empty instead of listing "overloaded".
   detail: >
-    Since now we have added enemy element aura feature, which may actually disable the ability
-    for the team to trigger Overloaded. We should now implement this check and actually only
-    enable when the reaction is possible with hasReaction(). And label the triggers properly.
+    Added hasReaction("overloaded") check to P1 buff condition alongside the existing
+    isPyroElectroTeam check. Updated cbs trigger label from [] to ["overloaded"].
   created: "2026-02-26"
-  resolved: null
+  resolved: "2026-03-22"

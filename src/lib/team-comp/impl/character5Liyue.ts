@@ -1115,6 +1115,8 @@ class Shenhe extends CharacterBase {
   // E Press: Lv10 251%, Lv13 (C3+) 296%
   protected readonly formulaMap = (() => {
     const eMult = this.constellation >= 3 ? 2.96 : 2.51;
+    // Q DoT: Lv10 59.6%, Lv13 (C5+) 70.4%
+    const qDotMult = this.constellation >= 5 ? 0.704 : 0.596;
     return {
       "shenhe-skill": {
         label: { zh: "E点按", en: "E Spring Spirit (Press)" },
@@ -1123,6 +1125,18 @@ class Shenhe extends CharacterBase {
             formula: new DirectFormula(eMult, {
               element: "Cryo",
               ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "shenhe-q-dot": {
+        label: { zh: "Q持续伤害", en: "Q DoT" },
+        parts: [
+          {
+            formula: new DirectFormula(qDotMult, {
+              element: "Cryo",
+              ability: "burst",
               reaction: "none",
             }),
           },
@@ -1354,6 +1368,8 @@ class Qiqi extends CharacterBase {
     // ~8 hits over 15s duration
     // C3 upgrades Q (Preserver of Fortune), C5 upgrades E (Herald of Frost)
     const eHeraldMult = this.constellation >= 5 ? 0.765 : 0.648;
+    // Q Skill DMG: Lv10 513%, Lv13 (C3+) 605%
+    const qMult = this.constellation >= 3 ? 6.05 : 5.13;
     return {
       "qiqi-skill-hit": {
         label: { zh: "E伤害×8", en: "E (×8)" },
@@ -1366,6 +1382,18 @@ class Qiqi extends CharacterBase {
             }),
             hits: 8,
             offField: true,
+          },
+        ],
+      },
+      "qiqi-burst": {
+        label: { zh: "Q伤害", en: "Q DMG" },
+        parts: [
+          {
+            formula: new DirectFormula(qMult, {
+              element: "Cryo",
+              ability: "burst",
+              reaction: "none",
+            }),
           },
         ],
       },
