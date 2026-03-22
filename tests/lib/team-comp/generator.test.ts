@@ -1,7 +1,9 @@
 /**
- * Tests for generator — specifically verifying 2+2pc set assignment.
+ * Tests for generator — verifying 2+2pc set assignment and 4★ flex slot promotion.
  */
 import { artifactHalfSetsById, artifactsById } from "@/data/constants";
+import type { Slot } from "@/data/types";
+import { allSlots } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
@@ -256,5 +258,144 @@ describe("generator — 2+2pc set assignment", () => {
     expect(arts.sands.setKey).toBe(expected5Star1);
     expect(arts.goblet.setKey).toBe(expected5Star2);
     expect(arts.circlet.setKey).toBe(expected5Star2);
+  });
+});
+
+// ── 4★ flex slot promotion ──────────────────────────────────────────────────
+
+describe("generator — 4★ flex slot promotion", () => {
+  /** Build a team where the support uses a 4-star 4pc set. */
+  function make4StarSupportConfigs(): TeamSlotConfig[] {
+    return [
+      {
+        charId: "diluc",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "wolfs_gravestone",
+        refinement: 1,
+        artifactSetId: "crimson_witch_of_flames",
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "xingqiu",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "sacrificial_sword",
+        refinement: 1,
+        artifactSetId: "instructor", // 4★ set
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "bennett",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "aquila_favonia",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+      {
+        charId: "kaedehara_kazuha",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "iron_sting",
+        refinement: 1,
+        artifactSetId: null,
+        artifactHalfSetIds: [],
+      },
+    ];
+  }
+
+  it("4★ set support should have exactly one 5★ flex slot in sands/goblet/circlet", async () => {
+    const configs = make4StarSupportConfigs();
+    const tb = new TeamBuild(configs);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+
+    const opts: GeneratorOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      calcContext: CTX,
+    };
+
+    const results = await drain(runGenerator(opts));
+    const final = results[results.length - 1];
+    expect(final.done).toBe(true);
+
+    const arts = final.artifactsByChar.xingqiu;
+    expect(arts).toBeDefined();
+
+    // Count how many slots are 5★ vs 4★
+    const flexSlots: Slot[] = [];
+    const fourStarSlots: Slot[] = [];
+    for (const slot of allSlots) {
+      if (arts[slot].rarity === 5) {
+        flexSlots.push(slot);
+      } else {
+        fourStarSlots.push(slot);
+        expect(arts[slot].rarity).toBe(4);
+      }
+    }
+
+    // Exactly one flex slot, and it must be sands/goblet/circlet
+    expect(flexSlots).toHaveLength(1);
+    expect(["sands", "goblet", "circlet"]).toContain(flexSlots[0]);
+
+    // The flex slot should use a 5★ set key (not the 4★ instructor set)
+    const flexArt = arts[flexSlots[0]];
+    expect(flexArt.setKey).not.toBe("instructor");
+    expect(artifactsById[flexArt.setKey]?.rarity).toBe(5);
+
+    // The 4 remaining slots should use the 4★ set
+    expect(fourStarSlots).toHaveLength(4);
+    for (const slot of fourStarSlots) {
+      expect(arts[slot].setKey).toBe("instructor");
+    }
+  });
+
+  it("5★ set carry should have no flex slot (all 5★)", async () => {
+    const configs = make4StarSupportConfigs();
+    const tb = new TeamBuild(configs);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+
+    const opts: GeneratorOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      calcContext: CTX,
+    };
+
+    const results = await drain(runGenerator(opts));
+    const final = results[results.length - 1];
+
+    const arts = final.artifactsByChar.diluc;
+    for (const slot of allSlots) {
+      expect(arts[slot].rarity).toBe(5);
+    }
+  });
+
+  it("flex slot has higher level (20) than other 4★ slots (16)", async () => {
+    const configs = make4StarSupportConfigs();
+    const tb = new TeamBuild(configs);
+    const formulaId = getFirstFormulaId(tb, "diluc");
+
+    const opts: GeneratorOptions = {
+      teamBuild: tb,
+      carryCharId: "diluc",
+      formulaId,
+      calcContext: CTX,
+    };
+
+    const results = await drain(runGenerator(opts));
+    const final = results[results.length - 1];
+    const arts = final.artifactsByChar.xingqiu;
+
+    for (const slot of allSlots) {
+      if (arts[slot].rarity === 5) {
+        expect(arts[slot].level).toBe(20);
+      } else {
+        expect(arts[slot].level).toBe(16);
+      }
+    }
   });
 });

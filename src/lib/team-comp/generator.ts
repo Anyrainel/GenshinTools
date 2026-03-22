@@ -7,6 +7,7 @@ import type { ArtifactData, MainStat, Slot, SubStat } from "@/data/types";
 import { allSlots } from "@/data/types";
 
 import {
+  type FlexSlotConfig,
   buildSheetFromMainAndSubs,
   constrainedGreedyAllocate,
   emptySubRolls,
@@ -111,6 +112,31 @@ function getCharRarity(
     if (setKey && artifactsById[setKey]?.rarity === 4) return 4;
   }
   return 5;
+}
+
+// ─── Flex Slot Helpers ───
+
+/** Candidate slots for 5★ flex promotion (sands/goblet/circlet). */
+const FLEX_CANDIDATES: Slot[] = ["sands", "goblet", "circlet"];
+
+function makeFlexConfig(
+  flexSlot: Slot,
+  budgetPreset: SubstatBudgetPreset,
+  rollMult?: number
+): FlexSlotConfig {
+  return {
+    slot: flexSlot,
+    rv: getRollValues(rollMult, 5),
+    maxRolls: rollsPerSlotForPreset(budgetPreset, 5),
+    statCap: rollsPerSlotForPreset(budgetPreset, 5) - 3,
+  };
+}
+
+/** Pick a random 5★ artifact set key for the flex slot display icon. */
+function pickRandom5StarSetKey(): string {
+  const all5Star = Object.values(artifactsById).filter((a) => a?.rarity === 5);
+  if (all5Star.length === 0) return "ideal";
+  return all5Star[Math.floor(Math.random() * all5Star.length)].id;
 }
 
 // ─── Helpers ───
@@ -258,16 +284,18 @@ function synthesizeArtifacts(
   mainStats: Record<Slot, MainStat>,
   subRolls: Record<Slot, Partial<Record<SubStat, number>>>,
   rv: Record<SubStat, number>,
-  slotSetKeys?: Record<Slot, string>
+  slotSetKeys?: Record<Slot, string>,
+  flex?: FlexSlotConfig | null
 ): Record<Slot, ArtifactData> {
   const result = {} as Record<Slot, ArtifactData>;
   for (const slot of allSlots) {
+    const slotRv = flex?.slot === slot ? flex.rv : rv;
     const subs: Partial<Record<SubStat, number>> = {};
     const slotSubs = subRolls[slot];
     for (const [stat, rolls] of Object.entries(slotSubs)) {
       if (!rolls) continue;
       // Display format: percent stats as e.g. 13.26 for 13.26%, flat stats as-is
-      subs[stat as SubStat] = +(rv[stat as SubStat] * rolls).toFixed(2);
+      subs[stat as SubStat] = +(slotRv[stat as SubStat] * rolls).toFixed(2);
     }
 
     const setKey = slotSetKeys?.[slot] ?? "ideal";
@@ -349,7 +377,8 @@ function findBestMainStats(
   rarity: 4 | 5 = 5,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const compiledCtx = tryCompileEval(
     teamBuild,
@@ -396,7 +425,8 @@ function findBestMainStats(
           mainStats,
           emptySubRolls(),
           rv,
-          rarity
+          rarity,
+          flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
         const dmg = fastEval
@@ -444,7 +474,8 @@ function fillSubstats(
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
-  preFill?: Record<Slot, Partial<Record<SubStat, number>>>
+  preFill?: Record<Slot, Partial<Record<SubStat, number>>>,
+  flex?: FlexSlotConfig
 ): Record<Slot, Partial<Record<SubStat, number>>> {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
@@ -490,6 +521,7 @@ function fillSubstats(
     preFill,
     maxRollsPerSlot: maxSlot,
     maxRollsPerStat: maxStat,
+    flex,
   });
 }
 
@@ -526,11 +558,14 @@ function constraintAwareGenerate(
   budgetPreset: SubstatBudgetPreset,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  flex?: FlexSlotConfig
 ): ConstraintAwareResult {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
-  const needForceEr = gap.erGap >= erMainStatInternal(rarity);
+  // If flex promotes sands to 5★, use 5★ ER main stat threshold
+  const erRarity = flex?.slot === "sands" ? 5 : rarity;
+  const needForceEr = gap.erGap >= erMainStatInternal(erRarity);
   const needForceCr = gap.crGap >= crMainStatInternal(rarity);
 
   // Build list of main stat variants to try
@@ -572,7 +607,8 @@ function constraintAwareGenerate(
       variant.forceCirclet,
       reactionOverride,
       combo,
-      reactionOverrides
+      reactionOverrides,
+      flex
     );
     if (!mainStats) continue; // no feasible combo found
 
@@ -580,7 +616,8 @@ function constraintAwareGenerate(
     const { erRemaining, crRemaining } = erCrGapAfterMainStats(
       gap,
       mainStats,
-      rarity
+      rarity,
+      flex
     );
     const preFill =
       erRemaining > 0 || crRemaining > 0
@@ -611,9 +648,16 @@ function constraintAwareGenerate(
       reactionOverride,
       combo,
       reactionOverrides,
-      preFill
+      preFill,
+      flex
     );
-    const sheet = buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
+    const sheet = buildSheetFromMainAndSubs(
+      mainStats,
+      subRolls,
+      rv,
+      rarity,
+      flex
+    );
     const sheets = { ...currentSheets, [charId]: sheet };
     const damage = evaluateDamage(
       teamBuild,
@@ -644,7 +688,8 @@ function constraintAwareGenerate(
       rarity,
       reactionOverride,
       combo,
-      reactionOverrides
+      reactionOverrides,
+      flex
     );
     const subRolls = fillSubstats(
       teamBuild,
@@ -659,9 +704,17 @@ function constraintAwareGenerate(
       budgetPreset,
       reactionOverride,
       combo,
-      reactionOverrides
+      reactionOverrides,
+      undefined, // preFill
+      flex
     );
-    const sheet = buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
+    const sheet = buildSheetFromMainAndSubs(
+      mainStats,
+      subRolls,
+      rv,
+      rarity,
+      flex
+    );
     const sheets = { ...currentSheets, [charId]: sheet };
     const damage = evaluateDamage(
       teamBuild,
@@ -698,7 +751,8 @@ function findBestMainStatsConstrained(
   forceCirclet?: MainStat,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  flex?: FlexSlotConfig
 ): Record<Slot, MainStat> | null {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
@@ -746,7 +800,8 @@ function findBestMainStatsConstrained(
           const { erRemaining, crRemaining } = erCrGapAfterMainStats(
             gap,
             mainStats,
-            rarity
+            rarity,
+            flex
           );
           if (erRemaining > 0 || crRemaining > 0) {
             const preFill = computeSubstatPreFill(
@@ -766,7 +821,8 @@ function findBestMainStatsConstrained(
           mainStats,
           emptySubRolls(),
           rv,
-          rarity
+          rarity,
+          flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
         const dmg = fastEval
@@ -809,7 +865,8 @@ function findBestMainStatsWithSubs(
   rarity: 4 | 5 = 5,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  flex?: FlexSlotConfig
 ): Record<Slot, MainStat> {
   const compiledCtx = tryCompileEval(
     teamBuild,
@@ -856,7 +913,8 @@ function findBestMainStatsWithSubs(
           mainStats,
           existingSubRolls,
           rv,
-          rarity
+          rarity,
+          flex
         );
         const sheets = { ...currentSheets, [charId]: sheet };
         const dmg = fastEval
@@ -987,13 +1045,15 @@ export async function* runGenerator(
     gap: ErCrGap,
     mainStats: Record<Slot, MainStat>,
     r: 4 | 5,
-    cRv: Record<SubStat, number>
+    cRv: Record<SubStat, number>,
+    flex?: FlexSlotConfig
   ) => {
     if (gap.erGap <= 0 && gap.crGap <= 0) return undefined;
     const { erRemaining, crRemaining } = erCrGapAfterMainStats(
       gap,
       mainStats,
-      r
+      r,
+      flex
     );
     if (erRemaining <= 0 && crRemaining <= 0) return undefined;
     return (
@@ -1009,76 +1069,146 @@ export async function* runGenerator(
     );
   };
 
+  // ── Helper: run generation for one character (with optional flex) ──
+  // Returns { mainStats, subRolls, sheet, damage }
+  const generateOneChar = (
+    cid: string,
+    cR: 4 | 5,
+    cRv: Record<SubStat, number>,
+    cGap: ErCrGap,
+    flex?: FlexSlotConfig
+  ): {
+    mainStats: Record<Slot, MainStat>;
+    subRolls: Record<Slot, Partial<Record<SubStat, number>>>;
+    sheet: StatSheet;
+    damage: number;
+  } => {
+    if (cGap.erGap > 0 || cGap.crGap > 0) {
+      return constraintAwareGenerate(
+        teamBuild,
+        cid,
+        carryCharId,
+        formulaId,
+        currentSheets,
+        calcContext,
+        cRv,
+        cGap,
+        cR,
+        budgetPreset,
+        reactionOverride,
+        combo,
+        reactionOverrides,
+        flex
+      );
+    }
+    const mainStats = findBestMainStats(
+      teamBuild,
+      cid,
+      carryCharId,
+      formulaId,
+      currentSheets,
+      calcContext,
+      cRv,
+      cR,
+      reactionOverride,
+      combo,
+      reactionOverrides,
+      flex
+    );
+    currentSheets[cid] = buildSheetFromMainAndSubs(
+      mainStats,
+      emptySubRolls(),
+      cRv,
+      cR,
+      flex
+    );
+    const subRolls = fillSubstats(
+      teamBuild,
+      cid,
+      carryCharId,
+      formulaId,
+      mainStats,
+      currentSheets,
+      calcContext,
+      cRv,
+      cR,
+      budgetPreset,
+      reactionOverride,
+      combo,
+      reactionOverrides,
+      undefined, // preFill
+      flex
+    );
+    const sheet = buildSheetFromMainAndSubs(mainStats, subRolls, cRv, cR, flex);
+    const sheets = { ...currentSheets, [cid]: sheet };
+    const damage = evaluateDamage(
+      teamBuild,
+      sheets,
+      carryCharId,
+      formulaId,
+      calcContext,
+      reactionOverride,
+      combo,
+      reactionOverrides
+    );
+    return { mainStats, subRolls, sheet, damage };
+  };
+
+  // ── Helper: run generation with flex-slot loop for 4★ characters ──
+  const generateWithFlex = (
+    cid: string,
+    cR: 4 | 5,
+    cRv: Record<SubStat, number>,
+    cGap: ErCrGap
+  ): {
+    mainStats: Record<Slot, MainStat>;
+    subRolls: Record<Slot, Partial<Record<SubStat, number>>>;
+    sheet: StatSheet;
+    damage: number;
+    winningFlex: FlexSlotConfig | null;
+  } => {
+    if (cR !== 4) {
+      const result = generateOneChar(cid, cR, cRv, cGap);
+      return { ...result, winningFlex: null };
+    }
+    // 4★ character: try each flex slot candidate and keep the best
+    let bestResult: ReturnType<typeof generateOneChar> | null = null;
+    let bestFlex: FlexSlotConfig | null = null;
+    for (const flexSlot of FLEX_CANDIDATES) {
+      const flex = makeFlexConfig(flexSlot, budgetPreset, rollMult);
+      const result = generateOneChar(cid, cR, cRv, cGap, flex);
+      if (!bestResult || result.damage > bestResult.damage) {
+        bestResult = result;
+        bestFlex = flex;
+      }
+    }
+    return { ...bestResult!, winningFlex: bestFlex };
+  };
+
   // ── Steps 1-2: Main stats + substats for carry, then supports ──
   // When ER/CR constraints exist, use constraint-aware generation that
   // tries forced main stat variants and pre-fills substats.
+  // For 4★ characters, try each sands/goblet/circlet as a 5★ flex slot.
   const carryR = charRarity[carryCharId] ?? 5;
   const carryRv = charRv[carryCharId] ?? rv;
   const carryGap = getCharGap(carryCharId);
+  // Track winning flex config per character for carry refinement and display
+  const charFlex: Record<string, FlexSlotConfig | null> = {};
 
   yield yieldProgress("carry: main stats + substats");
   await yieldFrame();
 
-  if (carryGap.erGap > 0 || carryGap.crGap > 0) {
-    const result = constraintAwareGenerate(
-      teamBuild,
+  {
+    const { mainStats, subRolls, sheet, winningFlex } = generateWithFlex(
       carryCharId,
-      carryCharId,
-      formulaId,
-      currentSheets,
-      calcContext,
-      carryRv,
-      carryGap,
       carryR,
-      budgetPreset,
-      reactionOverride,
-      combo,
-      reactionOverrides
-    );
-    allMainStats[carryCharId] = result.mainStats;
-    allSubRolls[carryCharId] = result.subRolls;
-    currentSheets[carryCharId] = result.sheet;
-  } else {
-    allMainStats[carryCharId] = findBestMainStats(
-      teamBuild,
-      carryCharId,
-      carryCharId,
-      formulaId,
-      currentSheets,
-      calcContext,
       carryRv,
-      carryR,
-      reactionOverride,
-      combo,
-      reactionOverrides
+      carryGap
     );
-    currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-      allMainStats[carryCharId],
-      emptySubRolls(),
-      carryRv,
-      carryR
-    );
-    allSubRolls[carryCharId] = fillSubstats(
-      teamBuild,
-      carryCharId,
-      carryCharId,
-      formulaId,
-      allMainStats[carryCharId],
-      currentSheets,
-      calcContext,
-      carryRv,
-      carryR,
-      budgetPreset,
-      reactionOverride,
-      combo,
-      reactionOverrides
-    );
-    currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-      allMainStats[carryCharId],
-      allSubRolls[carryCharId],
-      carryRv,
-      carryR
-    );
+    allMainStats[carryCharId] = mainStats;
+    allSubRolls[carryCharId] = subRolls;
+    currentSheets[carryCharId] = sheet;
+    charFlex[carryCharId] = winningFlex;
   }
   step += 2; // combined main+sub steps
 
@@ -1091,71 +1221,21 @@ export async function* runGenerator(
     yield yieldProgress(`${sid}: main stats + substats`);
     await yieldFrame();
 
-    if (sGap.erGap > 0 || sGap.crGap > 0) {
-      const result = constraintAwareGenerate(
-        teamBuild,
-        sid,
-        carryCharId,
-        formulaId,
-        currentSheets,
-        calcContext,
-        sRv,
-        sGap,
-        sR,
-        budgetPreset,
-        reactionOverride,
-        combo,
-        reactionOverrides
-      );
-      allMainStats[sid] = result.mainStats;
-      allSubRolls[sid] = result.subRolls;
-      currentSheets[sid] = result.sheet;
-    } else {
-      allMainStats[sid] = findBestMainStats(
-        teamBuild,
-        sid,
-        carryCharId,
-        formulaId,
-        currentSheets,
-        calcContext,
-        sRv,
-        sR,
-        reactionOverride,
-        combo,
-        reactionOverrides
-      );
-      currentSheets[sid] = buildSheetFromMainAndSubs(
-        allMainStats[sid],
-        emptySubRolls(),
-        sRv,
-        sR
-      );
-      allSubRolls[sid] = fillSubstats(
-        teamBuild,
-        sid,
-        carryCharId,
-        formulaId,
-        allMainStats[sid],
-        currentSheets,
-        calcContext,
-        sRv,
-        sR,
-        budgetPreset,
-        reactionOverride,
-        combo,
-        reactionOverrides
-      );
-      currentSheets[sid] = buildSheetFromMainAndSubs(
-        allMainStats[sid],
-        allSubRolls[sid],
-        sRv,
-        sR
-      );
-    }
+    const { mainStats, subRolls, sheet, winningFlex } = generateWithFlex(
+      sid,
+      sR,
+      sRv,
+      sGap
+    );
+    allMainStats[sid] = mainStats;
+    allSubRolls[sid] = subRolls;
+    currentSheets[sid] = sheet;
+    charFlex[sid] = winningFlex;
     step += 2; // combined main+sub steps
   }
 
   // ── Step 5: Re-roll main stats for carry (ignore main/sub conflicts) ──
+  const carryFlex = charFlex[carryCharId] ?? undefined;
   yield yieldProgress("carry: refine main stats");
   await yieldFrame();
   allMainStats[carryCharId] = findBestMainStatsWithSubs(
@@ -1170,13 +1250,15 @@ export async function* runGenerator(
     carryR,
     reactionOverride,
     combo,
-    reactionOverrides
+    reactionOverrides,
+    carryFlex
   );
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
     carryRv,
-    carryR
+    carryR,
+    carryFlex
   );
   step++;
 
@@ -1189,7 +1271,8 @@ export async function* runGenerator(
       carryGap,
       allMainStats[carryCharId],
       carryR,
-      carryRv
+      carryRv,
+      carryFlex
     );
     allSubRolls[carryCharId] = fillSubstats(
       teamBuild,
@@ -1205,14 +1288,16 @@ export async function* runGenerator(
       reactionOverride,
       combo,
       reactionOverrides,
-      refinedPreFill
+      refinedPreFill,
+      carryFlex
     );
   }
   currentSheets[carryCharId] = buildSheetFromMainAndSubs(
     allMainStats[carryCharId],
     allSubRolls[carryCharId],
     carryRv,
-    carryR
+    carryR,
+    carryFlex
   );
   step++;
 
@@ -1246,7 +1331,8 @@ export async function* runGenerator(
       carryGap,
       altMainStats,
       carryR,
-      carryRv
+      carryRv,
+      carryFlex
     );
     const altSubRolls = fillSubstats(
       teamBuild,
@@ -1262,13 +1348,15 @@ export async function* runGenerator(
       reactionOverride,
       combo,
       reactionOverrides,
-      altPreFill
+      altPreFill,
+      carryFlex
     );
     const altSheet = buildSheetFromMainAndSubs(
       altMainStats,
       altSubRolls,
       carryRv,
-      carryR
+      carryR,
+      carryFlex
     );
     const altSheets = { ...currentSheets, [carryCharId]: altSheet };
     const altDmg = evaluateDamage(
@@ -1291,6 +1379,17 @@ export async function* runGenerator(
   step++;
 
   // ── Final result ──
+  // Override set keys for flex slots: use a random 5★ set for icon display
+  for (const cid of allCharIds) {
+    const flex = charFlex[cid];
+    if (flex && setKeysByChar[cid]) {
+      setKeysByChar[cid] = {
+        ...setKeysByChar[cid],
+        [flex.slot]: pickRandom5StarSetKey(),
+      };
+    }
+  }
+
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
 
@@ -1308,7 +1407,8 @@ export async function* runGenerator(
       ms,
       sr,
       charRv[charId] ?? rv,
-      setKeysByChar?.[charId]
+      setKeysByChar?.[charId],
+      charFlex[charId]
     );
     sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
   }

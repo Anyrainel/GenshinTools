@@ -19,6 +19,24 @@ import { getMainStatValue, toInternal } from "@/lib/account-data/scoring/utils";
 import { StatSheet } from "./damageModels";
 import type { StatKey } from "./types";
 
+// ─── Flex Slot (5★ off-set in a 4★ set) ───
+
+/**
+ * When a character uses a 4-star 4pc set, only 4 pieces need to match.
+ * The 5th slot (sands/goblet/circlet) can be a 5-star off-set artifact
+ * with higher main stat values and more substat rolls.
+ */
+export interface FlexSlotConfig {
+  /** Which slot is promoted to 5★ */
+  slot: Slot;
+  /** 5★ roll values for substats in this slot */
+  rv: Record<SubStat, number>;
+  /** 5★ per-slot roll budget (e.g. 8 for preset "8_6") */
+  maxRolls: number;
+  /** 5★ per-stat cap (maxRolls - 3) */
+  statCap: number;
+}
+
 // ─── Constants ───
 
 const MAX_SUBSTATS_PER_SLOT = 4;
@@ -76,14 +94,19 @@ export function buildSheetFromMainAndSubs(
   mainStats: Record<Slot, MainStat>,
   subRolls: Record<Slot, Partial<Record<SubStat, number>>>,
   rv: Record<SubStat, number>,
-  rarity: 4 | 5 = 5
+  rarity: 4 | 5 = 5,
+  flex?: FlexSlotConfig
 ): StatSheet {
   const combined: Partial<Record<StatKey, number>> = {};
 
   for (const slot of allSlots) {
+    const isFlexed = flex?.slot === slot;
+    const slotR: 4 | 5 = isFlexed ? 5 : rarity;
+    const slotRv = isFlexed ? flex.rv : rv;
+
     // Main stat
     const ms = mainStats[slot];
-    const rawVal = getMainStatValue(ms, rarity);
+    const rawVal = getMainStatValue(ms, slotR);
     if (rawVal) {
       combined[ms as StatKey] =
         (combined[ms as StatKey] ?? 0) + toInternal(ms, rawVal);
@@ -93,7 +116,7 @@ export function buildSheetFromMainAndSubs(
     const slotSubs = subRolls[slot];
     for (const [stat, rolls] of Object.entries(slotSubs)) {
       if (!rolls) continue;
-      const val = rollToInternal(stat as SubStat, rolls, rv);
+      const val = rollToInternal(stat as SubStat, rolls, slotRv);
       combined[stat as StatKey] = (combined[stat as StatKey] ?? 0) + val;
     }
   }
@@ -139,6 +162,8 @@ export interface ConstrainedGreedyOptions {
   maxRollsPerSlot?: number;
   /** Override max rolls on one substat line (default: 6 for 5★, 4 for 4★). */
   maxRollsPerStat?: number;
+  /** Optional flex slot config for 5★ off-set slot in a 4★ set. */
+  flex?: FlexSlotConfig;
 }
 
 /**
@@ -156,13 +181,17 @@ export interface ConstrainedGreedyOptions {
 export function constrainedGreedyAllocate(
   opts: ConstrainedGreedyOptions
 ): Record<Slot, Partial<Record<SubStat, number>>> {
-  const { charId, mainStats, currentSheets, evalDamage, rv, preFill } = opts;
+  const { charId, mainStats, currentSheets, evalDamage, rv, preFill, flex } =
+    opts;
   const rarity = opts.rarity ?? 5;
 
   const subRolls = emptySubRolls();
-  const maxRolls = opts.maxRollsPerSlot ?? rollsPerArtifact(rarity);
-  let totalRolls = maxRolls * 5;
-  const statCap = opts.maxRollsPerStat ?? maxRollsPerStat(rarity);
+  const baseMaxRolls = opts.maxRollsPerSlot ?? rollsPerArtifact(rarity);
+  const baseStatCap = opts.maxRollsPerStat ?? maxRollsPerStat(rarity);
+  const slotMax = (s: Slot) =>
+    flex?.slot === s ? flex.maxRolls : baseMaxRolls;
+  const slotCap = (s: Slot) => (flex?.slot === s ? flex.statCap : baseStatCap);
+  let totalRolls = allSlots.reduce((sum, s) => sum + slotMax(s), 0);
 
   // Per-slot tracking
   const slotTotalRolls: Record<Slot, number> = {
@@ -194,18 +223,19 @@ export function constrainedGreedyAllocate(
   }
 
   const getSheet = () =>
-    buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity);
+    buildSheetFromMainAndSubs(mainStats, subRolls, rv, rarity, flex);
   const getSheets = () => ({ ...currentSheets, [charId]: getSheet() });
 
   /** Can this slot accept one more roll of `stat`? */
   const canPlace = (slot: Slot, stat: SubStat): boolean => {
     if (stat === (mainStats[slot] as string)) return false;
-    if (slotTotalRolls[slot] >= maxRolls) return false;
-    if ((subRolls[slot][stat] ?? 0) >= statCap) return false;
+    const mx = slotMax(slot);
+    if (slotTotalRolls[slot] >= mx) return false;
+    if ((subRolls[slot][stat] ?? 0) >= slotCap(slot)) return false;
     if (chosenPerSlot[slot].has(stat)) {
       // Reserve remaining rolls for unchosen substats (1 each)
       const unchosenNeeded = MAX_SUBSTATS_PER_SLOT - chosenPerSlot[slot].size;
-      return maxRolls - slotTotalRolls[slot] > unchosenNeeded;
+      return mx - slotTotalRolls[slot] > unchosenNeeded;
     }
     return chosenPerSlot[slot].size < MAX_SUBSTATS_PER_SLOT;
   };

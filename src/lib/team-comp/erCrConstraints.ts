@@ -145,15 +145,17 @@ export function computeSubstatPreFill(
 export function erCrGapAfterMainStats(
   gap: ErCrGap,
   mainStats: Record<Slot, MainStat>,
-  rarity: 4 | 5
+  rarity: 4 | 5,
+  flex?: { slot: Slot }
 ): { erRemaining: number; crRemaining: number } {
   let erFromMain = 0;
   let crFromMain = 0;
   for (const slot of allSlots) {
+    const r = flex?.slot === slot ? 5 : rarity;
     if (mainStats[slot] === "er")
-      erFromMain += toInternal("er", getMainStatValue("er", rarity));
+      erFromMain += toInternal("er", getMainStatValue("er", r));
     if (mainStats[slot] === "cr")
-      crFromMain += toInternal("cr", getMainStatValue("cr", rarity));
+      crFromMain += toInternal("cr", getMainStatValue("cr", r));
   }
   return {
     erRemaining: Math.max(0, gap.erGap - erFromMain),
