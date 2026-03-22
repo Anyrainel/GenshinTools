@@ -83,8 +83,8 @@ describe("computeDefaultActivation", () => {
     // With 5 stacks: 2 to part 0 (highest marginal), 3 to part 1
     expect(result[bKey]![0]).toBe(2);
     expect(result[bKey]![1]).toBe(3);
-    // Part 2 gets nothing (not in map means 0)
-    expect(result[bKey]![2]).toBeUndefined();
+    // Part 2 gets nothing (explicit 0 so UI doesn't default to "fully active")
+    expect(result[bKey]![2]).toBe(0);
   });
 
   it("returns empty map when maxStacks >= total hits", () => {

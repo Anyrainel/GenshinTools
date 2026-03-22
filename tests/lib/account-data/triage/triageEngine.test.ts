@@ -115,7 +115,11 @@ describe("runTriage", () => {
   });
 
   it("marks unmatched artifacts as TD (no demand)", () => {
-    const art = makeArt({ setKey: "unrelated_set" });
+    // Use substats that won't match any curated flex pattern (no cr+cd pair)
+    const art = makeArt({
+      setKey: "unrelated_set",
+      substats: { hp: 1, def: 1, "def%": 1, "hp%": 1 },
+    });
     const account = makeAccount([], [art]);
     const builds = [{ characterId: "char_a", builds: [makeBuild()] }];
     const { decisions } = runTriage(account, builds, {
