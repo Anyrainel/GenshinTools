@@ -7,7 +7,7 @@
   category: approximation
   summary: >
     P1 Transient Blossom +25% DMG vs enemies HP <50% is modeled as always-active.
-    Per rule S6, enemy HP conditions should use CombatOpts. Low priority since Albedo
+    Per rule S6, enemy HP conditions should use OptionMap. Low priority since Albedo
     is typically not the damage focus character.
   detail: >
     Approximation is within acceptable range. Albedo is a support character whose
@@ -27,7 +27,7 @@
   category: approximation
   summary: >
     C2 CRIT Rate +10% vs enemies <30% HP is not modeled. Per rule S6, enemy HP
-    conditions should use CombatOpts. Currently omitted entirely.
+    conditions should use OptionMap. Currently omitted entirely.
   detail: >
     Approximation is within acceptable range. The +10% CR only applies during the
     execute phase (enemy below 30% HP), which is a small fraction of total fight

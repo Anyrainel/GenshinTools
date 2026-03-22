@@ -105,11 +105,11 @@ See [`types.ts`](../src/lib/team-comp/types.ts) for definitions.
 - **CalcContext**: Scenario-level parameters (`enemyLevel`, `enemyRes`, `assumeCrit`). Constant for the entire team, passed at `calc()` time.
 - **DamageResult**: Aggregated result for a formulaId — `parts: { damage: number; hits: number }[]` and `Σ(damage × hits)`. Each `damage` is the raw `number` returned by a single `DamageFormula.calc()` invocation. Intermediate component breakdowns are only available via the cold-path `display()` method.
 
-### 1.6 CombatOpts (Schema-Driven Options)
+### 1.6 OptionMap (Schema-Driven Options)
 
-User-selected combat options for providers that support multiple modes (e.g., Durin DPS/Support, The Widsith random buff). See `OptionDef`, `CombatOpts`, and `InferOption` in [`types.ts`](../src/lib/team-comp/types.ts).
+User-selected combat options for providers that support multiple modes (e.g., Durin DPS/Support, The Widsith random buff). See `OptionDef`, `OptionMap`, and `InferOption` in [`types.ts`](../src/lib/team-comp/types.ts).
 
-**Option schema** is declared per-provider alongside the class and registered via the decorator. Base classes expose `protected readonly option: string` (raw value from `CombatOpts`); subclasses narrow it via `resolveOption()`:
+**Option schema** is declared per-provider alongside the class and registered via the decorator. Base classes expose `protected readonly option: string` (raw value from `OptionMap`); subclasses narrow it via `resolveOption()`:
 
 ```typescript
 // Schema: declared as const, satisfies OptionDef for constraint checking
@@ -135,7 +135,7 @@ getEntityOption("durin")  // → durinOption (OptionDef) or null
 
 **Ordering rule**: Choices must be ordered by preference — **the first choice is the most preferred default**. The `default` field must match the first choice's value. When a higher-preference choice is disabled by `when`, `resolveOption` naturally falls back to the next enabled choice.
 
-**Conditional availability (`when`)**: Each `OptionChoice` may have an optional `when?: (teamMeta: ITeamMeta) => boolean` predicate. When provided, the choice is disabled in the UI if the predicate returns false. `resolveOption()` skips disabled choices when falling back. Common patterns:
+**Conditional availability (`when`)**: Each `OptionEntry` may have an optional `when?: (teamMeta: ITeamMeta) => boolean` predicate. When provided, the choice is disabled in the UI if the predicate returns false. `resolveOption()` skips disabled choices when falling back. Common patterns:
 
 ```typescript
 // Constellation-gated choice:
@@ -150,7 +150,7 @@ getEntityOption("durin")  // → durinOption (OptionDef) or null
 
 The UI renders **all** choices but disables those where `when` returns false. If **all** choices are disabled, the dropdown is replaced with `--`. `isChoiceEnabled(choice, teamMeta?)` is the helper for checking availability.
 
-**Diff detection**: When `CombatOpts` changes in the store, compare `oldOpts[providerId] !== newOpts[providerId]` → reconstruct only affected providers.
+**Diff detection**: When `OptionMap` changes in the store, compare `oldOpts[providerId] !== newOpts[providerId]` → reconstruct only affected providers.
 
 **UI rendering**: `getEntityOption(id)` returns the `OptionDef`. Render as toggle (2 choices) or dropdown (3+). All labels are bilingual via `I18nLabel`.
 

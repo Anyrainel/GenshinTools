@@ -67,7 +67,7 @@ For each character independently, find the top-K artifact builds. In the browser
 
 **Parallelization via Web Workers:**
 
-- Each worker receives: the character config, serialized `TeamBuild` (as `TeamSlotConfig[]` + `CombatOpts`), serialized `baseSheets` (via `StatSheet.toSerializable()`), inventory, and time budget.
+- Each worker receives: the character config, serialized `TeamBuild` (as `TeamSlotConfig[]` + `OptionMap`), serialized `baseSheets` (via `StatSheet.toSerializable()`), inventory, and time budget.
 - Workers reconstruct the `TeamBuild` and `StatSheet` objects internally, then run `runCharacterBnB`.
 - Each worker gets the full Phase 1 time budget (since they run concurrently, the wall-clock time equals a single character's budget).
 - Results are serialized back: `artifactIds` as `string[]` (converted back to `Set<string>` on the main thread).

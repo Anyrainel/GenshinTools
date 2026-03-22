@@ -13,7 +13,7 @@
 
 ### Known Limitations
 - **sigewinne P1**: off-field party members only (excluding Sigewinne) — approximated as `otherOnField`
-- **aloy E**: Coil stack NA bonus + Rushing Ice NA bonus requires mid-combat stack counting (CombatOpts candidate, but low priority)
+- **aloy E**: Coil stack NA bonus + Rushing Ice NA bonus requires mid-combat stack counting (OptionMap candidate, but low priority)
 - **skirk P3 & tartaglia P3**: +1 E level to all party members requires all-Hydro/Cryo team with ≥1 of each — team buff not implemented (skirk's own talent level is handled).
 - **nefer C6**: formula restructure needed — complex interaction between elevated% buff and multi-formula self/shade split
 - **varesa C4**: mutual exclusivity between Fiery Passion (+100% burst dmg%) and Diligent Refinement (+5×ATK plunge baseDmg) — one-time buff for a single formula, cannot cleanly model both branches

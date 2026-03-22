@@ -144,10 +144,10 @@
   category: engine-gap
   summary: >
     C6 Q +15% DMG vs enemies with lower HP% than Chongyun is assumed always-active. Relative HP
-    comparison is hard to model with standard CombatOpts.
+    comparison is hard to model with standard OptionMap.
   detail: >
     Requires comparing enemy HP% to character HP%, which is a relative comparison not
-    supported by CombatOpts (which only models absolute thresholds like "below 50%"). Adding
+    supported by OptionMap (which only models absolute thresholds like "below 50%"). Adding
     this would require a new engine concept for relative HP state. The always-active assumption
     is acceptable because Chongyun Q is typically used as a burst nuke on enemies already
     damaged, where the condition is naturally satisfied. The 15% dmg% buff on a 4-star C6 Q

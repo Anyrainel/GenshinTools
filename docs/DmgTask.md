@@ -70,9 +70,9 @@ Remember: BuffSource is only for display purposes. It is not consumed by formula
 
 If a character's kit increases the damage of a specific named effect (e.g. "Crimson Oowajo DMG"), treat it as the broader standard AbilityType (e.g. `"skill"`) when defining `BuffTarget` and `DamageFormula` **if** the game text implies it belongs to that category (e.g. "deals Elemental Skill DMG"). This allows it to benefit from teammates' generic skill buffs.
 
-### Handling Mutually Exclusive Scenarios (CombatOpts)
+### Handling Mutually Exclusive Scenarios (OptionMap)
 
-If a character has randomized or playstyle-based mechanics that are mutually exclusive (e.g., Furina Ousia/Pneuma), use `CombatOpts` instead of assumptions.
+If a character has randomized or playstyle-based mechanics that are mutually exclusive (e.g., Furina Ousia/Pneuma), use `OptionMap` instead of assumptions.
 
 - **Do NOT** create separate character files or subclasses.
 - **Do** define an `OptionDef` schema with labeled choices and pass it to `@RegisterCharacter`.
@@ -272,8 +272,8 @@ For full annotated examples, see [DmgDesign.md §5.3](./DmgDesign.md#53-extensio
 - **`LunarDirectFormula`**：适用于计算挪德卡莱角色技能造成的“视为月XX反应伤害”的伤害。
 - 如奈芙尔（nefer）的特殊重击会造成2段（自身）和3段（虚影）伤害，其中只有虚影造成的伤害视为月绽放反应伤害，而自身的伤害仅为普通的草元素伤害，因此计算时需要将不同段使用不同公式来计算。
 
-### 7. 互斥机制与 `CombatOpts`
-如果一个角色拥有切换不同玩法的机制（例如芙宁娜的荒/芒性，杜林的白/黑龙形态，哥伦比亚的引力干涉类型，阿蕾奇诺的生命之契起始数值130%/155%/200%），或随机增益（例如流浪乐章），请避免假设所有增益同时存在，或者写死某个平均值。应通过 `@RegisterCharacter` 使用 `OptionDef` 定义并在运行时解析 `CombatOpts`。让用户在使用中规定一个状态。
+### 7. 互斥机制与 `OptionMap`
+如果一个角色拥有切换不同玩法的机制（例如芙宁娜的荒/芒性，杜林的白/黑龙形态，哥伦比亚的引力干涉类型，阿蕾奇诺的生命之契起始数值130%/155%/200%），或随机增益（例如流浪乐章），请避免假设所有增益同时存在，或者写死某个平均值。应通过 `@RegisterCharacter` 使用 `OptionDef` 定义并在运行时解析 `OptionMap`。让用户在使用中规定一个状态。
 
 **选项排序规则**：choices 必须按偏好排序——**第一个选项是最优默认值**。`default` 字段必须与第一个选项的 value 一致。
 
@@ -308,8 +308,8 @@ For full annotated examples, see [DmgDesign.md §5.3](./DmgDesign.md#53-extensio
 | 假设内容 / Assumption | 处理规则 / Rule | 理由与说明 / Rationale |
 |---|---|---|
 | **条件性增益 (Conditional buffs)** | 默认始终处于激活状态 | 例如“施放元素战技后”或“触发元素反应后” → 假定总是满足该触发条件 |
-| **层数 (Stacks)** | 视情况而定 | 1. 如果满层需要不同元素角色，则根据`teamMeta`计算层数 2. 如果满层只需要战斗手法，那默认满层 3. 如果满层很难达到，或者持续时间不足以覆盖循环，则设置CombatOpts |
-| **低血量条件 (Low HP conditions)** | 实现CombatOpts | 例如“生命值低于50%时” → 实现“生命值>=50%”和“生命值<50%”的OptionDef |
+| **层数 (Stacks)** | 视情况而定 | 1. 如果满层需要不同元素角色，则根据`teamMeta`计算层数 2. 如果满层只需要战斗手法，那默认满层 3. 如果满层很难达到，或者持续时间不足以覆盖循环，则设置OptionMap |
+| **低血量条件 (Low HP conditions)** | 实现OptionMap | 例如“生命值低于50%时” → 实现“生命值>=50%”和“生命值<50%”的OptionDef |
 | **护盾条件 (Shield conditions)** | 若队伍中有护盾角色则激活 | 例如“处于护盾庇护下” → 使用 `teamMeta.hasShielder()` 动态判断（结合角色特性与命座） |
 | **治疗条件 (Heal conditions)** | 若队伍中有治疗角色则激活 | 例如“受到治疗后” → 使用 `teamMeta.hasHealer()` 动态判断（结合角色特性与命座） |
 | **敌人元素附着 (Enemy element affection)** | 若队伍中有对应元素即可 | 例如“对处于火元素影响下的敌人” → 假定已被附着，前提是队伍里确实有火元素角色 |

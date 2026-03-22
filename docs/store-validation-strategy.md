@@ -14,7 +14,7 @@ Every persisted store now has a `merge()` that runs repair functions on every re
 |---|---|---|
 | useBuildsStore | 5 | `computeOptions` not defaulted, `characterToBuildIds` not validated |
 | useAccountStore | 3 | No semantic ID validation (character/artifact/weapon keys) |
-| useTeamStore | 4 | `opts` (CombatOpts) structure not validated |
+| useTeamStore | 4 | `opts` (OptionMap) structure not validated |
 | useTierStore | none | No versioning, no structural migration path |
 | useTriageStore | none | No versioning, shallow merge only |
 | usePreferencesStore | none | No versioning |
@@ -129,7 +129,7 @@ Even if their current shape doesn't need migration, having a version enables tar
 Continue the current pattern: hand-written repair functions in `merge()`. The remaining gaps to close:
 
 - **useBuildsStore:** Default `computeOptions` fields, validate `characterToBuildIds` entries reference existing builds
-- **useTeamStore:** Validate `opts` (CombatOpts) sub-fields exist
+- **useTeamStore:** Validate `opts` (OptionMap) sub-fields exist
 - **useTierStore:** Add version, validate tier assignment values are valid tier names
 
 This is the lowest-effort option but scales poorly — every new field needs a manual repair line, and it's easy to forget.

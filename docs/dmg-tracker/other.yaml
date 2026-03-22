@@ -7,7 +7,7 @@
   summary: >
     E Coil stack NA bonus + Rushing Ice NA bonus requires mid-combat stack counting.
   detail: >
-    Known limitation. CombatOpts candidate but low priority. Mid-combat stack counting
+    Known limitation. OptionMap candidate but low priority. Mid-combat stack counting
     not supported by current engine.
   created: "2026-02-25"
   resolved: "2026-02-25"
