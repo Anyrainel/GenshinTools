@@ -18,13 +18,13 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type { AccountData, ArtifactData } from "@/data/types";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type { IdealGenResult } from "@/lib/team-comp/idealArtifactGen";
-import type { IdealSubstatBudgetPreset } from "@/lib/team-comp/idealSubstatBudget";
-import { IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/idealSubstatBudget";
+import type { GeneratorResult } from "@/lib/team-comp/generator";
 import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
-} from "@/lib/team-comp/optimizerV2";
+} from "@/lib/team-comp/optimizer";
+import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
+import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
 import type {
   CalcContext,
   ComboLine,
@@ -789,7 +789,7 @@ interface DamageCardProps {
   minErRaw: number;
   // Ideal gen (dev only)
   idealComputing: boolean;
-  idealResult: IdealGenResult | null;
+  idealResult: GeneratorResult | null;
   idealError: Error | null;
   handleGenerateIdeal: () => void;
   idealArtifactsByChar: Record<string, Record<string, ArtifactData>>;
@@ -1049,7 +1049,7 @@ function RollMultSelect({
   );
 }
 
-function IdealSubstatBudgetSelect({
+function SubstatBudgetSelect({
   team,
   activeContext,
   updateTeam,
@@ -1057,7 +1057,7 @@ function IdealSubstatBudgetSelect({
   t,
 }: CtxProps) {
   const value =
-    activeContext.idealSubstatBudget ?? IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET;
+    activeContext.idealSubstatBudget ?? SUBSTAT_BUDGET_DEFAULT_PRESET;
   return (
     <div className={cn("flex items-center", isMobile ? "gap-1" : "gap-2")}>
       <span className={LABEL_CLS(isMobile)}>
@@ -1069,7 +1069,7 @@ function IdealSubstatBudgetSelect({
           updateTeam(team.id, {
             calcContext: {
               ...team.calcContext,
-              idealSubstatBudget: v as IdealSubstatBudgetPreset,
+              idealSubstatBudget: v as SubstatBudgetPreset,
             },
           })
         }
@@ -1685,7 +1685,7 @@ export function DamageCard({
             <EnemyResInput {...ctxProps} />
             <CritRateTargetInput {...ctxProps} />
             <RollMultSelect {...ctxProps} />
-            <IdealSubstatBudgetSelect {...ctxProps} />
+            <SubstatBudgetSelect {...ctxProps} />
             <ActionButton
               onClick={handleGenerateIdeal}
               disabled={idealComputing || !hasActiveFormula}

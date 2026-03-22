@@ -7,7 +7,7 @@ import {
   resolveWeaponStats,
 } from "@/lib/gameStatsLoader";
 import {
-  type CombatOpts,
+  type OptionMap,
   TeamMeta,
   createArtifactSet,
   createWeapon,
@@ -84,7 +84,7 @@ export function computeCrBudget(
         let maxCr = 0;
         for (const choice of optionDef.choices) {
           try {
-            const opts: CombatOpts = { [char.weapon.key]: choice.value };
+            const opts: OptionMap = { [char.weapon.key]: choice.value };
             const w = createWeapon(
               char.weapon.key,
               char.weapon.refinement,
@@ -130,7 +130,7 @@ export function computeCrBudget(
         let maxCr = 0;
         for (const choice of optionDef.choices) {
           try {
-            const opts: CombatOpts = { [build.artifactSet!]: choice.value };
+            const opts: OptionMap = { [build.artifactSet!]: choice.value };
             const artSet = createArtifactSet(
               build.artifactSet!,
               char.key,

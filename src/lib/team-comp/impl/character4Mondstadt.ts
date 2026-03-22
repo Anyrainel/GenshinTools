@@ -69,7 +69,7 @@ class Dahlia extends CharacterBase {
   })();
 
   // Rotation: EQ (shield/ATK SPD support)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "dahlia-skill": 1, "dahlia-burst": 1 };
   }
 }
@@ -207,7 +207,7 @@ class Razor extends CharacterBase {
   })();
 
   // Rotation: Q > 4×N4 combo (physical carry, ~15s burst window)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "razor-burst-na": 4,
       "razor-c6-lightning": 1,
@@ -350,7 +350,7 @@ class Fischl extends CharacterBase {
   })();
 
   // Rotation: E/Q to summon Oz, one Oz duration per rotation (hits baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "fischl-oz-total": 1 };
   }
 }
@@ -449,7 +449,7 @@ class Rosaria extends CharacterBase {
   })();
 
   // Rotation: EQ (off-field Cryo sub-DPS, burst ticks baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "rosaria-burst": 1 };
   }
 }
@@ -580,7 +580,7 @@ class Sucrose extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (EM support/taser driver, C1 gives extra E charge)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "sucrose-skill": 2, "sucrose-burst": 1 };
   }
 }
@@ -631,7 +631,7 @@ class Bennett extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (support, tap E has ~4s CD with P1)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "bennett-skill": 1 };
   }
 }
@@ -680,7 +680,7 @@ class Amber extends CharacterBase {
   })();
 
   // Rotation: Q (burst support, 18 waves baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "amber-burst": 1 };
   }
 }
@@ -744,7 +744,7 @@ class Kaeya extends CharacterBase {
   })();
 
   // Rotation: E×3 + Q (quickswap Cryo sub-DPS, 6s E CD, burst hits baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kaeya-skill": 3, "kaeya-burst": 1 };
   }
 }
@@ -799,7 +799,7 @@ class Lisa extends CharacterBase {
   })();
 
   // Rotation: E hold (3 stacks) + Q (sub-DPS, burst hits baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "lisa-hold": 1, "lisa-burst": 1 };
   }
 }

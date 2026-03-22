@@ -7,17 +7,14 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import {
-  type OptimizerOptions,
-  runOptimization,
-} from "@/lib/team-comp/optimizer";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
   PerCharConfig,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
+import { type OptimizerOptions, runOptimization } from "./optimizerV1";
 
 import "@/lib/team-comp/index";
 import {

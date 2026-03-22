@@ -1,11 +1,10 @@
 /** Preset substat roll totals per artifact slot (5★ count, then 4★). */
-export type IdealSubstatBudgetPreset = "8_6" | "8_7" | "9_7";
+export type SubstatBudgetPreset = "8_6" | "8_7" | "9_7";
 
-export const IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET: IdealSubstatBudgetPreset =
-  "8_6";
+export const SUBSTAT_BUDGET_DEFAULT_PRESET: SubstatBudgetPreset = "8_6";
 
 const PRESET_ROLLS: Record<
-  IdealSubstatBudgetPreset,
+  SubstatBudgetPreset,
   { rolls5: number; rolls4: number }
 > = {
   "8_6": { rolls5: 8, rolls4: 6 },
@@ -19,7 +18,7 @@ export function maxRollsPerStatFromTotal(rollsPerSlot: number): number {
 }
 
 export function rollsPerSlotForPreset(
-  preset: IdealSubstatBudgetPreset,
+  preset: SubstatBudgetPreset,
   rarity: 4 | 5
 ): number {
   const p = PRESET_ROLLS[preset];
@@ -27,19 +26,19 @@ export function rollsPerSlotForPreset(
 }
 
 export function maxRollsPerStatForPreset(
-  preset: IdealSubstatBudgetPreset,
+  preset: SubstatBudgetPreset,
   rarity: 4 | 5
 ): number {
   return maxRollsPerStatFromTotal(rollsPerSlotForPreset(preset, rarity));
 }
 
-export function resolveIdealSubstatBudgetPreset(
-  fromOptions: IdealSubstatBudgetPreset | undefined,
-  calcContext: { idealSubstatBudget?: IdealSubstatBudgetPreset }
-): IdealSubstatBudgetPreset {
+export function resolveSubstatBudgetPreset(
+  fromOptions: SubstatBudgetPreset | undefined,
+  calcContext: { idealSubstatBudget?: SubstatBudgetPreset }
+): SubstatBudgetPreset {
   return (
     fromOptions ??
     calcContext.idealSubstatBudget ??
-    IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET
+    SUBSTAT_BUDGET_DEFAULT_PRESET
   );
 }

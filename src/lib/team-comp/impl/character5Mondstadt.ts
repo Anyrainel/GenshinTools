@@ -258,7 +258,7 @@ class Durin extends CharacterBase {
   })();
 
   // Rotation: E > Q (off-field burst DPS, 3 initial hits + 10 dragon ticks baked in)
-  protected override get defaultRotation(): Record<string, number> {
+  protected override get defaultCombo(): Record<string, number> {
     return this.form === "white"
       ? { "durin-burst-white": 1 }
       : { "durin-burst-dark": 1 };
@@ -435,7 +435,7 @@ class Albedo extends CharacterBase {
   })();
 
   // Rotation: E (place isotoma) + ~5 blossom procs + Q (off-field sub-DPS)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "albedo-blossom": 5, "albedo-burst": 1 };
   }
 }
@@ -584,7 +584,7 @@ class Diluc extends CharacterBase {
   })();
 
   // Rotation: Q > N1E > N1E > N1E (vape carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "diluc-skill": 1,
       "diluc-burst": 1,
@@ -713,7 +713,7 @@ class Mona extends CharacterBase {
   })();
 
   // Rotation: Q (omen support, bubble explosion)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "mona-burst": 1 };
   }
 }
@@ -785,7 +785,7 @@ class Jean extends CharacterBase {
   })();
 
   // Rotation: E×2 + Q (Anemo support, 6s E CD)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "jean-skill": 1, "jean-burst": 1 };
   }
 }
@@ -972,7 +972,7 @@ class Venti extends CharacterBase {
   })();
 
   // Rotation: Q (burst ticks baked in) + 1 Windsunder NA string + C2 E
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "venti-windsunder": 1,
       "venti-burst-total": 1,
@@ -1053,7 +1053,7 @@ class Klee extends CharacterBase {
   };
 
   // Rotation: ~6 Charged Attacks per rotation (N1C or N2C combos during Q window)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "klee-charged": 6 };
   }
 }
@@ -1108,7 +1108,7 @@ class Eula extends CharacterBase {
   ];
 
   // Rotation: E tap + E hold + Q lightfall (physical carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "eula-skill-tap": 1,
       "eula-skill-hold": 1,
@@ -1324,7 +1324,7 @@ class Varka extends CharacterBase {
   })();
 
   // Rotation: E > 2×N5 > 2×Four Winds > 2×Azure Devour > Q (Anemo carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "varka-normal": 2,
       "varka-four-winds": 2,

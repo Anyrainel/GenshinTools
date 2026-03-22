@@ -1344,7 +1344,7 @@ function lookupVarIdx(
 
 /**
  * Fill the Float64Array vars from a StatSheet (e.g. synthesized artifact sheet).
- * Used by idealArtifactGen compiled evaluation.
+ * Used by generator compiled evaluation.
  */
 export function fillVarsFromSheet(
   sheet: StatSheet,

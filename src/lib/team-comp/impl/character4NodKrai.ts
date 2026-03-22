@@ -136,7 +136,7 @@ class Illuga extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (support buffer, C2 Aedon fires per 7 stacks; 21 base stacks ≈ 3 triggers)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "illuga-c2-aedon": 3 };
   }
 
@@ -239,7 +239,7 @@ class Aino extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS, Q 14 hits baked in)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "aino-skill": 1, "aino-burst-total": 1, "aino-c2-ball": 1 };
   }
 

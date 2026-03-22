@@ -143,7 +143,7 @@ class Iansan extends CharacterBase {
   })();
 
   // Rotation: E > N1(Swift Stormflight) > Q (ATK support, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "iansan-skill": 1, "iansan-burst": 1 };
   }
 }
@@ -288,7 +288,7 @@ class Ororon extends CharacterBase {
   })();
 
   // Rotation: E Q N2 > swap (sub-DPS, Hypersense ×8 baked in, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "ororon-skill": 1, "ororon-burst": 1, "ororon-hypersense": 1 };
   }
 }
@@ -367,7 +367,7 @@ class Kachina extends CharacterBase {
   })();
 
   // Rotation: E (Turbo Twirly independent ~6 hits over 12s) > Q (sub-DPS, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kachina-twirly": 6, "kachina-burst": 1 };
   }
 }

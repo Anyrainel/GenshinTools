@@ -132,7 +132,7 @@ class Dehya extends CharacterBase {
   })();
 
   // Rotation: E > teammates > E Q(10+1) — E field 1 activation, Q 1 activation (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "dehya-molten-inferno": 1, "dehya-burst-combo": 1 };
   }
 }
@@ -227,7 +227,7 @@ class Alhaitham extends CharacterBase {
   })();
 
   // Rotation: Q > N3D N3D N1E N3D N3CD N3D — ~7 Projection triggers + 1 Q (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "alhaitham-projection": 7, "alhaitham-burst": 1 };
   }
 }
@@ -362,7 +362,7 @@ class Wanderer extends CharacterBase {
   })();
 
   // Rotation: E > N2C ×5 > Q — hover carry with charged attacks (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "wanderer-normal": 5, "wanderer-charge": 5, "wanderer-burst": 1 };
   }
 }
@@ -560,7 +560,7 @@ class Nahida extends CharacterBase {
   })();
 
   // Rotation: E Q > off-field — ~8 Tri-Karma procs per 20s; C6 adds 6 Karmic Oblivion (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "nahida-karma": 8,
       "nahida-c6-karma": 1,
@@ -686,7 +686,7 @@ class Cyno extends CharacterBase {
   })();
 
   // Rotation: EQ > E > 6[N4E] — 6 N5+E combos during burst (4TF, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "cyno-combo": 6,
       "cyno-c6-bolts": 6,
@@ -828,7 +828,7 @@ class Nilou extends CharacterBase {
   })();
 
   // Rotation: Q E E E E — off-field Bloom support, 1 Q + ~5 Bountiful Cores (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "nilou-burst": 1,
       "nilou-bountiful-core": 5,
@@ -949,7 +949,7 @@ class Tighnari extends CharacterBase {
   })();
 
   // Rotation: E 3[CA] Q — quickswap Spread carry (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "tighnari-charge": 3, "tighnari-burst": 1 };
   }
 }

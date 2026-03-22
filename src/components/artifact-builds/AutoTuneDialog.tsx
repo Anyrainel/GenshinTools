@@ -193,7 +193,7 @@ export function AutoTuneDialog({
   // ─── Formula Discovery ───
   // Build a TeamBuild from the first valid enabled team to discover formulas
   // and eligible reactions per the character's element and team composition
-  const { discoveredFormulas, eligibleReactions, defaultRotation } =
+  const { discoveredFormulas, eligibleReactions, defaultCombo } =
     useMemo(() => {
       const formulas: {
         formulaId: string;
@@ -201,7 +201,7 @@ export function AutoTuneDialog({
         offField: "full" | "partial" | "none";
       }[] = [];
       let reactions: ReactionType[] = ["none"];
-      let rotation: Record<string, number> = {};
+      let combo: Record<string, number> = {};
       for (const team of enabledTeams) {
         const configs = buildTeamConfigs(team, accountData);
         if (
@@ -224,7 +224,7 @@ export function AutoTuneDialog({
               offField: offFieldStatus(tb, characterId, fid),
             });
           }
-          rotation = tb.getRotation(characterId);
+          combo = tb.getCombo(characterId);
           // Determine eligible reactions for this element + team
           const eligible = ELEMENT_ELIGIBLE_REACTIONS[
             element as keyof typeof ELEMENT_ELIGIBLE_REACTIONS
@@ -235,7 +235,7 @@ export function AutoTuneDialog({
           return {
             discoveredFormulas: formulas,
             eligibleReactions: reactions,
-            defaultRotation: rotation,
+            defaultCombo: combo,
           };
         } catch {
           // try next team
@@ -244,7 +244,7 @@ export function AutoTuneDialog({
       return {
         discoveredFormulas: formulas,
         eligibleReactions: reactions,
-        defaultRotation: rotation,
+        defaultCombo: combo,
       };
     }, [enabledTeams, accountData, characterId, element]);
 
@@ -253,17 +253,17 @@ export function AutoTuneDialog({
   // Auto-populate combo lines when formulas are discovered
   useEffect(() => {
     if (discoveredFormulas.length > 0 && state.comboLines.length === 0) {
-      const hasRotation = Object.keys(defaultRotation).length > 0;
+      const hasCombo = Object.keys(defaultCombo).length > 0;
       // Create one line per formula × reaction variant
       const lines: ComboLine[] = [];
       for (const f of discoveredFormulas) {
-        const rotCount = hasRotation ? (defaultRotation[f.formulaId] ?? 0) : 1;
+        const comboCount = hasCombo ? (defaultCombo[f.formulaId] ?? 0) : 1;
         if (hasReactions) {
           for (const rx of eligibleReactions) {
             lines.push({
               charId: characterId,
               formulaId: f.formulaId,
-              count: rx === "none" ? rotCount : 0,
+              count: rx === "none" ? comboCount : 0,
               reaction: rx !== "none" ? { reaction: rx } : undefined,
             });
           }
@@ -271,7 +271,7 @@ export function AutoTuneDialog({
           lines.push({
             charId: characterId,
             formulaId: f.formulaId,
-            count: rotCount,
+            count: comboCount,
           });
         }
       }
@@ -283,7 +283,7 @@ export function AutoTuneDialog({
     characterId,
     hasReactions,
     eligibleReactions,
-    defaultRotation,
+    defaultCombo,
   ]);
 
   // ─── Add Team (via edit dialog) ───

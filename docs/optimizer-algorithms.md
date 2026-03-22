@@ -106,7 +106,7 @@ topK = clamp(100 + (inventorySize - 500) × 200/1900, 100, 300)
 
 ### Production Status
 
-Active. Connected to the UI via `useAsyncTeamOptimizer`.
+Active. Connected to the UI via `useAsyncOptimizer`.
 
 ---
 

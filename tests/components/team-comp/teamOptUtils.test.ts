@@ -8,7 +8,7 @@ import {
 } from "@/components/team-comp/teamOptUtils";
 import type { ArtifactData, ReactionType } from "@/data/types";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import type { CombatOpts } from "@/lib/team-comp/damageModels";
+import type { OptionMap } from "@/lib/team-comp/damageModels";
 import { describe, expect, it } from "vitest";
 import {
   createAccountData,
@@ -218,7 +218,7 @@ describe("buildTeamConfigs", () => {
       null,
     ],
     reactions: [] as ReactionType[],
-    opts: {} as CombatOpts,
+    opts: {} as OptionMap,
     minEr: {},
     selectedFormula: null,
     optimizationResult: null,
@@ -265,7 +265,7 @@ describe("buildTeamConfigs", () => {
         "hu_tao.overrideLevel": "80",
         "hu_tao.overrideConstellation": "2",
         "hu_tao.overrideRefinement": "3",
-      } as CombatOpts,
+      } as OptionMap,
     };
     const configs = buildTeamConfigs(team, null);
     expect(configs[0].charLevel).toBe(80);

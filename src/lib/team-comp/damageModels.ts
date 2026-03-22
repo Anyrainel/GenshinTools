@@ -662,7 +662,7 @@ export class TeamMeta {
 // ═══════════════════════════════════════════════════════════════
 
 /** A single selectable value in an OptionDef. */
-export type OptionChoice = {
+export type OptionEntry = {
   value: string;
   label: I18nLabel;
   /** If provided, this choice is disabled when the predicate returns false. */
@@ -676,7 +676,7 @@ export type OptionChoice = {
  */
 export type OptionDef = {
   label: I18nLabel;
-  choices: readonly OptionChoice[];
+  choices: readonly OptionEntry[];
   default: string;
 };
 
@@ -691,7 +691,7 @@ export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
  * Each value is the selected option string for that provider.
  * Providers with no entry get `""` → falls back to schema default via `resolveOption()`.
  */
-export type CombatOpts = Record<string, string>;
+export type OptionMap = Record<string, string>;
 
 // ═══════════════════════════════════════════════════════════════
 // Stat Auto-Resolution Helpers
@@ -712,7 +712,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Auto-resolved: base stats + baselines (5% CR, 50% CD, 100% ER) */
   readonly stats: StatEntry[];
 
-  /** Raw option string from CombatOpts. Subclasses narrow via resolveOption(). */
+  /** Raw option string from OptionMap. Subclasses narrow via resolveOption(). */
   protected readonly option: string;
 
   constructor(
@@ -720,7 +720,7 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
     readonly charLevel: number,
     readonly constellation: number,
     readonly teamMeta: TeamMeta,
-    combatOpts: CombatOpts = {}
+    combatOpts: OptionMap = {}
   ) {
     this.stats = resolveCharacterStats(charId, charLevel);
     this.option = combatOpts[charId] ?? "";
@@ -735,16 +735,16 @@ export abstract class CharacterBase implements IStatProvider, IDamageProvider {
   /** Subclasses declare all formulas here — labels + formula instances in one place. */
   protected abstract readonly formulaMap: Record<string, FormulaEntry>;
 
-  /** How many times each formula fires in one standard rotation (~20-25s).
+  /** How many times each formula fires in one standard combo (~20-25s).
    *  Keys = formulaMap keys. Omitted keys = 0 (not used).
-   *  Default: empty (no rotation defined). */
-  protected get defaultRotation(): Record<string, number> {
+   *  Default: empty (no combo defined). */
+  protected get defaultCombo(): Record<string, number> {
     return {};
   }
 
-  /** Public accessor — filters defaultRotation to only formulas that exist in formulaMap. */
-  get rotation(): Record<string, number> {
-    const raw = this.defaultRotation;
+  /** Public accessor — filters defaultCombo to only formulas that exist in formulaMap. */
+  get combo(): Record<string, number> {
+    const raw = this.defaultCombo;
     const map = this.formulaMap;
     const result: Record<string, number> = {};
     for (const [id, count] of Object.entries(raw)) {
@@ -1008,7 +1008,7 @@ export abstract class WeaponBase implements IStatProvider {
   /** Auto-resolved: baseAtk + secondary stat from resources.ts */
   readonly stats: StatEntry[];
 
-  /** Raw option string from CombatOpts. Subclasses narrow via resolveOption(). */
+  /** Raw option string from OptionMap. Subclasses narrow via resolveOption(). */
   protected readonly option: string;
 
   constructor(
@@ -1016,7 +1016,7 @@ export abstract class WeaponBase implements IStatProvider {
     readonly refinement: number,
     readonly charId: string,
     readonly teamMeta: TeamMeta,
-    combatOpts: CombatOpts = {}
+    combatOpts: OptionMap = {}
   ) {
     this.stats = resolveWeaponStats(weaponId);
     this.option = combatOpts[weaponId] ?? "";
@@ -1031,14 +1031,14 @@ export abstract class WeaponBase implements IStatProvider {
 
 /** Base class for 4-piece artifact set extensions (4pc bonus only) */
 export abstract class ArtifactSetBase implements IStatProvider {
-  /** Raw option string from CombatOpts. Subclasses narrow via resolveOption(). */
+  /** Raw option string from OptionMap. Subclasses narrow via resolveOption(). */
   protected readonly option: string;
 
   constructor(
     readonly artifactSetId: string,
     readonly charId: string,
     readonly teamMeta: TeamMeta,
-    combatOpts: CombatOpts = {}
+    combatOpts: OptionMap = {}
   ) {
     this.option = combatOpts[artifactSetId] ?? "";
   }
@@ -1080,7 +1080,7 @@ type CharacterCtor = new (
   charLevel: number,
   constellation: number,
   teamMeta: TeamMeta,
-  combatOpts?: CombatOpts
+  combatOpts?: OptionMap
 ) => CharacterBase;
 
 type WeaponCtor = new (
@@ -1088,14 +1088,14 @@ type WeaponCtor = new (
   refinement: number,
   charId: string,
   teamMeta: TeamMeta,
-  combatOpts?: CombatOpts
+  combatOpts?: OptionMap
 ) => WeaponBase;
 
 type ArtifactSetCtor = new (
   artifactSetId: string,
   charId: string,
   teamMeta: TeamMeta,
-  combatOpts?: CombatOpts
+  combatOpts?: OptionMap
 ) => ArtifactSetBase;
 
 type ArtifactHalfSetCtor = new (
@@ -1150,7 +1150,7 @@ export function createCharacter(
   charLevel: number,
   constellation: number,
   teamMeta: TeamMeta,
-  combatOpts: CombatOpts = {}
+  combatOpts: OptionMap = {}
 ): CharacterBase {
   const Ctor = characterRegistry.get(charId);
   if (!Ctor) throw new Error(`No character registered for: ${charId}`);
@@ -1162,7 +1162,7 @@ export function createWeapon(
   refinement: number,
   charId: string,
   teamMeta: TeamMeta,
-  combatOpts: CombatOpts = {}
+  combatOpts: OptionMap = {}
 ): WeaponBase {
   const Ctor = weaponRegistry.get(weaponId);
   if (!Ctor) throw new Error(`No weapon registered for: ${weaponId}`);
@@ -1173,7 +1173,7 @@ export function createArtifactSet(
   setId: string,
   charId: string,
   teamMeta: TeamMeta,
-  combatOpts: CombatOpts = {}
+  combatOpts: OptionMap = {}
 ): ArtifactSetBase {
   const Ctor = artifactSetRegistry.get(setId);
   if (!Ctor) throw new Error(`No artifact set registered for: ${setId}`);
@@ -1203,7 +1203,7 @@ export function getEntityOption(entityId: string): OptionDef | null {
  * Choices without a `when` predicate are always enabled.
  */
 export function isChoiceEnabled(
-  choice: OptionChoice,
+  choice: OptionEntry,
   teamMeta?: TeamMeta
 ): boolean {
   if (!choice.when || !teamMeta) return true;

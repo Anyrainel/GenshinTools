@@ -1,6 +1,6 @@
 /**
  * Tests for the combo formula system: evaluateCombo, getComboDisplayResult,
- * runTeamOptimization (combo mode), and runIdealArtifactGen (combo mode).
+ * runTeamOptimization (combo mode), and runGenerator (combo mode).
  */
 import type { GlobalStatWeights } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
@@ -11,11 +11,8 @@ import {
   getComboDisplayResult,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import {
-  type IdealGenOptions,
-  runIdealArtifactGen,
-} from "@/lib/team-comp/idealArtifactGen";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
   PerCharConfig,
   TeamOptimizerOptions,
@@ -584,10 +581,10 @@ describe("runTeamOptimization — combo mode", () => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-// 4. runIdealArtifactGen combo mode tests
+// 4. runGenerator combo mode tests
 // ═══════════════════════════════════════════════════════════════
 
-describe("runIdealArtifactGen — combo mode", () => {
+describe("runGenerator — combo mode", () => {
   it("with combo option, result includes comboResult", async () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
@@ -598,7 +595,7 @@ describe("runIdealArtifactGen — combo mode", () => {
       lines: [{ charId: "diluc", formulaId, count: 1 }],
     };
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
@@ -606,7 +603,7 @@ describe("runIdealArtifactGen — combo mode", () => {
       combo,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     expect(final.comboResult).toBeDefined();
@@ -617,14 +614,14 @@ describe("runIdealArtifactGen — combo mode", () => {
     const tb = makeTeamBuild();
     const formulaId = getFirstFormulaId(tb, "diluc");
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
       calcContext: CTX,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     expect(final.comboResult).toBeUndefined();
@@ -640,7 +637,7 @@ describe("runIdealArtifactGen — combo mode", () => {
       lines: [{ charId: "diluc", formulaId, count: 3 }],
     };
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
@@ -648,7 +645,7 @@ describe("runIdealArtifactGen — combo mode", () => {
       combo,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     expect(final.damage).toBeGreaterThan(0);

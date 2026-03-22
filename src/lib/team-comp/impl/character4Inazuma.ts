@@ -41,7 +41,7 @@ class Kirara extends CharacterBase {
   ];
 
   // Rotation: E > swap > on-field NA triggers C4 every 3.8s (~5 procs per rotation)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kirara-c4-steed": 5 };
   }
 
@@ -101,7 +101,7 @@ class ShikanoinHeizou extends CharacterBase {
   ];
 
   // Rotation: swap-in > E (full conviction) > Q > swap out (driver sub-DPS)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "heizou-skill": 2, "heizou-burst": 1 };
   }
 
@@ -173,7 +173,7 @@ class KukiShinobu extends CharacterBase {
       "baseDmg",
       0.25
     ),
-    // C6: Self EM +150 when HP < 25% (S6: conditional on CombatOpts)
+    // C6: Self EM +150 when HP < 25% (S6: conditional on OptionMap)
     // Works off-field → receiver: "self"
     ...(this.constellation >= 6 && this.hpState === "critical"
       ? [
@@ -185,7 +185,7 @@ class KukiShinobu extends CharacterBase {
   ];
 
   // Rotation: E (off-field ring) > Q > swap; hyperbloom ~8 seeds per rotation, C4 ~4 procs
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "shinobu-burst": 1,
       "shinobu-hyperbloom": 8,
@@ -285,7 +285,7 @@ class Sayu extends CharacterBase {
   })();
 
   // Rotation: E (hold roll) > Q; Daruma attacks ~7 times over 12s (healer/swirl support)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "sayu-daruma": 7 };
   }
 
@@ -330,7 +330,7 @@ class Thoma extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap; Fiery Collapse every 1s over 15s (C2: 18s)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "thoma-burst-collapse": 15 };
   }
 
@@ -402,7 +402,7 @@ class Gorou extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap (Geo support, minimal field time)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "gorou-skill": 1, "gorou-burst": 1 };
   }
 
@@ -503,7 +503,7 @@ class KujouSara extends CharacterBase {
   ];
 
   // Rotation: E (ATK buff) > Q > swap (Electro support, buff bot)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "sara-burst": 1 };
   }
 

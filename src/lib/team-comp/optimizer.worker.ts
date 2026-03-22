@@ -7,9 +7,9 @@ import { preloadGameStats } from "@/lib/gameStatsLoader";
 // Side-effect: register all character/weapon/artifact implementations
 import "./index";
 import { TeamBuild, evaluateCombo } from "./damageCalc";
-import type { CombatOpts } from "./damageModels";
+import type { OptionMap } from "./damageModels";
 import { StatSheet } from "./damageModels";
-import { runCharacterBnB } from "./optimizerV2";
+import { runCharacterBnB } from "./optimizer";
 import type {
   CalcContext,
   CharCompConfig,
@@ -25,7 +25,7 @@ export type BnBWorkerRequest = {
   charConfig: PerCharConfig;
   // TeamBuild reconstruction
   configs: CharCompConfig[];
-  combatOpts: CombatOpts;
+  combatOpts: OptionMap;
   enemyElementAura?: Element;
   // B&B parameters
   carryCharId: string;
@@ -123,7 +123,7 @@ self.onmessage = async (e: MessageEvent<BnBWorkerRequest>) => {
             const key = `comboScoreFn:${_calcTargetId}`;
             if (!warnedCalcErrors.has(key)) {
               warnedCalcErrors.add(key);
-              console.warn("[optimizerV2.worker] comboScoreFn failed:", err);
+              console.warn("[optimizer.worker] comboScoreFn failed:", err);
             }
             return 0;
           }

@@ -1,6 +1,6 @@
 import type { ArtifactData } from "@/data/types";
-import { matchesSetRequirement } from "@/lib/team-comp/optimizer";
 import { describe, expect, it } from "vitest";
+import { matchesSetRequirement } from "./optimizerV1";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 

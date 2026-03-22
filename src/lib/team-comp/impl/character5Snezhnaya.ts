@@ -301,7 +301,7 @@ class Arlecchino extends CharacterBase {
   ];
 
   // Rotation: E > teammates > C absorb > 6[N3D] > Q (KQM, ~20s carry window)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "arlecchino-normal": 3,
       "arlecchino-burst": 1,
@@ -391,7 +391,7 @@ class Tartaglia extends CharacterBase {
   ];
 
   // Rotation: rQ > E > 4[N3C] (~9s melee, International team, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "tartaglia-melee-combo": 4, "tartaglia-burst-melee": 1 };
   }
 

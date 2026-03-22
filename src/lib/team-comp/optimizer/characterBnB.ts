@@ -1,7 +1,7 @@
 /**
  * Character-level Branch-and-Bound optimizer.
  *
- * Extracted from optimizerV2.ts — contains the per-character B&B search
+ * Extracted from optimizer.ts — contains the per-character B&B search
  * including set composition patterns, core DFS, and the runCharacterBnB entry point.
  */
 

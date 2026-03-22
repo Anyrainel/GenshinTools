@@ -33,7 +33,7 @@ import {
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild, hasOffFieldParts } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer";
 import type {
   PerCharConfig,
   TeamOptYield,

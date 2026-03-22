@@ -173,17 +173,17 @@ function buildTeamInputsFromUserTeams(
       )
         continue;
       const opts = (team.opts ?? {}) as Record<string, string>;
-      // Build rotation-based formulas from character's defaultRotation
+      // Build combo-based formulas from character's defaultCombo
       let formulas: WeightedFormula[] | undefined;
       try {
         const tb = new TeamBuild(configs, opts);
-        const rotation = tb.getRotation(characterId);
-        if (Object.keys(rotation).length > 0) {
+        const combo = tb.getCombo(characterId);
+        if (Object.keys(combo).length > 0) {
           const charFormulas = tb.getFormulaIds()[characterId];
           if (charFormulas) {
             formulas = Object.keys(charFormulas).map((formulaId) => ({
               formulaId,
-              count: rotation[formulaId] ?? 0,
+              count: combo[formulaId] ?? 0,
             }));
           }
         }

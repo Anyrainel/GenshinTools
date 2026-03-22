@@ -12,8 +12,8 @@ import type {
   ReactionType,
   Slot,
 } from "@/data/types";
-import { useAsyncIdealGen } from "@/hooks/useAsyncIdealGen";
-import { useAsyncTeamOptimizer } from "@/hooks/useAsyncTeamOptimizer";
+import { useAsyncGenerator } from "@/hooks/useAsyncGenerator";
+import { useAsyncOptimizer } from "@/hooks/useAsyncOptimizer";
 import { useGameStats } from "@/hooks/useGameStats";
 import { useInvestmentAnalysis } from "@/hooks/useInvestmentAnalysis";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -125,7 +125,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     error: teamError,
     start: startTeamOpt,
     stop: stopTeamOpt,
-  } = useAsyncTeamOptimizer();
+  } = useAsyncOptimizer();
 
   useEffect(() => {
     return () => {
@@ -259,13 +259,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   const combo = useMemo<ComboFormula>(() => {
     if (team.combos.length > 0) return team.combos[0];
-    // Initialize from default rotation data when no user combo exists
+    // Initialize from default combo data when no user combo exists
     const lines: ComboLine[] = [];
     if (teamBuild) {
       for (const charId of team.characters) {
         if (!charId) continue;
-        const rotation = teamBuild.getRotation(charId);
-        for (const [formulaId, count] of Object.entries(rotation)) {
+        const combo = teamBuild.getCombo(charId);
+        for (const [formulaId, count] of Object.entries(combo)) {
           if (count > 0) {
             lines.push({ charId, formulaId, count });
           }
@@ -724,15 +724,15 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     result: idealResult,
     isComputing: idealComputing,
     error: idealError,
-    start: startIdealGen,
-    stop: stopIdealGen,
-  } = useAsyncIdealGen();
+    start: startGenerator,
+    stop: stopGenerator,
+  } = useAsyncGenerator();
 
   useEffect(() => {
     return () => {
-      stopIdealGen();
+      stopGenerator();
     };
-  }, [stopIdealGen]);
+  }, [stopGenerator]);
 
   const handleGenerateIdeal = () => {
     if (!teamBuild) return;
@@ -804,7 +804,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
       };
     }
 
-    startIdealGen({
+    startGenerator({
       teamBuild,
       carryCharId,
       formulaId: idealFormulaId,
@@ -1022,8 +1022,8 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           const lines: ComboLine[] = [];
           for (const charId of team.characters) {
             if (!charId) continue;
-            const rotation = teamBuild.getRotation(charId);
-            for (const [formulaId, count] of Object.entries(rotation)) {
+            const combo = teamBuild.getCombo(charId);
+            for (const [formulaId, count] of Object.entries(combo)) {
               if (count > 0) {
                 lines.push({ charId, formulaId, count });
               }

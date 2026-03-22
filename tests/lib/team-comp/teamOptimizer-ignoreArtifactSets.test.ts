@@ -14,7 +14,7 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
   PerCharConfig,
   TeamOptYield,

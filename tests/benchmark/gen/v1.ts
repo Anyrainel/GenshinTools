@@ -14,12 +14,6 @@ import {
   hasOffFieldParts,
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import {
-  type OptFailReason,
-  type OptimizationResult,
-  type OptimizerOptions,
-  runOptimization,
-} from "@/lib/team-comp/optimizer";
 import type {
   CalcContext,
   CharCompConfig,
@@ -37,6 +31,12 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
+import {
+  type OptFailReason,
+  type OptimizationResult,
+  type OptimizerOptions,
+  runOptimization,
+} from "../../lib/team-comp/optimizerV1";
 
 const warnedCalcErrors = new Set<string>();
 

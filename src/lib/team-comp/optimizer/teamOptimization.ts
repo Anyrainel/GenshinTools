@@ -603,7 +603,7 @@ export async function* runTeamOptimization(
           const key = `comboScoreFn:${_calcTargetId}`;
           if (!warnedCalcErrors.has(key)) {
             warnedCalcErrors.add(key);
-            console.warn("[optimizerV2] comboScoreFn failed:", e);
+            console.warn("[optimizer] comboScoreFn failed:", e);
           }
           return 0;
         }
@@ -834,7 +834,7 @@ export async function* runTeamOptimization(
         const charConfig = effectivePerChar[charId];
         return new Promise<void>((resolve) => {
           const worker = new Worker(
-            new URL("../optimizerV2.worker.ts", import.meta.url),
+            new URL("../optimizer.worker.ts", import.meta.url),
             { type: "module" }
           );
 
@@ -858,7 +858,7 @@ export async function* runTeamOptimization(
           const onTimeout = () => {
             worker.terminate();
             console.warn(
-              `[optimizerV2] Worker timed out for ${charId} (ready=${workerReady})`
+              `[optimizer] Worker timed out for ${charId} (ready=${workerReady})`
             );
             const wr: WorkerResult = {
               charId,
@@ -876,7 +876,7 @@ export async function* runTeamOptimization(
           let timeoutId = setTimeout(onTimeout, 10_000);
 
           worker.onmessage = (
-            e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
+            e: MessageEvent<import("../optimizer.worker").BnBWorkerResponse>
           ) => {
             const resp = e.data;
             if (resp.type === "ready") {
@@ -898,7 +898,7 @@ export async function* runTeamOptimization(
             worker.terminate();
             if (resp.type === "error") {
               console.warn(
-                `[optimizerV2] Worker error for ${charId}:`,
+                `[optimizer] Worker error for ${charId}:`,
                 resp.error
               );
               const wr: WorkerResult = {
@@ -944,7 +944,7 @@ export async function* runTeamOptimization(
           worker.onerror = (e) => {
             clearTimeout(timeoutId);
             worker.terminate();
-            console.warn(`[optimizerV2] Worker crashed for ${charId}:`, e);
+            console.warn(`[optimizer] Worker crashed for ${charId}:`, e);
             const wr: WorkerResult = {
               charId,
               entries: [],
@@ -960,7 +960,7 @@ export async function* runTeamOptimization(
             resolve();
           };
 
-          const request: import("../optimizerV2.worker").BnBWorkerRequest = {
+          const request: import("../optimizer.worker").BnBWorkerRequest = {
             id: 0,
             charId,
             charConfig,
@@ -1749,7 +1749,7 @@ export async function* runTeamOptimization(
         (input) =>
           new Promise<Phase3Result>((resolve) => {
             const worker = new Worker(
-              new URL("../optimizerV2.worker.ts", import.meta.url),
+              new URL("../optimizer.worker.ts", import.meta.url),
               { type: "module" }
             );
 
@@ -1772,7 +1772,7 @@ export async function* runTeamOptimization(
             }, timeoutMs);
 
             worker.onmessage = (
-              e: MessageEvent<import("../optimizerV2.worker").BnBWorkerResponse>
+              e: MessageEvent<import("../optimizer.worker").BnBWorkerResponse>
             ) => {
               const resp = e.data;
               if (resp.type === "progress" || resp.type === "ready") return; // ignore progress/ready in Phase 3
@@ -1816,7 +1816,7 @@ export async function* runTeamOptimization(
               });
             };
 
-            const request: import("../optimizerV2.worker").BnBWorkerRequest = {
+            const request: import("../optimizer.worker").BnBWorkerRequest = {
               id: 0,
               charId: input.charId,
               charConfig: input.charConfig,

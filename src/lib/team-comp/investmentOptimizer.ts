@@ -27,11 +27,11 @@
 import type { Element, Rarity } from "@/data/types";
 
 import { TeamBuild, evaluateCombo } from "./damageCalc";
-import type { CombatOpts } from "./damageModels";
+import type { OptionMap } from "./damageModels";
 import { StatSheet } from "./damageModels";
-import type { IdealGenResult } from "./idealArtifactGen";
-import { runIdealArtifactGen } from "./idealArtifactGen";
-import { IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET } from "./idealSubstatBudget";
+import type { GeneratorResult } from "./generator";
+import { runGenerator } from "./generator";
+import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "./substatBudget";
 import type {
   CalcContext,
   CharCompConfig,
@@ -459,7 +459,7 @@ function evalWithCachedArtifacts(
   allocation: TeamInvestment,
   sheets: Record<string, StatSheet>,
   baseConfigs: CharCompConfig[],
-  combatOpts: CombatOpts,
+  combatOpts: OptionMap,
   enemyElementAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
@@ -485,7 +485,7 @@ function evalAndCache(
   configs: InvestmentCharConfig[],
   snapshotCache: SnapshotCache,
   baseConfigs: CharCompConfig[],
-  combatOpts: CombatOpts,
+  combatOpts: OptionMap,
   enemyAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
@@ -517,7 +517,7 @@ function evalAndCache(
 async function runIdealGen(
   allocation: TeamInvestment,
   baseConfigs: CharCompConfig[],
-  combatOpts: CombatOpts,
+  combatOpts: OptionMap,
   enemyElementAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
@@ -532,8 +532,8 @@ async function runIdealGen(
   const carryCharId =
     combo.lines.find((l) => l.count > 0)?.charId ?? configs[0].charId;
 
-  let finalResult: IdealGenResult | null = null;
-  for await (const result of runIdealArtifactGen({
+  let finalResult: GeneratorResult | null = null;
+  for await (const result of runGenerator({
     teamBuild,
     carryCharId,
     formulaId: "",
@@ -541,7 +541,7 @@ async function runIdealGen(
     combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
     reactionOverrides,
     rollMultiplier: calcContext.rollMultiplier,
-    idealSubstatBudget: IDEAL_SUBSTAT_BUDGET_DEFAULT_PRESET,
+    idealSubstatBudget: SUBSTAT_BUDGET_DEFAULT_PRESET,
     perChar,
   })) {
     finalResult = result;

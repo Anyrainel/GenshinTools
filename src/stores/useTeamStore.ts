@@ -1,6 +1,6 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, Element, ReactionType } from "@/data/types";
-import type { CombatOpts } from "@/lib/team-comp/damageModels";
+import type { OptionMap } from "@/lib/team-comp/damageModels";
 import type { InvestmentCharConfig } from "@/lib/team-comp/investmentOptimizer";
 import type {
   CalcContext,
@@ -95,7 +95,7 @@ const DEFAULT_TEAM_FIELDS = {
   formulaMode: "single" as const,
   minEr: {} as Record<string, number>,
   minCr: {} as Record<string, number>,
-  opts: {} as CombatOpts,
+  opts: {} as OptionMap,
 } satisfies Partial<Team>;
 
 export interface Team {
@@ -105,7 +105,7 @@ export interface Team {
   weapons: (string | null)[];
   artifacts: (ArtifactConfig | null)[];
   reactions: ReactionType[];
-  opts: CombatOpts;
+  opts: OptionMap;
   minEr: Record<string, number>;
   minCr?: Record<string, number>;
   selectedFormula: { charId: string; formulaId: string } | null;

@@ -175,7 +175,7 @@ class Columbina extends CharacterBase {
   })();
 
   // Rotation: E > Q > swap; off-field enabler. Ripple ticks ~12 over 25s, ~2 Gravity Interferences, ~3 CAs if driving
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "columbina-charge": 0,
       "columbina-skill-interference": 2,
@@ -388,7 +388,7 @@ class Nefer extends CharacterBase {
   // Lv13 (C5+): 1193.4% ATK + 2386.8% EM
 
   // Rotation: E > 3[CA] > E > 3[CA] > Q (on-field Lunar-Bloom carry, 6 Phantasm Performances per rotation)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "nefer-phantasm": 6, "nefer-burst": 0 };
   }
 
@@ -620,7 +620,7 @@ class Flins extends CharacterBase {
   //   Moonsign Ascendant Gleam adds 1 extra hit (187.1%/220.9%)
 
   // Rotation: E > E > sQ > N4D×2 > N2 > E > sQ > N4D > N5 (on-field carry, ~10s field time)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "flins-spearstorm": this.constellation >= 1 ? 3 : 2,
       "flins-thunderous": this.constellation >= 1 ? 3 : 2,
@@ -824,7 +824,7 @@ class Lauma extends CharacterBase {
   ];
 
   // Rotation: Hold E > Q > swap (off-field support). Sanctuary ticks every 2s for 15s ≈ 7 hits.
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "lauma-sanctuary": 7,
       "lauma-hold": 1,
@@ -980,7 +980,7 @@ class Ineffa extends CharacterBase {
   ];
 
   // Rotation: E > Q > swap (off-field sub-DPS). Birgitta 10 hits baked in formula. C6 triggers ~6 times over 20s.
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "ineffa-birgitta": 1,
       "ineffa-burst": 1,

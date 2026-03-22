@@ -7,7 +7,7 @@
  * - Per-stat roll cap per artifact (defaults: 5★: 6, 4★: 4)
  * - Per-artifact total roll cap (defaults: 5★: 9, 4★: 7)
  *
- * Used by both idealArtifactGen (full ideal artifact generation) and
+ * Used by both generator (full ideal artifact generation) and
  * autoTune (scoring weight generation).
  */
 

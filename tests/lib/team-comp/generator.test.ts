@@ -1,13 +1,10 @@
 /**
- * Tests for idealArtifactGen — specifically verifying 2+2pc set assignment.
+ * Tests for generator — specifically verifying 2+2pc set assignment.
  */
 import { artifactHalfSetsById, artifactsById } from "@/data/constants";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import {
-  type IdealGenOptions,
-  runIdealArtifactGen,
-} from "@/lib/team-comp/idealArtifactGen";
+import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
 
@@ -23,7 +20,7 @@ const CTX: CalcContext = {
 
 // ── 2+2pc set assignment ────────────────────────────────────────────────────
 
-describe("idealArtifactGen — 2+2pc set assignment", () => {
+describe("generator — 2+2pc set assignment", () => {
   const HALF_SET_1 = "atk%-18";
   const HALF_SET_2 = "em-80";
 
@@ -83,14 +80,14 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
     const tb = new TeamBuild(configs);
     const formulaId = getFirstFormulaId(tb, "diluc");
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
       calcContext: CTX,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
 
@@ -115,14 +112,14 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
     const tb = new TeamBuild(configs);
     const formulaId = getFirstFormulaId(tb, "diluc");
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
       calcContext: CTX,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     const arts = final.artifactsByChar.diluc;
 
@@ -147,7 +144,7 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
     const formulaId = getFirstFormulaId(tb, "diluc");
 
     // This is exactly what TeamOptDetail.tsx does for 2+2pc
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
@@ -163,7 +160,7 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
       },
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     const arts = final.artifactsByChar.diluc;
 
@@ -216,14 +213,14 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
     const tb = new TeamBuild(configs);
     const formulaId = getFirstFormulaId(tb, "diluc");
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
       calcContext: CTX,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     const arts = final.artifactsByChar.diluc;
 
@@ -241,7 +238,7 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
     const tb = new TeamBuild(configs);
     const formulaId = getFirstFormulaId(tb, "diluc");
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: "diluc",
       formulaId,
@@ -249,7 +246,7 @@ describe("idealArtifactGen — 2+2pc set assignment", () => {
       setKeysByChar: {}, // caller passes empty — should still derive from configs
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     const arts = final.artifactsByChar.diluc;
 

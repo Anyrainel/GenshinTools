@@ -157,10 +157,16 @@ function PartTab({
   );
   const storeKey = isCombo ? comboKey : formulaKey;
 
-  const applicableBuffs = useMemo(
-    () => buffs.filter((b) => b.active && !b.bespokeLabel),
-    [buffs]
-  );
+  // Filter to buffs active for THIS part (per-part tag resolution)
+  const applicableBuffs = useMemo(() => {
+    const pi = part.sourcePartIndex ?? partIndex;
+    return buffs.filter(
+      (b) =>
+        b.active &&
+        !b.bespokeLabel &&
+        (b.activePartIndices === undefined || b.activePartIndices.includes(pi))
+    );
+  }, [buffs, part.sourcePartIndex, partIndex]);
 
   // Group buffs by provider character (resonance buffs grouped separately)
   const groupedBuffs = useMemo(() => {
@@ -289,13 +295,13 @@ function PartTab({
 
                 {/* Row 2: tag filters (smaller, italic) */}
                 {filterDesc && (
-                  <div className="text-[11px] italic text-muted-foreground pl-7">
+                  <div className="text-[11px] italic text-muted-foreground pl-2">
                     [{filterDesc}]
                   </div>
                 )}
 
                 {/* Row 3: stat entries + activation control */}
-                <div className="flex items-center flex-wrap gap-x-2 gap-y-1 pl-7">
+                <div className="flex items-center flex-wrap gap-x-2 gap-y-1 pl-2">
                   {/* Stat entries */}
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0 flex-1">
                     {allEntries.map((entry, i) => (
@@ -358,7 +364,7 @@ function PartTab({
                         }
                         className="flex-1"
                       />
-                      <span className="text-[10px] tabular-nums text-muted-foreground min-w-[2.5rem] text-right">
+                      <span className="text-[10px] tabular-nums text-foreground text-right">
                         {currentHits}/{sliderMax}
                       </span>
                     </div>
@@ -401,15 +407,24 @@ export function PartBuffDialog({
     isCombo ? s.comboOverrides[comboKey] : s.overrides[formulaKey]
   );
 
+  // Check if THIS part has any applicable buffs (per-part filter)
+  const thisPart = parts[initialTab ?? 0];
+  const thisPartIdx = thisPart?.sourcePartIndex ?? initialTab ?? 0;
   const applicableBuffs = useMemo(
-    () => buffs.filter((b) => b.active && !b.bespokeLabel),
-    [buffs]
+    () =>
+      buffs.filter(
+        (b) =>
+          b.active &&
+          !b.bespokeLabel &&
+          (b.activePartIndices === undefined ||
+            b.activePartIndices.includes(thisPartIdx))
+      ),
+    [buffs, thisPartIdx]
   );
 
   if (applicableBuffs.length === 0) return null;
 
   // Show dot when THIS part has a buff not at full activation
-  const thisPart = parts[initialTab ?? 0];
   const hasOverrides =
     thisPart?.partialBuffs != null && thisPart.partialBuffs.length > 0;
 
@@ -473,7 +488,7 @@ export function PartBuffDialog({
                 part={parts[activeTab]}
                 partIndex={parts[activeTab].sourcePartIndex ?? activeTab}
                 formulaKey={formulaKey}
-                buffs={applicableBuffs}
+                buffs={buffs}
                 defaultActivation={defaultActivation}
                 t={t}
                 comboCount={comboCount}

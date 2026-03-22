@@ -1,24 +1,24 @@
 import type {
-  IdealGenOptions,
-  IdealGenResult,
-} from "@/lib/team-comp/idealArtifactGen";
-import { runIdealArtifactGen } from "@/lib/team-comp/idealArtifactGen";
+  GeneratorOptions,
+  GeneratorResult,
+} from "@/lib/team-comp/generator";
+import { runGenerator } from "@/lib/team-comp/generator";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export interface AsyncIdealGenState {
-  result: IdealGenResult | null;
+export interface AsyncGeneratorState {
+  result: GeneratorResult | null;
   isComputing: boolean;
   error: Error | null;
-  start: (opts: IdealGenOptions) => void;
+  start: (opts: GeneratorOptions) => void;
   stop: () => void;
 }
 
-export function useAsyncIdealGen(): AsyncIdealGenState {
-  const [result, setResult] = useState<IdealGenResult | null>(null);
+export function useAsyncGenerator(): AsyncGeneratorState {
+  const [result, setResult] = useState<GeneratorResult | null>(null);
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const activeGenerator = useRef<AsyncGenerator<IdealGenResult> | null>(null);
+  const activeGenerator = useRef<AsyncGenerator<GeneratorResult> | null>(null);
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -31,21 +31,21 @@ export function useAsyncIdealGen(): AsyncIdealGenState {
 
   const stop = useCallback(() => {
     if (activeGenerator.current) {
-      activeGenerator.current.return(undefined as unknown as IdealGenResult);
+      activeGenerator.current.return(undefined as unknown as GeneratorResult);
       activeGenerator.current = null;
     }
     setIsComputing(false);
   }, []);
 
   const start = useCallback(
-    async (opts: IdealGenOptions) => {
+    async (opts: GeneratorOptions) => {
       stop();
       setResult(null);
       setError(null);
       setIsComputing(true);
 
       try {
-        const gen = runIdealArtifactGen(opts);
+        const gen = runGenerator(opts);
         activeGenerator.current = gen;
 
         for await (const yielded of gen) {

@@ -35,10 +35,6 @@ import {
 } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
 import type {
-  OptimizationResult,
-  OptimizerOptions,
-} from "@/lib/team-comp/optimizer";
-import type {
   CalcContext,
   ComboFormula,
   ComboResult,
@@ -56,6 +52,10 @@ import type {
   TeamOptimizationResult,
   TeamOptimizerOptions,
 } from "@/lib/team-comp/types";
+import type {
+  OptimizationResult,
+  OptimizerOptions,
+} from "../../lib/team-comp/optimizerV1";
 
 // ─── Constants ───
 

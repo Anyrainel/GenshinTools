@@ -10,7 +10,7 @@ import type {
 } from "@/data/types";
 
 import type { StatSheet } from "./damageModels";
-import type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
+import type { SubstatBudgetPreset } from "./substatBudget";
 
 /**
  * All stat keys the engine tracks.
@@ -254,8 +254,14 @@ export type ResolvedBuff = {
    */
   providerCharId?: string;
   target: BuffTarget;
-  /** Whether this buff contributed to the calc target's stat sheet */
+  /** Whether this buff contributed to the calc target's stat sheet (any part). */
   active: boolean;
+  /**
+   * Which DisplayPart indices this buff is active for.
+   * Undefined means "all parts" (buff has no DamageTagFilter or is universally applicable).
+   * Empty array means the buff is inactive for all parts (active will be false).
+   */
+  activePartIndices?: number[];
   /** Entries always present on this buff */
   staticEntries: StatEntry[];
   /** Entries evaluated at post-stats time, with per-entry caps. Empty for non-scaling buffs. */
@@ -322,7 +328,7 @@ export type CalcContext = {
   critRateTarget?: number; // 0–100 integer; undefined = disabled
   rollMultiplier?: number; // ideal-gen only; 0.7–1.0, default 0.85
   /** ideal-gen only; per-slot substat roll totals; default 8_6 */
-  idealSubstatBudget?: IdealSubstatBudgetPreset;
+  idealSubstatBudget?: SubstatBudgetPreset;
 };
 
 // ─── Reaction Override (Formula v2) ───
@@ -406,7 +412,7 @@ export type CharCompConfig = {
 };
 
 // ─── Combat Options (Schema-Driven) ───
-// OptionChoice, OptionDef, InferOption, CombatOpts live in damageModels.ts
+// OptionEntry, OptionDef, InferOption, OptionMap live in damageModels.ts
 // (co-located with TeamMeta and resolveOption that consume them).
 
 // ─── Optimizer Types (shared across V1, V2, Mona, benchmark) ───
@@ -414,8 +420,21 @@ export type CharCompConfig = {
 import type { ArtifactData, GlobalStatWeights, Slot } from "@/data/types";
 import type { BuildMatchResult } from "@/lib/account-data/artifactScore";
 import type { TeamBuild } from "./damageCalc";
-import type { OptFailReason } from "./optimizer";
-export type { OptFailReason } from "./optimizer";
+
+export type OptFailReason =
+  | { kind: "empty-pool"; emptySlots: Slot[] }
+  | { kind: "no-seeds"; setId?: string | null; halfSetIds?: string[] }
+  | { kind: "er-unmet"; minEr: number; bestEr: number }
+  | { kind: "cr-unmet"; minCr: number; bestCr: number }
+  | {
+      kind: "set-impossible";
+      setId?: string | null;
+      halfSetIds?: string[];
+      slotCounts: Record<string, number>;
+    }
+  | { kind: "all-filtered"; combinationsTotal: number }
+  | { kind: "timeout" }
+  | { kind: "worker-error"; message: string };
 
 export type TeamOptPassId = "carry-1" | "support" | "carry-2";
 

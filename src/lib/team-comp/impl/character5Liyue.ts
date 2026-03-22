@@ -298,7 +298,7 @@ class Zibai extends CharacterBase {
   })();
 
   // Rotation: E > 3×N4 combo > 3×Steed > Q (Geo carry, 15s Lunar Phase Shift)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "zibai-e-combo": 3,
       "zibai-steed": 3,
@@ -409,7 +409,7 @@ class Xianyun extends CharacterBase {
   })();
 
   // Rotation: Q > E (3 Skyladders) > Driftcloud Wave (plunge support)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "xianyun-driftcloud": 1 };
   }
 }
@@ -523,7 +523,7 @@ class Baizhu extends CharacterBase {
   })();
 
   // Rotation: E > Q (Dendro healer/support, spiritveins baked into Q ×6)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "baizhu-burst": 1 };
   }
 }
@@ -679,7 +679,7 @@ class Yelan extends CharacterBase {
   })();
 
   // Rotation: E > Q > ~15 throw procs (off-field Hydro sub-DPS, 1 proc/sec over 15s)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "yelan-skill": 1, "yelan-burst-throw": 15 };
   }
 }
@@ -729,7 +729,7 @@ class Xiao extends CharacterBase {
   })();
 
   // Rotation: EE > Q > 11×high plunge (Anemo carry, ~15s Q window)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "xiao-plunge-high": 11 };
   }
 }
@@ -842,7 +842,7 @@ class Zhongli extends CharacterBase {
   })();
 
   // Rotation: hE > Q > ~10 resonance ticks (shield support, 20s rotation)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "zhongli-hold": 1, "zhongli-resonance": 10, "zhongli-burst": 1 };
   }
 }
@@ -971,7 +971,7 @@ class HuTao extends CharacterBase {
   })();
 
   // Rotation: E > 9×N1C > Q (Pyro vape carry, 9s E window)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "hutao-charged": 9, "hutao-blood-blossom": 2, "hutao-burst": 1 };
   }
 }
@@ -1113,7 +1113,7 @@ class Shenhe extends CharacterBase {
   })();
 
   // Rotation: E press > Q (Cryo buffer/support, minimal personal damage)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "shenhe-skill": 1 };
   }
 }
@@ -1204,7 +1204,7 @@ class Ganyu extends CharacterBase {
   })();
 
   // Rotation: 6×CA + Q (~10 shards over 15s, Cryo carry melt/freeze)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "ganyu-frostflake": 6, "ganyu-q-shard": 10 };
   }
 }
@@ -1306,7 +1306,7 @@ class Keqing extends CharacterBase {
   })();
 
   // Rotation: E > Q > 5×N1C (Electro aggravate carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "keqing-charged": 5, "keqing-burst": 1 };
   }
 }
@@ -1354,7 +1354,7 @@ class Qiqi extends CharacterBase {
   })();
 
   // Rotation: E (healer, hits baked into E ×8)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "qiqi-skill-hit": 1 };
   }
 }

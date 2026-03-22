@@ -31,12 +31,12 @@ import {
   compileTeamDamage,
   fillVarsFromSheet,
 } from "./formulaCompiler";
-import type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
+import type { SubstatBudgetPreset } from "./substatBudget";
 import {
   maxRollsPerStatForPreset,
-  resolveIdealSubstatBudgetPreset,
+  resolveSubstatBudgetPreset,
   rollsPerSlotForPreset,
-} from "./idealSubstatBudget";
+} from "./substatBudget";
 import type {
   CalcContext,
   ComboFormula,
@@ -46,11 +46,11 @@ import type {
   StatKey,
 } from "./types";
 
-export type { IdealSubstatBudgetPreset } from "./idealSubstatBudget";
+export type { SubstatBudgetPreset } from "./substatBudget";
 
 // ─── Types ───
 
-export interface IdealGenOptions {
+export interface GeneratorOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
   formulaId: string;
@@ -63,7 +63,7 @@ export interface IdealGenOptions {
    * Per-slot substat roll budget preset. Overrides `calcContext.idealSubstatBudget`
    * when set (e.g. investment passes the default preset to ignore calcContext).
    */
-  idealSubstatBudget?: IdealSubstatBudgetPreset;
+  idealSubstatBudget?: SubstatBudgetPreset;
   /** Override reaction types for the damage formula */
   reactionOverride?: ReactionOverride;
   /** Combo formula for combo mode */
@@ -76,7 +76,7 @@ export interface IdealGenOptions {
   ignoreArtifactSets?: Record<string, boolean>;
 }
 
-export interface IdealGenResult {
+export interface GeneratorResult {
   artifactsByChar: Record<string, Record<Slot, ArtifactData>>;
   sheetsByChar: Record<string, StatSheet>;
   damage: number;
@@ -151,7 +151,7 @@ function evaluateDamage(
     return result.totalDamage;
   } catch (e) {
     console.warn(
-      `[idealArtifactGen] evaluateDamage failed for ${carryCharId}/${formulaId}:`,
+      `[generator] evaluateDamage failed for ${carryCharId}/${formulaId}:`,
       e
     );
     return 0;
@@ -442,7 +442,7 @@ function fillSubstats(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5,
-  budgetPreset: IdealSubstatBudgetPreset,
+  budgetPreset: SubstatBudgetPreset,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>,
@@ -525,7 +525,7 @@ function constraintAwareGenerate(
   rv: Record<SubStat, number>,
   gap: ErCrGap,
   rarity: 4 | 5,
-  budgetPreset: IdealSubstatBudgetPreset,
+  budgetPreset: SubstatBudgetPreset,
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
@@ -695,7 +695,7 @@ function findBestMainStatsConstrained(
   rv: Record<SubStat, number>,
   gap: ErCrGap,
   rarity: 4 | 5,
-  budgetPreset: IdealSubstatBudgetPreset,
+  budgetPreset: SubstatBudgetPreset,
   forceSands?: MainStat,
   forceCirclet?: MainStat,
   reactionOverride?: ReactionOverride,
@@ -895,9 +895,9 @@ function findBestMainStatsWithSubs(
 //   5. Re-roll main stats for carry (with substats present, ignore conflicts)
 //   6. Clear & regenerate substats for carry
 
-export async function* runIdealArtifactGen(
-  opts: IdealGenOptions
-): AsyncGenerator<IdealGenResult> {
+export async function* runGenerator(
+  opts: GeneratorOptions
+): AsyncGenerator<GeneratorResult> {
   const {
     teamBuild,
     carryCharId,
@@ -907,7 +907,7 @@ export async function* runIdealArtifactGen(
     combo,
     reactionOverrides,
   } = opts;
-  const budgetPreset = resolveIdealSubstatBudgetPreset(
+  const budgetPreset = resolveSubstatBudgetPreset(
     opts.idealSubstatBudget,
     calcContext
   );
@@ -1344,10 +1344,7 @@ export async function* runIdealArtifactGen(
       damage = damageResult.totalDamage;
     }
   } catch (e) {
-    console.warn(
-      `[idealArtifactGen] final damage calc failed for ${carryCharId}:`,
-      e
-    );
+    console.warn(`[generator] final damage calc failed for ${carryCharId}:`, e);
   }
 
   yield {
@@ -1380,7 +1377,7 @@ function makeResult(
   reactionOverride?: ReactionOverride,
   combo?: ComboFormula,
   reactionOverrides?: Record<string, ReactionOverride>
-): IdealGenResult {
+): GeneratorResult {
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
 
@@ -1425,7 +1422,7 @@ function makeResult(
     }
   } catch (e) {
     console.warn(
-      `[idealArtifactGen] snapshot damage calc failed for ${carryCharId}:`,
+      `[generator] snapshot damage calc failed for ${carryCharId}:`,
       e
     );
   }

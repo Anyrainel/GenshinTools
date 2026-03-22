@@ -22,7 +22,7 @@ import {
 } from "./damageModels";
 
 import { AVG_SUBSTAT_ROLL } from "@/lib/account-data/scoring/utils";
-import type { CombatOpts } from "./damageModels";
+import type { OptionMap } from "./damageModels";
 import {
   type ComboLineContext,
   buildPartialBuffInfos,
@@ -222,7 +222,7 @@ export class CharBuild {
   constructor(
     config: CharCompConfig,
     teamMeta: TeamMeta,
-    combatOpts: CombatOpts = {}
+    combatOpts: OptionMap = {}
   ) {
     this.charBase = createCharacter(
       config.charId,
@@ -649,7 +649,7 @@ export function isBuffApplicable(
  * Orchestrates the full team's damage calculation.
  * Owns the stat resolution pipeline across all 4 team members.
  *
- * Construction is immutable (team composition + CombatOpts).
+ * Construction is immutable (team composition + OptionMap).
  * `getTeamStats(artifactStats, calcTargetId)` is the hot path.
  */
 export class TeamBuild {
@@ -660,13 +660,13 @@ export class TeamBuild {
   /** Original configs used to construct this TeamBuild (for reconstruction). */
   readonly configs: CharCompConfig[];
   /** Original combat opts used to construct this TeamBuild (for reconstruction). */
-  readonly combatOpts: CombatOpts;
+  readonly combatOpts: OptionMap;
   /** Enemy persistent element aura (for reconstruction). */
   readonly enemyElementAura?: Element;
 
   constructor(
     configs: CharCompConfig[],
-    combatOpts: CombatOpts = {},
+    combatOpts: OptionMap = {},
     enemyElementAura?: Element
   ) {
     this.configs = configs;
@@ -1030,9 +1030,9 @@ export class TeamBuild {
     return result;
   }
 
-  /** Default rotation counts for a character (from CharacterBase.rotation). */
-  getRotation(charId: string): Record<string, number> {
-    return this.charBuilds[charId]?.charBase.rotation ?? {};
+  /** Default combo counts for a character (from CharacterBase.combo). */
+  getCombo(charId: string): Record<string, number> {
+    return this.charBuilds[charId]?.charBase.combo ?? {};
   }
 
   /** Evaluate a specific character's damage formula with the given team stats */
@@ -1131,14 +1131,13 @@ export class TeamBuild {
 
     // ── Formula display ──
     const entry = build.charBase.getFormulaEntry(formulaId);
-    const formulaTags: DamageTag[] = [];
-    if (entry && entry.parts.length > 0) {
-      for (const part of entry.parts) {
-        if (part.formula.tag) {
-          formulaTags.push(part.formula.tag);
-        }
-      }
-    }
+    // Per-part tags for per-part buff resolution
+    const partTags: (DamageTag | undefined)[] =
+      entry?.parts.map((p) => p.formula.tag) ?? [];
+    // Flat list for legacy uses (combatStats getAll)
+    const formulaTags: DamageTag[] = partTags.filter(
+      (t): t is DamageTag => t !== undefined
+    );
 
     // Compute off-field stats for display if the formula has off-field parts
     const formulaHasOffField = entry?.parts.some((p) => p.offField) ?? false;
@@ -1340,7 +1339,7 @@ export class TeamBuild {
       charId,
       preStats,
       teamPreStatsArr,
-      formulaTags,
+      partTags,
       formulaId
     );
 
@@ -1442,7 +1441,7 @@ export class TeamBuild {
     calcTargetId: string,
     preStats: Record<string, StatSheet>,
     teamPreStatsArr: StatSheet[],
-    formulaTags: DamageTag[],
+    partTags: (DamageTag | undefined)[],
     formulaId?: string
   ): ResolvedBuff[] {
     const result: ResolvedBuff[] = [];
@@ -1546,6 +1545,7 @@ export class TeamBuild {
       // Resolve dynamic entries with per-entry caps
       let dynamicEntries: ResolvedStatEntry[] = [];
       let active = false;
+      let activePartIndices: number[] | undefined;
 
       const ownerStats = preStats[ownerId]!;
       const raw = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
@@ -1553,19 +1553,21 @@ export class TeamBuild {
       if (applicable) {
         if (raw.length > 0) {
           active = activeDynamicSet.has(buff);
-          if (active && formulaTags.length > 0 && buff.target.filter) {
-            active = formulaTags.some((tag) =>
-              filterMatchesTag(buff.target.filter!, tag)
-            );
-          }
         } else {
           active = activeStaticSet.has(buff);
-          if (active && formulaTags.length > 0 && buff.target.filter) {
-            active = formulaTags.some((tag) =>
-              filterMatchesTag(buff.target.filter!, tag)
-            );
-          }
         }
+        // Per-part tag filter: compute which parts this buff applies to
+        if (active && partTags.length > 0 && buff.target.filter) {
+          activePartIndices = [];
+          for (let pi = 0; pi < partTags.length; pi++) {
+            const tag = partTags[pi];
+            if (tag && filterMatchesTag(buff.target.filter!, tag)) {
+              activePartIndices.push(pi);
+            }
+          }
+          active = activePartIndices.length > 0;
+        }
+        // No filter → activePartIndices stays undefined (= all parts)
       }
 
       // Always populate dynamic entries for display, even when inactive
@@ -1585,6 +1587,7 @@ export class TeamBuild {
         providerCharId: ownerId,
         target: buff.target,
         active,
+        activePartIndices,
         staticEntries: buff.staticBuffs,
         dynamicEntries,
       });
@@ -1593,15 +1596,22 @@ export class TeamBuild {
     // Also include resonance buffs
     for (const buff of this.teamResonance.buffs) {
       let active = true;
-      if (formulaTags.length > 0 && buff.target.filter) {
-        active = formulaTags.some((tag) =>
-          filterMatchesTag(buff.target.filter!, tag)
-        );
+      let activePartIndicesRes: number[] | undefined;
+      if (partTags.length > 0 && buff.target.filter) {
+        activePartIndicesRes = [];
+        for (let pi = 0; pi < partTags.length; pi++) {
+          const tag = partTags[pi];
+          if (tag && filterMatchesTag(buff.target.filter!, tag)) {
+            activePartIndicesRes.push(pi);
+          }
+        }
+        active = activePartIndicesRes.length > 0;
       }
       result.push({
         source: buff.source,
         target: buff.target,
         active,
+        activePartIndices: activePartIndicesRes,
         staticEntries: buff.staticBuffs,
         dynamicEntries: [],
       });

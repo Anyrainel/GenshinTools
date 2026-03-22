@@ -73,7 +73,7 @@ import {
   fillVarsFromArtifacts,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
-import { runCharacterBnB } from "@/lib/team-comp/optimizerV2";
+import { runCharacterBnB } from "@/lib/team-comp/optimizer";
 import type {
   CalcContext,
   CharCompConfig,

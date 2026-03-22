@@ -12,11 +12,7 @@ import type { ArtifactData, GlobalStatWeights } from "@/data/types";
 import { allSlots } from "@/data/types";
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
-import {
-  type OptimizationResult,
-  runOptimization,
-} from "@/lib/team-comp/optimizer";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type {
   TeamOptYield,
   TeamOptimizationResult,
@@ -24,6 +20,7 @@ import type {
 } from "@/lib/team-comp/types";
 import type { CalcContext, CharCompConfig } from "@/lib/team-comp/types";
 import { describe, expect, it } from "vitest";
+import { type OptimizationResult, runOptimization } from "./optimizerV1";
 
 import "@/lib/team-comp/index";
 import {

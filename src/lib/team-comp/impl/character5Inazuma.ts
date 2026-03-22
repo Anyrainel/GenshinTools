@@ -86,7 +86,7 @@ class YumemizukiMizuki extends CharacterBase {
   })();
 
   // Rotation: Q > E (Dreamdrifter ~10s with P1 extension); ~6 ticks during float
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "mizuki-skill-swirl": 6 };
   }
 
@@ -145,7 +145,7 @@ class Chiori extends CharacterBase {
   ];
 
   // Rotation: EE (Tapestry swap) > Q; off-field Tamoto + Kinu procs per window
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "chiori-e-combo": 1,
       "chiori-burst": 1,
@@ -402,7 +402,7 @@ class RaidenShogun extends CharacterBase {
   })();
 
   // Rotation: E > supports > Q 3[N3C] N1C (~20s, hypercarry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "raiden-coordinated": 1, "raiden-initial": 1, "raiden-charge": 3 };
   }
 
@@ -539,7 +539,7 @@ class AratakiItto extends CharacterBase {
   ];
 
   // Rotation: supports > Q > N1 E > 2×Kesagiri chain > E (Geo carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "itto-kesagiri": 2 };
   }
 
@@ -614,7 +614,7 @@ class KamisatoAyaka extends CharacterBase {
   ];
 
   // Rotation: D E Q N1C > 2[N2C] (freeze carry, ~20s)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "ayaka-charged": 3, "ayaka-burst": 1 };
   }
 
@@ -719,7 +719,7 @@ class KamisatoAyato extends CharacterBase {
   })();
 
   // Rotation: Q > E (Shunsuiken ×16 baked) > swap (~20s, Hydro carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "ayato-shunsuiken": 1,
       "ayato-bloomwater": 1,
@@ -886,7 +886,7 @@ class SangonomiyaKokomi extends CharacterBase {
   ];
 
   // Rotation: E > supports > Q N2D×~5 (on-field during Q, ~3 fish procs at C1)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kokomi-c1-fish": 3 };
   }
 
@@ -972,7 +972,7 @@ class KaedeharaKazuha extends CharacterBase {
   })();
 
   // Rotation: E (plunge) > Q > E (plunge) (VV support, ~20s)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kazuha-skill": 2, "kazuha-plunge-c6": 2, "kazuha-burst": 1 };
   }
 
@@ -1092,7 +1092,7 @@ class Yoimiya extends CharacterBase {
   })();
 
   // Rotation: supports > E > 3×N1-N5 string (~20s, Pyro carry)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     const rot: Record<string, number> = { "yoimiya-normal": 3 };
     if (this.constellation >= 6) rot["yoimiya-c6-arrow"] = 0;
     return rot;
@@ -1193,7 +1193,7 @@ class YaeMiko extends CharacterBase {
   })();
 
   // Rotation: 3[E] > supports > Q 3[E]; ~15 Sakura hits + 1 burst per rotation
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "yae_miko-skill": 15, "yae_miko-burst": 1 };
   }
 

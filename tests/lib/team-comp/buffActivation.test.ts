@@ -5,7 +5,7 @@
  * 2. getDisplayResult with userBuffOverrides — cold path display
  * 3. compileTeamDamage with partialBuffs — hot path AST compiler
  * 4. runTeamOptimization with partialBuffs — optimizer integration
- * 5. runIdealArtifactGen (generate) — ideal artifact flow
+ * 5. runGenerator (generate) — ideal artifact flow
  * 6. Combo mode — compileComboTeamDamage with buffOverrides
  */
 import { describe, expect, it } from "vitest";
@@ -20,11 +20,8 @@ import {
   compileTeamDamage,
   fillVarsFromSheet,
 } from "@/lib/team-comp/formulaCompiler";
-import {
-  type IdealGenOptions,
-  runIdealArtifactGen,
-} from "@/lib/team-comp/idealArtifactGen";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { type GeneratorOptions, runGenerator } from "@/lib/team-comp/generator";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type { PartialBuffInfo } from "@/lib/team-comp/stackAllocation";
 import type {
   BuffActivationMap,
@@ -629,22 +626,22 @@ describe("runTeamOptimization with partialBuffs", () => {
   });
 });
 
-// ─── 5. runIdealArtifactGen with buff overrides ──────────────────────────────
+// ─── 5. runGenerator with buff overrides ──────────────────────────────
 
-describe("runIdealArtifactGen with buff overrides", () => {
+describe("runGenerator with buff overrides", () => {
   it("generate mode produces results (does not crash)", async () => {
     const tb = makeDilucTeamBuild();
     const carryId = "diluc";
     const formulaId = getFirstFormulaId(tb, carryId);
 
-    const opts: IdealGenOptions = {
+    const opts: GeneratorOptions = {
       teamBuild: tb,
       carryCharId: carryId,
       formulaId,
       calcContext: CTX,
     };
 
-    const results = await drain(runIdealArtifactGen(opts));
+    const results = await drain(runGenerator(opts));
     const final = results[results.length - 1];
     expect(final.done).toBe(true);
     expect(final.artifactsByChar.diluc).toBeDefined();

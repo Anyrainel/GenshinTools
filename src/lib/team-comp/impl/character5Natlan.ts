@@ -126,7 +126,7 @@ class Varesa extends CharacterBase {
   })();
 
   // Rotation: Q > ECP ×4 + sQ ×2 (~20s, plunge carry, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "varesa-plunge": 4, "varesa-kablam": 2 };
   }
 }
@@ -197,7 +197,7 @@ class Citlali extends CharacterBase {
     // because the Q Skull should NOT receive this bonus.
     // (see formulaMap "citlali-burst-total" Ice Storm part)
     // C1: Stellar Blade — on-field active character (not Citlali) gains +200% EM as baseDmg
-    // 10 base stacks (+3 per Frozen/Melt every 8s). CombatOpts: 10/13/16/unlimited.
+    // 10 base stacks (+3 per Frozen/Melt every 8s). OptionMap: 10/13/16/unlimited.
     ...(this.constellation >= 1
       ? [
           new ScalingBuff(
@@ -324,7 +324,7 @@ class Citlali extends CharacterBase {
   })();
 
   // Rotation: E Q > swap (off-field support, E total bakes in all hits, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "citlali-e-total": 1, "citlali-burst-total": 1 };
   }
 }
@@ -528,7 +528,7 @@ class Mavuika extends CharacterBase {
   })();
 
   // Rotation: Q (Sunfell) > SCSCC2 combo in 7s Crucible window (Melt carry, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "mavuika-sunfell": 1, "mavuika-szszzp": 1 };
   }
 }
@@ -715,7 +715,7 @@ class Chasca extends CharacterBase {
   })();
 
   // Rotation: E 4[C] (Q) + P2 proc (on-field carry, Q every ~2 rotations, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "chasca-shining-volley": 4,
       "chasca-p2-burning": 1,
@@ -947,7 +947,7 @@ class Xilonen extends CharacterBase {
   })();
 
   // Rotation: C6 on-field DPS 3×N4; mono-Geo Q extra beats once (KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return {
       "xilonen-normal": 3,
       "xilonen-burst-beats": 1,
@@ -1067,7 +1067,7 @@ class Mualani extends CharacterBase {
   })();
 
   // Rotation: E combo (3 Surging Bites) > Q (~16s rotation, vape carry, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "mualani-bite": 3, "mualani-burst": 1 };
   }
 }
@@ -1191,7 +1191,7 @@ class Kinich extends CharacterBase {
   })();
 
   // Rotation: shE Q 5[N2 shE] — ~4 Scalespiker Cannons + Q (Burning carry, KQM)
-  protected override get defaultRotation() {
+  protected override get defaultCombo() {
     return { "kinich-cannon": 4, "kinich-burst": 1 };
   }
 }

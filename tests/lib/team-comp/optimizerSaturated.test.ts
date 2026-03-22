@@ -15,7 +15,7 @@ import {
 import { preloadGameStats } from "@/lib/gameStatsLoader";
 import { TeamBuild } from "@/lib/team-comp/damageCalc";
 import { StatSheet } from "@/lib/team-comp/damageModels";
-import { runTeamOptimization } from "@/lib/team-comp/optimizerV2";
+import { runTeamOptimization } from "@/lib/team-comp/optimizer";
 import type { CharCompConfig } from "@/lib/team-comp/types";
 import "@/lib/team-comp/index";
 
