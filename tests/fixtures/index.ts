@@ -48,7 +48,7 @@ export const createCharacterData = (
   ...overrides,
 });
 
-export const MOCK_CHARACTERS = {
+const MOCK_CHARACTERS = {
   huTao: createCharacterData({
     key: "hu_tao",
     constellation: 1,
@@ -93,7 +93,7 @@ export const createWeaponData = (
   ...overrides,
 });
 
-export const MOCK_WEAPONS = {
+const MOCK_WEAPONS = {
   staffOfHoma: createWeaponData({ key: "staff_of_homa", refinement: 1 }),
   amosBow: createWeaponData({
     id: "w2",
@@ -165,7 +165,7 @@ export const createAccountData = (
   ...overrides,
 });
 
-export const MOCK_ACCOUNT_DATA = {
+const MOCK_ACCOUNT_DATA = {
   empty: createAccountData(),
   withOneCharacter: createAccountData({
     characters: [MOCK_CHARACTERS.huTao],
@@ -232,7 +232,7 @@ export const createArtifactScoreResult = (
   };
 };
 
-export const MOCK_SCORES = {
+const MOCK_SCORES = {
   complete: createArtifactScoreResult({ substatScore: { isComplete: true } }),
   incomplete: createArtifactScoreResult({
     substatScore: { isComplete: false },
@@ -248,7 +248,7 @@ export const MOCK_SCORES = {
 // Tier Assignment Fixtures
 // ============================================================================
 
-export const MOCK_TIER_ASSIGNMENTS = {
+const MOCK_TIER_ASSIGNMENTS = {
   empty: {},
   singleSTier: {
     hu_tao: { tier: "S", position: 0 },

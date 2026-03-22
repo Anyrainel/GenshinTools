@@ -19,7 +19,7 @@ function AllProviders({ children }: { children: ReactNode }) {
 }
 
 // Custom render function that wraps component with providers
-export function renderWithProviders(
+function renderWithProviders(
   ui: ReactNode,
   options?: Omit<RenderOptions, "wrapper">
 ) {

@@ -221,7 +221,7 @@ function sameTuple(a: ArtifactTuple, b: ArtifactTuple): boolean {
 
 // ── Marginal-gain scoring ──
 
-export const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
+const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
   ...AVG_SUBSTAT_ROLL,
   "pyro%": toInternal("pyro%", getFixedMainStatValue("pyro%", 5)),
   "hydro%": toInternal("hydro%", getFixedMainStatValue("hydro%", 5)),
@@ -235,7 +235,7 @@ export const MARGINAL_GAIN_DELTAS: Partial<Record<StatKey, number>> = {
 };
 
 /** Score an artifact by its actual stat contributions weighted by marginal gains. */
-export function scorePieceMarginal(
+function scorePieceMarginal(
   art: ArtifactData,
   marginalGains: Partial<Record<StatKey, number>>
 ): number {
@@ -269,7 +269,7 @@ export function scorePieceMarginal(
 }
 
 /** Compute marginal gain per stat for the swap character. */
-export function computeMarginalGainsForOptimizer(
+function computeMarginalGainsForOptimizer(
   teamBuild: TeamBuild,
   swapCharId: string,
   formulaCharId: string,
