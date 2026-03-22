@@ -1041,6 +1041,7 @@ async function cmdRun(opts: {
     key: string;
     comp: RunComparison & { status: "regression" };
   }[] = [];
+  const constraintFailList: { key: string; formulaId: string }[] = [];
   const newBestList: {
     key: string;
     comp: RunComparison & { status: "new_best" };
@@ -1166,6 +1167,7 @@ async function cmdRun(opts: {
     if (storeResult.constraintViolations.length > 0) {
       logConstraintViolations(storeResult.constraintViolations);
       constraintFails++;
+      constraintFailList.push({ key, formulaId });
     }
   }
 
@@ -1315,6 +1317,65 @@ async function cmdRun(opts: {
     }
     regList.length = 0;
     regList.push(...confirmedRegs);
+    saveStore(store);
+  }
+
+  // ── Retry constraint failures sequentially with 2× timeout ──
+  // Tight ER/CR constraints can fail under CPU contention — retry with dedicated time.
+  if (constraintFailList.length > 0 && opts.parallel > 0) {
+    const retryTimeout = opts.timeoutSec * 2;
+    console.log(
+      `\n${C.bold}═══ Retrying ${constraintFailList.length} constraint failure(s) sequentially (${retryTimeout}s timeout) ═══${C.reset}\n`
+    );
+
+    const stillFailing: typeof constraintFailList = [];
+    for (const cf of constraintFailList) {
+      const problem = store.problems[cf.key];
+      const team = teamById.get(problem?.teamId ?? "");
+      if (!team || !problem) {
+        stillFailing.push(cf);
+        continue;
+      }
+      const retryResult = await runOptimizerOnTeam(
+        team,
+        accountData,
+        inventory,
+        opts.algo,
+        retryTimeout * 1000,
+        opts.algo !== "v1" ? (retryTimeout * 1000) / 4 : undefined,
+        cf.formulaId,
+        opts.maxArtsPerSlot || undefined
+      );
+
+      const storeResult = tryStoreSolution(
+        store,
+        cf.key,
+        team,
+        cf.formulaId,
+        retryResult.artifactAssignment,
+        retryResult.optimizedDamage,
+        opts.algo,
+        accountData,
+        inventory,
+        { solveTimeSec: retryResult.optimizeTimeSec }
+      );
+
+      const charNames = team.characters.filter(Boolean).join("/");
+      if (storeResult.constraintViolations.length === 0) {
+        console.log(
+          `  ${C.green}ok${C.reset} ${cf.key} → ${fmt(retryResult.optimizedDamage)} (constraint recovered in ${retryResult.optimizeTimeSec.toFixed(1)}s)`
+        );
+        constraintFails--;
+      } else {
+        console.log(
+          `  ${C.red}X${C.reset} ${cf.key} → constraints still violated (confirmed)`
+        );
+        logConstraintViolations(storeResult.constraintViolations, "    ");
+        stillFailing.push(cf);
+      }
+    }
+    constraintFailList.length = 0;
+    constraintFailList.push(...stillFailing);
     saveStore(store);
   }
 
