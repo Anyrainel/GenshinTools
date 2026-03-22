@@ -1803,9 +1803,9 @@ export async function* runTeamOptimization(
               id: 0,
               charId: input.charId,
               charConfig: input.charConfig,
-              configs: teamBuild.configs,
-              combatOpts: teamBuild.combatOpts,
-              enemyElementAura: teamBuild.enemyElementAura,
+              configs: effectiveTeamBuild.configs,
+              combatOpts: effectiveTeamBuild.combatOpts,
+              enemyElementAura: effectiveTeamBuild.enemyElementAura,
               carryCharId,
               formulaId,
               inventory,
@@ -1996,7 +1996,8 @@ export async function* runTeamOptimization(
       ];
 
       if (is4pc) {
-        // Need 4 slots on-set. Pick the slot with fewest on-set candidates as flex.
+        // Need 4 slots on-set + 1 flex. When ER constraint exists, choose the
+        // flex slot that maximizes achievable ER; otherwise fewest on-set candidates.
         const setId = charConfig.artifactSetId!;
         const onSetCounts = allSlots.map(
           (slot) =>
@@ -2007,10 +2008,49 @@ export async function* runTeamOptimization(
                 !assignedIds.has(a.id)
             ).length
         );
-        // Flex slot = slot with fewest on-set candidates
+
         let flexSlotIdx = 0;
-        for (let i = 1; i < 5; i++) {
-          if (onSetCounts[i] < onSetCounts[flexSlotIdx]) flexSlotIdx = i;
+        if (charConfig.minEr > 0) {
+          // ER-aware flex slot: pick the slot where off-set best ER minus on-set best ER is largest
+          let bestFlexEr = Number.NEGATIVE_INFINITY;
+          for (let fi = 0; fi < 5; fi++) {
+            // Check all other slots have on-set candidates
+            let valid = true;
+            for (let si = 0; si < 5; si++) {
+              if (si !== fi && onSetCounts[si] === 0) {
+                valid = false;
+                break;
+              }
+            }
+            if (!valid) continue;
+            // Compute max ER for this flex configuration
+            let totalEr = 0;
+            for (let si = 0; si < 5; si++) {
+              const slot = allSlots[si];
+              const isOnSet = si !== fi;
+              const candidates = inventory.filter(
+                (a) =>
+                  a.slotKey === slot &&
+                  !assignedIds.has(a.id) &&
+                  (isOnSet ? a.setKey === setId : true)
+              );
+              let maxSlotEr = 0;
+              for (const a of candidates) {
+                const er = getArtifactEr(a);
+                if (er > maxSlotEr) maxSlotEr = er;
+              }
+              totalEr += maxSlotEr;
+            }
+            if (totalEr > bestFlexEr) {
+              bestFlexEr = totalEr;
+              flexSlotIdx = fi;
+            }
+          }
+        } else {
+          // Default: fewest on-set candidates
+          for (let i = 1; i < 5; i++) {
+            if (onSetCounts[i] < onSetCounts[flexSlotIdx]) flexSlotIdx = i;
+          }
         }
         for (let i = 0; i < 5; i++) {
           slotSetAssignment[i] = i === flexSlotIdx ? null : setId;
