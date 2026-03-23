@@ -677,8 +677,16 @@ export async function* runTeamOptimization(
         }
 
         const base = Math.max(dmgEmpty, 1);
-        if (Math.abs(dmgSuper - dmgEmpty) / base < 0.001) {
+        const satDelta = Math.abs(dmgSuper - dmgEmpty) / base;
+        if (satDelta < 0.001) {
           saturatedCharIds.add(cid);
+          // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+          const epc = perChar[cid];
+          if (epc && (epc.minEr > 0 || epc.minCr > 0)) {
+            console.log(
+              `[DEBUG-CONSTRAINT] ${cid} marked SATURATED (delta=${(satDelta * 100).toFixed(4)}%) with constraints: minEr=${epc.minEr} minCr=${epc.minCr}`
+            );
+          }
         }
       } catch {
         // If evaluation fails, don't mark as saturated — let B&B handle it
@@ -1559,6 +1567,14 @@ export async function* runTeamOptimization(
       bestArtifactsByChar[charId] = best
         ? artsTupleToRecord(best.artifacts)
         : { ...emptyArtifacts };
+      // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+      const epc = effectivePerChar[charId];
+      if (epc && epc.minEr > 0) {
+        const topKLen = topKByChar[charId]?.length ?? 0;
+        console.log(
+          `[DEBUG-CONSTRAINT] ${charId} Phase 2 allocation: NOT in bestAllocation, topK has ${topKLen} entries, using ${best ? "topK[0]" : "EMPTY artifacts"}`
+        );
+      }
     }
   }
 
@@ -1957,6 +1973,12 @@ export async function* runTeamOptimization(
     if (!hasArtifacts) needsHeuristicFill.add(charId);
   }
 
+  // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+  if (needsHeuristicFill.size > 0) {
+    console.log(
+      `[DEBUG-CONSTRAINT] Heuristic fill needed for: ${[...needsHeuristicFill].join(", ")} (saturated: ${[...saturatedCharIds].join(", ")})`
+    );
+  }
   if (needsHeuristicFill.size > 0) {
     // Collect all artifact IDs already assigned to characters NOT needing fill
     const assignedIds = new Set<string>();
@@ -2168,6 +2190,13 @@ export async function* runTeamOptimization(
         const crViolated =
           checker.hasCr && checker.crFloor + pickedCr < checker.minCr - 1e-6;
 
+        // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+        if (checker.hasEr) {
+          console.log(
+            `[DEBUG-CONSTRAINT] ${charId} heuristic greedy pick: erFloor=${(checker.erFloor * 100).toFixed(1)}% + pickedEr=${(pickedEr * 100).toFixed(1)}% = ${((checker.erFloor + pickedEr) * 100).toFixed(1)}% vs required=${(checker.minEr * 100).toFixed(1)}% → ${erViolated ? "VIOLATED" : "ok"}`
+          );
+        }
+
         if (erViolated || crViolated) {
           // Constraint violated. Re-pick: force mainstat pieces for the
           // violated stats, then fill remaining slots sorted by need.
@@ -2282,6 +2311,37 @@ export async function* runTeamOptimization(
         }
       }
 
+      // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+      {
+        const { minEr, minCr } = charConfig;
+        if (minEr > 0 || minCr > 0) {
+          let finalPickedEr = 0;
+          let finalPickedCr = 0;
+          for (const slot of allSlots) {
+            if (picked[slot]) {
+              finalPickedEr += getArtifactEr(picked[slot]!);
+              finalPickedCr += getArtifactCr(picked[slot]!);
+            }
+          }
+          const missingSlots = allSlots.filter((s) => !picked[s]);
+          const checker = new ConstraintChecker(
+            effectiveTeamBuild,
+            charId,
+            baseSheets,
+            carryCharId,
+            calcContext,
+            minEr,
+            minCr
+          );
+          console.log(
+            `[DEBUG-CONSTRAINT] ${charId} FINAL heuristic: erFloor=${(checker.erFloor * 100).toFixed(1)}% + artEr=${(finalPickedEr * 100).toFixed(1)}% = ${((checker.erFloor + finalPickedEr) * 100).toFixed(1)}% vs required=${(minEr * 100).toFixed(1)}%` +
+              (missingSlots.length > 0
+                ? ` (${missingSlots.length} empty slots: ${missingSlots.join(",")})`
+                : "")
+          );
+        }
+      }
+
       bestArtifactsByChar[charId] = picked;
       // Mark assigned IDs so subsequent saturated chars don't reuse them
       for (const id of pickedIds) assignedIds.add(id);
@@ -2347,6 +2407,10 @@ export async function* runTeamOptimization(
       const cr = validationStats[charId]?.get("cr", null) ?? 0;
 
       if (minEr > 0 && er < minEr - 1e-6) {
+        // [DEBUG-CONSTRAINT] Remove this logging block after investigation
+        console.log(
+          `[DEBUG-CONSTRAINT] ${charId} FINAL VALIDATION FAIL: er=${(er * 100).toFixed(1)}% < required=${(minEr * 100).toFixed(1)}% (saturated=${saturatedCharIds.has(charId)}, hasArts=${!!bestArtifactsByChar[charId]})`
+        );
         failReasons[charId] = { kind: "er-unmet", minEr, bestEr: er };
       } else if (minCr > 0 && cr < minCr - 1e-6) {
         failReasons[charId] = { kind: "cr-unmet", minCr, bestCr: cr };

@@ -995,11 +995,13 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         </Button>
         <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
           {team.name || t.ui("teamComp.teamOptimization")}
-          <Info
-            className="w-5 h-5 text-primary inline-block ml-1.5 align-baseline cursor-pointer"
+          <span
+            className="inline-block ml-1.5 align-baseline cursor-pointer"
             onClick={() => setLimitOpen(true)}
             title={t.ui("calcLimitations.title")}
-          />
+          >
+            <Info className="w-5 h-5 text-primary" />
+          </span>
         </h2>
       </div>
 
