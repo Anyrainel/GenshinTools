@@ -138,8 +138,13 @@ function PartTab({
         >
           {group.buffs.map((buff, bi) => {
             const bKey = buffSourceKey(buff.source);
+            // Cap slider range for stack-limited buffs
+            const effectiveMax =
+              buff.source.maxStacks != null
+                ? Math.min(sliderMax, buff.source.maxStacks)
+                : sliderMax;
             const defaultHits =
-              defaultActivation?.[bKey]?.[partIndex] ?? sliderMax;
+              defaultActivation?.[bKey]?.[partIndex] ?? effectiveMax;
             const currentHits = overrides?.[bKey]?.[partIndex] ?? defaultHits;
             const isDefault = overrides?.[bKey]?.[partIndex] === undefined;
 
@@ -225,7 +230,7 @@ function PartTab({
                   </div>
 
                   {/* Activation control */}
-                  {sliderMax === 1 ? (
+                  {effectiveMax === 1 ? (
                     <div className="flex items-center gap-1.5 shrink-0">
                       <Switch
                         checked={currentHits > 0}
@@ -243,16 +248,16 @@ function PartTab({
                     <div className="flex items-center gap-1.5 shrink-0 w-28">
                       <Slider
                         min={0}
-                        max={sliderMax}
+                        max={effectiveMax}
                         step={1}
-                        value={[currentHits]}
+                        value={[Math.min(currentHits, effectiveMax)]}
                         onValueChange={([v]) =>
                           storeSetHits(storeKey, bKey, partIndex, v!)
                         }
                         className="flex-1"
                       />
                       <span className="text-[10px] tabular-nums text-foreground text-right">
-                        {currentHits}/{sliderMax}
+                        {Math.min(currentHits, effectiveMax)}/{effectiveMax}
                       </span>
                     </div>
                   )}

@@ -12,6 +12,7 @@ import {
   computeDefaultActivation,
   distributeComboHits,
 } from "@/lib/team-comp/stackAllocation";
+import { aggregateComboFormulaDefaults } from "@/lib/team-comp/teamOptUtils";
 import type { CalcContext, StatKey } from "@/lib/team-comp/types";
 import { buffSourceKey, exclusionKey } from "@/lib/team-comp/types";
 
@@ -694,6 +695,78 @@ describe("distributeComboHits", () => {
 
   it("handles single line", () => {
     expect(distributeComboHits(4, 3, [3])).toEqual([4]);
+  });
+});
+
+describe("aggregateComboFormulaDefaults", () => {
+  it("sums per-line per-cast values for matching formula", () => {
+    const bKey = "character:escoffier:C2";
+
+    // Two combo lines for the same formula, each with different per-cast values
+    const activeLines = [
+      { charId: "skirk", formulaId: "burst", count: 2 },
+      { charId: "skirk", formulaId: "burst", count: 3 },
+    ];
+    // Per-line per-cast: line 0 gets 1.5 per cast, line 1 gets 0.5 per cast
+    const perLine = [{ [bKey]: { 0: 1.5 } }, { [bKey]: { 0: 0.5 } }];
+
+    const result = aggregateComboFormulaDefaults(
+      activeLines,
+      perLine,
+      "skirk",
+      "burst"
+    );
+
+    // Total = 1.5 × 2 + 0.5 × 3 = 4.5
+    expect(result[bKey]![0]).toBeCloseTo(4.5);
+  });
+
+  it("Escoffier C2 (maxStacks=5) across 4 reps keeps total ≤ 5", () => {
+    // Simulate computeComboDefaultActivation giving per-cast values for a
+    // 21-hit formula repeated 4 times. Budget = 5 across 84 total hits.
+    // Greedy allocation: 5 stacks → per-cast = 5/4 = 1.25 each line.
+    const bKey = "character:escoffier:C2";
+    const activeLines = [
+      { charId: "skirk", formulaId: "burst", count: 1 },
+      { charId: "skirk", formulaId: "burst", count: 1 },
+      { charId: "skirk", formulaId: "burst", count: 1 },
+      { charId: "skirk", formulaId: "burst", count: 1 },
+    ];
+    const perLine = [
+      { [bKey]: { 0: 1.25 } },
+      { [bKey]: { 0: 1.25 } },
+      { [bKey]: { 0: 1.25 } },
+      { [bKey]: { 0: 1.25 } },
+    ];
+
+    const result = aggregateComboFormulaDefaults(
+      activeLines,
+      perLine,
+      "skirk",
+      "burst"
+    );
+
+    // Total must be exactly 5 (not 21 per-formula × 4)
+    expect(result[bKey]![0]).toBe(5);
+  });
+
+  it("ignores lines for different formula", () => {
+    const bKey = "character:escoffier:C2";
+    const activeLines = [
+      { charId: "skirk", formulaId: "burst", count: 2 },
+      { charId: "skirk", formulaId: "charged", count: 1 },
+    ];
+    const perLine = [{ [bKey]: { 0: 2.0 } }, { [bKey]: { 0: 1.0 } }];
+
+    const result = aggregateComboFormulaDefaults(
+      activeLines,
+      perLine,
+      "skirk",
+      "burst"
+    );
+
+    // Only line 0 matches → 2.0 × 2 = 4.0
+    expect(result[bKey]![0]).toBe(4.0);
   });
 });
 

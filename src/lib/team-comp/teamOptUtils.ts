@@ -333,3 +333,40 @@ export function buildComboLinePartialBuffs(
     perLineUserOverrides.size > 0 ? perLineUserOverrides : undefined
   );
 }
+
+/**
+ * Aggregate per-line per-cast combo defaults into a single per-formula
+ * combo-total BuffActivationMap.
+ *
+ * For each combo line matching `charId`/`formulaId`, sums:
+ *   comboTotal[bKey][partIdx] += perCast * line.count
+ *
+ * The result is suitable for the drill-down dialog's default activation
+ * (where slider values represent the total across the entire combo).
+ */
+export function aggregateComboFormulaDefaults(
+  activeLines: ComboLine[],
+  perLine: BuffActivationMap[],
+  charId: string,
+  formulaId: string
+): BuffActivationMap {
+  const result: BuffActivationMap = {};
+
+  for (let i = 0; i < activeLines.length; i++) {
+    const line = activeLines[i];
+    if (line.charId !== charId || line.formulaId !== formulaId) continue;
+
+    const lineMap = perLine[i];
+    if (!lineMap) continue;
+
+    for (const [bKey, partMap] of Object.entries(lineMap)) {
+      if (!result[bKey]) result[bKey] = {};
+      for (const [pidxStr, perCast] of Object.entries(partMap)) {
+        const pidx = Number(pidxStr);
+        result[bKey][pidx] = (result[bKey][pidx] ?? 0) + perCast * line.count;
+      }
+    }
+  }
+
+  return result;
+}

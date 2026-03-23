@@ -33,7 +33,7 @@ import {
   computeComboDefaultActivation,
   computeDefaultActivation,
 } from "./stackAllocation";
-import type { PartialBuffInfo } from "./stackAllocation";
+import type { PartialBuffInfo, StackLimitedBuffInfo } from "./stackAllocation";
 import type {
   BuffActivationMap,
   BuffReceiverType,
@@ -2088,6 +2088,87 @@ export class TeamBuild {
   ): Record<number, PartialBuffInfo[]> | undefined {
     if (activeLines.length === 0) return undefined;
 
+    const { defaultActivations, stackLimited, lineEntries } =
+      this.buildComboDefaults(activeLines, sheets, ctx);
+
+    // ── Merge defaults + user overrides → PartialBuffInfo[] per line ──
+    const result: Record<number, PartialBuffInfo[]> = {};
+
+    for (let lineIdx = 0; lineIdx < activeLines.length; lineIdx++) {
+      const entry = lineEntries[lineIdx];
+      if (!entry) continue;
+
+      const merged: BuffActivationMap = { ...defaultActivations[lineIdx] };
+      const userOv = perLineUserOverrides?.get(lineIdx);
+      if (userOv) {
+        TeamBuild.mergeActivationOverrides(merged, userOv);
+      }
+
+      const infos: PartialBuffInfo[] = [];
+
+      if (stackLimited.length > 0) {
+        infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
+      }
+
+      if (userOv && Object.keys(userOv).length > 0) {
+        const lineCharId = activeLines[lineIdx].charId;
+        infos.push(
+          ...buildUserOverrideInfos(
+            userOv,
+            this.allStaticBuffs,
+            entry.parts,
+            (buff, providerId) =>
+              this.isBuffApplicableForChar(buff, providerId, lineCharId, true)
+          )
+        );
+      }
+
+      if (infos.length > 0) {
+        result[lineIdx] = infos;
+      }
+    }
+
+    return Object.keys(result).length > 0 ? result : undefined;
+  }
+
+  /**
+   * Compute combo-wide default activations and stack-limited buff info.
+   *
+   * Used by both the damage calc hot path (computeComboPartialBuffSpecs) and
+   * the display/dialog path (getComboFormulaDefaults) so that both share the
+   * same maxStack budget across ALL combo lines.
+   */
+  getComboFormulaDefaults(
+    activeLines: ComboLine[],
+    sheets: Record<string, StatSheet>,
+    ctx: CalcContext
+  ): {
+    perLine: BuffActivationMap[];
+    stackLimited: StackLimitedBuffInfo[];
+  } {
+    if (activeLines.length === 0) return { perLine: [], stackLimited: [] };
+    const { defaultActivations, stackLimited } = this.buildComboDefaults(
+      activeLines,
+      sheets,
+      ctx
+    );
+    return { perLine: defaultActivations, stackLimited };
+  }
+
+  /**
+   * Build combo-wide default activation by resolving stats and running
+   * computeComboDefaultActivation. Shared between computeComboPartialBuffSpecs
+   * and getComboFormulaDefaults.
+   */
+  private buildComboDefaults(
+    activeLines: ComboLine[],
+    sheets: Record<string, StatSheet>,
+    ctx: CalcContext
+  ): {
+    defaultActivations: BuffActivationMap[];
+    stackLimited: StackLimitedBuffInfo[];
+    lineEntries: (ReturnType<CharacterBase["getFormulaEntry"]> | null)[];
+  } {
     // ── Resolve pre/post stats using first on-field char for buff collection ──
     const firstCharId = activeLines[0].charId;
     const fieldDependent = this.getFieldDependentBuffs(firstCharId);
@@ -2162,44 +2243,7 @@ export class TeamBuild {
       ctx
     );
 
-    // ── Merge defaults + user overrides → PartialBuffInfo[] per line ──
-    const result: Record<number, PartialBuffInfo[]> = {};
-
-    for (let lineIdx = 0; lineIdx < activeLines.length; lineIdx++) {
-      const entry = lineEntries[lineIdx];
-      if (!entry) continue;
-
-      const merged: BuffActivationMap = { ...defaultActivations[lineIdx] };
-      const userOv = perLineUserOverrides?.get(lineIdx);
-      if (userOv) {
-        TeamBuild.mergeActivationOverrides(merged, userOv);
-      }
-
-      const infos: PartialBuffInfo[] = [];
-
-      if (stackLimited.length > 0) {
-        infos.push(...buildPartialBuffInfos(merged, stackLimited, entry.parts));
-      }
-
-      if (userOv && Object.keys(userOv).length > 0) {
-        const lineCharId = activeLines[lineIdx].charId;
-        infos.push(
-          ...buildUserOverrideInfos(
-            userOv,
-            this.allStaticBuffs,
-            entry.parts,
-            (buff, providerId) =>
-              this.isBuffApplicableForChar(buff, providerId, lineCharId, true)
-          )
-        );
-      }
-
-      if (infos.length > 0) {
-        result[lineIdx] = infos;
-      }
-    }
-
-    return Object.keys(result).length > 0 ? result : undefined;
+    return { defaultActivations, stackLimited, lineEntries };
   }
 }
 

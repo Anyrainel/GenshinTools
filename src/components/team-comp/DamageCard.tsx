@@ -22,13 +22,18 @@ import { fmtDamage } from "@/lib/team-comp/displayFormatters";
 import type { GeneratorResult } from "@/lib/team-comp/generator";
 import type { SubstatBudgetPreset } from "@/lib/team-comp/substatBudget";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "@/lib/team-comp/substatBudget";
-import { calcDisplayResult, toStatSheets } from "@/lib/team-comp/teamOptUtils";
+import {
+  aggregateComboFormulaDefaults,
+  calcDisplayResult,
+  toStatSheets,
+} from "@/lib/team-comp/teamOptUtils";
 import type {
   OptFailReason,
   TeamOptimizationProgress,
   TeamOptimizationResult,
 } from "@/lib/team-comp/types";
 import type {
+  BuffActivationMap,
   CalcContext,
   ComboLine,
   ComboResult,
@@ -38,8 +43,10 @@ import type {
   ReactionOverride,
   StatKey,
 } from "@/lib/team-comp/types";
+import { buffSourceKey } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { getAssetUrl } from "@/lib/utils";
+import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import type { Team } from "@/stores/useTeamStore";
 import {
   AlertTriangle,
@@ -427,6 +434,79 @@ function ComboBreakdown({
     };
   }, [focusedLine, comboId, activeLines]);
 
+  // ── Combo-wide defaults (shared maxStack budget) ──
+  // Memoized independently of focusedLine so it's computed once per combo.
+  const comboDefaults = useMemo(() => {
+    if (activeLines.length === 0) return undefined;
+    const sheets = toStatSheets(teamCharIds, artifactsByChar);
+    return teamBuild.getComboFormulaDefaults(activeLines, sheets, calcContext);
+  }, [teamBuild, activeLines, teamCharIds, artifactsByChar, calcContext]);
+
+  // Aggregate combo defaults for the focused formula's drill-down
+  const focusedComboActivation = useMemo(() => {
+    if (!focusedLine || !comboDefaults) return undefined;
+    return aggregateComboFormulaDefaults(
+      activeLines,
+      comboDefaults.perLine,
+      focusedLine.charId,
+      focusedLine.formulaId
+    );
+  }, [focusedLine, comboDefaults, activeLines]);
+
+  // Re-annotate display parts with combo-aware partialBuffs.
+  // In combo mode, totalHits = partHits × comboCount and activatedHits = combo default.
+  // Also merge user overrides on top so the dot indicator reflects actual state.
+  const comboKey = focusedComboInfo?.comboKey;
+  const comboOverrides = useBuffOverrideStore((s) =>
+    comboKey ? s.comboOverrides[comboKey] : undefined
+  );
+  const focusedParts = useMemo(() => {
+    if (!focusedDisplayResult || !focusedLine) return undefined;
+    const comboCount = focusedComboInfo?.comboCount ?? 1;
+    if (comboCount <= 1 || !comboDefaults) return undefined;
+
+    // Merge user overrides on top of combo defaults
+    const merged: BuffActivationMap = { ...focusedComboActivation };
+    if (comboOverrides) {
+      for (const [bKey, partMap] of Object.entries(comboOverrides)) {
+        if (!merged[bKey]) merged[bKey] = {};
+        for (const [pidx, hits] of Object.entries(partMap)) {
+          merged[bKey][Number(pidx)] = hits;
+        }
+      }
+    }
+
+    // Re-annotate parts
+    return focusedDisplayResult.parts.map((p, idx) => {
+      const sourceIdx = p.sourcePartIndex ?? idx;
+      const partHits = p.hits ?? 1;
+      const totalHits = partHits * comboCount;
+      const partialBuffs: DisplayPart["partialBuffs"] = [];
+
+      for (const [bKey, partMap] of Object.entries(merged)) {
+        const activated = partMap[sourceIdx];
+        if (activated != null && activated < totalHits) {
+          partialBuffs.push({
+            buffKey: bKey,
+            activatedHits: activated,
+            totalHits,
+          });
+        }
+      }
+
+      return partialBuffs.length > 0
+        ? { ...p, partialBuffs, sourcePartIndex: sourceIdx }
+        : p;
+    });
+  }, [
+    focusedDisplayResult,
+    focusedLine,
+    focusedComboInfo,
+    comboDefaults,
+    focusedComboActivation,
+    comboOverrides,
+  ]);
+
   return (
     <div className={cn(isMobile ? "space-y-1" : "space-y-2")}>
       <Collapsible open={expanded} onOpenChange={setExpanded}>
@@ -531,12 +611,15 @@ function ComboBreakdown({
                   </span>
                 </div>
                 <FormulaBreakdown
-                  parts={focusedDisplayResult.parts}
+                  parts={focusedParts ?? focusedDisplayResult.parts}
                   highlightedStat={null}
                   critMode={critMode}
                   t={t}
                   buffs={focusedDisplayResult.buffs}
-                  defaultActivation={focusedDisplayResult.buffActivation}
+                  defaultActivation={
+                    focusedComboActivation ??
+                    focusedDisplayResult.buffActivation
+                  }
                   formulaKey={`${focusedLine.charId}.${focusedLine.formulaId}`}
                   comboCount={focusedComboInfo?.comboCount}
                   comboKey={focusedComboInfo?.comboKey}
