@@ -6,7 +6,7 @@ Read AGENTS.md for project context if needed.
 - Same applies to `border-muted-foreground/` — use `border-border` or `border-muted-foreground` without opacity.
 
 # Store refactor rules
-Whenever a new feature requires incompatible changes to a store's data structure, always document the changes in the code, and also immediately add proper migration logic, and add migration test to ensure old format can migrate to new data format.
+Whenever a new feature requires incompatible changes to a store's data structure, always document the changes in the code during implementation. Always remember to add proper migration logic with respect to the current origin version (treat pending changes and local only commits as the same version), and add migration test to ensure old format can migrate to new data format.
 It would be a good habit to version the store data so there is an easier way to check for migration logic.
 When it is not possible to implement a smooth auto migration, discuss different options with user.
 

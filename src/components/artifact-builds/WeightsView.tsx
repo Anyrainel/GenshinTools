@@ -552,7 +552,7 @@ function ResultCard({
             background: `linear-gradient(90deg, ${elHex}, transparent)`,
           }}
         />
-        <div className="p-3 flex items-center gap-2.5">
+        <div className="p-3 flex items-center gap-2">
           {char && (
             <ItemIcon
               imagePath={char.imagePath}
@@ -597,7 +597,7 @@ function ResultCard({
 
       <div className="p-3 space-y-3">
         {/* ── Header ── */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {char && (
             <ItemIcon
               imagePath={char.imagePath}
@@ -1056,7 +1056,7 @@ export function WeightsView() {
 
       {/* ── Result grid ── */}
       {phase !== "selection" && (
-        <div className="grid gap-2.5 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
+        <div className="grid gap-2 grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3">
           {entries
             .filter(
               (e) =>

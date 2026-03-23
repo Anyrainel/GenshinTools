@@ -16,6 +16,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { cn } from "@/lib/utils";
 
 interface ResponsiveDialogProps {
   open: boolean;
@@ -119,8 +120,8 @@ function ResponsiveDialogContent({
   }
 
   return (
-    <DrawerContent className={className}>
-      <div className="flex flex-col h-full max-h-[85vh] overflow-y-auto px-4 pb-6 safe-area-bottom">
+    <DrawerContent>
+      <div className={cn("flex flex-col h-full max-h-[85vh] overflow-y-auto px-4 pb-6 safe-area-bottom", className)}>
         {children}
       </div>
     </DrawerContent>
