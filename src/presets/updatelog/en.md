@@ -12,10 +12,14 @@
 - Analyzer reworked: more accurate artifact snapshots per constellation, faster evaluation, and per-phase progress display
 - Analyzer graph view uses improved path-finding for more complete upgrade paths
 - Half-set filter chips in triage and inventory views
+- Calculation limitations info sheet in team detail page
 - More character and weapon formulas: Skirk, Xiangling, Baizhu, Chongyun C6, and others
+- Formula options now show explicit "None" / "0" choices instead of implicit defaults
 
 ### fixes
 - Fixed buff stack allocation not updating correctly when constellation changes
+- Fixed artifact generation not accounting for buff overrides, producing less optimal artifacts
+- Optimizer and generator now use compiled formulas for combo evaluation, significantly faster
 
 ## 2025-03-21
 
