@@ -9,19 +9,13 @@
 ### features
 - Extra buffs: add food, environment (Imaginarium Theater, Spiral Abyss, Stygian Onslaught), and custom stat buffs to damage calculations
 - Extra buffs now appear as full entries in the Buffs & Effects Ledger with icons and names
-- Analyzer reworked: more accurate artifact snapshots per constellation, faster evaluation with build caching, and per-phase progress display
-- Analyzer now computes buff stack allocation fresh per constellation, fixing issues with constellation-dependent max stacks
+- Analyzer reworked: more accurate artifact snapshots per constellation, faster evaluation, and per-phase progress display
 - Analyzer graph view uses improved path-finding for more complete upgrade paths
 - Half-set filter chips in triage and inventory views
-- Calculation limitations info sheet in team detail page
 - More character and weapon formulas: Skirk, Xiangling, Baizhu, Chongyun C6, and others
-- Formula options now show explicit "None" / "0" choices instead of implicit defaults
 
 ### fixes
-- Fixed formula breakdown showing a dangling operator when there is no base bonus
 - Fixed buff stack allocation not updating correctly when constellation changes
-- Fixed generator not passing buff overrides through constrained artifact generation
-- Improved responsive layout across analyzer dialog and team detail components
 
 ## 2025-03-21
 
