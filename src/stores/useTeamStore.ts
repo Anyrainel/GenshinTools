@@ -1,7 +1,8 @@
 import type { ArtifactConfig } from "@/components/shared/ItemPicker";
 import type { ArtifactData, Element, ReactionType } from "@/data/types";
+import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer";
 import type { OptionMap } from "@/lib/team-comp/damageModels";
-import type { InvestmentCharConfig } from "@/lib/team-comp/investmentOptimizer";
+import type { ExtraBuff } from "@/lib/team-comp/extraBuffTypes";
 import type {
   CalcContext,
   ComboFormula,
@@ -54,6 +55,79 @@ export function migrateTeamStore(
       };
     });
   }
+  if (version < 5) {
+    // Add extraBuffs field
+    state.teams = state.teams.map((t) => ({
+      ...t,
+      extraBuffs: (t as Team).extraBuffs ?? [],
+    }));
+  }
+  if (version < 6) {
+    // Rename investmentConfigs → analyzerConfigs
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field name
+    state.teams = state.teams.map((t: any) => {
+      const { investmentConfigs, ...rest } = t;
+      return {
+        ...rest,
+        analyzerConfigs: t.analyzerConfigs ?? investmentConfigs,
+      };
+    });
+  }
+  if (version < 7) {
+    // Batch renames: calcContext.idealSubstatBudget → substatBudget, enemyElementAura → enemyAura
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy field names
+    state.teams = state.teams.map((t: any) => {
+      let team = t;
+      // calcContext.idealSubstatBudget → substatBudget
+      if (team.calcContext?.idealSubstatBudget) {
+        const { idealSubstatBudget, ...restCtx } = team.calcContext;
+        team = {
+          ...team,
+          calcContext: { ...restCtx, substatBudget: idealSubstatBudget },
+        };
+      }
+      // enemyElementAura → enemyAura
+      if (team.enemyElementAura) {
+        const { enemyElementAura, ...rest } = team;
+        team = { ...rest, enemyAura: enemyElementAura };
+      }
+      return team;
+    });
+  }
+  if (version < 8) {
+    // analyzerConfigs: store only the alt weapon (not from roster)
+    // biome-ignore lint/suspicious/noExplicitAny: migration from legacy AnalyzerCharConfig
+    state.teams = state.teams.map((t: any) => {
+      if (!t.analyzerConfigs?.length) return t;
+      // biome-ignore lint/suspicious/noExplicitAny: migration
+      const configs = t.analyzerConfigs.map((cfg: any) => {
+        const charIdx = t.characters?.indexOf(cfg.charId) ?? -1;
+        const rosterWeaponId = charIdx >= 0 ? t.weapons?.[charIdx] : null;
+        // The alt weapon is whichever stored weapon doesn't match the roster
+        let altWeapon: { id: string; refinement?: number } | undefined;
+        if (cfg.weapon5Star?.id && cfg.weapon5Star.id !== rosterWeaponId) {
+          altWeapon = { id: cfg.weapon5Star.id };
+        } else if (
+          cfg.weapon4Star?.id &&
+          cfg.weapon4Star.id !== rosterWeaponId
+        ) {
+          altWeapon = {
+            id: cfg.weapon4Star.id,
+            refinement: cfg.weapon4Star.refinement,
+          };
+        }
+        return {
+          charId: cfg.charId,
+          altWeapon,
+          startConstellation: cfg.startConstellation ?? 0,
+          startRefinement: cfg.startRefinement ?? 0,
+          maxConstellation: cfg.maxConstellation ?? 6,
+          maxRefinement: cfg.maxRefinement ?? 5,
+        };
+      });
+      return { ...t, analyzerConfigs: configs };
+    });
+  }
   return state;
 }
 
@@ -96,6 +170,7 @@ const DEFAULT_TEAM_FIELDS = {
   minEr: {} as Record<string, number>,
   minCr: {} as Record<string, number>,
   opts: {} as OptionMap,
+  extraBuffs: [] as ExtraBuff[],
 } satisfies Partial<Team>;
 
 export interface Team {
@@ -120,9 +195,11 @@ export interface Team {
   /** Active combo ID, null = single formula mode */
   selectedCombo: string | null;
   /** Persistent element aura on the enemy (e.g. Pyro Regisvine). Enables reactions the team can't otherwise trigger. */
-  enemyElementAura?: Element;
-  /** Per-character investment analysis configs (weapon choices, start C/R). Separate from roster settings. */
-  investmentConfigs?: InvestmentCharConfig[];
+  enemyAura?: Element;
+  /** Per-character analyzer configs (alt weapon, start/max C/R). Roster weapon is derived at runtime. */
+  analyzerConfigs?: StoredAnalyzerCharConfig[];
+  /** Extra buffs applied by user (food, environment, status, custom). UI-only until plugged into TeamBuild. */
+  extraBuffs?: ExtraBuff[];
 }
 
 /** Exported artifact — `type` discriminator omitted since field names differ. */
@@ -372,7 +449,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 4,
+      version: 8,
       migrate: migrateTeamStore,
       merge: mergeTeamStore,
     }

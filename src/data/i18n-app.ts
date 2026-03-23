@@ -248,4 +248,67 @@ export const i18nAppData = {
     "nightsoul-energy-6": { en: "Nightsoul ER", zh: "夜魂能量" },
     "plunge-dmg%-25": { en: "Plunge", zh: "下落" },
   },
+  envBuffs: {
+    gateau_debord: {
+      en: "Gateau Debord: Magnifique",
+      zh: "德波大蛋糕·绚丽型",
+    },
+    flavor_of_spring: { en: "Flavor of Spring", zh: "炸春鲜" },
+    once_upon_mondstadt: {
+      en: '"Once Upon a Time in Mondstadt"',
+      zh: "「蒙德往事」",
+    },
+    gilded_hall: { en: "Gilded Hall", zh: "鎏金殿堂" },
+    cheesy_crab_hotpot: {
+      en: "Delicious Cheesy Crab Hotpot",
+      zh: "美味的酪香蟹蟹锅",
+    },
+    adeptus_temptation: {
+      en: "Delicious Adeptus' Temptation",
+      zh: "美味的仙跳墙",
+    },
+    strength_tonic: { en: "Strength Tonic", zh: "「强水」" },
+    forest_essential_oil: {
+      en: "Forest Essential Oil",
+      zh: "丛林精油",
+    },
+    unmoving_essential_oil: {
+      en: "Unmoving Essential Oil",
+      zh: "磐石精油",
+    },
+    shocking_essential_oil: {
+      en: "Shocking Essential Oil",
+      zh: "惊雷精油",
+    },
+    gushing_essential_oil: {
+      en: "Gushing Essential Oil",
+      zh: "狂风精油",
+    },
+    frosting_essential_oil: {
+      en: "Frosting Essential Oil",
+      zh: "霜劫精油",
+    },
+    streaming_essential_oil: {
+      en: "Streaming Essential Oil",
+      zh: "激流精油",
+    },
+    flaming_essential_oil: {
+      en: "Flaming Essential Oil",
+      zh: "烈火精油",
+    },
+    env_ichcahuipilli: {
+      en: "Ichcahuipilli's Aegis",
+      zh: "「依奇卡胡伊皮利的庇护」",
+    },
+    env_radiant_moongecko_1: {
+      en: "Radiant Moongecko 1",
+      zh: "蕴光月守宫1",
+    },
+    env_radiant_moongecko_2: {
+      en: "Radiant Moongecko 2",
+      zh: "蕴光月守宫2",
+    },
+    status_theater: { en: "Fantastical Blessing", zh: "「幻境祝福」" },
+    status_rift: { en: "Eminent Boon", zh: "「赋光之人」" },
+  },
 };

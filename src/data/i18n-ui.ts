@@ -24,6 +24,8 @@ export const i18nUiData = {
     delete: { en: "Delete", zh: "删除" },
     constellationFormat: { en: "C{0}", zh: "{0}命" },
     refinementFormat: { en: "R{0}", zh: "精{0}" },
+    constellationRefinementCompact: { en: "C{0}R{1}", zh: "{0}+{1}" },
+    constellationOnlyCompact: { en: "C{0}", zh: "{0}" },
     restore: { en: "Restore Preset", zh: "恢复预设" },
     gotIt: { en: "Got it", zh: "知道了" },
     save: { en: "Save", zh: "保存" },
@@ -934,65 +936,79 @@ export const i18nUiData = {
     },
     comboDisclaimer: {
       en: "Combo mode does not track buff durations or stacks — results may be inaccurate for long rotations.",
-      zh: "组合模式不追踪Buff持续时间和层数，长轴循环的结果可能不准确。",
+      zh: "组合模式不追踪Buff持续时间，长轴循环的结果可能不准确。",
     },
-    investment: {
+    extraBuffs: { en: "Environment", zh: "环境设置" },
+    extraBuffsFood: { en: "Food", zh: "料理" },
+    extraBuffsEnv: { en: "Environment", zh: "环境" },
+    extraBuffsStatus: { en: "Status", zh: "状态" },
+    extraBuffsCustom: { en: "Custom Buff…", zh: "自定义加成…" },
+    extraBuffsCustomTitle: { en: "Custom Extra Buff", zh: "自定义额外加成" },
+    extraBuffsTarget: { en: "Target", zh: "目标" },
+    extraBuffsStat: { en: "Stat", zh: "属性" },
+    extraBuffsValue: { en: "Value", zh: "数值" },
+    extraBuffsValuePct: { en: "(%, e.g. 20)", zh: "(%, 如 20)" },
+    extraBuffsValueFlat: { en: "(flat)", zh: "(固定值)" },
+    extraBuffsMaxStacks: { en: "Max Stacks", zh: "最大层数" },
+    extraBuffsOptional: { en: "optional", zh: "选填" },
+    extraBuffsAdd: { en: "Add Buff", zh: "添加加成" },
+    extraBuffsNoChars: {
+      en: "Add characters first",
+      zh: "请先添加角色",
+    },
+    analyzer: {
       en: "Investment Analysis",
       zh: "补金分析",
     },
-    investDesc: {
+    analyzerDesc: {
       en: "Find the most cost-efficient order to invest constellations and weapon refinements.",
       zh: "找到最高性价比的命座和精炼投资顺序。",
-    },
-    investBuffWarn: {
-      en: "Buff stack limits are not yet calculated. Some constellation values may be inaccurate, e.g. Clorinde C2, Xianyun C4, Shenhe C6.",
-      zh: "目前还不能计算buff的层数限制，个别命座价值会被误算：如爱可菲2命，希诺宁4命，申鹤6命等。",
     },
     runAnalysis: {
       en: "Run Analysis",
       zh: "开始分析",
     },
-    investChart: {
+    analyzerChart: {
       en: "Chart",
       zh: "图表",
     },
-    investTable: {
+    analyzerTable: {
       en: "Table",
       zh: "表格",
     },
-    investSequence: {
+    analyzerSequence: {
       en: "Sequence",
       zh: "顺序",
     },
-    investMinConfig: {
+    analyzerMinConfig: {
       en: "Min",
       zh: "最低",
     },
-    investMaxConfig: {
+    analyzerMaxConfig: {
       en: "Max",
       zh: "最高",
     },
-    investWeapon4StarR0: {
+    analyzerWeapon4StarR0: {
       en: "3/4★R5",
       zh: "3/4★精5",
     },
-    investChar: {
+    analyzerChar: {
       en: "Character",
       zh: "角色",
     },
-    investJin: {
+    analyzerJin: {
       en: "5★",
       zh: "金",
     },
-    investVsPrev: {
+    analyzerVsPrev: {
       en: "vs Prev",
       zh: "vs 前者",
     },
-    investDiff: {
+    analyzerDiff: {
       en: "Change",
       zh: "变化",
     },
-    investNoSteps: {
+    analyzerNoSteps: {
       en: "No investment steps found.",
       zh: "未找到投资步骤。",
     },

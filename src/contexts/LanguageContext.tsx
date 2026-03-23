@@ -267,6 +267,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     [language]
   );
 
+  const getEnvBuffName = useCallback(
+    (buffId: string): string => {
+      const buffs = i18nAppData.envBuffs as Record<
+        string,
+        Record<string, string>
+      >;
+      return buffs[buffId]?.[language] || buffId;
+    },
+    [language]
+  );
+
   const getStatShortName = useCallback(
     (statKey: string): string => {
       const stats = i18nAppData.statsShort as Record<
@@ -584,6 +595,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       skills: getSkills,
       passives: getPassives,
       constellations: getConstellations,
+      envBuff: getEnvBuffName,
       glossary: getGlossary,
       lang: language,
     }),
@@ -622,6 +634,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       getSkills,
       getPassives,
       getConstellations,
+      getEnvBuffName,
       getGlossary,
       language,
     ]
