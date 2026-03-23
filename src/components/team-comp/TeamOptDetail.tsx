@@ -971,7 +971,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
 
   // ─── Analyzer Dialog ───
   const [analyzerOpen, setAnalyzerOpen] = useState(false);
-  const analyzerState = useAnalyzer();
+  const analyzerState = useAnalyzer(team.id);
 
   return (
     <div

@@ -1,13 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/constants";
-import type {
-  CharInvestment,
-  InvestmentResult,
-} from "@/lib/team-comp/investmentOptimizer";
+import type { AnalyzerResult, CharInvestment } from "@/lib/team-comp/analyzer";
 import { getAssetUrl } from "@/lib/utils";
 
-interface InvestmentTableProps {
-  result: InvestmentResult;
+interface AnalyzerTableProps {
+  result: AnalyzerResult;
   /** Character IDs in team order (slot 0-3) */
   charIds: string[];
 }
@@ -75,14 +72,14 @@ function allocationDiffs(
   return entries;
 }
 
-export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
+export function AnalyzerTable({ result, charIds }: AnalyzerTableProps) {
   const { t } = useLanguage();
   const { sequence } = result;
 
   if (sequence.length === 0) {
     return (
       <p className="text-sm text-muted-foreground py-4 text-center">
-        {t.ui("teamComp.investNoSteps")}
+        {t.ui("teamComp.analyzerNoSteps")}
       </p>
     );
   }
@@ -92,25 +89,28 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+      <table className="min-w-[600px] text-xs md:text-sm">
         <thead>
           <tr className="border-b border-border text-left whitespace-nowrap">
             <th className="py-1.5 px-2 font-medium">
-              {t.ui("teamComp.investJin")}
+              {t.ui("teamComp.analyzerJin")}
             </th>
             {charIds.map((cid) => (
-              <th key={cid} className="py-1.5 px-1 font-medium text-center">
+              <th
+                key={cid}
+                className="py-1.5 px-2 font-medium text-center whitespace-nowrap"
+              >
                 {t.character(cid)}
               </th>
             ))}
-            <th className="py-1.5 px-2 font-medium">
-              {t.ui("teamComp.investDiff")}
-            </th>
             <th className="py-1.5 px-2 font-medium text-right">
               {t.ui("common.damage")}
             </th>
             <th className="py-1.5 px-2 font-medium text-right">
-              {t.ui("teamComp.investVsPrev")}
+              {t.ui("teamComp.analyzerVsPrev")}
+            </th>
+            <th className="py-1.5 px-2 font-medium">
+              {t.ui("teamComp.analyzerDiff")}
             </th>
           </tr>
         </thead>
@@ -139,9 +139,9 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
             return (
               <tr
                 key={i}
-                className="border-b border-border/50 hover:bg-muted/30"
+                className="border-b border-muted-foreground hover:bg-muted/30"
               >
-                <td className="py-1.5 px-2 font-mono text-sm text-amber-400">
+                <td className="py-1.5 px-2 text-amber-400 whitespace-nowrap">
                   {step.jin}
                 </td>
                 {charIds.map((cid) => {
@@ -149,7 +149,7 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                   if (!inv) return <td key={cid} />;
                   const char = charactersById[cid];
                   return (
-                    <td key={cid} className="py-1.5 px-1">
+                    <td key={cid} className="py-1.5 px-2 whitespace-nowrap">
                       <div className="flex items-center justify-start gap-0.5">
                         {char && (
                           <img
@@ -160,20 +160,36 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                           />
                         )}
                         <span
-                          className="text-sm font-mono whitespace-nowrap text-slate-400"
+                          className="text-xs md:text-sm whitespace-nowrap text-slate-400"
                           title={
                             inv.is5StarWeapon
                               ? undefined
                               : t.ui("teamComp.noWeapon5Star")
                           }
                         >
-                          {fmtC(inv.constellation)}
-                          {inv.is5StarWeapon ? fmtR(inv.refinement) : ""}
+                          {t.format(
+                            "common.constellationRefinementCompact",
+                            inv.constellation,
+                            inv.is5StarWeapon ? inv.refinement : 0
+                          )}
                         </span>
                       </div>
                     </td>
                   );
                 })}
+                <td className="py-1.5 px-2 text-right text-xs whitespace-nowrap">
+                  {Math.round(step.damage).toLocaleString()} (
+                  {(100 + step.gainVsBaselinePct).toFixed(1)}%)
+                </td>
+                <td className="py-1.5 px-2 text-right text-xs">
+                  {i === 0 ? (
+                    <span className="text-muted-foreground">&mdash;</span>
+                  ) : (
+                    <span className="text-emerald-400">
+                      +{step.gainVsPrevPct.toFixed(1)}%
+                    </span>
+                  )}
+                </td>
                 <td className="py-1.5 px-2 text-xs">
                   {diffs.length > 0 ? (
                     <div className="flex items-center gap-3 flex-wrap">
@@ -189,7 +205,7 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                           )}
                           <span className="whitespace-nowrap">{d.name}</span>
                           <span
-                            className={`font-mono whitespace-nowrap ${d.direction === "up" ? "text-emerald-400" : "text-red-400"}`}
+                            className={`whitespace-nowrap ${d.direction === "up" ? "text-emerald-400" : "text-red-400"}`}
                           >
                             {d.label}
                           </span>
@@ -198,19 +214,6 @@ export function InvestmentTable({ result, charIds }: InvestmentTableProps) {
                     </div>
                   ) : (
                     <span className="text-muted-foreground">&mdash;</span>
-                  )}
-                </td>
-                <td className="py-1.5 px-2 text-right font-mono text-xs whitespace-nowrap">
-                  {Math.round(step.damage).toLocaleString()} (
-                  {(100 + step.gainVsBaselinePct).toFixed(1)}%)
-                </td>
-                <td className="py-1.5 px-2 text-right font-mono text-xs">
-                  {i === 0 ? (
-                    <span className="text-muted-foreground">&mdash;</span>
-                  ) : (
-                    <span className="text-emerald-400">
-                      +{step.gainVsPrevPct.toFixed(1)}%
-                    </span>
                   )}
                 </td>
               </tr>

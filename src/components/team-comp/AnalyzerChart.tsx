@@ -1,9 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
-import type {
-  InvestmentResult,
-  InvestmentStep,
-} from "@/lib/team-comp/investmentOptimizer";
+import type { AnalyzerResult, AnalyzerStep } from "@/lib/team-comp/analyzer";
 import { getAssetUrl } from "@/lib/utils";
 import { useMemo } from "react";
 import {
@@ -16,12 +13,12 @@ import {
   YAxis,
 } from "recharts";
 
-interface InvestmentChartProps {
-  result: InvestmentResult;
+interface AnalyzerChartProps {
+  result: AnalyzerResult;
   charIds: string[];
 }
 
-export function InvestmentChart({ result, charIds }: InvestmentChartProps) {
+export function AnalyzerChart({ result, charIds }: AnalyzerChartProps) {
   const { t } = useLanguage();
 
   const chartData = useMemo(() => {
@@ -32,7 +29,7 @@ export function InvestmentChart({ result, charIds }: InvestmentChartProps) {
     }));
   }, [result.sequence]);
 
-  const jinLabel = t.ui("teamComp.investJin");
+  const jinLabel = t.ui("teamComp.analyzerJin");
   const damageLabel = t.ui("common.damage");
   const yMax = useMemo(() => {
     const maxPct = Math.max(...chartData.map((d) => d.pct));
@@ -47,62 +44,64 @@ export function InvestmentChart({ result, charIds }: InvestmentChartProps) {
   const fmtR = (n: number) => t.format("common.refinementFormat", n);
 
   return (
-    <div className="w-full h-[280px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chartData}
-          margin={{ top: 30, right: 30, bottom: 25, left: 0 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-          <XAxis
-            dataKey="jin"
-            label={{
-              value: jinLabel,
-              position: "insideBottomRight",
-              offset: -5,
-              dy: 5,
-              style: { fontSize: 14 },
-            }}
-            tick={{ fontSize: 12 }}
-            stroke="hsl(var(--muted-foreground))"
-          />
-          <YAxis
-            width={45}
-            domain={[0, yMax]}
-            ticks={yTicks}
-            tick={{ fontSize: 11 }}
-            stroke="hsl(var(--muted-foreground))"
-            tickFormatter={(v: number) => `${v}%`}
-            label={{
-              value: damageLabel,
-              position: "top",
-              offset: 10,
-              style: { fontSize: 14, textAnchor: "start" },
-            }}
-          />
-          <Tooltip
-            content={
-              <CustomTooltip
-                sequence={result.sequence}
-                charIds={charIds}
-                jinLabel={jinLabel}
-                fmtC={fmtC}
-                fmtR={fmtR}
-                t={t}
-              />
-            }
-            wrapperStyle={{ pointerEvents: "none", zIndex: 50 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="pct"
-            stroke="hsl(var(--primary))"
-            strokeWidth={2}
-            dot={{ fill: "hsl(var(--primary))", r: 4 }}
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+    <div className="overflow-x-auto">
+      <div className="w-full min-w-[500px] h-[280px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{ top: 30, right: 30, bottom: 25, left: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis
+              dataKey="jin"
+              label={{
+                value: jinLabel,
+                position: "insideBottomRight",
+                offset: -5,
+                dy: 5,
+                style: { fontSize: 14 },
+              }}
+              tick={{ fontSize: 12 }}
+              stroke="hsl(var(--muted-foreground))"
+            />
+            <YAxis
+              width={45}
+              domain={[0, yMax]}
+              ticks={yTicks}
+              tick={{ fontSize: 11 }}
+              stroke="hsl(var(--muted-foreground))"
+              tickFormatter={(v: number) => `${v}%`}
+              label={{
+                value: damageLabel,
+                position: "top",
+                offset: 10,
+                style: { fontSize: 14, textAnchor: "start" },
+              }}
+            />
+            <Tooltip
+              content={
+                <CustomTooltip
+                  sequence={result.sequence}
+                  charIds={charIds}
+                  jinLabel={jinLabel}
+                  fmtC={fmtC}
+                  fmtR={fmtR}
+                  t={t}
+                />
+              }
+              wrapperStyle={{ pointerEvents: "none", zIndex: 50 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="pct"
+              stroke="hsl(var(--primary))"
+              strokeWidth={2}
+              dot={{ fill: "hsl(var(--primary))", r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
@@ -121,7 +120,7 @@ function CustomTooltip({
   active?: boolean;
   // biome-ignore lint/suspicious/noExplicitAny: Recharts payload
   payload?: any[];
-  sequence: InvestmentStep[];
+  sequence: AnalyzerStep[];
   charIds: string[];
   jinLabel: string;
   fmtC: (n: number) => string;
@@ -170,7 +169,7 @@ function CustomTooltip({
               <span>{t.character(cid)}</span>
               <span className="font-mono ml-auto">
                 {fmtC(inv.constellation)}
-                {inv.is5StarWeapon ? fmtR(inv.refinement) : ""}
+                {fmtR(inv.is5StarWeapon ? inv.refinement : 0)}
               </span>
             </div>
           );

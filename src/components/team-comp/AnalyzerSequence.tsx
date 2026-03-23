@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/constants";
 import type {
+  AnalyzerResult,
   CharInvestment,
-  InvestmentResult,
   TeamInvestment,
-} from "@/lib/team-comp/investmentOptimizer";
+} from "@/lib/team-comp/analyzer";
 import { getAssetUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -41,7 +41,7 @@ type EdgeLine = {
 
 // ─── Build graph from optimizer DAG ───
 
-function buildGraph(result: InvestmentResult): {
+function buildGraph(result: AnalyzerResult): {
   nodes: GraphNode[];
   edges: GraphEdge[];
 } {
@@ -130,15 +130,12 @@ function computeRows(nodes: GraphNode[], edges: GraphEdge[]): Row[] {
 
 const NODE_GAP = 8;
 
-interface InvestmentSequenceProps {
-  result: InvestmentResult;
+interface AnalyzerSequenceProps {
+  result: AnalyzerResult;
   charIds: string[];
 }
 
-export function InvestmentSequence({
-  result,
-  charIds,
-}: InvestmentSequenceProps) {
+export function AnalyzerSequence({ result, charIds }: AnalyzerSequenceProps) {
   const { t } = useLanguage();
 
   const { nodes: graphNodes, edges: graphEdges } = useMemo(
@@ -196,7 +193,7 @@ export function InvestmentSequence({
   if (rows.length === 0) {
     return (
       <p className="text-sm text-muted-foreground py-4 text-center">
-        {t.ui("teamComp.investNoSteps")}
+        {t.ui("teamComp.analyzerNoSteps")}
       </p>
     );
   }
@@ -228,11 +225,11 @@ export function InvestmentSequence({
       </svg>
 
       {/* Rows */}
-      <div className="relative" style={{ zIndex: 1 }}>
+      <div className="relative w-fit min-w-full" style={{ zIndex: 1 }}>
         {rows.map((row) => (
           <div
             key={row.jin}
-            className="flex justify-center items-center py-1.5"
+            className="flex justify-center items-center py-1.5 w-fit min-w-full"
             style={{ gap: NODE_GAP }}
           >
             {row.nodes.map((node) => {
@@ -260,7 +257,7 @@ export function InvestmentSequence({
                 .filter((cid) => node.allocation[cid])
                 .map((cid) => {
                   const inv = node.allocation[cid]!;
-                  return `${t.character(cid)} ${fmtC(inv.constellation)} ${inv.is5StarWeapon ? fmtR(inv.refinement) : ""}`.trim();
+                  return `${t.character(cid)} ${fmtC(inv.constellation)}${fmtR(inv.is5StarWeapon ? inv.refinement : 0)}`;
                 })
                 .join("\n");
 
@@ -340,7 +337,7 @@ function CharState({
       )}
       <span className="font-mono text-[11px]">
         {fmtC(inv.constellation)}
-        {inv.is5StarWeapon && fmtR(inv.refinement)}
+        {fmtR(inv.is5StarWeapon ? inv.refinement : 0)}
       </span>
     </div>
   );

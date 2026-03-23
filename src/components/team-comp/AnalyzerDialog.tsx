@@ -1,5 +1,9 @@
+import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
+import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
+import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Button } from "@/components/ui/button";
 import {
   LightweightSelect,
@@ -16,6 +20,11 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactHalfSetsById,
@@ -24,70 +33,63 @@ import {
   weaponsById,
 } from "@/data/constants";
 import type { Rarity, WeaponResource } from "@/data/types";
+import type { UseAnalyzerState } from "@/hooks/useAnalyzer";
 import { useGameStats } from "@/hooks/useGameStats";
-import type { UseInvestmentAnalysisState } from "@/hooks/useInvestmentAnalysis";
 import {
   getCharacterDisplayMeta,
   getWeaponDisplayMeta,
 } from "@/lib/gameStatsLoader";
+import type {
+  AnalyzerCharConfig,
+  AnalyzerOptions,
+  StoredAnalyzerCharConfig,
+} from "@/lib/team-comp/analyzer";
 import type { TeamBuild } from "@/lib/team-comp/damageCalc";
-import type {
-  InvestmentCharConfig,
-  InvestmentOptions,
-} from "@/lib/team-comp/investmentOptimizer";
-import type {
-  CalcContext,
-  ComboFormula,
-  ReactionOverride,
-  TeamSlotConfig,
-} from "@/lib/team-comp/types";
+import type { FormulaContext, TeamSlotConfig } from "@/lib/team-comp/types";
 import { getAssetUrl } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { AlertTriangle, Loader2, Play, TrendingUp } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { InvestmentChart } from "./InvestmentChart";
-import { InvestmentSequence } from "./InvestmentSequence";
-import { InvestmentTable } from "./InvestmentTable";
+import { Loader2, Play, TrendingUp } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnalyzerChart } from "./AnalyzerChart";
+import { AnalyzerSequence } from "./AnalyzerSequence";
+import { AnalyzerTable } from "./AnalyzerTable";
 
-interface InvestmentDialogProps {
+interface AnalyzerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   teamId: string;
   teamBuild: TeamBuild;
   baseConfigs: TeamSlotConfig[];
-  combo: ComboFormula;
-  calcContext: CalcContext;
-  analysis: UseInvestmentAnalysisState;
-  reactionOverrides?: Record<string, ReactionOverride>;
+  formula: FormulaContext;
+  analysis: UseAnalyzerState;
   perChar?: Record<string, { minEr: number; minCr: number }>;
 }
 
 type ViewTab = "chart" | "table" | "sequence";
 
-export function InvestmentDialog({
+export function AnalyzerDialog({
   open,
   onOpenChange,
   teamId,
   teamBuild,
   baseConfigs,
-  combo,
-  calcContext,
+  formula,
   analysis,
-  reactionOverrides,
   perChar,
-}: InvestmentDialogProps) {
+}: AnalyzerDialogProps) {
+  const { combo } = formula;
   const { t } = useLanguage();
   const updateTeam = useTeamStore((s) => s.updateTeam);
   const storedConfigs = useTeamStore(
-    (s) => s.teams.find((t) => t.id === teamId)?.investmentConfigs
+    (s) => s.teams.find((t) => t.id === teamId)?.analyzerConfigs
   );
   const { progress, result, isComputing, error, start, stop } = analysis;
 
-  const [activeTab, setActiveTab] = useState<ViewTab>("sequence");
+  const [activeTab, setActiveTab] = useState<ViewTab>("chart");
 
-  // Per-character investment configs — initialize from store or defaults,
+  // Per-character analyzer configs — initialize from store or defaults,
   // then reconcile with current baseConfigs (team roster may have changed)
-  const [charConfigs, setCharConfigs] = useState<InvestmentCharConfig[]>(() =>
+  const [charConfigs, setCharConfigs] = useState<AnalyzerCharConfig[]>(() =>
     reconcileConfigs(
       storedConfigs && storedConfigs.length > 0 ? storedConfigs : [],
       baseConfigs
@@ -97,13 +99,22 @@ export function InvestmentDialog({
   // Re-reconcile when baseConfigs change (character added/removed/swapped)
   const baseCharIds = baseConfigs.map((b) => b.charId).join(",");
   useEffect(() => {
-    setCharConfigs((prev) => reconcileConfigs(prev, baseConfigs));
+    setCharConfigs((prev) => rereconcileConfigs(prev, baseConfigs));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [baseCharIds]);
 
-  // Persist to store whenever charConfigs change
+  // Persist to store whenever charConfigs change (store only the alt weapon).
+  // baseConfigs is intentionally omitted — when it changes, reconcileConfigs
+  // produces new charConfigs, which already triggers this effect.
+  const baseConfigsRef = useRef(baseConfigs);
+  baseConfigsRef.current = baseConfigs;
   useEffect(() => {
-    updateTeam(teamId, { investmentConfigs: charConfigs });
+    const bcs = baseConfigsRef.current;
+    const stored = charConfigs.map((cfg) => {
+      const bc = bcs.find((b) => b.charId === cfg.charId);
+      return bc ? fullToStored(cfg, bc) : fullToStored(cfg, bcs[0]);
+    });
+    updateTeam(teamId, { analyzerConfigs: stored });
   }, [charConfigs, teamId, updateTeam]);
 
   const updateWeapon = useCallback(
@@ -182,90 +193,76 @@ export function InvestmentDialog({
   );
 
   const handleRun = useCallback(() => {
-    const opts: InvestmentOptions = {
+    const opts: AnalyzerOptions = {
       configs: charConfigs,
       baseConfigs,
       teamBuild,
-      combo,
-      calcContext,
-      reactionOverrides,
+      formula,
       perChar,
     };
     start(opts, !!result);
-  }, [
-    charConfigs,
-    baseConfigs,
-    result,
-    teamBuild,
-    combo,
-    calcContext,
-    reactionOverrides,
-    perChar,
-    start,
-  ]);
+  }, [charConfigs, baseConfigs, result, teamBuild, formula, perChar, start]);
 
   const overallPct = progress ? Math.round(progress.overallProgress * 100) : 0;
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+      <ResponsiveDialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            {t.ui("teamComp.investment")}
+            {t.ui("teamComp.analyzer")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription asChild>
-            <span className="text-sm text-muted-foreground">
-              {t.ui("teamComp.investDesc")}
+            <span className="text-xs md:text-sm text-muted-foreground">
+              {t.ui("teamComp.analyzerDesc")}
             </span>
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        {/* Buff stack warning */}
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          {t.ui("teamComp.investBuffWarn")}
-        </div>
-
         {/* Combo formula summary + Team config */}
         <div className="flex items-center justify-center gap-x-3 gap-y-1 flex-wrap py-1">
-          {combo.lines
-            .filter((l) => l.count > 0)
-            .map((l) => {
-              const entry = teamBuild.charBuilds[
-                l.charId
-              ]?.charBase.getFormulaEntry(l.formulaId);
-              const label = entry ? t.resolveLabel(entry.label) : l.formulaId;
-              const char = charactersById[l.charId];
-              return (
-                <div
-                  key={`${l.charId}.${l.formulaId}`}
-                  className="flex items-center gap-1 text-xs"
-                >
-                  {char && (
-                    <img
-                      src={getAssetUrl(char.imagePath)}
-                      alt={l.charId}
-                      className="w-4 h-4 rounded-full"
-                    />
-                  )}
-                  <span>{label}</span>
-                  <span className="font-mono text-muted-foreground">
-                    ×{l.count}
-                  </span>
-                </div>
-              );
-            })}
+          {(() => {
+            const allFormulas = teamBuild.getFormulaIds();
+            return combo.lines
+              .filter(
+                (l) => l.count > 0 && allFormulas[l.charId]?.[l.formulaId]
+              )
+              .map((l) => {
+                const label = t.resolveLabel(
+                  allFormulas[l.charId][l.formulaId]
+                );
+                const char = charactersById[l.charId];
+                return (
+                  <div
+                    key={`${l.charId}.${l.formulaId}`}
+                    className="flex items-center gap-1 text-xs"
+                  >
+                    {char && (
+                      <img
+                        src={getAssetUrl(char.imagePath)}
+                        alt={l.charId}
+                        className="w-4 h-4 rounded-full"
+                      />
+                    )}
+                    <span>{label}</span>
+                    <span className="font-mono text-muted-foreground">
+                      ×{l.count}
+                    </span>
+                  </div>
+                );
+              });
+          })()}
         </div>
 
-        <div className="flex items-start justify-center gap-4 py-2 flex-wrap">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-3 lg:gap-4 py-2">
           {charConfigs.map((cfg) => {
             const bc = baseConfigs.find((b) => b.charId === cfg.charId);
             if (!bc) return null;
             return (
               <div
                 key={cfg.charId}
-                className="flex flex-col items-center gap-1.5"
+                className="flex flex-col items-center gap-1 md:gap-1.5"
               >
                 <CharConfigGroup
                   config={cfg}
@@ -307,7 +304,13 @@ export function InvestmentDialog({
             <div className="flex-1 ml-2 space-y-1">
               <Progress value={overallPct} className="h-2" />
               <p className="text-xs text-muted-foreground">
-                {progress.message}
+                {progress.phase === "phase1"
+                  ? t.ui("teamComp.analyzerPhase1")
+                  : progress.phase === "phase2"
+                    ? t.ui("teamComp.analyzerPhase2")
+                    : progress.phase === "phase3"
+                      ? t.ui("teamComp.analyzerPhase3")
+                      : ""}
               </p>
             </div>
           ) : result ? (
@@ -319,13 +322,13 @@ export function InvestmentDialog({
                     variant={activeTab === tab ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setActiveTab(tab)}
-                    className="text-sm h-8 px-3"
+                    className="text-xs md:text-sm h-7 md:h-8 px-2 md:px-3"
                   >
                     {tab === "chart"
-                      ? t.ui("teamComp.investChart")
+                      ? t.ui("teamComp.analyzerChart")
                       : tab === "table"
-                        ? t.ui("teamComp.investTable")
-                        : t.ui("teamComp.investSequence")}
+                        ? t.ui("teamComp.analyzerTable")
+                        : t.ui("teamComp.analyzerSequence")}
                   </Button>
                 ))}
               </div>
@@ -340,19 +343,19 @@ export function InvestmentDialog({
         {result && (
           <div className="space-y-3">
             {activeTab === "chart" && (
-              <InvestmentChart
+              <AnalyzerChart
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
             )}
             {activeTab === "table" && (
-              <InvestmentTable
+              <AnalyzerTable
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
             )}
             {activeTab === "sequence" && (
-              <InvestmentSequence
+              <AnalyzerSequence
                 result={result}
                 charIds={charConfigs.map((c) => c.charId)}
               />
@@ -371,7 +374,7 @@ function CharConfigGroup({
   baseConfig,
   onUpdateWeapon,
 }: {
-  config: InvestmentCharConfig;
+  config: AnalyzerCharConfig;
   baseConfig: TeamSlotConfig;
   onUpdateWeapon: (
     charId: string,
@@ -421,54 +424,140 @@ function CharConfigGroup({
     [baseConfig]
   );
 
+  // Determine which slot is fixed from the roster
+  const rosterWeapon = weaponsById[baseConfig.weaponId];
+  const rosterIs5Star = rosterWeapon?.rarity === 5;
+
+  // Build artifact tooltip element based on set configuration
+  const artifactTooltip = useMemo(() => {
+    if (baseConfig.artifactSetId) {
+      return <ArtifactTooltip setId={baseConfig.artifactSetId} />;
+    }
+    if (baseConfig.artifactHalfSetIds.length >= 2) {
+      return (
+        <MixedSetTooltip
+          id1={baseConfig.artifactHalfSetIds[0]}
+          id2={baseConfig.artifactHalfSetIds[1]}
+        />
+      );
+    }
+    return null;
+  }, [baseConfig.artifactSetId, baseConfig.artifactHalfSetIds]);
+
   return (
-    <div className="flex items-end gap-1">
+    <div className="flex items-end gap-0.5 md:gap-1">
       {/* Character */}
       <div className="flex flex-col items-center gap-1">
-        <span className="text-sm font-medium whitespace-nowrap">
+        <span className="text-xs md:text-sm font-medium whitespace-nowrap">
           {t.character(config.charId)}
         </span>
         {char && (
-          <ItemIcon
-            imagePath={char.imagePath}
-            rarity={config.rarity}
-            size="md"
-            characterId={config.charId}
-          />
+          <Tooltip disableHoverableContent>
+            <TooltipTrigger asChild>
+              <span className="cursor-help">
+                <ItemIcon
+                  imagePath={char.imagePath}
+                  rarity={config.rarity}
+                  size="sm"
+                  characterId={config.charId}
+                />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="p-0 border-none bg-transparent shadow-none"
+            >
+              <CharacterTooltip characterId={config.charId} />
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
       {/* Artifact */}
-      <ItemIcon
-        imagePath={artifactIcon.imagePath}
-        imagePath2={artifactIcon.imagePath2}
-        rarity={artifactIcon.rarity}
-        size="sm"
-      />
-      {/* 3/4★ weapon */}
+      <Tooltip disableHoverableContent>
+        <TooltipTrigger asChild>
+          <span className="cursor-help">
+            <ItemIcon
+              imagePath={artifactIcon.imagePath}
+              imagePath2={artifactIcon.imagePath2}
+              rarity={artifactIcon.rarity}
+              size="xs"
+            />
+          </span>
+        </TooltipTrigger>
+        {artifactTooltip && (
+          <TooltipContent
+            side="bottom"
+            className="p-0 border-none bg-transparent shadow-none"
+          >
+            {artifactTooltip}
+          </TooltipContent>
+        )}
+      </Tooltip>
+      {/* 3/4★ weapon — fixed if roster weapon is 3/4★, picker otherwise */}
       <div className="flex flex-col items-center gap-1">
-        <span className="text-sm">3/4★</span>
-        <ItemPicker
-          type="weapon"
-          value={config.weapon4Star?.id ?? null}
-          onChange={(id) => onUpdateWeapon(config.charId, "4", id as string)}
-          onClear={() => onUpdateWeapon(config.charId, "4", null)}
-          filter={filterLowStar}
-          triggerSize="sm"
-          menuSize="sm"
-        />
+        <span className="text-xs md:text-sm">3/4★</span>
+        {!rosterIs5Star && rosterWeapon ? (
+          <Tooltip disableHoverableContent>
+            <TooltipTrigger asChild>
+              <span className="cursor-help">
+                <ItemIcon
+                  imagePath={rosterWeapon.imagePath}
+                  rarity={(rosterWeapon.rarity ?? 4) as Rarity}
+                  size="xs"
+                />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="p-0 border-none bg-transparent shadow-none"
+            >
+              <WeaponTooltip weaponId={baseConfig.weaponId} />
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <ItemPicker
+            type="weapon"
+            value={config.weapon4Star?.id ?? null}
+            onChange={(id) => onUpdateWeapon(config.charId, "4", id as string)}
+            onClear={() => onUpdateWeapon(config.charId, "4", null)}
+            filter={filterLowStar}
+            triggerSize="xs"
+            menuSize="sm"
+          />
+        )}
       </div>
-      {/* 5★ weapon */}
+      {/* 5★ weapon — fixed if roster weapon is 5★, picker otherwise */}
       <div className="flex flex-col items-center gap-1">
-        <span className="text-sm">5★</span>
-        <ItemPicker
-          type="weapon"
-          value={config.weapon5Star?.id ?? null}
-          onChange={(id) => onUpdateWeapon(config.charId, "5", id as string)}
-          onClear={() => onUpdateWeapon(config.charId, "5", null)}
-          filter={filter5Star}
-          triggerSize="sm"
-          menuSize="sm"
-        />
+        <span className="text-xs md:text-sm">5★</span>
+        {rosterIs5Star && rosterWeapon ? (
+          <Tooltip disableHoverableContent>
+            <TooltipTrigger asChild>
+              <span className="cursor-help">
+                <ItemIcon
+                  imagePath={rosterWeapon.imagePath}
+                  rarity={5}
+                  size="xs"
+                />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              className="p-0 border-none bg-transparent shadow-none"
+            >
+              <WeaponTooltip weaponId={baseConfig.weaponId} />
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <ItemPicker
+            type="weapon"
+            value={config.weapon5Star?.id ?? null}
+            onChange={(id) => onUpdateWeapon(config.charId, "5", id as string)}
+            onClear={() => onUpdateWeapon(config.charId, "5", null)}
+            filter={filter5Star}
+            triggerSize="xs"
+            menuSize="sm"
+          />
+        )}
       </div>
     </div>
   );
@@ -480,7 +569,7 @@ function CharStartSelectors({
   config,
   onUpdateStart,
 }: {
-  config: InvestmentCharConfig;
+  config: AnalyzerCharConfig;
   onUpdateStart: (
     charId: string,
     field: "startConstellation" | "startRefinement",
@@ -501,7 +590,7 @@ function CharStartSelectors({
     if (!has5Wep) return null;
     const opts: { value: string; label: string }[] = [];
     if (hasBothWeps) {
-      opts.push({ value: "0", label: t.ui("teamComp.investWeapon4StarR0") });
+      opts.push({ value: "0", label: t.ui("teamComp.analyzerWeapon4StarR0") });
     }
     for (let r = 1; r <= 5; r++) {
       opts.push({
@@ -517,7 +606,7 @@ function CharStartSelectors({
   return (
     <div className="flex items-center gap-1.5">
       <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-        {t.ui("teamComp.investMinConfig")}
+        {t.ui("teamComp.analyzerMinConfig")}
       </span>
       {is5Star && (
         <LightweightSelect
@@ -575,7 +664,7 @@ function CharMaxSelectors({
   config,
   onUpdateMax,
 }: {
-  config: InvestmentCharConfig;
+  config: AnalyzerCharConfig;
   onUpdateMax: (
     charId: string,
     field: "maxConstellation" | "maxRefinement",
@@ -592,7 +681,7 @@ function CharMaxSelectors({
   return (
     <div className="flex items-center gap-1.5">
       <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-        {t.ui("teamComp.investMaxConfig")}
+        {t.ui("teamComp.analyzerMaxConfig")}
       </span>
       {is5Star && (
         <LightweightSelect
@@ -680,28 +769,106 @@ function getArtifactIconProps(bc: TeamSlotConfig): {
 
 // ─── Reconcile stored configs with current team roster ───
 
-function reconcileConfigs(
-  stored: InvestmentCharConfig[],
+/** Re-reconcile already-expanded full configs when baseConfigs change (char added/removed/swapped). */
+function rereconcileConfigs(
+  prev: AnalyzerCharConfig[],
   baseConfigs: TeamSlotConfig[]
-): InvestmentCharConfig[] {
+): AnalyzerCharConfig[] {
+  const baseIds = new Set(baseConfigs.map((b) => b.charId));
+  const kept = prev.filter((c) => baseIds.has(c.charId));
+  const keptIds = new Set(kept.map((c) => c.charId));
+  const added = buildDefaultCharConfigs(
+    baseConfigs.filter((b) => !keptIds.has(b.charId))
+  );
+  const byId = new Map([...kept, ...added].map((c) => [c.charId, c]));
+  return baseConfigs.map((b) => byId.get(b.charId)!);
+}
+
+/** Reconcile stored (persisted) configs into full AnalyzerCharConfigs using roster data. */
+function reconcileConfigs(
+  stored: StoredAnalyzerCharConfig[],
+  baseConfigs: TeamSlotConfig[]
+): AnalyzerCharConfig[] {
   const baseIds = new Set(baseConfigs.map((b) => b.charId));
   // Keep stored configs that still exist in the team
   const kept = stored.filter((c) => baseIds.has(c.charId));
   const keptIds = new Set(kept.map((c) => c.charId));
+  // Expand stored → full using roster data
+  const fullKept = kept.map((sc) => {
+    const bc = baseConfigs.find((b) => b.charId === sc.charId)!;
+    return storedToFull(sc, bc);
+  });
   // Add defaults for new team members
   const added = buildDefaultCharConfigs(
     baseConfigs.filter((b) => !keptIds.has(b.charId))
   );
   // Return in baseConfigs order
-  const byId = new Map([...kept, ...added].map((c) => [c.charId, c]));
+  const byId = new Map([...fullKept, ...added].map((c) => [c.charId, c]));
   return baseConfigs.map((b) => byId.get(b.charId)!);
+}
+
+/** Expand a stored config into a full AnalyzerCharConfig using the roster weapon. */
+function storedToFull(
+  sc: StoredAnalyzerCharConfig,
+  bc: TeamSlotConfig
+): AnalyzerCharConfig {
+  const charRes = charactersById[sc.charId];
+  const rarity = (charRes?.rarity ?? 5) as Rarity;
+  const rosterWeapon = weaponsById[bc.weaponId];
+  const rosterIs5Star = rosterWeapon?.rarity === 5;
+
+  return {
+    charId: sc.charId,
+    rarity,
+    weapon4Star: rosterIs5Star
+      ? sc.altWeapon
+        ? { id: sc.altWeapon.id, refinement: sc.altWeapon.refinement ?? 5 }
+        : undefined
+      : { id: bc.weaponId, refinement: bc.refinement },
+    weapon5Star: rosterIs5Star
+      ? { id: bc.weaponId }
+      : sc.altWeapon
+        ? { id: sc.altWeapon.id }
+        : undefined,
+    startConstellation: sc.startConstellation,
+    startRefinement: sc.startRefinement,
+    maxConstellation: sc.maxConstellation,
+    maxRefinement: sc.maxRefinement,
+  };
+}
+
+/** Strip a full config down to the stored form (only alt weapon). */
+function fullToStored(
+  cfg: AnalyzerCharConfig,
+  bc: TeamSlotConfig
+): StoredAnalyzerCharConfig {
+  const rosterWeapon = weaponsById[bc.weaponId];
+  const rosterIs5Star = rosterWeapon?.rarity === 5;
+
+  // The alt weapon is the one NOT from the roster
+  const altWeapon = rosterIs5Star
+    ? cfg.weapon4Star
+      ? { id: cfg.weapon4Star.id, refinement: cfg.weapon4Star.refinement }
+      : undefined
+    : cfg.weapon5Star
+      ? { id: cfg.weapon5Star.id }
+      : undefined;
+
+  return {
+    charId: cfg.charId,
+    altWeapon,
+    startConstellation: cfg.startConstellation,
+    startRefinement: cfg.startRefinement,
+    maxConstellation: cfg.maxConstellation,
+    maxRefinement: cfg.maxRefinement,
+  };
 }
 
 // ─── Default config builder ───
 
 function buildDefaultCharConfigs(
   baseConfigs: TeamSlotConfig[]
-): InvestmentCharConfig[] {
+): AnalyzerCharConfig[] {
   return baseConfigs.map((bc) => {
     const charRes = charactersById[bc.charId];
     const rarity: Rarity = (charRes?.rarity ?? 5) as Rarity;

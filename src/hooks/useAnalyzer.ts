@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type {
-  InvestmentOptions,
-  InvestmentProgress,
-  InvestmentResult,
-} from "@/lib/team-comp/investmentOptimizer";
-import {
-  isInvestmentResult,
-  runInvestmentAnalysis,
-} from "@/lib/team-comp/investmentOptimizer";
-import { useInvestmentCacheStore } from "@/stores/useInvestmentCacheStore";
+  AnalyzerOptions,
+  AnalyzerProgress,
+  AnalyzerResult,
+} from "@/lib/team-comp/analyzer";
+import { isAnalyzerResult, runAnalysis } from "@/lib/team-comp/analyzer";
+import { useAnalyzerCacheStore } from "@/stores/useAnalyzerCacheStore";
 
-/** Build a cache key from the investment options that affect the result. */
-function buildCacheKey(opts: InvestmentOptions): string {
+/** Build a cache key from the analyzer options that affect the result. */
+function buildCacheKey(opts: AnalyzerOptions): string {
   const charParts = opts.configs
     .map((c) => {
       const w4 = c.weapon4Star
@@ -24,33 +21,51 @@ function buildCacheKey(opts: InvestmentOptions): string {
     .sort()
     .join("|");
 
-  const comboPart = opts.combo.lines
+  const { combo, reactionOverrides } = opts.formula;
+
+  const comboPart = combo.lines
     .filter((l) => l.count > 0)
     .map((l) => `${l.charId}:${l.formulaId}:${l.count}`)
     .join(",");
 
-  return `${charParts}::${comboPart}`;
+  // Include reaction overrides in the cache key
+  const rxPart = reactionOverrides
+    ? Object.entries(reactionOverrides)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}=${v.type}`)
+        .join(";")
+    : "";
+
+  // buffOverrides intentionally excluded — the analyzer computes fresh
+  // greedy defaults per constellation, ignoring page-level overrides.
+
+  return `${charParts}::${comboPart}::${rxPart}`;
 }
 
-export interface UseInvestmentAnalysisState {
-  progress: InvestmentProgress | null;
-  result: InvestmentResult | null;
+export interface UseAnalyzerState {
+  progress: AnalyzerProgress | null;
+  result: AnalyzerResult | null;
   isComputing: boolean;
   error: Error | null;
-  start: (opts: InvestmentOptions, force?: boolean) => void;
+  start: (opts: AnalyzerOptions, force?: boolean) => void;
   stop: () => void;
 }
 
-export function useInvestmentAnalysis(): UseInvestmentAnalysisState {
-  const [progress, setProgress] = useState<InvestmentProgress | null>(null);
-  const [result, setResult] = useState<InvestmentResult | null>(null);
+export function useAnalyzer(teamId: string): UseAnalyzerState {
+  const cacheGet = useAnalyzerCacheStore((s) => s.get);
+  const cacheSet = useAnalyzerCacheStore((s) => s.set);
+  const getForTeam = useAnalyzerCacheStore((s) => s.getForTeam);
+  const setForTeam = useAnalyzerCacheStore((s) => s.setForTeam);
+
+  const [progress, setProgress] = useState<AnalyzerProgress | null>(null);
+  const [result, setResult] = useState<AnalyzerResult | null>(
+    () => getForTeam(teamId) ?? null
+  );
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const abortRef = useRef(false);
   const isMounted = useRef(true);
-  const cacheGet = useInvestmentCacheStore((s) => s.get);
-  const cacheSet = useInvestmentCacheStore((s) => s.set);
 
   useEffect(() => {
     isMounted.current = true;
@@ -66,7 +81,11 @@ export function useInvestmentAnalysis(): UseInvestmentAnalysisState {
   }, []);
 
   const start = useCallback(
-    async (opts: InvestmentOptions, force?: boolean) => {
+    async (opts: AnalyzerOptions, force?: boolean) => {
+      if (!opts.formula) {
+        setError(new Error("Analyzer requires a formula context"));
+        return;
+      }
       stop();
       abortRef.current = false;
       setProgress(null);
@@ -86,14 +105,15 @@ export function useInvestmentAnalysis(): UseInvestmentAnalysisState {
       setIsComputing(true);
 
       try {
-        const gen = runInvestmentAnalysis(opts);
+        const gen = runAnalysis(opts);
 
         for await (const yielded of gen) {
           if (abortRef.current || !isMounted.current) break;
 
-          if (isInvestmentResult(yielded)) {
+          if (isAnalyzerResult(yielded)) {
             setResult(yielded);
             cacheSet(key, yielded);
+            setForTeam(teamId, yielded);
           } else {
             setProgress(yielded);
           }
@@ -108,7 +128,7 @@ export function useInvestmentAnalysis(): UseInvestmentAnalysisState {
         }
       }
     },
-    [stop, cacheGet, cacheSet]
+    [stop, cacheGet, cacheSet, setForTeam, teamId]
   );
 
   return { progress, result, isComputing, error, start, stop };
