@@ -1,4 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactHalfSetsById,
@@ -41,12 +48,14 @@ import type {
   ReactionOverride,
 } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
+import limitEnRaw from "@/presets/updatelog/limit_en.md?raw";
+import limitZhRaw from "@/presets/updatelog/limit_zh.md?raw";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useBuffOverrideStore } from "@/stores/useBuffOverrideStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { type Team, useTeamStore } from "@/stores/useTeamStore";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArtifactSwapDialog, getMatchingSetIds } from "./ArtifactSwapDialog";
 import { DamageCard } from "./DamageCard";
@@ -58,8 +67,12 @@ import { TeamRosterCard } from "./TeamRosterCard";
 const getReactionKey = (charId: string, formulaId: string) =>
   `${charId}.${formulaId}`;
 
+const limitMap = { en: limitEnRaw, zh: limitZhRaw };
+
 export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
   const { t } = useLanguage();
+  const limitText = limitMap[t.lang];
+  const [limitOpen, setLimitOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const activeAccount = useAccountStore(getActiveAccount);
   const accountData = activeAccount?.data || null;
@@ -981,6 +994,11 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
         </Button>
         <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
           {team.name || t.ui("teamComp.teamOptimization")}
+          <Info
+            className="w-5 h-5 text-primary inline-block ml-1.5 align-baseline cursor-pointer"
+            onClick={() => setLimitOpen(true)}
+            title={t.ui("calcLimitations.title")}
+          />
         </h2>
       </div>
 
@@ -1194,6 +1212,45 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
           )}
         />
       )}
+
+      {/* Calculation Limitations Sheet */}
+      <Sheet open={limitOpen} onOpenChange={setLimitOpen}>
+        <SheetContent
+          side="right"
+          className="w-[min(85vw,400px)] md:w-[min(85vw,520px)] xl:w-[min(85vw,640px)] sm:max-w-none p-0 flex flex-col"
+        >
+          <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/40">
+            <SheetTitle className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" />
+              {t.ui("calcLimitations.title")}
+            </SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="flex-1">
+            <div className="px-5 py-4 space-y-3">
+              {limitText.split("\n").map((line, i) => {
+                const trimmed = line.trim();
+                if (!trimmed) return null;
+                const numMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+                if (numMatch) {
+                  return (
+                    <div key={i} className="flex gap-2 text-sm leading-relaxed">
+                      <span className="text-muted-foreground shrink-0 font-mono">
+                        {numMatch[1]}.
+                      </span>
+                      <span className="text-foreground/80">{numMatch[2]}</span>
+                    </div>
+                  );
+                }
+                return (
+                  <p key={i} className="text-sm font-semibold text-foreground">
+                    {trimmed}
+                  </p>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

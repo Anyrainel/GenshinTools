@@ -1478,6 +1478,9 @@ export const i18nUiData = {
     features: { en: "Features", zh: "新功能" },
     fixes: { en: "Fixes", zh: "修复" },
   },
+  calcLimitations: {
+    title: { en: "Calculation Limitations", zh: "计算限制" },
+  },
   triage: {
     tabLabel: { en: "Artifact Triage", zh: "锁定助手" },
     title: { en: "Artifact Triage Helper", zh: "圣遗物锁定助手" },

@@ -1,0 +1,9 @@
+The current damage calculation system has the following limitations:
+
+1. Skill damage and buffs are calculated at talent level 10 or 13 based on constellation. Exceptions: Childe calculates his own Lv.11 normal attacks; Skirk calculates Lv.11/14 elemental skill in appropriate teams.
+2. Time-limited buffs default to full uptime. You can fine-tune buff activation per damage segment (toggle on the right side of each damage number). Single-formula and rotation-total settings are independent.
+3. Stack-limited buffs default to one skill cast, with stacks allocated to the most effective damage segments. This may slightly overestimate damage in some cases. You can also adjust buff activation per damage segment.
+4. Stacks gained over time or through combat, as well as HP-threshold conditions, are all implemented as selectable options on characters, weapons, or artifacts — only one condition can be selected at a time, with no dynamic adjustment. Arlecchino's normal attacks will decay starting from the selected Bond of Life level.
+5. Most skills are treated as on-field damage. Some common off-field skills are treated as off-field damage; certain multi-hit skills may have some hits treated as off-field.
+6. Buffs that scale over time or with probability use averaged values (e.g. Yelan/Xiao passive, Ganyu C4 DMG bonus, Durin C4 — defaults to 1.4× stacks with an unlimited stacks option and custom input, Echoes of an Offering 4pc, etc.). Mavuika's A4 passive does not account for decay (which would somewhat discount her C4 effect).
+7. Damage is calculated for single-target by default. AoE target count and AoE damage falloff are not factored in.
