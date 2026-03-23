@@ -515,13 +515,13 @@ export class TeamMeta {
   /** 4pc artifact set IDs equipped by each character (charId → setId) */
   readonly artifactSets: Record<string, string>;
   /** Persistent element aura on the enemy, injected into reaction checks. */
-  readonly enemyElementAura?: Element;
+  readonly enemyAura?: Element;
 
   constructor(
     characterIds: string[],
     constellations: Record<string, number> = {},
     artifactSets: Record<string, string> = {},
-    enemyElementAura?: Element
+    enemyAura?: Element
   ) {
     this.characters = characterIds;
     this.constellations = constellations;
@@ -534,7 +534,7 @@ export class TeamMeta {
     this.isHealer = {};
     this.isShielder = {};
     this.artifactSets = artifactSets;
-    this.enemyElementAura = enemyElementAura;
+    this.enemyAura = enemyAura;
 
     const charStatsData = getCharacterStatsSync();
     for (const id of characterIds) {
@@ -593,10 +593,10 @@ export class TeamMeta {
     // For reactions with aura/trigger semantics, when enemy aura is set it
     // fixes the aura side — the character must supply the trigger element.
     const auraTrigger = REACTION_AURA_TRIGGER[reaction];
-    if (auraTrigger && this.enemyElementAura) {
+    if (auraTrigger && this.enemyAura) {
       // Find pairings where the enemy aura matches the aura side
       const matchingPairs = auraTrigger.filter(
-        (p) => p.aura === this.enemyElementAura
+        (p) => p.aura === this.enemyAura
       );
       if (matchingPairs.length === 0) return false;
 
@@ -609,11 +609,8 @@ export class TeamMeta {
     }
 
     // Fallback: check basic element requirements for the team
-    if (
-      this.enemyElementAura &&
-      !teamElements.includes(this.enemyElementAura)
-    ) {
-      teamElements.push(this.enemyElementAura);
+    if (this.enemyAura && !teamElements.includes(this.enemyAura)) {
+      teamElements.push(this.enemyAura);
     }
     let charParticipates = !charId;
     const hasElements = req.requiredElements.every((group) => {
@@ -673,7 +670,6 @@ export type OptionEntry = {
 export type OptionDef = {
   label: I18nLabel;
   choices: readonly OptionEntry[];
-  default: string;
 };
 
 /**
@@ -685,7 +681,7 @@ export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
 /**
  * User-selected combat options, keyed by provider ID (charId or weaponId).
  * Each value is the selected option string for that provider.
- * Providers with no entry get `""` → falls back to schema default via `resolveOption()`.
+ * Providers with no entry get `""` → falls back to first enabled choice via `resolveOption()`.
  */
 export type OptionMap = Record<string, string>;
 
@@ -1207,9 +1203,22 @@ export function isChoiceEnabled(
 }
 
 /**
+ * Return the value of the first enabled choice for a given OptionDef.
+ * Every OptionDef must have at least one ungated choice, so this always
+ * returns a valid value.
+ */
+export function getDefaultOptionValue(
+  def: OptionDef,
+  teamMeta?: TeamMeta
+): string {
+  const first = def.choices.find((c) => isChoiceEnabled(c, teamMeta));
+  return first ? first.value : def.choices[0].value;
+}
+
+/**
  * Resolve a raw option string against a typed schema, returning the
- * narrowed value. Falls back to first enabled choice (or schema default)
- * if raw value is invalid or disabled.
+ * narrowed value. Falls back to first enabled choice if raw value is
+ * invalid or disabled.
  *
  * Usage inside a subclass:
  * ```
@@ -1226,7 +1235,5 @@ export function resolveOption<const D extends OptionDef>(
   if (validChoice && isChoiceEnabled(validChoice, teamMeta)) {
     return raw as InferOption<D>;
   }
-  // Fall back to first enabled choice, or schema default if none enabled
-  const firstEnabled = def.choices.find((c) => isChoiceEnabled(c, teamMeta));
-  return (firstEnabled ? firstEnabled.value : def.default) as InferOption<D>;
+  return getDefaultOptionValue(def, teamMeta) as InferOption<D>;
 }

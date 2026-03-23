@@ -304,7 +304,8 @@ export type ResolvedBuff = {
  */
 export type DisplayResult = {
   // ── Formula ──
-  parts: DisplayPart[];
+  /** Per-formula display parts, keyed by "charId.formulaId". */
+  partsByFormula: Record<string, DisplayPart[]>;
   totalDamage: number;
 
   // ── Buffs ──
@@ -354,9 +355,9 @@ export type CalcContext = {
   enemyLevel: number;
   enemyRes: number;
   critRateTarget?: number; // 0–100 integer; undefined = disabled
-  rollMultiplier?: number; // ideal-gen only; 0.7–1.0, default 0.85
-  /** ideal-gen only; per-slot substat roll totals; default 8_6 */
-  idealSubstatBudget?: SubstatBudgetPreset;
+  rollMultiplier?: number; // generator only; 0.7–1.0, default 0.85
+  /** Generator only; per-slot substat roll totals; default 8_6 */
+  substatBudget?: SubstatBudgetPreset;
 };
 
 // ─── Reaction Override (Formula v2) ───
@@ -411,9 +412,32 @@ export type ComboFormula = {
   lines: ComboLine[];
 };
 
+/** Wrap a single formula into a 1-line ComboFormula. */
+export function singleFormulaCombo(
+  charId: string,
+  formulaId: string,
+  reaction?: ReactionOverride
+): ComboFormula {
+  return {
+    id: "__single__",
+    label: { zh: "", en: "" },
+    lines: [{ charId, formulaId, count: 1, reaction }],
+  };
+}
+
 export type ComboResult = {
   lineDamages: { perHit: number; total: number }[];
   totalDamage: number;
+};
+
+/**
+ * Bundled formula context: combo definition + per-formula overrides.
+ * Always travels as a unit across optimizer, generator, analyzer, and display.
+ */
+export type FormulaContext = {
+  combo: ComboFormula;
+  reactionOverrides?: Record<string, ReactionOverride>;
+  buffOverrides?: Record<number, PartialBuffInfo[]>;
 };
 
 // ─── Char Build Config ───
@@ -493,17 +517,9 @@ interface TeamOptResultBase {
   done: true;
 }
 
-export interface TeamOptSingleResult extends TeamOptResultBase {
-  mode: "single";
-  bestDamageResult: DamageResult;
-}
-
-export interface TeamOptComboResult extends TeamOptResultBase {
-  mode: "combo";
+export interface TeamOptimizationResult extends TeamOptResultBase {
   bestComboResult: ComboResult;
 }
-
-export type TeamOptimizationResult = TeamOptSingleResult | TeamOptComboResult;
 
 export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
 
@@ -518,22 +534,14 @@ export interface CharOptConfig {
 export interface TeamOptimizerOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
-  formulaId: string;
+  formula: FormulaContext;
   inventory: ArtifactData[];
   calcContext: CalcContext;
   globalConfig: GlobalStatWeights;
   baseSheets: Record<string, StatSheet>;
   perChar: Record<string, CharOptConfig>;
-  reactionOverride?: ReactionOverride;
-  altCount?: number;
-  combo?: ComboFormula;
-  reactionOverrides?: Record<string, ReactionOverride>;
   ignoreArtifactSets?: Record<string, boolean>;
   perCharDeadlineMs?: number;
   teamDeadlineMs?: number;
   maxArtsPerSlot?: number;
-  /** Pre-computed partial buff infos for stack-limited / user-overridden buffs (single mode). */
-  partialBuffs?: PartialBuffInfo[];
-  /** Per-line PartialBuffInfo[] for combo mode. Keyed by line index in validLines. */
-  comboLinePartialBuffs?: Record<number, PartialBuffInfo[]>;
 }
