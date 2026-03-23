@@ -943,7 +943,7 @@ async function* runTeamOpt(
 
   const formulaId =
     combo.lines.find((l) => l.charId === carryCharId)?.formulaId ?? "";
-  const reactionOverride = reactionOverrides?.[carryCharId + "." + formulaId];
+  const reactionOverride = reactionOverrides?.[`${carryCharId}.${formulaId}`];
 
   const isComboMode =
     combo != null && combo.lines.filter((l) => l.count > 0).length > 0;
