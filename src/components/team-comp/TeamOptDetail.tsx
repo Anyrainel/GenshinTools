@@ -152,6 +152,7 @@ export function TeamOptDetail({ team, onBack }: TeamOptDetailProps) {
     [effectiveTeam, accountData]
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: characterStats/weaponStats are intentional invalidation triggers — TeamBuild reads them indirectly via global registries
   const { teamBuild, buildError } = useMemo(() => {
     try {
       return {
