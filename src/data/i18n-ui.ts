@@ -1632,6 +1632,7 @@ export const i18nUiData = {
       en: "Equipped protection",
       zh: "已装备保护",
     },
+    filterByHalfSet: { en: "Filter by 2pc set:", zh: "按2件套过滤:" },
     rulePrefixFlex: { en: "Off-piece", zh: "散件" },
     // Help dialog
     help: {

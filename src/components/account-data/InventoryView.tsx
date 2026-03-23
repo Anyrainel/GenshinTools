@@ -23,11 +23,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
+  allHalfSetIds,
   artifactIdToHalfSetId,
   artifactsById,
   weaponsById,
 } from "@/data/constants";
-import { artifactHalfSets } from "@/data/resources";
 import type {
   AccountData,
   ArtifactData,
@@ -50,8 +50,6 @@ interface InventoryViewProps {
 
 type TaggedWeapon = WeaponData & { equipped: boolean };
 type TaggedArtifact = ArtifactData & { equipped: boolean };
-
-const ALL_HALF_SET_IDS = artifactHalfSets.map((hs) => hs.id);
 
 const isMaxWeapon = (w: WeaponData) => w.level === 90;
 const isMaxArtifact = (a: ArtifactData) =>
@@ -252,14 +250,6 @@ export function InventoryView({
     [allSecondaryStats, t]
   );
 
-  const sortedHalfSetIds = useMemo(
-    () =>
-      [...ALL_HALF_SET_IDS].sort((a, b) =>
-        t.halfSetShort(a).localeCompare(t.halfSetShort(b))
-      ),
-    [t]
-  );
-
   // ── Toggle helpers ──
   const toggleSet = <T,>(
     set: Set<T>,
@@ -433,7 +423,10 @@ export function InventoryView({
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-1 px-2">
-          {sortedHalfSetIds.map((hsId) => (
+          <span className="text-sm font-medium text-foreground shrink-0">
+            {t.ui("triage.filterByHalfSet")}
+          </span>
+          {allHalfSetIds.map((hsId) => (
             <FilterChip
               key={hsId}
               active={

@@ -15,6 +15,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { allHalfSetIds, artifactIdToHalfSetId } from "@/data/constants";
 import { useAllResolvedBuilds } from "@/hooks/useResolvedBuilds";
 import {
   type FlexPattern,
@@ -262,6 +263,15 @@ export function TriageView() {
   const [tierFilter, setTierFilter] = useState<Set<string>>(
     new Set(["P", "Q", "N", "T"])
   );
+  const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(new Set());
+  const toggleHalfSet = (hsId: string) => {
+    setHalfSetFilter((prev) => {
+      const next = new Set(prev);
+      if (next.has(hsId)) next.delete(hsId);
+      else next.add(hsId);
+      return next;
+    });
+  };
 
   type SortDimension = "tier" | "name" | "level";
   const [activeSortDim, setActiveSortDim] = useState<SortDimension>("name");
@@ -325,6 +335,13 @@ export function TriageView() {
     (d: TriageDecision) => tierFilter.has(d.decidingResult?.tier ?? "T"),
     [tierFilter]
   );
+  const passesFilters = useCallback(
+    (d: TriageDecision) =>
+      passesTier(d) &&
+      (halfSetFilter.size === 0 ||
+        halfSetFilter.has(artifactIdToHalfSetId[d.artifact.setKey] ?? "")),
+    [passesTier, halfSetFilter]
+  );
   const sortDecisions = useCallback(
     (arr: TriageDecision[]) => {
       const compareName = (a: TriageDecision, b: TriageDecision) => {
@@ -372,15 +389,18 @@ export function TriageView() {
       sortDecisions(
         decisions.filter(
           (d) =>
-            d.label === "lock" && !d.artifact.lock && !hasSP(d) && passesTier(d)
+            d.label === "lock" &&
+            !d.artifact.lock &&
+            !hasSP(d) &&
+            passesFilters(d)
         )
       ),
-    [decisions, hasSP, passesTier, sortDecisions]
+    [decisions, hasSP, passesFilters, sortDecisions]
   );
 
   const noAction = useMemo(
-    () => sortDecisions(decisions.filter((d) => hasSP(d) && passesTier(d))),
-    [decisions, hasSP, passesTier, sortDecisions]
+    () => sortDecisions(decisions.filter((d) => hasSP(d) && passesFilters(d))),
+    [decisions, hasSP, passesFilters, sortDecisions]
   );
 
   const recommendUnlock = useMemo(
@@ -391,10 +411,10 @@ export function TriageView() {
             d.label === "unlock" &&
             d.artifact.lock &&
             !hasSP(d) &&
-            passesTier(d)
+            passesFilters(d)
         )
       ),
-    [decisions, hasSP, passesTier, sortDecisions]
+    [decisions, hasSP, passesFilters, sortDecisions]
   );
 
   // "No change" = everything not in the other 3 tabs
@@ -405,14 +425,14 @@ export function TriageView() {
       ...noAction.map((d) => d.artifact.id),
     ]);
     return sortDecisions(
-      decisions.filter((d) => !otherIds.has(d.artifact.id) && passesTier(d))
+      decisions.filter((d) => !otherIds.has(d.artifact.id) && passesFilters(d))
     );
   }, [
     decisions,
     recommendLock,
     recommendUnlock,
     noAction,
-    passesTier,
+    passesFilters,
     sortDecisions,
   ]);
 
@@ -525,7 +545,7 @@ export function TriageView() {
               ))}
             </div>
             {/* Sort controls */}
-            <div className="flex items-center gap-1.5 ml-auto">
+            <div className="flex items-center gap-1.5 ml-auto shrink-0">
               <span className="text-sm font-medium text-foreground">
                 {t.ui("filters.sort")}
               </span>
@@ -563,6 +583,20 @@ export function TriageView() {
                 );
               })}
             </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="text-sm font-medium text-foreground shrink-0">
+              {t.ui("triage.filterByHalfSet")}
+            </span>
+            {allHalfSetIds.map((hsId) => (
+              <FilterChip
+                key={hsId}
+                active={halfSetFilter.size === 0 || halfSetFilter.has(hsId)}
+                onClick={() => toggleHalfSet(hsId)}
+              >
+                {t.halfSetShort(hsId)}
+              </FilterChip>
+            ))}
           </div>
           {/* Dialogs (portaled, no layout impact) */}
           <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} t={t} />

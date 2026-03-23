@@ -1,7 +1,10 @@
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactIdToHalfSetId, sortedArtifacts } from "@/data/constants";
-import { artifactHalfSets } from "@/data/resources";
+import {
+  allHalfSetIds,
+  artifactIdToHalfSetId,
+  sortedArtifacts,
+} from "@/data/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { fuzzyMatch } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -9,21 +12,11 @@ import { ArchiveToolbar } from "./ArchiveToolbar";
 import { ArtifactCard } from "./ArtifactCard";
 import { FilterChip } from "./FilterChip";
 
-const ALL_HALF_SET_IDS = artifactHalfSets.map((hs) => hs.id);
-
 export function ArtifactArchiveView() {
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(
     () => new Set()
-  );
-
-  const sortedHalfSetIds = useMemo(
-    () =>
-      [...ALL_HALF_SET_IDS].sort((a, b) =>
-        t.halfSetShort(a).localeCompare(t.halfSetShort(b))
-      ),
-    [t]
   );
 
   const toggleHalfSet = useCallback((id: string) => {
@@ -102,7 +95,7 @@ export function ArtifactArchiveView() {
           onSearchChange={setSearchQuery}
           searchPlaceholder={t.ui("archive.searchItemPlaceholder")}
         >
-          {sortedHalfSetIds.map((hsId) => (
+          {allHalfSetIds.map((hsId) => (
             <FilterChip
               key={hsId}
               active={halfSetFilter.size === 0 || halfSetFilter.has(hsId)}

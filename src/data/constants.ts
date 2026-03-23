@@ -308,6 +308,37 @@ export const artifactIdToHalfSetId = freezeRecord(
   }, {})
 );
 
+/** Hand-picked half-set IDs shown first, then remaining IDs sorted alphabetically. */
+const pinnedHalfSetIds: string[] = [
+  "atk%-18",
+  "hp%-20",
+  "def%-30",
+  "em-80",
+  "er-20",
+  "cr-12",
+  "pyro%-15",
+  "hydro%-15",
+  "electro%-15",
+  "cryo%-15",
+  "anemo%-15",
+  "dendro%-15",
+  "geo%-15",
+  "phys%-25",
+  "na-ca-dmg%-15",
+  "plunge-dmg%-25",
+  "skill-dmg%-20",
+  "burst-dmg%-20",
+  "nightsoul-dmg%-15",
+  "nightsoul-energy-6",
+];
+export const allHalfSetIds: readonly string[] = Object.freeze([
+  ...pinnedHalfSetIds,
+  ...artifactHalfSets
+    .map((hs) => hs.id)
+    .filter((id) => !pinnedHalfSetIds.includes(id))
+    .sort(),
+]);
+
 export const elementResourcesByName = freezeRecord(
   createRecord<ElementResource, ElementResource["name"]>(
     elementResources,

@@ -146,7 +146,7 @@ class Varesa extends CharacterBase {
 }
 
 const citlaliOption = {
-  label: { zh: "C1星刃层数", en: "C1 Stellar Blade Stacks" },
+  label: { zh: "1命星刃层数", en: "C1 Stellar Blade Stacks" },
   choices: [
     {
       value: "unlimited",

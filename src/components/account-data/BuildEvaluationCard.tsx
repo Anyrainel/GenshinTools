@@ -121,15 +121,14 @@ function BuildEvaluationCardComponent({
       </div>
 
       {/* Main stats row — icons instead of text labels */}
-      <div className="px-2.5 2xl:px-3 flex items-center gap-2 text-[11px] 2xl:text-xs text-foreground">
-        {mainStatSlots.map((slot, i) => {
+      <div className="px-2.5 2xl:px-3 flex items-center gap-1 text-[11px] 2xl:text-xs text-foreground">
+        {mainStatSlots.map((slot) => {
           const Icon = slotIcons[slot];
           return (
             <span
               key={slot}
               className="inline-flex items-center gap-0.5 whitespace-nowrap"
             >
-              {i > 0 && <span className="text-muted-foreground mr-1.5">·</span>}
               <Icon className="w-3 h-3 2xl:w-3.5 2xl:h-3.5 text-foreground/35 shrink-0" />
               {evalBuild.mainStats[slot].map((s) => t.statShort(s)).join("/")}
             </span>
