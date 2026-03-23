@@ -1,16 +1,19 @@
 /**
- * Investment Optimizer — computes the optimal order to invest 5★ constellations
+ * Analyzer — computes the optimal order to invest 5★ constellations
  * and weapon refinements across a 4-character team.
  *
  * Algorithm:
  *
  * Phase 1: Tier-Snapshot Artifact Generation
- *   Generate ideal artifacts for 9 tier snapshots (C0/C1/C2/C6 × 4★R5/5★R1 + C6R5).
- *   Artifacts from C2 are reused for C3-C5, from R1 for R2-R4.
+ *   Generate artifacts for 12 tier snapshots:
+ *     4★ weapon: C0/C1/C2 (3), 5★ R1: C0-C6 (7), 5★ R5: C2/C6 (2).
+ *   Artifacts from R1 are reused for R2-R4. 4★ weapon C3+ reuses C2.
  *
  * Phase 2: Exhaustive Breakpoint Combination Evaluation
- *   Enumerate all combinations of breakpoint states across characters (up to 9^4 = 6561).
+ *   Enumerate all combinations of breakpoint states across characters (up to 12^4).
  *   Each combo is evaluated with assembled artifacts from Phase 1.
+ *   BuffOverrides (greedy stack allocation) are computed fresh per evaluation
+ *   so constellation-dependent maxStacks are always correct.
  *   Results populate a global damage cache with auto-tracked best-at-each-M.
  *
  * Phase 3: BFS Expansion
@@ -26,18 +29,30 @@
 
 import type { Element, Rarity } from "@/data/types";
 
-import { TeamBuild, evaluateCombo } from "./damageCalc";
+import { CharBuild, TeamBuild, evaluateCombo } from "./damageCalc";
 import type { OptionMap } from "./damageModels";
-import { StatSheet } from "./damageModels";
+import { StatSheet, TeamMeta } from "./damageModels";
 import type { GeneratorResult } from "./generator";
 import { runGenerator } from "./generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "./substatBudget";
 import type {
   CalcContext,
   ComboFormula,
+  FormulaContext,
+  PartialBuffInfo,
   ReactionOverride,
   TeamSlotConfig,
 } from "./types";
+
+// ─── Fixed analyzer defaults ───
+
+/** Fixed context for all analyzer calculations. Generation and evaluation
+ *  both use the same enemy params so results are self-consistent. */
+const ANALYZER_CALC_CONTEXT: CalcContext = {
+  enemyLevel: 110,
+  enemyRes: 0.1,
+};
+const ANALYZER_ROLL_MULT = 0.85;
 
 // ─── Types ───
 
@@ -50,7 +65,7 @@ export type CharInvestment = {
 
 export type TeamInvestment = Record<string, CharInvestment>;
 
-export type InvestmentCharConfig = {
+export type AnalyzerCharConfig = {
   charId: string;
   rarity: Rarity;
   weapon4Star?: { id: string; refinement: number };
@@ -61,7 +76,18 @@ export type InvestmentCharConfig = {
   maxRefinement: number; // upper bound for refinement (default 5), 0 = no 5★ weapon
 };
 
-export type InvestmentNode = {
+/** Persisted form — stores only the alt weapon (not from roster). */
+export type StoredAnalyzerCharConfig = {
+  charId: string;
+  /** Weapon not from the team roster. 3/4★ alt includes refinement; 5★ alt does not. */
+  altWeapon?: { id: string; refinement?: number };
+  startConstellation: number;
+  startRefinement: number;
+  maxConstellation: number;
+  maxRefinement: number;
+};
+
+export type AnalyzerNode = {
   id: string;
   jin: number;
   allocation: TeamInvestment;
@@ -70,7 +96,7 @@ export type InvestmentNode = {
   isBreakpoint: boolean;
 };
 
-export type InvestmentEdge = {
+export type AnalyzerEdge = {
   fromId: string;
   toId: string;
   charId: string;
@@ -78,14 +104,14 @@ export type InvestmentEdge = {
   marginalDamage: number;
 };
 
-export type InvestmentDAG = {
-  nodes: InvestmentNode[];
-  edges: InvestmentEdge[];
+export type AnalyzerDAG = {
+  nodes: AnalyzerNode[];
+  edges: AnalyzerEdge[];
   baselineJin: number;
   maxJin: number;
 };
 
-export type InvestmentStep = {
+export type AnalyzerStep = {
   jin: number;
   allocation: TeamInvestment;
   damage: number;
@@ -101,29 +127,27 @@ export type CachedNodeRef = {
   damage: number;
 };
 
-export type InvestmentResult = {
-  dag: InvestmentDAG;
-  bestAtTier: Map<number, InvestmentNode>;
-  sequence: InvestmentStep[];
+export type AnalyzerResult = {
+  dag: AnalyzerDAG;
+  bestAtTier: Map<number, AnalyzerNode>;
+  sequence: AnalyzerStep[];
   nodesByJin: Map<number, CachedNodeRef[]>;
 };
 
-export type InvestmentPhase = "phase1" | "phase2" | "phase3" | "done";
+export type AnalyzerPhase = "phase1" | "phase2" | "phase3" | "done";
 
-export type InvestmentProgress = {
-  phase: InvestmentPhase;
+export type AnalyzerProgress = {
+  phase: AnalyzerPhase;
   phaseProgress: number;
   overallProgress: number;
   message: string;
 };
 
-export type InvestmentOptions = {
-  configs: InvestmentCharConfig[];
+export type AnalyzerOptions = {
+  configs: AnalyzerCharConfig[];
   baseConfigs: TeamSlotConfig[];
   teamBuild: TeamBuild;
-  combo: ComboFormula;
-  calcContext: CalcContext;
-  reactionOverrides?: Record<string, ReactionOverride>;
+  formula: FormulaContext;
   perChar?: Record<string, { minEr: number; minCr: number }>;
 };
 
@@ -137,36 +161,42 @@ type TierSnapshot = {
 };
 
 const TIER_SNAPSHOTS: TierSnapshot[] = [
+  // 4★ weapon path: C0-C2 (higher constellations reuse C2 artifacts)
   { id: "C0R0", constellation: 0, is5StarWeapon: false, refinement: 5 },
   { id: "C1R0", constellation: 1, is5StarWeapon: false, refinement: 5 },
   { id: "C2R0", constellation: 2, is5StarWeapon: false, refinement: 5 },
-  { id: "C6R0", constellation: 6, is5StarWeapon: false, refinement: 5 },
+  // 5★ weapon R1 path: every constellation gets its own snapshot
   { id: "C0R1", constellation: 0, is5StarWeapon: true, refinement: 1 },
   { id: "C1R1", constellation: 1, is5StarWeapon: true, refinement: 1 },
   { id: "C2R1", constellation: 2, is5StarWeapon: true, refinement: 1 },
+  { id: "C3R1", constellation: 3, is5StarWeapon: true, refinement: 1 },
+  { id: "C4R1", constellation: 4, is5StarWeapon: true, refinement: 1 },
+  { id: "C5R1", constellation: 5, is5StarWeapon: true, refinement: 1 },
   { id: "C6R1", constellation: 6, is5StarWeapon: true, refinement: 1 },
-  { id: "C0R5", constellation: 0, is5StarWeapon: true, refinement: 5 },
-  { id: "C1R5", constellation: 1, is5StarWeapon: true, refinement: 5 },
+  // 5★ weapon R5 path
   { id: "C2R5", constellation: 2, is5StarWeapon: true, refinement: 5 },
   { id: "C6R5", constellation: 6, is5StarWeapon: true, refinement: 5 },
 ];
 
 /**
  * Map a character's investment state to the nearest tier snapshot for artifact reuse.
- * C3-C5 → C2 artifacts, R2-R4 → R1 artifacts, R5 → R5 snapshots.
+ * 4★ weapon: C3+ → C2 artifacts.
+ * 5★ weapon R1-R4: each constellation has its own snapshot.
+ * 5★ weapon R5: C0/C1 → reuse R1 artifacts, C2-C5 → C2R5, C6 → C6R5.
  */
 function getNearestSnapshot(inv: CharInvestment): string {
-  const consTier =
-    inv.constellation <= 0
-      ? 0
-      : inv.constellation <= 1
-        ? 1
-        : inv.constellation <= 2
-          ? 2
-          : 6;
-  if (!inv.is5StarWeapon) return `C${consTier}R0`;
-  const refTier = inv.refinement >= 5 ? 5 : 1;
-  return `C${consTier}R${refTier}`;
+  if (!inv.is5StarWeapon) {
+    // 4★ weapon path: clamp constellation to 0/1/2
+    return `C${Math.min(inv.constellation, 2)}R0`;
+  }
+  if (inv.refinement >= 5) {
+    // R5 path: C0/C1 reuse R1 artifacts, C2-C5 → C2R5, C6 → C6R5
+    if (inv.constellation <= 1) return `C${inv.constellation}R1`;
+    if (inv.constellation <= 5) return "C2R5";
+    return "C6R5";
+  }
+  // 5★ weapon R1 path: every constellation 0-6 has its own snapshot
+  return `C${Math.min(Math.max(inv.constellation, 0), 6)}R1`;
 }
 
 // ─── Breakpoint State ───
@@ -190,7 +220,7 @@ function charM(inv: CharInvestment, rarity: Rarity): number {
 /** Total M for a team allocation */
 function computeM(
   allocation: TeamInvestment,
-  cfgs: InvestmentCharConfig[]
+  cfgs: AnalyzerCharConfig[]
 ): number {
   let total = 0;
   for (const cfg of cfgs) {
@@ -203,7 +233,7 @@ function computeM(
 // ─── Helpers ───
 
 function getBaselineState(
-  cfg: InvestmentCharConfig,
+  cfg: AnalyzerCharConfig,
   base: TeamSlotConfig
 ): CharInvestment {
   // If player already owns the 5★ weapon (startRefinement > 0), baseline uses it
@@ -269,7 +299,7 @@ function allocationNodeId(allocation: TeamInvestment): string {
     .join("|");
 }
 
-function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
+function getBreakpointStates(cfg: AnalyzerCharConfig): BreakpointState[] {
   const is5Star = cfg.rarity >= 5;
   const has4Wep = !!cfg.weapon4Star;
   const has5Wep = !!cfg.weapon5Star;
@@ -278,18 +308,19 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
   const owns5Star = sr > 0 && has5Wep;
   const states: BreakpointState[] = [];
 
-  // Standard constellation breakpoints: {0, 1, 2, 6} filtered by start/max constellation
-  const CONS_BREAKPOINTS = [0, 1, 2, 6];
   const maxC = cfg.maxConstellation;
   const maxR = cfg.maxRefinement;
 
-  if (is5Star) {
-    const consBPs = CONS_BREAKPOINTS.filter((c) => c >= sc && c <= maxC);
+  // 4★ weapon path: C0-C2 breakpoints (higher C reuses C2 artifacts)
+  const CONS_4STAR_WEP = [0, 1, 2];
+  // 5★ weapon path: every constellation is a breakpoint
+  const CONS_5STAR_WEP = [0, 1, 2, 3, 4, 5, 6];
 
+  if (is5Star) {
     if (!owns5Star && has4Wep) {
-      // 4★ weapon path: all constellation breakpoints with 4★ weapon
       const w4 = cfg.weapon4Star!.id;
       const r4 = cfg.weapon4Star!.refinement;
+      const consBPs = CONS_4STAR_WEP.filter((c) => c >= sc && c <= maxC);
       for (const c of consBPs) {
         states.push({
           constellation: c,
@@ -302,9 +333,9 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
 
     if (has5Wep && maxR > 0) {
       const w5 = cfg.weapon5Star!.id;
-      // 5★ weapon R1 path (or startRefinement if already owned)
       const baseR = owns5Star ? sr : 1;
       if (baseR <= maxR) {
+        const consBPs = CONS_5STAR_WEP.filter((c) => c >= sc && c <= maxC);
         for (const c of consBPs) {
           states.push({
             constellation: c,
@@ -313,16 +344,28 @@ function getBreakpointStates(cfg: InvestmentCharConfig): BreakpointState[] {
             is5StarWeapon: true,
           });
         }
-        // Max-R final breakpoint (skip if already at maxR)
+        // R5 breakpoints at C2 and max constellation (skip if baseR is already R5)
         if (baseR < maxR) {
+          // C2+R5 snapshot point (if C2 is reachable)
+          if (2 >= sc && 2 <= maxC) {
+            states.push({
+              constellation: 2,
+              weaponId: w5,
+              refinement: maxR,
+              is5StarWeapon: true,
+            });
+          }
+          // C(max)+R5 final breakpoint
           const maxConsBP =
             consBPs.length > 0 ? consBPs[consBPs.length - 1] : maxC;
-          states.push({
-            constellation: maxConsBP,
-            weaponId: w5,
-            refinement: maxR,
-            is5StarWeapon: true,
-          });
+          if (maxConsBP !== 2) {
+            states.push({
+              constellation: maxConsBP,
+              weaponId: w5,
+              refinement: maxR,
+              is5StarWeapon: true,
+            });
+          }
         }
       }
     }
@@ -372,7 +415,7 @@ type CachedNode = {
   damage: number;
 };
 
-class InvestmentCache {
+class AnalyzerCache {
   private nodes = new Map<string, CachedNode>();
   bestAtJin = new Map<number, CachedNode>();
 
@@ -404,7 +447,7 @@ class InvestmentCache {
 type CharOption = { inv: CharInvestment; perCharM: number };
 
 function getCharOptions(
-  cfg: InvestmentCharConfig,
+  cfg: AnalyzerCharConfig,
   base: TeamSlotConfig
 ): CharOption[] {
   const baseline = getBaselineState(cfg, base);
@@ -438,7 +481,7 @@ type SnapshotCache = Record<string, Record<string, StatSheet>>;
 
 function assembleSheets(
   allocation: TeamInvestment,
-  configs: InvestmentCharConfig[],
+  configs: AnalyzerCharConfig[],
   snapshotCache: SnapshotCache
 ): Record<string, StatSheet> {
   const sheets: Record<string, StatSheet> = {};
@@ -455,24 +498,87 @@ function assembleSheets(
   return sheets;
 }
 
+/**
+ * Evaluate an allocation's combo damage.
+ * Computes greedy buffOverrides fresh from the TeamBuild at the current
+ * constellation/weapon state, so stack-limited buffs (e.g. maxStacks that
+ * change per constellation) are always correct.
+ *
+ * @param charBuildCache - Optional pre-built CharBuild cache keyed by
+ *   `charId:constellation:weaponId:refinement`. Avoids re-creating
+ *   CharacterBase/WeaponBase/ArtifactSetBase for each evaluation.
+ * @param hasAnyStackLimited - Pre-computed flag; when false, skips
+ *   buffOverride computation entirely (no stack-limited buffs in any variant).
+ */
 function evalWithCachedArtifacts(
   allocation: TeamInvestment,
   sheets: Record<string, StatSheet>,
   baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
-  enemyElementAura: Element | undefined,
+  enemyAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  charBuildCache?: Map<string, CharBuild>,
+  hasAnyStackLimited?: boolean
 ): number {
   try {
     const configs = baseConfigs.map((bc) => {
       const inv = allocation[bc.charId];
       return inv ? investmentToConfig(inv, bc) : bc;
     });
-    const tb = new TeamBuild(configs, combatOpts, enemyElementAura);
-    return evaluateCombo(tb, combo, sheets, calcContext, reactionOverrides)
-      .totalDamage;
+
+    // Look up cached CharBuilds for this specific allocation
+    let cachedBuilds: Record<string, CharBuild> | undefined;
+    if (charBuildCache) {
+      cachedBuilds = {};
+      for (const cfg of configs) {
+        const key = `${cfg.charId}:${cfg.constellation}:${cfg.weaponId}:${cfg.refinement}`;
+        const cached = charBuildCache.get(key);
+        if (cached) {
+          cachedBuilds[cfg.charId] = cached;
+        } else {
+          // Cache miss — fall back to normal construction for this team
+          cachedBuilds = undefined;
+          break;
+        }
+      }
+    }
+
+    const tb = new TeamBuild(configs, combatOpts, enemyAura, [], cachedBuilds);
+
+    // Compute greedy buff allocation for this specific constellation state.
+    // Filter to valid lines (formulas that exist at this constellation).
+    const allFormulas = tb.getFormulaIds();
+    const validLines = combo.lines.filter((l) => {
+      const cf = allFormulas[l.charId];
+      return cf?.[l.formulaId];
+    });
+    const validCombo = { ...combo, lines: validLines };
+
+    let buffOverrides: Record<number, PartialBuffInfo[]> | undefined;
+    if (validLines.length > 0 && hasAnyStackLimited !== false) {
+      // If hasAnyStackLimited is undefined (no pre-check), do the per-eval check
+      const needCheck =
+        hasAnyStackLimited === true ||
+        tb.allStaticBuffs.some(({ buff }) => buff.source.maxStacks != null);
+      if (needCheck) {
+        buffOverrides = tb.computeComboPartialBuffSpecs(
+          validLines,
+          sheets,
+          calcContext
+        );
+      }
+    }
+
+    return evaluateCombo(
+      tb,
+      validCombo,
+      sheets,
+      calcContext,
+      reactionOverrides,
+      buffOverrides
+    ).totalDamage;
   } catch {
     return 0;
   }
@@ -481,15 +587,17 @@ function evalWithCachedArtifacts(
 /** Evaluate an allocation, using the global cache to avoid redundant computation. */
 function evalAndCache(
   allocation: TeamInvestment,
-  cache: InvestmentCache,
-  configs: InvestmentCharConfig[],
+  cache: AnalyzerCache,
+  configs: AnalyzerCharConfig[],
   snapshotCache: SnapshotCache,
   baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
   enemyAura: Element | undefined,
   combo: ComboFormula,
   calcContext: CalcContext,
-  reactionOverrides?: Record<string, ReactionOverride>
+  reactionOverrides?: Record<string, ReactionOverride>,
+  charBuildCache?: Map<string, CharBuild>,
+  hasAnyStackLimited?: boolean
 ): CachedNode {
   const id = allocationNodeId(allocation);
   const existing = cache.get(id);
@@ -504,7 +612,9 @@ function evalAndCache(
     enemyAura,
     combo,
     calcContext,
-    reactionOverrides
+    reactionOverrides,
+    charBuildCache,
+    hasAnyStackLimited
   );
   const jin = computeM(allocation, configs);
   const node: CachedNode = { id, jin, allocation: { ...allocation }, damage };
@@ -512,15 +622,14 @@ function evalAndCache(
   return node;
 }
 
-// ─── Ideal Gen ───
+// ─── Artifact Generation ───
 
-async function runIdealGen(
+async function runGeneration(
   allocation: TeamInvestment,
   baseConfigs: TeamSlotConfig[],
   combatOpts: OptionMap,
-  enemyElementAura: Element | undefined,
+  enemyAura: Element | undefined,
   combo: ComboFormula,
-  calcContext: CalcContext,
   reactionOverrides?: Record<string, ReactionOverride>,
   perChar?: Record<string, { minEr: number; minCr: number }>
 ): Promise<{ damage: number; sheetsByChar: Record<string, StatSheet> }> {
@@ -528,7 +637,7 @@ async function runIdealGen(
     const inv = allocation[bc.charId];
     return inv ? investmentToConfig(inv, bc) : bc;
   });
-  const teamBuild = new TeamBuild(configs, combatOpts, enemyElementAura);
+  const teamBuild = new TeamBuild(configs, combatOpts, enemyAura);
   const carryCharId =
     combo.lines.find((l) => l.count > 0)?.charId ?? configs[0].charId;
 
@@ -536,13 +645,15 @@ async function runIdealGen(
   for await (const result of runGenerator({
     teamBuild,
     carryCharId,
-    formulaId: "",
-    calcContext,
-    combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
-    reactionOverrides,
-    rollMultiplier: calcContext.rollMultiplier,
-    idealSubstatBudget: SUBSTAT_BUDGET_DEFAULT_PRESET,
+    calcContext: ANALYZER_CALC_CONTEXT,
+    formula: {
+      combo: { ...combo, lines: combo.lines.filter((l) => l.count > 0) },
+      reactionOverrides,
+    },
+    rollMultiplier: ANALYZER_ROLL_MULT,
+    substatBudget: SUBSTAT_BUDGET_DEFAULT_PRESET,
     perChar,
+    ignoreArtifactSets: {},
   })) {
     finalResult = result;
   }
@@ -553,23 +664,20 @@ async function runIdealGen(
   };
 }
 
+// ─── Progress weight constants ───
+const P1_WEIGHT = 0.4; // 0% → 40%  (artifact generation)
+const P2_WEIGHT = 0.5; // 40% → 90% (breakpoint combinations)
+const P3_WEIGHT = 0.1; // 90% → 100% (DAG fill)
+
 // ─── Phase 1: Tier snapshot generation ───
 
-async function computePhase1(
-  opts: InvestmentOptions,
-  onProgress: (p: InvestmentProgress) => void
-): Promise<SnapshotCache> {
-  const {
-    configs,
-    baseConfigs,
-    teamBuild,
-    combo,
-    calcContext,
-    reactionOverrides,
-    perChar,
-  } = opts;
+async function* computePhase1(
+  opts: AnalyzerOptions
+): AsyncGenerator<AnalyzerProgress, SnapshotCache> {
+  const { configs, baseConfigs, teamBuild, perChar } = opts;
+  const { combo, reactionOverrides } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
-  const enemyAura = teamBuild.enemyElementAura;
+  const enemyAura = teamBuild.enemyAura;
 
   const any4StarWeapon = configs.some((c) => c.weapon4Star);
   const any5StarWeapon = configs.some((c) => c.weapon5Star);
@@ -583,13 +691,16 @@ async function computePhase1(
 
   for (let i = 0; i < relevantSnapshots.length; i++) {
     const snapshot = relevantSnapshots[i];
+    const phasePct = i / relevantSnapshots.length;
 
-    onProgress({
+    yield {
       phase: "phase1",
-      phaseProgress: i / relevantSnapshots.length,
-      overallProgress: (i / relevantSnapshots.length) * 0.6,
+      phaseProgress: phasePct,
+      overallProgress: phasePct * P1_WEIGHT,
       message: `Generating artifacts for ${snapshot.id} (${i + 1}/${relevantSnapshots.length})...`,
-    });
+    };
+    // Let browser paint the progress update before starting heavy work
+    await new Promise((r) => setTimeout(r, 0));
 
     const allocation: TeamInvestment = {};
     for (let ci = 0; ci < configs.length; ci++) {
@@ -636,48 +747,114 @@ async function computePhase1(
       };
     }
 
-    const result = await runIdealGen(
+    const result = await runGeneration(
       allocation,
       baseConfigs,
       combatOpts,
       enemyAura,
       combo,
-      calcContext,
       reactionOverrides,
       perChar
     );
 
     snapshotCache[snapshot.id] = result.sheetsByChar;
-    await new Promise((r) => setTimeout(r, 0));
   }
 
-  onProgress({
+  yield {
     phase: "phase1",
     phaseProgress: 1,
-    overallProgress: 0.6,
+    overallProgress: P1_WEIGHT,
     message: "Artifact generation complete",
-  });
+  };
   return snapshotCache;
+}
+
+// ─── CharBuild cache for Phase 2/3 ───
+
+type CharBuildCacheResult = {
+  charBuildCache: Map<string, CharBuild>;
+  hasAnyStackLimited: boolean;
+};
+
+/**
+ * Pre-build CharBuild instances for every unique (charId, constellation,
+ * weaponId, refinement) option. Since no implementation checks cross-character
+ * constellation/refinement, each CharBuild is independent and can be reused
+ * across all team combinations that share the same per-character state.
+ *
+ * Also pre-computes a global hasAnyStackLimited flag by checking all cached
+ * builds' buff lists. When false, Phase 2/3 can skip buffOverride computation.
+ */
+function buildCharBuildCache(
+  charOpts: { charId: string; options: CharOption[] }[],
+  baseConfigs: TeamSlotConfig[],
+  combatOpts: OptionMap,
+  enemyAura: Element | undefined
+): CharBuildCacheResult {
+  const charBuildCache = new Map<string, CharBuild>();
+  let hasAnyStackLimited = false;
+
+  // Build a representative TeamMeta using baseline constellations.
+  // Each CharBuild only reads self-constellation from teamMeta, so the
+  // "wrong" values for other characters are harmless.
+  const charIds = baseConfigs.map((c) => c.charId);
+  const baseConstellations: Record<string, number> = {};
+  const artifactSets: Record<string, string> = {};
+  for (const c of baseConfigs) {
+    baseConstellations[c.charId] = c.constellation;
+    if (c.artifactSetId) artifactSets[c.charId] = c.artifactSetId;
+  }
+
+  for (const { charId, options } of charOpts) {
+    const baseConfig = baseConfigs.find((c) => c.charId === charId);
+    if (!baseConfig) continue;
+
+    for (const opt of options) {
+      const key = `${charId}:${opt.inv.constellation}:${opt.inv.weaponId}:${opt.inv.refinement}`;
+      if (charBuildCache.has(key)) continue;
+
+      // Create a TeamMeta with the correct self-constellation
+      const constellations = {
+        ...baseConstellations,
+        [charId]: opt.inv.constellation,
+      };
+      const teamMeta = new TeamMeta(
+        charIds,
+        constellations,
+        artifactSets,
+        enemyAura
+      );
+
+      const config = investmentToConfig(opt.inv, baseConfig);
+      const build = new CharBuild(config, teamMeta, combatOpts);
+      charBuildCache.set(key, build);
+
+      // Check if this build contributes any stack-limited buffs
+      if (!hasAnyStackLimited) {
+        for (const buff of build.getAllBuffs()) {
+          if (buff.source.maxStacks != null) {
+            hasAnyStackLimited = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  return { charBuildCache, hasAnyStackLimited };
 }
 
 // ─── Phase 2: Exhaustive breakpoint combination evaluation ───
 
-function computePhase2(
-  opts: InvestmentOptions,
+async function* computePhase2(
+  opts: AnalyzerOptions,
   snapshotCache: SnapshotCache,
-  cache: InvestmentCache,
-  onProgress: (p: InvestmentProgress) => void
-): void {
-  const {
-    configs,
-    baseConfigs,
-    teamBuild,
-    combo,
-    calcContext,
-    reactionOverrides,
-  } = opts;
+  cache: AnalyzerCache
+): AsyncGenerator<AnalyzerProgress, CharBuildCacheResult> {
+  const { configs, baseConfigs, teamBuild } = opts;
+  const { combo, reactionOverrides } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
-  const enemyAura = teamBuild.enemyElementAura;
+  const enemyAura = teamBuild.enemyAura;
   const activeCombo = {
     ...combo,
     lines: combo.lines.filter((l) => l.count > 0),
@@ -688,15 +865,23 @@ function computePhase2(
     options: getCharOptions(cfg, baseConfigs[i]),
   }));
 
+  // Pre-build CharBuild cache for all unique per-character options
+  const { charBuildCache, hasAnyStackLimited } = buildCharBuildCache(
+    charOpts,
+    baseConfigs,
+    combatOpts,
+    enemyAura
+  );
+
   const totalCombos = charOpts.reduce((acc, co) => acc * co.options.length, 1);
   let count = 0;
 
-  onProgress({
+  yield {
     phase: "phase2",
     phaseProgress: 0,
-    overallProgress: 0.6,
+    overallProgress: P1_WEIGHT,
     message: `Evaluating ${totalCombos} breakpoint combinations...`,
-  });
+  };
 
   function enumerate(ci: number, alloc: TeamInvestment, totalM: number) {
     if (ci >= charOpts.length) {
@@ -710,8 +895,10 @@ function computePhase2(
           combatOpts,
           enemyAura,
           activeCombo,
-          calcContext,
-          reactionOverrides
+          ANALYZER_CALC_CONTEXT,
+          reactionOverrides,
+          charBuildCache,
+          hasAnyStackLimited
         );
         cache.add({ id, jin: totalM, allocation: { ...alloc }, damage });
       }
@@ -725,47 +912,62 @@ function computePhase2(
     }
   }
 
-  enumerate(0, {}, 0);
+  // Batch by top-level character options, yielding progress between batches
+  if (charOpts.length > 0) {
+    const { charId, options } = charOpts[0];
+    for (let bi = 0; bi < options.length; bi++) {
+      const opt = options[bi];
+      const alloc: TeamInvestment = { [charId]: { ...opt.inv } };
+      enumerate(1, alloc, opt.perCharM);
 
-  onProgress({
+      const phasePct = (bi + 1) / options.length;
+      yield {
+        phase: "phase2",
+        phaseProgress: phasePct,
+        overallProgress: P1_WEIGHT + phasePct * P2_WEIGHT,
+        message: `Evaluated ${count}/${totalCombos} combinations...`,
+      };
+      await new Promise((r) => setTimeout(r, 0));
+    }
+  }
+
+  yield {
     phase: "phase2",
     phaseProgress: 1,
-    overallProgress: 0.8,
+    overallProgress: P1_WEIGHT + P2_WEIGHT,
     message: `Evaluated ${count} combinations, ${cache.bestAtJin.size} M-tiers found`,
-  });
+  };
+
+  return { charBuildCache, hasAnyStackLimited };
 }
 
 // ─── Phase 3: Constrained greedy along bestAtM parent→child edges ───
 //
-// Instead of unconstrained BFS, we:
-// 1. Build a DAG among bestAtJin nodes via parent/child reachability
-//    (parent = closest lower-金 node where all C/R ≤ current;
-//     child  = closest higher-金 node where all C/R ≥ current)
+// 1. Build a DAG among bestAtJin nodes via transitive reduction of the
+//    reachability relation. Each edge from→to is "direct" — no intermediate
+//    bestAtJin node lies between them. This finds ALL minimal parent/child
+//    relationships, capturing parallel investment paths.
 // 2. Run greedy +1M fill along each edge, constrained to not exceed
 //    the child's allocation. This prevents greedy from wandering into
 //    tiny support refinements when it should be building toward a
 //    character's next breakpoint.
 
-function computePhase3(
-  cache: InvestmentCache,
+async function* computePhase3(
+  cache: AnalyzerCache,
   snapshotCache: SnapshotCache,
-  opts: InvestmentOptions,
-  onProgress: (p: InvestmentProgress) => void
-): InvestmentEdge[] {
-  const {
-    configs,
-    baseConfigs,
-    teamBuild,
-    combo,
-    calcContext,
-    reactionOverrides,
-  } = opts;
+  opts: AnalyzerOptions,
+  charBuildCacheResult?: CharBuildCacheResult
+): AsyncGenerator<AnalyzerProgress, AnalyzerEdge[]> {
+  const { configs, baseConfigs, teamBuild } = opts;
+  const { combo, reactionOverrides } = opts.formula;
   const combatOpts = teamBuild.combatOpts;
-  const enemyAura = teamBuild.enemyElementAura;
+  const enemyAura = teamBuild.enemyAura;
   const activeCombo = {
     ...combo,
     lines: combo.lines.filter((l) => l.count > 0),
   };
+  const charBuildCache = charBuildCacheResult?.charBuildCache;
+  const hasAnyStackLimited = charBuildCacheResult?.hasAnyStackLimited;
 
   // 1. Collect bestAtJin nodes sorted by 金
   const bestNodes = [...cache.bestAtJin.entries()]
@@ -774,69 +976,55 @@ function computePhase3(
 
   if (bestNodes.length < 2) return [];
 
-  // 2. Build parent→child edges among bestAtJin nodes.
-  //    For each node, find closest reachable child (smallest 金 diff).
+  // 2. Build the full set of direct parent→child edges among bestAtJin nodes
+  //    (transitive reduction of the reachability relation).
+  //    Edge from→to is "direct" if from→to is reachable and no intermediate
+  //    bestAtJin node mid exists with from→mid→to all reachable.
   type BestEdge = { from: CachedNode; to: CachedNode };
   const bestEdges: BestEdge[] = [];
-  const hasIncoming = new Set<string>();
 
   for (let i = 0; i < bestNodes.length; i++) {
-    const node = bestNodes[i];
-    let closestChild: CachedNode | null = null;
-    let closestDiff = Number.POSITIVE_INFINITY;
-
+    const from = bestNodes[i];
     for (let j = i + 1; j < bestNodes.length; j++) {
-      const cand = bestNodes[j];
-      const diff = cand.jin - node.jin;
-      if (diff >= closestDiff) continue;
-      if (!isAllocationReachable(node.allocation, cand.allocation)) continue;
-      closestDiff = diff;
-      closestChild = cand;
-    }
+      const to = bestNodes[j];
+      if (!isAllocationReachable(from.allocation, to.allocation)) continue;
 
-    if (closestChild) {
-      bestEdges.push({ from: node, to: closestChild });
-      hasIncoming.add(closestChild.id);
-    }
-  }
+      // Check for any intermediate bestAtJin node that makes this edge redundant
+      let hasIntermediate = false;
+      for (let k = 0; k < bestNodes.length; k++) {
+        if (k === i || k === j) continue;
+        const mid = bestNodes[k];
+        if (mid.jin <= from.jin || mid.jin >= to.jin) continue;
+        if (
+          isAllocationReachable(from.allocation, mid.allocation) &&
+          isAllocationReachable(mid.allocation, to.allocation)
+        ) {
+          hasIntermediate = true;
+          break;
+        }
+      }
 
-  // Connect orphan nodes (no incoming edge except baseline) to closest parent
-  for (let i = 1; i < bestNodes.length; i++) {
-    const node = bestNodes[i];
-    if (hasIncoming.has(node.id)) continue;
-
-    let closestParent: CachedNode | null = null;
-    let closestDiff = Number.POSITIVE_INFINITY;
-
-    for (let j = i - 1; j >= 0; j--) {
-      const cand = bestNodes[j];
-      const diff = node.jin - cand.jin;
-      if (diff >= closestDiff) continue;
-      if (!isAllocationReachable(cand.allocation, node.allocation)) continue;
-      closestDiff = diff;
-      closestParent = cand;
-    }
-
-    if (closestParent) {
-      bestEdges.push({ from: closestParent, to: node });
-      hasIncoming.add(node.id);
+      if (!hasIntermediate) {
+        bestEdges.push({ from, to });
+      }
     }
   }
 
-  onProgress({
+  yield {
     phase: "phase3",
     phaseProgress: 0,
-    overallProgress: 0.8,
+    overallProgress: P1_WEIGHT + P2_WEIGHT,
     message: `Filling ${bestEdges.length} paths between optimal tiers...`,
-  });
+  };
 
   // 3. Constrained greedy along each bestEdge.
   //    At each step, only pick +1M upgrades where the resulting allocation
   //    stays ≤ the target child's allocation (isAllocationReachable).
   //    This guarantees convergence to the child after exactly (to.jin - from.jin) steps.
-  const edges: InvestmentEdge[] = [];
+  const edges: AnalyzerEdge[] = [];
 
-  for (const { from, to } of bestEdges) {
+  for (let ei = 0; ei < bestEdges.length; ei++) {
+    const { from, to } = bestEdges[ei];
     let current: CachedNode = from;
 
     while (current.jin < to.jin) {
@@ -862,8 +1050,10 @@ function computePhase3(
           combatOpts,
           enemyAura,
           activeCombo,
-          calcContext,
-          reactionOverrides
+          ANALYZER_CALC_CONTEXT,
+          reactionOverrides,
+          charBuildCache,
+          hasAnyStackLimited
         );
         if (!bestUp || cached.damage > bestUp.cached.damage) {
           bestUp = { cached, charId: up.charId, upgrade: up.upgrade };
@@ -882,14 +1072,23 @@ function computePhase3(
 
       current = bestUp.cached;
     }
+
+    const phasePct = (ei + 1) / bestEdges.length;
+    yield {
+      phase: "phase3",
+      phaseProgress: phasePct,
+      overallProgress: P1_WEIGHT + P2_WEIGHT + phasePct * P3_WEIGHT,
+      message: `Filling path ${ei + 1}/${bestEdges.length}...`,
+    };
+    await new Promise((r) => setTimeout(r, 0));
   }
 
-  onProgress({
+  yield {
     phase: "phase3",
     phaseProgress: 1,
-    overallProgress: 0.95,
+    overallProgress: P1_WEIGHT + P2_WEIGHT + P3_WEIGHT,
     message: `Filled ${edges.length} steps across ${bestEdges.length} paths`,
-  });
+  };
   return edges;
 }
 
@@ -897,7 +1096,7 @@ function computePhase3(
 
 function getSingleStepUpgrades(
   alloc: TeamInvestment,
-  cfgs: InvestmentCharConfig[]
+  cfgs: AnalyzerCharConfig[]
 ): { allocation: TeamInvestment; charId: string; upgrade: string }[] {
   const ups: { allocation: TeamInvestment; charId: string; upgrade: string }[] =
     [];
@@ -941,17 +1140,17 @@ function getSingleStepUpgrades(
 
 // ─── Sequence derivation ───
 
-function deriveSequence(dag: InvestmentDAG): {
-  sequence: InvestmentStep[];
-  bestAtTier: Map<number, InvestmentNode>;
+function deriveSequence(dag: AnalyzerDAG): {
+  sequence: AnalyzerStep[];
+  bestAtTier: Map<number, AnalyzerNode>;
 } {
-  const bestAtTier = new Map<number, InvestmentNode>();
+  const bestAtTier = new Map<number, AnalyzerNode>();
   for (const n of dag.nodes) {
     const ex = bestAtTier.get(n.jin);
     if (!ex || n.damage > ex.damage) bestAtTier.set(n.jin, n);
   }
 
-  const seq: InvestmentStep[] = [];
+  const seq: AnalyzerStep[] = [];
   const jins = [...bestAtTier.keys()].sort((a, b) => a - b);
   const baselineDamage =
     jins.length > 0 ? (bestAtTier.get(jins[0])?.damage ?? 0) : 0;
@@ -982,35 +1181,32 @@ function deriveSequence(dag: InvestmentDAG): {
 
 // ─── Main entry point ───
 
-export async function* runInvestmentAnalysis(
-  opts: InvestmentOptions
-): AsyncGenerator<InvestmentProgress | InvestmentResult> {
-  const q: InvestmentProgress[] = [];
-  const emit = (p: InvestmentProgress) => {
-    q.push(p);
-  };
-  const flush = function* () {
-    for (const p of q) yield p;
-    q.length = 0;
-  };
-
-  // Phase 1: Generate tier snapshots
-  const snapshotCache = await computePhase1(opts, emit);
-  yield* flush();
+export async function* runAnalysis(
+  opts: AnalyzerOptions
+): AsyncGenerator<AnalyzerProgress | AnalyzerResult> {
+  // Phase 1: Generate tier snapshots (streams progress via yield*)
+  const snapshotCache: SnapshotCache = yield* computePhase1(opts);
 
   // Global damage cache
-  const cache = new InvestmentCache();
+  const cache = new AnalyzerCache();
 
   // Phase 2: Exhaustive breakpoint combination evaluation
-  computePhase2(opts, snapshotCache, cache, emit);
-  yield* flush();
+  const charBuildCacheResult: CharBuildCacheResult = yield* computePhase2(
+    opts,
+    snapshotCache,
+    cache
+  );
 
   // Phase 3: BFS expansion from best-at-M seeds
-  const edges = computePhase3(cache, snapshotCache, opts, emit);
-  yield* flush();
+  const edges: AnalyzerEdge[] = yield* computePhase3(
+    cache,
+    snapshotCache,
+    opts,
+    charBuildCacheResult
+  );
 
   // Build DAG from cache + edges
-  const nodes: InvestmentNode[] = [];
+  const nodes: AnalyzerNode[] = [];
   const nodeIds = new Set<string>();
 
   // Include all best-at-M nodes
@@ -1047,7 +1243,7 @@ export async function* runInvestmentAnalysis(
   }
 
   const jinValues = nodes.map((n) => n.jin);
-  const dag: InvestmentDAG = {
+  const dag: AnalyzerDAG = {
     nodes,
     edges,
     baselineJin: jinValues.length > 0 ? Math.min(...jinValues) : 0,
@@ -1073,11 +1269,11 @@ export async function* runInvestmentAnalysis(
     overallProgress: 1,
     message: "Done",
   };
-  yield { dag, bestAtTier, sequence, nodesByJin } satisfies InvestmentResult;
+  yield { dag, bestAtTier, sequence, nodesByJin } satisfies AnalyzerResult;
 }
 
-export function isInvestmentResult(
-  v: InvestmentProgress | InvestmentResult
-): v is InvestmentResult {
+export function isAnalyzerResult(
+  v: AnalyzerProgress | AnalyzerResult
+): v is AnalyzerResult {
   return "dag" in v;
 }
