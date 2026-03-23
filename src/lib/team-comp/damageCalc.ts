@@ -67,7 +67,7 @@ import {
 export { TeamMeta };
 
 import type { ExtraBuff } from "./extraBuffTypes";
-import { resolveExtraBuffEntries } from "./extraBuffTypes";
+import { createExtraStatBuffs } from "./extraBuffTypes";
 
 // ═══════════════════════════════════════════════════════════════
 // TeamResonance
@@ -231,8 +231,7 @@ export class CharBuild {
   constructor(
     config: TeamSlotConfig,
     teamMeta: TeamMeta,
-    combatOpts: OptionMap = {},
-    extraStatEntries: StatEntry[] = []
+    combatOpts: OptionMap = {}
   ) {
     this.charBase = createCharacter(
       config.charId,
@@ -323,16 +322,22 @@ export class CharBuild {
       );
     }
 
-    // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses + extra buffs
+    // Phase 1: Assemble base stats from character + weapon + artifact set 2pc bonuses
     const baseEntries: StatEntry[] = [
       ...this.charBase.stats,
       ...this.weaponBase.stats,
       ...(this.artifactSetBase?.stats ?? []),
       ...this.artifactHalfSetBases.flatMap((h) => h.stats),
-      ...extraStatEntries,
     ];
     this.innerStatSheet = new StatSheet(baseEntries);
     this.baseStatSheet = this.innerStatSheet;
+  }
+
+  /** Reset innerStatSheet to the pre-applyStaticBuffs baseline.
+   *  Used by the analyzer to efficiently reuse CharBuild instances across
+   *  team combinations without re-constructing CharacterBase/WeaponBase. */
+  resetStatSheet(): void {
+    this.innerStatSheet = this.baseStatSheet;
   }
 
   /**
@@ -692,7 +697,17 @@ export class TeamBuild {
     configs: TeamSlotConfig[],
     combatOpts: OptionMap = {},
     enemyAura?: Element,
-    extraBuffs: ExtraBuff[] = []
+    extraBuffs: ExtraBuff[] = [],
+    /**
+     * Optional pre-built CharBuilds keyed by charId. When provided, their stat
+     * sheets are reset and reused instead of constructing new CharacterBase /
+     * WeaponBase / ArtifactSetBase instances. The caller must guarantee that
+     * each cached build was created with a TeamMeta whose self-constellation,
+     * weapon, artifact set, and combat options match the corresponding config.
+     * (Other characters' constellations in the original TeamMeta are irrelevant
+     * because no implementation checks cross-character constellation/refinement.)
+     */
+    _cachedCharBuilds?: Record<string, CharBuild>
   ) {
     this.configs = configs;
     this.combatOpts = combatOpts;
@@ -713,19 +728,30 @@ export class TeamBuild {
     );
     this.teamResonance = new TeamResonance(this.teamMeta);
 
-    // Create CharBuilds (with per-character extra buff entries)
+    // Create or reuse CharBuilds
     this.charBuilds = {};
-    for (const config of configs) {
-      const extraEntries =
-        extraBuffs.length > 0
-          ? resolveExtraBuffEntries(extraBuffs, config.charId)
-          : [];
-      this.charBuilds[config.charId] = new CharBuild(
-        config,
-        this.teamMeta,
-        combatOpts,
-        extraEntries
-      );
+    if (_cachedCharBuilds) {
+      for (const config of configs) {
+        const cached = _cachedCharBuilds[config.charId];
+        if (cached) {
+          cached.resetStatSheet();
+          this.charBuilds[config.charId] = cached;
+        } else {
+          this.charBuilds[config.charId] = new CharBuild(
+            config,
+            this.teamMeta,
+            combatOpts
+          );
+        }
+      }
+    } else {
+      for (const config of configs) {
+        this.charBuilds[config.charId] = new CharBuild(
+          config,
+          this.teamMeta,
+          combatOpts
+        );
+      }
     }
 
     // Collect all static buffs across the team
@@ -736,6 +762,13 @@ export class TeamBuild {
     for (const [charId, build] of Object.entries(this.charBuilds)) {
       for (const buff of build.getAllBuffs()) {
         this.allStaticBuffs.push({ buff, providerCharId: charId });
+      }
+    }
+
+    // Add extra buffs (food/env/status/custom) as first-class StatBuffs
+    if (extraBuffs.length > 0) {
+      for (const buff of createExtraStatBuffs(extraBuffs)) {
+        this.allStaticBuffs.push({ buff, providerCharId: "extra" });
       }
     }
 
@@ -761,7 +794,8 @@ export class TeamBuild {
   ): EvaluatedDynamicBuff[] {
     const results: EvaluatedDynamicBuff[] = [];
     for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId === "resonance") continue;
+      if (providerCharId === "resonance" || providerCharId === "extra")
+        continue;
       const ownerStats = preStats[providerCharId]!;
       const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
       assertNoDuplicateStatKeys(
@@ -931,7 +965,8 @@ export class TeamBuild {
   ): EvaluatedDynamicBuff[] {
     const results: EvaluatedDynamicBuff[] = [];
     for (const { buff, providerCharId } of this.allStaticBuffs) {
-      if (providerCharId === "resonance") continue;
+      if (providerCharId === "resonance" || providerCharId === "extra")
+        continue;
       if (excludeKeys.has(buffSourceKey(buff.source))) continue;
       const ownerStats = preStats[providerCharId]!;
       const entries = buff.dynamicBuffs(ownerStats, teamPreStatsArr);
@@ -1501,9 +1536,9 @@ export class TeamBuild {
     // of buff objects. This avoids reference-identity mismatches caused by
     // weapon/artifact getters that create new StatBuff instances each call.
 
-    // Exclude resonance entries — they are handled separately below.
+    // Exclude resonance and extra entries — they are handled separately below.
     const charBuffEntries = this.allStaticBuffs.filter(
-      (b) => b.providerCharId !== "resonance"
+      (b) => b.providerCharId !== "resonance" && b.providerCharId !== "extra"
     );
 
     // ── Active static set ──
@@ -1752,6 +1787,69 @@ export class TeamBuild {
         target: buff.target,
         active,
         activePartIndices: activePartIndicesRes,
+        staticEntries: buff.staticBuffs,
+        dynamicEntries: [],
+      });
+    }
+
+    // ── Extra buffs (food/env/status/custom) ──
+    const extraBuffEntries = this.allStaticBuffs.filter(
+      (b) => b.providerCharId === "extra"
+    );
+    for (const { buff } of extraBuffEntries) {
+      // charId filter gates applicability
+      if (buff.target.charId && buff.target.charId !== calcTargetId) {
+        result.push({
+          source: buff.source,
+          target: buff.target,
+          active: false,
+          staticEntries: buff.staticBuffs,
+          dynamicEntries: [],
+        });
+        continue;
+      }
+
+      let active = true;
+      let activePartIndicesExtra: number[] | undefined;
+      if (partTags.length > 0) {
+        const outputKeys = new Set<StatKey>(buff.staticBuffs.map((e) => e.key));
+        // Extra buffs apply to team members — expand via bridge
+        for (const charId of Object.keys(this.charBuilds)) {
+          for (const outKey of [...outputKeys]) {
+            const bridged = scalingBridge.get(`${charId}\0${outKey}`);
+            if (bridged) for (const k of bridged) outputKeys.add(k);
+          }
+        }
+
+        activePartIndicesExtra = [];
+        for (let pi = 0; pi < partTags.length; pi++) {
+          const tag = partTags[pi];
+          if (tag && buff.target.filter) {
+            if (!filterMatchesTag(buff.target.filter!, tag)) continue;
+          }
+          const rk = partReadKeys[pi];
+          if (rk && outputKeys.size > 0) {
+            let relevant = false;
+            for (const k of outputKeys) {
+              if (rk.has(k)) {
+                relevant = true;
+                break;
+              }
+            }
+            if (!relevant) continue;
+          }
+          activePartIndicesExtra.push(pi);
+        }
+        active = activePartIndicesExtra.length > 0;
+        if (activePartIndicesExtra.length === partTags.length) {
+          activePartIndicesExtra = undefined;
+        }
+      }
+      result.push({
+        source: buff.source,
+        target: buff.target,
+        active,
+        activePartIndices: activePartIndicesExtra,
         staticEntries: buff.staticBuffs,
         dynamicEntries: [],
       });

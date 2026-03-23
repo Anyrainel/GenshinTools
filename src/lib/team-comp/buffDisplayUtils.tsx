@@ -10,6 +10,7 @@ import {
   elementResourcesByName,
   weaponsById,
 } from "@/data/constants";
+import { envBuffsById } from "@/data/envBuffs";
 import type { Element } from "@/data/types";
 import { fmtStat } from "@/lib/team-comp/displayFormatters";
 import type { BuffTarget, ResolvedBuff, StatKey } from "@/lib/team-comp/types";
@@ -39,6 +40,9 @@ export function getSourceIcon(
       return elementResourcesByName[el as Element]?.imagePath;
     }
   }
+  if (source.type === "extra") {
+    return envBuffsById[source.id]?.imagePath;
+  }
   return undefined;
 }
 
@@ -58,6 +62,8 @@ export function getSourceName(source: ResolvedBuff["source"], t: T): string {
     }
     case "teamResonance":
       return t.resonance(source.id) || t.ui("teamComp.teamResonance");
+    case "extra":
+      return t.envBuff(source.id);
     default:
       return source.id;
   }

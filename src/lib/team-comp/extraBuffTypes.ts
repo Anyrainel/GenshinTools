@@ -1,4 +1,5 @@
-import type { StatEntry, StatKey } from "./types";
+import { StatBuff } from "./damageModels";
+import type { BuffSource, BuffTarget, StatEntry, StatKey } from "./types";
 
 /**
  * An extra buff applied by the user (food, environment, status, or custom).
@@ -37,4 +38,28 @@ export function resolveExtraBuffEntries(
     entries.push({ key, value });
   }
   return entries;
+}
+
+/**
+ * Convert ExtraBuff[] into StatBuff[] for integration with the buff system.
+ * Each ExtraBuff becomes one StatBuff with source.type = "extra".
+ */
+/** Strip category prefix (e.g. "food:gateau_debord" → "gateau_debord") from presetId. */
+function stripCategoryPrefix(presetId: string): string {
+  const idx = presetId.indexOf(":");
+  return idx >= 0 ? presetId.slice(idx + 1) : presetId;
+}
+
+export function createExtraStatBuffs(extraBuffs: ExtraBuff[]): StatBuff[] {
+  return extraBuffs.map((buff) => {
+    const source: BuffSource = {
+      type: "extra",
+      id: buff.presetId ? stripCategoryPrefix(buff.presetId) : buff.id,
+    };
+    const target: BuffTarget =
+      buff.target === "team"
+        ? { receiver: "team" }
+        : { receiver: "team", charId: buff.target };
+    return new StatBuff(source, target, buff.stats);
+  });
 }

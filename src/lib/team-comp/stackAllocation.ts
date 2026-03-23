@@ -273,7 +273,8 @@ export function buildUserOverrideInfos(
 
     // Find the matching buff in allStaticBuffs
     const match = allStaticBuffs.find((b) => {
-      if (b.providerCharId === "resonance") return false;
+      if (b.providerCharId === "resonance" || b.providerCharId === "extra")
+        return false;
       return buffSourceKey(b.buff.source) === bKey;
     });
     if (!match) continue;
@@ -306,7 +307,7 @@ export function collectStackLimitedBuffs(
   const result: StackLimitedBuffInfo[] = [];
 
   for (const { buff, providerCharId } of allStaticBuffs) {
-    if (providerCharId === "resonance") continue;
+    if (providerCharId === "resonance" || providerCharId === "extra") continue;
     if (buff.source.maxStacks == null) continue;
 
     const ownerStats = preStats[providerCharId];

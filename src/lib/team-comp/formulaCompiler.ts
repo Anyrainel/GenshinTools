@@ -775,7 +775,7 @@ function collectDynamicBuffExprs(
   }
 
   for (const { buff, providerCharId } of teamBuild.allStaticBuffs) {
-    if (providerCharId === "resonance") continue;
+    if (providerCharId === "resonance" || providerCharId === "extra") continue;
 
     const ownerStats = exprStatsMap[providerCharId];
     if (!ownerStats) continue;

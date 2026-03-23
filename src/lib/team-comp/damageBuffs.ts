@@ -222,6 +222,7 @@ function validateStatBuff(
 }
 
 function validateOrigin(source: BuffSource): void {
+  if (source.type === "extra") return;
   if (source.type === "character" || source.type === "weapon") {
     if (!source.origin) {
       throw new Error(

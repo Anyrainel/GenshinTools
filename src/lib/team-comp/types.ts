@@ -58,7 +58,8 @@ export type BuffSource = {
     | "weapon"
     | "artifactSet"
     | "artifactHalfSet"
-    | "teamResonance";
+    | "teamResonance"
+    | "extra";
   /** Provider ID from resources.ts */
   id: string;
   /** Kit origin: C0–C6, A, E, Q, P1–P4, R1–R5 */
